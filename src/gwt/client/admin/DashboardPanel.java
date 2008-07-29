@@ -104,7 +104,7 @@ public class DashboardPanel extends FlexTable
 
     protected void finishDisplayDashboard (ConnectConfig config)
     {
-        CAdmin.frame.closeClient(false);
+        CAdmin.frame.closeClient();
 
         // we have to serve admin-client.jar from the server to which it will connect back due to
         // security restrictions and proxy the game jar through there as well

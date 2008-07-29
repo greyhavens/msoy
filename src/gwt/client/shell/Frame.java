@@ -3,7 +3,6 @@
 
 package client.shell;
 
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -26,6 +25,12 @@ public interface Frame
     /** The offset of the content close button, from the left edge of the separator bar. */
     public static final int CLOSE_BUTTON_OFFSET = -16;
 
+    /** A method call code for use with our remote iframe to top frame RPC mechanism. */
+    public static enum Calls {
+        GET_WEB_CREDS, GET_PAGE_TOKEN, SET_TITLE, NAVIGATE_TO, NAVIGATE_REPLACE,
+        DISPLAY_WORLD_CLIENT, CLOSE_CLIENT, CLOSE_CONTENT
+    };
+
     /**
      * Sets the title of the browser window and the page.
      */
@@ -43,23 +48,22 @@ public interface Frame
     void navigateReplace (String token);
 
     /**
-     * Switches the frame into client display mode (clearing out any content) and notes the history
-     * token for the current page so that it can be restored in the event that we open a normal
-     * page and then later close it.
+     * Displays the Flash world client with the specified args. If the client is already showing,
+     * the args will be passed to the running client.
+     *
+     * @param pageToken a custom close token to override the default, or null for the default.
      */
-    void setShowingClient (String closeToken);
+    void displayWorldClient (String args, String closeToken);
 
     /**
      * Clears any open client and restores the content display.
      */
-    void closeClient (boolean deferred);
+    void closeClient ();
 
     /**
      * Clears the open content and restores the client to its full glory.
-     *
-     * @return true if the content was closed, false if we were not displaying content.
      */
-    boolean closeContent ();
+    void closeContent ();
 
     /**
      * Shows or hides the navigation header as desired.
@@ -85,12 +89,6 @@ public interface Frame
      * Hides the current dialog contents.
      */
     void clearDialog ();
-
-    /**
-     * Clears out the client section of the frame and creates a new scroll pane to contain a new
-     * client (and other bits if desired).
-     */
-    Panel getClientContainer ();
 
     /**
      * Displays the supplied page content.

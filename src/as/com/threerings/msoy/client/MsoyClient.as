@@ -205,20 +205,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
-     * Notifies our JavaScript shell that the flash client should be made full size.
-     */
-    public function restoreClient () :void
-    {
-        try {
-            if (ExternalInterface.available && !_embedded && !_featuredPlaceView) {
-                ExternalInterface.call("restoreClient");
-            }
-        } catch (err :Error) {
-            log.warning("ExternalInterface.call('restoreClient') failed: " + err);
-        }
-    }
-
-    /**
      * Notifies our JavaScript shell that the flash client should be cleared out.
      */
     public function closeClient () :void

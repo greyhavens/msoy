@@ -39,7 +39,8 @@ import client.util.Link;
  * handles displaying the Flash client.
  */
 public class FrameEntryPoint
-    implements EntryPoint, HistoryListener, Session.Observer, client.shell.Frame
+    implements EntryPoint, HistoryListener, Session.Observer, client.shell.Frame,
+               WorldClient.Container
 {
     // from interface EntryPoint
     public void onModuleLoad ()
@@ -75,14 +76,12 @@ public class FrameEntryPoint
         // create our header, dialog and popup
         _header = new FrameHeader(new ClickListener() {
             public void onClick (Widget sender) {
-                if (closeContent()) {
-                    // peachy, nothing else to do
+                if (_closeToken != null) {
+                    closeContent();
+                } else if (CShell.isGuest()) {
+                    History.newItem("");
                 } else {
-                    if (CShell.isGuest()) {
-                        History.newItem("");
-                    } else {
-                        Link.go(Page.WORLD, "m" + CShell.getMemberId());
-                    }
+                    Link.go(Page.WORLD, "m" + CShell.getMemberId());
                 }
             }
         });
@@ -111,7 +110,7 @@ public class FrameEntryPoint
         }
 
         // TEMP: always show the header
-        CShell.frame.setHeaderVisible(true);
+        setHeaderVisible(true);
     }
 
     // from interface HistoryListener
@@ -173,11 +172,11 @@ public class FrameEntryPoint
     // from interface Session.Observer
     public void didLogon (SessionData data)
     {
-        // WorldClient.didLogon(data.creds);
+        WorldClient.didLogon(data.creds);
 
         if (_pageId != null) {
             setPage(_pageId); // reloads the current page
-        } else if (_currentToken != null && !data.justCreated) {
+        } else if (!data.justCreated) {
             onHistoryChanged(_currentToken);
         }
     }
@@ -190,7 +189,7 @@ public class FrameEntryPoint
         // reload the current page
         onHistoryChanged(_currentToken);
         // close the Flash client if it's open
-        CShell.frame.closeClient(false);
+        closeClient();
     }
 
     // from interface Frame
@@ -202,7 +201,7 @@ public class FrameEntryPoint
     // from interface Frame
     public void navigateTo (String token)
     {
-        if (!token.equals(History.getToken())) {
+        if (!token.equals(_currentToken)) {
             History.newItem(token);
         }
     }
@@ -214,39 +213,18 @@ public class FrameEntryPoint
         History.newItem(token);
     }
 
-    // from interface Frame
-    public void setShowingClient (String closeToken)
+    // frome interface Frame
+    public void displayWorldClient (String args, String closeToken)
     {
-        // note the current history token so that we can restore it if needed
-        _closeToken = closeToken;
-
-        // clear out our content and the expand/close controls
-        RootPanel.get(CONTENT).clear();
-        RootPanel.get(CONTENT).setWidth("0px");
-        RootPanel.get(CONTENT).setVisible(false);
-
-        // have the client take up all the space
-        RootPanel.get(CLIENT).setWidth("100%");
-
-        // make sure the header is showing as we always want the header above the client
-        setHeaderVisible(true);
-        _header.selectTab(null);
+        WorldClient.displayFlash(args, closeToken, this);
     }
 
     // from interface Frame
-    public void closeClient (boolean deferred)
+    public void closeClient ()
     {
-        if (deferred) {
-            DeferredCommand.addCommand(new Command() {
-                public void execute () {
-                    closeClient(false);
-                }
-            });
-            return;
-        }
-
         WorldClient.clientWillClose();
         _closeToken = null;
+
         RootPanel.get(CLIENT).clear();
         RootPanel.get(CLIENT).setWidth(Math.max(Window.getClientWidth() - CONTENT_WIDTH, 0) + "px");
         RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
@@ -254,20 +232,15 @@ public class FrameEntryPoint
         // TODO: let the page know to clear its close button
 
         // if we're on a "world" page, go to a landing page
-        String curToken = History.getToken();
-        if (curToken.startsWith(Page.WORLD)) {
+        if (_currentToken.startsWith(Page.WORLD)) {
             // if we were in a game, go to the games page, otherwise go to me
-            Link.go(curToken.indexOf("game") == -1 ? Page.ME : Page.GAMES, "");
+            Link.go(_currentToken.indexOf("game") == -1 ? Page.ME : Page.GAMES, "");
         }
     }
 
     // from interface Frame
-    public boolean closeContent ()
+    public void closeContent ()
     {
-        if (_closeToken == null) {
-            return false;
-        }
-
         // let the Flash client know that it's being unminimized
         WorldClient.setMinimized(false);
 
@@ -278,9 +251,9 @@ public class FrameEntryPoint
         RootPanel.get(CLIENT).setWidth("100%");
 
         // restore the client's URL
-        History.newItem(_closeToken);
-
-        return true;
+        if (_closeToken != null) {
+            History.newItem(_closeToken);
+        }
     }
 
     // from interface Frame
@@ -325,20 +298,6 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
-    public Panel getClientContainer ()
-    {
-        RootPanel.get(CLIENT).clear();
-        if (Window.getClientHeight() < (HEADER_HEIGHT + CLIENT_HEIGHT)) {
-            RootPanel.get(CLIENT).add(_cscroller = new ScrollPanel());
-            _cscroller.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-            return _cscroller;
-        } else {
-            _cscroller = null;
-            return RootPanel.get(CLIENT);
-        }
-    }
-
-    // from interface Frame
     public void showContent (String pageId, Widget pageContent)
     {
         RootPanel.get(CONTENT).clear();
@@ -367,24 +326,89 @@ public class FrameEntryPoint
         }
     }
 
+    // from interface WorldClient.Container
+    public void setShowingClient (String closeToken)
+    {
+        // note the current history token so that we can restore it if needed
+        _closeToken = (closeToken == null) ? _currentToken : closeToken;
+
+        // clear out our content and the expand/close controls
+        RootPanel.get(CONTENT).clear();
+        RootPanel.get(CONTENT).setWidth("0px");
+        RootPanel.get(CONTENT).setVisible(false);
+
+        // have the client take up all the space
+        RootPanel.get(CLIENT).setWidth("100%");
+
+        // make sure the header is showing as we always want the header above the client
+        setHeaderVisible(true);
+        _header.selectTab(null);
+    }
+
+    // from interface WorldClient.Container
+    public Panel getClientContainer ()
+    {
+        RootPanel.get(CLIENT).clear();
+        if (Window.getClientHeight() < (HEADER_HEIGHT + CLIENT_HEIGHT)) {
+            RootPanel.get(CLIENT).add(_cscroller = new ScrollPanel());
+            _cscroller.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+            return _cscroller;
+        } else {
+            _cscroller = null;
+            return RootPanel.get(CLIENT);
+        }
+    }
+
     protected void setPage (String pageId)
     {
         _pageId = pageId;
         RootPanel.get("content").clear();
         Frame iframe = new Frame("/" + _pageId + "/" + _pageId + ".html");
-        DOM.setAttribute(iframe.getElement(), "name", "page");
+        DOM.setElementProperty(iframe.getElement(), "name", "page");
         iframe.setStyleName("pageIFrame");
         showContent(_pageId, iframe);
     }
 
-    protected String getPageToken ()
+    /**
+     * Handles a variety of methods called by our iframed page.
+     */
+    protected String frameCall (String callStr, String[] args)
     {
-        return _pageToken;
+        Calls call = Enum.valueOf(Calls.class, callStr);
+        switch (call) {
+        case GET_WEB_CREDS:
+            return (CShell.creds == null) ? null : CShell.creds.flatten();
+        case GET_PAGE_TOKEN:
+            return _pageToken;
+        case SET_TITLE:
+            setTitle(args[0]);
+            return null;
+        case NAVIGATE_TO:
+            navigateTo(args[0]);
+            return null;
+        case NAVIGATE_REPLACE:
+            navigateReplace(args[0]);
+            return null;
+        case DISPLAY_WORLD_CLIENT:
+            displayWorldClient(args[0], args[1]);
+            return null;
+        case CLOSE_CLIENT:
+            closeClient();
+            return null;
+        case CLOSE_CONTENT:
+            closeContent();
+            return null;
+        }
+        return null; // not reached
     }
 
-    protected String getWebCreds ()
+    protected void deferredCloseClient ()
     {
-        return (CShell.creds == null) ? null : CShell.creds.flatten();
+        DeferredCommand.addCommand(new Command() {
+            public void execute () {
+                closeClient();
+            }
+        });
     }
 
     /**
@@ -398,11 +422,8 @@ public class FrameEntryPoint
            }
            return true;
        };
-       $wnd.getWebCreds = function () {
-           return entry.@client.frame.FrameEntryPoint::getWebCreds()();
-       };
-       $wnd.getPageToken = function () {
-           return entry.@client.frame.FrameEntryPoint::getPageToken()();
+       $wnd.frameCall = function (action, args) {
+           return entry.@client.frame.FrameEntryPoint::frameCall(Ljava/lang/String;[Ljava/lang/String;)(action, args);
        };
        $wnd.helloWhirled = function () {
             return true;
@@ -410,17 +431,11 @@ public class FrameEntryPoint
        $wnd.setWindowTitle = function (title) {
            entry.@client.frame.FrameEntryPoint::setTitle(Ljava/lang/String;)(title);
        };
-       $wnd.navigateTo = function (token) {
-           entry.@client.frame.FrameEntryPoint::navigateTo(Ljava/lang/String;)(token);
-       };
-       $wnd.navigateReplace = function (token) {
-           entry.@client.frame.FrameEntryPoint::navigateReplace(Ljava/lang/String;)(token);
-       };
-       $wnd.displayPage = function (page, args) {
-           @client.util.Link::go(Ljava/lang/String;Ljava/lang/String;)(page, args);
-       };
        $wnd.setGuestId = function (guestId) {
            @client.shell.CShell::setGuestId(I)(guestId);
+       };
+       $wnd.clearClient = function () {
+            entry.@client.frame.FrameEntryPoint::deferredCloseClient()();
        };
        $wnd.getReferral = function () {
            return @client.shell.TrackingCookie::getAsObject()();

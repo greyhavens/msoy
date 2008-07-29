@@ -4,7 +4,6 @@
 package client.shell;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -23,6 +22,24 @@ import client.util.ServiceUtil;
  */
 public class WorldClient extends Widget
 {
+    /** Needed to allow the world client to interact with the frame (or other client host). */
+    public static interface Container
+    {
+        /**
+         * Switches the frame into client display mode (clearing out any content) and notes the
+         * history token for the current page so that it can be restored in the event that we open
+         * a normal page and then later close it. If the supplied token is null, the current
+         * location should be used.
+         */
+        void setShowingClient (String closeToken);
+
+        /**
+         * Clears out the client section of the frame and creates a new scroll pane to contain a
+         * new client (and other bits if desired).
+         */
+        Panel getClientContainer ();
+    }
+
     /**
      * Displays a scene in a mini-world client. The scene will not display chat, and the player
      * will not have an avatar in the scene. Clicking the scene will take the player there.
@@ -51,12 +68,8 @@ public class WorldClient extends Widget
         }
     }
 
-    public static void displayFlash (String flashArgs)
-    {
-        displayFlash(flashArgs, History.getToken());
-    }
-
-    public static void displayFlash (String flashArgs, final String pageToken)
+    public static void displayFlash (
+        String flashArgs, final String pageToken, final Container container)
     {
         // if we have not yet determined our default server, find that out now
         if (_defaultServer == null) {
@@ -64,14 +77,14 @@ public class WorldClient extends Widget
             _usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
                 public void onSuccess (ConnectConfig config) {
                     _defaultServer = config;
-                    displayFlash(savedArgs, pageToken);
+                    displayFlash(savedArgs, pageToken, container);
                 }
             });
             return;
         }
 
         // let the frame know that we're displaying a client (this clears out the content)
-        CShell.frame.setShowingClient(pageToken);
+        container.setShowingClient(pageToken);
 
         // if we're currently already displaying exactly what we've been asked to display; then
         // stop here because we're just restoring our client after closing a GWT page
@@ -91,7 +104,7 @@ public class WorldClient extends Widget
             if (CShell.ident != null) {
                 flashArgs += "&token=" + CShell.ident.token;
             }
-            FlashClients.embedWorldClient(CShell.frame.getClientContainer(), flashArgs);
+            FlashClients.embedWorldClient(container.getClientContainer(), flashArgs);
 
         } else {
             // note our new current flash args
@@ -100,10 +113,10 @@ public class WorldClient extends Widget
         }
     }
 
-    public static void displayFlashLobby (LaunchConfig config, String action)
+    public static void displayFlashLobby (LaunchConfig config, String action, Container container)
     {
         // let the page know that we're displaying a client
-        CShell.frame.setShowingClient(History.getToken());
+        container.setShowingClient(null);
 
         clientWillClose(); // clear our Java or Flash client if we have one
 
@@ -115,20 +128,20 @@ public class WorldClient extends Widget
         if (CShell.ident != null) {
             flashArgs += "&token=" + CShell.ident.token;
         }
-        FlashClients.embedGameClient(CShell.frame.getClientContainer(), flashArgs);
+        FlashClients.embedGameClient(container.getClientContainer(), flashArgs);
     }
 
-    public static void displayJava (Widget client)
+    public static void displayJava (Widget client, Container container)
     {
         // let the page know that we're displaying a client
-        CShell.frame.setShowingClient(History.getToken());
+        container.setShowingClient(null);
 
         // clear out any flash page args
         _curFlashArgs = null;
 
         if (_jclient != client) {
             clientWillClose(); // clear out our flash client if we have one
-            CShell.frame.getClientContainer().add(_jclient = client);
+            container.getClientContainer().add(_jclient = client);
         } else {
             clientMinimized(false);
         }

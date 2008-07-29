@@ -10,7 +10,6 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -71,7 +70,7 @@ public abstract class Page
         if (getTabPageId() != null) {
             _bar = TitleBar.create(getTabPageId(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    // TODO
+                    CShell.frame.closeContent();
                 }
             });
             RootPanel.get("content").add(_bar);
@@ -89,25 +88,34 @@ public abstract class Page
             CShell.frame = new PageFrame() {
                 public void setTitle (String title) {
                     super.setTitle(title);
-                    frameSetTitle(title);
+                    frameCall(Frame.Calls.SET_TITLE, new String[] { title });
                 }
                 public void navigateTo (String token) {
-                    frameNavigateTo(token);
+                    frameCall(Frame.Calls.NAVIGATE_TO, new String[] { token });
                 }
                 public void navigateReplace (String token) {
-                    frameNavigateReplace(token);
+                    frameCall(Frame.Calls.NAVIGATE_REPLACE, new String[] { token });
+                }
+                public void displayWorldClient (String args, String closeToken) {
+                    frameCall(Frame.Calls.DISPLAY_WORLD_CLIENT, new String[] { args, closeToken });
+                }
+                public void closeClient () {
+                    frameCall(Frame.Calls.CLOSE_CLIENT, null);
+                }
+                public void closeContent () {
+                    frameCall(Frame.Calls.CLOSE_CONTENT, null);
                 }
             };
 
             // obtain our current credentials from the frame
-            CShell.creds = WebCreds.unflatten(frameGetWebCreds());
+            CShell.creds = WebCreds.unflatten(frameCall(Frame.Calls.GET_WEB_CREDS, null));
             if (CShell.creds != null) {
                 CShell.ident = new WebIdent(CShell.creds.getMemberId(), CShell.creds.token);
             }
             // TODO: activeInvite
 
             // and get our current page token from our containing frame
-            setPageToken(frameGetPageToken());
+            setPageToken(frameCall(Frame.Calls.GET_PAGE_TOKEN, null));
             // TODO: nix the above and just call didLogon() and have that get our page token
             // properly instead of via History
 
@@ -269,6 +277,14 @@ public abstract class Page
     }
 
     /**
+     * Calls up to our containing frame and takes an action and possibly returns a value.
+     */
+    protected String frameCall (Frame.Calls call, String[] args)
+    {
+        return nativeFrameCall(call.toString(), args);
+    }
+
+    /**
      * Wires ourselves up to our enclosing frame.
      *
      * @return true if we're running as a subframe, false if we're running in standalone test mode.
@@ -280,39 +296,8 @@ public abstract class Page
         return $wnd != $wnd.top;
     }-*/;
 
-    /**
-     * Calls up to our containing frame to get our current credentials.
-     */
-    protected static native String frameGetWebCreds () /*-{
-        return $wnd.top.getWebCreds();
-    }-*/;
-
-    /**
-     * Calls up to our containing frame to get our current page token.
-     */
-    protected static native String frameGetPageToken () /*-{
-        return $wnd.top.getPageToken();
-    }-*/;
-
-    /**
-     * Calls up to our containing frame and sets the page title.
-     */
-    protected static native void frameSetTitle (String title) /*-{
-        $wnd.top.setWindowTitle(title);
-    }-*/;
-
-    /**
-     * Calls up to our containing frame to navigate to the specified token.
-     */
-    protected static native void frameNavigateTo (String token) /*-{
-        $wnd.top.navigateTo(token);
-    }-*/;
-
-    /**
-     * Calls up to our containing frame to replace the current page with the specified token.
-     */
-    protected static native void frameNavigateReplace (String token) /*-{
-        $wnd.top.navigateReplace(token);
+    protected static native String nativeFrameCall (String action, String[] args) /*-{
+        return $wnd.top.frameCall(action, args);
     }-*/;
 
     protected abstract class PageFrame implements Frame
@@ -334,13 +319,16 @@ public abstract class Page
             History.newItem(token);
         }
 
-        public void setShowingClient (String closeToken) {
+        public void displayWorldClient (String args, String closeToken) {
+            CShell.log("Would display world [args=" + args + ", closeToken=" + closeToken + "].");
         }
-        public void closeClient (boolean deferred) {
+        public void closeClient () {
+            CShell.log("Would close client.");
         }
-        public boolean closeContent () {
-            return false;
+        public void closeContent () {
+            CShell.log("Would close content.");
         }
+
         public void setHeaderVisible (boolean visible) {
         }
         public void ensureVisible (Widget widget) {
@@ -350,9 +338,6 @@ public abstract class Page
         public void showPopupDialog (String title, Widget dialog) {
         }
         public void clearDialog () {
-        }
-        public Panel getClientContainer () {
-            return null;
         }
 
         public void showContent (String pageId, Widget pageContent) {

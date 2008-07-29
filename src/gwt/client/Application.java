@@ -177,7 +177,7 @@ public class Application
         // reload the current page
         onHistoryChanged(_currentToken);
         // close the Flash client if it's open
-        CShell.frame.closeClient(false);
+        CShell.frame.closeClient();
     }
 
     /**

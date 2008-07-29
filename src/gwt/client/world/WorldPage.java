@@ -19,7 +19,6 @@ import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
-import client.shell.WorldClient;
 import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
@@ -47,12 +46,12 @@ public class WorldPage extends Page
             if (action.startsWith("s")) {
                 String sceneId = action.substring(1);
                 if (args.getArgCount() <= 1) {
-                    WorldClient.displayFlash("sceneId=" + sceneId);
+                    CWorld.frame.displayWorldClient("sceneId=" + sceneId, null);
                 } else {
                     // if we have sNN-extra-args we want the close button to use just "sNN"
-                    WorldClient.displayFlash("sceneId=" + sceneId +
-                                             "&page=" + Args.compose(args.splice(1)),
-                                             Page.WORLD + "-s" + sceneId);
+                    CWorld.frame.displayWorldClient(
+                        "sceneId=" + sceneId + "&page=" + Args.compose(args.splice(1)),
+                        Page.WORLD + "-s" + sceneId);
                 }
 
             } else if (action.equals("game")) {
@@ -64,15 +63,15 @@ public class WorldPage extends Page
 
             } else if (action.startsWith("g")) {
                 // go to a specific group's scene group
-                WorldClient.displayFlash("groupHome=" + action.substring(1));
+                CWorld.frame.displayWorldClient("groupHome=" + action.substring(1), null);
 
             } else if (action.startsWith("m")) {
                 // go to a specific member's home
-                WorldClient.displayFlash("memberHome=" + action.substring(1));
+                CWorld.frame.displayWorldClient("memberHome=" + action.substring(1), null);
 
             } else if (action.startsWith("c")) {
                 // join a group chat
-                WorldClient.displayFlash("groupChat=" + action.substring(1));
+                CWorld.frame.displayWorldClient("groupChat=" + action.substring(1), null);
 
             } else if (action.startsWith("p")) {
                 // display popular places
@@ -83,7 +82,7 @@ public class WorldPage extends Page
 
             } else if (action.startsWith("h")) {
                 // go to our home
-                WorldClient.displayFlash("memberHome=" + CWorld.getMemberId());
+                CWorld.frame.displayWorldClient("memberHome=" + CWorld.getMemberId(), null);
 
             } else {
                 setContent(MsoyUI.createLabel(CWorld.msgs.unknownLocation(), "infoLabel"));
@@ -156,36 +155,31 @@ public class WorldPage extends Page
 
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
-            WorldClient.displayFlash("worldGame=" + config.gameId);
+            CWorld.frame.displayWorldClient("worldGame=" + config.gameId, null);
             break;
 
         case LaunchConfig.FLASH_LOBBIED:
             if (gameOid <= 0) {
-//                 // TEMP: mdb alternate business in progress
-//                 if (config.server != null && config.server.indexOf("bering") != -1) {
-//                     WorldClient.displayFlashLobby(config, action);
-//                 } else {
-                    String hostPort = "&ghost=" + config.server + "&gport=" + config.port;
-                    if (action.equals("m") || action.equals("f") || action.equals("s")) {
-                        WorldClient.displayFlash(
-                            "playNow=" + config.gameId + "&mode=" + action + hostPort);
-                    } else {
-                        WorldClient.displayFlash("gameLobby=" + config.gameId + hostPort);
-                    }
-//                 }
+                String hostPort = "&ghost=" + config.server + "&gport=" + config.port;
+                if (action.equals("m") || action.equals("f") || action.equals("s")) {
+                    CWorld.frame.displayWorldClient(
+                        "playNow=" + config.gameId + "&mode=" + action + hostPort, null);
+                } else {
+                    CWorld.frame.displayWorldClient("gameLobby=" + config.gameId + hostPort, null);
+                }
             } else {
-                WorldClient.displayFlash("gameLocation=" + gameOid);
+                CWorld.frame.displayWorldClient("gameLocation=" + gameOid, null);
             }
             break;
 
         case LaunchConfig.JAVA_FLASH_LOBBIED:
         case LaunchConfig.JAVA_SELF_LOBBIED:
             if (config.type == LaunchConfig.JAVA_FLASH_LOBBIED && gameOid <= 0) {
-                WorldClient.displayFlash("gameLobby=" + config.gameId);
+                CWorld.frame.displayWorldClient("gameLobby=" + config.gameId, null);
 
             } else {
                 // clear out the client as we're going into Java land
-                CWorld.frame.closeClient(false);
+                CWorld.frame.closeClient();
 
                 // prepare a command to be invoked once we know Java is loaded
                 _javaReadyCommand = new Command() {
@@ -224,20 +218,22 @@ public class WorldPage extends Page
 
     protected void displayJava (LaunchConfig config, int gameOid)
     {
-        String[] args = new String[] {
-            "game_id", "" + config.gameId, "game_oid", "" + gameOid,
-            "server", config.server, "port", "" + config.port,
-            "authtoken", (CWorld.ident == null) ? "" : CWorld.ident.token };
-        String gjpath = "/clients/" + DeploymentConfig.version + "/" +
-            (config.lwjgl ? "lwjgl-" : "") + "game-client.jar";
-        WorldClient.displayJava(
-            WidgetUtil.createApplet(
-                // here we explicitly talk directly to our game server (not via the public facing
-                // URL which is a virtual IP) so that Java's security policy works
-                "game", config.getURL(gjpath) + "," + config.getURL(config.gameMediaPath),
-                "com.threerings.msoy.game.client." + (config.lwjgl ? "LWJGL" : "") + "GameApplet",
-                // TODO: allow games to specify their dimensions in their config
-                "100%", "600", false, args));
+// TODO: all this information needs to be passed up to the Frame, so maybe the frame should just
+// take care of all of this...
+//         String[] args = new String[] {
+//             "game_id", "" + config.gameId, "game_oid", "" + gameOid,
+//             "server", config.server, "port", "" + config.port,
+//             "authtoken", (CWorld.ident == null) ? "" : CWorld.ident.token };
+//         String gjpath = "/clients/" + DeploymentConfig.version + "/" +
+//             (config.lwjgl ? "lwjgl-" : "") + "game-client.jar";
+//         WorldClient.displayJava(
+//             WidgetUtil.createApplet(
+//                 // here we explicitly talk directly to our game server (not via the public facing
+//                 // URL which is a virtual IP) so that Java's security policy works
+//                 "game", config.getURL(gjpath) + "," + config.getURL(config.gameMediaPath),
+//                 "com.threerings.msoy.game.client." + (config.lwjgl ? "LWJGL" : "") + "GameApplet",
+//                 // TODO: allow games to specify their dimensions in their config
+//                 "100%", "600", false, args));
     }
 
     protected void javaReady ()

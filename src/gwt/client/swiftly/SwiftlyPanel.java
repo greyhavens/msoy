@@ -118,7 +118,7 @@ public class SwiftlyPanel extends FlexTable
         getFlexCellFormatter().setHeight(1, 0, "100%");
 
         // clear out any world client because Swiftly currently kills it anyway
-        CSwiftly.frame.closeClient(false);
+        CSwiftly.frame.closeClient();
     }
 
     protected void updateProjectLink ()

@@ -72,7 +72,7 @@ public class MePage extends MsgsEntryPoint
             _membersvc.getABTestGroup(
                 TrackingCookie.get(), "jul08CreatorsLanding", true, new MsoyCallback<Integer>() {
                     public void onSuccess (Integer group) {
-                        CMe.frame.closeClient(false); // fullscreen
+                        CMe.frame.closeClient(); // fullscreen
                         if (group == 1) {
                             setContent(CMe.msgs.titleCreators(), new CreatorsSignupPanel(), false);
                         } else if (group == 2) {
@@ -136,7 +136,7 @@ public class MePage extends MsgsEntryPoint
 
     protected void displayWhat ()
     {
-        CMe.frame.closeClient(false); // no client on the main guest landing page
+        CMe.frame.closeClient(); // no client on the main guest landing page
         setContent(CMe.msgs.landingTitle(), new LandingPanel(), false);
     }
 

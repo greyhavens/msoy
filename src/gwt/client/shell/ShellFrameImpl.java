@@ -35,7 +35,7 @@ import client.util.Link;
  * and the various clients.
  */
 public class ShellFrameImpl
-    implements Frame, Session.Observer, WindowResizeListener
+    implements Frame, WorldClient.Container, Session.Observer, WindowResizeListener
 {
     /**
      * Called by the Application to initialize us once in the lifetime of the app.
@@ -62,14 +62,12 @@ public class ShellFrameImpl
         // create our header, dialog and popup
         _header = new FrameHeader(new ClickListener() {
             public void onClick (Widget sender) {
-                if (closeContent()) {
-                    // peachy, nothing else to do
+                if (_closeToken != null) {
+                    closeContent();
+                } else if (CShell.isGuest()) {
+                    History.newItem("");
                 } else {
-                    if (CShell.isGuest()) {
-                        History.newItem("");
-                    } else {
-                        Link.go(Page.WORLD, "m" + CShell.getMemberId());
-                    }
+                    Link.go(Page.WORLD, "m" + CShell.getMemberId());
                 }
             }
         });
@@ -126,40 +124,19 @@ public class ShellFrameImpl
         History.newItem(token);
     }
 
-    // from interface Frame
-    public void setShowingClient (String closeToken)
+    // frome interface Frame
+    public void displayWorldClient (String args, String closeToken)
     {
-        // note the current history token so that we can restore it if needed
-        _closeToken = closeToken;
-
-        // clear out our content and the expand/close controls
-        RootPanel.get(CONTENT).clear();
-        RootPanel.get(CONTENT).setWidth("0px");
-        RootPanel.get(CONTENT).setVisible(false);
-
-        // have the client take up all the space
-        RootPanel.get(CLIENT).setWidth("100%");
-
-        // make sure the header is showing as we always want the header above the client
-        setHeaderVisible(true);
-        _header.selectTab(null);
+        WorldClient.displayFlash(args, closeToken, this);
     }
 
     // from interface Frame
-    public void closeClient (boolean deferred)
+    public void closeClient ()
     {
-        if (deferred) {
-            DeferredCommand.addCommand(new Command() {
-                public void execute () {
-                    closeClient(false);
-                }
-            });
-            return;
-        }
-
         WorldClient.clientWillClose();
         _closeToken = null;
         _cscroller = null;
+
         RootPanel.get(CLIENT).clear();
         RootPanel.get(CLIENT).setWidth(Math.max(Window.getClientWidth() - CONTENT_WIDTH, 0) + "px");
         RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
@@ -177,12 +154,8 @@ public class ShellFrameImpl
     }
 
     // from interface Frame
-    public boolean closeContent ()
+    public void closeContent ()
     {
-        if (_closeToken == null) {
-            return false;
-        }
-
         // let the Flash client know that it's being unminimized
         WorldClient.setMinimized(false);
 
@@ -198,9 +171,9 @@ public class ShellFrameImpl
         _bar = null;
 
         // restore the client's URL
-        History.newItem(_closeToken);
-
-        return true;
+        if (_closeToken != null) {
+            History.newItem(_closeToken);
+        }
     }
 
     // from interface Frame
@@ -244,20 +217,6 @@ public class ShellFrameImpl
     public void clearDialog ()
     {
         RootPanel.get(HEADER).remove(_dialog);
-    }
-
-    // from interface Frame
-    public Panel getClientContainer ()
-    {
-        RootPanel.get(CLIENT).clear();
-        if (Window.getClientHeight() < (HEADER_HEIGHT + CLIENT_HEIGHT)) {
-            RootPanel.get(CLIENT).add(_cscroller = new ScrollPanel());
-            _cscroller.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-            return _cscroller;
-        } else {
-            _cscroller = null;
-            return RootPanel.get(CLIENT);
-        }
     }
 
     // from interface Frame
@@ -323,6 +282,39 @@ public class ShellFrameImpl
         }
     }
 
+    // from interface WorldClient.Container
+    public void setShowingClient (String closeToken)
+    {
+        // note the current history token so that we can restore it if needed
+        _closeToken = (closeToken == null) ? History.getToken() : closeToken;
+
+        // clear out our content and the expand/close controls
+        RootPanel.get(CONTENT).clear();
+        RootPanel.get(CONTENT).setWidth("0px");
+        RootPanel.get(CONTENT).setVisible(false);
+
+        // have the client take up all the space
+        RootPanel.get(CLIENT).setWidth("100%");
+
+        // make sure the header is showing as we always want the header above the client
+        setHeaderVisible(true);
+        _header.selectTab(null);
+    }
+
+    // from interface WorldClient.Container
+    public Panel getClientContainer ()
+    {
+        RootPanel.get(CLIENT).clear();
+        if (Window.getClientHeight() < (HEADER_HEIGHT + CLIENT_HEIGHT)) {
+            RootPanel.get(CLIENT).add(_cscroller = new ScrollPanel());
+            _cscroller.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+            return _cscroller;
+        } else {
+            _cscroller = null;
+            return RootPanel.get(CLIENT);
+        }
+    }
+
     // from interface Session.Observer
     public void didLogon (SessionData data)
     {
@@ -345,15 +337,21 @@ public class ShellFrameImpl
         }
     }
 
+    protected void deferredCloseClient ()
+    {
+        DeferredCommand.addCommand(new Command() {
+            public void execute () {
+                closeClient();
+            }
+        });
+    }
+
     /**
      * Configures top-level functions that can be called by Flash.
      */
-    protected static native void configureCallbacks (Frame frame) /*-{
-       $wnd.restoreClient = function () {
-            frame.@client.shell.Frame::closeContent()();
-       };
+    protected static native void configureCallbacks (ShellFrameImpl impl) /*-{
        $wnd.clearClient = function () {
-            frame.@client.shell.Frame::closeClient(Z)(true);
+            impl.@client.shell.ShellFrameImpl::deferredCloseClient()();
        };
     }-*/;
 
