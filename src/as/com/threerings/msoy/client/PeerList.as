@@ -91,8 +91,9 @@ public class PeerList extends List
 
     protected function removePeer (peer :PeerEntry) :void
     {
-        if (dataProvider.contains(peer)) {
-            dataProvider.removeItemAt(dataProvider.getItemIndex(peer));
+        var idx :int = dataProvider.getItemIndex(peer);
+        if (idx != -1) {
+            dataProvider.removeItemAt(idx);
         }
     }
 
