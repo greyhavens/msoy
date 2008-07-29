@@ -7,6 +7,7 @@ import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
@@ -15,6 +16,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.msoy.web.data.WebIdent;
 
 import client.util.FlashClients;
 import client.util.Link;
@@ -65,88 +67,83 @@ public abstract class Page
     {
         init();
 
-        // TODO: check whether we're running in a frame or if we're in single page test mode, only
-        // do the remaining things if we're in single page test mode
-
-        // TEMP: set up a frame
-        CShell.frame = new Frame() {
-            /* Frame () */ {
-                // set up our title bar and content width
-                if (getTabPageId() != null) {
-                    TitleBar bar = TitleBar.create(getTabPageId(), new ClickListener() {
-                        public void onClick (Widget sender) {
-                            // TODO
-                        }
-                    });
-                    RootPanel.get("content").add(bar);
-                    RootPanel.get("content").setWidth(CONTENT_WIDTH + "px");
-                    _bar = bar; // have to do this here because we're not in a real constructor
-                } else {
-                    RootPanel.get("content").setWidth("");
+        // set up our title bar and content width
+        if (getTabPageId() != null) {
+            _bar = TitleBar.create(getTabPageId(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    // TODO
                 }
-            }
+            });
+            RootPanel.get("content").add(_bar);
+            RootPanel.get("content").setWidth(Frame.CONTENT_WIDTH + "px");
+        } else {
+            RootPanel.get("content").setWidth("");
+        }
 
-            public void setTitle (String title) {
-            }
-            public void setShowingClient (String closeToken) {
-            }
-            public void closeClient (boolean deferred) {
-            }
-            public boolean closeContent () {
-                return false;
-            }
-            public void setHeaderVisible (boolean visible) {
-            }
-            public void ensureVisible (Widget widget) {
-            }
-            public void showDialog (String title, Widget dialog) {
-            }
-            public void showPopupDialog (String title, Widget dialog) {
-            }
-            public void clearDialog () {
-            }
-            public Panel getClientContainer () {
-                return null;
-            }
-            public void showContent (String pageId, Widget pageContent) {
-                RootPanel contentDiv = RootPanel.get("content");
-                if (_pageContent != null) {
-                    contentDiv.remove(_pageContent);
+        // wire ourselves up to the top-level frame
+        if (configureCallbacks(this)) {
+            // if we're running in standalone page test mode, we do a bunch of stuff
+            CShell.frame = new PageFrame() {
+                public void setTitle (String title) {
+                    super.setTitle(title);
+                    frameSetTitle(title);
                 }
-                _pageContent = pageContent;
-                if (_pageContent != null) {
-                    contentDiv.add(_pageContent);
+                public void navigateTo (String token) {
+                    frameNavigateTo(token);
                 }
-                if (_bar != null) {
-                    _bar.setCloseVisible(FlashClients.clientExists());
+                public void navigateReplace (String token) {
+                    frameNavigateReplace(token);
                 }
-            }
+            };
 
-            protected TitleBar _bar;
-            protected Widget _pageContent;
-        };
+            // obtain our current credentials from the frame
+            CShell.creds = WebCreds.unflatten(frameGetWebCreds());
+            CShell.ident = new WebIdent(CShell.creds.getMemberId(), CShell.creds.token);
+            // TODO: level, activeInvite
 
-        final HistoryListener listener = new HistoryListener() {
-            public void onHistoryChanged (String token) {
-                // this is only called when we're in single page test mode, so we assume we're
-                // staying on the same page and just pass the arguments back into ourselves
-                token = token.substring(token.indexOf("-")+1);
-                Args args = new Args();
-                args.setToken(token);
-                Page.this.onHistoryChanged(args);
-            }
-        };
-        History.addHistoryListener(listener);
+            // and get our current page token from our containing frame
+            setPageToken(frameGetPageToken());
+            // TODO: nix the above and just call didLogon() and have that get our page token
+            // properly instead of via History
 
-        Session.addObserver(new Session.Observer() {
-            public void didLogon (SessionData data) {
-                listener.onHistoryChanged(""); // TODO get our page token from the frame
-            }
-            public void didLogoff () {
-                listener.onHistoryChanged(""); // TODO get our page token from the frame
-            }
-        });
-        Session.validate();
+        } else {
+            // if we're running in standalone page test mode, we do a bunch of stuff
+            CShell.frame = new PageFrame() {
+                public void setTitle (String title) {
+                    super.setTitle(title);
+                    Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
+                }
+                public void navigateTo (String token) {
+                    if (!token.equals(History.getToken())) {
+                        History.newItem(token);
+                    }
+                }
+                public void navigateReplace (String token) {
+                    History.back();
+                    History.newItem(token);
+                }
+            };
+
+            final HistoryListener listener = new HistoryListener() {
+                public void onHistoryChanged (String token) {
+                    // this is only called when we're in single page test mode, so we assume we're
+                    // staying on the same page and just pass the arguments back into ourselves
+                    token = token.substring(token.indexOf("-")+1);
+                    setPageToken(token);
+                }
+            };
+            History.addHistoryListener(listener);
+
+            Session.addObserver(new Session.Observer() {
+                public void didLogon (SessionData data) {
+                    listener.onHistoryChanged(""); // TODO get our page token from the frame
+                }
+                public void didLogoff () {
+                    listener.onHistoryChanged(""); // TODO get our page token from the frame
+                }
+            });
+            Session.validate();
+        }
     }
 
     // END NEW STUFF
@@ -198,6 +195,7 @@ public abstract class Page
      */
     public void didLogoff ()
     {
+        // TODO: move this into the frame
         // go to the landing page by hook or crook
         if (History.getToken().equals("")) {
             Link.replace("", "");
@@ -278,6 +276,124 @@ public abstract class Page
         CShell.frame.setTitle(title == null ? getDefaultTitle(getTabPageId()) : title);
     }
 
+    /**
+     * Called when our page token has been changed by the outer frame.
+     */
+    protected void setPageToken (String token)
+    {
+        CShell.log("Got new page token " + token);
+        Args args = new Args();
+        args.setToken(token);
+        onHistoryChanged(args);
+    }
+
+    /**
+     * Wires ourselves up to our enclosing frame.
+     *
+     * @return true if we're running as a subframe, false if we're running in standalone test mode.
+     */
+    protected static native boolean configureCallbacks (Page page) /*-{
+        $wnd.top.setPageToken = function (token) {
+            page.@client.shell.Page::setPageToken(Ljava/lang/String;)(token)
+        };
+        return $wnd != $wnd.top;
+    }-*/;
+
+    /**
+     * Calls up to our containing frame to get our current credentials.
+     */
+    protected static native String frameGetWebCreds () /*-{
+        return $wnd.top.getWebCreds();
+    }-*/;
+
+    /**
+     * Calls up to our containing frame to get our current page token.
+     */
+    protected static native String frameGetPageToken () /*-{
+        return $wnd.top.getPageToken();
+    }-*/;
+
+    /**
+     * Calls up to our containing frame and sets the page title.
+     */
+    protected static native void frameSetTitle (String title) /*-{
+        $wnd.top.setWindowTitle(title);
+    }-*/;
+
+    /**
+     * Calls up to our containing frame to navigate to the specified token.
+     */
+    protected static native void frameNavigateTo (String token) /*-{
+        $wnd.top.navigateTo(token);
+    }-*/;
+
+    /**
+     * Calls up to our containing frame to replace the current page with the specified token.
+     */
+    protected static native void frameNavigateReplace (String token) /*-{
+        $wnd.top.navigateReplace(token);
+    }-*/;
+
+    protected abstract class PageFrame implements Frame
+    {
+        public void setTitle (String title) {
+            if (_bar != null && title != null) {
+                _bar.setTitle(title);
+            }
+        }
+
+        public void navigateTo (String token) {
+            if (!token.equals(History.getToken())) {
+                History.newItem(token);
+            }
+        }
+
+        public void navigateReplace (String token) {
+            History.back();
+            History.newItem(token);
+        }
+
+        public void setShowingClient (String closeToken) {
+        }
+        public void closeClient (boolean deferred) {
+        }
+        public boolean closeContent () {
+            return false;
+        }
+        public void setHeaderVisible (boolean visible) {
+        }
+        public void ensureVisible (Widget widget) {
+        }
+        public void showDialog (String title, Widget dialog) {
+        }
+        public void showPopupDialog (String title, Widget dialog) {
+        }
+        public void clearDialog () {
+        }
+        public Panel getClientContainer () {
+            return null;
+        }
+
+        public void showContent (String pageId, Widget pageContent) {
+            RootPanel contentDiv = RootPanel.get("content");
+            if (_pageContent != null) {
+                contentDiv.remove(_pageContent);
+            }
+            _pageContent = pageContent;
+            if (_pageContent != null) {
+                contentDiv.add(_pageContent);
+            }
+            if (_bar != null) {
+                _bar.setCloseVisible(FlashClients.clientExists());
+            }
+        }
+
+        protected Widget _pageContent;
+    }
+
+    protected TitleBar _bar;
     protected Widget _content;
+
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

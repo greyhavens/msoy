@@ -32,6 +32,17 @@ public interface Frame
     void setTitle (String title);
 
     /**
+     * Navigates to the page represented by the specified token.
+     */
+    void navigateTo (String token);
+
+    /**
+     * Replaces the current page with the page represented by the specified token, removing the
+     * current page from the browser history in the process.
+     */
+    void navigateReplace (String token);
+
+    /**
      * Switches the frame into client display mode (clearing out any content) and notes the history
      * token for the current page so that it can be restored in the event that we open a normal
      * page and then later close it.

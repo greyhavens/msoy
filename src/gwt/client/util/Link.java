@@ -3,17 +3,21 @@
 
 package client.util;
 
-import client.shell.Args;
-import client.shell.Page;
-
-import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Event;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.ClickListenerCollection;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Hyperlink;
+import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MemberName;
+
+import client.shell.Args;
+import client.shell.CShell;
+import client.shell.Page;
 
 /**
  * A utility class with link-related methods.
@@ -21,55 +25,55 @@ import com.threerings.msoy.data.all.MemberName;
 public class Link
 {
     /**
-     * Returns a {@link Hyperlink} that displays the details of a given group.
+     * Returns link that displays the details of a given group.
      */
-    public static Hyperlink groupView (String label, int groupId)
+    public static Widget groupView (String label, int groupId)
     {
         return create(label, Page.WHIRLEDS, Args.compose("d", groupId));
     }
 
     /**
-     * Returns a {@link Hyperlink} that displays the details of a given member.
+     * Returns link that displays the details of a given member.
      */
-    public static Hyperlink memberView (String label, int memberId)
+    public static Widget memberView (String label, int memberId)
     {
         return create(label, Page.PEOPLE, ""+memberId);
     }
 
     /**
-     * Returns a {@link Hyperlink} that displays the details of a given member.
+     * Returns link that displays the details of a given member.
      */
-    public static Hyperlink memberView (MemberName name)
+    public static Widget memberView (MemberName name)
     {
         return create(name.toString(), Page.PEOPLE, ""+name.getMemberId());
     }
 
     /**
-     * Returns a {@link Hyperlink} that navigates to the specified application page with the
-     * specified arguments. A page should use this method to pass itself arguments.
+     * Returns link that navigates to the specified application page with the specified
+     * arguments. A page should use this method to pass itself arguments.
      */
-    public static Hyperlink create (String label, String page, String args)
+    public static Widget create (String label, String page, String args)
     {
-        Hyperlink link = new Hyperlink(label, createToken(page, args));
+        Widget link = new ReroutedHyperlink(label, false, createToken(page, args));
         link.addStyleName("inline");
         return link;
     }
 
     /**
-     * Returns a {@link Hyperlink} that navigates to the specified application page with the
-     * specified arguments. A page should use this method to pass itself arguments.
+     * Returns link that navigates to the specified application page with the specified
+     * arguments. A page should use this method to pass itself arguments.
      */
-    public static Hyperlink createImage (String path, String tip, String page, String args)
+    public static Widget createImage (String path, String tip, String page, String args)
     {
         return createHyperlink("<img border=0 src=\"" + path + "\">", tip, page, args);
     }
 
     /**
-     * Returns a {@link Hyperlink} that navigates to the specified application page with the
-     * specified arguments. A page should use this method to pass itself arguments.
+     * Returns link that navigates to the specified application page with the specified
+     * arguments. A page should use this method to pass itself arguments.
      */
-    public static Hyperlink createImage (AbstractImagePrototype image,
-                                         String tip, String page, String args)
+    public static Widget createImage (AbstractImagePrototype image,
+                                      String tip, String page, String args)
     {
         return createHyperlink(image.getHTML(), tip, page, args);
     }
@@ -83,7 +87,8 @@ public class Link
     {
         HTML escaper = new HTML();
         escaper.setText(label);
-        return "<a href=\"#" + createToken(page, args) + "\">" + escaper.getHTML() + "</a>";
+        return "<a target=\"_top\" href=\"#" + createToken(page, args) + "\">" +
+            escaper.getHTML() + "</a>";
     }
 
     /**
@@ -116,10 +121,7 @@ public class Link
      */
     public static void go (String page, String args)
     {
-        String token = createToken(page, args);
-        if (!token.equals(History.getToken())) { // TODO: necessary?
-            History.newItem(token);
-        }
+        CShell.frame.navigateTo(createToken(page, args));
     }
 
     /**
@@ -127,20 +129,85 @@ public class Link
      */
     public static void replace (String page, String args)
     {
-        History.back();
-        go(page, args);
+        CShell.frame.navigateReplace(createToken(page, args));
     }
 
     /**
      * A helper function for both {@link #getImageLink}s.
      */
-    protected static Hyperlink createHyperlink (String html, String tip, String page, String args)
+    protected static Widget createHyperlink (String html, String tip, String page, String args)
     {
-        Hyperlink link = new Hyperlink(html, true, createToken(page, args));
+        Widget link = new ReroutedHyperlink(html, true, createToken(page, args));
         if (tip != null) {
             link.setTitle(tip);
         }
         link.addStyleName("inline");
         return link;
+    }
+
+    /** Returns the path of the URL in the top frame. */
+    protected static native String getFramePath () /*-{
+        return $wnd.top.location.pathname;
+    }-*/;
+
+    /**
+     * A modified Hyperlink that routes its click through the application (so that it can be sent
+     * to the top-level frame for processing) and which sets its path to the path of the top-level
+     * frame, so that opening the link in a new tab or window will properly recreate the entire
+     * framed environment rather than just opening the internal frame.
+     *
+     * We'd just extend Hyperlink and make a few small modifications, but we can't get at the
+     * anchor element or the list of click listeners because they're both private. So instead we
+     * have to reimplement everything. Yay!
+     */
+    protected static class ReroutedHyperlink extends Widget
+        implements SourcesClickEvents
+    {
+        public ReroutedHyperlink (String text, boolean asHTML, String targetHistoryToken) {
+            _targetHistoryToken = targetHistoryToken;
+
+            setElement(DOM.createDiv());
+            sinkEvents(Event.ONCLICK);
+            setStyleName("gwt-Hyperlink");
+
+            Element anchorElem = DOM.createAnchor();
+            DOM.appendChild(getElement(), anchorElem);
+            DOM.setElementProperty(anchorElem, "href", getFramePath() + "#" + _targetHistoryToken);
+
+            if (asHTML) {
+                DOM.setInnerHTML(anchorElem, text);
+            } else {
+                DOM.setInnerText(anchorElem, text);
+            }
+        }
+
+        // from interface SourcesClickEvents
+        public void addClickListener (ClickListener listener) {
+            if (_clickListeners == null) {
+                _clickListeners = new ClickListenerCollection();
+            }
+            _clickListeners.add(listener);
+        }
+
+        // from interface SourcesClickEvents
+        public void removeClickListener (ClickListener listener) {
+            if (_clickListeners != null) {
+                _clickListeners.remove(listener);
+            }
+        }
+
+        @Override // from Widget
+        public void onBrowserEvent (Event event) {
+            if (DOM.eventGetType(event) == Event.ONCLICK) {
+                if (_clickListeners != null) {
+                    _clickListeners.fireClick(this);
+                }
+                CShell.frame.navigateTo(_targetHistoryToken);
+                DOM.eventPreventDefault(event);
+            }
+        }
+
+        protected String _targetHistoryToken;
+        protected ClickListenerCollection _clickListeners;
     }
 }

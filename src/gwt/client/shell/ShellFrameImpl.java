@@ -112,6 +112,21 @@ public class ShellFrameImpl
     }
 
     // from interface Frame
+    public void navigateTo (String token)
+    {
+        if (!token.equals(History.getToken())) {
+            History.newItem(token);
+        }
+    }
+
+    // from interface Frame
+    public void navigateReplace (String token)
+    {
+        History.back();
+        History.newItem(token);
+    }
+
+    // from interface Frame
     public void setShowingClient (String closeToken)
     {
         // note the current history token so that we can restore it if needed

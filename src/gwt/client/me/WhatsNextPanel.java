@@ -14,10 +14,10 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
@@ -120,9 +120,10 @@ public class WhatsNextPanel extends SmartTable
         friends.setHeight("100%");
         friends.setText(0, 0, CMe.msgs.nextFriends(), 1, "Title");
         friends.setText(1, 0, CMe.msgs.nextNoFriends(), 1, "NoFriends");
-        Hyperlink imageLink = Link.createImage(
+        Widget imageLink = Link.createImage(
             "/images/me/invite_friends.png", CMe.msgs.nextInviteTip(), Page.PEOPLE, "invites");
-        imageLink.addClickListener(MsoyUI.createTrackingListener("meInviteFriends", null));
+        ((SourcesClickEvents)imageLink).addClickListener(
+            MsoyUI.createTrackingListener("meInviteFriends", null));
         friends.setWidget(2, 0, imageLink);
         friends.setText(3, 0, CMe.msgs.nextOr(), 1, "Or");
         friends.setText(4, 0, CMe.msgs.nextFind(), 1, "Title");

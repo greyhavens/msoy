@@ -45,6 +45,8 @@ public class FrameEntryPoint
     {
         CShell.frame = this;
 
+        // TODO: listen for resize, resize our client scroller and iframe
+
         // our main frame never scrolls
         Window.enableScrolling(false);
 
@@ -52,7 +54,7 @@ public class FrameEntryPoint
         Session.addObserver(this);
 
         // set up the callbackd that our flash clients can call
-        configureCallbacks(this, CShell.frame);
+        configureCallbacks(this);
 
         // wire ourselves up to the history-based navigation mechanism
         History.addHistoryListener(this);
@@ -153,7 +155,7 @@ public class FrameEntryPoint
             iframe.setStyleName("pageIFrame");
             showContent(_pageId, iframe);
         } else {
-            // TODO: pass our arguments through to our iframed page
+            setPageToken(_pageToken);
         }
 
 //         // convert the page to GA format and report it to Google Analytics
@@ -194,6 +196,21 @@ public class FrameEntryPoint
     public void setTitle (String title)
     {
         Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
+    }
+
+    // from interface Frame
+    public void navigateTo (String token)
+    {
+        if (!token.equals(History.getToken())) {
+            History.newItem(token);
+        }
+    }
+
+    // from interface Frame
+    public void navigateReplace (String token)
+    {
+        History.back();
+        History.newItem(token);
     }
 
     // from interface Frame
@@ -354,16 +371,24 @@ public class FrameEntryPoint
         return _pageToken;
     }
 
+    protected String getWebCreds ()
+    {
+        return CShell.creds.flatten();
+    }
+
     /**
      * Configures top-level functions that can be called by Flash.
      */
-    protected static native void configureCallbacks (FrameEntryPoint entry, client.shell.Frame frame) /*-{
+    protected static native void configureCallbacks (FrameEntryPoint entry) /*-{
        $wnd.onunload = function (event) {
            var client = $doc.getElementById("asclient");
            if (client) {
                client.onUnload();
            }
            return true;
+       };
+       $wnd.getWebCreds = function () {
+           return entry.@client.frame.FrameEntryPoint::getWebCreds()();
        };
        $wnd.getPageToken = function () {
            return entry.@client.frame.FrameEntryPoint::getPageToken()();
@@ -372,7 +397,13 @@ public class FrameEntryPoint
             return true;
        };
        $wnd.setWindowTitle = function (title) {
-            frame.@client.shell.Frame::setTitle(Ljava/lang/String;)(title);
+           entry.@client.frame.FrameEntryPoint::setTitle(Ljava/lang/String;)(title);
+       };
+       $wnd.navigateTo = function (token) {
+           entry.@client.frame.FrameEntryPoint::navigateTo(Ljava/lang/String;)(token);
+       };
+       $wnd.navigateReplace = function (token) {
+           entry.@client.frame.FrameEntryPoint::navigateReplace(Ljava/lang/String;)(token);
        };
        $wnd.displayPage = function (page, args) {
            @client.util.Link::go(Ljava/lang/String;Ljava/lang/String;)(page, args);
@@ -391,11 +422,16 @@ public class FrameEntryPoint
        }
     }-*/;
 
-    protected String _currentToken = "";
+    /**
+     * Passes a page's current token down into our page frame.
+     */
+    protected static native void setPageToken (String token) /*-{
+        $wnd.setPageToken(token);
+    }-*/;
 
+    protected String _currentToken = "";
     protected String _pageToken = "";
     protected String _pageId;
-
     protected String _closeToken;
 
     protected FrameHeader _header;

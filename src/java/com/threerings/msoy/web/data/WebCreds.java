@@ -34,11 +34,36 @@ public class WebCreds implements IsSerializable
     public boolean isAdmin;
 
     /**
+     * Unflattens a string created by a call to {@link #flatten}.
+     */
+    public static WebCreds unflatten (String data)
+    {
+        String[] toks = data.split("\t");
+        WebCreds creds = new WebCreds();
+        creds.token = toks[0];
+        creds.accountName = toks[1];
+        creds.name = new MemberName(toks[2], Integer.valueOf(toks[3]));
+        creds.permaName = toks[4];
+        creds.isSupport = Boolean.valueOf(toks[5]);
+        creds.isAdmin = Boolean.valueOf(toks[6]);
+        return creds;
+    }
+
+    /**
      * Returns the member id for the user authenticated with these credentials.
      */
     public int getMemberId ()
     {
         return (name == null) ? 0 : name.getMemberId();
+    }
+
+    /**
+     * Flattens these creds into a string that can be passed between JavaScript apps.
+     */
+    public String flatten ()
+    {
+        return token + "\t" + accountName + "\t" + name + "\t" + name.getMemberId() + "\t" +
+            permaName + "\t" + isSupport + "\t" + isAdmin;
     }
 
     /**
