@@ -1248,9 +1248,9 @@ public class RoomObjectController extends RoomController
     /**
      * Return a SnapshotController for this room, creating a new one if necessary.
      */
-    protected function getSnapshotController() :SnapshotController 
+    protected function getSnapshotController () :SnapshotController 
     {
-        if(! _snapshotController) {
+        if (!_snapshotController) {
             _snapshotController = new SnapshotController(_wdctx, _roomView);            
         }
         return _snapshotController;        

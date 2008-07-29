@@ -77,7 +77,7 @@ public class SnapshotPanel extends FloatingPanel
         return _takeGalleryImage.selected;
     }
 
-    override public function close() :void
+    override public function close () :void
     {
         super.close();
         _ctrl.panelClosed();
@@ -107,7 +107,8 @@ public class SnapshotPanel extends FloatingPanel
     /**
      * We can save an image if either one or both of the image saving options are selected.
      */
-    protected function canSave () :Boolean {
+    protected function canSave () :Boolean
+    {
         return shouldSaveGalleryImage || shouldSaveSceneThumbnail;
     }
 
