@@ -1,5 +1,7 @@
-package com.threerings.msoy.item.server.persist;
+//
+// $Id$
 
+package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -8,7 +10,9 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+
 import com.threerings.io.Streamable;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -17,11 +21,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  * 
  * @author mjensen
  */
-@Entity(indices={
-    @Index(name="ixListId", fields={ ItemListElementRecord.LIST_ID } )
-}, uniqueConstraints = {
-    @UniqueConstraint(fieldNames={ ItemListElementRecord.LIST_ID, ItemListElementRecord.TYPE, ItemListElementRecord.ITEM_ID })
-})
+@Entity
 public class ItemListElementRecord extends PersistentRecord
     implements Streamable
 {
@@ -55,12 +55,10 @@ public class ItemListElementRecord extends PersistentRecord
         new ColumnExp(ItemListElementRecord.class, SEQUENCE);
     // AUTO-GENERATED: FIELDS END
  
-    /**
-     * The schema version of this record.
-     */
-    public static final int SCHEMA_VERSION = 1;
+    /** The schema version of this record. */
+    public static final int SCHEMA_VERSION = 2;
     
-    /** The list identifier for this list to which we belong. */
+    /** The identifier for this list to which we belong. */
     @Id
     public int listId;
 
