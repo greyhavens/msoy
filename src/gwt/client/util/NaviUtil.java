@@ -24,6 +24,15 @@ public class NaviUtil
         GameDetails (String code) {
             _code = code;
         }
+        
+        public static GameDetails getEnum (String code) {
+            for (GameDetails detail : values()) {
+                if (detail.code().equals(code)) {
+                    return detail;
+                }
+            }
+            return GameDetails.INSTRUCTIONS;
+        }
 
         protected String _code;
     }        

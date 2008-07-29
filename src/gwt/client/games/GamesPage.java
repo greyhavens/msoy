@@ -42,12 +42,7 @@ public class GamesPage extends Page
             } else {
                 setContent(panel = new GameDetailPanel());
             }
-            GameDetails tab;
-            try {
-                tab = Enum.valueOf(GameDetails.class, args.get(2, ""));
-            } catch (Exception e) {
-                tab = GameDetails.INSTRUCTIONS;
-            }
+            GameDetails tab = GameDetails.getEnum(args.get(2, ""));
             panel.setGame(args.get(1, 0), tab);
 
         } else if (action.equals("t")) {
