@@ -25,7 +25,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
-import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 

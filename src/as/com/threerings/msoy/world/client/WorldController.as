@@ -31,7 +31,7 @@ import com.threerings.whirled.data.SceneObject;
 import com.threerings.msoy.chat.client.ChatChannelController;
 import com.threerings.msoy.chat.client.IMRegisterDialog;
 import com.threerings.msoy.chat.client.ReportingListener;
-import com.threerings.msoy.group.data.GroupMembership;
+import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.ItemMarshaller;
 import com.threerings.msoy.item.data.all.Item;
