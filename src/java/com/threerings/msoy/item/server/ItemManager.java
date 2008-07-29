@@ -380,7 +380,7 @@ public class ItemManager
         
         ItemListInfo favorites;
         
-        if(favoriteLists.size() == 0) {            
+        if(favoriteLists.isEmpty()) {            
             // create an favorites list for this user
             favorites = createItemList(memberId, ItemListInfo.FAVORITES, ItemListInfo.FAVORITES_NAME);
             
