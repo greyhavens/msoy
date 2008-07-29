@@ -237,8 +237,8 @@ public class ItemServlet extends MsoyServiceServlet
                 mrec.getName() : // shortcut for items we created
                 _memberRepo.loadMemberName(record.creatorId); // normal lookup
             if (mrec != null) {
-                detail.memberRating = repo.getRating(iident.itemId, mrec.memberId);
-                detail.favorite = _itemMan.isFavorite(mrec.memberId, iident);
+                detail.memberItemInfo.memberRating = repo.getRating(iident.itemId, mrec.memberId);
+                detail.memberItemInfo.favorite = _itemMan.isFavorite(mrec.memberId, iident);
             }
             switch (detail.item.used) {
             case Item.USED_AS_FURNITURE:
@@ -648,10 +648,9 @@ public class ItemServlet extends MsoyServiceServlet
                 for (ItemRecord record : repo.loadFlaggedItems(count)) {
                     Item item = record.toItem();
 
-                    // get auxillary info and construct an ItemDetail
+                    // get auxiliary info and construct an ItemDetail
                     ItemDetail detail = new ItemDetail();
                     detail.item = item;
-                    detail.memberRating = 0; // not populated
                     detail.creator = _memberRepo.loadMemberName(record.creatorId);
 
                     // add the detail to our result and see if we're done
@@ -729,9 +728,9 @@ public class ItemServlet extends MsoyServiceServlet
     // defines ItemService interface
     public void setFavorite (WebIdent ident, ItemIdent item, boolean favorite)
         throws ServiceException
-    {   
+    {
         MemberRecord member = _mhelper.requireAuthedUser(ident);
-        
+
         try {
             if(favorite) {
                 _itemMan.addFavorite(member.memberId, item);
@@ -744,7 +743,7 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
-    
+
     /**
      * Helper method for remixItem and revertRemixedClone.
      * @param item the updated item, or null to revert to the original mix.

@@ -285,15 +285,15 @@ public class ItemManager
         // load up the user's lists
         return convertRecords(_listRepo.loadInfos(memberId));
     }
-    
-    public ItemListInfo createItemList (int memberId, byte listType, String name) 
+
+    public ItemListInfo createItemList (int memberId, byte listType, String name)
         throws PersistenceException
     {
         ItemListInfo listInfo = new ItemListInfo();
         listInfo.type = listType;
         listInfo.name = name;
         ItemListInfoRecord record = new ItemListInfoRecord(listInfo, memberId);
-        _listRepo.createList(record);        
+        _listRepo.createList(record);
         return record.toItemListInfo();
     }
 
@@ -301,13 +301,13 @@ public class ItemManager
     {
         addItem(listId, item.getIdent());
     }
-        
+
     public void addItem (int listId, ItemIdent item) throws PersistenceException
-    {        
+    {
         _listRepo.addItem(listId, item);
     }
-    
-    public void removeItem (int listId, ItemIdent item) throws PersistenceException 
+
+    public void removeItem (int listId, ItemIdent item) throws PersistenceException
     {
         _listRepo.removeItem(listId, item);
     }
@@ -348,56 +348,65 @@ public class ItemManager
         });
     }
 
-    public void addFavorite (int memberId, ItemIdent item) 
-        throws PersistenceException 
+    public void addFavorite (int memberId, ItemIdent item)
+        throws PersistenceException
     {
         ItemListInfo favoriteList = getFavoriteListInfo(memberId);
         _listRepo.addItem(favoriteList.listId, item);
     }
-    
-    public void removeFavorite (int memberId, ItemIdent item) 
-        throws PersistenceException 
+
+    public void removeFavorite (int memberId, ItemIdent item)
+        throws PersistenceException
     {
         ItemListInfo favoriteList = getFavoriteListInfo(memberId);
         _listRepo.removeItem(favoriteList.listId, item);
     }
-     
+
     /**
      * Check to see if the member's favorite list contains the given item.
      */
-    public boolean isFavorite(int memberId, ItemIdent item) 
+    public boolean isFavorite(int memberId, Item item)
+        throws PersistenceException
+    {
+        return isFavorite(memberId, item.getIdent());
+    }
+
+    /**
+     * Check to see if the member's favorite list contains the given item.
+     */
+    public boolean isFavorite(int memberId, ItemIdent item)
         throws PersistenceException
     {
         ItemListInfo favoriteList = getFavoriteListInfo(memberId);
-        return _listRepo.contains(favoriteList.listId, item);        
+        return _listRepo.contains(favoriteList.listId, item);
     }
-    
-    protected ItemListInfo getFavoriteListInfo (int memberId) 
-        throws PersistenceException 
+
+    protected ItemListInfo getFavoriteListInfo (int memberId)
+        throws PersistenceException
     {
         List<ItemListInfoRecord> favoriteRecords = _listRepo.loadInfos(memberId, ItemListInfo.FAVORITES);
         List<ItemListInfo> favoriteLists = convertRecords(favoriteRecords);
-        
+
         ItemListInfo favorites;
-        
-        if(favoriteLists.isEmpty()) {            
+
+        if (favoriteLists.isEmpty()) {
             // create an favorites list for this user
             favorites = createItemList(memberId, ItemListInfo.FAVORITES, ItemListInfo.FAVORITES_NAME);
-            
-        } else {            
-            // TODO There should never be more than one FAVORITES list per member 
+
+        } else {
+            // TODO There should never be more than one FAVORITES list per member
             // If there are more than one list, merge them somehow?
             favorites = favoriteLists.get(0);
         }
-        
+
         return favorites;
-    } 
-    
-    public void loadFavoriteList () 
+    }
+
+    public void loadFavoriteList ()
     {
         // TODO
     }
-    
+
     /**
      * Awards the specified prize to the specified member.
      */
@@ -1010,10 +1019,10 @@ public class ItemManager
         List<ItemListInfo> list = Lists.newArrayListWithExpectedSize(nn);
         for (int ii = 0; ii < nn; ii++) {
             list.add(records.get(ii).toItemListInfo());
-        }        
+        }
         return list;
     }
-    
+
     /**
      * A class that helps manage loading or storing a bunch of items that may be spread in
      * difference repositories.

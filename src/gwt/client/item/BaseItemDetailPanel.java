@@ -28,7 +28,6 @@ import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.web.data.TagHistory;
 
-import client.item.rating.ItemDetailRatingModel;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
@@ -61,7 +60,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         preview.setWidget(ItemUtil.createViewer(_item, userOwnsItem()));
         bits.add(preview);
         if (_item.isRatable()) {
-            ItemRating rating = new ItemRating(new ItemDetailRatingModel(_detail), true);
+            ItemRating rating = new ItemRating(_detail.item, _detail.memberItemInfo, true);
             rating.addStyleName("Rating");
             bits.add(rating);
         }

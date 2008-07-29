@@ -3,7 +3,6 @@
 
 package client.item;
 
-import client.item.rating.ItemRatingModel;
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.util.MsoyCallback;
@@ -17,6 +16,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.gwt.ItemService;
+import com.threerings.msoy.item.gwt.MemberItemInfo;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
@@ -28,9 +28,9 @@ public class ItemRating extends FlexTable
      * Construct a new display for the given item with member's previous rating of the item and a
      * specified display mode.
      */
-    public ItemRating (ItemRatingModel model, boolean horiz)
+    public ItemRating(Item item, MemberItemInfo memberItemInfo, boolean horiz)
     {
-        _item = model.getItem();
+        _item = item;
         _horiz = horiz;
         _averageStars = new Stars(_item.rating, true, false, null);
 
@@ -40,11 +40,12 @@ public class ItemRating extends FlexTable
         _ratingCount = new Label();
         _ratingCount.setStyleName(STYLE_COUNT);
         updateRatingCount();
-        
-        FavoriteIndicator favoriteIndicator = null;
-        
+
+        // TODO reveal favorite indicator when ready
+        // FavoriteIndicator favoriteIndicator = null;
+
         if (writable) {
-            _memberRating = model.getMemberRating();
+            _memberRating = memberItemInfo.memberRating;
             _playerStars = new Stars(_memberRating, false, false, this);
 
             _ratingTip = new Label();
@@ -55,10 +56,10 @@ public class ItemRating extends FlexTable
 
             // Initialize the default context tips
             starMouseOff();
-            
+
             // indicate whether this a favorite item of the current member
-            // TODO hiding the favorite indicator for now
-            // favoriteIndicator = new FavoriteIndicator(model);            
+            // TODO reveal favorite indicator when ready
+            // favoriteIndicator = new FavoriteIndicator(_item, memberItemInfo);
         }
 
         Label ratingAverage = new Label(_cmsgs.averageRating());
@@ -81,7 +82,9 @@ public class ItemRating extends FlexTable
                 setWidget(0, 3, _ratingDesc);
                 setWidget(1, 2, _playerStars);
                 getFlexCellFormatter().setColSpan(1, 2, 2);
-                setWidget(1, 3, favoriteIndicator);
+                // TODO hiding favorite indicator for now
+                // setWidget(0, 4, favoriteIndicator);
+                // getFlexCellFormatter().setRowSpan(0, 4, 2);
             }
         } else {
             setWidget(0, 0, ratingAverage);
@@ -95,7 +98,8 @@ public class ItemRating extends FlexTable
                 setWidget(3, 0, _ratingDesc);
                 setWidget(3, 1, nbsp);
                 getFlexCellFormatter().setColSpan(3, 0, 2);
-                setWidget(4, 0, favoriteIndicator);
+                // TODO hiding favorite indicator for now
+                // setWidget(4, 0, favoriteIndicator);
             }
         }
     }
@@ -146,7 +150,7 @@ public class ItemRating extends FlexTable
             _ratingCount.setText(_cmsgs.numberOfRatings(s));
         }
     }
-    
+
     /** True if both Stars are to be laid out on the same row. */
     protected boolean _horiz;
 
@@ -156,7 +160,7 @@ public class ItemRating extends FlexTable
     protected Label _ratingCount, _ratingTip, _ratingDesc;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final ItemServiceAsync _itemsvc = 
+    protected static final ItemServiceAsync _itemsvc =
         (ItemServiceAsync) ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 
     protected static final String [] RATING_DESCRIPTIONS = {
@@ -168,5 +172,5 @@ public class ItemRating extends FlexTable
     };
 
    protected static final String STYLE_RATING = "ratingText";
-   protected static final String STYLE_COUNT = "ratingCount";   
+   protected static final String STYLE_COUNT = "ratingCount";
 }

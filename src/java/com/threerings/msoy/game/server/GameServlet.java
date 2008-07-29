@@ -114,7 +114,9 @@ public class GameServlet extends MsoyServiceServlet
                     creatorId = item.creatorId;
                 }
                 if (mrec != null) {
-                    detail.memberRating = _gameRepo.getRating(item.itemId, mrec.memberId);
+                    detail.memberItemInfo.memberRating = _gameRepo.getRating(item.itemId, mrec.memberId);
+                    // TODO: set whether the game is one of the member's favorites
+                    // detail.memberItemInfo.favorite
                 }
             }
 

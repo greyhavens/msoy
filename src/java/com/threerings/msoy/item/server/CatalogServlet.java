@@ -377,7 +377,10 @@ public class CatalogServlet extends MsoyServiceServlet
             CatalogListing clrec = record.toListing();
             clrec.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
             if (mrec != null) {
-                clrec.detail.memberRating = repo.getRating(record.item.itemId, mrec.memberId);
+                clrec.detail.memberItemInfo.memberRating =
+                    repo.getRating(record.item.itemId, mrec.memberId);
+                clrec.detail.memberItemInfo.favorite =
+                    _itemMan.isFavorite(mrec.memberId, record.item.toItem());
             }
             return clrec;
 

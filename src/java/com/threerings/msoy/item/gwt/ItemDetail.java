@@ -26,12 +26,9 @@ public class ItemDetail implements Streamable, IsSerializable
     /** A display-friendly expansion of Item.creatorId. */
     public MemberName creator;
 
-    /** The item's rating given by the member specified in the request. */
-    public byte memberRating;
-
     /** If non-null, contains the String name for the usage location specified in the Item. */
     public String useLocation;
-    
-    /** Indicates whether this is one of the member's favorite items. */
-    public boolean favorite;
+
+    /** Contains member rating and favorite information about the item. */
+    public MemberItemInfo memberItemInfo = new MemberItemInfo();
 }

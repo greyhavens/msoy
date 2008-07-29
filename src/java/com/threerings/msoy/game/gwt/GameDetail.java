@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.gwt.MemberItemInfo;
 
 /**
  * Contains information displayed on a game's detail page.
@@ -25,9 +26,6 @@ public class GameDetail
 
     /** The item listed in the catalog for this game. */
     public Game listedItem;
-
-    /** The member's rating for the listed catalog item, if they have one. */
-    public byte memberRating;
 
     /** The source item maintained by the creator for this game. */
     public Game sourceItem;
@@ -50,9 +48,9 @@ public class GameDetail
     /** The number of people playing this game right now. */
     public int playingNow;
 
-    /** Indicates that this game is one of the the current member's favorites. */
-    public boolean favorite;    
-    
+    /** Contains member rating and favorite information about the game. */
+    public MemberItemInfo memberItemInfo = new MemberItemInfo();
+
     /**
      * Returns the listed game if we have one, the source if not.
      */

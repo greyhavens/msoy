@@ -65,7 +65,7 @@ public class GameDetailPanel extends SmartTable
         shot.add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null));
         if (detail.listedItem != null) {
             shot.add(WidgetUtil.makeShim(5, 5));
-            shot.add(new ItemRating(new GameDetailRatingModel(detail), false));
+            shot.add(new ItemRating(detail.listedItem, detail.memberItemInfo, false));
         }
         setWidget(0, 0, shot);
         getFlexCellFormatter().setRowSpan(0, 0, 2);
