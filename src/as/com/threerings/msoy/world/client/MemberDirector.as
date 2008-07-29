@@ -3,21 +3,18 @@
 
 package com.threerings.msoy.world.client {
 
-import com.threerings.util.Log;
-import com.threerings.util.MessageBundle;
-
-import com.threerings.presents.client.BasicDirector;
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ConfirmAdapter;
-import com.threerings.presents.client.ResultWrapper;
-
+import com.threerings.msoy.badge.data.EarnedBadge;
+import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.chat.client.ReportingListener;
+import com.threerings.presents.client.BasicDirector;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.ConfirmAdapter;
+import com.threerings.presents.dobj.MessageAdapter;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.util.Log;
 
 public class MemberDirector extends BasicDirector
 {
@@ -57,6 +54,18 @@ public class MemberDirector extends BasicDirector
     }
 
     // from BasicDirector
+    override protected function clientObjectUpdated (client :Client) :void
+    {
+        if (_mobj != null) {
+            _mobj.removeListener(_memberListener);
+        }
+        _mobj = client.getClientObject() as MemberObject;
+        if (_mobj != null) {
+            _mobj.addListener(_memberListener);
+        }
+    }
+
+    // from BasicDirector
     override protected function registerServices (client :Client) :void
     {
         client.addServiceGroup(MsoyCodes.MEMBER_GROUP);
@@ -70,7 +79,18 @@ public class MemberDirector extends BasicDirector
         _msvc = (client.requireService(MemberService) as MemberService);
     }
 
+    protected function messageReceivedOnUserObject (event :MessageEvent) :void
+    {
+        if (event.getName() == MemberObject.BADGE_AWARDED) {
+            var badge :EarnedBadge = event.getArgs()[0] as EarnedBadge;
+            // TODO - show a clever display here
+            log.info("Badge awarded", badge);
+        }
+    }
+
     protected var _wctx :WorldContext;
     protected var _msvc :MemberService;
+    protected var _mobj :MemberObject;
+    protected var _memberListener :MessageAdapter = new MessageAdapter(messageReceivedOnUserObject);
 }
 }

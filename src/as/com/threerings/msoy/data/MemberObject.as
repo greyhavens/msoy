@@ -3,31 +3,18 @@
 
 package com.threerings.msoy.data {
 
-import flash.errors.IllegalOperationError;
-
-import com.threerings.util.Integer;
-import com.threerings.util.Name;
-import com.threerings.util.Short;
-
-import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
-import com.threerings.io.Streamable;
-
-import com.threerings.presents.dobj.DSet;
-
-import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
-
+import com.threerings.io.ObjectInputStream;
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
-
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
+import com.threerings.presents.dobj.DSet;
+import com.threerings.util.Name;
 
 /**
  * Represents a connected msoy user.
@@ -105,6 +92,10 @@ public class MemberObject extends MsoyBodyObject
     /** A message sent by the server to denote a notification to be displayed.
      * Format: [ Notification ]. */
     public static const NOTIFICATION :String = "notification";
+
+    /** A message sent by the server to indicate that a badge was awarded.
+     * Format: [ EarnedBadge ]. */
+    public static const BADGE_AWARDED :String = "badgeAwarded";
 
     /** An <code>availability</code> status. */
     public static const AVAILABLE :int = 0;
