@@ -5,6 +5,29 @@ package client.item;
 
 import java.util.Collection;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
+
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.gwt.CatalogQuery;
+import com.threerings.msoy.item.gwt.ItemDetail;
+import com.threerings.msoy.item.gwt.ItemService;
+import com.threerings.msoy.item.gwt.ItemServiceAsync;
+import com.threerings.msoy.web.data.TagHistory;
+
 import client.item.rating.ItemDetailRatingModel;
 import client.shell.Args;
 import client.shell.CShell;
@@ -18,27 +41,6 @@ import client.ui.StyledTabPanel;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.gwt.CatalogQuery;
-import com.threerings.msoy.item.gwt.ItemDetail;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
-import com.threerings.msoy.web.data.TagHistory;
 
 /**
  * Defines the base item detail popup from which we derive an inventory and catalog item detail.

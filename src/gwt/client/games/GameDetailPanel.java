@@ -6,6 +6,17 @@ package client.games;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.SourcesTabEvents;
+import com.google.gwt.user.client.ui.TabListener;
+import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.msoy.game.gwt.GameDetail;
+import com.threerings.msoy.item.data.all.Game;
+
 import client.item.ItemRating;
 import client.msgs.CommentsPanel;
 import client.shell.Page;
@@ -15,16 +26,6 @@ import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.NaviUtil;
 import client.util.NaviUtil.GameDetails;
-
-import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.SourcesTabEvents;
-import com.google.gwt.user.client.ui.TabListener;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
-import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.msoy.game.gwt.GameDetail;
-import com.threerings.msoy.item.data.all.Game;
 
 /**
  * Displays detail information on a particular game.
