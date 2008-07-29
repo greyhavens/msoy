@@ -137,12 +137,23 @@ public class RoomStudioView extends RoomView
         super.dispatchSpriteMessage(item, name, arg, isAction);
     }
 
-    public function setAvatarScale (scale :Number) :void
+    public function setSpriteScale (scale :Number) :void
     {
-        var info :StudioMemberInfo = _avatar.getActorInfo().clone() as StudioMemberInfo;
-        info.setScale(scale);
-        info.status = OccupantInfo.ACTIVE; // while we're at it, un-idle
-        _avatar.setOccupantInfo(info);
+        if (_testingSprite is MemberSprite) {
+            var avatar :MemberSprite = (_testingSprite as MemberSprite);
+            var info :StudioMemberInfo = avatar.getActorInfo().clone() as StudioMemberInfo;
+            info.setScale(scale);
+            info.status = OccupantInfo.ACTIVE; // while we're at it, un-idle
+            avatar.setOccupantInfo(info);
+
+        } else if (_testingSprite is FurniSprite) {
+            var furni :FurniSprite = (_testingSprite as FurniSprite);
+            furni.setMediaScaleX(scale);
+            furni.setMediaScaleY(scale);
+
+        } else {
+            throw new Error("waka!");
+        }
     }
 
     override public function setBackground (decor :Decor) :void
@@ -157,16 +168,11 @@ public class RoomStudioView extends RoomView
 
     protected function initViewAvatar (params :Object) :void
     {
-        var scale :Number = Number(params["scale"]);
-        if (isNaN(scale) || scale == 0) {
-            scale = 1;
-        }
-
         // newstyle is that everything comes in on the "media" param, but let's still fall
         // back to "avatar" for a bit.
         var avatar :String = params["media"] || params["avatar"];
         var info :StudioMemberInfo = new StudioMemberInfo(_sctx, avatar);
-        info.setScale(scale);
+        info.setScale(getScaleFromParams(params));
         _avatar = new MemberSprite(_ctx, info);
         addSprite(_avatar);
         _avatar.setEntering(new MsoyLocation(.1, 0, .25));
@@ -179,7 +185,7 @@ public class RoomStudioView extends RoomView
         bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.idle"), emulateIdle));
 
         _saveScaling = ("true" == String(params["scaling"]));
-        createScaleControls();
+        createSpriteScaleControls();
         _avatar.addEventListener(MediaContainer.SIZE_KNOWN, handleAvatarSizeKnown);
     }
 
@@ -216,6 +222,8 @@ public class RoomStudioView extends RoomView
 
         _testingSprite = addFurni(furni);
 
+        createSpriteScaleControls();
+        initScaleProperties(.1, 4);
         addDefaultAvatar();
     }
 
@@ -248,13 +256,13 @@ public class RoomStudioView extends RoomView
         bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.talk"), emulateChat));
     }
 
-    protected function createScaleControls () :void
+    protected function createSpriteScaleControls () :void
     {
-        _scaleButton = new CommandButton("", showAvatarScaler);
-        _scaleButton.styleName = "controlBarButtonZoom";
-        _scaleButton.toolTip = Msgs.GENERAL.get("i.avatarScale");
+        _scaleButton = new CommandButton("", showSpriteScaler);
+        _scaleButton.styleName = "controlBarButtonScale";
+        _scaleButton.toolTip = Msgs.GENERAL.get("i.spriteScale");
         _scaleButton.enabled = false;
-        _scaleReset = new CommandButton(Msgs.GENERAL.get("b.resetScale"), updateAvatarScale, 1);
+        _scaleReset = new CommandButton(Msgs.GENERAL.get("b.resetScale"), updateSpriteScale, 1);
 
         var bar :ControlBar = _ctx.getTopPanel().getControlBar();
 
@@ -262,10 +270,41 @@ public class RoomStudioView extends RoomView
         bar.addCustomComponent(_scaleReset);
     }
 
-    protected function showAvatarScaler () :void
+    protected function showSpriteScaler () :void
     {
         SliderPopup.toggle(_scaleButton, (_avatar.getActorInfo() as StudioMemberInfo).getScale(),
-            updateAvatarScale, _scaleProperties);
+            updateSpriteScale, _scaleProperties);
+    }
+
+    protected function getSpriteScale () :Number
+    {
+        if (_testingSprite is MemberSprite) {
+            return ((_testingSprite as MemberSprite).getActorInfo() as StudioMemberInfo).getScale();
+
+        } else if (_testingSprite is FurniSprite) {
+            return (_testingSprite as FurniSprite).getMediaScaleX();
+
+        } else {
+            throw new Error("waka!");
+        }
+    }
+
+    /**
+     * Callback when the scale is updated in some way.
+     */
+    protected function updateSpriteScale (newScale :Number) :void
+    {
+        _scaleReset.enabled = (newScale != 1);
+
+        setSpriteScale(newScale);
+
+        if (_saveScaling && ExternalInterface.available) {
+            try {
+                ExternalInterface.call("updateAvatarScale", newScale);
+            } catch (e :Error) {
+                trace(e);
+            }
+        }
     }
 
     /**
@@ -310,37 +349,30 @@ public class RoomStudioView extends RoomView
         // the maximum bumps us up against the overall maximums
         var maxScale :Number = Math.min(OccupantSprite.MAX_WIDTH / width,
                                         OccupantSprite.MAX_HEIGHT / height);
+        initScaleProperties(minScale, maxScale);
+    }
 
+    protected function initScaleProperties (minScale :Number, maxScale :Number) :void
+    {
         // but we always ensure that scale 1.0 is selectable, even if it seems it shouldn't be.
         _scaleProperties.minimum = Math.min(1, minScale);
         _scaleProperties.maximum = Math.max(1, maxScale);
 
         // enable everything
         _scaleButton.enabled = true;
-    }
-
-    /**
-     * Callback when the scale is updated in some way.
-     */
-    protected function updateAvatarScale (newScale :Number) :void
-    {
-        _scaleReset.enabled = (newScale != 1);
-
-        setAvatarScale(newScale);
-
-        if (_saveScaling && ExternalInterface.available) {
-            try {
-                ExternalInterface.call("updateAvatarScale", newScale);
-            } catch (e :Error) {
-                trace(e);
-            }
-        }
+        _scaleReset.enabled = (1 != getSpriteScale());
     }
 
     // from RoomView
     override protected function getZoom () :Number
     {
         return 1; // don't let a user's zoom pref be used in the viewer
+    }
+
+    protected function getScaleFromParams (params :Object) :Number
+    {
+        var scale :Number = Number(params["scale"]);
+        return (isNaN(scale) || scale == 0) ? 1 : scale;
     }
 
     protected var _sctx :StudioContext;

@@ -423,6 +423,13 @@ TabNavigator, TabBar {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_zoom_disabled.png");
 }
 
+.controlBarButtonScale {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_scale.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_scale.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_scale.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_scale.png");
+}
+
 .controlBarHoverZone {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/hoverzone.png");
 }
