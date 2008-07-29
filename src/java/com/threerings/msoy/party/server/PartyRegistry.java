@@ -30,7 +30,7 @@ public class PartyRegistry
 {
     @Inject public PartyRegistry (InvocationManager invmgr)
     {
-        System.err.println("===================== PartyRegistry started");
+        //System.err.println("===================== PartyRegistry started");
         invmgr.registerDispatcher(new PartyDispatcher(this));
     }
 
