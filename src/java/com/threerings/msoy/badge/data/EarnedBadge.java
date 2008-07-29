@@ -5,8 +5,11 @@ package com.threerings.msoy.badge.data;
 
 public class EarnedBadge extends Badge
 {
-    /** When this badge was earned. */
-    public long whenEarned;
+    /**
+     * When this badge was earned.
+     * Long, instead of a long, because we can't stream longs to the ActionScript client.
+     */
+    public Long whenEarned;
 
     /** Constructs a new empty EarnedBadge. */
     public EarnedBadge ()
@@ -18,5 +21,10 @@ public class EarnedBadge extends Badge
     {
         this.badgeCode = type.getCode();
         this.whenEarned = whenEarned;
+    }
+
+    public String toString ()
+    {
+        return "badgeCode=" + badgeCode + " whenEarned=" + whenEarned;
     }
 }

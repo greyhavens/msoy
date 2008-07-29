@@ -12,6 +12,7 @@ import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 
 import com.threerings.msoy.badge.data.EarnedBadge;
+import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -324,7 +325,7 @@ public class MemberNodeActions
         }
 
         protected void execute (MemberObject memobj) {
-            memobj.badges.addBadge(_badge);
+            memobj.awardBadge(_badge);
         }
 
         protected EarnedBadge _badge;
@@ -339,9 +340,12 @@ public class MemberNodeActions
 
         protected void execute (MemberObject memobj) {
             memobj.getStats().updateStat(_modifier);
+            _badgeMan.updateBadges(memobj);
         }
 
         protected StatModifier<T> _modifier;
+
+        @Inject protected transient BadgeManager _badgeMan;
     }
 
     protected static class FriendEntryUpdate extends PeerManager.NodeAction

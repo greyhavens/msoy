@@ -20,6 +20,7 @@ import com.threerings.msoy.world.data.ObserverInfo;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.badge.data.BadgeSet;
+import com.threerings.msoy.badge.data.EarnedBadge;
 
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -114,6 +115,12 @@ public class MemberObject extends MsoyBodyObject
     /** A message sent by the server to denote a notification to be displayed.
      * Format: [ Notification ]. */
     public static final String NOTIFICATION = "notification";
+
+    /**
+     * A message sent by the server to indicate that a badge was awarded.
+     * Format: [ EarnedBadge ]
+     */
+    public static final String BADGE_AWARDED = "badgeAwarded";
 
     /** The ideal size of the avatar cache. */
     public static final int AVATAR_CACHE_SIZE = 5;
@@ -220,6 +227,23 @@ public class MemberObject extends MsoyBodyObject
     public StatSet getStats ()
     {
         return (DeploymentConfig.devDeployment ? stats : _dummyStats);
+    }
+
+    /**
+     * Adds an EarnedBadge to the member's BadgeSet, and dispatches an event indicating that
+     * a new badge was awarded.
+     *
+     * @return true if the badge was added to the member's BadgeSet, and false if already
+     * existed in the set.
+     */
+    public boolean awardBadge (EarnedBadge badge)
+    {
+        boolean added = badges.addBadge(badge);
+        if (added) {
+            this.postMessage(BADGE_AWARDED, badge);
+            log.info("BadgeAwarded message sent", "badge", badge);
+        }
+        return added;
     }
 
     /**

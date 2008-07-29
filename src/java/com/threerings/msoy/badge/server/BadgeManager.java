@@ -72,7 +72,7 @@ public class BadgeManager
         // create badges and stick them in the MemberObject
         final List<EarnedBadge> badges = createBadges(badgeTypes, whenEarned);
         for (EarnedBadge badge : badges) {
-            user.badges.addBadge(badge);
+            user.awardBadge(badge);
         }
 
         // stick the badges in the database
