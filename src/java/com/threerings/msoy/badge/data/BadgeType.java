@@ -105,7 +105,7 @@ public enum BadgeType
     
     public String getImageUrl ()
     {
-        return STATIC_imageName_URL + _imageName;
+        return STATIC_IMAGE_URL + _imageName;
     }
 
     /**
@@ -169,7 +169,7 @@ public enum BadgeType
     protected int _requiredUnits;
     protected String _imageName;
     
-    protected static final String STATIC_imageName_URL = DeploymentConfig.staticMediaURL + "badge/";
+    protected static final String STATIC_IMAGE_URL = DeploymentConfig.staticMediaURL + "badge/";
 
     /** The table mapping stat codes to enumerated types. */
     protected static HashIntMap<BadgeType> _codeToType;
