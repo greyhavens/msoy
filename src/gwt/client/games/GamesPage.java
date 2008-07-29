@@ -42,7 +42,7 @@ public class GamesPage extends Page
             } else {
                 setContent(panel = new GameDetailPanel());
             }
-            GameDetails tab = GameDetails.getEnum(args.get(2, ""));
+            GameDetails tab = GameDetails.getByCode(args.get(2, ""));
             panel.setGame(args.get(1, 0), tab);
 
         } else if (action.equals("t")) {

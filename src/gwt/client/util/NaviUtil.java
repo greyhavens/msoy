@@ -24,8 +24,13 @@ public class NaviUtil
         GameDetails (String code) {
             _code = code;
         }
-        
-        public static GameDetails getEnum (String code) {
+
+        /**
+         * Look up a GameDetails by its code.
+         */
+        public static GameDetails getByCode (String code)
+        {
+            // we could store these in a map, but why bother?
             for (GameDetails detail : values()) {
                 if (detail.code().equals(code)) {
                     return detail;
