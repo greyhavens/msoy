@@ -7,8 +7,6 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
-import com.samskivert.jdbc.depot.annotation.Index;
-import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.io.Streamable;
