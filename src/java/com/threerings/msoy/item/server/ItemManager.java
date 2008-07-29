@@ -317,7 +317,6 @@ public class ItemManager
         _invoker.postUnit(new RepositoryListenerUnit<List<Item>>("loadItemList", lner) {
             public List<Item> invokePersistResult () throws Exception {
                 // first, look up the list
-                ItemListInfoRecord infoRecord = _listRepo.loadInfo(listId);
                 ItemIdent[] idents = _listRepo.loadList(listId);
 
                 // now we're going to load all of these items
