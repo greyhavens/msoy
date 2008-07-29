@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -155,7 +154,7 @@ public class ProjectSelectionPanel extends FlexTable
 
         while (iter.hasNext()) {
             SwiftlyProject project = iter.next();
-            Hyperlink projectLink = Link.create(
+            Widget projectLink = Link.create(
                 project.projectName, "swiftly", String.valueOf(project.projectId));
             _remixableProjectsPanel.add(projectLink);
         }

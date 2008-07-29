@@ -3,8 +3,8 @@
 
 package client.msgs;
 
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
 
@@ -37,8 +37,7 @@ public class IssueMessagePanel extends SimpleMessagePanel
     {
         super.addInfo(info);
 
-        Hyperlink link = Link.create(
-            CMsgs.mmsgs.iThread(), Page.WHIRLEDS, "t_" + _threadId);
+        Widget link = Link.create(CMsgs.mmsgs.iThread(), Page.WHIRLEDS, "t_" + _threadId);
         link.setStyleName("issueMessageLink");
         link.addStyleName("actionLabel");
         info.add(link);

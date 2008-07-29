@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -184,7 +183,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
                 }
             }
 
-            Hyperlink toThread;
+            Widget toThread;
             if (thread.hasUnreadMessages()) {
                 String args = threadArgs(
                     thread.threadId, thread.lastReadPostIndex, thread.lastReadPostId);
@@ -212,7 +211,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
 
             VerticalPanel mrp = new VerticalPanel();
             mrp.add(new Label(_pdate.format(thread.mostRecentPostTime)));
-            Hyperlink latest = Link.create(
+            Widget latest = Link.create(
                 CMsgs.mmsgs.tlpBy(thread.mostRecentPoster.toString()),
                 Page.WHIRLEDS, threadArgs(thread.threadId, thread.posts-1,
                 thread.mostRecentPostId));

@@ -9,7 +9,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -120,8 +119,8 @@ public class IssueListPanel extends PagedGrid<Issue>
             setCellSpacing(0);
 
             int col = 0;
-            Hyperlink toIssue = Link.create(
-                    issue.description, Page.WHIRLEDS, _linkPrefix + issue.issueId + _linkPostfix);
+            Widget toIssue = Link.create(
+                issue.description, Page.WHIRLEDS, _linkPrefix + issue.issueId + _linkPostfix);
             setWidget(0, col, toIssue);
             getFlexCellFormatter().setStyleName(0, col++, "Description");
 
@@ -135,7 +134,7 @@ public class IssueListPanel extends PagedGrid<Issue>
             getFlexCellFormatter().setStyleName(0, col++, "State");
 
             VerticalPanel created = new VerticalPanel();
-            Hyperlink creator;
+            Widget creator;
             if (issue.state == Issue.STATE_OPEN) {
                 created.add(new Label(_pdate.format(issue.createdTime)));
                 creator = Link.create(

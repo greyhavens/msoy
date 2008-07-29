@@ -104,7 +104,8 @@ public class WhatsNextPanel extends SmartTable
         image.addClickListener(trackListener);
         contents.setWidget(0, 0, image, 1, "Screen");
         contents.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        PushButton button = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, CMe.msgs.nextDecorate(), onClick);
+        PushButton button = MsoyUI.createButton(
+            MsoyUI.MEDIUM_THIN, CMe.msgs.nextDecorate(), onClick);
         button.addClickListener(trackListener);
         contents.setWidget(0, 1, button);
         contents.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);

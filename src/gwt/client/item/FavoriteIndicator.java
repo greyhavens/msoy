@@ -2,7 +2,6 @@ package client.item;
 
 import client.item.rating.ItemRatingModel;
 import client.shell.CShell;
-import client.shell.ShellMessages;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 

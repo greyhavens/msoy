@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -151,7 +150,7 @@ public class MyWhirleds extends AbsolutePanel
                 // name links to whirled
                 FlowPanel name = new FlowPanel();
                 name.setStyleName("Name");
-                Hyperlink nameText = Link.create(
+                Widget nameText = Link.create(
                     card.name.toString(), Page.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
                 nameText.addStyleName("inline");
                 name.add(nameText);
@@ -166,7 +165,8 @@ public class MyWhirleds extends AbsolutePanel
 
                 // only show members online if there is at least one
                 if (card.population > 0) {
-                    Label membersOnline = new Label(CWhirleds.msgs.myMembersOnline(""+card.population));
+                    Label membersOnline = new Label(
+                        CWhirleds.msgs.myMembersOnline(""+card.population));
                     membersOnline.setStyleName("MembersOnline");
                     add(membersOnline);
                 }
@@ -174,9 +174,9 @@ public class MyWhirleds extends AbsolutePanel
                 // latest thread subject links to thread
                 if (card.latestThread != null) {
 
-                    Hyperlink latestThreadSubject = Link.create(
-                        card.latestThread.subject,
-                        Page.WHIRLEDS, Args.compose("t", card.latestThread.threadId));
+                    Widget latestThreadSubject = Link.create(
+                        card.latestThread.subject, Page.WHIRLEDS,
+                        Args.compose("t", card.latestThread.threadId));
                     latestThreadSubject.setStyleName("LatestThreadSubject");
                     add(latestThreadSubject);
 
@@ -213,14 +213,12 @@ public class MyWhirleds extends AbsolutePanel
                 }
 
                 // #threads and #posts link to discussions
-                Hyperlink numThreads = Link.create(
-                    card.numThreads+"",
-                    Page.WHIRLEDS, Args.compose("f", card.name.getGroupId()));
+                Widget numThreads = Link.create(
+                    card.numThreads+"", Page.WHIRLEDS, Args.compose("f", card.name.getGroupId()));
                 numThreads.addStyleName("NumThreads");
                 add(numThreads);
-                Hyperlink numPosts = Link.create(
-                    card.numPosts+"",
-                    Page.WHIRLEDS, Args.compose("f", card.name.getGroupId()));
+                Widget numPosts = Link.create(
+                    card.numPosts+"", Page.WHIRLEDS, Args.compose("f", card.name.getGroupId()));
                 numPosts.addStyleName("NumPosts");
                 add(numPosts);
             }

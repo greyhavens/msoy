@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLTable;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
@@ -150,8 +149,8 @@ public class GameGenrePanel extends FlowPanel
          * Creates a title for display in the grid header that performs a sort action onclick
          */
         protected Widget createTitle (String text, String styleName, byte sortMethod) {
-            Hyperlink link = Link.create(text, Page.GAMES,
-                Args.compose(new String[] {"g", _genre+"", sortMethod+""}));
+            Widget link = Link.create(
+                text, Page.GAMES, Args.compose(new String[] {"g", _genre+"", sortMethod+""}));
             link.addStyleName(styleName);
             return link;
         }

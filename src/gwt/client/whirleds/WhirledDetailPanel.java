@@ -10,7 +10,6 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
@@ -135,8 +134,7 @@ public class WhirledDetailPanel extends FlowPanel
         established.add(new InlineLabel(
             CWhirleds.msgs.groupEst(_efmt.format(_group.creationDate)), false, false, true));
         established.add(new InlineLabel(_cmsgs.creatorBy(), false, false, true));
-        Hyperlink creator = Link.memberView(
-            _detail.creator.toString(), _detail.creator.getMemberId());
+        Widget creator = Link.memberView(_detail.creator.toString(), _detail.creator.getMemberId());
         creator.addStyleName("Creator");
         established.add(creator);
         titleBox.add(established);
