@@ -3,6 +3,8 @@
 
 package client.whirleds;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -16,8 +18,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 
@@ -27,6 +27,8 @@ import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
+import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
 
 import client.item.ShopUtil;
 import client.shell.Args;
@@ -40,6 +42,7 @@ import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays the details of a Whirled.
@@ -82,12 +85,11 @@ public class WhirledDetailPanel extends FlowPanel
      */
     protected void loadGroup (int groupId)
     {
-        CWhirleds.groupsvc.getGroupDetail(
-            CWhirleds.ident, groupId, new MsoyCallback<GroupDetail>() {
-                public void onSuccess (GroupDetail detail) {
-                    setGroupDetail(detail);
-                }
-            });
+        _groupsvc.getGroupDetail(CWhirleds.ident, groupId, new MsoyCallback<GroupDetail>() {
+            public void onSuccess (GroupDetail detail) {
+                setGroupDetail(detail);
+            }
+        });
     }
 
     /**
@@ -277,7 +279,7 @@ public class WhirledDetailPanel extends FlowPanel
     {
         return new Command() {
             public void execute () {
-                CWhirleds.groupsvc.leaveGroup(CWhirleds.ident, _group.groupId, memberId, refresh());
+                _groupsvc.leaveGroup(CWhirleds.ident, _group.groupId, memberId, refresh());
             }
         };
     }
@@ -286,7 +288,7 @@ public class WhirledDetailPanel extends FlowPanel
     {
         return new Command() {
             public void execute () {
-                CWhirleds.groupsvc.joinGroup(CWhirleds.ident, _group.groupId, refresh());
+                _groupsvc.joinGroup(CWhirleds.ident, _group.groupId, refresh());
             }
         };
     }
@@ -445,4 +447,6 @@ public class WhirledDetailPanel extends FlowPanel
 
     protected static final SimpleDateFormat _efmt = new SimpleDateFormat("MMM dd, yyyy");
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }

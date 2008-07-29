@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -22,22 +23,22 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
-
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.group.gwt.MyGroupCard;
 
 import client.shell.Args;
 import client.shell.Page;
-
 import client.shop.CShop;
-
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.DateUtil;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays a list of threads.
@@ -62,12 +63,11 @@ public class MyWhirleds extends AbsolutePanel
             }
         });
 
-        CWhirleds.groupsvc.getMyGroups(
-            CWhirleds.ident, sortMethod, new MsoyCallback<List<MyGroupCard>>() {
-                public void onSuccess (List<MyGroupCard> whirleds) {
-                    gotData(whirleds);
-                }
-            });
+        _groupsvc.getMyGroups(CWhirleds.ident, sortMethod, new MsoyCallback<List<MyGroupCard>>() {
+            public void onSuccess (List<MyGroupCard> whirleds) {
+                gotData(whirleds);
+            }
+        });
     }
 
     /**
@@ -241,7 +241,8 @@ public class MyWhirleds extends AbsolutePanel
     /** Dropdown of sort methods */
     protected ListBox _sortBox;
 
-    /** Used to format the most recent post date. */
-    protected static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM-dd-yy");
-    protected static SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm aa");
+    protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM-dd-yy");
+    protected static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm aa");
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }

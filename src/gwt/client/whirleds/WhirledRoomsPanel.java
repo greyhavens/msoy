@@ -3,6 +3,7 @@
 
 package client.whirleds;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -14,19 +15,19 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.item.data.all.Item;
-
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
+import com.threerings.msoy.item.data.all.Item;
 
+import client.shell.Page;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.ui.TongueBox;
 import client.util.Link;
 import client.util.MsoyCallback;
-
-import client.shell.Page;
+import client.util.ServiceUtil;
 
 /**
  * Displays the rooms of a particular Whirled.
@@ -37,7 +38,7 @@ public class WhirledRoomsPanel extends VerticalPanel
     {
         _detail = detail;
 
-        CWhirleds.groupsvc.getGroupRooms(
+        _groupsvc.getGroupRooms(
             CWhirleds.ident, _detail.group.groupId, new MsoyCallback<GroupService.RoomsResult>() {
                 public void onSuccess (GroupService.RoomsResult result) {
                     init(result);
@@ -83,7 +84,7 @@ public class WhirledRoomsPanel extends VerticalPanel
             return;
         }
         GroupService.Room room = _roomsResult.callerRooms.get(index);
-        CWhirleds.groupsvc.transferRoom(CWhirleds.ident, _detail.group.groupId, room.sceneId,
+        _groupsvc.transferRoom(CWhirleds.ident, _detail.group.groupId, room.sceneId,
             new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     moveSceneToGrid(index);
@@ -122,10 +123,13 @@ public class WhirledRoomsPanel extends VerticalPanel
         }
     }
 
-    protected static final int ROOM_COLUMNS = 6;
-
     protected GroupDetail _detail;
     protected GroupService.RoomsResult _roomsResult;
     protected ListBox _roomsListBox;
     protected SmartTable _roomsGrid;
+
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+
+    protected static final int ROOM_COLUMNS = 6;
 }

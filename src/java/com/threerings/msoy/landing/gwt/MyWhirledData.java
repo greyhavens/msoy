@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.world.gwt;
+package com.threerings.msoy.landing.gwt;
 
 import java.util.List;
 

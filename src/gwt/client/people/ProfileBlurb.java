@@ -5,6 +5,8 @@ package client.people;
 
 import java.util.Date;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -18,8 +20,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
@@ -28,6 +28,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.gwt.ProfileService;
+import com.threerings.msoy.person.gwt.ProfileServiceAsync;
 
 import client.editem.ImageChooserPopup;
 import client.item.ShopUtil;
@@ -42,6 +43,7 @@ import client.util.FlashClients;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 import client.util.events.FlashEvents;
 import client.util.events.NameChangeEvent;
 
@@ -314,7 +316,7 @@ public class ProfileBlurb extends Blurb
             _profile.age = 0;
         }
 
-        CPeople.profilesvc.updateProfile(CPeople.ident, name, _profile, new MsoyCallback<Void>() {
+        _profilesvc.updateProfile(CPeople.ident, name, _profile, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 displayProfile();
                 if (!name.equals(CPeople.creds.name.toString())) {
@@ -347,6 +349,8 @@ public class ProfileBlurb extends Blurb
     protected static final SimpleDateFormat _sfmt = new SimpleDateFormat("MMM dd, yyyy");
     protected static final SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy h:mmaa");
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
+        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
 
     protected static final long YEAR_MILLIS = (365L * 24L * 60L * 60L * 1000L);
 }

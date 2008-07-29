@@ -5,15 +5,19 @@ package client.people;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
+import com.threerings.msoy.person.gwt.ProfileService;
+import com.threerings.msoy.person.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
 import client.ui.HeaderBox;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 public class SearchPanel extends FlowPanel
 {
@@ -44,12 +48,11 @@ public class SearchPanel extends FlowPanel
         clearResults();
 
         if (query.length() > 0) {
-            CPeople.profilesvc.findProfiles(
-                CPeople.ident, query, new MsoyCallback<List<MemberCard>>() {
-                    public void onSuccess (List<MemberCard> members) {
-                        setResults(members, page, query);
-                    }
-                });
+            _profilesvc.findProfiles(CPeople.ident, query, new MsoyCallback<List<MemberCard>>() {
+                public void onSuccess (List<MemberCard> members) {
+                    setResults(members, page, query);
+                }
+            });
         }
     }
 
@@ -85,4 +88,7 @@ public class SearchPanel extends FlowPanel
     protected SearchControls _ctrls;
     protected MemberList _members;
     protected String _searchString;
+
+    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
+        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
 }

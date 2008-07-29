@@ -5,22 +5,26 @@ package client.people;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.group.gwt.GroupCard;
-import com.threerings.msoy.person.gwt.ProfileService;
-
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
+
+import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
+import com.threerings.msoy.person.gwt.ProfileService;
 
 import client.shell.Args;
 import client.shell.Page;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
+import client.util.ServiceUtil;
 
 /**
  * Displays a list of the groups of which a person is a member.
@@ -91,7 +95,7 @@ public class GroupsBlurb extends Blurb
 //                 Button inviteButton = new Button(CPeople.msgs.inviteToGroup());
 //                 new ClickCallback<List<GroupMembership>>(inviteButton) {
 //                     public boolean callService () {
-//                         CPeople.groupsvc.getMembershipGroups(
+//                         _groupsvc.getMembershipGroups(
 //                             CPeople.ident, CPeople.getMemberId(), true, this);
 //                         return true;
 //                     }
@@ -125,6 +129,9 @@ public class GroupsBlurb extends Blurb
             add(MsoyUI.createActionLabel(card.name.toString(), groupClick));
         }
     }
+
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 
     protected static final int GROUP_COLUMNS = 6;
     protected static final int GROUP_ROWS = 2;

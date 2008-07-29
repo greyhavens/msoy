@@ -3,6 +3,7 @@
 
 package client.whirleds;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -19,6 +20,7 @@ import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
@@ -28,6 +30,7 @@ import client.ui.PromptPopup;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays the members of a particular Whirled. Allows managers to manage ranks and membership.
@@ -44,7 +47,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
         _invite.addClickListener(Link.createListener(Page.MAIL, args));
         _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
 
-        CWhirleds.groupsvc.getGroupMembers(
+        _groupsvc.getGroupMembers(
             CWhirleds.ident, _detail.group.groupId, new MsoyCallback<GroupService.MembersResult>() {
                 public void onSuccess (GroupService.MembersResult result) {
                     setModel(new SimpleDataModel<GroupMemberCard>(result.members), 0);
@@ -86,7 +89,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
     {
         return new Command() {
             public void execute () {
-                CWhirleds.groupsvc.updateMemberRank(
+                _groupsvc.updateMemberRank(
                     CWhirleds.ident, _detail.group.groupId, card.name.getMemberId(), rank,
                     new MsoyCallback<Void>() {
                         public void onSuccess (Void result) {
@@ -104,7 +107,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
     {
         return new Command() {
             public void execute () {
-                CWhirleds.groupsvc.leaveGroup(CWhirleds.ident, _detail.group.groupId,
+                _groupsvc.leaveGroup(CWhirleds.ident, _detail.group.groupId,
                     card.name.getMemberId(), new MsoyCallback<Void>() {
                         public void onSuccess (Void result) {
                             removeItem(card);
@@ -160,4 +163,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
 
     protected GroupDetail _detail;
     protected Button _invite;
+
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }

@@ -19,6 +19,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.person.gwt.ProfileService;
+import com.threerings.msoy.person.gwt.ProfileServiceAsync;
 
 import client.shell.Args;
 import client.shell.DynamicMessages;
@@ -27,6 +28,7 @@ import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
+import client.util.ServiceUtil;
 
 /**
  * Displays a member's interests and other random bits.
@@ -101,7 +103,7 @@ public class InterestsBlurb extends Blurb
         new ClickCallback<Void>(update) {
             public boolean callService () {
                 _newInterests = getNewInterests();
-                CPeople.profilesvc.updateInterests(CPeople.ident, _newInterests, this);
+                _profilesvc.updateInterests(CPeople.ident, _newInterests, this);
                 return true;
             }
 
@@ -174,4 +176,6 @@ public class InterestsBlurb extends Blurb
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
+        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
 }

@@ -25,7 +25,7 @@ public interface Frame
     /** The offset of the content close button, from the left edge of the separator bar. */
     public static final int CLOSE_BUTTON_OFFSET = -16;
 
-    /** A method call code for use with our remote iframe to top frame RPC mechanism. */
+    /** Codes for use with our inner frame to top frame RPC mechanism. */
     public static enum Calls {
         GET_WEB_CREDS, GET_PAGE_TOKEN, SET_TITLE, NAVIGATE_TO, NAVIGATE_REPLACE,
         DISPLAY_WORLD_CLIENT, CLOSE_CLIENT, CLOSE_CONTENT

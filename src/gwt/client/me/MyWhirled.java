@@ -5,19 +5,22 @@ package client.me;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.data.all.Item;
 
+import com.threerings.msoy.landing.gwt.MeService;
+import com.threerings.msoy.landing.gwt.MeServiceAsync;
+import com.threerings.msoy.landing.gwt.MyWhirledData;
 import com.threerings.msoy.person.gwt.FeedMessage;
-import com.threerings.msoy.world.gwt.MyWhirledData;
 
 import client.item.StuffNaviBar;
 import client.msgs.FeedPanel;
-
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 public class MyWhirled extends VerticalPanel
 {
@@ -25,7 +28,7 @@ public class MyWhirled extends VerticalPanel
     {
         setStyleName("myWhirled");
 
-        CMe.worldsvc.getMyWhirled(CMe.ident, new MsoyCallback<MyWhirledData>() {
+        _mesvc.getMyWhirled(CMe.ident, new MsoyCallback<MyWhirledData>() {
             public void onSuccess (MyWhirledData data) {
                 init(data);
             }
@@ -41,10 +44,13 @@ public class MyWhirled extends VerticalPanel
             data.friendCount > 0 ? CMe.mmsgs.emptyFeed() : CMe.mmsgs.emptyFeedNoFriends();
         FeedPanel feed = new FeedPanel(empty, true, new FeedPanel.FeedLoader() {
             public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback) {
-                CMe.worldsvc.loadFeed(CMe.ident, feedDays, callback);
+                _mesvc.loadFeed(CMe.ident, feedDays, callback);
             }
         });
         feed.setFeed(data.feed, false);
         add(feed);
     }
+
+    protected static final MeServiceAsync _mesvc = (MeServiceAsync)
+        ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
 }

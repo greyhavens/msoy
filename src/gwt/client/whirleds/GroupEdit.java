@@ -20,12 +20,11 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.GroupName;
-
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupExtras;
-
+import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
-
 import com.threerings.msoy.web.data.TagHistory;
 
 import client.item.TagDetailPanel;
@@ -38,6 +37,7 @@ import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * A popup that lets a member of sufficient rank modify a group's metadata.
@@ -141,16 +141,16 @@ public class GroupEdit extends FlexTable
         if (_group.groupId != 0 && _group.policy != Group.POLICY_EXCLUSIVE) {
             TagDetailPanel tags = new TagDetailPanel(new TagDetailPanel.TagService() {
                 public void tag (String tag, AsyncCallback<TagHistory> cback) {
-                    CWhirleds.groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, true, cback);
+                    _groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, true, cback);
                 }
                 public void untag (String tag, AsyncCallback<TagHistory> cback) {
-                    CWhirleds.groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, false, cback);
+                    _groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, false, cback);
                 }
                 public void getRecentTags (AsyncCallback<Collection<TagHistory>> cback) {
-                    CWhirleds.groupsvc.getRecentTags(CWhirleds.ident, cback);
+                    _groupsvc.getRecentTags(CWhirleds.ident, cback);
                 }
                 public void getTags (AsyncCallback<Collection<String>> cback) {
-                    CWhirleds.groupsvc.getTags(CWhirleds.ident, _group.groupId, cback);
+                    _groupsvc.getTags(CWhirleds.ident, _group.groupId, cback);
                 }
                 public boolean supportFlags () {
                     return false;
@@ -218,25 +218,23 @@ public class GroupEdit extends FlexTable
         };
         // check if we're trying to set the policy to exclusive on a group that has tags
         if (_group.policy == Group.POLICY_EXCLUSIVE) {
-            CWhirleds.groupsvc.getTags(
+            _groupsvc.getTags(
                 CWhirleds.ident, _group.groupId, new MsoyCallback<Collection<String>>() {
                     public void onSuccess (Collection<String> tags) {
                         if (tags.size() > 0) {
                             MsoyUI.error(CWhirleds.msgs.errTagsOnExclusive());
                         } else if (_group.groupId > 0) {
-                            CWhirleds.groupsvc.updateGroup(
-                                CWhirleds.ident, _group, _extras, updateCallback);
+                            _groupsvc.updateGroup(CWhirleds.ident, _group, _extras, updateCallback);
                         } else {
-                            CWhirleds.groupsvc.createGroup(
-                                CWhirleds.ident, _group, _extras, createCallback);
+                            _groupsvc.createGroup(CWhirleds.ident, _group, _extras, createCallback);
                         }
                     }
                 });
         } else {
             if (_group.groupId > 0) {
-                CWhirleds.groupsvc.updateGroup(CWhirleds.ident, _group, _extras, updateCallback);
+                _groupsvc.updateGroup(CWhirleds.ident, _group, _extras, updateCallback);
             } else {
-                CWhirleds.groupsvc.createGroup(CWhirleds.ident, _group, _extras, createCallback);
+                _groupsvc.createGroup(CWhirleds.ident, _group, _extras, createCallback);
             }
         }
     }
@@ -252,4 +250,6 @@ public class GroupEdit extends FlexTable
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }

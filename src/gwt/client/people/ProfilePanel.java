@@ -3,11 +3,15 @@
 
 package client.people;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.person.gwt.ProfileService;
+import com.threerings.msoy.person.gwt.ProfileServiceAsync;
+
+import client.util.ServiceUtil;
 
 /**
  * Displays a member's profile.
@@ -18,7 +22,7 @@ public class ProfilePanel extends VerticalPanel
     {
         setStyleName("profile");
         // issue a request for this member's profile page data
-        CPeople.profilesvc.loadProfile(
+        _profilesvc.loadProfile(
             CPeople.ident, _memberId = memberId, new AsyncCallback<ProfileService.ProfileResult>() {
                 public void onSuccess (ProfileService.ProfileResult result) {
                     init(result);
@@ -52,4 +56,7 @@ public class ProfilePanel extends VerticalPanel
         new ProfileBlurb(), new InterestsBlurb(), new FriendsBlurb(), new TrophiesBlurb(),
         new RatingsBlurb(), new GroupsBlurb(), new FeedBlurb(), new CommentsBlurb(),
     };
+
+    protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
+        ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
 }

@@ -5,13 +5,15 @@ package client.me;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.world.gwt.WorldService;
+import com.threerings.msoy.landing.gwt.MeService;
+import com.threerings.msoy.landing.gwt.MeServiceAsync;
 
 import client.shell.Page;
 import client.ui.MsoyUI;
@@ -19,6 +21,7 @@ import client.ui.TongueBox;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.SceneThumbnail;
+import client.util.ServiceUtil;
 
 /**
  * Displays this member's rooms.
@@ -29,14 +32,14 @@ public class MyRoomsPanel extends VerticalPanel
     {
         setStyleName("myRooms");
 
-        CMe.worldsvc.loadMyRooms(CMe.ident, new MsoyCallback<List<WorldService.Room>>() {
-            public void onSuccess (List<WorldService.Room> rooms) {
+        _mesvc.loadMyRooms(CMe.ident, new MsoyCallback<List<MeService.Room>>() {
+            public void onSuccess (List<MeService.Room> rooms) {
                 init(rooms);
             }
         });
     }
 
-    protected void init (List<WorldService.Room> rooms)
+    protected void init (List<MeService.Room> rooms)
     {
         add(new TongueBox(null, CMe.msgs.roomsIntro(), false));
         SmartTable grid = new SmartTable(0, 0);
@@ -49,7 +52,7 @@ public class MyRoomsPanel extends VerticalPanel
 
     protected static class RoomWidget extends SmartTable
     {
-        public RoomWidget (final WorldService.Room room)
+        public RoomWidget (final MeService.Room room)
         {
             super("Room", 0, 2);
             ClickListener onClick = Link.createListener(Page.WORLD, "s"+room.sceneId);
@@ -60,6 +63,9 @@ public class MyRoomsPanel extends VerticalPanel
             setWidget(1, 0, MsoyUI.createActionLabel(room.name, onClick));
         }
     }
+
+    protected static final MeServiceAsync _mesvc = (MeServiceAsync)
+        ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
 
     protected static final int ROOM_COLUMNS = 3;
 }

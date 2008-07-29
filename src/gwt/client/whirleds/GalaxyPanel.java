@@ -5,6 +5,7 @@ package client.whirleds;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -23,6 +24,8 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
@@ -30,6 +33,7 @@ import client.ui.ClickBox;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Display the public groups in a sensical manner, including a sorted list of characters that
@@ -99,7 +103,7 @@ public class GalaxyPanel extends VerticalPanel
         create.setWidget(1, 2, new Button(CWhirleds.msgs.galaxyCreate(), onClick), 1, "Button");
         add(create);
 
-        CWhirleds.groupsvc.getGalaxyData(CWhirleds.ident, new MsoyCallback<GalaxyData>() {
+        _groupsvc.getGalaxyData(CWhirleds.ident, new MsoyCallback<GalaxyData>() {
             public void onSuccess (GalaxyData galaxy) {
                 init(galaxy);
             }
@@ -129,7 +133,7 @@ public class GalaxyPanel extends VerticalPanel
         setModel("p", "", page, new ModelLoader() {
             public void loadModel (MsoyCallback<List<GroupCard>> callback) {
                 // TODO: this eventually needs to be a ServiceBackedDataModel
-                CWhirleds.groupsvc.getGroupsList(CWhirleds.ident, callback);
+                _groupsvc.getGroupsList(CWhirleds.ident, callback);
             }
         });
     }
@@ -170,7 +174,7 @@ public class GalaxyPanel extends VerticalPanel
 
         setModel("tag", tag, page, new ModelLoader() {
             public void loadModel (MsoyCallback<List<GroupCard>> callback) {
-                CWhirleds.groupsvc.searchForTag(CWhirleds.ident, tag, callback);
+                _groupsvc.searchForTag(CWhirleds.ident, tag, callback);
             }
         });
         return true;
@@ -184,7 +188,7 @@ public class GalaxyPanel extends VerticalPanel
         _searchInput.setText(query);
         setModel("search", query, page, new ModelLoader() {
             public void loadModel (MsoyCallback<List<GroupCard>> callback) {
-                CWhirleds.groupsvc.searchGroups(CWhirleds.ident, query, callback);
+                _groupsvc.searchGroups(CWhirleds.ident, query, callback);
             }
         });
         return true;
@@ -232,6 +236,9 @@ public class GalaxyPanel extends VerticalPanel
     protected FlowPanel _popularTags, _currentTag;
     protected TextBox _searchInput;
     protected PagedGrid<GroupCard> _groupGrid;
+
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 
     protected static final int POP_TAG_COUNT = 9;
     protected static final int GRID_ROWS = 2;
