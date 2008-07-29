@@ -67,17 +67,6 @@ public class SupportPage extends MsgsEntryPoint
         }
     }
 
-    @Override // from Page
-    public void didLogoff ()
-    {
-        super.didLogoff();
-
-        // clear out our underwire creds
-        if (_webctx != null) {
-            _webctx.ainfo = null;
-        }
-    }
-
     @Override
     public String getPageId ()
     {

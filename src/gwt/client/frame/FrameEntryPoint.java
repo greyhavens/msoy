@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
@@ -52,6 +53,14 @@ public class FrameEntryPoint
 
         // listen for logon/logoff
         Session.addObserver(this);
+
+        // load up various JavaScript dependencies
+        for (int ii = 0; ii < JS_DEPENDS.length; ii += 2) {
+            Element e = DOM.getElementById(JS_DEPENDS[ii]);
+            if (e != null) {
+                DOM.setElementAttribute(e, "src", JS_DEPENDS[ii+1]);
+            }
+        }
 
         // set up the callbackd that our flash clients can call
         configureCallbacks(this);
@@ -100,6 +109,9 @@ public class FrameEntryPoint
             RootPanel.get(LOADING_AND_TESTS).clear();
             RootPanel.get(LOADING_AND_TESTS).setVisible(false);
         }
+
+        // TEMP: always show the header
+        CShell.frame.setHeaderVisible(true);
     }
 
     // from interface HistoryListener
@@ -149,11 +161,7 @@ public class FrameEntryPoint
 
         // replace the page if necessary
         if (_pageId == null || !_pageId.equals(page)) {
-            _pageId = page;
-            RootPanel.get("content").clear();
-            Frame iframe = new Frame("/" + _pageId + "/" + _pageId + ".html");
-            iframe.setStyleName("pageIFrame");
-            showContent(_pageId, iframe);
+            setPage(page);
         } else {
             setPageToken(_pageToken);
         }
@@ -168,28 +176,21 @@ public class FrameEntryPoint
         // WorldClient.didLogon(data.creds);
 
         if (_pageId != null) {
-            // TODO: tell our page that we just logged on
+            setPage(_pageId); // reloads the current page
         } else if (_currentToken != null && !data.justCreated) {
             onHistoryChanged(_currentToken);
         }
-
-        // TEMP: show a header
-        CShell.frame.setHeaderVisible(true);
     }
 
     // from interface Session.Observer
     public void didLogoff ()
     {
-        if (_pageId == null) {
-            // we can now load our starting page
-            onHistoryChanged(_currentToken);
-        } else {
-            CShell.frame.closeClient(false);
-            // TODO: tell our page that we just logged off
-        }
-
-        // TEMP: show a header
-        CShell.frame.setHeaderVisible(true);
+        // clear out any current page
+        _pageId = null;
+        // reload the current page
+        onHistoryChanged(_currentToken);
+        // close the Flash client if it's open
+        CShell.frame.closeClient(false);
     }
 
     // from interface Frame
@@ -366,6 +367,15 @@ public class FrameEntryPoint
         }
     }
 
+    protected void setPage (String pageId)
+    {
+        _pageId = pageId;
+        RootPanel.get("content").clear();
+        Frame iframe = new Frame("/" + _pageId + "/" + _pageId + ".html");
+        iframe.setStyleName("pageIFrame");
+        showContent(_pageId, iframe);
+    }
+
     protected String getPageToken ()
     {
         return _pageToken;
@@ -373,7 +383,7 @@ public class FrameEntryPoint
 
     protected String getWebCreds ()
     {
-        return CShell.creds.flatten();
+        return (CShell.creds == null) ? null : CShell.creds.flatten();
     }
 
     /**
@@ -445,4 +455,13 @@ public class FrameEntryPoint
     protected static final String CLIENT = "client";
     protected static final String SITE_CONTAINER = "ctable";
     protected static final String LOADING_AND_TESTS = "loadingAndTests";
+
+    /** Enumerates our Javascript dependencies. */
+    protected static final String[] JS_DEPENDS = {
+        "swfobject", "/js/swfobject.js",
+        "md5", "/js/md5.js",
+        // TODO: put this on the account registration page
+        // "recaptcha", "http://api.recaptcha.net/js/recaptcha_ajax.js",
+        "googanal", "http://www.google-analytics.com/ga.js",
+    };
 }

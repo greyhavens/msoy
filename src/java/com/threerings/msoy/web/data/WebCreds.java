@@ -38,6 +38,9 @@ public class WebCreds implements IsSerializable
      */
     public static WebCreds unflatten (String data)
     {
+        if (data == null) {
+            return null;
+        }
         String[] toks = data.split("\t");
         WebCreds creds = new WebCreds();
         creds.token = toks[0];

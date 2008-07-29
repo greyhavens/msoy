@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.CookieUtil;
@@ -62,7 +64,14 @@ public class Session
         // if we have no creds token, we are definitely not logged in
         String token = CookieUtil.get(WebCreds.CREDS_COOKIE);
         if (token == null) {
-            didLogoff();
+            // defer execution of didLogoff so that the caller sees the same behavior in both
+            // situations: immediate return of this method and a call to didLogon or didLogoff at
+            // some later time after the current call stack has completed
+            DeferredCommand.addCommand(new Command() {
+                public void execute () {
+                    didLogoff();
+                }
+            });
             return;
         }
 

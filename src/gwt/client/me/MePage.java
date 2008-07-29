@@ -12,7 +12,6 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
-import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.world.gwt.WorldService;
 import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
@@ -110,12 +109,6 @@ public class MePage extends MsgsEntryPoint
         } else {
             displayWhat();
         }
-    }
-
-    @Override // from Page
-    public void didLogon (WebCreds creds)
-    {
-        Link.go(ME, "");
     }
 
     @Override

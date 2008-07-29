@@ -37,17 +37,6 @@ import client.util.ServiceUtil;
 public class Application
     implements EntryPoint, HistoryListener, Session.Observer
 {
-    /**
-     * Configures our current history token (normally this is done automatically as the user
-     * navigates, but sometimes we want to override the current token). This does not take any
-     * action based on the token, but the token will be used if the user subsequently logs in or
-     * out.
-     */
-    public static void setCurrentToken (String token)
-    {
-        _currentToken = token;
-    }
-
     // from interface EntryPoint
     public void onModuleLoad ()
     {
@@ -122,7 +111,7 @@ public class Application
 
             // save our tracking info, but don't overwrite old values
             maybeCreateReferral(affiliate, vector, creative);
-            
+
         } else {
             maybeCreateReferral("", "", "");
         }
@@ -164,9 +153,15 @@ public class Application
     {
         WorldClient.didLogon(data.creds);
 
-        if (_page != null) {
-            _page.didLogon(data.creds);
-        } else if (_currentToken != null && !data.justCreated) {
+        // if we're on any account page, and we logon, we want to go to the me page
+        if (_page != null && Page.ACCOUNT.equals(_page.getPageId())) {
+            CShell.frame.navigateTo(Page.ME);
+        } else  {
+            // tell any existing page that it's being unloaded
+            if (_page != null) {
+                _page.onPageUnload();
+                _page = null;
+            }
             onHistoryChanged(_currentToken);
         }
     }
@@ -174,13 +169,15 @@ public class Application
     // from interface Session.Observer
     public void didLogoff ()
     {
-        if (_page == null) {
-            // we can now load our starting page
-            onHistoryChanged(_currentToken);
-        } else {
-            CShell.frame.closeClient(false);
-            _page.didLogoff();
+        // tell any existing page that it's being unloaded
+        if (_page != null) {
+            _page.onPageUnload();
+            _page = null;
         }
+        // reload the current page
+        onHistoryChanged(_currentToken);
+        // close the Flash client if it's open
+        CShell.frame.closeClient(false);
     }
 
     /**
@@ -198,7 +195,7 @@ public class Application
             _membersvc.trackReferralCreation(ref, null);
         }
     }
-    
+
     protected void createMappings ()
     {
         _creators.put(Page.ACCOUNT, client.account.AccountPage.getCreator());

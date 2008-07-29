@@ -51,15 +51,8 @@ import client.util.ServiceUtil;
  */
 public class CreateAccountPanel extends FlowPanel
 {
-    public interface RegisterListener
+    public CreateAccountPanel ()
     {
-        /** Called when the player is logging on due to a successful registration. */
-        void didRegister ();
-    }
-
-    public CreateAccountPanel (RegisterListener regListener)
-    {
-        _regListener = regListener;
         setStyleName("createAccount");
 
         FlowPanel loginLink = MsoyUI.createFlowPanel("Login");
@@ -239,10 +232,6 @@ public class CreateAccountPanel extends FlowPanel
             _dateOfBirth.getDate(), null, info, 1, inviteId, guestId, challenge,
             response, TrackingCookie.get(), new AsyncCallback<SessionData>() {
                 public void onSuccess (SessionData result) {
-                    // notify our registration listener
-                    if (_regListener != null) {
-                        _regListener.didRegister();
-                    }
                     result.justCreated = true;
                     // pass our credentials into the session (which will trigger a redirect)
                     Session.didLogon(result);
@@ -359,7 +348,6 @@ public class CreateAccountPanel extends FlowPanel
     protected DateFields _dateOfBirth;
     protected CheckBox _tosBox;
     protected Label _status;
-    protected RegisterListener _regListener;
 
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);

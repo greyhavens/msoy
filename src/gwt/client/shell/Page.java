@@ -98,7 +98,9 @@ public abstract class Page
 
             // obtain our current credentials from the frame
             CShell.creds = WebCreds.unflatten(frameGetWebCreds());
-            CShell.ident = new WebIdent(CShell.creds.getMemberId(), CShell.creds.token);
+            if (CShell.creds != null) {
+                CShell.ident = new WebIdent(CShell.creds.getMemberId(), CShell.creds.token);
+            }
             // TODO: level, activeInvite
 
             // and get our current page token from our containing frame
@@ -178,30 +180,6 @@ public abstract class Page
      */
     public void onPageUnload ()
     {
-    }
-
-    /**
-     * Called when we the player logs on while viewing this page. The default implementation
-     * redisplays the current page with the current args (by calling {@link #onHistoryChanged}.
-     */
-    public void didLogon (WebCreds creds)
-    {
-        History.onHistoryChanged(History.getToken());
-    }
-
-    /**
-     * Called when the player logs off while viewing this page. The default implementation sends
-     * the user to the landing page.
-     */
-    public void didLogoff ()
-    {
-        // TODO: move this into the frame
-        // go to the landing page by hook or crook
-        if (History.getToken().equals("")) {
-            Link.replace("", "");
-        } else {
-            History.newItem("");
-        }
     }
 
     /**

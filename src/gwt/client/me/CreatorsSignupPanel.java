@@ -20,7 +20,7 @@ public class CreatorsSignupPanel extends SimplePanel
         setWidget(content);
         
         content.add(MsoyUI.createHTML(CMe.msgs.creatorsGetStarted(), "GetStarted"), 377, 470);
-        content.add(new CreateAccountPanel(null), 10, 530);
+        content.add(new CreateAccountPanel(), 10, 530);
         content.add(new LandingCopyright(), 0, 1085);
     }
 }
