@@ -52,6 +52,7 @@ public class ChatTab extends HBox
 
         addChild(_label = new Label());
         _label.styleName = this;
+        _label.maxWidth = 175;
         _label.text = roomName;
 
         // close button is not added until displayCloseBox(true) is called

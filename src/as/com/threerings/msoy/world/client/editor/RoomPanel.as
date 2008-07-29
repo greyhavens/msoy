@@ -80,6 +80,7 @@ public class RoomPanel extends BasePanel
         _name = new TextInput();
         _name.percentWidth = 100;
         _name.maxWidth = 200;
+        _name.maxChars = 254;
         box.addChild(_name);
 
         // container for other buttons
