@@ -372,6 +372,7 @@ public class FrameEntryPoint
         _pageId = pageId;
         RootPanel.get("content").clear();
         Frame iframe = new Frame("/" + _pageId + "/" + _pageId + ".html");
+        DOM.setAttribute(iframe.getElement(), "name", "page");
         iframe.setStyleName("pageIFrame");
         showContent(_pageId, iframe);
     }
@@ -436,7 +437,12 @@ public class FrameEntryPoint
      * Passes a page's current token down into our page frame.
      */
     protected static native void setPageToken (String token) /*-{
-        $wnd.setPageToken(token);
+        try {
+            var page = $wnd.frames['page'];
+            page.setPageToken(token);
+        } catch (e) {
+            // oh well, nothing to be done
+        }
     }-*/;
 
     protected String _currentToken = "";

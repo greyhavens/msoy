@@ -80,6 +80,9 @@ public abstract class Page
             RootPanel.get("content").setWidth("");
         }
 
+        // do our on-load stuff
+        onPageLoad();
+
         // wire ourselves up to the top-level frame
         if (configureCallbacks(this)) {
             // if we're running in standalone page test mode, we do a bunch of stuff
@@ -101,7 +104,7 @@ public abstract class Page
             if (CShell.creds != null) {
                 CShell.ident = new WebIdent(CShell.creds.getMemberId(), CShell.creds.token);
             }
-            // TODO: level, activeInvite
+            // TODO: activeInvite
 
             // and get our current page token from our containing frame
             setPageToken(frameGetPageToken());
@@ -271,7 +274,7 @@ public abstract class Page
      * @return true if we're running as a subframe, false if we're running in standalone test mode.
      */
     protected static native boolean configureCallbacks (Page page) /*-{
-        $wnd.top.setPageToken = function (token) {
+        $wnd.setPageToken = function (token) {
             page.@client.shell.Page::setPageToken(Ljava/lang/String;)(token)
         };
         return $wnd != $wnd.top;

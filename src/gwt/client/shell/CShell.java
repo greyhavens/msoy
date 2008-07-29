@@ -25,9 +25,6 @@ public class CShell
     /** Use this to make service calls. */
     public static WebIdent ident;
 
-    /** This member's current level. */
-    public static int level;
-
     /** Our active invitation if we landed at Whirled from an invite, null otherwise (for use if
      * and when we create an account). */
     public static Invitation activeInvite;

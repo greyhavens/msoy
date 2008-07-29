@@ -45,8 +45,6 @@ public class StatusPanel extends SmartTable
                 switch(event.getType()) {
                 case StatusChangeEvent.LEVEL:
                     _levels.setLevel(event.getValue());
-                    // keep our global level tracker up to date
-                    CShell.level = event.getValue();
                     // if our level changed, display some fancy graphics
                     if (isIncrease(event)) {
                         _levels.showLevelUpPopup();
@@ -102,9 +100,6 @@ public class StatusPanel extends SmartTable
         FlashEvents.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.GOLD, data.gold, 0));
         FlashEvents.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
 
-        // initialize some global bits
-        CShell.level = data.level;
-
         // configure our 'new mail' indicator
         setWidget(0, idx++, _mail);
         FlashEvents.dispatchEvent(
@@ -126,7 +121,6 @@ public class StatusPanel extends SmartTable
     public void didLogoff ()
     {
         _creds = null;
-        CShell.level = 0;
     }
 
     protected static boolean isIncrease (StatusChangeEvent event)
