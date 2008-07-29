@@ -61,7 +61,8 @@ public enum StatType implements Stat.Type
     }
 
     // from interface Stat.Type
-    public boolean isPersistent () {
+    public boolean isPersistent () 
+    {
         return _persist;
     }
 

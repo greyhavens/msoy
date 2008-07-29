@@ -12,6 +12,9 @@ public abstract class Badge
 {
     /** The unique code representing the type of this badge. */
     public int badgeCode;
+    
+    /** The public image URL for this badge. */
+    public String imageUrl;
 
     /**
      * NB - the design for this has changed; we aren't planning on allowing suppressed Badges
@@ -22,12 +25,19 @@ public abstract class Badge
      * shown or acquired.
      */
     //public boolean isSuppressed;
-
-    /** Returns the URL where the badge's image is stored */
-    public String getImageUrl ()
+    
+    public Badge ()
     {
-        // TODO
-        return "";
+        // for deserialization
+    }
+    
+    /**
+     * Creates a new badge, and automatically fills in the badge imageUrl from the BadgeType Enum.
+     */
+    public Badge (BadgeType type)
+    {
+        this.badgeCode = type.getCode();
+        imageUrl = getType().getImageUrl();
     }
 
     /** Returns this Badge's Type */
@@ -37,7 +47,7 @@ public abstract class Badge
     }
 
     // from interface DSet.Entry
-    public Comparable getKey ()
+    public Comparable<Integer> getKey ()
     {
         return new Integer(badgeCode);
     }

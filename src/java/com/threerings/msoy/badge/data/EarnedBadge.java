@@ -19,7 +19,7 @@ public class EarnedBadge extends Badge
     /** Constructs a new EarnedBadge with the specified type. */
     public EarnedBadge (BadgeType type, long whenEarned)
     {
-        this.badgeCode = type.getCode();
+        super(type);
         this.whenEarned = whenEarned;
     }
 

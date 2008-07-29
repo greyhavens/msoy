@@ -10,6 +10,9 @@ public class Badge extends SimpleStreamableObject
 {
     /** The code that uniquely identifies this badge type. */
     public var badgeCode :int;
+    
+    /** The public image URL for this badge. */
+    public var imageUrl :String; 
 
     public function getKey () :Object
     {
@@ -21,6 +24,7 @@ public class Badge extends SimpleStreamableObject
     {
         super.readObject(ins);
         badgeCode = ins.readInt();
+        imageUrl = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -28,6 +32,7 @@ public class Badge extends SimpleStreamableObject
     {
         super.writeObject(out);
         out.writeInt(badgeCode);
+        out.writeField(imageUrl);
     }
 }
 
