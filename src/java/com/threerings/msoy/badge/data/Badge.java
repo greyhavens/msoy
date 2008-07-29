@@ -37,7 +37,7 @@ public abstract class Badge
     public Badge (BadgeType type)
     {
         this.badgeCode = type.getCode();
-        imageUrl = getType().getImageUrl();
+        imageUrl = type.getImageUrl();
     }
 
     /** Returns this Badge's Type */
