@@ -73,6 +73,7 @@ import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
+import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.server.AVRDispatcher;
 import com.threerings.msoy.avrg.server.AVRGameManager;
 import com.threerings.msoy.avrg.server.AVRProvider;
@@ -85,7 +86,6 @@ import com.threerings.msoy.avrg.server.persist.QuestStateRecord;
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyObject;
-import com.threerings.msoy.game.data.AVRGameConfig;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
@@ -104,7 +104,7 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class GameGameRegistry
-    implements LobbyProvider, AVRProvider, ShutdownManager.Shutdowner, 
+    implements LobbyProvider, AVRProvider, ShutdownManager.Shutdowner,
     LobbyManager.ShutdownObserver, AVRGameManager.ShutdownObserver
 {
     @Inject public GameGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
@@ -380,15 +380,15 @@ public class GameGameRegistry
                 MsoyGameDefinition def;
                 try {
                     def = (MsoyGameDefinition)new MsoyGameParser().parseGame(_content.game);
-                    
+
                 } catch (IOException ioe) {
                     log.warning("Error parsing game config", "game", _content.game, ioe);
                     return;
-                    
+
                 } catch (SAXException saxe) {
                     log.warning("Error parsing game config", "game", _content.game, saxe);
                     return;
-                    
+
                 }
 
                 List<PlaceManagerDelegate> delegates = Lists.newArrayList();
@@ -684,7 +684,7 @@ public class GameGameRegistry
         flushPercentiler(-Math.abs(gameId)); // single-player
         flushPercentiler(Math.abs(gameId)); // multiplayer
     }
-    
+
     public void avrGameDidShutdown (int gameId)
     {
         // destroy our record of that avrg
@@ -693,10 +693,10 @@ public class GameGameRegistry
 
         // kill the bureau session
         killBureauSession(gameId);
-        
+
         // let our world server know we're audi
         _worldClient.stoppedHostingGame(gameId);
-        
+
         // TODO: do avrg's need to flush percentilers
     }
 
