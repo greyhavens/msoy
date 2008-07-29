@@ -185,10 +185,13 @@ public class UploadUtil
         throws IOException
     {
         // the snapshot gets uploaded to /snapshot/<
-        String name = String.valueOf(uploadFile.getSceneId()) +
-            MediaDesc.mimeTypeToSuffix(uploadFile.getMimeType());
+        byte mimeType = uploadFile.getMimeType();
+        String sceneId = String.valueOf(uploadFile.getSceneId());
+        String mimeSuffix = MediaDesc.mimeTypeToSuffix(mimeType);
         publishStream(uploadFile.getInputStream(), SNAPSHOT_DIRECTORY,
-            name, MediaDesc.mimeTypeToString(uploadFile.getMimeType()));
+            sceneId + mimeSuffix, MediaDesc.mimeTypeToString(uploadFile.getMimeType()));
+        publishImage(MediaDesc.SNAPSHOT_THUMB_SIZE, uploadFile, mimeType, "jpg",
+            SNAPSHOT_DIRECTORY, sceneId + "_t" + mimeSuffix);
     }
 
     /**
@@ -209,6 +212,26 @@ public class UploadUtil
     public static MediaInfo publishImage (String mediaId, UploadFile uploadFile)
         throws IOException
     {
+        int size = Item.THUMB_MEDIA.equals(mediaId)
+            ? MediaDesc.THUMBNAIL_SIZE : MediaDesc.PREVIEW_SIZE;
+        return publishImage(size, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT,
+            null, null);
+    }
+
+    /**
+     * Computes and fills in the constraints on the supplied image, scaling thumbnails as
+     * necessary, and publishes the image data to the media store.
+     *
+     * @param size the size of the thumbnail to generate, or previewSize to
+     * not generate a thumbnail. Wacky, I know.
+     *
+     * @return a MediaInfo object filled in with the published image info.
+     */
+    public static MediaInfo publishImage (
+        int size, UploadFile uploadFile, byte thumbMime, String thumbFormat,
+        String dir, String name)
+        throws IOException
+    {
         // convert the uploaded file data into an image object
         BufferedImage image = ImageIO.read(uploadFile.getInputStream());
         if (image == null) {
@@ -217,22 +240,22 @@ public class UploadUtil
 
         String hash = uploadFile.getHash();
         byte mimeType = uploadFile.getMimeType();
-        int width = image.getWidth(), height = image.getHeight();
-        int size = MediaDesc.PREVIEW_SIZE;
+        int width = image.getWidth();
+        int height = image.getHeight();
 
         // if we're uploading a thumbnail image...
         boolean published = false;
-        if (mediaId.equals(Item.THUMB_MEDIA)) {
-            // ...we want to compute our constraint against the thumbnail size...
-            size = MediaDesc.THUMBNAIL_SIZE;
+        if (size != MediaDesc.PREVIEW_SIZE) {
+            int targetWidth = MediaDesc.DIMENSIONS[size * 2];
+            int targetHeight = MediaDesc.DIMENSIONS[size * 2 + 1];
             // ...and we may need to scale our image
-            if (width > MediaDesc.THUMBNAIL_WIDTH || height > MediaDesc.THUMBNAIL_HEIGHT) {
+            if (width > targetWidth || height > targetHeight) {
                 // determine the size of our to be scaled image
-                float tratio = MediaDesc.THUMBNAIL_WIDTH / (float)MediaDesc.THUMBNAIL_HEIGHT;
+                float tratio = targetWidth / (float)targetHeight;
                 float iratio = image.getWidth() / (float)image.getHeight();
                 float scale = (iratio > tratio) ?
-                    MediaDesc.THUMBNAIL_WIDTH / (float)image.getWidth() :
-                    MediaDesc.THUMBNAIL_HEIGHT / (float)image.getHeight();
+                    targetWidth / (float)image.getWidth() :
+                    targetHeight / (float)image.getHeight();
                 width = Math.max(1, Math.round(scale * image.getWidth()));
                 height = Math.max(1, Math.round(scale * image.getHeight()));
 
@@ -253,17 +276,22 @@ public class UploadUtil
                 } catch (NoSuchAlgorithmException nsa) {
                     throw new RuntimeException(nsa.getMessage());
                 }
+                mimeType = thumbMime;
+
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 DigestOutputStream digout = new DigestOutputStream(bout, digest);
-                ImageIO.write(timage, THUMBNAIL_IMAGE_FORMAT,
-                              new MemoryCacheImageOutputStream(digout));
+                ImageIO.write(timage, thumbFormat, new MemoryCacheImageOutputStream(digout));
 
                 // update our hash and thumbnail
                 hash = StringUtil.hexlate(digest.digest());
-                mimeType = THUMBNAIL_MIME_TYPE;
 
                 // publish the thumbnail
-                publishStream(new ByteArrayInputStream(bout.toByteArray()), hash, mimeType);
+                ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+                if (name == null) {
+                    publishStream(bin, hash, mimeType);
+                } else {
+                    publishStream(bin, dir, name, MediaDesc.mimeTypeToString(mimeType));
+                }
                 bout.close();
                 published = true;
             }
