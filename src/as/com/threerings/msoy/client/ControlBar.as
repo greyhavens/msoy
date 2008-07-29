@@ -250,7 +250,7 @@ public class ControlBar extends HBox
             [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR /*,UI_VIEWER*/ ]);
         addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR /*,UI_VIEWER*/,
             UI_CHATREMOVED]);
-        addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT /*, UI_VIEWER*/, UI_CHATREMOVED ]);
+        addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT, UI_VIEWER, UI_CHATREMOVED ]);
 
         //addGroupChild(_partyBtn, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER,
         //    UI_CHATREMOVED ]);
@@ -341,7 +341,19 @@ public class ControlBar extends HBox
      */
     protected function handlePopZoom () :void
     {
-        SliderPopup.toggle(_zoomBtn, Prefs.getZoom(), Prefs.setZoom);
+        SliderPopup.toggle(_zoomBtn, getZoom(), setZoom);
+    }
+
+    // overrideable
+    protected function getZoom () :Number
+    {
+        return Prefs.getZoom();
+    }
+
+    // overrideable
+    protected function setZoom (newZoom :Number) :void
+    {
+        Prefs.setZoom(newZoom);
     }
 
     /** Our clientside context. */

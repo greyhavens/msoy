@@ -100,6 +100,18 @@ public class RoomStudioView extends RoomView
         return _avatar;
     }
 
+    // from RoomView
+    override public function getZoom () :Number
+    {
+        return _zoom;
+    }
+
+    public function setZoom (newZoom :Number) :void
+    {
+        _zoom = newZoom;
+        relayout();
+    }
+
     public function doEntityMove (ident :ItemIdent, newLoc :MsoyLocation) :void
     {
         var sprite :OccupantSprite = _entities.get(ident) as OccupantSprite;
@@ -363,12 +375,6 @@ public class RoomStudioView extends RoomView
         _scaleReset.enabled = (1 != getSpriteScale());
     }
 
-    // from RoomView
-    override protected function getZoom () :Number
-    {
-        return 1; // don't let a user's zoom pref be used in the viewer
-    }
-
     protected function getScaleFromParams (params :Object) :Number
     {
         var scale :Number = Number(params["scale"]);
@@ -376,6 +382,8 @@ public class RoomStudioView extends RoomView
     }
 
     protected var _sctx :StudioContext;
+
+    protected var _zoom :Number = 1;
 
     protected var _testingSprite :MsoySprite;
     protected var _avatar :MemberSprite;

@@ -333,6 +333,24 @@ public class WorldControlBar extends ControlBar
         });
     }
 
+    override protected function getZoom () :Number
+    {
+        // in the "viewer", we don't save the zoom in preferences
+        var studioView :RoomStudioView = _ctx.getTopPanel().getPlaceView() as RoomStudioView;
+        return (studioView != null) ? studioView.getZoom() : super.getZoom();
+    }
+
+    override protected function setZoom (newZoom :Number) :void
+    {
+        // in the "viewer", we don't save the zoom in preferences
+        var studioView :RoomStudioView = _ctx.getTopPanel().getPlaceView() as RoomStudioView;
+        if (studioView != null) {
+            studioView.setZoom(newZoom);
+        } else {
+            super.setZoom(newZoom);
+        }
+    }
+
     /** Are we in room editing mode? */
     protected var _isEditing :Boolean;
 

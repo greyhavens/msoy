@@ -172,6 +172,14 @@ public class RoomView extends Sprite
     }
 
     /**
+     * Get the zoom level of the room.
+     */
+    public function getZoom () :Number
+    {
+        return Prefs.getZoom();
+    }
+
+    /**
      * Get the actions currently published by our own avatar.
      */
     public function getMyActions () :Array
@@ -700,14 +708,6 @@ public class RoomView extends Sprite
             }
         }
         return maxScale;
-    }
-
-    /**
-     * Get the zoom level of the room.
-     */
-    protected function getZoom () :Number
-    {
-        return Prefs.getZoom();
     }
 
     protected function scrollView () :void
