@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -22,7 +23,9 @@ import com.samskivert.util.Invoker;
 
 import com.threerings.bureau.server.BureauRegistry;
 
+import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
+import com.threerings.crowd.server.PlaceManagerDelegate;
 import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.presents.annotation.MainInvoker;
@@ -73,6 +76,7 @@ import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.avrg.server.AVRDispatcher;
 import com.threerings.msoy.avrg.server.AVRGameManager;
 import com.threerings.msoy.avrg.server.AVRProvider;
+import com.threerings.msoy.avrg.server.QuestDelegate;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.GameStateRecord;
 import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
@@ -81,6 +85,7 @@ import com.threerings.msoy.avrg.server.persist.QuestStateRecord;
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.AVRGameConfig;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
@@ -329,6 +334,9 @@ public class GameGameRegistry
                               final InvocationService.ResultListener listener)
         throws InvocationException
     {
+        // TODO: transition
+        final int instanceId = 1;
+
         final PlayerObject player = (PlayerObject) caller;
 
         InvocationService.ResultListener joinListener =
@@ -349,9 +357,6 @@ public class GameGameRegistry
         _loadingAVRGames.put(gameId, list = new ResultListenerList());
         list.add(joinListener);
 
-        final AVRGameManager fmgr = _injector.getInstance(AVRGameManager.class);
-        fmgr.setShutdownObserver(this);
-        
         _invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             public void invokePersist () throws Exception {
                 if (gameId == Game.TUTORIAL_GAME_ID) {
@@ -385,13 +390,36 @@ public class GameGameRegistry
                     return;
                     
                 }
-                
-                fmgr.startup(gameId, _content, def, _recs);
-                _avrgManagers.put(gameId, fmgr);
+
+                List<PlaceManagerDelegate> delegates = Lists.newArrayList();
+                // TODO: Re-enable event logging for AVRGs
+//                delegates.add(new EventLoggingDelegate(_content));
+                // TODO: Refactor the bits of AwardDelegate that we want
+//                delegates.add(new AwardDelegate(_content));
+                delegates.add(new QuestDelegate(_content));
+                delegates.add(new AgentTraceDelegate(gameId));
+
+                AVRGameConfig config = new AVRGameConfig();
+                config.init(_content.game, def);
+
+                AVRGameManager mgr;
+                try {
+                    mgr = (AVRGameManager)_plreg.createPlace(config, delegates);
+
+                } catch (Exception e) {
+                    log.warning("Failed to create AVRGameObject", "gameId", gameId, e);
+                    return;
+                }
+
+                mgr.getGameObject().setGameMedia(_content.game.gameMedia);
+                mgr.setShutdownObserver(GameGameRegistry.this);
+                mgr.initializeState(_recs);
+
+                _avrgManagers.put(gameId, mgr);
 
                 ResultListenerList list = _loadingAVRGames.remove(gameId);
                 if (list != null) {
-                    list.requestProcessed(fmgr);
+                    list.requestProcessed(mgr);
                 } else {
                     log.warning(
                         "No listeners when done activating AVRGame [gameId=" + gameId + "]");
@@ -442,8 +470,9 @@ public class GameGameRegistry
         // get the corresponding manager
         AVRGameManager mgr = _avrgManagers.get(gameId);
         if (mgr != null) {
-            mgr.removePlayer(player);
-            _worldClient.leaveAVRGame(playerId);
+            _locmgr.leavePlace(player);
+            // TODO: no longer needed?
+            // _worldClient.leaveAVRGame(playerId);
 
         } else {
             log.warning("Tried to deactivate AVRG without manager [gameId=" + gameId + "]");
@@ -630,7 +659,7 @@ public class GameGameRegistry
     {
         // shutdown our active lobbies
         for (LobbyManager lmgr : _lobbies.values().toArray(new LobbyManager[_lobbies.size()])) {
-            lobbyDidShutdown(lmgr.getGame());
+            lobbyDidShutdown(lmgr.getGame().gameId);
         }
 
         for (AVRGameManager amgr : _avrgManagers.values()) {
@@ -639,34 +668,34 @@ public class GameGameRegistry
     }
 
     // from interface LobbyManager.ShutdownObserver
-    public void lobbyDidShutdown (final Game game)
+    public void lobbyDidShutdown (int gameId)
     {
         // destroy our record of that lobby
-        _lobbies.remove(game.gameId);
-        _loadingLobbies.remove(game.gameId); // just in case
+        _lobbies.remove(gameId);
+        _loadingLobbies.remove(gameId); // just in case
 
         // kill the bureau session, if any
-        killBureauSession(game.gameId);
+        killBureauSession(gameId);
 
         // let our world server know we're audi
-        _worldClient.stoppedHostingGame(game.gameId);
+        _worldClient.stoppedHostingGame(gameId);
 
         // flush any modified percentile distributions
-        flushPercentiler(-Math.abs(game.gameId)); // single-player
-        flushPercentiler(Math.abs(game.gameId)); // multiplayer
+        flushPercentiler(-Math.abs(gameId)); // single-player
+        flushPercentiler(Math.abs(gameId)); // multiplayer
     }
     
-    public void avrGameDidShutdown (final Game game)
+    public void avrGameDidShutdown (int gameId)
     {
         // destroy our record of that avrg
-        _avrgManagers.remove(game.gameId);
-        _loadingAVRGames.remove(game.gameId);
-        
+        _avrgManagers.remove(gameId);
+        _loadingAVRGames.remove(gameId);
+
         // kill the bureau session
-        killBureauSession(game.gameId);
+        killBureauSession(gameId);
         
         // let our world server know we're audi
-        _worldClient.stoppedHostingGame(game.gameId);
+        _worldClient.stoppedHostingGame(gameId);
         
         // TODO: do avrg's need to flush percentilers
     }
@@ -711,19 +740,40 @@ public class GameGameRegistry
             return;
         }
 
+        final int placeOid = mgr.getGameObject().getOid();
+        try {
+            _locmgr.moveTo(player, placeOid);
+
+        } catch (InvocationException pe) {
+            log.warning("Move to AVRGameObject failed", "gameId", mgr.getGameId(), pe);
+            listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+        }
+
         _invoker.postUnit(new RepositoryUnit("joinAVRGame") {
             public void invokePersist () throws Exception {
                 _questRecs = _avrgRepo.getQuests(mgr.getGameId(), playerId);
                 _stateRecs = _avrgRepo.getPlayerGameState(mgr.getGameId(), playerId);
             }
             public void handleSuccess () {
-                mgr.addPlayer(player, _questRecs, _stateRecs);
-                listener.requestProcessed(mgr.getGameObject().getOid());
+                player.startTransaction();
+                try {
+                    for (PlayerGameStateRecord rec : _stateRecs) {
+                        player.addToGameState(rec.toEntry());
+                    }
+                    for (QuestStateRecord rec: _questRecs) {
+                        player.addToQuestState(rec.toEntry());
+                    }
+                } finally {
+                    player.commitTransaction();
+                }
+
+                listener.requestProcessed(placeOid);
             }
             public void handleFailure (Exception pe) {
                 log.warning("Unable to resolve player state [gameId=" +
                     mgr.getGameId() + ", player=" + playerId + "]", pe);
             }
+
             protected List<QuestStateRecord> _questRecs;
             protected List<PlayerGameStateRecord> _stateRecs;
         });
@@ -803,10 +853,10 @@ public class GameGameRegistry
     protected Injector _injector;
 
     // various and sundry dependent services
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected InvocationManager _invmgr;
     @Inject protected GameWatcherManager _watchmgr;
+    @Inject protected LocationManager _locmgr;
     @Inject protected PlaceRegistry _plreg;
     @Inject protected WorldServerClient _worldClient;
     @Inject protected MsoyEventLogger _eventLog;

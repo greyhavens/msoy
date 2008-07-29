@@ -13,8 +13,8 @@ import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
 
 /**
- * Contains the gobs of game metadata that we load when a lobby is resolved and pass along to games
- * whence they are created.
+ * Contains the gobs of game metadata that we load when a lobby or an AVRG is resolved and
+ * pass along to games once they are created.
  */
 public class GameContent
 {

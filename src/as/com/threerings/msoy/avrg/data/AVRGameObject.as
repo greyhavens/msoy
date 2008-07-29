@@ -4,6 +4,7 @@
 package com.threerings.msoy.avrg.data {
 
 import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.io.ObjectInputStream;
 
@@ -20,7 +21,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 /**
  * Holds game state for an AVRGame.
  */
-public class AVRGameObject extends DObject
+public class AVRGameObject extends PlaceObject
 {
     /** The identifier for a MessageEvent containing a user message. */
     public static const USER_MESSAGE :String = "Umsg";
@@ -38,12 +39,6 @@ public class AVRGameObject extends DObject
     /** The field name of the <code>state</code> field. */
     public static const STATE :String = "state";
 
-    /** The field name of the <code>playerOids</code> field. */
-    public static const PLAYER_OIDS :String = "playerOids";
-
-    /** The field name of the <code>players</code> field. */
-    public static const PLAYERS :String = "players";
-
     /** The field name of the <code>playerLocs</code> field. */
     public static const PLAYER_LOCS :String = "playerLocs";
 
@@ -58,12 +53,6 @@ public class AVRGameObject extends DObject
     /** Contains the game's state. */
     public var state :DSet = new DSet();
 
-    /** Tracks the oid of the body objects of all of the active players of this game. */
-    public var playerOids :OidList;
-
-    /** Contains an {@link OccupantInfo} record for each player of this game. */
-    public var players :DSet;
-
     /**
      * Tracks the (scene) location of each player. This data is only updated when the agent
      * has successfully subscribed to the scene's RoomObject and it's safe for clients to make
@@ -75,32 +64,12 @@ public class AVRGameObject extends DObject
     /** Used to communicate with the AVRGameManager. */
     public var avrgService :AVRGameMarshaller;
     
-    /**
-     * Looks up a player's occupant info by name.
-     *
-     * @return the occupant info record for the named user or null if no
-     * user in the room has that username.
-     */
-    public function getOccupantInfo (username :Name) :OccupantInfo
-    {
-        var itr :Iterator = players.iterator();
-        while (itr.hasNext()) {
-            var info :OccupantInfo = (itr.next() as OccupantInfo);
-            if (info.username.equals(username)) {
-                return info;
-            }
-        }
-        return null;
-    }
-
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
 
         gameMedia = (ins.readObject() as MediaDesc);
         state = (ins.readObject() as DSet);
-        playerOids = (ins.readObject() as OidList);
-        players = (ins.readObject() as DSet);
         playerLocs = (ins.readObject() as DSet);
         avrgService = (ins.readObject() as AVRGameMarshaller);
     }

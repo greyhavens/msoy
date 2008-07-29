@@ -57,7 +57,7 @@ public class LobbyManager
     /** Allows interested parties to know when a lobby shuts down. */
     public interface ShutdownObserver
     {
-        void lobbyDidShutdown (Game game);
+        void lobbyDidShutdown (int gameId);
     }
 
     /**
@@ -233,7 +233,7 @@ public class LobbyManager
         _lobj.subscriberListener = null;
         _lobj.removeListener(_tableWatcher);
 
-        _shutObs.lobbyDidShutdown(_content.game);
+        _shutObs.lobbyDidShutdown(getGameId());
 
         _tableMgr.shutdown();
 

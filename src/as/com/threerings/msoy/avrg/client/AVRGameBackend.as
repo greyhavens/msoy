@@ -286,7 +286,7 @@ public class AVRGameBackend extends ControlBackend
         }
 
         var result :Array = new Array();
-        var iterator :Iterator = _gameObj.players.iterator();
+        var iterator :Iterator = _gameObj.occupantInfo.iterator();
         while (iterator.hasNext()) {
             var name :MemberName = OccupantInfo(iterator.next()).username as MemberName;
             if (name != null) {
@@ -529,7 +529,7 @@ public class AVRGameBackend extends ControlBackend
 
     protected var _gameListener :SetAdapter = new SetAdapter(
         function (event :EntryAddedEvent) :void {
-            if (event.getName() == AVRGameObject.PLAYERS && _roomObj != null) {
+            if (event.getName() == PlaceObject.OCCUPANT_INFO && _roomObj != null) {
                 var gameInfo :OccupantInfo = event.getEntry();
 
                 // we look this user up by display name in the room
@@ -541,7 +541,7 @@ public class AVRGameBackend extends ControlBackend
         },
         null,
         function (event :EntryRemovedEvent) :void {
-            if (event.getName() == AVRGameObject.PLAYERS && _roomObj != null) {
+            if (event.getName() == PlaceObject.OCCUPANT_INFO && _roomObj != null) {
                 var gameInfo :OccupantInfo = event.getOldEntry();
 
                 // we look this user up by display name in the room
