@@ -131,7 +131,6 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.stats = new StatSet(stats.iterator());
 
         // and their badges
-        @SuppressWarnings("unused") BadgeType dummy2 = BadgeType.UNUSED;
         List<BadgeRecord> badgeRecs = _badgeRepo.loadBadges(member.memberId);
         List<EarnedBadge> badges = Lists.newArrayListWithExpectedSize(badgeRecs.size());
         for (BadgeRecord rec : badgeRecs) {
