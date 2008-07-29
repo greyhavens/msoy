@@ -32,9 +32,9 @@ public enum BadgeType
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getSetStatSize(StatType.UNIQUE_GAMES_PLAYED);
         }
-    }
+    },
 
-    ;
+    UNUSED(Category.GAME, 0, "dummy", 0, "dummy");
 
     /**
      * Defines the various badge categories, which can be used to suggest to the user
@@ -102,7 +102,7 @@ public enum BadgeType
     {
         return _coinValue;
     }
-    
+
     public String getImageUrl ()
     {
         return STATIC_IMAGE_URL + _imageName;
@@ -116,8 +116,8 @@ public enum BadgeType
     {
         return 0;
     }
-    
-    BadgeType (Category category, int coinValue, String unitName, int requiredUnits, 
+
+    BadgeType (Category category, int coinValue, String unitName, int requiredUnits,
             String imageName)
     {
         _category = category;
@@ -168,7 +168,7 @@ public enum BadgeType
     protected String _unitName;
     protected int _requiredUnits;
     protected String _imageName;
-    
+
     protected static final String STATIC_IMAGE_URL = DeploymentConfig.staticMediaURL + "badge/";
 
     /** The table mapping stat codes to enumerated types. */
