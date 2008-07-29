@@ -48,7 +48,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.GameState;
-import com.threerings.msoy.game.data.AVRGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
@@ -60,6 +59,7 @@ import com.threerings.msoy.game.server.GameWatcherManager.Observer;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
+import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.avrg.data.SceneInfo;
@@ -88,12 +88,12 @@ public class AVRGameManager extends PlaceManager
         /** Informs the observer a shutdown has happened. */
         void avrGameDidShutdown (int gameId);
     }
-    
+
     public void setShutdownObserver (ShutdownObserver obs)
     {
         _shutdownObserver = obs;
     }
-    
+
     public int getGameId ()
     {
         return _gameId;
@@ -141,7 +141,7 @@ public class AVRGameManager extends PlaceManager
     }
 
     @Override
-    protected void didStartup () 
+    protected void didStartup ()
     {
         AVRGameConfig cfg = (AVRGameConfig)_config;
         MsoyGameDefinition def = (MsoyGameDefinition) cfg.getGameDefinition();
@@ -150,11 +150,11 @@ public class AVRGameManager extends PlaceManager
 
         _gameObj = (AVRGameObject)_plobj;
         _gameObj.subscriberListener = this;
-        
+
         _gameAgentObj = createGameAgentObject(_gameId, def);
         _gameAgentObj.gameOid = _gameObj.getOid();
         _breg.startAgent(_gameAgentObj);
-        
+
         _gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
 
         _shutdownCheck = new Interval (_omgr) {
@@ -174,12 +174,12 @@ public class AVRGameManager extends PlaceManager
         int agents = _gameAgentObj != null ? 1 : 0;
         if (target.getSubscriberCount() <= agents) {
             _shutdownCheck.schedule(IDLE_UNLOAD_PERIOD);
-            
+
         } else {
-            _shutdownCheck.cancel();            
+            _shutdownCheck.cancel();
         }
     }
-    
+
     /**
      * The game has changed while we're hosting it; update the media, the client will reload.
      */
@@ -375,13 +375,13 @@ public class AVRGameManager extends PlaceManager
         _shutdown = true;
 
         _shutdownCheck.cancel();
-        
+
         stopTickers();
 
         if (_gameAgentObj != null) {
             _breg.destroyAgent(_gameAgentObj);
         }
-        
+
         // identify any modified memory records for flushing to the database
         final List<GameStateRecord> recs = new ArrayList<GameStateRecord>();
         for (GameState entry : _gameObj.state) {
@@ -397,7 +397,7 @@ public class AVRGameManager extends PlaceManager
                 }
             }
         });
-        
+
         if (_shutdownObserver != null) {
             _shutdownObserver.avrGameDidShutdown(_gameId);
         }
@@ -520,16 +520,16 @@ public class AVRGameManager extends PlaceManager
         if (_gameObj.getSubscriberCount() <= agents) {
             shutdown();
         }
-    }   
-        
+    }
+
     protected AVRGameAgentObject createGameAgentObject (int gameId, MsoyGameDefinition def)
-    {   
+    {
         String code = def.getServerMediaPath(gameId);
         if (code == null) {
             log.warning("No server code for avrg", "gameId", gameId);
             return null;
         }
-            
+
         AVRGameAgentObject agent = new AVRGameAgentObject();
         agent.bureauId = BureauTypes.GAME_BUREAU_ID_PREFIX + gameId;
         agent.bureauType = BureauTypes.THANE_BUREAU_TYPE;
@@ -616,7 +616,7 @@ public class AVRGameManager extends PlaceManager
 
     /** The map of tickers, lazy-initialized. */
     protected HashMap<String, Ticker> _tickers;
-    
+
     /** Observer of our shutdown. */
     protected ShutdownObserver _shutdownObserver;
 

@@ -1,11 +1,10 @@
 //
 // $Id: AVRGameConfig.java 9198 2008-05-16 19:21:43Z jamie $
 
-package com.threerings.msoy.game.data;
+package com.threerings.msoy.avrg.data;
 
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.util.ActionScript;
-import com.threerings.toybox.data.ToyBoxGameConfig;
 import com.whirled.game.data.GameDefinition;
 import com.threerings.msoy.item.data.all.Game;
 
