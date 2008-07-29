@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import client.item.ItemRating;
-import client.item.rating.GameDetailRatingModel;
 import client.msgs.CommentsPanel;
 import client.shell.Page;
 import client.ui.StyledTabPanel;
