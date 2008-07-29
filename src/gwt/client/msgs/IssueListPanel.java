@@ -5,6 +5,9 @@ package client.msgs;
 
 import java.util.List;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -13,12 +16,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.msoy.fora.gwt.Issue;
 
+import client.shell.CShell;
 import client.shell.Page;
 import client.util.Link;
 
@@ -63,7 +65,7 @@ public class IssueListPanel extends PagedGrid<Issue>
     @Override // from PagedGrid
     protected Widget createEmptyContents ()
     {
-        HTML empty = new HTML(CMsgs.mmsgs.noIssues());
+        HTML empty = new HTML(_mmsgs.noIssues());
         empty.setStyleName("Empty");
         return empty;
     }
@@ -71,7 +73,7 @@ public class IssueListPanel extends PagedGrid<Issue>
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return CMsgs.mmsgs.noIssues();
+        return _mmsgs.noIssues();
     }
 
     @Override // from PagedGrid
@@ -86,19 +88,18 @@ public class IssueListPanel extends PagedGrid<Issue>
         super.addCustomControls(controls);
 
         // add a button for refreshing the issue list
-        _refresh = new Button(CMsgs.mmsgs.tlpRefresh(), new ClickListener() {
+        _refresh = new Button(_mmsgs.tlpRefresh(), new ClickListener() {
             public void onClick (Widget sender) {
                 _parent.displayIssues(true);
             }
         });
         controls.setWidget(0, 0, _refresh);
-        if (CMsgs.isSupport()) {
-            controls.setWidget(0, 1, new Button(
-                CMsgs.mmsgs.newIssue(), new ClickListener() {
-                    public void onClick (Widget sender) {
-                        _parent.createIssue();
-                    }
-                }));
+        if (CShell.isSupport()) {
+            controls.setWidget(0, 1, new Button(_mmsgs.newIssue(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    _parent.createIssue();
+                }
+            }));
         }
     }
 
@@ -124,13 +125,13 @@ public class IssueListPanel extends PagedGrid<Issue>
             setWidget(0, col, toIssue);
             getFlexCellFormatter().setStyleName(0, col++, "Description");
 
-            setText(0, col, IssueMsgs.priorityMsg(issue, CMsgs.mmsgs));
+            setText(0, col, IssueMsgs.priorityMsg(issue, _mmsgs));
             getFlexCellFormatter().setStyleName(0, col++, "State");
 
-            setText(0, col, IssueMsgs.categoryMsg(issue, CMsgs.mmsgs));
+            setText(0, col, IssueMsgs.categoryMsg(issue, _mmsgs));
             getFlexCellFormatter().setStyleName(0, col++, "State");
 
-            setText(0, col, (issue.owner == null ? CMsgs.mmsgs.iNone() : issue.owner.toString()));
+            setText(0, col, (issue.owner == null ? _mmsgs.iNone() : issue.owner.toString()));
             getFlexCellFormatter().setStyleName(0, col++, "State");
 
             VerticalPanel created = new VerticalPanel();
@@ -160,8 +161,8 @@ public class IssueListPanel extends PagedGrid<Issue>
     protected String _linkPrefix;
     protected String _linkPostfix = "";
 
-    /** Used to format the created date. */
-    protected static SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
+    protected static final SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
+    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
 
     /** The number of issues displayed per page. */
     protected static final int ISSUES_PER_PAGE = 20;

@@ -3,8 +3,8 @@
 
 package client.msgs;
 
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 
@@ -12,8 +12,9 @@ import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
-import client.util.ServiceUtil;
+import client.shell.CShell;
 import client.util.ServiceBackedDataModel;
+import client.util.ServiceUtil;
 
 /**
  * Various data models used by the issue services.
@@ -60,7 +61,7 @@ public class IssueModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            _issuesvc.loadIssues(CMsgs.ident, _type, _state, start, count, needCount, this);
+            _issuesvc.loadIssues(CShell.ident, _type, _state, start, count, needCount, this);
         }
 
         @Override // from ServiceBackedDataModel
@@ -92,8 +93,7 @@ public class IssueModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            _issuesvc.loadOwnedIssues(
-                    CMsgs.ident, _type, _state, start, count, needCount, this);
+            _issuesvc.loadOwnedIssues(CShell.ident, _type, _state, start, count, needCount, this);
         }
     }
 

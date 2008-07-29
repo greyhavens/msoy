@@ -7,15 +7,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
-import com.threerings.gwt.ui.WidgetUtil;
-
+import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -30,24 +31,24 @@ public class NewThreadPanel extends TableFooterPanel
     {
         _groupId = groupId;
 
-        addRow(CMsgs.mmsgs.ntpSubject(), _subject = new TextBox());
+        addRow(_mmsgs.ntpSubject(), _subject = new TextBox());
         _subject.setMaxLength(ForumThread.MAX_SUBJECT_LENGTH);
         _subject.setVisibleLength(40);
 
         if (isManager) {
             RowPanel bits = new RowPanel();
             bits.add(_announce = new CheckBox());
-            bits.add(MsoyUI.createLabel(CMsgs.mmsgs.ntpAnnounceTip(), "Tip"));
-            addRow(CMsgs.mmsgs.ntpAnnounce(), bits);
+            bits.add(MsoyUI.createLabel(_mmsgs.ntpAnnounceTip(), "Tip"));
+            addRow(_mmsgs.ntpAnnounce(), bits);
 
             bits = new RowPanel();
             bits.add(_sticky = new CheckBox());
-            bits.add(MsoyUI.createLabel(CMsgs.mmsgs.ntpStickyTip(), "Tip"));
-            addRow(CMsgs.mmsgs.ntpSticky(), bits);
+            bits.add(MsoyUI.createLabel(_mmsgs.ntpStickyTip(), "Tip"));
+            addRow(_mmsgs.ntpSticky(), bits);
         }
 
         addRow(WidgetUtil.makeShim(5, 5));
-        addRow(CMsgs.mmsgs.ntpFirstMessage());
+        addRow(_mmsgs.ntpFirstMessage());
         addRow(_message = new MessageEditor());
 
         addFooterButton(new Button(_cmsgs.cancel(), new ClickListener() {
@@ -55,7 +56,7 @@ public class NewThreadPanel extends TableFooterPanel
                 ((ForumPanel)getParent()).newThreadCanceled(_groupId);
             }
         }));
-        Button submit = new Button(CMsgs.mmsgs.ntpSubmit());
+        Button submit = new Button(_mmsgs.ntpSubmit());
         new ForumCallback<ForumThread>(submit) {
             public boolean callService () {
                 return submitNewThread(this);
@@ -72,13 +73,13 @@ public class NewThreadPanel extends TableFooterPanel
     {
         String subject = _subject.getText().trim();
         if (subject.length() == 0) {
-            MsoyUI.error(CMsgs.mmsgs.errNoSubject());
+            MsoyUI.error(_mmsgs.errNoSubject());
             return false;
         }
 
         String message = _message.getHTML();
         if (message.length() == 0) {
-            MsoyUI.error(CMsgs.mmsgs.errNoMessage());
+            MsoyUI.error(_mmsgs.errNoMessage());
             return false;
         }
 
@@ -89,7 +90,7 @@ public class NewThreadPanel extends TableFooterPanel
         if (_sticky != null && _sticky.isChecked()) {
             flags |= ForumThread.FLAG_STICKY;
         }
-        _forumsvc.createThread(CMsgs.ident, _groupId, flags, subject, message, callback);
+        _forumsvc.createThread(CShell.ident, _groupId, flags, subject, message, callback);
         return true;
     }
 
@@ -99,6 +100,7 @@ public class NewThreadPanel extends TableFooterPanel
     protected MessageEditor _message;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
     protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
         ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
 }

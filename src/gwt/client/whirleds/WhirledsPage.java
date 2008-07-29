@@ -12,13 +12,12 @@ import client.msgs.ForumModels;
 import client.msgs.ForumPanel;
 import client.msgs.IssueModels;
 import client.msgs.IssuePanel;
-import client.msgs.MsgsEntryPoint;
 import client.msgs.ThreadPanel;
 import client.shell.Args;
 import client.shell.Page;
 import client.ui.MsoyUI;
 
-public class WhirledsPage extends MsgsEntryPoint
+public class WhirledsPage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()

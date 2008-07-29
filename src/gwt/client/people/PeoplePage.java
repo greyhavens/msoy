@@ -5,7 +5,6 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 
-import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
 import client.shell.Page;
 
@@ -13,7 +12,7 @@ import client.shell.Page;
  * Displays a profile's "portal" page with their profile information, friends,
  * and whatever else they want showing on their page.
  */
-public class PeoplePage extends MsgsEntryPoint
+public class PeoplePage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()

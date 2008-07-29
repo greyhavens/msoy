@@ -6,7 +6,7 @@ package client.mail;
 import client.shell.CShell;
 
 /**
- * Extends {@link CMsgs} and provides mail-specific services.
+ * Extends {@link CShell} and provides mail-specific services.
  */
 public class CMail extends CShell
 {

@@ -3,6 +3,7 @@
 
 package client.msgs;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -37,11 +38,13 @@ public class IssueMessagePanel extends SimpleMessagePanel
     {
         super.addInfo(info);
 
-        Widget link = Link.create(CMsgs.mmsgs.iThread(), Page.WHIRLEDS, "t_" + _threadId);
+        Widget link = Link.create(_mmsgs.iThread(), Page.WHIRLEDS, "t_" + _threadId);
         link.setStyleName("issueMessageLink");
         link.addStyleName("actionLabel");
         info.add(link);
     }
 
     protected int _threadId;
+
+    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
 }

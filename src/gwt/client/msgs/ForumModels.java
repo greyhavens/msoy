@@ -3,11 +3,14 @@
 
 package client.msgs;
 
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import com.threerings.gwt.util.ListenerList;
+import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.gwt.ForumMessage;
@@ -15,9 +18,7 @@ import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
-import com.threerings.gwt.util.ListenerList;
-import com.threerings.gwt.util.SimpleDataModel;
-
+import client.shell.CShell;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
@@ -98,7 +99,7 @@ public class ForumModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            _forumsvc.loadThreads(CMsgs.ident, _groupId, start, count, needCount, this);
+            _forumsvc.loadThreads(CShell.ident, _groupId, start, count, needCount, this);
         }
 
         @Override // from ServiceBackedDataModel
@@ -168,7 +169,7 @@ public class ForumModels
             }
 
             _forumsvc.loadUnreadThreads(
-                CMsgs.ident, MAX_UNREAD_THREADS, new AsyncCallback<ForumService.ThreadResult>() {
+                CShell.ident, MAX_UNREAD_THREADS, new AsyncCallback<ForumService.ThreadResult>() {
                     public void onSuccess (ForumService.ThreadResult result) {
                         _items = result.threads;
                         for (ForumThread thread : result.threads) {
@@ -262,8 +263,8 @@ public class ForumModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            _forumsvc.loadMessages(CMsgs.ident, _threadId, _thread.lastReadPostId,
-                                        start, count, needCount, this);
+            _forumsvc.loadMessages(CShell.ident, _threadId, _thread.lastReadPostId,
+                                   start, count, needCount, this);
         }
 
         @Override // from ServiceBackedDataModel

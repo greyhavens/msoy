@@ -11,13 +11,12 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
-import com.threerings.msoy.data.all.GroupName;
-
 import client.images.msgs.MsgsImages;
-
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
@@ -40,12 +39,12 @@ public class ForumPanel extends TitledListPanel
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayGroupThreads(groupId, _fmodels);
-        setContents(createHeader(groupId, CMsgs.mmsgs.groupThreadListHeader(""), threads), threads);
+        setContents(createHeader(groupId, _mmsgs.groupThreadListHeader(""), threads), threads);
 
         // set up a callback to configure our page title when we learn this group's name
         _fmodels.getGroupThreads(groupId).addGotNameListener(new AsyncCallback<GroupName>() {
             public void onSuccess (GroupName result) {
-                CMsgs.frame.setTitle(result.toString());
+                CShell.frame.setTitle(result.toString());
                 setGroupTitle(groupId, result.toString());
             }
             public void onFailure (Throwable error) { /* not used */ }
@@ -59,13 +58,13 @@ public class ForumPanel extends TitledListPanel
     {
         ThreadListPanel threads = new ThreadListPanel(this);
         threads.displayUnreadThreads(_fmodels, refresh);
-        setContents(createHeader(0, CMsgs.mmsgs.msgUnreadThreadsHeader(), null), threads);
+        setContents(createHeader(0, _mmsgs.msgUnreadThreadsHeader(), null), threads);
     }
 
     public void startNewThread (int groupId)
     {
         ForumModels.GroupThreads gthreads = _fmodels.getGroupThreads(groupId);
-        setContents(CMsgs.mmsgs.ntpTitle(), new NewThreadPanel(groupId, gthreads.isManager()));
+        setContents(_mmsgs.ntpTitle(), new NewThreadPanel(groupId, gthreads.isManager()));
     }
 
     protected SmartTable createHeader (int groupId, String title, SearchBox.Listener listener)
@@ -85,8 +84,8 @@ public class ForumPanel extends TitledListPanel
         if (listener != null) {
             header.setWidget(0, col++, new SearchBox(listener), 1, "Search");
         }
-        header.setText(0, col++, CMsgs.mmsgs.groupThreadPosts(), 1, "Posts");
-        header.setText(0, col++, CMsgs.mmsgs.groupThreadLastPost(), 1, "LastPost");
+        header.setText(0, col++, _mmsgs.groupThreadPosts(), 1, "Posts");
+        header.setText(0, col++, _mmsgs.groupThreadLastPost(), 1, "LastPost");
         if (groupId == 0) {
             header.setText(0, col++, "", 1, "IgnoreThread");
         }
@@ -99,7 +98,7 @@ public class ForumPanel extends TitledListPanel
     protected void setGroupTitle (int groupId, String groupName)
     {
         if (groupId > 0) {
-            String title = CMsgs.mmsgs.groupThreadListHeader(groupName);
+            String title = _mmsgs.groupThreadListHeader(groupName);
             Label titleLink = MsoyUI.createActionLabel(
                 title, Link.createListener(Page.WHIRLEDS, Args.compose("d", groupId)));
             _title.setWidget(titleLink);
@@ -108,7 +107,7 @@ public class ForumPanel extends TitledListPanel
 
     protected void newThreadPosted (ForumThread thread)
     {
-        MsoyUI.info(CMsgs.mmsgs.msgNewThreadPosted());
+        MsoyUI.info(_mmsgs.msgNewThreadPosted());
         _fmodels.newThreadPosted(thread);
         displayGroupThreads(thread.group.getGroupId());
     }
@@ -124,6 +123,6 @@ public class ForumPanel extends TitledListPanel
     /** Title for the page, set to group name after data load */
     protected SimplePanel _title;
 
-    /** Our action icon images. */
-    protected static MsgsImages _images = (MsgsImages)GWT.create(MsgsImages.class);
+    protected static final MsgsImages _images = (MsgsImages)GWT.create(MsgsImages.class);
+    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
 }

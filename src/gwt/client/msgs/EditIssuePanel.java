@@ -5,12 +5,6 @@ package client.msgs;
 
 import java.util.List;
 
-import client.ui.MsoyUI;
-import client.util.ClickCallback;
-import client.util.Link;
-
-import client.shell.Page;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -28,8 +22,13 @@ import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
-import client.util.ServiceUtil;
+import client.shell.CShell;
+import client.shell.Page;
+import client.ui.MsoyUI;
+import client.util.ClickCallback;
+import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays an issue and allows it to be edited if the user is authorized.
@@ -56,7 +55,7 @@ public class EditIssuePanel extends TableFooterPanel
     {
         _newIssue = true;
         _issue = new Issue();
-        _issue.creator = new MemberName(CMsgs.creds.permaName, CMsgs.creds.getMemberId());
+        _issue.creator = new MemberName(CShell.creds.permaName, CShell.creds.getMemberId());
         fillEditPanel();
     }
 
@@ -70,13 +69,13 @@ public class EditIssuePanel extends TableFooterPanel
         _issue = issue;
         _messageId = messageId;
         _page = page;
-        if (CMsgs.isSupport() && _issue.state == Issue.STATE_OPEN && messageId == 0) {
+        if (CShell.isSupport() && _issue.state == Issue.STATE_OPEN && messageId == 0) {
             fillEditPanel();
         } else {
             fillViewPanel();
         }
         _issuesvc.loadMessages(
-            CMsgs.ident, _issue.issueId, messageId, new MsoyCallback<List<ForumMessage>>() {
+            CShell.ident, _issue.issueId, messageId, new MsoyCallback<List<ForumMessage>>() {
                 public void onSuccess (List<ForumMessage> messages) {
                     if (messages != null) {
                         setMessages(messages);
@@ -89,35 +88,35 @@ public class EditIssuePanel extends TableFooterPanel
     {
         _table = new SmartTable(0, 5);
 
-        _table.setText(0, 0, CMsgs.mmsgs.iType());
-        _table.setText(1, 0, CMsgs.mmsgs.iCreator());
-        _table.setText(2, 0, CMsgs.mmsgs.iOwner());
-        _table.setText(3, 0, CMsgs.mmsgs.iDescription());
-        _table.setText(4, 0, CMsgs.mmsgs.iState());
-        _table.setText(5, 0, CMsgs.mmsgs.iPriority());
-        _table.setText(6, 0, CMsgs.mmsgs.iCategory());
-        _table.setText(7, 0, CMsgs.mmsgs.iComment());
+        _table.setText(0, 0, _mmsgs.iType());
+        _table.setText(1, 0, _mmsgs.iCreator());
+        _table.setText(2, 0, _mmsgs.iOwner());
+        _table.setText(3, 0, _mmsgs.iDescription());
+        _table.setText(4, 0, _mmsgs.iState());
+        _table.setText(5, 0, _mmsgs.iPriority());
+        _table.setText(6, 0, _mmsgs.iCategory());
+        _table.setText(7, 0, _mmsgs.iComment());
 
         addRow(_table);
     }
 
     protected void fillViewPanel ()
     {
-        _table.setText(0, 1, IssueMsgs.typeMsg(_issue.type, CMsgs.mmsgs));
+        _table.setText(0, 1, IssueMsgs.typeMsg(_issue.type, _mmsgs));
         _table.setText(1, 1, _issue.creator.toString());
         _table.setText(2, 1, (_issue.owner == null ?
-                    CMsgs.mmsgs.iNoOwner() : _issue.owner.toString()));
+                    _mmsgs.iNoOwner() : _issue.owner.toString()));
         _table.setText(3, 1, _issue.description);
-        _table.setText(4, 1, IssueMsgs.stateMsg(_issue.state, CMsgs.mmsgs));
-        _table.setText(5, 1, IssueMsgs.priorityMsg(_issue.priority, CMsgs.mmsgs));
-        _table.setText(6, 1, IssueMsgs.categoryMsg(_issue.category, CMsgs.mmsgs));
+        _table.setText(4, 1, IssueMsgs.stateMsg(_issue.state, _mmsgs));
+        _table.setText(5, 1, IssueMsgs.priorityMsg(_issue.priority, _mmsgs));
+        _table.setText(6, 1, IssueMsgs.categoryMsg(_issue.category, _mmsgs));
         _table.setText(7, 1, _issue.closeComment);
         _messagesRow = 8;
         if (_messageId > 0) {
-            Button assign = new Button(CMsgs.mmsgs.assign());
+            Button assign = new Button(_mmsgs.assign());
             new ClickCallback<Void>(assign) {
                 public boolean callService () {
-                    _issuesvc.assignMessage(CMsgs.ident, _issue.issueId, _messageId, this);
+                    _issuesvc.assignMessage(CShell.ident, _issue.issueId, _messageId, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
@@ -135,15 +134,15 @@ public class EditIssuePanel extends TableFooterPanel
         int row = 0;
         _table.setWidget(row++, 1, _typeBox = new ListBox());
         for (int ii = 0; ii < Issue.TYPE_VALUES.length; ii++) {
-            _typeBox.addItem(IssueMsgs.typeMsg(Issue.TYPE_VALUES[ii], CMsgs.mmsgs));
+            _typeBox.addItem(IssueMsgs.typeMsg(Issue.TYPE_VALUES[ii], _mmsgs));
             if (_issue.type == Issue.TYPE_VALUES[ii]) {
                 _typeBox.setSelectedIndex(ii);
             }
         }
         _table.setText(row++, 1, _issue.creator.toString());
         _table.setWidget(row++, 1, _ownerBox = new ListBox());
-        _ownerBox.addItem(CMsgs.mmsgs.iNoOwner());
-        _issuesvc.loadOwners(CMsgs.ident, new MsoyCallback<List<MemberName>>() {
+        _ownerBox.addItem(_mmsgs.iNoOwner());
+        _issuesvc.loadOwners(CShell.ident, new MsoyCallback<List<MemberName>>() {
             public void onSuccess (List<MemberName> owners) {
                 if (owners != null) {
                     setOwners(owners);
@@ -154,7 +153,7 @@ public class EditIssuePanel extends TableFooterPanel
 
         _table.setWidget(row++, 1, _stateBox = new ListBox());
         for (int ii = 0; ii < Issue.STATE_VALUES.length; ii++) {
-            _stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii], CMsgs.mmsgs));
+            _stateBox.addItem(IssueMsgs.stateMsg(Issue.STATE_VALUES[ii], _mmsgs));
             if (_issue.state == Issue.STATE_VALUES[ii]) {
                 _stateBox.setSelectedIndex(ii);
             }
@@ -162,7 +161,7 @@ public class EditIssuePanel extends TableFooterPanel
 
         _table.setWidget(row++, 1, _priorityBox = new ListBox());
         for (int ii = 0; ii < Issue.PRIORITY_VALUES.length; ii++) {
-            _priorityBox.addItem(IssueMsgs.priorityMsg(Issue.PRIORITY_VALUES[ii], CMsgs.mmsgs));
+            _priorityBox.addItem(IssueMsgs.priorityMsg(Issue.PRIORITY_VALUES[ii], _mmsgs));
             if (_issue.priority == Issue.PRIORITY_VALUES[ii]) {
                 _priorityBox.setSelectedIndex(ii);
             }
@@ -170,7 +169,7 @@ public class EditIssuePanel extends TableFooterPanel
 
         _table.setWidget(row++, 1, _categoryBox = new ListBox());
         for (int ii = 0; ii < Issue.CATEGORY_VALUES.length; ii++) {
-            _categoryBox.addItem(IssueMsgs.categoryMsg(Issue.CATEGORY_VALUES[ii], CMsgs.mmsgs));
+            _categoryBox.addItem(IssueMsgs.categoryMsg(Issue.CATEGORY_VALUES[ii], _mmsgs));
             if (_issue.category == Issue.CATEGORY_VALUES[ii]) {
                 _categoryBox.setSelectedIndex(ii);
             }
@@ -180,12 +179,12 @@ public class EditIssuePanel extends TableFooterPanel
 
         Button left, right;
         if (_tpanel != null) {
-            left = new Button(CMsgs.mmsgs.cancel(), new ClickListener() {
+            left = new Button(_mmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget source) {
                     _tpanel.showMessages();
                 }
             });
-            right = new Button(CMsgs.mmsgs.create());
+            right = new Button(_mmsgs.create());
             new ClickCallback<Issue>(right) {
                 public boolean callService () {
                     return commitEdit(true, this);
@@ -198,12 +197,12 @@ public class EditIssuePanel extends TableFooterPanel
             };
 
         } else {
-            left = new Button(CMsgs.mmsgs.cancel(), new ClickListener() {
+            left = new Button(_mmsgs.cancel(), new ClickListener() {
                 public void onClick (Widget source) {
                     _ipanel.redisplayIssues();
                 }
             });
-            right = new Button(_newIssue ? CMsgs.mmsgs.create() : CMsgs.mmsgs.update());
+            right = new Button(_newIssue ? _mmsgs.create() : _mmsgs.update());
             new ClickCallback<Issue>(right) {
                 public boolean callService () {
                     return commitEdit(_newIssue, this);
@@ -254,10 +253,10 @@ public class EditIssuePanel extends TableFooterPanel
                         _ownerNames.get(_ownerBox.getSelectedIndex() - 1) : null;
         _issue.description = _description.getText();
         if (_issue.description.length() == 0) {
-            MsoyUI.error(CMsgs.mmsgs.errINoDescription());
+            MsoyUI.error(_mmsgs.errINoDescription());
             return false;
         } else if (_issue.description.length() > Issue.MAX_DESC_LENGTH) {
-            MsoyUI.error(CMsgs.mmsgs.errIDescLong());
+            MsoyUI.error(_mmsgs.errIDescLong());
             return false;
         }
         _issue.state = Issue.STATE_VALUES[_stateBox.getSelectedIndex()];
@@ -267,23 +266,23 @@ public class EditIssuePanel extends TableFooterPanel
         if (_issue.state != Issue.STATE_OPEN) {
             _issue.closeComment = _comment.getText();
             if (_issue.closeComment.length() == 0) {
-                MsoyUI.error(CMsgs.mmsgs.errINoComment());
+                MsoyUI.error(_mmsgs.errINoComment());
                 return false;
             } else if (_issue.closeComment.length() > Issue.MAX_COMMENT_LENGTH) {
-                MsoyUI.error(CMsgs.mmsgs.errICommentLong());
+                MsoyUI.error(_mmsgs.errICommentLong());
                 return false;
             } else if (_issue.owner == null ||
-                    _issue.owner.getMemberId() != CMsgs.creds.getMemberId()) {
-                MsoyUI.error(CMsgs.mmsgs.errICloseOwner());
+                    _issue.owner.getMemberId() != CShell.creds.getMemberId()) {
+                MsoyUI.error(_mmsgs.errICloseOwner());
                 return false;
             }
         }
 
         if (create) {
             _issuesvc.createIssue(
-                    CMsgs.ident, _issue, (_message == null ? 0 : _message.messageId), callback);
+                    CShell.ident, _issue, (_message == null ? 0 : _message.messageId), callback);
         } else {
-            _issuesvc.updateIssue(CMsgs.ident, _issue, callback);
+            _issuesvc.updateIssue(CShell.ident, _issue, callback);
         }
         return true;
     }
@@ -308,6 +307,7 @@ public class EditIssuePanel extends TableFooterPanel
 
     protected int _messagesRow;
 
+    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
     protected static final IssueServiceAsync _issuesvc = (IssueServiceAsync)
         ServiceUtil.bind(GWT.create(IssueService.class), IssueService.ENTRY_POINT);
 }

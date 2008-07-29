@@ -52,7 +52,7 @@ public class FeedPanel extends TongueBox
     public FeedPanel (String emptyMessage, boolean setHeader, FeedLoader feedLoader)
     {
         if (setHeader) {
-            setHeader(CMsgs.mmsgs.headerFeed());
+            setHeader(_mmsgs.headerFeed());
         }
         setContent(_feeds = new FeedList());
         _emptyMessage = emptyMessage;
@@ -69,7 +69,7 @@ public class FeedPanel extends TongueBox
         _fullPage = fullPage;
         _feeds.clear();
         _feeds.populate(feed, _emptyMessage, _fullPage);
-        _moreLabel.setText(_fullPage ? CMsgs.mmsgs.shortFeed() : CMsgs.mmsgs.fullFeed());
+        _moreLabel.setText(_fullPage ? _mmsgs.shortFeed() : _mmsgs.fullFeed());
     }
 
     protected void loadFeed (final boolean fullPage)
@@ -215,7 +215,7 @@ public class FeedPanel extends TongueBox
                 if (header > message.posted) {
                     header = startofDay(message.posted);
                     if (yesterday < message.posted) {
-                        add(new DateWidget(CMsgs.mmsgs.yesterday()));
+                        add(new DateWidget(_mmsgs.yesterday()));
                     } else if (!fullPage) {
                         // stop after displaying today and yesterday; we let the server send us 48
                         // hours of feed messages to account for timezone differences, but we
@@ -280,7 +280,7 @@ public class FeedPanel extends TongueBox
                                                            NaviUtil.GameDetails.TROPHIES));
 
             case 103: // FRIEND_LISTED_ITEM
-                return CMsgs.mmsgs.descCombine(
+                return _mmsgs.descCombine(
                             _dmsgs.getString("itemType" + message.data[1]),
                             Link.createHtml(message.data[0], Page.SHOP,
                                 Args.compose("l", message.data[1], message.data[2])));
@@ -337,27 +337,27 @@ public class FeedPanel extends TongueBox
             String friendLink = profileLink(message.friend);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new IconWidget("friend_added_friend", CMsgs.mmsgs.friendAddedFriend(
+                add(new IconWidget("friend_added_friend", _mmsgs.friendAddedFriend(
                                 friendLink, buildString(message))));
                 break;
 
             case 101: // FRIEND_UPDATED_ROOM
-                add(new IconWidget("friend_updated_room", CMsgs.mmsgs.friendUpdatedRoom(
+                add(new IconWidget("friend_updated_room", _mmsgs.friendUpdatedRoom(
                                 friendLink, buildString(message))));
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new ThumbnailWidget(buildMedia(message), CMsgs.mmsgs.friendWonTrophy(
+                add(new ThumbnailWidget(buildMedia(message), _mmsgs.friendWonTrophy(
                                 friendLink, buildString(message))));
                 break;
 
             case 103: // FRIEND_LISTED_ITEM
-                add(new ThumbnailWidget(buildMedia(message), CMsgs.mmsgs.friendListedItem(
+                add(new ThumbnailWidget(buildMedia(message), _mmsgs.friendListedItem(
                                 friendLink, buildString(message))));
                 break;
 
             case 104: // FRIEND_GAINED_LEVEL
-                add(new IconWidget("friend_gained_level", CMsgs.mmsgs.friendGainedLevel(
+                add(new IconWidget("friend_gained_level", _mmsgs.friendGainedLevel(
                                 friendLink, buildString(message))));
                 break;
             }
@@ -376,7 +376,7 @@ public class FeedPanel extends TongueBox
         {
             return standardCombine(list, new StringBuilder() {
                 public String build (FriendFeedMessage message) {
-                    return CMsgs.mmsgs.colonCombine(
+                    return _mmsgs.colonCombine(
                         profileLink(message.friend), buildString(message));
                 }
             });
@@ -401,9 +401,9 @@ public class FeedPanel extends TongueBox
             for (int ii = 1, ll = list.size(); ii < ll; ii++) {
                 FriendFeedMessage message = list.get(ii);
                 if (ii + 1 == ll) {
-                    combine = CMsgs.mmsgs.andCombine(combine, builder.build(message));
+                    combine = _mmsgs.andCombine(combine, builder.build(message));
                 } else {
-                    combine = CMsgs.mmsgs.commaCombine(combine, builder.build(message));
+                    combine = _mmsgs.commaCombine(combine, builder.build(message));
                 }
             }
             return combine;
@@ -435,28 +435,28 @@ public class FeedPanel extends TongueBox
             String friendLink = profileLink(message.friend);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new IconWidget("friend_added_friend", CMsgs.mmsgs.friendAddedFriends(
+                add(new IconWidget("friend_added_friend", _mmsgs.friendAddedFriends(
                                 friendLink, standardCombine(list))));
                 break;
 
             case 101: // FRIEND_UPDATED_ROOM
                 add(new IconWidget("friend_updated_room",
-                            CMsgs.mmsgs.friendsUpdatedRoom(friendLinkCombine(list))));
+                            _mmsgs.friendsUpdatedRoom(friendLinkCombine(list))));
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new ThumbnailWidget(buildMediaArray(list), CMsgs.mmsgs.friendWonTrophies(
+                add(new ThumbnailWidget(buildMediaArray(list), _mmsgs.friendWonTrophies(
                                 friendLink, standardCombine(list))));
                 break;
 
             case 103: // FRIEND_LISTED_ITEM
-                add(new ThumbnailWidget(buildMediaArray(list), CMsgs.mmsgs.friendListedItem(
+                add(new ThumbnailWidget(buildMediaArray(list), _mmsgs.friendListedItem(
                                 friendLink, standardCombine(list))));
                 break;
 
             case 104: // FRIEND_GAINED_LEVEL
                 add(new IconWidget("friend_gained_level",
-                            CMsgs.mmsgs.friendsGainedLevel(friendLinkCombine(list))));
+                            _mmsgs.friendsGainedLevel(friendLinkCombine(list))));
                 break;
             }
         }
@@ -467,12 +467,12 @@ public class FeedPanel extends TongueBox
             String friendLinks = profileCombine(list);
             switch (message.type) {
             case 100: // FRIEND_ADDED_FRIEND
-                add(new IconWidget("friend_added_friend", CMsgs.mmsgs.friendAddedFriendsRight(
+                add(new IconWidget("friend_added_friend", _mmsgs.friendAddedFriendsRight(
                                 friendLinks, buildString(message))));
                 break;
 
             case 102: // FRIEND_WON_TROPHY
-                add(new ThumbnailWidget(buildMedia(message), CMsgs.mmsgs.friendWonTrophy(
+                add(new ThumbnailWidget(buildMedia(message), _mmsgs.friendWonTrophy(
                                 friendLinks, buildString(message))));
                 break;
             }
@@ -484,7 +484,7 @@ public class FeedPanel extends TongueBox
             case 200: // GROUP_ANNOUNCEMENT
                 String threadLink = Link.createHtml(
                     message.data[1], Page.WHIRLEDS, Args.compose("t", message.data[2]));
-                add(new BasicWidget(CMsgs.mmsgs.groupAnnouncement(message.data[0], threadLink)));
+                add(new BasicWidget(_mmsgs.groupAnnouncement(message.data[0], threadLink)));
                 break;
             }
         }
@@ -496,11 +496,11 @@ public class FeedPanel extends TongueBox
                 if (message.actor == null) {
                     return; // TEMP: skip old pre-actor messages
                 }
-                String roomPageLink = Link.createHtml(CMsgs.mmsgs.selfRoomCommented(),
+                String roomPageLink = Link.createHtml(_mmsgs.selfRoomCommented(),
                     Page.WORLD, Args.compose("room", message.data[0]));
                 String roomLink = Link.createHtml(
                     message.data[1], Page.WORLD, "s" + message.data[0]);
-                add(new BasicWidget(CMsgs.mmsgs.selfRoomComment(
+                add(new BasicWidget(_mmsgs.selfRoomComment(
                                         profileLink(message.actor), roomPageLink, roomLink)));
                 break;
             }
@@ -512,7 +512,7 @@ public class FeedPanel extends TongueBox
             case 1: // GLOBAL_ANNOUNCEMENT
                 String threadLink = Link.createHtml(
                     message.data[0], Page.WHIRLEDS, Args.compose("t", message.data[1]));
-                add(new BasicWidget(CMsgs.mmsgs.globalAnnouncement(threadLink)));
+                add(new BasicWidget(_mmsgs.globalAnnouncement(threadLink)));
                 break;
             }
         }
@@ -714,6 +714,7 @@ public class FeedPanel extends TongueBox
     protected FeedLoader _feedLoader;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
 
     /** The default number of days of feed information to show. */
     protected static final int SHORT_CUTOFF = 2;

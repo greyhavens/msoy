@@ -25,12 +25,12 @@ public abstract class ComplainPopup extends BorderedDialog
 {
     public ComplainPopup ()
     {
-        setHeaderTitle(CMsgs.mmsgs.complainHeader());
+        setHeaderTitle(_mmsgs.complainHeader());
         VerticalPanel vbox = new VerticalPanel();
         vbox.setStyleName("complainPopup");
         vbox.setSpacing(5);
-        vbox.add(MsoyUI.createLabel(CMsgs.mmsgs.complainMessage(), null));
-        vbox.add(MsoyUI.createLabel(CMsgs.mmsgs.complainDesc(), null));
+        vbox.add(MsoyUI.createLabel(_mmsgs.complainMessage(), null));
+        vbox.add(MsoyUI.createLabel(_mmsgs.complainDesc(), null));
         vbox.add(_description = MsoyUI.createTextBox("", 512, 50));
 
         ClickListener sendComplain = new ClickListener() {
@@ -87,7 +87,7 @@ public abstract class ComplainPopup extends BorderedDialog
     protected void sendComplain ()
     {
         if ("".equals(_description.getText())) {
-            MsoyUI.info(CMsgs.mmsgs.complainNeedDescription());
+            MsoyUI.info(_mmsgs.complainNeedDescription());
             return;
         }
         if (callService() && hideOnSend()) {
@@ -98,4 +98,5 @@ public abstract class ComplainPopup extends BorderedDialog
     protected TextBox _description;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
 }

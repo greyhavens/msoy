@@ -15,13 +15,12 @@ import com.threerings.underwire.web.client.UnderwireService;
 import com.threerings.underwire.web.client.UnderwireServiceAsync;
 import com.threerings.underwire.web.data.AccountName;
 
-import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 
-public class SupportPage extends MsgsEntryPoint
+public class SupportPage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()

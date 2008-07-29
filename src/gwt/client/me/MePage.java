@@ -16,7 +16,6 @@ import com.threerings.msoy.world.gwt.WorldService;
 import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
 import client.games.CGames;
-import client.msgs.MsgsEntryPoint;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.TrackingCookie;
@@ -25,7 +24,7 @@ import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
-public class MePage extends MsgsEntryPoint
+public class MePage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()

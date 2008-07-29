@@ -3,6 +3,7 @@
 
 package client.msgs;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
@@ -25,9 +26,11 @@ public abstract class ForumCallback<T> extends ClickCallback<T>
         if (cause instanceof MessageTooLongException) {
             int extra = ((MessageTooLongException)cause).getMessageLength() -
                 ForumMessage.MAX_MESSAGE_LENGTH;
-            return CMsgs.mmsgs.errMessageTooLong(""+extra);
+            return _mmsgs.errMessageTooLong(""+extra);
         } else {
             return super.convertError(cause);
         }
     }
+
+    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
 }

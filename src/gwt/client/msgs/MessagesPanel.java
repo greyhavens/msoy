@@ -25,6 +25,7 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.images.msgs.MsgsImages;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
@@ -67,7 +68,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return (_model == _tmodel) ? CMsgs.mmsgs.noMessages() : CMsgs.mmsgs.noMatches();
+        return (_model == _tmodel) ? _mmsgs.noMessages() : _mmsgs.noMatches();
     }
 
     @Override // from PagedGrid
@@ -82,7 +83,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         super.addCustomControls(controls);
 
         // add a button for starting a new message that will optionally be enabled later
-        _postReply = new Button(CMsgs.mmsgs.postReply(), new ClickListener() {
+        _postReply = new Button(_mmsgs.postReply(), new ClickListener() {
             public void onClick (Widget sender) {
                 _parent.postReply(null, false);
             }
@@ -91,22 +92,22 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         controls.setWidget(0, 0, _postReply);
 
         // add a button for ignoring this thread
-        _ignoreThread = new Button(CMsgs.mmsgs.ignoreThread());
-        _ignoreThread.setTitle(CMsgs.mmsgs.ignoreThreadTip());
+        _ignoreThread = new Button(_mmsgs.ignoreThread());
+        _ignoreThread.setTitle(_mmsgs.ignoreThreadTip());
         new ClickCallback<Void>(_ignoreThread) {
             public boolean callService () {
-                _forumsvc.ignoreThread(CMsgs.ident, _parent.getThreadId(), this);
+                _forumsvc.ignoreThread(CShell.ident, _parent.getThreadId(), this);
                 return true;
             }
             public boolean gotResult (Void result) {
-                MsoyUI.info(CMsgs.mmsgs.threadIgnored());
+                MsoyUI.info(_mmsgs.threadIgnored());
                 return false;
             }
         };
         controls.setWidget(0, 1, _ignoreThread);
 
         // add a button for editing this thread's flags
-        _editFlags = new Button(CMsgs.mmsgs.editFlags(), new ClickListener() {
+        _editFlags = new Button(_mmsgs.editFlags(), new ClickListener() {
             public void onClick (Widget sender) {
                 _parent.editFlags();
             }
@@ -132,7 +133,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         if (_scrollToPanel != null) {
             DeferredCommand.addCommand(new Command() {
                 public void execute () {
-                    CMsgs.frame.ensureVisible(_scrollToPanel);
+                    CShell.frame.ensureVisible(_scrollToPanel);
                     _scrollToPanel = null;
                 }
             });
@@ -154,7 +155,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
     protected void replyPosted (ForumMessage message)
     {
-        MsoyUI.info(CMsgs.mmsgs.msgReplyPosted());
+        MsoyUI.info(_mmsgs.msgReplyPosted());
         _tmodel.appendItem(message);
         if (_model == _tmodel) {
             refreshDisplay();
@@ -169,10 +170,10 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                 // TODO: if forum admin, make them send a mail to the poster explaining why their
                 // post was deleted?
                 _forumsvc.deleteMessage(
-                    CMsgs.ident, message.messageId, new MsoyCallback<Void>() {
+                    CShell.ident, message.messageId, new MsoyCallback<Void>() {
                         public void onSuccess (Void result) {
                             removeItem(message);
-                            MsoyUI.info(CMsgs.mmsgs.msgPostDeleted());
+                            MsoyUI.info(_mmsgs.msgPostDeleted());
                         }
                     });
             }
@@ -216,30 +217,30 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         {
             super.addInfo(info);
 
-            if (!CMsgs.isGuest() && CMsgs.getMemberId() != _message.poster.name.getMemberId()) {
+            if (!CShell.isGuest() && CShell.getMemberId() != _message.poster.name.getMemberId()) {
                 String args = Args.compose("w", "m", ""+_message.poster.name.getMemberId());
-                info.add(makeInfoLabel(CMsgs.mmsgs.inlineMail(),
+                info.add(makeInfoLabel(_mmsgs.inlineMail(),
                                        Link.createListener(Page.MAIL, args)));
             }
 
             if (_postReply.isEnabled()) {
                 info.add(makeInfoImage(_images.reply_post(),
-                                                CMsgs.mmsgs.inlineReply(), new ClickListener() {
+                                                _mmsgs.inlineReply(), new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.postReply(_message, false);
                     }
                 }));
                 info.add(makeInfoImage(_images.reply_post_quote(),
-                                                CMsgs.mmsgs.inlineQReply(), new ClickListener() {
+                                                _mmsgs.inlineQReply(), new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.postReply(_message, true);
                     }
                 }));
             }
 
-            if (CMsgs.getMemberId() == _message.poster.name.getMemberId()) {
+            if (CShell.getMemberId() == _message.poster.name.getMemberId()) {
                 info.add(makeInfoImage(_images.edit_post(),
-                                                CMsgs.mmsgs.inlineEdit(), new ClickListener() {
+                                                _mmsgs.inlineEdit(), new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.editPost(_message, new MsoyCallback<ForumMessage>() {
                             public void onSuccess (ForumMessage message) {
@@ -250,8 +251,8 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                 }));
             }
 
-            if (!CMsgs.isGuest() && CMsgs.getMemberId() != _message.poster.name.getMemberId()) {
-                info.add(makeInfoImage(_images.complain_post(), CMsgs.mmsgs.inlineComplain(),
+            if (!CShell.isGuest() && CShell.getMemberId() != _message.poster.name.getMemberId()) {
+                info.add(makeInfoImage(_images.complain_post(), _mmsgs.inlineComplain(),
                     new ClickListener() {
                         public void onClick (Widget sender) {
                             new ForumMessageComplainPopup(_message).show();
@@ -260,10 +261,10 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             }
 
             // TODO: if whirled manager, also allow forum moderation
-            if (CMsgs.getMemberId() == _message.poster.name.getMemberId() || CMsgs.isSupport()) {
+            if (CShell.getMemberId() == _message.poster.name.getMemberId() || CShell.isSupport()) {
                 info.add(makeInfoImage(_images.delete_post(),
-                                                CMsgs.mmsgs.inlineDelete(),
-                                                new PromptPopup(CMsgs.mmsgs.confirmDelete(),
+                                                _mmsgs.inlineDelete(),
+                                                new PromptPopup(_mmsgs.confirmDelete(),
                                                                 deletePost(_message))));
             }
 
@@ -271,17 +272,17 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                 ClickListener viewClick = Link.createListener(
                     Page.WHIRLEDS, Args.compose("i", _message.issueId));
                 info.add(makeInfoImage(_images.view_issue(),
-                                                CMsgs.mmsgs.inlineIssue(), viewClick));
+                                                _mmsgs.inlineIssue(), viewClick));
 
-            } else if (CMsgs.isSupport()) {
+            } else if (CShell.isSupport()) {
                 ClickListener newClick = new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.newIssue(_message);
                     }
                 };
                 info.add(makeInfoImage(_images.new_issue(),
-                                                CMsgs.mmsgs.inlineNewIssue(), newClick));
-                info.add(makeInfoImage(_images.assign_issue(), CMsgs.mmsgs.inlineAssignIssue(),
+                                                _mmsgs.inlineNewIssue(), newClick));
+                info.add(makeInfoImage(_images.assign_issue(), _mmsgs.inlineAssignIssue(),
                                        Link.createListener(
                                            Page.WHIRLEDS, Args.compose(
                                                "assign", ""+_message.messageId, ""+_page))));
@@ -310,7 +311,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         protected boolean callService ()
         {
             _forumsvc.complainMessage(
-                    CMsgs.ident, _description.getText(), _message.messageId, this);
+                CShell.ident, _description.getText(), _message.messageId, this);
             return true;
         }
 
@@ -340,6 +341,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
     protected Button _editFlags;
 
     protected static final MsgsImages _images = GWT.create(MsgsImages.class);
+    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
     protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
         ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
 

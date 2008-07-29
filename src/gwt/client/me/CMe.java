@@ -3,14 +3,14 @@
 
 package client.me;
 
-import client.msgs.CMsgs;
+import client.shell.CShell;
 
 import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
 /**
  * Extends {@link CShell} and provides me-specific services.
  */
-public class CMe extends CMsgs
+public class CMe extends CShell
 {
     /** Provides world-related services. */
     public static WorldServiceAsync worldsvc;

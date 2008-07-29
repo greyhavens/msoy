@@ -5,6 +5,8 @@ package client.msgs;
 
 import java.util.List;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -16,8 +18,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -26,8 +26,8 @@ import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
-
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.ui.SearchBox;
@@ -68,7 +68,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     public void search (String search)
     {
         _forumsvc.findThreads(
-            CMsgs.ident, _groupId, search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
+            CShell.ident, _groupId, search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
             public void onSuccess (List<ForumThread> threads) {
                 setModel(new SimpleDataModel<ForumThread>(threads), 0);
             }
@@ -94,7 +94,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             return super.createEmptyContents();
         }
 
-        HTML empty = new HTML(CMsgs.mmsgs.noUnreadThreads());
+        HTML empty = new HTML(_mmsgs.noUnreadThreads());
         empty.setStyleName("Empty");
         return empty;
     }
@@ -102,7 +102,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return CMsgs.mmsgs.noThreads();
+        return _mmsgs.noThreads();
     }
 
     @Override // from PagedGrid
@@ -117,7 +117,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
         super.addCustomControls(controls);
 
         // add a button for starting a new thread that will optionally be enabled later
-        _startThread = new Button(CMsgs.mmsgs.tlpStartNewThread(), new ClickListener() {
+        _startThread = new Button(_mmsgs.tlpStartNewThread(), new ClickListener() {
             public void onClick (Widget sender) {
                 _parent.startNewThread(_groupId);
             }
@@ -126,7 +126,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
         controls.setWidget(0, 0, _startThread);
 
         // add a button for refreshing our unread thread list
-        _refresh = new Button(CMsgs.mmsgs.tlpRefresh(), new ClickListener() {
+        _refresh = new Button(_mmsgs.tlpRefresh(), new ClickListener() {
             public void onClick (Widget sender) {
                 _parent.displayUnreadThreads(true);
             }
@@ -166,10 +166,10 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             Image statusImage = new Image();
             if (thread.hasUnreadMessages()) {
                 statusImage.setUrl("/images/msgs/unread.png");
-                statusImage.setTitle(CMsgs.mmsgs.tlpStatusUnreadTip());
+                statusImage.setTitle(_mmsgs.tlpStatusUnreadTip());
             } else {
                 statusImage.setUrl("/images/msgs/read.png");
-                statusImage.setTitle(CMsgs.mmsgs.tlpStatusReadTip());
+                statusImage.setTitle(_mmsgs.tlpStatusReadTip());
             }
             setWidget(0, col, statusImage);
             getFlexCellFormatter().setStyleName(0, col++, "Status");
@@ -188,7 +188,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
                 String args = threadArgs(
                     thread.threadId, thread.lastReadPostIndex, thread.lastReadPostId);
                 toThread = Link.create(thread.subject, Page.WHIRLEDS, args);
-                toThread.setTitle(CMsgs.mmsgs.tlpFirstUnreadTip());
+                toThread.setTitle(_mmsgs.tlpFirstUnreadTip());
             } else {
                 toThread = Link.create(
                     thread.subject, Page.WHIRLEDS, threadArgs(thread.threadId, 0, 0));
@@ -198,7 +198,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             // if we're displaying unread threads from many groups, display the group name after
             // the subject
             if (_groupId == 0) {
-                bits.add(MsoyUI.createLabel(CMsgs.mmsgs.tlpFromGroup(thread.group.toString()),
+                bits.add(MsoyUI.createLabel(_mmsgs.tlpFromGroup(thread.group.toString()),
                                             "tipLabel"), HasAlignment.ALIGN_BOTTOM);
             }
 
@@ -212,10 +212,10 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             VerticalPanel mrp = new VerticalPanel();
             mrp.add(new Label(_pdate.format(thread.mostRecentPostTime)));
             Widget latest = Link.create(
-                CMsgs.mmsgs.tlpBy(thread.mostRecentPoster.toString()),
+                _mmsgs.tlpBy(thread.mostRecentPoster.toString()),
                 Page.WHIRLEDS, threadArgs(thread.threadId, thread.posts-1,
                 thread.mostRecentPostId));
-            latest.setTitle(CMsgs.mmsgs.tlpLastTip());
+            latest.setTitle(_mmsgs.tlpLastTip());
             mrp.add(latest);
             setWidget(0, col, mrp);
             getFlexCellFormatter().setStyleName(0, col++, "LastPost");
@@ -223,14 +223,14 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             // add an ignore button when displaying unread threads from many groups
             if (_groupId == 0) {
                 Image ignoreThread = MsoyUI.createImage("/images/msgs/ignore.png", "Ignore");
-                ignoreThread.setTitle(CMsgs.mmsgs.ignoreThreadTip());
+                ignoreThread.setTitle(_mmsgs.ignoreThreadTip());
                 new ClickCallback<Void>(ignoreThread) {
                     public boolean callService () {
-                        _forumsvc.ignoreThread(CMsgs.ident, thread.threadId, this);
+                        _forumsvc.ignoreThread(CShell.ident, thread.threadId, this);
                         return true;
                     }
                     public boolean gotResult (Void result) {
-                        MsoyUI.info(CMsgs.mmsgs.threadIgnored());
+                        MsoyUI.info(_mmsgs.threadIgnored());
                         setModel(_fmodels.getUnreadThreads(true), getPage());
                         return false;
                     }
@@ -270,6 +270,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     protected Button _refresh;
 
     protected static final SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
+    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
     protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
         ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);
 
@@ -284,6 +285,6 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
 
     /** Tooltips for our image icons. */
     protected static final String[] FLAG_TIPS = {
-        CMsgs.mmsgs.tlpAnnounceTip(), CMsgs.mmsgs.tlpStickyTip(), CMsgs.mmsgs.tlpLockedTip()
+        _mmsgs.tlpAnnounceTip(), _mmsgs.tlpStickyTip(), _mmsgs.tlpLockedTip()
     };
 }
