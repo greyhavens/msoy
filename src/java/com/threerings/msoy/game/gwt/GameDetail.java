@@ -50,6 +50,9 @@ public class GameDetail
     /** The number of people playing this game right now. */
     public int playingNow;
 
+    /** Indicates that this game is one of the the current member's favorites. */
+    public boolean favorite;    
+    
     /**
      * Returns the listed game if we have one, the source if not.
      */

@@ -14,40 +14,31 @@ import com.threerings.presents.dobj.DSet;
 public class ItemListInfo
     implements Streamable, IsSerializable, DSet.Entry
 {
-    /** An id constant that means "no list". Not used here. Used in places that use a single
-     * int to refer to a list, or no list. */
-    public static final int NO_LIST = 0;
-
-//    /** An id constant that refers to the list of all catalog items that this user created. */
-//    public static final int LISTED_ALL = -1;
-//
-//    /** An id constant that refers to all audio items owned by the user. */
-//    public static final int OWNED_AUDIO = -2;
-//
-//    /** An id constant that refers to all audio items owned by the user. */
-//    public static final int OWNED_VIDEO = -3;
-//
-//    public static final int SPECIAL_LIST_COUNT = 3;
-
+    /** Special list type used to indicate a member's favorite items. */
+    public static final byte FAVORITES = -1;
+    
+    /** Generic item list type */
+    public static final byte GENERIC = 0;
+    
     /** The type constants. */
     public static final byte AUDIO_PLAYLIST = 1;
     public static final byte VIDEO_PLAYLIST = 2;
     public static final byte CATALOG_BUNDLE = 3;
 
-//    public static final byte[] SPECIAL_LIST_TYPES = {
-//        CATALOG_BUNDLE, AUDIO_PLAYLIST, VIDEO_PLAYLIST };
-//
-//    public static final String[] SPECIAL_LIST_NAMES = {
-//        "m.ilist_all", "m.ilist_songs", "m.ilist_videos" };
-
+    /**
+     * A name for the special favorites list.
+     * TODO how will the i18n work here?
+     */
+    public static final String FAVORITES_NAME = "m.favorites";
+    
     /** The unique identifier for this list. */
     public int listId;
 
-//    /** The member id of the user that owns this list. */
-//    public int memberId;
+    /** The member id of the user that owns this list. */
+    public int memberId;
 
     /** The type of list that this is. */
-    public byte type;
+    public byte type = GENERIC;
 
     /** The name of this list. */
     public String name;
@@ -64,18 +55,19 @@ public class ItemListInfo
      */
     public String encode ()
     {
-        return listId + ":" + type + ":" + name;
+        return listId + ":" + memberId + ":" + type + ":" + name;
     }
 
     public static ItemListInfo decode (String str)
     {
         String[] pieces = str.split(":");
-        if (pieces.length == 3) {
+        if (pieces.length == 4) {
             ItemListInfo info = new ItemListInfo();
             try {
                 info.listId = Integer.parseInt(pieces[0]);
-                info.type = (byte) Integer.parseInt(pieces[1]);
-                info.name = pieces[2];
+                info.memberId = (byte) Integer.parseInt(pieces[1]);
+                info.type = (byte) Integer.parseInt(pieces[2]);
+                info.name = pieces[3];
                 return info;
 
             } catch (NumberFormatException nfe) {

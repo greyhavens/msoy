@@ -31,4 +31,7 @@ public class ItemDetail implements Streamable, IsSerializable
 
     /** If non-null, contains the String name for the usage location specified in the Item. */
     public String useLocation;
+    
+    /** Indicates whether this is one of the member's favorite items. */
+    public boolean favorite;
 }

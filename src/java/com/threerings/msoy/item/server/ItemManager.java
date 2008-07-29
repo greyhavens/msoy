@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,17 +15,34 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
-import com.samskivert.util.Predicate;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
-
-import com.samskivert.jdbc.RepositoryListenerUnit;
-
+import com.threerings.msoy.admin.data.ServerConfigObject;
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.game.server.MsoyGameRegistry;
+import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.Prize;
+import com.threerings.msoy.peer.server.GameNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.server.RoomManager;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -35,39 +54,11 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.ResultAdapter;
-
 import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneRegistry;
 
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.game.server.MsoyGameRegistry;
-import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.admin.data.ServerConfigObject;
-
-import com.threerings.msoy.peer.server.GameNodeAction;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.server.RoomManager;
-
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.ItemListInfo;
-import com.threerings.msoy.item.data.all.Prize;
-
-import com.threerings.msoy.item.data.ItemCodes;
-// we'll avoid import verbosity in this rare case
+//we'll avoid import verbosity in this rare case
 import com.threerings.msoy.item.server.persist.*;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Manages digital items and their underlying repositories.
@@ -292,26 +283,33 @@ public class ItemManager
         }
 
         // load up the user's lists
-        List<ItemListInfoRecord> records = _listRepo.loadInfos(memberId);
-
-        int nn = records.size();
-        List<ItemListInfo> list = Lists.newArrayListWithExpectedSize(nn);
-        for (int ii = 0; ii < nn; ii++) {
-            list.add(records.get(ii).toItemListInfo());
-        }
-
-        return list;
+        return convertRecords(_listRepo.loadInfos(memberId));
+    }
+    
+    public ItemListInfo createItemList (int memberId, byte listType, String name) 
+        throws PersistenceException
+    {
+        ItemListInfo listInfo = new ItemListInfo();
+        listInfo.type = listType;
+        listInfo.name = name;
+        ItemListInfoRecord record = new ItemListInfoRecord(listInfo, memberId);
+        _listRepo.createList(record);        
+        return record.toItemListInfo();
     }
 
-    public ItemListInfo createItemList (int memberId, byte type, String name)
+    public void addItem (int listId, Item item) throws PersistenceException
     {
-        // TODO
-        return null;
+        addItem(listId, item.getIdent());
     }
-
-    public void addItemToList (ItemListInfo info, Item item)
+        
+    public void addItem (int listId, ItemIdent item) throws PersistenceException
+    {        
+        _listRepo.addItem(listId, item);
+    }
+    
+    public void removeItem (int listId, ItemIdent item) throws PersistenceException 
     {
-        // TODO: easy addition without having to rewrite old stuff
+        _listRepo.removeItem(listId, item);
     }
 
     public void loadItemList (final int listId, ResultListener<List<Item>> lner)
@@ -332,32 +330,13 @@ public class ItemManager
                     }
                 }
 
-                // now look up all those items
+                // mass-lookup items from their respective repositories
                 HashMap<ItemIdent, Item> items = new HashMap<ItemIdent, Item>();
-                // mass-lookup items, a repo at a time
                 for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : lookupList) {
                     for (ItemRecord rec : tup.left.loadItems(tup.right)) {
                         Item item = rec.toItem();
                         items.put(item.getIdent(), item);
                     }
-                }
-
-                // prune any items that need pruning
-                pruneItemsFromList(infoRecord, items.values());
-
-                // then, if we're missing any items, we need to re-save the list
-                if (idents.length != items.size()) {
-                    List<ItemIdent> newIdents = Lists.newArrayListWithExpectedSize(items.size());
-                    for (ItemIdent ident : idents) {
-                        if (items.containsKey(ident)) {
-                            newIdents.add(ident);
-                        }
-                    }
-
-                    // now save the list
-                    idents = new ItemIdent[newIdents.size()];
-                    newIdents.toArray(idents);
-                    _listRepo.saveList(listId, idents);
                 }
 
                 // finally, return all the items in list order
@@ -370,6 +349,56 @@ public class ItemManager
         });
     }
 
+    public void addFavorite (int memberId, ItemIdent item) 
+        throws PersistenceException 
+    {
+        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
+        _listRepo.addItem(favoriteList.listId, item);
+    }
+    
+    public void removeFavorite (int memberId, ItemIdent item) 
+        throws PersistenceException 
+    {
+        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
+        _listRepo.removeItem(favoriteList.listId, item);
+    }
+     
+    /**
+     * Check to see if the member's favorite list contains the given item.
+     */
+    public boolean isFavorite(int memberId, ItemIdent item) 
+        throws PersistenceException
+    {
+        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
+        return _listRepo.contains(favoriteList.listId, item);        
+    }
+    
+    protected ItemListInfo getFavoriteListInfo (int memberId) 
+        throws PersistenceException 
+    {
+        List<ItemListInfoRecord> favoriteRecords = _listRepo.loadInfos(memberId, ItemListInfo.FAVORITES);
+        List<ItemListInfo> favoriteLists = convertRecords(favoriteRecords);
+        
+        ItemListInfo favorites;
+        
+        if(favoriteLists.size() == 0) {            
+            // create an favorites list for this user
+            favorites = createItemList(memberId, ItemListInfo.FAVORITES, ItemListInfo.FAVORITES_NAME);
+            
+        } else {            
+            // TODO There should never be more than one FAVORITES list per member 
+            // If there are more than one list, merge them somehow?
+            favorites = favoriteLists.get(0);
+        }
+        
+        return favorites;
+    } 
+    
+    public void loadFavoriteList () 
+    {
+        // TODO
+    }
+    
     /**
      * Awards the specified prize to the specified member.
      */
@@ -410,44 +439,6 @@ public class ItemManager
 //                     true, new ResultListener.NOOP<Void>());
             }
         });
-    }
-
-    /**
-     * Depending on the type of the list, prune any items are not supposed to be in it legally.
-     */
-    protected void pruneItemsFromList (ItemListInfoRecord infoRecord, Collection<Item> items)
-        throws PersistenceException
-    {
-        Predicate<Item> pred;
-        switch (infoRecord.type) {
-        default:
-            throw new PersistenceException("Do not know how to prune items from lists of type " +
-                infoRecord.type);
-            // implicit break
-
-        case ItemListInfo.VIDEO_PLAYLIST: // fall through to AUDIO_PLAYLIST
-        case ItemListInfo.AUDIO_PLAYLIST:
-            // the items must all be owned
-            final int memberId = infoRecord.memberId;
-            pred = new Predicate<Item>() {
-                public boolean isMatch (Item item) {
-                    return (item.ownerId == memberId);
-                }
-            };
-            break;
-
-        case ItemListInfo.CATALOG_BUNDLE:
-            // the items must all be listed in the catalog
-            pred = new Predicate<Item>() {
-                public boolean isMatch (Item item) {
-                    return (item.ownerId == 0); // TODO: this catches other cases besides listed?
-                }
-            };
-            break;
-        }
-
-        // filter to keep only the items that match the predicate
-        pred.filter(items);
     }
 
     /**
@@ -1011,6 +1002,19 @@ public class ItemManager
         return repo;
     }
 
+    /**
+     * Utility for converting a list of records into their counterparts.
+     */
+    protected static List<ItemListInfo> convertRecords(List<ItemListInfoRecord> records)
+    {
+        int nn = records.size();
+        List<ItemListInfo> list = Lists.newArrayListWithExpectedSize(nn);
+        for (int ii = 0; ii < nn; ii++) {
+            list.add(records.get(ii).toItemListInfo());
+        }        
+        return list;
+    }
+    
     /**
      * A class that helps manage loading or storing a bunch of items that may be spread in
      * difference repositories.

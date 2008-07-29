@@ -1,25 +1,28 @@
-//
-// $Id$
-
 package com.threerings.msoy.item.server.persist;
+
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
+import com.samskivert.jdbc.depot.annotation.UniqueConstraint;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.io.Streamable;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
- * Represents an element of a persistent list of items.
+ * Represents an element of a list of items.
  * 
- * @deprecated use ItemListElementRecord instead.
+ * @author mjensen
  */
-@Entity
-@Deprecated
-public class ItemIdentListRecord extends PersistentRecord
+@Entity(indices={
+    @Index(name="ixListId", fields={ ItemListElementRecord.LIST_ID } )
+}, uniqueConstraints = {
+    @UniqueConstraint(fieldNames={ ItemListElementRecord.LIST_ID, ItemListElementRecord.TYPE, ItemListElementRecord.ITEM_ID })
+})
+public class ItemListElementRecord extends PersistentRecord
     implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
@@ -28,59 +31,61 @@ public class ItemIdentListRecord extends PersistentRecord
 
     /** The qualified column identifier for the {@link #listId} field. */
     public static final ColumnExp LIST_ID_C =
-        new ColumnExp(ItemIdentListRecord.class, LIST_ID);
+        new ColumnExp(ItemListElementRecord.class, LIST_ID);
 
     /** The column identifier for the {@link #type} field. */
     public static final String TYPE = "type";
 
     /** The qualified column identifier for the {@link #type} field. */
     public static final ColumnExp TYPE_C =
-        new ColumnExp(ItemIdentListRecord.class, TYPE);
+        new ColumnExp(ItemListElementRecord.class, TYPE);
 
     /** The column identifier for the {@link #itemId} field. */
     public static final String ITEM_ID = "itemId";
 
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(ItemIdentListRecord.class, ITEM_ID);
+        new ColumnExp(ItemListElementRecord.class, ITEM_ID);
 
     /** The column identifier for the {@link #sequence} field. */
     public static final String SEQUENCE = "sequence";
 
     /** The qualified column identifier for the {@link #sequence} field. */
     public static final ColumnExp SEQUENCE_C =
-        new ColumnExp(ItemIdentListRecord.class, SEQUENCE);
+        new ColumnExp(ItemListElementRecord.class, SEQUENCE);
     // AUTO-GENERATED: FIELDS END
-
+ 
     /**
      * The schema version of this record.
      */
     public static final int SCHEMA_VERSION = 1;
-
+    
     /** The list identifier for this list to which we belong. */
     @Id
     public int listId;
 
     /** The item type. */
+    @Id
     public byte type;
 
     /** The item id. */
+    @Id
     public int itemId;
 
-    /** The sequence number of this list item. */
+    /** Use to sort the elements of a list. */
     public short sequence;
 
     /**
      * Default constructor.
      */
-    public ItemIdentListRecord ()
+    public ItemListElementRecord ()
     {
     }
 
     /**
-     * Construct an ItemIdentListRecord from an ItemIdent.
+     * Construct an ItemListElementRecord from an ItemIdent.
      */
-    public ItemIdentListRecord (int listId, ItemIdent ident, int sequence)
+    public ItemListElementRecord (int listId, ItemIdent ident, int sequence)
     {
         this.listId = listId;
         this.type = ident.type;
@@ -88,7 +93,7 @@ public class ItemIdentListRecord extends PersistentRecord
         this.sequence = (short) sequence;
     }
 
-    public ItemIdentListRecord (int listId, Item item, int sequence)
+    public ItemListElementRecord (int listId, Item item, int sequence)
     {
         this.listId = listId;
         this.type = item.getType();
@@ -100,18 +105,19 @@ public class ItemIdentListRecord extends PersistentRecord
     {
         return new ItemIdent(type, itemId);
     }
-    
+
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ItemIdentListRecord}
+     * Create and return a primary {@link Key} to identify a {@link #ItemListElementRecord}
      * with the supplied key values.
      */
-    public static Key<ItemIdentListRecord> getKey (int listId)
+    public static Key<ItemListElementRecord> getKey (int listId, byte type, int itemId)
     {
-        return new Key<ItemIdentListRecord>(
-                ItemIdentListRecord.class,
-                new String[] { LIST_ID },
-                new Comparable[] { listId });
+        return new Key<ItemListElementRecord>(
+                ItemListElementRecord.class,
+                new String[] { LIST_ID, TYPE, ITEM_ID },
+                new Comparable[] { listId, type, itemId });
     }
     // AUTO-GENERATED: METHODS END
 }
+

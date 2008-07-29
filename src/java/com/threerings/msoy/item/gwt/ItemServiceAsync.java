@@ -126,4 +126,10 @@ public interface ItemServiceAsync
      */
     void deleteItemAdmin (WebIdent ident, ItemIdent item, String subject, String body,
                           AsyncCallback<Integer> callback);
+    
+    /**
+     * The asynchronous version of {@link ItemService.setFavorite}.
+     */
+    void setFavorite (WebIdent ident, ItemIdent item, boolean favorite, 
+                      AsyncCallback<Void> callback);
 }

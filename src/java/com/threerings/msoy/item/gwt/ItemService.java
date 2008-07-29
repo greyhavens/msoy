@@ -175,4 +175,10 @@ public interface ItemService extends RemoteService
      */
     Integer deleteItemAdmin (WebIdent ident, ItemIdent item, String subject, String body)
         throws ServiceException;
+    
+    /**
+     * Flags an item as the current member's favorite or not.
+     */
+    void setFavorite(WebIdent ident, ItemIdent item, boolean favorite) 
+        throws ServiceException;
 }

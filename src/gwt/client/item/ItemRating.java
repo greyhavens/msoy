@@ -3,23 +3,23 @@
 
 package client.item;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-
-import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
-
+import client.item.rating.ItemRatingModel;
 import client.shell.CShell;
 import client.shell.ShellMessages;
-import client.ui.Stars;
-import client.util.ServiceUtil;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
+import client.ui.Stars;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.msoy.item.gwt.ItemService;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 public class ItemRating extends FlexTable
     implements Stars.StarMouseListener
@@ -28,21 +28,23 @@ public class ItemRating extends FlexTable
      * Construct a new display for the given item with member's previous rating of the item and a
      * specified display mode.
      */
-    public ItemRating (Item item, byte memberRating, boolean horiz)
+    public ItemRating (ItemRatingModel model, boolean horiz)
     {
-        _item = item;
+        _item = model.getItem();
         _horiz = horiz;
         _averageStars = new Stars(_item.rating, true, false, null);
 
         // if we're not logged in, force read-only mode
-        boolean writable = (item.isRatable() && ! CShell.isGuest());
+        boolean writable = (_item.isRatable() && ! CShell.isGuest());
 
         _ratingCount = new Label();
         _ratingCount.setStyleName(STYLE_COUNT);
         updateRatingCount();
-
+        
+        FavoriteIndicator favoriteIndicator = null;
+        
         if (writable) {
-            _memberRating = memberRating;
+            _memberRating = model.getMemberRating();
             _playerStars = new Stars(_memberRating, false, false, this);
 
             _ratingTip = new Label();
@@ -53,6 +55,10 @@ public class ItemRating extends FlexTable
 
             // Initialize the default context tips
             starMouseOff();
+            
+            // indicate whether this a favorite item of the current member
+            // TODO hiding the favorite indicator for now
+            // favoriteIndicator = new FavoriteIndicator(model);            
         }
 
         Label ratingAverage = new Label(_cmsgs.averageRating());
@@ -75,6 +81,7 @@ public class ItemRating extends FlexTable
                 setWidget(0, 3, _ratingDesc);
                 setWidget(1, 2, _playerStars);
                 getFlexCellFormatter().setColSpan(1, 2, 2);
+                setWidget(1, 3, favoriteIndicator);
             }
         } else {
             setWidget(0, 0, ratingAverage);
@@ -88,6 +95,7 @@ public class ItemRating extends FlexTable
                 setWidget(3, 0, _ratingDesc);
                 setWidget(3, 1, nbsp);
                 getFlexCellFormatter().setColSpan(3, 0, 2);
+                setWidget(4, 0, favoriteIndicator);
             }
         }
     }
@@ -98,7 +106,7 @@ public class ItemRating extends FlexTable
         final boolean isFirstRating = _memberRating == 0;
 
         _playerStars.setRating(_memberRating = newRating);
-        ItemIdent ident = new ItemIdent(_item.getType(), _item.getPrototypeId());
+        ItemIdent ident = _item.getIdent();
         _itemsvc.rateItem(CShell.ident, ident, newRating, new MsoyCallback<Float>() {
             public void onSuccess (Float result) {
                 _averageStars.setRating(_item.rating = result);
@@ -138,8 +146,8 @@ public class ItemRating extends FlexTable
             _ratingCount.setText(_cmsgs.numberOfRatings(s));
         }
     }
-
-    /** True if both Stars are to be layed out on the same row. */
+    
+    /** True if both Stars are to be laid out on the same row. */
     protected boolean _horiz;
 
     protected Item _item;
@@ -148,8 +156,8 @@ public class ItemRating extends FlexTable
     protected Label _ratingCount, _ratingTip, _ratingDesc;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final ItemServiceAsync _itemsvc = 
+        (ItemServiceAsync) ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 
     protected static final String [] RATING_DESCRIPTIONS = {
         _cmsgs.descRating1(),
@@ -159,6 +167,6 @@ public class ItemRating extends FlexTable
         _cmsgs.descRating5()
     };
 
-    protected static final String STYLE_RATING = "ratingText";
-    protected static final String STYLE_COUNT = "ratingCount";
+   protected static final String STYLE_RATING = "ratingText";
+   protected static final String STYLE_COUNT = "ratingCount";   
 }

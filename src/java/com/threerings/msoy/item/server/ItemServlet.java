@@ -238,6 +238,7 @@ public class ItemServlet extends MsoyServiceServlet
                 _memberRepo.loadMemberName(record.creatorId); // normal lookup
             if (mrec != null) {
                 detail.memberRating = repo.getRating(iident.itemId, mrec.memberId);
+                detail.favorite = _itemMan.isFavorite(mrec.memberId, iident);
             }
             switch (detail.item.used) {
             case Item.USED_AS_FURNITURE:
@@ -725,6 +726,25 @@ public class ItemServlet extends MsoyServiceServlet
         }
     }
 
+    // defines ItemService interface
+    public void setFavorite (WebIdent ident, ItemIdent item, boolean favorite)
+        throws ServiceException
+    {   
+        MemberRecord member = _mhelper.requireAuthedUser(ident);
+        
+        try {
+            if(favorite) {
+                _itemMan.addFavorite(member.memberId, item);
+            }
+            else {
+                _itemMan.removeFavorite(member.memberId, item);
+            }
+        } catch(PersistenceException pex) {
+            log.warning("Could not set favorite for [member="+member.memberId+", item=" + item + "].", pex);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+    
     /**
      * Helper method for remixItem and revertRemixedClone.
      * @param item the updated item, or null to revert to the original mix.

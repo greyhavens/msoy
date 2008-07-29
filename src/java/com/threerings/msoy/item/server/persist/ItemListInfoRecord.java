@@ -9,13 +9,20 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.annotation.GeneratedValue;
+import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
+import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.ItemListInfo;
 
+/**
+ * Meta-data defining a list of items.
+ */
 @Entity(indices={ @Index(name="ixMember", fields={"memberId"}) })
+@TableGenerator(name="listId", pkColumnValue="ITEM_LIST_INFO")
 public class ItemListInfoRecord extends PersistentRecord
     implements Streamable
 {
@@ -50,9 +57,10 @@ public class ItemListInfoRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     /** Our depot schema version. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     @Id
+    @GeneratedValue(generator="listId", strategy=GenerationType.TABLE, allocationSize=1)
     public int listId;
 
     public int memberId;
