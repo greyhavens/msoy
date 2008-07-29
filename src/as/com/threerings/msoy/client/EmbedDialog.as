@@ -3,14 +3,14 @@
 
 package com.threerings.msoy.client {
 
-import com.threerings.flex.CommandButton;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.ui.FloatingPanel;
-
 import flash.system.System;
 
 import mx.controls.Text;
 import mx.controls.TextArea;
+
+import com.threerings.flex.CommandButton;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.ui.FloatingPanel;
 
 public class EmbedDialog extends FloatingPanel
 {
@@ -30,7 +30,7 @@ public class EmbedDialog extends FloatingPanel
         var flashVars :String = "sceneId=" + ctx.getMsoyController().getSceneIdString() + 
             "&" + TrackingCookie.makeFlashVars(affiliate, TrackingCookie.ROOM_VECTOR, "");
         
-        var embedCode :String = Msgs.GENERAL.get("m.embed", flashVars, url);
+        var embedCode :String = Msgs.GENERAL.get("m.embed", flashVars, url, "100%", "600");
 
         var instruction :Text = new Text();
         instruction.width = 300;
