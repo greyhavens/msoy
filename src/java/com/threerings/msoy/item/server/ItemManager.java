@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.item.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -15,34 +13,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
-import com.threerings.msoy.admin.data.ServerConfigObject;
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.game.server.MsoyGameRegistry;
-import com.threerings.msoy.item.data.ItemCodes;
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.ItemListInfo;
-import com.threerings.msoy.item.data.all.Prize;
-import com.threerings.msoy.peer.server.GameNodeAction;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.server.RoomManager;
+
+import com.samskivert.jdbc.RepositoryListenerUnit;
+
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -54,11 +34,39 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.util.ResultAdapter;
+
 import com.threerings.whirled.server.SceneManager;
 import com.threerings.whirled.server.SceneRegistry;
 
-//we'll avoid import verbosity in this rare case
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.game.server.MsoyGameRegistry;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.persist.MemberRepository;
+
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.admin.data.ServerConfigObject;
+
+import com.threerings.msoy.peer.server.GameNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.world.data.FurniData;
+import com.threerings.msoy.world.server.RoomManager;
+
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.Prize;
+
+import com.threerings.msoy.item.data.ItemCodes;
+// we'll avoid import verbosity in this rare case
 import com.threerings.msoy.item.server.persist.*;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages digital items and their underlying repositories.
