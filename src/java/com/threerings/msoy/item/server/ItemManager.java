@@ -338,7 +338,7 @@ public class ItemManager
                 }
 
                 // mass-lookup items from their respective repositories
-                HashMap<ItemIdent, Item> items = new HashMap<ItemIdent, Item>();
+                HashMap<ItemIdent, Item> items = Maps.newHashMap();
                 for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : lookupList) {
                     for (ItemRecord rec : tup.left.loadItems(tup.right)) {
                         Item item = rec.toItem();
