@@ -11,6 +11,7 @@ import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.stats.data.StatModifier;
 
 /**
  * Dispatches requests to the {@link GameServerProvider}.
@@ -78,6 +79,12 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
         case GameServerMarshaller.UPDATE_PLAYER:
             ((GameServerProvider)provider).updatePlayer(
                 source, ((Integer)args[0]).intValue(), (GameSummary)args[1]
+            );
+            return;
+
+        case GameServerMarshaller.UPDATE_STAT:
+            ((GameServerProvider)provider).updateStat(
+                source, ((Integer)args[0]).intValue(), (StatModifier)args[1]
             );
             return;
 

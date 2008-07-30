@@ -16,6 +16,9 @@ import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.net.PeerCreds;
 import com.threerings.presents.server.ShutdownManager;
+import com.threerings.stats.data.IntSetStatAdder;
+import com.threerings.stats.data.IntStatIncrementer;
+import com.threerings.stats.data.Stat;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Prize;
@@ -141,6 +144,24 @@ public class WorldServerClient
             log.warning("Dropping prize award [mid=" + memberId + ", prize=" + prize + "].");
         } else {
             _gssvc.awardPrize(_client, memberId, gameId, gameName, prize, listener);
+        }
+    }
+
+    public void incrementStat (int memberId, Stat.Type type, int delta)
+    {
+        if (_gssvc == null) {
+            log.warning("Dropping incrementStat", "Stat.Type", type, "delta", delta);
+        } else {
+            _gssvc.updateStat(_client, memberId, new IntStatIncrementer(type, delta));
+        }
+    }
+
+    public void addToSetStat (int memberId, Stat.Type type, int value)
+    {
+        if (_gssvc == null) {
+            log.warning("Dropping addToSetStat", "Stat.Type", type, "value", value);
+        } else {
+            _gssvc.updateStat(_client, memberId, new IntSetStatAdder(type, value));
         }
     }
 

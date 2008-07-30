@@ -9,6 +9,7 @@ import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
+import com.threerings.stats.data.StatModifier;
 
 /**
  * Provides the implementation of the {@link GameServerService} interface
@@ -95,6 +96,17 @@ public class GameServerMarshaller extends InvocationMarshaller
     public void updatePlayer (Client arg1, int arg2, GameSummary arg3)
     {
         sendRequest(arg1, UPDATE_PLAYER, new Object[] {
+            Integer.valueOf(arg2), arg3
+        });
+    }
+
+    /** The method id used to dispatch {@link #updateStat} requests. */
+    public static final int UPDATE_STAT = 8;
+
+    // from interface GameServerService
+    public void updateStat (Client arg1, int arg2, StatModifier arg3)
+    {
+        sendRequest(arg1, UPDATE_STAT, new Object[] {
             Integer.valueOf(arg2), arg3
         });
     }

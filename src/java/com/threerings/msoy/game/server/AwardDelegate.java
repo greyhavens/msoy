@@ -549,46 +549,36 @@ public class AwardDelegate extends RatingDelegate
      */
     protected void updatePlayerStats (Iterable<Integer> playerOids, Iterable<Integer> winnerOids)
     {
-        final int gameId = _content.detail.gameId;
-
         // we're currently not persisting any stats for in-development games
-        if (Game.isDeveloperVersion(gameId)) {
+        if (Game.isDeveloperVersion(_content.detail.gameId)) {
             return;
         }
 
-        final boolean isMultiplayer = isMultiplayer();
-        final List<Integer> playerIds = playerOidsToMemberIds(playerOids, true);
-        final List<Integer> winnerIds = playerOidsToMemberIds(winnerOids, true);
-        _invoker.postUnit(new WriteOnlyUnit("updateGameStats") {
-            public void invokePersist () throws PersistenceException {
-                for (int playerId : playerIds) {
-                    // track total game sessions
-                    _statLogic.incrementStat(playerId, StatType.GAME_SESSIONS, 1);
-                    // track unique games played
-                    _statLogic.addToSetStat(playerId, StatType.UNIQUE_GAMES_PLAYED, gameId);
+        List<Integer> memberIds = playerOidsToMemberIds(playerOids, true);
+        for (int memberId : memberIds) {
+            // track total game sessions
+            _worldClient.incrementStat(memberId, StatType.GAME_SESSIONS, 1);
+            // track unique games played
+            _worldClient.addToSetStat(memberId, StatType.UNIQUE_GAMES_PLAYED,
+                _content.detail.gameId);
 
-                    if (isMultiplayer) {
-                        // track unique game partners
-                        for (int otherPlayerId : playerIds) {
-                            if (otherPlayerId != playerId) {
-                                _statLogic.addToSetStat(
-                                    playerId, StatType.MP_GAME_PARTNERS, otherPlayerId);
-                            }
-                        }
-                    }
-                }
-
-                // track multiplayer game wins
-                if (isMultiplayer) {
-                    for (int playerId : winnerIds) {
-                        _statLogic.addToSetStat(playerId, StatType.MP_GAMES_WON, 1);
+            if (isMultiplayer()) {
+                // track unique game partners
+                for (int otherMemberId : memberIds) {
+                    if (otherMemberId != memberId) {
+                        _worldClient.addToSetStat(
+                            memberId, StatType.MP_GAME_PARTNERS, otherMemberId);
                     }
                 }
             }
-            protected String getFailureMessage () {
-                return "Failed to update game stats (gameId=" + gameId + ")";
+        }
+
+        // track multiplayer game wins
+        if (isMultiplayer()) {
+            for (int memberId : playerOidsToMemberIds(winnerOids, true)) {
+                _worldClient.addToSetStat(memberId, StatType.MP_GAMES_WON, 1);
             }
-        });
+        }
     }
 
     protected List<Integer> playerOidsToMemberIds (
@@ -1150,7 +1140,6 @@ public class AwardDelegate extends RatingDelegate
     // our dependencies
     @Inject protected GameGameRegistry _gameReg;
     @Inject protected WorldServerClient _worldClient;
-    @Inject protected StatLogic _statLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected GameRepository _gameRepo;
 }

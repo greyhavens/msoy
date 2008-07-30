@@ -5,6 +5,8 @@ package com.threerings.msoy.game.client;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
+import com.threerings.stats.data.Stat;
+import com.threerings.stats.data.StatModifier;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
@@ -50,6 +52,11 @@ public interface GameServerService extends InvocationService
      * Awards the specified prize to the specified player. Returns the awarded {@link Item} to the
      * caller via the supplied result listener.
      */
-    public void awardPrize (Client client, int memberId, int gameId, String gameName, Prize prize,
+    void awardPrize (Client client, int memberId, int gameId, String gameName, Prize prize,
                             ResultListener listener);
+
+    /**
+     * Applies a stat update for the specified player.
+     */
+    void updateStat (Client client, int memberId, StatModifier modifier);
 }

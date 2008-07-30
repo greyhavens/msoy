@@ -28,6 +28,7 @@ import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.parlor.game.data.GameCodes;
+import com.threerings.stats.data.StatModifier;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -36,6 +37,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.StatLogic;
 
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Game;
@@ -357,6 +359,18 @@ public class MsoyGameRegistry
         _itemMan.awardPrize(memberId, gameId, gameName, prize, new ResultAdapter<Item>(listener));
     }
 
+    // from interface GameServerProvider
+    @SuppressWarnings("unchecked")
+    public void updateStat (ClientObject caller, int memberId, StatModifier modifier)
+    {
+        if (!checkCallerAccess(caller, "updateStat(" + memberId + ", " + modifier + ")")) {
+            return;
+        }
+        // stat logic will update the stat in the database and send a MemberNodeAction to the
+        // appropriate MemberObject
+        _statLogic.updateStat(memberId, modifier);
+    }
+
     // from interface _Shutdowner
     public void shutdown ()
     {
@@ -601,6 +615,7 @@ public class MsoyGameRegistry
     @Inject protected ItemManager _itemMan;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected GameRepository _gameRepo;
+    @Inject protected StatLogic _statLogic;
 
     /** The number of delegate game servers to be started. */
     protected static final int DELEGATE_GAME_SERVERS = 1;
