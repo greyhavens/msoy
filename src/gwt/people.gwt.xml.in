@@ -1,0 +1,40 @@
+<module>
+  <inherits name="com.google.gwt.user.User"/>
+  <inherits name="com.google.gwt.i18n.I18N"/>
+  <inherits name="com.google.gwt.xml.XML"/>
+
+  <source path="org/gwtwidgets/client"/>
+  <source path="com/kisgergely/gwt/canvas/client"/>
+  <source path="com/threerings/io"/>
+  <source path="com/threerings/util"/>
+  <source path="com/threerings/presents/dobj"/>
+  <source path="com/threerings/gwt/ui"/>
+  <source path="com/threerings/gwt/util"/>
+
+  <source path="com/threerings/msoy/data/all"/>
+  <source path="com/threerings/msoy/web/data"/>
+  <source path="com/threerings/msoy/web/client"/>
+  <source path="com/threerings/msoy/item/data/all"/>
+  <source path="com/threerings/msoy/item/gwt"/>
+  <source path="com/threerings/msoy/fora/gwt"/>
+  <source path="com/threerings/msoy/game/data/all"/>
+  <source path="com/threerings/msoy/game/gwt"/>
+  <source path="com/threerings/msoy/group/data/all"/>
+  <source path="com/threerings/msoy/group/gwt"/>
+  <source path="com/threerings/msoy/mail/gwt"/>
+  <source path="com/threerings/msoy/person/gwt"/>
+
+  <source path="client/people"/>
+  <source path="client/games"/>
+  <source path="client/mail"/>
+  <source path="client/msgs"/>
+  <source path="client/editem"/>
+  <source path="client/item"/>
+  <source path="client/images"/>
+  <source path="client/shell"/>
+  <source path="client/ui"/>
+  <source path="client/util"/>
+  <public path="public"/>
+
+  <entry-point class="client.people.PeoplePage"/>
+</module>
