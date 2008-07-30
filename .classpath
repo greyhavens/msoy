@@ -97,13 +97,8 @@
 	<classpathentry kind="lib" path="dist/lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="dist/lib/xmlrpc-client.jar"/>
 	<classpathentry kind="lib" path="dist/lib/xmlrpc-common.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/narya"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/samskivert"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/threerings"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/toybox"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/underwire"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/vilya"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/whirled"/>
 	<classpathentry kind="lib" path="lib/plugin.jar"/>
 	<classpathentry kind="output" path="dist/classes"/>
 </classpath>
