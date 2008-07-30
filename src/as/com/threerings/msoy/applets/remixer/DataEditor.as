@@ -148,13 +148,13 @@ public class DataEditor extends FieldEditor
         var doPopFn :Function = function () :void {
             // here also, we don't use entry, we fetch it fresh
             var popper :PopupEditor = createPopper();
-            popper.open(_ctx, dataEditor, _ctx.pack.getDataEntry(entry.name));
+            popper.open(_ctx, dataEditor, _ctx.pack.getDataEntry(entry.name), updateValue);
         };
         var change :CommandButton = createEditButton(doPopFn);
         return [ label, change, change ];
     }
 
-    internal function updateValue (value :*) :void
+    protected function updateValue (value :*) :void
     {
         if (value != _value) {
             _value = value;

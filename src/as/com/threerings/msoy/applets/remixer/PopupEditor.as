@@ -6,6 +6,8 @@ package com.threerings.msoy.applets.remixer {
 import flash.events.Event;
 import flash.events.IEventDispatcher;
 
+import flash.display.DisplayObject;
+
 import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.TitleWindow;
@@ -26,10 +28,11 @@ public class PopupEditor extends TitleWindow
     /**
      * Initialize and open this editor.
      */
-    public function open (ctx :RemixContext, parent :DataEditor, entry :Object) :void
+    public function open (
+        ctx :RemixContext, parent :DisplayObject, entry :Object, updateFn :Function) :void
     {
-        _parent = parent;
         _entry = entry;
+        _updateFn = updateFn;
         this.title = entry.name;
 
         // configure the okbutton immediately
@@ -41,7 +44,7 @@ public class PopupEditor extends TitleWindow
         GridUtil.addRow(grid, ctx.REMIX.get("l.name"), entry.name as String);
         var desc :Text = new Text();
         desc.selectable = false;
-        desc.width = 300;
+        desc.maxWidth = 300;
         desc.text = (entry.info as String) || ctx.REMIX.get("m.none");
         GridUtil.addRow(grid, ctx.REMIX.get("l.desc"), desc);
         GridUtil.addRow(grid, ctx.REMIX.get("l.type"), entry.type as String);
@@ -58,7 +61,7 @@ public class PopupEditor extends TitleWindow
         GridUtil.addRow(grid, buttonBar, [2, 1]);
 
         // finally, let 'er rip
-        PopUpManager.addPopUp(this, _parent, true);
+        PopUpManager.addPopUp(this, parent, true);
         PopUpUtil.center(this);
     }
 
@@ -75,17 +78,18 @@ public class PopupEditor extends TitleWindow
     protected function close (save :Boolean) :void
     {
         if (save) {
-            _parent.updateValue(getNewValue());
+            _updateFn(getNewValue());
         }
 
+        dispatchEvent(new Event(Event.CLOSE));
         PopUpManager.removePopUp(this);
     }
-
-    protected var _parent :DataEditor;
 
     protected var _entry :Object;
 
     protected var _okBtn :CommandButton;
+
+    protected var _updateFn :Function;
 }
 }
 

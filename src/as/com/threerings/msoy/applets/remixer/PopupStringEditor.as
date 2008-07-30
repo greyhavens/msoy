@@ -47,8 +47,10 @@ public class PopupStringEditor extends PopupEditor
         }
 
         var textToShow :String;
-        if (entry.type == "String") {
+        if (entry.type == "String" || Boolean(entry.useArea)) {
             _txt = new TextArea();
+            _txt.width = 400;
+            _txt.height = 400;
             textToShow = entry.value; // allow "s and so forth
 
         } else {

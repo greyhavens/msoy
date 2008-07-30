@@ -18,6 +18,7 @@ import flash.utils.ByteArray;
 import mx.controls.ButtonBar;
 import mx.controls.HRule;
 import mx.controls.Label;
+import mx.controls.TextArea;
 
 import mx.containers.HBox;
 import mx.containers.TitleWindow;
@@ -26,6 +27,8 @@ import mx.containers.VBox;
 import mx.core.UIComponent;
 
 import mx.managers.PopUpManager;
+
+import mx.validators.Validator;
 
 import com.adobe.images.PNGEncoder;
 
@@ -64,6 +67,7 @@ public class PopupFilePreview extends TitleWindow
         _sizeRestriction = new SizeRestriction(Number(entry.width), Number(entry.height),
             Number(entry.maxWidth), Number(entry.maxHeight));
         var imageOk :Boolean = (_type == "Image" || _type == "DisplayObject" || _type == "Blob");
+        var textType :Boolean = (_type == "XML" || _type == "Text");
 
         var externalAvail :Boolean = false;
         try {
@@ -113,16 +117,25 @@ public class PopupFilePreview extends TitleWindow
         }
 
         previewBox.addChild(makeHeader(_ctx.REMIX.get("t.preview")));
-        _image = new DisplayCanvas(400, 400);
-        _image.addEventListener(DisplayCanvas.SIZE_KNOWN, handleSizeKnown);
-        previewBox.addChild(_image);
-        _label = new Label();
-        _label.maxWidth = 250;
+        if (imageOk) {
+            _image = new DisplayCanvas(400, 400);
+            _image.addEventListener(DisplayCanvas.SIZE_KNOWN, handleSizeKnown);
+            previewBox.addChild(_image);
+
+        } else if (textType) {
+            _text = new TextArea();
+            _text.width = 400;
+            _text.height = 400;
+            _text.editable = false;
+            previewBox.addChild(_text);
+        }
 
         hbox = new HBox();
-        if (imageOk) {
+        if (imageOk || textType) {
             hbox.addChild(_edit = new CommandButton(_ctx.REMIX.get("b.edit"), doEdit));
         }
+        _label = new Label();
+        _label.maxWidth = 250;
         hbox.addChild(_label);
         previewBox.addChild(hbox);
 
@@ -137,12 +150,12 @@ public class PopupFilePreview extends TitleWindow
         buttonBar.addChild(_ok = new CommandButton(_ctx.REMIX.get("b.save"), close, true));
         box.addChild(buttonBar);
 
-        setImage(entry.value, ctx.pack.getFile(name));
+        setFile(entry.value, ctx.pack.getFile(name));
 
         setPopped(true);
     }
 
-    public function setImage (filename :String, bytes :ByteArray) :void
+    public function setFile (filename :String, bytes :ByteArray) :void
     {
         if (filename == null) {
             _filename = null;
@@ -153,7 +166,13 @@ public class PopupFilePreview extends TitleWindow
             _label.text = _filename;
         }
         _bytes = bytes;
-        _image.setImage(bytes);
+
+        if (_image != null) {
+            _image.setImage(bytes);
+
+        } else if (_text != null) {
+            _text.text = bytesToString(bytes);
+        }
         _ok.enabled = (bytes != null);
         if (_edit != null) {
             _edit.enabled = (bytes != null);
@@ -253,17 +272,17 @@ public class PopupFilePreview extends TitleWindow
         }
 
         var fname :String = value[0] as String;
-        var image :ByteArray = value[1] as ByteArray;
+        var data :ByteArray = value[1] as ByteArray;
 
-        if (_sizeRestriction == null ||
+        if (_image == null || _sizeRestriction == null ||
                 (_sizeRestriction.forced == null && isNaN(_sizeRestriction.maxWidth) &&
                 isNaN(_sizeRestriction.maxHeight))) {
-            setImage(fname, image);
+            setFile(fname, data);
 
         } else {
             // otherwise, for now, let's just always route it through the editor
             // TODO: check the size, if it's cool then use it directly...
-            doEdit(image, fname);
+            doEdit(data, fname);
         }
     }
 
@@ -282,7 +301,7 @@ public class PopupFilePreview extends TitleWindow
     {
         const fname :String = "cameragrab.png";
         if (_sizeRestriction.isValid(bitmapData.width, bitmapData.height)) {
-            setImage(fname, PNGEncoder.encode(bitmapData));
+            setFile(fname, PNGEncoder.encode(bitmapData));
         } else {
             doEdit(bitmapData, fname);
         }
@@ -351,23 +370,48 @@ public class PopupFilePreview extends TitleWindow
 
         _newFilename = newFilename;
         var source :Object = (image != null) ? image : _bytes;
-        var editor :ImageEditor = new ImageEditor(_ctx, source, _sizeRestriction);
-        editor.addEventListener(ImageEditor.IMAGE_UPDATED, handleEditorClosed);
+
+        if (_image != null) {
+            var iEditor :ImageEditor = new ImageEditor(_ctx, source, _sizeRestriction);
+            iEditor.addEventListener(ImageEditor.IMAGE_UPDATED, handleEditorClosed);
+            iEditor.addEventListener(ImageEditor.IMAGE_UPDATED, handleImageEditorClosed);
+        } else if (_text != null) {
+            var validator :Validator = (_type == "XML") ? new XMLValidator(_ctx) : null;
+            var tEditor :PopupStringEditor = new PopupStringEditor(validator);
+            tEditor.addEventListener(Event.CLOSE, handleEditorClosed);
+            var entry :Object = _ctx.pack.getFileEntry(_name);
+            entry.useArea = true;
+            entry.value = _text.text;
+            entry.fromString = stringToBytes;
+            tEditor.open(_ctx, this, entry, updateTextValue);
+        }
     }
 
-    protected function handleEditorClosed (event :ValueEvent) :void
+    protected function handleEditorClosed (... ignored) :void
     {
+        // re-pop ourselves
         setPopped(true);
+    }
 
+    protected function handleImageEditorClosed (event :ValueEvent) :void
+    {
         var array :Array = event.value as Array;
         if (array != null) {
-            var file :String = (_newFilename != null) ? _newFilename : _filename;
-            _newFilename = null;
-
-            var ba :ByteArray = ByteArray(array[0]);
-            _filename = _ctx.createFilename(file, ba, array[1] as String);
-            setImage(_filename, ba);
+            updateFile(ByteArray(array[0]), array[1] as String);
         }
+    }
+
+    protected function updateTextValue (newValue :ByteArray) :void
+    {
+        updateFile(newValue);
+    }
+
+    protected function updateFile (ba :ByteArray, newExtension :String = null) :void
+    {
+        var file :String = (_newFilename != null) ? _newFilename : _filename;
+        _newFilename = null;
+        _filename = _ctx.createFilename(file, ba, newExtension);
+        setFile(_filename, ba);
     }
 
     protected function setPopped (vis :Boolean) :void
@@ -378,6 +422,19 @@ public class PopupFilePreview extends TitleWindow
         } else {
             PopUpManager.removePopUp(this);
         }
+    }
+
+    protected function bytesToString (ba :ByteArray) :String
+    {
+        ba.position = 0;
+        return ba.readUTFBytes(ba.bytesAvailable);
+    }
+
+    protected function stringToBytes (s :String) :ByteArray
+    {
+        var ba :ByteArray = new ByteArray();
+        ba.writeUTFBytes(s);
+        return ba;
     }
 
     protected var _parent :FileEditor;
@@ -399,6 +456,7 @@ public class PopupFilePreview extends TitleWindow
     protected var _edit :CommandButton;
 
     protected var _image :DisplayCanvas;
+    protected var _text :TextArea;
 
     protected var _label :Label;
 
