@@ -70,12 +70,17 @@ public class BadgeManager
         final long whenEarned = System.currentTimeMillis();
 
         // create badges and stick them in the MemberObject
+        int coinValue = 0;
         final List<EarnedBadge> badges = createBadges(badgeTypes, whenEarned);
         for (EarnedBadge badge : badges) {
             user.awardBadge(badge);
+            coinValue += badge.getType().getCoinValue();
         }
+        user.setFlow(user.flow + coinValue);
+        user.setAccFlow(user.accFlow + coinValue);
 
         // stick the badges in the database
+        final int totalCoinValue = coinValue;
         _invoker.postUnit(new WriteOnlyUnit("awardBadges") {
             public void invokePersist () throws PersistenceException {
                 for (BadgeType badgeType : badgeTypes) {
@@ -87,10 +92,12 @@ public class BadgeManager
                 }
             }
             public void handleFailure (Exception error) {
-                // rollback the changes to the user's BadgeSet
+                // rollback the changes to the user's BadgeSet and flow
                 for (EarnedBadge badge : badges) {
                     user.badges.removeBadge(badge);
                 }
+                user.setFlow(user.flow - totalCoinValue);
+                user.setAccFlow(user.accFlow - totalCoinValue);
                 super.handleFailure(error);
             }
             protected String getFailureMessage () {

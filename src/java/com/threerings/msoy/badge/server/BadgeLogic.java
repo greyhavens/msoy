@@ -14,10 +14,14 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.persist.FlowRepository;
+import com.threerings.msoy.server.persist.MemberFlowRecord;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
 
 /**
  * Provides badge related services to servlets and other blocking thread entities.
@@ -43,11 +47,16 @@ public class BadgeLogic
         _feedRepo.publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_BADGE,
             "some data here");
 
+        UserActionDetails info = new UserActionDetails(memberId, UserAction.EARNED_BADGE);
+        MemberFlowRecord mfrec = _flowRepo.grantFlow(info, type.getCoinValue());
+
         if (sendMemberNodeAction) {
             MemberNodeActions.badgeAwarded(brec);
+            MemberNodeActions.flowUpdated(mfrec);
         }
     }
 
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected FeedRepository _feedRepo;
+    @Inject protected FlowRepository _flowRepo;
 }

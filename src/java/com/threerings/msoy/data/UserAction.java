@@ -34,6 +34,8 @@ public enum UserAction
     UPDATED_LISTING(35, 0),
     UPDATED_PRICING(36, 0),
 
+    EARNED_BADGE(40, 0),
+
     ;
 
     /**
