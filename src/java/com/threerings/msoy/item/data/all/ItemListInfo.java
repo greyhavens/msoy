@@ -16,10 +16,10 @@ public class ItemListInfo
 {
     /** Special list type used to indicate a member's favorite items. */
     public static final byte FAVORITES = -1;
-    
-    /** Generic item list type */
+
+    /** The default item list type. This type of list can hold any type of item. */
     public static final byte GENERIC = 0;
-    
+
     /** The type constants. */
     public static final byte AUDIO_PLAYLIST = 1;
     public static final byte VIDEO_PLAYLIST = 2;
@@ -30,7 +30,7 @@ public class ItemListInfo
      * TODO how will the i18n work here?
      */
     public static final String FAVORITES_NAME = "m.favorites";
-    
+
     /** The unique identifier for this list. */
     public int listId;
 
@@ -60,21 +60,25 @@ public class ItemListInfo
 
     public static ItemListInfo decode (String str)
     {
+        ItemListInfo info = null;
         String[] pieces = str.split(":");
-        if (pieces.length == 4) {
-            ItemListInfo info = new ItemListInfo();
+        if (pieces.length >= 4) {
+            info = new ItemListInfo();
             try {
                 info.listId = Integer.parseInt(pieces[0]);
                 info.memberId = (byte) Integer.parseInt(pieces[1]);
                 info.type = (byte) Integer.parseInt(pieces[2]);
                 info.name = pieces[3];
-                return info;
-
+                // allow for the case where the name has colons in it
+                for (int i = 4; i < pieces.length; i++) {
+                    info.name += ":";
+                    info.name += pieces[i];
+                }
             } catch (NumberFormatException nfe) {
                 // nothing, fall through
             }
         }
 
-        return null;
+        return info;
     }
 }
