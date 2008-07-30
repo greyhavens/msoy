@@ -12,7 +12,6 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.person.gwt.ProfileServiceAsync;
 
-import client.msgs.FeedPanel;
 import client.util.ServiceUtil;
 
 /**

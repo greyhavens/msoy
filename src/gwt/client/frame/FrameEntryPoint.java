@@ -332,8 +332,7 @@ public class FrameEntryPoint
         // note the current history token so that we can restore it if needed
         _closeToken = (closeToken == null) ? _currentToken : closeToken;
 
-        // clear out our content and the expand/close controls
-        RootPanel.get(CONTENT).clear();
+        // hide our content
         RootPanel.get(CONTENT).setWidth("0px");
         RootPanel.get(CONTENT).setVisible(false);
 

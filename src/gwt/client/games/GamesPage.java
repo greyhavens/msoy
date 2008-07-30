@@ -42,8 +42,7 @@ public class GamesPage extends Page
             } else {
                 setContent(panel = new GameDetailPanel());
             }
-            GameDetails tab = GameDetails.getByCode(args.get(2, ""));
-            panel.setGame(args.get(1, 0), tab);
+            panel.setGame(args.get(1, 0), GameDetails.getByCode(args.get(2, "")));
 
         } else if (action.equals("t")) {
             setContent(new TrophyCasePanel(args.get(1, 0)));

@@ -16,8 +16,8 @@ import com.threerings.msoy.landing.gwt.MyWhirledData;
 import com.threerings.msoy.person.gwt.FeedMessage;
 
 import client.item.StuffNaviBar;
-import client.msgs.FeedPanel;
 import client.msgs.MsgsMessages;
+import client.people.FeedPanel;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;

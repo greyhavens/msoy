@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.people;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +30,7 @@ import com.threerings.msoy.person.gwt.FriendFeedMessage;
 import com.threerings.msoy.person.gwt.GroupFeedMessage;
 import com.threerings.msoy.person.gwt.SelfFeedMessage;
 
+import client.msgs.MsgsMessages;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicMessages;
