@@ -739,7 +739,7 @@ public class ItemServlet extends MsoyServiceServlet
                 _itemMan.removeFavorite(member.memberId, item);
             }
         } catch(PersistenceException pex) {
-            log.warning("Could not set favorite for [member="+member.memberId+", item=" + item + "].", pex);
+            log.warning("Could not set favorite.", "member", member.memberId, "item", item, pex);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
