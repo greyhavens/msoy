@@ -46,6 +46,8 @@ public class SliderPopup extends Canvas
         
         // Initialize slider
         _slider = new VSlider();
+        //_slider.getThumbAt(0).scaleX = 2;
+        _slider.sliderThumbClass = SliderPopupThumb;
         _slider.x = 4;
         _slider.y = 10;
         _slider.height = 80;
@@ -165,4 +167,5 @@ public class SliderPopup extends Canvas
         previous instance before displaying a new one. */
     protected static var _currentInstance : SliderPopup;
 }
+
 }
