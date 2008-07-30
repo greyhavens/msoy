@@ -131,7 +131,7 @@ public class LocalLogDumper
 
                     // optic version
                     if (! ((Integer)o).equals(LocalEventLogger.VERSION_ID)) {
-                        throw new IllegalStateException("Unknown item version: " + ((Integer)o));
+                        throw new IllegalStateException("Unknown item version: " + o);
                     }
 
                     Object result = payload.readObject();

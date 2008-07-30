@@ -57,5 +57,5 @@ public interface GameServerProvider extends InvocationProvider
     /**
      * Handles a {@link GameServerService#updateStat} request.
      */
-    void updateStat (ClientObject caller, int arg1, StatModifier arg2);
+    void updateStat (ClientObject caller, int arg1, StatModifier<?> arg2);
 }

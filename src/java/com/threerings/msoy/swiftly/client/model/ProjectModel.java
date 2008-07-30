@@ -35,7 +35,7 @@ import com.threerings.presents.dobj.SetListener;
  * Manages various SwiftlyProject related data and services.
  */
 public class ProjectModel
-    implements SetListener, AttributeChangeListener, MessageListener, OccupantObserver
+    implements SetListener<MemberName>, AttributeChangeListener, MessageListener, OccupantObserver
 {
     public ProjectModel (ProjectRoomObject roomObj, SwiftlyContext ctx)
     {
@@ -195,7 +195,7 @@ public class ProjectModel
     }
 
     // from interface SetListener
-    public void entryAdded (EntryAddedEvent event)
+    public void entryAdded (EntryAddedEvent<MemberName> event)
     {
         if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
             // TODO:
@@ -203,7 +203,7 @@ public class ProjectModel
     }
 
     // from interface SetListener
-    public void entryUpdated (EntryUpdatedEvent event)
+    public void entryUpdated (EntryUpdatedEvent<MemberName> event)
     {
         if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
             // TODO:
@@ -211,7 +211,7 @@ public class ProjectModel
     }
 
     // from interface SetListener
-    public void entryRemoved (EntryRemovedEvent event)
+    public void entryRemoved (EntryRemovedEvent<MemberName> event)
     {
         if (event.getName().equals(ProjectRoomObject.COLLABORATORS)) {
             // TODO:

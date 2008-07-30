@@ -110,7 +110,7 @@ public class InterestsBlurb extends Blurb
             public boolean gotResult (Void result) {
                 // filter out our blank new interests
                 for (int ii = 0; ii < _newInterests.size(); ii++) {
-                    Interest interest = (Interest) _newInterests.get(ii);
+                    Interest interest = _newInterests.get(ii);
                     if (interest.interests.length() == 0) {
                         _newInterests.remove(ii--);
                     }
@@ -146,7 +146,7 @@ public class InterestsBlurb extends Blurb
     protected String getCurrentInterest (int type)
     {
         for (int ii = 0; ii < _interests.size(); ii++) {
-            Interest interest = (Interest) _interests.get(ii);
+            Interest interest = _interests.get(ii);
             if (interest.type == type) {
                 return interest.interests;
             }

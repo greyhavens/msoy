@@ -56,13 +56,13 @@ public class FriendEntry
     }
 
     // from interface DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return new Integer(getMemberId());
     }
 
     // from interface Comparable
-    public int compareTo (Object other)
+    public int compareTo (PeerEntry other)
     {
         FriendEntry that = (FriendEntry) other;
         // online folks show up above offline folks

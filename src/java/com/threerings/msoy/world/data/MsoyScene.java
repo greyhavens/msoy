@@ -224,7 +224,7 @@ public class MsoyScene extends SceneImpl
     }
 
     // from SpotScene
-    public Iterator getPortals ()
+    public Iterator<Portal> getPortals ()
     {
         return _model.getPortals();
     }

@@ -61,7 +61,7 @@ import com.threerings.msoy.swiftly.server.storage.ProjectStorageException;
  */
 @EventThread
 public class ProjectRoomManager extends PlaceManager
-    implements ProjectRoomProvider, SetListener
+    implements ProjectRoomProvider, SetListener<DSet.Entry>
 {
     /** Server-root relative path to the server build directory. */
     public static final String LOCAL_BUILD_DIRECTORY = "/data/swiftly/build";
@@ -442,7 +442,7 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface SetListener
-    public void entryAdded (EntryAddedEvent event)
+    public void entryAdded (EntryAddedEvent<DSet.Entry> event)
     {
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
@@ -456,7 +456,7 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface SetListener
-    public void entryUpdated (EntryUpdatedEvent event)
+    public void entryUpdated (EntryUpdatedEvent<DSet.Entry> event)
     {
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             SwiftlyDocument element = (SwiftlyDocument)event.getEntry();
@@ -470,7 +470,7 @@ public class ProjectRoomManager extends PlaceManager
     }
 
     // from interface SetListener
-    public void entryRemoved (EntryRemovedEvent event)
+    public void entryRemoved (EntryRemovedEvent<DSet.Entry> event)
     {
         // nada
     }

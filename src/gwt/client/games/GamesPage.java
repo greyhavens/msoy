@@ -53,7 +53,7 @@ public class GamesPage extends Page
 
         } else if (action.equals("g")) {
             setContent(new GameGenrePanel(
-                (byte)args.get(1, (byte)-1), (byte)args.get(2, 0), (String)args.get(3, null)));
+                (byte)args.get(1, (byte)-1), (byte)args.get(2, 0), args.get(3, null)));
 
         } else {
             setContent(new ArcadePanel());

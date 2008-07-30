@@ -321,7 +321,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (itemIds.length == 0) {
             return new ArrayList<T>();
         }
-        Comparable[] idArr = IntListUtil.box(itemIds);
+        Comparable<?>[] idArr = IntListUtil.box(itemIds);
         Where inClause = new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr));
         List<T> items = loadClonedItems(inClause);
         items.addAll(findAll(getItemClass(), inClause));
@@ -542,7 +542,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
 
         // construct an array of item ids we need to load
-        Comparable[] idArr = new Integer[records.size()];
+        Comparable<?>[] idArr = new Integer[records.size()];
         int ii = 0;
         for (CatalogRecord record : records) {
             idArr[ii++] = record.listedItemId;
@@ -890,7 +890,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         throws PersistenceException
     {
         Where where;
-        Key key;
+        Key<?> key;
         if (item.itemId < 0) {
             where = new Where(getCloneColumn(ItemRecord.ITEM_ID), item.itemId,
                               getCloneColumn(ItemRecord.OWNER_ID), item.ownerId);

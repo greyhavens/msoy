@@ -5,8 +5,7 @@ import com.threerings.presents.dobj.DSet;
 /**
  * Represents a player's connection to another person of interest.
  */
-public interface PeerEntry
-    extends Comparable, DSet.Entry
+public interface PeerEntry extends Comparable<PeerEntry>, DSet.Entry
 {
     /** The member ID of the peer. */
     public int getMemberId ();

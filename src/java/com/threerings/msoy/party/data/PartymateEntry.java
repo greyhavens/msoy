@@ -28,7 +28,7 @@ public class PartymateEntry
         return name.getPhoto();
     }
 
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return getMemberId();
     }
@@ -44,7 +44,7 @@ public class PartymateEntry
             (getMemberId() == ((PartymateEntry)other).getMemberId());
     }
 
-    public int compareTo (Object other)
+    public int compareTo (PeerEntry other)
     {
         PartymateEntry that = (PartymateEntry)other;
         return MemberName.BY_DISPLAY_NAME.compare(this.name, that.name);

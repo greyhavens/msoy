@@ -13,6 +13,6 @@ public class DSet<E extends DSet.Entry>
 {
     public static interface Entry extends Streamable
     {
-        Comparable getKey ();
+        Comparable<?> getKey ();
     }
 }

@@ -16,7 +16,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;

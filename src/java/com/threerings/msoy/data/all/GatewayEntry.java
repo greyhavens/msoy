@@ -11,7 +11,7 @@ import com.threerings.presents.dobj.DSet;
  * Information pertaining to a player's IM connections.
  */
 public class GatewayEntry
-    implements Comparable, DSet.Entry, IsSerializable
+    implements Comparable<GatewayEntry>, DSet.Entry, IsSerializable
 {
     /** The gateway name. */
     public String gateway;
@@ -40,15 +40,14 @@ public class GatewayEntry
     }
 
     // from interface DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return gateway;
     }
 
     // from interface Comparable
-    public int compareTo (Object other)
+    public int compareTo (GatewayEntry that)
     {
-        GatewayEntry that = (GatewayEntry)other;
         // online connections shown first
         if (this.online != that.online) {
             return this.online ? -1 : 1;

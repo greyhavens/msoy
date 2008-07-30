@@ -83,7 +83,7 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
 
         case GameServerMarshaller.UPDATE_STAT:
             ((GameServerProvider)provider).updateStat(
-                source, ((Integer)args[0]).intValue(), (StatModifier)args[1]
+                source, ((Integer)args[0]).intValue(), (StatModifier<?>)args[1]
             );
             return;
 

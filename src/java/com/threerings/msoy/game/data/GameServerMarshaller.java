@@ -104,7 +104,7 @@ public class GameServerMarshaller extends InvocationMarshaller
     public static final int UPDATE_STAT = 8;
 
     // from interface GameServerService
-    public void updateStat (Client arg1, int arg2, StatModifier arg3)
+    public void updateStat (Client arg1, int arg2, StatModifier<?> arg3)
     {
         sendRequest(arg1, UPDATE_STAT, new Object[] {
             Integer.valueOf(arg2), arg3

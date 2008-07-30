@@ -23,7 +23,7 @@ public class StatusObject extends DObject
         public int players;
 
         // documentation inherited from interface DSet.Entry
-        public Comparable getKey () {
+        public Comparable<?> getKey () {
             return gameOid;
         }
     }

@@ -67,10 +67,11 @@ public class RuntimeConfig
             _omgr = omgr;
         }
 
-        public boolean allowSubscribe (DObject object, Subscriber subscriber) {
+        public boolean allowSubscribe (DObject object, Subscriber<?> subscriber) {
             // if the subscriber is a client; make sure they're an admin
-            if (subscriber instanceof MsoyClient) {
-                MemberObject user = (MemberObject)((MsoyClient)subscriber).getClientObject();
+            if (MsoyClient.class.isInstance(subscriber)) {
+                MemberObject user = (MemberObject)
+                    MsoyClient.class.cast(subscriber).getClientObject();
                 return user.tokens.isAdmin();
             }
             return true;

@@ -651,7 +651,7 @@ public class CatalogServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            Item item = (Item)Item.getClassForType(itemType).newInstance();
+            Item item = Item.getClassForType(itemType).newInstance();
             return (!(item instanceof SubItem) || ((SubItem)item).isSalable());
         } catch (Exception e) {
             log.warning("Failed to check salability [type=" + itemType + "].", e);

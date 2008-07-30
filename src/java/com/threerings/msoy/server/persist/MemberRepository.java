@@ -694,7 +694,7 @@ public class MemberRepository extends DepotRepository
         if (memberIds.length == 0) {
             return Collections.emptyList();
         }
-        Comparable[] idArr = IntListUtil.box(memberIds);
+        Comparable<?>[] idArr = IntListUtil.box(memberIds);
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
@@ -1092,7 +1092,7 @@ public class MemberRepository extends DepotRepository
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, otherId));
 
-        Key key = FriendRecord.getKey(memberId, otherId);
+        Key<FriendRecord> key = FriendRecord.getKey(memberId, otherId);
         deleteAll(FriendRecord.class, key, key);
 
         key = FriendRecord.getKey(otherId, memberId);

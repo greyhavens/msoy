@@ -425,7 +425,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     }
 
     // from DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return getIdent();
     }

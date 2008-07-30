@@ -174,15 +174,14 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public void updateInterests (WebIdent ident, List interests)
+    public void updateInterests (WebIdent ident, List<Interest> interests)
         throws ServiceException
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
         try {
             // store the supplied interests in the repository; blank interests will be deleted
-            @SuppressWarnings("unchecked") List<Interest> tinterests = interests;
-            _profileRepo.storeInterests(memrec.memberId, tinterests);
+                _profileRepo.storeInterests(memrec.memberId, interests);
 
         } catch (PersistenceException pe) {
             log.warning("Failed to update member's interests [who=" + memrec.who() +

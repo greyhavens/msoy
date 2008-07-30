@@ -247,7 +247,7 @@ public class FlowRepository extends DepotRepository
                          new Arithmetic.Add(MemberRecord.ACC_FLOW_C, amount));
         }
 
-        Key key = MemberRecord.getKey(info.memberId);
+        Key<MemberRecord> key = MemberRecord.getKey(info.memberId);
         int mods;
         if (grant) {
             mods = updateLiteral(MemberRecord.class, key, key, fieldMap);

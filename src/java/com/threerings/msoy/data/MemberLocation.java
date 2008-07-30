@@ -25,7 +25,7 @@ public class MemberLocation extends SimpleStreamableObject
     public boolean avrGame;
 
     // from DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return memberId;
     }

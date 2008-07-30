@@ -24,7 +24,7 @@ public class ItemList
     public Item[] items;
 
     // from DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return info.getKey();
     }

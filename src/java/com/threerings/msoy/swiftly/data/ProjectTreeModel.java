@@ -105,7 +105,7 @@ public class ProjectTreeModel extends DefaultTreeModel
 
     private void updateNodes (NodeOp op)
     {
-        Enumeration iter = ((DefaultMutableTreeNode)root).breadthFirstEnumeration();
+        Enumeration<?> iter = ((DefaultMutableTreeNode)root).breadthFirstEnumeration();
         while (iter.hasMoreElements()) {
             PathElementTreeNode node = (PathElementTreeNode)iter.nextElement();
             if (op.isMatch(node)) {

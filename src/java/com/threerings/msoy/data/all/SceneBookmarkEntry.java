@@ -10,7 +10,7 @@ import com.threerings.presents.dobj.DSet;
  * Does something extraordinary.
  */
 public class SceneBookmarkEntry
-    implements Comparable, DSet.Entry, IsSerializable
+    implements Comparable<SceneBookmarkEntry>, DSet.Entry, IsSerializable
 {
     /** The scene id being represented. */
     public int sceneId;
@@ -34,15 +34,14 @@ public class SceneBookmarkEntry
     }
 
     // from DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return new Integer(sceneId);
     }
 
     // from Comparable
-    public int compareTo (Object other)
+    public int compareTo (SceneBookmarkEntry that)
     {
-        SceneBookmarkEntry that = (SceneBookmarkEntry) other;
         return this.sceneId - that.sceneId;
     }
 

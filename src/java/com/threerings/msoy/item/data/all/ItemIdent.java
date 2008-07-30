@@ -11,7 +11,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * A fully qualified item identifier (type and integer id).
  */
 public class ItemIdent
-    implements Comparable, Streamable, IsSerializable
+    implements Comparable<ItemIdent>, Streamable, IsSerializable
 {
     /** The item type identifier. */
     public byte type;
@@ -36,10 +36,8 @@ public class ItemIdent
     }
 
     // from Comparable
-    public int compareTo (Object other)
+    public int compareTo (ItemIdent that)
     {
-        ItemIdent that = (ItemIdent) other;
-
         // first, compare by type.
         if (this.type < that.type) {
             return 1;

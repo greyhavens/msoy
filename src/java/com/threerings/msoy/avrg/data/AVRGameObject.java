@@ -74,7 +74,7 @@ public class AVRGameObject extends PlaceObject
     }
 
     @Override // from DObject
-    public void addSubscriber (Subscriber sub)
+    public void addSubscriber (Subscriber<?> sub)
     {
         super.addSubscriber(sub);
         if (subscriberListener != null) {
@@ -83,7 +83,7 @@ public class AVRGameObject extends PlaceObject
     }
 
     @Override // from DObject
-    public void removeSubscriber (Subscriber sub)
+    public void removeSubscriber (Subscriber<?> sub)
     {
         super.removeSubscriber(sub);
         if (subscriberListener != null) {

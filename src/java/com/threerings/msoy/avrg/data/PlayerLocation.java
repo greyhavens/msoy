@@ -32,7 +32,7 @@ public class PlayerLocation extends SimpleStreamableObject
     }
 
     // from interface DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return playerId;
     }

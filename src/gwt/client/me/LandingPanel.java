@@ -16,9 +16,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.game.gwt.FeaturedGameInfo;
-import com.threerings.msoy.group.gwt.GroupCard;
-import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.landing.gwt.LandingData;
 import com.threerings.msoy.landing.gwt.LandingService;
 import com.threerings.msoy.landing.gwt.LandingServiceAsync;
@@ -127,9 +124,9 @@ public class LandingPanel extends SimplePanel
         // collect the data for this page
         _landingsvc.getLandingData(new MsoyCallback<LandingData>() {
             public void onSuccess (LandingData data) {
-                topGamesPanel.setGames((FeaturedGameInfo[])data.topGames);
-                _featuredWhirled.setWhirleds((GroupCard[])data.featuredWhirleds);
-                _avatarPanel.setAvatars((ListingCard[])data.topAvatars);
+                topGamesPanel.setGames(data.topGames);
+                _featuredWhirled.setWhirleds(data.featuredWhirleds);
+                _avatarPanel.setAvatars(data.topAvatars);
             }
         });
     }

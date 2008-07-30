@@ -19,7 +19,7 @@ public class HostedPlace extends SimpleStreamableObject
     public String name;
 
     // from DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return placeId;
     }

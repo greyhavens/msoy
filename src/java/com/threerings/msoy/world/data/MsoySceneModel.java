@@ -166,7 +166,7 @@ public class MsoySceneModel extends SceneModel
     /**
      * Support for SpotScene.
      */
-    public Iterator getPortals ()
+    public Iterator<Portal> getPortals ()
     {
         validatePortalInfo();
         return _portalInfo.values().iterator();

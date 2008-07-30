@@ -103,23 +103,20 @@ public class PartyRegistry
     protected AccessController _partyAccessController = new AccessController()
     {
         // documentation inherited from interface
-        public boolean allowSubscribe (DObject object, Subscriber sub)
+        public boolean allowSubscribe (DObject object, Subscriber<?> sub)
         {
             // if the subscriber is a client, ensure that they are this same user
-            if (sub instanceof PresentsClient) {
-                MemberObject mobj = (MemberObject) (((PresentsClient)sub).getClientObject());
-                PartyObject pobj = (PartyObject) object;
-
+            if (PresentsClient.class.isInstance(sub)) {
+                MemberObject mobj = (MemberObject)PresentsClient.class.cast(sub).getClientObject();
+                PartyObject pobj = (PartyObject)object;
                 return mobj.partyId == pobj.partyId;
             }
-
             return true;
         }
         // documentation inherited from interface
         public boolean allowDispatch (DObject object, DEvent event)
         {
-            // TODO
-            return true;
+            return true; // TODO
         }
     };
 

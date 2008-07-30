@@ -41,7 +41,7 @@ public class EntityMemoryEntry
      * optimization, but I hate that otherwise we're sending down the entire entry when we want to
      * remove it!
      */
-    public Comparable getRemoveKey ()
+    public Comparable<?> getRemoveKey ()
     {
         EntityMemoryEntry other = new EntityMemoryEntry();
         other.item = this.item;
@@ -51,7 +51,7 @@ public class EntityMemoryEntry
     }
 
     // from interface DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return this;
     }

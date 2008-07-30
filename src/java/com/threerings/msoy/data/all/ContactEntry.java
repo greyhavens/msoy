@@ -11,7 +11,7 @@ import com.threerings.presents.dobj.DSet;
  * Stores contact information for a player's IM buddies.
  */
 public class ContactEntry
-    implements Comparable, DSet.Entry, IsSerializable
+    implements Comparable<ContactEntry>, DSet.Entry, IsSerializable
 {
     /** The jabber name of the contact. */
     public JabberName name;
@@ -31,15 +31,14 @@ public class ContactEntry
     }
 
     // from interface DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return name;
     }
 
     // from interface Comparable
-    public int compareTo (Object other)
+    public int compareTo (ContactEntry that)
     {
-        ContactEntry that = (ContactEntry)other;
         // online folks show up above offline folks
         if (this.online != that.online) {
             return this.online ? -1 : 1;

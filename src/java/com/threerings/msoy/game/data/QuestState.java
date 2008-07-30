@@ -38,7 +38,7 @@ public class QuestState extends SimpleStreamableObject
     }
 
     // from DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return questId;
     }

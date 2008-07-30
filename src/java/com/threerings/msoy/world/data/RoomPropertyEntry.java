@@ -32,7 +32,7 @@ public class RoomPropertyEntry
     }
 
     // from interface DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return key;
     }

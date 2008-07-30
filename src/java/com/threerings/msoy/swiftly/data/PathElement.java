@@ -172,7 +172,7 @@ public class PathElement
     }
 
     // from interface DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return elementId;
     }
@@ -265,5 +265,5 @@ public class PathElement
 
     /** Key for the enclosing parent, used to re-bind the transient _parent instance variable
      * post-serialization. */
-    private Comparable _parentKey = null;
+    private Comparable<?> _parentKey = null;
 }

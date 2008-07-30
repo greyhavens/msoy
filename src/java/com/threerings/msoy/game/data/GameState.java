@@ -46,7 +46,7 @@ public class GameState
     }
 
     // from interface DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return key;
     }

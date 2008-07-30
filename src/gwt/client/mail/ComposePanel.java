@@ -68,7 +68,7 @@ public class ComposePanel extends FlowPanel
             public void onChange (Widget sender) {
                 int idx = _friendBox.getSelectedIndex();
                 if (idx > 0) {
-                    setRecipient((MemberCard)_friends.get(idx-1), false);
+                    setRecipient(_friends.get(idx-1), false);
                 }
             }
         });

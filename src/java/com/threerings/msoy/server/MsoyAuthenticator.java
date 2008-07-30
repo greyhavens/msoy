@@ -588,7 +588,7 @@ public class MsoyAuthenticator extends Authenticator
     protected static String generateIdent (String accountName, int offset)
     {
         String seed = StringUtil.sha1hex(
-                Long.toHexString(System.currentTimeMillis() + (long)offset*1000L) + accountName);
+                Long.toHexString(System.currentTimeMillis() + offset*1000L) + accountName);
         return seed + generateIdentChecksum(seed);
     }
 

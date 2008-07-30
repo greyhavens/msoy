@@ -33,7 +33,7 @@ public class ServerRegistryObject extends DObject
         }
 
         // from DSet.Entry
-        public Comparable getKey ()
+        public Comparable<?> getKey ()
         {
             return hostName + ":" + port;
         }

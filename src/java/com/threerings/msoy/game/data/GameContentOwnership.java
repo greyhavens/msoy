@@ -12,7 +12,7 @@ import com.whirled.game.data.GameData;
  * Contains information on an item owned by a player for a game.
  */
 public class GameContentOwnership extends SimpleStreamableObject
-    implements DSet.Entry, Comparable
+    implements DSet.Entry, Comparable<GameContentOwnership>
 {
     /** The game to which this content pertains. */
     public int gameId;
@@ -39,15 +39,14 @@ public class GameContentOwnership extends SimpleStreamableObject
     }
 
     // from DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return this;
     }
 
     // from Comparable
-    public int compareTo (Object other)
+    public int compareTo (GameContentOwnership oo)
     {
-        GameContentOwnership oo = (GameContentOwnership)other;
         int rv = (oo.gameId - gameId);
         if (rv != 0) {
             return rv;
@@ -62,6 +61,6 @@ public class GameContentOwnership extends SimpleStreamableObject
     @Override // from Object
     public boolean equals (Object other)
     {
-        return (compareTo(other) == 0);
+        return (compareTo((GameContentOwnership)other) == 0);
     }
 }

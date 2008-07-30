@@ -1099,32 +1099,32 @@ public class RoomManager extends SpotSceneManager
 
     /** Listens to the room. */
     protected class RoomListener
-        implements SetListener
+        implements SetListener<OccupantInfo>
     {
         // from SetListener
-        public void entryAdded (EntryAddedEvent event)
+        public void entryAdded (EntryAddedEvent<OccupantInfo> event)
         {
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
-                updateAvatarIdent(null, (OccupantInfo)event.getEntry());
+                updateAvatarIdent(null, event.getEntry());
             }
         }
 
         // from SetListener
-        public void entryUpdated (EntryUpdatedEvent event)
+        public void entryUpdated (EntryUpdatedEvent<OccupantInfo> event)
         {
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
-                updateAvatarIdent((OccupantInfo)event.getOldEntry(), (OccupantInfo)event.getEntry());
+                updateAvatarIdent(event.getOldEntry(), event.getEntry());
             }
         }
 
         // from SetListener
-        public void entryRemoved (EntryRemovedEvent event)
+        public void entryRemoved (EntryRemovedEvent<OccupantInfo> event)
         {
             String name = event.getName();
             if (name == PlaceObject.OCCUPANT_INFO) {
-                updateAvatarIdent((OccupantInfo)event.getOldEntry(), null);
+                updateAvatarIdent(event.getOldEntry(), null);
             }
         }
 

@@ -108,7 +108,7 @@ public class MemberName extends Name
     }
 
     // from DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return new Integer(_memberId); // TODO: make this not suck when GWT learns not to suck
     }

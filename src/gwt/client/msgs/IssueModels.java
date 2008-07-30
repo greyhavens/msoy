@@ -134,7 +134,7 @@ public class IssueModels
     {
         HashMap<Integer, OwnedIssues> typeIssues = getTypeMap(type, _ownedModel);
         OwnedIssues issues;
-        if (refresh || (issues = (OwnedIssues)typeIssues.get(state)) == null) {
+        if (refresh || (issues = typeIssues.get(state)) == null) {
             typeIssues.put(state, issues = new OwnedIssues(type, state));
         }
         return issues;

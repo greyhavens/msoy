@@ -129,8 +129,8 @@ public class InviteServlet extends MsoyServiceServlet
     }
 
     // from InviteService
-    public InvitationResults sendInvites (WebIdent ident, List addresses, String fromName,
-                                          String customMessage, boolean anonymous)
+    public InvitationResults sendInvites (WebIdent ident, List<EmailContact> addresses,
+                                          String fromName, String customMessage, boolean anonymous)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
@@ -162,7 +162,7 @@ public class InviteServlet extends MsoyServiceServlet
         ir.names = new MemberName[addresses.size()];
         List<Invitation> penders = Lists.newArrayList();
         for (int ii = 0; ii < addresses.size(); ii++) {
-            EmailContact contact = (EmailContact)addresses.get(ii);
+            EmailContact contact = addresses.get(ii);
             if (contact.name.equals(contact.email)) {
                 contact.name = null;
             }

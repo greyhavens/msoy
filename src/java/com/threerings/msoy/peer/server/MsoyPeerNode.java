@@ -4,6 +4,7 @@
 package com.threerings.msoy.peer.server;
 
 import com.threerings.presents.client.Client;
+import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -25,7 +26,7 @@ import com.threerings.msoy.server.ServerConfig;
  * Handles Whirled-specific peer bits.
  */
 public class MsoyPeerNode extends PeerNode
-    implements SetListener
+    implements SetListener<DSet.Entry>
 {
     @Override // from PeerNode
     public void init (PeerManager peermgr, PresentsDObjectMgr omgr, NodeRecord record)
@@ -56,7 +57,7 @@ public class MsoyPeerNode extends PeerNode
     }
 
     // from interface SetListener
-    public void entryAdded (EntryAddedEvent event)
+    public void entryAdded (EntryAddedEvent<DSet.Entry> event)
     {
         if (event.getName().equals(MsoyNodeObject.MEMBER_LOCS)) {
             ((MsoyPeerManager)_peermgr).remoteMemberEnteredScene(
@@ -69,7 +70,7 @@ public class MsoyPeerNode extends PeerNode
     }
 
     // from interface SetListener
-    public void entryUpdated (EntryUpdatedEvent event)
+    public void entryUpdated (EntryUpdatedEvent<DSet.Entry> event)
     {
         if (event.getName().equals(MsoyNodeObject.MEMBER_LOCS)) {
             ((MsoyPeerManager)_peermgr).remoteMemberEnteredScene(
@@ -78,7 +79,7 @@ public class MsoyPeerNode extends PeerNode
     }
 
     // from interface SetListener
-    public void entryRemoved (EntryRemovedEvent event)
+    public void entryRemoved (EntryRemovedEvent<DSet.Entry> event)
     {
         if (event.getName().equals(NodeObject.CLIENTS)) {
             ((MsoyPeerManager)_peermgr).remoteMemberLoggedOff(

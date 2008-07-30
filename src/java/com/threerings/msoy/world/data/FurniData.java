@@ -111,7 +111,7 @@ public class FurniData extends SimpleStreamableObject
     }
 
     // from DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return id;
     }

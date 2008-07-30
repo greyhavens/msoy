@@ -298,13 +298,13 @@ public class LobbyManager
     }
 
     /** Listens for table removal/addition and considers destroying the room. */
-    protected SetAdapter _tableWatcher = new SetAdapter() {
-        public void entryAdded (EntryAddedEvent event) {
+    protected SetAdapter<Table> _tableWatcher = new SetAdapter<Table>() {
+        public void entryAdded (EntryAddedEvent<Table> event) {
             if (event.getName().equals(LobbyObject.TABLES)) {
                 cancelShutdowner();
             }
         }
-        public void entryRemoved (EntryRemovedEvent event) {
+        public void entryRemoved (EntryRemovedEvent<Table> event) {
             if (event.getName().equals(LobbyObject.TABLES)) {
                 recheckShutdownInterval();
             }

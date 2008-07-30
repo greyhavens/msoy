@@ -106,8 +106,7 @@ public class ConvMessageRecord extends PersistentRecord
 
         if (payloadType != 0 && payloadState != null) {
             try {
-                @SuppressWarnings("unchecked") Class<? extends MailPayload> objectClass =
-                    MailPayload.getPayloadClass(payloadType);
+                Class<? extends MailPayload> objectClass = MailPayload.getPayloadClass(payloadType);
                 JSONMarshaller<? extends MailPayload> marsh =
                     JSONMarshaller.getMarshaller(objectClass);
                 cmsg.payload = marsh.newInstance(payloadState);

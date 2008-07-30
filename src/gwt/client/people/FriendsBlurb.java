@@ -47,7 +47,7 @@ public class FriendsBlurb extends Blurb
         } else {
             SmartTable grid = new SmartTable();
             for (int ii = 0; ii < pdata.friends.size(); ii++) {
-                grid.setWidget(0, ii, new FriendWidget((MemberCard)pdata.friends.get(ii)));
+                grid.setWidget(0, ii, new FriendWidget(pdata.friends.get(ii)));
             }
             setContent(grid);
         }

@@ -137,7 +137,7 @@ public abstract class SwiftlyDocument
      */
     public abstract void loadInEditor (SwiftlyDocumentEditor editor, PositionLocation location);
 
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return documentId;
     }
@@ -223,7 +223,7 @@ public abstract class SwiftlyDocument
 
     /** Key for the associated PathElement, used to re-bind the transient _path instance variable
      *  post-serialization. */
-    protected Comparable _pathKey;
+    protected Comparable<?> _pathKey;
 
     /** Instances of all the SwiftlyDocument factories. Order determines mime-type handling precedence. */
     protected static DocumentFactory[] _documentTypeFactories = {

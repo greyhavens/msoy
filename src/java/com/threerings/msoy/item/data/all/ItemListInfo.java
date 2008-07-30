@@ -44,7 +44,7 @@ public class ItemListInfo
     public String name;
 
     // from DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         // TODO: damn GWT
         return new Integer(listId);

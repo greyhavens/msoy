@@ -21,13 +21,13 @@ public class HostedChannel extends SimpleStreamableObject
     public int oid;
 
     // from DSet.Entry
-    public Comparable getKey ()
+    public Comparable<?> getKey ()
     {
         return getKey(channel);
     }
 
     /** Static version of the channel key generator. */
-    public static Comparable getKey (ChatChannel channel)
+    public static Comparable<?> getKey (ChatChannel channel)
     {
         return channel.hashCode();
     }

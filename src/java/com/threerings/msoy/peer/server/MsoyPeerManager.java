@@ -232,7 +232,7 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public MsoyNodeObject getChannelHost (final ChatChannel channel)
     {
-        final Comparable channelKey = HostedChannel.getKey(channel);
+        final Comparable<?> channelKey = HostedChannel.getKey(channel);
         return lookupNodeDatum(new Lookup<MsoyNodeObject>() {
             public MsoyNodeObject lookup (NodeObject nodeobj) {
                 MsoyNodeObject node = (MsoyNodeObject) nodeobj;

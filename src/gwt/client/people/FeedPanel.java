@@ -675,7 +675,7 @@ public class FeedPanel extends TongueBox
         public void remove (FeedMessage message)
         {
             if (message instanceof FriendFeedMessage) {
-                list.remove((FriendFeedMessage)message);
+                list.remove(message);
             }
         }
 

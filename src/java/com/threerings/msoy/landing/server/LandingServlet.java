@@ -20,7 +20,6 @@ import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
-import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.game.server.GameLogic;

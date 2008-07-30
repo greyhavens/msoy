@@ -23,7 +23,7 @@ public class MsoyObjectAccess
 
     /** The game access controller. */
     public static AccessController GAME = new AccessController() {
-        public boolean allowSubscribe (DObject object, Subscriber sub)
+        public boolean allowSubscribe (DObject object, Subscriber<?> sub)
         {
             return true;
         }

@@ -253,7 +253,7 @@ public class FacebookServlet extends HttpServlet
 
     protected void dumpParameters (HttpServletRequest req)
     {
-        Enumeration iter = req.getParameterNames();
+        Enumeration<?> iter = req.getParameterNames();
         while (iter.hasMoreElements()) {
             String pname = (String)iter.nextElement();
             for (String value : req.getParameterValues(pname)) {

@@ -58,7 +58,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
     public transient SubscriberListener subscriberListener;
 
     // from TableLobbyObject
-    public DSet getTables ()
+    public DSet<Table> getTables ()
     {
         return tables;
     }
@@ -78,7 +78,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
     }
 
     @Override // from DObject
-    public void addSubscriber (Subscriber sub)
+    public void addSubscriber (Subscriber<?> sub)
     {
         super.addSubscriber(sub);
         if (subscriberListener != null) {
@@ -87,7 +87,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
     }
 
     @Override // from DObject
-    public void removeSubscriber (Subscriber sub)
+    public void removeSubscriber (Subscriber<?> sub)
     {
         super.removeSubscriber(sub);
         if (subscriberListener != null) {

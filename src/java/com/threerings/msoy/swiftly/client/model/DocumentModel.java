@@ -9,6 +9,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationService.ConfirmListener;
+import com.threerings.presents.dobj.DSet;
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.SetListener;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.swiftly.client.SwiftlyContext;
@@ -25,18 +33,12 @@ import com.threerings.msoy.swiftly.data.ProjectRoomObject;
 import com.threerings.msoy.swiftly.data.SwiftlyDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyImageDocument;
 import com.threerings.msoy.swiftly.data.SwiftlyTextDocument;
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationService.ConfirmListener;
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.SetListener;
 
 /**
  * Manages SwiftlyDocuments and PathElements in a given SwiftlyProject.
  */
 public class DocumentModel
-    implements SetListener, DocumentUpdateListener
+    implements SetListener<DSet.Entry>, DocumentUpdateListener
 {
     public DocumentModel (ProjectRoomObject roomObj, SwiftlyContext ctx)
     {
@@ -268,7 +270,7 @@ public class DocumentModel
     }
 
     // from interface SetListener
-    public void entryAdded (EntryAddedEvent event)
+    public void entryAdded (EntryAddedEvent<DSet.Entry> event)
     {
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             SwiftlyDocument doc = (SwiftlyDocument)event.getEntry();
@@ -291,7 +293,7 @@ public class DocumentModel
     }
 
     // from interface SetListener
-    public void entryUpdated (EntryUpdatedEvent event)
+    public void entryUpdated (EntryUpdatedEvent<DSet.Entry> event)
     {
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             SwiftlyDocument doc = (SwiftlyDocument)event.getEntry();
@@ -320,7 +322,7 @@ public class DocumentModel
     }
 
     // from interface SetListener
-    public void entryRemoved (EntryRemovedEvent event)
+    public void entryRemoved (EntryRemovedEvent<DSet.Entry> event)
     {
         if (event.getName().equals(ProjectRoomObject.DOCUMENTS)) {
             SwiftlyDocument doc = (SwiftlyDocument)event.getOldEntry();
