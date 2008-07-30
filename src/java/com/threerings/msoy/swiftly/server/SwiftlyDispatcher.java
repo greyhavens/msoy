@@ -29,7 +29,6 @@ public class SwiftlyDispatcher extends InvocationDispatcher<SwiftlyMarshaller>
         return new SwiftlyMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

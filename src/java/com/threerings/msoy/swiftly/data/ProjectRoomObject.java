@@ -231,7 +231,7 @@ public class ProjectRoomObject extends PlaceObject
      * the <code>pathElements</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromPathElements (Comparable key)
+    public void removeFromPathElements (Comparable<?> key)
     {
         requestEntryRemove(PATH_ELEMENTS, pathElements, key);
     }
@@ -259,8 +259,7 @@ public class ProjectRoomObject extends PlaceObject
     public void setPathElements (DSet<PathElement> value)
     {
         requestAttributeChange(PATH_ELEMENTS, value, this.pathElements);
-        @SuppressWarnings("unchecked") DSet<PathElement> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<PathElement> clone = (value == null) ? null : value.typedClone();
         this.pathElements = clone;
     }
 
@@ -279,7 +278,7 @@ public class ProjectRoomObject extends PlaceObject
      * the <code>documents</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromDocuments (Comparable key)
+    public void removeFromDocuments (Comparable<?> key)
     {
         requestEntryRemove(DOCUMENTS, documents, key);
     }
@@ -307,8 +306,7 @@ public class ProjectRoomObject extends PlaceObject
     public void setDocuments (DSet<SwiftlyDocument> value)
     {
         requestAttributeChange(DOCUMENTS, value, this.documents);
-        @SuppressWarnings("unchecked") DSet<SwiftlyDocument> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<SwiftlyDocument> clone = (value == null) ? null : value.typedClone();
         this.documents = clone;
     }
 
@@ -327,7 +325,7 @@ public class ProjectRoomObject extends PlaceObject
      * the <code>collaborators</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromCollaborators (Comparable key)
+    public void removeFromCollaborators (Comparable<?> key)
     {
         requestEntryRemove(COLLABORATORS, collaborators, key);
     }
@@ -355,8 +353,7 @@ public class ProjectRoomObject extends PlaceObject
     public void setCollaborators (DSet<MemberName> value)
     {
         requestAttributeChange(COLLABORATORS, value, this.collaborators);
-        @SuppressWarnings("unchecked") DSet<MemberName> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<MemberName> clone = (value == null) ? null : value.typedClone();
         this.collaborators = clone;
     }
 

@@ -18,7 +18,7 @@ import com.threerings.whirled.spot.data.Location;
 import flash.utils.ByteArray;
 
 /**
- * Provides the implementation of the {@link RoomService} interface
+ * Provides the implementation of the <code>RoomService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -27,7 +27,7 @@ import flash.utils.ByteArray;
 public class RoomMarshaller extends InvocationMarshaller
     implements RoomService
 {
-    /** The method id used to dispatch {@link #changeLocation} requests. */
+    /** The method id used to dispatch <code>changeLocation</code> requests. */
     public static const CHANGE_LOCATION :int = 1;
 
     // from interface RoomService
@@ -38,7 +38,7 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #despawnMob} requests. */
+    /** The method id used to dispatch <code>despawnMob</code> requests. */
     public static const DESPAWN_MOB :int = 2;
 
     // from interface RoomService
@@ -51,7 +51,7 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #editRoom} requests. */
+    /** The method id used to dispatch <code>editRoom</code> requests. */
     public static const EDIT_ROOM :int = 3;
 
     // from interface RoomService
@@ -64,7 +64,7 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #purchaseRoom} requests. */
+    /** The method id used to dispatch <code>purchaseRoom</code> requests. */
     public static const PURCHASE_ROOM :int = 4;
 
     // from interface RoomService
@@ -77,7 +77,7 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #requestControl} requests. */
+    /** The method id used to dispatch <code>requestControl</code> requests. */
     public static const REQUEST_CONTROL :int = 5;
 
     // from interface RoomService
@@ -88,7 +88,7 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #sendSpriteMessage} requests. */
+    /** The method id used to dispatch <code>sendSpriteMessage</code> requests. */
     public static const SEND_SPRITE_MESSAGE :int = 6;
 
     // from interface RoomService
@@ -99,7 +99,7 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #sendSpriteSignal} requests. */
+    /** The method id used to dispatch <code>sendSpriteSignal</code> requests. */
     public static const SEND_SPRITE_SIGNAL :int = 7;
 
     // from interface RoomService
@@ -110,7 +110,7 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #setActorState} requests. */
+    /** The method id used to dispatch <code>setActorState</code> requests. */
     public static const SET_ACTOR_STATE :int = 8;
 
     // from interface RoomService
@@ -121,7 +121,7 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #setRoomProperty} requests. */
+    /** The method id used to dispatch <code>setRoomProperty</code> requests. */
     public static const SET_ROOM_PROPERTY :int = 9;
 
     // from interface RoomService
@@ -132,7 +132,7 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #spawnMob} requests. */
+    /** The method id used to dispatch <code>spawnMob</code> requests. */
     public static const SPAWN_MOB :int = 10;
 
     // from interface RoomService
@@ -145,7 +145,7 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #updateMemory} requests. */
+    /** The method id used to dispatch <code>updateMemory</code> requests. */
     public static const UPDATE_MEMORY :int = 11;
 
     // from interface RoomService
@@ -156,7 +156,7 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #updateRoom} requests. */
+    /** The method id used to dispatch <code>updateRoom</code> requests. */
     public static const UPDATE_ROOM :int = 12;
 
     // from interface RoomService

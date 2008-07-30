@@ -30,7 +30,6 @@ public class JabberDispatcher extends InvocationDispatcher<JabberMarshaller>
         return new JabberMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

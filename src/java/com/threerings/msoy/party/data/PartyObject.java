@@ -41,7 +41,7 @@ public class PartyObject extends DObject
      * the <code>mates</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromMates (Comparable key)
+    public void removeFromMates (Comparable<?> key)
     {
         requestEntryRemove(MATES, mates, key);
     }
@@ -69,8 +69,7 @@ public class PartyObject extends DObject
     public void setMates (DSet<PartymateEntry> value)
     {
         requestAttributeChange(MATES, value, this.mates);
-        @SuppressWarnings("unchecked") DSet<PartymateEntry> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<PartymateEntry> clone = (value == null) ? null : value.typedClone();
         this.mates = clone;
     }
 

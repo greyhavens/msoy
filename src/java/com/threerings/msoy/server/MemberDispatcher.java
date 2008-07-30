@@ -30,7 +30,6 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
         return new MemberMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

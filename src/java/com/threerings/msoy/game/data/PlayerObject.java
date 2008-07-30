@@ -220,7 +220,7 @@ public class PlayerObject extends BodyObject
      * the <code>friends</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromFriends (Comparable key)
+    public void removeFromFriends (Comparable<?> key)
     {
         requestEntryRemove(FRIENDS, friends, key);
     }
@@ -248,8 +248,7 @@ public class PlayerObject extends BodyObject
     public void setFriends (DSet<FriendEntry> value)
     {
         requestAttributeChange(FRIENDS, value, this.friends);
-        @SuppressWarnings("unchecked") DSet<FriendEntry> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<FriendEntry> clone = (value == null) ? null : value.typedClone();
         this.friends = clone;
     }
 
@@ -268,7 +267,7 @@ public class PlayerObject extends BodyObject
      * the <code>gameState</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromGameState (Comparable key)
+    public void removeFromGameState (Comparable<?> key)
     {
         requestEntryRemove(GAME_STATE, gameState, key);
     }
@@ -296,8 +295,7 @@ public class PlayerObject extends BodyObject
     public void setGameState (DSet<GameState> value)
     {
         requestAttributeChange(GAME_STATE, value, this.gameState);
-        @SuppressWarnings("unchecked") DSet<GameState> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<GameState> clone = (value == null) ? null : value.typedClone();
         this.gameState = clone;
     }
 
@@ -316,7 +314,7 @@ public class PlayerObject extends BodyObject
      * the <code>questState</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromQuestState (Comparable key)
+    public void removeFromQuestState (Comparable<?> key)
     {
         requestEntryRemove(QUEST_STATE, questState, key);
     }
@@ -344,8 +342,7 @@ public class PlayerObject extends BodyObject
     public void setQuestState (DSet<QuestState> value)
     {
         requestAttributeChange(QUEST_STATE, value, this.questState);
-        @SuppressWarnings("unchecked") DSet<QuestState> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<QuestState> clone = (value == null) ? null : value.typedClone();
         this.questState = clone;
     }
 
@@ -364,7 +361,7 @@ public class PlayerObject extends BodyObject
      * the <code>gameContent</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromGameContent (Comparable key)
+    public void removeFromGameContent (Comparable<?> key)
     {
         requestEntryRemove(GAME_CONTENT, gameContent, key);
     }
@@ -392,8 +389,7 @@ public class PlayerObject extends BodyObject
     public void setGameContent (DSet<GameContentOwnership> value)
     {
         requestAttributeChange(GAME_CONTENT, value, this.gameContent);
-        @SuppressWarnings("unchecked") DSet<GameContentOwnership> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<GameContentOwnership> clone = (value == null) ? null : value.typedClone();
         this.gameContent = clone;
     }
 

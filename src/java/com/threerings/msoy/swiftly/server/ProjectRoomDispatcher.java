@@ -30,7 +30,6 @@ public class ProjectRoomDispatcher extends InvocationDispatcher<ProjectRoomMarsh
         return new ProjectRoomMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

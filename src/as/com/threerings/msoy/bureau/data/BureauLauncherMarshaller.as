@@ -10,7 +10,7 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
- * Provides the implementation of the {@link BureauLauncherService} interface
+ * Provides the implementation of the <code>BureauLauncherService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -19,7 +19,7 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public class BureauLauncherMarshaller extends InvocationMarshaller
     implements BureauLauncherService
 {
-    /** The method id used to dispatch {@link #getGameServerRegistryOid} requests. */
+    /** The method id used to dispatch <code>getGameServerRegistryOid</code> requests. */
     public static const GET_GAME_SERVER_REGISTRY_OID :int = 1;
 
     // from interface BureauLauncherService
@@ -32,7 +32,7 @@ public class BureauLauncherMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #launcherInitialized} requests. */
+    /** The method id used to dispatch <code>launcherInitialized</code> requests. */
     public static const LAUNCHER_INITIALIZED :int = 2;
 
     // from interface BureauLauncherService

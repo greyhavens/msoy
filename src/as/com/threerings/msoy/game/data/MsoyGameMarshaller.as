@@ -11,7 +11,7 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.util.Integer;
 
 /**
- * Provides the implementation of the {@link MsoyGameService} interface
+ * Provides the implementation of the <code>MsoyGameService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -20,7 +20,7 @@ import com.threerings.util.Integer;
 public class MsoyGameMarshaller extends InvocationMarshaller
     implements MsoyGameService
 {
-    /** The method id used to dispatch {@link #inviteFriends} requests. */
+    /** The method id used to dispatch <code>inviteFriends</code> requests. */
     public static const INVITE_FRIENDS :int = 1;
 
     // from interface MsoyGameService
@@ -31,7 +31,7 @@ public class MsoyGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #locateGame} requests. */
+    /** The method id used to dispatch <code>locateGame</code> requests. */
     public static const LOCATE_GAME :int = 2;
 
     // from interface MsoyGameService

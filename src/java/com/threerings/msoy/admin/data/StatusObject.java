@@ -108,7 +108,7 @@ public class StatusObject extends DObject
      * the <code>games</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromGames (Comparable key)
+    public void removeFromGames (Comparable<?> key)
     {
         requestEntryRemove(GAMES, games, key);
     }
@@ -136,8 +136,7 @@ public class StatusObject extends DObject
     public void setGames (DSet<StatusObject.GameInfo> value)
     {
         requestAttributeChange(GAMES, value, this.games);
-        @SuppressWarnings("unchecked") DSet<StatusObject.GameInfo> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<StatusObject.GameInfo> clone = (value == null) ? null : value.typedClone();
         this.games = clone;
     }
 

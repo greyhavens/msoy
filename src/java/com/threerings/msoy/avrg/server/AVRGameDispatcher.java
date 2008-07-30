@@ -29,7 +29,6 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
         return new AVRGameMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

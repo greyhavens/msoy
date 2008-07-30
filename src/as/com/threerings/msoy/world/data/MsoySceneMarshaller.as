@@ -11,7 +11,7 @@ import com.threerings.whirled.client.SceneService_SceneMoveListener;
 import com.threerings.whirled.data.SceneMarshaller_SceneMoveMarshaller;
 
 /**
- * Provides the implementation of the {@link MsoySceneService} interface
+ * Provides the implementation of the <code>MsoySceneService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -20,7 +20,7 @@ import com.threerings.whirled.data.SceneMarshaller_SceneMoveMarshaller;
 public class MsoySceneMarshaller extends InvocationMarshaller
     implements MsoySceneService
 {
-    /** The method id used to dispatch {@link #moveTo} requests. */
+    /** The method id used to dispatch <code>moveTo</code> requests. */
     public static const MOVE_TO :int = 1;
 
     // from interface MsoySceneService

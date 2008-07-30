@@ -13,7 +13,7 @@ import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
- * Provides the implementation of the {@link JabberService} interface
+ * Provides the implementation of the <code>JabberService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -22,7 +22,7 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public class JabberMarshaller extends InvocationMarshaller
     implements JabberService
 {
-    /** The method id used to dispatch {@link #registerIM} requests. */
+    /** The method id used to dispatch <code>registerIM</code> requests. */
     public static const REGISTER_IM :int = 1;
 
     // from interface JabberService
@@ -35,7 +35,7 @@ public class JabberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #sendMessage} requests. */
+    /** The method id used to dispatch <code>sendMessage</code> requests. */
     public static const SEND_MESSAGE :int = 2;
 
     // from interface JabberService
@@ -48,7 +48,7 @@ public class JabberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #unregisterIM} requests. */
+    /** The method id used to dispatch <code>unregisterIM</code> requests. */
     public static const UNREGISTER_IM :int = 3;
 
     // from interface JabberService

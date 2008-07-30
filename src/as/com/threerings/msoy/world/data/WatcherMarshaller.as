@@ -9,7 +9,7 @@ import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.util.Integer;
 
 /**
- * Provides the implementation of the {@link WatcherService} interface
+ * Provides the implementation of the <code>WatcherService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -18,7 +18,7 @@ import com.threerings.util.Integer;
 public class WatcherMarshaller extends InvocationMarshaller
     implements WatcherService
 {
-    /** The method id used to dispatch {@link #addWatch} requests. */
+    /** The method id used to dispatch <code>addWatch</code> requests. */
     public static const ADD_WATCH :int = 1;
 
     // from interface WatcherService
@@ -29,7 +29,7 @@ public class WatcherMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #clearWatch} requests. */
+    /** The method id used to dispatch <code>clearWatch</code> requests. */
     public static const CLEAR_WATCH :int = 2;
 
     // from interface WatcherService

@@ -11,7 +11,7 @@ import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.util.Integer;
 
 /**
- * Provides the implementation of the {@link PetService} interface
+ * Provides the implementation of the <code>PetService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -20,7 +20,7 @@ import com.threerings.util.Integer;
 public class PetMarshaller extends InvocationMarshaller
     implements PetService
 {
-    /** The method id used to dispatch {@link #callPet} requests. */
+    /** The method id used to dispatch <code>callPet</code> requests. */
     public static const CALL_PET :int = 1;
 
     // from interface PetService
@@ -33,7 +33,7 @@ public class PetMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #orderPet} requests. */
+    /** The method id used to dispatch <code>orderPet</code> requests. */
     public static const ORDER_PET :int = 2;
 
     // from interface PetService
@@ -46,7 +46,7 @@ public class PetMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #sendChat} requests. */
+    /** The method id used to dispatch <code>sendChat</code> requests. */
     public static const SEND_CHAT :int = 3;
 
     // from interface PetService

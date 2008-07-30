@@ -19,7 +19,7 @@ import com.threerings.util.Integer;
 import com.threerings.util.langBoolean;
 
 /**
- * Provides the implementation of the {@link MemberService} interface
+ * Provides the implementation of the <code>MemberService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -28,7 +28,7 @@ import com.threerings.util.langBoolean;
 public class MemberMarshaller extends InvocationMarshaller
     implements MemberService
 {
-    /** The method id used to dispatch {@link #acknowledgeWarning} requests. */
+    /** The method id used to dispatch <code>acknowledgeWarning</code> requests. */
     public static const ACKNOWLEDGE_WARNING :int = 1;
 
     // from interface MemberService
@@ -39,7 +39,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #bootFromPlace} requests. */
+    /** The method id used to dispatch <code>bootFromPlace</code> requests. */
     public static const BOOT_FROM_PLACE :int = 2;
 
     // from interface MemberService
@@ -52,7 +52,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #complainMember} requests. */
+    /** The method id used to dispatch <code>complainMember</code> requests. */
     public static const COMPLAIN_MEMBER :int = 3;
 
     // from interface MemberService
@@ -63,7 +63,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #followMember} requests. */
+    /** The method id used to dispatch <code>followMember</code> requests. */
     public static const FOLLOW_MEMBER :int = 4;
 
     // from interface MemberService
@@ -76,7 +76,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #getCurrentMemberLocation} requests. */
+    /** The method id used to dispatch <code>getCurrentMemberLocation</code> requests. */
     public static const GET_CURRENT_MEMBER_LOCATION :int = 5;
 
     // from interface MemberService
@@ -89,7 +89,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #getDisplayName} requests. */
+    /** The method id used to dispatch <code>getDisplayName</code> requests. */
     public static const GET_DISPLAY_NAME :int = 6;
 
     // from interface MemberService
@@ -102,7 +102,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #getGroupHomeSceneId} requests. */
+    /** The method id used to dispatch <code>getGroupHomeSceneId</code> requests. */
     public static const GET_GROUP_HOME_SCENE_ID :int = 7;
 
     // from interface MemberService
@@ -115,7 +115,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #getGroupName} requests. */
+    /** The method id used to dispatch <code>getGroupName</code> requests. */
     public static const GET_GROUP_NAME :int = 8;
 
     // from interface MemberService
@@ -128,7 +128,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #getHomeId} requests. */
+    /** The method id used to dispatch <code>getHomeId</code> requests. */
     public static const GET_HOME_ID :int = 9;
 
     // from interface MemberService
@@ -141,7 +141,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #inviteToBeFriend} requests. */
+    /** The method id used to dispatch <code>inviteToBeFriend</code> requests. */
     public static const INVITE_TO_BE_FRIEND :int = 10;
 
     // from interface MemberService
@@ -154,7 +154,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #inviteToFollow} requests. */
+    /** The method id used to dispatch <code>inviteToFollow</code> requests. */
     public static const INVITE_TO_FOLLOW :int = 11;
 
     // from interface MemberService
@@ -167,7 +167,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #setAvatar} requests. */
+    /** The method id used to dispatch <code>setAvatar</code> requests. */
     public static const SET_AVATAR :int = 12;
 
     // from interface MemberService
@@ -180,7 +180,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #setAway} requests. */
+    /** The method id used to dispatch <code>setAway</code> requests. */
     public static const SET_AWAY :int = 13;
 
     // from interface MemberService
@@ -191,7 +191,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #setDisplayName} requests. */
+    /** The method id used to dispatch <code>setDisplayName</code> requests. */
     public static const SET_DISPLAY_NAME :int = 14;
 
     // from interface MemberService
@@ -204,7 +204,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #setHomeSceneId} requests. */
+    /** The method id used to dispatch <code>setHomeSceneId</code> requests. */
     public static const SET_HOME_SCENE_ID :int = 15;
 
     // from interface MemberService
@@ -217,7 +217,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #trackReferralCreation} requests. */
+    /** The method id used to dispatch <code>trackReferralCreation</code> requests. */
     public static const TRACK_REFERRAL_CREATION :int = 16;
 
     // from interface MemberService
@@ -228,7 +228,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #updateAvailability} requests. */
+    /** The method id used to dispatch <code>updateAvailability</code> requests. */
     public static const UPDATE_AVAILABILITY :int = 17;
 
     // from interface MemberService
@@ -239,7 +239,7 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #updateStatus} requests. */
+    /** The method id used to dispatch <code>updateStatus</code> requests. */
     public static const UPDATE_STATUS :int = 18;
 
     // from interface MemberService

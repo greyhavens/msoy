@@ -13,7 +13,7 @@ import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
- * Provides the implementation of the {@link ChatChannelService} interface
+ * Provides the implementation of the <code>ChatChannelService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -22,7 +22,7 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public class ChatChannelMarshaller extends InvocationMarshaller
     implements ChatChannelService
 {
-    /** The method id used to dispatch {@link #createChannel} requests. */
+    /** The method id used to dispatch <code>createChannel</code> requests. */
     public static const CREATE_CHANNEL :int = 1;
 
     // from interface ChatChannelService
@@ -35,7 +35,7 @@ public class ChatChannelMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #inviteToChannel} requests. */
+    /** The method id used to dispatch <code>inviteToChannel</code> requests. */
     public static const INVITE_TO_CHANNEL :int = 2;
 
     // from interface ChatChannelService
@@ -48,7 +48,7 @@ public class ChatChannelMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #joinChannel} requests. */
+    /** The method id used to dispatch <code>joinChannel</code> requests. */
     public static const JOIN_CHANNEL :int = 3;
 
     // from interface ChatChannelService
@@ -61,7 +61,7 @@ public class ChatChannelMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #leaveChannel} requests. */
+    /** The method id used to dispatch <code>leaveChannel</code> requests. */
     public static const LEAVE_CHANNEL :int = 4;
 
     // from interface ChatChannelService

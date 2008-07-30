@@ -14,7 +14,7 @@ import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 
 /**
- * Provides the implementation of the {@link ItemService} interface
+ * Provides the implementation of the <code>ItemService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -23,7 +23,7 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 public class ItemMarshaller extends InvocationMarshaller
     implements ItemService
 {
-    /** The method id used to dispatch {@link #deleteItem} requests. */
+    /** The method id used to dispatch <code>deleteItem</code> requests. */
     public static const DELETE_ITEM :int = 1;
 
     // from interface ItemService
@@ -36,7 +36,7 @@ public class ItemMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #getCatalogId} requests. */
+    /** The method id used to dispatch <code>getCatalogId</code> requests. */
     public static const GET_CATALOG_ID :int = 2;
 
     // from interface ItemService
@@ -49,7 +49,7 @@ public class ItemMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #getItemNames} requests. */
+    /** The method id used to dispatch <code>getItemNames</code> requests. */
     public static const GET_ITEM_NAMES :int = 3;
 
     // from interface ItemService
@@ -62,7 +62,7 @@ public class ItemMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #peepItem} requests. */
+    /** The method id used to dispatch <code>peepItem</code> requests. */
     public static const PEEP_ITEM :int = 4;
 
     // from interface ItemService
@@ -75,7 +75,7 @@ public class ItemMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #reclaimItem} requests. */
+    /** The method id used to dispatch <code>reclaimItem</code> requests. */
     public static const RECLAIM_ITEM :int = 5;
 
     // from interface ItemService

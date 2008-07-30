@@ -32,7 +32,6 @@ public class PeerChatDispatcher extends InvocationDispatcher<PeerChatMarshaller>
         return new PeerChatMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

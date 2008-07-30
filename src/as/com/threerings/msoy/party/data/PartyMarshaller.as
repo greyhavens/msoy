@@ -13,7 +13,7 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.util.Integer;
 
 /**
- * Provides the implementation of the {@link PartyService} interface
+ * Provides the implementation of the <code>PartyService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -22,7 +22,7 @@ import com.threerings.util.Integer;
 public class PartyMarshaller extends InvocationMarshaller
     implements PartyService
 {
-    /** The method id used to dispatch {@link #joinParty} requests. */
+    /** The method id used to dispatch <code>joinParty</code> requests. */
     public static const JOIN_PARTY :int = 1;
 
     // from interface PartyService
@@ -35,7 +35,7 @@ public class PartyMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #leaveParty} requests. */
+    /** The method id used to dispatch <code>leaveParty</code> requests. */
     public static const LEAVE_PARTY :int = 2;
 
     // from interface PartyService
@@ -48,7 +48,7 @@ public class PartyMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #startParty} requests. */
+    /** The method id used to dispatch <code>startParty</code> requests. */
     public static const START_PARTY :int = 3;
 
     // from interface PartyService

@@ -58,7 +58,7 @@ public class ServerRegistryObject extends DObject
      * the <code>servers</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromServers (Comparable key)
+    public void removeFromServers (Comparable<?> key)
     {
         requestEntryRemove(SERVERS, servers, key);
     }
@@ -86,8 +86,7 @@ public class ServerRegistryObject extends DObject
     public void setServers (DSet<ServerRegistryObject.ServerInfo> value)
     {
         requestAttributeChange(SERVERS, value, this.servers);
-        @SuppressWarnings("unchecked") DSet<ServerRegistryObject.ServerInfo> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<ServerRegistryObject.ServerInfo> clone = (value == null) ? null : value.typedClone();
         this.servers = clone;
     }
     // AUTO-GENERATED: METHODS END

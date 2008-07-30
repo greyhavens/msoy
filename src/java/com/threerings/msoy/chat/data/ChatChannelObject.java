@@ -100,7 +100,7 @@ public class ChatChannelObject extends DObject
      * the <code>chatters</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromChatters (Comparable key)
+    public void removeFromChatters (Comparable<?> key)
     {
         requestEntryRemove(CHATTERS, chatters, key);
     }
@@ -128,8 +128,7 @@ public class ChatChannelObject extends DObject
     public void setChatters (DSet<VizMemberName> value)
     {
         requestAttributeChange(CHATTERS, value, this.chatters);
-        @SuppressWarnings("unchecked") DSet<VizMemberName> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<VizMemberName> clone = (value == null) ? null : value.typedClone();
         this.chatters = clone;
     }
 

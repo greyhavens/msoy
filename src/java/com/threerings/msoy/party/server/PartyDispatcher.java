@@ -29,7 +29,6 @@ public class PartyDispatcher extends InvocationDispatcher<PartyMarshaller>
         return new PartyMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

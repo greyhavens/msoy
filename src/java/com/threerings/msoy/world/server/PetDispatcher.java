@@ -29,7 +29,6 @@ public class PetDispatcher extends InvocationDispatcher<PetMarshaller>
         return new PetMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

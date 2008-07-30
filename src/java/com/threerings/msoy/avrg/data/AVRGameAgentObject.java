@@ -41,7 +41,7 @@ public class AVRGameAgentObject extends AgentObject
      * the <code>scenes</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromScenes (Comparable key)
+    public void removeFromScenes (Comparable<?> key)
     {
         requestEntryRemove(SCENES, scenes, key);
     }
@@ -69,8 +69,7 @@ public class AVRGameAgentObject extends AgentObject
     public void setScenes (DSet<SceneInfo> value)
     {
         requestAttributeChange(SCENES, value, this.scenes);
-        @SuppressWarnings("unchecked") DSet<SceneInfo> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<SceneInfo> clone = (value == null) ? null : value.typedClone();
         this.scenes = clone;
     }
 

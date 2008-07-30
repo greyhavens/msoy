@@ -29,7 +29,6 @@ public class LobbyDispatcher extends InvocationDispatcher<LobbyMarshaller>
         return new LobbyMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

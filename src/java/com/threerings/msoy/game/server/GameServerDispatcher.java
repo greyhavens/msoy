@@ -33,7 +33,6 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
         return new GameServerMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

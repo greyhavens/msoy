@@ -34,7 +34,6 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
         return new RoomMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

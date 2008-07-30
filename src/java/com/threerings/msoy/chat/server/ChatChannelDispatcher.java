@@ -31,7 +31,6 @@ public class ChatChannelDispatcher extends InvocationDispatcher<ChatChannelMarsh
         return new ChatChannelMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

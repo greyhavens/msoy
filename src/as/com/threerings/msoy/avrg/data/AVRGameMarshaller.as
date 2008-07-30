@@ -16,7 +16,7 @@ import com.threerings.util.langBoolean;
 import flash.utils.ByteArray;
 
 /**
- * Provides the implementation of the {@link AVRGameService} interface
+ * Provides the implementation of the <code>AVRGameService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -25,7 +25,7 @@ import flash.utils.ByteArray;
 public class AVRGameMarshaller extends InvocationMarshaller
     implements AVRGameService
 {
-    /** The method id used to dispatch {@link #cancelQuest} requests. */
+    /** The method id used to dispatch <code>cancelQuest</code> requests. */
     public static const CANCEL_QUEST :int = 1;
 
     // from interface AVRGameService
@@ -38,7 +38,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #completeQuest} requests. */
+    /** The method id used to dispatch <code>completeQuest</code> requests. */
     public static const COMPLETE_QUEST :int = 2;
 
     // from interface AVRGameService
@@ -51,7 +51,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #deletePlayerProperty} requests. */
+    /** The method id used to dispatch <code>deletePlayerProperty</code> requests. */
     public static const DELETE_PLAYER_PROPERTY :int = 3;
 
     // from interface AVRGameService
@@ -64,7 +64,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #deleteProperty} requests. */
+    /** The method id used to dispatch <code>deleteProperty</code> requests. */
     public static const DELETE_PROPERTY :int = 4;
 
     // from interface AVRGameService
@@ -77,7 +77,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #sendMessage} requests. */
+    /** The method id used to dispatch <code>sendMessage</code> requests. */
     public static const SEND_MESSAGE :int = 5;
 
     // from interface AVRGameService
@@ -90,7 +90,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #setPlayerProperty} requests. */
+    /** The method id used to dispatch <code>setPlayerProperty</code> requests. */
     public static const SET_PLAYER_PROPERTY :int = 6;
 
     // from interface AVRGameService
@@ -103,7 +103,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #setProperty} requests. */
+    /** The method id used to dispatch <code>setProperty</code> requests. */
     public static const SET_PROPERTY :int = 7;
 
     // from interface AVRGameService
@@ -116,7 +116,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #setTicker} requests. */
+    /** The method id used to dispatch <code>setTicker</code> requests. */
     public static const SET_TICKER :int = 8;
 
     // from interface AVRGameService
@@ -129,7 +129,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #startQuest} requests. */
+    /** The method id used to dispatch <code>startQuest</code> requests. */
     public static const START_QUEST :int = 9;
 
     // from interface AVRGameService
@@ -142,7 +142,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #updateQuest} requests. */
+    /** The method id used to dispatch <code>updateQuest</code> requests. */
     public static const UPDATE_QUEST :int = 10;
 
     // from interface AVRGameService

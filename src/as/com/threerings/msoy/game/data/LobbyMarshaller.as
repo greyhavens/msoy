@@ -11,7 +11,7 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.util.Integer;
 
 /**
- * Provides the implementation of the {@link LobbyService} interface
+ * Provides the implementation of the <code>LobbyService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -20,7 +20,7 @@ import com.threerings.util.Integer;
 public class LobbyMarshaller extends InvocationMarshaller
     implements LobbyService
 {
-    /** The method id used to dispatch {@link #identifyLobby} requests. */
+    /** The method id used to dispatch <code>identifyLobby</code> requests. */
     public static const IDENTIFY_LOBBY :int = 1;
 
     // from interface LobbyService
@@ -33,7 +33,7 @@ public class LobbyMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #joinPlayerGame} requests. */
+    /** The method id used to dispatch <code>joinPlayerGame</code> requests. */
     public static const JOIN_PLAYER_GAME :int = 2;
 
     // from interface LobbyService
@@ -46,7 +46,7 @@ public class LobbyMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #playNow} requests. */
+    /** The method id used to dispatch <code>playNow</code> requests. */
     public static const PLAY_NOW :int = 3;
 
     // from interface LobbyService

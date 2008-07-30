@@ -30,7 +30,6 @@ public class MsoySceneDispatcher extends InvocationDispatcher<MsoySceneMarshalle
         return new MsoySceneMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

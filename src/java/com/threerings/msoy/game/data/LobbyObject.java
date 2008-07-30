@@ -143,7 +143,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
      * the <code>tables</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromTables (Comparable key)
+    public void removeFromTables (Comparable<?> key)
     {
         requestEntryRemove(TABLES, tables, key);
     }
@@ -171,8 +171,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
     public void setTables (DSet<Table> value)
     {
         requestAttributeChange(TABLES, value, this.tables);
-        @SuppressWarnings("unchecked") DSet<Table> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<Table> clone = (value == null) ? null : value.typedClone();
         this.tables = clone;
     }
 

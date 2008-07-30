@@ -12,7 +12,7 @@ import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 public class MsoyGameMarshaller_LocationMarshaller
     extends InvocationMarshaller_ListenerMarshaller
 {
-    /** The method id used to dispatch {@link #gameLocated} responses. */
+    /** The method id used to dispatch <code>gameLocated</code> responses. */
     public static const GAME_LOCATED :int = 1;
 
     // from InvocationMarshaller_ListenerMarshaller

@@ -115,7 +115,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>hostedScenes</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromHostedScenes (Comparable key)
+    public void removeFromHostedScenes (Comparable<?> key)
     {
         requestEntryRemove(HOSTED_SCENES, hostedScenes, key);
     }
@@ -143,8 +143,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setHostedScenes (DSet<HostedRoom> value)
     {
         requestAttributeChange(HOSTED_SCENES, value, this.hostedScenes);
-        @SuppressWarnings("unchecked") DSet<HostedRoom> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<HostedRoom> clone = (value == null) ? null : value.typedClone();
         this.hostedScenes = clone;
     }
 
@@ -163,7 +162,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>hostedGames</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromHostedGames (Comparable key)
+    public void removeFromHostedGames (Comparable<?> key)
     {
         requestEntryRemove(HOSTED_GAMES, hostedGames, key);
     }
@@ -191,8 +190,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setHostedGames (DSet<HostedGame> value)
     {
         requestAttributeChange(HOSTED_GAMES, value, this.hostedGames);
-        @SuppressWarnings("unchecked") DSet<HostedGame> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<HostedGame> clone = (value == null) ? null : value.typedClone();
         this.hostedGames = clone;
     }
 
@@ -211,7 +209,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>hostedProjects</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromHostedProjects (Comparable key)
+    public void removeFromHostedProjects (Comparable<?> key)
     {
         requestEntryRemove(HOSTED_PROJECTS, hostedProjects, key);
     }
@@ -239,8 +237,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setHostedProjects (DSet<HostedProject> value)
     {
         requestAttributeChange(HOSTED_PROJECTS, value, this.hostedProjects);
-        @SuppressWarnings("unchecked") DSet<HostedProject> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<HostedProject> clone = (value == null) ? null : value.typedClone();
         this.hostedProjects = clone;
     }
 
@@ -259,7 +256,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>hostedChannels</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromHostedChannels (Comparable key)
+    public void removeFromHostedChannels (Comparable<?> key)
     {
         requestEntryRemove(HOSTED_CHANNELS, hostedChannels, key);
     }
@@ -287,8 +284,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setHostedChannels (DSet<HostedChannel> value)
     {
         requestAttributeChange(HOSTED_CHANNELS, value, this.hostedChannels);
-        @SuppressWarnings("unchecked") DSet<HostedChannel> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<HostedChannel> clone = (value == null) ? null : value.typedClone();
         this.hostedChannels = clone;
     }
 
@@ -307,7 +303,7 @@ public class MsoyNodeObject extends CrowdNodeObject
      * the <code>memberLocs</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromMemberLocs (Comparable key)
+    public void removeFromMemberLocs (Comparable<?> key)
     {
         requestEntryRemove(MEMBER_LOCS, memberLocs, key);
     }
@@ -335,8 +331,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public void setMemberLocs (DSet<MemberLocation> value)
     {
         requestAttributeChange(MEMBER_LOCS, value, this.memberLocs);
-        @SuppressWarnings("unchecked") DSet<MemberLocation> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<MemberLocation> clone = (value == null) ? null : value.typedClone();
         this.memberLocs = clone;
     }
 

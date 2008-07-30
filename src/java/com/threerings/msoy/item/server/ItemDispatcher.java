@@ -30,7 +30,6 @@ public class ItemDispatcher extends InvocationDispatcher<ItemMarshaller>
         return new ItemMarshaller();
     }
 
-    @SuppressWarnings("unchecked")
     @Override // documentation inherited
     public void dispatchRequest (
         ClientObject source, int methodId, Object[] args)

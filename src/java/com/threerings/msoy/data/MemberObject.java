@@ -587,7 +587,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>followers</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromFollowers (Comparable key)
+    public void removeFromFollowers (Comparable<?> key)
     {
         requestEntryRemove(FOLLOWERS, followers, key);
     }
@@ -615,8 +615,7 @@ public class MemberObject extends MsoyBodyObject
     public void setFollowers (DSet<MemberName> value)
     {
         requestAttributeChange(FOLLOWERS, value, this.followers);
-        @SuppressWarnings("unchecked") DSet<MemberName> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<MemberName> clone = (value == null) ? null : value.typedClone();
         this.followers = clone;
     }
 
@@ -683,7 +682,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>avatarCache</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromAvatarCache (Comparable key)
+    public void removeFromAvatarCache (Comparable<?> key)
     {
         requestEntryRemove(AVATAR_CACHE, avatarCache, key);
     }
@@ -711,8 +710,7 @@ public class MemberObject extends MsoyBodyObject
     public void setAvatarCache (DSet<Avatar> value)
     {
         requestAttributeChange(AVATAR_CACHE, value, this.avatarCache);
-        @SuppressWarnings("unchecked") DSet<Avatar> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<Avatar> clone = (value == null) ? null : value.typedClone();
         this.avatarCache = clone;
     }
 
@@ -731,7 +729,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>friends</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromFriends (Comparable key)
+    public void removeFromFriends (Comparable<?> key)
     {
         requestEntryRemove(FRIENDS, friends, key);
     }
@@ -759,8 +757,7 @@ public class MemberObject extends MsoyBodyObject
     public void setFriends (DSet<FriendEntry> value)
     {
         requestAttributeChange(FRIENDS, value, this.friends);
-        @SuppressWarnings("unchecked") DSet<FriendEntry> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<FriendEntry> clone = (value == null) ? null : value.typedClone();
         this.friends = clone;
     }
 
@@ -779,7 +776,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>gateways</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromGateways (Comparable key)
+    public void removeFromGateways (Comparable<?> key)
     {
         requestEntryRemove(GATEWAYS, gateways, key);
     }
@@ -807,8 +804,7 @@ public class MemberObject extends MsoyBodyObject
     public void setGateways (DSet<GatewayEntry> value)
     {
         requestAttributeChange(GATEWAYS, value, this.gateways);
-        @SuppressWarnings("unchecked") DSet<GatewayEntry> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<GatewayEntry> clone = (value == null) ? null : value.typedClone();
         this.gateways = clone;
     }
 
@@ -827,7 +823,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>imContacts</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromImContacts (Comparable key)
+    public void removeFromImContacts (Comparable<?> key)
     {
         requestEntryRemove(IM_CONTACTS, imContacts, key);
     }
@@ -855,8 +851,7 @@ public class MemberObject extends MsoyBodyObject
     public void setImContacts (DSet<ContactEntry> value)
     {
         requestAttributeChange(IM_CONTACTS, value, this.imContacts);
-        @SuppressWarnings("unchecked") DSet<ContactEntry> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<ContactEntry> clone = (value == null) ? null : value.typedClone();
         this.imContacts = clone;
     }
 
@@ -875,7 +870,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>groups</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromGroups (Comparable key)
+    public void removeFromGroups (Comparable<?> key)
     {
         requestEntryRemove(GROUPS, groups, key);
     }
@@ -903,8 +898,7 @@ public class MemberObject extends MsoyBodyObject
     public void setGroups (DSet<GroupMembership> value)
     {
         requestAttributeChange(GROUPS, value, this.groups);
-        @SuppressWarnings("unchecked") DSet<GroupMembership> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<GroupMembership> clone = (value == null) ? null : value.typedClone();
         this.groups = clone;
     }
 
@@ -955,7 +949,7 @@ public class MemberObject extends MsoyBodyObject
      * the <code>lists</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromLists (Comparable key)
+    public void removeFromLists (Comparable<?> key)
     {
         requestEntryRemove(LISTS, lists, key);
     }
@@ -983,8 +977,7 @@ public class MemberObject extends MsoyBodyObject
     public void setLists (DSet<ItemListInfo> value)
     {
         requestAttributeChange(LISTS, value, this.lists);
-        @SuppressWarnings("unchecked") DSet<ItemListInfo> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<ItemListInfo> clone = (value == null) ? null : value.typedClone();
         this.lists = clone;
     }
 

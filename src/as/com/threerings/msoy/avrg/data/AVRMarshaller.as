@@ -13,7 +13,7 @@ import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.util.Integer;
 
 /**
- * Provides the implementation of the {@link AVRService} interface
+ * Provides the implementation of the <code>AVRService</code> interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
@@ -22,7 +22,7 @@ import com.threerings.util.Integer;
 public class AVRMarshaller extends InvocationMarshaller
     implements AVRService
 {
-    /** The method id used to dispatch {@link #activateGame} requests. */
+    /** The method id used to dispatch <code>activateGame</code> requests. */
     public static const ACTIVATE_GAME :int = 1;
 
     // from interface AVRService
@@ -35,7 +35,7 @@ public class AVRMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch {@link #deactivateGame} requests. */
+    /** The method id used to dispatch <code>deactivateGame</code> requests. */
     public static const DEACTIVATE_GAME :int = 2;
 
     // from interface AVRService

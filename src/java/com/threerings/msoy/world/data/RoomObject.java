@@ -102,7 +102,7 @@ public class RoomObject extends SpotSceneObject
      * the <code>memories</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromMemories (Comparable key)
+    public void removeFromMemories (Comparable<?> key)
     {
         requestEntryRemove(MEMORIES, memories, key);
     }
@@ -130,8 +130,7 @@ public class RoomObject extends SpotSceneObject
     public void setMemories (DSet<EntityMemoryEntry> value)
     {
         requestAttributeChange(MEMORIES, value, this.memories);
-        @SuppressWarnings("unchecked") DSet<EntityMemoryEntry> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<EntityMemoryEntry> clone = (value == null) ? null : value.typedClone();
         this.memories = clone;
     }
 
@@ -150,7 +149,7 @@ public class RoomObject extends SpotSceneObject
      * the <code>roomProperties</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromRoomProperties (Comparable key)
+    public void removeFromRoomProperties (Comparable<?> key)
     {
         requestEntryRemove(ROOM_PROPERTIES, roomProperties, key);
     }
@@ -178,8 +177,7 @@ public class RoomObject extends SpotSceneObject
     public void setRoomProperties (DSet<RoomPropertyEntry> value)
     {
         requestAttributeChange(ROOM_PROPERTIES, value, this.roomProperties);
-        @SuppressWarnings("unchecked") DSet<RoomPropertyEntry> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<RoomPropertyEntry> clone = (value == null) ? null : value.typedClone();
         this.roomProperties = clone;
     }
 
@@ -198,7 +196,7 @@ public class RoomObject extends SpotSceneObject
      * the <code>controllers</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromControllers (Comparable key)
+    public void removeFromControllers (Comparable<?> key)
     {
         requestEntryRemove(CONTROLLERS, controllers, key);
     }
@@ -226,8 +224,7 @@ public class RoomObject extends SpotSceneObject
     public void setControllers (DSet<EntityControl> value)
     {
         requestAttributeChange(CONTROLLERS, value, this.controllers);
-        @SuppressWarnings("unchecked") DSet<EntityControl> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<EntityControl> clone = (value == null) ? null : value.typedClone();
         this.controllers = clone;
     }
 
@@ -246,7 +243,7 @@ public class RoomObject extends SpotSceneObject
      * the <code>effects</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromEffects (Comparable key)
+    public void removeFromEffects (Comparable<?> key)
     {
         requestEntryRemove(EFFECTS, effects, key);
     }
@@ -274,8 +271,7 @@ public class RoomObject extends SpotSceneObject
     public void setEffects (DSet<EffectData> value)
     {
         requestAttributeChange(EFFECTS, value, this.effects);
-        @SuppressWarnings("unchecked") DSet<EffectData> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<EffectData> clone = (value == null) ? null : value.typedClone();
         this.effects = clone;
     }
     // AUTO-GENERATED: METHODS END

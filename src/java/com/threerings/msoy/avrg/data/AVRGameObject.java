@@ -123,7 +123,7 @@ public class AVRGameObject extends PlaceObject
      * the <code>state</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromState (Comparable key)
+    public void removeFromState (Comparable<?> key)
     {
         requestEntryRemove(STATE, state, key);
     }
@@ -151,8 +151,7 @@ public class AVRGameObject extends PlaceObject
     public void setState (DSet<GameState> value)
     {
         requestAttributeChange(STATE, value, this.state);
-        @SuppressWarnings("unchecked") DSet<GameState> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<GameState> clone = (value == null) ? null : value.typedClone();
         this.state = clone;
     }
 
@@ -171,7 +170,7 @@ public class AVRGameObject extends PlaceObject
      * the <code>playerLocs</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromPlayerLocs (Comparable key)
+    public void removeFromPlayerLocs (Comparable<?> key)
     {
         requestEntryRemove(PLAYER_LOCS, playerLocs, key);
     }
@@ -199,8 +198,7 @@ public class AVRGameObject extends PlaceObject
     public void setPlayerLocs (DSet<PlayerLocation> value)
     {
         requestAttributeChange(PLAYER_LOCS, value, this.playerLocs);
-        @SuppressWarnings("unchecked") DSet<PlayerLocation> clone =
-            (value == null) ? null : value.typedClone();
+        DSet<PlayerLocation> clone = (value == null) ? null : value.typedClone();
         this.playerLocs = clone;
     }
 
