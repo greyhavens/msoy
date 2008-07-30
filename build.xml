@@ -10,7 +10,7 @@
   <property name="asrc.dir"      value="src/as"/>
   <property name="deploy.dir"    value="dist"/>
   <property name="classes.dir"   value="${deploy.dir}/classes"/>
-  <property name="gwtout.dir"    value="pages"/>
+  <property name="gwtout.dir"    value="pages/gwt"/>
   <property name="flexsdk.dir"   value="lib/flex_sdk"/>
   <property name="extlibs.dir"   value="extlibs/java"/>
   <property name="javadoc.title" value="Metasoy API"/>
@@ -422,8 +422,9 @@
   <target name="gclient" depends="jprepare,gmsgs"
           description="Rebuilds the GWT client (but only for Mozilla).">
     <for list="${pages}" param="page"><sequential>
-      <delete dir="pages/@{page}"/>
-      <mkdir dir="pages/@{page}"/>
+      <mkdir dir="${gwtout.dir}"/>
+      <delete dir="${gwtout.dir}/@{page}"/>
+      <mkdir dir="${gwtout.dir}/@{page}"/>
       <if><isset property="full"/><then>
           <copy file="${gsrc.dir}/@{page}.gwt.xml.in"
                 tofile="${gsrc.dir}/@{page}.gwt.xml" overwrite="true"/>
@@ -476,9 +477,9 @@
       <apply failonerror="true" executable="gzip">
         <arg value="-c"/>
         <srcfile/>
-        <fileset dir="pages/@{page}" includes="*.cache.html"/>
+        <fileset dir="${gwtout.dir}/@{page}" includes="*.cache.html"/>
         <redirector>
-          <outputmapper type="glob" from="*.cache.html" to="pages/@{page}/*.cache.html.gz"/>
+          <outputmapper type="glob" from="*.cache.html" to="${gwtout.dir}/@{page}/*.cache.html.gz"/>
         </redirector>
       </apply>
 
@@ -1007,12 +1008,8 @@
 
   <!-- cleans out the compiled GWT bits and caches -->
   <target name="gclean">
-    <delete dir=".gwt-cache"/>
-    <delete dir="pages/msoy"/>
-    <delete dir="pages/frame"/>
-    <delete dir="pages/msoy-aux"/>
-    <delete dir="pages/.gwt-tmp"/>
-    <delete file="${gsrc.dir}/msoy.gwt.xml"/>
+    <delete dir="${gwtout.dir}"/>
+    <delete file="${gsrc.dir}/*.gwt.xml"/>
   </target>
 
   <!-- fully cleans out all build results -->

@@ -362,7 +362,7 @@ public class FrameEntryPoint
     {
         _pageId = pageId;
         RootPanel.get("content").clear();
-        Frame iframe = new Frame("/" + _pageId + "/" + _pageId + ".html");
+        Frame iframe = new Frame("/gwt/" + _pageId + "/" + _pageId + ".html");
         DOM.setElementProperty(iframe.getElement(), "name", "page");
         iframe.setStyleName("pageIFrame");
         showContent(_pageId, iframe);

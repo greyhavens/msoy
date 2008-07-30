@@ -72,7 +72,7 @@
       <td valign="top" id="client" height="100%"></td></tr>
   </table>
   <iframe id="__gwt_historyFrame" style="width:0px;height:0px;border:0px;display:none"></iframe>
-  <script language="javascript" src="/msoy/msoy.nocache.js"></script>
+  <script language="javascript" src="/gwt/msoy/msoy.nocache.js"></script>
   <script id="swfobject" type="text/javascript"></script>
   <script id="md5" type="text/javascript"></script>
   <script id="googanal" type="text/javascript"></script>
