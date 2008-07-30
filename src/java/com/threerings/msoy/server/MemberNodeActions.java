@@ -339,7 +339,7 @@ public class MemberNodeActions
         }
 
         protected void execute (MemberObject memobj) {
-            memobj.getStats().updateStat(_modifier);
+            memobj.getStats().syncStat(_modifier);
             _badgeMan.updateBadges(memobj);
         }
 
