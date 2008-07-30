@@ -226,7 +226,7 @@ public class StuffServlet extends MsoyServiceServlet
                 _memberRepo.loadMemberName(record.creatorId); // normal lookup
             if (mrec != null) {
                 detail.memberItemInfo.memberRating = repo.getRating(iident.itemId, mrec.memberId);
-                detail.memberItemInfo.favorite = _itemMan.isFavorite(mrec.memberId, iident);
+                detail.memberItemInfo.favorite = _itemLogic.isFavorite(mrec.memberId, iident);
             }
             switch (detail.item.used) {
             case Item.USED_AS_FURNITURE:

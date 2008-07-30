@@ -379,7 +379,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 clrec.detail.memberItemInfo.memberRating =
                     repo.getRating(record.item.itemId, mrec.memberId);
                 clrec.detail.memberItemInfo.favorite =
-                    _itemMan.isFavorite(mrec.memberId, record.item.toItem());
+                    _itemLogic.isFavorite(mrec.memberId, record.item.toItem());
             }
             return clrec;
 

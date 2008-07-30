@@ -6,6 +6,7 @@ package com.threerings.msoy.item.server;
 import java.util.List;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -23,10 +24,13 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.ListingCard;
 
 import com.threerings.msoy.item.server.persist.CloneRecord;
+import com.threerings.msoy.item.server.persist.ItemListInfoRecord;
+import com.threerings.msoy.item.server.persist.ItemListRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
@@ -193,7 +197,113 @@ public class ItemLogic
         }
     }
 
+
+    public List<ItemListInfo> getItemLists (int memberId)
+        throws PersistenceException
+    {
+        if (_omgr.isDispatchThread()) {
+            throw new IllegalStateException("Must be called from the invoker");
+        }
+
+        // load up the user's lists
+        return convertRecords(_listRepo.loadInfos(memberId));
+    }
+
+    public ItemListInfo createItemList (int memberId, byte listType, String name)
+        throws PersistenceException
+    {
+        ItemListInfo listInfo = new ItemListInfo();
+        listInfo.type = listType;
+        listInfo.name = name;
+        ItemListInfoRecord record = new ItemListInfoRecord(listInfo, memberId);
+        _listRepo.createList(record);
+        return record.toItemListInfo();
+    }
+
+    public void addItem (int listId, Item item) throws PersistenceException
+    {
+        addItem(listId, item.getIdent());
+    }
+
+    public void addItem (int listId, ItemIdent item) throws PersistenceException
+    {
+        _listRepo.addItem(listId, item);
+    }
+
+    public void removeItem (int listId, ItemIdent item) throws PersistenceException
+    {
+        _listRepo.removeItem(listId, item);
+    }
+
+    public void addFavorite (int memberId, ItemIdent item)
+        throws PersistenceException
+    {
+        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
+        _listRepo.addItem(favoriteList.listId, item);
+    }
+
+    public void removeFavorite (int memberId, ItemIdent item)
+        throws PersistenceException
+    {
+        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
+        _listRepo.removeItem(favoriteList.listId, item);
+    }
+
+    /**
+     * Check to see if the member's favorite list contains the given item.
+     */
+    public boolean isFavorite(int memberId, Item item)
+        throws PersistenceException
+    {
+        return isFavorite(memberId, item.getIdent());
+    }
+
+    /**
+     * Check to see if the member's favorite list contains the given item.
+     */
+    public boolean isFavorite(int memberId, ItemIdent item)
+        throws PersistenceException
+    {
+        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
+        return _listRepo.contains(favoriteList.listId, item);
+    }
+
+    protected ItemListInfo getFavoriteListInfo (int memberId)
+        throws PersistenceException
+    {
+        List<ItemListInfoRecord> favoriteRecords = _listRepo.loadInfos(memberId, ItemListInfo.FAVORITES);
+        List<ItemListInfo> favoriteLists = convertRecords(favoriteRecords);
+
+        ItemListInfo favorites;
+
+        if (favoriteLists.isEmpty()) {
+            // create an favorites list for this user
+            favorites = createItemList(memberId, ItemListInfo.FAVORITES, ItemListInfo.FAVORITES_NAME);
+
+        } else {
+            // TODO There should never be more than one FAVORITES list per member
+            // If there are more than one list, merge them somehow?
+            favorites = favoriteLists.get(0);
+        }
+
+        return favorites;
+    }
+
+    /**
+     * Utility for converting a list of records into their counterparts.
+     */
+    protected static List<ItemListInfo> convertRecords(List<ItemListInfoRecord> records)
+    {
+        int nn = records.size();
+        List<ItemListInfo> list = Lists.newArrayListWithExpectedSize(nn);
+        for (int ii = 0; ii < nn; ii++) {
+            list.add(records.get(ii).toItemListInfo());
+        }
+        return list;
+    }
+
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ItemManager _itemMan;
+    @Inject protected ItemListRepository _listRepo;
     @Inject protected RootDObjectManager _omgr;
 }

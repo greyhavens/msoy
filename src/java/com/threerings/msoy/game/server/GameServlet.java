@@ -33,6 +33,7 @@ import com.threerings.parlor.rating.util.Percentiler;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -115,8 +116,10 @@ public class GameServlet extends MsoyServiceServlet
                 }
                 if (mrec != null) {
                     detail.memberItemInfo.memberRating = _gameRepo.getRating(item.itemId, mrec.memberId);
-                    // TODO: set whether the game is one of the member's favorites
-                    // detail.memberItemInfo.favorite
+                    //set whether the game is one of the member's favorites
+                    if(detail.listedItem != null) {
+                        detail.memberItemInfo.favorite = _itemLogic.isFavorite(mrec.memberId, detail.listedItem);
+                    }
                 }
             }
 
@@ -702,19 +705,20 @@ public class GameServlet extends MsoyServiceServlet
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GameRepository _gameRepo;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected TrophyRepository _trophyRepo;
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected TrophySourceRepository _trophySourceRepo;
 
-    /** Compartor for sorting {@link GameInfo}, by gameId. */
+    /** Comparator for sorting {@link GameInfo}, by gameId. */
     protected static Comparator<GameInfo> SORT_BY_NEWEST = new Comparator<GameInfo>() {
         public int compare (GameInfo c1, GameInfo c2) {
             return c2.gameId - c1.gameId;
         }
     };
 
-    /** Compartor for sorting {@link GameInfo}, by name. */
+    /** Comparator for sorting {@link GameInfo}, by name. */
     protected static Comparator<GameInfo> SORT_BY_NAME = new Comparator<GameInfo>() {
         public int compare (GameInfo c1, GameInfo c2) {
             return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());

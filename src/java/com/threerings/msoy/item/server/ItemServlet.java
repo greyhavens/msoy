@@ -393,10 +393,10 @@ public class ItemServlet extends MsoyServiceServlet
 
         try {
             if(favorite) {
-                _itemMan.addFavorite(member.memberId, item);
+                _itemLogic.addFavorite(member.memberId, item);
             }
             else {
-                _itemMan.removeFavorite(member.memberId, item);
+                _itemLogic.removeFavorite(member.memberId, item);
             }
         } catch(PersistenceException pex) {
             log.warning("Could not set favorite.", "member", member.memberId, "item", item, pex);
@@ -429,5 +429,6 @@ public class ItemServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected ItemManager _itemMan;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected PhotoRepository _photoRepo;
 }
