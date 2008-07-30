@@ -1,4 +1,4 @@
-/** 
+/**
  * $Id$
  *
  * CSS styles for the (shared) Item interfaces.
@@ -21,8 +21,17 @@
 }
 
 .ratingText {
-    font-size: 14px;
-    font-weight: bold;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.favoriteText {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.favoriteToggle .gwt-ToggleButton-down {
+  background: #FFFFFF
 }
 
 .stuffNaviBar {
@@ -49,15 +58,15 @@
   padding-top: 36px;
 }
 
-.tagCloud .Link { 
-  padding: 0px 8px 4px 8px; 
+.tagCloud .Link {
+  padding: 0px 8px 4px 8px;
 }
 
 .itemDetailPanel .headerBox .Title {
   font-size: 18px;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-weight: normal;
-} 
+}
 
 .itemDetailPanel .headerBox .Preview {
   background-image: url(/images/item/detail_preview_bg.png);
