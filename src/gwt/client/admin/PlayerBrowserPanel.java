@@ -167,9 +167,9 @@ public class PlayerBrowserPanel extends HorizontalPanel
 
     protected void addToAvailable (int memberId, int amount)
     {
-        Iterator iter = _playerLists.iterator();
+        Iterator<PlayerList> iter = _playerLists.iterator();
         while (iter.hasNext()) {
-            PlayerList list = (PlayerList) iter.next();
+            PlayerList list = iter.next();
             if (list.addToAvailable(memberId, amount)) {
                 break;
             }
@@ -269,9 +269,9 @@ public class PlayerBrowserPanel extends HorizontalPanel
             }
             _rows = new Element[_result.invitees.size()];
             int ii = 0;
-            Iterator iter = _result.invitees.iterator();
+            Iterator<MemberInviteStatus> iter = _result.invitees.iterator();
             while (iter.hasNext()) {
-                final MemberInviteStatus member = (MemberInviteStatus) iter.next();
+                final MemberInviteStatus member = iter.next();
                 getRowFormatter().addStyleName(row, "DataRow");
                 Label nameLabel = new Label(member.name);
                 nameLabel.addClickListener(new ClickListener() {
