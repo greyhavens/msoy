@@ -725,7 +725,7 @@ public class ItemServlet extends MsoyServiceServlet
         }
     }
 
-    // defines ItemService interface
+    // from ItemService interface
     public void setFavorite (WebIdent ident, ItemIdent item, boolean favorite)
         throws ServiceException
     {
