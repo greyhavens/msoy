@@ -48,6 +48,8 @@ import com.threerings.flex.PopUpUtil;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
+import com.threerings.msoy.ui.FlyingPanel;
+
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
@@ -61,30 +63,23 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.world.client.WorldContext;
 
-public class PartyPopup extends TitleWindow
+public class PartyPopup extends FlyingPanel
 {
     /** The width of the popup, defined by the width of the header image. */
     public static const POPUP_WIDTH :int = 219;
 
     public function PartyPopup (ctx :WorldContext) :void
     {
-        _ctx = ctx;
-        _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
-
-        addEventListener(CloseEvent.CLOSE, _ctx.getWorldController().handlePopParty);
+        super(ctx);
+        _wctx = ctx;
+        showCloseButton = true;
+        open();
     }
 
-    public function show () :void
+    override public function close () :void
     {
-        PopUpManager.addPopUp(this, _ctx.getTopPanel(), false);
-        systemManager.addEventListener(Event.RESIZE, stageResized);
-    }
-
-    public function shutdown () :void
-    {
-        systemManager.removeEventListener(Event.RESIZE, stageResized);
-        _ctx.getMemberObject().removeListener(_friendsList);
-        PopUpManager.removePopUp(this);
+        _wctx.getMemberObject().removeListener(_friendsList);
+        super.close();
     }
 
     public function memberObjectUpdated (memObj :MemberObject) :void
@@ -96,14 +91,8 @@ public class PartyPopup extends TitleWindow
     {
         super.createChildren();
 
-        // Panel provides no way to customize this, other than overriding the class and blowing
-        // away what it set these to.
-        mx_internal::closeButton.explicitWidth = 13;
-        mx_internal::closeButton.explicitHeight = 14;
-
         // styles and positioning
         styleName = "friendsListPanel";
-        showCloseButton = true;
         width = POPUP_WIDTH;
         var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
         height = placeBounds.height - PADDING * 2;
@@ -114,7 +103,7 @@ public class PartyPopup extends TitleWindow
 
         addChild(_friendsList);
 
-        var me :MemberObject = _ctx.getMemberObject();
+        var me :MemberObject = _wctx.getMemberObject();
         /*// add a little separator
         var separator :VBox = new VBox();
         separator.percentWidth = 100;
@@ -154,41 +143,11 @@ public class PartyPopup extends TitleWindow
         init(me);
     }
 
-    override protected function layoutChrome (unscaledWidth :Number, unscaledHeight :Number) :void
-    {
-        super.layoutChrome(unscaledWidth, unscaledHeight);
-
-        mx_internal::closeButton.x = POPUP_WIDTH - mx_internal::closeButton.width - 5;
-        mx_internal::closeButton.y = 5;
-    }
-
     protected function init (memObj :MemberObject) :void
     {
         memObj.addListener(_friendsList);
 
         _friendsList.init(memObj.friends.toArray());
-    }
-
-    protected function stageResized (...ignored) :void
-    {
-        var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
-        // fix the height
-        height = placeBounds.height - PADDING * 2;
-        // fit the popup within the new bounds, minux padding.
-        placeBounds.x += PADDING;
-        placeBounds.y += PADDING;
-        placeBounds.width -= PADDING * 2;
-        placeBounds.height -= PADDING * 2;
-        PopUpUtil.fitInRect(this, placeBounds);
-    }
-
-    protected function miniWillChange (event :ValueEvent) :void
-    {
-        if (event.value) {
-            _currentX = x;
-        } else {
-            x = _currentX;
-        }
     }
 
     private static const log :Log = Log.getLog(PartyPopup);
@@ -198,11 +157,10 @@ public class PartyPopup extends TitleWindow
     /** Defined in Java as com.threerings.msoy.person.data.Profile.MAX_STATUS_LENGTH */
     protected static const PROFILE_MAX_STATUS_LENGTH :int = 100;
 
-    protected var _ctx :WorldContext;
+    protected var _wctx :WorldContext;
     protected var _friendsList :PeerList;
     protected var _friends :ArrayCollection = new ArrayCollection();
     protected var _nameLabel :Label;
     protected var _statusEdit :TextInput;
-    protected var _currentX :int = 0;
 }
 }

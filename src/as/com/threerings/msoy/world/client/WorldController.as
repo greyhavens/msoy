@@ -5,6 +5,7 @@ package com.threerings.msoy.world.client {
 
 import flash.geom.Rectangle;
 
+import flash.events.Event;
 import flash.events.TimerEvent;
 import flash.external.ExternalInterface;
 import flash.net.URLRequest;
@@ -1075,11 +1076,11 @@ public class WorldController extends MsoyController
     public function handlePopFriendsList (...ignored) :void
     {
         if (_friendsList != null) {
-            _friendsList.shutdown();
-            _friendsList = null;
+            _friendsList.close();
+
         } else {
             _friendsList = new FriendsListPanel(_wctx);
-            _friendsList.show();
+            _friendsList.addEventListener(Event.REMOVED_FROM_STAGE, handleFriendsListRemoved);
         }
     }
 
@@ -1089,11 +1090,10 @@ public class WorldController extends MsoyController
     public function handlePopParty (...ignored) :void
     {
         if (_partyPopup != null) {
-            _partyPopup.shutdown();
-            _partyPopup = null;
+            _partyPopup.close();
         } else {
             _partyPopup = new PartyPopup(_wctx);
-            _partyPopup.show();
+            _partyPopup.addEventListener(Event.REMOVED_FROM_STAGE, handlePartyPopupRemoved);
         }
     }
 
@@ -1143,7 +1143,7 @@ public class WorldController extends MsoyController
 
             if (_friendsList != null) {
                 // force closed if we're a guest.
-                handlePopFriendsList();
+                _friendsList.close();
             }
         }
 
@@ -1356,8 +1356,18 @@ public class WorldController extends MsoyController
 
         // if we just moved to a game, we need to close down the friend list.
         if (_friendsList != null) {
-            handlePopFriendsList();
+            _friendsList.close();
         }
+    }
+
+    protected function handleFriendsListRemoved (event :Event) :void
+    {
+        _friendsList = null;
+    }
+
+    protected function handlePartyPopupRemoved (event :Event) :void
+    {
+        _partyPopup = null;
     }
 
     // from MsoyController

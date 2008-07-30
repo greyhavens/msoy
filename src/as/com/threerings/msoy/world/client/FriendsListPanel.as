@@ -27,12 +27,8 @@ import mx.controls.TextInput;
 
 import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;
-import mx.core.mx_internal;
 
-import mx.events.CloseEvent;
 import mx.events.FlexEvent;
-
-import mx.managers.PopUpManager;
 
 import com.threerings.presents.client.InvocationAdapter;
 
@@ -43,15 +39,14 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.flex.PopUpUtil;
-
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
+
+import com.threerings.msoy.ui.FlyingPanel;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.PeerList;
 
 import com.threerings.msoy.data.MemberObject;
@@ -59,7 +54,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
-public class FriendsListPanel extends TitleWindow
+public class FriendsListPanel extends FlyingPanel
     implements AttributeChangeListener
 {
     /** The width of the popup, defined by the width of the header image. */
@@ -67,24 +62,18 @@ public class FriendsListPanel extends TitleWindow
 
     public function FriendsListPanel (ctx :WorldContext) :void
     {
-        _ctx = ctx;
-        _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
-
-        addEventListener(CloseEvent.CLOSE, _ctx.getWorldController().handlePopFriendsList);
+        super(ctx);
+        _wctx = ctx;
+        showCloseButton = true;
+        open();
     }
 
-    public function show () :void
+    override public function close () :void
     {
-        PopUpManager.addPopUp(this, _ctx.getTopPanel(), false);
-        systemManager.addEventListener(Event.RESIZE, stageResized);
-    }
+        _wctx.getMemberObject().removeListener(this);
+        _wctx.getMemberObject().removeListener(_friendsList);
 
-    public function shutdown () :void
-    {
-        systemManager.removeEventListener(Event.RESIZE, stageResized);
-        _ctx.getMemberObject().removeListener(this);
-        _ctx.getMemberObject().removeListener(_friendsList);
-        PopUpManager.removePopUp(this);
+        super.close();
     }
 
     public function memberObjectUpdated (memObj :MemberObject) :void
@@ -104,21 +93,15 @@ public class FriendsListPanel extends TitleWindow
     {
         super.createChildren();
 
-        // Panel provides no way to customize this, other than overriding the class and blowing
-        // away what it set these to.
-        mx_internal::closeButton.explicitWidth = 13;
-        mx_internal::closeButton.explicitHeight = 14;
-
         // styles and positioning
         styleName = "friendsListPanel";
-        showCloseButton = true;
         width = POPUP_WIDTH;
         var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
         height = placeBounds.height - PADDING * 2;
         x = placeBounds.x + placeBounds.width - width - PADDING;
         y = placeBounds.y + PADDING;
 
-        _friendsList = new PeerList(_ctx, MemberObject.FRIENDS, FriendRenderer);
+        _friendsList = new PeerList(_wctx, MemberObject.FRIENDS, FriendRenderer);
         _friendsList.dataProvider.filterFunction = function (friend :FriendEntry) :Boolean {
             // Only show online friends
             return friend.online;
@@ -140,7 +123,7 @@ public class FriendsListPanel extends TitleWindow
         addChild(box);
 
         // Create a display name label and a status editor
-        var me :MemberObject = _ctx.getMemberObject();
+        var me :MemberObject = _wctx.getMemberObject();
         _nameLabel = new Label();
         _nameLabel.styleName = "friendLabel";
         _nameLabel.setStyle("fontWeight", "bold");
@@ -164,14 +147,6 @@ public class FriendsListPanel extends TitleWindow
     
         // initialize with currently online friends
         init(me);
-    }
-
-    override protected function layoutChrome (unscaledWidth :Number, unscaledHeight :Number) :void
-    {
-        super.layoutChrome(unscaledWidth, unscaledHeight);
-
-        mx_internal::closeButton.x = POPUP_WIDTH - mx_internal::closeButton.width - 5;
-        mx_internal::closeButton.y = 5;
     }
 
     protected function init (memObj :MemberObject) :void
@@ -218,49 +193,27 @@ public class FriendsListPanel extends TitleWindow
         // delay losing focus by a frame so the selection has time to get set correctly.
         callLater(function () :void { _ctx.getTopPanel().getControlBar().giveChatFocus(); });
         var newStatus :String = _statusEdit.text;
-        if (newStatus != _ctx.getMemberObject().headline) {
+        if (newStatus != _wctx.getMemberObject().headline) {
             var msvc :MemberService =
                 (_ctx.getClient().requireService(MemberService) as MemberService);
             msvc.updateStatus(_ctx.getClient(), newStatus, new InvocationAdapter(
                 function (cause :String) :void {
                     _ctx.displayFeedback(null, cause);
                     // revert to old status
-                    var me :MemberObject = _ctx.getMemberObject();
+                    var me :MemberObject = _wctx.getMemberObject();
                     setStatus(me.headline);
                 }));
-        }
-    }
-
-    protected function stageResized (...ignored) :void
-    {
-        var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
-        // fix the height
-        height = placeBounds.height - PADDING * 2;
-        // fit the popup within the new bounds, minux padding.
-        placeBounds.x += PADDING;
-        placeBounds.y += PADDING;
-        placeBounds.width -= PADDING * 2;
-        placeBounds.height -= PADDING * 2;
-        PopUpUtil.fitInRect(this, placeBounds);
-    }
-
-    protected function miniWillChange (event :ValueEvent) :void
-    {
-        if (event.value) {
-            _currentX = x;
-        } else {
-            x = _currentX;
         }
     }
 
     protected function keyUp (event :KeyboardEvent) :void
     {
         if (event.keyCode == Keyboard.ESCAPE) {
-            var me :MemberObject = _ctx.getMemberObject();
+            var me :MemberObject = _wctx.getMemberObject();
             setStatus(me.headline);
             _statusEdit.setSelection(0, 0);
             // delay losing focus by a frame so the selection has time to get set correctly.
-            callLater(function () :void { _ctx.getTopPanel().getControlBar().giveChatFocus(); });
+            callLater(_ctx.getTopPanel().getControlBar().giveChatFocus);
         }
     }
 
@@ -277,10 +230,9 @@ public class FriendsListPanel extends TitleWindow
     /** Defined in Java as com.threerings.msoy.person.data.Profile.MAX_STATUS_LENGTH */
     protected static const PROFILE_MAX_STATUS_LENGTH :int = 100;
 
-    protected var _ctx :WorldContext;
+    protected var _wctx :WorldContext;
     protected var _friendsList :PeerList;
     protected var _nameLabel :Label;
     protected var _statusEdit :TextInput;
-    protected var _currentX :int = 0;
 }
 }

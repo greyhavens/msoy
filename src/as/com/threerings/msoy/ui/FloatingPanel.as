@@ -12,6 +12,9 @@ import mx.containers.TitleWindow;
 import mx.controls.Button;
 import mx.controls.ButtonBar;
 
+import mx.core.mx_internal; // namespace
+import mx.core.UIComponent;
+
 import mx.events.CloseEvent;
 
 import mx.managers.PopUpManager;
@@ -228,6 +231,24 @@ public class FloatingPanel extends TitleWindow
         } else {
             Log.getLog(this).info("Not forwarding " + event);
         }
+    }
+
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        var closeBtn :UIComponent = mx_internal::closeButton;
+        closeBtn.explicitWidth = 13;
+        closeBtn.explicitHeight = 14;
+    }
+
+    override protected function layoutChrome (unscaledWidth :Number, unscaledHeight :Number) :void
+    {
+        super.layoutChrome(unscaledWidth, unscaledHeight);
+
+        var closeBtn :UIComponent = mx_internal::closeButton;
+        closeBtn.x = unscaledWidth - closeBtn.width - 5;
+        closeBtn.y = 5;
     }
 
     /**
