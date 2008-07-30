@@ -40,9 +40,11 @@
   <link rel="stylesheet" href="/css/games.css" type="text/css"/>
   <link rel="stylesheet" href="/css/help.css" type="text/css"/>
   <link rel="stylesheet" href="/css/item.css" type="text/css"/>
+  <link rel="stylesheet" href="/css/landing.css" type="text/css"/>
   <link rel="stylesheet" href="/css/mail.css" type="text/css"/>
   <link rel="stylesheet" href="/css/me.css" type="text/css"/>
   <link rel="stylesheet" href="/css/msgs.css" type="text/css"/>
+  <link rel="stylesheet" href="/css/person.css" type="text/css"/>
   <link rel="stylesheet" href="/css/people.css" type="text/css"/>
   <link rel="stylesheet" href="/css/shop.css" type="text/css"/>
   <link rel="stylesheet" href="/css/stuff.css" type="text/css"/>

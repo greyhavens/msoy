@@ -1,0 +1,512 @@
+/**
+ * $Id: me.css 10021 2008-07-24 20:53:18Z sarah $
+ *
+ * Styles for Landing pages.
+ */
+
+/* ------------------------------------
+   LANDING PAGE
+-------------------------------------*/
+
+/* Spans the entire width of the page */
+.LandingPanel {
+  background: #63ABD3 url(/images/landing/bg_gradient.jpg) repeat-x top center;
+  width: 100%;
+  height: 1002px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+/* Spans the width of the page to position a flourish that trails off to the right */
+.LandingBackground {
+  background: transparent url(/images/landing/splash_right.png) no-repeat top center;
+  width: 100%;
+  height: 1002px;
+}
+
+/* Centered in the middle of the page */
+.LandingContent {
+  width: 800px;
+  height: 1002px;
+  margin: auto;
+}
+
+.LandingPanel .Video {
+  width: 360px;
+  height: 200px;
+}
+
+.LandingPanel .logonPanel {
+  background: url(/images/landing/login_bg.png) no-repeat top center;
+  width: 170px;
+  height: 60px;
+}
+
+.LandingPanel .logonPanel .gwt-TextBox,
+.LandingPanel .logonPanel .gwt-PasswordTextBox {
+  font-size: 13px;
+  color: #666666;
+  width: 145px;
+  margin-left: 7px;
+  border: solid #2E729F 1px;
+}
+
+.LandingPanel .logonPanel .gwt-PasswordTextBox {
+  width: 91px;
+  margin-top: -5px;
+}
+
+.LandingPanel .logonPanel .rightLabel {
+  display: none;
+}
+
+.LandingPanel .logonPanel .tipLabel {
+  position: absolute;
+  top: 60px;
+  left: 120px;
+  color: #2E729F;
+  font-size: 11px;
+}
+
+.LandingPanel .LoginButton {
+  font-size: 13px;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  background: url(/images/landing/login_button_bg.png) no-repeat top center;
+  width: 50px;
+  height: 21px;
+  padding-top: 3px;
+  color: #FFFFFF;
+  border-spacing: 0;
+  position: absolute;
+  top: 33px;
+  left: 112px;
+}
+
+.LandingPanel .JoinButton {
+  background: url(/images/landing/join_now_button.png) no-repeat top center;
+  width: 99px;
+  height: 67px;
+  border: none;
+  cursor: pointer;
+}
+
+.LandingPanel .LandingTagline {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  color: #FFFFFF;
+}
+
+.LandingPanel .Background {
+  height: 675px;
+}
+
+.LandingPanel .Background .LeftBorder {
+  background: url(/images/landing/stripe_tile.png) repeat-y top right;
+  width: 57px;
+  float: left;
+  height: 100%;
+}
+
+.LandingPanel .Background .Center {
+  background: #C7E4F6 url(/images/landing/overlay_gradient.jpg) repeat-x top center;
+  width: 690px;
+  float: left;
+  height: 100%;
+}
+.LandingPanel .Background .RightBorder {
+  background: url(/images/landing/stripe_tile.png) repeat-y top left;
+  width: 53px;
+  float: left;
+  height: 100%;
+}
+
+/* ------------------------------------
+   LANDING PAGE - TOP GAMES
+-------------------------------------*/
+
+.LandingPanel .TopGamesPanel {
+  width: 650px;
+  height: 275px;
+}
+
+.LandingPanel .TopGamesPanel .TopGamesHeader {
+  width: 202px;
+  height: 27px;
+  background: url(/images/landing/topgames_header.png) no-repeat top center;
+}
+
+.LandingPanel .TopGamesPanel .GameListItem,
+.LandingPanel .TopGamesPanel .GameListItemSelected {
+  background: url(/images/landing/topgames_singlebox.jpg) no-repeat top center;
+  width: 202px;
+  cursor: pointer;
+  border-bottom: solid 1px #9CC0D6;
+}
+.LandingPanel .TopGamesPanel .GameListItemSelected {
+  border-bottom: solid 1px #72AACD;
+}
+
+.LandingPanel .TopGamesPanel .GameListItem td,
+.LandingPanel .TopGamesPanel .GameListItemSelected td {
+  height: 49px;
+}
+
+.LandingPanel .TopGamesPanel .GameListItemSelected {
+  background: url(/images/landing/topgames_singlebox_select.jpg) no-repeat top center;
+}
+
+.LandingPanel .TopGamesPanel .GameListItem .Thumbnail,
+.LandingPanel .TopGamesPanel .GameListItemSelected .Thumbnail {
+  float: left;
+  width: 55px;
+  text-align: center;
+  vertical-align: center;
+}
+
+.LandingPanel .TopGamesPanel .GameListItem .Name,
+.LandingPanel .TopGamesPanel .GameListItemSelected .Name {
+  float: left;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  color: #1391DD;
+  width: 130px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-decoration: underline;
+}
+
+.LandingPanel .TopGamesPanel .GameInfoContainer {
+  width: 433px;
+  height: 272px;
+  border: solid #4fa0cd 1px;
+  background: #5caedd url(/images/landing/topgames_info_bg.jpg) repeat-x top center;
+}
+
+.LandingPanel .TopGamesPanel .GameInfo {
+  width: 415px;
+  height: 245px;
+  padding-top: 20px;
+  padding-left: 10px;
+}
+
+.LandingPanel .TopGamesPanel .FeaturedGame .gameBits {
+  color: #FFFFFF;
+}
+
+.LandingPanel .TopGamesPanel .FeaturedGame .RightPanel {
+  width: 235px;
+  height: 255px;
+  color: #0b4a6d;
+}
+.LandingPanel .TopGamesPanel .FeaturedGame .RightPanel a {
+  color: #0b4a6d;
+}
+
+.LandingPanel .TopGamesPanel .FeaturedGame .Genre {
+  font-size: 14px;
+  height: 14px;
+}
+
+.LandingPanel .TopGamesPanel .FeaturedGame .creator {
+  font-size: 14px;
+}
+
+.LandingPanel .TopGamesPanel .FeaturedGame .Descrip {
+  width: 230px;
+  height: 95px;
+  padding-top: 3px;
+  line-height: 15px;
+}
+
+.LandingPanel .TopGamesPanel .FeaturedGame .Name {
+  width: 230px;
+}
+
+.LandingPanel .TopGamesPanel .FeaturedGame .Online {
+  background: url(/images/game/players_bg.png) no-repeat;
+  color: #FFFFFF;
+  width: 134px;
+  height: 21px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 2px;
+}
+
+.LandingPanel .TopGamesPanel .GameInfo .playButtonSmall {
+  position: absolute;
+  top: 180px;
+  left: 237px;
+}
+
+.LandingPanel .TopGamesPanel .GameInfo .MoreGames {
+  background-image: url(/images/landing/more_games.png);
+  background-repeat: no-repeat;
+  width: 101px;
+  height: 27px;
+  position: absolute;
+  top: 239px;
+  left: 325px;
+}
+.LandingPanel .TopGamesPanel .GameInfo .MoreGames-up-hovering,
+.LandingPanel .TopGamesPanel .GameInfo .MoreGames-down-hovering {
+  background-image: url(/images/landing/more_games_over.png);
+}
+
+/* ------------------------------------
+   LANDING PAGE - TOP AVATARS
+-------------------------------------*/
+
+.LandingPanel .AvatarPanel {
+  background: url(/images/landing/top_avatars_bg.png) no-repeat top center;
+  width: 213px;
+  height: 334px;
+  padding-top: 40px;
+}
+
+.LandingPanel .AvatarPanel .AvatarBox {
+  font-size: 12px;
+  margin: 0px 10px;
+  width: 150px;
+  margin-bottom: 13px;
+}
+
+.LandingPanel .AvatarPanel .AvatarBox .Name {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 14px;
+  padding-left: 5px;
+  width: 100px;
+  height: 40px;
+  overflow: hidden;
+}
+
+.LandingPanel .AvatarPanel .AvatarBox .Creator {
+  padding-left: 5px;
+  color: #4C7799;
+  width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+/* ------------------------------------
+   LANDING PAGE - FEATURED WHIRLED
+-------------------------------------*/
+
+.LandingPanel .FeaturedWhirled {
+  background: url(/images/landing/featured_whirled_bg.png) no-repeat top center;
+  width: 448px;
+  height: 334px;
+}
+
+.LandingPanel .FeaturedWhirled .Flash {
+  position: absolute;
+  top: 45px;
+  left: 35px;
+}
+
+.LandingPanel .FeaturedWhirled .Flash img {
+  margin: 0;
+}
+
+.LandingPanel .FeaturedWhirled td.Name div.gwt-Hyperlink {
+  position: absolute;
+  top: 220px;
+  left: 75px;
+  width: 300px;
+  text-align: center;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 16px;
+}
+.LandingPanel .FeaturedWhirled td.Name a {
+  color: #FFFFFF;
+}
+
+/* hide "Featured Whirled" title */
+.LandingPanel .FeaturedWhirled div.Title {
+  display: none;
+}
+
+/* width is hard coded to 400 in a style attribute
+   only td.Online will be inline and visible */
+.LandingPanel .FeaturedWhirled table.pagedGrid {
+  border-spacing: 0;
+}
+
+.LandingPanel .FeaturedWhirled .OnlineBox {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #FFFFFF;
+  font-weight: bold;
+  font-size: 16px;
+  font-weight: normal;
+  font-size: 13px;
+  text-align: center;
+  position: absolute;
+  width: 300px;
+  top: 240px;
+  left: 75px;
+}
+
+/* hide group description */
+.LandingPanel .FeaturedWhirled td.Blurb {
+  display: none;
+}
+
+.LandingPanel .FeaturedWhirled button.PrevButton {
+  position: absolute;
+  top: 285px;
+  left: 10px;
+}
+
+.LandingPanel .FeaturedWhirled button.NextButton {
+  position: absolute;
+  top: 285px;
+  left: 385px;
+}
+
+.LandingPanel .FeaturedWhirled .Icons {
+  position: absolute;
+  left: 80px;
+  top: 270px;
+}
+
+.LandingPanel .FeaturedWhirled .Icons .Icon {
+  text-align: center;
+  float: left;
+  width: 65px;
+  height: 55px;
+  color: #2E729F;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-top: 3px;
+  margin-left: 5px;
+}
+
+.LandingPanel .FeaturedWhirled .Icons .IconBox {
+  height: 37px;
+}
+
+.LandingPanel .LandingCopyright {
+  width: 708px;
+  margin: auto;
+  height: 25px;
+  font-size: 14px;
+  text-align: center;
+  color: #226B98;
+  padding-top: 7px;
+  background-color: #3B85B2;
+}
+
+.LandingPanel .LandingCopyright a {
+  color: #0F3F70;
+}
+
+/* ------------------------------------
+   CREATORS LANDING
+-------------------------------------*/
+
+.creatorsPanel {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  background: #073449 url(/images/landing/creators_bg.jpg) no-repeat top center;
+  width: 100%;
+  height: 1109px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.creatorsPanel .Content {
+  width: 620px;
+  height: 1109px;
+  margin: auto;
+}
+
+.creatorsPanel .LandingCopyright {
+  width: 620px;
+  text-align: center;
+}
+.creatorsPanel .LandingCopyright,
+.creatorsPanel .LandingCopyright a {
+  font-size: 14px;
+  color: #12718f;
+  background: none;
+  padding: 0;
+}
+
+.creatorsPanel .GetStartedButton {
+  width: 258px;
+  height: 114px;
+  border: none;
+  cursor: pointer;
+  background: transparent url(/images/landing/get_started_button.png);
+}
+.creatorsPanel .GetStartedButton-down-hovering {
+  background: transparent url(/images/landing/get_started_button_over.png);
+}
+.creatorsPanel .GetStartedButton-up-hovering {
+  background: transparent url(/images/landing/get_started_button_over.png);
+}
+
+/* ------------------------------------
+   CREATORS LANDING WITH SIGNUP
+-------------------------------------*/
+
+.creatorsSignupPanel {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  background: #073449 url(/images/landing/creators_bg.jpg) no-repeat top center;
+  width: 100%;
+  height: 1109px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.creatorsSignupPanel .Content {
+  width: 620px;
+  height: 1109px;
+  margin: auto;
+}
+
+.creatorsSignupPanel .GetStarted {
+  color: #3781a8;
+  font-size: 25px;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+.creatorsSignupPanel .createAccount {
+  background: none;
+  width: 600px;
+}
+
+.creatorsSignupPanel .createAccount .Intro {
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.creatorsSignupPanel .createAccount,
+.creatorsSignupPanel .createAccount a,
+.creatorsSignupPanel .createAccount .Intro,
+.creatorsSignupPanel .createAccount .Status {
+  color: #3781a8;
+}
+
+.creatorsSignupPanel .LandingCopyright {
+  width: 620px;
+  text-align: center;
+}
+
+.creatorsSignupPanel .LandingCopyright,
+.creatorsSignupPanel .LandingCopyright a {
+  font-size: 14px;
+  color: #12718f;
+  background: none;
+  padding: 0;
+}
