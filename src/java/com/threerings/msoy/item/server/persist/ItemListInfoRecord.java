@@ -59,8 +59,7 @@ public class ItemListInfoRecord extends PersistentRecord
     /** Our depot schema version. */
     public static final int SCHEMA_VERSION = 2;
 
-    @Id
-    @GeneratedValue(generator="listId", strategy=GenerationType.TABLE, allocationSize=1)
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int listId;
 
     public int memberId;
