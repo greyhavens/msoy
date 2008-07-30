@@ -334,7 +334,7 @@ public class GameGameRegistry
         throws InvocationException
     {
         // TODO: transition
-        final int instanceId = 1;
+        // final int instanceId = 1;
 
         final PlayerObject player = (PlayerObject) caller;
 

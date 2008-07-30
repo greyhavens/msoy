@@ -5,7 +5,6 @@ package com.threerings.msoy.game.client;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 
 import com.threerings.msoy.game.data.GameSummary;

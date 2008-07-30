@@ -15,7 +15,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.IntListUtil;
@@ -49,7 +48,6 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.item.data.all.Game;
