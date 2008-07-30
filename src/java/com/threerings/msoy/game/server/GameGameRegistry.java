@@ -304,12 +304,11 @@ public class GameGameRegistry
                     trophy.memberId, FeedMessageType.FRIEND_WON_TROPHY,
                     trophy.name + "\t" + trophy.gameId +
                     "\t" + MediaDesc.mdToString(trec.trophyMedia));
-                // update the player's stats
-                _statLogic.incrementStat(trophy.memberId, StatType.TROPHIES_EARNED, 1);
             }
             public void handleSuccess () {
                 _worldClient.reportTrophyAward(trophy.memberId, gameName, trec);
                 _eventLog.trophyEarned(trophy.memberId, trophy.gameId, trophy.ident);
+                _worldClient.incrementStat(trophy.memberId, StatType.TROPHIES_EARNED, 1);
                 ((InvocationService.ResultListener)_listener).requestProcessed(trec);
             }
             protected String getFailureMessage () {
