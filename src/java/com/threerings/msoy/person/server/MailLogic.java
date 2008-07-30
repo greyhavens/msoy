@@ -155,7 +155,7 @@ public class MailLogic
     {
         if (attachment instanceof PresentPayload) {
             ItemIdent ident = ((PresentPayload)attachment).ident;
-            ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(ident.type);
+            ItemRepository<?> repo = _itemMan.getRepository(ident.type);
             ItemRecord item = repo.loadItem(ident.itemId);
 
             // validate that they're allowed to gift this item (these are all also checked on the

@@ -44,7 +44,7 @@ public abstract class MailPayload
      *
      * @exception IllegalArgumentException thrown if an unknown payload type is provided.
      */
-    public static Class getPayloadClass (int type)
+    public static Class<? extends MailPayload> getPayloadClass (int type)
     {
         switch(type) {
         case TYPE_GROUP_INVITE:

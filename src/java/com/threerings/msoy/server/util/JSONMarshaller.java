@@ -67,10 +67,10 @@ public class JSONMarshaller<T>
     /**
      * Returns a JSON marshaller for a given class, either through cache lookup or creation.
      */
-    @SuppressWarnings("unchecked")
     public static <T> JSONMarshaller<T> getMarshaller (Class<T> pclass)
     {
-        JSONMarshaller<T> marsh = _classMap.get(pclass);
+        @SuppressWarnings("unchecked") JSONMarshaller<T> marsh =
+            (JSONMarshaller<T>)_classMap.get(pclass);
         if (marsh == null) {
             marsh = new JSONMarshaller<T>(pclass);
             _classMap.put(pclass, marsh);
@@ -174,7 +174,7 @@ public class JSONMarshaller<T>
                     throw new JSONMarshallingException(
                         "Can't stuff non-array state into array field [dClass=" + dClass + "]");
                 }
-                Class cClass = dClass.getComponentType();
+                Class<?> cClass = dClass.getComponentType();
                 JSONArray jArr = (JSONArray) state;
                 int sz = jArr.length();
                 Object rArr = Array.newInstance(cClass, sz);
@@ -227,7 +227,7 @@ public class JSONMarshaller<T>
             return value;
         }
         if (dClass.isArray()) {
-            Class cClass = dClass.getComponentType();
+            Class<?> cClass = dClass.getComponentType();
             int sz = Array.getLength(value);
             JSONArray jArr = new JSONArray();
             for (int ii = 0; ii < sz; ii ++ ) {
@@ -249,7 +249,7 @@ public class JSONMarshaller<T>
     }
 
     // convenience method for categorizing anything JSON treats as primitive
-    protected boolean isJSONPrimitive(Class vClass) {
+    protected boolean isJSONPrimitive(Class<?> vClass) {
         return (vClass.equals(Boolean.TYPE) || vClass.equals(Boolean.class) ||
                 vClass.equals(Byte.TYPE) || vClass.equals(Byte.class) ||
                 vClass.equals(Short.TYPE) || vClass.equals(Short.class) ||
@@ -270,8 +270,8 @@ public class JSONMarshaller<T>
     protected Map<String, Field> _fields = Maps.newHashMap();
 
     /** The static cache of instantiated marshallers. */
-    protected static Map<Class, JSONMarshaller> _classMap = Maps.newHashMap();
+    protected static Map<Class<?>, JSONMarshaller<?>> _classMap = Maps.newHashMap();
 
     /** The static registry of migrations. */
-    protected static Map<Class, Map<String, String>> _migrations = Maps.newHashMap();
+    protected static Map<Class<?>, Map<String, String>> _migrations = Maps.newHashMap();
 }

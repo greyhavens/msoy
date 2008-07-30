@@ -141,7 +141,7 @@ public class CommentServlet extends MsoyServiceServlet
 
             } else {
                 try {
-                    ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository((byte)etype);
+                    ItemRepository<?> repo = _itemMan.getRepository((byte)etype);
                     CatalogRecord listing = repo.loadListing(eid, true);
                     if (listing != null) {
                         ItemRecord item = listing.item;
