@@ -51,7 +51,6 @@ import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
@@ -121,8 +120,8 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // validate display name length (this is enforced on the client)
-        if (displayName.length() < Profile.MIN_DISPLAY_NAME_LENGTH ||
-            displayName.length() > Profile.MAX_DISPLAY_NAME_LENGTH) {
+        if (displayName.length() < MemberName.MIN_DISPLAY_NAME_LENGTH ||
+            displayName.length() > MemberName.MAX_DISPLAY_NAME_LENGTH) {
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
