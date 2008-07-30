@@ -12,20 +12,13 @@
   <source path="com/threerings/msoy/data/all"/>
   <source path="com/threerings/msoy/web/data"/>
   <source path="com/threerings/msoy/web/client"/>
-  <source path="com/threerings/msoy/mail/gwt"/>
-  <source path="com/threerings/msoy/item/data/all"/>
-  <source path="com/threerings/msoy/stuff/gwt"/>
-  <source path="com/threerings/msoy/group/data/all"/>
-  <source path="com/threerings/msoy/group/gwt"/>
-  <source path="com/threerings/msoy/fora/gwt"/>
 
-  <source path="client/mail"/>
-  <source path="client/item"/>
+  <source path="client/admin"/>
   <source path="client/images"/>
   <source path="client/shell"/>
   <source path="client/ui"/>
   <source path="client/util"/>
   <public path="public"/>
 
-  <entry-point class="client.mail.MailPage"/>
+  <entry-point class="client.admin.AdminPage"/>
 </module>

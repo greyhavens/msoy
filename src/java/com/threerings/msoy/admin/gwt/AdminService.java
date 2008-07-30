@@ -11,6 +11,9 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.gwt.ItemDetail;
+
 /**
  * Defines remote services available to admins.
  */
@@ -24,25 +27,25 @@ public interface AdminService extends RemoteService
      *
      * @param activeSince If null, all users will receive invitations
      */
-    public void grantInvitations (WebIdent ident, int numberInvitations, Date activeSince)
+    void grantInvitations (WebIdent ident, int numberInvitations, Date activeSince)
         throws ServiceException;
 
     /**
      * Grants the given number of invitations to the given user.
      */
-    public void grantInvitations (WebIdent ident, int numberInvitations, int memberId)
+    void grantInvitations (WebIdent ident, int numberInvitations, int memberId)
         throws ServiceException;
 
     /**
      * Returns admin information for the specified member.
      */
-    public MemberAdminInfo getMemberInfo (WebIdent ident, int memberId)
+    MemberAdminInfo getMemberInfo (WebIdent ident, int memberId)
         throws ServiceException;
 
     /**
      * Fetches a list of players who were invited by inviterId.
      */
-    public MemberInviteResult getPlayerList (WebIdent ident, int inviterId)
+    MemberInviteResult getPlayerList (WebIdent ident, int inviterId)
         throws ServiceException;
 
     /**
@@ -54,30 +57,43 @@ public interface AdminService extends RemoteService
      * @return a three element array containing the count of successfully sent emails, the count of
      * failures and the count of opt-out accounts.
      */
-    public int[] spamPlayers (WebIdent ident, String subject, String body, int startId, int endId)
+    int[] spamPlayers (WebIdent ident, String subject, String body, int startId, int endId)
         throws ServiceException;
 
     /**
      * Configures a member as support personnel or not. Only callable by admins.
      */
-    public void setIsSupport (WebIdent ident, int memberId, boolean isSupport)
+    void setIsSupport (WebIdent ident, int memberId, boolean isSupport)
         throws ServiceException;
 
     /**
      * Configures a member as support personnel or not. Only callable by admins.
      */
-    public List<ABTest> getABTests (WebIdent ident)
+    List<ABTest> getABTests (WebIdent ident)
         throws ServiceException;
 
     /**
      * Create a new A/B Test record
      */
-    public void createTest (WebIdent ident, ABTest test)
+    void createTest (WebIdent ident, ABTest test)
         throws ServiceException;
 
     /**
      * Update an existing A/B Test record
      */
-    public void updateTest (WebIdent ident, ABTest test)
+    void updateTest (WebIdent ident, ABTest test)
+        throws ServiceException;
+
+    /**
+     * Fetches the first 'count' items flagged as mature or copyright in the database.
+     */
+    List<ItemDetail> getFlaggedItems (WebIdent ident, int count)
+        throws ServiceException;
+
+    /**
+     * Deletes an item and notifies people who care with the given message.  If the item is listed
+     * in the catalog, also delists it and deletes any clones.
+     */
+    Integer deleteItemAdmin (WebIdent ident, ItemIdent item, String subject, String body)
         throws ServiceException;
 }

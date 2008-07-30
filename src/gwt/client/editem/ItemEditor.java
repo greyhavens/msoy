@@ -22,8 +22,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
+import com.threerings.msoy.stuff.gwt.StuffService;
+import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -155,7 +155,7 @@ public abstract class ItemEditor extends FlexTable
      */
     public void setItem (int itemId)
     {
-        _itemsvc.loadItem(CShell.ident, new ItemIdent(_type, itemId),
+        _stuffsvc.loadItem(CShell.ident, new ItemIdent(_type, itemId),
             new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
                     setItem(result);
@@ -556,7 +556,7 @@ public abstract class ItemEditor extends FlexTable
         }
 
         if (_item.itemId == 0) {
-            _itemsvc.createItem(CShell.ident, _item, _parentItem, new MsoyCallback<Item>() {
+            _stuffsvc.createItem(CShell.ident, _item, _parentItem, new MsoyCallback<Item>() {
                 public void onSuccess (Item item) {
                     MsoyUI.info(_emsgs.msgItemCreated());
                     _parent.editComplete(item);
@@ -564,7 +564,7 @@ public abstract class ItemEditor extends FlexTable
             });
 
         } else {
-            _itemsvc.updateItem(CShell.ident, _item, new MsoyCallback<Void>() {
+            _stuffsvc.updateItem(CShell.ident, _item, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     MsoyUI.info(_emsgs.msgItemUpdated());
                     _parent.editComplete(_item);
@@ -662,8 +662,8 @@ public abstract class ItemEditor extends FlexTable
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
+        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
 
     protected static final String TYPE_IMAGE = "image";
     protected static final String TYPE_AUDIO = "audio";

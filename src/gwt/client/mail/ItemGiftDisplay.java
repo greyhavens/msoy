@@ -12,6 +12,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.mail.gwt.ItemGiftPayload;
+import com.threerings.msoy.stuff.gwt.StuffService;
+import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import client.item.ItemThumbnail;
 import client.ui.MsoyUI;
@@ -63,7 +65,7 @@ public class ItemGiftDisplay extends MailPayloadDisplay
                 add(MsoyUI.createLabel(CMail.msgs.giftItem(), null));
             }
 
-            _itemsvc.loadItem(CMail.ident, _giftPayload.item, new MsoyCallback<Item>() {
+            _stuffsvc.loadItem(CMail.ident, _giftPayload.item, new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
                     add(new ItemThumbnail(result, _enabled ? new ClickListener() {
                         public void onClick (Widget sender) {
@@ -101,6 +103,8 @@ public class ItemGiftDisplay extends MailPayloadDisplay
 
     protected ItemGiftPayload _giftPayload;
 
+    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
+        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
     protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
         ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 
-import client.item.ItemMessages;
 import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.ServiceUtil;

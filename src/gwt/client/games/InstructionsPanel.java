@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.game.gwt.GameDetail;
 
-import client.editem.RichTextToolbar;
+import client.item.RichTextToolbar;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 

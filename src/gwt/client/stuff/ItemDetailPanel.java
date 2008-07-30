@@ -21,8 +21,8 @@ import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ItemDetail;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
+import com.threerings.msoy.stuff.gwt.StuffService;
+import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import client.item.BaseItemDetailPanel;
 import client.item.ItemActivator;
@@ -294,7 +294,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     {
         new ClickCallback<Void>(trigger, CStuff.msgs.detailConfirmDelete()) {
             public boolean callService () {
-                _itemsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
+                _stuffsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Void result) {
@@ -318,7 +318,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     {
         new ClickCallback<Item>(trigger, CStuff.msgs.detailConfirmRevert()) {
             public boolean callService () {
-                _itemsvc.revertRemixedClone(CStuff.ident, _item.getIdent(), this);
+                _stuffsvc.revertRemixedClone(CStuff.ident, _item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Item item) {
@@ -343,6 +343,6 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
+        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
 }

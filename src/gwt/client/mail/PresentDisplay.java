@@ -49,7 +49,7 @@ public class PresentDisplay extends MailPayloadDisplay
                 setText(0, 2, CMail.msgs.presentRecipTip());
             }
 
-            setWidget(0, 0, new ThumbBox(payload.getThumbnailMedia(), onClick));
+            setWidget(0, 0, new ThumbBox(payload.thumbMedia, onClick));
             setWidget(1, 0, MsoyUI.createActionLabel(payload.name, onClick));
             getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
         }

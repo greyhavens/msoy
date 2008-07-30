@@ -1,9 +1,8 @@
 //
 // $Id$
 
-package client.editem;
+package client.item;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -24,8 +23,8 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
 
 import client.ui.MsoyUI;
 import client.util.MediaUploader;
@@ -49,8 +48,8 @@ public class ImageChooserPopup extends VerticalPanel
     public static void displayImageChooser (
         final boolean thumbnail, final AsyncCallback<MediaDesc> callback)
     {
-        _itemsvc.loadInventory(CShell.ident, Item.PHOTO, 0, new AsyncCallback<List<Item>>() {
-            public void onSuccess (List<Item> items) {
+        _membersvc.loadPhotos(CShell.ident, new AsyncCallback<List<Photo>>() {
+            public void onSuccess (List<Photo> items) {
                 CShell.frame.showDialog(
                     _cmsgs.icTitle(), new ImageChooserPopup(items, thumbnail, callback));
             }
@@ -61,7 +60,7 @@ public class ImageChooserPopup extends VerticalPanel
     }
 
     protected ImageChooserPopup (
-        List<Item> images, boolean thumbnail, AsyncCallback<MediaDesc> callback)
+        List<Photo> images, boolean thumbnail, AsyncCallback<MediaDesc> callback)
     {
         _callback = callback;
         _thumbnail = thumbnail;
@@ -84,18 +83,10 @@ public class ImageChooserPopup extends VerticalPanel
     }
 
     protected class PhotoGrid extends PagedGrid<Photo>
-        implements EditorHost
     {
-        public PhotoGrid (List<Item> images) {
+        public PhotoGrid (List<Photo> photos) {
             super(2, 7, NAV_ON_BOTTOM);
             setWidth("100%");
-            // for checking and strong typing
-            List<Photo> photos = new ArrayList<Photo>();
-            for (Item potentialPhoto : images) {
-                if (potentialPhoto instanceof Photo) {
-                    photos.add((Photo)potentialPhoto);
-                }
-            }
             setModel(new SimpleDataModel<Photo>(photos), 0);
         }
 
@@ -154,7 +145,7 @@ public class ImageChooserPopup extends VerticalPanel
                     if (!desc.isImage()) {
                         _upload.setEnabled(false);
                         _preview.setWidget(null);
-                        MsoyUI.error(_emsgs.errPhotoNotImage());
+                        MsoyUI.error(_cmsgs.errPhotoNotImage());
                         return;
                     }
                     _media = desc;
@@ -180,7 +171,6 @@ public class ImageChooserPopup extends VerticalPanel
     protected AsyncCallback<MediaDesc> _callback;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

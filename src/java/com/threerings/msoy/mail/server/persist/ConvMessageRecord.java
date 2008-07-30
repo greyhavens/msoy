@@ -14,9 +14,15 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.mail.gwt.ConvMessage;
-import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.server.util.JSONMarshaller;
+
+import com.threerings.msoy.mail.gwt.ConvMessage;
+import com.threerings.msoy.mail.gwt.FriendInvitePayload;
+import com.threerings.msoy.mail.gwt.GameAwardPayload;
+import com.threerings.msoy.mail.gwt.GroupInvitePayload;
+import com.threerings.msoy.mail.gwt.ItemGiftPayload;
+import com.threerings.msoy.mail.gwt.MailPayload;
+import com.threerings.msoy.mail.gwt.PresentPayload;
 
 import static com.threerings.msoy.Log.log;
 
@@ -106,7 +112,7 @@ public class ConvMessageRecord extends PersistentRecord
 
         if (payloadType != 0 && payloadState != null) {
             try {
-                Class<? extends MailPayload> objectClass = MailPayload.getPayloadClass(payloadType);
+                Class<? extends MailPayload> objectClass = getPayloadClass(payloadType);
                 JSONMarshaller<? extends MailPayload> marsh =
                     JSONMarshaller.getMarshaller(objectClass);
                 cmsg.payload = marsh.newInstance(payloadState);
@@ -117,6 +123,28 @@ public class ConvMessageRecord extends PersistentRecord
         }
 
         return cmsg;
+    }
+
+    /**
+     * Returns the class registered for the specified payload type.
+     *
+     * @exception IllegalArgumentException thrown if an unknown payload type is provided.
+     */
+    protected static Class<? extends MailPayload> getPayloadClass (int type)
+    {
+        switch (type) {
+        case MailPayload.TYPE_GROUP_INVITE:
+            return GroupInvitePayload.class;
+        case MailPayload.TYPE_FRIEND_INVITE:
+            return FriendInvitePayload.class;
+        case MailPayload.TYPE_ITEM_GIFT:
+            return ItemGiftPayload.class;
+        case MailPayload.TYPE_GAME_AWARD:
+            return GameAwardPayload.class;
+        case MailPayload.TYPE_PRESENT:
+            return PresentPayload.class;
+        }
+        throw new IllegalArgumentException("Unknown payload [type= " + type + "]");
     }
 
     // AUTO-GENERATED: METHODS START

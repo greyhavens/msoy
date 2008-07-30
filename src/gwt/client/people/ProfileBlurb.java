@@ -30,7 +30,7 @@ import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.person.gwt.ProfileServiceAsync;
 
-import client.editem.ImageChooserPopup;
+import client.item.ImageChooserPopup;
 import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.Page;

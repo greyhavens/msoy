@@ -11,8 +11,8 @@ import com.google.gwt.user.client.History;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
+import com.threerings.msoy.stuff.gwt.StuffService;
+import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
@@ -88,9 +88,9 @@ public class StuffPage extends Page
                 setContent(title, new ItemDetailPanel(_models, _detail));
 
             } else {
-                _itemsvc.loadItemDetail(CStuff.ident, ident,
-                    new MsoyCallback<ItemService.DetailOrIdent>() {
-                        public void onSuccess (ItemService.DetailOrIdent result) {
+                _stuffsvc.loadItemDetail(CStuff.ident, ident,
+                    new MsoyCallback<StuffService.DetailOrIdent>() {
+                        public void onSuccess (StuffService.DetailOrIdent result) {
                             if (result.detail != null) {
                                 _detail = result.detail;
                                 _models.updateItem(_detail.item);
@@ -203,6 +203,6 @@ public class StuffPage extends Page
     protected ItemDetail _detail;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
+        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
 }

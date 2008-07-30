@@ -21,12 +21,23 @@ import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.mail.server.persist.MailRepository;
-
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
+
+import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.gwt.ItemDetail;
+import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.CloneRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
+
+import com.threerings.msoy.mail.server.persist.MailRepository;
+import com.threerings.msoy.person.server.MailLogic;
 
 import com.threerings.msoy.admin.data.MsoyAdminCodes;
 import com.threerings.msoy.admin.gwt.ABTest;
@@ -204,7 +215,8 @@ public class AdminServlet extends MsoyServiceServlet
                     }
 
                     try {
-                        MailUtil.deliverMail(new String[] { mrec.accountName }, from, subject, body);
+                        MailUtil.deliverMail(
+                            new String[] { mrec.accountName }, from, subject, body);
                         results[0]++;
                     } catch (Exception e) {
                         results[1]++;
@@ -226,9 +238,7 @@ public class AdminServlet extends MsoyServiceServlet
         }
     }
 
-    /**
-     * Configures a member as support personnel or not. Only callable by admins.
-     */
+    // from interface AdminService
     public void setIsSupport (WebIdent ident, int memberId, boolean isSupport)
         throws ServiceException
     {
@@ -251,9 +261,7 @@ public class AdminServlet extends MsoyServiceServlet
         }
     }
 
-    /**
-     * Fetch a list of A/B test records
-     */
+    // from interface AdminService
     public List<ABTest> getABTests (WebIdent ident)
         throws ServiceException
     {
@@ -272,9 +280,7 @@ public class AdminServlet extends MsoyServiceServlet
         }
     }
 
-    /**
-     * Create a new A/B Test record
-     */
+    // from interface AdminService
     public void createTest (WebIdent ident, ABTest test)
         throws ServiceException
     {
@@ -290,9 +296,7 @@ public class AdminServlet extends MsoyServiceServlet
         }
     }
 
-    /**
-     * Update an existing A/B Test record
-     */
+    // from interface AdminService
     public void updateTest (WebIdent ident, ABTest test)
         throws ServiceException
     {
@@ -305,6 +309,100 @@ public class AdminServlet extends MsoyServiceServlet
             _testRepo.updateABTest(test);
         } catch (PersistenceException pe) {
             log.warning("Failed to update test " + test + ".", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface AdminService
+    public List<ItemDetail> getFlaggedItems (WebIdent ident, int count)
+        throws ServiceException
+    {
+        MemberRecord mRec = _mhelper.requireAuthedUser(ident);
+        if (!mRec.isSupport()) {
+            throw new ServiceException(ItemCodes.ACCESS_DENIED);
+        }
+        List<ItemDetail> items = Lists.newArrayList();
+        // it'd be nice to round-robin the item types or something, so the first items in the queue
+        // aren't always from the same type... perhaps we'll just do something clever in the UI
+        try {
+            for (byte type : _itemMan.getRepositoryTypes()) {
+                ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
+                for (ItemRecord record : repo.loadFlaggedItems(count)) {
+                    Item item = record.toItem();
+
+                    // get auxiliary info and construct an ItemDetail
+                    ItemDetail detail = new ItemDetail();
+                    detail.item = item;
+                    detail.creator = _memberRepo.loadMemberName(record.creatorId);
+
+                    // add the detail to our result and see if we're done
+                    items.add(detail);
+                    if (items.size() == count) {
+                        return items;
+                    }
+                }
+            }
+            return items;
+
+        } catch (PersistenceException pe) {
+            log.warning("Getting flagged items failed.", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface AdminService
+    public Integer deleteItemAdmin (WebIdent ident, ItemIdent iident, String subject, String body)
+        throws ServiceException
+    {
+        MemberRecord admin = _mhelper.requireAuthedUser(ident);
+        if (!admin.isSupport()) {
+            throw new ServiceException(ItemCodes.ACCESS_DENIED);
+        }
+
+        byte type = iident.type;
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
+        try {
+            ItemRecord item = repo.loadOriginalItem(iident.itemId);
+            IntSet owners = new ArrayIntSet();
+
+            int deletionCount = 0;
+            owners.add(item.creatorId);
+
+            // we've loaded the original item, if it represents the original listing
+            // or a prototype item, we want to squish the original catalog listing.
+            if (item.catalogId != 0) {
+                CatalogRecord catrec = repo.loadListing(item.catalogId, false);
+                if (catrec != null && catrec.listedItemId == item.itemId) {
+                    repo.removeListing(catrec);
+                }
+            }
+
+            // then delete any potential clones
+            for (CloneRecord record : repo.loadCloneRecords(item.itemId)) {
+                repo.deleteItem(record.itemId);
+                deletionCount ++;
+                owners.add(record.ownerId);
+            }
+
+            // finally delete the actual item
+            repo.deleteItem(item.itemId);
+            deletionCount ++;
+
+            // notify the owners of the deletion
+            for (int ownerId : owners) {
+                if (ownerId == admin.memberId) {
+                    continue; // admin deleting their own item? sure, whatever!
+                }
+                MemberRecord owner = _memberRepo.loadMember(ownerId);
+                if (owner != null) {
+                    _mailLogic.startConversation(admin, owner, subject, body, null);
+                }
+            }
+
+            return Integer.valueOf(deletionCount);
+
+        } catch (PersistenceException pe) {
+            log.warning("Admin item delete failed [item=" + iident + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -331,6 +429,8 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected MailRepository _mailRepo;
     @Inject protected ABTestRepository _testRepo;
+    @Inject protected ItemManager _itemMan;
+    @Inject protected MailLogic _mailLogic;
 
     protected static final int MEMBERS_PER_LOOP = 100;
 }

@@ -4,7 +4,6 @@
 package com.threerings.msoy.mail.gwt;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
@@ -31,19 +30,11 @@ public class PresentPayload extends MailPayload
     /**
      * Create a new {@link PresentPayload} with the supplied configuration.
      */
-    public PresentPayload (Item item)
+    public PresentPayload (ItemIdent ident, String name, MediaDesc thumbMedia)
     {
-        this.ident = item.getIdent();
-        this.name = item.name;
-        this.thumbMedia = item.thumbMedia;
-    }
-
-    /**
-     * Returns the preview to be shown for this present.
-     */
-    public MediaDesc getThumbnailMedia ()
-    {
-        return (thumbMedia == null) ? Item.getDefaultThumbnailMediaFor(ident.type) : thumbMedia;
+        this.ident = ident;
+        this.name = name;
+        this.thumbMedia = thumbMedia;
     }
 
     @Override

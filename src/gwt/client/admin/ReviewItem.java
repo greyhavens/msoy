@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
@@ -187,7 +189,7 @@ public class ReviewItem extends FlowPanel
                 return; // you just never know
             }
 
-            _itemsvc.deleteItemAdmin(
+            _adminsvc.deleteItemAdmin(
                 CAdmin.ident, _item.getIdent(), CAdmin.msgs.reviewDeletionMailHeader(),
                 CAdmin.msgs.reviewDeletionMailMessage(_item.name, _area.getText().trim()),
                 new AsyncCallback<Integer>() {
@@ -223,4 +225,6 @@ public class ReviewItem extends FlowPanel
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
     protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
         ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
+        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

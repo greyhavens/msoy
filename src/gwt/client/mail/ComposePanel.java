@@ -23,11 +23,11 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.mail.gwt.GroupInvitePayload;
 import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.PresentPayload;
+import com.threerings.msoy.stuff.gwt.StuffService;
+import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
@@ -138,14 +138,15 @@ public class ComposePanel extends FlowPanel
 
     public void setGiftItem (byte type, int itemId)
     {
-        _itemsvc.loadItem(CMail.ident, new ItemIdent(type, itemId),
+        _stuffsvc.loadItem(CMail.ident, new ItemIdent(type, itemId),
             new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
-                    PresentPayload payload = new PresentPayload(result);
+                    PresentPayload payload = new PresentPayload(
+                        result.getIdent(), result.name, result.getThumbnailMedia());
                     _contents.setText(3, 0, CMail.msgs.composeAttachment(), 1, "Label");
                     _contents.getFlexCellFormatter().setVerticalAlignment(
                         3, 0, HasAlignment.ALIGN_TOP);
-                    _contents.setWidget(3, 1, new ThumbBox(payload.getThumbnailMedia(), null));
+                    _contents.setWidget(3, 1, new ThumbBox(payload.thumbMedia, null));
                     _payload = payload;
                 }
             });
@@ -204,8 +205,8 @@ public class ComposePanel extends FlowPanel
 
     protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
         ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
+        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }

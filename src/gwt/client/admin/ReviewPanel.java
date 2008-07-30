@@ -13,9 +13,9 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.item.gwt.ItemDetail;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import client.ui.RowPanel;
 import client.ui.ThumbBox;
@@ -52,7 +52,7 @@ public class ReviewPanel extends FlowPanel
             remove(_contents);
         }
         add(_contents = new FlexTable());
-        _itemsvc.getFlaggedItems(CAdmin.ident, 10, new MsoyCallback<List<ItemDetail>>() {
+        _adminsvc.getFlaggedItems(CAdmin.ident, 10, new MsoyCallback<List<ItemDetail>>() {
             public void onSuccess (List<ItemDetail> items) {
                 populateUI(items);
             }
@@ -78,6 +78,6 @@ public class ReviewPanel extends FlowPanel
 
     protected FlexTable _contents;
 
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
+        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

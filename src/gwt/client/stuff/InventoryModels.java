@@ -20,8 +20,8 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
+import com.threerings.msoy.stuff.gwt.StuffService;
+import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 /**
  * Maintains information on our member's inventory.
@@ -48,7 +48,7 @@ public class InventoryModels
             return;
         }
 
-        _itemsvc.loadInventory(CStuff.ident, type, suiteId, new AsyncCallback<List<Item>>() {
+        _stuffsvc.loadInventory(CStuff.ident, type, suiteId, new AsyncCallback<List<Item>>() {
             public void onSuccess (List<Item> result) {
                 SimpleDataModel<Item> model = new SimpleDataModel<Item>(result);
                 _models.put(key, model);
@@ -136,6 +136,6 @@ public class InventoryModels
 
     protected Map<Key, SimpleDataModel<Item>> _models = new HashMap<Key, SimpleDataModel<Item>>();
 
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
+        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
 }

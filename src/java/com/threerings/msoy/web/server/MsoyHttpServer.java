@@ -62,6 +62,8 @@ import com.threerings.msoy.person.gwt.InviteService;
 import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.person.server.InviteServlet;
 import com.threerings.msoy.person.server.ProfileServlet;
+import com.threerings.msoy.stuff.gwt.StuffService;
+import com.threerings.msoy.stuff.server.StuffServlet;
 import com.threerings.msoy.swiftly.gwt.SwiftlyService;
 import com.threerings.msoy.swiftly.server.SwiftlyServlet;
 import com.threerings.msoy.swiftly.server.SwiftlyUploadServlet;
@@ -254,6 +256,7 @@ public class MsoyHttpServer extends Server
         SERVLETS.put(MeService.ENTRY_POINT, MeServlet.class);
         SERVLETS.put(MemberService.ENTRY_POINT, MemberServlet.class);
         SERVLETS.put(ProfileService.ENTRY_POINT, ProfileServlet.class);
+        SERVLETS.put(StuffService.ENTRY_POINT, StuffServlet.class);
         SERVLETS.put(SwiftlyService.ENTRY_POINT, SwiftlyServlet.class);
         SERVLETS.put(WebUserService.ENTRY_POINT, WebUserServlet.class);
         SERVLETS.put(WorldService.ENTRY_POINT, WorldServlet.class);

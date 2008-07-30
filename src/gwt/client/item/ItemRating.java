@@ -28,7 +28,7 @@ public class ItemRating extends FlexTable
      * Construct a new display for the given item with member's previous rating of the item and a
      * specified display mode.
      */
-    public ItemRating(Item item, MemberItemInfo memberItemInfo, boolean horiz)
+    public ItemRating (Item item, MemberItemInfo memberItemInfo, boolean horiz)
     {
         _item = item;
         _horiz = horiz;
@@ -108,17 +108,14 @@ public class ItemRating extends FlexTable
     public void starClicked (byte newRating)
     {
         final boolean isFirstRating = _memberRating == 0;
-
         _playerStars.setRating(_memberRating = newRating);
         ItemIdent ident = _item.getIdent();
         _itemsvc.rateItem(CShell.ident, ident, newRating, new MsoyCallback<Float>() {
             public void onSuccess (Float result) {
                 _averageStars.setRating(_item.rating = result);
-
                 if (isFirstRating) {
                     _item.ratingCount += 1;
                 }
-
                 updateRatingCount();
             }
         });
@@ -143,7 +140,6 @@ public class ItemRating extends FlexTable
     protected void updateRatingCount ()
     {
         String s = String.valueOf(_item.ratingCount);
-
         if (_item.ratingCount == 1) {
             _ratingCount.setText(_cmsgs.numberOfRatingsOne(s));
         } else {

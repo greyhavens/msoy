@@ -10,6 +10,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.WebIdent;
 
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.gwt.ItemDetail;
+
 /**
  * The asynchronous (client-side) version of {@link AdminService}.
  */
@@ -65,4 +68,15 @@ public interface AdminServiceAsync
      * The asynchronous version of {@link AdminService#updateTest}.
      */
     void updateTest (WebIdent ident, ABTest test, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService.getFlaggedItems}.
+     */
+    void getFlaggedItems (WebIdent ident, int count, AsyncCallback<List<ItemDetail>> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService.deleteItemAdmin}.
+     */
+    void deleteItemAdmin (WebIdent ident, ItemIdent item, String subject, String body,
+                          AsyncCallback<Integer> callback);
 }

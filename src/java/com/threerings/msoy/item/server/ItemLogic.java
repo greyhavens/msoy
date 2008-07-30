@@ -26,6 +26,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.ListingCard;
 
+import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
@@ -41,6 +42,15 @@ import static com.threerings.msoy.Log.log;
 @BlockingThread @Singleton
 public class ItemLogic
 {
+    /**
+     * A small helper interface for editClone.
+     */
+    public static interface CloneEditOp
+    {
+        public void doOp (CloneRecord record, ItemRecord orig, ItemRepository<ItemRecord> repo)
+            throws PersistenceException;
+    }
+
     public Item createItem (MemberRecord memrec, Item item)
         throws ServiceException
     {
@@ -132,6 +142,54 @@ public class ItemLogic
         // finally fill in the listings using the map
         for (ListingCard card : list) {
             card.creator = map.get(card.creator.getMemberId());
+        }
+    }
+
+    /**
+     * Helper method for editing clones.
+     */
+    public ItemRecord editClone (MemberRecord memrec, ItemIdent itemIdent, CloneEditOp op)
+        throws ServiceException
+    {
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(itemIdent.type);
+        try {
+            // load up the old version of the item
+            CloneRecord record = repo.loadCloneRecord(itemIdent.itemId);
+            if (record == null) {
+                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+            }
+
+            // make sure they own it (or are admin)
+            if (record.ownerId != memrec.memberId && !memrec.isAdmin()) {
+                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+            }
+
+            // load up the original record so we can see what changed
+            final ItemRecord orig = repo.loadOriginalItem(record.originalItemId);
+            if (orig == null) {
+                log.warning("Unable to locate original of remixed clone [who=" + memrec.who() +
+                    ", item=" + itemIdent + "].");
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
+
+            // do the operation
+            op.doOp(record, orig, repo);
+
+            // create the proper ItemRecord representing the clone
+            orig.initFromClone(record);
+
+            // let the item manager know that we've updated this item
+            _omgr.postRunnable(new Runnable() {
+                public void run () {
+                    _itemMan.itemUpdated(orig);
+                }
+            });
+
+            return orig;
+
+        } catch (PersistenceException pe) {
+            log.warning("Failed to edit clone " + itemIdent + ".", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 

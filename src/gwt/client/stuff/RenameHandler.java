@@ -15,8 +15,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
+import com.threerings.msoy.stuff.gwt.StuffService;
+import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
@@ -42,7 +42,7 @@ public class RenameHandler extends ClickCallback<String>
 
     // from ClickCallback
     public boolean callService () {
-        _itemsvc.renameClone(CStuff.ident, _item.getIdent(), _name.getText(), this);
+        _stuffsvc.renameClone(CStuff.ident, _item.getIdent(), _name.getText(), this);
         return true;
     }
 
@@ -115,6 +115,6 @@ public class RenameHandler extends ClickCallback<String>
     protected TextBox _name;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
+        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
 }

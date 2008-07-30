@@ -21,12 +21,12 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.CostUpdatedException;
-import com.threerings.msoy.item.gwt.ItemService;
-import com.threerings.msoy.item.gwt.ItemServiceAsync;
+import com.threerings.msoy.stuff.gwt.StuffService;
+import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import client.editem.EditemMessages;
 import client.editem.EditorHost;
-import client.editem.ImageChooserPopup;
+import client.item.ImageChooserPopup;
 import client.item.ItemUtil;
 import client.shell.CShell;
 import client.shop.CShop;
@@ -61,7 +61,7 @@ public class ItemRemixer extends FlexTable
 
     public void setItem (byte type, int itemId)
     {
-        _itemsvc.loadItem(CShell.ident, new ItemIdent(type, itemId), new MsoyCallback<Item>() {
+        _stuffsvc.loadItem(CShell.ident, new ItemIdent(type, itemId), new MsoyCallback<Item>() {
             public void onSuccess (Item result) {
                 setItem(result);
             }
@@ -170,7 +170,7 @@ public class ItemRemixer extends FlexTable
 
         _item.setPrimaryMedia(new MediaDesc(mediaHash, (byte) mimeType, (byte) constraint));
 
-        _itemsvc.remixItem(CShell.ident, _item, new MsoyCallback<Item>() {
+        _stuffsvc.remixItem(CShell.ident, _item, new MsoyCallback<Item>() {
             public void onSuccess (Item item) {
                 MsoyUI.info(_emsgs.msgItemUpdated());
                 _parent.editComplete(item);
@@ -250,8 +250,8 @@ public class ItemRemixer extends FlexTable
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
-    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
-        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
+        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
 
     protected static final int WIDTH = 680;
 }

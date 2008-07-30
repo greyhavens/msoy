@@ -15,51 +15,29 @@ public abstract class MailPayload
     implements IsSerializable, Streamable
 {
     /**
-     * The identifying integer of a {@link GroupInvitePayload} payload.
+     * The identifying integer of a GroupInvitePayload.
      */
     public static final int TYPE_GROUP_INVITE = 1;
 
     /**
-     * The identifying integer of a {@link FriendInvitePayload} payload.
+     * The identifying integer of a FriendInvitePayload.
      */
     public static final int TYPE_FRIEND_INVITE = 2;
 
     /**
-     * The identifying integer of a {@link ItemGiftPayload} payload.
+     * The identifying integer of a ItemGiftPayload.
      */
     public static final int TYPE_ITEM_GIFT = 3;
 
     /**
-     * The identifying integer of a {@link GameAwardPayload} payload.
+     * The identifying integer of a GameAwardPayload.
      */
     public static final int TYPE_GAME_AWARD = 4;
 
     /**
-     * The identifying integer of a {@link PresentPayload} payload.
+     * The identifying integer of a PresentPayload.
      */
     public static final int TYPE_PRESENT = 5;
-
-    /**
-     * Returns the class registered for the specified payload type.
-     *
-     * @exception IllegalArgumentException thrown if an unknown payload type is provided.
-     */
-    public static Class<? extends MailPayload> getPayloadClass (int type)
-    {
-        switch(type) {
-        case TYPE_GROUP_INVITE:
-            return GroupInvitePayload.class;
-        case TYPE_FRIEND_INVITE:
-            return FriendInvitePayload.class;
-        case TYPE_ITEM_GIFT:
-            return ItemGiftPayload.class;
-        case TYPE_GAME_AWARD:
-            return GameAwardPayload.class;
-        case TYPE_PRESENT:
-            return PresentPayload.class;
-        }
-        throw new IllegalArgumentException("Unknown payload [type= " + type + "]");
-    }
 
     /**
      * Returns the type associated with this payload instance.
