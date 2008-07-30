@@ -8,33 +8,32 @@ import java.util.zip.CRC32;
 import com.samskivert.util.HashIntMap;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.stats.Log;
 
 /** Defines the various badge types. */
 public enum BadgeType
 {
     // social badges
-    FRIEND_1(Category.SOCIAL, 1000, "Friends", 1, "friend1.png") {
+    FRIEND_1(Category.SOCIAL, 1000, "Friends", 1) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getIntStat(StatType.FRIENDS_MADE);
         }
     },
 
-    FRIEND_2(Category.SOCIAL, 2000, "Friends", 5, "friend2.png") {
+    FRIEND_2(Category.SOCIAL, 2000, "Friends", 5) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getIntStat(StatType.FRIENDS_MADE);
         }
     },
 
     // game badges
-    GAMER_1(Category.GAME, 1000, "Games", 5, "gamer1.png") {
+    GAMER_1(Category.GAME, 1000, "Games", 5) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getSetStatSize(StatType.UNIQUE_GAMES_PLAYED);
         }
     },
-
-    UNUSED(Category.GAME, 0, "dummy", 0, "dummy");
+    
+    ;
 
     /**
      * Defines the various badge categories, which can be used to suggest to the user
@@ -103,11 +102,6 @@ public enum BadgeType
         return _coinValue;
     }
 
-    public String getImageUrl ()
-    {
-        return STATIC_IMAGE_URL + _imageName;
-    }
-
     /**
      * Overridden by badge types to indicate how many units of the stat that this badge tracks
      * (games played, friends made, etc) the user has acquired.
@@ -117,14 +111,12 @@ public enum BadgeType
         return 0;
     }
 
-    BadgeType (Category category, int coinValue, String unitName, int requiredUnits,
-            String imageName)
+    BadgeType (Category category, int coinValue, String unitName, int requiredUnits)
     {
         _category = category;
         _coinValue = coinValue;
         _unitName = unitName;
         _requiredUnits = requiredUnits;
-        _imageName = imageName;
     }
 
     /**
@@ -167,9 +159,6 @@ public enum BadgeType
     protected int _code;
     protected String _unitName;
     protected int _requiredUnits;
-    protected String _imageName;
-
-    protected static final String STATIC_IMAGE_URL = DeploymentConfig.staticMediaURL + "badge/";
 
     /** The table mapping stat codes to enumerated types. */
     protected static HashIntMap<BadgeType> _codeToType;

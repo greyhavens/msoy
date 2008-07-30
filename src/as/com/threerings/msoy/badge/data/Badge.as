@@ -5,18 +5,26 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.presents.dobj.DSet_Entry;
 
+import com.threerings.msoy.client.DeploymentConfig;
+
 public class Badge extends SimpleStreamableObject
     implements DSet_Entry
 {
     /** The code that uniquely identifies this badge type. */
     public var badgeCode :int;
-    
-    /** The public image URL for this badge. */
-    public var imageUrl :String; 
 
     public function getKey () :Object
     {
         return badgeCode;
+    }
+
+    /**
+     * Returns the public access image URL for this badge.
+     */
+    public function imageUrl () :String
+    {
+        return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR + badgeCode.toString(16) +
+            BADGE_IMAGE_TYPE;
     }
 
     // from interface Streamable
@@ -24,7 +32,6 @@ public class Badge extends SimpleStreamableObject
     {
         super.readObject(ins);
         badgeCode = ins.readInt();
-        imageUrl = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -32,8 +39,9 @@ public class Badge extends SimpleStreamableObject
     {
         super.writeObject(out);
         out.writeInt(badgeCode);
-        out.writeField(imageUrl);
     }
-}
 
+    protected static const BADGE_IMAGE_DIR :String = "badge/";
+    protected static const BADGE_IMAGE_TYPE :String = ".png";
+}
 }

@@ -5,6 +5,7 @@ package com.threerings.msoy.badge.data;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.presents.dobj.DSet;
 
 public abstract class Badge
@@ -12,9 +13,6 @@ public abstract class Badge
 {
     /** The unique code representing the type of this badge. */
     public int badgeCode;
-    
-    /** The public image URL for this badge. */
-    public String imageUrl;
 
     /**
      * NB - the design for this has changed; we aren't planning on allowing suppressed Badges
@@ -25,19 +23,18 @@ public abstract class Badge
      * shown or acquired.
      */
     //public boolean isSuppressed;
-    
+
     public Badge ()
     {
         // for deserialization
     }
-    
+
     /**
      * Creates a new badge, and automatically fills in the badge imageUrl from the BadgeType Enum.
      */
     public Badge (BadgeType type)
     {
         this.badgeCode = type.getCode();
-        imageUrl = type.getImageUrl();
     }
 
     /** Returns this Badge's Type */
@@ -46,9 +43,21 @@ public abstract class Badge
         return BadgeType.getType(badgeCode);
     }
 
+    /**
+     * Returns the public access image URL for this badge.
+     */
+    public String imageUrl ()
+    {
+        return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR + Integer.toHexString(badgeCode) +
+            BADGE_IMAGE_TYPE;
+    }
+
     // from interface DSet.Entry
     public Comparable<Integer> getKey ()
     {
         return new Integer(badgeCode);
     }
+
+    protected static final String BADGE_IMAGE_DIR = "badge/";
+    protected static final String BADGE_IMAGE_TYPE = ".png";
 }
