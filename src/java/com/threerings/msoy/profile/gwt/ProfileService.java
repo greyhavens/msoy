@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.person.gwt;
+package com.threerings.msoy.profile.gwt;
 
 import java.util.List;
 
@@ -14,6 +14,8 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.group.gwt.GroupCard;
 
+import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.WebIdent;

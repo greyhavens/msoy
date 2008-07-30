@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.person.server;
+package com.threerings.msoy.profile.server;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -40,12 +40,12 @@ import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
-import com.threerings.msoy.person.gwt.Profile;
-import com.threerings.msoy.person.gwt.ProfileService;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.InterestRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.profile.gwt.Profile;
+import com.threerings.msoy.profile.gwt.ProfileService;
 
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;

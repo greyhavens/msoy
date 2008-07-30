@@ -9,9 +9,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.person.gwt.FeedMessage;
-import com.threerings.msoy.person.gwt.ProfileService;
-import com.threerings.msoy.person.gwt.ProfileServiceAsync;
+import com.threerings.msoy.profile.gwt.ProfileService;
+import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
+import client.person.FeedPanel;
 import client.util.ServiceUtil;
 
 /**

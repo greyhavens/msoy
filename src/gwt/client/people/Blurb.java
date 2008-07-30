@@ -4,7 +4,7 @@
 package client.people;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.person.gwt.ProfileService;
+import com.threerings.msoy.profile.gwt.ProfileService;
 
 import client.ui.TongueBox;
 

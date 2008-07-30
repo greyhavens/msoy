@@ -57,9 +57,9 @@ public class EditAccountPanel extends SmartTable
 
         // configure or display permaname interface
         if (CMe.creds.permaName == null) {
-            setText(row++, 0, CMe.msgs.editPickPermaNameHeader(), 3, "Header");
+            setText(row++, 0, _msgs.editPickPermaNameHeader(), 3, "Header");
 
-            setText(row, 0, CMe.msgs.editPermaName(), 1, "rightLabel");
+            setText(row, 0, _msgs.editPermaName(), 1, "rightLabel");
             setWidget(row, 1, _pname = new TextBox());
             _pname.addKeyboardListener(_valpname);
             _uppname = new Button(_cmsgs.set(), new ClickListener() {
@@ -70,17 +70,17 @@ public class EditAccountPanel extends SmartTable
             _uppname.setEnabled(false);
             setWidget(_permaRow = row++, 2, _uppname);
 
-            setHTML(row++, 0, CMe.msgs.editPermaNameTip(), 3, "Tip");
+            setHTML(row++, 0, _msgs.editPermaNameTip(), 3, "Tip");
 
         } else {
-            setText(row, 0, CMe.msgs.editPermaName(), 1, "rightLabel");
+            setText(row, 0, _msgs.editPermaName(), 1, "rightLabel");
             setText(row++, 1, CMe.creds.permaName, 1, "PermaName");
         }
 
         // configure email address interface
-        setText(row++, 0, CMe.msgs.editEmailHeader(), 3, "Header");
+        setText(row++, 0, _msgs.editEmailHeader(), 3, "Header");
 
-        setText(row, 0, CMe.msgs.editEmail(), 1, "rightLabel");
+        setText(row, 0, _msgs.editEmail(), 1, "rightLabel");
         setWidget(row, 1, _email = new TextBox());
         _email.setText(CMe.creds.accountName);
         _email.addKeyboardListener(_valemail);
@@ -93,19 +93,19 @@ public class EditAccountPanel extends SmartTable
         setWidget(row++, 2, _upemail);
 
         // configure email preferences interface
-        setText(row++, 0, CMe.msgs.editEPrefsHeader(), 3, "Header");
+        setText(row++, 0, _msgs.editEPrefsHeader(), 3, "Header");
 
-        setText(row, 0, CMe.msgs.editWhirledMailEmail(), 1, "rightLabel");
+        setText(row, 0, _msgs.editWhirledMailEmail(), 1, "rightLabel");
         RowPanel bits = new RowPanel();
         bits.add(_whirledEmail = new CheckBox());
-        bits.add(MsoyUI.createLabel(CMe.msgs.editWhirledMailEmailTip(), "tipLabel"));
+        bits.add(MsoyUI.createLabel(_msgs.editWhirledMailEmailTip(), "tipLabel"));
         setWidget(row++, 1, bits, 2, null);
         _whirledEmail.setChecked(_accountInfo.emailWhirledMail);
 
-        setText(row, 0, CMe.msgs.editAnnounceEmail(), 1, "rightLabel");
+        setText(row, 0, _msgs.editAnnounceEmail(), 1, "rightLabel");
         bits = new RowPanel();
         bits.add(_announceEmail = new CheckBox());
-        bits.add(MsoyUI.createLabel(CMe.msgs.editAnnounceEmailTip(), "tipLabel"));
+        bits.add(MsoyUI.createLabel(_msgs.editAnnounceEmailTip(), "tipLabel"));
         setWidget(row++, 1, bits, 2, null);
         _announceEmail.setChecked(_accountInfo.emailAnnouncements);
 
@@ -117,9 +117,9 @@ public class EditAccountPanel extends SmartTable
         setWidget(row++, 2, _upeprefs);
 
         // configure real name interface
-        setText(row++, 0, CMe.msgs.editRealNameHeader(), 3, "Header");
+        setText(row++, 0, _msgs.editRealNameHeader(), 3, "Header");
 
-        setText(row, 0, CMe.msgs.editRealName(), 1, "rightLabel");
+        setText(row, 0, _msgs.editRealName(), 1, "rightLabel");
         setWidget(row, 1, _rname = new TextBox());
         _rname.setText(_accountInfo.realName);
         _rname.addKeyboardListener(_valrname);
@@ -131,12 +131,12 @@ public class EditAccountPanel extends SmartTable
         _uprname.setEnabled(false);
         setWidget(row++, 2, _uprname);
 
-        setHTML(row++, 0, CMe.msgs.editRealNameTip(), 3, "Tip");
+        setHTML(row++, 0, _msgs.editRealNameTip(), 3, "Tip");
 
         // configure password interface
-        setText(row++, 0, CMe.msgs.editPasswordHeader(), 3, "Header");
+        setText(row++, 0, _msgs.editPasswordHeader(), 3, "Header");
 
-        setText(row, 0, CMe.msgs.editPassword(), 1, "rightLabel");
+        setText(row, 0, _msgs.editPassword(), 1, "rightLabel");
         setWidget(row++, 1, _password = new PasswordTextBox());
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
@@ -145,7 +145,7 @@ public class EditAccountPanel extends SmartTable
         }));
         _password.addKeyboardListener(_valpass);
 
-        setText(row, 0, CMe.msgs.editConfirm(), 1, "rightLabel");
+        setText(row, 0, _msgs.editConfirm(), 1, "rightLabel");
         setWidget(row, 1, _confirm = new PasswordTextBox());
         _confirm.addKeyboardListener(_valpass);
         _uppass = new Button(_cmsgs.update(), new ClickListener() {
@@ -170,7 +170,7 @@ public class EditAccountPanel extends SmartTable
         }));
         // END TEMP
 
-        setWidget(row++, 0, _status = new Label(CMe.msgs.editTip()), 3, "Status");
+        setWidget(row++, 0, _status = new Label(_msgs.editTip()), 3, "Status");
     }
 
     protected void updateRealName ()
@@ -183,7 +183,7 @@ public class EditAccountPanel extends SmartTable
             public void onSuccess (Void result) {
                 _rname.setEnabled(true);
                 _uprname.setEnabled(false);
-                setStatus(CMe.msgs.realNameUpdated());
+                setStatus(_msgs.realNameUpdated());
             }
             public void onFailure (Throwable cause) {
                 _rname.setText(_accountInfo.realName = oldRealName);
@@ -201,7 +201,7 @@ public class EditAccountPanel extends SmartTable
         _usersvc.updateEmail(CMe.ident, email, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 CMe.creds.accountName = email;
-                setStatus(CMe.msgs.emailUpdated());
+                setStatus(_msgs.emailUpdated());
             }
             public void onFailure (Throwable cause) {
                 _upemail.setEnabled(true);
@@ -217,7 +217,7 @@ public class EditAccountPanel extends SmartTable
                                   _announceEmail.isChecked(), new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _upeprefs.setEnabled(true);
-                setStatus(CMe.msgs.eprefsUpdated());
+                setStatus(_msgs.eprefsUpdated());
             }
             public void onFailure (Throwable cause) {
                 _upeprefs.setEnabled(true);
@@ -238,7 +238,7 @@ public class EditAccountPanel extends SmartTable
                 _password.setEnabled(true);
                 _confirm.setText("");
                 _confirm.setEnabled(true);
-                setStatus(CMe.msgs.passwordUpdated());
+                setStatus(_msgs.passwordUpdated());
             }
             public void onFailure (Throwable cause) {
                 _password.setEnabled(true);
@@ -261,7 +261,7 @@ public class EditAccountPanel extends SmartTable
                 setText(_permaRow, 1, pname);
                 setText(_permaRow, 2, "");
                 setText(_permaRow+1, 0, "");
-                setStatus(CMe.msgs.permaNameConfigured());
+                setStatus(_msgs.permaNameConfigured());
             }
             public void onFailure (Throwable cause) {
                 _pname.setEnabled(true);
@@ -276,7 +276,7 @@ public class EditAccountPanel extends SmartTable
         String realName = _rname.getText().trim();
         boolean valid = false;
         if (!_accountInfo.realName.equals(realName)) {
-            setStatus(CMe.msgs.editNameReady());
+            setStatus(_msgs.editNameReady());
             valid = true;
         } else {
             setStatus("");
@@ -292,7 +292,7 @@ public class EditAccountPanel extends SmartTable
             email.equals(CMe.creds.accountName)) {
             setStatus("");
         } else {
-            setStatus(CMe.msgs.editEmailReady());
+            setStatus(_msgs.editEmailReady());
             valid = true;
         }
         _upemail.setEnabled(valid);
@@ -303,11 +303,11 @@ public class EditAccountPanel extends SmartTable
         boolean valid = false;
         String password = _password.getText().trim(), confirm = _confirm.getText().trim();
         if (confirm.length() == 0) {
-            setError(CMe.msgs.editMissingConfirm());
+            setError(_msgs.editMissingConfirm());
         } else if (!password.equals(confirm)) {
-            setError(CMe.msgs.editPasswordMismatch());
+            setError(_msgs.editPasswordMismatch());
         } else {
-            setStatus(CMe.msgs.editPasswordReady());
+            setStatus(_msgs.editPasswordReady());
             valid = true;
         }
         _uppass.setEnabled(valid);
@@ -330,7 +330,7 @@ public class EditAccountPanel extends SmartTable
             char c = pname.charAt(ii);
             if ((ii == 0 && !Character.isLetter(c)) ||
                 (!Character.isLetter(c) && !Character.isDigit(c) && c != '_')) {
-                setError(CMe.msgs.editPermaInvalid());
+                setError(_msgs.editPermaInvalid());
                 _uppname.setEnabled(false);
                 return;
             }
@@ -340,11 +340,11 @@ public class EditAccountPanel extends SmartTable
         if (pname.length() == 0) {
             setStatus("");
         } else if (pname.length() < MemberName.MINIMUM_PERMANAME_LENGTH) {
-            setError(CMe.msgs.editPermaShort());
+            setError(_msgs.editPermaShort());
         } else if (pname.length() > MemberName.MAXIMUM_PERMANAME_LENGTH) {
-            setError(CMe.msgs.editPermaLong());
+            setError(_msgs.editPermaLong());
         } else {
-            setStatus(CMe.msgs.editPermaReady());
+            setStatus(_msgs.editPermaReady());
             valid = true;
         }
         _uppname.setEnabled(valid);
@@ -417,6 +417,7 @@ public class EditAccountPanel extends SmartTable
     protected Label _status;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final MeMessages _msgs = GWT.create(MeMessages.class);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

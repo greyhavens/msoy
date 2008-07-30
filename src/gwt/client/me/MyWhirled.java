@@ -10,14 +10,14 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.landing.gwt.MeService;
-import com.threerings.msoy.landing.gwt.MeServiceAsync;
-import com.threerings.msoy.landing.gwt.MyWhirledData;
 import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.MeService;
+import com.threerings.msoy.person.gwt.MeServiceAsync;
+import com.threerings.msoy.person.gwt.MyWhirledData;
 
 import client.item.StuffNaviBar;
-import client.msgs.MsgsMessages;
-import client.people.FeedPanel;
+import client.person.FeedPanel;
+import client.person.PersonMessages;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -38,10 +38,10 @@ public class MyWhirled extends VerticalPanel
     protected void init (MyWhirledData data)
     {
         add(new StuffNaviBar(Item.NOT_A_TYPE));
-        add(MsoyUI.createLabel(CMe.msgs.populationDisplay("" + data.whirledPopulation), "Pop"));
+        add(MsoyUI.createLabel(_msgs.populationDisplay("" + data.whirledPopulation), "Pop"));
         add(new WhatsNextPanel(data));
         String empty =
-            data.friendCount > 0 ? _mmsgs.emptyFeed() : _mmsgs.emptyFeedNoFriends();
+            data.friendCount > 0 ? _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
         FeedPanel feed = new FeedPanel(empty, true, new FeedPanel.FeedLoader() {
             public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback) {
                 _mesvc.loadFeed(CMe.ident, feedDays, callback);
@@ -51,7 +51,8 @@ public class MyWhirled extends VerticalPanel
         add(feed);
     }
 
-    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
+    protected static final MeMessages _msgs = (MeMessages)GWT.create(MeMessages.class);
+    protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
     protected static final MeServiceAsync _mesvc = (MeServiceAsync)
         ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
 }

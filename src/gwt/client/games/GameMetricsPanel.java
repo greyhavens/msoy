@@ -3,6 +3,7 @@
 
 package client.games;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -14,12 +15,16 @@ import com.kisgergely.gwt.canvas.client.Canvas;
 import com.kisgergely.gwt.canvas.client.CanvasRenderingContext2D;
 
 import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameMetrics;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.ClickCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays the metrics like score distributions for a particular game.
@@ -41,16 +46,15 @@ public class GameMetricsPanel extends VerticalPanel
         }
 
         add(MsoyUI.createLabel(CGames.msgs.gmpLoading(), "Header"));
-        CGames.gamesvc.loadGameMetrics(
-            CGames.ident, _detail.gameId, new AsyncCallback<GameMetrics>() {
-                public void onSuccess (GameMetrics metrics) {
-                    gotMetrics(metrics);
-                }
-                public void onFailure (Throwable caught) {
-                    CGames.log("loadGameMetrics failed", caught);
-                    add(MsoyUI.createLabel(CGames.serverError(caught), "Header"));
-                }
-            });
+        _gamesvc.loadGameMetrics(CGames.ident, _detail.gameId, new AsyncCallback<GameMetrics>() {
+            public void onSuccess (GameMetrics metrics) {
+                gotMetrics(metrics);
+            }
+            public void onFailure (Throwable caught) {
+                CGames.log("loadGameMetrics failed", caught);
+                add(MsoyUI.createLabel(CGames.serverError(caught), "Header"));
+            }
+        });
     }
 
     protected void gotMetrics (GameMetrics metrics)
@@ -126,7 +130,7 @@ public class GameMetricsPanel extends VerticalPanel
         row.add(reset);
         new ClickCallback<Void>(reset, CGames.msgs.gmpResetConfirm()) {
             public boolean callService () {
-                CGames.gamesvc.resetGameScores(CGames.ident, _detail.gameId, single, this);
+                _gamesvc.resetGameScores(CGames.ident, _detail.gameId, single, this);
                 return true;
             }
             public boolean gotResult (Void result) {
@@ -206,6 +210,9 @@ public class GameMetricsPanel extends VerticalPanel
 
     protected GameDetail _detail;
     protected GameMetrics _metrics;
+
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 
     protected static final int BAR_WIDTH = 3;
     protected static final int GRAPH_HEIGHT = 100;

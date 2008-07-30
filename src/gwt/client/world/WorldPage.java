@@ -6,7 +6,6 @@ package client.world;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 
@@ -22,6 +21,7 @@ import client.shell.Page;
 import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Handles the MetaSOY main page.
@@ -113,10 +113,6 @@ public class WorldPage extends Page
     {
         super.initContext();
 
-        // wire up our remote services
-        CWorld.worldsvc = (WorldServiceAsync)GWT.create(WorldService.class);
-        ((ServiceDefTarget)CWorld.worldsvc).setServiceEntryPoint("/worldsvc");
-
         // load up our translation dictionaries
         CWorld.msgs = (WorldMessages)GWT.create(WorldMessages.class);
     }
@@ -129,7 +125,7 @@ public class WorldPage extends Page
 
     protected void displayHotSpots ()
     {
-        CWorld.worldsvc.serializePopularPlaces(CWorld.ident, 20, new MsoyCallback<String>() {
+        _worldsvc.serializePopularPlaces(CWorld.ident, 20, new MsoyCallback<String>() {
             public void onSuccess (String result) {
                 setFlashContent(null, FlashClients.createPopularPlacesDefinition(result));
             }
@@ -139,7 +135,7 @@ public class WorldPage extends Page
     protected void displayGame (final String action, int gameId, final int gameOid)
     {
         // load up the information needed to launch the game
-        CWorld.worldsvc.loadLaunchConfig(CWorld.ident, gameId, new MsoyCallback<LaunchConfig>() {
+        _worldsvc.loadLaunchConfig(CWorld.ident, gameId, new MsoyCallback<LaunchConfig>() {
             public void onSuccess (LaunchConfig result) {
                 launchGame(result, gameOid, action);
             }
@@ -256,6 +252,9 @@ public class WorldPage extends Page
 
     /** A command to be run when Java reports readiness. */
     protected Command _javaReadyCommand;
+
+    protected static final WorldServiceAsync _worldsvc = (WorldServiceAsync)
+        ServiceUtil.bind(GWT.create(WorldService.class), WorldService.ENTRY_POINT);
 
     protected static final int NEIGHBORHOOD_REFRESH_TIME = 60;
 }

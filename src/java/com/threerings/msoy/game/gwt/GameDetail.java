@@ -51,6 +51,12 @@ public class GameDetail
     /** Contains member rating and favorite information about the game. */
     public MemberItemInfo memberItemInfo = new MemberItemInfo();
 
+    /** The height of a game screenshot. */
+    public static final int SHOT_HEIGHT = 125;
+
+    /** The width of a game screenshot. */
+    public static final int SHOT_WIDTH = 175;
+
     /**
      * Returns the listed game if we have one, the source if not.
      */

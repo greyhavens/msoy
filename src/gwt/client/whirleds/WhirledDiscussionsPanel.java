@@ -5,6 +5,7 @@ package client.whirleds;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -55,17 +56,17 @@ public class WhirledDiscussionsPanel extends FlowPanel
             }
         };
         Anchor rssText = new Anchor("/rss/" + _detail.group.groupId, "", "_blank");
-        rssText.setHTML(CWhirleds.msgs.discussionRss());
+        rssText.setHTML(_msgs.discussionRss());
         rssText.setStyleName("RssText");
         rss.add(rssText);
         Image rssImage = MsoyUI.createActionImage(
-            "/images/group/thread_rss.png", CWhirleds.msgs.discussionRss(), rssClick);
+            "/images/group/thread_rss.png", _msgs.discussionRss(), rssClick);
         rss.add(rssImage);
         add(rss);
 
         // there are no threads, print a message
         if (_detail.threads.size() == 0) {
-            HTML noThreads = new HTML(CWhirleds.msgs.discussionNoThreads());
+            HTML noThreads = new HTML(_msgs.discussionNoThreads());
             noThreads.setStyleName("NoThreads");
             add(noThreads);
             return;
@@ -91,7 +92,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
         public ThreadWidget (final ForumThread thread) {
             setStyleName("Thread");
 
-            Label date = new Label(DATE_FORMAT.format(thread.mostRecentPostTime));
+            Label date = new Label(_dfmt.format(thread.mostRecentPostTime));
             date.setStyleName("Date");
             add(date);
 
@@ -114,23 +115,22 @@ public class WhirledDiscussionsPanel extends FlowPanel
             // posted by <a href="#people-{ID}">{NAME}</a> at {TIME}
             FlowPanel postedBy = new FlowPanel();
             postedBy.addStyleName("PostedBy");
-            postedBy.add(new InlineLabel(CWhirleds.msgs.discussionPostedBy() + " "));
+            postedBy.add(new InlineLabel(_msgs.discussionPostedBy() + " "));
             InlineLabel author = new InlineLabel(thread.firstPost.poster.name.toString());
             author.addClickListener(posterClick);
             author.addStyleName("actionLabel");
             postedBy.add(author);
             postedBy.add (new InlineLabel(
-                " " + CWhirleds.msgs.discussionAt(TIME_FORMAT.format(thread.firstPost.created))));
+                " " + _msgs.discussionAt(_tfmt.format(thread.firstPost.created))));
             add(postedBy);
 
             final String repliesText;
             if (thread.posts == 2) {
                 // one reply - singular
-                repliesText = CWhirleds.msgs.discussionReply("1");
-            }
-            else {
+                repliesText = _msgs.discussionReply("1");
+            } else {
                 // 0 or 2+ replies
-                repliesText = CWhirleds.msgs.discussionReplies("" + (thread.posts-1));
+                repliesText = _msgs.discussionReplies("" + (thread.posts-1));
             }
             Widget replies = Link.create(
                 repliesText, Page.WHIRLEDS, Args.compose("t", thread.threadId));
@@ -145,9 +145,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
     /** Infoes about the group we're in for constructing links etc */
     protected GroupDetail _detail;
 
-    /** Used to format the most recent post date. */
-    protected static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEEEE, MMMMM dd, yyyy");
-
-    /** Used to format the most recent post date. */
-    protected static SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("h:mm aa");
+    protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("EEEEE, MMMMM dd, yyyy");
+    protected static final SimpleDateFormat _tfmt = new SimpleDateFormat("h:mm aa");
+    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
 }

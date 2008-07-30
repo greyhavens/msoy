@@ -3,6 +3,7 @@
 
 package client.world;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.InlineLabel;
@@ -12,11 +13,14 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.fora.gwt.Comment;
 import com.threerings.msoy.world.gwt.RoomInfo;
+import com.threerings.msoy.world.gwt.WorldService;
+import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
 import client.msgs.CommentsPanel;
 import client.ui.StyledTabPanel;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays information about a room, allows commenting.
@@ -27,7 +31,7 @@ public class RoomPanel extends SmartTable
     {
         super("roomPanel", 0, 5);
 
-        CWorld.worldsvc.loadRoomInfo(sceneId, new MsoyCallback<RoomInfo>() {
+        _worldsvc.loadRoomInfo(sceneId, new MsoyCallback<RoomInfo>() {
             public void onSuccess (RoomInfo info) {
                 init(info);
             }
@@ -58,4 +62,7 @@ public class RoomPanel extends SmartTable
         addWidget(tabs, 1, null);
         tabs.selectTab(0);
     }
+
+    protected static final WorldServiceAsync _worldsvc = (WorldServiceAsync)
+        ServiceUtil.bind(GWT.create(WorldService.class), WorldService.ENTRY_POINT);
 }

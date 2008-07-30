@@ -4,10 +4,12 @@
 package com.threerings.msoy.item.gwt;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -82,5 +84,13 @@ public interface ItemService extends RemoteService
      * Flags an item as the current member's favorite or not.
      */
     void setFavorite(WebIdent ident, ItemIdent item, boolean favorite)
+        throws ServiceException;
+
+    /**
+     * Loads up all of this member's photo inventory. This exists separate from
+     * StuffService.loadInventory because we want to allow photo selection in many places in the
+     * website, but we don't want to have to compile in the entire Item hiearchy to do so.
+     */
+    List<Photo> loadPhotos (WebIdent ident)
         throws ServiceException;
 }

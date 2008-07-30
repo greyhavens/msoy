@@ -16,6 +16,7 @@ import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Game;
 
@@ -169,14 +170,14 @@ public class GameEditor extends ItemEditor
         // add a tab for uploading the game screenshot
         ItemMediaUploader shotter = createAuxUploader(TYPE_IMAGE, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (width != Game.SHOT_WIDTH || height != Game.SHOT_HEIGHT || !desc.isImage()) {
-                    return _emsgs.errInvalidShot(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT);
+                if (width != GameDetail.SHOT_WIDTH || height != GameDetail.SHOT_HEIGHT || !desc.isImage()) {
+                    return _emsgs.errInvalidShot(""+GameDetail.SHOT_WIDTH, ""+GameDetail.SHOT_HEIGHT);
                 }
                 _game.shotMedia = desc;
                 return null;
             }
         });
-        shotter.setHint(_emsgs.gameShotHint(""+Game.SHOT_WIDTH, ""+Game.SHOT_HEIGHT));
+        shotter.setHint(_emsgs.gameShotHint(""+GameDetail.SHOT_WIDTH, ""+GameDetail.SHOT_HEIGHT));
         addSpacer();
         addRow(_emsgs.gameShotTab(), shotter, _emsgs.gameShotTitle());
 

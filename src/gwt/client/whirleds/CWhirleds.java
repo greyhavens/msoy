@@ -10,6 +10,4 @@ import client.shell.CShell;
  */
 public class CWhirleds extends CShell
 {
-    /** Messages used by the whirleds interfaces. */
-    public static WhirledsMessages msgs;
 }

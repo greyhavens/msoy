@@ -3,17 +3,22 @@
 
 package client.games;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
+
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.PlayerRating;
 
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
+import client.util.ServiceUtil;
 
 /**
  * Displays top-rankings for a particular game.
@@ -42,7 +47,7 @@ public class TopRankingPanel extends VerticalPanel
         }
 
         addNote(CGames.msgs.trpLoading());
-        CGames.gamesvc.loadTopRanked(
+        _gamesvc.loadTopRanked(
             CGames.ident, _gameId, _onlyMyFriends, new AsyncCallback<PlayerRating[][]>() {
                 public void onSuccess (PlayerRating[][] topRanked) {
                     gotRankings(topRanked);
@@ -140,6 +145,9 @@ public class TopRankingPanel extends VerticalPanel
     protected int _gameId;
     protected boolean _onlyMyFriends;
     protected SmartTable _grid;
+
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 
     protected static final int COLUMNS = 5;
 }

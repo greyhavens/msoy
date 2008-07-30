@@ -9,8 +9,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.ReferralInfo;
 
-import com.threerings.msoy.item.data.all.Photo;
-
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.WebIdent;
@@ -83,9 +81,4 @@ public interface MemberServiceAsync
      * The asynchronous version of {@link MemberService#trackReferral}.
      */
     void trackReferralCreation (ReferralInfo info, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link MemberService#loadPhotos}.
-     */
-    void loadPhotos (WebIdent ident, AsyncCallback<List<Photo>> callback);
 }

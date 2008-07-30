@@ -3,6 +3,7 @@
 
 package client.games;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -13,10 +14,13 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.game.gwt.GameDetail;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.item.RichTextToolbar;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays the instructions for a game.
@@ -128,7 +132,7 @@ public class InstructionsPanel extends VerticalPanel
             MsoyUI.error(CGames.msgs.ipInstructionsTooLong(""+excess));
             return;
         }
-        CGames.gamesvc.updateGameInstructions(
+        _gamesvc.updateGameInstructions(
             CGames.ident, _detail.gameId, instructions, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 _detail.instructions = instructions;
@@ -138,4 +142,7 @@ public class InstructionsPanel extends VerticalPanel
     }
 
     protected GameDetail _detail;
+
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

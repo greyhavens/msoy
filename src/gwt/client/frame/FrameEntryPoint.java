@@ -118,7 +118,7 @@ public class FrameEntryPoint
     {
         _currentToken = token;
 
-        String page = (token == null || token.equals("")) ? Page.ME : token;
+        String page = (token == null || token.equals("")) ? getLandingPage() : token;
         Args args = new Args();
         int dashidx = token.indexOf("-");
         if (dashidx != -1) {
@@ -408,6 +408,11 @@ public class FrameEntryPoint
                 closeClient();
             }
         });
+    }
+
+    protected String getLandingPage ()
+    {
+        return CShell.isGuest() ? Page.LANDING : Page.ME;
     }
 
     /**

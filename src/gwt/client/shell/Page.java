@@ -37,6 +37,7 @@ public abstract class Page
     public static final String CREATE = "create";
     public static final String GAMES = "games";
     public static final String HELP = "help";
+    public static final String LANDING = "landing";
     public static final String MAIL = "mail";
     public static final String ME = "me";
     public static final String PEOPLE = "people";

@@ -76,7 +76,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
     @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
-        controls.setWidget(0, 0, _invite = new Button(CWhirleds.msgs.wmpInvite()));
+        controls.setWidget(0, 0, _invite = new Button(_msgs.wmpInvite()));
     }
 
     public boolean amSenior (GroupMemberCard member)
@@ -141,16 +141,16 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
             }
 
             if (card.rank == GroupMembership.RANK_MEMBER) {
-                setAction(0, 2, CWhirleds.msgs.detailPromote(),
-                          CWhirleds.msgs.detailPromotePrompt(""+card.name),
+                setAction(0, 2, _msgs.detailPromote(),
+                          _msgs.detailPromotePrompt(""+card.name),
                           updateMemberRank(card, GroupMembership.RANK_MANAGER));
             } else {
-                setAction(0, 2, CWhirleds.msgs.detailDemote(),
-                          CWhirleds.msgs.detailDemotePrompt(""+card.name),
+                setAction(0, 2, _msgs.detailDemote(),
+                          _msgs.detailDemotePrompt(""+card.name),
                           updateMemberRank(card, GroupMembership.RANK_MEMBER));
             }
 
-            setAction(1, 1, CWhirleds.msgs.detailRemove(), CWhirleds.msgs.detailRemovePrompt(
+            setAction(1, 1, _msgs.detailRemove(), _msgs.detailRemovePrompt(
                           ""+card.name, _detail.group.name), removeMember(card));
         }
 
@@ -164,6 +164,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
     protected GroupDetail _detail;
     protected Button _invite;
 
+    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }

@@ -102,7 +102,7 @@ public class MyWhirleds extends AbsolutePanel
         @Override // from PagedGrid
         protected String getEmptyMessage ()
         {
-            return CWhirleds.msgs.myNoWhirleds();
+            return _msgs.myNoWhirleds();
         }
 
         @Override // from PagedGrid
@@ -157,7 +157,7 @@ public class MyWhirleds extends AbsolutePanel
                 // display a star beside name if player is a manager of this group
                 if (card.rank == GroupMembership.RANK_MANAGER) {
                     Image managerStar = MsoyUI.createInlineImage("/images/group/manager_star.png");
-                    managerStar.setTitle(CWhirleds.msgs.myManagerStarTitle());
+                    managerStar.setTitle(_msgs.myManagerStarTitle());
                     managerStar.addStyleName("ManagerStar");
                     name.add(managerStar);
                 }
@@ -166,7 +166,7 @@ public class MyWhirleds extends AbsolutePanel
                 // only show members online if there is at least one
                 if (card.population > 0) {
                     Label membersOnline = new Label(
-                        CWhirleds.msgs.myMembersOnline(""+card.population));
+                        _msgs.myMembersOnline(""+card.population));
                     membersOnline.setStyleName("MembersOnline");
                     add(membersOnline);
                 }
@@ -184,7 +184,7 @@ public class MyWhirleds extends AbsolutePanel
                     FlowPanel postedBy = new FlowPanel();
                     postedBy.setStyleName("PostedBy");
                     add(postedBy);
-                    postedBy.add(new InlineLabel(CWhirleds.msgs.myPostedBy()+" "));
+                    postedBy.add(new InlineLabel(_msgs.myPostedBy()+" "));
                     String memberName = card.latestThread.firstPost.poster.name.toString();
                     int memberId = card.latestThread.firstPost.poster.name.getMemberId();
                     postedBy.add(Link.memberView(memberName, memberId));
@@ -197,11 +197,11 @@ public class MyWhirleds extends AbsolutePanel
                     if (DateUtil.getDayOfMonth(created) == DateUtil.getDayOfMonth(now) &&
                         DateUtil.getMonth(created) == DateUtil.getMonth(now) &&
                         DateUtil.getYear(created) == DateUtil.getYear(now)) {
-                        date.add(new InlineLabel(CWhirleds.msgs.myToday()));
+                        date.add(new InlineLabel(_msgs.myToday()));
                     } else {
-                        date.add(new InlineLabel(DATE_FORMAT.format(created) + " "));
+                        date.add(new InlineLabel(_dateFormat.format(created) + " "));
                     }
-                    InlineLabel time = new InlineLabel(" " + TIME_FORMAT.format(created));
+                    InlineLabel time = new InlineLabel(" " + _timeFormat.format(created));
                     time.addStyleName("Time");
                     date.add(time);
 
@@ -225,11 +225,20 @@ public class MyWhirleds extends AbsolutePanel
         }
     }
 
+    /** Dropdown of sort methods */
+    protected ListBox _sortBox;
+
+    protected static final SimpleDateFormat _dateFormat = new SimpleDateFormat("MM-dd-yy");
+    protected static final SimpleDateFormat _timeFormat = new SimpleDateFormat("hh:mm aa");
+    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+
     protected static final String[] SORT_LABELS = new String[] {
-        CWhirleds.msgs.mySortByPeopleOnline(),
-        CWhirleds.msgs.mySortByName(),
-        CWhirleds.msgs.mySortByManager(),
-        CWhirleds.msgs.mySortByNewestPost()
+        _msgs.mySortByPeopleOnline(),
+        _msgs.mySortByName(),
+        _msgs.mySortByManager(),
+        _msgs.mySortByNewestPost()
     };
     protected static final byte[] SORT_VALUES = new byte[] {
         MyGroupCard.SORT_BY_PEOPLE_ONLINE,
@@ -237,12 +246,4 @@ public class MyWhirleds extends AbsolutePanel
         MyGroupCard.SORT_BY_MANAGER,
         MyGroupCard.SORT_BY_NEWEST_POST
     };
-
-    /** Dropdown of sort methods */
-    protected ListBox _sortBox;
-
-    protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("MM-dd-yy");
-    protected static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("hh:mm aa");
-    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
-        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }

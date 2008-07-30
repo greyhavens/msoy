@@ -37,7 +37,7 @@ public class FeaturedWhirledPanel extends FlowPanel
     {
         setStyleName("FeaturedWhirled");
         _showPlaceholder = showPlaceholder;
-        add(MsoyUI.createLabel(CWhirleds.msgs.featuredTitle(), "Title"));
+        add(MsoyUI.createLabel(_msgs.featuredTitle(), "Title"));
         add(_flashPanel = new SimplePanel());
         _flashPanel.addStyleName("Flash");
 
@@ -119,7 +119,7 @@ public class FeaturedWhirledPanel extends FlowPanel
         Widget link = Link.groupView(group.name.toString(), group.name.getGroupId());
         _info.setWidget(0, 1, link, 1, "Name");
         if (group.population > 0) {
-            Label onlineCount = new Label(CWhirleds.msgs.featuredOnline(""+group.population));
+            Label onlineCount = new Label(_msgs.featuredOnline(""+group.population));
             SimplePanel onlineBox = new SimplePanel();
             onlineBox.setStyleName("OnlineBox");
             onlineBox.add(onlineCount);
@@ -163,5 +163,6 @@ public class FeaturedWhirledPanel extends FlowPanel
     protected SmartTable _info;
     protected SimplePanel _flashPanel;
 
+    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

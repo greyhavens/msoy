@@ -49,17 +49,17 @@ public class WhirledRoomsPanel extends VerticalPanel
     protected void init (GroupService.RoomsResult rooms)
     {
         _roomsResult = rooms;
-        add(new TongueBox(null, CWhirleds.msgs.detailRoomsDetail(_detail.group.name), false));
+        add(new TongueBox(null, _msgs.detailRoomsDetail(_detail.group.name), false));
         _roomsGrid = new SmartTable(0, 0);
         for (int ii = 0; ii < rooms.groupRooms.size(); ii++) {
             int row = ii / ROOM_COLUMNS, col = ii % ROOM_COLUMNS;
             _roomsGrid.setWidget(row, col,
                 new RoomWidget(rooms.groupRooms.get(ii)));
         }
-        add(new TongueBox(CWhirleds.msgs.detailRoomsTitle(_detail.group.name), _roomsGrid));
+        add(new TongueBox(_msgs.detailRoomsTitle(_detail.group.name), _roomsGrid));
 
         VerticalPanel transferPanel = new VerticalPanel();
-        transferPanel.add(new Label(CWhirleds.msgs.detailTransferRoomInfo()));
+        transferPanel.add(new Label(_msgs.detailTransferRoomInfo()));
         HorizontalPanel transferForm = new HorizontalPanel();
         transferPanel.add(transferForm);
         transferForm.setSpacing(10);
@@ -67,14 +67,14 @@ public class WhirledRoomsPanel extends VerticalPanel
         for (GroupService.Room callerRoom : _roomsResult.callerRooms) {
             _roomsListBox.addItem(callerRoom.name);
         }
-        Button transferButton = new Button(CWhirleds.msgs.detailTransferRoom(_detail.group.name),
+        Button transferButton = new Button(_msgs.detailTransferRoom(_detail.group.name),
             new ClickListener() {
                 public void onClick (Widget sender) {
                     transferCurrentRoom();
                 }
             });
         transferForm.add(transferButton);
-        add(new TongueBox(CWhirleds.msgs.detailCallersRoomsTitle(), transferPanel));
+        add(new TongueBox(_msgs.detailCallersRoomsTitle(), transferPanel));
     }
 
     protected void transferCurrentRoom ()
@@ -128,6 +128,7 @@ public class WhirledRoomsPanel extends VerticalPanel
     protected ListBox _roomsListBox;
     protected SmartTable _roomsGrid;
 
+    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 

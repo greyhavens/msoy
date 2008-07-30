@@ -47,7 +47,7 @@ public class GalaxyPanel extends VerticalPanel
 
         // add our favorites and featured whirled
         SmartTable features = new SmartTable("Features", 0, 0);
-        features.setText(0, 0, CWhirleds.msgs.galaxyIntro(), 1, "Intro"); // TODO: favorites
+        features.setText(0, 0, _msgs.galaxyIntro(), 1, "Intro"); // TODO: favorites
         features.setWidget(0, 1, _featured = new FeaturedWhirledPanel(false, false));
         features.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         features.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
@@ -56,7 +56,7 @@ public class GalaxyPanel extends VerticalPanel
 
         // now add a UI for browsing and searching Whirleds
         SmartTable browse = new SmartTable("Browse", 0, 0);
-        browse.setText(0, 0, CWhirleds.msgs.galaxyBrowseTitle(), 1, "Title");
+        browse.setText(0, 0, _msgs.galaxyBrowseTitle(), 1, "Title");
         browse.setWidget(0, 1, _currentTag = new FlowPanel(), 1, "Current");
 
         HorizontalPanel search = new HorizontalPanel();
@@ -68,7 +68,7 @@ public class GalaxyPanel extends VerticalPanel
         };
         _searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
         search.add(WidgetUtil.makeShim(5, 5));
-        search.add(new Button(CWhirleds.msgs.galaxySearch(), doSearch));
+        search.add(new Button(_msgs.galaxySearch(), doSearch));
         browse.setWidget(0, 2, search, 1, "Search");
         browse.getFlexCellFormatter().setHorizontalAlignment(0, 2, HasAlignment.ALIGN_RIGHT);
         add(browse);
@@ -86,7 +86,7 @@ public class GalaxyPanel extends VerticalPanel
                 return new GroupWidget(card);
             }
             protected String getEmptyMessage () {
-                return CWhirleds.msgs.galaxyNoGroups();
+                return _msgs.galaxyNoGroups();
             }
         });
         _groupGrid.setWidth("100%");
@@ -96,11 +96,11 @@ public class GalaxyPanel extends VerticalPanel
         // add info on creating a Whirled
         add(WidgetUtil.makeShim(10, 10));
         SmartTable create = new SmartTable("Create", 0, 0);
-        create.setText(0, 0, CWhirleds.msgs.galaxyCreateTitle(), 3, "Header");
-        create.setText(1, 0, CWhirleds.msgs.galaxyCreateBlurb(), 1, "Pitch");
+        create.setText(0, 0, _msgs.galaxyCreateTitle(), 3, "Header");
+        create.setText(1, 0, _msgs.galaxyCreateBlurb(), 1, "Pitch");
         create.setWidget(1, 1, WidgetUtil.makeShim(10, 10));
         ClickListener onClick = Link.createListener(Page.WHIRLEDS, "edit");
-        create.setWidget(1, 2, new Button(CWhirleds.msgs.galaxyCreate(), onClick), 1, "Button");
+        create.setWidget(1, 2, new Button(_msgs.galaxyCreate(), onClick), 1, "Button");
         add(create);
 
         _groupsvc.getGalaxyData(CWhirleds.ident, new MsoyCallback<GalaxyData>() {
@@ -145,7 +145,7 @@ public class GalaxyPanel extends VerticalPanel
 
         // set up our popular tags
         if (data.popularTags.size() == 0) {
-            _popularTags.add(MsoyUI.createLabel(CWhirleds.msgs.galaxyNoPopularTags(), "Link"));
+            _popularTags.add(MsoyUI.createLabel(_msgs.galaxyNoPopularTags(), "Link"));
         } else {
             for (String tag : data.popularTags) {
                 Widget link = Link.create(
@@ -163,11 +163,11 @@ public class GalaxyPanel extends VerticalPanel
             return false;
         }
 
-        InlineLabel tagLabel = new InlineLabel(CWhirleds.msgs.galaxyCurrentTag(tag) + " ");
+        InlineLabel tagLabel = new InlineLabel(_msgs.galaxyCurrentTag(tag) + " ");
         tagLabel.addStyleName("Label");
         _currentTag.add(tagLabel);
         _currentTag.add(new InlineLabel("("));
-        Widget clear = Link.create(CWhirleds.msgs.galaxyTagClear(), Page.WHIRLEDS, "");
+        Widget clear = Link.create(_msgs.galaxyTagClear(), Page.WHIRLEDS, "");
         clear.addStyleName("inline");
         _currentTag.add(clear);
         _currentTag.add(new InlineLabel(")"));
@@ -224,7 +224,7 @@ public class GalaxyPanel extends VerticalPanel
             if (group.population == 0) {
                 setHTML(row, 0, "&nbsp;", 1, "Population");
             } else {
-                String popstr = CWhirleds.msgs.galaxyMemberCount("" + group.population);
+                String popstr = _msgs.galaxyMemberCount("" + group.population);
                 setText(row, 0, popstr, 1, "Population");
             }
         }
@@ -237,6 +237,7 @@ public class GalaxyPanel extends VerticalPanel
     protected TextBox _searchInput;
     protected PagedGrid<GroupCard> _groupGrid;
 
+    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 

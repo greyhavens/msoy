@@ -11,8 +11,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 
-import com.threerings.msoy.item.data.all.Photo;
-
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
@@ -111,13 +109,5 @@ public interface MemberService extends RemoteService
      * Tracks the creation of a new referral info structure, for a new visitor.
      */
     void trackReferralCreation (ReferralInfo info)
-        throws ServiceException;
-
-    /**
-     * Loads up all of this member's photo inventory. This exists separate from
-     * StuffService.loadInventory because we want to allow photo selection in many places in the
-     * website, but we don't want to have to compile in the entire Item hiearchy to do so.
-     */
-    List<Photo> loadPhotos (WebIdent ident)
         throws ServiceException;
 }

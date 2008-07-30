@@ -17,7 +17,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.person.gwt.ProfileService;
+import com.threerings.msoy.profile.gwt.ProfileService;
 
 import client.shell.Args;
 import client.shell.Page;

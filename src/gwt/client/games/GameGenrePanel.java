@@ -23,6 +23,8 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.Args;
 import client.shell.DynamicMessages;
@@ -32,6 +34,7 @@ import client.ui.Stars;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays games in a particular genre, or of all genres for the "All Games" page.
@@ -81,7 +84,7 @@ public class GameGenrePanel extends FlowPanel
         }
         add(_header = new GameHeaderPanel(genre, sortMethod, query, titleText));
 
-        CGames.gamesvc.loadGameGenre(
+        _gamesvc.loadGameGenre(
             CGames.ident, genre, sortMethod, query, new MsoyCallback<List<GameInfo>>() {
                 public void onSuccess (List<GameInfo> games) {
                     init(genre, games);
@@ -262,6 +265,8 @@ public class GameGenrePanel extends FlowPanel
     protected byte _genre;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 
     protected static final int GAMES_PER_PAGE = 10;
 }

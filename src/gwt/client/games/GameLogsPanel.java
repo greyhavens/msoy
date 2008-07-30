@@ -5,16 +5,21 @@ package client.games;
 
 import org.gwtwidgets.client.util.SimpleDateFormat;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
+
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameLogs;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.ui.MsoyUI;
+import client.util.ServiceUtil;
 
 /**
  * Displays the server-side logs for a particular game, if any.
@@ -36,7 +41,7 @@ public class GameLogsPanel extends VerticalPanel
         }
 
         add(MsoyUI.createLabel(CGames.msgs.glpLoading(), "Header"));
-        CGames.gamesvc.loadGameLogs(CGames.ident, _detail.gameId, new AsyncCallback<GameLogs>() {
+        _gamesvc.loadGameLogs(CGames.ident, _detail.gameId, new AsyncCallback<GameLogs>() {
             public void onSuccess (GameLogs logs) {
                 gotLogs(logs);
             }
@@ -88,8 +93,10 @@ public class GameLogsPanel extends VerticalPanel
     protected GameDetail _detail;
     protected GameLogs _logs;
 
-    /** Used to format the most recent post date. */
-    protected static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("h:mm aa, MMMMM dd, yyyy");
+    protected static final SimpleDateFormat DATE_FORMAT =
+        new SimpleDateFormat("h:mm aa, MMMMM dd, yyyy");
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 
     /** The number of columns in the log table. */
     protected static final int TABLE_COLUMNS = 3;

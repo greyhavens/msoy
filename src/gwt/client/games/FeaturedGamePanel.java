@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
-import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.game.gwt.GameDetail;
 
 import client.shell.Args;
 import client.shell.DynamicMessages;
@@ -39,7 +39,7 @@ public class FeaturedGamePanel extends AbsolutePanel
 
         ClickListener detailsClick = Link.createListener(
             Page.GAMES, Args.compose("d", game.gameId));
-        add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT,
+        add(new ThumbBox(game.getShotMedia(), GameDetail.SHOT_WIDTH, GameDetail.SHOT_HEIGHT,
                          detailsClick), 10, 37);
         if (game.playersOnline > 0) {
             add(MsoyUI.createLabel(

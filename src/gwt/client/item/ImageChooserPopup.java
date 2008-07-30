@@ -23,8 +23,8 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.web.client.MemberService;
-import com.threerings.msoy.web.client.MemberServiceAsync;
+import com.threerings.msoy.item.gwt.ItemService;
+import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import client.ui.MsoyUI;
 import client.util.MediaUploader;
@@ -48,7 +48,7 @@ public class ImageChooserPopup extends VerticalPanel
     public static void displayImageChooser (
         final boolean thumbnail, final AsyncCallback<MediaDesc> callback)
     {
-        _membersvc.loadPhotos(CShell.ident, new AsyncCallback<List<Photo>>() {
+        _itemsvc.loadPhotos(CShell.ident, new AsyncCallback<List<Photo>>() {
             public void onSuccess (List<Photo> items) {
                 CShell.frame.showDialog(
                     _cmsgs.icTitle(), new ImageChooserPopup(items, thumbnail, callback));
@@ -171,6 +171,6 @@ public class ImageChooserPopup extends VerticalPanel
     protected AsyncCallback<MediaDesc> _callback;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
-        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

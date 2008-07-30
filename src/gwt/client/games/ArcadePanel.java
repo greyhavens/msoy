@@ -6,9 +6,12 @@ package client.games;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.GameInfo;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.Args;
 import client.shell.DynamicMessages;
@@ -17,6 +20,7 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Main game display.
@@ -29,7 +33,7 @@ public class ArcadePanel extends FlowPanel
 
         add(_header = new GameHeaderPanel((byte)-1, GameInfo.SORT_BY_NAME, null, "Featured Games"));
 
-        CGames.gamesvc.loadArcadeData(CGames.ident, new MsoyCallback<ArcadeData>() {
+        _gamesvc.loadArcadeData(CGames.ident, new MsoyCallback<ArcadeData>() {
             public void onSuccess (ArcadeData data) {
                 init(data);
             }
@@ -142,4 +146,6 @@ public class ArcadePanel extends FlowPanel
     protected GameHeaderPanel _header;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

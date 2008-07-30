@@ -44,7 +44,6 @@ import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.person.gwt.Profile;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
@@ -60,6 +59,7 @@ import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.msoy.world.data.MsoySceneModel;
 

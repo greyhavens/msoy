@@ -3,24 +3,28 @@
 
 package client.games;
 
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.util.MediaUtil;
+import client.util.ServiceUtil;
 
 /**
  * Displays the trophies
@@ -45,7 +49,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
             return;
         }
 
-        CGames.gamesvc.loadGameTrophies(CGames.ident, _gameId, new AsyncCallback<List<Trophy>>() {
+        _gamesvc.loadGameTrophies(CGames.ident, _gameId, new AsyncCallback<List<Trophy>>() {
             public void onSuccess (List<Trophy> result) {
                 setModel(new SimpleDataModel<Trophy>(result), 0);
             }
@@ -114,5 +118,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
 
     protected int _gameId;
 
-    protected static SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

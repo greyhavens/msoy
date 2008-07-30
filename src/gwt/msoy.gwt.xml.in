@@ -23,7 +23,9 @@
   <source path="com/threerings/msoy/item/gwt"/>
   <source path="com/threerings/msoy/landing/gwt"/>
   <source path="com/threerings/msoy/mail/gwt"/>
+  <source path="com/threerings/msoy/feed/gwt"/>
   <source path="com/threerings/msoy/person/gwt"/>
+  <source path="com/threerings/msoy/profile/gwt"/>
   <source path="com/threerings/msoy/stuff/gwt"/>
   <source path="com/threerings/msoy/swiftly/data/all"/>
   <source path="com/threerings/msoy/swiftly/gwt"/>

@@ -14,10 +14,14 @@
   <source path="com/threerings/msoy/web/data"/>
   <source path="com/threerings/msoy/web/client"/>
   <source path="com/threerings/msoy/item/data/all"/>
+  <source path="com/threerings/msoy/item/gwt"/>
+  <source path="com/threerings/msoy/fora/gwt"/>
   <source path="com/threerings/msoy/game/data/all"/>
   <source path="com/threerings/msoy/game/gwt"/>
 
   <source path="client/games"/>
+  <source path="client/msgs"/>
+  <source path="client/item"/>
   <source path="client/images"/>
   <source path="client/shell"/>
   <source path="client/ui"/>

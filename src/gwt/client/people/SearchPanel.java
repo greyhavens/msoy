@@ -10,8 +10,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.person.gwt.ProfileService;
-import com.threerings.msoy.person.gwt.ProfileServiceAsync;
+import com.threerings.msoy.profile.gwt.ProfileService;
+import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;

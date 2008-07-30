@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.gwt;
 
 import java.util.Collection;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -11,6 +12,7 @@ import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.WebIdent;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Photo;
 
 /**
  * The asynchronous (client-side) version of {@link ItemService}.
@@ -71,4 +73,9 @@ public interface ItemServiceAsync
      */
     void setFavorite (WebIdent ident, ItemIdent item, boolean favorite,
                       AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link ItemService#loadPhotos}.
+     */
+    void loadPhotos (WebIdent ident, AsyncCallback<List<Photo>> callback);
 }

@@ -6,7 +6,6 @@ package com.threerings.msoy.web.server;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
@@ -21,9 +20,6 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.item.server.persist.PhotoRecord;
-import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.web.client.MemberService;
@@ -219,34 +215,10 @@ public class MemberServlet extends MsoyServiceServlet
         _eventLog.referralCreated(info);        
     }
 
-    // from interface MemberService
-    public List<Photo> loadPhotos (WebIdent ident)
-        throws ServiceException
-    {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-
-        try {
-            List<Photo> photos = Lists.newArrayList();
-            for (PhotoRecord record : _photoRepo.loadOriginalItems(memrec.memberId, 0)) {
-                photos.add((Photo)record.toItem());
-            }
-            for (PhotoRecord record : _photoRepo.loadClonedItems(memrec.memberId, 0)) {
-                photos.add((Photo)record.toItem());
-            }
-            Collections.sort(photos);
-            return photos;
-
-        } catch (PersistenceException pe) {
-            log.warning("loadInventory failed [for=" + memrec.memberId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-    }
-
     // our dependencies
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected FriendManager _friendMan;
     @Inject protected MemberLogic _memberLogic;
-    @Inject protected PhotoRepository _photoRepo;
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;

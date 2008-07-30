@@ -62,11 +62,11 @@ public class GroupEdit extends FlexTable
         setCellPadding(0);
 
         CWhirleds.frame.setTitle(
-            _group.groupId == 0 ? CWhirleds.msgs.editCreateTitle() : group.name);
+            _group.groupId == 0 ? _msgs.editCreateTitle() : group.name);
 
         // set up our editor contents
         _name = MsoyUI.createTextBox(_group.name, GroupName.LENGTH_MAX, 20);
-        addRow(CWhirleds.msgs.editName(), _name);
+        addRow(_msgs.editName(), _name);
 
         // if this is a blank group, set up some defaults
         if (_group.policy == 0) {
@@ -76,38 +76,38 @@ public class GroupEdit extends FlexTable
 
         // make sure the group's configured policy is consistent with what's shown in the GUI
         _policy = new ListBox();
-        _policy.addItem(CWhirleds.msgs.policyPublic());
-        _policy.addItem(CWhirleds.msgs.policyInvite());
-        _policy.addItem(CWhirleds.msgs.policyExclusive());
+        _policy.addItem(_msgs.policyPublic());
+        _policy.addItem(_msgs.policyInvite());
+        _policy.addItem(_msgs.policyExclusive());
         _policy.setSelectedIndex(_group.policy - Group.POLICY_PUBLIC);
-        addRow(CWhirleds.msgs.editPolicy(), _policy);
+        addRow(_msgs.editPolicy(), _policy);
 
         _thread = new ListBox();
-        _thread.addItem(CWhirleds.msgs.forumPermsAll());
-        _thread.addItem(CWhirleds.msgs.forumPermsMember());
-        _thread.addItem(CWhirleds.msgs.forumPermsManager());
+        _thread.addItem(_msgs.forumPermsAll());
+        _thread.addItem(_msgs.forumPermsMember());
+        _thread.addItem(_msgs.forumPermsManager());
         _thread.setSelectedIndex(_group.getThreadPerm() - Group.PERM_ALL);
-        addRow(CWhirleds.msgs.editThread(), _thread);
+        addRow(_msgs.editThread(), _thread);
 
         _post = new ListBox();
-        _post.addItem(CWhirleds.msgs.forumPermsAll());
-        _post.addItem(CWhirleds.msgs.forumPermsMember());
-        _post.addItem(CWhirleds.msgs.forumPermsManager());
+        _post.addItem(_msgs.forumPermsAll());
+        _post.addItem(_msgs.forumPermsMember());
+        _post.addItem(_msgs.forumPermsManager());
         _post.setSelectedIndex(_group.getPostPerm() - Group.PERM_ALL);
-        addRow(CWhirleds.msgs.editPost(), _post);
+        addRow(_msgs.editPost(), _post);
 
-        addRow(CWhirleds.msgs.editLogo(), _logo = new PhotoChoiceBox(true, null));
+        addRow(_msgs.editLogo(), _logo = new PhotoChoiceBox(true, null));
         _logo.setMedia(_group.getLogo());
 
         _blurb = MsoyUI.createTextBox(_group.blurb, Group.MAX_BLURB_LENGTH, 40);
-        addRow(CWhirleds.msgs.editBlurb(), _blurb);
+        addRow(_msgs.editBlurb(), _blurb);
 
         _homepage = MsoyUI.createTextBox(_extras.homepageUrl, 255, 40);
-        addRow(CWhirleds.msgs.editHomepage(), _homepage);
+        addRow(_msgs.editHomepage(), _homepage);
 
         _charter = new LimitedTextArea(Group.MAX_CHARTER_LENGTH, 60, 3);
         _charter.setText(_extras.charter);
-        addRow(CWhirleds.msgs.editCharter(), _charter);
+        addRow(_msgs.editCharter(), _charter);
 
         _catalogType = new ListBox();
         for (int ii = 0; ii < Item.TYPES.length; ii++) {
@@ -116,8 +116,8 @@ public class GroupEdit extends FlexTable
                 _catalogType.setSelectedIndex(ii);
             }
         }
-        addRow(CWhirleds.msgs.editCatalogType(), _catalogType);
-        addRow(CWhirleds.msgs.editCatalogTag(),
+        addRow(_msgs.editCatalogType(), _catalogType);
+        addRow(_msgs.editCatalogTag(),
             _catalogTag = MsoyUI.createTextBox(_extras.catalogTag, 24, 24));
 
         HorizontalPanel footer = new HorizontalPanel();
@@ -159,7 +159,7 @@ public class GroupEdit extends FlexTable
                     // nada
                 }
                 public void addMenuItems (final String tag, PopupMenu menu) {
-                    menu.addMenuItem(CWhirleds.msgs.detailTagLink(), new Command() {
+                    menu.addMenuItem(_msgs.detailTagLink(), new Command() {
                         public void execute () {
                             Link.go(Page.WHIRLEDS, Args.compose("tag", "0", tag));
                         }
@@ -200,7 +200,7 @@ public class GroupEdit extends FlexTable
             _group.name.length() > GroupName.LENGTH_MAX ||
             !(Character.isLetter(_group.name.charAt(0)) ||
               Character.isDigit(_group.name.charAt(0)))) {
-            MsoyUI.error(CWhirleds.msgs.errInvalidGroupName());
+            MsoyUI.error(_msgs.errInvalidGroupName());
             return;
         }
 
@@ -222,7 +222,7 @@ public class GroupEdit extends FlexTable
                 CWhirleds.ident, _group.groupId, new MsoyCallback<Collection<String>>() {
                     public void onSuccess (Collection<String> tags) {
                         if (tags.size() > 0) {
-                            MsoyUI.error(CWhirleds.msgs.errTagsOnExclusive());
+                            MsoyUI.error(_msgs.errTagsOnExclusive());
                         } else if (_group.groupId > 0) {
                             _groupsvc.updateGroup(CWhirleds.ident, _group, _extras, updateCallback);
                         } else {
@@ -248,6 +248,7 @@ public class GroupEdit extends FlexTable
     protected LimitedTextArea _charter;
     protected Button _submit;
 
+    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)

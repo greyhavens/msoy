@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.server;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -22,11 +23,14 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.PhotoRecord;
+import com.threerings.msoy.item.server.persist.PhotoRepository;
 
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
@@ -400,6 +404,30 @@ public class ItemServlet extends MsoyServiceServlet
         }
     }
 
+    // from interface ItemService
+    public List<Photo> loadPhotos (WebIdent ident)
+        throws ServiceException
+    {
+        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+
+        try {
+            List<Photo> photos = Lists.newArrayList();
+            for (PhotoRecord record : _photoRepo.loadOriginalItems(memrec.memberId, 0)) {
+                photos.add((Photo)record.toItem());
+            }
+            for (PhotoRecord record : _photoRepo.loadClonedItems(memrec.memberId, 0)) {
+                photos.add((Photo)record.toItem());
+            }
+            Collections.sort(photos);
+            return photos;
+
+        } catch (PersistenceException pe) {
+            log.warning("loadInventory failed [for=" + memrec.memberId + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     // our dependencies
     @Inject protected ItemManager _itemMan;
+    @Inject protected PhotoRepository _photoRepo;
 }

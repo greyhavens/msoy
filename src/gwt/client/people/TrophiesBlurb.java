@@ -6,7 +6,7 @@ package client.people;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.person.gwt.ProfileService;
+import com.threerings.msoy.profile.gwt.ProfileService;
 
 import client.games.TrophyGrid;
 import client.shell.Args;

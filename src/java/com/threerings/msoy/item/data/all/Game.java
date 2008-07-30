@@ -55,12 +55,6 @@ public class Game extends Item
     /** We reserve a very unlikely gameId for the tutorial. */
     public static final int TUTORIAL_GAME_ID = Integer.MAX_VALUE;
 
-    /** The width of a game screenshot. */
-    public static final int SHOT_WIDTH = 175;
-
-    /** The height of a game screenshot. */
-    public static final int SHOT_HEIGHT = 125;
-
     /** This game's genre. */
     public byte genre;
 

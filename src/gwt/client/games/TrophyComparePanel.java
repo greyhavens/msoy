@@ -5,16 +5,18 @@ package client.games;
 
 import java.util.Date;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-
-import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.web.data.MemberCard;
 
@@ -24,6 +26,7 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays a side-by-side comparison of the caller's trophies in a particular game with another
@@ -37,7 +40,7 @@ public class TrophyComparePanel extends SmartTable
         setText(0, 0, CGames.msgs.compareLoading());
 
         int[] memberIds = new int[] { targetId, CGames.getMemberId() };
-        CGames.gamesvc.compareTrophies(
+        _gamesvc.compareTrophies(
             CGames.ident, gameId, memberIds, new MsoyCallback<GameService.CompareResult>() {
                 public void onSuccess (GameService.CompareResult result) {
                     init(gameId, result);
@@ -112,5 +115,7 @@ public class TrophyComparePanel extends SmartTable
         getFlexCellFormatter().setVerticalAlignment(row, col, HasAlignment.ALIGN_MIDDLE);
     }
 
-    protected static SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

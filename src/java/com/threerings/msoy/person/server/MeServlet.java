@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.landing.server;
+package com.threerings.msoy.person.server;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -19,11 +19,13 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.person.gwt.FeedMessage;
-import com.threerings.msoy.person.server.persist.FeedRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.MeService;
+import com.threerings.msoy.person.gwt.MyWhirledData;
+import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -32,8 +34,6 @@ import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletLogic;
 
-import com.threerings.msoy.landing.gwt.MeService;
-import com.threerings.msoy.landing.gwt.MyWhirledData;
 
 import static com.threerings.msoy.Log.log;
 

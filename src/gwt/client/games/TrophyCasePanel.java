@@ -3,14 +3,18 @@
 
 package client.games;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.TrophyCase;
 
 import client.shell.Args;
 import client.shell.Page;
 import client.ui.TongueBox;
 import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * Displays all trophies owned by the specified player.
@@ -27,7 +31,7 @@ public class TrophyCasePanel extends VerticalPanel
         }
 
         setHeader(CGames.msgs.caseLoading());
-        CGames.gamesvc.loadTrophyCase(CGames.ident, memberId, new MsoyCallback<TrophyCase>() {
+        _gamesvc.loadTrophyCase(CGames.ident, memberId, new MsoyCallback<TrophyCase>() {
             public void onSuccess (TrophyCase tc) {
                 setTrophyCase(tc);
             }
@@ -66,4 +70,7 @@ public class TrophyCasePanel extends VerticalPanel
         clear();
         add(new TongueBox(null, title, false));
     }
+
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

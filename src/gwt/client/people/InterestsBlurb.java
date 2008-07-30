@@ -18,8 +18,8 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.person.gwt.Interest;
-import com.threerings.msoy.person.gwt.ProfileService;
-import com.threerings.msoy.person.gwt.ProfileServiceAsync;
+import com.threerings.msoy.profile.gwt.ProfileService;
+import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
 import client.shell.Args;
 import client.shell.DynamicMessages;

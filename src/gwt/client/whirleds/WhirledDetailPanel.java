@@ -134,7 +134,7 @@ public class WhirledDetailPanel extends FlowPanel
         FlowPanel established = new FlowPanel();
         established.setStyleName("Established");
         established.add(new InlineLabel(
-            CWhirleds.msgs.groupEst(_efmt.format(_group.creationDate)), false, false, true));
+            _msgs.groupEst(_efmt.format(_group.creationDate)), false, false, true));
         established.add(new InlineLabel(_cmsgs.creatorBy(), false, false, true));
         Widget creator = Link.memberView(_detail.creator.toString(), _detail.creator.getMemberId());
         creator.addStyleName("Creator");
@@ -143,7 +143,7 @@ public class WhirledDetailPanel extends FlowPanel
 
         // members opens in contentPanel
         titleBox.add(new InlineLabel(_group.memberCount + " "));
-        InlineLabel members = new InlineLabel(CWhirleds.msgs.detailMembers());
+        InlineLabel members = new InlineLabel(_msgs.detailMembers());
         titleBox.add(members);
         members.addStyleName("actionLabel");
         ClickListener membersClick = new ClickListener() {
@@ -155,12 +155,12 @@ public class WhirledDetailPanel extends FlowPanel
 
         // enter and discussions buttons
         PushButton enterButton = MsoyUI.createButton(
-            MsoyUI.LONG_THIN, CWhirleds.msgs.detailEnter(), Link.createListener(
+            MsoyUI.LONG_THIN, _msgs.detailEnter(), Link.createListener(
                 Page.WORLD, "s"+_group.homeSceneId));
         enterButton.addStyleName("EnterButton");
         mainDetails.add(enterButton);
         PushButton discussionsButton = MsoyUI.createButton(
-            MsoyUI.MEDIUM_THIN, CWhirleds.msgs.detailForums(), Link.createListener(
+            MsoyUI.MEDIUM_THIN, _msgs.detailForums(), Link.createListener(
                 Page.WHIRLEDS, Args.compose("f", _group.groupId)));
         discussionsButton.addStyleName("DiscussionsButton");
         mainDetails.add(discussionsButton);
@@ -174,22 +174,22 @@ public class WhirledDetailPanel extends FlowPanel
         if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
             if (Group.canJoin(_group.policy) && !CWhirleds.isGuest()) {
                 actions.add(MsoyUI.createActionLabel(
-                               CWhirleds.msgs.detailJoin(), new PromptPopup(
-                                   CWhirleds.msgs.detailJoinPrompt(), joinGroup()).setContext(
-                                       CWhirleds.msgs.detailJoinContext(_group.name))));
+                               _msgs.detailJoin(), new PromptPopup(
+                                   _msgs.detailJoinPrompt(), joinGroup()).setContext(
+                                       _msgs.detailJoinContext(_group.name))));
             }
         }
         // leave this whirled & invite others to it
         else {
             actions.add(MsoyUI.createActionLabel(
-                           CWhirleds.msgs.detailLeave(), new PromptPopup(
-                               CWhirleds.msgs.detailLeavePrompt(_group.name),
+                           _msgs.detailLeave(), new PromptPopup(
+                               _msgs.detailLeavePrompt(_group.name),
                                removeMember(CWhirleds.getMemberId()))));
         }
         if (Group.canInvite(detail.group.policy, detail.myRank)) {
             String args = Args.compose("w", "g", ""+_detail.group.groupId);
             actions.add(MsoyUI.createActionLabel(
-                CWhirleds.msgs.detailInvite(), Link.createListener(Page.MAIL, args)));
+                _msgs.detailInvite(), Link.createListener(Page.MAIL, args)));
         }
 
         // shop
@@ -197,11 +197,11 @@ public class WhirledDetailPanel extends FlowPanel
             String args = ShopUtil.composeArgs(
                 _extras.catalogItemType, _extras.catalogTag, null, 0);
             actions.add(MsoyUI.createActionLabel(
-                CWhirleds.msgs.detailShop(), Link.createListener(Page.SHOP, args)));
+                _msgs.detailShop(), Link.createListener(Page.SHOP, args)));
         }
 
         // read charter
-        Label readCharter = new Label(CWhirleds.msgs.detailReadCharter());
+        Label readCharter = new Label(_msgs.detailReadCharter());
         actions.add(readCharter);
         readCharter.addStyleName("actionLabel");
         ClickListener charterClick = new ClickListener() {
@@ -219,13 +219,13 @@ public class WhirledDetailPanel extends FlowPanel
 
             String args = Args.compose("edit", _group.groupId);
             Label editWhirled = MsoyUI.createActionLabel(
-                CWhirleds.msgs.detailEdit(), Link.createListener(Page.WHIRLEDS, args));
+                _msgs.detailEdit(), Link.createListener(Page.WHIRLEDS, args));
             editWhirled.addStyleName("inline");
             managerActions.add(editWhirled);
 
             managerActions.add(new InlineLabel(" | "));
 
-            InlineLabel manageRooms = new InlineLabel(CWhirleds.msgs.detailManageRooms());
+            InlineLabel manageRooms = new InlineLabel(_msgs.detailManageRooms());
             managerActions.add(manageRooms);
             manageRooms.addStyleName("actionLabel");
             ClickListener roomsClick = new ClickListener() {
@@ -255,7 +255,7 @@ public class WhirledDetailPanel extends FlowPanel
         _whirledViewPanel.add(clickToPlayImage);
 
         if (_detail.population > 0) {
-            HTML online = new HTML(CWhirleds.msgs.featuredOnline(""+_detail.population));
+            HTML online = new HTML(_msgs.featuredOnline(""+_detail.population));
             online.setStyleName("Online");
             screenshot.add(online);
         }
@@ -321,7 +321,7 @@ public class WhirledDetailPanel extends FlowPanel
             _content.setStyleName("ContentPanelContent");
 
             // back to discussions button hidden by default
-            container.add(_backButton = new Label(CWhirleds.msgs.detailBackToDiscussions()));
+            container.add(_backButton = new Label(_msgs.detailBackToDiscussions()));
             _backButton.setVisible(false);
             _backButton.addStyleName("actionLabel");
             _backButton.addStyleName("ContentBackButton");
@@ -337,7 +337,7 @@ public class WhirledDetailPanel extends FlowPanel
             if (_discussions != null && _content.getWidget() == _discussions) {
                 return;
             }
-            _title.setWidget(new Label(CWhirleds.msgs.detailTabDiscussions()));
+            _title.setWidget(new Label(_msgs.detailTabDiscussions()));
             if (_discussions == null) {
                 _discussions = new WhirledDiscussionsPanel(_detail);
             }
@@ -349,10 +349,10 @@ public class WhirledDetailPanel extends FlowPanel
             if (_charter != null && _content.getWidget() == _charter) {
                 return;
             }
-            _title.setWidget(new Label(CWhirleds.msgs.detailTabCharter()));
+            _title.setWidget(new Label(_msgs.detailTabCharter()));
             if (_charter == null) {
                 String charterText = (_extras.charter == null) ?
-                    CWhirleds.msgs.detailNoCharter() : _extras.charter;
+                    _msgs.detailNoCharter() : _extras.charter;
                 _charter = new PrettyTextPanel(charterText);
             }
             _content.setWidget(_charter);
@@ -363,7 +363,7 @@ public class WhirledDetailPanel extends FlowPanel
             if (_members != null && _content.getWidget() == _members) {
                 return;
             }
-            _title.setWidget(new Label(CWhirleds.msgs.detailTabMembers()));
+            _title.setWidget(new Label(_msgs.detailTabMembers()));
             if (_members == null) {
                 _members = new WhirledMembersPanel(_detail);
             }
@@ -375,7 +375,7 @@ public class WhirledDetailPanel extends FlowPanel
             if (_rooms != null && _content.getWidget() == _rooms) {
                 return;
             }
-            _title.setWidget(new Label(CWhirleds.msgs.detailTabRooms()));
+            _title.setWidget(new Label(_msgs.detailTabRooms()));
             if (_rooms == null) {
                 _rooms = new WhirledRoomsPanel(_detail);
             }
@@ -400,7 +400,7 @@ public class WhirledDetailPanel extends FlowPanel
         public TopMembersPanel () {
             setStyleName("TopMembersPanel");
             add(MsoyUI.createSimplePanel("Title",
-                new HTML(CWhirleds.msgs.detailTopMembersTitle())));
+                new HTML(_msgs.detailTopMembersTitle())));
 
             FlowPanel content = new FlowPanel();
             content.setStyleName("Content");
@@ -418,7 +418,7 @@ public class WhirledDetailPanel extends FlowPanel
                 members.getFlexCellFormatter().setRowSpan(ii * 2, 0, 2);
                 if (member.rank == GroupMembership.RANK_MANAGER) {
                     members.setHTML(
-                        ii * 2, 1, CWhirleds.msgs.detailTopMembersManager(), 1, "Manager");
+                        ii * 2, 1, _msgs.detailTopMembersManager(), 1, "Manager");
                 }
                 SimplePanel name = MsoyUI.createSimplePanel(
                   "Name", Link.memberView("" + member.name, member.name.getMemberId()));
@@ -426,7 +426,7 @@ public class WhirledDetailPanel extends FlowPanel
             }
 
             // see all opens in contentPanel
-            Label seeAllLink = new Label(CWhirleds.msgs.detailTopMembersSeeAll());
+            Label seeAllLink = new Label(_msgs.detailTopMembersSeeAll());
             content.add(seeAllLink);
             seeAllLink.addStyleName("SeeAll");
             seeAllLink.addStyleName("actionLabel");
@@ -446,6 +446,7 @@ public class WhirledDetailPanel extends FlowPanel
     protected ContentPanel _contentPanel;
 
     protected static final SimpleDateFormat _efmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);

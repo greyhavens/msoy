@@ -4,10 +4,6 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.ServiceDefTarget;
-
-import com.threerings.msoy.game.gwt.GameService;
-import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
@@ -70,10 +66,6 @@ public class GamesPage extends Page
     protected void initContext ()
     {
         super.initContext();
-
-        // wire up our remote services
-        CGames.gamesvc = (GameServiceAsync)GWT.create(GameService.class);
-        ((ServiceDefTarget)CGames.gamesvc).setServiceEntryPoint("/gamesvc");
 
         // load up our translation dictionaries
         CGames.msgs = (GamesMessages)GWT.create(GamesMessages.class);

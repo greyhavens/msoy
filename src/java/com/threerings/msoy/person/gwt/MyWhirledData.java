@@ -1,13 +1,12 @@
 //
 // $Id$
 
-package com.threerings.msoy.landing.gwt;
+package com.threerings.msoy.person.gwt;
 
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.web.data.MemberCard;
 
 /**

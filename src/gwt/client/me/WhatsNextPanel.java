@@ -25,7 +25,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.landing.gwt.MyWhirledData;
+import com.threerings.msoy.person.gwt.MyWhirledData;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.images.next.NextImages;
@@ -67,11 +67,11 @@ public class WhatsNextPanel extends SmartTable
         image.addClickListener(trackListener);
         box.add(image);
         box.add(WidgetUtil.makeShim(10, 10));
-        PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, CMe.msgs.nextPlay(), onClick);
+        PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.nextPlay(), onClick);
         button.addClickListener(trackListener);
         box.add(button);
         box.add(WidgetUtil.makeShim(5, 5));
-        box.add(MsoyUI.createLabel(CMe.msgs.nextPlayTip(), "tipLabel"));
+        box.add(MsoyUI.createLabel(_msgs.nextPlayTip(), "tipLabel"));
         return box;
     }
 
@@ -86,11 +86,11 @@ public class WhatsNextPanel extends SmartTable
         image.addClickListener(trackListener);
         box.add(image);
         box.add(WidgetUtil.makeShim(10, 10));
-        PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, CMe.msgs.nextExplore(), onClick);
+        PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.nextExplore(), onClick);
         button.addClickListener(trackListener);
         box.add(button);
         box.add(WidgetUtil.makeShim(5, 5));
-        box.add(MsoyUI.createLabel(CMe.msgs.nextExploreTip(), "tipLabel"));
+        box.add(MsoyUI.createLabel(_msgs.nextExploreTip(), "tipLabel"));
         return box;
     }
 
@@ -105,11 +105,11 @@ public class WhatsNextPanel extends SmartTable
         contents.setWidget(0, 0, image, 1, "Screen");
         contents.getFlexCellFormatter().setRowSpan(0, 0, 2);
         PushButton button = MsoyUI.createButton(
-            MsoyUI.MEDIUM_THIN, CMe.msgs.nextDecorate(), onClick);
+            MsoyUI.MEDIUM_THIN, _msgs.nextDecorate(), onClick);
         button.addClickListener(trackListener);
         contents.setWidget(0, 1, button);
         contents.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
-        contents.setText(1, 0, CMe.msgs.nextDecorateTip(), 1, "tipLabel");
+        contents.setText(1, 0, _msgs.nextDecorateTip(), 1, "tipLabel");
         box.add(contents);
         return box;
     }
@@ -118,15 +118,15 @@ public class WhatsNextPanel extends SmartTable
     {
         SmartTable friends = new SmartTable(0, 0);
         friends.setHeight("100%");
-        friends.setText(0, 0, CMe.msgs.nextFriends(), 1, "Title");
-        friends.setText(1, 0, CMe.msgs.nextNoFriends(), 1, "NoFriends");
+        friends.setText(0, 0, _msgs.nextFriends(), 1, "Title");
+        friends.setText(1, 0, _msgs.nextNoFriends(), 1, "NoFriends");
         Widget imageLink = Link.createImage(
-            "/images/me/invite_friends.png", CMe.msgs.nextInviteTip(), Page.PEOPLE, "invites");
+            "/images/me/invite_friends.png", _msgs.nextInviteTip(), Page.PEOPLE, "invites");
         ((SourcesClickEvents)imageLink).addClickListener(
             MsoyUI.createTrackingListener("meInviteFriends", null));
         friends.setWidget(2, 0, imageLink);
-        friends.setText(3, 0, CMe.msgs.nextOr(), 1, "Or");
-        friends.setText(4, 0, CMe.msgs.nextFind(), 1, "Title");
+        friends.setText(3, 0, _msgs.nextOr(), 1, "Or");
+        friends.setText(4, 0, _msgs.nextFind(), 1, "Title");
 
         HorizontalPanel sctrls = new HorizontalPanel();
         sctrls.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
@@ -146,15 +146,15 @@ public class WhatsNextPanel extends SmartTable
         sctrls.add(new Button("Search", onClick));
 
         friends.setWidget(5, 0, sctrls);
-        friends.setText(6, 0, CMe.msgs.nextFindTip(), 1, "FindTip");
+        friends.setText(6, 0, _msgs.nextFindTip(), 1, "FindTip");
         return friends;
     }
 
     protected Widget createFriends (MyWhirledData data)
     {
         FlowPanel friends = new FlowPanel();
-        friends.add(MsoyUI.createLabel(CMe.msgs.nextFriends(), "Title"));
-        friends.add(MsoyUI.createLabel(CMe.msgs.nextFriendClick(), "ClickTip"));
+        friends.add(MsoyUI.createLabel(_msgs.nextFriends(), "Title"));
+        friends.add(MsoyUI.createLabel(_msgs.nextFriendClick(), "ClickTip"));
 
         // if we have few friends, show larger photo images
         int size = (data.friends.size() > 6) ?
@@ -218,8 +218,8 @@ public class WhatsNextPanel extends SmartTable
         return member;
     }
 
-    /** Our screenshot images. */
-    protected static NextImages _images = (NextImages)GWT.create(NextImages.class);
+    protected static final NextImages _images = GWT.create(NextImages.class);
+    protected static final MeMessages _msgs = GWT.create(MeMessages.class);
 
     protected static final AbstractImagePrototype[] GAME_SHOTS = {
         _images.astro_shot(), _images.brawler_shot(), _images.dict_shot(),

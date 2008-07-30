@@ -12,8 +12,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.landing.gwt.MeService;
-import com.threerings.msoy.landing.gwt.MeServiceAsync;
+import com.threerings.msoy.person.gwt.MeService;
+import com.threerings.msoy.person.gwt.MeServiceAsync;
 
 import client.shell.Page;
 import client.ui.MsoyUI;
@@ -41,13 +41,13 @@ public class MyRoomsPanel extends VerticalPanel
 
     protected void init (List<MeService.Room> rooms)
     {
-        add(new TongueBox(null, CMe.msgs.roomsIntro(), false));
+        add(new TongueBox(null, _msgs.roomsIntro(), false));
         SmartTable grid = new SmartTable(0, 0);
         for (int ii = 0; ii < rooms.size(); ii++) {
             int row = ii / ROOM_COLUMNS, col = ii % ROOM_COLUMNS;
             grid.setWidget(row, col, new RoomWidget(rooms.get(ii)));
         }
-        add(new TongueBox(CMe.msgs.titleRooms(), grid));
+        add(new TongueBox(_msgs.titleRooms(), grid));
     }
 
     protected static class RoomWidget extends SmartTable
@@ -64,6 +64,7 @@ public class MyRoomsPanel extends VerticalPanel
         }
     }
 
+    protected static final MeMessages _msgs = GWT.create(MeMessages.class);
     protected static final MeServiceAsync _mesvc = (MeServiceAsync)
         ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
 

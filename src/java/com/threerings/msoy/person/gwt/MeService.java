@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.landing.gwt;
+package com.threerings.msoy.person.gwt;
 
 import java.util.List;
 
@@ -13,7 +13,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
-import com.threerings.msoy.person.gwt.FeedMessage;
 
 /**
  * Provides information for the Me page.

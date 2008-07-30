@@ -68,7 +68,7 @@ public class Application
     {
         _currentToken = token;
 
-        String page = (token == null || token.equals("")) ? Page.ME : token;
+        String page = (token == null || token.equals("")) ? getLandingPage() : token;
         Args args = new Args();
         int dashidx = token.indexOf("-");
         if (dashidx != -1) {
@@ -196,12 +196,18 @@ public class Application
         }
     }
 
+    protected String getLandingPage ()
+    {
+        return CShell.isGuest() ? Page.LANDING : Page.ME;
+    }
+
     protected void createMappings ()
     {
         _creators.put(Page.ACCOUNT, client.account.AccountPage.getCreator());
         _creators.put(Page.ADMIN, client.admin.AdminPage.getCreator());
         _creators.put(Page.GAMES, client.games.GamesPage.getCreator());
         _creators.put(Page.HELP, client.help.HelpPage.getCreator());
+        _creators.put(Page.LANDING, client.landing.LandingPage.getCreator());
         _creators.put(Page.MAIL, client.mail.MailPage.getCreator());
         _creators.put(Page.ME, client.me.MePage.getCreator());
         _creators.put(Page.PEOPLE, client.people.PeoplePage.getCreator());

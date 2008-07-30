@@ -6,6 +6,7 @@ package client.games;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
@@ -14,7 +15,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.game.gwt.GameDetail;
+import com.threerings.msoy.game.gwt.GameService;
+import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.item.data.all.Game;
 
 import client.item.ItemRating;
@@ -25,6 +29,7 @@ import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.NaviUtil;
+import client.util.ServiceUtil;
 import client.util.NaviUtil.GameDetails;
 
 /**
@@ -43,7 +48,7 @@ public class GameDetailPanel extends SmartTable
         if (_gameId == gameId) {
             selectTab(tab);
         } else {
-            CGames.gamesvc.loadGameDetail(CGames.ident, gameId, new MsoyCallback<GameDetail>() {
+            _gamesvc.loadGameDetail(CGames.ident, gameId, new MsoyCallback<GameDetail>() {
                 public void onSuccess (GameDetail detail) {
                     setGameDetail(gameId, detail);
                     selectTab(tab);
@@ -62,7 +67,8 @@ public class GameDetailPanel extends SmartTable
         Game game = detail.getGame();
         VerticalPanel shot = new VerticalPanel();
         shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        shot.add(new ThumbBox(game.getShotMedia(), Game.SHOT_WIDTH, Game.SHOT_HEIGHT, null));
+        shot.add(new ThumbBox(game.getShotMedia(), GameDetail.SHOT_WIDTH,
+                              GameDetail.SHOT_HEIGHT, null));
         if (detail.listedItem != null) {
             shot.add(WidgetUtil.makeShim(5, 5));
             shot.add(new ItemRating(detail.listedItem, detail.memberItemInfo, false));
@@ -166,4 +172,7 @@ public class GameDetailPanel extends SmartTable
     protected int _gameId;
     protected GameDetails _seltab;
     protected Map<GameDetails, Integer> _tabmap = new HashMap<GameDetails, Integer>();
+
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

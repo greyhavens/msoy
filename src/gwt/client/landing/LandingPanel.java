@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.me;
+package client.landing;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -62,7 +62,7 @@ public class LandingPanel extends SimplePanel
 
         // login box
         final FlowPanel login = new FlowPanel();
-        PushButton loginButton = new PushButton(CMe.msgs.landingLogin());
+        PushButton loginButton = new PushButton(_msgs.landingLogin());
         loginButton.addStyleName("LoginButton");
         login.add(new LogonPanel(true, loginButton, true));
         login.add(loginButton);
@@ -80,14 +80,14 @@ public class LandingPanel extends SimplePanel
             }
         };
         final Image clickToPlayImage = MsoyUI.createActionImage(
-                "/images/landing/play_screen.png", CMe.msgs.landingClickToStart(), onClick);
+                "/images/landing/play_screen.png", _msgs.landingClickToStart(), onClick);
         clickToPlayImage.addClickListener(
             MsoyUI.createTrackingListener("landingVideoPlayed", null));
         video.add(clickToPlayImage, 0, 0);
         content.add(video, 465, 90);
 
         // tagline
-        final HTML tagline = new HTML(CMe.msgs.landingTagline());
+        final HTML tagline = new HTML(_msgs.landingTagline());
         tagline.setStyleName("LandingTagline");
         content.add(tagline, 425, 275);
 
@@ -135,6 +135,7 @@ public class LandingPanel extends SimplePanel
     protected AvatarPanel _avatarPanel;
 
     protected static final LandingImages _images = GWT.create(LandingImages.class);
+    protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
     protected static final LandingServiceAsync _landingsvc = (LandingServiceAsync)
         ServiceUtil.bind(GWT.create(LandingService.class), LandingService.ENTRY_POINT);
 }
