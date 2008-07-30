@@ -26,7 +26,6 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -338,10 +337,7 @@ public class ProfileServlet extends MsoyServiceServlet
                 entry.getValue().gameName = "";
             } else {
                 entry.getValue().gameName = record.name;
-                if (record.thumbMediaHash != null) {
-                    entry.getValue().gameThumb = new MediaDesc(
-                        record.thumbMediaHash, record.thumbMimeType, record.thumbConstraint);
-                }
+                entry.getValue().gameThumb = record.getThumbMediaDesc();
             }
         }
 

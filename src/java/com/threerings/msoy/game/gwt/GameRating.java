@@ -6,7 +6,6 @@ package com.threerings.msoy.game.gwt;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Contains information about an an implicit user's rating for a (also included) game.
@@ -21,7 +20,7 @@ public class GameRating
     public String gameName;
 
     /** The game's thumbnail media. */
-    public MediaDesc gameThumb = Item.getDefaultThumbnailMediaFor(Item.GAME);
+    public MediaDesc gameThumb;
 
     /** The single player rating of the user for this game. */
     public int singleRating;
