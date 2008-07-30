@@ -19,11 +19,7 @@ import static com.threerings.msoy.Log.log;
  * Manages the persistent store of {@link TemplateRecord} items.
  */
 @Singleton
-public class TemplateRepository extends ItemRepository<
-    TemplateRecord,
-    TemplateCloneRecord,
-    TemplateCatalogRecord,
-    TemplateRatingRecord>
+public class TemplateRepository extends ItemRepository<TemplateRecord>
 {
     @Entity(name="TemplateTagRecord")
     public static class TemplateTagRecord extends TagRecord
@@ -47,21 +43,21 @@ public class TemplateRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<TemplateCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return TemplateCatalogRecord.class;
+        return coerceCatalog(TemplateCatalogRecord.class);
     }
 
     @Override
-    protected Class<TemplateCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return TemplateCloneRecord.class;
+        return coerceClone(TemplateCloneRecord.class);
     }
 
     @Override
-    protected Class<TemplateRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return TemplateRatingRecord.class;
+        return coerceRating(TemplateRatingRecord.class);
     }
 
     @Override
