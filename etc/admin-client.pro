@@ -4,6 +4,7 @@
 # Proguard configuration file for the Admin Dashboard client
 
 -injars ../dist/lib/commons-io.jar(!META-INF/*)
+-injars ../dist/lib/google-collect.jar(!META-INF/*)
 -injars ../dist/lib/samskivert-0.0-SNAPSHOT.jar(
     com/samskivert/Log.class,**/io/**,**/net/**,**/swing/**,**/text/**,**/util/**,
     **/servlet/user/Password.class,**/servlet/user/User.class,**/servlet/user/UserUtil.class)
@@ -18,11 +19,9 @@
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class)
 -injars ../dist/msoy-code.jar(
     !**/*UnitTest.class,rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
-    **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/all/**,
-    **/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
-    **/msoy/group/data/GroupMembership.class,**/msoy/badge/data/**,
-    **/msoy/game/data/GameMemberInfo.class,**/msoy/notify/data/**,
-    **/msoy/game/data/GameSummary.class,**/msoy/world/data/WorldOccupantInfo.class)
+    **/msoy/item/data/all/**,**/msoy/admin/data/**,**/msoy/admin/client/**,**/msoy/admin/util/**,
+    **/msoy/group/data/all/GroupMembership.class,**/msoy/badge/data/**,
+    **/msoy/notify/data/**,**/msoy/game/data/GameSummary.class)
 
 -dontskipnonpubliclibraryclasses
 -outjars ../dist/admin-client.jar
