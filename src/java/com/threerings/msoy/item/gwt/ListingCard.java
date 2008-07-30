@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Contains a smidgen of information on an item.
@@ -52,13 +51,5 @@ public class ListingCard implements IsSerializable
             return oc.itemType == itemType && oc.catalogId == catalogId;
         }
         return false;
-    }
-
-    /**
-     * Returns this listing's item thumbnail media or the default.
-     */
-    public MediaDesc getThumbnailMedia ()
-    {
-        return thumbMedia == null ? Item.getDefaultThumbnailMediaFor(itemType) : thumbMedia;
     }
 }

@@ -456,6 +456,7 @@ public class GameServlet extends MsoyServiceServlet
             data.topGames = Lists.newArrayList();
             for (GameRecord game : _gameRepo.loadGenre((byte)-1, ArcadeData.TOP_GAME_COUNT)) {
                 GameInfo gameInfo = new GameInfo();
+                // we only want some of the game info here, so we don't use GameRecord.toGameInfo
                 gameInfo.gameId = game.gameId;
                 gameInfo.name = game.name;
                 gameInfo.thumbMedia = game.getThumbMediaDesc();

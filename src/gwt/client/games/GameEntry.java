@@ -32,7 +32,7 @@ public class GameEntry extends SmartTable
             }
         };
         setWidget(0, 0, MediaUtil.createMediaView(
-                      game.getThumbMedia(), MediaDesc.THUMBNAIL_SIZE, onClick), 1, "Thumb");
+                      game.thumbMedia, MediaDesc.THUMBNAIL_SIZE, onClick), 1, "Thumb");
 
         setWidget(0, 1, MsoyUI.createActionLabel(game.name, onClick), 1, "Name");
 

@@ -410,7 +410,7 @@ public class MediaDesc implements Serializable, Streamable, IsSerializable
      */
     public static String mdToString (MediaDesc md)
     {
-        if (md == null) {
+        if (md == null || md instanceof StaticMediaDesc) {
             return "";
         }
         // Using StringBuffer for GWT compatability

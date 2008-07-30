@@ -108,7 +108,7 @@ public class ShopPanel extends HorizontalPanel
 
         ClickListener onClick = makeClick(card);
         FlowPanel right = new FlowPanel();
-        right.add(new ThumbBox(card.getThumbnailMedia(), onClick));
+        right.add(new ThumbBox(card.thumbMedia, onClick));
         right.add(WidgetUtil.makeShim(10, 10));
         right.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, CShop.msgs.shopBuy(), onClick));
 
@@ -135,7 +135,7 @@ public class ShopPanel extends HorizontalPanel
     {
         public TopListingBox (int rank, ListingCard card) {
             super("TopListingBox", 0, 0);
-            setWidget(0, 1, new ThumbBox(card.getThumbnailMedia(), MediaDesc.HALF_THUMBNAIL_SIZE,
+            setWidget(0, 1, new ThumbBox(card.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
                                          makeClick(card)), 1, "Thumb");
             setText(1, 0, CShop.msgs.shopRank(""+rank), 1, "Ranking");
             setWidget(1, 1, MsoyUI.createLabel(card.name, "Name")); // requires overflow: hidden

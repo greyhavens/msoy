@@ -333,9 +333,12 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
         item.flagged = flagged;
         item.attrs = attrs;
         item.mature = mature;
-        item.furniMedia = (furniMediaHash == null) ?
-            null : new MediaDesc(furniMediaHash, furniMimeType, furniConstraint);
-        item.thumbMedia = getThumbMediaDesc();
+        if (furniMediaHash != null) {
+            item.furniMedia = new MediaDesc(furniMediaHash, furniMimeType, furniConstraint);
+        }
+        if (thumbMediaHash != null) {
+            item.thumbMedia = new MediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
+        }
         return item;
     }
 
@@ -379,13 +382,13 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     }
 
     /**
-     * Returns the MediaDesc for the thumbnail media of this item, or null if there is no
-     * thumbnail media.
+     * Returns the MediaDesc for the thumbnail media of this item, or the default if the item has
+     * no thumbnail media.
      */
     public MediaDesc getThumbMediaDesc ()
     {
-        return (thumbMediaHash == null) ?
-            null : new MediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
+        return (thumbMediaHash == null) ? Item.getDefaultThumbnailMediaFor(getType()) :
+            new MediaDesc(thumbMediaHash, thumbMimeType, thumbConstraint);
     }
 
     /**

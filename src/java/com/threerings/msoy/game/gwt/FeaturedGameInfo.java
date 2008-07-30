@@ -31,6 +31,6 @@ public class FeaturedGameInfo extends GameInfo
      */
     public MediaDesc getShotMedia ()
     {
-        return (shotMedia != null) ? shotMedia : getThumbMedia();
+        return (shotMedia != null) ? shotMedia : thumbMedia;
     }
 }

@@ -6,7 +6,6 @@ package com.threerings.msoy.game.gwt;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Contains summary information for a game being displayed on the arcade page.
@@ -64,12 +63,4 @@ public class GameInfo
 
     /** The number of user ratings that went into the average rating. */
     public int ratingCount;
-
-    /**
-     * Returns the media to be shown for this game's thumbnail.
-     */
-    public MediaDesc getThumbMedia ()
-    {
-        return (thumbMedia != null) ? thumbMedia : Item.getDefaultThumbnailMediaFor(Item.GAME);
-    }
 }

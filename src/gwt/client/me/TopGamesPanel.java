@@ -106,7 +106,7 @@ public class TopGamesPanel extends AbsolutePanel
 
         SimplePanel thumbnail = new SimplePanel();
         Widget thumbnailImage = MediaUtil.createMediaView(
-            game.getThumbMedia(), MediaDesc.HALF_THUMBNAIL_SIZE);
+            game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE);
         thumbnail.setStyleName("Thumbnail");
         thumbnail.add(thumbnailImage);
         gamePanelInner.setWidget(0, 0, thumbnail);

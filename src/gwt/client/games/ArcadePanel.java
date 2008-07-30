@@ -97,14 +97,14 @@ public class ArcadePanel extends FlowPanel
                 if (i == 0) {
                     genreGame.addStyleName("First");
                     genreGame.add(
-                        new ThumbBox(game.getThumbMedia(), MediaDesc.THUMBNAIL_SIZE, gameClick));
+                        new ThumbBox(game.thumbMedia, MediaDesc.THUMBNAIL_SIZE, gameClick));
                     genreGame.add(MsoyUI.createSimplePanel(
                                       "Name", MsoyUI.createActionLabel(game.name, gameClick)));
                     genreGame.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 50),
                                                      "Description"));
                 }
                 else {
-                    genreGame.add(new ThumbBox(game.getThumbMedia(),
+                    genreGame.add(new ThumbBox(game.thumbMedia, 
                                                MediaDesc.HALF_THUMBNAIL_SIZE, gameClick));
                     genreGame.add(MsoyUI.createSimplePanel(
                                       "Name", MsoyUI.createActionLabel(game.name, gameClick)));
@@ -133,7 +133,7 @@ public class ArcadePanel extends FlowPanel
             add(MsoyUI.createLabel(index+"", "Number"));
             ClickListener onClick = Link.createListener(
                 Page.GAMES, Args.compose("d", game.gameId));
-            add(new ThumbBox(game.getThumbMedia(), MediaDesc.HALF_THUMBNAIL_SIZE, onClick));
+            add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE, onClick));
             add(MsoyUI.createSimplePanel("Name", MsoyUI.createActionLabel(game.name, onClick)));
         }
     }

@@ -182,7 +182,7 @@ public class GameGenrePanel extends FlowPanel
                     }
                 };
                 setWidget(0, col++, MediaUtil.createMediaView(
-                    game.getThumbMedia(), MediaDesc.THUMBNAIL_SIZE, gameClick), 1, "Thumbnail");
+                    game.thumbMedia, MediaDesc.THUMBNAIL_SIZE, gameClick), 1, "Thumbnail");
 
                 FlowPanel name = new FlowPanel();
                 name.add(MsoyUI.createActionLabel(game.name, "Name", gameClick));

@@ -30,7 +30,7 @@ public class GameSummary extends SimpleStreamableObject
     public byte gameMediaType;
 
     /** The thumbnail of the game - used as a game icon */
-    public MediaDesc thumbMedia;
+    protected MediaDesc thumbMedia;
 
     /** Used for unserialization. */
     public GameSummary ()

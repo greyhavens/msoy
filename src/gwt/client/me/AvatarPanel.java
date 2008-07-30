@@ -51,8 +51,8 @@ public class AvatarPanel extends FlowPanel
 
             ClickListener click = Link.createListener(
                 Page.SHOP, Args.compose("l", "" + card.itemType, "" + card.catalogId));
-            setWidget(0, 0, new ThumbBox(
-                card.getThumbnailMedia(), MediaDesc.THUMBNAIL_SIZE, click), 1, "Thumb");
+            setWidget(0, 0, new ThumbBox(card.thumbMedia, MediaDesc.THUMBNAIL_SIZE, click),
+                1, "Thumb");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
             setWidget(0, 1, MsoyUI.createLabel(card.name, "Name"));
             setWidget(1, 0, MsoyUI.createLabel(
