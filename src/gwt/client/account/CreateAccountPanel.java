@@ -30,7 +30,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.person.gwt.Profile;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.AccountInfo;
@@ -96,7 +96,7 @@ public class CreateAccountPanel extends FlowPanel
             CAccount.msgs.createConfirmTip()));
         _confirm.addKeyboardListener(_onType);
 
-        _name = MsoyUI.createTextBox("", Profile.MAX_DISPLAY_NAME_LENGTH, -1);
+        _name = MsoyUI.createTextBox("", MemberName.MAX_DISPLAY_NAME_LENGTH, -1);
         _name.addKeyboardListener(_onType);
         add(new LabeledBox(
             CAccount.msgs.createDisplayName(), _name, CAccount.msgs.createDisplayNameTip()));
@@ -175,8 +175,8 @@ public class CreateAccountPanel extends FlowPanel
             status = CAccount.msgs.createMissingDoB();
             // this is not a FocusWidget so we have to handle it specially
             _dateOfBirth.setFocus(true);
-        } else if (name.length() < Profile.MIN_DISPLAY_NAME_LENGTH) {
-            status = CAccount.msgs.createNameTooShort(""+Profile.MIN_DISPLAY_NAME_LENGTH);
+        } else if (name.length() < MemberName.MIN_DISPLAY_NAME_LENGTH) {
+            status = CAccount.msgs.createNameTooShort(""+MemberName.MIN_DISPLAY_NAME_LENGTH);
             toFocus = _name;
         } else if (!_tosBox.isChecked()) {
             status = CAccount.msgs.createMustAgreeTOS();

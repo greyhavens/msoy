@@ -207,7 +207,7 @@ public class ProfileBlurb extends Blurb
         int row = 0;
         econtent.setText(row, 0, CPeople.msgs.displayName());
         econtent.setWidget(row++, 1, _ename = new TextBox());
-        _ename.setMaxLength(Profile.MAX_DISPLAY_NAME_LENGTH);
+        _ename.setMaxLength(MemberName.MAX_DISPLAY_NAME_LENGTH);
         _ename.setText(_name.toString());
 
         econtent.setText(row, 0, "Photo");
@@ -287,8 +287,8 @@ public class ProfileBlurb extends Blurb
         final String name = _ename.getText().trim();
         if (!Profile.isValidDisplayName(name)) {
             MsoyUI.infoNear(CPeople.msgs.displayNameInvalid(
-                                "" + Profile.MIN_DISPLAY_NAME_LENGTH,
-                                "" + Profile.MAX_DISPLAY_NAME_LENGTH), _ename);
+                                "" + MemberName.MIN_DISPLAY_NAME_LENGTH,
+                                "" + MemberName.MAX_DISPLAY_NAME_LENGTH), _ename);
             return;
         }
         if (!CPeople.isSupport() && !Profile.isValidNonSupportName(name)) {

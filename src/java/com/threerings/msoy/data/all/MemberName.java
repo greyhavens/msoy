@@ -50,6 +50,12 @@ public class MemberName extends Name
     /** The maximum allowable length of a permaname. */
     public static final int MAXIMUM_PERMANAME_LENGTH = 12;
 
+    /** The maximum length for a display name. */
+    public static final int MAX_DISPLAY_NAME_LENGTH = 30;
+
+    /** The minimum length for a display name. */
+    public static final int MIN_DISPLAY_NAME_LENGTH = 3;
+
     /**
      * Returns true if the supplied member id represents an anonymous viewer.
      */

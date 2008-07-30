@@ -6,6 +6,7 @@ package com.threerings.msoy.person.gwt;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.MemberCard;
 
 /**
@@ -13,12 +14,6 @@ import com.threerings.msoy.web.data.MemberCard;
  */
 public class Profile implements IsSerializable
 {
-    /** The minimum length for a display name. */
-    public static final int MIN_DISPLAY_NAME_LENGTH = 3;
-
-    /** The maximum length for a display name. */
-    public static final int MAX_DISPLAY_NAME_LENGTH = 30;
-
     /** The maximum length for a member's status. */
     public static final int MAX_STATUS_LENGTH = 100;
 
@@ -80,8 +75,8 @@ public class Profile implements IsSerializable
      */
     public static boolean isValidDisplayName (String name)
     {
-        return (name != null && name.length() >= MIN_DISPLAY_NAME_LENGTH &&
-                name.length() <= MAX_DISPLAY_NAME_LENGTH);
+        return (name != null && name.length() >= MemberName.MIN_DISPLAY_NAME_LENGTH &&
+                name.length() <= MemberName.MAX_DISPLAY_NAME_LENGTH);
     }
 
     /**
