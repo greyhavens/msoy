@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
@@ -167,9 +166,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
 
     protected void addToAvailable (int memberId, int amount)
     {
-        Iterator<PlayerList> iter = _playerLists.iterator();
-        while (iter.hasNext()) {
-            PlayerList list = iter.next();
+        for (PlayerList list : _playerLists) {
             if (list.addToAvailable(memberId, amount)) {
                 break;
             }
@@ -269,16 +266,11 @@ public class PlayerBrowserPanel extends HorizontalPanel
             }
             _rows = new Element[_result.invitees.size()];
             int ii = 0;
-            Iterator<MemberInviteStatus> iter = _result.invitees.iterator();
-            while (iter.hasNext()) {
-                final MemberInviteStatus member = iter.next();
+            for (MemberInviteStatus member : _result.invitees) {
                 getRowFormatter().addStyleName(row, "DataRow");
                 Label nameLabel = new Label(member.name);
-                nameLabel.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        Link.go(Page.ADMIN, Args.compose("browser", member.memberId));
-                    }
-                });
+                nameLabel.addClickListener(
+                    Link.createListener(Page.ADMIN, Args.compose("browser", member.memberId)));
                 nameLabel.addStyleName("Clickable");
                 _memberIds.put(member.memberId, nameLabel);
                 setWidget(row, NAME_COLUMN, nameLabel);
