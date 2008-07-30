@@ -4,64 +4,37 @@
 package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObjectContainer;
-import flash.display.Loader;
-import flash.display.LoaderInfo;
-import flash.display.MovieClip;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
-
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
-
 import flash.net.URLLoader;
 import flash.net.URLRequest;
-
 import flash.system.Security;
-
 import flash.text.TextField;
-
 import flash.utils.Timer;
 
 import caurina.transitions.Tweener;
-
-import mx.core.Container;
-
-import com.whirled.game.data.WhirledGameObject;
-
-import com.threerings.util.Log;
-import com.threerings.util.MessageBundle;
-import com.threerings.util.MultiLoader;
-
-import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ClientObserver;
-import com.threerings.presents.client.ResultWrapper;
-import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.MessageListener;
-
-import com.threerings.crowd.client.LocationAdapter;
-import com.threerings.crowd.client.PlaceController;
-import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.msoy.ui.MsoyMediaContainer;
 
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.TrophySource;
-import com.threerings.msoy.world.client.WorldContext;
-
 import com.threerings.msoy.game.data.MsoyGameCodes;
-import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.ui.AwardPanel;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.client.ClientObserver;
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
+import com.threerings.util.Log;
+import com.threerings.util.MultiLoader;
+import com.whirled.game.data.WhirledGameObject;
 
 /**
  * Handles all the fiddly bits relating to connecting to a separate server to match-make and
@@ -215,8 +188,8 @@ public class GameLiaison
     public function clientDidClear (event :ClientEvent) :void
     {
         // remove any trophy panel we might have lying around
-        if (_awardPanel != null && _awardPanel.parent != null) {
-            _wctx.getTopPanel().getPlaceContainer().removeOverlay(_awardPanel);
+        if (_awardPanel != null) {
+            _awardPanel.close();
             // if the path completes after this, it will generate a warning, but in "theory" it
             // should stop receiving onEnterFrame when it's removed from the hierarchy
         }
@@ -230,96 +203,16 @@ public class GameLiaison
         const name :String = event.getName();
         const args :Array = event.getArgs();
         if (name == MsoyGameCodes.TROPHY_AWARDED || name == MsoyGameCodes.PRIZE_AWARDED) {
-            _pendingAwards.push(args[0]);
-            checkPendingAwards();
+            if (_awardPanel == null) {
+                _awardPanel = new AwardPanel(_wctx, _gctx.getChatDirector());
+            }
+            _awardPanel.displayAward(args[0]);
 
         } else if (name == WhirledGameObject.COINS_AWARDED_MESSAGE &&
                 _gctx.getPlayerObject().isGuest() && Boolean(args[2]) /* for real */) {
             // if a guest earns flow, we want to show them the "please register" dialog
             displayGuestFlowEarnage(int(args[0]));
         }
-    }
-
-    protected function checkPendingAwards () :void
-    {
-        // if we haven't yet loaded our trophy panel, do that
-        if (_awardPanel == null) {
-            _awardPanel = LOADING;
-            MultiLoader.getContents(AWARD_PANEL, function (result :DisplayObjectContainer) :void {
-                _awardPanel = result;
-                checkPendingAwards();
-            });
-
-        } else if (_awardPanel == LOADING || _awardPanel.stage != null ||
-                   _pendingAwards.length == 0) {
-            // we're loading the award panel or it's being used or we're done
-
-        } else {
-            // otherwise pop the next award from the list and display it
-            displayAward(_pendingAwards.pop());
-        }
-    }
-
-    protected function displayAward (award :Object) :void
-    {
-        var msg :String, name :String, title :String;
-        var media :MediaDesc;
-        if (award is Trophy) {
-            var trophy :Trophy = (award as Trophy);
-            msg = MessageBundle.tcompose("m.trophy_earned", trophy.name);
-            name = trophy.name;
-            title = "m.trophy_title";
-            media = trophy.trophyMedia;
-
-        } else if (award is Item) {
-            var item :Item = (award as Item);
-            msg = MessageBundle.tcompose("m.prize_earned", item.name);
-            name = item.name;
-            title = "m.prize_title";
-            media = item.getThumbnailMedia();
-
-        } else {
-            log.warning("Requested to display unknown award " + award + ".");
-            checkPendingAwards();
-            return;
-        }
-
-        // display a chat message reporting their award
-        _gctx.getChatDirector().displayInfo(MsoyCodes.GAME_MSGS, msg);
-
-        // configure the award display panel with the award info
-        (_awardPanel.getChildByName("statement") as TextField).text =
-            _wctx.xlate(MsoyCodes.GAME_MSGS, title);
-        (_awardPanel.getChildByName("trophy_name") as TextField).text = name;
-        var clip :MovieClip = (_awardPanel.getChildByName("trophy") as MovieClip);
-        while (clip.numChildren > 0) { // remove any old trophy image or the sample
-            clip.removeChildAt(0);
-        }
-        var image :MsoyMediaContainer = new MsoyMediaContainer(media);
-        clip.addChild(image);
-
-        // add the award panel to the stage now so that the logic that checks if it's used will
-        // be able to detect its state properly
-        _awardPanel.x = 250;
-        _awardPanel.y = -_awardPanel.height;
-        var container :PlaceBox = _wctx.getTopPanel().getPlaceContainer();
-        container.addOverlay(_awardPanel, PlaceBox.LAYER_TRANSIENT);
-
-        // wait for the award image to load
-        var linfo :LoaderInfo = (image.getMedia() as Loader).contentLoaderInfo;
-        linfo.addEventListener(Event.COMPLETE, function (event :Event) :void {
-            // center the award image
-            image.x -= image.getContentWidth()/2;
-            image.y -= image.getContentHeight()/2;
-            Tweener.addTween(_awardPanel, {y: 0, time: 0.75, transition: EASING_OUT});
-            Tweener.addTween(_awardPanel, 
-                {y: -_awardPanel.height, time: 0.5, delay: 3, transition: EASING_IN, 
-                    onComplete: function () :void {
-                        container.removeOverlay(_awardPanel); 
-                        checkPendingAwards();
-                    }
-                });
-        });
     }
 
     protected function displayGuestFlowEarnage (amount :int) :void
@@ -365,8 +258,8 @@ public class GameLiaison
     protected function clearGuestFlow (... ignored) :void
     {
         _flowPanelAutoDismiss.reset();
-        Tweener.addTween(_guestFlowPanel, 
-            {y: -_guestFlowPanel.height, time: 0.75, transition: EASING_IN, 
+        Tweener.addTween(_guestFlowPanel,
+            {y: -_guestFlowPanel.height, time: 0.75, transition: EASING_IN,
                 onComplete: function () :void {
                     _wctx.getTopPanel().getPlaceContainer().removeOverlay(_guestFlowPanel);
                 }
@@ -389,10 +282,7 @@ public class GameLiaison
     protected var _flowPanelAutoDismiss :Timer;
 
     /** The award display movie. */
-    protected var _awardPanel :DisplayObjectContainer;
-
-    /** Awards waiting to be displayed. Either Trophy or Item. */
-    protected var _pendingAwards :Array = [];
+    protected var _awardPanel :AwardPanel;
 
     /** Used to note that we're loading an embedded SWF. */
     protected static const LOADING :Sprite = new Sprite();
