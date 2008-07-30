@@ -19,11 +19,7 @@ import static com.threerings.msoy.Log.log;
  * Manages the persistent store of {@link AvatarRecord} items.
  */
 @Singleton
-public class AvatarRepository extends ItemRepository<
-    AvatarRecord,
-    AvatarCloneRecord,
-    AvatarCatalogRecord,
-    AvatarRatingRecord>
+public class AvatarRepository extends ItemRepository<AvatarRecord>
 {
     @Entity(name="AvatarTagRecord")
     public static class AvatarTagRecord extends TagRecord
@@ -60,21 +56,21 @@ public class AvatarRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<AvatarCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return AvatarCatalogRecord.class;
+        return coerceCatalog(AvatarCatalogRecord.class);
     }
 
     @Override
-    protected Class<AvatarCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return AvatarCloneRecord.class;
+        return coerceClone(AvatarCloneRecord.class);
     }
 
     @Override
-    protected Class<AvatarRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return AvatarRatingRecord.class;
+        return coerceRating(AvatarRatingRecord.class);
     }
 
     @Override

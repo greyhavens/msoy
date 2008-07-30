@@ -16,11 +16,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
  * Manages the persistent store of {@link Decor} items.
  */
 @Singleton
-public class DecorRepository extends ItemRepository<
-    DecorRecord,
-    DecorCloneRecord,
-    DecorCatalogRecord,
-    DecorRatingRecord>
+public class DecorRepository extends ItemRepository<DecorRecord>
 {
     @Entity(name="DecorTagRecord")
     public static class DecorTagRecord extends TagRecord
@@ -44,21 +40,21 @@ public class DecorRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<DecorCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return DecorCatalogRecord.class;
+        return coerceCatalog(DecorCatalogRecord.class);
     }
 
     @Override
-    protected Class<DecorCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return DecorCloneRecord.class;
+        return coerceClone(DecorCloneRecord.class);
     }
 
     @Override
-    protected Class<DecorRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return DecorRatingRecord.class;
+        return coerceRating(DecorRatingRecord.class);
     }
 
     @Override

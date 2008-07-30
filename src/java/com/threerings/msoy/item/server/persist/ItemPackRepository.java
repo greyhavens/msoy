@@ -16,11 +16,7 @@ import com.threerings.msoy.server.persist.TagRecord;
  * Manages the persistent store of {@link ItemPackRecord} items.
  */
 @Singleton
-public class ItemPackRepository extends ItemRepository<
-    ItemPackRecord,
-    ItemPackCloneRecord,
-    ItemPackCatalogRecord,
-    ItemPackRatingRecord>
+public class ItemPackRepository extends ItemRepository<ItemPackRecord>
 {
     @Entity(name="ItemPackTagRecord")
     public static class ItemPackTagRecord extends TagRecord
@@ -44,21 +40,21 @@ public class ItemPackRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<ItemPackCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return ItemPackCatalogRecord.class;
+        return coerceCatalog(ItemPackCatalogRecord.class);
     }
 
     @Override
-    protected Class<ItemPackCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return ItemPackCloneRecord.class;
+        return coerceClone(ItemPackCloneRecord.class);
     }
 
     @Override
-    protected Class<ItemPackRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return ItemPackRatingRecord.class;
+        return coerceRating(ItemPackRatingRecord.class);
     }
 
     @Override

@@ -30,7 +30,7 @@ import com.threerings.msoy.item.gwt.ListingCard;
 @Entity(indices={
     @Index(name="listedItemIndex", fields={ CatalogRecord.LISTED_ITEM_ID } )
 })
-public abstract class CatalogRecord<T extends ItemRecord> extends PersistentRecord
+public abstract class CatalogRecord extends PersistentRecord
     implements Streamable
 {
     // AUTO-GENERATED: FIELDS START

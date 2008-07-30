@@ -9,7 +9,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /** Clone records for ItemPacks. */
 @TableGenerator(name="cloneId", pkColumnValue="ITEMPACK_CLONE")
-public class ItemPackCloneRecord extends CloneRecord<ItemPackRecord>
+public class ItemPackCloneRecord extends CloneRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #itemId} field. */

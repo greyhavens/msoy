@@ -13,7 +13,7 @@ import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
     @Index(name="ixOriginalItem", fields={ CloneRecord.ORIGINAL_ITEM_ID }),
     @Index(name="ixLocation", fields={ CloneRecord.LOCATION })
 })
-public abstract class CloneRecord<T extends ItemRecord> extends PersistentRecord
+public abstract class CloneRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #itemId} field. */

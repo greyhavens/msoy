@@ -16,11 +16,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
  * Manages the persistent store of {@link Furniture} items.
  */
 @Singleton
-public class FurnitureRepository extends ItemRepository<
-    FurnitureRecord,
-    FurnitureCloneRecord,
-    FurnitureCatalogRecord,
-    FurnitureRatingRecord>
+public class FurnitureRepository extends ItemRepository<FurnitureRecord>
 {
     @Entity(name="FurnitureTagRecord")
     public static class FurnitureTagRecord extends TagRecord
@@ -44,21 +40,21 @@ public class FurnitureRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<FurnitureCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return FurnitureCatalogRecord.class;
+        return coerceCatalog(FurnitureCatalogRecord.class);
     }
 
     @Override
-    protected Class<FurnitureCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return FurnitureCloneRecord.class;
+        return coerceClone(FurnitureCloneRecord.class);
     }
 
     @Override
-    protected Class<FurnitureRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return FurnitureRatingRecord.class;
+        return coerceRating(FurnitureRatingRecord.class);
     }
 
     @Override

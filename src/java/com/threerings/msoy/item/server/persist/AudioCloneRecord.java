@@ -9,7 +9,7 @@ import com.samskivert.jdbc.depot.annotation.TableGenerator;
 
 /** Clone records for Audios. */
 @TableGenerator(name="cloneId", pkColumnValue="AUDIO_CLONE")
-public class AudioCloneRecord extends CloneRecord<AudioRecord>
+public class AudioCloneRecord extends CloneRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #itemId} field. */

@@ -9,7 +9,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /** Catalog Records for Avatars. */
 @TableGenerator(name="catalogId", pkColumnValue="AVATAR_CATALOG")
-public class AvatarCatalogRecord extends CatalogRecord<AvatarRecord>
+public class AvatarCatalogRecord extends CatalogRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #catalogId} field. */

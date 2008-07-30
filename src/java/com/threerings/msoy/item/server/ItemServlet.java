@@ -75,7 +75,7 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(item.getType());
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(item.getType());
         try {
             // load up the old version of the item
             final ItemRecord record = repo.loadItem(item.itemId);
@@ -143,8 +143,7 @@ public class ItemServlet extends MsoyServiceServlet
 
         final String fname = newName;
         ItemRecord rec = editClone(ident, itemIdent, new CloneEditOp() {
-            public void doOp (CloneRecord<ItemRecord> record, ItemRecord orig,
-                              ItemRepository<ItemRecord, ?, ?, ?> repo)
+            public void doOp (CloneRecord record, ItemRecord orig, ItemRepository<ItemRecord> repo)
                 throws PersistenceException
             {
                 if (StringUtil.isBlank(fname) || fname.equals(orig.name)) {
@@ -173,7 +172,7 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
         try {
             List<Item> items = Lists.newArrayList();
             for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId)) {
@@ -195,7 +194,7 @@ public class ItemServlet extends MsoyServiceServlet
     public Item loadItem (WebIdent ident, ItemIdent item)
         throws ServiceException
     {
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(item.type);
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(item.type);
         try {
             ItemRecord irec = repo.loadItem(item.itemId);
             return (irec == null) ? null : irec.toItem();
@@ -211,7 +210,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
 
         try {
             ItemRecord record = repo.loadItem(iident.itemId);
@@ -295,7 +294,7 @@ public class ItemServlet extends MsoyServiceServlet
 //        throws ServiceException
 //    {
 //        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-//        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+//        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
 //
 //        try {
 //            // load a copy of the clone to modify
@@ -341,7 +340,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
 
         try {
             final ItemRecord item = repo.loadItem(iident.itemId);
@@ -378,7 +377,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
 
         try {
             ItemRecord item = repo.loadItem(iident.itemId);
@@ -416,7 +415,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+            ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
             List<String> result = Lists.newArrayList();
             for (TagNameRecord tagName : repo.getTagRepository().getTags(iident.itemId)) {
                 result.add(tagName.tag);
@@ -433,7 +432,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+            ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
             List<TagHistoryRecord> records =
                 repo.getTagRepository().getTagHistoryByTarget(iident.itemId);
             IntMap<MemberName> names = _memberRepo.loadMemberNames(
@@ -467,7 +466,7 @@ public class ItemServlet extends MsoyServiceServlet
         try {
             List<TagHistory> list = Lists.newArrayList();
             for (byte type : _itemMan.getRepositoryTypes()) {
-                ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
+                ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
                 for (TagHistoryRecord record :
                          repo.getTagRepository().getTagHistoryByMember(memrec.memberId)) {
                     TagNameRecord tag = (record.tagId == -1) ? null :
@@ -503,7 +502,7 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         try {
-            ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+            ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
             long now = System.currentTimeMillis();
 
             ItemRecord item = repo.loadItem(iident.itemId);
@@ -544,7 +543,7 @@ public class ItemServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         byte type = iident.type;
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
         try {
             ItemRecord item = repo.loadItem(iident.itemId);
             if (item == null) {
@@ -590,7 +589,7 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
 
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
         try {
             // TODO: If things get really tight, this could use updatePartial() later.
             ItemRecord item = repo.loadItem(iident.itemId);
@@ -612,7 +611,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         _mhelper.requireAuthedUser(ident);
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
         try {
             // TODO: If things get really tight, this could use updatePartial() later.
             ItemRecord item = repo.loadItem(iident.itemId);
@@ -644,7 +643,7 @@ public class ItemServlet extends MsoyServiceServlet
         // aren't always from the same type... perhaps we'll just do something clever in the UI
         try {
             for (byte type : _itemMan.getRepositoryTypes()) {
-                ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
+                ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
                 for (ItemRecord record : repo.loadFlaggedItems(count)) {
                     Item item = record.toItem();
 
@@ -678,7 +677,7 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         byte type = iident.type;
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(type);
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
         try {
             ItemRecord item = repo.loadOriginalItem(iident.itemId);
             IntSet owners = new ArrayIntSet();
@@ -759,8 +758,7 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         ItemRecord rec = editClone(ident, itemIdent, new CloneEditOp() {
-            public void doOp (CloneRecord<ItemRecord> record, ItemRecord orig,
-                              ItemRepository<ItemRecord, ?, ?, ?> repo)
+            public void doOp (CloneRecord record, ItemRecord orig, ItemRepository<ItemRecord> repo)
                 throws PersistenceException
             {
                 if (item == null) {
@@ -792,10 +790,10 @@ public class ItemServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(itemIdent.type);
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(itemIdent.type);
         try {
             // load up the old version of the item
-            CloneRecord<ItemRecord> record = repo.loadCloneRecord(itemIdent.itemId);
+            CloneRecord record = repo.loadCloneRecord(itemIdent.itemId);
             if (record == null) {
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
@@ -839,8 +837,7 @@ public class ItemServlet extends MsoyServiceServlet
      */
     protected static interface CloneEditOp
     {
-        public void doOp (CloneRecord<ItemRecord> record, ItemRecord orig,
-                          ItemRepository<ItemRecord, ?, ?, ?> repo)
+        public void doOp (CloneRecord record, ItemRecord orig, ItemRepository<ItemRecord> repo)
             throws PersistenceException;
     }
 

@@ -16,11 +16,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
  * Manages the persistent store of {@link Pet} items.
  */
 @Singleton
-public class PetRepository extends ItemRepository<
-    PetRecord,
-    PetCloneRecord,
-    PetCatalogRecord,
-    PetRatingRecord>
+public class PetRepository extends ItemRepository<PetRecord>
 {
     @Entity(name="PetTagRecord")
     public static class PetTagRecord extends TagRecord
@@ -44,21 +40,21 @@ public class PetRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<PetCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return PetCatalogRecord.class;
+        return coerceCatalog(PetCatalogRecord.class);
     }
 
     @Override
-    protected Class<PetCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return PetCloneRecord.class;
+        return coerceClone(PetCloneRecord.class);
     }
 
     @Override
-    protected Class<PetRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return PetRatingRecord.class;
+        return coerceRating(PetRatingRecord.class);
     }
 
     @Override

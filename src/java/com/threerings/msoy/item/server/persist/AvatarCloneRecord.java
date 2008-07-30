@@ -10,7 +10,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /** Clone records for Avatars. */
 @TableGenerator(name="cloneId", pkColumnValue="AVATAR_CLONE")
-public class AvatarCloneRecord extends CloneRecord<AvatarRecord>
+public class AvatarCloneRecord extends CloneRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #scale} field. */

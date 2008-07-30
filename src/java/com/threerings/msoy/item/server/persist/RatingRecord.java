@@ -13,7 +13,7 @@ import com.threerings.io.Streamable;
  * Represents a member's rating of an item.
  */
 @Entity
-public abstract class RatingRecord<T extends ItemRecord> extends PersistentRecord
+public abstract class RatingRecord extends PersistentRecord
     implements Streamable
 {
     // AUTO-GENERATED: FIELDS START

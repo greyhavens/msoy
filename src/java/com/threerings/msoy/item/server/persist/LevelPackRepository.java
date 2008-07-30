@@ -16,11 +16,7 @@ import com.threerings.msoy.server.persist.TagRecord;
  * Manages the persistent store of {@link LevelPackRecord} items.
  */
 @Singleton
-public class LevelPackRepository extends ItemRepository<
-    LevelPackRecord,
-    LevelPackCloneRecord,
-    LevelPackCatalogRecord,
-    LevelPackRatingRecord>
+public class LevelPackRepository extends ItemRepository<LevelPackRecord>
 {
     @Entity(name="LevelPackTagRecord")
     public static class LevelPackTagRecord extends TagRecord
@@ -44,21 +40,21 @@ public class LevelPackRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<LevelPackCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return LevelPackCatalogRecord.class;
+        return coerceCatalog(LevelPackCatalogRecord.class);
     }
 
     @Override
-    protected Class<LevelPackCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return LevelPackCloneRecord.class;
+        return coerceClone(LevelPackCloneRecord.class);
     }
 
     @Override
-    protected Class<LevelPackRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return LevelPackRatingRecord.class;
+        return coerceRating(LevelPackRatingRecord.class);
     }
 
     @Override

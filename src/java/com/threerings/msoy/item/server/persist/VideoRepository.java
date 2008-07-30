@@ -16,11 +16,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
  * Manages the persistent store of {@link VideoRecord} items.
  */
 @Singleton
-public class VideoRepository extends ItemRepository<
-    VideoRecord,
-    VideoCloneRecord,
-    VideoCatalogRecord,
-    VideoRatingRecord>
+public class VideoRepository extends ItemRepository<VideoRecord>
 {
     @Entity(name="VideoTagRecord")
     public static class VideoTagRecord extends TagRecord
@@ -44,21 +40,21 @@ public class VideoRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<VideoCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return VideoCatalogRecord.class;
+        return coerceCatalog(VideoCatalogRecord.class);
     }
 
     @Override
-    protected Class<VideoCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return VideoCloneRecord.class;
+        return coerceClone(VideoCloneRecord.class);
     }
 
     @Override
-    protected Class<VideoRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return VideoRatingRecord.class;
+        return coerceRating(VideoRatingRecord.class);
     }
 
     @Override

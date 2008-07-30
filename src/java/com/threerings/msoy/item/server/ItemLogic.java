@@ -58,7 +58,7 @@ public class ItemLogic
         }
 
         // create the persistent item record
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _itemMan.getRepository(item.getType());
+        ItemRepository<ItemRecord> repo = _itemMan.getRepository(item.getType());
         final ItemRecord record = repo.newItemRecord(item);
 
         // configure the item's creator and owner
@@ -72,7 +72,7 @@ public class ItemLogic
                             ", item=" + item + "].");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
-            ItemRepository<ItemRecord, ?, ?, ?> prepo = _itemMan.getRepository(parent.type);
+            ItemRepository<ItemRecord> prepo = _itemMan.getRepository(parent.type);
             ItemRecord prec = null;
             try {
                 prec = prepo.loadItem(parent.itemId);

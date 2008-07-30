@@ -16,11 +16,7 @@ import com.threerings.msoy.server.persist.TagRecord;
  * Manages the persistent store of {@link TrophySourceRecord} items.
  */
 @Singleton
-public class TrophySourceRepository extends ItemRepository<
-    TrophySourceRecord,
-    TrophySourceCloneRecord,
-    TrophySourceCatalogRecord,
-    TrophySourceRatingRecord>
+public class TrophySourceRepository extends ItemRepository<TrophySourceRecord>
 {
     @Entity(name="TrophySourceTagRecord")
     public static class TrophySourceTagRecord extends TagRecord
@@ -44,21 +40,21 @@ public class TrophySourceRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<TrophySourceCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return TrophySourceCatalogRecord.class;
+        return coerceCatalog(TrophySourceCatalogRecord.class);
     }
 
     @Override
-    protected Class<TrophySourceCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return TrophySourceCloneRecord.class;
+        return coerceClone(TrophySourceCloneRecord.class);
     }
 
     @Override
-    protected Class<TrophySourceRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return TrophySourceRatingRecord.class;
+        return coerceRating(TrophySourceRatingRecord.class);
     }
 
     @Override

@@ -16,11 +16,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
  * Manages the persistent store of {@link AudioRecord} items.
  */
 @Singleton
-public class AudioRepository extends ItemRepository<
-    AudioRecord,
-    AudioCloneRecord,
-    AudioCatalogRecord,
-    AudioRatingRecord>
+public class AudioRepository extends ItemRepository<AudioRecord>
 {
     @Entity(name="AudioTagRecord")
     public static class AudioTagRecord extends TagRecord
@@ -44,21 +40,21 @@ public class AudioRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<AudioCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return AudioCatalogRecord.class;
+        return coerceCatalog(AudioCatalogRecord.class);
     }
 
     @Override
-    protected Class<AudioCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return AudioCloneRecord.class;
+        return coerceClone(AudioCloneRecord.class);
     }
 
     @Override
-    protected Class<AudioRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return AudioRatingRecord.class;
+        return coerceRating(AudioRatingRecord.class);
     }
 
     @Override

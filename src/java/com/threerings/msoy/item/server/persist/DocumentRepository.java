@@ -16,11 +16,7 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
  * Manages the persistent store of {@link Document} items.
  */
 @Singleton
-public class DocumentRepository extends ItemRepository<
-    DocumentRecord,
-    DocumentCloneRecord,
-    DocumentCatalogRecord,
-    DocumentRatingRecord>
+public class DocumentRepository extends ItemRepository<DocumentRecord>
 {
     @Entity(name="DocumentTagRecord")
     public static class DocumentTagRecord extends TagRecord
@@ -44,21 +40,21 @@ public class DocumentRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<DocumentCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return DocumentCatalogRecord.class;
+        return coerceCatalog(DocumentCatalogRecord.class);
     }
 
     @Override
-    protected Class<DocumentCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return DocumentCloneRecord.class;
+        return coerceClone(DocumentCloneRecord.class);
     }
 
     @Override
-    protected Class<DocumentRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return DocumentRatingRecord.class;
+        return coerceRating(DocumentRatingRecord.class);
     }
 
     @Override

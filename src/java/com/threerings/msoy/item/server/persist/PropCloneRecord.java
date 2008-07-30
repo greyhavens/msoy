@@ -9,7 +9,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /** Clone records for Props. */
 @TableGenerator(name="cloneId", pkColumnValue="PROP_CLONE")
-public class PropCloneRecord extends CloneRecord<PropRecord>
+public class PropCloneRecord extends CloneRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #itemId} field. */

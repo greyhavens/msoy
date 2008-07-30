@@ -16,11 +16,7 @@ import com.threerings.msoy.server.persist.TagRecord;
  * Manages the persistent store of {@link PhotoRecord} items.
  */
 @Singleton
-public class PhotoRepository extends ItemRepository<
-    PhotoRecord,
-    PhotoCloneRecord,
-    PhotoCatalogRecord,
-    PhotoRatingRecord>
+public class PhotoRepository extends ItemRepository<PhotoRecord>
 {
     @Entity(name="PhotoTagRecord")
     public static class PhotoTagRecord extends TagRecord
@@ -44,21 +40,21 @@ public class PhotoRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<PhotoCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return PhotoCatalogRecord.class;
+        return coerceCatalog(PhotoCatalogRecord.class);
     }
 
     @Override
-    protected Class<PhotoCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return PhotoCloneRecord.class;
+        return coerceClone(PhotoCloneRecord.class);
     }
 
     @Override
-    protected Class<PhotoRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return PhotoRatingRecord.class;
+        return coerceRating(PhotoRatingRecord.class);
     }
 
     @Override

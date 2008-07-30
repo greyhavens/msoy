@@ -16,11 +16,7 @@ import com.threerings.msoy.server.persist.TagRecord;
  * Manages the persistent store of {@link PropRecord} items.
  */
 @Singleton
-public class PropRepository extends ItemRepository<
-    PropRecord,
-    PropCloneRecord,
-    PropCatalogRecord,
-    PropRatingRecord>
+public class PropRepository extends ItemRepository<PropRecord>
 {
     @Entity(name="PropTagRecord")
     public static class PropTagRecord extends TagRecord
@@ -44,21 +40,21 @@ public class PropRepository extends ItemRepository<
     }
 
     @Override
-    protected Class<PropCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return PropCatalogRecord.class;
+        return coerceCatalog(PropCatalogRecord.class);
     }
 
     @Override
-    protected Class<PropCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return PropCloneRecord.class;
+        return coerceClone(PropCloneRecord.class);
     }
 
     @Override
-    protected Class<PropRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return PropRatingRecord.class;
+        return coerceRating(PropRatingRecord.class);
     }
 
     @Override

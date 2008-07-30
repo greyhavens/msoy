@@ -7,7 +7,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /** Rating records for TrophySources. */
-public class TrophySourceRatingRecord extends RatingRecord<TrophySourceRecord>
+public class TrophySourceRatingRecord extends RatingRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #itemId} field. */

@@ -84,7 +84,7 @@ public class BuildAndExportTask extends AbstractBuildTask
         UploadUtil.publishUploadFile(uploadFile);
 
         // load the correct item repository
-        ItemRepository<ItemRecord, ?, ?, ?> repo = null;
+        ItemRepository<ItemRecord> repo = null;
         try {
             repo = _itemMan.getRepository(_itemType);
 

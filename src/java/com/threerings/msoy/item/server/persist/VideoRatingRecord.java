@@ -7,7 +7,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /** Rating records for Videos. */
-public class VideoRatingRecord extends RatingRecord<VideoRecord>
+public class VideoRatingRecord extends RatingRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #itemId} field. */

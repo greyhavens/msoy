@@ -175,7 +175,7 @@ public class ItemManager
     /**
      * Returns the repository used to manage items of the specified type.
      */
-    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (ItemIdent ident, ResultListener<?> rl)
+    public ItemRepository<ItemRecord> getRepository (ItemIdent ident, ResultListener<?> rl)
     {
         return getRepository(ident.type, rl);
     }
@@ -183,7 +183,7 @@ public class ItemManager
     /**
      * Returns the repository used to manage items of the specified type.
      */
-    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (byte type, ResultListener<?> rl)
+    public ItemRepository<ItemRecord> getRepository (byte type, ResultListener<?> rl)
     {
         try {
             return getRepositoryFor(type);
@@ -196,7 +196,7 @@ public class ItemManager
     /**
      * Returns the repository used to manage items of the specified type.
      */
-    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (
+    public ItemRepository<ItemRecord> getRepository (
         byte type, InvocationService.InvocationListener lner)
     {
         try {
@@ -219,7 +219,7 @@ public class ItemManager
      * Returns the repository used to manage items of the specified type. Throws a service
      * exception if the supplied type is invalid.
      */
-    public ItemRepository<ItemRecord, ?, ?, ?> getRepository (byte type)
+    public ItemRepository<ItemRecord> getRepository (byte type)
         throws ServiceException
     {
         try {
@@ -235,7 +235,7 @@ public class ItemManager
      */
     public void getItem (final ItemIdent ident, ResultListener<Item> lner)
     {
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
+        final ItemRepository<ItemRecord> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
@@ -273,7 +273,7 @@ public class ItemManager
                 // create a list to hold the results
                 List<Item> items = Lists.newArrayList();
                 // mass-lookup items, a repo at a time
-                for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : list) {
+                for (Tuple<ItemRepository<ItemRecord>, int[]> tup : list) {
                     for (ItemRecord rec : tup.left.loadItems(tup.right)) {
                         items.add(rec.toItem());
                     }
@@ -339,7 +339,7 @@ public class ItemManager
 
                 // mass-lookup items from their respective repositories
                 HashMap<ItemIdent, Item> items = Maps.newHashMap();
-                for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : lookupList) {
+                for (Tuple<ItemRepository<ItemRecord>, int[]> tup : lookupList) {
                     for (ItemRecord rec : tup.left.loadItems(tup.right)) {
                         Item item = rec.toItem();
                         items.put(item.getIdent(), item);
@@ -421,10 +421,10 @@ public class ItemManager
     public void awardPrize (final int memberId, final int gameId, final String gameName,
                             final Prize prize, ResultListener<Item> listener)
     {
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(prize.targetType, listener);
+        final ItemRepository<ItemRecord> repo = getRepository(prize.targetType, listener);
         _invoker.postUnit(new RepositoryListenerUnit<Item>("awardPrize", listener) {
             public Item invokePersistResult () throws Exception {
-                CatalogRecord<ItemRecord> listing = repo.loadListing(prize.targetCatalogId, true);
+                CatalogRecord listing = repo.loadListing(prize.targetCatalogId, true);
                 if (listing == null) {
                     throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
                 }
@@ -488,7 +488,7 @@ public class ItemManager
             return;
         }
 
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(itemType, lner);
+        final ItemRepository<ItemRecord> repo = getRepository(itemType, lner);
         if (repo == null) {
             return; // getRepository already informed the listener about this problem
         }
@@ -631,10 +631,10 @@ public class ItemManager
 
         _invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemsUsage", lner) {
             public Object invokePersistResult () throws Exception {
-                for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : unused) {
+                for (Tuple<ItemRepository<ItemRecord>, int[]> tup : unused) {
                     tup.left.markItemUsage(tup.right, Item.UNUSED, 0);
                 }
-                for (Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> tup : scened) {
+                for (Tuple<ItemRepository<ItemRecord>, int[]> tup : scened) {
                     tup.left.markItemUsage(tup.right, Item.USED_AS_FURNITURE, sceneId);
                 }
                 return null;
@@ -695,7 +695,7 @@ public class ItemManager
         final int memberId, byte type, final int maxCount, ResultListener<List<Item>> lner)
     {
         // locate the appropriate repo
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(type, lner);
+        final ItemRepository<ItemRecord> repo = getRepository(type, lner);
         if (repo == null) {
             return;
         }
@@ -722,7 +722,7 @@ public class ItemManager
                           ResultListener<Void> lner)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
+        final ItemRepository<ItemRecord> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
@@ -746,7 +746,7 @@ public class ItemManager
     public void setMature (final ItemIdent ident, final boolean value, ResultListener<Void> lner)
     {
         // locate the appropriate repository
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident, lner);
+        final ItemRepository<ItemRecord> repo = getRepository(ident, lner);
         if (repo == null) {
             return;
         }
@@ -792,22 +792,6 @@ public class ItemManager
                               InvocationService.ResultListener rl)
         throws InvocationException
     {
-        final HashIntMap<ItemRepository<ItemRecord, ?, ?, ?>> repos =
-            new HashIntMap<ItemRepository<ItemRecord, ?, ?, ?>>();
-
-        // get all the repos for all item idents
-        for (ItemIdent ident : idents) {
-            if (! repos.containsKey(ident.type)) {
-                // get a new repo, and save in the map
-                ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident.type, rl);
-                if (repo == null) {
-                    return; // error already reported to listener...
-                } else {
-                    repos.put(ident.type, repo);
-                }
-            }
-        }
-
         // pull item names from repos
         _invoker.postUnit(
             new RepositoryListenerUnit<String[]>("getItemNames", new ResultAdapter<String[]>(rl)) {
@@ -815,7 +799,7 @@ public class ItemManager
                 String[] itemNames = new String[idents.length];
                 for (int ii = 0; ii < idents.length; ii++) {
                     ItemIdent ident = idents[ii];
-                    ItemRecord rec = repos.get(ident.type).loadItem(ident.itemId);
+                    ItemRecord rec = _repos.get(ident.type).loadItem(ident.itemId);
                     if (rec != null) {
                         itemNames[ii] = rec.name;
                     }
@@ -880,7 +864,7 @@ public class ItemManager
                             ResultListener<Void> rl = new ResultListener.NOOP<Void>();
                             _invoker.postUnit(new RepositoryListenerUnit<Void>("deleteItem", rl) {
                                 public Void invokePersistResult () throws Exception {
-                                    ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(ident.type);
+                                    ItemRepository<ItemRecord> repo = getRepository(ident.type);
                                     repo.deleteItem(ident.itemId);
                                     cl.requestProcessed();
                                     return null;
@@ -974,14 +958,14 @@ public class ItemManager
     public void getRandomCatalogItem (
         final byte itemType, final String[] tags, ResultListener<Item> lner)
     {
-        final ItemRepository<ItemRecord, ?, ?, ?> repo = getRepository(itemType, lner);
+        final ItemRepository<ItemRecord> repo = getRepository(itemType, lner);
         if (repo == null) {
             return;
         }
 
         _invoker.postUnit(new RepositoryListenerUnit<Item>("getRandomCatalogItem", lner) {
             public Item invokePersistResult () throws Exception {
-                CatalogRecord<? extends ItemRecord> record;
+                CatalogRecord record;
                 if (tags == null || tags.length == 0) {
                     record = repo.pickRandomCatalogEntry();
 
@@ -1008,10 +992,10 @@ public class ItemManager
      * servlet handler threads but need not be synchronized because the repositories table is
      * created at server startup time and never modified.
      */
-    protected ItemRepository<ItemRecord, ?, ?, ?> getRepositoryFor (byte type)
+    protected ItemRepository<ItemRecord> getRepositoryFor (byte type)
         throws MissingRepositoryException
     {
-        ItemRepository<ItemRecord, ?, ?, ?> repo = _repos.get(type);
+        ItemRepository<ItemRecord> repo = _repos.get(type);
         if (repo == null) {
             throw new MissingRepositoryException(type);
         }
@@ -1036,7 +1020,7 @@ public class ItemManager
      * difference repositories.
      */
     protected class LookupList
-        implements Iterable<Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]>>
+        implements Iterable<Tuple<ItemRepository<ItemRecord>, int[]>>
     {
         /**
          * Add the specified item id to the list.
@@ -1070,16 +1054,16 @@ public class ItemManager
         }
 
         // from Iterable
-        public Iterator<Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]>> iterator ()
+        public Iterator<Tuple<ItemRepository<ItemRecord>, int[]>> iterator ()
         {
             final Iterator<LookupType> itr = _byType.values().iterator();
-            return new Iterator<Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]>>() {
+            return new Iterator<Tuple<ItemRepository<ItemRecord>, int[]>>() {
                 public boolean hasNext () {
                     return itr.hasNext();
                 }
-                public Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]> next () {
+                public Tuple<ItemRepository<ItemRecord>, int[]> next () {
                     LookupType lookup = itr.next();
-                    return new Tuple<ItemRepository<ItemRecord, ?, ?, ?>, int[]>(
+                    return new Tuple<ItemRepository<ItemRecord>, int[]>(
                         lookup.repo, lookup.getItemIds());
                 }
                 public void remove () {
@@ -1111,12 +1095,12 @@ public class ItemManager
             public byte type;
 
             /** The repository associated with this list. */
-            public ItemRepository<ItemRecord, ?, ?, ?> repo;
+            public ItemRepository<ItemRecord> repo;
 
             /**
              * Create a new LookupType for the specified repository.
              */
-            public LookupType (byte type, ItemRepository<ItemRecord, ?, ?, ?> repo)
+            public LookupType (byte type, ItemRepository<ItemRecord> repo)
             {
                 this.type = type;
                 this.repo = repo;
@@ -1165,7 +1149,7 @@ public class ItemManager
     }
 
     /** Maps byte type ids to repository for all digital item types. */
-    protected Map<Byte, ItemRepository<ItemRecord, ?, ?, ?>> _repos = Maps.newHashMap();
+    protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
 
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;

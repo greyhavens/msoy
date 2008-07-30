@@ -7,7 +7,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /** Rating records for Documents. */
-public class DocumentRatingRecord extends RatingRecord<DocumentRecord>
+public class DocumentRatingRecord extends RatingRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #itemId} field. */

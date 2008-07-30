@@ -9,7 +9,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /** Catalog Records for Videos. */
 @TableGenerator(name="catalogId", pkColumnValue="VIDEO_CATALOG")
-public class VideoCatalogRecord extends CatalogRecord<VideoRecord>
+public class VideoCatalogRecord extends CatalogRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #catalogId} field. */

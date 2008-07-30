@@ -52,11 +52,7 @@ import static com.threerings.msoy.Log.log;
  * Manages the persistent store of {@link Game} items.
  */
 @Singleton
-public class GameRepository extends ItemRepository<
-        GameRecord,
-        GameCloneRecord,
-        GameCatalogRecord,
-        GameRatingRecord>
+public class GameRepository extends ItemRepository<GameRecord>
 {
     @Entity(name="GameTagRecord")
     public static class GameTagRecord extends TagRecord
@@ -493,21 +489,21 @@ public class GameRepository extends ItemRepository<
     }
 
     @Override // from ItemRepository
-    protected Class<GameCatalogRecord> getCatalogClass ()
+    protected Class<CatalogRecord> getCatalogClass ()
     {
-        return GameCatalogRecord.class;
+        return coerceCatalog(GameCatalogRecord.class);
     }
 
     @Override // from ItemRepository
-    protected Class<GameCloneRecord> getCloneClass ()
+    protected Class<CloneRecord> getCloneClass ()
     {
-        return GameCloneRecord.class;
+        return coerceClone(GameCloneRecord.class);
     }
 
     @Override // from ItemRepository
-    protected Class<GameRatingRecord> getRatingClass ()
+    protected Class<RatingRecord> getRatingClass ()
     {
-        return GameRatingRecord.class;
+        return coerceRating(GameRatingRecord.class);
     }
 
     @Override // from ItemRepository

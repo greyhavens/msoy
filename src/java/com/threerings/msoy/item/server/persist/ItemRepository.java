@@ -75,11 +75,7 @@ import static com.threerings.msoy.Log.log;
  * Manages a repository of digital items of a particular type.
  */
 @BlockingThread
-public abstract class ItemRepository<
-    T extends ItemRecord,
-    CLT extends CloneRecord<T>,
-    CAT extends CatalogRecord<T>,
-    RT extends RatingRecord<T>>
+public abstract class ItemRepository<T extends ItemRecord>
     extends DepotRepository
 {
     @Computed
@@ -222,7 +218,7 @@ public abstract class ItemRepository<
      */
     public T loadClone (int cloneId) throws PersistenceException
     {
-        CLT cloneRecord = loadCloneRecord(cloneId);
+        CloneRecord cloneRecord = loadCloneRecord(cloneId);
         if (cloneRecord == null) {
             return null;
         }
@@ -347,7 +343,7 @@ public abstract class ItemRepository<
     /**
      * Loads a single clone record by item id.
      */
-    public CLT loadCloneRecord (int itemId)
+    public CloneRecord loadCloneRecord (int itemId)
         throws PersistenceException
     {
         return load(getCloneClass(), itemId);
@@ -357,7 +353,7 @@ public abstract class ItemRepository<
      * Loads all the raw clone records associated with a given original item id. This is
      * potentially a very large dataset.
      */
-    public List<CLT> loadCloneRecords (int itemId)
+    public List<CloneRecord> loadCloneRecords (int itemId)
         throws PersistenceException
     {
         return findAll(
@@ -387,7 +383,7 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         Class<T> iclass = getItemClass();
-        Class<CLT> cclass = getCloneClass();
+        Class<CloneRecord> cclass = getCloneClass();
 
         Timestamp now = new Timestamp(System.currentTimeMillis());
         for (int itemId : itemIds) {
@@ -413,10 +409,10 @@ public abstract class ItemRepository<
     /**
      * Find a single catalog entry randomly.
      */
-    public CAT pickRandomCatalogEntry ()
+    public CatalogRecord pickRandomCatalogEntry ()
         throws PersistenceException
     {
-        CAT record = load(getCatalogClass(), new QueryClause[] {
+        CatalogRecord record = load(getCatalogClass(), new QueryClause[] {
             new Limit(0, 1),
             OrderBy.random()
         });
@@ -430,7 +426,7 @@ public abstract class ItemRepository<
     /**
      * Find a single random catalog entry that is tagged with *any* of the specified tags.
      */
-    public CAT findRandomCatalogEntryByTags (String... tags)
+    public CatalogRecord findRandomCatalogEntryByTags (String... tags)
         throws PersistenceException
     {
         // first find the tag record...
@@ -445,7 +441,7 @@ public abstract class ItemRepository<
             tagIds[ii] = tagRecords.get(ii).tagId;
         }
 
-        List<CAT> records = findAll(getCatalogClass(),
+        List<CatalogRecord> records = findAll(getCatalogClass(),
             new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
                      getItemClass(), ItemRecord.ITEM_ID),
             new Limit(0, 1),
@@ -458,7 +454,7 @@ public abstract class ItemRepository<
             return null;
         }
 
-        CAT record = records.get(0);
+        CatalogRecord record = records.get(0);
         record.item = loadOriginalItem(record.listedItemId);
         return record;
     }
@@ -492,7 +488,7 @@ public abstract class ItemRepository<
      *       Depot code that we don't know how to handle yet (or possibly some fiddling with
      *       the Item vs Catalog class hierarchies).
      */
-    public List<CAT> loadCatalog (byte sortBy, boolean mature, String search, int tag,
+    public List<CatalogRecord> loadCatalog (byte sortBy, boolean mature, String search, int tag,
                                   int creator, Float minRating, int offset, int rows)
         throws PersistenceException
     {
@@ -539,7 +535,7 @@ public abstract class ItemRepository<
         addSearchClause(clauses, mature, search, tag, creator, minRating);
 
         // finally fetch all the catalog records of interest
-        List<CAT> records = findAll(
+        List<CatalogRecord> records = findAll(
             getCatalogClass(), clauses.toArray(new QueryClause[clauses.size()]));
         if (records.size() == 0) {
             return records;
@@ -561,7 +557,7 @@ public abstract class ItemRepository<
         }
 
         // finally populate the catalog records
-        for (CatalogRecord<T> record : records) {
+        for (CatalogRecord record : records) {
             record.item = map.get(record.listedItemId);
         }
         return records;
@@ -570,10 +566,10 @@ public abstract class ItemRepository<
     /**
      * Load a single catalog listing.
      */
-    public CAT loadListing (int catalogId, boolean loadListedItem)
+    public CatalogRecord loadListing (int catalogId, boolean loadListedItem)
         throws PersistenceException
     {
-        CAT record = load(getCatalogClass(), catalogId);
+        CatalogRecord record = load(getCatalogClass(), catalogId);
         if (record != null && loadListedItem) {
             record.item = load(getItemClass(), record.listedItemId);
         }
@@ -587,7 +583,7 @@ public abstract class ItemRepository<
     public void nudgeListing (int catalogId, boolean purchased)
         throws PersistenceException
     {
-        CAT record = load(getCatalogClass(), catalogId);
+        CatalogRecord record = load(getCatalogClass(), catalogId);
         if (record == null) {
             return; // if the listing has been unlisted, we don't need to nudge it.
         }
@@ -666,7 +662,7 @@ public abstract class ItemRepository<
      * Updates a clone item's override media in the database. This is done when we remix.
      * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
      */
-    public void updateCloneMedia (CloneRecord<?> cloneRec)
+    public void updateCloneMedia (CloneRecord cloneRec)
         throws PersistenceException
     {
         Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -683,7 +679,7 @@ public abstract class ItemRepository<
      * Updates a clone item's override name in the database.
      * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
      */
-    public void updateCloneName (CloneRecord<?> cloneRec)
+    public void updateCloneName (CloneRecord cloneRec)
         throws PersistenceException
     {
         cloneRec.lastTouched = new Timestamp(System.currentTimeMillis());
@@ -707,7 +703,7 @@ public abstract class ItemRepository<
                 "Can't list item with owner [itemId=" + listItem.itemId + "]");
         }
 
-        CAT record;
+        CatalogRecord record;
         try {
             record = getCatalogClass().newInstance();
         } catch (Exception e) {
@@ -773,7 +769,7 @@ public abstract class ItemRepository<
     public ItemRecord insertClone (ItemRecord parent, int newOwnerId, int flowPaid, int goldPaid)
         throws PersistenceException
     {
-        CLT record;
+        CloneRecord record;
         try {
             record = getCloneClass().newInstance();
         } catch (Exception e) {
@@ -807,8 +803,8 @@ public abstract class ItemRepository<
             // delete rating records for this item (and invalidate the cache properly)
             deleteAll(getRatingClass(),
                       new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId),
-                      new CacheInvalidator.TraverseWithFilter<RT>(getRatingClass()) {
-                          public boolean testForEviction (Serializable key, RT record) {
+                      new CacheInvalidator.TraverseWithFilter<RatingRecord>(getRatingClass()) {
+                          public boolean testForEviction (Serializable key, RatingRecord record) {
                               return record != null && record.itemId == itemId;
                           }
                       });
@@ -828,7 +824,7 @@ public abstract class ItemRepository<
     public byte getRating (int itemId, int memberId)
         throws PersistenceException
     {
-        RatingRecord<T> record = load(
+        RatingRecord record = load(
             getRatingClass(), RatingRecord.ITEM_ID, itemId, RatingRecord.MEMBER_ID, memberId);
         return (record == null) ? (byte)0 : record.rating;
     }
@@ -840,7 +836,7 @@ public abstract class ItemRepository<
         throws PersistenceException
     {
         // first create a new rating record
-        RatingRecord<T> record;
+        RatingRecord record;
         try {
             record = getRatingClass().newInstance();
         } catch (Exception e) {
@@ -880,8 +876,8 @@ public abstract class ItemRepository<
     {
         // TODO: this cache eviction might be slow :)
         updatePartial(getRatingClass(), new Where(getRatingColumn(RatingRecord.ITEM_ID), oldItemId),
-                      new CacheInvalidator.TraverseWithFilter<RT>(getRatingClass()) {
-                          public boolean testForEviction (Serializable key, RT record) {
+                      new CacheInvalidator.TraverseWithFilter<RatingRecord>(getRatingClass()) {
+                          public boolean testForEviction (Serializable key, RatingRecord record) {
                               return (record.itemId == oldItemId);
                           }
                       }, RatingRecord.ITEM_ID, newItemId);
@@ -898,7 +894,7 @@ public abstract class ItemRepository<
         if (item.itemId < 0) {
             where = new Where(getCloneColumn(ItemRecord.ITEM_ID), item.itemId,
                               getCloneColumn(ItemRecord.OWNER_ID), item.ownerId);
-            key = new Key<CLT>(getCloneClass(), CloneRecord.ITEM_ID, item.itemId);
+            key = new Key<CloneRecord>(getCloneClass(), CloneRecord.ITEM_ID, item.itemId);
         } else {
             where = new Where(getItemColumn(ItemRecord.ITEM_ID), item.itemId,
                               getItemColumn(ItemRecord.OWNER_ID), item.ownerId);
@@ -936,7 +932,7 @@ public abstract class ItemRepository<
         Collections.addAll(clauseList, clauses);
         clauseList.add(new Join(getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID,
             getItemClass(), ItemRecord.ITEM_ID));
-        List<CLT> clones = findAll(getCloneClass(), clauseList);
+        List<CloneRecord> clones = findAll(getCloneClass(), clauseList);
 
         // our work here is done if we didn't find any
         if (clones.isEmpty()) {
@@ -945,7 +941,7 @@ public abstract class ItemRepository<
 
         // create a set of the corresponding original ids
         ArrayIntSet origIds = new ArrayIntSet(clones.size());
-        for (CLT clone : clones) {
+        for (CloneRecord clone : clones) {
             origIds.add(clone.originalItemId);
         }
 
@@ -960,7 +956,7 @@ public abstract class ItemRepository<
         // now traverse each clone in the originally-returned order and fill in
         // a clone of the ItemRecord to return.
         List<T> results = new ArrayList<T>(clones.size());
-        for (CLT clone : clones) {
+        for (CloneRecord clone : clones) {
             // we could just return the record directly, except that we could be loading
             // more than one clone that uses the same original
             T record = records.get(clone.originalItemId);
@@ -1140,19 +1136,19 @@ public abstract class ItemRepository<
      * Specific item repositories override this method and indicate their item's clone persistent
      * record class.
      */
-    protected abstract Class<CLT> getCloneClass ();
+    protected abstract Class<CloneRecord> getCloneClass ();
 
     /**
      * Specific item repositories override this method and indicate their item's catalog persistent
      * record class.
      */
-    protected abstract Class<CAT> getCatalogClass ();
+    protected abstract Class<CatalogRecord> getCatalogClass ();
 
     /**
      * Specific item repositories override this method and indicate their item's rating persistent
      * record class.
      */
-    protected abstract Class<RT> getRatingClass ();
+    protected abstract Class<RatingRecord> getRatingClass ();
 
     /**
      * Specific item repositories override this method and indicate their item's tag persistent
@@ -1165,6 +1161,27 @@ public abstract class ItemRepository<
      * persistent record class.
      */
     protected abstract TagHistoryRecord createTagHistoryRecord ();
+
+    /** Used to coerce CatalogRecord derivations when implementing {@link #getCatalogClass}. */
+    protected static Class<CatalogRecord> coerceCatalog (Class<? extends CatalogRecord> clazz)
+    {
+        @SuppressWarnings("unchecked") Class<CatalogRecord> cclazz = (Class<CatalogRecord>)clazz;
+        return cclazz;
+    }
+
+    /** Used to coerce CloneRecord derivations when implementing {@link #getCloneClass}. */
+    protected static Class<CloneRecord> coerceClone (Class<? extends CloneRecord> clazz)
+    {
+        @SuppressWarnings("unchecked") Class<CloneRecord> cclazz = (Class<CloneRecord>)clazz;
+        return cclazz;
+    }
+
+    /** Used to coerce RatingRecord derivations when implementing {@link #getRatingClass}. */
+    protected static Class<RatingRecord> coerceRating (Class<? extends RatingRecord> clazz)
+    {
+        @SuppressWarnings("unchecked") Class<RatingRecord> cclazz = (Class<RatingRecord>)clazz;
+        return cclazz;
+    }
 
     /** The byte type of our item. */
     protected byte _itemType;

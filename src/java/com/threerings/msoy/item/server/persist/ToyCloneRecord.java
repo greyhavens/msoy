@@ -9,7 +9,7 @@ import com.samskivert.jdbc.depot.annotation.TableGenerator;
 
 /** Clone records for Toy. */
 @TableGenerator(name="cloneId", pkColumnValue="FURNITURE_CLONE")
-public class ToyCloneRecord extends CloneRecord<ToyRecord>
+public class ToyCloneRecord extends CloneRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #itemId} field. */

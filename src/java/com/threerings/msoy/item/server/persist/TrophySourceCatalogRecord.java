@@ -9,7 +9,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /** Catalog Records for TrophySources. */
 @TableGenerator(name="catalogId", pkColumnValue="TROPHYSOURCE_CATALOG")
-public class TrophySourceCatalogRecord extends CatalogRecord<TrophySourceRecord>
+public class TrophySourceCatalogRecord extends CatalogRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The qualified column identifier for the {@link #catalogId} field. */

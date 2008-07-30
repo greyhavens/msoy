@@ -193,7 +193,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /**
      * Gets the class for the specified item type.
      */
-    public static Class getClassForType (byte itemType)
+    public static Class<? extends Item> getClassForType (byte itemType)
     {
         return _mapping.get(new Byte(itemType));
     }
@@ -201,7 +201,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /**
      * Gets the item type for the specified item class.
      */
-    public static byte getTypeForClass (Class iclass)
+    public static byte getTypeForClass (Class<? extends Item> iclass)
     {
         Byte val = _reverseMapping.get(iclass);
         return (val != null) ? val.byteValue() : NOT_A_TYPE;
@@ -497,7 +497,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     /**
      * Register a concrete subclass and it's associated type code.
      */
-    private static byte registerItemType (Class iclass, int itype)
+    private static byte registerItemType (Class<? extends Item> iclass, int itype)
     {
         byte type = (byte) itype;
         if (itype != type) {
@@ -506,8 +506,8 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
 
         if (_mapping == null) {
             // we can't use google collections here because this class is used in GWT.
-            _mapping = new HashMap<Byte, Class>();
-            _reverseMapping = new HashMap<Class, Byte>();
+            _mapping = new HashMap<Byte, Class<? extends Item>>();
+            _reverseMapping = new HashMap<Class<? extends Item>, Byte>();
         }
 
         Byte otype = new Byte(type);
@@ -517,8 +517,8 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
         return type;
     }
 
-    private static HashMap<Byte, Class> _mapping;
-    private static HashMap<Class, Byte> _reverseMapping;
+    private static HashMap<Byte, Class<? extends Item>> _mapping;
+    private static HashMap<Class<? extends Item>, Byte> _reverseMapping;
 
     protected static final SubItem[] NO_SUBTYPES = {};
 }
