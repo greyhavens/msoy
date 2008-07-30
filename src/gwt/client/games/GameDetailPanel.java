@@ -118,7 +118,7 @@ public class GameDetailPanel extends SmartTable
         if ((detail.sourceItem != null && detail.sourceItem.ownerId == CGames.getMemberId()) ||
             CGames.isAdmin()) {
             addTab(GameDetails.METRICS, CGames.msgs.tabMetrics(), new GameMetricsPanel(detail));
-            addTab(GameDetails.LOGS, CGames.msgs.tabLogs(), new GameLogsPanel(detail));
+            addTab(GameDetails.LOGS, CGames.msgs.tabLogs(), new GameLogsPanel(gameId));
         }
     }
 

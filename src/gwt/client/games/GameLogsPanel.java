@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameLogs;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -26,10 +25,10 @@ import client.util.ServiceUtil;
  */
 public class GameLogsPanel extends VerticalPanel
 {
-    public GameLogsPanel (GameDetail detail)
+    public GameLogsPanel (int gameId)
     {
         setStyleName("gameLogs");
-        _detail = detail;
+        _gameId = gameId;
     }
 
     @Override // from UIObject
@@ -41,7 +40,7 @@ public class GameLogsPanel extends VerticalPanel
         }
 
         add(MsoyUI.createLabel(CGames.msgs.glpLoading(), "Header"));
-        _gamesvc.loadGameLogs(CGames.ident, _detail.gameId, new AsyncCallback<GameLogs>() {
+        _gamesvc.loadGameLogs(CGames.ident, _gameId, new AsyncCallback<GameLogs>() {
             public void onSuccess (GameLogs logs) {
                 gotLogs(logs);
             }
@@ -75,13 +74,13 @@ public class GameLogsPanel extends VerticalPanel
         int row = 0;
         int col = 0;
         for (int ii = 0; ii < logs.logIds.length; ii ++) {
-            String href = "/gamelogs?gameId=" + _detail.gameId + "&logId=" + logs.logIds[ii];
+            String href = "/gamelogs?gameId=" + _gameId + "&logId=" + logs.logIds[ii];
             String label = DATE_FORMAT.format(logs.logTimes[ii]);
 
             table.setWidget(row, col, new HTML(
                                 "<a target='_blank' href='" + href + "'>" + label + "</a>"));
             row ++;
-            if (row * (TABLE_COLUMNS - col) >= (logs.logIds.length - ii)) {
+            if (row * (TABLE_COLUMNS - col - 1) >= (logs.logIds.length - ii)) {
                 row = 0;
                 col ++;
             }
@@ -90,7 +89,7 @@ public class GameLogsPanel extends VerticalPanel
         add(table);
     }
 
-    protected GameDetail _detail;
+    protected int _gameId;
     protected GameLogs _logs;
 
     protected static final SimpleDateFormat DATE_FORMAT =
