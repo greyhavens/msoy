@@ -3,12 +3,9 @@
 
 package com.threerings.msoy.avrg.data;
 
-import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
-import com.threerings.presents.dobj.OidList;
 import com.threerings.presents.dobj.Subscriber;
 
-import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.data.all.MediaDesc;

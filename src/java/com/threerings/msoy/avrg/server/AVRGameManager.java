@@ -25,24 +25,15 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.ObjectAddedEvent;
-import com.threerings.presents.dobj.ObjectRemovedEvent;
-import com.threerings.presents.dobj.OidListListener;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.util.PersistingUnit;
 
 import com.threerings.bureau.server.BureauRegistry;
-import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
-import com.threerings.whirled.data.ScenePlace;
-
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -51,13 +42,10 @@ import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
-import com.threerings.msoy.game.server.GameContent;
 import com.threerings.msoy.game.server.GameWatcherManager;
 import com.threerings.msoy.game.server.PlayerLocator;
-import com.threerings.msoy.game.server.WorldServerClient;
 import com.threerings.msoy.game.server.GameWatcherManager.Observer;
 
-import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameObject;
@@ -67,8 +55,6 @@ import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.GameStateRecord;
 import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
-import com.threerings.msoy.avrg.server.persist.QuestLogSummaryRecord;
-import com.threerings.msoy.avrg.server.persist.QuestStateRecord;
 
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.server.WhirledGameManager;
