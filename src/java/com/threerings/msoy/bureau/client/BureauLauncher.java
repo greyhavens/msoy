@@ -37,8 +37,7 @@ public class BureauLauncher
                 addError(e);
             }
 
-            // TODO: what is "userdb" and should we change it?
-            bind(PersistenceContext.class).toInstance(new PersistenceContext("userdb", provider));
+            bind(PersistenceContext.class).toInstance(new PersistenceContext("msoy", provider));
             bind(RunQueue.class).annotatedWith(EventQueue.class).toInstance(_runner);
             bind(Runner.class).toInstance(_runner);
         }
@@ -318,7 +317,7 @@ public class BureauLauncher
 
     /** Time between checks of the <code>NODES</code> table when a recent logoff has been
      * encountered. */
-    protected static long HYPER_PEER_POLL_INTERVAL = 60000;
+    protected static long HYPER_PEER_POLL_INTERVAL = 1000;
 
     /** Time between checks of the <code>NODES</code> table. */
     protected static long RESUME_NORMAL_INTERVAL = 10000;
