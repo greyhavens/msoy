@@ -4,27 +4,11 @@
 package com.threerings.msoy.game.server;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.Comparators;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Multimaps;
-import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.jdbc.WriteOnlyUnit;
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.CollectionUtil;
-import com.samskivert.util.IntListUtil;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
-import com.samskivert.util.Invoker;
-import com.samskivert.util.StringUtil;
-
-import com.threerings.media.util.MathUtil;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.InvocationService;
@@ -33,10 +17,7 @@ import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
-import com.threerings.crowd.server.PlaceManagerDelegate;
 
-import com.threerings.parlor.rating.server.RatingDelegate;
-import com.threerings.parlor.rating.util.Percentiler;
 import com.threerings.parlor.server.PlayManagerDelegate;
 
 import com.whirled.game.data.GameData;
@@ -44,22 +25,16 @@ import com.whirled.game.data.ItemData;
 import com.whirled.game.data.LevelData;
 import com.whirled.game.data.TrophyData;
 import com.whirled.game.data.WhirledGameObject;
-import com.whirled.game.server.WhirledGameManager;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
 
-import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.PlayerObject;
