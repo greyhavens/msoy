@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.game.server;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +23,6 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.media.util.MathUtil;
-import com.threerings.util.MessageBundle;
-
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObject;
@@ -36,14 +33,9 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.parlor.rating.server.RatingDelegate;
 import com.threerings.parlor.rating.util.Percentiler;
 
-import com.whirled.game.data.GameData;
-import com.whirled.game.data.ItemData;
-import com.whirled.game.data.LevelData;
-import com.whirled.game.data.TrophyData;
 import com.whirled.game.data.WhirledGameObject;
 import com.whirled.game.server.WhirledGameManager;
 
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
@@ -51,24 +43,15 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemPack;
-import com.threerings.msoy.item.data.all.LevelPack;
-import com.threerings.msoy.item.data.all.Prize;
-import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.game.data.GameContentOwnership;
-import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.game.server.persist.TrophyRecord;
 
 import static com.threerings.msoy.Log.log;
 
 /**
- * Handles Whirled game services like awarding flow.
+ * Handles Whirled game services like paying out coins.
  */
 public class AwardDelegate extends RatingDelegate
 {
@@ -79,138 +62,6 @@ public class AwardDelegate extends RatingDelegate
     {
         // keep our game content around for later
         _content = content;
-    }
-
-    /**
-     * Handles WhirledGameService.awardTrophy, via MsoyGameManager
-     */
-    public void awardTrophy (ClientObject caller, String ident, int playerId,
-                             final InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        final PlayerObject plobj = verifyWritePermission(caller, playerId);
-
-        // guests are not currently awarded trophies; some day when we have infinite time or
-        // infinite monkeys, we will track trophies awarded to guests and transfer them to their
-        // newly created account
-        if (plobj.isGuest()) {
-            log.info("Guest " + playerId + " not awarded trophy " + ident + ".");
-            return;
-        }
-
-        // locate the trophy source record in question
-        TrophySource source = null;
-        for (TrophySource csource : _content.tsources) {
-            if (csource.ident.equals(ident)) {
-                source = csource;
-                break;
-            }
-        }
-        if (source == null) {
-            throw new InvocationException(MessageBundle.qualify(MsoyCodes.GAME_MSGS,
-                MessageBundle.tcompose(MsoyGameCodes.E_UNKNOWN_TROPHY, ident)));
-        }
-
-        // if the player already has this trophy, ignore the request
-        final int gameId = _content.game.gameId;
-        if (plobj.ownsGameContent(gameId, GameData.TROPHY_DATA, ident)) {
-            log.info("Game requested to award already held trophy", "game", where(),
-                     "who", plobj.who(), "ident", ident);
-            return;
-        }
-
-        // add the trophy to their runtime set now to avoid repeat-call freakoutery; if we fail to
-        // store the trophy to the database, we won't tell them that they earned it and they'll be
-        // able to earn it again next time
-        plobj.addToGameContent(
-            new GameContentOwnership(gameId, GameData.TROPHY_DATA, source.ident));
-
-        // create the persistent record we will shortly store
-        TrophyRecord trophy = new TrophyRecord();
-        trophy.gameId = gameId;
-        trophy.memberId = plobj.getMemberId();
-        trophy.ident = source.ident;
-        trophy.name = source.name;
-        trophy.trophyMediaHash = source.getThumbnailMedia().hash;
-        trophy.trophyMimeType = source.getThumbnailMedia().mimeType;
-        trophy.whenEarned = new Timestamp(System.currentTimeMillis());
-
-        // if this is an in-development game, we do not award trophies persistently; but we will
-        // stick it into the player's runtime record so that the game developer can see that the
-        // trophy was awarded; note also that we do load the trophies earned from the catalog
-        // version, so a developer will not constantly re-receive trophies once they have released
-        // them and earned them permanently from the catalog version of their game
-        if (_content.game.isDeveloperVersion()) {
-            log.info("Awarding transient trophy to developer", "game", where(),
-                     "who", plobj.who(), "ident", ident);
-            plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());
-            return;
-        }
-
-        // otherwise, award them the trophy, then add it to their runtime collection
-        _gameReg.awardTrophy(_content.game.name, trophy, source.description,
-                             new InvocationService.ResultListener() {
-            public void requestProcessed (Object result) {
-                plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, (Trophy)result);
-            }
-            public void requestFailed (String cause) {
-                listener.requestFailed(cause);
-            }
-        });
-    }
-
-    // from interface WhirledGameProvider
-    public void awardPrize (ClientObject caller, String ident, int playerId,
-                            final InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        final PlayerObject plobj = verifyWritePermission(caller, playerId);
-
-        // guests are not currently awarded prizes; some day when we have infinite time or infinite
-        // monkeys, we will track prizes awarded to guests and transfer them to their newly created
-        // account
-        if (plobj.isGuest()) {
-            return;
-        }
-
-        // locate the prize record in question
-        Prize prize = null;
-        for (Prize cprize : _content.prizes) {
-            if (cprize.ident.equals(ident)) {
-                prize = cprize;
-                break;
-            }
-        }
-        if (prize == null) {
-            log.info("Game requested to award unknown prize", "game", where(),
-                     "who", plobj.who(), "ident", ident);
-            throw new InvocationException(MsoyGameCodes.E_INTERNAL_ERROR);
-        }
-
-        // if the player has already earned this prize during this session, ignore the request
-        final int gameId = _content.game.gameId;
-        if (plobj.ownsGameContent(gameId, GameData.PRIZE_MARKER, ident)) {
-            log.info("Game requested to award already earned prize", "game", where(),
-                     "who", plobj.who(), "ident", ident);
-            return;
-        }
-
-        // add the prize to the runtime set now to avoid repeat-call freakoutery; if the prize
-        // award fails for other wacky reasons, they'll just have to re-earn it later
-        plobj.addToGameContent(
-            new GameContentOwnership(gameId, GameData.PRIZE_MARKER, prize.ident));
-
-        // because we don't have a full item manager, we have to pass the buck to a world server to
-        // do the actual prize awarding
-        _worldClient.awardPrize(plobj.getMemberId(), gameId, _content.game.name, prize,
-                                new InvocationService.ResultListener() {
-            public void requestProcessed (Object result) {
-                plobj.postMessage(MsoyGameCodes.PRIZE_AWARDED, (Item)result);
-            }
-            public void requestFailed (String cause) {
-                listener.requestFailed(cause);
-            }
-        });
     }
 
     // from interface WhirledGameProvider
@@ -369,37 +220,6 @@ public class AwardDelegate extends RatingDelegate
         // compute our flow per minute
         float minuteRate = RuntimeConfig.server.hourlyGameFlowRate / 60f;
         _flowPerMinute = Math.round(minuteRate * _content.detail.getPayoutFactor());
-
-        // wire up our WhirledGameService
-        if (plobj instanceof WhirledGameObject) {
-            WhirledGameObject gobj = (WhirledGameObject)plobj;
-
-            // let the client know what game content is available
-            List<GameData> gdata = Lists.newArrayList();
-            for (LevelPack pack : _content.lpacks) {
-                LevelData data = new LevelData();
-                data.ident = pack.ident;
-                data.name = pack.name;
-                data.mediaURL = pack.getFurniMedia().getMediaPath();
-                data.premium = pack.premium;
-                gdata.add(data);
-            }
-            for (ItemPack pack : _content.ipacks) {
-                ItemData data = new ItemData();
-                data.ident = pack.ident;
-                data.name = pack.name;
-                data.mediaURL = pack.getFurniMedia().getMediaPath();
-                gdata.add(data);
-            }
-            for (TrophySource source : _content.tsources) {
-                TrophyData data = new TrophyData();
-                data.ident = source.ident;
-                data.name = source.name;
-                data.mediaURL = source.getThumbnailMedia().getMediaPath();
-                gdata.add(data);
-            }
-            gobj.setGameData(gdata.toArray(new GameData[gdata.size()]));
-        }
     }
 
     @Override
@@ -457,6 +277,7 @@ public class AwardDelegate extends RatingDelegate
         // record this gameplay for future game metrics tracking and blah blah
         final int gameId = _content.detail.gameId, playerMins = Math.max(totalMinutes, 1);
         _invoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
+            @Override
             public void invokePersist () throws Exception {
                 // note that this game was played
                 _gameRepo.noteGamePlayed(
@@ -467,6 +288,7 @@ public class AwardDelegate extends RatingDelegate
                         gameId, newFlowToNextRecalc, hourlyRate);
                 }
             }
+            @Override
             public void handleSuccess () {
                 // update the in-memory detail record if we changed things
                 if (_newData != null) {
@@ -494,11 +316,6 @@ public class AwardDelegate extends RatingDelegate
             if (_tracking) {
                 record.beganStamp = now();
             }
-        }
-
-        // if this person is a player, load up their content packs and trophies
-        if (isPlayer(plobj)) {
-            _gameReg.resolveOwnedContent(Math.abs(_content.game.gameId), plobj);
         }
     }
 
@@ -883,7 +700,7 @@ public class AwardDelegate extends RatingDelegate
 //            // off your lap and should reap a corresponding reward.
 //
 //        } else {
-//      // The non-ray-gets-his-way way:
+//      // The non-ray-gets-his-way way, which by the way Zell believes is a good idea:
         // a player within 80% of the average time will receive a payout based on the average time
         // to accomodate games where faster performance is desirable; however, below 80% we scale
         // down to prevent players who manage to get a game to payout in a degenerately low time
@@ -951,6 +768,7 @@ public class AwardDelegate extends RatingDelegate
         // actually grant their flow award; we don't need to update their in-memory flow value
         // because we've been doing that all along
         _invoker.postUnit(new Invoker.Unit("grantFlow") {
+            @Override
             public boolean invoke () {
                 UserActionDetails action = new UserActionDetails(
                         record.memberId, UserAction.PLAYED_GAME, UserActionDetails.INVALID_ID,
@@ -966,57 +784,6 @@ public class AwardDelegate extends RatingDelegate
                 return false;
             }
         });
-    }
-
-    /**
-     * Checks that the caller in question is a player if the game is not a party game.
-     *
-     * @return a casted {@link PlayerObject} reference if the method returns at all.
-     */
-    protected PlayerObject verifyIsPlayer (ClientObject caller)
-        throws InvocationException
-    {
-        PlayerObject user = (PlayerObject)caller;
-        if (caller != null && _gobj.players.length > 0) {
-            if (_gobj.getPlayerIndex(user.getMemberName()) == -1) {
-                throw new InvocationException(MsoyGameCodes.E_ACCESS_DENIED);
-            }
-        }
-        return user;
-    }
-
-    /**
-     * Checks that the caller in question is a player if the game is not a party game
-     * or an agent for games that use server-side code.
-     */
-    protected void verifyIsPlayerOrAgent (ClientObject caller)
-        throws InvocationException
-    {
-        if (caller instanceof PlayerObject) {
-            verifyIsPlayer(caller);
-
-        } else if (!(_gmgr instanceof WhirledGameManager) ||
-            !((WhirledGameManager)_gmgr).isAgent(caller)) {
-            throw new InvocationException(MsoyGameCodes.E_ACCESS_DENIED);
-        }
-    }
-
-    /**
-     *  Make sure that the given caller is a player or an agent and can write to the data
-     *  of the given playerId.
-     *  @return the resolved player object to write to
-     **/
-    protected PlayerObject verifyWritePermission(ClientObject caller, int playerId)
-        throws InvocationException
-    {
-        if (!(_gmgr instanceof WhirledGameManager)) {
-            throw new InvocationException(MsoyGameCodes.E_ACCESS_DENIED);
-        }
-
-        verifyIsPlayerOrAgent(caller);
-
-        WhirledGameManager wgmgr = (WhirledGameManager)_gmgr;
-        return (PlayerObject)wgmgr.validateWritePermission(caller, playerId);
     }
 
     /**
@@ -1092,6 +859,7 @@ public class AwardDelegate extends RatingDelegate
             return Comparators.compare(playerOid, other.playerOid);
         }
 
+        @Override
         public String toString () {
             return StringUtil.fieldsToString(this);
         }

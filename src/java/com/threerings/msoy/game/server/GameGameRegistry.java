@@ -90,6 +90,7 @@ import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.server.TrophyDelegate;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.game.xml.MsoyGameParser;
@@ -394,6 +395,7 @@ public class GameGameRegistry
 //                delegates.add(new EventLoggingDelegate(_content));
                 // TODO: Refactor the bits of AwardDelegate that we want
 //                delegates.add(new AwardDelegate(_content));
+                delegates.add(new TrophyDelegate(_content));
                 delegates.add(new QuestDelegate(_content));
                 delegates.add(new AgentTraceDelegate(gameId));
 

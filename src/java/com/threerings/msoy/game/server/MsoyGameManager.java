@@ -33,7 +33,7 @@ public class MsoyGameManager extends WhirledGameManager
                              InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        _awardDelegate.awardTrophy(caller, ident, playerId, listener);
+        _trophyDelegate.awardTrophy(caller, ident, playerId, listener);
     }
 
     // from interface WhirledGameProvider
@@ -41,7 +41,7 @@ public class MsoyGameManager extends WhirledGameManager
                             InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        _awardDelegate.awardPrize(caller, ident, playerId, listener);
+        _trophyDelegate.awardPrize(caller, ident, playerId, listener);
     }
 
     // from interface WhirledGameProvider
@@ -50,7 +50,7 @@ public class MsoyGameManager extends WhirledGameManager
         InvocationService.InvocationListener listener)
         throws InvocationException
     {
-        _awardDelegate.endGameWithScores(caller, playerOids, scores, payoutType, listener);
+    	_awardDelegate.endGameWithScores(caller, playerOids, scores, payoutType, listener);
     }
 
     // from interface WhirledGameProvider
@@ -84,9 +84,10 @@ public class MsoyGameManager extends WhirledGameManager
 
         if (delegate instanceof AwardDelegate) {
             _awardDelegate = (AwardDelegate) delegate;
-        }
-        if (delegate instanceof AgentTraceDelegate) {
+        } else if (delegate instanceof AgentTraceDelegate) {
             _traceDelegate = (AgentTraceDelegate) delegate;
+        } else if (delegate instanceof TrophyDelegate) {
+        	_trophyDelegate = (TrophyDelegate) delegate;
         }
     }
 
@@ -117,8 +118,11 @@ public class MsoyGameManager extends WhirledGameManager
         return 1000L * ((getPlayerSlots() == 1) ? 180 : 90);
     }
 
-    /** A delegate that takes care of awarding flow, ratings, trophy, prizes.. */
+    /** A delegate that takes care of awarding flow and ratings. */
     protected AwardDelegate _awardDelegate;
+
+    /** A delegate that takes care of awarding trophies and prizes.. */
+    protected TrophyDelegate _trophyDelegate;
 
     /** A delegate that handles agent traces.. */
     protected AgentTraceDelegate _traceDelegate;

@@ -30,10 +30,12 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.bureau.server.BureauRegistry;
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
+import com.threerings.crowd.server.PlayManager;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
@@ -66,7 +68,7 @@ import static com.threerings.msoy.Log.log;
  */
 @EventThread
 public class AVRGameManager extends PlaceManager
-    implements AVRGameProvider, AVRGameObject.SubscriberListener
+    implements AVRGameProvider, AVRGameObject.SubscriberListener, PlayManager
 {
     /** Observes our shutdown function call. */
     public interface ShutdownObserver
@@ -118,6 +120,28 @@ public class AVRGameManager extends PlaceManager
         if (delegate instanceof QuestDelegate) {
             _questDelegate = (QuestDelegate) delegate;
         }
+    }
+
+    // from PlayManager
+    public boolean isPlayer (ClientObject client)
+    {
+        return client != null && (client instanceof PlayerObject) &&
+            _gameObj.occupants.contains(client.getOid());
+    }
+
+    // from PlayManager
+    public boolean isAgent (ClientObject caller)
+    {
+        return _gameAgentObj != null && _gameAgentObj.clientOid == caller.getOid();
+    }
+
+    // from PlayManager
+    public BodyObject checkWritePermission (ClientObject caller, int playerId)
+    {
+        if (isAgent(caller)) {
+            return (playerId != 0) ? _locator.lookupPlayer(playerId) : null;
+        }
+        return (playerId == 0) ? (BodyObject) caller : null;
     }
 
     @Override
