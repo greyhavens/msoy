@@ -12,7 +12,7 @@ import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
 import flash.utils.ByteArray;
 
-import com.adobe.images.JPGEncoder;
+import com.threerings.flash.JPGEncoder;
 
 import com.threerings.util.Controller;
 import com.threerings.util.StringUtil;
@@ -77,19 +77,6 @@ public class SnapshotController extends Controller
      */
     public function doUpload (panel :SnapshotPanel) :void
     {
-        if (panel.shouldSaveSceneThumbnail) {
-            upload(panel.sceneThumbnail.bitmap, SCENE_THUMBNAIL_SERVICE);
-        }
-        
-        if (panel.shouldSaveGalleryImage) {
-            upload(panel.galleryImage.bitmap, SCENE_SNAPSHOT_SERVICE);                
-            Log.testing(
-                "saving gallery image size: " +
-                panel.galleryImage.bitmap.width + "x" +
-                panel.galleryImage.bitmap.height);                
-            upload(panel.galleryImage.bitmap, SCENE_SNAPSHOT_SERVICE);                
-        }
-        
         //todo: save the ordinary file here... depends on 
         _ctx.getGameDirector().tutorialEvent("snapshotTaken");
     }
@@ -102,10 +89,19 @@ public class SnapshotController extends Controller
         _panel = null;
     }
     
-    protected function upload (bitmap :BitmapData, service :String) :void    
+    public function uploadThumbnail (data:ByteArray) :void
     {
-        const encoder :JPGEncoder = new JPGEncoder(80);
-        const mimeBody :ByteArray = makeMimeBody(encoder.encode(bitmap));
+        upload(data, SCENE_THUMBNAIL_SERVICE);
+    }
+    
+    public function uploadGalleryImage (data:ByteArray) :void
+    {
+        upload(data, SCENE_SNAPSHOT_SERVICE);        
+    }
+    
+    protected function upload (data :ByteArray, service :String) :void    
+    {
+        const mimeBody :ByteArray = makeMimeBody(data);
 
         // TODO: display a progress dialog during uploading
         // These should be local, or the dialog is a new thing. Fuck this controller, actually.

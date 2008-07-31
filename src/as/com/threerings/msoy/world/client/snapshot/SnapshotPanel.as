@@ -10,11 +10,14 @@ import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
 import mx.core.BitmapAsset;
+import mx.core.Container;
 import mx.core.UIComponent;
 import mx.controls.Image;
 import mx.controls.Text;
+import mx.controls.ProgressBar;
 
 import mx.containers.HBox;
+import mx.containers.VBox;
 
 import com.threerings.util.Log;
 
@@ -122,37 +125,64 @@ public class SnapshotPanel extends FloatingPanel
 
     override protected function createChildren () :void
     {
+        super.createChildren();        
+        createSnapshotControls(this);                
+    }
+    
+    protected function showProgressBar () :void
+    {
+        removeAllChildren();
         super.createChildren();
+        createProgressControls(this);
+    }
+    
+    protected function createProgressControls (container :Container) :void
+    {
+        var bar :ProgressBar = new ProgressBar();
+        bar.percentWidth = 100;
+        bar.indeterminate = true;
+        bar.label = Msgs.WORLD.get("b.snap_progress");
+        container.addChild(bar);        
+        container.addChild(new CommandButton(Msgs.WORLD.get("b.snap_cancel"), cancelUpload));        
+    }
 
+    protected function cancelUpload () :void 
+    {
+        trace("cancel upload");
+        // handle the user pressing cancel on the upload.
+    }
+
+    protected function createSnapshotControls (container :Container) :void
+    {
         // take gallery image
         _takeGalleryImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_gallery"), 
             enforceUIInterlocks);
         _takeGalleryImage.selected = true;
-        addChild(_takeGalleryImage);
+        container.addChild(_takeGalleryImage);
 
         // only add the button to take the canonical snapshot if it's enabled.
         if (_sceneThumbnailPermitted) {
             _useAsSceneThumbnail = new CommandCheckBox(Msgs.WORLD.get("b.snap_scene_thumbnail"), 
                 enforceUIInterlocks);
             _useAsSceneThumbnail.selected = false;
-            addChild(_useAsSceneThumbnail);
+            container.addChild(_useAsSceneThumbnail);
         }
 
         // show occupants
         _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
         _showOccs.selected = true;
-        addChildIndented(_showOccs);
+        container.addChild(_showOccs);
         
-        // show chat is indented
+        // show chat
         _showChat = new CommandCheckBox(Msgs.WORLD.get("b.snap_overlays"), takeNewSnapshot);
         _showChat.selected = true;
-        addChildIndented(_showChat);
+        container.addChild(_showChat);
 
-        addChild(new CommandButton(Msgs.WORLD.get("b.snap_update"), takeNewSnapshot));
+        container.addChild(new CommandButton(Msgs.WORLD.get("b.snap_update"), takeNewSnapshot));
 
         _preview = new Image();
         _preview.source = new BitmapAsset(sceneThumbnail.bitmap);
-        addChild(_preview);
+        container.addChild(_preview);
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
         enforceUIInterlocks();        
@@ -160,11 +190,51 @@ public class SnapshotPanel extends FloatingPanel
 
     override protected function buttonClicked (buttonId :int) :void
     {
-        super.buttonClicked(buttonId);
         if (buttonId == OK_BUTTON) {
-            _ctrl.doUpload(this);
+            upload();
+        } else {
+            close();            
+        }        
+    }    
+
+    /**
+     * Begin the upload process, much of which happens asynchronously.
+     */
+    protected function upload () :void
+    {
+        showProgressBar();
+        
+        if (this.shouldSaveSceneThumbnail) {
+            sceneThumbnail.encodeAndUpload(_ctrl.uploadThumbnail, uploadGalleryImage);
+        } else {
+            uploadGalleryImage();
         }
     }
+
+    /**
+     * Second stage of the upload process.
+     */
+    protected function uploadGalleryImage () :void
+    {
+        if (this.shouldSaveGalleryImage) {
+            galleryImage.encodeAndUpload(_ctrl.uploadGalleryImage, uploadingDone);            
+        } else {
+            uploadingDone();
+        }
+    }
+    
+    /**
+     * Called when uploading is complete.
+     */
+    protected function uploadingDone () :void
+    {
+        // done at this point so we can close the panel
+        close();        
+    }
+
+
+    protected var _galleryImageDone :Boolean = false;
+    protected var _sceneThumbnailDone :Boolean = false;
 
     protected var _sceneThumbnailPermitted :Boolean;
 
@@ -178,5 +248,7 @@ public class SnapshotPanel extends FloatingPanel
     protected var _useAsSceneThumbnail :CommandCheckBox;
     protected var _takeGalleryImage :CommandCheckBox;
 
+    protected var _snapPanel :Container;
+    protected var _progressPanel :Container;
 }
 }

@@ -8,7 +8,12 @@ import flash.display.DisplayObject;
 import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
+import flash.utils.ByteArray;
+
+import com.threerings.flash.BackgroundJPGEncoder;
+
 import com.threerings.util.Log;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.client.LayeredContainer;
@@ -108,6 +113,36 @@ public class Snapshot
         }
         return allSuccess;
     }
+
+    /**
+     * Cause the snapshot to be encoded and uploaded.  Encoding is done in the background using
+     * a background updater, and 
+     */
+    public function encodeAndUpload (uploadOperation:Function, uploadDone:Function) :void
+    {
+        trace("starting encoding");
+        _uploadOperation = uploadOperation
+        _uploadDone = uploadDone;
+        _encoder = new BackgroundJPGEncoder(bitmap, 70);
+        _encoder.addEventListener("complete", handleJpegEncoded);
+        _encoder.start();
+    }
+
+    protected function handleJpegEncoded (event :ValueEvent) :void
+    {
+        trace("jpeg encoded");
+        
+        // call whatever we're supposed to call with the jpeg data now that we have it
+        _uploadOperation(event.value as ByteArray);
+        
+        // now call whatever the next operation in the chain is
+        _uploadDone();
+    }
+
+    protected var _encoder :BackgroundJPGEncoder;
+
+    protected var _uploadOperation :Function;
+    protected var _uploadDone :Function;
     
     protected var _view :RoomView;
     protected var _frame :Rectangle;
