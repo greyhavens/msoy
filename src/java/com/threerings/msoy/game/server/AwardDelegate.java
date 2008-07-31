@@ -277,7 +277,6 @@ public class AwardDelegate extends RatingDelegate
         // record this gameplay for future game metrics tracking and blah blah
         final int gameId = _content.detail.gameId, playerMins = Math.max(totalMinutes, 1);
         _invoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
-            @Override
             public void invokePersist () throws Exception {
                 // note that this game was played
                 _gameRepo.noteGamePlayed(
@@ -288,7 +287,6 @@ public class AwardDelegate extends RatingDelegate
                         gameId, newFlowToNextRecalc, hourlyRate);
                 }
             }
-            @Override
             public void handleSuccess () {
                 // update the in-memory detail record if we changed things
                 if (_newData != null) {
@@ -768,7 +766,6 @@ public class AwardDelegate extends RatingDelegate
         // actually grant their flow award; we don't need to update their in-memory flow value
         // because we've been doing that all along
         _invoker.postUnit(new Invoker.Unit("grantFlow") {
-            @Override
             public boolean invoke () {
                 UserActionDetails action = new UserActionDetails(
                         record.memberId, UserAction.PLAYED_GAME, UserActionDetails.INVALID_ID,
@@ -859,7 +856,6 @@ public class AwardDelegate extends RatingDelegate
             return Comparators.compare(playerOid, other.playerOid);
         }
 
-        @Override
         public String toString () {
             return StringUtil.fieldsToString(this);
         }
