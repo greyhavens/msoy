@@ -11,7 +11,7 @@ import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 
-import com.threerings.msoy.badge.data.EarnedBadge;
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.msoy.chat.server.ChatChannelManager;

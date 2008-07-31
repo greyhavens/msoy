@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.badge.data;
+package com.threerings.msoy.badge.data.all;
 
 public class EarnedBadge extends Badge
 {
@@ -17,9 +17,9 @@ public class EarnedBadge extends Badge
     }
 
     /** Constructs a new EarnedBadge with the specified type. */
-    public EarnedBadge (BadgeType type, long whenEarned)
+    public EarnedBadge (int badgeCode, long whenEarned)
     {
-        super(type);
+        super(badgeCode);
         this.whenEarned = whenEarned;
     }
 

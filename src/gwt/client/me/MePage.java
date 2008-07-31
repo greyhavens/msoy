@@ -38,6 +38,9 @@ public class MePage extends Page
         } else if (action.equals("rooms")) {
             setContent(_msgs.titleRooms(), new MyRoomsPanel());
 
+        } else if (action.equals("passport")) {
+            setContent(_msgs.titlePassport(), new PassportPanel());
+
         } else if (!CMe.isGuest()) {
             setContent(new MyWhirled());
             FlashClients.tutorialEvent("myWhirledVisited");

@@ -3,19 +3,26 @@
 
 package com.threerings.msoy.world.client {
 
-import com.threerings.msoy.badge.data.EarnedBadge;
-import com.threerings.msoy.chat.client.ReportingListener;
-import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.data.MemberMarshaller;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.ui.AwardPanel;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ConfirmAdapter;
+
 import com.threerings.presents.dobj.MessageAdapter;
 import com.threerings.presents.dobj.MessageEvent;
+
 import com.threerings.util.Log;
+
+import com.threerings.msoy.badge.data.all.EarnedBadge;
+
+import com.threerings.msoy.chat.client.ReportingListener;
+
+import com.threerings.msoy.client.MemberService;
+
+import com.threerings.msoy.data.MemberMarshaller;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
+
+import com.threerings.msoy.ui.AwardPanel;
 
 public class MemberDirector extends BasicDirector
 {

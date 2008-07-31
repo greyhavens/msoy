@@ -22,6 +22,7 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MyWhirledData;
@@ -43,7 +44,7 @@ import static com.threerings.msoy.Log.log;
 public class MeServlet extends MsoyServiceServlet
     implements MeService
 {
-    // from WorldService
+    // from MeService
     public MyWhirledData getMyWhirled (WebIdent ident)
         throws ServiceException
     {
@@ -73,7 +74,7 @@ public class MeServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface WorldService
+    // from interface MeService
     public void updateWhirledNews (WebIdent ident, final String newsHtml)
         throws ServiceException
     {
@@ -89,7 +90,7 @@ public class MeServlet extends MsoyServiceServlet
         });
     }
 
-    // from interface WorldService
+    // from interface MeService
     public List<MeService.Room> loadMyRooms (WebIdent ident)
         throws ServiceException
     {
@@ -112,7 +113,7 @@ public class MeServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface WorldService
+    // from interface MeService
     public List<FeedMessage> loadFeed (WebIdent ident, int cutoffDays)
         throws ServiceException
     {
@@ -130,6 +131,13 @@ public class MeServlet extends MsoyServiceServlet
             log.warning("Load feed failed [memberId=" + mrec.memberId + "]", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
+    }
+
+    // from interface MeService
+    public List<Badge> loadBadges(WebIdent ident)
+        throws ServiceException
+    {
+        return null;
     }
 
     /**

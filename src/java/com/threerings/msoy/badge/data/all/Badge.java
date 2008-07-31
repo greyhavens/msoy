@@ -1,12 +1,13 @@
 //
 // $Id$
 
-package com.threerings.msoy.badge.data;
+package com.threerings.msoy.badge.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.presents.dobj.DSet;
+
+import com.threerings.msoy.data.all.DeploymentConfig;
 
 public abstract class Badge
     implements DSet.Entry, IsSerializable
@@ -32,15 +33,9 @@ public abstract class Badge
     /**
      * Creates a new badge, and automatically fills in the badge imageUrl from the BadgeType Enum.
      */
-    public Badge (BadgeType type)
+    public Badge (int badgeCode)
     {
-        this.badgeCode = type.getCode();
-    }
-
-    /** Returns this Badge's Type */
-    public BadgeType getType ()
-    {
-        return BadgeType.getType(badgeCode);
+        this.badgeCode = badgeCode;
     }
 
     /**

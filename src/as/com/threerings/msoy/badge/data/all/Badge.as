@@ -1,4 +1,4 @@
-package com.threerings.msoy.badge.data {
+package com.threerings.msoy.badge.data.all {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;

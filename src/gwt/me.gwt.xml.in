@@ -15,6 +15,7 @@
   <source path="com/threerings/msoy/item/data/all"/>
   <source path="com/threerings/msoy/item/gwt"/>
   <source path="com/threerings/msoy/person/gwt"/>
+  <source path="com/threerings/msoy/badge/data/all"/>
 
   <source path="client/me"/>
   <source path="client/person"/>

@@ -10,6 +10,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
+import com.threerings.msoy.badge.data.all.Badge;
+
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -58,5 +60,11 @@ public interface MeService extends RemoteService
      * the specified suite.
      */
     List<FeedMessage> loadFeed (WebIdent ident, int cutoffDays)
+        throws ServiceException;
+
+    /**
+     * Loads the badges relevant to this player.
+     */
+    List<Badge> loadBadges (WebIdent ident)
         throws ServiceException;
 }

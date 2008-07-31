@@ -9,6 +9,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.WebIdent;
 
+import com.threerings.msoy.badge.data.all.Badge;
+
 
 /**
  * The asynchronous (client-side) version of {@link MeService}.
@@ -34,4 +36,9 @@ public interface MeServiceAsync
      * The asynchronous version of {@link MeService#loadFeed}.
      */
     void loadFeed (WebIdent ident, int cutoffDays, AsyncCallback<List<FeedMessage>> callback);
+
+    /**
+     * The asynchronous version of {@link MeService#loadBadges}.
+     */
+    void loadBadges (WebIdent ident, AsyncCallback<List<Badge>> callback);
 }

@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.badge.data;
 
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.presents.dobj.DSet;
 
 /**

@@ -16,6 +16,8 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.web.client.DeploymentConfig;
+
 import client.ui.MsoyUI;
 import client.util.Link;
 
@@ -34,6 +36,9 @@ public class TitleBar extends SmartTable
 
         if (pageId.equals(Page.ME)) {
             subnavi.addLink(null, "Me", Page.ME, "");
+            if (DeploymentConfig.devDeployment) {
+                subnavi.addLink(null, "Passport", Page.ME, "passport");
+            }
             subnavi.addImageLink("/images/me/menu_home.png", "My Home", Page.WORLD,
                 "m" + memberId);
             subnavi.addLink(null, "My Rooms", Page.ME, "rooms");

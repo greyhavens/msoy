@@ -10,7 +10,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.badge.data.EarnedBadge;
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 
 public class BadgeRecord extends PersistentRecord
 {

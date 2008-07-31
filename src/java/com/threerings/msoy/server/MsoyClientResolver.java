@@ -32,7 +32,7 @@ import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 
 import com.threerings.msoy.badge.data.BadgeSet;
-import com.threerings.msoy.badge.data.EarnedBadge;
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.server.persist.BadgeRecord;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 

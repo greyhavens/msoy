@@ -17,7 +17,7 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 
 import com.threerings.msoy.badge.data.BadgeType;
-import com.threerings.msoy.badge.data.EarnedBadge;
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.MemberObject;
 
 /**
@@ -74,7 +74,7 @@ public class BadgeManager
         final List<EarnedBadge> badges = createBadges(badgeTypes, whenEarned);
         for (EarnedBadge badge : badges) {
             user.awardBadge(badge);
-            coinValue += badge.getType().getCoinValue();
+            coinValue += BadgeType.getType(badge.badgeCode).getCoinValue();
         }
         user.setFlow(user.flow + coinValue);
         user.setAccFlow(user.accFlow + coinValue);
@@ -114,7 +114,7 @@ public class BadgeManager
     {
         List<EarnedBadge> badges = Lists.newArrayListWithExpectedSize(badgeTypes.size());
         for (BadgeType type : badgeTypes) {
-            badges.add(new EarnedBadge(type, whenEarned));
+            badges.add(new EarnedBadge(type.getCode(), whenEarned));
         }
         return badges;
     }

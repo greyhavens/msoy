@@ -1,27 +1,37 @@
 package com.threerings.msoy.ui {
 
-import caurina.transitions.Tweener;
-
-import com.threerings.crowd.chat.client.ChatDirector;
-import com.threerings.flash.MediaContainer;
-import com.threerings.msoy.badge.data.Badge;
-import com.threerings.msoy.client.PlaceBox;
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.util.Log;
-import com.threerings.util.MessageBundle;
-import com.threerings.util.MultiLoader;
-
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 import flash.display.MovieClip;
 import flash.display.Sprite;
+
 import flash.events.Event;
+
 import flash.text.TextField;
+
+import caurina.transitions.Tweener;
+
+import com.threerings.crowd.chat.client.ChatDirector;
+
+import com.threerings.flash.MediaContainer;
+
+import com.threerings.util.Log;
+import com.threerings.util.MessageBundle;
+import com.threerings.util.MultiLoader;
+
+import com.threerings.msoy.badge.data.all.Badge;
+
+import com.threerings.msoy.client.PlaceBox;
+
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MediaDesc;
+
+import com.threerings.msoy.game.data.all.Trophy;
+
+import com.threerings.msoy.item.data.all.Item;
+
+import com.threerings.msoy.world.client.WorldContext;
 
 public class AwardPanel
 {
