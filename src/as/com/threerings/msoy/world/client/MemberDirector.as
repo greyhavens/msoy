@@ -9,6 +9,7 @@ import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.MemberMarshaller;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.ui.AwardPanel;
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ConfirmAdapter;
@@ -82,8 +83,11 @@ public class MemberDirector extends BasicDirector
     protected function messageReceivedOnUserObject (event :MessageEvent) :void
     {
         if (event.getName() == MemberObject.BADGE_AWARDED) {
+            if (_awardPanel == null) {
+                _awardPanel = new AwardPanel(_wctx, _wctx.getChatDirector());
+            }
             var badge :EarnedBadge = event.getArgs()[0] as EarnedBadge;
-            // TODO - show a clever display here
+            _awardPanel.displayAward(badge);
             log.info("Badge awarded", badge);
         }
     }
@@ -92,5 +96,6 @@ public class MemberDirector extends BasicDirector
     protected var _msvc :MemberService;
     protected var _mobj :MemberObject;
     protected var _memberListener :MessageAdapter = new MessageAdapter(messageReceivedOnUserObject);
+    protected var _awardPanel :AwardPanel;
 }
 }

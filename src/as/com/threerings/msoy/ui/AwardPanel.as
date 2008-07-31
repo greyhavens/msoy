@@ -3,6 +3,8 @@ package com.threerings.msoy.ui {
 import caurina.transitions.Tweener;
 
 import com.threerings.crowd.chat.client.ChatDirector;
+import com.threerings.flash.MediaContainer;
+import com.threerings.msoy.badge.data.Badge;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -31,6 +33,9 @@ public class AwardPanel
         _chatDirector = chatDirector;
     }
 
+    /**
+     * Removes the AwardPanel from the screen, if it's being displayed.
+     */
     public function close () :void
     {
         if (_panel.parent != null) {
@@ -38,6 +43,10 @@ public class AwardPanel
         }
     }
 
+    /**
+     * Displays
+     * @param award a Trophy, Item, or Badge
+     */
     public function displayAward (award :Object) :void
     {
         _pendingAwards.push(award);
@@ -65,23 +74,33 @@ public class AwardPanel
 
     protected function showNextAward (award :Object) :void
     {
-        log.info("showNextAward");
-
         var msg :String, name :String, title :String;
-        var media :MediaDesc;
+        var messageBundle :String;
+        var mediaDesc :MediaDesc;
+        var mediaUrl :String;
         if (award is Trophy) {
             var trophy :Trophy = (award as Trophy);
             msg = MessageBundle.tcompose("m.trophy_earned", trophy.name);
             name = trophy.name;
-            title = "m.trophy_title";
-            media = trophy.trophyMedia;
+            title = _wctx.xlate(MsoyCodes.GAME_MSGS, "m.trophy_title");
+            mediaDesc = trophy.trophyMedia;
+            messageBundle = MsoyCodes.GAME_MSGS;
 
         } else if (award is Item) {
             var item :Item = (award as Item);
             msg = MessageBundle.tcompose("m.prize_earned", item.name);
             name = item.name;
-            title = "m.prize_title";
-            media = item.getThumbnailMedia();
+            title = _wctx.xlate(MsoyCodes.GAME_MSGS, "m.prize_title");
+            mediaDesc = item.getThumbnailMedia();
+            messageBundle = MsoyCodes.GAME_MSGS;
+
+        } else if (award is Badge) {
+            var badge :Badge = (award as Badge);
+            name = _wctx.xlate(MsoyCodes.PASSPORT_MSGS, badge.nameProp);
+            msg = MessageBundle.tcompose("m.badge_awarded", name);
+            title = _wctx.xlate(MsoyCodes.PASSPORT_MSGS, "t.badge_awarded");
+            mediaUrl = badge.imageUrl;
+            messageBundle = MsoyCodes.PASSPORT_MSGS;
 
         } else {
             log.warning("Requested to display unknown award " + award + ".");
@@ -91,18 +110,19 @@ public class AwardPanel
 
         // display a chat message reporting their award
         if (_chatDirector != null) {
-            _chatDirector.displayInfo(MsoyCodes.GAME_MSGS, msg);
+            _chatDirector.displayInfo(messageBundle, msg);
         }
 
         // configure the award display panel with the award info
-        (_panel.getChildByName("statement") as TextField).text =
-            _wctx.xlate(MsoyCodes.GAME_MSGS, title);
+        (_panel.getChildByName("statement") as TextField).text = title;
         (_panel.getChildByName("trophy_name") as TextField).text = name;
         var clip :MovieClip = (_panel.getChildByName("trophy") as MovieClip);
         while (clip.numChildren > 0) { // remove any old trophy image or the sample
             clip.removeChildAt(0);
         }
-        var image :MsoyMediaContainer = new MsoyMediaContainer(media);
+        // load the appropriate image from either a MediaDesc or a URL
+        var image :MediaContainer = (mediaDesc != null ? new MsoyMediaContainer(mediaDesc) :
+            new MediaContainer(mediaUrl));
         clip.addChild(image);
 
         // add ourselves to the stage now so that the logic that checks if it's used will

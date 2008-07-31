@@ -42,5 +42,8 @@ public class MsoyCodes extends InvocationCodes
 
     /** Identifies our editing message bundle. */
     public static const EDITING_MSGS :String = "editing";
+
+    /** Identifies our passport message bundle. */
+    public static const PASSPORT_MSGS :String = "passport";
 }
 }
