@@ -970,8 +970,10 @@
     </copy>
   </target>
 
+  <!-- TODO: the tutorial target has been removed from flashapps until it compiles again after a 
+       the API shuffle is done, and the tutorial code has been refactored -->
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,tutorial,
+  <target name="flashapps" depends="asprepare,mediastub,
                                     videoviewer,decorviewer,remixer">
     <antcall target="ascompile"><param name="astype" value="world"/></antcall>
     <antcall target="ascompile"><param name="astype" value="game"/></antcall>
