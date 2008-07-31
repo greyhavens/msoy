@@ -68,7 +68,7 @@ import static com.threerings.msoy.Log.log;
  */
 @EventThread
 public class AVRGameManager extends PlaceManager
-    implements AVRGameProvider, AVRGameObject.SubscriberListener, PlayManager
+    implements AVRGameProvider, PlayManager
 {
     /** Observes our shutdown function call. */
     public interface ShutdownObserver
@@ -159,35 +159,12 @@ public class AVRGameManager extends PlaceManager
         _gameId = cfg.getGameId();
 
         _gameObj = (AVRGameObject)_plobj;
-        _gameObj.subscriberListener = this;
 
         _gameAgentObj = createGameAgentObject(_gameId, def);
         _gameAgentObj.gameOid = _gameObj.getOid();
         _breg.startAgent(_gameAgentObj);
 
         _gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
-
-        _shutdownCheck = new Interval (_omgr) {
-            public void expired () {
-                checkForShutdown();
-            }
-        };
-    }
-
-    //  from AVRGameObject.SubscriberListener
-    public void subscriberCountChanged (AVRGameObject target)
-    {
-        if (_shutdown) {
-            return;
-        }
-
-        int agents = _gameAgentObj != null ? 1 : 0;
-        if (target.getSubscriberCount() <= agents) {
-            _shutdownCheck.schedule(IDLE_UNLOAD_PERIOD);
-
-        } else {
-            _shutdownCheck.cancel();
-        }
     }
 
     /**
@@ -382,10 +359,6 @@ public class AVRGameManager extends PlaceManager
     @Override
     protected void didShutdown ()
     {
-        _shutdown = true;
-
-        _shutdownCheck.cancel();
-
         stopTickers();
 
         if (_gameAgentObj != null) {
@@ -439,6 +412,12 @@ public class AVRGameManager extends PlaceManager
         _pendingMoves.remove(memberId);
 
         flushPlayerGameState(player);
+    }
+
+    @Override
+    protected long idleUnloadPeriod ()
+    {
+        return IDLE_UNLOAD_PERIOD;
     }
 
     protected void playerEnteredScene (int memberId, int sceneId, String hostname, int port)
@@ -524,14 +503,6 @@ public class AVRGameManager extends PlaceManager
         return String.valueOf(_gameId);
     }
 
-    protected void checkForShutdown ()
-    {
-        int agents = _gameAgentObj != null ? 1 : 0;
-        if (_gameObj.getSubscriberCount() <= agents) {
-            shutdown();
-        }
-    }
-
     protected AVRGameAgentObject createGameAgentObject (int gameId, MsoyGameDefinition def)
     {
         String code = def.getServerMediaPath(gameId);
@@ -605,12 +576,6 @@ public class AVRGameManager extends PlaceManager
             playerEnteredScene(memberId, sceneId, hostname, port);
         }
     };
-
-    /** Timed task to check if we are ready to shut down. */
-    protected Interval _shutdownCheck;
-
-    /** Set once we've shutdown to prevent multiple shudowns. */
-    protected boolean _shutdown;
 
     /** The gameId of this particular AVRG. */
     protected int _gameId;

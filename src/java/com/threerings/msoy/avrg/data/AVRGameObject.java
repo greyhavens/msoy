@@ -4,7 +4,6 @@
 package com.threerings.msoy.avrg.data;
 
 import com.threerings.presents.dobj.DSet;
-import com.threerings.presents.dobj.Subscriber;
 
 import com.threerings.crowd.data.PlaceObject;
 
@@ -16,13 +15,6 @@ import com.threerings.msoy.game.data.GameState;
  */
 public class AVRGameObject extends PlaceObject
 {
-    /** Used on the server to listen to subscriber count changes to an avr game object. */
-    public interface SubscriberListener
-    {
-        /** Called when the number of subscribers has changed. */
-        void subscriberCountChanged (AVRGameObject target);
-    }
-
     /** The identifier for a MessageEvent containing a user message. */
     public static final String USER_MESSAGE = "Umsg";
 
@@ -61,35 +53,6 @@ public class AVRGameObject extends PlaceObject
 
     /** Used to communicate with the AVRGameManager. */
     public AVRGameMarshaller avrgService;
-
-    /** If set on the server, will be called with subscriber updates. */
-    public transient SubscriberListener subscriberListener;
-
-    /**
-     * Expose our subscriber count.
-     */
-    public int getSubscriberCount ()
-    {
-        return _scount;
-    }
-
-    @Override // from DObject
-    public void addSubscriber (Subscriber<?> sub)
-    {
-        super.addSubscriber(sub);
-        if (subscriberListener != null) {
-            subscriberListener.subscriberCountChanged(this);
-        }
-    }
-
-    @Override // from DObject
-    public void removeSubscriber (Subscriber<?> sub)
-    {
-        super.removeSubscriber(sub);
-        if (subscriberListener != null) {
-            subscriberListener.subscriberCountChanged(this);
-        }
-    }
 
     // AUTO-GENERATED: METHODS START
     /**
