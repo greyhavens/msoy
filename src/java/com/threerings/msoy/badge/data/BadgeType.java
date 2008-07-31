@@ -26,13 +26,19 @@ public enum BadgeType
         }
     },
 
+    WHIRLEDS_1(Category.SOCIAL, 1000, "Whirleds", 1) {
+        protected int getAcquiredUnits (MemberObject user) {
+            return user.stats.getIntStat(StatType.WHIRLEDS_CREATED);
+        }
+    },
+
     // game badges
     GAMER_1(Category.GAME, 1000, "Games", 5) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getSetStatSize(StatType.UNIQUE_GAMES_PLAYED);
         }
     },
-    
+
     ;
 
     /**
