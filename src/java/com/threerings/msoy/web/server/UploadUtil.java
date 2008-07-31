@@ -184,12 +184,18 @@ public class UploadUtil
     public static void publishSnapshot (SnapshotUploadFile uploadFile)
         throws IOException
     {
+        log.warning("publish snapshot called");
+        
         // the snapshot gets uploaded to /snapshot/<
         byte mimeType = uploadFile.getMimeType();
         String sceneId = String.valueOf(uploadFile.getSceneId());
         String mimeSuffix = MediaDesc.mimeTypeToSuffix(mimeType);
+        
+        // publish the regular sized image
         publishStream(uploadFile.getInputStream(), SNAPSHOT_DIRECTORY,
             sceneId + mimeSuffix, MediaDesc.mimeTypeToString(uploadFile.getMimeType()));
+            
+        // publish a reduced sized version of the image
         publishImage(MediaDesc.SNAPSHOT_THUMB_SIZE, uploadFile, mimeType, "jpg",
             SNAPSHOT_DIRECTORY, sceneId + "_t" + mimeSuffix);
     }
@@ -258,10 +264,10 @@ public class UploadUtil
                     targetHeight / (float)image.getHeight();
                 width = Math.max(1, Math.round(scale * image.getWidth()));
                 height = Math.max(1, Math.round(scale * image.getHeight()));
-
+                                
                 // generate the scaled image
                 BufferedImage timage =
-                    new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                    new BufferedImage(width, height, samplingModelForFormat(thumbFormat));
                 Graphics2D gfx = timage.createGraphics();
                 try {
                     gfx.drawImage(image, 0, 0, width, height, null);
@@ -306,6 +312,33 @@ public class UploadUtil
         byte constraint = MediaDesc.computeConstraint(size, width, height);
         return new MediaInfo(hash, mimeType, constraint, width, height);
     }
+
+    /**
+     * Return the sampling model that should be used for rendering a given image prior to encoding
+     * in the given format. 
+     *
+     * (javax.imageio.ImageIO doesn't work properly if you use a sampling mode that includes an
+     * alpha channel when writing a format that doesn't support alpha.)
+     */
+    protected static int samplingModelForFormat (String informalName)
+        throws IOException
+    {
+        Integer found = samplingModels.get(informalName.toLowerCase());
+        if (found == null) {
+            throw new IOException("image sampling model not known for format: "+informalName);
+        }
+        return found;
+    }
+
+    /**
+     * Mapping of informal image format names to buffer sample mode.
+     */
+    protected static final Map<String, Integer> samplingModels = ImmutableMap.of(
+            "jpg", BufferedImage.TYPE_INT_RGB,
+            "jpeg", BufferedImage.TYPE_INT_RGB,
+            "png", BufferedImage.TYPE_INT_ARGB,
+            "tiff", BufferedImage.TYPE_INT_ARGB
+        );
 
     protected static final byte THUMBNAIL_MIME_TYPE = MediaDesc.IMAGE_PNG;
     protected static final String THUMBNAIL_IMAGE_FORMAT = "PNG";
