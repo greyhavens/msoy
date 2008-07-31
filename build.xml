@@ -226,8 +226,8 @@
 
     <!-- grab the deployment et al properties from the configuration location. -->
     <gatherconfiguration app="${app.name}" distribution="${ooo.distribution}" dest="${deploy.dir}">
-      <sources><directory path="${basedir}/etc"/></sources>
       <sources refid="ooo.msoyconfig.source"/>
+      <sources><directory path="${basedir}/etc"/></sources>
       <files>
         <file name="msoy-server.properties"/>
         <file name="msoy-server.conf"/>
