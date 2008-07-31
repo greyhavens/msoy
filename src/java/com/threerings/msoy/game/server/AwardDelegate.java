@@ -389,7 +389,7 @@ public class AwardDelegate extends RatingDelegate
         // track multiplayer game wins
         if (isMultiplayer()) {
             for (int memberId : playerOidsToMemberIds(winnerOids, true)) {
-                _worldClient.addToSetStat(memberId, StatType.MP_GAMES_WON, 1);
+                _worldClient.incrementStat(memberId, StatType.MP_GAMES_WON, 1);
             }
         }
     }
