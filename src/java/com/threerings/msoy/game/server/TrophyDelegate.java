@@ -34,10 +34,10 @@ import com.threerings.presents.server.InvocationException;
 
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManagerDelegate;
-import com.threerings.crowd.server.PlayManagerDelegate;
 
 import com.threerings.parlor.rating.server.RatingDelegate;
 import com.threerings.parlor.rating.util.Percentiler;
+import com.threerings.parlor.server.PlayManagerDelegate;
 
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.ItemData;

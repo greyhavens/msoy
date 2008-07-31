@@ -17,6 +17,7 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
 import com.samskivert.jdbc.WriteOnlyUnit;
 
+import com.threerings.parlor.server.PlayManager;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -35,7 +36,6 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
-import com.threerings.crowd.server.PlayManager;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
