@@ -3,18 +3,25 @@
 
 package com.threerings.msoy.data {
 
+import com.threerings.presents.dobj.DSet;
+
 import com.threerings.crowd.data.TokenRing;
+
 import com.threerings.io.ObjectInputStream;
+
+import com.threerings.util.Name;
+
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+
 import com.threerings.msoy.game.data.GameSummary;
+
 import com.threerings.msoy.group.data.all.GroupMembership;
+
 import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.presents.dobj.DSet;
-import com.threerings.util.Name;
 
 /**
  * Represents a connected msoy user.
