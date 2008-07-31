@@ -13,7 +13,6 @@ import com.samskivert.util.ExpiringReference;
 
 import com.threerings.presents.data.InvocationCodes;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
