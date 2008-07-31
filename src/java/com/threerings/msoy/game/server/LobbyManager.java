@@ -259,6 +259,7 @@ public class LobbyManager
         List<PlaceManagerDelegate> delegates = Lists.newArrayList();
         delegates.add(new EventLoggingDelegate(_content));
         delegates.add(new AwardDelegate(_content));
+        delegates.add(new TrophyDelegate(_content));
         delegates.add(new AgentTraceDelegate(getGameId()));
         return (GameManager)_plreg.createPlace(config, delegates);
     }
