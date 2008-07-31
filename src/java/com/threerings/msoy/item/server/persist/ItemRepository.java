@@ -805,7 +805,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                       new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId),
                       new CacheInvalidator.TraverseWithFilter<RatingRecord>(getRatingClass()) {
                           public boolean testForEviction (Serializable key, RatingRecord record) {
-                              return record != null && record.itemId == itemId;
+                              return record.itemId == itemId;
                           }
                       });
 
