@@ -87,7 +87,6 @@ public class BuildAndExportTask extends AbstractBuildTask
         ItemRepository<ItemRecord> repo = null;
         try {
             repo = _itemMan.getRepository(_itemType);
-
         } catch (ServiceException se) {
             throw new RuntimeException("Unable to find repository for Swiftly project item type." +
                 " Aborting build process. [itemType=" + _itemType + "].");

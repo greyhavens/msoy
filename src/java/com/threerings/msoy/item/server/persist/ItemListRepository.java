@@ -57,23 +57,29 @@ public class ItemListRepository extends DepotRepository
     /**
      * Deletes a list and removes all of its items.
      *
-     * @param listId
-     *            the ID of the list to delete.
+     * @param listId the ID of the list to delete.
      */
-    public void deleteList (int listId)
+    public void deleteList (final int listId)
         throws PersistenceException
     {
-        // delete the list info and remove all items IDs in the list
+        // delete all of the elements from the list
+        deleteAll(ItemListElementRecord.class, new Where(ItemListElementRecord.LIST_ID_C, listId),
+            new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
+                ItemListElementRecord.class) {
+                public boolean testForEviction (Serializable key, ItemListElementRecord record)
+                {
+                    return record.listId == listId;
+                }
+        });
+
+        // delete the list info
         delete(ItemListInfoRecord.class, listId);
-        delete(ItemListElementRecord.class, listId);
     }
 
     /**
      * Gets the number of items in a list.
      *
-     * @param listId
-     *            the ID of the list to size up.
-     * @throws PersistenceException
+     * @param listId the ID of the list to size up.
      */
     public int getSize (int listId)
         throws PersistenceException

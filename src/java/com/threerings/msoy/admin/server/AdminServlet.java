@@ -30,7 +30,7 @@ import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
-import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -325,8 +325,8 @@ public class AdminServlet extends MsoyServiceServlet
         // it'd be nice to round-robin the item types or something, so the first items in the queue
         // aren't always from the same type... perhaps we'll just do something clever in the UI
         try {
-            for (byte type : _itemMan.getRepositoryTypes()) {
-                ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
+            for (byte type : _itemLogic.getRepositoryTypes()) {
+                ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
                 for (ItemRecord record : repo.loadFlaggedItems(count)) {
                     Item item = record.toItem();
 
@@ -360,7 +360,7 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         byte type = iident.type;
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         try {
             ItemRecord item = repo.loadOriginalItem(iident.itemId);
             IntSet owners = new ArrayIntSet();
@@ -429,7 +429,7 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected MailRepository _mailRepo;
     @Inject protected ABTestRepository _testRepo;
-    @Inject protected ItemManager _itemMan;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
 
     protected static final int MEMBERS_PER_LOOP = 100;

@@ -84,7 +84,7 @@ public class LandingServlet extends MsoyServiceServlet
             data.topGames = _gameLogic.loadTopGames(pps);
 
             // select the top rated avatars
-            ItemRepository<?> repo = _itemMan.getRepository(Item.AVATAR);
+            ItemRepository<?> repo = _itemMan.getAvatarRepository();
             List<ListingCard> cards = Lists.newArrayList();
             for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, false, null, 0,
                                                        0, null, 0, ShopData.TOP_ITEM_COUNT)) {

@@ -22,7 +22,7 @@ import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.underwire.server.SupportLogic;
 
-import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
@@ -141,7 +141,7 @@ public class CommentServlet extends MsoyServiceServlet
 
             } else {
                 try {
-                    ItemRepository<?> repo = _itemMan.getRepository((byte)etype);
+                    ItemRepository<?> repo = _itemLogic.getRepository((byte)etype);
                     CatalogRecord listing = repo.loadListing(eid, true);
                     if (listing != null) {
                         ItemRecord item = listing.item;
@@ -238,7 +238,7 @@ public class CommentServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected ItemManager _itemMan;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected StatLogic _statLogic;
     @Inject protected SupportLogic _supportLogic;

@@ -52,7 +52,7 @@ public class ItemServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
 
-        AvatarRepository repo = _itemMan.getAvatarRepository();
+        AvatarRepository repo = _itemLogic.getAvatarRepository();
         try {
             final AvatarRecord avatar = repo.loadItem(avatarId);
             if (avatar == null) {
@@ -132,7 +132,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
 
         try {
             ItemRecord item = repo.loadItem(iident.itemId);
@@ -170,7 +170,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
+            ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
             List<String> result = Lists.newArrayList();
             for (TagNameRecord tagName : repo.getTagRepository().getTags(iident.itemId)) {
                 result.add(tagName.tag);
@@ -187,7 +187,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         try {
-            ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
+            ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
             List<TagHistoryRecord> records =
                 repo.getTagRepository().getTagHistoryByTarget(iident.itemId);
             IntMap<MemberName> names = _memberRepo.loadMemberNames(
@@ -220,8 +220,8 @@ public class ItemServlet extends MsoyServiceServlet
 
         try {
             List<TagHistory> list = Lists.newArrayList();
-            for (byte type : _itemMan.getRepositoryTypes()) {
-                ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
+            for (byte type : _itemLogic.getRepositoryTypes()) {
+                ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
                 for (TagHistoryRecord record :
                          repo.getTagRepository().getTagHistoryByMember(memrec.memberId)) {
                     TagNameRecord tag = (record.tagId == -1) ? null :
@@ -257,7 +257,7 @@ public class ItemServlet extends MsoyServiceServlet
         }
 
         try {
-            ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
+            ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
             long now = System.currentTimeMillis();
 
             ItemRecord item = repo.loadItem(iident.itemId);
@@ -298,7 +298,7 @@ public class ItemServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
         byte type = iident.type;
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         try {
             ItemRecord item = repo.loadItem(iident.itemId);
             if (item == null) {
@@ -344,7 +344,7 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
 
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
         try {
             // TODO: If things get really tight, this could use updatePartial() later.
             ItemRecord item = repo.loadItem(iident.itemId);
@@ -366,7 +366,7 @@ public class ItemServlet extends MsoyServiceServlet
         throws ServiceException
     {
         _mhelper.requireAuthedUser(ident);
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
         try {
             // TODO: If things get really tight, this could use updatePartial() later.
             ItemRecord item = repo.loadItem(iident.itemId);
@@ -428,7 +428,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected ItemManager _itemMan;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected ItemManager _itemMan;
     @Inject protected PhotoRepository _photoRepo;
 }

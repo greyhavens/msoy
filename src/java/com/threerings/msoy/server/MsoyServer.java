@@ -165,22 +165,22 @@ public class MsoyServer extends MsoyBaseServer
         // initialize our HTTP server
         _httpServer.init(injector, new File(ServerConfig.serverRoot, "log"));
     }
-    
+
     /**
      * On dev deployments, restart the policy server, including these ports from another node
      * on this machine.
      */
-    public void addPortsToPolicy (int[] ports) 
+    public void addPortsToPolicy (int[] ports)
     {
         if (!DeploymentConfig.devDeployment) {
             return;
         }
-        
+
         if (_otherNodePorts == null) {
             _otherNodePorts = new ArrayIntSet();
         }
         _otherNodePorts.add(ports);
-        
+
         if (_policyServer != null) {
             _policyServer.unbindAll();
         }
@@ -190,7 +190,7 @@ public class MsoyServer extends MsoyBaseServer
             log.warning("Failed to restart MsoyPolicyServer with new ports", ioe);
         }
     }
-    
+
     /**
      * On dev deployments, restarts the policy server, removing these ports from another node
      * on this machine.
@@ -200,12 +200,12 @@ public class MsoyServer extends MsoyBaseServer
         if (!DeploymentConfig.devDeployment) {
             return;
         }
-       
+
         if (_otherNodePorts == null) {
             _otherNodePorts = new ArrayIntSet();
         }
         _otherNodePorts.remove(ports);
-        
+
         if (_policyServer != null) {
             _policyServer.unbindAll();
         }
@@ -408,7 +408,7 @@ public class MsoyServer extends MsoyBaseServer
 
     /** A policy server used on dev deployments. */
     protected IoAcceptor _policyServer;
-    
+
     /** On dev deployments, we keep track of the ports on other nodes (hosted on the same machine
      * that need to be accepted by the policy server. */
     protected ArrayIntSet _otherNodePorts;

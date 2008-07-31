@@ -43,7 +43,7 @@ import static com.threerings.msoy.Log.log;
 public class StuffServlet extends MsoyServiceServlet
     implements StuffService
 {
-    // from interface ItemService
+    // from interface StuffService
     public Item createItem (WebIdent ident, Item item, ItemIdent parent)
         throws ServiceException
     {
@@ -51,7 +51,7 @@ public class StuffServlet extends MsoyServiceServlet
         return _itemLogic.createItem(memrec, item, parent);
     }
 
-    // from interface ItemService
+    // from interface StuffService
     public void updateItem (WebIdent ident, Item item)
         throws ServiceException
     {
@@ -64,7 +64,7 @@ public class StuffServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(item.getType());
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.getType());
         try {
             // load up the old version of the item
             final ItemRecord record = repo.loadItem(item.itemId);
@@ -97,7 +97,7 @@ public class StuffServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface ItemService
+    // from interface StuffService
     public Item remixItem (WebIdent ident, Item item)
         throws ServiceException
     {
@@ -111,14 +111,14 @@ public class StuffServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface ItemService
+    // from interface StuffService
     public Item revertRemixedClone (WebIdent ident, ItemIdent itemIdent)
         throws ServiceException
     {
         return remixClone(ident, itemIdent, null);
     }
 
-    // from interface ItemService
+    // from interface StuffService
     public String renameClone (WebIdent ident, ItemIdent itemIdent, String newName)
         throws ServiceException
     {
@@ -149,7 +149,7 @@ public class StuffServlet extends MsoyServiceServlet
         return rec.name;
     }
 
-    // from interface ItemService
+    // from interface StuffService
     public List<Item> loadInventory (WebIdent ident, byte type, int suiteId)
         throws ServiceException
     {
@@ -162,7 +162,7 @@ public class StuffServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         try {
             List<Item> items = Lists.newArrayList();
             for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId)) {
@@ -180,11 +180,11 @@ public class StuffServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface ItemService
+    // from interface StuffService
     public Item loadItem (WebIdent ident, ItemIdent item)
         throws ServiceException
     {
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(item.type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
         try {
             ItemRecord irec = repo.loadItem(item.itemId);
             return (irec == null) ? null : irec.toItem();
@@ -195,12 +195,12 @@ public class StuffServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface ItemService
+    // from interface StuffService
     public DetailOrIdent loadItemDetail (WebIdent ident, final ItemIdent iident)
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
 
         try {
             ItemRecord record = repo.loadItem(iident.itemId);
@@ -243,12 +243,12 @@ public class StuffServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface ItemService
+    // from interface StuffService
     public void deleteItem (final WebIdent ident, final ItemIdent iident)
         throws ServiceException
     {
         MemberRecord memrec = _mhelper.requireAuthedUser(ident);
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
 
         try {
             final ItemRecord item = repo.loadItem(iident.itemId);

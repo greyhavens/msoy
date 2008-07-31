@@ -22,7 +22,7 @@ import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
@@ -155,7 +155,7 @@ public class MailLogic
     {
         if (attachment instanceof PresentPayload) {
             ItemIdent ident = ((PresentPayload)attachment).ident;
-            ItemRepository<?> repo = _itemMan.getRepository(ident.type);
+            ItemRepository<?> repo = _itemLogic.getRepository(ident.type);
             ItemRecord item = repo.loadItem(ident.itemId);
 
             // validate that they're allowed to gift this item (these are all also checked on the
@@ -204,7 +204,7 @@ public class MailLogic
 
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected ItemManager _itemMan;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberRepository _memberRepo;
 }

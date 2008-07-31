@@ -103,7 +103,7 @@ public class CatalogServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(query.itemType);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(query.itemType);
         CatalogResult result = new CatalogResult();
         List<ListingCard> list = Lists.newArrayList();
 
@@ -151,7 +151,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(itemType);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
 
         try {
             CatalogRecord listing = repo.loadListing(catalogId, true);
@@ -251,7 +251,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(item.type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
         try {
             // load a copy of the original item
             ItemRecord originalItem = repo.loadOriginalItem(item.itemId);
@@ -284,7 +284,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // configure its listed suite as the catalog id of the suite master item
             if (originalItem instanceof SubItemRecord) {
                 SubItem sitem = (SubItem)originalItem.toItem();
-                ItemRepository<ItemRecord> mrepo = _itemMan.getRepository(sitem.getSuiteMasterType());
+                ItemRepository<ItemRecord> mrepo = _itemLogic.getRepository(sitem.getSuiteMasterType());
                 ItemRecord suiteMaster = mrepo.loadOriginalItem(
                     ((SubItemRecord)originalItem).suiteId);
                 if (suiteMaster == null) {
@@ -351,7 +351,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.getAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(itemType);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
         try {
             // load up the old catalog record
             CatalogRecord record = repo.loadListing(catalogId, true);
@@ -397,7 +397,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(item.type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
         try {
             // load a copy of the original item
             ItemRecord originalItem = repo.loadOriginalItem(item.itemId);
@@ -468,7 +468,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(itemType);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
         try {
             // load up the listing we're updating
             CatalogRecord record = repo.loadListing(catalogId, false);
@@ -516,7 +516,7 @@ public class CatalogServlet extends MsoyServiceServlet
         MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(itemType);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
         try {
             CatalogRecord listing = repo.loadListing(catalogId, true);
             if (listing == null) {
@@ -543,7 +543,7 @@ public class CatalogServlet extends MsoyServiceServlet
         final MemberRecord mrec = _mhelper.requireAuthedUser(ident);
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
 
         try {
             CloneRecord cRec = repo.loadCloneRecord(iident.itemId);
@@ -596,7 +596,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public Map<String, Integer> getPopularTags (byte type, int rows)
         throws ServiceException
     {
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         Map<String, Integer> result = Maps.newHashMap();
         try {
             for (TagPopularityRecord record : repo.getTagRepository().getPopularTags(rows)) {
@@ -614,7 +614,7 @@ public class CatalogServlet extends MsoyServiceServlet
     protected ListingCard[] loadTopItems (MemberRecord mrec, byte type)
         throws PersistenceException, ServiceException
     {
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(type);
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         List<ListingCard> cards = Lists.newArrayList();
         for (CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, showMature(mrec),
                 null, 0, 0, null, 0, ShopData.TOP_ITEM_COUNT)) {
@@ -679,8 +679,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected StatLogic _statLogic;
 }

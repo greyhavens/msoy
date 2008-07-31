@@ -3,15 +3,21 @@
 
 package com.threerings.msoy.item.server;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -28,12 +34,27 @@ import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.ListingCard;
 
+import com.threerings.msoy.item.server.persist.AudioRepository;
+import com.threerings.msoy.item.server.persist.AvatarRepository;
 import com.threerings.msoy.item.server.persist.CloneRecord;
+import com.threerings.msoy.item.server.persist.DecorRepository;
+import com.threerings.msoy.item.server.persist.DocumentRepository;
+import com.threerings.msoy.item.server.persist.FurnitureRepository;
+import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemListInfoRecord;
 import com.threerings.msoy.item.server.persist.ItemListRepository;
+import com.threerings.msoy.item.server.persist.ItemPackRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.LevelPackRepository;
+import com.threerings.msoy.item.server.persist.PetRepository;
+import com.threerings.msoy.item.server.persist.PhotoRepository;
+import com.threerings.msoy.item.server.persist.PrizeRepository;
+import com.threerings.msoy.item.server.persist.PropRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
+import com.threerings.msoy.item.server.persist.ToyRepository;
+import com.threerings.msoy.item.server.persist.TrophySourceRepository;
+import com.threerings.msoy.item.server.persist.VideoRepository;
 
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
@@ -46,6 +67,104 @@ import static com.threerings.msoy.Log.log;
 @BlockingThread @Singleton
 public class ItemLogic
 {
+    /**
+     * An exception that may be thrown if an item repository doesn't exist.
+     */
+    public static class MissingRepositoryException extends Exception
+    {
+        public MissingRepositoryException (byte type)
+        {
+            super("No repository registered for " + type + ".");
+        }
+    }
+
+    /**
+     * Initializes repository mappings.
+     */
+    public void init ()
+    {
+        // map our various repositories
+        registerRepository(Item.AUDIO, _audioRepo);
+        registerRepository(Item.AVATAR, _avatarRepo);
+        registerRepository(Item.DECOR, _decorRepo);
+        registerRepository(Item.DOCUMENT, _documentRepo);
+        registerRepository(Item.FURNITURE, _furniRepo);
+        registerRepository(Item.TOY, _toyRepo);
+        registerRepository(Item.GAME, _gameRepo);
+        registerRepository(Item.PET, _petRepo);
+        registerRepository(Item.PHOTO, _photoRepo);
+        registerRepository(Item.VIDEO, _videoRepo);
+        registerRepository(Item.LEVEL_PACK, _lpackRepo);
+        registerRepository(Item.ITEM_PACK, _ipackRepo);
+        registerRepository(Item.TROPHY_SOURCE, _tsourceRepo);
+        registerRepository(Item.PRIZE, _prizeRepo);
+        registerRepository(Item.PROP, _propRepo);
+    }
+
+    /**
+     * Provides a reference to the {@link GameRepository} which is used for nefarious ToyBox
+     * purposes.
+     */
+    public GameRepository getGameRepository ()
+    {
+        return _gameRepo;
+    }
+
+    /**
+     * Provides a reference to the {@link PetRepository} which is used to load pets into rooms.
+     */
+    public PetRepository getPetRepository ()
+    {
+        return _petRepo;
+    }
+
+    /**
+     * Provides a reference to the {@link AvatarRepository} which is used to load pets into rooms.
+     */
+    public AvatarRepository getAvatarRepository ()
+    {
+        return _avatarRepo;
+    }
+
+    /**
+     * Provides a reference to the {@link DecorRepository} which is used to load room decor.
+     */
+    public DecorRepository getDecorRepository ()
+    {
+        return _decorRepo;
+    }
+
+    /**
+     * Provides a reference to the {@link TrophySourceRepository}.
+     */
+    public TrophySourceRepository getTrophySourceRepository ()
+    {
+        return _tsourceRepo;
+    }
+
+    /**
+     * Returns the repository used to manage items of the specified type. Throws a service
+     * exception if the supplied type is invalid.
+     */
+    public ItemRepository<ItemRecord> getRepository (byte type)
+        throws ServiceException
+    {
+        try {
+            return getRepositoryFor(type);
+        } catch (MissingRepositoryException mre) {
+            log.warning("Requested invalid repository type " + type + ".");
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+    }
+
+    /**
+     * Returns an iterator of item types for which we have repositories.
+     */
+    public Iterable<Byte> getRepositoryTypes ()
+    {
+        return _repos.keySet();
+    }
+
     /**
      * A small helper interface for editClone.
      */
@@ -72,7 +191,7 @@ public class ItemLogic
         }
 
         // create the persistent item record
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(item.getType());
+        ItemRepository<ItemRecord> repo = getRepository(item.getType());
         final ItemRecord record = repo.newItemRecord(item);
 
         // configure the item's creator and owner
@@ -86,7 +205,7 @@ public class ItemLogic
                             ", item=" + item + "].");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
-            ItemRepository<ItemRecord> prepo = _itemMan.getRepository(parent.type);
+            ItemRepository<ItemRecord> prepo = getRepository(parent.type);
             ItemRecord prec = null;
             try {
                 prec = prepo.loadItem(parent.itemId);
@@ -155,7 +274,7 @@ public class ItemLogic
     public ItemRecord editClone (MemberRecord memrec, ItemIdent itemIdent, CloneEditOp op)
         throws ServiceException
     {
-        ItemRepository<ItemRecord> repo = _itemMan.getRepository(itemIdent.type);
+        ItemRepository<ItemRecord> repo = getRepository(itemIdent.type);
         try {
             // load up the old version of the item
             CloneRecord record = repo.loadCloneRecord(itemIdent.itemId);
@@ -220,12 +339,26 @@ public class ItemLogic
         return record.toItemListInfo();
     }
 
-    public void addItem (int listId, Item item) throws PersistenceException
+    /**
+     * Deletes a list and removes all
+     *
+     * @param listId
+     * @throws PersistenceException
+     */
+    public void deleteList (int listId)
+        throws PersistenceException
+    {
+        _listRepo.deleteList(listId);
+    }
+
+    public void addItem (int listId, Item item)
+        throws PersistenceException
     {
         addItem(listId, item.getIdent());
     }
 
-    public void addItem (int listId, ItemIdent item) throws PersistenceException
+    public void addItem (int listId, ItemIdent item)
+        throws PersistenceException
     {
         _listRepo.addItem(listId, item);
     }
@@ -277,17 +410,195 @@ public class ItemLogic
         ItemListInfo favorites;
 
         if (favoriteLists.isEmpty()) {
-            // create an favorites list for this user
+            // create the favorites list for this user
             favorites = createItemList(memberId, ItemListInfo.FAVORITES, ItemListInfo.FAVORITES_NAME);
-
         } else {
-            // TODO There should never be more than one FAVORITES list per member
-            // If there are more than one list, merge them somehow?
+            // There should never be more than one FAVORITES list per member
+            // TODO If there is more than one list, merge them somehow?
             favorites = favoriteLists.get(0);
         }
 
         return favorites;
     }
+
+    public List<Item> loadItemList (int listId)
+        throws PersistenceException
+    {
+        // look up the list elements
+        ItemIdent[] idents = _listRepo.loadList(listId);
+        return loadItems(idents);
+    }
+
+    public List<Item> loadItemList (int listId, int offset, int limit)
+        throws PersistenceException
+    {
+        // look up the list elements
+        ItemIdent[] idents = _listRepo.loadList(listId);
+        return loadItems(idents);
+    }
+
+    public List<Item> loadItems (ItemIdent[] idents)
+        throws PersistenceException
+    {
+        // now we're going to load all of these items
+        LookupList lookupList = new LookupList();
+        for (ItemIdent ident : idents) {
+            try {
+                lookupList.addItem(ident);
+            } catch (MissingRepositoryException mre) {
+                log.warning("Omitting bogus item from list: " + ident);
+            }
+        }
+
+        // mass-lookup items from their respective repositories
+        HashMap<ItemIdent, Item> items = Maps.newHashMap();
+        for (Tuple<ItemRepository<ItemRecord>, int[]> tup : lookupList) {
+            for (ItemRecord rec : tup.left.loadItems(tup.right)) {
+                Item item = rec.toItem();
+                items.put(item.getIdent(), item);
+            }
+        }
+
+        // finally, return all the items in list order
+        List<Item> list = Lists.newArrayListWithExpectedSize(idents.length);
+        for (ItemIdent ident : idents) {
+            list.add(items.get(ident));
+        }
+        return list;
+    }
+
+    public List<Item> loadFavoriteList (int memberId)
+        throws PersistenceException
+    {
+        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
+        return loadItemList(favoriteList.listId);
+    }
+
+    public List<Item> loadFavoriteList (int memberId, int offset, int limit)
+        throws PersistenceException
+    {
+        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
+        return loadItemList(favoriteList.listId, offset, limit);
+    }
+
+    /**
+     * A class that helps manage loading or storing a bunch of items that may be spread in
+     * difference repositories.
+     */
+    protected class LookupList
+        implements Iterable<Tuple<ItemRepository<ItemRecord>, int[]>>
+    {
+        /**
+         * Add the specified item id to the list.
+         */
+        public void addItem (ItemIdent ident)
+            throws MissingRepositoryException
+        {
+            addItem(ident.type, ident.itemId);
+        }
+
+        /**
+         * Add the specified item id to the list.
+         */
+        public void addItem (byte itemType, int itemId)
+            throws MissingRepositoryException
+        {
+            LookupType lt = _byType.get(itemType);
+            if (lt == null) {
+                lt = new LookupType(itemType, getRepositoryFor(itemType));
+                _byType.put(itemType, lt);
+            }
+            lt.addItemId(itemId);
+        }
+
+        public void removeItem (byte itemType, int itemId)
+        {
+            LookupType lt = _byType.get(itemType);
+            if (lt != null) {
+                lt.removeItemId(itemId);
+            }
+        }
+
+        // from Iterable
+        public Iterator<Tuple<ItemRepository<ItemRecord>, int[]>> iterator ()
+        {
+            final Iterator<LookupType> itr = _byType.values().iterator();
+            return new Iterator<Tuple<ItemRepository<ItemRecord>, int[]>>() {
+                public boolean hasNext () {
+                    return itr.hasNext();
+                }
+                public Tuple<ItemRepository<ItemRecord>, int[]> next () {
+                    LookupType lookup = itr.next();
+                    return new Tuple<ItemRepository<ItemRecord>, int[]>(
+                        lookup.repo, lookup.getItemIds());
+                }
+                public void remove () {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+
+        public Iterator<Tuple<Byte, int[]>> typeIterator ()
+        {
+            final Iterator<LookupType> itr = _byType.values().iterator();
+            return new Iterator<Tuple<Byte, int[]>>() {
+                public boolean hasNext () {
+                    return itr.hasNext();
+                }
+                public Tuple<Byte, int[]> next () {
+                    LookupType lookup = itr.next();
+                    return new Tuple<Byte, int[]>(lookup.type, lookup.getItemIds());
+                }
+                public void remove () {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+
+        protected class LookupType
+        {
+            /** The item type associated with this list. */
+            public byte type;
+
+            /** The repository associated with this list. */
+            public ItemRepository<ItemRecord> repo;
+
+            /**
+             * Create a new LookupType for the specified repository.
+             */
+            public LookupType (byte type, ItemRepository<ItemRecord> repo)
+            {
+                this.type = type;
+                this.repo = repo;
+            }
+
+            /**
+             * Add the specified item to the list.
+             */
+            public void addItemId (int id)
+            {
+                _ids.add(id);
+            }
+
+            public void removeItemId (int id)
+            {
+                _ids.remove(id);
+            }
+
+            /**
+             * Get all the item ids in this list.
+             */
+            public int[] getItemIds ()
+            {
+                return _ids.toIntArray();
+            }
+
+            protected ArrayIntSet _ids = new ArrayIntSet();
+        }
+
+        /** A mapping of item type to LookupType record of repo / ids. */
+        protected HashMap<Byte, LookupType> _byType = new HashMap<Byte, LookupType>();
+    } /* End: class LookupList. */
 
     /**
      * Utility for converting a list of records into their counterparts.
@@ -302,8 +613,50 @@ public class ItemLogic
         return list;
     }
 
+    @SuppressWarnings("unchecked")
+    protected void registerRepository (byte itemType, ItemRepository repo)
+    {
+        _repos.put(itemType, repo);
+        repo.init(itemType);
+    }
+
+    /**
+     * Get the specified ItemRepository. This method is called both from the dobj thread and the
+     * servlet handler threads but need not be synchronized because the repositories table is
+     * created at server startup time and never modified.
+     */
+    protected ItemRepository<ItemRecord> getRepositoryFor (byte type)
+        throws MissingRepositoryException
+    {
+        ItemRepository<ItemRecord> repo = _repos.get(type);
+        if (repo == null) {
+            throw new MissingRepositoryException(type);
+        }
+        return repo;
+    }
+
+    /** Maps byte type ids to repository for all digital item types. */
+    protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
+
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ItemManager _itemMan;
     @Inject protected ItemListRepository _listRepo;
     @Inject protected RootDObjectManager _omgr;
+
+    // our myriad item repositories
+    @Inject protected AudioRepository _audioRepo;
+    @Inject protected AvatarRepository _avatarRepo;
+    @Inject protected DecorRepository _decorRepo;
+    @Inject protected DocumentRepository _documentRepo;
+    @Inject protected FurnitureRepository _furniRepo;
+    @Inject protected ToyRepository _toyRepo;
+    @Inject protected GameRepository _gameRepo;
+    @Inject protected PetRepository _petRepo;
+    @Inject protected PhotoRepository _photoRepo;
+    @Inject protected VideoRepository _videoRepo;
+    @Inject protected LevelPackRepository _lpackRepo;
+    @Inject protected ItemPackRepository _ipackRepo;
+    @Inject protected TrophySourceRepository _tsourceRepo;
+    @Inject protected PrizeRepository _prizeRepo;
+    @Inject protected PropRepository _propRepo;
 }

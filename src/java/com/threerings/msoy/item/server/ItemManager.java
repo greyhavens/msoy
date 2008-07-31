@@ -4,13 +4,9 @@
 package com.threerings.msoy.item.server;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -58,12 +54,15 @@ import com.threerings.msoy.world.server.RoomManager;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.Prize;
 
 import com.threerings.msoy.item.data.ItemCodes;
+
 // we'll avoid import verbosity in this rare case
 import com.threerings.msoy.item.server.persist.*;
+
+import com.threerings.msoy.item.server.ItemLogic.LookupList;
+import com.threerings.msoy.item.server.ItemLogic.MissingRepositoryException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -74,17 +73,6 @@ import static com.threerings.msoy.Log.log;
 public class ItemManager
     implements ItemProvider
 {
-    /**
-     * An exception that may be thrown if an item repository doesn't exist.
-     */
-    public static class MissingRepositoryException extends Exception
-    {
-        public MissingRepositoryException (byte type)
-        {
-            super("No repository registered for " + type + ".");
-        }
-    } /* End: static class MissingRepositoryException. */
-
     @Inject public ItemManager (InvocationManager invmgr)
     {
         // register our invocation service
@@ -96,22 +84,7 @@ public class ItemManager
      */
     public void init ()
     {
-        // map our various repositories
-        registerRepository(Item.AUDIO, _audioRepo);
-        registerRepository(Item.AVATAR, _avatarRepo);
-        registerRepository(Item.DECOR, _decorRepo);
-        registerRepository(Item.DOCUMENT, _documentRepo);
-        registerRepository(Item.FURNITURE, _furniRepo);
-        registerRepository(Item.TOY, _toyRepo);
-        registerRepository(Item.GAME, _gameRepo);
-        registerRepository(Item.PET, _petRepo);
-        registerRepository(Item.PHOTO, _photoRepo);
-        registerRepository(Item.VIDEO, _videoRepo);
-        registerRepository(Item.LEVEL_PACK, _lpackRepo);
-        registerRepository(Item.ITEM_PACK, _ipackRepo);
-        registerRepository(Item.TROPHY_SOURCE, _tsourceRepo);
-        registerRepository(Item.PRIZE, _prizeRepo);
-        registerRepository(Item.PROP, _propRepo);
+        _itemLogic.init();
 
         ItemRepository.setNewAndHotDropoffDays(RuntimeConfig.server.newAndHotDropoffDays);
 
@@ -136,7 +109,7 @@ public class ItemManager
      */
     public GameRepository getGameRepository ()
     {
-        return _gameRepo;
+        return _itemLogic.getGameRepository();
     }
 
     /**
@@ -144,7 +117,7 @@ public class ItemManager
      */
     public PetRepository getPetRepository ()
     {
-        return _petRepo;
+        return _itemLogic.getPetRepository();
     }
 
     /**
@@ -152,7 +125,7 @@ public class ItemManager
      */
     public AvatarRepository getAvatarRepository ()
     {
-        return _avatarRepo;
+        return _itemLogic.getAvatarRepository();
     }
 
     /**
@@ -160,7 +133,7 @@ public class ItemManager
      */
     public DecorRepository getDecorRepository ()
     {
-        return _decorRepo;
+        return _itemLogic.getDecorRepository();
     }
 
     /**
@@ -168,7 +141,17 @@ public class ItemManager
      */
     public TrophySourceRepository getTrophySourceRepository ()
     {
-        return _tsourceRepo;
+        return _itemLogic.getTrophySourceRepository();
+    }
+
+    /**
+     * TODO: This is a blocking call. Get rid of this and replace
+     * calls to this method with calls to ItemLogic.
+     */
+    public ItemRepository<ItemRecord> getRepository (byte itemType)
+        throws ServiceException
+    {
+        return _itemLogic.getRepository(itemType);
     }
 
     /**
@@ -185,7 +168,7 @@ public class ItemManager
     public ItemRepository<ItemRecord> getRepository (byte type, ResultListener<?> rl)
     {
         try {
-            return getRepositoryFor(type);
+            return _itemLogic.getRepositoryFor(type);
         } catch (MissingRepositoryException mre) {
             rl.requestFailed(mre);
             return null;
@@ -199,33 +182,10 @@ public class ItemManager
         byte type, InvocationService.InvocationListener lner)
     {
         try {
-            return getRepositoryFor(type);
+            return _itemLogic.getRepositoryFor(type);
         } catch (MissingRepositoryException mre) {
             lner.requestFailed(ItemCodes.E_INTERNAL_ERROR);
             return null;
-        }
-    }
-
-    /**
-     * Returns an iterator of item types for which we have repositories.
-     */
-    public Iterable<Byte> getRepositoryTypes ()
-    {
-        return _repos.keySet();
-    }
-
-    /**
-     * Returns the repository used to manage items of the specified type. Throws a service
-     * exception if the supplied type is invalid.
-     */
-    public ItemRepository<ItemRecord> getRepository (byte type)
-        throws ServiceException
-    {
-        try {
-            return getRepositoryFor(type);
-        } catch (MissingRepositoryException mre) {
-            log.warning("Requested invalid repository type " + type + ".");
-            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
 
@@ -255,7 +215,7 @@ public class ItemManager
      */
     public void getItems (Collection<ItemIdent> ids, ResultListener<List<Item>> lner)
     {
-        final LookupList list = new LookupList();
+        final LookupList list = _itemLogic.new LookupList();
         try {
             for (ItemIdent ident : ids) {
                 list.addItem(ident);
@@ -286,48 +246,9 @@ public class ItemManager
     {
         _invoker.postUnit(new RepositoryListenerUnit<List<Item>>("loadItemList", lner) {
             public List<Item> invokePersistResult () throws Exception {
-                // first, look up the list
-                ItemIdent[] idents = _listRepo.loadList(listId);
-
-                // now we're going to load all of these items
-                LookupList lookupList = new LookupList();
-                for (ItemIdent ident : idents) {
-                    try {
-                        lookupList.addItem(ident);
-                    } catch (MissingRepositoryException mre) {
-                        log.warning("Omitting bogus item from list: " + ident);
-                    }
-                }
-
-                // mass-lookup items from their respective repositories
-                HashMap<ItemIdent, Item> items = Maps.newHashMap();
-                for (Tuple<ItemRepository<ItemRecord>, int[]> tup : lookupList) {
-                    for (ItemRecord rec : tup.left.loadItems(tup.right)) {
-                        Item item = rec.toItem();
-                        items.put(item.getIdent(), item);
-                    }
-                }
-
-                // finally, return all the items in list order
-                List<Item> list = Lists.newArrayListWithExpectedSize(idents.length);
-                for (ItemIdent ident : idents) {
-                    list.add(items.get(ident));
-                }
-                return list;
+                return _itemLogic.loadItemList(listId);
             }
         });
-    }
-
-    public void loadFavoriteList (int memberId, ResultListener<List<Item>> listener)
-    {
-        // TODO
-
-    }
-
-    public void loadFavoriteList (int memberId, int offset, int limit, ResultListener<List<Item>> listener)
-    {
-        // TODO
-
     }
 
     /**
@@ -504,8 +425,8 @@ public class ItemManager
                                  FurniData[] removedFurni, FurniData[] addedFurni,
                                  ResultListener<Object> lner)
     {
-        final LookupList unused = new LookupList();
-        final LookupList scened = new LookupList();
+        final LookupList unused = _itemLogic.new LookupList();
+        final LookupList scened = _itemLogic.new LookupList();
 
         try {
             ArrayIntSet props = null;
@@ -714,7 +635,7 @@ public class ItemManager
                 String[] itemNames = new String[idents.length];
                 for (int ii = 0; ii < idents.length; ii++) {
                     ItemIdent ident = idents[ii];
-                    ItemRecord rec = _repos.get(ident.type).loadItem(ident.itemId);
+                    ItemRecord rec = _itemLogic.getRepository(ident.type).loadItem(ident.itemId);
                     if (rec != null) {
                         itemNames[ii] = rec.name;
                     }
@@ -895,147 +816,6 @@ public class ItemManager
         });
     }
 
-    @SuppressWarnings("unchecked")
-    protected void registerRepository (byte itemType, ItemRepository repo)
-    {
-        _repos.put(itemType, repo);
-        repo.init(itemType);
-    }
-
-    /**
-     * Get the specified ItemRepository. This method is called both from the dobj thread and the
-     * servlet handler threads but need not be synchronized because the repositories table is
-     * created at server startup time and never modified.
-     */
-    protected ItemRepository<ItemRecord> getRepositoryFor (byte type)
-        throws MissingRepositoryException
-    {
-        ItemRepository<ItemRecord> repo = _repos.get(type);
-        if (repo == null) {
-            throw new MissingRepositoryException(type);
-        }
-        return repo;
-    }
-
-    /**
-     * A class that helps manage loading or storing a bunch of items that may be spread in
-     * difference repositories.
-     */
-    protected class LookupList
-        implements Iterable<Tuple<ItemRepository<ItemRecord>, int[]>>
-    {
-        /**
-         * Add the specified item id to the list.
-         */
-        public void addItem (ItemIdent ident)
-            throws MissingRepositoryException
-        {
-            addItem(ident.type, ident.itemId);
-        }
-
-        /**
-         * Add the specified item id to the list.
-         */
-        public void addItem (byte itemType, int itemId)
-            throws MissingRepositoryException
-        {
-            LookupType lt = _byType.get(itemType);
-            if (lt == null) {
-                lt = new LookupType(itemType, getRepositoryFor(itemType));
-                _byType.put(itemType, lt);
-            }
-            lt.addItemId(itemId);
-        }
-
-        public void removeItem (byte itemType, int itemId)
-        {
-            LookupType lt = _byType.get(itemType);
-            if (lt != null) {
-                lt.removeItemId(itemId);
-            }
-        }
-
-        // from Iterable
-        public Iterator<Tuple<ItemRepository<ItemRecord>, int[]>> iterator ()
-        {
-            final Iterator<LookupType> itr = _byType.values().iterator();
-            return new Iterator<Tuple<ItemRepository<ItemRecord>, int[]>>() {
-                public boolean hasNext () {
-                    return itr.hasNext();
-                }
-                public Tuple<ItemRepository<ItemRecord>, int[]> next () {
-                    LookupType lookup = itr.next();
-                    return new Tuple<ItemRepository<ItemRecord>, int[]>(
-                        lookup.repo, lookup.getItemIds());
-                }
-                public void remove () {
-                    throw new UnsupportedOperationException();
-                }
-            };
-        }
-
-        public Iterator<Tuple<Byte, int[]>> typeIterator ()
-        {
-            final Iterator<LookupType> itr = _byType.values().iterator();
-            return new Iterator<Tuple<Byte, int[]>>() {
-                public boolean hasNext () {
-                    return itr.hasNext();
-                }
-                public Tuple<Byte, int[]> next () {
-                    LookupType lookup = itr.next();
-                    return new Tuple<Byte, int[]>(lookup.type, lookup.getItemIds());
-                }
-                public void remove () {
-                    throw new UnsupportedOperationException();
-                }
-            };
-        }
-
-        protected class LookupType
-        {
-            /** The item type associated with this list. */
-            public byte type;
-
-            /** The repository associated with this list. */
-            public ItemRepository<ItemRecord> repo;
-
-            /**
-             * Create a new LookupType for the specified repository.
-             */
-            public LookupType (byte type, ItemRepository<ItemRecord> repo)
-            {
-                this.type = type;
-                this.repo = repo;
-            }
-
-            /**
-             * Add the specified item to the list.
-             */
-            public void addItemId (int id)
-            {
-                _ids.add(id);
-            }
-
-            public void removeItemId (int id)
-            {
-                _ids.remove(id);
-            }
-
-            /**
-             * Get all the item ids in this list.
-             */
-            public int[] getItemIds ()
-            {
-                return _ids.toIntArray();
-            }
-
-            protected ArrayIntSet _ids = new ArrayIntSet();
-        }
-
-        /** A mapping of item type to LookupType record of repo / ids. */
-        protected HashMap<Byte, LookupType> _byType = new HashMap<Byte, LookupType>();
-    } /* End: class LookupList. */
-
     /** Notifies other nodes when a game record is updated. */
     protected static class GameUpdatedAction extends GameNodeAction
     {
@@ -1050,9 +830,6 @@ public class ItemManager
         @Inject protected transient MsoyGameRegistry _gameReg;
     }
 
-    /** Maps byte type ids to repository for all digital item types. */
-    protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
-
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ServerMessages _serverMsgs;
@@ -1063,21 +840,6 @@ public class ItemManager
     @Inject protected MemberManager _memberMan;
     @Inject protected ItemListRepository _listRepo;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected ItemLogic _itemLogic;
 
-    // our myriad item repositories
-    @Inject protected AudioRepository _audioRepo;
-    @Inject protected AvatarRepository _avatarRepo;
-    @Inject protected DecorRepository _decorRepo;
-    @Inject protected DocumentRepository _documentRepo;
-    @Inject protected FurnitureRepository _furniRepo;
-    @Inject protected ToyRepository _toyRepo;
-    @Inject protected GameRepository _gameRepo;
-    @Inject protected PetRepository _petRepo;
-    @Inject protected PhotoRepository _photoRepo;
-    @Inject protected VideoRepository _videoRepo;
-    @Inject protected LevelPackRepository _lpackRepo;
-    @Inject protected ItemPackRepository _ipackRepo;
-    @Inject protected TrophySourceRepository _tsourceRepo;
-    @Inject protected PrizeRepository _prizeRepo;
-    @Inject protected PropRepository _propRepo;
 }
