@@ -54,7 +54,7 @@ public class StatLogic
      * Attempts to apply the given stat modification. If the stat modification fails MAX_TRIES
      * times, a warning will be logged; otherwise, a MemberNodeAction will be posted.
      */
-    public <T extends Stat> void updateStat (int memberId, StatModifier<T> modifier)
+    public void updateStat (int memberId, StatModifier<? extends Stat> modifier)
     {
         if (!DeploymentConfig.devDeployment) {
             return; // TODO remove this when the Passport system goes live
