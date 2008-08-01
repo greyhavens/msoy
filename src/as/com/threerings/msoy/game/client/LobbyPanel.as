@@ -101,11 +101,14 @@ public class LobbyPanel extends FloatingPanel
         resize.easingFunction = Cubic.easeInOut;
         resize.duration = 300;
         setStyle("resizeEffect", resize);
-        addEventListener(EffectEvent.EFFECT_END, function (event :EffectEvent) :void {
-            if (numChildren > 0) {
-                (getChildAt(0) as UIComponent).setVisible(true);
-            }
-        });
+        // TODO: This effect is not always getting done, so we never hide the contents, and 
+        // therefore never need them unhidden.  When this effect has been sorted out, this code 
+        // will once again be useful 
+//        addEventListener(EffectEvent.EFFECT_END, function (event :EffectEvent) :void {
+//            if (numChildren > 0) {
+//                (getChildAt(0) as UIComponent).setVisible(true);
+//            }
+//        });
     }
 
     // overridden so we can redefine center's default to false, since we force layout..
@@ -333,7 +336,11 @@ public class LobbyPanel extends FloatingPanel
         // if the table switched from pending to running, move it
         if (table.gameOid > 0 && panel.parent == _pendingList) {
             _pendingList.removeChild(panel);
-            _runningList.addChild(panel);
+            // if it's a running unwatchable seated game, no need to display it
+            if (table.config.getMatchType() == GameConfig.PARTY || 
+                !(_lobbyObj.gameDef.match as MsoyMatchConfig).unwatchable) {
+                _runningList.addChild(panel);
+            }
             updateTableState();
         }
 
@@ -485,7 +492,10 @@ public class LobbyPanel extends FloatingPanel
             }
             removeChildAt(0);
         }
-        contents.setVisible(false);
+        // TODO: the effect event isn't always getting dispatched (noteably when someone re-opens
+        // the lobby from within a game instance, so we can't rely on the content getting 
+        // unhidden for us.
+        //contents.setVisible(false);
         addChild(contents);
         return true;
     }
