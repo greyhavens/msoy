@@ -64,7 +64,7 @@ TitleWindow {
   fontWeight: bold;
 }
 
-Accordion {
+/*Accordion {
   headerHeight: 20;
   dropShadowEnabled: true;
   shadowDirection: center;
@@ -81,7 +81,7 @@ Accordion {
   textRollOverColor: #fd019f;
   textSelectedColor: #fd019f;
   openDuration: 225;
-}
+}*/
 
 TextInput {
   backgroundAlpha: 1;
@@ -1226,7 +1226,7 @@ BasePanel {
 .friendsListPanel {
   titleBackgroundSkin: Embed(source="../../rsrc/media/skins/friends_popup_header.png",
           scaleGridTop="8", scaleGridBottom="28",
-          scaleGridLeft="8", scaleGridRight="211");
+          scaleGridLeft="8", scaleGridRight="315");
   headerHeight: 36;
   backgroundColor: black;
   backgroundAlpha: 0.8;
@@ -1236,6 +1236,25 @@ BasePanel {
   paddingLeft: 0;
   paddingRight: 0;
   verticalGap: 0;
+}
+
+.shareWindow {
+  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/share_popup_header.png");
+  headerHeight: 36;
+  backgroundColor: black;
+  backgroundAlpha: 0.8;
+  backgroundImage: null;
+  paddingTop: 0;
+  paddingBottom: 0;
+  paddingLeft: 0;
+  paddingRight: 0;
+  verticalGap: 0;
+}
+
+.copyButton {
+  upSkin: Embed(source="../../rsrc/media/skins/button/copy.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/copy_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/copy_down.png");
 }
 
 .friendList {

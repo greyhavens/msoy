@@ -247,6 +247,7 @@ public class HeaderBar extends HBox
         _extras.push(_commentLink);
 
         _embedLink = new CommandLinkButton(Msgs.GENERAL.get("b.share"), function () :void {
+                // TODO: Popup management needed now that non-modal
                 new EmbedDialog(_ctx);
             });
         _embedLink.styleName = "headerShareLink";
