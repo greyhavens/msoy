@@ -6,6 +6,8 @@ package com.threerings.msoy.client {
 import flash.events.Event;
 import flash.events.MouseEvent;
 
+import flash.display.StageDisplayState;
+
 import mx.core.Container;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
@@ -223,6 +225,11 @@ public class ControlBar extends HBox
         _zoomBtn.setCallback(handlePopZoom);
 
         //_partyBtn = new CommandCheckBox("Party", handleJoinLeaveParty);
+
+        _fullBtn = new CommandButton();
+        _fullBtn.styleName = "controlBarButtonFull";
+        _fullBtn.toolTip = Msgs.GENERAL.get("i.full");
+        _fullBtn.setCallback(handleFullScreen);
     }
 
     /**
@@ -251,6 +258,10 @@ public class ControlBar extends HBox
         addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR /*,UI_VIEWER*/,
             UI_CHATREMOVED]);
         addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT, UI_VIEWER, UI_CHATREMOVED ]);
+        if (_ctx.getTokens().isAdmin()) {
+            addGroupChild(_fullBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER,
+                UI_CHATREMOVED]);
+        }
 
         //addGroupChild(_partyBtn, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER,
         //    UI_CHATREMOVED ]);
@@ -336,6 +347,17 @@ public class ControlBar extends HBox
         }
     }
 
+    protected function handleFullScreen () :void
+    {
+        try {
+            stage.displayState = (stage.displayState != StageDisplayState.FULL_SCREEN)
+                ? StageDisplayState.FULL_SCREEN
+                : StageDisplayState.NORMAL;
+        } catch (se :SecurityError) {
+            _fullBtn.enabled = false;
+        }
+    }
+
     /**
      * Handle the zoom button popup.
      */
@@ -383,6 +405,9 @@ public class ControlBar extends HBox
 
     /** Handles volume adjustment. */
     protected var _volBtn :CommandButton;
+
+    /** Handles full screening. */
+    protected var _fullBtn :CommandButton;
 
     /** Handles room zooming. */
     protected var _zoomBtn :CommandButton;
