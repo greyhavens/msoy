@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="DataPack,com.whirled.DataPack,close,getArray,getBoolean,getColor,getData,getDisplayObjects,getFile,getFileAsString,getFileAsXML,getLoaders,getNumber,getPoint,getRectangle,getString,isComplete,load" name="keywords">
+<meta content="DataPack,com.whirled.DataPack,close,extractStringValue,getArray,getBoolean,getColor,getData,getDisplayObjects,getFile,getFileAsString,getFileAsXML,getLoaders,getNumber,getPoint,getRectangle,getString,isComplete,load,parseValueFromString" name="keywords">
 <title>com.whirled.DataPack</title>
 </head>
 <body>
@@ -194,6 +194,30 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#extractStringValue()">extractStringValue</a>(datum:XML, valueField:String = "value"):*</div>
+<div class="summaryTableDescription">
+     Extract from the datum either a String, null, or undefined.</div>
+</td><td class="summaryTableOwnerCol">DataPack</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#parseValueFromString()">parseValueFromString</a>(string:String, type:String):Object</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">DataPack</td>
+</tr>
+</table>
+</div>
 <a name="eventSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Events</div>
@@ -280,6 +304,35 @@ showHideInherited();
      If the DataPack is still loading, stop it, otherwise has no effect. It would
      be a good idea to call this during your UNLOAD handling.
      </p></div>
+<a name="extractStringValue()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">extractStringValue</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function extractStringValue(datum:XML, valueField:String = "value"):*</code><p>
+     Extract from the datum either a String, null, or undefined.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">datum</span>:XML</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">valueField</span>:String</code> (default = "<code>value</code>")<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>*</code></td>
+</tr>
+</table>
+</div>
 <a name="getArray()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -679,6 +732,33 @@ showHideInherited();
      }
      </pre></div>
      <p></p>
+</div>
+<a name="parseValueFromString()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">parseValueFromString</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function parseValueFromString(string:String, type:String):Object</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">string</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">type</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
 </div>
 <div class="detailSectionHeader">Event detail</div>
 <a name="event:complete"></a>

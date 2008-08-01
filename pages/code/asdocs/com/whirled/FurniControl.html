@@ -41,7 +41,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">FurniControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="EntityControl.html">EntityControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="AbstractControl.html">AbstractControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Subclasses</td><td><a href="../whirled/BackdropControl.html">BackdropControl</a>, <a href="../whirled/PropControl.html">PropControl</a>, <a href="../whirled/ToyControl.html">ToyControl</a></td>
+<td class="classHeaderTableLabel">Subclasses</td><td><a href="../whirled/BackdropControl.html">BackdropControl</a>, <a href="../whirled/ToyControl.html">ToyControl</a></td>
 </tr>
 </table>
 <p></p>
@@ -232,7 +232,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#hasControl()">hasControl</a>():Boolean</div>
 <div class="summaryTableDescription">
-     Deletes this entity from the player's inventory and removed it from the room.</div>
+     Is this client in control?
+          <p>Control is a mutually exclusive lock across all instances of the entity (i.e.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -521,7 +522,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedConstant">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#PROP_TYPE">PROP_TYPE</a> : String = "std:type"<div class="summaryTableDescription">[static] The type of the entity, AVATAR, PET or FURNI.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#PROP_MEMBER_ID">PROP_MEMBER_ID</a> : String = "std:member_id"<div class="summaryTableDescription">[static] The unique Whirled player ID of the owner on an avatar (int).</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedConstant">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#PROP_NAME">PROP_NAME</a> : String = "std:name"<div class="summaryTableDescription">[static] The non-unique display name of the entity (a String).</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedConstant">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#PROP_ORIENTATION">PROP_ORIENTATION</a> : String = "std:orientation"<div class="summaryTableDescription">[static] The entity facing direction (a Number).</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedConstant">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EntityControl.html#PROP_TYPE">PROP_TYPE</a> : String = "std:type"<div class="summaryTableDescription">[static] The type of the entity, TYPE_AVATAR, TYPE_PET or TYPE_FURNI.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedConstant">

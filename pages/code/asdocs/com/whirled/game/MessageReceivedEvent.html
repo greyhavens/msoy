@@ -173,10 +173,17 @@ showHideInherited();
 <div class="detailBody">
 <code>senderId:int</code>&nbsp;&nbsp;[read-only]<p>
      Access the id of the occupant that sent the message. The value may not correspond to a real 
-     occupant id if {</p><span class="label">Implementation</span>
+     occupant id if <code>isFromServer</code> returns true.
+     </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get senderId():int</code>
 <br>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/MessageReceivedEvent.html#isFromServer()" target="">isFromServer()</a>
+</div>
 </div>
 <a name="value"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

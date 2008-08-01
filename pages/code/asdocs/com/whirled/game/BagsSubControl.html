@@ -188,7 +188,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SHOW_TO_ALL">SHOW_TO_ALL</a> : int = 0<div class="summaryTableDescription">[static] 
-     Player id constant used by {</div>
+     Player id constant used by <code>pick</code> and <code>deal</code> indicating that elements 
+     should be picked or dealt publicly to all players.</div>
 </td><td class="summaryTableOwnerCol">BagsSubControl</td>
 </tr>
 </table>
@@ -282,7 +283,11 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">callback</span>:Function</code> (default = <code>null</code>)<code></code> &mdash; if {</td>
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code> (default = <code>null</code>)<code></code> &mdash; if <code>SHOW_TO_ALL</code> (or unset), the picked elements should be 
+            set on the gameObject as a property for all to see.
+            If a playerId is specified, only that player will receive
+            the elements as a message.
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -291,6 +296,12 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/BagsSubControl.html#SHOW_TO_ALL" target="">SHOW_TO_ALL</a>
+</div>
 </div>
 <a name="merge()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -353,9 +364,19 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> &mdash; if {</td>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> &mdash; if <code>SHOW_TO_ALL</code> (or unset), the picked elements should be 
+            set on the gameObject as a property for all to see.
+            If a playerId is specified, only that player will receive
+            the elements as a message.
+     </td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/BagsSubControl.html#SHOW_TO_ALL" target="">SHOW_TO_ALL</a>
+</div>
 </div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
@@ -367,7 +388,17 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const SHOW_TO_ALL:int = 0</code><p> 
-     Player id constant used by {</p></div>
+     Player id constant used by <code>pick</code> and <code>deal</code> indicating that elements 
+     should be picked or dealt publicly to all players.
+     </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/BagsSubControl.html#pick()" target="">pick()</a>
+<br>
+<a href="../game/BagsSubControl.html#deal()" target="">deal()</a>
+</div>
+</div>
 <br>
 <br>
 <hr>

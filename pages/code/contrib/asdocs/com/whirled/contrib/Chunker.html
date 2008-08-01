@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Chunker,com.whirled.contrib.Chunker,COMPRESSED_TOKEN,END_TOKEN,MAX_CHUNK_DATA,MIN_SEND_WAIT,NO_TOKENS,OBJECT_TOKEN,START_TOKEN,_ctrl,_inData,_msgName,_nextSend,_outData,_outTokens,_timer,checkSendChunk,chunkReceived,handleMessage,handleUnload,send,sendChunk" name="keywords">
+<meta content="Chunker,com.whirled.contrib.Chunker,ALWAYS_COMPRESS,COMPRESSED_TOKEN,END_TOKEN,MAX_CHUNK_DATA,MIN_SEND_WAIT,NEVER_COMPRESS,NO_TOKENS,OBJECT_TOKEN,START_TOKEN,TRY_COMPRESS,_ctrl,_inData,_msgName,_nextSend,_outData,_outTokens,_timer,checkSendChunk,chunkReceived,countChunks,handleMessage,handleUnload,send,sendChunk" name="keywords">
 <title>com.whirled.contrib.Chunker</title>
 </head>
 <body>
@@ -103,7 +103,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#send()">send</a>(data:Object, tryCompress:Boolean = true):void</div>
+<a class="signatureLink" href="#send()">send</a>(data:Object, compressStrategy:int):void</div>
 <div class="summaryTableDescription">
      Send this data to all instances of this entity in chunked and throttled messages.</div>
 </td><td class="summaryTableOwnerCol">Chunker</td>
@@ -131,6 +131,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#chunkReceived()">chunkReceived</a>(inBytes:ByteArray):void</div>
 <div class="summaryTableDescription">
      Handle a received chunk.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#countChunks()">countChunks</a>(dataLength:int):int</div>
+<div class="summaryTableDescription">[static]
+     Counts the number of chunks to send data of the specified length.</div>
 </td><td class="summaryTableOwnerCol">Chunker</td>
 </tr>
 <tr class="">
@@ -176,7 +184,30 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 </div>
-<a name="constantSummary"></a><a name="protectedConstantSummary"></a>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ALWAYS_COMPRESS">ALWAYS_COMPRESS</a> : int = 0<div class="summaryTableDescription">[static] A compression strategy that always compresses the data, regardless of whether it
+     saved any space.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#NEVER_COMPRESS">NEVER_COMPRESS</a> : int = 2<div class="summaryTableDescription">[static] A compression strategy that says: don't ever even waste time trying to compress.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TRY_COMPRESS">TRY_COMPRESS</a> : int = 1<div class="summaryTableDescription">[static] A compression stragegy that tries to compress the data, but only sends the compressed
+     form if it would actually result in sending less chunks.</div>
+</td><td class="summaryTableOwnerCol">Chunker</td>
+</tr>
+</table>
+</div>
+<a name="protectedConstantSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Protected Constants</div>
 <table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
@@ -339,6 +370,29 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="countChunks()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">countChunks</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function countChunks(dataLength:int):int</code><p>
+     Counts the number of chunks to send data of the specified length.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">dataLength</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
 <a name="handleMessage()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -378,7 +432,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function send(data:Object, tryCompress:Boolean = true):void</code><p>
+<code>public function send(data:Object, compressStrategy:int):void</code><p>
      Send this data to all instances of this entity in chunked and throttled messages.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -390,8 +444,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">tryCompress</span>:Boolean</code> (default = <code>true</code>)<code></code> &mdash; whether to try to compress. Pass false if the data you're sending
-     is already compressed and you don't want to waste CPU trying.
+<td width="20px"></td><td><code><span class="label">compressStrategy</span>:int</code> &mdash; the strategy to take when deciding whether to compress the data.
      </td>
 </tr>
 </table>
@@ -428,10 +481,19 @@ showHideInherited();
   </p></div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
+<a name="ALWAYS_COMPRESS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ALWAYS_COMPRESS</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const ALWAYS_COMPRESS:int = 0</code><p> A compression strategy that always compresses the data, regardless of whether it
+     saved any space. </p></div>
 <a name="COMPRESSED_TOKEN"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">COMPRESSED_TOKEN</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">COMPRESSED_TOKEN</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -468,6 +530,14 @@ showHideInherited();
 <code>protected static const MIN_SEND_WAIT:int = 200</code><p> The minimum time between sends. This is even fairly aggressive. Using
      other values may "work" but then certain times they may not work, so you're
      best off not screwing with this. </p></div>
+<a name="NEVER_COMPRESS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">NEVER_COMPRESS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const NEVER_COMPRESS:int = 2</code><p> A compression strategy that says: don't ever even waste time trying to compress. </p></div>
 <a name="NO_TOKENS"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -494,6 +564,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected static const START_TOKEN:int</code>
 </div>
+<a name="TRY_COMPRESS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">TRY_COMPRESS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const TRY_COMPRESS:int = 1</code><p> A compression stragegy that tries to compress the data, but only sends the compressed
+     form if it would actually result in sending less chunks. </p></div>
 <br>
 <br>
 <hr>

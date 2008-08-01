@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="MainLoop,com.whirled.contrib.simplegame.MainLoop,TRANSITION_CHANGE,TRANSITION_POP,TRANSITION_PUSH,TRANSITION_UNWIND,_fps,_hasSetup,_hostSprite,_keyDispatcher,_lastTime,_modeStack,_pendingModeTransitionQueue,_running,_updatables,g_instance,elapsedSeconds,fps,instance,topMode,addUpdatable,changeMode,createModeTransition,handleModeTransitions,onKeyDown,onKeyUp,popAllModes,popMode,pushMode,removeUpdatable,run,setup,shutdown,unwindToMode,update" name="keywords">
+<meta content="MainLoop,com.whirled.contrib.simplegame.MainLoop,TRANSITION_CHANGE,TRANSITION_INSERT,TRANSITION_POP,TRANSITION_PUSH,TRANSITION_UNWIND,_fps,_hasSetup,_hostSprite,_keyDispatcher,_lastTime,_modeStack,_pendingModeTransitionQueue,_running,_updatables,g_instance,elapsedSeconds,fps,instance,topMode,addUpdatable,changeMode,createModeTransition,handleModeTransitions,onKeyDown,onKeyUp,popAllModes,popMode,pushMode,removeUpdatable,run,setup,shutdown,unwindToMode,update" name="keywords">
 <title>com.whirled.contrib.simplegame.MainLoop</title>
 </head>
 <body>
@@ -159,7 +159,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#popAllModes()">popAllModes</a>():void</div>
 <div class="summaryTableDescription">
-     Pops all modes from the mode stack.</div>
+     Inserts a mode into the stack at the given index.</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
@@ -231,7 +231,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#createModeTransition()">createModeTransition</a>(mode:<a href="AppMode.html">AppMode</a>, transitionType:uint):void</div>
+<a class="signatureLink" href="#createModeTransition()">createModeTransition</a>(mode:<a href="AppMode.html">AppMode</a>, transitionType:uint, index:int = 0):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
@@ -273,19 +273,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TRANSITION_CHANGE">TRANSITION_CHANGE</a> : uint = 2<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TRANSITION_CHANGE">TRANSITION_CHANGE</a> : int = 2<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TRANSITION_POP">TRANSITION_POP</a> : uint = 1<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TRANSITION_INSERT">TRANSITION_INSERT</a> : int = 4<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TRANSITION_PUSH">TRANSITION_PUSH</a> : uint = 0<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TRANSITION_POP">TRANSITION_POP</a> : int = 1<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TRANSITION_UNWIND">TRANSITION_UNWIND</a> : uint = 3<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TRANSITION_PUSH">TRANSITION_PUSH</a> : int = 0<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">MainLoop</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TRANSITION_UNWIND">TRANSITION_UNWIND</a> : int = 3<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">MainLoop</td>
 </tr>
 </table>
@@ -489,7 +493,7 @@ showHideInherited();
 <code>public function changeMode(mode:<a href="AppMode.html">AppMode</a>):void</code><p>
      Pops the top mode from the stack, and pushes
      a new mode in its place.
-     Mode changes take effect before game updates.
+     (Mode changes take effect between game updates.)
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -504,7 +508,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function createModeTransition(mode:<a href="AppMode.html">AppMode</a>, transitionType:uint):void</code><span class="label">Parameters</span>
+<code>protected function createModeTransition(mode:<a href="AppMode.html">AppMode</a>, transitionType:uint, index:int = 0):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">mode</span>:<a href="AppMode.html">AppMode</a></code></td>
@@ -514,6 +518,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">transitionType</span>:uint</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">index</span>:int</code> (default = <code>0</code>)<code></code></td>
 </tr>
 </table>
 </div>
@@ -562,9 +572,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function popAllModes():void</code><p>
-     Pops all modes from the mode stack.
-     Mode changes take effect before game updates.
-     </p></div>
+     Inserts a mode into the stack at the given index.
+     (Mode changes take effect between game updates.)
+          </p></div>
 <a name="popMode()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -574,7 +584,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public function popMode():void</code><p>
      Pops the top mode from the mode stack.
-     Mode changes take effect before game updates.
+     (Mode changes take effect between game updates.)
      </p></div>
 <a name="pushMode()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -585,7 +595,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public function pushMode(mode:<a href="AppMode.html">AppMode</a>):void</code><p>
      Pushes a mode to the mode stack.
-     Mode changes take effect before game updates.
+     (Mode changes take effect between game updates.)
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -684,7 +694,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const TRANSITION_CHANGE:uint = 2</code>
+<code>public static const TRANSITION_CHANGE:int = 2</code>
+</div>
+<a name="TRANSITION_INSERT"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">TRANSITION_INSERT</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const TRANSITION_INSERT:int = 4</code>
 </div>
 <a name="TRANSITION_POP"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -693,7 +712,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const TRANSITION_POP:uint = 1</code>
+<code>public static const TRANSITION_POP:int = 1</code>
 </div>
 <a name="TRANSITION_PUSH"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -702,7 +721,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const TRANSITION_PUSH:uint = 0</code>
+<code>public static const TRANSITION_PUSH:int = 0</code>
 </div>
 <a name="TRANSITION_UNWIND"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -711,7 +730,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const TRANSITION_UNWIND:uint = 3</code>
+<code>public static const TRANSITION_UNWIND:int = 3</code>
 </div>
 <br>
 <br>

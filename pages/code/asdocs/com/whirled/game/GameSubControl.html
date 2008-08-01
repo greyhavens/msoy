@@ -419,7 +419,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CURRENT_USER">CURRENT_USER</a> : int = 0<div class="summaryTableDescription">[static] ID constant passed into {</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CURRENT_USER">CURRENT_USER</a> : int = 0<div class="summaryTableDescription">[static] ID constant passed into <code>getLevelPacks</code> to indicate the current player.</div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="">
@@ -429,7 +429,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SERVER_AGENT_ID">SERVER_AGENT_ID</a> : int = -2.147483648E9<div class="summaryTableDescription">[static] ID constant returned by {</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SERVER_AGENT_ID">SERVER_AGENT_ID</a> : int = -2.147483648E9<div class="summaryTableDescription">[static] ID constant returned by <code>getMyId</code> when called by a game's server agent.</div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="">
@@ -740,13 +740,23 @@ showHideInherited();
 <div class="detailBody">
 <code>public function getMyId():int</code><p>
      Returns this client's player id. If this method is called from the game's server agent,
-     the result is {</p><p></p>
+     the result is <code>SERVER_AGENT_ID</code>. The method <code>amServerAgent</code> can be used to 
+     explicitly test for this case.
+     </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>int</code></td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/GameSubControl.html#SERVER_AGENT_ID" target="">SERVER_AGENT_ID</a>
+<br>
+<a href="../game/GameSubControl.html#amServerAgent()" target="">amServerAgent()</a>
+</div>
 </div>
 <a name="getOccupantIds()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -1090,7 +1100,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const CURRENT_USER:int = 0</code><p> ID constant passed into {</p></div>
+<code>public static const CURRENT_USER:int = 0</code><p> ID constant passed into <code>getLevelPacks</code> to indicate the current player. 
+     </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/GameSubControl.html#getLevelPacks()" target="">getLevelPacks()</a>
+</div>
+</div>
 <a name="PROPORTIONAL"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -1109,7 +1126,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const SERVER_AGENT_ID:int = -2.147483648E9</code><p> ID constant returned by {</p></div>
+<code>public static const SERVER_AGENT_ID:int = -2.147483648E9</code><p> ID constant returned by <code>getMyId</code> when called by a game's server agent. 
+     </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/GameSubControl.html#getMyId()" target="">getMyId()</a>
+</div>
+</div>
 <a name="TO_EACH_THEIR_OWN"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
