@@ -28,6 +28,7 @@ import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultAdapter;
 
 import com.threerings.parlor.game.data.GameCodes;
+import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 
 import com.threerings.msoy.data.MemberObject;
@@ -360,8 +361,8 @@ public class MsoyGameRegistry
     }
 
     // from interface GameServerProvider
-    @SuppressWarnings("unchecked")
-    public void updateStat (ClientObject caller, int memberId, StatModifier modifier)
+    public void updateStat (ClientObject caller, int memberId,
+        StatModifier<? extends Stat> modifier)
     {
         if (!checkCallerAccess(caller, "updateStat(" + memberId + ", " + modifier + ")")) {
             return;
