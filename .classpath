@@ -100,5 +100,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/toybox"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/underwire"/>
 	<classpathentry kind="lib" path="lib/plugin.jar"/>
+	<classpathentry kind="lib" path="etc"/>
 	<classpathentry kind="output" path="dist/classes"/>
 </classpath>
