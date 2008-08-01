@@ -52,8 +52,10 @@ public class MsoyEventLogger
         int port = ServerConfig.eventLogPort;
         if (!StringUtil.isBlank(host) && port > 0) {
             try {
-                EventLoggerConfig config = new EventLoggerConfig(
-                    host, port, ServerConfig.eventLogUsername, ServerConfig.eventLogPassword);
+                final String eventstore = "eventspool_" + ident;
+                EventLoggerConfig config = 
+                    new EventLoggerConfig(host, port, ServerConfig.eventLogUsername, 
+                                          ServerConfig.eventLogPassword, eventstore);
 
                 // if our spool directory is not an absolute path, prefix it with the server root
                 File spoolDir = new File(ServerConfig.eventLogSpoolDir);
