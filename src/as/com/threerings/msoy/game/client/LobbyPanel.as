@@ -290,6 +290,12 @@ public class LobbyPanel extends FloatingPanel
             return;
         }
 
+        // if it's a running unwatchable seated game, no need to display it
+        if (table.config.getMatchType() != GameConfig.PARTY && table.inPlay() &&
+            (_lobbyObj.gameDef.match as MsoyMatchConfig).unwatchable) {
+            return;
+        }
+
         // add the table at the bottom of the list
         var list :VBox = (table.gameOid > 0) ? _runningList : _pendingList;
         list.addChild(new TablePanel(_gctx, this, table));
