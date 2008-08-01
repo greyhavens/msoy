@@ -49,7 +49,7 @@ public class ItemListRepository extends DepotRepository
         throws PersistenceException
     {
         if (record.listId != 0) {
-            throw new PersistenceException("Can't insert existing list with id [" + record.listId + "]");
+            throw new IllegalArgumentException("Can't insert existing list with id [" + record.listId + "]");
         }
         insert(record);
     }
