@@ -105,7 +105,7 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class GameGameRegistry
     implements LobbyProvider, AVRProvider, ShutdownManager.Shutdowner,
-    LobbyManager.ShutdownObserver, AVRGameManager.ShutdownObserver
+    LobbyManager.ShutdownObserver, AVRGameManager.LifecycleObserver
 {
     @Inject public GameGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
@@ -391,7 +391,7 @@ public class GameGameRegistry
                 }
 
                 List<PlaceManagerDelegate> delegates = Lists.newArrayList();
-                // TODO: Re-enable event logging for AVRGs
+                // TODO: Move AVRG event logging out of QuestDelegate and maybe into this one?
 //                delegates.add(new EventLoggingDelegate(_content));
                 // TODO: Refactor the bits of AwardDelegate that we want
 //                delegates.add(new AwardDelegate(_content));
@@ -412,18 +412,12 @@ public class GameGameRegistry
                 }
 
                 mgr.getGameObject().setGameMedia(_content.game.gameMedia);
-                mgr.setShutdownObserver(GameGameRegistry.this);
+                mgr.setLifecycleObserver(GameGameRegistry.this);
                 mgr.initializeState(_recs);
 
-                _avrgManagers.put(gameId, mgr);
-
-                ResultListenerList list = _loadingAVRGames.remove(gameId);
-                if (list != null) {
-                    list.requestProcessed(mgr);
-                } else {
-                    log.warning(
-                        "No listeners when done activating AVRGame [gameId=" + gameId + "]");
-                }
+                // now start up the agent, then wait for the avrGameReady callback
+                mgr.startAgent();
+                // TODO: add a timeout?
             }
 
             public void handleFailure (Exception pe) {
@@ -685,8 +679,11 @@ public class GameGameRegistry
         flushPercentiler(Math.abs(gameId)); // multiplayer
     }
 
-    public void avrGameDidShutdown (int gameId)
+    // from AVRGameManager.LifecycleObserver
+    public void avrGameDidShutdown (AVRGameManager mgr)
     {
+        int gameId = mgr.getGameId();
+
         // destroy our record of that avrg
         _avrgManagers.remove(gameId);
         _loadingAVRGames.remove(gameId);
@@ -696,8 +693,21 @@ public class GameGameRegistry
 
         // let our world server know we're audi
         _worldClient.stoppedHostingGame(gameId);
+    }
 
-        // TODO: do avrg's need to flush percentilers
+    // from AVRGameManager.LifecycleObserver
+    public void avrGameReady (AVRGameManager mgr)
+    {
+        int gameId = mgr.getGameId();
+
+        _avrgManagers.put(gameId, mgr);
+
+        ResultListenerList list = _loadingAVRGames.remove(gameId);
+        if (list != null) {
+            list.requestProcessed(mgr);
+        } else {
+            log.warning("No listeners when done activating AVRGame", "gameId", gameId);
+        }
     }
 
     protected GameContent assembleGameContent (final int gameId)

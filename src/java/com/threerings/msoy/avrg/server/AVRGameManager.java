@@ -44,6 +44,7 @@ import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
+import com.threerings.msoy.game.server.AgentTraceDelegate;
 import com.threerings.msoy.game.server.GameWatcherManager;
 import com.threerings.msoy.game.server.PlayerLocator;
 import com.threerings.msoy.game.server.GameWatcherManager.Observer;
@@ -71,15 +72,18 @@ public class AVRGameManager extends PlaceManager
     implements AVRGameProvider, PlayManager
 {
     /** Observes our shutdown function call. */
-    public interface ShutdownObserver
+    public interface LifecycleObserver
     {
+        /** Informs the observer the AVRG manager is ready for operation. */
+        void avrGameReady (AVRGameManager mgr);
+
         /** Informs the observer a shutdown has happened. */
-        void avrGameDidShutdown (int gameId);
+        void avrGameDidShutdown (AVRGameManager mgr);
     }
 
-    public void setShutdownObserver (ShutdownObserver obs)
+    public void setLifecycleObserver (LifecycleObserver obs)
     {
-        _shutdownObserver = obs;
+        _lifecycleObserver = obs;
     }
 
     public int getGameId ()
@@ -144,6 +148,15 @@ public class AVRGameManager extends PlaceManager
         return (playerId == 0) ? (BodyObject) caller : null;
     }
 
+    /**
+     * Called privately by the ThaneAVRGameController when anything in the agent's code domain
+     * causes a line of debug or error tracing.
+     */
+    public void agentTrace (ClientObject caller, String trace)
+    {
+        _traceDelegate.recordAgentTrace(trace);
+    }
+
     @Override
     protected PlaceObject createPlaceObject ()
     {
@@ -154,17 +167,28 @@ public class AVRGameManager extends PlaceManager
     protected void didStartup ()
     {
         AVRGameConfig cfg = (AVRGameConfig)_config;
-        MsoyGameDefinition def = (MsoyGameDefinition) cfg.getGameDefinition();
 
         _gameId = cfg.getGameId();
 
         _gameObj = (AVRGameObject)_plobj;
+        _gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
+    }
+
+    public void startAgent ()
+    {
+        AVRGameConfig cfg = (AVRGameConfig)_config;
+        MsoyGameDefinition def = (MsoyGameDefinition) cfg.getGameDefinition();
 
         _gameAgentObj = createGameAgentObject(_gameId, def);
+        if (_gameAgentObj == null) {
+            // if there is no agent, force a call to agentReady
+            _lifecycleObserver.avrGameReady(this);
+            return;
+        }
+
+        // else ask the bureau to start it and wait for its initialization
         _gameAgentObj.gameOid = _gameObj.getOid();
         _breg.startAgent(_gameAgentObj);
-
-        _gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
     }
 
     /**
@@ -329,6 +353,16 @@ public class AVRGameManager extends PlaceManager
     }
 
     /**
+     * Called privately by the ThaneAVRGameController when an agent's code is all set to go
+     * and the AVRG can startup.
+     */
+    public void agentReady (ClientObject caller)
+    {
+        log.info("AVRG Agent ready for " + caller);
+        _lifecycleObserver.avrGameReady(this);
+    }
+
+    /**
      * This method is called when the agent completes the subscription of a scene's RoomObject.
      * TODO: wire up
      */
@@ -381,8 +415,8 @@ public class AVRGameManager extends PlaceManager
             }
         });
 
-        if (_shutdownObserver != null) {
-            _shutdownObserver.avrGameDidShutdown(_gameId);
+        if (_lifecycleObserver != null) {
+            _lifecycleObserver.avrGameDidShutdown(this);
         }
     }
 
@@ -506,8 +540,7 @@ public class AVRGameManager extends PlaceManager
     protected AVRGameAgentObject createGameAgentObject (int gameId, MsoyGameDefinition def)
     {
         String code = def.getServerMediaPath(gameId);
-        if (code == null) {
-            log.warning("No server code for avrg", "gameId", gameId);
+        if (StringUtil.isBlank(code)) {
             return null;
         }
 
@@ -593,10 +626,13 @@ public class AVRGameManager extends PlaceManager
     protected HashMap<String, Ticker> _tickers;
 
     /** Observer of our shutdown. */
-    protected ShutdownObserver _shutdownObserver;
+    protected LifecycleObserver _lifecycleObserver;
 
     /** The delegate that handles quest completion and coin payouts. */
     protected QuestDelegate _questDelegate;
+
+    /** A delegate that handles agent traces.. */
+    protected AgentTraceDelegate _traceDelegate;
 
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;

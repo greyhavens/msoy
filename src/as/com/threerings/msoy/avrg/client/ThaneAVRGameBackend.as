@@ -17,6 +17,11 @@ public class ThaneAVRGameBackend
         return handleUserCodeConnect;
     }
 
+    public function shutdown () :void
+    {
+        // shut down sub-backends, remove listeners
+    }
+
     protected function handleUserCodeConnect (evt :Object) :void
     {
         var props :Object = evt.props;

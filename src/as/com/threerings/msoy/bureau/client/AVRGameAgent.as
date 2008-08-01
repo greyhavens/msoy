@@ -242,9 +242,7 @@ public class AVRGameAgent extends Agent
      */
     protected function relayTrace (trace :String) :void
     {
-        // TODO: call the trace method on the server, the manager caller technique only works if 
-        // the game is a place obj and the server-side manager is a place manager etc.
-        //_manager.invoke("agentTrace", trace);
+        _gameObj.manager.invoke("agentTrace", trace);
     }
 
     /**
