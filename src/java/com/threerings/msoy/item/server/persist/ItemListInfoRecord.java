@@ -57,9 +57,9 @@ public class ItemListInfoRecord extends PersistentRecord
     // AUTO-GENERATED: FIELDS END
 
     /** Our depot schema version. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
-    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Id @GeneratedValue(generator="listId", strategy=GenerationType.TABLE, allocationSize=1)
     public int listId;
 
     public int memberId;
