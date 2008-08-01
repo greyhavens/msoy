@@ -365,15 +365,24 @@ public class ItemManager
     {
         memObj.startTransaction();
         try {
+            boolean remove = (avatar.ownerId != memObj.getMemberId());
+
             // if they're wearing it, update that.
             if (avatar.equals(memObj.avatar)) {
-                memObj.setAvatar(avatar);
+                memObj.setAvatar(remove ? null : avatar);
                 _memberMan.updateOccupantInfo(memObj);
             }
 
             // probably we'll update it in their cache, too.
             if (memObj.avatarCache.contains(avatar)) {
-                memObj.updateAvatarCache(avatar);
+                if (remove) {
+                    memObj.removeFromAvatarCache(avatar.getKey());
+                } else {
+                    memObj.updateAvatarCache(avatar);
+                }
+
+            } else if (remove) {
+                // nothing, they don't have it in their cache and we want to remove it anyway
 
             } else if (memObj.avatarCache.size() < MemberObject.AVATAR_CACHE_SIZE) {
                 memObj.addToAvatarCache(avatar);
@@ -505,9 +514,22 @@ public class ItemManager
      */
     public void itemUpdated (ItemRecord rec)
     {
+        itemUpdated(rec, 0);
+    }
+
+    /**
+     * Informs the runtime world that an item was updated in the database. Worn avatars will be
+     * updated, someday items being used as furni or decor in rooms will also magically be updated.
+     *
+     * @param overrideMemberId an alternate memberId to process, in case the item was removed
+     * from a member's inventory.
+     */
+    public void itemUpdated (ItemRecord rec, int overrideMemberId)
+    {
         byte type = rec.getType();
         if (type == Item.AVATAR) {
-            MemberNodeActions.avatarUpdated(rec.ownerId, rec.itemId);
+            int memberId = (overrideMemberId == 0) ? rec.ownerId : overrideMemberId;
+            MemberNodeActions.avatarUpdated(memberId, rec.itemId);
 
         } else if (type == Item.GAME) {
             _peerMan.invokeNodeAction(new GameUpdatedAction(((GameRecord) rec).gameId));

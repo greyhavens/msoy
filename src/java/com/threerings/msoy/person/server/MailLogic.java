@@ -12,6 +12,8 @@ import com.samskivert.util.Invoker;
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
 
+import com.threerings.presents.dobj.RootDObjectManager;
+
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
@@ -23,6 +25,7 @@ import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
@@ -150,13 +153,13 @@ public class MailLogic
      * Handles any side-effects of mail payload delivery. Currently that is only the transfer of an
      * item from the sender to the recipient for {@link PresentPayload}.
      */
-    protected void processPayload (int senderId, int recipId, MailPayload attachment)
+    protected void processPayload (final int senderId, final int recipId, MailPayload attachment)
         throws PersistenceException, ServiceException
     {
         if (attachment instanceof PresentPayload) {
             ItemIdent ident = ((PresentPayload)attachment).ident;
             ItemRepository<?> repo = _itemLogic.getRepository(ident.type);
-            ItemRecord item = repo.loadItem(ident.itemId);
+            final ItemRecord item = repo.loadItem(ident.itemId);
 
             // validate that they're allowed to gift this item (these are all also checked on the
             // client so we don't need useful error messages)
@@ -175,6 +178,14 @@ public class MailLogic
             }
 
             repo.updateOwnerId(item, recipId);
+
+            // notify the runtime system that the item has moved
+            _omgr.postRunnable(new Runnable() {
+                public void run () {
+                    _itemMan.itemUpdated(item, senderId); // they lose it
+                    _itemMan.itemUpdated(item, recipId); // they gain it
+                }
+            });
         }
     }
 
@@ -202,6 +213,8 @@ public class MailLogic
         }
     }
 
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected ItemManager _itemMan;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected ItemLogic _itemLogic;

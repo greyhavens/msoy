@@ -300,7 +300,7 @@ public class ItemServlet extends MsoyServiceServlet
         byte type = iident.type;
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         try {
-            ItemRecord item = repo.loadItem(iident.itemId);
+            final ItemRecord item = repo.loadItem(iident.itemId);
             if (item == null) {
                 log.warning("Trying to " + (wrap ? "" : "un") + "wrap non-existent item " +
                             "[ident=" + ident + ", item=" + iident + "]");
@@ -328,6 +328,14 @@ public class ItemServlet extends MsoyServiceServlet
                 }
                 repo.updateOwnerId(item, memrec.memberId);
             }
+
+            // let the item manager know that we've updated this item
+            final int memId = memrec.memberId;
+            postDObjectAction(new Runnable() {
+                public void run () {
+                    _itemMan.itemUpdated(item, memId);
+                }
+            });
 
         } catch (PersistenceException pe) {
             log.warning("Failed to wrap item [item=" + iident + ", wrap=" + wrap + "]", pe);
