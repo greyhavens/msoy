@@ -147,12 +147,14 @@ public class SnapshotController extends Controller
 
     protected function handleError (event :Event) :void
     {
-        _ctx.displayFeedback(MsoyCodes.WORLD_MSGS, "e.snap");
+        if (_panel) {
+            _panel.uploadError(Msgs.WORLD.get("e.snap"));
+        }
     }
 
     protected function handleResult (event :Event) :void
     {
-        _ctx.displayFeedback(MsoyCodes.WORLD_MSGS, "m.snap_success");
+        // no need to overdo it by providing even more confirmation here
     }
 
     protected var _panel :SnapshotPanel;

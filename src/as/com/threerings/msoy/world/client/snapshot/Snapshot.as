@@ -128,6 +128,16 @@ public class Snapshot
         _encoder.start();
     }
 
+    /**
+     * Cancel encoding if it's underway.  We don't cancel uploads.
+     */
+    public function cancelEncoding () :void
+    {
+        if (_encoder) {
+            _encoder.cancel();
+        }
+    }
+
     protected function handleJpegEncoded (event :ValueEvent) :void
     {
         trace("jpeg encoded");

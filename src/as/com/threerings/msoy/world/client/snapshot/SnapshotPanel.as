@@ -15,6 +15,7 @@ import mx.core.UIComponent;
 import mx.controls.Image;
 import mx.controls.Text;
 import mx.controls.ProgressBar;
+import mx.controls.Label;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
@@ -142,14 +143,25 @@ public class SnapshotPanel extends FloatingPanel
         bar.percentWidth = 100;
         bar.indeterminate = true;
         bar.label = Msgs.WORLD.get("b.snap_progress");
-        container.addChild(bar);        
-        container.addChild(new CommandButton(Msgs.WORLD.get("b.snap_cancel"), cancelUpload));        
+        container.addChild(bar);
+        _progressLabel = new Label();
+        _progressLabel.text = Msgs.WORLD.get("b.snap_upload_starting");
+        container.addChild(_progressLabel);   
+        _cancelUploadButton = new CommandButton(Msgs.WORLD.get("b.snap_cancel"), cancelUpload);     
+        container.addChild(_cancelUploadButton);        
     }
 
+    /**
+     * Handling the user request that the upload be cancelled.
+     */
     protected function cancelUpload () :void 
     {
-        trace("cancel upload");
-        // handle the user pressing cancel on the upload.
+        // cancel any encoding processes that may be running.
+        galleryImage.cancelEncoding();
+        sceneThumbnail.cancelEncoding();
+        
+        // close the panel
+        close();
     }
 
     protected function createSnapshotControls (container :Container) :void
@@ -205,6 +217,7 @@ public class SnapshotPanel extends FloatingPanel
         showProgressBar();
         
         if (this.shouldSaveSceneThumbnail) {
+            _progressLabel.text = Msgs.WORLD.get("b.snap_upload_thumb");
             sceneThumbnail.encodeAndUpload(_ctrl.uploadThumbnail, uploadGalleryImage);
         } else {
             uploadGalleryImage();
@@ -217,10 +230,20 @@ public class SnapshotPanel extends FloatingPanel
     protected function uploadGalleryImage () :void
     {
         if (this.shouldSaveGalleryImage) {
+            _progressLabel.text = Msgs.WORLD.get("b.snap_upload_snap");
             galleryImage.encodeAndUpload(_ctrl.uploadGalleryImage, uploadingDone);            
         } else {
             uploadingDone();
         }
+    }
+    
+    /**
+     * Called if uploading failed.
+     */
+    public function uploadError (message :String) :void
+    {
+        _progressLabel.text = Msgs.WORLD.get("b.snap_upload_fail");
+        _cancelUploadButton.label = Msgs.GENERAL.get("b.ok");
     }
     
     /**
@@ -231,7 +254,6 @@ public class SnapshotPanel extends FloatingPanel
         // done at this point so we can close the panel
         close();        
     }
-
 
     protected var _galleryImageDone :Boolean = false;
     protected var _sceneThumbnailDone :Boolean = false;
@@ -250,5 +272,7 @@ public class SnapshotPanel extends FloatingPanel
 
     protected var _snapPanel :Container;
     protected var _progressPanel :Container;
+    protected var _cancelUploadButton :CommandButton;
+    protected var _progressLabel :Label;
 }
 }
