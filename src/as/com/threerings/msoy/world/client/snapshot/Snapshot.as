@@ -133,7 +133,7 @@ public class Snapshot
      */
     public function cancelEncoding () :void
     {
-        if (_encoder) {
+        if (_encoder) {
             _encoder.cancel();
         }
     }
