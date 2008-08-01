@@ -352,6 +352,8 @@ public class MsoyChatDirector extends ChatDirector
 
     override public function dispatchMessage (message :ChatMessage, localtype :String) :void
     {
+        log.debug("dispatchMessage [" + message + ", " + localtype + "]");
+
         if ((message is UserMessage && localtype == ChatCodes.USER_CHAT_TYPE) || 
             message is TellFeedbackMessage) {
             // use a more specific localtype

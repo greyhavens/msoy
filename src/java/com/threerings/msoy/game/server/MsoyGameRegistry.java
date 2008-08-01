@@ -31,6 +31,8 @@ import com.threerings.parlor.game.data.GameCodes;
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 
+import com.threerings.util.Name;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -325,6 +327,17 @@ public class MsoyGameRegistry
             return;
         }
         handler.postMessage(WorldServerClient.RESET_SCORE_PERCENTILER, gameId, single);
+    }
+
+    /**
+     * Forwards a broadcast to the game server, so that it can be sent on all of that server's
+     * place (game) objects.
+     */
+    public void forwardBroadcast(Name from, String bundle, String msg, boolean attention)
+    {
+        for (GameServerHandler handler : _handlers) {
+            handler.postMessage(WorldServerClient.FORWARD_BROADCAST, from, bundle, msg, attention);
+        }
     }
 
     // from interface GameServerProvider

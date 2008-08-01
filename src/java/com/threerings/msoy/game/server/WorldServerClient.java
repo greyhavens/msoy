@@ -16,10 +16,14 @@ import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.net.PeerCreds;
 import com.threerings.presents.server.ShutdownManager;
+
 import com.threerings.stats.data.IntSetStatAdder;
 import com.threerings.stats.data.IntStatIncrementer;
 import com.threerings.stats.data.Stat;
 
+import com.threerings.util.Name;
+
+import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.server.ServerConfig;
@@ -49,6 +53,10 @@ public class WorldServerClient
 
     /** A message sent by our world server to request that we reset our percentiler. */
     public static final String RESET_SCORE_PERCENTILER = "resetScorePercentiler";
+
+    /** A message sent by our world server to request that we broadcast a message with our
+     * chat provider */
+    public static final String FORWARD_BROADCAST = "forwardBroadcast";
 
     /**
      * Configures our listen and connection ports and connects to our parent world server.
@@ -182,6 +190,14 @@ public class WorldServerClient
             int gameId = (Integer)event.getArgs()[0];
             boolean single = (Boolean)event.getArgs()[1];
             _gameReg.resetScorePercentiler(gameId, single);
+
+        } else if (event.getName().equals(FORWARD_BROADCAST)) {
+            Object[] args = event.getArgs();
+            Name sender = (Name)args[0];
+            String bundle = (String)args[1];
+            String msg = (String)args[2];
+            boolean attention = (Boolean)args[3];
+            _chatProv.broadcast(sender, bundle, msg, attention, false);
         }
     }
 
@@ -222,4 +238,5 @@ public class WorldServerClient
     @Inject protected GameGameRegistry _gameReg;
     @Inject protected GameWatcherManager _watchmgr;
     @Inject protected RootDObjectManager _omgr;
+    @Inject protected ChatProvider _chatProv;
 }

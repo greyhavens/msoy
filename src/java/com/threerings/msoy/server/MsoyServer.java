@@ -15,20 +15,49 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.servlet.user.UserRepository;
+
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+
+import com.samskivert.jdbc.depot.PersistenceContext;
+
+import com.samskivert.servlet.user.UserRepository;
+
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
+
+import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.BodyLocator;
+
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.net.AuthRequest;
+import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.presents.server.Authenticator;
+import com.threerings.presents.server.ClientFactory;
+import com.threerings.presents.server.ClientResolver;
+import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.PresentsServer;
+import com.threerings.presents.server.ShutdownManager;
+
+import com.threerings.parlor.game.server.GameManager;
+
+import com.threerings.whirled.server.SceneRegistry;
+import com.threerings.whirled.server.persist.SceneRepository;
+import com.threerings.whirled.util.SceneFactory;
+
+import com.threerings.util.Name;
+
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.bureau.server.WindowAuthenticator;
 import com.threerings.msoy.bureau.server.WindowClientFactory;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.chat.server.JabberManager;
+import com.threerings.msoy.chat.server.MsoyChatProvider;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
@@ -44,23 +73,6 @@ import com.threerings.msoy.world.server.MsoySceneRegistry;
 import com.threerings.msoy.world.server.PetManager;
 import com.threerings.msoy.world.server.WorldWatcherManager;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
-import com.threerings.parlor.game.server.GameManager;
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.peer.server.PeerManager;
-import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.ClientFactory;
-import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.PresentsClient;
-import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.PresentsServer;
-import com.threerings.presents.server.ShutdownManager;
-import com.threerings.util.Name;
-import com.threerings.whirled.server.SceneRegistry;
-import com.threerings.whirled.server.persist.SceneRepository;
-import com.threerings.whirled.util.SceneFactory;
 
 /**
  * Brings together all of the services needed by the World server.
@@ -80,6 +92,7 @@ public class MsoyServer extends MsoyBaseServer
             bind(PeerManager.class).to(MsoyPeerManager.class);
             // crowd dependencies
             bind(BodyLocator.class).to(MemberLocator.class);
+            bind(ChatProvider.class).to(MsoyChatProvider.class);
             // vilya whirled dependencies
             bind(SceneRepository.class).to(MsoySceneRepository.class);
             bind(SceneFactory.class).to(MsoySceneFactory.class);
@@ -164,6 +177,12 @@ public class MsoyServer extends MsoyBaseServer
 
         // initialize our HTTP server
         _httpServer.init(injector, new File(ServerConfig.serverRoot, "log"));
+
+        // Due to a circular dependency, this instance cannot be injected into MsoyChatProvider.
+        // This is also temporary to support broadcasts in games.  When you maintain a subscription
+        // to a PlaceObject on the WorldServer while in games, MsoyChatProvider's overridden
+        // broadcast method becomes unneccessary
+        ((MsoyChatProvider) _chatprov).init(_gameReg);
     }
 
     /**
