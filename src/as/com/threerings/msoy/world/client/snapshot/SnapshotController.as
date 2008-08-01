@@ -123,6 +123,8 @@ public class SnapshotController extends Controller
     {
         var memberId :int = _ctx.getMemberObject().memberName.getMemberId();
         var scene :Scene = _ctx.getSceneDirector().getScene();
+        var itemName :String = StringUtil.truncate(
+            Msgs.WORLD.get("m.sceneItemName", scene.getName()), MsoyCodes.MAX_NAME_LENGTH, "...");
 
         const b :String = "--" + BOUNDARY + "\r\n";
         var output :ByteArray = new ByteArray();
@@ -135,7 +137,7 @@ public class SnapshotController extends Controller
             "Content-Disposition: form-data; name=\"scene\"\r\n" +
             "\r\n" + String(scene.getId()) + "\r\n" + b +
             "Content-Disposition: form-data; name=\"name\"\r\n" +
-            "\r\n" + escape(Msgs.WORLD.get("m.sceneItemName", scene.getName())) + "\r\n" + b +
+            "\r\n" + escape(itemName) + "\r\n" + b +
             "Content-Disposition: form-data; name=\"snapshot_plus_thumb\"; " +
             "filename=\"snapshot.jpg\"\r\n" +
             "Content-Type: image/jpeg\r\n" +
