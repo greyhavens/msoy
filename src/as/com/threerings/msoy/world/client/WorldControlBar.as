@@ -119,7 +119,7 @@ public class WorldControlBar extends ControlBar
 
         _roomeditBtn = new CommandButton();
         _roomeditBtn.toolTip = Msgs.GENERAL.get("i.editScene");
-        _roomeditBtn.setCommand(MsoyController.ROOM_EDIT);
+        _roomeditBtn.setCommand(WorldController.ROOM_EDIT);
         _roomeditBtn.styleName = "controlBarButtonEdit";
         _roomeditBtn.enabled = false;
 
@@ -140,7 +140,7 @@ public class WorldControlBar extends ControlBar
 
         _snapBtn = new CommandButton();
         _snapBtn.toolTip = Msgs.GENERAL.get("i.snapshot");
-        _snapBtn.setCommand(MsoyController.SNAPSHOT);
+        _snapBtn.setCommand(WorldController.SNAPSHOT);
         _snapBtn.styleName = "controlBarButtonSnapshot";
         _snapBtn.enabled = true;
 

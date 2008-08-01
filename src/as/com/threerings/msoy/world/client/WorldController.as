@@ -84,6 +84,12 @@ public class WorldController extends MsoyController
 //    /** Command to display the recent scenes list. */
 //    public static const POP_ROOMS_MENU :String = "PopRoomsMenu";
 
+    /** Opens up a new toolbar and a new room editor. */
+    public static const ROOM_EDIT :String = "RoomEdit";
+
+    /** Takes a room snapshot. */
+    public static const SNAPSHOT :String = "Snapshot"; 
+
     /** Command to go to a particular place (by Oid). */
     public static const GO_LOCATION :String = "GoLocation";
 
