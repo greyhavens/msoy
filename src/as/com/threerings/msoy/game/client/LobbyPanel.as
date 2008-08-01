@@ -101,9 +101,10 @@ public class LobbyPanel extends FloatingPanel
         resize.easingFunction = Cubic.easeInOut;
         resize.duration = 300;
         setStyle("resizeEffect", resize);
-        // TODO: This effect is not always getting done, so we never hide the contents, and 
-        // therefore never need them unhidden.  When this effect has been sorted out, this code 
-        // will once again be useful 
+        // TODO: This event is not always getting dispatched (it appears that the effect was not
+        // getting triggered at all), so the contents were never getting unhidden.  The initial 
+        // hiding has been disabled for now.  When this effect has been sorted out, this code will 
+        // once again be useful 
 //        addEventListener(EffectEvent.EFFECT_END, function (event :EffectEvent) :void {
 //            if (numChildren > 0) {
 //                (getChildAt(0) as UIComponent).setVisible(true);
