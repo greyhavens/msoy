@@ -9,9 +9,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.Tuple;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
+import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager.RemoteMemberObserver;
 import com.threerings.presents.annotation.EventThread;
@@ -87,6 +89,22 @@ public class WorldWatcherManager
 
         _memberWatchers.put(memberId, caller);
         _watcherMembers.put(caller.getOid(), memberId);
+        
+        MemberLocation location = _peerMgr.getMemberLocation(memberId);
+        if (location == null) {
+            log.warning("Watched member has no current location", "memberId", memberId);
+            return;
+        }
+
+        Tuple<String, HostedRoom> room = _peerMgr.getSceneHost(location.sceneId);
+        if (room == null) {
+            log.warning("Host not found for scene", "location", location);
+            return;
+        }
+        
+        String host = _peerMgr.getPeerPublicHostName(room.left);
+        int port = _peerMgr.getPeerPort(room.left);
+        remoteMemberEnteredScene(location, host, port);
     }
 
     // from interface WatcherProvider
@@ -121,4 +139,7 @@ public class WorldWatcherManager
 
     /** A multimap of caller Oid to memberId that can easily tell us who's watched by whom. */
     protected Multimap<Integer, Integer> _watcherMembers = new HashMultimap<Integer, Integer>();
+    
+    // Dependencies
+    @Inject MsoyPeerManager _peerMgr;
 }
