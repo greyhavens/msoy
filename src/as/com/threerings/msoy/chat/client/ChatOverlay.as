@@ -141,8 +141,6 @@ public class ChatOverlay
     // from ChatDisplay
     public function displayMessage (msg :ChatMessage, alreadyDisp :Boolean) :Boolean
     {
-        log.info("processing message [" + msg + "]");
-
         if (shouldDisplayMessage(msg)) {
             if (isHistoryMode()) { 
                 _filteredMessages.push(msg);
@@ -165,8 +163,6 @@ public class ChatOverlay
             !_localtypeDisplayTimes.containsKey(msg.localtype)) {
             _localtypeDisplayTimes.put(msg.localtype, getTimer());
         }
-
-        log.warning("Message fill through! [" + msg + "]");
 
         return false;
     }
