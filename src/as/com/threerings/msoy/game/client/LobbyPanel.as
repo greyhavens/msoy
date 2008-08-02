@@ -39,7 +39,6 @@ import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.EmbedDialog;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MemberName;
