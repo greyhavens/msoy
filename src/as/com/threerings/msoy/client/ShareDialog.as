@@ -26,9 +26,9 @@ import com.threerings.flex.GridUtil;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.ui.FloatingPanel;
 
-public class EmbedDialog extends FloatingPanel
+public class ShareDialog extends FloatingPanel
 {
-    public function EmbedDialog (ctx :MsoyContext)
+    public function ShareDialog (ctx :MsoyContext)
     {
         super(ctx);
         showCloseButton = true;
