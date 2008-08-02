@@ -322,7 +322,7 @@ public class HeaderBar extends HBox
     protected var _commentVisible :Boolean;
     protected var _commentLink :CommandLinkButton;
 
-    protected var _sharePopup :EmbedDialog;
+    protected var _sharePopup :ShareDialog;
     protected var _embedVisible :Boolean;
     protected var _embedLink :CommandLinkButton;
 
