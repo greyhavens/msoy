@@ -100,7 +100,7 @@ public class MsoyGameAuthenticator extends Authenticator
                 rsp.authdata = new MsoyTokenRing(tokens);
             }
 
-            log.info("User logged on [user=" + creds.getUsername() + "].");
+            //log.info("User logged on [user=" + creds.getUsername() + "].");
             rdata.code = AuthResponseData.SUCCESS;
 
         } catch (ServiceException se) {

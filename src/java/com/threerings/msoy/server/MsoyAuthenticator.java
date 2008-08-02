@@ -184,6 +184,7 @@ public class MsoyAuthenticator extends Authenticator
     {
         return "Guest" + Math.abs(memberId);
     }
+
     /**
      * Returns the default domain used for the internal support tools.
      */
