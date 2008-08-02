@@ -31,8 +31,6 @@ import com.threerings.util.Log;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
 
-import com.threerings.msoy.client.EmbedDialog;
-
 import com.threerings.msoy.world.client.WorldController;
 
 public class HeaderBar extends HBox
@@ -247,9 +245,13 @@ public class HeaderBar extends HBox
         _extras.push(_commentLink);
 
         _embedLink = new CommandLinkButton(Msgs.GENERAL.get("b.share"), function () :void {
-                // TODO: Popup management needed now that non-modal
-                new EmbedDialog(_ctx);
-            });
+            if (_sharePopup == null) {
+                _sharePopup = new EmbedDialog(_ctx);
+            } else {
+                _sharePopup.close();
+                _sharePopup = null;
+            }
+        });
         _embedLink.styleName = "headerShareLink";
         controlBox.addChild(_embedLink);
         setEmbedVisible(false);
@@ -320,6 +322,7 @@ public class HeaderBar extends HBox
     protected var _commentVisible :Boolean;
     protected var _commentLink :CommandLinkButton;
 
+    protected var _sharePopup :EmbedDialog;
     protected var _embedVisible :Boolean;
     protected var _embedLink :CommandLinkButton;
 

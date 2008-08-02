@@ -28,6 +28,29 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 public class EmbedDialog extends FloatingPanel
 {
+    public function EmbedDialog (ctx :MsoyContext)
+    {
+        super(ctx);
+        showCloseButton = true;
+
+        styleName = "shareWindow";
+        //setStyle("horizontalAlign", "center");
+
+        var cord :Accordion = new Accordion();
+
+        cord.width = 323;
+        cord.height = 250;
+        cord.addChild(createEmailBox());
+        cord.addChild(createLinkBox());
+        cord.addChild(createEmbedBox());
+
+        addChild(cord);
+
+        //addButtons(_copyBtn, OK_BUTTON);
+        //setButtonWidth(0); // free-size
+        open(false);
+    }
+
     public function getEmbedCode (size :int) :String
     {
         var url :String = _ctx.getTopPanel().root.loaderInfo.loaderURL;
@@ -112,7 +135,7 @@ public class EmbedDialog extends FloatingPanel
         return box;
     }
 
-    public function createSizeButton (code :TextInput, size :int) :RadioButton
+    protected function createSizeButton (code :TextInput, size :int) :RadioButton
     {
         var button :RadioButton = new RadioButton();
         button.groupName = "embed_size";
@@ -161,29 +184,6 @@ public class EmbedDialog extends FloatingPanel
         box.addChild(createCopyable(code));
 
         return box;
-    }
-
-    public function EmbedDialog (ctx :MsoyContext)
-    {
-        super(ctx);
-        showCloseButton = true;
-
-        styleName = "shareWindow";
-        //setStyle("horizontalAlign", "center");
-
-        var cord :Accordion = new Accordion();
-
-        cord.width = 323;
-        cord.height = 250;
-        cord.addChild(createEmailBox());
-        cord.addChild(createLinkBox());
-        cord.addChild(createEmbedBox());
-
-        addChild(cord);
-
-        //addButtons(_copyBtn, OK_BUTTON);
-        //setButtonWidth(0); // free-size
-        open(false);
     }
 
     protected static const EMBED_SIZES :Array = [
