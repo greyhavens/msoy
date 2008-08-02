@@ -1265,6 +1265,9 @@ public class RoomObjectController extends RoomController
     /** Our general-purpose room listener. */
     protected var _roomListener :ChangeListener;
 
+    /** The current scene we're viewing. */
+    protected var _scene :MsoyScene;
+
     /** The music currently playing in the scene, which may or may not be
      * background music. */
     protected var _music :SoundPlayer;

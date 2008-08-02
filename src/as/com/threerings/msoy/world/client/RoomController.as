@@ -101,8 +101,6 @@ import com.threerings.msoy.world.data.FurniUpdate_Add;
 import com.threerings.msoy.world.data.FurniUpdate_Remove;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
-import com.threerings.msoy.world.data.MsoyScene;
-import com.threerings.msoy.world.data.MsoySceneModel;
 import com.threerings.msoy.world.data.PetInfo;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.RoomPropertyEntry;
@@ -1000,9 +998,6 @@ public class RoomController extends SceneController
 
     /** If shift is being held down, the coordinates at which it was pressed. */
     protected var _shiftDownSpot :Point;
-
-    /** The current scene we're viewing. */
-    protected var _scene :MsoyScene;
 
     /** The "cursor" used to display that a location is walkable. */
     protected var _walkTarget :WalkTarget = new WalkTarget();

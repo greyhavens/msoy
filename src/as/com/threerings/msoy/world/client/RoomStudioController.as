@@ -167,8 +167,7 @@ public class RoomStudioController extends RoomController
         }
 
         model.decor = decor;
-        _scene = new MsoyScene(model, _config);
-        _studioView.setScene(_scene);
+        _studioView.setScene(new MsoyScene(model, _config));
         _studioView.setBackground(model.decor);
     }
 
