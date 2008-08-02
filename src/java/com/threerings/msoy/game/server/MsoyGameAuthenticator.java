@@ -23,6 +23,7 @@ import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -72,7 +73,11 @@ public class MsoyGameAuthenticator extends Authenticator
             if (MsoyCredentials.isGuestSessionToken(creds.sessionToken)) {
                 // extract their assigned member id from their token
                 int memberId = MsoyCredentials.getGuestMemberId(creds.sessionToken);
-                creds.setUsername(new MemberName(String.valueOf(creds.getUsername()), memberId));
+                // if they didn't supply a username, generate one from their guest member id.
+                Name credsName = creds.getUsername();
+                creds.setUsername(new MemberName(credsName != null ? credsName.toString() :
+                                                 MsoyAuthenticator.generateGuestName(memberId),
+                                                 memberId));
 
             } else {
                 MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
@@ -95,7 +100,7 @@ public class MsoyGameAuthenticator extends Authenticator
                 rsp.authdata = new MsoyTokenRing(tokens);
             }
 
-            // log.info("User logged on [user=" + user.username + "].");
+            log.info("User logged on [user=" + creds.getUsername() + "].");
             rdata.code = AuthResponseData.SUCCESS;
 
         } catch (ServiceException se) {

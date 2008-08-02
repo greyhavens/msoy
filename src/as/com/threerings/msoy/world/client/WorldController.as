@@ -850,7 +850,8 @@ public class WorldController extends MsoyController
 
         } else if (null != params["groupChat"]) {
             var groupId :int = int(params["groupChat"]);
-            var gm :GroupMembership = _wctx.getMemberObject().groups.get(groupId) as GroupMembership;
+            var gm :GroupMembership = 
+                _wctx.getMemberObject().groups.get(groupId) as GroupMembership;
             if (gm != null) {
                 handleOpenChannel(gm.group);
             }

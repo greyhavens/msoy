@@ -6,35 +6,48 @@ package com.threerings.msoy.game.client {
 import flash.display.DisplayObjectContainer;
 import flash.display.SimpleButton;
 import flash.display.Sprite;
+
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
+
 import flash.net.URLLoader;
 import flash.net.URLRequest;
+
 import flash.system.Security;
+
 import flash.text.TextField;
+
 import flash.utils.Timer;
 
 import caurina.transitions.Tweener;
 
+import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.client.ClientObserver;
+
+import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.MessageListener;
+
+import com.threerings.util.Log;
+import com.threerings.util.MultiLoader;
+
+import com.whirled.game.data.WhirledGameObject;
+
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.ui.AwardPanel;
+
 import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ClientObserver;
-import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.MessageListener;
-import com.threerings.util.Log;
-import com.threerings.util.MultiLoader;
-import com.whirled.game.data.WhirledGameObject;
+
+import com.threerings.msoy.ui.AwardPanel;
 
 /**
  * Handles all the fiddly bits relating to connecting to a separate server to match-make and

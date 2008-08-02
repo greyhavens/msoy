@@ -213,7 +213,7 @@ public class FrameEntryPoint
         History.newItem(token);
     }
 
-    // frome interface Frame
+    // from interface Frame
     public void displayWorldClient (String args, String closeToken)
     {
         WorldClient.displayFlash(args, closeToken, this);

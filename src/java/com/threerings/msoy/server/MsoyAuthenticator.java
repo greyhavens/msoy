@@ -178,6 +178,13 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     /**
+     * Generates a guest name from the given member id.
+     */
+    public static String generateGuestName (int memberId)
+    {
+        return "Guest" + Math.abs(memberId);
+    }
+    /**
      * Returns the default domain used for the internal support tools.
      */
     public Domain getDefaultDomain ()
@@ -413,7 +420,7 @@ public class MsoyAuthenticator extends Authenticator
         } else {
             // if they supplied a name with their credentials, use that, otherwise generate one
             String name = (creds.getUsername() == null) ?
-                generateGuestName() : creds.getUsername().toString();
+                generateGuestName(memberId) : creds.getUsername().toString();
             creds.setUsername(new MemberName(name, memberId));
         }
         rdata.sessionToken = MsoyCredentials.makeGuestSessionToken(memberId);
@@ -553,7 +560,7 @@ public class MsoyAuthenticator extends Authenticator
 
         // record to the event log that we created a new account
         final String iid = (invite == null) ? null : invite.inviteId;
-        final String tracker = (referral == null) ? null : referral.tracker; 
+        final String tracker = (referral == null) ? null : referral.tracker;
         _eventLog.accountCreated(mrec.memberId, iid, tracker);
 
         return mrec;
@@ -601,12 +608,6 @@ public class MsoyAuthenticator extends Authenticator
             seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
     }
 
-    protected static synchronized String generateGuestName ()
-    {
-        _nextGuestNumber = (_nextGuestNumber % 1000) + 1;
-        return "Guest" + _nextGuestNumber;
-    }
-
     // our dependencies
     @Inject protected Domain _defaultDomain;
     @Inject protected ServerMessages _serverMsgs;
@@ -614,9 +615,6 @@ public class MsoyAuthenticator extends Authenticator
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyEventLogger _eventLog;
-
-    /** Used to assign display names to guests. */
-    protected static int _nextGuestNumber;
 
     /** The number of times we'll try generate a unique ident before failing. */
     protected static final int MAX_TRIES = 100;
