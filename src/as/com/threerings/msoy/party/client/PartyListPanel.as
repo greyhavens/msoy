@@ -137,7 +137,7 @@ public class PartyListPanel extends TitleWindow
         mx_internal::closeButton.explicitHeight = 14;
 
         // styles and positioning
-        styleName = "friendsListPanel";
+        styleName = "partyPopup";
         showCloseButton = true;
         width = POPUP_WIDTH;
         var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 

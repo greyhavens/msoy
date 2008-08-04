@@ -90,7 +90,7 @@ public class PartyPopup extends FlyingPanel
         super.createChildren();
 
         // styles and positioning
-        styleName = "friendsListPanel";
+        styleName = "partyPopup";
         width = POPUP_WIDTH;
         var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
         height = placeBounds.height - PADDING * 2;
