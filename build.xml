@@ -349,7 +349,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="${page}/${page}.html"/>
+        <arg value="gwt/${page}/${page}.html"/>
       </java>
     </then><else>
       <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
@@ -359,7 +359,7 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="${page}/${page}.html"/>
+        <arg value="gwt/${page}/${page}.html"/>
       </java>
     </else></if>
   </target>
