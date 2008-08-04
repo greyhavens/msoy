@@ -86,7 +86,4 @@ if [ -s $LOGFILE ]; then
 fi
 rm -f $LOGFILE
 
-# Prune old logs
-# find $MSOY_HOME/log -name 'stdout-$PROCID.log*' -a -mtime +7 | xargs rm -f
-
 exit $EXIT_CODE

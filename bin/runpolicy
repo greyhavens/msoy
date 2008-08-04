@@ -33,31 +33,17 @@ JAVA_ARGS="-server"
 touch $LOGFILE
 
 # Start up the server
-echo "Running policy server:" >>$LOGFILE
-echo " Deployment root: $MSOY_HOME" >>$LOGFILE
-echo "         Java VM: $JAVA_VM" >>$LOGFILE
-echo "       Java args: $JAVA_ARGS" >>$LOGFILE
-echo "    Server class: $CLASS" >>$LOGFILE
-
 $JAVA_VM $JAVA_ARGS $CLASS >>$LOGFILE 2>&1 &
 PROCESS_PID=$!
 echo $PROCESS_PID >$PIDFILE
 wait $PROCESS_PID
 EXIT_CODE=$?
 
-# Mail out warnings from the logs
-FILTLOG=`mktemp /tmp/msoyfiltered.log.XXXXXX` || exit 1
-cat $LOGFILE | $MSOY_HOME/tools/bin/lfilter > $FILTLOG
-if [ -s $FILTLOG ]; then
-    cat $FILTLOG | $MAIL -s "$HOSTNAME: $MSOY_HOME filtered policy log" $LOG_EMAIL
+# If any stdout or stderr logs were generated, send those via email (all normal
+# logs should be redirected to a separate file)
+if [ -s $LOGFILE ]; then
+    cat $LOGFILE | $MAIL -s "$HOSTNAME: $MSOY_HOME stray policy log output" $LOG_EMAIL
 fi
-rm -f $FILTLOG
-
-# Archive the log
-NOW=`date "+%F-%H:%M"`
-mv $LOGFILE $LOGFILE.$NOW
-
-# Prune old logs
-find $MSOY_HOME/log -name 'stdout-policy.log*' -a -mtime +7 | xargs rm -f
+rm -f $LOGFILE
 
 exit $EXIT_CODE

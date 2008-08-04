@@ -76,15 +76,7 @@ $THANE_INTERPRETER -Dinterp $LIBS $MAIN -- $BUREAU_ID $CONNECT_TOKEN \
     $CONNECT_SERVER $CONNECT_PORT >>$LOGFILE 2>&1
 EXIT_CODE=$?
 
-# Mail out warnings from the logs
-FILTLOG=`mktemp /tmp/msoyfiltered-$BUREAU_ID.log.XXXXXX` || exit 1
-cat $LOGFILE | $MSOY_HOME/tools/bin/lfilter > $FILTLOG
-if [ -s $FILTLOG ]; then
-    cat $FILTLOG | $MAIL -s "$HOSTNAME: $MSOY_HOME p$LISTEN_PORT filtered log" $LOG_EMAIL
-fi
-rm -f $FILTLOG
-
-# Archive the server log
+# Archive the log
 NOW=`date "+%F-%H:%M"`
 mv $LOGFILE $LOGFILE.$NOW
 
