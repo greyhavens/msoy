@@ -21,6 +21,7 @@ import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
 
+import client.item.ItemMessages;
 import client.shell.Args;
 import client.shell.Page;
 import client.ui.HeaderBox;
@@ -102,7 +103,7 @@ public class ShopPanel extends HorizontalPanel
     {
         FlowPanel left = new FlowPanel();
         left.add(MsoyUI.createLabel(card.name, "Name"));
-        left.add(MsoyUI.createLabel(CShop.msgs.itemBy(card.creator.toString()), "Creator"));
+        left.add(MsoyUI.createLabel(_imsgs.itemBy(card.creator.toString()), "Creator"));
         left.add(WidgetUtil.makeShim(5, 5));
         left.add(MsoyUI.createLabel(card.descrip, "Descrip"));
 
@@ -139,12 +140,13 @@ public class ShopPanel extends HorizontalPanel
                                          makeClick(card)), 1, "Thumb");
             setText(1, 0, CShop.msgs.shopRank(""+rank), 1, "Ranking");
             setWidget(1, 1, MsoyUI.createLabel(card.name, "Name")); // requires overflow: hidden
-            setText(2, 1, CShop.msgs.itemBy(card.creator.toString()), 1, "Creator");
+            setText(2, 1, _imsgs.itemBy(card.creator.toString()), 1, "Creator");
         }
     }
 
     protected FlowPanel _contents;
 
+    protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 }

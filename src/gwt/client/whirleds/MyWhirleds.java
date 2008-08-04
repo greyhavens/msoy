@@ -32,7 +32,6 @@ import com.threerings.msoy.group.gwt.MyGroupCard;
 
 import client.shell.Args;
 import client.shell.Page;
-import client.shop.CShop;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.DateUtil;
@@ -113,8 +112,7 @@ public class MyWhirleds extends AbsolutePanel
 
         @Override // from PagedGrid
         protected void addCustomControls (FlexTable controls) {
-            controls.setWidget(
-                0, 0, new InlineLabel(CShop.msgs.catalogSortBy(), false, false, false));
+            controls.setWidget(0, 0, new InlineLabel(_msgs.mySortBy(), false, false, false));
             controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
             controls.setWidget(0, 1, _sortBox);
 

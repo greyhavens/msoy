@@ -108,9 +108,6 @@ public class FrameEntryPoint
             RootPanel.get(LOADING_AND_TESTS).clear();
             RootPanel.get(LOADING_AND_TESTS).setVisible(false);
         }
-
-        // TEMP: always show the header
-        setHeaderVisible(true);
     }
 
     // from interface HistoryListener
@@ -305,19 +302,28 @@ public class FrameEntryPoint
         // clear out any lingering dialog content
         clearDialog();
 
-        if (pageId != null) {
-            // select the appropriate header tab
-            _header.selectTab(pageId);
+        // show the header for everything except the landing pages
+        setHeaderVisible(!Page.LANDING.equals(pageId));
+
+        // select the appropriate header tab (TODO: map page ids to tab ids)
+        _header.selectTab(pageId);
+
+        if (Page.LANDING.equals(pageId)) {
+            CShell.log("Setting content to full width.");
+            closeClient(); // no client on the landing page
+            RootPanel.get(CONTENT).setWidth(""); // content takes up whole page
+
+        } else {
+            // let the client know it about to be minimized
+            WorldClient.setMinimized(true);
+            int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
+            RootPanel.get(CLIENT).setWidth(clientWidth + "px");
+            CShell.log("Setting content to fixed width.");
+            RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
         }
 
-        // let the client know it about to be minimized
-        WorldClient.setMinimized(true);
-        int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
-        RootPanel.get(CLIENT).setWidth(clientWidth + "px");
-
-        // stuff the content into the page and size it properly
+        // stuff the content into the page and show it
         RootPanel.get(CONTENT).add(pageContent);
-        RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
         RootPanel.get(CONTENT).setVisible(true);
 
         int ccount = RootPanel.get(CLIENT).getWidgetCount();
@@ -487,6 +493,6 @@ public class FrameEntryPoint
         "md5", "/js/md5.js",
         // TODO: put this on the account registration page
         // "recaptcha", "http://api.recaptcha.net/js/recaptcha_ajax.js",
-        "googanal", "http://www.google-analytics.com/ga.js",
+        // "googanal", "http://www.google-analytics.com/ga.js",
     };
 }

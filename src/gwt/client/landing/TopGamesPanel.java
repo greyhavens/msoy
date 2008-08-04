@@ -3,6 +3,7 @@
 
 package client.landing;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -21,9 +22,9 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.gwt.GameDetail;
 
-import client.games.CGames;
 import client.games.GameBitsPanel;
 import client.games.GameNamePanel;
+import client.games.GamesMessages;
 import client.games.PlayButton;
 import client.shell.Args;
 import client.shell.Page;
@@ -155,7 +156,7 @@ public class TopGamesPanel extends AbsolutePanel
         if (game.playersOnline > 0) {
             left.add(WidgetUtil.makeShim(10, 10));
             left.add(MsoyUI.createLabel(
-                CGames.msgs.featuredOnline("" + game.playersOnline), "Online"));
+                _msgs.featuredOnline("" + game.playersOnline), "Online"));
         }
 
         left.add(WidgetUtil.makeShim(10, 10));
@@ -229,4 +230,6 @@ public class TopGamesPanel extends AbsolutePanel
 
     /** Game info panel; changes when a new game is selected */
     protected SimplePanel _gameInfo;
+
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
 }

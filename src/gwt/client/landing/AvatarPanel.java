@@ -3,16 +3,18 @@
 
 package client.landing;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.ui.SmartTable;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.gwt.ListingCard;
 
+import client.item.ItemMessages;
 import client.shell.Args;
 import client.shell.Page;
-import client.shop.CShop;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -55,8 +57,9 @@ public class AvatarPanel extends FlowPanel
                 1, "Thumb");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
             setWidget(0, 1, MsoyUI.createLabel(card.name, "Name"));
-            setWidget(1, 0, MsoyUI.createLabel(
-                          CShop.msgs.itemBy(card.creator.toString()), "Creator"));
+            setWidget(1, 0, MsoyUI.createLabel(_imsgs.itemBy(card.creator.toString()), "Creator"));
         }
     }
+
+    protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
 }

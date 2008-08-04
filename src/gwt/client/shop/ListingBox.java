@@ -3,6 +3,7 @@
 
 package client.shop;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 
@@ -11,6 +12,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.item.ItemBox;
+import client.item.ItemMessages;
 import client.shell.Args;
 import client.shell.Page;
 import client.ui.MsoyUI;
@@ -26,7 +28,7 @@ public class ListingBox extends ItemBox
         super(listing.thumbMedia, listing.name, Page.SHOP,
               Args.compose("l", "" + listing.itemType, "" + listing.catalogId), listing.remixable);
 
-        String cname = CShop.msgs.itemBy(listing.creator.toString());
+        String cname = _imsgs.itemBy(listing.creator.toString());
         addWidget(MsoyUI.createLabel(cname, "Creator"), getColumns(), null);
 
         int row = getRowCount();
@@ -53,4 +55,6 @@ public class ListingBox extends ItemBox
     {
         return 2;
     }
+
+    protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
 }
