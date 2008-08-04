@@ -59,6 +59,14 @@ public /*abstract*/ class MsoyContext
         _topPanel = new TopPanel(this, createControlBar());
     }
 
+    /**
+     * Convenience method.
+     */
+    public function getMemberObject () :MemberObject
+    {
+        return (_client.getClientObject() as MemberObject);
+    }
+
     public function getWidth () :Number
     {
         return _client.getStage().stageWidth;
