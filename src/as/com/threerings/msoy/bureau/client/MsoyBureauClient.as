@@ -45,7 +45,7 @@ public class MsoyBureauClient extends WhirledBureauClient
     /** Access this client's window director. */
     public function getWindowDirector () :WindowDirector
     {
-        var enableWindowDirector :Boolean = false;
+        var enableWindowDirector :Boolean = true;
         var thaneWorldServiceProvided :Boolean = false;
 
         if (enableWindowDirector && _windowDirector == null) {
