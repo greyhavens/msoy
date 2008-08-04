@@ -1,5 +1,6 @@
 package com.threerings.msoy.bureau.client {
 
+import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.client.ResultAdapter;
 import com.threerings.util.Assert;
@@ -81,6 +82,8 @@ public class WindowDirector
     protected var _windows :HashMap = new HashMap();
     protected var _serviceGroups :Array = [];
     protected var _bureauId :String;
+
+    WindowClientObject; // make sure this gets linked in for serialization
 }
 
 }
@@ -139,6 +142,11 @@ class WindowImpl implements Window
     {
         Assert.isTrue(isLoggedOn());
         return _client.requireService(sclass);
+    }
+
+    public function getClient () :Client
+    {
+        return _client;
     }
 
     /** @inheritDoc */

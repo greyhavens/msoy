@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.bureau.server;
 
+import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.bureau.data.WindowCredentials;
+import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.server.ClientFactory;
 import com.threerings.presents.server.ClientResolver;
@@ -40,11 +42,20 @@ public class WindowClientFactory implements ClientFactory
     {
         // Just give bureau windows a vanilla ClientResolver.
         if (WindowCredentials.isWindow(username)) {
-            return ClientResolver.class;
+            return MyClientResolver.class;
         } else {
             return _delegate.getClientResolverClass(username);
         }
     }
 
+    protected static class MyClientResolver extends ClientResolver
+    {
+        @Override
+        public ClientObject createClientObject ()
+        {
+            return new WindowClientObject();
+        }
+    }
+    
     protected ClientFactory _delegate;
 }
