@@ -5,6 +5,7 @@ package client.ui;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.SmartTable;
 
@@ -25,7 +26,16 @@ public class ClickBox extends SmartTable
         ClickListener onClick = Link.createListener(page, args);
         addWidget(new ThumbBox(media, onClick), getColumns(), null);
         getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-        addWidget(MsoyUI.createActionLabel(name, "Name", onClick), getColumns(), "Label");
+        addLabel(MsoyUI.createActionLabel(name, "Name", onClick));
+    }
+
+    /**
+     * Adds the supplied label to the click box, making it width-limited and non-wrapping.
+     */
+    protected void addLabel (Label label)
+    {
+        label.addStyleName("Label");
+        addWidget(label, getColumns(), null);
     }
 
     /**

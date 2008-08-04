@@ -29,7 +29,7 @@ public class ListingBox extends ItemBox
               Args.compose("l", "" + listing.itemType, "" + listing.catalogId), listing.remixable);
 
         String cname = _imsgs.itemBy(listing.creator.toString());
-        addWidget(MsoyUI.createLabel(cname, "Creator"), getColumns(), null);
+        addLabel(MsoyUI.createLabel(cname, "Creator"));
 
         int row = getRowCount();
         setWidget(row, 0, new Stars(listing.rating, true, true, null), 1, "Rating");
