@@ -1128,7 +1128,6 @@
     <copyfilelist dest="${approot.server.code}/bin">
       <filelist dir="bin">
         <file name="msoyjava"/>
-        <file name="roll_logs"/>
         <file name="runcommon"/>
         <file name="runthaneclient"/>
       </filelist>
