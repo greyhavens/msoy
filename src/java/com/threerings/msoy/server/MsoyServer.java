@@ -30,6 +30,7 @@ import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
 import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.BodyLocator;
+import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -93,6 +94,7 @@ public class MsoyServer extends MsoyBaseServer
             // crowd dependencies
             bind(BodyLocator.class).to(MemberLocator.class);
             bind(ChatProvider.class).to(MsoyChatProvider.class);
+            bind(PlaceRegistry.class).to(RoomRegistry.class);
             // vilya whirled dependencies
             bind(SceneRepository.class).to(MsoySceneRepository.class);
             bind(SceneFactory.class).to(MsoySceneFactory.class);
