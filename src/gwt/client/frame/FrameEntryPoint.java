@@ -14,10 +14,10 @@ import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Frame;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.ReferralInfo;
@@ -85,28 +85,29 @@ public class FrameEntryPoint
                 }
             }
         });
+        _header.setVisible(false);
+        RootPanel.get(PAGE).add(_header);
+
 //         _dialog = new Dialog();
 //         _popup = new PopupDialog();
 
         // clear out the loading HTML so we can display a browser warning or load Whirled
-        DOM.setInnerHTML(RootPanel.get(LOADING_AND_TESTS).getElement(), "");
+        DOM.setInnerHTML(RootPanel.get(LOADING).getElement(), "");
 
         // If the browser is unsupported, hide the page (still being built) and show a warning.
         ClickListener continueClicked = new ClickListener() {
             public void onClick (Widget widget) {
                 // close the warning and show the page if the visitor choose to continue
-                RootPanel.get(LOADING_AND_TESTS).clear();
-                RootPanel.get(LOADING_AND_TESTS).setVisible(false);
-                RootPanel.get(SITE_CONTAINER).setVisible(true);
+                RootPanel.get(LOADING).clear();
+                RootPanel.get(LOADING).setVisible(false);
             }
         };
         Widget warningDialog = BrowserTest.getWarningDialog(continueClicked);
         if (warningDialog != null) {
-            RootPanel.get(SITE_CONTAINER).setVisible(false);
-            RootPanel.get(LOADING_AND_TESTS).add(warningDialog);
+            RootPanel.get(LOADING).add(warningDialog);
         } else {
-            RootPanel.get(LOADING_AND_TESTS).clear();
-            RootPanel.get(LOADING_AND_TESTS).setVisible(false);
+            RootPanel.get(LOADING).clear();
+            RootPanel.get(LOADING).setVisible(false);
         }
     }
 
@@ -222,14 +223,18 @@ public class FrameEntryPoint
         WorldClient.clientWillClose();
         _closeToken = null;
 
-        RootPanel.get(CLIENT).clear();
-        RootPanel.get(CLIENT).setWidth(Math.max(Window.getClientWidth() - CONTENT_WIDTH, 0) + "px");
-        RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
-        RootPanel.get(CONTENT).setVisible(true);
+        if (_client != null) {
+            RootPanel.get(PAGE).remove(_client);
+            _client = null;
+            if (_content != null) {
+                _content.setWidth(CONTENT_WIDTH + "px");
+                _content.setVisible(true);
+            }
+        }
         // TODO: let the page know to clear its close button
 
         // if we're on a "world" page, go to a landing page
-        if (_currentToken.startsWith(Page.WORLD)) {
+        if (_currentToken != null && _currentToken.startsWith(Page.WORLD)) {
             // if we were in a game, go to the games page, otherwise go to me
             Link.go(_currentToken.indexOf("game") == -1 ? Page.ME : Page.GAMES, "");
         }
@@ -241,11 +246,16 @@ public class FrameEntryPoint
         // let the Flash client know that it's being unminimized
         WorldClient.setMinimized(false);
 
+        // clear out the content
+        if (_content != null) {
+            RootPanel.get(PAGE).remove(_content);
+            _content = null;
+        }
         // restore the client to the full glorious browser width
-        RootPanel.get(CONTENT).clear();
-        RootPanel.get(CONTENT).setWidth("0px");
-        RootPanel.get(CONTENT).setVisible(false);
-        RootPanel.get(CLIENT).setWidth("100%");
+        if (_client != null) {
+            RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
+            _client.setWidth("100%");
+        }
 
         // restore the client's URL
         if (_closeToken != null) {
@@ -256,10 +266,7 @@ public class FrameEntryPoint
     // from interface Frame
     public void setHeaderVisible (boolean visible)
     {
-        RootPanel.get(HEADER).remove(_header);
-        if (visible) {
-            RootPanel.get(HEADER).add(_header);
-        }
+        _header.setVisible(visible);
     }
 
     // from interface Frame
@@ -297,7 +304,10 @@ public class FrameEntryPoint
     // from interface Frame
     public void showContent (String pageId, Widget pageContent)
     {
-        RootPanel.get(CONTENT).clear();
+        if (_content != null) {
+            RootPanel.get(PAGE).remove(_content);
+            _content = null;
+        }
 
         // clear out any lingering dialog content
         clearDialog();
@@ -308,28 +318,31 @@ public class FrameEntryPoint
         // select the appropriate header tab (TODO: map page ids to tab ids)
         _header.selectTab(pageId);
 
+        int contentTop;
+        String contentWidth;
         if (Page.LANDING.equals(pageId)) {
-            CShell.log("Setting content to full width.");
             closeClient(); // no client on the landing page
-            RootPanel.get(CONTENT).setWidth(""); // content takes up whole page
+            // content takes up whole page
+            contentWidth = "100%";
+            contentTop = 0;
 
         } else {
             // let the client know it about to be minimized
             WorldClient.setMinimized(true);
             int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
-            RootPanel.get(CLIENT).setWidth(clientWidth + "px");
-            CShell.log("Setting content to fixed width.");
-            RootPanel.get(CONTENT).setWidth(CONTENT_WIDTH + "px");
+            if (_client != null) {
+                _client.setWidth(clientWidth + "px");
+                RootPanel.get(PAGE).setWidgetPosition(_client, CONTENT_WIDTH, NAVI_HEIGHT);
+            }
+            // position the content normally
+            contentWidth = CONTENT_WIDTH + "px";
+            contentTop = NAVI_HEIGHT;
         }
 
-        // stuff the content into the page and show it
-        RootPanel.get(CONTENT).add(pageContent);
-        RootPanel.get(CONTENT).setVisible(true);
-
-        int ccount = RootPanel.get(CLIENT).getWidgetCount();
-        if (ccount == 0) {
-            RootPanel.get(CLIENT).add(new HTML("&nbsp;"));
-        }
+        // add and position the content
+        pageContent.setWidth(contentWidth);
+        RootPanel.get(PAGE).add(_content = pageContent);
+        RootPanel.get(PAGE).setWidgetPosition(_content, 0, contentTop);
     }
 
     // from interface WorldClient.Container
@@ -339,11 +352,15 @@ public class FrameEntryPoint
         _closeToken = (closeToken == null) ? _currentToken : closeToken;
 
         // hide our content
-        RootPanel.get(CONTENT).setWidth("0px");
-        RootPanel.get(CONTENT).setVisible(false);
+        if (_content != null) {
+            _content.setVisible(false);
+        }
 
         // have the client take up all the space
-        RootPanel.get(CLIENT).setWidth("100%");
+        if (_client != null) {
+            RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
+            _client.setWidth("100%");
+        }
 
         // make sure the header is showing as we always want the header above the client
         setHeaderVisible(true);
@@ -353,21 +370,27 @@ public class FrameEntryPoint
     // from interface WorldClient.Container
     public Panel getClientContainer ()
     {
-        RootPanel.get(CLIENT).clear();
-        if (Window.getClientHeight() < (HEADER_HEIGHT + CLIENT_HEIGHT)) {
-            RootPanel.get(CLIENT).add(_cscroller = new ScrollPanel());
-            _cscroller.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-            return _cscroller;
-        } else {
-            _cscroller = null;
-            return RootPanel.get(CLIENT);
+        if (_client != null) {
+            RootPanel.get(PAGE).remove(_client);
+            _client = null;
         }
+
+        if (Window.getClientHeight() < (NAVI_HEIGHT + CLIENT_HEIGHT)) {
+            _client = new ScrollPanel();
+            _client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+        } else {
+            _client = new SimplePanel();
+        }
+        _client.setWidth("100%");
+        RootPanel.get(PAGE).add(_client);
+        RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
+
+        return _client;
     }
 
     protected void setPage (String pageId)
     {
         _pageId = pageId;
-        RootPanel.get("content").clear();
         Frame iframe = new Frame("/gwt/" + _pageId + "/" + _pageId + ".html");
         DOM.setElementProperty(iframe.getElement(), "name", "page");
         iframe.setStyleName("pageIFrame");
@@ -476,16 +499,14 @@ public class FrameEntryPoint
     protected String _closeToken;
 
     protected FrameHeader _header;
-    protected ScrollPanel _cscroller;
+    protected Widget _content;
+    protected Panel _client;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
     // constants for our top-level elements
-    protected static final String HEADER = "header";
-    protected static final String CONTENT = "content";
-    protected static final String CLIENT = "client";
-    protected static final String SITE_CONTAINER = "ctable";
-    protected static final String LOADING_AND_TESTS = "loadingAndTests";
+    protected static final String PAGE = "page";
+    protected static final String LOADING = "loading";
 
     /** Enumerates our Javascript dependencies. */
     protected static final String[] JS_DEPENDS = {
