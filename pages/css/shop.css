@@ -1,19 +1,8 @@
-/** 
+/**
  * $Id$
  *
  * CSS styles for the Catalog interfaces.
  */
-
-.marquee {
-  background: url(/images/shop/marquee_tile.png) repeat-x top;
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-  height: 38px;
-  text-align: center;
-  padding-top: 8px;
-}
 
 .shopPanel, .catalogPanel {
   width: 100%;

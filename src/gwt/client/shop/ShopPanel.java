@@ -25,6 +25,7 @@ import client.item.ItemMessages;
 import client.shell.Args;
 import client.shell.Page;
 import client.ui.HeaderBox;
+import client.ui.Marquee;
 import client.ui.MsoyUI;
 import client.ui.Stars;
 import client.ui.ThumbBox;

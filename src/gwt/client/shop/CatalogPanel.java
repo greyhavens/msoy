@@ -34,6 +34,7 @@ import client.item.ShopUtil;
 import client.item.TagCloud;
 import client.shell.Frame;
 import client.shell.Page;
+import client.ui.Marquee;
 import client.util.Link;
 
 /**

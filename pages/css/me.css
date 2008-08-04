@@ -59,9 +59,9 @@
   text-align: center;
 }
 
-.whatsNext .Friends .FriendsScroller { 
+.whatsNext .Friends .FriendsScroller {
   height: 326px;
-  width: 217px; 
+  width: 217px;
 }
 
 .whatsNext .NoFriends .Title, .whatsNext .Friends .Title {
@@ -172,4 +172,19 @@
 .myRooms .Room {
   font-size: 12px;
   text-align: center;
+}
+
+/* ------------------------------------
+   PASSPORT PAGE
+-------------------------------------*/
+.passport {
+  background: #1d5883;
+  width: 100%;
+  height: 100%;
+}
+
+.passport .NextPanel {
+  background-image: url(/images/me/passport_header_bg.jpg);
+  height: 252px;
+  width: 678px;
 }
