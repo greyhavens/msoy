@@ -9,6 +9,12 @@ import com.threerings.presents.dobj.DSet;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
+import com.threerings.msoy.world.data.EntityMemoryEntry;
+import com.threerings.msoy.world.data.RoomPropertyEntry;
+import com.threerings.msoy.world.data.EntityControl;
+import com.threerings.msoy.world.data.EffectData;
+
+
 /**
  * Contains the distributed state of a virtual world room.
  */
@@ -62,15 +68,19 @@ public class RoomObject extends SpotSceneObject
 
     /** Contains the memories for all entities in this room. */
     public var memories :DSet = new DSet();
+    EntityMemoryEntry; // reference to force linkage
 
     /** Contains the shared property space for this room. */
     public var roomProperties :DSet = new DSet();
+    RoomPropertyEntry; // reference to force linkage
 
     /** Contains mappings for all controlled entities in this room. */
     public var controllers :DSet = new DSet();
+    EntityControl; // reference to force linkage
 
     /** Contains the currently displayed "effects" (temporary furniture..). */
     public var effects :DSet = new DSet();
+    EffectData; // reference to force linkage
 
     override public function readObject (ins :ObjectInputStream) :void
     {
