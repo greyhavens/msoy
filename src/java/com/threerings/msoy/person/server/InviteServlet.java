@@ -45,6 +45,7 @@ import static com.threerings.msoy.Log.log;
  * Provides the server implementation of {@link InviteService}.
  */
 public class InviteServlet extends MsoyServiceServlet
+    implements InviteService
 {
     // from InviteService
     public List<EmailContact> getWebMailAddresses (WebIdent ident, String email, String password)
