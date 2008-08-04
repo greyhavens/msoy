@@ -114,7 +114,7 @@ class WindowImpl implements Window
         _client.addEventListener(ClientEvent.CLIENT_FAILED_TO_LOGON, clientFailedToLogon);
         _client.addEventListener(ClientEvent.CLIENT_CONNECTION_FAILED, clientConnectionFailed);
 
-        var debug :Boolean = true;
+        var debug :Boolean = false;
         if (debug) {
             _client.addEventListener(ClientEvent.CLIENT_WILL_LOGON, logEvt);
             _client.addEventListener(ClientEvent.CLIENT_DID_LOGON, logEvt);
