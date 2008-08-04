@@ -28,6 +28,8 @@ import com.threerings.util.MultiLoader;
 
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.ui.FloatingPanel;
+
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -150,7 +152,9 @@ public class WorldControlBar extends ControlBar
         _friendBtnBox.horizontalScrollPolicy = ScrollPolicy.OFF;
         var friendBtn :CommandButton = new CommandButton();
         friendBtn.toolTip = Msgs.GENERAL.get("i.friends");
-        friendBtn.setCommand(MsoyController.POP_FRIENDS_LIST);
+        friendBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+            return new FriendsListPanel(_ctx as WorldContext);
+        }, friendBtn));
         friendBtn.styleName = "controlBarFriendButton";
         friendBtn.enabled = true;
         friendBtn.focusEnabled = false;
@@ -160,7 +164,9 @@ public class WorldControlBar extends ControlBar
         if (_ctx.getTokens().isAdmin()) {
             var partyBtn :CommandButton = new CommandButton();
             partyBtn.toolTip = Msgs.GENERAL.get("i.party");
-            partyBtn.setCommand(MsoyController.POP_PARTY);
+            partyBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+                return new PartyPopup(_ctx);
+            }, partyBtn));
             partyBtn.styleName = "controlBarPartyButton";
             partyBtn.enabled = true;
             partyBtn.focusEnabled = false;

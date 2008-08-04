@@ -108,12 +108,6 @@ public class MsoyController extends Controller
     /** Command to go to a running game (gameId + placeOid). */
     public static const GO_GAME :String = "GoGame";
 
-    /** Command to pop up the friends list popup (or close it if it's up) */
-    public static const POP_FRIENDS_LIST :String = "PopFriendsList";
-
-    /** Command to pop up the party popup (or close it if it's up) */
-    public static const POP_PARTY :String = "PopParty";
-
     /** Command to share the current scene with email contacts. */
     public static const EMAIL_SHARE :String = "EmailShare";
 

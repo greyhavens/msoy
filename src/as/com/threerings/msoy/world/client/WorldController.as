@@ -1077,33 +1077,6 @@ public class WorldController extends MsoyController
         handleGoScene(int(_backstack[_backstackIdx = idx].id));
     }
 
-    /** 
-     * Handles the POP_FRIENDS_LIST command.
-     */
-    public function handlePopFriendsList (...ignored) :void
-    {
-        if (_friendsList != null) {
-            _friendsList.close();
-
-        } else {
-            _friendsList = new FriendsListPanel(_wctx);
-            _friendsList.addEventListener(Event.REMOVED_FROM_STAGE, handleFriendsListRemoved);
-        }
-    }
-
-    /** 
-     * Handles the POP_PARTY_LIST command.
-     */
-    public function handlePopParty (...ignored) :void
-    {
-        if (_partyPopup != null) {
-            _partyPopup.close();
-        } else {
-            _partyPopup = new PartyPopup(_wctx);
-            _partyPopup.addEventListener(Event.REMOVED_FROM_STAGE, handlePartyPopupRemoved);
-        }
-    }
-
     // from MsoyController
     override public function handleLogon (creds :Credentials) :void
     {
@@ -1129,10 +1102,6 @@ public class WorldController extends MsoyController
                 Prefs.setUsername(name.toString());
             }
 
-            if (_friendsList != null) {
-                _friendsList.memberObjectUpdated(memberObj);
-            }
-            
             _wctx.getTopPanel().getHeaderBar().getChatTabs().memberObjectUpdated(memberObj);
 
         } else {
@@ -1146,11 +1115,6 @@ public class WorldController extends MsoyController
             } catch (e :Error) {
                 log.warning("Unable to inform GWT of our guest id " +
                             "[id=" + memberObj.getMemberId() + "]: " + e);
-            }
-
-            if (_friendsList != null) {
-                // force closed if we're a guest.
-                _friendsList.close();
             }
         }
 
@@ -1360,21 +1324,6 @@ public class WorldController extends MsoyController
             headerBar.setCommentLink(handleViewGameComments, cfg.getGameId());
             headerBar.setInstructionsLink(handleViewGameInstructions, cfg.getGameId());
         }
-
-        // if we just moved to a game, we need to close down the friend list.
-        if (_friendsList != null) {
-            _friendsList.close();
-        }
-    }
-
-    protected function handleFriendsListRemoved (event :Event) :void
-    {
-        _friendsList = null;
-    }
-
-    protected function handlePartyPopupRemoved (event :Event) :void
-    {
-        _partyPopup = null;
     }
 
     // from MsoyController
@@ -1415,12 +1364,6 @@ public class WorldController extends MsoyController
 
     /** Our room history menu. */
     protected var _historyMenu :CommandMenu;
-
-    /** Our friends list. */
-    protected var _friendsList :FriendsListPanel;
-
-    /** Our party panel. */
-    protected var _partyPopup :PartyPopup;
 
     private static const log :Log = Log.getLog(WorldController);
 }
