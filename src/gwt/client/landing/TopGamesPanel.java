@@ -151,7 +151,8 @@ public class TopGamesPanel extends AbsolutePanel
 
         VerticalPanel left = new VerticalPanel();
         left.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        left.add(new ThumbBox(game.getShotMedia(), GameDetail.SHOT_WIDTH, GameDetail.SHOT_HEIGHT, onClick));
+        left.add(new ThumbBox(game.getShotMedia(), GameDetail.SHOT_WIDTH, GameDetail.SHOT_HEIGHT,
+                              onClick));
 
         if (game.playersOnline > 0) {
             left.add(WidgetUtil.makeShim(10, 10));
@@ -190,13 +191,15 @@ public class TopGamesPanel extends AbsolutePanel
         // play button
         PushButton playButton = new PlayButton(game.gameId, game.minPlayers, game.maxPlayers);
         playButton.setStyleName("playButtonSmall");
-        playButton.addClickListener(MsoyUI.createTrackingListener("landingGamePlayClicked", game.gameId+""));
+        playButton.addClickListener(
+            MsoyUI.createTrackingListener("landingGamePlayClicked", game.gameId+""));
         right.add(playButton);
 
         // more games button
         PushButton moreGamesButton = makePlayButton(
             "MoreGames", Link.createListener(Page.GAMES, ""));
-        moreGamesButton.addClickListener(MsoyUI.createTrackingListener("landingMoreGamesClicked", null));
+        moreGamesButton.addClickListener(
+            MsoyUI.createTrackingListener("landingMoreGamesClicked", null));
         right.add(moreGamesButton);
 
         gameInfoTable.setWidget(0, 2, right);
