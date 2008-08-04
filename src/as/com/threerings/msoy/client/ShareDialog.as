@@ -7,6 +7,7 @@ import flash.system.System;
 
 import flash.events.Event;
 import flash.events.FocusEvent;
+import flash.events.MouseEvent;
 
 import mx.events.FlexEvent;
 
@@ -97,17 +98,22 @@ public class ShareDialog extends FloatingPanel
         box.percentHeight = 100;
 
         var info :Label = new Label();
-        info.text = Msgs.GENERAL.get("l.email_instruction");
+        info.text = Msgs.GENERAL.get("l.email_addresses");
         box.addChild(info);
 
         var emails :TextInput = new TextInput();
         box.addChild(emails);
 
+        info = new Label();
+        info.text = Msgs.GENERAL.get("l.email_message");
+        box.addChild(info);
+
         var message :TextArea = new TextArea();
         box.addChild(message);
 
-        // TODO: Localize
-        var ok :CommandButton = new CommandButton("OK", MsoyController.EMAIL_SHARE, [emails, message]);
+        // TODO: Close the dialog on submit
+        var ok :CommandButton = new CommandButton(
+            Msgs.GENERAL.get("b.email_ok"), MsoyController.EMAIL_SHARE, [emails, message]);
         box.addChild(ok);
 
         return box;

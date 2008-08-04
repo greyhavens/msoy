@@ -312,7 +312,7 @@ public class MsoyController extends Controller
             _mctx.getClient().requireService(MemberService) as MemberService;
 
         var out :TypedArray = TypedArray.create(String);
-        for each (var email :String in emails.text.split(",")) {
+        for each (var email :String in emails.text.split(/[ ,]/)) {
             out.push(email);
         }
 

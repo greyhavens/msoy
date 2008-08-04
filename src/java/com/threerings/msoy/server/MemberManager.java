@@ -79,6 +79,8 @@ import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.server.util.MailSender;
+
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
@@ -566,13 +568,27 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void emailShare (ClientObject caller, String[] emails, String message, InvocationService.ConfirmListener cl)
+    public void emailShare (ClientObject caller, final String[] emails, final String message,
+                            final InvocationService.ConfirmListener cl)
     {
-        // TODO
-        for (int i=0; i<emails.length; ++i) {
-            System.err.println("============== " + emails[i]);
-        }
-        cl.requestProcessed();
+        final MemberObject memObj = (MemberObject) caller;
+
+        _invoker.postUnit(new RepositoryUnit("emailShare") {
+            public void invokePersist () throws PersistenceException {
+                _sender = _memberRepo.loadMember(memObj.getMemberId());
+            }
+            public void handleSuccess () {
+                String from = (_sender == null) ?
+                    "no-reply@whirled.com" : _sender.accountName;
+                String name = (_sender == null) ? null : _sender.name;
+                for (String recip : emails) {
+                    MailSender.sendEmail(recip, from, "shareInvite", "name", name,
+                        "message", message, "link", "www.todo.com");
+                }
+                cl.requestProcessed();
+            }
+            protected MemberRecord _sender;
+        });
     }
 
     /**
