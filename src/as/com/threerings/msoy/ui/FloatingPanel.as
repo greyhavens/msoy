@@ -93,7 +93,7 @@ public class FloatingPanel extends TitleWindow
                 }
             } else {
                 thePanel.close();
-                // once the close callback is called, this will null out the reference.
+                // that will call our close callback, nulling out 'thePanel'
             }
         };
     }
