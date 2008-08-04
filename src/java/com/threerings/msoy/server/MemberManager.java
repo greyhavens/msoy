@@ -565,6 +565,16 @@ public class MemberManager
         _eventLog.referralCreated(info);
     }
 
+    // from interface MemberProvider
+    public void emailShare (ClientObject caller, String[] emails, String message, InvocationService.ConfirmListener cl)
+    {
+        // TODO
+        for (int i=0; i<emails.length; ++i) {
+            System.err.println("============== " + emails[i]);
+        }
+        cl.requestProcessed();
+    }
+
     /**
      * Grants flow to the member identified in the supplied user action details.
      *

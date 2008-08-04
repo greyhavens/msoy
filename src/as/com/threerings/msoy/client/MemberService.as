@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.client {
 
+import com.threerings.io.TypedArray;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -23,6 +24,9 @@ public interface MemberService extends InvocationService
 
     // from Java interface MemberService
     function complainMember (arg1 :Client, arg2 :int, arg3 :String) :void;
+
+    // from Java interface MemberService
+    function emailShare (arg1 :Client, arg2 :TypedArray /* of class java.lang.String */, arg3 :String, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
     function followMember (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;

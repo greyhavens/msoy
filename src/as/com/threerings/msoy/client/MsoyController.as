@@ -22,6 +22,10 @@ import flash.utils.Timer;
 import flash.utils.getTimer; // function import
 
 import mx.controls.Button;
+import mx.controls.TextArea;
+import mx.controls.TextInput;
+
+import com.threerings.io.TypedArray;
 
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
@@ -43,6 +47,7 @@ import com.threerings.flex.ChatControl;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
+import com.threerings.presents.client.ConfirmAdapter;
 
 import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
@@ -108,6 +113,9 @@ public class MsoyController extends Controller
 
     /** Command to pop up the party popup (or close it if it's up) */
     public static const POP_PARTY :String = "PopParty";
+
+    /** Command to share the current scene with email contacts. */
+    public static const EMAIL_SHARE :String = "EmailShare";
 
     /**
      * Creates and initializes the controller.
@@ -293,6 +301,26 @@ public class MsoyController extends Controller
     {
         SliderPopup.toggle(trigger, Prefs.getSoundVolume(), Prefs.setSoundVolume,
             { styleName: "volumeSlider" });
+    }
+
+    /**
+     * Handle the EMAIL_SHARE command.
+     */
+    public function handleEmailShare (emails :TextInput, message :TextArea) :void
+    {
+        var msvc :MemberService =
+            _mctx.getClient().requireService(MemberService) as MemberService;
+
+        var out :TypedArray = TypedArray.create(String);
+        for each (var email :String in emails.text.split(",")) {
+            out.push(email);
+        }
+
+        msvc.emailShare(_mctx.getClient(), out, message.text, new ConfirmAdapter(
+            function (cause :String) :void {
+                trace("failure"); // TODO
+            }
+        ));
     }
 
     /**

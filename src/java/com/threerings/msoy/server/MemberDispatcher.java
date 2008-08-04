@@ -54,6 +54,12 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
+        case MemberMarshaller.EMAIL_SHARE:
+            ((MemberProvider)provider).emailShare(
+                source, (String[])args[0], (String)args[1], (InvocationService.ConfirmListener)args[2]
+            );
+            return;
+
         case MemberMarshaller.FOLLOW_MEMBER:
             ((MemberProvider)provider).followMember(
                 source, ((Integer)args[0]).intValue(), (InvocationService.ConfirmListener)args[1]

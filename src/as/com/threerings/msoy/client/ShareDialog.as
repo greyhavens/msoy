@@ -18,7 +18,7 @@ import mx.containers.TitleWindow;
 
 import mx.controls.RadioButton;
 import mx.controls.Label;
-import mx.controls.Text;
+import mx.controls.TextArea;
 import mx.controls.TextInput;
 
 import com.threerings.flex.CommandButton;
@@ -100,12 +100,14 @@ public class ShareDialog extends FloatingPanel
         info.text = Msgs.GENERAL.get("l.email_instruction");
         box.addChild(info);
 
-        var input :TextInput = new TextInput();
-        box.addChild(input);
+        var emails :TextInput = new TextInput();
+        box.addChild(emails);
 
-        var ok :CommandButton = new CommandButton("OK", function () :void {
-            input.text = "Spamming complete";
-        });
+        var message :TextArea = new TextArea();
+        box.addChild(message);
+
+        // TODO: Localize
+        var ok :CommandButton = new CommandButton("OK", MsoyController.EMAIL_SHARE, [emails, message]);
         box.addChild(ok);
 
         return box;

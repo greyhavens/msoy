@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.data {
 
+import com.threerings.io.TypedArray;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.presents.client.Client;
@@ -63,8 +64,21 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch <code>emailShare</code> requests. */
+    public static const EMAIL_SHARE :int = 4;
+
+    // from interface MemberService
+    public function emailShare (arg1 :Client, arg2 :TypedArray /* of class java.lang.String */, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
+    {
+        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, EMAIL_SHARE, [
+            arg2, arg3, listener4
+        ]);
+    }
+
     /** The method id used to dispatch <code>followMember</code> requests. */
-    public static const FOLLOW_MEMBER :int = 4;
+    public static const FOLLOW_MEMBER :int = 5;
 
     // from interface MemberService
     public function followMember (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
@@ -77,7 +91,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>getCurrentMemberLocation</code> requests. */
-    public static const GET_CURRENT_MEMBER_LOCATION :int = 5;
+    public static const GET_CURRENT_MEMBER_LOCATION :int = 6;
 
     // from interface MemberService
     public function getCurrentMemberLocation (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -90,7 +104,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>getDisplayName</code> requests. */
-    public static const GET_DISPLAY_NAME :int = 6;
+    public static const GET_DISPLAY_NAME :int = 7;
 
     // from interface MemberService
     public function getDisplayName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -103,7 +117,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>getGroupHomeSceneId</code> requests. */
-    public static const GET_GROUP_HOME_SCENE_ID :int = 7;
+    public static const GET_GROUP_HOME_SCENE_ID :int = 8;
 
     // from interface MemberService
     public function getGroupHomeSceneId (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -116,7 +130,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>getGroupName</code> requests. */
-    public static const GET_GROUP_NAME :int = 8;
+    public static const GET_GROUP_NAME :int = 9;
 
     // from interface MemberService
     public function getGroupName (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
@@ -129,7 +143,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>getHomeId</code> requests. */
-    public static const GET_HOME_ID :int = 9;
+    public static const GET_HOME_ID :int = 10;
 
     // from interface MemberService
     public function getHomeId (arg1 :Client, arg2 :int, arg3 :int, arg4 :InvocationService_ResultListener) :void
@@ -142,7 +156,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>inviteToBeFriend</code> requests. */
-    public static const INVITE_TO_BE_FRIEND :int = 10;
+    public static const INVITE_TO_BE_FRIEND :int = 11;
 
     // from interface MemberService
     public function inviteToBeFriend (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
@@ -155,7 +169,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>inviteToFollow</code> requests. */
-    public static const INVITE_TO_FOLLOW :int = 11;
+    public static const INVITE_TO_FOLLOW :int = 12;
 
     // from interface MemberService
     public function inviteToFollow (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void
@@ -168,7 +182,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setAvatar</code> requests. */
-    public static const SET_AVATAR :int = 12;
+    public static const SET_AVATAR :int = 13;
 
     // from interface MemberService
     public function setAvatar (arg1 :Client, arg2 :int, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void
@@ -181,7 +195,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setAway</code> requests. */
-    public static const SET_AWAY :int = 13;
+    public static const SET_AWAY :int = 14;
 
     // from interface MemberService
     public function setAway (arg1 :Client, arg2 :Boolean, arg3 :String) :void
@@ -192,7 +206,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setDisplayName</code> requests. */
-    public static const SET_DISPLAY_NAME :int = 14;
+    public static const SET_DISPLAY_NAME :int = 15;
 
     // from interface MemberService
     public function setDisplayName (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void
@@ -205,7 +219,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setHomeSceneId</code> requests. */
-    public static const SET_HOME_SCENE_ID :int = 15;
+    public static const SET_HOME_SCENE_ID :int = 16;
 
     // from interface MemberService
     public function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void
@@ -218,7 +232,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>trackReferralCreation</code> requests. */
-    public static const TRACK_REFERRAL_CREATION :int = 16;
+    public static const TRACK_REFERRAL_CREATION :int = 17;
 
     // from interface MemberService
     public function trackReferralCreation (arg1 :Client, arg2 :ReferralInfo) :void
@@ -229,7 +243,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateAvailability</code> requests. */
-    public static const UPDATE_AVAILABILITY :int = 17;
+    public static const UPDATE_AVAILABILITY :int = 18;
 
     // from interface MemberService
     public function updateAvailability (arg1 :Client, arg2 :int) :void
@@ -240,7 +254,7 @@ public class MemberMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateStatus</code> requests. */
-    public static const UPDATE_STATUS :int = 18;
+    public static const UPDATE_STATUS :int = 19;
 
     // from interface MemberService
     public function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void

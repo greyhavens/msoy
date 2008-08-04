@@ -108,4 +108,9 @@ public interface MemberService extends InvocationService
      * Tracks the creation of a new referral info structure, for a new visitor.
      */
     void trackReferralCreation (Client client, ReferralInfo info);
+
+    /**
+     * Shares a scene by emailing offsite friends.
+     */
+    void emailShare (Client client, String[] emails, String message, ConfirmListener listener);
 }
