@@ -6,6 +6,7 @@ package com.threerings.msoy.bureau.client {
 import com.threerings.bureau.client.BureauDirector;
 import com.threerings.bureau.util.BureauContext;
 import com.threerings.msoy.bureau.data.ThaneCodes;
+import com.threerings.msoy.bureau.data.ThaneWorldMarshaller;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.whirled.bureau.client.UserCodeLoader;
@@ -46,12 +47,13 @@ public class MsoyBureauClient extends WhirledBureauClient
     public function getWindowDirector () :WindowDirector
     {
         var enableWindowDirector :Boolean = true;
-        var thaneWorldServiceProvided :Boolean = false;
+        var thaneWorldServiceProvided :Boolean = true;
 
         if (enableWindowDirector && _windowDirector == null) {
             _windowDirector = new WindowDirector(_bureauId);
             // TODO: implement thane world service on the server and uncomment this
             if (thaneWorldServiceProvided) {
+                ThaneWorldMarshaller; // make sure we link in the marshaller
                 _windowDirector.addServiceGroup(ThaneCodes.THANE_GROUP);
             }
         }
