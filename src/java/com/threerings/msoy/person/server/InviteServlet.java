@@ -244,6 +244,8 @@ public class InviteServlet extends MsoyServiceServlet
             if (inviter != null) {
                 params.set("friend", fromName);
                 params.set("email", inviter.accountName);
+                params.set("referral_params",
+                           makeReferralParams(inviter.memberId+"", EMAIL_VECTOR, null));
             }
             if (!StringUtil.isBlank(toName)) {
                 params.set("name", toName);
@@ -253,9 +255,6 @@ public class InviteServlet extends MsoyServiceServlet
             }
             params.set("invite_id", inviteId);
             params.set("server_url", ServerConfig.getServerURL());
-            
-            params.set("referral_params", 
-                makeReferralParams(inviter.memberId+"", EMAIL_VECTOR, null));
 
             String from = (inviter == null) ? ServerConfig.getFromAddress() : inviter.accountName;
             String result = MailSender.sendEmail(email, from, "memberInvite", params);
@@ -280,10 +279,10 @@ public class InviteServlet extends MsoyServiceServlet
         }
     }
 
-    protected static String makeReferralParams (String affiliate, String vector, String creative) 
+    protected static String makeReferralParams (String affiliate, String vector, String creative)
     {
-        return "aid_" + (affiliate != null ? affiliate : "") + 
-            "_" + (vector != null ? vector : "") + 
+        return "aid_" + (affiliate != null ? affiliate : "") +
+            "_" + (vector != null ? vector : "") +
             "_" + (creative != null && creative.length() > 0 ? creative : "_");
     }
 
