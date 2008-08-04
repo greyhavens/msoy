@@ -98,9 +98,48 @@
 }
 
 .pageIFrame {
-  height: 100%;
   border: none;
-  background: #FFFFFF;
+}
+
+/** Page title styles */
+.pageTitle {
+  background: #000000 url(/images/header/titlebar.png) no-repeat bottom left;
+}
+
+.pageTitle .Title {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  height: 34px;
+  color: white;
+  white-space: nowrap;
+  opacity: 0.6; /* Firefox and Safari */
+  filter: alpha(opacity=60); /* IE */
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.pageTitle .SubNavi {
+  font-size: 12px;
+  color: white;
+  white-space: nowrap;
+  vertical-align: bottom;
+  text-align: right;
+  padding: 0px 5px 5px 0px;
+}
+
+.pageTitle .SubNavi a {
+  color: white;
+}
+
+.pageTitle .SubNavi img, .pageTitle .SubNavi div {
+  display: inline;
+  vertical-align: bottom;
+}
+
+.pageTitle .Close {
+  padding-bottom: 12px;
+  padding-left: 5px;
 }
 
 /* ------------------------------------

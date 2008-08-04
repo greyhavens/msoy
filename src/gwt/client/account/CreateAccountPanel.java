@@ -228,7 +228,7 @@ public class CreateAccountPanel extends FlowPanel
         String challenge = hasRecaptchaKey() ? getRecaptchaChallenge() : null;
         String response = hasRecaptchaKey() ? getRecaptchaResponse() : null;
         _usersvc.register(
-            DeploymentConfig.version, email, CAccount.md5hex(password), name,
+            DeploymentConfig.version, email, CAccount.frame.md5hex(password), name,
             _dateOfBirth.getDate(), null, info, 1, inviteId, guestId, challenge,
             response, TrackingCookie.get(), new AsyncCallback<SessionData>() {
                 public void onSuccess (SessionData result) {

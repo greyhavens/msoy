@@ -13,6 +13,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -30,6 +31,7 @@ import client.shell.FrameHeader;
 import client.shell.Page;
 import client.shell.Session;
 import client.shell.ShellMessages;
+import client.shell.TitleBar;
 import client.shell.TrackingCookie;
 import client.shell.WorldClient;
 import client.util.Link;
@@ -194,6 +196,9 @@ public class FrameEntryPoint
     public void setTitle (String title)
     {
         Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
+        if (title != null && _bar != null) {
+            _bar.setTitle(title);
+        }
     }
 
     // from interface Frame
@@ -231,7 +236,10 @@ public class FrameEntryPoint
                 _content.setVisible(true);
             }
         }
-        // TODO: let the page know to clear its close button
+
+        if (_bar != null) {
+            _bar.setCloseVisible(false);
+        }
 
         // if we're on a "world" page, go to a landing page
         if (_currentToken != null && _currentToken.startsWith(Page.WORLD)) {
@@ -247,10 +255,8 @@ public class FrameEntryPoint
         WorldClient.setMinimized(false);
 
         // clear out the content
-        if (_content != null) {
-            RootPanel.get(PAGE).remove(_content);
-            _content = null;
-        }
+        clearContent();
+
         // restore the client to the full glorious browser width
         if (_client != null) {
             RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
@@ -304,10 +310,8 @@ public class FrameEntryPoint
     // from interface Frame
     public void showContent (String pageId, Widget pageContent)
     {
-        if (_content != null) {
-            RootPanel.get(PAGE).remove(_content);
-            _content = null;
-        }
+        // clear out any old content
+        clearContent();
 
         // clear out any lingering dialog content
         clearDialog();
@@ -319,12 +323,15 @@ public class FrameEntryPoint
         _header.selectTab(pageId);
 
         int contentTop;
-        String contentWidth;
+        String contentWidth, contentHeight;
         if (Page.LANDING.equals(pageId)) {
             closeClient(); // no client on the landing page
             // content takes up whole page
             contentWidth = "100%";
+            contentHeight = "100%";
             contentTop = 0;
+            // the content is just the supplied widget, no extra bits
+            _content = pageContent;
 
         } else {
             // let the client know it about to be minimized
@@ -336,12 +343,25 @@ public class FrameEntryPoint
             }
             // position the content normally
             contentWidth = CONTENT_WIDTH + "px";
+            contentHeight = (Window.getClientHeight() - NAVI_HEIGHT) + "px";
             contentTop = NAVI_HEIGHT;
+            // add a titlebar to the top of the content
+            FlowPanel content = new FlowPanel(); // TODO: pageId -> tabPageId
+            content.add(_bar = TitleBar.create(pageId, new ClickListener() {
+                public void onClick (Widget sender) {
+                    closeContent();
+                }
+            }));
+            pageContent.setWidth(contentWidth);
+            pageContent.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
+            content.add(pageContent);
+            _content = content;
         }
 
-        // add and position the content
-        pageContent.setWidth(contentWidth);
-        RootPanel.get(PAGE).add(_content = pageContent);
+        // size, add and position the content
+        _content.setWidth(contentWidth);
+        _content.setHeight(contentHeight);
+        RootPanel.get(PAGE).add(_content);
         RootPanel.get(PAGE).setWidgetPosition(_content, 0, contentTop);
     }
 
@@ -365,6 +385,12 @@ public class FrameEntryPoint
         // make sure the header is showing as we always want the header above the client
         setHeaderVisible(true);
         _header.selectTab(null);
+    }
+
+    // from interface Frame
+    public String md5hex (String text)
+    {
+        return nmd5hex(text);
     }
 
     // from interface WorldClient.Container
@@ -397,6 +423,15 @@ public class FrameEntryPoint
         showContent(_pageId, iframe);
     }
 
+    protected void clearContent ()
+    {
+        if (_content != null) {
+            _bar = null;
+            RootPanel.get(PAGE).remove(_content);
+            _content = null;
+        }
+    }
+
     /**
      * Handles a variety of methods called by our iframed page.
      */
@@ -408,6 +443,8 @@ public class FrameEntryPoint
             return (CShell.creds == null) ? null : CShell.creds.flatten();
         case GET_PAGE_TOKEN:
             return _pageToken;
+        case GET_MD5:
+            return nmd5hex(args[0]);
         case SET_TITLE:
             setTitle(args[0]);
             return null;
@@ -493,6 +530,11 @@ public class FrameEntryPoint
         }
     }-*/;
 
+    /** MD5 hashes the supplied text and returns the hex encoded hash value. */
+    public native static String nmd5hex (String text) /*-{
+        return $wnd.hex_md5(text);
+    }-*/;
+
     protected String _currentToken = "";
     protected String _pageToken = "";
     protected String _pageId;
@@ -500,6 +542,7 @@ public class FrameEntryPoint
 
     protected FrameHeader _header;
     protected Widget _content;
+    protected TitleBar _bar;
     protected Panel _client;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

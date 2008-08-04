@@ -282,6 +282,17 @@ public class ShellFrameImpl
         }
     }
 
+//     // from interface Frame
+//     public void logon (String username, String password)
+//     {
+//     }
+
+    // from interface Frame
+    public String md5hex (String text)
+    {
+        return nmd5hex(text);
+    }
+
     // from interface WorldClient.Container
     public void setShowingClient (String closeToken)
     {
@@ -411,6 +422,11 @@ public class ShellFrameImpl
 
         protected Dialog _innerDialog;
     }
+
+    /** MD5 hashes the supplied text and returns the hex encoded hash value. */
+    public native static String nmd5hex (String text) /*-{
+        return $wnd.hex_md5(text);
+    }-*/;
 
     protected FrameHeader _header;
     protected String _closeToken;

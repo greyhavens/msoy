@@ -108,7 +108,7 @@ public class ResetPasswordPanel extends FlexTable
 
     protected void sendResetRequest ()
     {
-        String password = CAccount.md5hex(_password.getText().trim());
+        String password = CAccount.frame.md5hex(_password.getText().trim());
         _usersvc.resetPassword(_memberId, _code, password, new MsoyCallback<Boolean>() {
             public void onSuccess (Boolean result) {
                 if (result) {

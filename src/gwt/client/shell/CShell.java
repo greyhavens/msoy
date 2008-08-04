@@ -141,11 +141,6 @@ public class CShell
         return $doc.whirledPartner;
     }-*/;
 
-    /** MD5 hashes the supplied text and returns the hex encoded hash value. */
-    public native static String md5hex (String text) /*-{
-        return $wnd.hex_md5(text);
-    }-*/;
-
     /**
      * Records a log message to the JavaScript console.
      */

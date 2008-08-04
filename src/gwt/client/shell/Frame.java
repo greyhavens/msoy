@@ -27,7 +27,7 @@ public interface Frame
 
     /** Codes for use with our inner frame to top frame RPC mechanism. */
     public static enum Calls {
-        GET_WEB_CREDS, GET_PAGE_TOKEN, SET_TITLE, NAVIGATE_TO, NAVIGATE_REPLACE,
+        GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, SET_TITLE, NAVIGATE_TO, NAVIGATE_REPLACE,
         DISPLAY_WORLD_CLIENT, CLOSE_CLIENT, CLOSE_CONTENT
     };
 
@@ -94,4 +94,14 @@ public interface Frame
      * Displays the supplied page content.
      */
     void showContent (String pageId, Widget pageContent);
+
+//     /**
+//      * Logs on with the supplied username and (unencrypted) password.
+//      */
+//     void logon (String username, String password);
+
+    /**
+     * MD5 encodes the supplied text.
+     */
+    String md5hex (String text);
 }

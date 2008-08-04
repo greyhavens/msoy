@@ -228,7 +228,7 @@ public class EditAccountPanel extends SmartTable
 
     protected void updatePassword ()
     {
-        final String password = CMe.md5hex(_password.getText().trim());
+        final String password = CMe.frame.md5hex(_password.getText().trim());
         _uppass.setEnabled(false);
         _password.setEnabled(false);
         _confirm.setEnabled(false);

@@ -8,7 +8,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -17,7 +16,6 @@ import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 
-import client.util.FlashClients;
 import client.util.Link;
 
 /**
@@ -67,19 +65,6 @@ public abstract class Page
     {
         init();
 
-        // set up our title bar and content width
-        if (getTabPageId() != null) {
-            _bar = TitleBar.create(getTabPageId(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    CShell.frame.closeContent();
-                }
-            });
-            RootPanel.get("content").add(_bar);
-            RootPanel.get("content").setWidth(Frame.CONTENT_WIDTH + "px");
-        } else {
-            RootPanel.get("content").setWidth("");
-        }
-
         // do our on-load stuff
         onPageLoad();
 
@@ -88,7 +73,6 @@ public abstract class Page
             // if we're running in standalone page test mode, we do a bunch of stuff
             CShell.frame = new PageFrame() {
                 public void setTitle (String title) {
-                    super.setTitle(title);
                     frameCall(Frame.Calls.SET_TITLE, new String[] { title });
                 }
                 public void navigateTo (String token) {
@@ -105,6 +89,9 @@ public abstract class Page
                 }
                 public void closeContent () {
                     frameCall(Frame.Calls.CLOSE_CONTENT, null);
+                }
+                public String md5hex (String text) {
+                    return frameCall(Frame.Calls.GET_MD5, new String[] { text });
                 }
             };
 
@@ -124,7 +111,6 @@ public abstract class Page
             // if we're running in standalone page test mode, we do a bunch of stuff
             CShell.frame = new PageFrame() {
                 public void setTitle (String title) {
-                    super.setTitle(title);
                     Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
                 }
                 public void navigateTo (String token) {
@@ -135,6 +121,10 @@ public abstract class Page
                 public void navigateReplace (String token) {
                     History.back();
                     History.newItem(token);
+                }
+                public String md5hex (String text) {
+                    CShell.log("Pants! No md5 in standalone mode.");
+                    return text;
                 }
             };
 
@@ -303,12 +293,6 @@ public abstract class Page
 
     protected abstract class PageFrame implements Frame
     {
-        public void setTitle (String title) {
-            if (_bar != null && title != null) {
-                _bar.setTitle(title);
-            }
-        }
-
         public void navigateTo (String token) {
             if (!token.equals(History.getToken())) {
                 History.newItem(token);
@@ -342,7 +326,7 @@ public abstract class Page
         }
 
         public void showContent (String pageId, Widget pageContent) {
-            RootPanel contentDiv = RootPanel.get("content");
+            RootPanel contentDiv = RootPanel.get();
             if (_pageContent != null) {
                 contentDiv.remove(_pageContent);
             }
@@ -350,15 +334,11 @@ public abstract class Page
             if (_pageContent != null) {
                 contentDiv.add(_pageContent);
             }
-            if (_bar != null) {
-                _bar.setCloseVisible(FlashClients.clientExists());
-            }
         }
 
         protected Widget _pageContent;
     }
 
-    protected TitleBar _bar;
     protected Widget _content;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

@@ -132,8 +132,7 @@ public class LogonPanel extends SmartTable
         if (account.length() <= 0 || password.length() <= 0) {
             return;
         }
-
-        _usersvc.login(DeploymentConfig.version, account, CShell.md5hex(password), 1, this);
+        _usersvc.login(DeploymentConfig.version, account, CShell.frame.md5hex(password), 1, this);
     }
 
     public void onSuccess (SessionData data)
