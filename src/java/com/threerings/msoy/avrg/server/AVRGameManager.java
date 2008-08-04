@@ -116,13 +116,17 @@ public class AVRGameManager extends PlaceManager
         }
     }
 
-    @Override // from PlaceManagerDelegate
+    @Override // from PlaceManager
     public void addDelegate (PlaceManagerDelegate delegate)
     {
         super.addDelegate(delegate);
 
         if (delegate instanceof QuestDelegate) {
             _questDelegate = (QuestDelegate) delegate;
+        }
+
+        if (delegate instanceof AgentTraceDelegate) {
+            _traceDelegate = (AgentTraceDelegate) delegate;
         }
     }
 
