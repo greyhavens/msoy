@@ -85,7 +85,7 @@ public class RoomEditorController
      */
     public function isEditing () :Boolean
     {
-        return _view != null && _panel != null && _panel.isOpen;
+        return _view != null && _panel != null && _panel.isOpen();
     }
 
     /**
@@ -365,7 +365,7 @@ public class RoomEditorController
      */
     public function actionEditorClosed () :void
     {
-        if (_panel != null && _panel.isOpen) {
+        if (_panel != null && _panel.isOpen()) {
             log.warning("Room editor failed to close!");
         }
 

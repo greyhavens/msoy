@@ -5,6 +5,7 @@ package com.threerings.msoy.ui {
 
 import flash.display.DisplayObject;
 
+import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.containers.TitleWindow;
@@ -43,6 +44,61 @@ public class FloatingPanel extends TitleWindow
     public static const DEFAULT_BUTTON_WIDTH :int = 72;
 
     /**
+     * A convenience function for all FloatingPanels, to track up/down state and do the
+     * right thing.
+     *
+     * @param createFn a no-arg function that creates (and populates?) your FloatingPanel
+     * @param toggleButton option, use only if your button displays a toggle state for
+     * the popup, so that it can be updated when the popup is popped down via another path
+     * than the button..
+     *
+     * @return a Function that can be called to pop up or down the panel. Useful for attaching
+     * to CommandButtons, etc.
+     */
+    public static function createPopper (createFn :Function, srcButton :Button = null) :Function
+    {
+        var thePanel :FloatingPanel;
+        // let's try to automatically pop the dialog down if the srcButton is disposed of
+        if (srcButton != null) {
+            srcButton.addEventListener(Event.REMOVED_FROM_STAGE, function (... ignored) :void {
+                if (thePanel != null && thePanel.isOpen()) {
+                    thePanel.close();
+                }
+            });
+        }
+        return function (... args) :void {
+            // if the srcButton is non-null, see if it's a toggle and see if the selected
+            // value matches the pop state, if so, do nothing, as the pop-state could be
+            // being adjusted as a result of the panel closing!
+            if (srcButton != null && srcButton.toggle &&
+                    srcButton.selected == (thePanel != null)) {
+                return;
+            }
+            // otherwise, pop it up or down
+            if (thePanel == null) {
+                thePanel = createFn();
+                // TODO: change closeCallback to an event dispatch, so that more than one may
+                // be set and our callback can't be clobbered.
+                thePanel.setCloseCallback(function () :void {
+                    thePanel = null;
+                    if (srcButton != null) {
+                        // deselect the button. Should only be needed for toggle buttons, but
+                        // can't hurt
+                        srcButton.selected = false;
+                    }
+                });
+                // auto-open the panel if it's not already
+                if (!thePanel.isOpen()) {
+                    thePanel.open();
+                }
+            } else {
+                thePanel.close();
+                // once the close callback is called, this will null out the reference.
+            }
+        };
+    }
+
+    /**
      * Create a Floating Panel.
      */
     public function FloatingPanel (ctx :MsoyContext, title :String = "")
@@ -57,6 +113,16 @@ public class FloatingPanel extends TitleWindow
         // add a listener to handle command events we generate (we use priority -1 so that if a
         // controller is listening to this panel directly, it will get the event first)
         addEventListener(CommandEvent.COMMAND, handleCommand, false, -1);
+    }
+
+    /**
+     * Set the callback that will be called when this dialog closes.
+     */
+    public function setCloseCallback (closeCallback :Function) :void
+    {
+        // TODO?: to be even more correct, we should perhaps call this callback when the
+        // dialog is removed from its parent, even if done via some other mechanism
+        _closeCallback = closeCallback;
     }
 
     /**
@@ -82,7 +148,7 @@ public class FloatingPanel extends TitleWindow
     /**
      * This property is true if the floating panel is currently open.
      */
-    public function get isOpen () :Boolean
+    public function isOpen () :Boolean
     {
         return _parent != null;
     }
@@ -94,6 +160,9 @@ public class FloatingPanel extends TitleWindow
     {
         _parent = null;
         PopUpManager.removePopUp(this);
+        if (_closeCallback != null) {
+            _closeCallback();
+        }
     }
 
     /**
@@ -276,6 +345,9 @@ public class FloatingPanel extends TitleWindow
 
     /** Provides client services. */
     protected var _ctx :MsoyContext;
+
+    /** Called when we're closed. */
+    protected var _closeCallback :Function;
 
     /** The button bar. */
     protected var _buttonBar :ButtonBar;
