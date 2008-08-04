@@ -1133,13 +1133,6 @@
         <file name="runthaneclient"/>
       </filelist>
     </copyfilelist>
-    <copyfilelist dest="${approot.server.code}/tools/bin">
-      <filelist dir="tools/bin">
-        <file name="lfilter"/>
-        <file name="filter_interesting"/>
-        <file name="sum_invokers"/>
-      </filelist>
-    </copyfilelist>
 
     <!-- copy various scripts needed by msoy only  -->
     <copyfilelist dest="${approot.server}/bin">
@@ -1284,7 +1277,6 @@
           <permission mode="555" recursive="true">
             <path>bin/</path>
             <path>etc/rc.d/</path>
-            <path>tools/bin/</path>
             <path>data/swiftly/flex_sdk_bin/bin</path>
           </permission>
           <permission user="${msoy.user}" group="${msoy.group}" mode="550">
