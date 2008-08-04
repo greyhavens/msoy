@@ -3,6 +3,7 @@
 
 package client.games;
 
+import com.google.gwt.core.client.GWT;
 import com.threerings.gwt.ui.SmartTable;
 
 /**
@@ -17,25 +18,27 @@ public class GameBitsPanel extends SmartTable
 
         int row = 0;
         if (maxPlayers == Integer.MAX_VALUE) {
-            setText(row, 1, CGames.msgs.bitsPlayersParty("" + minPlayers));
+            setText(row, 1, _msgs.bitsPlayersParty("" + minPlayers));
         } else if (minPlayers == maxPlayers) {
-            setText(row, 1, CGames.msgs.bitsPlayersSame("" + minPlayers));
+            setText(row, 1, _msgs.bitsPlayersSame("" + minPlayers));
         } else {
-            setText(row, 1, CGames.msgs.bitsPlayersFixed("" + minPlayers, "" + maxPlayers));
+            setText(row, 1, _msgs.bitsPlayersFixed("" + minPlayers, "" + maxPlayers));
         }
-        setText(row++, 0, CGames.msgs.bitsPlayers(), 1, "Label");
+        setText(row++, 0, _msgs.bitsPlayers(), 1, "Label");
 
-        setText(row, 0, CGames.msgs.bitsAvgDuration(), 1, "Label");
+        setText(row, 0, _msgs.bitsAvgDuration(), 1, "Label");
         setText(row++, 1, avgMinsLabel(Math.round(avgTime/60f)));
 
         if (gamesPlayed > 0) {
-            setText(row, 0, CGames.msgs.bitsGamesPlayed(), 1, "Label");
+            setText(row, 0, _msgs.bitsGamesPlayed(), 1, "Label");
             setText(row++, 1, ""+gamesPlayed);
         }
     }
 
     protected static String avgMinsLabel (int avgMins)
     {
-        return (avgMins > 1) ? CGames.msgs.bitsMinutes(""+avgMins) : CGames.msgs.bitsMinute();
+        return (avgMins > 1) ? _msgs.bitsMinutes(""+avgMins) : _msgs.bitsMinute();
     }
+
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
 }

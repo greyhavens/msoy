@@ -43,7 +43,7 @@ public class GameHeaderPanel extends FlowPanel
 
         // find a game fast dropdown box
         FlowPanel findGame = MsoyUI.createFlowPanel("FindGame");
-        findGame.add(MsoyUI.createLabel(CGames.msgs.genreFindGame(), "Title"));
+        findGame.add(MsoyUI.createLabel(_msgs.genreFindGame(), "Title"));
         add(findGame);
         _findGameBox = new ListBox();
         _findGameBox.addItem("", "");
@@ -60,7 +60,7 @@ public class GameHeaderPanel extends FlowPanel
 
         // search for games
         FlowPanel search = MsoyUI.createFlowPanel("Search");
-        search.add(MsoyUI.createLabel(CGames.msgs.genreSearch(), "Title"));
+        search.add(MsoyUI.createLabel(_msgs.genreSearch(), "Title"));
         add(search);
         final TextBox searchBox = new TextBox();
         searchBox.setVisibleLength(20);
@@ -122,5 +122,6 @@ public class GameHeaderPanel extends FlowPanel
     /** Genre ID or -1 for All Games page */
     protected byte _genre;
 
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

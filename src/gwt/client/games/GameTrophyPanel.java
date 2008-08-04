@@ -37,7 +37,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
         _gameId = gameId;
         addStyleName("gameTrophyPanel");
         addStyleName("dottedGrid");
-        add(new Label(CGames.msgs.gameTrophyLoading()));
+        add(new Label(_msgs.gameTrophyLoading()));
         setCellAlignment(ALIGN_LEFT, ALIGN_TOP);
     }
 
@@ -70,7 +70,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return CGames.msgs.gameTrophyNoTrophies();
+        return _msgs.gameTrophyNoTrophies();
     }
 
     @Override // from PagedGrid
@@ -97,13 +97,13 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
                               trophy.trophyMedia, MediaDesc.THUMBNAIL_SIZE));
                 setText(0, 1, trophy.name);
                 if (trophy.description == null) {
-                    setText(1, 0, CGames.msgs.gameTrophySecret());
+                    setText(1, 0, _msgs.gameTrophySecret());
                     getFlexCellFormatter().setStyleName(1, 0, "Italic");
                 } else {
                     setText(1, 0, trophy.description);
                 }
                 if (trophy.whenEarned != null) {
-                    setText(2, 0, CGames.msgs.gameTrophyEarnedOn(
+                    setText(2, 0, _msgs.gameTrophyEarnedOn(
                                 _pfmt.format(new Date(trophy.whenEarned.longValue()))));
                     getFlexCellFormatter().setStyleName(2, 0, "Earned");
                 }
@@ -119,6 +119,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
     protected int _gameId;
 
     protected static final SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

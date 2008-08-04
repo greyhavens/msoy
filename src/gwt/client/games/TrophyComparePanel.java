@@ -37,7 +37,7 @@ public class TrophyComparePanel extends SmartTable
     public TrophyComparePanel (final int gameId, int targetId)
     {
         super("trophyCompare", 0, 10);
-        setText(0, 0, CGames.msgs.compareLoading());
+        setText(0, 0, _msgs.compareLoading());
 
         int[] memberIds = new int[] { targetId, CGames.getMemberId() };
         _gamesvc.compareTrophies(
@@ -51,7 +51,7 @@ public class TrophyComparePanel extends SmartTable
     protected void init (int gameId, GameService.CompareResult result)
     {
         if (result == null) {
-            setText(0, 0, CGames.msgs.compareNoSuchGame());
+            setText(0, 0, _msgs.compareNoSuchGame());
             return;
         }
 
@@ -83,7 +83,7 @@ public class TrophyComparePanel extends SmartTable
             FlowPanel tname = new FlowPanel();
             tname.add(MsoyUI.createLabel(trophy.name, "Trophy"));
             if (trophy.description == null) {
-                tname.add(MsoyUI.createLabel(CGames.msgs.gameTrophySecret(), "Italic"));
+                tname.add(MsoyUI.createLabel(_msgs.gameTrophySecret(), "Italic"));
             } else {
                 tname.add(MsoyUI.createLabel(trophy.description, null));
             }
@@ -99,7 +99,7 @@ public class TrophyComparePanel extends SmartTable
                                                       TrophySource.TROPHY_HEIGHT, null));
                     info = _pfmt.format(new Date(earned.longValue()));
                 } else {
-                    info = CGames.msgs.compareUnearned();
+                    info = _msgs.compareUnearned();
                     getFlexCellFormatter().addStyleName(row+1, pp, "Italic");
                 }
                 setText(row+1, pp, info, 1, "Earned");
@@ -116,6 +116,7 @@ public class TrophyComparePanel extends SmartTable
     }
 
     protected static final SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

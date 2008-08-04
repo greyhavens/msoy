@@ -10,6 +10,4 @@ import client.shell.CShell;
  */
 public class CGames extends CShell
 {
-    /** Messages used by the games interfaces. */
-    public static GamesMessages msgs;
 }

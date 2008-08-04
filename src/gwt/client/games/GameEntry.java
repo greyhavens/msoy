@@ -3,6 +3,7 @@
 
 package client.games;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -39,8 +40,8 @@ public class GameEntry extends SmartTable
         setText(1, 0, truncate(game.description), 1, "Descrip");
 
         String players = (game.playersOnline == 0) ? "" :
-            (game.playersOnline == 1 ? CGames.msgs.genrePlayer() :
-             CGames.msgs.genrePlayers(""+game.playersOnline));
+            (game.playersOnline == 1 ? _msgs.genrePlayer() :
+             _msgs.genrePlayers(""+game.playersOnline));
         setText(2, 0, players, 1, "Players");
         getFlexCellFormatter().setRowSpan(0, 0, 3);
     }
@@ -58,6 +59,8 @@ public class GameEntry extends SmartTable
         }
         return descrip.substring(0, MAX_DESCRIP_LENGTH-3) + "...";
     }
+
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
 
     protected static final int MAX_DESCRIP_LENGTH = 50;
 }

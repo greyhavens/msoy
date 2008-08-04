@@ -42,11 +42,11 @@ public class TopRankingPanel extends VerticalPanel
 
         // it's possible to have this tab shown and be a guest; so we avoid freakoutage
         if (_onlyMyFriends && CGames.isGuest()) {
-            addNote(CGames.msgs.trpLogin());
+            addNote(_msgs.trpLogin());
             return;
         }
 
-        addNote(CGames.msgs.trpLoading());
+        addNote(_msgs.trpLoading());
         _gamesvc.loadTopRanked(
             CGames.ident, _gameId, _onlyMyFriends, new AsyncCallback<PlayerRating[][]>() {
                 public void onSuccess (PlayerRating[][] topRanked) {
@@ -66,8 +66,7 @@ public class TopRankingPanel extends VerticalPanel
 
         int totalRows = Math.max(results[0].length, results[1].length);
         if (totalRows == 0) {
-            addNote(_onlyMyFriends ? CGames.msgs.trpMyNoRankings() :
-                      CGames.msgs.trpTopNoRankings());
+            addNote(_onlyMyFriends ? _msgs.trpMyNoRankings() : _msgs.trpTopNoRankings());
             return;
         }
 
@@ -75,15 +74,15 @@ public class TopRankingPanel extends VerticalPanel
 
         int col = 0;
         if (results[0].length > 0) {
-            displayRankings(CGames.msgs.trpSingleHeader(), col, results[0], totalRows);
+            displayRankings(_msgs.trpSingleHeader(), col, results[0], totalRows);
             col += COLUMNS;
         }
         if (results[1].length > 0) {
-            displayRankings(CGames.msgs.trpMultiHeader(), col, results[1], totalRows);
+            displayRankings(_msgs.trpMultiHeader(), col, results[1], totalRows);
             col += COLUMNS;
         }
 
-        String text = _onlyMyFriends ? CGames.msgs.trpSingleTip() : CGames.msgs.trpMultiTip();
+        String text = _onlyMyFriends ? _msgs.trpSingleTip() : _msgs.trpMultiTip();
         add(MsoyUI.createLabel(text, "Footer"));
     }
 
@@ -93,7 +92,7 @@ public class TopRankingPanel extends VerticalPanel
             int hcol = (cc + col);
             switch (cc) {
             case 2: _grid.setText(0, hcol, header); break;
-            case 3: _grid.setText(0, hcol, CGames.msgs.trpRatingHeader()); break;
+            case 3: _grid.setText(0, hcol, _msgs.trpRatingHeader()); break;
             default: _grid.setHTML(0, hcol, "&nbsp;"); break;
             }
             _grid.getFlexCellFormatter().setStyleName(0, hcol, (cc == 3) ? "HeaderTip" : "Header");
@@ -109,7 +108,7 @@ public class TopRankingPanel extends VerticalPanel
                 continue;
             }
 
-            _grid.setText(row, col, CGames.msgs.gameRank("" + (ii+1)), 1, "Cell");
+            _grid.setText(row, col, _msgs.gameRank("" + (ii+1)), 1, "Cell");
             _grid.getFlexCellFormatter().setHorizontalAlignment(row, col, HasAlignment.ALIGN_RIGHT);
 
             ThumbBox box = new ThumbBox(rating.photo, MediaDesc.QUARTER_THUMBNAIL_SIZE, null);
@@ -146,6 +145,7 @@ public class TopRankingPanel extends VerticalPanel
     protected boolean _onlyMyFriends;
     protected SmartTable _grid;
 
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 

@@ -86,7 +86,7 @@ public class GameDetailPanel extends SmartTable
 
         // note that they're playing the developer version if so
         if (Game.isDeveloperVersion(gameId)) {
-            addText(CGames.msgs.gdpDevVersion(), 3, "InDevTip");
+            addText(_msgs.gdpDevVersion(), 3, "InDevTip");
         }
 
         _tabs = new StyledTabPanel();
@@ -94,31 +94,30 @@ public class GameDetailPanel extends SmartTable
         addWidget(_tabs, 3, null);
 
         // add the about/instructions tab
-        addTab(GameDetails.INSTRUCTIONS,
-               CGames.msgs.tabInstructions(), new InstructionsPanel(detail));
+        addTab(GameDetails.INSTRUCTIONS, _msgs.tabInstructions(), new InstructionsPanel(detail));
 
         // add comments tab
         if (detail.listedItem != null) {
-            addTab(GameDetails.COMMENTS, CGames.msgs.tabComments(),
+            addTab(GameDetails.COMMENTS, _msgs.tabComments(),
                    new CommentsPanel(detail.listedItem.getType(), detail.listedItem.catalogId));
         }
 
         // add trophies tab, passing in the potentially negative gameId
-        addTab(GameDetails.TROPHIES, CGames.msgs.tabTrophies(), new GameTrophyPanel(gameId));
+        addTab(GameDetails.TROPHIES, _msgs.tabTrophies(), new GameTrophyPanel(gameId));
 
         // add top rankings tabs
         if (!CGames.isGuest()) {
-            addTab(GameDetails.MYRANKINGS, CGames.msgs.tabMyRankings(),
+            addTab(GameDetails.MYRANKINGS, _msgs.tabMyRankings(),
                    new TopRankingPanel(detail.gameId, true));
         }
-        addTab(GameDetails.TOPRANKINGS, CGames.msgs.tabTopRankings(),
+        addTab(GameDetails.TOPRANKINGS, _msgs.tabTopRankings(),
                new TopRankingPanel(detail.gameId, false));
 
         // if we're the owner of the game or an admin, add the metrics tab
         if ((detail.sourceItem != null && detail.sourceItem.ownerId == CGames.getMemberId()) ||
             CGames.isAdmin()) {
-            addTab(GameDetails.METRICS, CGames.msgs.tabMetrics(), new GameMetricsPanel(detail));
-            addTab(GameDetails.LOGS, CGames.msgs.tabLogs(), new GameLogsPanel(gameId));
+            addTab(GameDetails.METRICS, _msgs.tabMetrics(), new GameMetricsPanel(detail));
+            addTab(GameDetails.LOGS, _msgs.tabLogs(), new GameLogsPanel(gameId));
         }
     }
 
@@ -173,6 +172,7 @@ public class GameDetailPanel extends SmartTable
     protected GameDetails _seltab;
     protected Map<GameDetails, Integer> _tabmap = new HashMap<GameDetails, Integer>();
 
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

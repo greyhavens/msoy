@@ -37,13 +37,11 @@ public class FeaturedGamePanel extends AbsolutePanel
         clear();
         final FeaturedGameInfo game = _games[index];
 
-        ClickListener detailsClick = Link.createListener(
-            Page.GAMES, Args.compose("d", game.gameId));
+        ClickListener detailsClick = Link.createListener(Page.GAMES, Args.compose("d", game.gameId));
         add(new ThumbBox(game.getShotMedia(), GameDetail.SHOT_WIDTH, GameDetail.SHOT_HEIGHT,
                          detailsClick), 10, 37);
         if (game.playersOnline > 0) {
-            add(MsoyUI.createLabel(
-                    CGames.msgs.featuredOnline("" + game.playersOnline), "Online"), 10, 170);
+            add(MsoyUI.createLabel(_msgs.featuredOnline(""+game.playersOnline), "Online"), 10, 170);
         }
 
         // prev and next buttons are positioned in css
@@ -71,5 +69,6 @@ public class FeaturedGamePanel extends AbsolutePanel
 
     protected FeaturedGameInfo[] _games;
 
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

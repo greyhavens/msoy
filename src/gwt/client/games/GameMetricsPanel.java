@@ -45,7 +45,7 @@ public class GameMetricsPanel extends VerticalPanel
             return;
         }
 
-        add(MsoyUI.createLabel(CGames.msgs.gmpLoading(), "Header"));
+        add(MsoyUI.createLabel(_msgs.gmpLoading(), "Header"));
         _gamesvc.loadGameMetrics(CGames.ident, _detail.gameId, new AsyncCallback<GameMetrics>() {
             public void onSuccess (GameMetrics metrics) {
                 gotMetrics(metrics);
@@ -63,7 +63,7 @@ public class GameMetricsPanel extends VerticalPanel
         clear();
 
         if (metrics.singleTotalCount > 0) {
-            add(MsoyUI.createLabel(CGames.msgs.gmpSingleHeader(), "Header"));
+            add(MsoyUI.createLabel(_msgs.gmpSingleHeader(), "Header"));
             add(createTilerDisplay(metrics.singleTotalCount, metrics.singleCounts,
                                    metrics.singleMaxScore, metrics.singleScores));
             add(WidgetUtil.makeShim(5, 5));
@@ -71,7 +71,7 @@ public class GameMetricsPanel extends VerticalPanel
         }
 
         if (metrics.multiTotalCount > 0) {
-            add(MsoyUI.createLabel(CGames.msgs.gmpMultiHeader(), "Header"));
+            add(MsoyUI.createLabel(_msgs.gmpMultiHeader(), "Header"));
             add(createTilerDisplay(metrics.multiTotalCount, metrics.multiCounts,
                                    metrics.multiMaxScore, metrics.multiScores));
             add(WidgetUtil.makeShim(5, 5));
@@ -79,7 +79,7 @@ public class GameMetricsPanel extends VerticalPanel
         }
 
         if (metrics.singleTotalCount + metrics.multiTotalCount == 0) {
-            add(new Label(CGames.msgs.gmpNoMetrics()));
+            add(new Label(_msgs.gmpNoMetrics()));
         }
     }
 
@@ -91,9 +91,9 @@ public class GameMetricsPanel extends VerticalPanel
 
         // display the hints
         table.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
-        table.setText(row, 0, CGames.msgs.gmpCountsHint());
+        table.setText(row, 0, _msgs.gmpCountsHint());
         table.getFlexCellFormatter().setStyleName(row, 1, "tipLabel");
-        table.setText(row++, 1, CGames.msgs.gmpScoresHint());
+        table.setText(row++, 1, _msgs.gmpScoresHint());
 
         // display a graph of the raw counts by bucket
         int maxCount = 0;
@@ -104,7 +104,7 @@ public class GameMetricsPanel extends VerticalPanel
         for (int ii = 0; ii < counts.length; ii++) {
             data[ii] = (counts[ii] * GRAPH_HEIGHT) / maxCount;
         }
-        String xLabel = CGames.msgs.gmpCountsX(format(maxScore / 100f));
+        String xLabel = _msgs.gmpCountsX(format(maxScore / 100f));
         table.setWidget(row, 0, createGraph(data, ""+maxScore, ""+maxCount, xLabel));
 
         // display a graph of the scores needed to achieve a particular percentile
@@ -113,11 +113,11 @@ public class GameMetricsPanel extends VerticalPanel
             data[ii] = Math.round((scores[ii] * GRAPH_HEIGHT) / maxScore);
         }
         table.setWidget(row++, 1, createGraph(data, ""+(counts.length-1), format(maxScore),
-                                              CGames.msgs.gmpScoresX()));
+                                              _msgs.gmpScoresX()));
 
         // display the total number of scores recorded
-        table.setText(row, 0, CGames.msgs.gmpTotalCount(""+totalCount));
-        table.setText(row++, 1, CGames.msgs.gmpMaxPercentile(""+scores[scores.length-1]));
+        table.setText(row, 0, _msgs.gmpTotalCount(""+totalCount));
+        table.setText(row++, 1, _msgs.gmpMaxPercentile(""+scores[scores.length-1]));
 
         return table;
     }
@@ -125,16 +125,16 @@ public class GameMetricsPanel extends VerticalPanel
     protected RowPanel createResetUI (final boolean single)
     {
         RowPanel row = new RowPanel();
-        row.add(MsoyUI.createLabel(CGames.msgs.gmpResetHint(), "tipLabel"));
-        Button reset = new Button(CGames.msgs.gmpResetScores());
+        row.add(MsoyUI.createLabel(_msgs.gmpResetHint(), "tipLabel"));
+        Button reset = new Button(_msgs.gmpResetScores());
         row.add(reset);
-        new ClickCallback<Void>(reset, CGames.msgs.gmpResetConfirm()) {
+        new ClickCallback<Void>(reset, _msgs.gmpResetConfirm()) {
             public boolean callService () {
                 _gamesvc.resetGameScores(CGames.ident, _detail.gameId, single, this);
                 return true;
             }
             public boolean gotResult (Void result) {
-                MsoyUI.info(CGames.msgs.gmpScoresReset());
+                MsoyUI.info(_msgs.gmpScoresReset());
                 return true;
             }
         };
@@ -211,6 +211,7 @@ public class GameMetricsPanel extends VerticalPanel
     protected GameDetail _detail;
     protected GameMetrics _metrics;
 
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 

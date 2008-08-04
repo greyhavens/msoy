@@ -42,7 +42,7 @@ public class InstructionsPanel extends VerticalPanel
 
         setHorizontalAlignment(ALIGN_LEFT);
         if (_detail.instructions == null || _detail.instructions.length() == 0) {
-            add(new Label(CGames.msgs.ipNoInstructions()));
+            add(new Label(_msgs.ipNoInstructions()));
         } else {
             // snip off our background color if we have one
             String[] bits = decodeInstructions(_detail.instructions);
@@ -129,7 +129,7 @@ public class InstructionsPanel extends VerticalPanel
     {
         if (instructions.length() > GameDetail.MAX_INSTRUCTIONS_LENGTH) {
             int excess = instructions.length() - GameDetail.MAX_INSTRUCTIONS_LENGTH;
-            MsoyUI.error(CGames.msgs.ipInstructionsTooLong(""+excess));
+            MsoyUI.error(_msgs.ipInstructionsTooLong(""+excess));
             return;
         }
         _gamesvc.updateGameInstructions(
@@ -143,6 +143,7 @@ public class InstructionsPanel extends VerticalPanel
 
     protected GameDetail _detail;
 
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

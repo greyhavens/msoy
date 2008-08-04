@@ -39,7 +39,7 @@ public class GameLogsPanel extends VerticalPanel
             return;
         }
 
-        add(MsoyUI.createLabel(CGames.msgs.glpLoading(), "Header"));
+        add(MsoyUI.createLabel(_msgs.glpLoading(), "Header"));
         _gamesvc.loadGameLogs(CGames.ident, _gameId, new AsyncCallback<GameLogs>() {
             public void onSuccess (GameLogs logs) {
                 gotLogs(logs);
@@ -57,11 +57,11 @@ public class GameLogsPanel extends VerticalPanel
         clear();
 
         if (logs.logIds.length == 0) {
-            add(new Label(CGames.msgs.glpNoLogs()));
+            add(new Label(_msgs.glpNoLogs()));
             return;
         }
 
-        add(MsoyUI.createLabel(CGames.msgs.glpLogsHeader(), "Header"));
+        add(MsoyUI.createLabel(_msgs.glpLogsHeader(), "Header"));
 
         /**
          * Let's tabulate like so:
@@ -75,7 +75,7 @@ public class GameLogsPanel extends VerticalPanel
         int col = 0;
         for (int ii = 0; ii < logs.logIds.length; ii ++) {
             String href = "/gamelogs?gameId=" + _gameId + "&logId=" + logs.logIds[ii];
-            String label = DATE_FORMAT.format(logs.logTimes[ii]);
+            String label = _dfmt.format(logs.logTimes[ii]);
 
             table.setWidget(row, col, new HTML(
                                 "<a target='_blank' href='" + href + "'>" + label + "</a>"));
@@ -92,8 +92,8 @@ public class GameLogsPanel extends VerticalPanel
     protected int _gameId;
     protected GameLogs _logs;
 
-    protected static final SimpleDateFormat DATE_FORMAT =
-        new SimpleDateFormat("h:mm aa, MMMMM dd, yyyy");
+    protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("h:mm aa, MMMMM dd, yyyy");
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 

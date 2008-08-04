@@ -26,11 +26,11 @@ public class TrophyCasePanel extends VerticalPanel
         setStyleName("trophyCase");
 
         if (memberId <= 0) {
-            setHeader(CGames.msgs.noSuchPlayer());
+            setHeader(_msgs.noSuchPlayer());
             return;
         }
 
-        setHeader(CGames.msgs.caseLoading());
+        setHeader(_msgs.caseLoading());
         _gamesvc.loadTrophyCase(CGames.ident, memberId, new MsoyCallback<TrophyCase>() {
             public void onSuccess (TrophyCase tc) {
                 setTrophyCase(tc);
@@ -41,24 +41,24 @@ public class TrophyCasePanel extends VerticalPanel
     protected void setTrophyCase (TrophyCase tcase)
     {
         if (tcase == null) {
-            setHeader(CGames.msgs.noSuchPlayer());
+            setHeader(_msgs.noSuchPlayer());
             return;
         }
 
-        CGames.frame.setTitle(CGames.msgs.caseTitle(tcase.owner.toString()));
+        CGames.frame.setTitle(_msgs.caseTitle(tcase.owner.toString()));
         if (tcase.shelves.length == 0) {
             setHeader((CGames.getMemberId() == tcase.owner.getMemberId()) ?
-                     CGames.msgs.caseEmptyMe() : CGames.msgs.caseEmpty());
+                     _msgs.caseEmptyMe() : _msgs.caseEmpty());
             return;
         }
 
-        setHeader(CGames.msgs.caseBlurb());
+        setHeader(_msgs.caseBlurb());
         for (int ii = 0; ii < tcase.shelves.length; ii++) {
             TrophyCase.Shelf shelf = tcase.shelves[ii];
             TongueBox box = new TongueBox(shelf.name, new TrophyGrid(shelf.trophies));
             int ownerId = tcase.owner.getMemberId();
             if (!CGames.isGuest() && CGames.getMemberId() != ownerId) {
-                box.setFooterLink(CGames.msgs.caseCompare(),
+                box.setFooterLink(_msgs.caseCompare(),
                                   Page.GAMES, Args.compose("ct", ""+shelf.gameId, ""+ownerId));
             }
             add(box);
@@ -71,6 +71,7 @@ public class TrophyCasePanel extends VerticalPanel
         add(new TongueBox(null, title, false));
     }
 
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

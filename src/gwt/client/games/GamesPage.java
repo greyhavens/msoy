@@ -44,8 +44,7 @@ public class GamesPage extends Page
             setContent(new TrophyCasePanel(args.get(1, 0)));
 
         } else if (action.equals("ct")) {
-            setContent(CGames.msgs.compareTitle(),
-                       new TrophyComparePanel(args.get(1, 0), args.get(2, 0)));
+            setContent(_msgs.compareTitle(), new TrophyComparePanel(args.get(1, 0), args.get(2, 0)));
 
         } else if (action.equals("g")) {
             setContent(new GameGenrePanel(
@@ -62,12 +61,5 @@ public class GamesPage extends Page
         return GAMES;
     }
 
-    @Override // from Page
-    protected void initContext ()
-    {
-        super.initContext();
-
-        // load up our translation dictionaries
-        CGames.msgs = (GamesMessages)GWT.create(GamesMessages.class);
-    }
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
 }

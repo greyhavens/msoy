@@ -80,7 +80,7 @@ public class GameGenrePanel extends FlowPanel
             }
         }
         else {
-            titleText = CGames.msgs.genreAllGames();
+            titleText = _msgs.genreAllGames();
         }
         add(_header = new GameHeaderPanel(genre, sortMethod, query, titleText));
 
@@ -122,7 +122,7 @@ public class GameGenrePanel extends FlowPanel
 
         @Override
         protected String getEmptyMessage () {
-            return CGames.msgs.genreNoGames();
+            return _msgs.genreNoGames();
         }
 
         /**
@@ -131,7 +131,7 @@ public class GameGenrePanel extends FlowPanel
         @Override
         protected void addCustomControls (FlexTable controls) {
             controls.setWidget(
-                0, 0, new InlineLabel(CGames.msgs.genreSortBy(), false, false, false));
+                0, 0, new InlineLabel(_msgs.genreSortBy(), false, false, false));
             controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
             controls.setWidget(0, 1, _sortBox);
 
@@ -195,7 +195,7 @@ public class GameGenrePanel extends FlowPanel
 
                 FlowPanel ratingPanel = new FlowPanel();
                 ratingPanel.add(new Stars(game.rating, true, false, null));
-                ratingPanel.add(MsoyUI.createLabel(CGames.msgs.genreNumRatings(game.ratingCount+""),
+                ratingPanel.add(MsoyUI.createLabel(_msgs.genreNumRatings(game.ratingCount+""),
                                 "NumRatings"));
                 setWidget(0, col++, ratingPanel, 1, "Rating");
                 setText(0, col++, _dmsgs.getString("genre" + game.genre), 1, "Category");
@@ -235,14 +235,30 @@ public class GameGenrePanel extends FlowPanel
         }
     }
 
+    /** Header area with title, games dropdown and search */
+    protected GameHeaderPanel _header;
+
+    /** Dropdown of sort methods */
+    protected ListBox _sortBox;
+
+    /** Genre ID or -1 for All Games page */
+    protected byte _genre;
+
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
+        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
+
+    protected static final int GAMES_PER_PAGE = 10;
+
     protected static final String[] SORT_LABELS = new String[] {
-        CGames.msgs.genreSortByRating(),
-        CGames.msgs.genreSortByNewest(),
-        CGames.msgs.genreSortByAlphabetical(),
-        CGames.msgs.genreSortByMultiplayer(),
-        CGames.msgs.genreSortBySinglePlayer(),
-        CGames.msgs.genreSortByCategory(),
-        CGames.msgs.genreSortByNowPlaying()
+        _msgs.genreSortByRating(),
+        _msgs.genreSortByNewest(),
+        _msgs.genreSortByAlphabetical(),
+        _msgs.genreSortByMultiplayer(),
+        _msgs.genreSortBySinglePlayer(),
+        _msgs.genreSortByCategory(),
+        _msgs.genreSortByNowPlaying()
     };
 
     protected static final byte[] SORT_VALUES = new byte[] {
@@ -254,19 +270,4 @@ public class GameGenrePanel extends FlowPanel
         GameInfo.SORT_BY_GENRE,
         GameInfo.SORT_BY_PLAYERS_ONLINE
     };
-
-    /** Header area with title, games dropdown and search */
-    protected GameHeaderPanel _header;
-
-    /** Dropdown of sort methods */
-    protected ListBox _sortBox;
-
-    /** Genre ID or -1 for All Games page */
-    protected byte _genre;
-
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
-    protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
-        ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
-
-    protected static final int GAMES_PER_PAGE = 10;
 }
