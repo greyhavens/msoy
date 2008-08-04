@@ -5,8 +5,6 @@ package com.threerings.msoy.game.client {
 
 import flash.display.Loader;
 
-import mx.events.CloseEvent;
-
 import mx.containers.VBox;
 
 import com.threerings.crowd.data.PlaceObject;
@@ -75,7 +73,18 @@ public class MsoyGamePanel extends WhirledGamePanel
 
         if (GAMESTUB_CHAT_MODE) {
             // set up a button to pop/hide the _playerList
-            _showPlayers = new CommandCheckBox("view scores", togglePlayerList); // TODO i18n
+            _showPlayers = new CommandCheckBox("view scores");
+            _showPlayers.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+                // TODO: create a class for this puppy?
+                var panel :FloatingPanel = new FloatingPanel(_gctx.getMsoyContext(),
+                    "Players List"); // TODO i18n
+                panel.showCloseButton = true;
+                var box :VBox = new VBox();
+                box.setStyle("backgroundColor", 0x000000);
+                box.addChild(_playerList);
+                panel.addChild(box);
+                return panel;
+            }, _showPlayers));
             bar.addCustomComponent(_showPlayers);
 
         } else {
@@ -95,7 +104,6 @@ public class MsoyGamePanel extends WhirledGamePanel
         super.didLeavePlace(plobj);
 
         if (GAMESTUB_CHAT_MODE) {
-            togglePlayerList(false);
             _showPlayers.parent.removeChild(_showPlayers);
 
             // TODO: create an overlay for chat!
@@ -127,41 +135,9 @@ public class MsoyGamePanel extends WhirledGamePanel
             Msgs.GAME.get((gameObj.players.length == 1) ? "b.replay" : "b.rematch") ];
     }
 
-    /**
-     * Called to toggle the display of our playerList popup.
-     */
-    protected function togglePlayerList (show :Boolean) :void
-    {
-        if (show == (_playerPanel != null)) {
-            return;
-        }
-        if (show) {
-            _playerPanel = new FloatingPanel(_gctx.getMsoyContext(), "Players List"); // TODO i18n
-            _playerPanel.addEventListener(CloseEvent.CLOSE, playerListWasClosed);
-            _playerPanel.showCloseButton = true;
-            var box :VBox = new VBox();
-            box.setStyle("backgroundColor", 0x000000);
-            box.addChild(_playerList);
-            _playerPanel.addChild(box);
-            _playerPanel.open();
-
-        } else {
-            _playerPanel.close();
-            _playerPanel = null;
-        }
-    }
-
-    protected function playerListWasClosed (event :CloseEvent) :void
-    {
-        _playerPanel = null;
-        _showPlayers.selected = false;
-    }
-
     /** convenience reference to our game context */
     protected var _gctx :GameContext;
 
     protected var _showPlayers :CommandCheckBox;
-
-    protected var _playerPanel :FloatingPanel;
 }
 }
