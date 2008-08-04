@@ -4,11 +4,6 @@
 package com.threerings.msoy.item.server.persist;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +18,6 @@ import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
-import com.samskivert.jdbc.DatabaseLiaison;
-import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -67,104 +60,6 @@ public class GameRepository extends ItemRepository<GameRecord>
     @Inject public GameRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        // TEMP 05-21-2008
-        ctx.registerMigration(GameDetailRecord.class, new EntityMigration(9) {
-            public boolean runBeforeDefault () {
-                return true;
-            }
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                Statement stmt = conn.createStatement();
-                try {
-                    ResultSet rs = stmt.executeQuery(
-                        "select " + liaison.columnSQL("gameId") + ", " +
-                                    liaison.columnSQL("instructions") +
-                        " from " + liaison.tableSQL("GameDetailRecord"));
-                    while (rs.next()) {
-                        _instructions.put(rs.getInt(1), rs.getString(2));
-                    }
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-                return _instructions.size();
-            }
-        });
-        ctx.registerMigration(GameDetailRecord.class, new EntityMigration.Drop(9, "instructions"));
-        ctx.registerMigration(GameDetailRecord.class, new EntityMigration(9) {
-            public boolean runBeforeDefault () {
-                return false;
-            }
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                log.info("Creating " + _instructions.size() + " InstructionRecord rows.");
-                for (Map.Entry<Integer,String> entry : _instructions.entrySet()) {
-                    try {
-                        updateInstructions(entry.getKey(), entry.getValue());
-                    } catch (PersistenceException pe) {
-                        log.warning("Failed to migrate instructions [id=" + entry.getKey() +
-                                    ", data=" + entry.getValue() + "]: " + pe);
-                    }
-                }
-                return _instructions.size();
-            }
-        });
-        ctx.registerMigration(GameDetailRecord.class, new EntityMigration(10) {
-            public boolean runBeforeDefault () {
-                return false;
-            }
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                int migrated = 0;
-
-                // migrate the data from our old columns to our new
-                PreparedStatement pstmt = conn.prepareStatement(
-                    "update " + liaison.tableSQL("GameDetailRecord") +
-                    " set " + liaison.columnSQL("gamesPlayed") + "= ?, " +
-                              liaison.columnSQL("avgSingleDuration") + " = ?, " +
-                              liaison.columnSQL("avgMultiDuration") + "= ?," +
-                              liaison.columnSQL("flowToNextRecalc") + "= ?" +
-                    " where " + liaison.columnSQL("gameId") + "= ?");
-                Statement stmt = conn.createStatement();
-                try {
-                    ResultSet rs = stmt.executeQuery(
-                        "select " + liaison.columnSQL("gameId") + ", " +
-                                    liaison.columnSQL("singlePlayerGames") + ", " +
-                                    liaison.columnSQL("singlePlayerMinutes") + ", " +
-                                    liaison.columnSQL("multiPlayerGames") + ", " +
-                                    liaison.columnSQL("multiPlayerMinutes") +
-                        " from " + liaison.tableSQL("GameDetailRecord"));
-                    while (rs.next()) {
-                        int gameId = rs.getInt(1);
-                        int singleGames = rs.getInt(2);
-                        int singleMins = rs.getInt(3);
-                        int multiGames = rs.getInt(4);
-                        int multiMins = rs.getInt(5);
-                        pstmt.setInt(1, singleGames+multiGames);
-                        pstmt.setInt(2, (singleGames == 0) ? 0 : (singleMins*60)/singleGames);
-                        pstmt.setInt(3, (multiGames == 0) ? 0 : (multiMins*60)/multiGames);
-                        pstmt.setInt(4, GameDetailRecord.INITIAL_RECALC_FLOW);
-                        pstmt.setInt(5, gameId);
-                        migrated += pstmt.executeUpdate();
-                    }
-
-                    // also delete any old gameplay records as they are not tagged properly as
-                    // multi- or single-player
-                    stmt.executeUpdate("delete from " + liaison.tableSQL("GamePlayRecord"));
-
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-
-                // lastly drop the columns
-                liaison.dropColumn(conn, "GameDetailRecord", "singlePlayerGames");
-                liaison.dropColumn(conn, "GameDetailRecord", "singlePlayerMinutes");
-                liaison.dropColumn(conn, "GameDetailRecord", "multiPlayerGames");
-                liaison.dropColumn(conn, "GameDetailRecord", "multiPlayerMinutes");
-                liaison.dropColumn(conn, "GameDetailRecord", "lastPayoutRecalc");
-                liaison.dropColumn(conn, "GameDetailRecord", "flowSinceLastRecalc");
-
-                return migrated;
-            }
-        });
-        // END TEMP
 
         // TEMP 05-23-2008
         ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(17014, "serverClass"));
