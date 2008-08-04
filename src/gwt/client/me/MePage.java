@@ -5,10 +5,11 @@ package client.me;
 
 import com.google.gwt.core.client.GWT;
 
-import client.shell.Args;
-import client.shell.Page;
 import client.util.FlashClients;
 import client.util.Link;
+
+import client.shell.Args;
+import client.shell.Page;
 
 public class MePage extends Page
 {

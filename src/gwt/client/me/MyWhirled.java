@@ -6,21 +6,26 @@ package client.me;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.item.data.all.Item;
+
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 
-import client.item.StuffNaviBar;
-import client.person.FeedPanel;
-import client.person.PersonMessages;
 import client.ui.MsoyUI;
+
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
+
+import client.item.StuffNaviBar;
+
+import client.person.FeedPanel;
+import client.person.PersonMessages;
 
 public class MyWhirled extends VerticalPanel
 {

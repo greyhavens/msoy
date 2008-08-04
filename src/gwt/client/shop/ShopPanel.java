@@ -4,6 +4,7 @@
 package client.shop;
 
 import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -14,24 +15,28 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
 
-import client.item.ItemMessages;
-import client.shell.Args;
-import client.shell.Page;
+import com.threerings.msoy.data.all.MediaDesc;
+
 import client.ui.HeaderBox;
 import client.ui.Marquee;
 import client.ui.MsoyUI;
 import client.ui.Stars;
 import client.ui.ThumbBox;
+
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
+
+import client.shell.Args;
+import client.shell.Page;
+
+import client.item.ItemMessages;
 
 /**
  * Displays the main catalog landing page.

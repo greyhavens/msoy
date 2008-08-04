@@ -10,10 +10,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.threerings.msoy.badge.data.all.Badge;
+
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
-
-import com.threerings.msoy.badge.data.all.Badge;
 
 import client.ui.Marquee;
 
