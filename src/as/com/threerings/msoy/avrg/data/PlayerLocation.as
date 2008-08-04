@@ -3,9 +3,10 @@
 
 package com.threerings.msoy.avrg.data {
 
-import com.threerings.presents.dobj.DSet_Entry;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+import com.threerings.presents.dobj.DSet_Entry;
+import com.threerings.util.StringUtil;
 
 /**
  * Helps an AVRG keep track of which scene a player is in.
@@ -23,6 +24,12 @@ public class PlayerLocation
      public function getKey () :Object
      {
          return playerId;
+     }
+
+     // from Object
+     public function toString () :String
+     {
+         return StringUtil.simpleToString(this);
      }
 
      // from interface Streamable
