@@ -87,7 +87,7 @@ public class MsoyGameManager extends WhirledGameManager
         } else if (delegate instanceof AgentTraceDelegate) {
             _traceDelegate = (AgentTraceDelegate) delegate;
         } else if (delegate instanceof TrophyDelegate) {
-        	_trophyDelegate = (TrophyDelegate) delegate;
+            _trophyDelegate = (TrophyDelegate) delegate;
         }
     }
 
