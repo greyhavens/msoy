@@ -6,6 +6,9 @@ import com.threerings.msoy.bureau.client.MsoyBureauClient;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.world.data.ControllableAVRGame;
+import com.threerings.msoy.world.data.MemberInfo;
+import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -29,6 +32,8 @@ public class Reference
     MsoyBureauClient;
     Item;
     Trophy;
+    MemberInfo;
+    MsoyLocation;
+    ControllableAVRGame;
 }
 }
-
