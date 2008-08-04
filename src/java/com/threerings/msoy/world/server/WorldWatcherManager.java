@@ -62,8 +62,8 @@ public class WorldWatcherManager
     {
         ClientObject watcher = _memberWatchers.get(loc.memberId);
         log.info(
-            "remoteMemberEnteredScene(" + loc + ", " + hostname + ", " + port +
-            "): watcher=" + watcher);
+            "remoteMemberEnteredScene", "loc", loc, "hostname", hostname, "port", port, 
+            "watcher", watcher);
         if (watcher != null) {
             WatcherSender.memberMoved(watcher, loc.memberId, loc.sceneId, hostname, port);
         }
@@ -79,7 +79,7 @@ public class WorldWatcherManager
     public void addWatch (ClientObject caller, int memberId)
     {
         if (_memberWatchers.containsKey(memberId)) {
-            log.warning("Discarding existing watcher [memberId=" + memberId + "]");
+            log.warning("Discarding existing watcher", "memberId", memberId);
         }
 
         // add a death listener to this watcher if we've not already done so
@@ -111,7 +111,7 @@ public class WorldWatcherManager
     public void clearWatch (ClientObject caller, int memberId)
     {
         if (!_memberWatchers.containsKey(memberId)) {
-            log.warning("Attempting to clear nonexistent watch [memberId=" + memberId + "]");
+            log.warning("Attempting to clear nonexistent watch", "memberId", memberId);
             return;
         }
         _memberWatchers.remove(memberId);
@@ -126,7 +126,7 @@ public class WorldWatcherManager
     protected ObjectDeathListener _watcherCleanup = new ObjectDeathListener () {
         public void objectDestroyed (ObjectDestroyedEvent event) {
             int watcherOid = event.getTargetOid();
-            log.debug("Flushing disconnected movement watcher [oid=" + watcherOid + "]");
+            log.debug("Flushing disconnected movement watcher", "oid", watcherOid);
             for (int member : _watcherMembers.get(watcherOid)) {
                 _memberWatchers.remove(member);
             }
