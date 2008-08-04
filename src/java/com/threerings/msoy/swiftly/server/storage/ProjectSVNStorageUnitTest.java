@@ -73,8 +73,7 @@ public class ProjectSVNStorageUnitTest extends TestCase
     public void testOpenStorage ()
         throws Exception
     {
-        final ProjectStorage storage = new ProjectSVNStorage(_project, _storageRecord);
-        assertTrue(storage != null);
+        new ProjectSVNStorage(_project, _storageRecord);
     }
 
     public void testGetDocument ()
