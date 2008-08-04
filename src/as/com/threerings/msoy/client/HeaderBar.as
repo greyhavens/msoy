@@ -29,6 +29,8 @@ import com.threerings.flex.FlexWrapper;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 
+import com.threerings.msoy.ui.FloatingPanel;
+
 import com.threerings.msoy.chat.client.ChatTabBar;
 
 import com.threerings.msoy.world.client.WorldController;
@@ -143,6 +145,7 @@ public class HeaderBar extends HBox
             }
             stretchSpacer(false);
         } else {
+            // TODO: clean this shite up, just store it in a dictionary, always?
             var visibles :Dictionary = new Dictionary();
             visibles[_embedLink] = _embedVisible;
             visibles[_commentLink] = _commentVisible;
@@ -244,14 +247,10 @@ public class HeaderBar extends HBox
         setCommentLink(null);
         _extras.push(_commentLink);
 
-        _embedLink = new CommandLinkButton(Msgs.GENERAL.get("b.share"), function () :void {
-            if (_sharePopup == null) {
-                _sharePopup = new ShareDialog(_ctx);
-            } else {
-                _sharePopup.close();
-                _sharePopup = null;
-            }
-        });
+        _embedLink = new CommandLinkButton(Msgs.GENERAL.get("b.share"),
+            FloatingPanel.createPopper(function () :ShareDialog {
+                return new ShareDialog(_ctx);
+            }));
         _embedLink.styleName = "headerShareLink";
         controlBox.addChild(_embedLink);
         setEmbedVisible(false);
@@ -322,7 +321,6 @@ public class HeaderBar extends HBox
     protected var _commentVisible :Boolean;
     protected var _commentLink :CommandLinkButton;
 
-    protected var _sharePopup :ShareDialog;
     protected var _embedVisible :Boolean;
     protected var _embedLink :CommandLinkButton;
 
