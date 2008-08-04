@@ -88,9 +88,6 @@
 	<classpathentry kind="lib" path="dist/lib/svnkit-cli.jar"/>
 	<classpathentry kind="lib" path="dist/lib/svnkit-javahl.jar"/>
 	<classpathentry kind="lib" path="dist/lib/swfutils-ooo.jar"/>
-	<classpathentry kind="lib" path="dist/lib/toybox-0.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dist/lib/underwire-0.0-SNAPSHOT.jar"/>
-	<classpathentry kind="lib" path="dist/lib/underwire-gwt-0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="dist/lib/velocity-1.5-dev.jar"/>
 	<classpathentry kind="lib" path="dist/lib/winlaf-0.5.1.jar"/>
 	<classpathentry kind="lib" path="dist/lib/ws-commons-util.jar"/>
