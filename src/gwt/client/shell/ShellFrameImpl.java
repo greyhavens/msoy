@@ -28,6 +28,7 @@ import com.threerings.msoy.web.data.SessionData;
 
 import client.ui.MsoyUI;
 import client.util.FlashClients;
+import client.util.FlashVersion;
 import client.util.Link;
 
 /**
@@ -291,6 +292,12 @@ public class ShellFrameImpl
     public String md5hex (String text)
     {
         return nmd5hex(text);
+    }
+
+    // from interface Frame
+    public String checkFlashVersion (int width, int height)
+    {
+        return FlashVersion.checkFlashVersion(width, height);
     }
 
     // from interface WorldClient.Container

@@ -76,6 +76,10 @@ public abstract class Page
                 public String md5hex (String text) {
                     return frameCall(Frame.Calls.GET_MD5, new String[] { text });
                 }
+                public String checkFlashVersion (int width, int height) {
+                    return frameCall(Frame.Calls.CHECK_FLASH_VERSION,
+                                     new String[] { ""+width, ""+height });
+                }
             };
 
             // obtain our current credentials from the frame
@@ -108,6 +112,9 @@ public abstract class Page
                 public String md5hex (String text) {
                     CShell.log("Pants! No md5 in standalone mode.");
                     return text;
+                }
+                public String checkFlashVersion (int width, int height) {
+                    return null; // sure man, no problem!
                 }
             };
 

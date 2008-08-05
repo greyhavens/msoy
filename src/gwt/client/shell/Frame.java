@@ -30,8 +30,8 @@ public interface Frame
 
     /** Codes for use with our inner frame to top frame RPC mechanism. */
     public static enum Calls {
-        GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, SET_TITLE, NAVIGATE_TO, NAVIGATE_REPLACE,
-        DISPLAY_WORLD_CLIENT, CLOSE_CLIENT, CLOSE_CONTENT
+        SET_TITLE, NAVIGATE_TO, NAVIGATE_REPLACE, DISPLAY_WORLD_CLIENT, CLOSE_CLIENT, CLOSE_CONTENT,
+        GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, CHECK_FLASH_VERSION
     };
 
     /**
@@ -107,4 +107,10 @@ public interface Frame
      * MD5 encodes the supplied text.
      */
     String md5hex (String text);
+
+    /**
+     * Checks that the installed version of Flash is kosher. Returns null if so, a HTML snipped to
+     * embed otherwise.
+     */
+    String checkFlashVersion (int width, int height);
 }

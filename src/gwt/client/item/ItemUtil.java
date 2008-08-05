@@ -26,9 +26,9 @@ import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Toy;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.shell.ShellMessages;
-import client.util.FlashClients;
 import client.util.Link;
 
 /**
@@ -110,7 +110,7 @@ public class ItemUtil
         }
 
         // see if we need to display an upgrade message
-        String definition = FlashClients.getUpgradeString(w, h);
+        String definition = CShell.frame.checkFlashVersion(w, h);
         if (definition != null) {
             return new HTML(definition);
         }

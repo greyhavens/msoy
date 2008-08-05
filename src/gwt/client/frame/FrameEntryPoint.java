@@ -35,6 +35,7 @@ import client.shell.TitleBar;
 import client.shell.TrackingCookie;
 import client.shell.WorldClient;
 import client.util.FlashClients;
+import client.util.FlashVersion;
 import client.util.Link;
 
 /**
@@ -405,6 +406,12 @@ public class FrameEntryPoint
         return nmd5hex(text);
     }
 
+    // from interface Frame
+    public String checkFlashVersion (int width, int height)
+    {
+    	return FlashVersion.checkFlashVersion(width, height);
+    }
+
     // from interface WorldClient.Container
     public Panel getClientContainer ()
     {
@@ -450,12 +457,6 @@ public class FrameEntryPoint
     {
         Calls call = Enum.valueOf(Calls.class, callStr);
         switch (call) {
-        case GET_WEB_CREDS:
-            return (CShell.creds == null) ? null : CShell.creds.flatten();
-        case GET_PAGE_TOKEN:
-            return _pageToken;
-        case GET_MD5:
-            return nmd5hex(args[0]);
         case SET_TITLE:
             setTitle(args[0]);
             return null;
@@ -474,6 +475,14 @@ public class FrameEntryPoint
         case CLOSE_CONTENT:
             closeContent();
             return null;
+        case GET_WEB_CREDS:
+            return (CShell.creds == null) ? null : CShell.creds.flatten();
+        case GET_PAGE_TOKEN:
+            return _pageToken;
+        case GET_MD5:
+            return nmd5hex(args[0]);
+        case CHECK_FLASH_VERSION:
+            return checkFlashVersion(Integer.valueOf(args[0]), Integer.valueOf(args[1]));
         }
         return null; // not reached
     }
