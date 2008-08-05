@@ -244,14 +244,14 @@ public class CommentServlet extends MsoyServiceServlet
     protected static boolean isValidType (int entityType)
     {
         // if it's an item, we must delegate to the Item class
-        if (entityType >= TYPE_ITEM_MIN && entityType <= TYPE_ITEM_MAX) {
+        if (entityType >= Comment.TYPE_ITEM_MIN && entityType <= Comment.TYPE_ITEM_MAX) {
             return Item.getClassForType((byte)entityType) != null;
         }
 
         // otherwise make sure we have a constant defined for this type
         switch (entityType) {
-        case TYPE_ROOM:
-        case TYPE_PROFILE_WALL:
+        case Comment.TYPE_ROOM:
+        case Comment.TYPE_PROFILE_WALL:
             return true;
         default:
             return false;
