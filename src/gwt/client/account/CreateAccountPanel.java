@@ -7,7 +7,6 @@ import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -21,7 +20,6 @@ import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.SourcesFocusEvents;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -102,9 +100,9 @@ public class CreateAccountPanel extends FlowPanel
             CAccount.msgs.createDisplayName(), _name, CAccount.msgs.createDisplayNameTip()));
 
         // optionally add the recaptcha component
-        if (hasRecaptchaKey()) {
-            add(new LabeledBox(
-                CAccount.msgs.createCaptcha(), new HTML("<div id=\"recaptchaDiv\"></div>"), null));
+        if (RecaptchaUtil.isEnabled()) {
+            add(new LabeledBox(CAccount.msgs.createCaptcha(),
+                               new HTML("<div id=\"recaptchaDiv\"></div>"), null));
             add(new HTML("<div id=\"recaptchaDiv\"></div>"));
         }
 
@@ -132,25 +130,7 @@ public class CreateAccountPanel extends FlowPanel
         if (_email != null) {
             _email.setFocus(true);
         }
-        if (hasRecaptchaKey()) {
-            RootPanel.get("recaptchaDiv").add(
-                    MsoyUI.createLabel(CAccount.msgs.createCaptchaLoading(), "label"));
-            initCaptcha();
-        }
-    }
-
-    protected void initCaptcha ()
-    {
-        // our JavaScript is loaded asynchrnously, so there's a possibility that it won't be set up
-        // by the time we try to initialize ourselves; in that case we have no recourse but to try
-        // again in a short while (there's no way to find out when async JS is loaded)
-        if (!createRecaptcha("recaptchaDiv")) {
-            new Timer() {
-                public void run () {
-                    initCaptcha();
-                }
-            }.schedule(500);
-        }
+        RecaptchaUtil.init("recaptchaDiv");
     }
 
     protected boolean validateData ()
@@ -180,10 +160,10 @@ public class CreateAccountPanel extends FlowPanel
             toFocus = _name;
         } else if (!_tosBox.isChecked()) {
             status = CAccount.msgs.createMustAgreeTOS();
-        } else if (hasRecaptchaKey() && (getRecaptchaResponse() == null ||
-                    getRecaptchaResponse().length() == 0)) {
+        } else if (RecaptchaUtil.isEnabled() && (RecaptchaUtil.getResponse() == null ||
+                                                 RecaptchaUtil.getResponse().length() == 0)) {
             status = CAccount.msgs.createMustCaptcha();
-            focusRecaptcha();
+            RecaptchaUtil.focus();
         } else {
             return true;
         }
@@ -226,8 +206,8 @@ public class CreateAccountPanel extends FlowPanel
         info.realName = _rname.getText().trim();
 
         setStatus(CAccount.msgs.creatingAccount());
-        String challenge = hasRecaptchaKey() ? getRecaptchaChallenge() : null;
-        String response = hasRecaptchaKey() ? getRecaptchaResponse() : null;
+        String challenge = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getChallenge() : null;
+        String response = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getResponse() : null;
         _usersvc.register(
             DeploymentConfig.version, email, CAccount.frame.md5hex(password), name,
             _dateOfBirth.getDate(), null, info, 1, inviteId, guestId, challenge,
@@ -238,10 +218,10 @@ public class CreateAccountPanel extends FlowPanel
                     CAccount.frame.dispatchDidLogon(result);
                 }
                 public void onFailure (Throwable caught) {
-                    if (hasRecaptchaKey()) {
-                        reloadRecaptcha();
+                    if (RecaptchaUtil.isEnabled()) {
+                        RecaptchaUtil.reload();
                         if (caught instanceof CaptchaException) {
-                            focusRecaptcha();
+                            RecaptchaUtil.focus();
                         }
                     }
                     setStatus(CAccount.serverError(caught));
@@ -311,38 +291,6 @@ public class CreateAccountPanel extends FlowPanel
             setStatus("");
         }
     };
-
-    protected static native boolean hasRecaptchaKey () /*-{
-        return !(typeof $wnd.recaptchaPublicKey == "undefined");
-    }-*/;
-
-    protected static native boolean createRecaptcha (String element) /*-{
-        try {
-            if ($wnd.Recaptcha != null) {
-                $wnd.Recaptcha.create($wnd.recaptchaPublicKey, element, { theme: "white" });
-                return true;
-            }
-        } catch (e) {
-            // fall through, return false
-        }
-        return false;
-    }-*/;
-
-    protected static native String getRecaptchaChallenge () /*-{
-        return $wnd.Recaptcha.get_challenge();
-    }-*/;
-
-    protected static native String getRecaptchaResponse () /*-{
-        return $wnd.Recaptcha.get_response();
-    }-*/;
-
-    protected static native void focusRecaptcha () /*-{
-        $wnd.Recaptcha.focus_response_field();
-    }-*/;
-
-    protected static native void reloadRecaptcha () /*-{
-        $wnd.Recaptcha.reload();
-    }-*/;
 
     protected TextBox _email, _name, _rname;
     protected PasswordTextBox _password, _confirm;

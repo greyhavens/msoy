@@ -735,8 +735,6 @@ public class FrameEntryPoint
     protected static final String[] JS_DEPENDS = {
         "swfobject", "/js/swfobject.js",
         "md5", "/js/md5.js",
-        // TODO: put this on the account registration page
-        // "recaptcha", "http://api.recaptcha.net/js/recaptcha_ajax.js",
-        // "googanal", "http://www.google-analytics.com/ga.js",
+        "googanal", "http://www.google-analytics.com/ga.js",
     };
 }
