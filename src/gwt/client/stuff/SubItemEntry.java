@@ -3,6 +3,9 @@
 
 package client.stuff;
 
+import client.item.DoListItemPopup;
+import client.util.NaviUtil;
+
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
@@ -41,7 +44,7 @@ public class SubItemEntry extends ItemEntry
 
         Button button = new Button(CStuff.msgs.detailSubEdit(), new ClickListener() {
             public void onClick (Widget sender) {
-                CStuff.editItem(item.getType(), item.itemId);
+                NaviUtil.editItem(item.getType(), item.itemId);
             }
         });
         button.addStyleName("tinyButton");

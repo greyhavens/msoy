@@ -25,19 +25,19 @@ import com.threerings.msoy.item.gwt.CostUpdatedException;
 
 import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
+import client.item.DoListItemPopup;
 import client.item.ItemActivator;
 import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.shell.ShellMessages;
-import client.stuff.CStuff;
-import client.stuff.DoListItemPopup;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
+import client.util.NaviUtil;
 import client.util.ServiceUtil;
 
 /**
@@ -95,10 +95,10 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _buyPanel.add(purchase);
 
         if (!CShop.isGuest() && isRemixable()) {
-            PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, CStuff.msgs.detailRemix(),
+            PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingRemix(),
                 new ClickListener() {
                     public void onClick (Widget sender) {
-                        CStuff.remixCatalogItem(
+                        NaviUtil.remixCatalogItem(
                             _item.getType(), _item.itemId, _listing.catalogId,
                             _listing.flowCost, _listing.goldCost);
                     }

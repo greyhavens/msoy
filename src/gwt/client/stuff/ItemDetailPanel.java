@@ -25,6 +25,7 @@ import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import client.item.BaseItemDetailPanel;
+import client.item.DoListItemPopup;
 import client.item.ItemActivator;
 import client.shell.Args;
 import client.shell.CShell;
@@ -35,6 +36,7 @@ import client.ui.RowPanel;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
+import client.util.NaviUtil;
 import client.util.ServiceUtil;
 
 import client.util.events.FlashEvents;
@@ -151,7 +153,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             String butlbl = CStuff.msgs.detailEdit();
             buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, new ClickListener() {
                 public void onClick (Widget sender) {
-                    CStuff.editItem(_item.getType(), _item.itemId);
+                    NaviUtil.editItem(_item.getType(), _item.itemId);
                 }
             }));
 
@@ -249,7 +251,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRemix(),
                 new ClickListener() {
                     public void onClick (Widget sender) {
-                        CStuff.remixItem(_item.getType(), _item.itemId);
+                        NaviUtil.remixItem(_item.getType(), _item.itemId);
                     }
                 }));
         }

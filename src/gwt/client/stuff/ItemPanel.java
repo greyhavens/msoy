@@ -35,6 +35,7 @@ import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.NaviUtil;
 
 /**
  * Displays all items of a particular type in a player's inventory.
@@ -157,7 +158,7 @@ public class ItemPanel extends VerticalPanel
         // add the create button
         _upload.setWidget(1, 1, new Button(CStuff.msgs.panelCreateNew(), new ClickListener() {
             public void onClick (Widget widget) {
-                CStuff.createItem(_type, (byte)0, 0);
+                NaviUtil.createItem(_type, (byte)0, 0);
             }
         }), 1, "Button");
         _upload.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);

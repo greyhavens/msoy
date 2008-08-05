@@ -17,6 +17,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import client.shell.DynamicMessages;
 import client.util.MsoyCallback;
+import client.util.NaviUtil;
 
 /**
  * Displays a set of sub-items on an item's detail page.
@@ -75,7 +76,7 @@ public class SubItemPanel extends PagedGrid<Item>
         controls.setWidget(0, 0, _create = new Button(CStuff.msgs.panelCreateNew()));
         _create.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
-                CStuff.createItem(_type, _parent.getType(), _parent.itemId);
+                NaviUtil.createItem(_type, _parent.getType(), _parent.itemId);
             }
         });
     }

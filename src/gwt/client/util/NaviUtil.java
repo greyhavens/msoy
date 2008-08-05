@@ -4,6 +4,7 @@
 package client.util;
 
 import client.shell.Args;
+import client.shell.Page;
 
 /**
  * A place where we can encapsulate the creation of arguments that link to complex pages in
@@ -46,4 +47,31 @@ public class NaviUtil
     {
         return Args.compose("d", ""+gameId, tab.code());
     }
+
+	public static void viewItem (byte type, int itemId)
+	{
+	    Link.go(Page.STUFF, Args.compose(""+type, "-1", ""+itemId));
+	}
+
+	public static void editItem (byte type, int itemId)
+	{
+	    Link.go(Page.STUFF, Args.compose("e", ""+type, ""+itemId));
+	}
+
+	public static void remixItem (byte type, int itemId)
+	{
+	    Link.go(Page.STUFF, Args.compose("r", ""+type, ""+itemId));
+	}
+
+	public static void remixCatalogItem (
+	    byte type, int itemId, int catalogId, int flowCost, int goldCost)
+	{
+	    Link.go(Page.STUFF, Args.compose(
+	        new String[] { "r", ""+type, ""+itemId, ""+catalogId, ""+flowCost, ""+goldCost }));
+	}
+
+	public static void createItem (byte type, byte ptype, int pitemId)
+	{
+	    Link.go(Page.STUFF, Args.compose(new String[] { "c", ""+type, ""+ptype, ""+pitemId }));
+	}
 }

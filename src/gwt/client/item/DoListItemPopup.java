@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.stuff;
+package client.item;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
@@ -24,6 +24,7 @@ import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 
+import client.shell.CShell;
 import client.shell.DynamicMessages;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
@@ -39,9 +40,8 @@ public class DoListItemPopup extends VerticalPanel
 
     public static void show (Item item, CatalogListing listing, ListedListener listener)
     {
-        String title = item.catalogId == 0 ?
-            CStuff.msgs.doListCreateTitle() : CStuff.msgs.doListUpdateTitle();
-        CStuff.frame.showDialog(title, new DoListItemPopup(item, listing, listener));
+        String title = item.catalogId == 0 ? _imsgs.doListCreateTitle() : _imsgs.doListUpdateTitle();
+        CShell.frame.showDialog(title, new DoListItemPopup(item, listing, listener));
     }
 
     protected DoListItemPopup (Item item, final CatalogListing listing, ListedListener listener)
@@ -61,13 +61,13 @@ public class DoListItemPopup extends VerticalPanel
         // whether or not we're repricing an existing listing
         boolean firstTime = (item.catalogId == 0), repricing = (listing != null);
         if (firstTime) {
-            add(MsoyUI.createLabel(CStuff.msgs.doListBlurb(), "Blurb"));
+            add(MsoyUI.createLabel(_imsgs.doListBlurb(), "Blurb"));
         } else if (repricing) {
-            add(MsoyUI.createLabel(CStuff.msgs.doUppriceBlurb(), "Blurb"));
+            add(MsoyUI.createLabel(_imsgs.doUppriceBlurb(), "Blurb"));
         } else {
-            String message = CStuff.msgs.doUpdateBlurb();
+            String message = _imsgs.doUpdateBlurb();
             if (salableItem) {
-                message += CStuff.msgs.doUpdateSalableNote();
+                message += _imsgs.doUpdateSalableNote();
             }
             HTML update = new HTML(message);
             update.setStyleName("Blurb");
@@ -76,9 +76,9 @@ public class DoListItemPopup extends VerticalPanel
 
         // only add the description if we're not repricing
         if (!repricing) {
-            add(MsoyUI.createLabel(CStuff.msgs.doListDescripHeader(), "Header"));
-            add(MsoyUI.createLabel(firstTime ? CStuff.msgs.doListNeedsDescrip() :
-                                   CStuff.msgs.doUpdateNeedsDescrip(), "Blurb"));
+            add(MsoyUI.createLabel(_imsgs.doListDescripHeader(), "Header"));
+            add(MsoyUI.createLabel(firstTime ? _imsgs.doListNeedsDescrip() :
+                                   _imsgs.doUpdateNeedsDescrip(), "Blurb"));
             add(_description = new TextArea());
             _description.setText(item.description);
             _description.setCharacterWidth(50);
@@ -91,7 +91,7 @@ public class DoListItemPopup extends VerticalPanel
             pricing.setCellPadding(0);
             pricing.setCellSpacing(3);
 
-            int row = pricing.addText(CStuff.msgs.doListStrategy(), 1, "rightLabel");
+            int row = pricing.addText(_imsgs.doListStrategy(), 1, "rightLabel");
             pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1, null);
             int selectedPricing = (_item instanceof SubItem) ? 0 /* hidden */ : 1 /* manual */;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
@@ -116,23 +116,23 @@ public class DoListItemPopup extends VerticalPanel
             pricing.setWidget(row, 2, _pricingTip = new Label(""), 2, "Blurb");
             pricing.getFlexCellFormatter().setRowSpan(row, 2, 3);
 
-            _salesTargetLabel = new Label(CStuff.msgs.doListSalesTarget());
+            _salesTargetLabel = new Label(_imsgs.doListSalesTarget());
             row = pricing.addWidget(_salesTargetLabel, 1, "rightLabel");
             pricing.setWidget(row, 1, _salesTarget = new NumberTextBox(false, 5, 5), 1, null);
             int salesTarget = (listing == null) ? DEFAULT_SALES_TARGET : listing.salesTarget;
             _salesTarget.setText(String.valueOf(salesTarget));
 
-            row = pricing.addText(CStuff.msgs.doListFlowCost(), 1, "rightLabel");
+            row = pricing.addText(_imsgs.doListFlowCost(), 1, "rightLabel");
             pricing.setWidget(row, 1, _flowCost = new NumberTextBox(false, 5, 5), 1, null);
             int flowCost = (listing == null) ? DEFAULT_FLOW_COST : listing.flowCost;
             _flowCost.setText(String.valueOf(flowCost));
 
-//             row = pricing.addText(CStuff.msgs.doListGoldCost(), 1, "rightLabel");
+//             row = pricing.addText(_imsgs.doListGoldCost(), 1, "rightLabel");
 //             pricing.setWidget(row, 1, _goldCost = new NumberTextBox(false, 5, 5), 2, null);
 //             int goldCost = (listing == null) ? DEFAULT_GOLD_COST : listing.goldCost;
 //             _goldCost.setText(String.valueOf(goldCost));
 
-            add(MsoyUI.createLabel(CStuff.msgs.doListPricingHeader(), "Header"));
+            add(MsoyUI.createLabel(_imsgs.doListPricingHeader(), "Header"));
             add(pricing);
 
             _pricingBox.setSelectedIndex(selectedPricing);
@@ -143,32 +143,31 @@ public class DoListItemPopup extends VerticalPanel
 
         // create buttons for listing and
         HorizontalPanel footer = new HorizontalPanel();
-        footer.add(new Button(CStuff.msgs.doListBtnCancel(), new ClickListener() {
+        footer.add(new Button(_imsgs.doListBtnCancel(), new ClickListener() {
             public void onClick (Widget sender) {
-                CStuff.frame.clearDialog();
+                CShell.frame.clearDialog();
             }
         }));
         footer.add(WidgetUtil.makeShim(10, 10));
-        String doLbl = firstTime ? CStuff.msgs.doListBtnGo() : CStuff.msgs.doUpdateBtnGo();
+        String doLbl = firstTime ? _imsgs.doListBtnGo() : _imsgs.doUpdateBtnGo();
         footer.add(_doIt = new Button(doLbl));
         setHorizontalAlignment(ALIGN_RIGHT);
         add(footer);
 
         // set up our button actions
         if (firstTime) {
-            final String resultMsg = firstTime ?
-                CStuff.msgs.doListListed() : CStuff.msgs.doListUpdated();
+            final String resultMsg = firstTime ? _imsgs.doListListed() : _imsgs.doListUpdated();
             new ClickCallback<Integer>(_doIt) {
                 public boolean callService () {
                     _catalogsvc.listItem(
-                        CStuff.ident, _item.getIdent(), _description.getText(), getPricing(),
+                        CShell.ident, _item.getIdent(), _description.getText(), getPricing(),
                         getSalesTarget(), getFlowCost(), getGoldCost(), this);
                     return true;
                 }
                 public boolean gotResult (Integer result) {
                     _item.catalogId = result;
                     MsoyUI.info(resultMsg);
-                    CStuff.frame.clearDialog();
+                    CShell.frame.clearDialog();
                     _listener.itemListed(_item, false);
                     return false;
                 }
@@ -180,17 +179,17 @@ public class DoListItemPopup extends VerticalPanel
                     int pricing = getPricing(), salesTarget = getSalesTarget();
                     if (pricing == CatalogListing.PRICING_LIMITED_EDITION &&
                             listing != null && salesTarget <= listing.purchases) {
-                        MsoyUI.error(CStuff.msgs.doListHitLimit(""+listing.purchases));
+                        MsoyUI.error(_imsgs.doListHitLimit(""+listing.purchases));
                         return false;
                     }
                     _catalogsvc.updatePricing(
-                        CStuff.ident, _item.getType(), _item.catalogId, pricing,
+                        CShell.ident, _item.getType(), _item.catalogId, pricing,
                         salesTarget, getFlowCost(), getGoldCost(), this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
-                    MsoyUI.info(CStuff.msgs.doListUpdated());
-                    CStuff.frame.clearDialog();
+                    MsoyUI.info(_imsgs.doListUpdated());
+                    CShell.frame.clearDialog();
                     _listener.itemListed(_item, true);
                     return false;
                 }
@@ -200,12 +199,12 @@ public class DoListItemPopup extends VerticalPanel
             new ClickCallback<Void>(_doIt) {
                 public boolean callService () {
                     _catalogsvc.updateListing(
-                        CStuff.ident, _item.getIdent(), _description.getText(), this);
+                        CShell.ident, _item.getIdent(), _description.getText(), this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
-                    MsoyUI.info(CStuff.msgs.doListUpdated());
-                    CStuff.frame.clearDialog();
+                    MsoyUI.info(_imsgs.doListUpdated());
+                    CShell.frame.clearDialog();
                     return false;
                 }
             };
@@ -251,6 +250,7 @@ public class DoListItemPopup extends VerticalPanel
     protected Label _status;
     protected Button _doIt;
 
+    protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
