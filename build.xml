@@ -53,6 +53,7 @@
   <!-- declare the libraries needed by the MSOY runtime -->
   <filelist dir="." id="dist.libs">
     <file name="${extlibs.dir}/activation.jar"/>
+    <file name="${extlibs.dir}/aopalliance.jar"/>
     <file name="${extlibs.dir}/args4j-2.0.7.jar"/>
     <file name="${extlibs.dir}/commons-beanutils.jar"/>
     <file name="${extlibs.dir}/commons-codec.jar"/>

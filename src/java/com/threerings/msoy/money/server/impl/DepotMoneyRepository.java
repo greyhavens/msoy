@@ -75,7 +75,7 @@ final class DepotMoneyRepository extends DepotRepository
                     MemberAccountRecord.DATE_LAST_UPDATED, account.dateLastUpdated,
                     MemberAccountRecord.VERSION_ID, account.getVersionId());
                 if (count == 0) {
-                    throw new StaleDataException();
+                    throw new StaleDataException("Member account record is stale: " + account.getMemberId());
                 }
             }
         } catch (final PersistenceException pe) {

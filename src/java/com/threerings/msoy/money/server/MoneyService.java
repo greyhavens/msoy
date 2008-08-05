@@ -35,9 +35,12 @@ public interface MoneyService
      * @param affiliateId ID of the affiliate associated with this purchase.  Null if no affiliate.
      * @param item Item to secure the price for.
      * @param numBars Number of bars
+     * @param description A description of the item that will appear on the member's transaction
+     *      history if purchased.
      * @return Price of the item secured in coins, according to the current exchange rate.
      */
-    int secureBarPrice (int memberId, int creatorId, Integer affiliateId, ItemIdent item, int numBars);
+    int secureBarPrice (int memberId, int creatorId, int affiliateId, ItemIdent item, int numBars, 
+        String description);
 
     /**
      * Secures a price for an item in coins.  This ensures the user will be able to purchase
@@ -52,11 +55,15 @@ public interface MoneyService
      *
      * @param memberId ID of the member securing the price.
      * @param creatorId ID of the creator of the item being secured.
-     * @param affiliateId ID of the affiliate associated with this purchase.  Null if no affiliate.
+     * @param affiliateId ID of the affiliate associated with this purchase.  Zero if no affiliate.
      * @param item Item to secure the price for.
      * @param numCoins Number of coins.
+     * @param description A description of the item that will appear on the member's transaction
+     *      history if purchased.
+     * @return Price of the item secured in bars, according to the current exchange rate.
      */
-    void secureCoinPrice (int memberId, int creatorId, Integer affiliateId, ItemIdent item, int numCoins);
+    int secureCoinPrice (int memberId, int creatorId, int affiliateId, ItemIdent item, int numCoins, 
+        String description);
 
     /**
      * Purchases an item using bars as the currency.  This will only update the appropriate accounts
@@ -123,11 +130,11 @@ public interface MoneyService
      *
      * @param memberId ID of the member to receive the coins.
      * @param creatorId ID of the creator of the item that caused the coins to be awarded.
-     * @param affiliateId ID of the affiliate associated with the transaction.  Null if no
+     * @param affiliateId ID of the affiliate associated with the transaction.  Zero if no
      *      affiliate.
      * @param amount Number of coins to be awarded.
      */
-    void awardCoins (int memberId, int creatorId, Integer affiliateId, int amount);
+    void awardCoins (int memberId, int creatorId, int affiliateId, int amount);
 
     /**
      * Retrieves the current account balance (coins, bars, and bling) for the given member.

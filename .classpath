@@ -111,5 +111,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/toybox"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/underwire"/>
 	<classpathentry kind="lib" path="etc"/>
+	<classpathentry kind="lib" path="extlibs/java/aopalliance.jar"/>
 	<classpathentry kind="output" path="dist/classes"/>
 </classpath>

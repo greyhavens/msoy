@@ -98,7 +98,7 @@ public class MemberAccountRecord extends PersistentRecord
         this.bars = 0;
         this.bling = 0.0;
         this.dateLastUpdated = new Timestamp(new Date().getTime());
-        this.versionId = 1;
+        this.versionId = 0;
     }
     
     /** For depot's eyes only.  Not part of the API. */
@@ -118,6 +118,45 @@ public class MemberAccountRecord extends PersistentRecord
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated, MoneyType.BARS,
             bars, false, "Purchased " + bars + " bars.");
+    }
+    
+    /**
+     * Adds the given number of coins to the member's account.
+     * 
+     * @param coins Number of coins to add.
+     * @return Account history record for this transaction.
+     */
+    public MemberAccountHistoryRecord awardCoins (final int coins)
+    {
+        this.coins += coins;
+        this.dateLastUpdated = new Timestamp(new Date().getTime());
+        return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated, MoneyType.COINS,
+            coins, false, "Awarded " + coins + " coins.");
+    }
+    
+    /**
+     * Purchases an item, deducting the appropriate amount of money from this account.
+     * 
+     * @param amount Amount to deduct.
+     * @param type Type indicating bars or coins.
+     * @param description Description that should be used in the history record.
+     * @return Account history record for this transaction.
+     */
+    public MemberAccountHistoryRecord buyItem (final int amount, final MoneyType type, final String description)
+    {
+        if (type == MoneyType.BARS) {
+            this.bars -= amount;
+        } else {
+            this.coins -= amount;
+        }
+        this.dateLastUpdated = new Timestamp(new Date().getTime());
+        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, type, amount, true, 
+            description);
+    }
+    
+    public boolean canAfford (final int amount, final MoneyType type)
+    {
+        return type == MoneyType.BARS ? (bars >= amount) : (coins >= amount);
     }
     
     public int getMemberId ()

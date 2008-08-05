@@ -79,7 +79,7 @@ public class MoneyHistory
     }
 
     /**
-     * Item involved in the transaction.
+     * Item involved in the transaction, or null if no item.
      */
     public ItemIdent getItem ()
     {

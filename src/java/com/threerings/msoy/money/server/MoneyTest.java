@@ -14,6 +14,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.impl.MoneyModule;
 import com.threerings.msoy.server.ServerConfig;
 
@@ -33,6 +35,65 @@ public class MoneyTest
         service.buyBars(1, 2);
         final MemberMoney newMoney = service.getMoneyFor(1);
         assertEquals(oldMoney.getBars() + 2, newMoney.getBars());
+        // TODO: check history.
+    }
+    
+    @Test
+    public void testBuyBarItemWithBars ()
+        throws Exception
+    {
+        final MemberMoney oldMoney = service.getMoneyFor(1);
+        service.buyBars(1, 150);
+        final ItemIdent item = new ItemIdent(Item.AVATAR, 1);
+        service.secureBarPrice(1, 2, 3, item, 100, "My bar item");
+        service.buyItemWithBars(1, item);
+        final MemberMoney newMoney = service.getMoneyFor(1);
+        assertEquals(oldMoney.getBars() + 50, newMoney.getBars());
+        // TODO: check creator and affiliate
+        // TODO: check history
+    }
+    
+    @Test(expected=NotEnoughMoneyException.class)
+    public void testNotEnoughBars ()
+        throws Exception
+    {
+        final MemberMoney oldMoney = service.getMoneyFor(1);
+        final ItemIdent item = new ItemIdent(Item.AVATAR, 1);
+        service.secureBarPrice(1, 2, 3, item, oldMoney.getBars() + 1, "My bar item");
+        service.buyItemWithBars(1, item);
+    }
+        
+    @Test(expected=NotEnoughMoneyException.class)
+    public void testNotEnoughCoins ()
+        throws Exception
+    {
+        final MemberMoney oldMoney = service.getMoneyFor(1);
+        final ItemIdent item = new ItemIdent(Item.AVATAR, 1);
+        service.secureCoinPrice(1, 2, 3, item, oldMoney.getCoins() + 1, "My coin item");
+        service.buyItemWithCoins(1, item);
+    }
+    
+    @Test(expected=NotSecuredException.class)
+    public void testNotSecured ()
+        throws Exception
+    {
+        final ItemIdent item = new ItemIdent(Item.AVATAR, 1);
+        service.buyItemWithBars(1, item);
+    }
+    
+    @Test
+    public void testBuyCoinItemWithCoins ()
+        throws Exception
+    {
+        final MemberMoney oldMoney = service.getMoneyFor(1);
+        service.awardCoins(1, 2, 3, 150);
+        final ItemIdent item = new ItemIdent(Item.AVATAR, 1);
+        service.secureCoinPrice(1, 2, 3, item, 100, "My coin item");
+        service.buyItemWithCoins(1, item);
+        final MemberMoney newMoney = service.getMoneyFor(1);
+        assertEquals(oldMoney.getCoins() + 50, newMoney.getCoins());
+        // TODO: check creator and affiliate
+        // TODO: check history
     }
     
     @Before

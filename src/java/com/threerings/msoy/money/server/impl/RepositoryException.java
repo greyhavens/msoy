@@ -3,6 +3,11 @@
 
 package com.threerings.msoy.money.server.impl;
 
+/**
+ * Generic exception indicating a problem has occurred accessing a repository.
+ * 
+ * @author Kyle Sampson <kyle@threerings.net>
+ */
 public class RepositoryException extends RuntimeException
 {
     public RepositoryException (final String msg)

@@ -20,7 +20,7 @@ interface MoneyRepository
      * 
      * @param account Account to update.
      */
-    void saveAccount (MemberAccountRecord account) throws StaleDataException;
+    void saveAccount (MemberAccountRecord account);
     
     /**
      * Adds a history record for an account.
