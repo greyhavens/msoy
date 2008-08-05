@@ -163,7 +163,7 @@
   float: left;
   width: 55px;
   text-align: center;
-  vertical-align: center;
+  vertical-align: middle;
 }
 
 .LandingPanel .TopGamesPanel .GameListItem .Name,
