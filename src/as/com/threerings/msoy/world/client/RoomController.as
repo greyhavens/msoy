@@ -144,15 +144,14 @@ public class RoomController extends SceneController
     // documentation inherited
     override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
-        super.init(ctx, config);
-
         _wdctx = (ctx as WorldContext);
+        super.init(ctx, config);
     }
 
     // documentation inherited
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
-        _roomView = new RoomView(ctx as WorldContext, this);
+        _roomView = new RoomView(_wdctx, this);
         return _roomView;
     }
 
