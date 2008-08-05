@@ -146,7 +146,7 @@ public class MsoyHttpServer extends Server
         protected void addReferralCookie (HttpServletRequest req, HttpServletResponse rsp) {
             
             // do we already know the referer? if so, we're done
-            if (CookieUtil.getCookie(req, ReferralInfo.REFERER_COOKIE) != null) {
+            if (CookieUtil.getCookie(req, ReferralInfo.REFERRER_COOKIE) != null) {
                 return; 
             }
             
@@ -156,7 +156,7 @@ public class MsoyHttpServer extends Server
                 
                 try {
                     URL url = new URL((String) ref);
-                    Cookie cookie = new Cookie(ReferralInfo.REFERER_COOKIE, url.getHost());
+                    Cookie cookie = new Cookie(ReferralInfo.REFERRER_COOKIE, url.getHost());
                     cookie.setMaxAge(-1); // session only
                     cookie.setPath("/");
                     rsp.addCookie(cookie);

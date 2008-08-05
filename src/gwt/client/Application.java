@@ -128,7 +128,7 @@ public class Application
 
         } else {
             // try to load the HTTP referrer info, and manufacture a new referral from that.
-            String ref = CookieUtil.get(ReferralInfo.REFERER_COOKIE);
+            String ref = CookieUtil.get(ReferralInfo.REFERRER_COOKIE);
             if (ref != null && ref.length() > 0) {
                 maybeCreateReferral(ref, token, "");
             } else {

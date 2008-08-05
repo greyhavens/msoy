@@ -19,10 +19,10 @@ public class ReferralInfo
     implements Streamable, IsSerializable
 {
     /** 
-     * Name of a session cookie entry that will communicate the original referer URL
+     * Name of a session cookie entry that will communicate the original referrer URL
      * from the default Msoy servlet over to the GWT side. 
      */
-    public static final String REFERER_COOKIE = "ref"; 
+    public static final String REFERRER_COOKIE = "ref"; 
     
     /** Creates a random tracking number. */
     public static String makeRandomTracker ()
