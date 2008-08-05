@@ -32,7 +32,7 @@ import com.threerings.msoy.group.gwt.GroupServiceAsync;
 
 import client.item.ShopUtil;
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.shell.WorldClient;
 import client.ui.MsoyUI;
@@ -156,12 +156,12 @@ public class WhirledDetailPanel extends FlowPanel
         // enter and discussions buttons
         PushButton enterButton = MsoyUI.createButton(
             MsoyUI.LONG_THIN, _msgs.detailEnter(), Link.createListener(
-                Page.WORLD, "s"+_group.homeSceneId));
+                Pages.WORLD, "s"+_group.homeSceneId));
         enterButton.addStyleName("EnterButton");
         mainDetails.add(enterButton);
         PushButton discussionsButton = MsoyUI.createButton(
             MsoyUI.MEDIUM_THIN, _msgs.detailForums(), Link.createListener(
-                Page.WHIRLEDS, Args.compose("f", _group.groupId)));
+                Pages.WHIRLEDS, Args.compose("f", _group.groupId)));
         discussionsButton.addStyleName("DiscussionsButton");
         mainDetails.add(discussionsButton);
 
@@ -189,7 +189,7 @@ public class WhirledDetailPanel extends FlowPanel
         if (Group.canInvite(detail.group.policy, detail.myRank)) {
             String args = Args.compose("w", "g", ""+_detail.group.groupId);
             actions.add(MsoyUI.createActionLabel(
-                _msgs.detailInvite(), Link.createListener(Page.MAIL, args)));
+                _msgs.detailInvite(), Link.createListener(Pages.MAIL, args)));
         }
 
         // shop
@@ -197,7 +197,7 @@ public class WhirledDetailPanel extends FlowPanel
             String args = ShopUtil.composeArgs(
                 _extras.catalogItemType, _extras.catalogTag, null, 0);
             actions.add(MsoyUI.createActionLabel(
-                _msgs.detailShop(), Link.createListener(Page.SHOP, args)));
+                _msgs.detailShop(), Link.createListener(Pages.SHOP, args)));
         }
 
         // read charter
@@ -219,7 +219,7 @@ public class WhirledDetailPanel extends FlowPanel
 
             String args = Args.compose("edit", _group.groupId);
             Label editWhirled = MsoyUI.createActionLabel(
-                _msgs.detailEdit(), Link.createListener(Page.WHIRLEDS, args));
+                _msgs.detailEdit(), Link.createListener(Pages.WHIRLEDS, args));
             editWhirled.addStyleName("inline");
             managerActions.add(editWhirled);
 
@@ -411,7 +411,7 @@ public class WhirledDetailPanel extends FlowPanel
             for (int ii = 0; ii < _detail.topMembers.size(); ii++) {
                 GroupMemberCard member = _detail.topMembers.get(ii);
                 ClickListener iconClick = Link.createListener(
-                    Page.PEOPLE, "" + member.name.getMemberId());
+                    Pages.PEOPLE, "" + member.name.getMemberId());
                 ThumbBox icon =
                     new ThumbBox(member.photo, MediaDesc.HALF_THUMBNAIL_SIZE, iconClick);
                 members.setWidget(ii * 2, 0, icon, 1, "Icon");

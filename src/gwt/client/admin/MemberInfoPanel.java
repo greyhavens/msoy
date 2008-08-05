@@ -16,7 +16,7 @@ import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.data.all.MemberName;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
 import client.util.Link;
@@ -134,7 +134,7 @@ public class MemberInfoPanel extends SmartTable
 
     protected Widget infoLink (MemberName name)
     {
-        return Link.create("" + name, Page.ADMIN, Args.compose("info", name.getMemberId()));
+        return Link.create("" + name, Pages.ADMIN, Args.compose("info", name.getMemberId()));
     }
 
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)

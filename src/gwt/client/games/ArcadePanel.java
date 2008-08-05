@@ -15,7 +15,7 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.Args;
 import client.shell.DynamicMessages;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -70,7 +70,7 @@ public class ArcadePanel extends FlowPanel
             browseGenres.add(new GenreBox(genre));
         }
         browseGenres.add(MsoyUI.createActionLabel(
-            "View all games", "ViewAllGames", Link.createListener(Page.GAMES, "g")));
+            "View all games", "ViewAllGames", Link.createListener(Pages.GAMES, "g")));
     }
 
     /**
@@ -81,7 +81,7 @@ public class ArcadePanel extends FlowPanel
         public GenreBox (ArcadeData.Genre genre) {
             setStyleName("GenreBox");
 
-            ClickListener onClick = Link.createListener(Page.GAMES, Args.compose("g", genre.genre));
+            ClickListener onClick = Link.createListener(Pages.GAMES, Args.compose("g", genre.genre));
             FlowPanel header = MsoyUI.createFlowPanel("Header");
             add(header);
             header.add(MsoyUI.createImage("/images/game/genre/" + genre.genre + ".png", "Icon"));
@@ -91,7 +91,7 @@ public class ArcadePanel extends FlowPanel
             for (int i = 0; i < genre.games.length; i++) {
                 GameInfo game = genre.games[i];
                 ClickListener gameClick = Link.createListener(
-                    Page.GAMES, Args.compose("d", game.gameId));
+                    Pages.GAMES, Args.compose("d", game.gameId));
                 FlowPanel genreGame = MsoyUI.createFlowPanel("GenreGame");
                 add(genreGame);
                 // display the first larger than the rest
@@ -117,7 +117,7 @@ public class ArcadePanel extends FlowPanel
             }
 
             add(MsoyUI.createSimplePanel("ViewAll", Link.create(
-                _msgs.genreMore(""+genre.gameCount), Page.GAMES, Args.compose("g", genre.genre))));
+                _msgs.genreMore(""+genre.gameCount), Pages.GAMES, Args.compose("g", genre.genre))));
         }
     }
 
@@ -129,7 +129,7 @@ public class ArcadePanel extends FlowPanel
         public TopGameWidget (int index, GameInfo game) {
             setStyleName("TopGameWidget");
             add(MsoyUI.createLabel(index+"", "Number"));
-            ClickListener onClick = Link.createListener(Page.GAMES, Args.compose("d", game.gameId));
+            ClickListener onClick = Link.createListener(Pages.GAMES, Args.compose("d", game.gameId));
             add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE, onClick));
             add(MsoyUI.createSimplePanel("Name", MsoyUI.createActionLabel(game.name, onClick)));
         }

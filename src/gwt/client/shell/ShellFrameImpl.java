@@ -67,7 +67,7 @@ public class ShellFrameImpl
                 } else if (CShell.isGuest()) {
                     History.newItem("");
                 } else {
-                    Link.go(Page.WORLD, "m" + CShell.getMemberId());
+                    Link.go(Pages.WORLD, "m" + CShell.getMemberId());
                 }
             }
         });
@@ -147,9 +147,9 @@ public class ShellFrameImpl
 
         // if we're on a "world" page, go to a landing page
         String curToken = History.getToken();
-        if (curToken.startsWith(Page.WORLD)) {
+        if (curToken.startsWith(Pages.WORLD.getPath())) {
             // if we were in a game, go to the games page, otherwise go to me
-            Link.go(curToken.indexOf("game") == -1 ? Page.ME : Page.GAMES, "");
+            Link.go(curToken.indexOf("game") == -1 ? Pages.ME : Pages.GAMES, "");
         }
     }
 
@@ -220,7 +220,7 @@ public class ShellFrameImpl
     }
 
     // from interface Frame
-    public void showContent (String pageId, Widget pageContent)
+    public void showContent (Pages page, Widget pageContent)
     {
         RootPanel.get(CONTENT).clear();
         _bar = null;
@@ -233,11 +233,11 @@ public class ShellFrameImpl
         _contlist.setHeight("100%");
         _contlist.add(pageContent);
 
-        if (pageId != null) {
+        if (page!= null) {
             // select the appropriate header tab
-            _header.selectTab(pageId);
+            _header.selectTab(page.getTab());
             // create our page title bar
-            _bar = TitleBar.create(pageId, new ClickListener() {
+            _bar = TitleBar.create(page.getTab(), new ClickListener() {
                 public void onClick (Widget sender) {
                     closeContent();
                 }
@@ -249,9 +249,9 @@ public class ShellFrameImpl
         int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
         RootPanel.get(CLIENT).setWidth(clientWidth + "px");
 
-        // if we're not showing a Page.Content page, don't do our custom scrolling
+        // if we're not showing a Pages.Content page, don't do our custom scrolling
         Widget content;
-        if (pageId == null) {
+        if (page == null) {
             content = _contlist;
             Window.enableScrolling(true);
         } else {

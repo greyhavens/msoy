@@ -13,6 +13,7 @@ import com.threerings.msoy.swiftly.gwt.SwiftlyServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 
@@ -38,15 +39,9 @@ public class SwiftlyPage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return SWIFTLY;
-    }
-
-    @Override // from Page
-    protected String getTabPageId ()
-    {
-        return CREATE;
+        return Pages.SWIFTLY;
     }
 
     @Override // from Page

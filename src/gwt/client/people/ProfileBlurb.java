@@ -33,7 +33,7 @@ import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 import client.item.ImageChooserPopup;
 import client.item.ShopUtil;
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -83,12 +83,12 @@ public class ProfileBlurb extends Blurb
         }
         if (!CPeople.isGuest() && !isMe) {
             addButton(photo, "/images/profile/sendmail.png", CPeople.msgs.sendMail(),
-                      Page.MAIL, Args.compose("w", "m", ""+_name.getMemberId()));
+                      Pages.MAIL, Args.compose("w", "m", ""+_name.getMemberId()));
         }
         addButton(photo, "/images/profile/visithome.png", CPeople.msgs.visitHome(),
-                  Page.WORLD, "m" + _name.getMemberId());
+                  Pages.WORLD, "m" + _name.getMemberId());
         addButton(photo, "/images/profile/browseitems.png", CPeople.msgs.browseItems(),
-                  Page.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
+                  Pages.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
 
         // create the info section with their name, a/s/l, etc.
         SmartTable info = new SmartTable("Info", 0, 5);
@@ -138,7 +138,7 @@ public class ProfileBlurb extends Blurb
             if (CPeople.isSupport()) {
                 addDetail(dbits, CPeople.msgs.memberSince(),
                           Link.create(
-                              since, Page.ADMIN, Args.compose("info", _name.getMemberId())));
+                              since, Pages.ADMIN, Args.compose("info", _name.getMemberId())));
             } else {
                 addDetail(dbits, CPeople.msgs.memberSince(), since);
             }
@@ -172,7 +172,7 @@ public class ProfileBlurb extends Blurb
         }
     }
 
-    protected void addButton (SmartTable table, String path, String text, String page, String args)
+    protected void addButton (SmartTable table, String path, String text, Pages page, String args)
     {
         int row = table.addWidget(Link.createImage(path, text, page, args), 1, null);
         table.setWidget(row, 1, Link.create(text, page, args), 1, null);

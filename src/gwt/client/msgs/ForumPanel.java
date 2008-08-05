@@ -17,7 +17,7 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 import client.images.msgs.MsgsImages;
 import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.util.Link;
@@ -100,7 +100,7 @@ public class ForumPanel extends TitledListPanel
         if (groupId > 0) {
             String title = _mmsgs.groupThreadListHeader(groupName);
             Label titleLink = MsoyUI.createActionLabel(
-                title, Link.createListener(Page.WHIRLEDS, Args.compose("d", groupId)));
+                title, Link.createListener(Pages.WHIRLEDS, Args.compose("d", groupId)));
             _title.setWidget(titleLink);
         }
     }

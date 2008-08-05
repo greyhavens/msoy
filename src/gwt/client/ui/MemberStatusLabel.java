@@ -14,7 +14,7 @@ import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
 import client.shell.ShellMessages;
-import client.shell.Page;
+import client.shell.Pages;
 import client.util.Link;
 
 /**
@@ -33,13 +33,13 @@ public class MemberStatusLabel extends FlowPanel
         } else if (status instanceof MemberCard.InGame) {
             MemberCard.InGame gs = (MemberCard.InGame)status;
             add(new InlineLabel(_cmsgs.mslOnlinePlaying(gs.gameName), false, false, true));
-            add(Link.create(_cmsgs.mslJoin(), Page.WORLD,
+            add(Link.create(_cmsgs.mslJoin(), Pages.WORLD,
                                        Args.compose("game", gs.gameId)));
 
         } else if (status instanceof MemberCard.InScene) {
             MemberCard.InScene ss = (MemberCard.InScene)status;
             add(new InlineLabel(_cmsgs.mslOnlineIn(ss.sceneName), false, false, true));
-            add(Link.create(_cmsgs.mslJoin(), Page.WORLD, "s" + ss.sceneId));
+            add(Link.create(_cmsgs.mslJoin(), Pages.WORLD, "s" + ss.sceneId));
         }
     }
 

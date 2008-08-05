@@ -13,13 +13,14 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.WidgetUtil;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 import com.threerings.msoy.swiftly.gwt.SwiftlyConnectConfig;
 
-import com.threerings.gwt.ui.WidgetUtil;
-
+import client.shell.Pages;
 import client.util.Link;
 import client.util.MsoyCallback;
 
@@ -124,7 +125,7 @@ public class SwiftlyPanel extends FlexTable
     protected void updateProjectLink ()
     {
         _projectLink.setTargetHistoryToken(
-            Link.createToken("swiftly", String.valueOf(_project.projectId)));
+            Link.createToken(Pages.SWIFTLY, String.valueOf(_project.projectId)));
         _projectLink.setText(_project.projectName);
     }
 

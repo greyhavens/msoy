@@ -10,7 +10,7 @@ import client.item.ItemActivator;
 import client.item.ItemBox;
 import client.item.ItemUtil;
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 
 /**
  * Displays a thumbnail version of an item.
@@ -19,7 +19,7 @@ public class ItemEntry extends ItemBox
 {
     public ItemEntry (Item item)
     {
-        super(item.getThumbnailMedia(), ItemUtil.getName(item, true), Page.STUFF,
+        super(item.getThumbnailMedia(), ItemUtil.getName(item, true), Pages.STUFF,
               Args.compose("d", ""+item.getType(), ""+item.itemId),
               item.getPrimaryMedia().isRemixable());
 

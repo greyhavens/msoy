@@ -25,7 +25,7 @@ import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -57,7 +57,7 @@ public class ReviewItem extends FlowPanel
         // the name displays an item inspector
         String name = _item.name + " - " + detail.creator.toString();
         String args = Args.compose("d", ""+_item.getType(), ""+_item.itemId);
-        add(Link.create(name, Page.STUFF, args));
+        add(Link.create(name, Pages.STUFF, args));
 
         add(MsoyUI.createLabel(_item.description, null));
 

@@ -18,6 +18,7 @@ import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
@@ -51,7 +52,7 @@ public class WorldPage extends Page
                     // if we have sNN-extra-args we want the close button to use just "sNN"
                     CWorld.frame.displayWorldClient(
                         "sceneId=" + sceneId + "&page=" + Args.compose(args.splice(1)),
-                        Page.WORLD + "-s" + sceneId);
+                        Pages.WORLD + "-s" + sceneId);
                 }
 
             } else if (action.equals("game")) {
@@ -118,9 +119,9 @@ public class WorldPage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return WORLD;
+        return Pages.WORLD;
     }
 
     protected void displayHotSpots ()

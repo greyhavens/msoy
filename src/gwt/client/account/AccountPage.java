@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 
@@ -33,7 +34,7 @@ public class AccountPage extends Page
             if (CAccount.isGuest()) {
                 setContent(CAccount.msgs.createTitle(), new CreateAccountPanel());
             } else {
-                Link.go(Page.ME, "");
+                Link.go(Pages.ME, "");
             }
 
         } else if (action.equals("login")) {
@@ -54,9 +55,9 @@ public class AccountPage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return ACCOUNT;
+        return Pages.ACCOUNT;
     }
 
     @Override // from Page

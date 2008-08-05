@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.mail.gwt.GameAwardPayload;
 
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.ThumbBox;
 import client.util.Link;
 import client.util.NaviUtil;
@@ -28,7 +28,7 @@ public class GameAwardDisplay extends MailPayloadDisplay
 
         table.setText(0, 1, CMail.msgs.awardTitle());
         String args = NaviUtil.gameDetail(_payload.gameId, NaviUtil.GameDetails.TROPHIES);
-        table.setWidget(0, 2, Link.create(_payload.gameName, Page.GAMES, args));
+        table.setWidget(0, 2, Link.create(_payload.gameName, Pages.GAMES, args));
 
         switch (_payload.awardType) {
         case GameAwardPayload.TROPHY:

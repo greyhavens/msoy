@@ -30,7 +30,7 @@ import client.item.ItemActivator;
 import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.DynamicMessages;
-import client.shell.Page;
+import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
@@ -67,7 +67,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             public boolean callService () {
                 if (CShop.isGuest()) {
                     MsoyUI.infoAction(CShop.msgs.msgMustRegister(), CShop.msgs.msgRegister(),
-                                      Link.createListener(Page.ACCOUNT, "create"));
+                                      Link.createListener(Pages.ACCOUNT, "create"));
                 } else {
                     _catalogsvc.purchaseItem(
                         CShop.ident, _item.getType(), _listing.catalogId,
@@ -124,7 +124,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 public void onClick (Widget sender) {
                     DoListItemPopup.show(_item, _listing, new DoListItemPopup.ListedListener() {
                         public void itemListed (Item item, boolean updated) {
-                            Link.replace(Page.SHOP, Args.compose(new String[] {
+                            Link.replace(Pages.SHOP, Args.compose(new String[] {
                                         "l", "" + _item.getType(), "" + _listing.catalogId,
                                         "repriced_from_" + _listing.flowCost}));
                         }
@@ -153,7 +153,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 // also add a link to view the original
                 String args = Args.compose("d", ""+_item.getType(), ""+_listing.originalItemId);
                 info.addWidget(Link.create(CShop.msgs.listingViewOrig(),
-                                                      Page.STUFF, args), 2, null);
+                                                      Pages.STUFF, args), 2, null);
             }
         }
 
@@ -202,7 +202,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             _buyPanel.add(new Label(CShop.msgs.boughtViewStuff(type)));
             String ptype = _dmsgs.getString("pItemType" + itype);
             _buyPanel.add(Link.create(
-                              CShop.msgs.boughtGoNow(ptype), Page.STUFF, ""+itype));
+                              CShop.msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
         }
     }
 
@@ -226,7 +226,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     {
         menu.addMenuItem(_cmsgs.tagSearch(), new Command() {
             public void execute() {
-                Link.go(Page.SHOP, ShopUtil.composeArgs(_item.getType(), tag, null, 0));
+                Link.go(Pages.SHOP, ShopUtil.composeArgs(_item.getType(), tag, null, 0));
             }
         });
     }

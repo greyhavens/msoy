@@ -17,7 +17,7 @@ import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
 import client.shell.CShell;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.ServiceUtil;
@@ -64,7 +64,7 @@ public class IssuePanel extends TitledListPanel
 
     public void redisplayIssues ()
     {
-        Link.go(Page.WHIRLEDS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
+        Link.go(Pages.WHIRLEDS, (_owned ? "owned_" : "b_") + _type + "_" + _state);
     }
 
     public void displayIssue (int issueId, int owned)

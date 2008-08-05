@@ -4,7 +4,7 @@
 package client.util;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 
 /**
  * A place where we can encapsulate the creation of arguments that link to complex pages in
@@ -50,28 +50,28 @@ public class NaviUtil
 
 	public static void viewItem (byte type, int itemId)
 	{
-	    Link.go(Page.STUFF, Args.compose(""+type, "-1", ""+itemId));
+	    Link.go(Pages.STUFF, Args.compose(""+type, "-1", ""+itemId));
 	}
 
 	public static void editItem (byte type, int itemId)
 	{
-	    Link.go(Page.STUFF, Args.compose("e", ""+type, ""+itemId));
+	    Link.go(Pages.STUFF, Args.compose("e", ""+type, ""+itemId));
 	}
 
 	public static void remixItem (byte type, int itemId)
 	{
-	    Link.go(Page.STUFF, Args.compose("r", ""+type, ""+itemId));
+	    Link.go(Pages.STUFF, Args.compose("r", ""+type, ""+itemId));
 	}
 
 	public static void remixCatalogItem (
 	    byte type, int itemId, int catalogId, int flowCost, int goldCost)
 	{
-	    Link.go(Page.STUFF, Args.compose(
+	    Link.go(Pages.STUFF, Args.compose(
 	        new String[] { "r", ""+type, ""+itemId, ""+catalogId, ""+flowCost, ""+goldCost }));
 	}
 
 	public static void createItem (byte type, byte ptype, int pitemId)
 	{
-	    Link.go(Page.STUFF, Args.compose(new String[] { "c", ""+type, ""+ptype, ""+pitemId }));
+	    Link.go(Pages.STUFF, Args.compose(new String[] { "c", ""+type, ""+ptype, ""+pitemId }));
 	}
 }

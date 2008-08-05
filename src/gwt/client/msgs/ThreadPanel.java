@@ -27,7 +27,7 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Page;
+import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.MessagePanel;
@@ -86,7 +86,7 @@ public class ThreadPanel extends TitledListPanel
         _thread = thread;
         _theader.setText(0, 2, _thread.subject);
         _theader.setWidget(0, 1, Link.create(
-                               _thread.group + ":", Page.WHIRLEDS,
+                               _thread.group + ":", Pages.WHIRLEDS,
                                Args.compose("f", _thread.group.getGroupId())));
     }
 

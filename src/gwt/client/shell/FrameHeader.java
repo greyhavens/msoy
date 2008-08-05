@@ -39,16 +39,16 @@ public class FrameHeader extends SmartTable
 
         String lpath = "/images/header/header_logo.png";
         setWidget(col++, 0, MsoyUI.createActionImage(lpath, onLogoClick), 1, "Logo");
-        addButton(col++, Page.ME, _cmsgs.menuMe(), _images.me(), _images.ome(), _images.sme());
-        addButton(col++, Page.PEOPLE, _cmsgs.menuFriends(), _images.friends(), _images.ofriends(),
+        addButton(col++, Pages.ME, _cmsgs.menuMe(), _images.me(), _images.ome(), _images.sme());
+        addButton(col++, Pages.PEOPLE, _cmsgs.menuFriends(), _images.friends(), _images.ofriends(),
                   _images.sfriends());
-        addButton(col++, Page.GAMES, _cmsgs.menuGames(), _images.games(), _images.ogames(),
+        addButton(col++, Pages.GAMES, _cmsgs.menuGames(), _images.games(), _images.ogames(),
                   _images.sgames());
-        addButton(col++, Page.WHIRLEDS, _cmsgs.menuWorlds(), _images.worlds(), _images.oworlds(),
+        addButton(col++, Pages.WHIRLEDS, _cmsgs.menuWorlds(), _images.worlds(), _images.oworlds(),
                   _images.sworlds());
-        addButton(col++, Page.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
+        addButton(col++, Pages.SHOP, _cmsgs.menuShop(), _images.shop(), _images.oshop(),
                   _images.sshop());
-        addButton(col++, Page.HELP, _cmsgs.menuHelp(), _images.help(), _images.ohelp(),
+        addButton(col++, Pages.HELP, _cmsgs.menuHelp(), _images.help(), _images.ohelp(),
                   _images.shelp());
         _statusCol = col;
 
@@ -56,10 +56,10 @@ public class FrameHeader extends SmartTable
         Session.addObserver(this);
     }
 
-    public void selectTab (String pageId)
+    public void selectTab (Frame.Tabs tab)
     {
         for (NaviButton button : _buttons) {
-            button.setSelected(button.pageId.equals(pageId));
+            button.setSelected(button.page.getTab() == tab);
         }
     }
 
@@ -79,21 +79,21 @@ public class FrameHeader extends SmartTable
         setWidget(0, _statusCol, new SignOrLogonPanel(), 1, "Right");
     }
 
-    protected void addButton (int col, String pageId, String text, AbstractImagePrototype up,
+    protected void addButton (int col, Pages page, String text, AbstractImagePrototype up,
                               AbstractImagePrototype over, AbstractImagePrototype down) {
-        NaviButton button = new NaviButton(pageId, text, up, over, down);
+        NaviButton button = new NaviButton(page, text, up, over, down);
         setWidget(0, col, button);
         _buttons.add(button);
     }
 
     protected static class NaviButton extends SimplePanel
     {
-        public final String pageId;
+        public final Pages page;
 
-        public NaviButton (String page, String text, AbstractImagePrototype up,
+        public NaviButton (Pages page, String text, AbstractImagePrototype up,
                            AbstractImagePrototype over, AbstractImagePrototype down) {
             setStyleName("NaviButton");
-            pageId = page;
+            this.page = page;
 
             _upImage = up.createImage();
             _upImage.addStyleName("actionLabel");
@@ -113,10 +113,10 @@ public class FrameHeader extends SmartTable
             ClickListener go = new ClickListener() {
                 public void onClick (Widget sender) {
                     // if a guest clicks on "me", send them to create account
-                    if (pageId.equals(Page.ME) && CShell.isGuest()) {
-                        Link.go(Page.ACCOUNT, "create");
+                    if (NaviButton.this.page == Pages.ME && CShell.isGuest()) {
+                        Link.go(Pages.ACCOUNT, "create");
                     } else {
-                        Link.go(pageId, "");
+                        Link.go(NaviButton.this.page, "");
                     }
                 }
             };
@@ -142,7 +142,7 @@ public class FrameHeader extends SmartTable
         public SignOrLogonPanel () {
             super(0, 0);
             PushButton signup = new PushButton(
-                _cmsgs.headerSignup(), Link.createListener(Page.ACCOUNT, "create"));
+                _cmsgs.headerSignup(), Link.createListener(Pages.ACCOUNT, "create"));
             signup.setStyleName("SignupButton");
             signup.addStyleName("Button");
             setWidget(0, 0, signup);

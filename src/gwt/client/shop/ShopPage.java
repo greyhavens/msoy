@@ -13,6 +13,7 @@ import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.Pages;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -60,9 +61,9 @@ public class ShopPage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return SHOP;
+        return Pages.SHOP;
     }
 
     @Override // from Page

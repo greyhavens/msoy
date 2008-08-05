@@ -21,7 +21,7 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.ui.TongueBox;
@@ -114,7 +114,7 @@ public class WhirledRoomsPanel extends VerticalPanel
         public RoomWidget (GroupService.Room room)
         {
             super("Room", 0, 2);
-            ClickListener onClick = Link.createListener(Page.WORLD, "s"+room.sceneId);
+            ClickListener onClick = Link.createListener(Pages.WORLD, "s"+room.sceneId);
             MediaDesc decor = (room.decor != null) ? room.decor :
                 Item.getDefaultThumbnailMediaFor(Item.DECOR);
             setWidget(0, 0, new ThumbBox(decor, onClick));

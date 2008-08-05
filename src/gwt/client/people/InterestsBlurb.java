@@ -23,7 +23,7 @@ import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
 import client.shell.Args;
 import client.shell.DynamicMessages;
-import client.shell.Page;
+import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
@@ -164,7 +164,7 @@ public class InterestsBlurb extends Blurb
                 panel.add(new InlineLabel(",", false, false, true));
             }
             String interest = ivec[ii].trim();
-            panel.add(Link.create(interest, Page.PEOPLE,
+            panel.add(Link.create(interest, Pages.PEOPLE,
                 Args.compose("search", "0", interest)));
         }
 

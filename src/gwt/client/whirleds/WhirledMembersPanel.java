@@ -23,7 +23,7 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MemberStatusLabel;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
@@ -44,7 +44,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
 
         _detail = detail;
         String args = Args.compose("w", "g", ""+_detail.group.groupId);
-        _invite.addClickListener(Link.createListener(Page.MAIL, args));
+        _invite.addClickListener(Link.createListener(Pages.MAIL, args));
         _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
 
         _groupsvc.getGroupMembers(
@@ -125,7 +125,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
             MemberName name = card.name;
 
             int mid = name.getMemberId();
-            ClickListener onClick = Link.createListener(Page.PEOPLE, ""+mid);
+            ClickListener onClick = Link.createListener(Pages.PEOPLE, ""+mid);
             setWidget(0, 0, new ThumbBox(card.photo, onClick), 1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
             setWidget(0, 1, Link.memberView(""+name, mid), 1, "Name");

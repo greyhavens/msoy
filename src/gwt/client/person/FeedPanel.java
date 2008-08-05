@@ -33,7 +33,7 @@ import com.threerings.msoy.person.gwt.SelfFeedMessage;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicMessages;
-import client.shell.Page;
+import client.shell.Pages;
 
 import client.ui.TongueBox;
 import client.util.DateUtil;
@@ -272,17 +272,17 @@ public class FeedPanel extends TongueBox
 
             case 101: // FRIEND_UPDATED_ROOM
                 return Link.createHtml(
-                        message.data[1], Page.WORLD, "s" + message.data[0]);
+                        message.data[1], Pages.WORLD, "s" + message.data[0]);
 
             case 102: // FRIEND_WON_TROPHY
-                return Link.createHtml(message.data[0], Page.GAMES,
+                return Link.createHtml(message.data[0], Pages.GAMES,
                                        NaviUtil.gameDetail(Integer.valueOf(message.data[1]),
                                                            NaviUtil.GameDetails.TROPHIES));
 
             case 103: // FRIEND_LISTED_ITEM
                 return _pmsgs.descCombine(
                             _dmsgs.getString("itemType" + message.data[1]),
-                            Link.createHtml(message.data[0], Page.SHOP,
+                            Link.createHtml(message.data[0], Pages.SHOP,
                                 Args.compose("l", message.data[1], message.data[2])));
 
             case 104: // FRIEND_GAINED_LEVEL
@@ -307,7 +307,7 @@ public class FeedPanel extends TongueBox
                 }
                 clicker = new ClickListener() {
                     public void onClick (Widget sender) {
-                        Link.go(Page.GAMES, NaviUtil.gameDetail(Integer.valueOf(message.data[1]),
+                        Link.go(Pages.GAMES, NaviUtil.gameDetail(Integer.valueOf(message.data[1]),
                                                                 NaviUtil.GameDetails.TROPHIES));
                     }
                 };
@@ -324,7 +324,7 @@ public class FeedPanel extends TongueBox
                 clicker = new ClickListener() {
                     public void onClick (Widget sender) {
                         Link.go(
-                            Page.SHOP, Args.compose("l", message.data[1], message.data[2]));
+                            Pages.SHOP, Args.compose("l", message.data[1], message.data[2]));
                     }
                 };
                 return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
@@ -483,7 +483,7 @@ public class FeedPanel extends TongueBox
             switch (message.type) {
             case 200: // GROUP_ANNOUNCEMENT
                 String threadLink = Link.createHtml(
-                    message.data[1], Page.WHIRLEDS, Args.compose("t", message.data[2]));
+                    message.data[1], Pages.WHIRLEDS, Args.compose("t", message.data[2]));
                 add(new BasicWidget(_pmsgs.groupAnnouncement(message.data[0], threadLink)));
                 break;
             }
@@ -497,9 +497,9 @@ public class FeedPanel extends TongueBox
                     return; // TEMP: skip old pre-actor messages
                 }
                 String roomPageLink = Link.createHtml(_pmsgs.selfRoomCommented(),
-                    Page.WORLD, Args.compose("room", message.data[0]));
+                    Pages.WORLD, Args.compose("room", message.data[0]));
                 String roomLink = Link.createHtml(
-                    message.data[1], Page.WORLD, "s" + message.data[0]);
+                    message.data[1], Pages.WORLD, "s" + message.data[0]);
                 add(new BasicWidget(_pmsgs.selfRoomComment(
                                         profileLink(message.actor), roomPageLink, roomLink)));
                 break;
@@ -511,7 +511,7 @@ public class FeedPanel extends TongueBox
             switch (message.type) {
             case 1: // GLOBAL_ANNOUNCEMENT
                 String threadLink = Link.createHtml(
-                    message.data[0], Page.WHIRLEDS, Args.compose("t", message.data[1]));
+                    message.data[0], Pages.WHIRLEDS, Args.compose("t", message.data[1]));
                 add(new BasicWidget(_pmsgs.globalAnnouncement(threadLink)));
                 break;
             }
@@ -524,7 +524,7 @@ public class FeedPanel extends TongueBox
 
         protected String profileLink (String name, String id)
         {
-            return Link.createHtml(name, Page.PEOPLE, id);
+            return Link.createHtml(name, Pages.PEOPLE, id);
         }
     }
 

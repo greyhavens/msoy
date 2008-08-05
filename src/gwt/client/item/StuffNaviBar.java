@@ -16,7 +16,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.images.stuff.StuffImages;
 import client.shell.DynamicMessages;
-import client.shell.Page;
+import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.util.Link;
 
@@ -41,7 +41,7 @@ public class StuffNaviBar extends SmartTable
                 link.setWidget(SELECTED[ii].createImage());
             } else {
                 final Image hover = SELECTED[ii].createImage();
-                hover.addClickListener(Link.createListener(Page.STUFF, ""+type));
+                hover.addClickListener(Link.createListener(Pages.STUFF, ""+type));
                 final Image normal = NORMAL[ii].createImage();
                 link.setWidget(normal);
                 link.addMouseListener(new MouseListenerAdapter() {

@@ -28,7 +28,7 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.ClickBox;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -63,7 +63,7 @@ public class GalaxyPanel extends VerticalPanel
         search.add(_searchInput = MsoyUI.createTextBox("", 255, 20));
         ClickListener doSearch = new ClickListener() {
             public void onClick (Widget sender) {
-                Link.go(Page.WHIRLEDS, Args.compose("search", "0", _searchInput.getText()));
+                Link.go(Pages.WHIRLEDS, Args.compose("search", "0", _searchInput.getText()));
             }
         };
         _searchInput.addKeyboardListener(new EnterClickAdapter(doSearch));
@@ -80,7 +80,7 @@ public class GalaxyPanel extends VerticalPanel
         contents.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
         contents.setWidget(0, 2, _groupGrid = new PagedGrid<GroupCard>(GRID_ROWS, GRID_COLUMNS) {
             protected void displayPageFromClick (int page) {
-                Link.go(Page.WHIRLEDS, Args.compose(_action, ""+page, _arg));
+                Link.go(Pages.WHIRLEDS, Args.compose(_action, ""+page, _arg));
             }
             protected Widget createWidget (GroupCard card) {
                 return new GroupWidget(card);
@@ -99,7 +99,7 @@ public class GalaxyPanel extends VerticalPanel
         create.setText(0, 0, _msgs.galaxyCreateTitle(), 3, "Header");
         create.setText(1, 0, _msgs.galaxyCreateBlurb(), 1, "Pitch");
         create.setWidget(1, 1, WidgetUtil.makeShim(10, 10));
-        ClickListener onClick = Link.createListener(Page.WHIRLEDS, "edit");
+        ClickListener onClick = Link.createListener(Pages.WHIRLEDS, "edit");
         create.setWidget(1, 2, new Button(_msgs.galaxyCreate(), onClick), 1, "Button");
         add(create);
 
@@ -149,7 +149,7 @@ public class GalaxyPanel extends VerticalPanel
         } else {
             for (String tag : data.popularTags) {
                 Widget link = Link.create(
-                    tag, Page.WHIRLEDS, Args.compose("tag", "0", tag));
+                    tag, Pages.WHIRLEDS, Args.compose("tag", "0", tag));
                 link.addStyleName("Link");
                 link.removeStyleName("inline");
                 _popularTags.add(link);
@@ -167,7 +167,7 @@ public class GalaxyPanel extends VerticalPanel
         tagLabel.addStyleName("Label");
         _currentTag.add(tagLabel);
         _currentTag.add(new InlineLabel("("));
-        Widget clear = Link.create(_msgs.galaxyTagClear(), Page.WHIRLEDS, "");
+        Widget clear = Link.create(_msgs.galaxyTagClear(), Pages.WHIRLEDS, "");
         clear.addStyleName("inline");
         _currentTag.add(clear);
         _currentTag.add(new InlineLabel(")"));
@@ -218,7 +218,7 @@ public class GalaxyPanel extends VerticalPanel
     protected class GroupWidget extends ClickBox
     {
         public GroupWidget (GroupCard group) {
-            super(group.logo, group.name.toString(), Page.WHIRLEDS,
+            super(group.logo, group.name.toString(), Pages.WHIRLEDS,
                   Args.compose("d", group.name.getGroupId()));
             int row = getRowCount();
             if (group.population == 0) {

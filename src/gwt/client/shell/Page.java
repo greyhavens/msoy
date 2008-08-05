@@ -29,30 +29,13 @@ public abstract class Page
         Page createPage ();
     }
 
-    // constants for our various pages
-    public static final String ACCOUNT = "account";
-    public static final String ADMIN = "admin";
-    public static final String CREATE = "create";
-    public static final String GAMES = "games";
-    public static final String HELP = "help";
-    public static final String LANDING = "landing";
-    public static final String MAIL = "mail";
-    public static final String ME = "me";
-    public static final String PEOPLE = "people";
-    public static final String SHOP = "shop";
-    public static final String STUFF = "stuff";
-    public static final String SUPPORT = "support";
-    public static final String SWIFTLY = "swiftly";
-    public static final String WHIRLEDS = "whirleds";
-    public static final String WORLD = "world";
-
     /**
      * Returns the default title for the specified page.
      */
-    public static String getDefaultTitle (String pageId)
+    public static String getDefaultTitle (Frame.Tabs tab)
     {
         try {
-            return _dmsgs.getString(pageId + "Title");
+            return _dmsgs.getString(tab.toString().toLowerCase()+ "Title");
         } catch (Exception e) {
             return null;
         }
@@ -187,7 +170,7 @@ public abstract class Page
     /**
      * Returns the identifier of this page (used for navigation).
      */
-    public abstract String getPageId ();
+    public abstract Pages getPageId ();
 
     /**
      * Called during initialization to give our entry point and derived classes a chance to
@@ -195,14 +178,6 @@ public abstract class Page
      */
     protected void initContext ()
     {
-    }
-
-    /**
-     * Returns the identifier the page whose tab should be showing when this page is showing.
-     */
-    protected String getTabPageId ()
-    {
-        return getPageId();
     }
 
     /**
@@ -252,8 +227,8 @@ public abstract class Page
     protected void setContent (String title, Widget content, boolean withHeader)
     {
         CShell.frame.setHeaderVisible(withHeader);
-        CShell.frame.showContent(withHeader ? getTabPageId() : null, _content = content);
-        CShell.frame.setTitle(title == null ? getDefaultTitle(getTabPageId()) : title);
+        CShell.frame.showContent(withHeader ? getPageId() : null, _content = content);
+        CShell.frame.setTitle(title == null ? getDefaultTitle(getPageId().getTab()) : title);
     }
 
     /**
@@ -325,7 +300,7 @@ public abstract class Page
         public void clearDialog () {
         }
 
-        public void showContent (String pageId, Widget pageContent) {
+        public void showContent (Pages page, Widget pageContent) {
             RootPanel contentDiv = RootPanel.get();
             if (_pageContent != null) {
                 contentDiv.remove(_pageContent);

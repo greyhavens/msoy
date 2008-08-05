@@ -176,9 +176,9 @@ public class Args
     /**
      * Returns our args in path-like format: a1/a2/a3/...
      */
-    public String toPath (String page)
+    public String toPath (Pages page)
     {
-        StringBuffer buf = new StringBuffer("/").append(page);
+        StringBuffer buf = new StringBuffer("/").append(page.getPath());
         for (String arg : _args) {
             buf.append("/").append(arg);
         }

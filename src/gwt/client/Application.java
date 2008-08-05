@@ -12,7 +12,6 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 
 import com.threerings.msoy.data.all.ReferralInfo;
-
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
@@ -24,10 +23,12 @@ import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.Page;
+import client.shell.Pages;
 import client.shell.Session;
 import client.shell.ShellFrameImpl;
 import client.shell.TrackingCookie;
 import client.shell.WorldClient;
+import client.util.Link;
 import client.util.ServiceUtil;
 
 /**
@@ -68,30 +69,17 @@ public class Application
     {
         _currentToken = token;
 
-        String page = (token == null || token.equals("")) ? getLandingPage() : token;
+        Pages page;
+        try {
+            page = Enum.valueOf(Pages.class, token.split("-")[0].toUpperCase());
+        } catch (Exception e) {
+            page = getLandingPage();
+        }
         Args args = new Args();
         int dashidx = token.indexOf("-");
         if (dashidx != -1) {
-            page = token.substring(0, dashidx);
             args.setToken(token.substring(dashidx+1));
         }
-
-        // TEMP: migrate old style invites to new style
-        if ("invite".equals(page)) {
-            token = Args.compose("i", args.get(0, ""));
-            args = new Args();
-            args.setToken(token);
-            page = Page.ME;
-        } else if ("optout".equals(page) || "resetpw".equals(page)) {
-            token = Args.compose(page, args.get(0, ""), args.get(1, ""));
-            args = new Args();
-            args.setToken(token);
-            page = Page.ACCOUNT;
-        } else if ((Page.WORLD.equals(page) || "whirled".equals(page)) &&
-                   args.get(0, "").equals("i")) {
-            page = Page.ME;
-        }
-        // END TEMP
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
 
@@ -128,7 +116,7 @@ public class Application
             Page.Creator creator = _creators.get(page);
             if (creator == null) {
                 CShell.log("Page unknown, redirecting to me [page=" + page + "].");
-                creator = _creators.get(Page.ME);
+                creator = _creators.get(Pages.ME);
                 args = new Args();
             }
 
@@ -154,8 +142,8 @@ public class Application
         WorldClient.didLogon(data.creds);
 
         // if we're on any account page, and we logon, we want to go to the me page
-        if (_page != null && Page.ACCOUNT.equals(_page.getPageId())) {
-            CShell.frame.navigateTo(Page.ME);
+        if (_page != null && Pages.ACCOUNT.equals(_page.getPageId())) {
+            CShell.frame.navigateTo(Pages.ME.getPath());
         } else  {
             // tell any existing page that it's being unloaded
             if (_page != null) {
@@ -196,27 +184,40 @@ public class Application
         }
     }
 
-    protected String getLandingPage ()
+    protected Pages getLandingPage ()
     {
-        return CShell.isGuest() ? Page.LANDING : Page.ME;
+        return CShell.isGuest() ? Pages.LANDING : Pages.ME;
     }
 
     protected void createMappings ()
     {
-        _creators.put(Page.ACCOUNT, client.account.AccountPage.getCreator());
-        _creators.put(Page.ADMIN, client.admin.AdminPage.getCreator());
-        _creators.put(Page.GAMES, client.games.GamesPage.getCreator());
-        _creators.put(Page.HELP, client.help.HelpPage.getCreator());
-        _creators.put(Page.LANDING, client.landing.LandingPage.getCreator());
-        _creators.put(Page.MAIL, client.mail.MailPage.getCreator());
-        _creators.put(Page.ME, client.me.MePage.getCreator());
-        _creators.put(Page.PEOPLE, client.people.PeoplePage.getCreator());
-        _creators.put(Page.SHOP, client.shop.ShopPage.getCreator());
-        _creators.put(Page.STUFF, client.stuff.StuffPage.getCreator());
-        _creators.put(Page.SUPPORT, client.support.SupportPage.getCreator());
-        _creators.put(Page.SWIFTLY, client.swiftly.SwiftlyPage.getCreator());
-        _creators.put(Page.WHIRLEDS, client.whirleds.WhirledsPage.getCreator());
-        _creators.put(Page.WORLD, client.world.WorldPage.getCreator());
+        _creators.put(Pages.ACCOUNT, client.account.AccountPage.getCreator());
+        _creators.put(Pages.ADMIN, client.admin.AdminPage.getCreator());
+        _creators.put(Pages.GAMES, client.games.GamesPage.getCreator());
+        _creators.put(Pages.HELP, client.help.HelpPage.getCreator());
+        _creators.put(Pages.LANDING, client.landing.LandingPage.getCreator());
+        _creators.put(Pages.MAIL, client.mail.MailPage.getCreator());
+        _creators.put(Pages.ME, client.me.MePage.getCreator());
+        _creators.put(Pages.PEOPLE, client.people.PeoplePage.getCreator());
+        _creators.put(Pages.SHOP, client.shop.ShopPage.getCreator());
+        _creators.put(Pages.STUFF, client.stuff.StuffPage.getCreator());
+        _creators.put(Pages.SUPPORT, client.support.SupportPage.getCreator());
+        _creators.put(Pages.SWIFTLY, client.swiftly.SwiftlyPage.getCreator());
+        _creators.put(Pages.WHIRLEDS, client.whirleds.WhirledsPage.getCreator());
+        _creators.put(Pages.WORLD, client.world.WorldPage.getCreator());
+    }
+
+    /**
+     * Called when Flash wants us to display a page.
+     */
+    protected static void displayPage (String page, String args)
+    {
+    	try {
+    		Link.go(Enum.valueOf(Pages.class, page), args);
+    	} catch (Exception e) {
+    		CShell.log("Unable to display page from Flash [page=" + page + 
+    				   ", args=" + args + "].", e);
+    	}
     }
 
     /**
@@ -237,7 +238,7 @@ public class Application
             frame.@client.shell.Frame::setTitle(Ljava/lang/String;)(title);
        };
        $wnd.displayPage = function (page, args) {
-           @client.util.Link::go(Ljava/lang/String;Ljava/lang/String;)(page, args);
+           @client.Application::displayPage(Ljava/lang/String;Ljava/lang/String;)(page, args);
        };
        $wnd.setGuestId = function (guestId) {
            @client.shell.CShell::setGuestId(I)(guestId);
@@ -256,7 +257,7 @@ public class Application
     protected Page _page;
     protected Analytics _analytics = new Analytics();
 
-    protected Map<String, Page.Creator> _creators = new HashMap<String, Page.Creator>();
+    protected Map<Pages, Page.Creator> _creators = new HashMap<Pages, Page.Creator>();
 
     protected static String _currentToken = "";
 

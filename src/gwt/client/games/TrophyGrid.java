@@ -10,7 +10,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.data.all.Trophy;
 
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -37,7 +37,7 @@ public class TrophyGrid extends FlexTable
             final Trophy trophy = trophies[ii];
             ClickListener trophyClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Page.GAMES, NaviUtil.gameDetail(
+                    Link.go(Pages.GAMES, NaviUtil.gameDetail(
                                 trophy.gameId, NaviUtil.GameDetails.TROPHIES));
                 }
             };

@@ -6,7 +6,7 @@ package client.games;
 import com.google.gwt.user.client.ui.PushButton;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.util.Link;
 
 /**
@@ -20,6 +20,6 @@ public class PlayButton extends PushButton
         setStyleName("playButton");
         String args = (minPlayers == 1 && maxPlayers == 1) ?
             Args.compose("game", "s", "" + gameId) : Args.compose("game", "l", "" + gameId);
-        addClickListener(Link.createListener(Page.WORLD, args));
+        addClickListener(Link.createListener(Pages.WORLD, args));
     }
 }

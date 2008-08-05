@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 
 /**
@@ -56,15 +57,9 @@ public class AdminPage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return ADMIN;
-    }
-
-    @Override // from Page
-    protected String getTabPageId ()
-    {
-        return ME;
+        return Pages.ADMIN;
     }
 
     @Override // from Page

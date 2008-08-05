@@ -30,7 +30,7 @@ import client.item.ItemActivator;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicMessages;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.ClickCallback;
@@ -231,7 +231,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(new Label(CStuff.msgs.detailGiftTip()));
             _details.add(WidgetUtil.makeShim(10, 5));
             String[] args = new String[] { "w", "i", ""+_item.getType(), ""+_item.itemId };
-            ClickListener onClick = Link.createListener(Page.MAIL, Args.compose(args));
+            ClickListener onClick = Link.createListener(Pages.MAIL, Args.compose(args));
             _giftBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailGift(), onClick);
             _details.add(_giftBtn);
         }
@@ -329,7 +329,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 _detail.item = item;
 
                 // redisplay the item detail with the reverted version.
-                Link.replace(Page.STUFF, Args.compose(new String[] {
+                Link.replace(Pages.STUFF, Args.compose(new String[] {
                             "d", "" + item.getType(), "" + item.itemId, "revert" }));
                 return false;
             }

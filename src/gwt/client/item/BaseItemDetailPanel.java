@@ -30,7 +30,7 @@ import com.threerings.msoy.web.data.TagHistory;
 
 import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.CreatorLabel;
 import client.ui.HeaderBox;
 import client.ui.MsoyUI;
@@ -79,7 +79,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
             protected void addMenuItems () {
                 this.addMenuItem(_imsgs.viewProfile(), new Command() {
                     public void execute () {
-                        Link.go(Page.PEOPLE, "" + _detail.creator.getMemberId());
+                        Link.go(Pages.PEOPLE, "" + _detail.creator.getMemberId());
                     }
                 });
                 this.addMenuItem(_imsgs.browseCatalogFor(), new Command() {
@@ -87,7 +87,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
                         CatalogQuery query = new CatalogQuery();
                         query.itemType = _detail.item.getType();
                         query.creatorId = _detail.creator.getMemberId();
-                        Link.go(Page.SHOP, ShopUtil.composeArgs(query, 0));
+                        Link.go(Pages.SHOP, ShopUtil.composeArgs(query, 0));
                     }
                 });
             }
@@ -97,7 +97,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         if (_item.catalogId != 0 && _item.ownerId != 0) {
             _details.add(WidgetUtil.makeShim(10, 10));
             String args = Args.compose("l", "" + _item.getType(), "" + _item.catalogId);
-            _details.add(Link.create(_imsgs.viewInShop(), Page.SHOP, args));
+            _details.add(Link.create(_imsgs.viewInShop(), Pages.SHOP, args));
         }
 
         _details.add(WidgetUtil.makeShim(10, 10));
@@ -118,7 +118,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
         if (_item instanceof Game) {
             _details.add(WidgetUtil.makeShim(10, 10));
             String args = Args.compose("d" , ((Game)_item).gameId);
-            _details.add(Link.create(_imsgs.bidPlay(), Page.GAMES, args));
+            _details.add(Link.create(_imsgs.bidPlay(), Pages.GAMES, args));
         }
 
         // add our tag business at the bottom

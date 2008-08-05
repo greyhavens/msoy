@@ -19,7 +19,7 @@ import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 
-import client.shell.Page;
+import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
@@ -190,7 +190,7 @@ public class ABTestEditorDialog extends BorderedDialog
                     if (_parent != null) {
                         _parent.refresh();
                     } else {
-                        Link.go(Page.ADMIN, "testlist");
+                        Link.go(Pages.ADMIN, "testlist");
                     }
                 }
             });
@@ -205,7 +205,7 @@ public class ABTestEditorDialog extends BorderedDialog
                     if (_parent != null) {
                         _parent.refresh();
                     } else {
-                        Link.go(Page.ADMIN, "testlist");
+                        Link.go(Pages.ADMIN, "testlist");
                     }
                 }
             });

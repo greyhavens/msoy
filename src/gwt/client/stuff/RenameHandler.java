@@ -19,7 +19,7 @@ import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.util.Link;
@@ -51,7 +51,7 @@ public class RenameHandler extends ClickCallback<String>
         _item.name = result;
         _models.updateItem(_item);
         // just force a reload of the detail page
-        Link.replace(Page.STUFF, Args.compose(new String[] {
+        Link.replace(Pages.STUFF, Args.compose(new String[] {
                     "d", "" + _item.getType(), "" + _item.itemId,
                     _item.name.replaceAll(" ", "-") }));
         return true;

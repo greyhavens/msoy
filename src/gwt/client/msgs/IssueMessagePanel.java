@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
 
-import client.shell.Page;
+import client.shell.Pages;
 import client.util.Link;
 
 /**
@@ -38,7 +38,7 @@ public class IssueMessagePanel extends SimpleMessagePanel
     {
         super.addInfo(info);
 
-        Widget link = Link.create(_mmsgs.iThread(), Page.WHIRLEDS, "t_" + _threadId);
+        Widget link = Link.create(_mmsgs.iThread(), Pages.WHIRLEDS, "t_" + _threadId);
         link.setStyleName("issueMessageLink");
         link.addStyleName("actionLabel");
         info.add(link);

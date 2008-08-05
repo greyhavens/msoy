@@ -14,7 +14,7 @@ import com.threerings.msoy.item.gwt.ListingCard;
 import client.item.ItemBox;
 import client.item.ItemMessages;
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.Stars;
 
@@ -25,7 +25,7 @@ public class ListingBox extends ItemBox
 {
     public ListingBox (ListingCard listing)
     {
-        super(listing.thumbMedia, listing.name, Page.SHOP,
+        super(listing.thumbMedia, listing.name, Pages.SHOP,
               Args.compose("l", "" + listing.itemType, "" + listing.catalogId), listing.remixable);
 
         String cname = _imsgs.itemBy(listing.creator.toString());

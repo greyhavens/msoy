@@ -10,7 +10,7 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 
 import client.games.TrophyGrid;
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 
 /**
  * Displays a member's recently earned trophies.
@@ -35,7 +35,7 @@ public class TrophiesBlurb extends Blurb
         TrophyGrid.populateTrophyGrid(grid, tvec);
         setContent(grid);
 
-        setFooterLink(CPeople.msgs.seeAll(), Page.GAMES,
+        setFooterLink(CPeople.msgs.seeAll(), Pages.GAMES,
                       Args.compose("t", pdata.name.getMemberId()));
     }
 }

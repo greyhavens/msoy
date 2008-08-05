@@ -16,7 +16,7 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.SimpleDataModel;
 
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -80,7 +80,7 @@ public class RatingsBlurb extends Blurb
 
             ClickListener gameClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Page.GAMES, NaviUtil.gameDetail(
+                    Link.go(Pages.GAMES, NaviUtil.gameDetail(
                                 entry.gameId, NaviUtil.GameDetails.MYRANKINGS));
                 }
             };

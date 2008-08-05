@@ -27,7 +27,7 @@ import com.threerings.msoy.admin.gwt.MemberInviteStatus;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
@@ -57,7 +57,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     displayPlayersInvitedBy(_childList.getResult().memberId);
                 } else {
                     int memberId = _parentList.getResult().memberId;
-                    Link.go(Page.ADMIN, Args.compose("browser", memberId));
+                    Link.go(Pages.ADMIN, Args.compose("browser", memberId));
                 }
             }
         }));
@@ -74,7 +74,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     return;
                 }
                 int memberId = _playerLists.get(index +1).getResult().memberId;
-                Link.go(Page.ADMIN, Args.compose("browser", memberId));
+                Link.go(Pages.ADMIN, Args.compose("browser", memberId));
             }
         }));
         _forwardButton.setEnabled(false);
@@ -196,7 +196,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 buttons.addStyleName("Buttons");
                 buttons.add(new Button("View Profile", new ClickListener() {
                     public void onClick (Widget sender) {
-                        Link.go(Page.PEOPLE, "" + _result.memberId);
+                        Link.go(Pages.PEOPLE, "" + _result.memberId);
                     }
                 }));
                 Widget shim = WidgetUtil.makeShim(1, 25);
@@ -270,7 +270,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 getRowFormatter().addStyleName(row, "DataRow");
                 Label nameLabel = new Label(member.name);
                 nameLabel.addClickListener(
-                    Link.createListener(Page.ADMIN, Args.compose("browser", member.memberId)));
+                    Link.createListener(Pages.ADMIN, Args.compose("browser", member.memberId)));
                 nameLabel.addStyleName("Clickable");
                 _memberIds.put(member.memberId, nameLabel);
                 setWidget(row, NAME_COLUMN, nameLabel);

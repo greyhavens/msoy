@@ -18,7 +18,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.Link;
@@ -36,10 +36,10 @@ public class SearchControls extends SmartTable
         PushButton action;
         if (CPeople.isGuest()) {
             action = MsoyUI.createButton(MsoyUI.LONG_THIN, CPeople.msgs.searchJoin(),
-                                         Link.createListener(Page.ACCOUNT, "create"));
+                                         Link.createListener(Pages.ACCOUNT, "create"));
         } else {
             action = MsoyUI.createButton(MsoyUI.LONG_THIN, CPeople.msgs.searchInvite(),
-                                         Link.createListener(Page.PEOPLE, "invites"));
+                                         Link.createListener(Pages.PEOPLE, "invites"));
         }
         setWidget(0, 0, action, 1, "Action");
         getFlexCellFormatter().setRowSpan(0, 0, 2);
@@ -76,7 +76,7 @@ public class SearchControls extends SmartTable
     public void onClick (Widget sender)
     {
         FlashClients.tutorialEvent("friendsSought");
-        Link.go(Page.PEOPLE, Args.compose("search", "0", getQuery()));
+        Link.go(Pages.PEOPLE, Args.compose("search", "0", getQuery()));
     }
 
     @Override // from Widget

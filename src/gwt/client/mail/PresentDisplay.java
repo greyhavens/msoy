@@ -13,7 +13,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.mail.gwt.PresentPayload;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -44,7 +44,7 @@ public class PresentDisplay extends MailPayloadDisplay
             ClickListener onClick = null;
             if (recipient) {
                 onClick = Link.createListener(
-                    Page.STUFF, Args.compose("d", ""+payload.ident.type, ""+payload.ident.itemId));
+                    Pages.STUFF, Args.compose("d", ""+payload.ident.type, ""+payload.ident.itemId));
                 setWidget(0, 1, WidgetUtil.makeShim(10, 10));
                 setText(0, 2, CMail.msgs.presentRecipTip());
             }

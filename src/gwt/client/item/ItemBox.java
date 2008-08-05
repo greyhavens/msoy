@@ -11,6 +11,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
+import client.shell.Pages;
 import client.ui.ClickBox;
 
 /**
@@ -19,7 +20,7 @@ import client.ui.ClickBox;
  */
 public class ItemBox extends ClickBox
 {
-    public ItemBox (MediaDesc media, String name, String page, String args, boolean remixable)
+    public ItemBox (MediaDesc media, String name, Pages page, String args, boolean remixable)
     {
         super(media, name, page, args);
         addStyleName("itemBox");

@@ -12,6 +12,7 @@ import com.threerings.msoy.web.data.Invitation;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Page;
+import client.shell.Pages;
 import client.shell.TrackingCookie;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -46,12 +47,12 @@ public class LandingPage extends Page
             // only load their invitation and redirect to the main page if they're not logged in
             String inviteId = args.get(1, "");
             if (CShell.activeInvite != null && CShell.activeInvite.inviteId.equals(inviteId)) {
-                Link.go(Page.ME, "");
+                Link.go(Pages.ME, "");
             } else {
                 _membersvc.getInvitation(inviteId, true, new MsoyCallback<Invitation>() {
                     public void onSuccess (Invitation invite) {
                         CShell.activeInvite = invite;
-                        Link.go(Page.ME, "");
+                        Link.go(Pages.ME, "");
                     }
                 });
             }
@@ -67,7 +68,7 @@ public class LandingPage extends Page
                         } else if (group == 2) {
                             setContent(_msgs.titleCreators(), new CreatorsLinksPanel(), false);
                         } else if (group == 3) {
-                            Link.go(Page.ME, "");
+                            Link.go(Pages.ME, "");
                         } else {
                             // group 4, and if test is not running visitors see info page
                             setContent(_msgs.titleCreators(), new CreatorsPanel(), false);
@@ -89,7 +90,7 @@ public class LandingPage extends Page
 
         // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
         } else if (action.equals("creatorsoldlandingtest")) {
-            Link.go(Page.ME, "");
+            Link.go(Pages.ME, "");
 
         } else {
             CShell.frame.closeClient(); // no client on the main guest landing page
@@ -98,9 +99,9 @@ public class LandingPage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return LANDING;
+        return Pages.LANDING;
     }
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);

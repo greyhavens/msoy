@@ -27,7 +27,7 @@ import com.threerings.msoy.mail.gwt.MailServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.ClickCallback;
@@ -104,7 +104,7 @@ public class MailPanel extends VerticalPanel
         @Override // from PagedGrid
         protected void displayPageFromClick (int page)
         {
-            Link.go(Page.MAIL, ""+page);
+            Link.go(Pages.MAIL, ""+page);
         }
 
         @Override // from PagedGrid
@@ -124,7 +124,7 @@ public class MailPanel extends VerticalPanel
                         ((ConvosModel)_model).reset();
                         displayPage(0, true);
                     } else {
-                        Link.go(Page.MAIL, "");
+                        Link.go(Pages.MAIL, "");
                     }
                 }
             }));
@@ -180,7 +180,7 @@ public class MailPanel extends VerticalPanel
 
             Widget link = Link.create(
                 (convo.subject.length() == 0) ? CMail.msgs.mailNoSubject() : convo.subject,
-                Page.MAIL, Args.compose("c", convo.conversationId));
+                Pages.MAIL, Args.compose("c", convo.conversationId));
             setWidget(0, 3, link, 1, "Subject");
             setText(1, 1, convo.lastSnippet, 1, "Snippet");
         }

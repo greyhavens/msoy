@@ -37,7 +37,7 @@ import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.CaptchaException;
 import com.threerings.msoy.web.data.SessionData;
 
-import client.shell.Page;
+import client.shell.Pages;
 import client.shell.Session;
 import client.shell.TrackingCookie;
 import client.ui.DateFields;
@@ -60,7 +60,7 @@ public class CreateAccountPanel extends FlowPanel
         loginLink.add(new Label(CAccount.msgs.createAlreadyMember()));
         PushButton loginButton = MsoyUI.createButton(
             MsoyUI.SHORT_THIN, CAccount.msgs.createLoginLink(),
-            Link.createListener(Page.ACCOUNT, "login"));
+            Link.createListener(Pages.ACCOUNT, "login"));
         loginButton.addClickListener(
             MsoyUI.createTrackingListener("signupLoginButtonClicked", null));
         loginLink.add(loginButton);

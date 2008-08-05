@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 
@@ -27,13 +27,13 @@ public class CreatorsPanel extends SimplePanel
 
         PushButton getStartedButton = new PushButton();
         getStartedButton.setStyleName("GetStartedButton");
-        getStartedButton.addClickListener(Link.createListener(Page.ACCOUNT, "create"));
+        getStartedButton.addClickListener(Link.createListener(Pages.ACCOUNT, "create"));
         getStartedButton.addClickListener(
             MsoyUI.createTrackingListener("creatorsGetStartedClicked", null));
         content.add(getStartedButton, 342, 381);
 
         Image infoImage = MsoyUI.createActionImage("/images/landing/creators_info.jpg",
-            Link.createListener(Page.ACCOUNT, "create"));
+            Link.createListener(Pages.ACCOUNT, "create"));
         infoImage.addClickListener(MsoyUI.createTrackingListener("creatorsInfoImageClicked", null));
         content.add(infoImage, 15, 504);
 

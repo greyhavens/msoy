@@ -17,7 +17,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Page;
+import client.shell.Pages;
 
 /**
  * A utility class with link-related methods.
@@ -29,7 +29,7 @@ public class Link
      */
     public static Widget groupView (String label, int groupId)
     {
-        return create(label, Page.WHIRLEDS, Args.compose("d", groupId));
+        return create(label, Pages.WHIRLEDS, Args.compose("d", groupId));
     }
 
     /**
@@ -37,7 +37,7 @@ public class Link
      */
     public static Widget memberView (String label, int memberId)
     {
-        return create(label, Page.PEOPLE, ""+memberId);
+        return create(label, Pages.PEOPLE, ""+memberId);
     }
 
     /**
@@ -45,14 +45,14 @@ public class Link
      */
     public static Widget memberView (MemberName name)
     {
-        return create(name.toString(), Page.PEOPLE, ""+name.getMemberId());
+        return create(name.toString(), Pages.PEOPLE, ""+name.getMemberId());
     }
 
     /**
      * Returns link that navigates to the specified application page with the specified
      * arguments. A page should use this method to pass itself arguments.
      */
-    public static Widget create (String label, String page, String args)
+    public static Widget create (String label, Pages page, String args)
     {
         Widget link = new ReroutedHyperlink(label, false, createToken(page, args));
         link.addStyleName("inline");
@@ -63,7 +63,7 @@ public class Link
      * Returns link that navigates to the specified application page with the specified
      * arguments. A page should use this method to pass itself arguments.
      */
-    public static Widget createImage (String path, String tip, String page, String args)
+    public static Widget createImage (String path, String tip, Pages page, String args)
     {
         return createHyperlink("<img border=0 src=\"" + path + "\">", tip, page, args);
     }
@@ -73,7 +73,7 @@ public class Link
      * arguments. A page should use this method to pass itself arguments.
      */
     public static Widget createImage (AbstractImagePrototype image,
-                                      String tip, String page, String args)
+                                      String tip, Pages page, String args)
     {
         return createHyperlink(image.getHTML(), tip, page, args);
     }
@@ -83,7 +83,7 @@ public class Link
      * if you can avoid it. Hyperlink does special stuff to make the history mechanism work in some
      * browsers and this breaks that.
      */
-    public static String createHtml (String label, String page, String args)
+    public static String createHtml (String label, Pages page, String args)
     {
         HTML escaper = new HTML();
         escaper.setText(label);
@@ -95,9 +95,9 @@ public class Link
      * Returns a string that can be appended to '#' to link to the specified page with the
      * specified arguments.
      */
-    public static String createToken (String page, String args)
+    public static String createToken (Pages page, String args)
     {
-        String token = page;
+        String token = (page == null) ? "" : page.getPath();
         if (args != null && args.length() > 0) {
             token = token + "-" + args;
         }
@@ -107,7 +107,7 @@ public class Link
     /**
      * Creates a click listener that navigates to the supplied page when activated.
      */
-    public static ClickListener createListener (final String page, final String args)
+    public static ClickListener createListener (final Pages page, final String args)
     {
         return new ClickListener() {
             public void onClick (Widget sender) {
@@ -119,7 +119,7 @@ public class Link
     /**
      * Move to the page in question.
      */
-    public static void go (String page, String args)
+    public static void go (Pages page, String args)
     {
         CShell.frame.navigateTo(createToken(page, args));
     }
@@ -127,7 +127,7 @@ public class Link
     /**
      * Replace the current page with the one specified.
      */
-    public static void replace (String page, String args)
+    public static void replace (Pages page, String args)
     {
         CShell.frame.navigateReplace(createToken(page, args));
     }
@@ -135,7 +135,7 @@ public class Link
     /**
      * A helper function for both {@link #getImageLink}s.
      */
-    protected static Widget createHyperlink (String html, String tip, String page, String args)
+    protected static Widget createHyperlink (String html, String tip, Pages page, String args)
     {
         Widget link = new ReroutedHyperlink(html, true, createToken(page, args));
         if (tip != null) {

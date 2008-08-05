@@ -26,7 +26,7 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 import client.images.msgs.MsgsImages;
 import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
@@ -221,7 +221,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             if (!CShell.isGuest() && CShell.getMemberId() != _message.poster.name.getMemberId()) {
                 String args = Args.compose("w", "m", ""+_message.poster.name.getMemberId());
                 info.add(makeInfoLabel(_mmsgs.inlineMail(),
-                                       Link.createListener(Page.MAIL, args)));
+                                       Link.createListener(Pages.MAIL, args)));
             }
 
             if (_postReply.isEnabled()) {
@@ -271,7 +271,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
             if (_message.issueId > 0) {
                 ClickListener viewClick = Link.createListener(
-                    Page.WHIRLEDS, Args.compose("i", _message.issueId));
+                    Pages.WHIRLEDS, Args.compose("i", _message.issueId));
                 info.add(makeInfoImage(_images.view_issue(),
                                                 _mmsgs.inlineIssue(), viewClick));
 
@@ -285,7 +285,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                                                 _mmsgs.inlineNewIssue(), newClick));
                 info.add(makeInfoImage(_images.assign_issue(), _mmsgs.inlineAssignIssue(),
                                        Link.createListener(
-                                           Page.WHIRLEDS, Args.compose(
+                                           Pages.WHIRLEDS, Args.compose(
                                                "assign", ""+_message.messageId, ""+_page))));
             }
         }

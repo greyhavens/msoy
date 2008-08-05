@@ -15,7 +15,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.Link;
@@ -55,7 +55,7 @@ public class MyRoomsPanel extends VerticalPanel
         public RoomWidget (final MeService.Room room)
         {
             super("Room", 0, 2);
-            ClickListener onClick = Link.createListener(Page.WORLD, "s"+room.sceneId);
+            ClickListener onClick = Link.createListener(Pages.WORLD, "s"+room.sceneId);
             SceneThumbnail sceneImage = new SceneThumbnail(room.sceneId, true);
             sceneImage.addClickListener(onClick);
             setWidget(0, 0, sceneImage);

@@ -21,7 +21,7 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.fora.gwt.Issue;
 
 import client.shell.CShell;
-import client.shell.Page;
+import client.shell.Pages;
 import client.util.Link;
 
 /**
@@ -121,7 +121,7 @@ public class IssueListPanel extends PagedGrid<Issue>
 
             int col = 0;
             Widget toIssue = Link.create(
-                issue.description, Page.WHIRLEDS, _linkPrefix + issue.issueId + _linkPostfix);
+                issue.description, Pages.WHIRLEDS, _linkPrefix + issue.issueId + _linkPostfix);
             setWidget(0, col, toIssue);
             getFlexCellFormatter().setStyleName(0, col++, "Description");
 
@@ -139,13 +139,13 @@ public class IssueListPanel extends PagedGrid<Issue>
             if (issue.state == Issue.STATE_OPEN) {
                 created.add(new Label(_pdate.format(issue.createdTime)));
                 creator = Link.create(
-                    issue.creator.toString(), Page.PEOPLE, "" + issue.creator.getMemberId());
+                    issue.creator.toString(), Pages.PEOPLE, "" + issue.creator.getMemberId());
             } else {
                 if (issue.closedTime != null) {
                     created.add(new Label(_pdate.format(issue.closedTime)));
                 }
                 creator = Link.create(
-                    issue.owner.toString(), Page.PEOPLE, "" + issue.owner.getMemberId());
+                    issue.owner.toString(), Pages.PEOPLE, "" + issue.owner.getMemberId());
             }
             created.add(creator);
             setWidget(0, col, created);

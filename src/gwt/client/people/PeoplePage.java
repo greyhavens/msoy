@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.Pages;
 
 /**
  * Displays a profile's "portal" page with their profile information, friends,
@@ -52,9 +53,9 @@ public class PeoplePage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return PEOPLE;
+        return Pages.PEOPLE;
     }
 
     @Override // from Page

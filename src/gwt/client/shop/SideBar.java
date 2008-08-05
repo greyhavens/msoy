@@ -15,7 +15,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import client.item.ShopUtil;
 import client.shell.DynamicMessages;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 
@@ -49,7 +49,7 @@ public class SideBar extends SmartTable
                     add(MsoyUI.createLabel(name, "Selected"));
                 } else {
                     Widget link = Link.create(
-                        name, Page.SHOP, toLinkArguments(query, type, 0));
+                        name, Pages.SHOP, toLinkArguments(query, type, 0));
                     link.removeStyleName("inline");
                     add(link);
                 }

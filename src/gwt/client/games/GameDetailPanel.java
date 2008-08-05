@@ -23,7 +23,7 @@ import com.threerings.msoy.item.data.all.Game;
 
 import client.comment.CommentsPanel;
 import client.item.ItemRating;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.StyledTabPanel;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -129,7 +129,7 @@ public class GameDetailPanel extends SmartTable
         if (tabCode == _seltab) {
             return true;
         }
-        Link.go(Page.GAMES, NaviUtil.gameDetail(_gameId, tabCode));
+        Link.go(Pages.GAMES, NaviUtil.gameDetail(_gameId, tabCode));
         return false;
     }
 

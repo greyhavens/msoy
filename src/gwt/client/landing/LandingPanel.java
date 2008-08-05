@@ -22,7 +22,7 @@ import com.threerings.msoy.landing.gwt.LandingServiceAsync;
 
 import client.images.landing.LandingImages;
 import client.shell.LogonPanel;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.util.Link;
@@ -54,7 +54,7 @@ public class LandingPanel extends SimplePanel
 
         // join now
         final Button joinButton =
-            new Button("", Link.createListener(Page.ACCOUNT, "create"));
+            new Button("", Link.createListener(Pages.ACCOUNT, "create"));
         joinButton.setStyleName("JoinButton");
         joinButton.addClickListener(
             MsoyUI.createTrackingListener("landingJoinButtonClicked", null));

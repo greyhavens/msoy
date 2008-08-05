@@ -20,7 +20,7 @@ import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -45,7 +45,7 @@ public class GroupsBlurb extends Blurb
         setContent(new GroupsGrid(pdata.groups));
     }
 
-    protected static Widget createEmptyTable (String message, String link, String page, String args)
+    protected static Widget createEmptyTable (String message, String link, Pages page, String args)
     {
         FlowPanel bits = new FlowPanel();
         bits.add(new InlineLabel(message, false, false, true));
@@ -73,7 +73,7 @@ public class GroupsBlurb extends Blurb
                 return super.createEmptyContents();
             }
             return createEmptyTable(CPeople.msgs.notInGroupsSelf(),
-                                    CPeople.msgs.notInGroupsJoin(), Page.WHIRLEDS, "");
+                                    CPeople.msgs.notInGroupsJoin(), Pages.WHIRLEDS, "");
         }
 
         @Override // from PagedGrid
@@ -122,7 +122,7 @@ public class GroupsBlurb extends Blurb
 
             ClickListener groupClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Page.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
+                    Link.go(Pages.WHIRLEDS, Args.compose("d", card.name.getGroupId()));
                 }
             };
             add(new ThumbBox(card.logo, groupClick));

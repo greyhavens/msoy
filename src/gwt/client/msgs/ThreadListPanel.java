@@ -27,7 +27,7 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.shell.Args;
 import client.shell.CShell;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.ui.SearchBox;
@@ -187,11 +187,11 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             if (thread.hasUnreadMessages()) {
                 String args = threadArgs(
                     thread.threadId, thread.lastReadPostIndex, thread.lastReadPostId);
-                toThread = Link.create(thread.subject, Page.WHIRLEDS, args);
+                toThread = Link.create(thread.subject, Pages.WHIRLEDS, args);
                 toThread.setTitle(_mmsgs.tlpFirstUnreadTip());
             } else {
                 toThread = Link.create(
-                    thread.subject, Page.WHIRLEDS, threadArgs(thread.threadId, 0, 0));
+                    thread.subject, Pages.WHIRLEDS, threadArgs(thread.threadId, 0, 0));
             }
             bits.add(toThread);
 
@@ -213,7 +213,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             mrp.add(new Label(_pdate.format(thread.mostRecentPostTime)));
             Widget latest = Link.create(
                 _mmsgs.tlpBy(thread.mostRecentPoster.toString()),
-                Page.WHIRLEDS, threadArgs(thread.threadId, thread.posts-1,
+                Pages.WHIRLEDS, threadArgs(thread.threadId, thread.posts-1,
                 thread.mostRecentPostId));
             latest.setTitle(_mmsgs.tlpLastTip());
             mrp.add(latest);

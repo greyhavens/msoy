@@ -13,7 +13,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameInfo;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -29,7 +29,7 @@ public class GameEntry extends SmartTable
 
         ClickListener onClick = new ClickListener() {
             public void onClick (Widget widget) {
-                Link.go(Page.GAMES, Args.compose("d", game.gameId));
+                Link.go(Pages.GAMES, Args.compose("d", game.gameId));
             }
         };
         setWidget(0, 0, MediaUtil.createMediaView(

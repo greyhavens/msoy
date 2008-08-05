@@ -22,7 +22,7 @@ import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.group.gwt.GroupDetail;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -97,7 +97,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
             add(date);
 
             Widget subject = Link.create(
-                thread.subject, Page.WHIRLEDS, Args.compose("t", thread.threadId));
+                thread.subject, Pages.WHIRLEDS, Args.compose("t", thread.threadId));
             subject.setStyleName("Subject");
             add(subject);
 
@@ -106,7 +106,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
             add(text);
 
             ClickListener posterClick = Link.createListener(
-                Page.PEOPLE, "" + thread.firstPost.poster.name.getMemberId());
+                Pages.PEOPLE, "" + thread.firstPost.poster.name.getMemberId());
             Widget posterIcon = MediaUtil.createMediaView(
                 thread.firstPost.poster.photo, MediaDesc.HALF_THUMBNAIL_SIZE, posterClick);
             posterIcon.setStyleName("PostedByIcon");
@@ -133,7 +133,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
                 repliesText = _msgs.discussionReplies("" + (thread.posts-1));
             }
             Widget replies = Link.create(
-                repliesText, Page.WHIRLEDS, Args.compose("t", thread.threadId));
+                repliesText, Pages.WHIRLEDS, Args.compose("t", thread.threadId));
             replies.setStyleName("Replies");
             add(replies);
         }

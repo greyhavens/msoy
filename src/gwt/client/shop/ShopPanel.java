@@ -35,7 +35,7 @@ import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 
 import client.item.ItemMessages;
 
@@ -136,7 +136,7 @@ public class ShopPanel extends HorizontalPanel
     protected static ClickListener makeClick (ListingCard card)
     {
         return Link.createListener(
-            Page.SHOP, Args.compose("l", "" + card.itemType, "" + card.catalogId));
+            Pages.SHOP, Args.compose("l", "" + card.itemType, "" + card.catalogId));
     }
 
     protected static class TopListingBox extends SmartTable

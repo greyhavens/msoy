@@ -14,7 +14,7 @@ import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.item.ItemMessages;
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -52,7 +52,7 @@ public class AvatarPanel extends FlowPanel
             super("AvatarBox", 0, 0);
 
             ClickListener click = Link.createListener(
-                Page.SHOP, Args.compose("l", "" + card.itemType, "" + card.catalogId));
+                Pages.SHOP, Args.compose("l", "" + card.itemType, "" + card.catalogId));
             setWidget(0, 0, new ThumbBox(card.thumbMedia, MediaDesc.THUMBNAIL_SIZE, click),
                 1, "Thumb");
             getFlexCellFormatter().setRowSpan(0, 0, 2);

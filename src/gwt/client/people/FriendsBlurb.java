@@ -14,7 +14,7 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -42,7 +42,7 @@ public class FriendsBlurb extends Blurb
             } else {
                 setContent(GroupsBlurb.createEmptyTable(
                                CPeople.msgs.noFriendsSelf(), CPeople.msgs.noFriendsFindEm(),
-                               Page.PEOPLE, "search"));
+                               Pages.PEOPLE, "search"));
             }
         } else {
             SmartTable grid = new SmartTable();
@@ -53,7 +53,7 @@ public class FriendsBlurb extends Blurb
         }
 
         setFooterLink(CPeople.msgs.seeAllFriends("" + pdata.totalFriendCount),
-                      Page.PEOPLE, Args.compose("f", pdata.name.getMemberId()));
+                      Pages.PEOPLE, Args.compose("f", pdata.name.getMemberId()));
     }
 
     protected class FriendWidget extends FlowPanel
@@ -63,7 +63,7 @@ public class FriendsBlurb extends Blurb
             setStyleName("Friend");
             ClickListener profileClick = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Page.PEOPLE, "" + card.name.getMemberId());
+                    Link.go(Pages.PEOPLE, "" + card.name.getMemberId());
                 }
             };
             add(new ThumbBox(card.photo, profileClick));

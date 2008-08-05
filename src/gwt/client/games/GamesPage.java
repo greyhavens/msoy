@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.Pages;
 import client.util.NaviUtil.GameDetails;
 
 /**
@@ -56,9 +57,9 @@ public class GamesPage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return GAMES;
+        return Pages.GAMES;
     }
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);

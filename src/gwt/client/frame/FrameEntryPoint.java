@@ -28,7 +28,7 @@ import client.shell.Args;
 import client.shell.BrowserTest;
 import client.shell.CShell;
 import client.shell.FrameHeader;
-import client.shell.Page;
+import client.shell.Pages;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.shell.TitleBar;
@@ -83,7 +83,7 @@ public class FrameEntryPoint
                 } else if (CShell.isGuest()) {
                     History.newItem("");
                 } else {
-                    Link.go(Page.WORLD, "m" + CShell.getMemberId());
+                    Link.go(Pages.WORLD, "m" + CShell.getMemberId());
                 }
             }
         });
@@ -118,11 +118,15 @@ public class FrameEntryPoint
     {
         _currentToken = token;
 
-        String page = (token == null || token.equals("")) ? getLandingPage() : token;
+        Pages page;
+        try {
+            page = Enum.valueOf(Pages.class, token.split("-")[0].toUpperCase());
+        } catch (Exception e) {
+            page = getLandingPage();
+        }
         Args args = new Args();
         int dashidx = token.indexOf("-");
         if (dashidx != -1) {
-            page = token.substring(0, dashidx);
             args.setToken(token.substring(dashidx+1));
         }
 
@@ -159,7 +163,7 @@ public class FrameEntryPoint
         _pageToken = Args.compose(args.splice(0));
 
         // replace the page if necessary
-        if (_pageId == null || !_pageId.equals(page)) {
+        if (_page == null || !_page.equals(page)) {
             setPage(page);
         } else {
             setPageToken(_pageToken, _iframe.getElement());
@@ -174,8 +178,8 @@ public class FrameEntryPoint
     {
         WorldClient.didLogon(data.creds);
 
-        if (_pageId != null) {
-            setPage(_pageId); // reloads the current page
+        if (_page != null) {
+            setPage(_page); // reloads the current page
         } else if (!data.justCreated) {
             onHistoryChanged(_currentToken);
         }
@@ -185,7 +189,7 @@ public class FrameEntryPoint
     public void didLogoff ()
     {
         // clear out any current page
-        _pageId = null;
+        _page = null;
         // reload the current page
         onHistoryChanged(_currentToken);
         // close the Flash client if it's open
@@ -242,9 +246,9 @@ public class FrameEntryPoint
         }
 
         // if we're on a "world" page, go to a landing page
-        if (_currentToken != null && _currentToken.startsWith(Page.WORLD)) {
+        if (_currentToken != null && _currentToken.startsWith(Pages.WORLD.getPath())) {
             // if we were in a game, go to the games page, otherwise go to me
-            Link.go(_currentToken.indexOf("game") == -1 ? Page.ME : Page.GAMES, "");
+            Link.go(_currentToken.indexOf("game") == -1 ? Pages.ME : Pages.GAMES, "");
         }
     }
 
@@ -308,7 +312,7 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
-    public void showContent (String pageId, Widget pageContent)
+    public void showContent (Pages page, Widget pageContent)
     {
         // clear out any old content
         clearContent();
@@ -317,17 +321,14 @@ public class FrameEntryPoint
         clearDialog();
 
         // show the header for everything except the landing pages
-        setHeaderVisible(!Page.LANDING.equals(pageId));
-
-        // TODO
-        String tabPageId = pageId;
+        setHeaderVisible(!Pages.LANDING.equals(page));
 
         // select the appropriate header tab
-        _header.selectTab(tabPageId);
+        _header.selectTab(page.getTab());
 
         int contentTop;
         String contentWidth, contentHeight;
-        if (Page.LANDING.equals(pageId)) {
+        if (Pages.LANDING.equals(page)) {
             closeClient(); // no client on the landing page
             // content takes up whole page
             contentWidth = "100%";
@@ -350,7 +351,7 @@ public class FrameEntryPoint
             contentTop = NAVI_HEIGHT;
             // add a titlebar to the top of the content
             FlowPanel content = new FlowPanel();
-            content.add(_bar = TitleBar.create(tabPageId, new ClickListener() {
+            content.add(_bar = TitleBar.create(page.getTab(), new ClickListener() {
                 public void onClick (Widget sender) {
                     closeContent();
                 }
@@ -417,12 +418,12 @@ public class FrameEntryPoint
         return _client;
     }
 
-    protected void setPage (String pageId)
+    protected void setPage (Pages page)
     {
-        _pageId = pageId;
-        _iframe = new Frame("/gwt/" + _pageId + "/" + _pageId + ".html");
+        _page = page;
+        _iframe = new Frame("/gwt/" + _page.getPath() + "/" + _page.getPath() + ".html");
         _iframe.setStyleName("pageIFrame");
-        showContent(_pageId, _iframe);
+        showContent(_page, _iframe);
     }
 
     protected void clearContent ()
@@ -478,9 +479,9 @@ public class FrameEntryPoint
         });
     }
 
-    protected String getLandingPage ()
+    protected Pages getLandingPage ()
     {
-        return CShell.isGuest() ? Page.LANDING : Page.ME;
+        return CShell.isGuest() ? Pages.LANDING : Pages.ME;
     }
 
     /**
@@ -540,7 +541,7 @@ public class FrameEntryPoint
 
     protected String _currentToken = "";
     protected String _pageToken = "";
-    protected String _pageId;
+    protected Pages _page;
     protected String _closeToken;
 
     protected FrameHeader _header;

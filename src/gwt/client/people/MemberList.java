@@ -19,7 +19,7 @@ import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 
 import client.ui.MemberStatusLabel;
 import client.ui.MsoyUI;
@@ -85,11 +85,11 @@ public class MemberList extends PagedGrid<MemberCard>
 
             setWidget(0, 0, MediaUtil.createMediaView(card.photo, MediaDesc.THUMBNAIL_SIZE,
                                                       Link.createListener(
-                                                      Page.PEOPLE, "" + card.name.getMemberId())),
+                                                      Pages.PEOPLE, "" + card.name.getMemberId())),
                       1, "Photo");
             getFlexCellFormatter().setRowSpan(0, 0, 3);
 
-            setWidget(0, 1, Link.create(card.name.toString(), Page.PEOPLE,
+            setWidget(0, 1, Link.create(card.name.toString(), Pages.PEOPLE,
                                                    ""+card.name.getMemberId()), 1, "Name");
 
             // we'll overwrite these below if we have anything to display
@@ -118,7 +118,7 @@ public class MemberList extends PagedGrid<MemberCard>
             // if we're not a guest, we can send them mail
             if (isNotMe && !CPeople.isGuest()) {
                 onClick = Link.createListener(
-                    Page.MAIL, Args.compose("w", "m", ""+card.name.getMemberId()));
+                    Pages.MAIL, Args.compose("w", "m", ""+card.name.getMemberId()));
                 extras.setWidget(row, 0,
                     MsoyUI.createActionImage("/images/profile/sendmail.png", onClick));
                 extras.setWidget(row++, 1,
@@ -126,7 +126,7 @@ public class MemberList extends PagedGrid<MemberCard>
             }
 
             // always show the visit home button
-            onClick = Link.createListener(Page.WORLD, "m" + card.name.getMemberId());
+            onClick = Link.createListener(Pages.WORLD, "m" + card.name.getMemberId());
             extras.setWidget(row, 0,
                 MsoyUI.createActionImage("/images/profile/visithome.png", onClick));
             extras.setWidget(row++, 1,

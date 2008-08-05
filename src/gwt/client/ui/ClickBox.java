@@ -11,6 +11,7 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 
+import client.shell.Pages;
 import client.util.Link;
 
 /**
@@ -19,7 +20,7 @@ import client.util.Link;
  */
 public class ClickBox extends SmartTable
 {
-    public ClickBox (MediaDesc media, String name, String page, String args)
+    public ClickBox (MediaDesc media, String name, Pages page, String args)
     {
         super("clickBox", 0, 0);
 

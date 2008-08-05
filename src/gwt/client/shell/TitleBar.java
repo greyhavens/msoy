@@ -29,70 +29,81 @@ public class TitleBar extends SmartTable
     /**
      * Creates a title bar for the specified page.
      */
-    public static TitleBar create (String pageId, ClickListener onClose)
+    public static TitleBar create (Frame.Tabs tab, ClickListener onClose)
     {
         SubNaviPanel subnavi = new SubNaviPanel();
         int memberId = CShell.getMemberId();
 
-        if (pageId.equals(Page.ME)) {
-            subnavi.addLink(null, "Me", Page.ME, "");
+        switch (tab) {
+        case ME:
+            subnavi.addLink(null, "Me", Pages.ME, "");
             if (DeploymentConfig.devDeployment) {
-                subnavi.addLink(null, "Passport", Page.ME, "passport");
+                subnavi.addLink(null, "Passport", Pages.ME, "passport");
             }
-            subnavi.addImageLink("/images/me/menu_home.png", "My Home", Page.WORLD,
+            subnavi.addImageLink("/images/me/menu_home.png", "My Home", Pages.WORLD,
                 "m" + memberId);
-            subnavi.addLink(null, "My Rooms", Page.ME, "rooms");
-            subnavi.addLink(null, "My Profile", Page.PEOPLE, "" + memberId);
-            subnavi.addLink(null, "Mail", Page.MAIL, "");
-            subnavi.addLink(null, "Account", Page.ME, "account");
+            subnavi.addLink(null, "My Rooms", Pages.ME, "rooms");
+            subnavi.addLink(null, "My Profile", Pages.PEOPLE, "" + memberId);
+            subnavi.addLink(null, "Mail", Pages.MAIL, "");
+            subnavi.addLink(null, "Account", Pages.ME, "account");
             if (CShell.isSupport()) {
-                subnavi.addLink(null, "Admin", Page.ADMIN, "");
+                subnavi.addLink(null, "Admin", Pages.ADMIN, "");
             }
-
-        } else if (pageId.equals(Page.PEOPLE)) {
+            break;
+            
+        case FRIENDS:
             if (CShell.isGuest()) {
-                subnavi.addLink(null, "Search", Page.PEOPLE, "");
+                subnavi.addLink(null, "Search", Pages.PEOPLE, "");
             } else {
-                subnavi.addLink(null, "My Friends", Page.PEOPLE, "");
-                subnavi.addLink(null, "Invite Friends", Page.PEOPLE, "invites");
+                subnavi.addLink(null, "My Friends", Pages.PEOPLE, "");
+                subnavi.addLink(null, "Invite Friends", Pages.PEOPLE, "invites");
             }
-
-        } else if (pageId.equals(Page.GAMES)) {
-            subnavi.addLink(null, "Games", Page.GAMES, "");
+            break;
+            
+        case GAMES:
+        	subnavi.addLink(null, "Games", Pages.GAMES, "");
             if (!CShell.isGuest()) {
-                subnavi.addLink(null, "My Trophies", Page.GAMES, Args.compose("t", memberId));
+                subnavi.addLink(null, "My Trophies", Pages.GAMES, Args.compose("t", memberId));
             }
-            subnavi.addLink(null, "All Games", Page.GAMES, "g");
+            subnavi.addLink(null, "All Games", Pages.GAMES, "g");
+            break;
 
-        } else if (pageId.equals(Page.WHIRLEDS)) {
-            subnavi.addLink(null, "Whirleds", Page.WHIRLEDS, "");
+        case WHIRLEDS:
+            subnavi.addLink(null, "Whirleds", Pages.WHIRLEDS, "");
             if (!CShell.isGuest()) {
-                subnavi.addLink(null, "My Whirleds", Page.WHIRLEDS, "mywhirleds");
-                subnavi.addLink(null, "My Discussions", Page.WHIRLEDS, "unread");
+                subnavi.addLink(null, "My Whirleds", Pages.WHIRLEDS, "mywhirleds");
+                subnavi.addLink(null, "My Discussions", Pages.WHIRLEDS, "unread");
                 if (CShell.isSupport()) {
-                    subnavi.addLink(null, "Issues", Page.WHIRLEDS, "b");
-                    subnavi.addLink(null, "My Issues", Page.WHIRLEDS, "owned");
+                    subnavi.addLink(null, "Issues", Pages.WHIRLEDS, "b");
+                    subnavi.addLink(null, "My Issues", Pages.WHIRLEDS, "owned");
                 }
             }
+            break;
+            
+        case SHOP:
+            subnavi.addLink(null, "Shop", Pages.SHOP, "");
+            break;
 
-        } else if (pageId.equals(Page.SHOP)) {
-            subnavi.addLink(null, "Shop", Page.SHOP, "");
-
-        } else if (pageId.equals(Page.HELP)) {
-            subnavi.addLink(null, "Help", Page.HELP, "");
+        case HELP:
+            subnavi.addLink(null, "Help", Pages.HELP, "");
             if (CShell.isSupport()) {
-                subnavi.addLink(null, "Admin", Page.SUPPORT, "admin");
+                subnavi.addLink(null, "Admin", Pages.SUPPORT, "admin");
             }
+            break;
+            
+        default:
+        	// nada
+        	break;
         }
 
-        return new TitleBar(pageId, Page.getDefaultTitle(pageId), subnavi, onClose);
+        return new TitleBar(tab, Page.getDefaultTitle(tab), subnavi, onClose);
     }
 
-    public TitleBar (String pageId, String title, SubNaviPanel subnavi, ClickListener onClose)
+    public TitleBar (Frame.Tabs tab, String title, SubNaviPanel subnavi, ClickListener onClose)
     {
         super("pageTitle", 0, 0);
 
-        setWidget(0, 0, createImage(pageId), 3, null);
+        setWidget(0, 0, createImage(tab), 3, null);
 
         _titleLabel = new Label(title);
         _titleLabel.setStyleName("Title");
@@ -136,16 +147,14 @@ public class TitleBar extends SmartTable
         }
     }
 
-    protected Image createImage (String page) {
-        String id = (page.equals(Page.ME) || page.equals(Page.PEOPLE) ||
-                     page.equals(Page.GAMES) || page.equals(Page.WHIRLEDS) ||
-                     page.equals(Page.SHOP) || page.equals(Page.HELP)) ? page : "solid";
+    protected Image createImage (Frame.Tabs tab) {
+        String id = (tab == null) ? "solid" : tab.toString().toLowerCase();
         return new Image("/images/header/" + id + "_cap.png");
     }
 
     protected static class SubNaviPanel extends FlowPanel
     {
-        public void addLink (String iconPath, String label, final String page, final String args) {
+        public void addLink (String iconPath, String label, final Pages page, final String args) {
             addSeparator();
             if (iconPath != null) {
                 add(MsoyUI.createActionImage(iconPath, new ClickListener() {
@@ -158,7 +167,7 @@ public class TitleBar extends SmartTable
             add(Link.create(label, page, args));
         }
 
-        public Image addImageLink (String path, String tip, final String page, final String args) {
+        public Image addImageLink (String path, String tip, final Pages page, final String args) {
             addSeparator();
             Image icon = MsoyUI.createActionImage(path, new ClickListener() {
                 public void onClick (Widget sender) {

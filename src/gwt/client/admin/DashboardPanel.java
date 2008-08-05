@@ -18,7 +18,7 @@ import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.ConnectConfig;
 
-import client.shell.Page;
+import client.shell.Pages;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -51,7 +51,7 @@ public class DashboardPanel extends FlexTable
             }));
             controls.add(new Button(CAdmin.msgs.browserPlayers(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Page.ADMIN, "browser");
+                    Link.go(Pages.ADMIN, "browser");
                 }
             }));
             controls.add(new Button(CAdmin.msgs.spamPlayers(), new ClickListener() {
@@ -62,7 +62,7 @@ public class DashboardPanel extends FlexTable
         }
         controls.add(new Button(CAdmin.msgs.reviewButton(), new ClickListener() {
             public void onClick (Widget sender) {
-                Link.go(Page.ADMIN, "review");
+                Link.go(Pages.ADMIN, "review");
             }
         }));
 
@@ -86,7 +86,7 @@ public class DashboardPanel extends FlexTable
         if (CAdmin.isAdmin()) {
             controls.add(new Button(CAdmin.msgs.viewABTests(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Page.ADMIN, "testlist");
+                    Link.go(Pages.ADMIN, "testlist");
                 }
             }));
         }

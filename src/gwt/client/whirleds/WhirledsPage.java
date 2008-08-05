@@ -15,6 +15,7 @@ import client.msgs.IssuePanel;
 import client.msgs.ThreadPanel;
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 
 public class WhirledsPage extends Page
@@ -116,9 +117,9 @@ public class WhirledsPage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return WHIRLEDS;
+        return Pages.WHIRLEDS;
     }
 
     protected ForumModels _fmodels = new ForumModels();

@@ -26,7 +26,7 @@ import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.data.all.Toy;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.util.FlashClients;
 import client.util.Link;
@@ -78,7 +78,7 @@ public class ItemUtil
         if (item instanceof Game) {
             panel.add(new Button(_cmsgs.detailPlay(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Page.GAMES, Args.compose("d" , ((Game)item).gameId));
+                    Link.go(Pages.GAMES, Args.compose("d" , ((Game)item).gameId));
                 }
             }));
         }

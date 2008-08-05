@@ -17,6 +17,7 @@ import com.threerings.underwire.web.data.AccountName;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 
@@ -67,9 +68,9 @@ public class SupportPage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return SUPPORT;
+        return Pages.SUPPORT;
     }
 
     @Override // from Page

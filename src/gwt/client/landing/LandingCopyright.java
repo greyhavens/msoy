@@ -8,7 +8,7 @@ import java.util.Date;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.DateUtil;
 import client.util.Link;
@@ -34,7 +34,7 @@ public class LandingCopyright extends FlowPanel
         add(MsoyUI.createExternalAnchor(
                 "http://www.threerings.net/about/privacy.html", _msgs.landingPrivacy()));
         add(MsoyUI.createHTML("&nbsp;|&nbsp;", "inline"));
-        add(Link.create(_msgs.landingHelp(), Page.HELP, ""));
+        add(Link.create(_msgs.landingHelp(), Pages.HELP, ""));
     }
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);

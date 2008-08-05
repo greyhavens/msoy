@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.Pages;
 
 public class HelpPage extends Page
 {
@@ -27,9 +28,9 @@ public class HelpPage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return HELP;
+        return Pages.HELP;
     }
 
     @Override // from Page

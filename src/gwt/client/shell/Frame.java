@@ -25,6 +25,9 @@ public interface Frame
     /** The offset of the content close button, from the left edge of the separator bar. */
     public static final int CLOSE_BUTTON_OFFSET = -16;
 
+    /** Enumerates our different header tabs. */
+    public static enum Tabs { ME, FRIENDS, GAMES, WHIRLEDS, SHOP, HELP };
+
     /** Codes for use with our inner frame to top frame RPC mechanism. */
     public static enum Calls {
         GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, SET_TITLE, NAVIGATE_TO, NAVIGATE_REPLACE,
@@ -93,7 +96,7 @@ public interface Frame
     /**
      * Displays the supplied page content.
      */
-    void showContent (String pageId, Widget pageContent);
+    void showContent (Pages page, Widget pageContent);
 
 //     /**
 //      * Logs on with the supplied username and (unencrypted) password.

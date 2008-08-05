@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 
 import client.shell.DynamicMessages;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
 import client.util.ClickCallback;
@@ -113,7 +113,7 @@ public class ProjectSelectionPanel extends FlexTable
                 return true;
             }
             public boolean gotResult (SwiftlyProject newProject) {
-                Link.go(Page.SWIFTLY, "" + newProject.projectId);
+                Link.go(Pages.SWIFTLY, "" + newProject.projectId);
                 return true;
             }
         };
@@ -155,7 +155,7 @@ public class ProjectSelectionPanel extends FlexTable
         while (iter.hasNext()) {
             SwiftlyProject project = iter.next();
             Widget projectLink = Link.create(
-                project.projectName, "swiftly", String.valueOf(project.projectId));
+                project.projectName, Pages.SWIFTLY, String.valueOf(project.projectId));
             _remixableProjectsPanel.add(projectLink);
         }
     }
@@ -195,7 +195,7 @@ public class ProjectSelectionPanel extends FlexTable
             SwiftlyProject project = iter.next();
             HorizontalPanel projectInfo = new HorizontalPanel();
             projectInfo.add(Link.create(
-                project.projectName, "swiftly", String.valueOf(project.projectId)));
+                project.projectName, Pages.SWIFTLY, String.valueOf(project.projectId)));
             /* TODO: Disabled until we figure out how delete should actually work
             if (CSwiftly.ident.memberId == project.ownerId) {
                 projectInfo.add(new DeleteButton(project, ProjectSelectionPanel.this));

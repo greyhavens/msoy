@@ -16,13 +16,11 @@ import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
-
 import client.remix.ItemRemixer;
-
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Page;
-
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -100,7 +98,7 @@ public class StuffPage extends Page
                                 // We didn't have access to that specific item, but have been given
                                 // the catalog id for the prototype.
                                 ItemIdent id = result.ident;
-                                Link.go(Page.SHOP, Args.compose("l", "" + id.type, "" + id.itemId));
+                                Link.go(Pages.SHOP, Args.compose("l", "" + id.type, "" + id.itemId));
                             }
                         }
                     });
@@ -159,7 +157,7 @@ public class StuffPage extends Page
             public void editComplete (Item item) {
                 if (item != null) {
                     _models.updateItem(item);
-                    Link.go(Page.STUFF,
+                    Link.go(Pages.STUFF,
                         Args.compose("d", "" + item.getType(), "" + item.itemId));
                 } else {
                     History.back();
@@ -169,15 +167,9 @@ public class StuffPage extends Page
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return STUFF;
-    }
-
-    @Override // from Page
-    protected String getTabPageId ()
-    {
-        return ME;
+        return Pages.STUFF;
     }
 
     @Override // from Page

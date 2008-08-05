@@ -10,6 +10,7 @@ import client.util.Link;
 
 import client.shell.Args;
 import client.shell.Page;
+import client.shell.Pages;
 
 public class MePage extends Page
 {
@@ -47,14 +48,14 @@ public class MePage extends Page
             FlashClients.tutorialEvent("myWhirledVisited");
 
         } else {
-            Link.go("", ""); // redirect to landing page
+            Link.go(null, ""); // redirect to landing page
         }
     }
 
     @Override
-    public String getPageId ()
+    public Pages getPageId ()
     {
-        return ME;
+        return Pages.ME;
     }
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);

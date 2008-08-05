@@ -11,7 +11,7 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.TrophyCase;
 
 import client.shell.Args;
-import client.shell.Page;
+import client.shell.Pages;
 import client.ui.TongueBox;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -59,7 +59,7 @@ public class TrophyCasePanel extends VerticalPanel
             int ownerId = tcase.owner.getMemberId();
             if (!CGames.isGuest() && CGames.getMemberId() != ownerId) {
                 box.setFooterLink(_msgs.caseCompare(),
-                                  Page.GAMES, Args.compose("ct", ""+shelf.gameId, ""+ownerId));
+                                  Pages.GAMES, Args.compose("ct", ""+shelf.gameId, ""+ownerId));
             }
             add(box);
         }
