@@ -162,7 +162,7 @@ public class FrameEntryPoint
         if (_pageId == null || !_pageId.equals(page)) {
             setPage(page);
         } else {
-            setPageToken(_pageToken);
+            setPageToken(_pageToken, _iframe.getElement());
         }
 
 //         // convert the page to GA format and report it to Google Analytics
@@ -319,8 +319,11 @@ public class FrameEntryPoint
         // show the header for everything except the landing pages
         setHeaderVisible(!Page.LANDING.equals(pageId));
 
-        // select the appropriate header tab (TODO: map page ids to tab ids)
-        _header.selectTab(pageId);
+        // TODO
+        String tabPageId = pageId;
+
+        // select the appropriate header tab
+        _header.selectTab(tabPageId);
 
         int contentTop;
         String contentWidth, contentHeight;
@@ -346,8 +349,8 @@ public class FrameEntryPoint
             contentHeight = (Window.getClientHeight() - NAVI_HEIGHT) + "px";
             contentTop = NAVI_HEIGHT;
             // add a titlebar to the top of the content
-            FlowPanel content = new FlowPanel(); // TODO: pageId -> tabPageId
-            content.add(_bar = TitleBar.create(pageId, new ClickListener() {
+            FlowPanel content = new FlowPanel();
+            content.add(_bar = TitleBar.create(tabPageId, new ClickListener() {
                 public void onClick (Widget sender) {
                     closeContent();
                 }
@@ -417,10 +420,9 @@ public class FrameEntryPoint
     protected void setPage (String pageId)
     {
         _pageId = pageId;
-        Frame iframe = new Frame("/gwt/" + _pageId + "/" + _pageId + ".html");
-        DOM.setElementProperty(iframe.getElement(), "name", "page");
-        iframe.setStyleName("pageIFrame");
-        showContent(_pageId, iframe);
+        _iframe = new Frame("/gwt/" + _pageId + "/" + _pageId + ".html");
+        _iframe.setStyleName("pageIFrame");
+        showContent(_pageId, _iframe);
     }
 
     protected void clearContent ()
@@ -521,12 +523,13 @@ public class FrameEntryPoint
     /**
      * Passes a page's current token down into our page frame.
      */
-    protected static native void setPageToken (String token) /*-{
+    protected static native void setPageToken (String token, Element frame) /*-{
         try {
-            var page = $wnd.frames['page'];
-            page.setPageToken(token);
+            frame.contentWindow.setPageToken(token);
         } catch (e) {
-            // oh well, nothing to be done
+            if ($wnd.console) {
+                $wnd.console.log("Failed to set page token [token=" + token + ", error=" + e + "].");
+            }
         }
     }-*/;
 
@@ -543,6 +546,7 @@ public class FrameEntryPoint
     protected FrameHeader _header;
     protected Widget _content;
     protected TitleBar _bar;
+    protected Frame _iframe;
     protected Panel _client;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
