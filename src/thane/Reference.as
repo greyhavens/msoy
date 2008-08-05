@@ -7,6 +7,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.world.data.ControllableAVRGame;
+import com.threerings.msoy.world.data.ControllableEntity;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
@@ -35,5 +36,6 @@ public class Reference
     MemberInfo;
     MsoyLocation;
     ControllableAVRGame;
+    ControllableEntity;
 }
 }
