@@ -9,7 +9,6 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
@@ -24,10 +23,6 @@ public class CShell
 
     /** Use this to make service calls. */
     public static WebIdent ident;
-
-    /** Our active invitation if we landed at Whirled from an invite, null otherwise (for use if
-     * and when we create an account). */
-    public static Invitation activeInvite;
 
     /** Used to communicate with the frame. */
     public static Frame frame;

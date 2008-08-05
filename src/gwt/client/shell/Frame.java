@@ -5,6 +5,7 @@ package client.shell;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.util.events.FlashEvent;
@@ -35,7 +36,7 @@ public interface Frame
     /** Codes for use with our inner frame to top frame RPC mechanism. */
     public static enum Calls {
         SET_TITLE, NAVIGATE_TO, NAVIGATE_REPLACE, DISPLAY_WORLD_CLIENT, CLOSE_CLIENT, CLOSE_CONTENT,
-        DID_LOGON, GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, CHECK_FLASH_VERSION
+        DID_LOGON, GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, CHECK_FLASH_VERSION, GET_ACTIVE_INVITE
     };
 
     /**
@@ -122,4 +123,9 @@ public interface Frame
      * embed otherwise.
      */
     String checkFlashVersion (int width, int height);
+
+    /**
+     * Returns the invitation via which the current user arrived or null.
+     */
+    Invitation getActiveInvitation ();
 }

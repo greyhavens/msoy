@@ -37,7 +37,7 @@ import client.util.events.FlashEvents;
  * The frame wraps the top-level page HTML and handles displaying the navigation, the page content,
  * and the various clients.
  */
-public class ShellFrameImpl
+public abstract class ShellFrameImpl
     implements Frame, WorldClient.Container, Session.Observer, WindowResizeListener
 {
     /**

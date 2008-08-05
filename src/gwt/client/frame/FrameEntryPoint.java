@@ -24,6 +24,9 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.MemberServiceAsync;
+import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.Args;
@@ -40,6 +43,8 @@ import client.util.ArrayUtil;
 import client.util.FlashClients;
 import client.util.FlashVersion;
 import client.util.Link;
+import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
 
@@ -136,6 +141,26 @@ public class FrameEntryPoint
         }
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
+
+        // do some special processing if this is an invitation link
+        if (page == Pages.ME && args.get(0, "").equals("i") && CShell.isGuest()) {
+            // load up the invitation information and save it
+            String inviteId = args.get(1, "");
+            if (_activeInvite == null || !_activeInvite.inviteId.equals(inviteId)) {
+                _membersvc.getInvitation(inviteId, true, new MsoyCallback<Invitation>() {
+                    public void onSuccess (Invitation invite) {
+                        _activeInvite = invite;
+                        // also configure our tracking cookie
+                        TrackingCookie.save(new ReferralInfo(
+                                                ""+invite.inviter.getMemberId(), EMAIL_VECTOR,
+                                                "", ReferralInfo.makeRandomTracker()), false);
+                    }
+                });
+            }
+            // and send them to the landing page
+            Link.go(Pages.LANDING, "");
+            return;
+        }
 
         // pull the affiliate id out of the URL. it will be of the form: "aid_A_V_C", consisting of
         // three components: the affiliate ID, the entry vector ID, and the creative (ad) ID.
@@ -431,6 +456,12 @@ public class FrameEntryPoint
     	return FlashVersion.checkFlashVersion(width, height);
     }
 
+    // from interface Frame
+    public Invitation getActiveInvitation ()
+    {
+        return _activeInvite;
+    }
+
     // from interface WorldClient.Container
     public void setShowingClient (String closeToken)
     {
@@ -476,7 +507,6 @@ public class FrameEntryPoint
 
     protected void setPage (Pages page)
     {
-        CShell.log("Loading iframe for " + page + ": " + page.getPath() + "...");
         _page = page;
         _iframe = new Frame("/gwt/" + _page.getPath() + "/" + _page.getPath() + ".html");
         _iframe.setStyleName("pageIFrame");
@@ -530,6 +560,8 @@ public class FrameEntryPoint
             return new String[] {
                 checkFlashVersion(Integer.valueOf(args[0]), Integer.valueOf(args[1]))
             };
+        case GET_ACTIVE_INVITE:
+            return _activeInvite == null ? null : _activeInvite.flatten().toArray(new String[0]);
         }
         CShell.log("Got unknown frameCall request [call=" + call + "].");
         return null; // not reached
@@ -683,14 +715,22 @@ public class FrameEntryPoint
     protected Frame _iframe;
     protected Panel _client;
 
+    /** If the user arrived via an invitation, we'll store that here during their session. */
+    protected Invitation _activeInvite;
+
     /** Handles window resizes. */
     protected WindowResizeListener _resizer;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
+        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 
     // constants for our top-level elements
     protected static final String PAGE = "page";
     protected static final String LOADING = "loading";
+
+    /** This vector string represents an email invite */
+    protected static final String EMAIL_VECTOR = "emailInvite";
 
     /** Enumerates our Javascript dependencies. */
     protected static final String[] JS_DEPENDS = {

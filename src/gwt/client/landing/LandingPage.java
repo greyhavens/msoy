@@ -7,10 +7,8 @@ import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
-import com.threerings.msoy.web.data.Invitation;
 
 import client.shell.Args;
-import client.shell.CShell;
 import client.shell.Page;
 import client.shell.Pages;
 import client.shell.TrackingCookie;
@@ -43,26 +41,11 @@ public class LandingPage extends Page
     {
         String action = args.get(0, "");
 
-        if (action.equals("i") && CShell.isGuest()) {
-            // only load their invitation and redirect to the main page if they're not logged in
-            String inviteId = args.get(1, "");
-            if (CShell.activeInvite != null && CShell.activeInvite.inviteId.equals(inviteId)) {
-                Link.go(Pages.ME, "");
-            } else {
-                _membersvc.getInvitation(inviteId, true, new MsoyCallback<Invitation>() {
-                    public void onSuccess (Invitation invite) {
-                        CShell.activeInvite = invite;
-                        Link.go(Pages.ME, "");
-                    }
-                });
-            }
-
         // landing page for creators (a/b test: half see signup, half see info - default is info)
-        } else if (action.equals("creators")) {
+        if (action.equals("creators")) {
             _membersvc.getABTestGroup(
                 TrackingCookie.get(), "jul08CreatorsLanding", true, new MsoyCallback<Integer>() {
                     public void onSuccess (Integer group) {
-                        CShell.frame.closeClient(); // fullscreen
                         if (group == 1) {
                             setContent(_msgs.titleCreators(), new CreatorsSignupPanel(), false);
                         } else if (group == 2) {
@@ -93,7 +76,6 @@ public class LandingPage extends Page
             Link.go(Pages.ME, "");
 
         } else {
-            CShell.frame.closeClient(); // no client on the main guest landing page
             setContent(_msgs.landingTitle(), new LandingPanel(), false);
         }
     }

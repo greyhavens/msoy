@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
@@ -95,6 +96,10 @@ public abstract class Page
                     return frameCall(Frame.Calls.CHECK_FLASH_VERSION,
                                      new String[] { ""+width, ""+height })[0];
                 }
+                public Invitation getActiveInvitation () {
+                    return Invitation.unflatten(
+                        ArrayUtil.toIterator(frameCall(Frame.Calls.GET_ACTIVE_INVITE, null)));
+                }
             };
 
             // obtain our current credentials from the frame
@@ -103,7 +108,6 @@ public abstract class Page
             if (CShell.creds != null) {
                 CShell.ident = new WebIdent(CShell.creds.getMemberId(), CShell.creds.token);
             }
-            // TODO: activeInvite
 
             // and get our current page token from our containing frame
             setPageToken(frameCall(Frame.Calls.GET_PAGE_TOKEN, null)[0]);
@@ -135,6 +139,9 @@ public abstract class Page
                 }
                 public String checkFlashVersion (int width, int height) {
                     return null; // sure man, no problem!
+                }
+                public Invitation getActiveInvitation () {
+                    return null; // we're testing, no one invited us
                 }
             };
 

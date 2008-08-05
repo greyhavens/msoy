@@ -17,6 +17,7 @@ import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
+import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.Analytics;
@@ -30,6 +31,7 @@ import client.shell.ShellFrameImpl;
 import client.shell.TrackingCookie;
 import client.shell.WorldClient;
 import client.util.Link;
+import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
@@ -48,7 +50,11 @@ public class Application
         createMappings();
 
         // initialize the frame
-        CShell.frame = new ShellFrameImpl();
+        CShell.frame = new ShellFrameImpl() {
+            public Invitation getActiveInvitation () {
+                return _activeInvite;
+            }
+        };
 
         // set up the callbackd that our flash clients can call
         configureCallbacks(this, CShell.frame);
@@ -86,8 +92,24 @@ public class Application
 
         CShell.log("Displaying page [page=" + page + ", args=" + args + "].");
 
+        // do some special processing if this is an invitation link
+        if (page == Pages.ME && args.get(0, "").equals("i") && CShell.isGuest()) {
+            // load up the invitation information and save it
+            String inviteId = args.get(1, "");
+            if (_activeInvite == null || !_activeInvite.inviteId.equals(inviteId)) {
+                _membersvc.getInvitation(inviteId, true, new MsoyCallback<Invitation>() {
+                    public void onSuccess (Invitation invite) {
+                        _activeInvite = invite;
+                    }
+                });
+            }
+            // and send them to the landing page
+            Link.go(Pages.LANDING, "");
+            return;
+        }
+
         // pull the affiliate id out of the URL. it will be of the form: "aid_A_V_C", consisting
-        //   of three components: the affiliate ID, the entry vector ID, and the creative (ad) ID.
+        // of three components: the affiliate ID, the entry vector ID, and the creative (ad) ID.
         int aidIdx = args.indexOf("aid");
         int lastIdx = aidIdx + 3;
         if (aidIdx != -1 && args.getArgCount() > lastIdx) {
@@ -272,6 +294,7 @@ public class Application
     }-*/;
 
     protected Page _page;
+    protected Invitation _activeInvite;
     protected Analytics _analytics = new Analytics();
 
     protected Map<Pages, Page.Creator> _creators = new HashMap<Pages, Page.Creator>();
@@ -280,7 +303,6 @@ public class Application
 
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
-
     protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
         ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
 }

@@ -38,7 +38,7 @@ public class WebCreds implements IsSerializable
     public boolean isAdmin;
 
     /**
-     * Unflattens a string created by a call to {@link #flatten}.
+     * Creates and initializes an instance from supplied {@link #flatten}ed string.
      */
     public static WebCreds unflatten (Iterator<String> data)
     {
@@ -57,7 +57,7 @@ public class WebCreds implements IsSerializable
     }
 
     /**
-     * Flattens these creds into a string that can be passed between JavaScript apps.
+     * Flattens this instance into a string that can be passed between JavaScript apps.
      */
     public List<String> flatten ()
     {

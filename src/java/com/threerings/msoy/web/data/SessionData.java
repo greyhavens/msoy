@@ -52,7 +52,7 @@ public class SessionData implements IsSerializable
     }
 
     /**
-     * Flattens this data into a list of strings we can send between frames in the GWT app.
+     * Flattens this instance into a list of strings we can send between frames in the GWT app.
      */
     public List<String> flatten ()
     {
