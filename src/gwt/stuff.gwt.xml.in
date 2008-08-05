@@ -1,6 +1,16 @@
 <module>
+  <inherits name="com.google.gwt.xml.XML"/>
   <inherits name="page"/>
 
+  <source path="com/threerings/msoy/item/data/all"/>
+  <source path="com/threerings/msoy/item/gwt"/>
+  <source path="com/threerings/msoy/game/data/all"/>
+  <source path="com/threerings/msoy/game/gwt"/>
+  <source path="com/threerings/msoy/stuff/gwt"/>
+
+  <source path="client/item"/>
+  <source path="client/remix"/>
+  <source path="client/editem"/>
   <source path="client/stuff"/>
 
   <entry-point class="client.stuff.StuffPage"/>

@@ -9,6 +9,7 @@
   <source path="com/threerings/msoy/comment/gwt"/>
   <source path="com/threerings/msoy/game/data/all"/>
   <source path="com/threerings/msoy/game/gwt"/>
+  <source path="com/threerings/msoy/fora/gwt"/>
   <source path="com/threerings/msoy/group/data/all"/>
   <source path="com/threerings/msoy/group/gwt"/>
   <source path="com/threerings/msoy/stuff/gwt"/>
@@ -17,8 +18,8 @@
   <source path="com/threerings/msoy/person/gwt"/>
   <source path="com/threerings/msoy/profile/gwt"/>
 
-  <source path="client/item"/>
   <source path="client/comment"/>
+  <source path="client/item"/>
   <source path="client/mail"/>
   <source path="client/games"/>
   <source path="client/person"/>

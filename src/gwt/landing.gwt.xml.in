@@ -5,6 +5,7 @@
 
   <source path="com/threerings/msoy/item/data/all"/>
   <source path="com/threerings/msoy/item/gwt"/>
+  <source path="com/threerings/msoy/comment/gwt"/>
   <source path="com/threerings/msoy/fora/gwt"/>
   <source path="com/threerings/msoy/game/data/all"/>
   <source path="com/threerings/msoy/game/gwt"/>
@@ -13,11 +14,12 @@
   <source path="com/threerings/msoy/landing/gwt"/>
 
   <source path="client/item"/>
-  <source path="client/msgs"/>
   <source path="client/account"/>
-  <source path="client/landing"/>
+  <source path="client/comment"/>
   <source path="client/games"/>
+  <source path="client/msgs"/>
   <source path="client/whirleds"/>
+  <source path="client/landing"/>
 
   <entry-point class="client.landing.LandingPage"/>
 </module>

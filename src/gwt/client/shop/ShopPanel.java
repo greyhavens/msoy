@@ -26,6 +26,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import client.ui.HeaderBox;
 import client.ui.Marquee;
 import client.ui.MsoyUI;
+import client.ui.PriceLabel;
 import client.ui.Stars;
 import client.ui.ThumbBox;
 

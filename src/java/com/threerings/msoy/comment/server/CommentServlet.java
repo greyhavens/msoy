@@ -18,6 +18,7 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.underwire.server.SupportLogic;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
@@ -107,7 +108,7 @@ public class CommentServlet extends MsoyServiceServlet
 
         // validate the entity type and id (sort of; we can't *really* validate the id without a
         // bunch of entity specific befuckery which I don't particularly care to do)
-        if (!Comment.isValidType(etype) || eid == 0) {
+        if (!isValidType(etype) || eid == 0) {
             log.warning("Refusing to post comment on illegal entity [entity=" + etype + ":" + eid +
                         ", who=" + mrec.who() +
                         ", text=" + StringUtil.truncate(text, 40, "...") + "].");
@@ -234,6 +235,26 @@ public class CommentServlet extends MsoyServiceServlet
             log.warning("Failed to complain comment [entity=" + etype + ":" + eid +
                     ", who=" + mrec.who() + ", posted=" + posted + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    /**
+     * Returns true if this is a valid comment entity type, false if not.
+     */
+    protected static boolean isValidType (int entityType)
+    {
+        // if it's an item, we must delegate to the Item class
+        if (entityType >= TYPE_ITEM_MIN && entityType <= TYPE_ITEM_MAX) {
+            return Item.getClassForType((byte)entityType) != null;
+        }
+
+        // otherwise make sure we have a constant defined for this type
+        switch (entityType) {
+        case TYPE_ROOM:
+        case TYPE_PROFILE_WALL:
+            return true;
+        default:
+            return false;
         }
     }
 

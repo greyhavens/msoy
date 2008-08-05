@@ -7,7 +7,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.web.data.MemberCard;
 
 /**
@@ -33,26 +32,6 @@ public class Comment
 
     /** The number of comments displayed per page. */
     public static final int COMMENTS_PER_PAGE = 5;
-
-    /**
-     * Returns true if this is a valid comment entity type, false if not.
-     */
-    public static boolean isValidType (int entityType)
-    {
-        // if it's an item, we must delegate to the Item class
-        if (entityType >= TYPE_ITEM_MIN && entityType <= TYPE_ITEM_MAX) {
-            return Item.getClassForType((byte)entityType) != null;
-        }
-
-        // otherwise make sure we have a constant defined for this type
-        switch (entityType) {
-        case TYPE_ROOM:
-        case TYPE_PROFILE_WALL:
-            return true;
-        default:
-            return false;
-        }
-    }
 
     /**
      * Returns true if the specified member can delete a comment.

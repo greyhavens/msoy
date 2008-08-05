@@ -34,6 +34,7 @@ import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
+import client.ui.PriceLabel;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;

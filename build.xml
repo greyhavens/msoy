@@ -214,6 +214,12 @@
   <property name="msgsN.list" value="${msgs1.list},${msgs2.list},${msgs3.list},${msgs4.list}"/>
   <property name="gmsgs.list" value="${msgsN.list},${msgs5.list}"/>
 
+  <!-- enumerate our GWT pages -->
+  <property name="pages1.list" value="account,games,help,landing,mail,me,people"/>
+  <!-- NOTE: admin should be in above list but it's freaking out right now -->
+  <property name="pages2.list" value="shop,stuff,support,swiftly,whirleds,world"/>
+  <property name="gpages.list" value="frame,${pages1.list},${pages2.list}"/>
+
   <!-- declare our classpath -->
   <path id="classpath">
     <pathelement location="${classes.dir}"/>
@@ -416,7 +422,7 @@
   <!-- builds our GWT web client -->
   <property name="gwtc.style" value="OBF"/>
   <if><isset property="full"/><then>
-    <property name="pages" value="msoy,frame"/>
+    <property name="pages" value="msoy,${gpages.list}"/>
   </then><else>
     <property name="pages" value="msoy"/>
   </else></if>

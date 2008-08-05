@@ -29,9 +29,8 @@ import client.editem.EditorHost;
 import client.item.ImageChooserPopup;
 import client.item.ItemUtil;
 import client.shell.CShell;
-import client.shop.CShop;
-import client.shop.PriceLabel;
 import client.ui.MsoyUI;
+import client.ui.PriceLabel;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -141,9 +140,8 @@ public class ItemRemixer extends FlexTable
         }
 
         if (_catalogId != 0) {
-            _catalogsvc.purchaseItem(
-                CShop.ident, _item.getType(), _catalogId, _flowCost, _goldCost,
-                new AsyncCallback<Item>() {
+            _catalogsvc.purchaseItem(CShell.ident, _item.getType(), _catalogId, _flowCost, _goldCost,
+                                     new AsyncCallback<Item>() {
                     public void onSuccess (Item result) {
                         _item = result;
                         _catalogId = 0;
