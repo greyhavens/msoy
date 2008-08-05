@@ -150,10 +150,10 @@ public abstract class Page
 
             Session.addObserver(new Session.Observer() {
                 public void didLogon (SessionData data) {
-                    listener.onHistoryChanged(""); // TODO get our page token from the frame
+                    listener.onHistoryChanged(History.getToken());
                 }
                 public void didLogoff () {
-                    listener.onHistoryChanged(""); // TODO get our page token from the frame
+                    listener.onHistoryChanged(History.getToken());
                 }
             });
             Session.validate();
