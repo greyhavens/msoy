@@ -85,7 +85,9 @@ public class ShareDialog extends FloatingPanel
             System.setClipboard(field.text);
         });
         button.styleName = "copyButton";
+
         box.addChild(button);
+        box.defaultButton = button;
 
         return box;
     }
@@ -114,7 +116,9 @@ public class ShareDialog extends FloatingPanel
         // TODO: Close the dialog on submit
         var ok :CommandButton = new CommandButton(
             Msgs.GENERAL.get("b.email_ok"), MsoyController.EMAIL_SHARE, [emails, message]);
+
         box.addChild(ok);
+        box.defaultButton = ok;
 
         return box;
     }

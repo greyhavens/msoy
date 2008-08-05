@@ -310,8 +310,8 @@ public class MsoyController extends Controller
             out.push(email);
         }
 
-        msvc.emailShare(_mctx.getClient(), out, message.text, new ConfirmAdapter(
-            function (cause :String) :void {
+        msvc.emailShare(_mctx.getClient(), int(getSceneIdString()), out, message.text,
+            new ConfirmAdapter(function (cause :String) :void {
                 trace("failure"); // TODO
             }
         ));

@@ -68,12 +68,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const EMAIL_SHARE :int = 4;
 
     // from interface MemberService
-    public function emailShare (arg1 :Client, arg2 :TypedArray /* of class java.lang.String */, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
+    public function emailShare (arg1 :Client, arg2 :int, arg3 :TypedArray /* of class java.lang.String */, arg4 :String, arg5 :InvocationService_ConfirmListener) :void
     {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener4.listener = arg4;
+        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, EMAIL_SHARE, [
-            arg2, arg3, listener4
+            Integer.valueOf(arg2), arg3, arg4, listener5
         ]);
     }
 

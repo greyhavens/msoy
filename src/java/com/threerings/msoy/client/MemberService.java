@@ -112,5 +112,5 @@ public interface MemberService extends InvocationService
     /**
      * Shares a scene by emailing offsite friends.
      */
-    void emailShare (Client client, String[] emails, String message, ConfirmListener listener);
+    void emailShare (Client client, int sceneId, String[] emails, String message, ConfirmListener listener);
 }
