@@ -277,17 +277,17 @@ public class RoomObjectController extends RoomController
      */
     public function handleRoomEdit () :void
     {
+        // TODO: debounce the button, since we're round-trippin' to the server..
+        if (isRoomEditing()) {
+            cancelRoomEditing();
+            return;
+        }
         _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultWrapper(
             function (cause :String) :void {
                 _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
             },
             function (result :Object) :void {
-                // if we're editing, let's finish, otherwise let's start!
-                if (isRoomEditing()) {
-                    cancelRoomEditing();
-                } else {
-                    beginRoomEditing();
-                }
+                beginRoomEditing();
             }));
     }
 
@@ -556,7 +556,6 @@ public class RoomObjectController extends RoomController
     public function cancelRoomEditing () :void
     {
         _editor.endEditing();
-        _editor = null;
     }
 
     /**
@@ -947,6 +946,7 @@ public class RoomObjectController extends RoomController
                 _music.play(); // restart non-background music
             }
             roomEditBtn.selected = false;
+            _editor = null;
         }
 
         if (_music != null && ! _musicIsBackground) {
@@ -955,9 +955,7 @@ public class RoomObjectController extends RoomController
             _musicIsBackground = true;
         }
 
-        if (_editor == null) { // should be..
-            _editor = new RoomEditorController(_wdctx, _roomObjectView);
-        }
+        _editor = new RoomEditorController(_wdctx, _roomObjectView);
         _editor.startEditing(wrapupFn);
         _editor.updateUndoStatus(_updates.length != 0);
     }

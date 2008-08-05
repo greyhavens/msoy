@@ -51,7 +51,6 @@ import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.Scene;
-import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.ControlBar;
@@ -80,13 +79,6 @@ import com.threerings.msoy.item.data.all.Pet;
 
 import com.threerings.msoy.world.client.MsoySprite;
 import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.editor.DoorTargetEditController;
-import com.threerings.msoy.world.client.editor.ItemUsedDialog;
-import com.threerings.msoy.world.client.editor.RoomEditorController;
-import com.threerings.msoy.world.client.updates.FurniUpdateAction;
-import com.threerings.msoy.world.client.updates.SceneUpdateAction;
-import com.threerings.msoy.world.client.updates.UpdateAction;
-import com.threerings.msoy.world.client.updates.UpdateStack;
 
 import com.threerings.msoy.world.data.ActorInfo;
 import com.threerings.msoy.world.data.AudioData;
@@ -97,14 +89,11 @@ import com.threerings.msoy.world.data.EffectData;
 import com.threerings.msoy.world.data.EntityControl;
 import com.threerings.msoy.world.data.EntityMemoryEntry;
 import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.data.FurniUpdate_Add;
-import com.threerings.msoy.world.data.FurniUpdate_Remove;
 import com.threerings.msoy.world.data.MemberInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
 import com.threerings.msoy.world.data.PetInfo;
 import com.threerings.msoy.world.data.RoomObject;
 import com.threerings.msoy.world.data.RoomPropertyEntry;
-import com.threerings.msoy.world.data.SceneAttrsUpdate;
 
 import com.threerings.msoy.ui.MediaWrapper;
 import com.threerings.msoy.ui.RadialMenu;
