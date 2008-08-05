@@ -12,6 +12,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 
+import com.threerings.gwt.util.CookieUtil;
+
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
@@ -111,8 +113,7 @@ public class Application
         // pull the affiliate id out of the URL. it will be of the form: "aid_A_V_C", consisting
         // of three components: the affiliate ID, the entry vector ID, and the creative (ad) ID.
         int aidIdx = args.indexOf("aid");
-        int lastIdx = aidIdx + 3;
-        if (aidIdx != -1 && args.getArgCount() > lastIdx) {
+        if (aidIdx != -1) {
             String affiliate = args.get(aidIdx + 1, "");
             String vector = args.get(aidIdx + 2, "");
             String creative = args.get(aidIdx + 3, "");
@@ -126,7 +127,13 @@ public class Application
             maybeCreateReferral(affiliate, vector, creative);
 
         } else {
-            maybeCreateReferral("", "", "");
+            // try to load the HTTP referrer info, and manufacture a new referral from that.
+            String ref = CookieUtil.get(ReferralInfo.REFERER_COOKIE);
+            if (ref != null && ref.length() > 0) {
+                maybeCreateReferral(ref, token, "");
+            } else {
+                maybeCreateReferral("", "", "");
+            }
         }
 
         // replace the page if necessary
