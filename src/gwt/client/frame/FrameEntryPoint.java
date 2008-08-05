@@ -13,6 +13,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
@@ -46,15 +47,16 @@ import client.util.events.FlashEvents;
  * handles displaying the Flash client.
  */
 public class FrameEntryPoint
-    implements EntryPoint, HistoryListener, Session.Observer, client.shell.Frame,
-               WorldClient.Container
+    implements EntryPoint, HistoryListener, WindowResizeListener, Session.Observer,
+               client.shell.Frame, WorldClient.Container
 {
     // from interface EntryPoint
     public void onModuleLoad ()
     {
         CShell.frame = this;
 
-        // TODO: listen for resize, resize our client scroller and iframe
+        // listen for window resize so that we can adjust the size of our scrollers
+        Window.addWindowResizeListener(this);
 
         // our main frame never scrolls
         Window.enableScrolling(false);
@@ -176,6 +178,17 @@ public class FrameEntryPoint
 
 //         // convert the page to GA format and report it to Google Analytics
 //         _analytics.report(args.toPath(page));
+    }
+
+    // from interface WindowResizeListener
+    public void onWindowResized (int width, int height)
+    {
+        if (_content != null) {
+            _content.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+        }
+        if (_iframe != null) {
+            _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
+        }
     }
 
     // from interface Session.Observer
@@ -395,6 +408,18 @@ public class FrameEntryPoint
         }
     }
 
+    // from interface Frame
+    public String md5hex (String text)
+    {
+        return nmd5hex(text);
+    }
+
+    // from interface Frame
+    public String checkFlashVersion (int width, int height)
+    {
+    	return FlashVersion.checkFlashVersion(width, height);
+    }
+
     // from interface WorldClient.Container
     public void setShowingClient (String closeToken)
     {
@@ -415,18 +440,6 @@ public class FrameEntryPoint
         // make sure the header is showing as we always want the header above the client
         setHeaderVisible(true);
         _header.selectTab(null);
-    }
-
-    // from interface Frame
-    public String md5hex (String text)
-    {
-        return nmd5hex(text);
-    }
-
-    // from interface Frame
-    public String checkFlashVersion (int width, int height)
-    {
-    	return FlashVersion.checkFlashVersion(width, height);
     }
 
     // from interface WorldClient.Container
