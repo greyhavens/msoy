@@ -38,6 +38,7 @@ public class MsoySceneDirector extends SceneDirector
         ctx :WorldContext, locDir :LocationDirector, repo :SceneRepository)
     {
         super(ctx, locDir, repo, new MsoySceneFactory());
+        _worldctx = ctx;
 
         // ensure that the compiler includes these necessary symbols
         var c :Class = MsoySceneMarshaller;
@@ -94,16 +95,15 @@ public class MsoySceneDirector extends SceneDirector
     // from SceneDirector
     override public function moveSucceeded (placeId :int, config :PlaceConfig) :void
     {
-        var wctx :WorldContext = _ctx as WorldContext;
         var data :MsoyPendingData = _pendingData as MsoyPendingData;
         if (data != null && data.message != null) {
-            wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, data.message);
+            _worldctx.displayFeedback(MsoyCodes.GENERAL_MSGS, data.message);
         }
 
         super.moveSucceeded(placeId, config);
 
         // tell our controller to update the URL of the browser to reflect our new location
-        wctx.getWorldController().wentToScene(_sceneId);
+        _worldctx.getWorldController().wentToScene(_sceneId);
     }
 
     // from SceneDirector
@@ -116,8 +116,7 @@ public class MsoySceneDirector extends SceneDirector
         _departingPortalId = -1;
         super.requestFailed(reason);
 
-        var wctx :WorldContext = _ctx as WorldContext;
-        wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
+        _worldctx.displayFeedback(MsoyCodes.GENERAL_MSGS, reason);
 
         // if we're in the featured place view...
         if (UberClient.isFeaturedPlaceView()) {
@@ -169,7 +168,7 @@ public class MsoySceneDirector extends SceneDirector
         // issue a moveTo request
         log.info("Issuing moveTo(" + data.previousSceneId + "->" + data.sceneId + ", " +
                  sceneVers + ", " + _departingPortalId + ", " + data.destLoc + ").");
-        _mssvc.moveTo(_wctx.getClient(), data.sceneId, sceneVers, _departingPortalId,
+        _mssvc.moveTo(_worldctx.getClient(), data.sceneId, sceneVers, _departingPortalId,
                       data.destLoc, this);
     }
 
@@ -204,8 +203,7 @@ public class MsoySceneDirector extends SceneDirector
      */
     protected function bounceBack (localSceneId :int, remoteSceneId :int, reason :String) :void
     {
-        var wctx :WorldContext = _ctx as WorldContext;
-        var ctrl :WorldController = wctx.getWorldController();
+        var ctrl :WorldController = _worldctx.getWorldController();
 
         // if we tried to move from one scene to another on the same peer, there's nothing to clean
         // up, just update the URL to make GWT happy
@@ -223,7 +221,7 @@ public class MsoySceneDirector extends SceneDirector
         }
 
         // we have nowhere to go back. let's just go home.
-        var memberId :int = wctx.getMemberObject().getMemberId();
+        var memberId :int = _worldctx.getMemberObject().getMemberId();
         if (!MemberName.isGuest(memberId)) {
             log.info("Scene locked, returning home [memberId=" + memberId + "].");
             ctrl.handleGoMemberHome(memberId);
@@ -239,11 +237,13 @@ public class MsoySceneDirector extends SceneDirector
     protected function memberMessageReceived (event :MessageEvent) :void
     {
         if (event.getName() == RoomCodes.FOLLOWEE_MOVED) {
-            var sceneId :int = int(event.getArgs()[0]), wctx :WorldContext = (_ctx as WorldContext);
-            log.info("Following " + wctx.getMemberObject().following + " to " + sceneId + ".");
+            var sceneId :int = int(event.getArgs()[0]);
+            log.info("Following " + _worldctx.getMemberObject().following + " to " + sceneId + ".");
             moveTo(sceneId);
         }
     }
+
+    protected var _worldctx :WorldContext;
 
     protected var _mssvc :MsoySceneService;
     protected var _postMoveMessage :String;
