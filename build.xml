@@ -421,11 +421,7 @@
 
   <!-- builds our GWT web client -->
   <property name="gwtc.style" value="OBF"/>
-  <if><isset property="full"/><then>
-    <property name="pages" value="msoy,${gpages.list}"/>
-  </then><else>
-    <property name="pages" value="msoy"/>
-  </else></if>
+  <property name="pages" value="msoy,${gpages.list}"/>
   <target name="gclient" depends="jprepare,gmsgs"
           description="Rebuilds the GWT client (but only for Mozilla).">
     <for list="${pages}" param="page"><sequential>
