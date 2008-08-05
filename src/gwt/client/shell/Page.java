@@ -61,7 +61,7 @@ public abstract class Page
         // wire ourselves up to the top-level frame
         if (configureCallbacks(this)) {
             // if we're running in standalone page test mode, we do a bunch of stuff
-            CShell.frame = new PageFrame() {
+            CShell.init(new PageFrame() {
                 public void setTitle (String title) {
                     frameCall(Frame.Calls.SET_TITLE, new String[] { title });
                 }
@@ -100,7 +100,7 @@ public abstract class Page
                     return Invitation.unflatten(
                         ArrayUtil.toIterator(frameCall(Frame.Calls.GET_ACTIVE_INVITE, null)));
                 }
-            };
+            });
 
             // obtain our current credentials from the frame
             CShell.creds = WebCreds.unflatten(
@@ -114,7 +114,7 @@ public abstract class Page
 
         } else {
             // if we're running in standalone page test mode, we do a bunch of stuff
-            CShell.frame = new PageFrame() {
+            CShell.init(new PageFrame() {
                 public void setTitle (String title) {
                     Window.setTitle(title == null ? _cmsgs.bareTitle() : _cmsgs.windowTitle(title));
                 }
@@ -143,7 +143,7 @@ public abstract class Page
                 public Invitation getActiveInvitation () {
                     return null; // we're testing, no one invited us
                 }
-            };
+            });
 
             final HistoryListener listener = new HistoryListener() {
                 public void onHistoryChanged (String token) {

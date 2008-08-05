@@ -17,12 +17,14 @@ import com.threerings.msoy.world.gwt.WorldService;
 import com.threerings.msoy.world.gwt.WorldServiceAsync;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
+import client.util.events.GotGuestIdEvent;
 
 /**
  * Handles the MetaSOY main page.
@@ -145,9 +147,9 @@ public class WorldPage extends Page
 
     protected void launchGame (final LaunchConfig config, final int gameOid, String action)
     {
-        // if we were assigned a guest id, make it known to everyone
+    	// if we were assigned a guest id, make it known to everyone
         if (config.guestId != 0) {
-            CWorld.setGuestId(config.guestId);
+        	CShell.frame.dispatchEvent(new GotGuestIdEvent(config.guestId));
         }
 
         switch (config.type) {

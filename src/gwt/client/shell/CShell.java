@@ -13,6 +13,10 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 
+import client.util.events.FlashEvents;
+import client.util.events.GotGuestIdEvent;
+import client.util.events.GotGuestIdListener;
+
 /**
  * Contains a reference to the various bits that we're likely to need in the web client interface.
  */
@@ -60,23 +64,27 @@ public class CShell
     }
 
     /**
-     * When the client logs onto the Whirled as a guest, they let us know what their id is so that
-     * if the guest creates an account we can transfer anything they earned as a guest to their
-     * newly created account. This is also called if a player attempts to play a game without
-     * having first logged into the server.
+     * Initializes the shell and wires up some listeners.
      */
-    public static void setGuestId (int guestId)
+    public static void init (Frame frame)
     {
-        if (getMemberId() > 0) {
-            log("Warning: got guest id but appear to be logged in? " +
-                "[memberId=" + getMemberId() + ", guestId=" + guestId + "].");
-        } else {
-            ident = new WebIdent();
-            ident.memberId = guestId;
-            // TODO: the code that knows how to do this is in MsoyCredentials which is not
-            // accessible to GWT currently for unrelated technical reasons
-            ident.token = "G" + guestId;
-        }
+        CShell.frame = frame;
+
+        FlashEvents.addListener(new GotGuestIdListener() {
+            public void gotGuestId (GotGuestIdEvent event) {
+                if (getMemberId() > 0) {
+                    log("Warning: got guest id but appear to be logged in? " +
+                        "[memberId=" + getMemberId() + ", guestId=" + event.getGuestId() + "].");
+                } else {
+                    log("Got guest id from Flash " + event.getGuestId() + ".");
+                    ident = new WebIdent();
+                    ident.memberId = event.getGuestId();
+                    // TODO: the code that knows how to do this is in MsoyCredentials which is not
+                    // accessible to GWT currently for unrelated technical reasons
+                    ident.token = "G" + event.getGuestId();
+                }
+            }
+        });
     }
 
     /**

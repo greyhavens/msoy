@@ -223,7 +223,15 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     public function itemUsageChangedToGWT (itemType :int, itemId :int, usage :int, loc :int) :void
     {
-        dispatchEventToGWT("ItemUsageChanged", [ itemType, itemId, usage, loc ]);
+        dispatchEventToGWT("itemUsageChanged", [ itemType, itemId, usage, loc ]);
+    }
+
+    /**
+     * Tells GWT that we were assigned a guest id.
+     */
+    public function gotGuestIdToGWT (guestId :int) :void
+    {
+        dispatchEventToGWT("gotGuestId", [ guestId ]);
     }
 
     /**
@@ -236,7 +244,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                 ExternalInterface.call("triggerFlashEvent", eventName, eventArgs);
             }
         } catch (err :Error) {
-            Log.getLog(this).warning("triggerFlashEvent failed: " + err);
+            Log.getLog(this).warning("triggerFlashEvent failed [event=" + eventName +
+                                     ", args=" + eventArgs + ", error=" + err + "].");
         }
     }
 

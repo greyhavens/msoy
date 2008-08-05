@@ -59,7 +59,8 @@ public class FrameEntryPoint
     // from interface EntryPoint
     public void onModuleLoad ()
     {
-        CShell.frame = this;
+        // set up our CShell singleton
+        CShell.init(this);
 
         // our main frame never scrolls
         Window.enableScrolling(false);
@@ -649,9 +650,6 @@ public class FrameEntryPoint
        $wnd.displayPage = function (page, args) {
            @client.frame.FrameEntryPoint::displayPage(Ljava/lang/String;Ljava/lang/String;)(page, args);
        };
-       $wnd.setGuestId = function (guestId) {
-           @client.shell.CShell::setGuestId(I)(guestId);
-       };
        $wnd.clearClient = function () {
             entry.@client.frame.FrameEntryPoint::deferredCloseClient()();
        };
@@ -687,7 +685,8 @@ public class FrameEntryPoint
     /**
      * Forwards a Flash event to the page frame.
      */
-    protected static native void forwardEvent (Element frame, String name, JavaScriptObject args) /*-{
+    protected static native void forwardEvent (
+        Element frame, String name, JavaScriptObject args) /*-{
         try {
             if (frame.contentWindow.triggerEvent) {
                 frame.contentWindow.triggerEvent(name, args);

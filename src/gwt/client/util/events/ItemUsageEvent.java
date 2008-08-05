@@ -9,7 +9,7 @@ import client.util.JavaScriptUtil;
 
 public class ItemUsageEvent extends FlashEvent
 {
-    public static final String NAME = "ItemUsageChanged";
+    public static final String NAME = "itemUsageChanged";
 
     @Override // from FlashEvent
     public String getEventName ()

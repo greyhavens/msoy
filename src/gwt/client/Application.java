@@ -49,12 +49,12 @@ public class Application
         // create our static page mappings
         createMappings();
 
-        // initialize the frame
-        CShell.frame = new ShellFrameImpl() {
+        // set up our CShell singleton
+        CShell.init(new ShellFrameImpl() {
             public Invitation getActiveInvitation () {
                 return _activeInvite;
             }
-        };
+        });
 
         // set up the callbackd that our flash clients can call
         configureCallbacks(this, CShell.frame);
@@ -275,9 +275,6 @@ public class Application
        };
        $wnd.displayPage = function (page, args) {
            @client.Application::displayPage(Ljava/lang/String;Ljava/lang/String;)(page, args);
-       };
-       $wnd.setGuestId = function (guestId) {
-           @client.shell.CShell::setGuestId(I)(guestId);
        };
        $wnd.getReferral = function () {
            return @client.shell.TrackingCookie::getAsObject()();

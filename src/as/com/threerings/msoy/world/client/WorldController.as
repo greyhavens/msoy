@@ -1089,21 +1089,13 @@ public class WorldController extends MsoyController
             if (name != null) {
                 Prefs.setUsername(name.toString());
             }
-
             _wctx.getTopPanel().getHeaderBar().getChatTabs().memberObjectUpdated(memberObj);
 
         } else {
             // if we are a guest, let the GWT application know the guest id as whom we're
             // authenticated so that it can pass that guest id along to the server if we register
             // and the server can transfer any flow we earn as this guest to our new account
-            try {
-                if (ExternalInterface.available) {
-                    ExternalInterface.call("setGuestId", memberObj.getMemberId());
-                }
-            } catch (e :Error) {
-                log.warning("Unable to inform GWT of our guest id " +
-                            "[id=" + memberObj.getMemberId() + "]: " + e);
-            }
+            _wctx.getMsoyClient().gotGuestIdToGWT(memberObj.getMemberId());
         }
 
         if (!_didFirstLogonGo) {
