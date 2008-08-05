@@ -114,11 +114,12 @@ public class ShareDialog extends FloatingPanel
         box.addChild(message);
 
         // TODO: Close the dialog on submit
-        var ok :CommandButton = new CommandButton(
-            Msgs.GENERAL.get("b.email_ok"), MsoyController.EMAIL_SHARE, [emails, message]);
+        var send :CommandButton = new CommandButton(null,
+            MsoyController.EMAIL_SHARE, [emails, message]);
+        send.styleName = "sendButton";
 
-        box.addChild(ok);
-        box.defaultButton = ok;
+        box.addChild(send);
+        box.defaultButton = send;
 
         return box;
     }
@@ -150,7 +151,8 @@ public class ShareDialog extends FloatingPanel
     protected function createSizeButton (code :TextInput, size :int) :RadioButton
     {
         var button :RadioButton = new RadioButton();
-        button.groupName = "embed_size";
+        button.groupName = "embedSize";
+        //button.styleName = "embedSize" + size;
         button.label = Msgs.GENERAL.get("l.embed_size" + size);
         button.labelPlacement = "top";
 
