@@ -64,20 +64,21 @@ public class FriendsListPanel extends FlyingPanel
     public function FriendsListPanel (ctx :WorldContext) :void
     {
         super(ctx);
+        _wctx = ctx;
         showCloseButton = true;
         open();
 
         _cliObs = new ClientAdapter(null, clientDidLogon);
-        _ctx.getClient().addClientObserver(_cliObs);
+        _wctx.getClient().addClientObserver(_cliObs);
 
         // TODO: automatically pop-down when you enter a game ??? (Used to work, but do we want it?)
     }
 
     override public function close () :void
     {
-        _ctx.getMemberObject().removeListener(this);
-        _ctx.getMemberObject().removeListener(_friendsList);
-        _ctx.getClient().removeClientObserver(_cliObs);
+        _wctx.getMemberObject().removeListener(this);
+        _wctx.getMemberObject().removeListener(_friendsList);
+        _wctx.getClient().removeClientObserver(_cliObs);
 
         super.close();
     }
@@ -93,7 +94,7 @@ public class FriendsListPanel extends FlyingPanel
     // part of ClientObserver, adapted by _cliObs
     protected function clientDidLogon (... ignored) :void
     {
-        var memObj :MemberObject = _ctx.getMemberObject();
+        var memObj :MemberObject = _wctx.getMemberObject();
         if (memObj.isGuest()) {
             close();
         } else {
@@ -108,12 +109,12 @@ public class FriendsListPanel extends FlyingPanel
         // styles and positioning
         styleName = "friendsListPanel";
         width = POPUP_WIDTH;
-        var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
+        var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds(); 
         height = placeBounds.height - PADDING * 2;
         x = placeBounds.x + placeBounds.width - width - PADDING;
         y = placeBounds.y + PADDING;
 
-        _friendsList = new PeerList(_ctx, MemberObject.FRIENDS, FriendRenderer);
+        _friendsList = new PeerList(_wctx, MemberObject.FRIENDS, FriendRenderer);
         _friendsList.dataProvider.filterFunction = function (friend :FriendEntry) :Boolean {
             // Only show online friends
             return friend.online;
@@ -135,7 +136,7 @@ public class FriendsListPanel extends FlyingPanel
         addChild(box);
 
         // Create a display name label and a status editor
-        var me :MemberObject = _ctx.getMemberObject();
+        var me :MemberObject = _wctx.getMemberObject();
         _nameLabel = new Label();
         _nameLabel.styleName = "friendLabel";
         _nameLabel.setStyle("fontWeight", "bold");
@@ -203,16 +204,16 @@ public class FriendsListPanel extends FlyingPanel
     {
         _statusEdit.setSelection(0, 0);
         // delay losing focus by a frame so the selection has time to get set correctly.
-        callLater(function () :void { _ctx.getTopPanel().getControlBar().giveChatFocus(); });
+        callLater(function () :void { _wctx.getTopPanel().getControlBar().giveChatFocus(); });
         var newStatus :String = _statusEdit.text;
-        if (newStatus != _ctx.getMemberObject().headline) {
+        if (newStatus != _wctx.getMemberObject().headline) {
             var msvc :MemberService =
-                (_ctx.getClient().requireService(MemberService) as MemberService);
-            msvc.updateStatus(_ctx.getClient(), newStatus, new InvocationAdapter(
+                (_wctx.getClient().requireService(MemberService) as MemberService);
+            msvc.updateStatus(_wctx.getClient(), newStatus, new InvocationAdapter(
                 function (cause :String) :void {
-                    _ctx.displayFeedback(null, cause);
+                    _wctx.displayFeedback(null, cause);
                     // revert to old status
-                    var me :MemberObject = _ctx.getMemberObject();
+                    var me :MemberObject = _wctx.getMemberObject();
                     setStatus(me.headline);
                 }));
         }
@@ -221,11 +222,11 @@ public class FriendsListPanel extends FlyingPanel
     protected function keyUp (event :KeyboardEvent) :void
     {
         if (event.keyCode == Keyboard.ESCAPE) {
-            var me :MemberObject = _ctx.getMemberObject();
+            var me :MemberObject = _wctx.getMemberObject();
             setStatus(me.headline);
             _statusEdit.setSelection(0, 0);
             // delay losing focus by a frame so the selection has time to get set correctly.
-            callLater(_ctx.getTopPanel().getControlBar().giveChatFocus);
+            callLater(_wctx.getTopPanel().getControlBar().giveChatFocus);
         }
     }
 
@@ -241,6 +242,8 @@ public class FriendsListPanel extends FlyingPanel
 
     /** Defined in Java as com.threerings.msoy.person.data.Profile.MAX_STATUS_LENGTH */
     protected static const PROFILE_MAX_STATUS_LENGTH :int = 100;
+
+    protected var _wctx :WorldContext;
 
     protected var _cliObs :ClientAdapter;
     protected var _friendsList :PeerList;
