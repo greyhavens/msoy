@@ -85,7 +85,7 @@ public class TopPanel extends Canvas
 
             // set up the control bar
             _controlBar = controlBar;
-            _controlBar.init(ctx, this);
+            _controlBar.init(this);
             _controlBar.includeInLayout = false;
             _controlBar.setStyle("bottom", 0);
             _controlBar.setStyle("left", 0);

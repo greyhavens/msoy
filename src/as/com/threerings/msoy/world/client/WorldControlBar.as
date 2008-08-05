@@ -53,6 +53,12 @@ import com.threerings.msoy.party.client.PartyPopup;
  */
 public class WorldControlBar extends ControlBar
 {
+    public function WorldControlBar (ctx :WorldContext)
+    {
+        super(ctx);
+        _wctx = ctx;
+    }
+
     /**
      * This is needed by the room controller, so that it can enable/disable the edit button.
      */
@@ -153,7 +159,7 @@ public class WorldControlBar extends ControlBar
         var friendBtn :CommandButton = new CommandButton();
         friendBtn.toolTip = Msgs.GENERAL.get("i.friends");
         friendBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
-            return new FriendsListPanel(_ctx as WorldContext);
+            return new FriendsListPanel(_wctx);
         }, friendBtn));
         friendBtn.styleName = "controlBarFriendButton";
         friendBtn.enabled = true;
@@ -165,7 +171,7 @@ public class WorldControlBar extends ControlBar
             var partyBtn :CommandButton = new CommandButton();
             partyBtn.toolTip = Msgs.GENERAL.get("i.party");
             partyBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
-                return new PartyPopup(_ctx);
+                return new PartyPopup(_wctx);
             }, partyBtn));
             partyBtn.styleName = "controlBarPartyButton";
             partyBtn.enabled = true;
@@ -249,7 +255,7 @@ public class WorldControlBar extends ControlBar
     {
         // if we've already shown the tip, have no chat control or they have been a member for a
         // while, don't show the chat tip
-        var mobj :MemberObject = (_ctx as WorldContext).getMemberObject();
+        var mobj :MemberObject = _wctx.getMemberObject();
         if (_chatTip != null || _chatControl == null || mobj.level >= CHAT_TIP_GRADUATE_LEVEL ||
             Prefs.getSlidingChatHistory()) {
             return;
@@ -279,7 +285,7 @@ public class WorldControlBar extends ControlBar
     {
         // if we have already shown the intro, they are a guest, are not wearing the tofu avatar,
         // or have ever worn any non-tofu avatar, don't show the avatar intro
-        var mobj :MemberObject = (_ctx as WorldContext).getMemberObject();
+        var mobj :MemberObject = _wctx.getMemberObject();
         if (_avatarIntro != null || mobj.isGuest() || mobj.avatar != null ||
             mobj.avatarCache.size() > 0) {
             return;
@@ -302,7 +308,7 @@ public class WorldControlBar extends ControlBar
 
             var go :SimpleButton = (_avatarIntro.getChildByName("btn_gotoshop") as SimpleButton);
             go.addEventListener(MouseEvent.CLICK, function (event :MouseEvent) :void {
-                (_ctx as WorldContext).getWorldController().handleViewAvatarCatalog();
+                _wctx.getWorldController().handleViewAvatarCatalog();
                 fadeOutAndRemove(_avatarIntro);
             });
 
@@ -356,6 +362,9 @@ public class WorldControlBar extends ControlBar
             super.setZoom(newZoom);
         }
     }
+
+    /** Our context, cast as a WorldContext. */
+    protected var _wctx :WorldContext;
 
     /** Are we in room editing mode? */
     protected var _isEditing :Boolean;

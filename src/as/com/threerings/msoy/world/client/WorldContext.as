@@ -138,7 +138,7 @@ public class WorldContext extends MsoyContext
     // from MsoyContext
     override protected function createControlBar () :ControlBar
     {
-        return new WorldControlBar();
+        return new WorldControlBar(this);
     }
 
     // from MsoyContext

@@ -77,9 +77,14 @@ public class ControlBar extends HBox
     public static const ALL_UI_GROUPS :Array = [
         UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, UI_GUEST, UI_VIEWER, UI_CHATREMOVED ];
 
-    public function init (ctx :MsoyContext, top :TopPanel) :void
+    public function ControlBar (ctx :MsoyContext)
     {
         _ctx = ctx;
+        // the rest is in init()
+    }
+
+    public function init (top :TopPanel) :void
+    {
         styleName = "controlBar";
 
         var cls :Class = getStyle("backgroundSkin");

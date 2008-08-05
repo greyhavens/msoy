@@ -231,7 +231,7 @@ public /*abstract*/ class MsoyContext
      */
     protected function createControlBar () :ControlBar
     {
-        return new ControlBar();
+        return new ControlBar(this);
     }
 
     /**
