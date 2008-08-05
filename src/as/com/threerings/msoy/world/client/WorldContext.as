@@ -59,6 +59,14 @@ public class WorldContext extends MsoyContext
     }
 
     /**
+     * Convenience method.
+     */
+    public function getMemberObject () :MemberObject
+    {
+        return (_client.getClientObject() as MemberObject);
+    }
+
+    /**
      * Returns our client casted to a WorldClient.
      */
     public function getWorldClient () :WorldClient
