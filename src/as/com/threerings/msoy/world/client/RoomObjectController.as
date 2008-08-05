@@ -242,19 +242,6 @@ public class RoomObjectController extends RoomController
     }
 
     /**
-     * Toggle the display of the snapshot panel.
-     */
-    public function toggleSnapshotPanel () :void
-    {
-        const ctrl :SnapshotController = getSnapshotController();
-        if (ctrl.isShowing()) {
-            ctrl.destroyPanel();
-        } else {
-            ctrl.showPanel();
-        }
-    }
-
-    /**
      * Handles EDIT_DOOR.
      */
     public function handleEditDoor (furniData :FurniData) :void
@@ -1243,17 +1230,6 @@ public class RoomObjectController extends RoomController
         }
     }
     
-    /**
-     * Return a SnapshotController for this room, creating a new one if necessary.
-     */
-    protected function getSnapshotController () :SnapshotController 
-    {
-        if (!_snapshotController) {
-            _snapshotController = new SnapshotController(_wdctx, _roomView);            
-        }
-        return _snapshotController;        
-    }
-
     /** A casted version of _roomView. */
     protected var _roomObjectView :RoomObjectView;
 
@@ -1286,8 +1262,5 @@ public class RoomObjectController extends RoomController
 
     /** A flag to indicate that the room editor should be opened when the view is un-minimized */
     protected var _openEditor :Boolean = false;
-    
-    /** Controller for taking snapshots of the room **/
-    protected var _snapshotController :SnapshotController;
 }
 }

@@ -43,25 +43,24 @@ public class SnapshotPanel extends FloatingPanel
     public var galleryImage :Snapshot;
     public var sceneThumbnail :Snapshot;
 
-    public function SnapshotPanel (
-        controller: SnapshotController, ctx :WorldContext, view :RoomView)
+    public function SnapshotPanel (ctx :WorldContext)
     {
         super(ctx, Msgs.WORLD.get("t.snap"));
 
-        _view = view;
-        _ctrl = controller;
+        _view = ctx.getTopPanel().getPlaceView() as RoomView;
+        _ctrl = new SnapshotController(ctx, _view, this);
 
         // if the user is permitted to manage the room then enable the taking of canonical snapshots
         _sceneThumbnailPermitted = _view.getRoomController().canManageRoom();
-        
+
         Log.getLog(this).debug("_sceneThumbnailPermitted = "+_sceneThumbnailPermitted);        
-        
-        sceneThumbnail = new Snapshot(view, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
+
+        sceneThumbnail = new Snapshot(_view, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
         sceneThumbnail.updateSnapshot();
-        
-        galleryImage = new Snapshot(view, view.width, view.height);
+
+        // TODO: we want the room bounds, not the room *view* bounds....
+        galleryImage = new Snapshot(_view, _view.width, _view.height);
         galleryImage.updateSnapshot();
-                
         open();
     }
 
@@ -79,12 +78,6 @@ public class SnapshotPanel extends FloatingPanel
     public function get shouldSaveGalleryImage () :Boolean
     {
         return _takeGalleryImage.selected;
-    }
-
-    override public function close () :void
-    {
-        super.close();
-        _ctrl.panelClosed();
     }
 
     protected function takeNewSnapshot (... ignored) :void

@@ -43,6 +43,7 @@ import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.world.client.snapshot.SnapshotPanel;
 
 import com.threerings.msoy.notify.client.NotificationDisplay;
 
@@ -148,7 +149,9 @@ public class WorldControlBar extends ControlBar
 
         _snapBtn = new CommandButton();
         _snapBtn.toolTip = Msgs.GENERAL.get("i.snapshot");
-        _snapBtn.setCommand(WorldController.SNAPSHOT);
+        _snapBtn.setCallback(FloatingPanel.createPopper(function () :SnapshotPanel {
+            return new SnapshotPanel(_wctx);
+        }, _snapBtn));
         _snapBtn.styleName = "controlBarButtonSnapshot";
         _snapBtn.enabled = true;
 

@@ -39,36 +39,11 @@ public class SnapshotController extends Controller
     public static const SCENE_THUMBNAIL_SERVICE :String = "/scenethumbsvc";    
     public static const SCENE_SNAPSHOT_SERVICE :String = "/snapshotsvc";
     
-    public function SnapshotController (ctx :WorldContext, view :RoomView)
+    public function SnapshotController (ctx :WorldContext, view :RoomView, panel :SnapshotPanel)
     {
-        _view = view;
         _ctx = ctx;
-    }
-
-    /**
-     * Idempotent method to open a new snapshot panel if one isn't already open.
-     */
-    public function showPanel () :void 
-    {
-        if (! _panel) {
-            _panel = new SnapshotPanel(this, _ctx, _view);
-        }
-    }
-
-    /**
-     * Idempotent method to discard the current panel.
-     */
-    public function destroyPanel () :void
-    {
-        _panel.close();
-    }
-
-    /**
-     * Return true if this controller is currently showing a panel
-     */
-    public function isShowing () :Boolean 
-    {
-        return null != _panel;
+        _view = view;
+        setControlledPanel(panel);
     }
 
     /** 
@@ -79,14 +54,6 @@ public class SnapshotController extends Controller
     {
         //todo: save the ordinary file here... depends on 
         _ctx.getGameDirector().tutorialEvent("snapshotTaken");
-    }
-    
-    /**
-     * Handle the case that the panel is closed but no action is nseeded.
-     */
-    public function panelClosed () :void 
-    {
-        _panel = null;
     }
     
     public function uploadThumbnail (data:ByteArray) :void
@@ -149,9 +116,7 @@ public class SnapshotController extends Controller
 
     protected function handleError (event :Event) :void
     {
-        if (_panel) {
-            _panel.uploadError(Msgs.WORLD.get("e.snap"));
-        }
+        _panel.uploadError(Msgs.WORLD.get("e.snap"));
     }
 
     protected function handleResult (event :Event) :void
@@ -159,9 +124,9 @@ public class SnapshotController extends Controller
         // no need to overdo it by providing even more confirmation here
     }
 
+    protected var _ctx :WorldContext;
     protected var _panel :SnapshotPanel;
     protected var _view :RoomView;
-    protected var _ctx :WorldContext;
 
     protected static const BOUNDARY :String = "why are you reading the raw http stream?";
 }

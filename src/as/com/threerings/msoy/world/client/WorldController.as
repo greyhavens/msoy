@@ -87,9 +87,6 @@ public class WorldController extends MsoyController
     /** Opens up a new toolbar and a new room editor. */
     public static const ROOM_EDIT :String = "RoomEdit";
 
-    /** Takes a room snapshot. */
-    public static const SNAPSHOT :String = "Snapshot"; 
-
     /** Command to go to a particular place (by Oid). */
     public static const GO_LOCATION :String = "GoLocation";
 
@@ -703,15 +700,6 @@ public class WorldController extends MsoyController
         if (canManageScene()) {
             (_topPanel.getPlaceView() as RoomObjectView).getRoomObjectController().handleRoomEdit();
         }
-    }
-
-    /**
-     * Handle the SNAPSHOT command.
-     */
-    public function handleSnapshot () :void
-    {
-        var room :RoomObjectView = _topPanel.getPlaceView() as RoomObjectView;
-        room.getRoomObjectController().toggleSnapshotPanel();
     }
 
     /**
