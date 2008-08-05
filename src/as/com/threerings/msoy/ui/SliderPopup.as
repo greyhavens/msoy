@@ -27,6 +27,26 @@ import com.threerings.util.Util;
  */
 public class SliderPopup extends Canvas
 {
+    /**
+     * Helper method to either close the currently displayed SliderPopup and show this one,
+     * or untoggle this one if it was already being displayed.
+     */
+    public static function toggle (
+        trigger :DisplayObject, startValue :Number, bindTo :Function,
+        sliderInitProps :Object = null) :void
+    {
+        if (_currentInstance != null) {
+            const skipUp :Boolean = (_currentInstance._trigger == trigger);
+            _currentInstance.destroy();
+            // if we're toggling the same trigger, just pop down
+            if (skipUp) {
+                return;
+            }
+        }
+        _currentInstance = new SliderPopup(trigger, startValue, bindTo, sliderInitProps);
+        _currentInstance.show();
+    }
+
     public function SliderPopup (
         trigger :DisplayObject, startValue :Number, bindTo :Function,
         sliderInitProps :Object = null)
@@ -57,25 +77,25 @@ public class SliderPopup extends Canvas
         BindingUtils.bindSetter(bindTo, _slider, "value");
 
         addChild(_slider);
+
+        addEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false, 0, true);
+        addEventListener(MouseEvent.ROLL_OVER, mouseOverHandler, false, 0, true);
+        _slider.addEventListener(SliderEvent.THUMB_RELEASE, thumbReleaseHandler, false, 0, true);
+
+        visible = false;
+        owner.addChild(this);
+
+        // Setting the skin happens after adding to the parent's draw list -
+        // this ensures styles are properly loaded
+        var cls :Class = getStyle("backgroundSkin");
+        setStyle("backgroundImage", cls);
     }
 
     /** Show the popup, by adding it to the application's display list,
      *  and register for appropriate events. */
     public function show () : void
     {
-        destroyCurrentInstance();
-        
-        owner.addChild(this);
-        addEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false, 0, true);
-        addEventListener(MouseEvent.ROLL_OVER, mouseOverHandler, false, 0, true);
-        _slider.addEventListener(SliderEvent.THUMB_RELEASE, thumbReleaseHandler, false, 0, true);
-        
-        // Setting the skin happens after adding to the parent's draw list -
-        // this ensures styles are properly loaded
-        var cls :Class = getStyle("backgroundSkin");
-        setStyle("backgroundImage", cls);
-
-        _currentInstance = this;
+        visible = true;
     }
 
     /** Makes the pop-up invisible, but doesn't remove it. */
@@ -90,37 +110,9 @@ public class SliderPopup extends Canvas
     public function destroy () :void
     {
         owner.removeChild(this);
-        removeEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false);
-        _currentInstance = null;
-    }
-
-    /**
-     * Helper method to either close the currently displayed SliderPopup and show this one,
-     * or untoggle this one if it was already being displayed.
-     */
-    public static function toggle (
-        trigger :DisplayObject, startValue :Number, bindTo :Function,
-        sliderInitProps :Object = null) :void
-    {
-        if (popupExists() && _currentInstance._trigger == trigger) {
-            destroyCurrentInstance();
-        } else {
-            new SliderPopup(trigger, startValue, bindTo, sliderInitProps).show();
+        if (this == _currentInstance) {
+            _currentInstance = null;
         }
-    }
-
-    /** If an instance exists, hide it. */
-    public static function destroyCurrentInstance () :void
-    {
-        if (_currentInstance != null) {
-            _currentInstance.destroy();
-        }
-    }
-
-    /** Returns true if a visible instance of this window exists. */
-    public static function popupExists () :Boolean
-    {
-        return (_currentInstance != null && _currentInstance.visible);
     }
 
     // EVENT HANDLERS
@@ -131,11 +123,11 @@ public class SliderPopup extends Canvas
         if (event.relatedObject != null) {
             _cursorOffCanvas = true;
 
-            if ( ! event.buttonDown) {
+            if (!event.buttonDown) {
                 // We rolled out into room view, or other element - close up,
                 // but don't delete the object, in case there are still events
                 // queued up for it.
-                hide();
+                destroy();
             }
         }
     }
@@ -148,7 +140,7 @@ public class SliderPopup extends Canvas
     protected function thumbReleaseHandler (event :SliderEvent): void
     {
         if (_cursorOffCanvas) {
-            hide();
+            destroy();
         }
     }
 
