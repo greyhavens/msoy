@@ -245,8 +245,6 @@ public class InviteServlet extends MsoyServiceServlet
             if (inviter != null) {
                 params.set("friend", fromName);
                 params.set("email", inviter.accountName);
-                params.set("referral_params",
-                           makeReferralParams(inviter.memberId+"", EMAIL_VECTOR, null));
             }
             if (!StringUtil.isBlank(toName)) {
                 params.set("name", toName);
@@ -280,13 +278,6 @@ public class InviteServlet extends MsoyServiceServlet
         }
     }
 
-    protected static String makeReferralParams (String affiliate, String vector, String creative)
-    {
-        return "aid_" + (affiliate != null ? affiliate : "") +
-            "_" + (vector != null ? vector : "") +
-            "_" + (creative != null && creative.length() > 0 ? creative : "_");
-    }
-
     protected class NameServiceException extends ServiceException
     {
         public MemberName name;
@@ -300,9 +291,6 @@ public class InviteServlet extends MsoyServiceServlet
 
     protected IntIntMap _webmailAccess = new IntIntMap();
     protected long _waCleared = System.currentTimeMillis();
-
-    /** This vector string represents an email invite */
-    public static final String EMAIL_VECTOR = "emailInvite";
 
     protected static final int MAX_WEB_ACCESS_ATTEMPTS = 5;
     protected static final long WEB_ACCESS_CLEAR_INTERVAL = 5L * 60 * 1000;
