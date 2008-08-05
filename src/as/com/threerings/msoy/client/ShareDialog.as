@@ -138,7 +138,7 @@ public class ShareDialog extends FloatingPanel
         var url :String = _ctx.getTopPanel().root.loaderInfo.loaderURL;
         // TODO: Proper way to get the URL for both rooms and games
         url = url.replace(/(http:\/\/[^\/]*).*/,
-            "$1/#world-m" + _ctx.getMsoyController().getSceneIdString());
+            "$1/#world-s" + _ctx.getMsoyController().getSceneIdString());
 
         var field :TextInput = new TextInput();
         field.text = url;
