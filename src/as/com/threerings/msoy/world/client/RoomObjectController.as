@@ -143,7 +143,7 @@ public class RoomObjectController extends RoomController
     // documentation inherited
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
-        _roomObjectView = new RoomObjectView(ctx as WorldContext, this);
+        _roomObjectView = new RoomObjectView(_wdctx, this);
         _roomView = _roomObjectView;
         return _roomObjectView;
     }
