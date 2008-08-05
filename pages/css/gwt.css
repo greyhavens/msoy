@@ -903,4 +903,5 @@ img, embed, applet, object {
   height: 38px;
   text-align: center;
   padding-top: 8px;
+  white-space: nowrap;
 }

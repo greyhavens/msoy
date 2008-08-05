@@ -187,4 +187,18 @@
   background-image: url(/images/me/passport_header_bg.jpg);
   height: 252px;
   width: 678px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+}
+
+.passport .NextPanel .Description {
+  padding-top: 10px;
+  padding-right: 10px;
+  font-size: 13px;
+}
+
+.passport .NextPanel .Icon {
+  padding-top: 10px;
+  padding-right: 10px;
 }
