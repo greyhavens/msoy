@@ -9,7 +9,9 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.world.data.ControllableAVRGame;
 import com.threerings.msoy.world.data.ControllableEntity;
 import com.threerings.msoy.world.data.MemberInfo;
+import com.threerings.msoy.world.data.MobInfo;
 import com.threerings.msoy.world.data.MsoyLocation;
+import com.threerings.msoy.world.data.ObserverInfo;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -37,5 +39,7 @@ public class Reference
     MsoyLocation;
     ControllableAVRGame;
     ControllableEntity;
+    MobInfo;
+    ObserverInfo;
 }
 }
