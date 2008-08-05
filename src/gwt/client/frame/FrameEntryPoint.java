@@ -485,6 +485,19 @@ public class FrameEntryPoint
     }
 
     /**
+     * Called when Flash wants us to display a page.
+     */
+    protected static void displayPage (String page, String args)
+    {
+    	try {
+    		Link.go(Enum.valueOf(Pages.class, page), args);
+    	} catch (Exception e) {
+    		CShell.log("Unable to display page from Flash [page=" + page + 
+    				   ", args=" + args + "].", e);
+    	}
+    }
+
+    /**
      * Configures top-level functions that can be called by Flash.
      */
     protected static native void configureCallbacks (FrameEntryPoint entry) /*-{
@@ -503,6 +516,9 @@ public class FrameEntryPoint
        };
        $wnd.setWindowTitle = function (title) {
            entry.@client.frame.FrameEntryPoint::setTitle(Ljava/lang/String;)(title);
+       };
+       $wnd.displayPage = function (page, args) {
+           @client.frame.FrameEntryPoint::displayPage(Ljava/lang/String;Ljava/lang/String;)(page, args);
        };
        $wnd.setGuestId = function (guestId) {
            @client.shell.CShell::setGuestId(I)(guestId);
