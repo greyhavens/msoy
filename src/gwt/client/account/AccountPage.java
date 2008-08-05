@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import client.shell.Args;
 import client.shell.Page;
 import client.ui.MsoyUI;
+import client.util.Link;
 
 /**
  * Displays account information.
@@ -29,7 +30,11 @@ public class AccountPage extends Page
     {
         String action = args.get(0, "");
         if (action.equals("create")) {
-            setContent(CAccount.msgs.createTitle(), new CreateAccountPanel());
+            if (CAccount.isGuest()) {
+                setContent(CAccount.msgs.createTitle(), new CreateAccountPanel());
+            } else {
+                Link.go(Page.ME, "");
+            }
 
         } else if (action.equals("login")) {
             setContent(CAccount.msgs.loginPageTitle(), new LoginPagePanel());
