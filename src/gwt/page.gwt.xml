@@ -13,14 +13,12 @@
   <source path="com/threerings/msoy/web/data"/>
   <source path="com/threerings/msoy/web/client"/>
 
-  <source path="client/frame"/>
+  <source path="client/util"/>
+  <source path="client/ui"/>
   <source path="client/images"/>
   <source path="client/shell"/>
-  <source path="client/ui"/>
-  <source path="client/util"/>
-  <public path="public"/>
 
-  <entry-point class="client.frame.FrameEntryPoint"/>
+  <public path="public"/>
 
   <replace-with class="com.threerings.gwt.ui.WidgetUtilImplMozilla">
     <when-type-is class="com.threerings.gwt.ui.WidgetUtilImpl"/>

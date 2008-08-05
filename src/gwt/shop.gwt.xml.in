@@ -1,24 +1,7 @@
 <module>
-  <inherits name="com.google.gwt.user.User"/>
-  <inherits name="com.google.gwt.i18n.I18N"/>
-
-  <source path="org/gwtwidgets/client"/>
-  <source path="com/threerings/io"/>
-  <source path="com/threerings/util"/>
-  <source path="com/threerings/presents/dobj"/>
-  <source path="com/threerings/gwt/ui"/>
-  <source path="com/threerings/gwt/util"/>
-
-  <source path="com/threerings/msoy/data/all"/>
-  <source path="com/threerings/msoy/web/data"/>
-  <source path="com/threerings/msoy/web/client"/>
+  <inherits name="page"/>
 
   <source path="client/shop"/>
-  <source path="client/images"/>
-  <source path="client/shell"/>
-  <source path="client/ui"/>
-  <source path="client/util"/>
-  <public path="public"/>
 
   <entry-point class="client.shop.ShopPage"/>
 </module>

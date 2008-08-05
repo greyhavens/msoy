@@ -1,19 +1,8 @@
 <module>
-  <inherits name="com.google.gwt.user.User"/>
-  <set-property name="user.agent" value="gecko"/>
-  <inherits name="com.google.gwt.i18n.I18N"/>
+  <inherits name="page"/>
 
-  <source path="org/gwtwidgets/client"/>
   <source path="com/kisgergely/gwt/canvas/client"/>
-  <source path="com/threerings/io"/>
-  <source path="com/threerings/util"/>
-  <source path="com/threerings/presents/dobj"/>
-  <source path="com/threerings/gwt/ui"/>
-  <source path="com/threerings/gwt/util"/>
 
-  <source path="com/threerings/msoy/data/all"/>
-  <source path="com/threerings/msoy/web/data"/>
-  <source path="com/threerings/msoy/web/client"/>
   <source path="com/threerings/msoy/item/data/all"/>
   <source path="com/threerings/msoy/item/gwt"/>
   <source path="com/threerings/msoy/fora/gwt"/>
@@ -23,17 +12,12 @@
   <source path="com/threerings/msoy/group/gwt"/>
   <source path="com/threerings/msoy/landing/gwt"/>
 
-  <source path="client/landing"/>
-  <source path="client/whirleds"/>
-  <source path="client/games"/>
-  <source path="client/account"/>
-  <source path="client/msgs"/>
   <source path="client/item"/>
-  <source path="client/images"/>
-  <source path="client/shell"/>
-  <source path="client/ui"/>
-  <source path="client/util"/>
-  <public path="public"/>
+  <source path="client/msgs"/>
+  <source path="client/account"/>
+  <source path="client/landing"/>
+  <source path="client/games"/>
+  <source path="client/whirleds"/>
 
   <entry-point class="client.landing.LandingPage"/>
 </module>

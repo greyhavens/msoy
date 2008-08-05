@@ -455,6 +455,9 @@
         <redirector outputproperty="redirector.out"/>
       </java>
 
+      <!-- delete our temporary .gwt.xml file -->
+      <delete file="${gsrc.dir}/@{page}.gwt.xml"/>
+
       <!-- until the GWT compiler does the right thing echo errors/warnings correctly -->
       <if><contains string="${redirector.out}" substring="[ERROR]"/><then>
           <echo level="error">${redirector.out}</echo>
@@ -1012,6 +1015,7 @@
   <!-- cleans out the compiled GWT bits and caches -->
   <target name="gclean">
     <delete dir="${gwtout.dir}"/>
+    <!-- TODO: remove after next autobuild -->
     <delete><fileset dir="${gsrc.dir}" includes="*.gwt.xml"/></delete>
   </target>
 
