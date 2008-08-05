@@ -260,7 +260,7 @@ public class ControlBar extends HBox
             _ctx, Msgs.CHAT.get("b.send"), this.height, this.height - 4);
         addGroupChild(_chatControl,
             [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR /*,UI_VIEWER*/ ]);
-        addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR /*,UI_VIEWER*/,
+        addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER,
             UI_CHATREMOVED]);
         addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT, UI_VIEWER, UI_CHATREMOVED ]);
         if (_ctx.getTokens().isAdmin()) {

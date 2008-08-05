@@ -50,6 +50,7 @@ public class WorldContext extends MsoyContext
         _mediaDir = new MediaDirector(this);
         // and some we want suppressed in StudioContext
         createWorldDirectors();
+        _controller = new WorldController(this, _topPanel);
     }
 
     // from WhirledContext
@@ -166,7 +167,6 @@ public class WorldContext extends MsoyContext
         _worldDir = new WorldDirector(this);
         _notifyDir = new NotificationDirector(this);
         _memberDir = new MemberDirector(this);
-        _controller = new WorldController(this, _topPanel);
     }
 
     protected var _controller :WorldController;

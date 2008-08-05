@@ -538,8 +538,11 @@ public class MsoyController extends Controller
         // we can only update our idle status if we're not away.
         if (!_away && nowIdle != _idle) {
             _idle = nowIdle;
-            var bsvc :BodyService = _mctx.getClient().requireService(BodyService) as BodyService;
-            bsvc.setIdle(_mctx.getClient(), nowIdle);
+            var bsvc :BodyService = _mctx.getClient().getService(BodyService) as BodyService;
+            // the service may be null if we're in the studio viewer, so just don't worry about it
+            if (bsvc != null) {
+                bsvc.setIdle(_mctx.getClient(), nowIdle);
+            }
         }
     }
 
