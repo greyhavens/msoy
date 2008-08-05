@@ -8,10 +8,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
-
-import com.threerings.gwt.ui.InlineLabel;
 
 import com.threerings.msoy.badge.data.all.Badge;
 
