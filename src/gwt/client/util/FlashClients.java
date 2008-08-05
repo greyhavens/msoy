@@ -3,7 +3,6 @@
 
 package client.util;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
@@ -167,57 +166,6 @@ public class FlashClients
     {
         tutorialEventNative(eventName);
     }
-
-    /**
-     * Helpy helper function.
-     */
-    public static native int getLength (JavaScriptObject array) /*-{
-        return array.length;
-    }-*/;
-
-    /**
-     * Helpy helper function.  Makes it possible to retrieve objects from arrays that are members
-     * of arrays.
-     */
-    public static native JavaScriptObject getJavaScriptElement (JavaScriptObject array,
-        int index) /*-{
-        return array[index];
-    }-*/;
-
-    /**
-     * Helpy helper function.
-     */
-    public static native String getStringElement (JavaScriptObject array, int index) /*-{
-        return array[index];
-    }-*/;
-
-    /**
-     * Helpy helper function.
-     */
-    public static native int getIntElement (JavaScriptObject array, int index) /*-{
-        return array[index];
-    }-*/;
-
-    /**
-     * Helpy helper function.
-     */
-    public static native byte getByteElement (JavaScriptObject array, int index) /*-{
-        return array[index];
-    }-*/;
-
-    /**
-     * Helpy helper function.
-     */
-    public static native boolean getBooleanElement (JavaScriptObject array, int index) /*-{
-        return array[index];
-    }-*/;
-
-    /**
-     * Helpy helper function.
-     */
-    public static native boolean getBoolean (JavaScriptObject value) /*-{
-        return value;
-    }-*/;
 
     /**
      * Checks if we have a specilized flash object to show, and if so, adds it to the container

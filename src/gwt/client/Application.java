@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 
@@ -30,6 +31,8 @@ import client.shell.TrackingCookie;
 import client.shell.WorldClient;
 import client.util.Link;
 import client.util.ServiceUtil;
+import client.util.events.FlashEvent;
+import client.util.events.FlashEvents;
 
 /**
  * Our main application and entry point. This dispatches a requests to the appropriate {@link
@@ -221,6 +224,17 @@ public class Application
     }
 
     /**
+     * Called when Flash wants us to dispatch an event.
+     */
+    protected static void triggerEvent (String eventName, JavaScriptObject args)
+    {
+        FlashEvent event = FlashEvents.createEvent(eventName, args);
+        if (event != null) {
+            FlashEvents.internalDispatchEvent(event);
+        }
+    }
+
+    /**
      * Configures top-level functions that can be called by Flash.
      */
     protected static native void configureCallbacks (Application app, Frame frame) /*-{
@@ -251,6 +265,9 @@ public class Application
        };
        $wnd.toggleClientHeight = function () {
            @client.util.FlashClients::toggleClientHeight()();
+       }
+       $wnd.triggerFlashEvent = function (eventName, args) {
+           @client.Application::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
        }
     }-*/;
 

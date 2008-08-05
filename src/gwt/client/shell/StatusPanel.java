@@ -96,13 +96,13 @@ public class StatusPanel extends SmartTable
         int idx = 0;
         setText(0, idx++, _creds.name.toString());
         setWidget(0, idx++, _levels);
-        FlashEvents.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.FLOW, data.flow, 0));
-        FlashEvents.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.GOLD, data.gold, 0));
-        FlashEvents.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.FLOW, data.flow, 0));
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.GOLD, data.gold, 0));
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
 
         // configure our 'new mail' indicator
         setWidget(0, idx++, _mail);
-        FlashEvents.dispatchEvent(
+        CShell.frame.dispatchEvent(
             new StatusChangeEvent(StatusChangeEvent.MAIL, data.newMailCount, 0));
 
         // add a logoff link

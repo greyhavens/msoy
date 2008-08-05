@@ -5,28 +5,37 @@ package client.util.events;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-import client.util.FlashClients;
+import client.util.JavaScriptUtil;
 
 public class ItemUsageEvent extends FlashEvent
 {
     public static final String NAME = "ItemUsageChanged";
 
-    @Override // FlashEvent
+    @Override // from FlashEvent
     public String getEventName ()
     {
         return NAME;
     }
 
-    @Override // FlashEvent
-    public void readFlashArgs (JavaScriptObject args)
+    @Override // from FlashEvent
+    public void fromJSObject (JavaScriptObject args)
     {
-        _type = FlashClients.getByteElement(args, 0);
-        _id = FlashClients.getIntElement(args, 1);
-        _usage = FlashClients.getByteElement(args, 2);
-        _loc = FlashClients.getIntElement(args, 3);
+        _type = JavaScriptUtil.getByteElement(args, 0);
+        _id = JavaScriptUtil.getIntElement(args, 1);
+        _usage = JavaScriptUtil.getByteElement(args, 2);
+        _loc = JavaScriptUtil.getIntElement(args, 3);
     }
 
-    @Override // FlashEvent
+    @Override // from FlashEvent
+    public void toJSObject (JavaScriptObject args)
+    {
+        JavaScriptUtil.setByteElement(args, 0, _type);
+        JavaScriptUtil.setIntElement(args, 1, _id);
+        JavaScriptUtil.setByteElement(args, 2, _usage);
+        JavaScriptUtil.setIntElement(args, 3, _loc);
+    }
+
+    @Override // from FlashEvent
     public void notifyListener (FlashEventListener listener)
     {
         if (listener instanceof ItemUsageListener) {

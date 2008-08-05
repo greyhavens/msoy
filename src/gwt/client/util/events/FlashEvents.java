@@ -17,10 +17,6 @@ import client.shell.CShell;
  */
 public class FlashEvents
 {
-    static {
-        configureEventCallback();
-    }
-
     /**
      * Registers an event listener to be notified when events arrive from the Flash client (or are
      * dispatched locally).
@@ -29,7 +25,7 @@ public class FlashEvents
     {
         String name = nameForListener(listener);
         if (name != null) {
-            ListenerList.addListener(_eventListeners, name, listener);
+            ListenerList.addListener(getLLMap(), name, listener);
         }
     }
 
@@ -40,37 +36,36 @@ public class FlashEvents
     {
         String name = nameForListener(listener);
         if (name != null) {
-            ListenerList.removeListener(_eventListeners, name, listener);
+            ListenerList.removeListener(getLLMap(), name, listener);
         }
     }
 
     /**
-     * Dispatches an event to all registered listeners.
+     * Creates an event object from the supplied Flash event data.
      */
-    public static void dispatchEvent (final FlashEvent event)
+    public static FlashEvent createEvent (String eventName, JavaScriptObject args)
     {
-        ListenerList<FlashEventListener> listeners = _eventListeners.get(event.getEventName());
+        FlashEvent event = eventForName(eventName);
+        if (event != null) {
+            event.fromJSObject(args);
+        }
+        return event;
+    }
+
+    /**
+     * Internal method used by FrameEntryPoint or Page to dispatch an event to all registered
+     * listeners. Don't use this method, use {@link Frame#dispatchEvent} which properly routes the 
+     * event through the top-level frame and back down to the inner page. 
+     */
+    public static void internalDispatchEvent (final FlashEvent event)
+    {
+        ListenerList<FlashEventListener> listeners = getLLMap().get(event.getEventName());
         if (listeners != null) {
             listeners.notify(new ListenerList.Op<FlashEventListener>() {
                 public void notify (FlashEventListener listener) {
                     event.notifyListener(listener);
                 }
             });
-        }
-    }
-
-    /**
-     * Called through the JavaScript bridge to dispatch an event that arrived from Flash.
-     */
-    protected static void triggerEvent (String eventName, JavaScriptObject args)
-    {
-        if (!_eventListeners.containsKey(eventName)) {
-            return; // if no one is listening, stop here
-        }
-        FlashEvent event = eventForName(eventName);
-        if (event != null) {
-            event.readFlashArgs(args);
-            dispatchEvent(event);
         }
     }
 
@@ -110,12 +105,14 @@ public class FlashEvents
         }
     }
 
-    protected static native void configureEventCallback () /*-{
-        $wnd.triggerFlashEvent = function (eventName, args) {
-            @client.util.events.FlashEvents::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
+    /** We have to do this kookiness because methods in this class can be called from JSNI methods
+     * which seem not to inoke the static initializers of the class before doing so. */
+    protected static Map<String, ListenerList<FlashEventListener>> getLLMap () {
+        if (_eventListeners == null) {
+            _eventListeners = new HashMap<String, ListenerList<FlashEventListener>>();
         }
-    }-*/;
+        return _eventListeners;
+    }
 
-    protected static Map<String, ListenerList<FlashEventListener>> _eventListeners =
-        new HashMap<String, ListenerList<FlashEventListener>>();
+    protected static Map<String, ListenerList<FlashEventListener>> _eventListeners;
 }

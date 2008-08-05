@@ -9,7 +9,6 @@ import com.google.gwt.core.client.GWT;
 
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
-import client.util.events.FlashEvents;
 import client.util.events.StatusChangeEvent;
 
 import com.threerings.msoy.mail.gwt.ConvMessage;
@@ -37,7 +36,7 @@ public class ConvosModel extends ServiceBackedDataModel<Conversation, MailServic
         }
 
         // now dispatch an event indicating our new unread mail count
-        FlashEvents.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, unread, unread+1));
+        CMail.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, unread, unread+1));
     }
 
     /**

@@ -16,7 +16,12 @@ public abstract class FlashEvent
      * Pull the expected values for this event out of the JavaScriptObject, using the utility
      * functions in FlashClients.
      */
-    public abstract void readFlashArgs (JavaScriptObject args);
+    public abstract void fromJSObject (JavaScriptObject args);
+
+    /**
+     * Converts this object back into a JavaScriptObject, using the utility methods in FlashClients.
+     */
+    public abstract void toJSObject (JavaScriptObject args);
 
     /**
      * Events with the associated listener interface should implement this function and

@@ -44,7 +44,6 @@ import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
-import client.util.events.FlashEvents;
 import client.util.events.NameChangeEvent;
 
 /**
@@ -320,7 +319,7 @@ public class ProfileBlurb extends Blurb
             public void onSuccess (Void result) {
                 displayProfile();
                 if (!name.equals(CPeople.creds.name.toString())) {
-                    FlashEvents.dispatchEvent(new NameChangeEvent(name));
+                    CPeople.frame.dispatchEvent(new NameChangeEvent(name));
                 }
                 FlashClients.tutorialEvent("profileEdited");
             }

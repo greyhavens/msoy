@@ -5,6 +5,8 @@ package client.shell;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import client.util.events.FlashEvent;
+
 /**
  * Provides a means by which the pages can interact with the frame.
  */
@@ -97,6 +99,11 @@ public interface Frame
      * Displays the supplied page content.
      */
     void showContent (Pages page, Widget pageContent);
+
+    /**
+     * Dispatches a Flash event to all registered listeners.
+     */
+    void dispatchEvent (FlashEvent event);
 
 //     /**
 //      * Logs on with the supplied username and (unencrypted) password.

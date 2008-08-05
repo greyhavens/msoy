@@ -5,6 +5,7 @@ package client.frame;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
@@ -37,6 +38,8 @@ import client.shell.WorldClient;
 import client.util.FlashClients;
 import client.util.FlashVersion;
 import client.util.Link;
+import client.util.events.FlashEvent;
+import client.util.events.FlashEvents;
 
 /**
  * Handles the outer shell of the Whirled web application. Loads pages into an iframe and also
@@ -378,6 +381,20 @@ public class FrameEntryPoint
         }
     }
 
+    // from interface Frame
+    public void dispatchEvent (FlashEvent event)
+    {
+        // dispatch the event locally
+        FlashEvents.internalDispatchEvent(event);
+
+        // forward the event to our subpage
+        if (_iframe != null) {
+            JavaScriptObject args = JavaScriptObject.createArray();
+            event.toJSObject(args);
+            forwardEvent(_iframe.getElement(), event.getEventName(), args);
+        }
+    }
+
     // from interface WorldClient.Container
     public void setShowingClient (String closeToken)
     {
@@ -502,6 +519,17 @@ public class FrameEntryPoint
     }
 
     /**
+     * Called when Flash or our inner Page frame wants us to dispatch an event.
+     */
+    protected void triggerEvent (String eventName, JavaScriptObject args)
+    {
+        FlashEvent event = FlashEvents.createEvent(eventName, args);
+        if (event != null) {
+            dispatchEvent(event);
+        }
+    }
+
+    /**
      * Called when Flash wants us to display a page.
      */
     protected static void displayPage (String page, String args)
@@ -552,6 +580,9 @@ public class FrameEntryPoint
        $wnd.toggleClientHeight = function () {
            @client.util.FlashClients::toggleClientHeight()();
        }
+       $wnd.triggerFlashEvent = function (eventName, args) {
+           entry.@client.frame.FrameEntryPoint::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
+       }
     }-*/;
 
     /**
@@ -563,6 +594,19 @@ public class FrameEntryPoint
         } catch (e) {
             if ($wnd.console) {
                 $wnd.console.log("Failed to set page token [token=" + token + ", error=" + e + "].");
+            }
+        }
+    }-*/;
+
+    /**
+     * Forwards a Flash event to the page frame.
+     */
+    protected static native void forwardEvent (Element frame, String name, JavaScriptObject args) /*-{
+        try {
+            frame.contentWindow.triggerEvent(name, args);
+        } catch (e) {
+            if ($wnd.console) {
+                $wnd.console.log("Failed to forward event [name=" + name + ", error=" + e + "].");
             }
         }
     }-*/;

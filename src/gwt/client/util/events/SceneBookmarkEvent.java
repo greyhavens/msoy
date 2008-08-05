@@ -5,7 +5,7 @@ package client.util.events;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-import client.util.FlashClients;
+import client.util.JavaScriptUtil;
 
 /**
  * Notifies when a scene is added or removed.
@@ -21,12 +21,6 @@ public class SceneBookmarkEvent extends FlashEvent
     /** The name of this event type: defined in BaseClient.as. */
     public static final String NAME = "sceneBookmark";
 
-    @Override // FlashEvent
-    public String getEventName ()
-    {
-        return NAME;
-    }
-
     public SceneBookmarkEvent ()
     {
     }
@@ -38,15 +32,29 @@ public class SceneBookmarkEvent extends FlashEvent
         _sceneId = sceneId;
     }
 
-    @Override // FlashEvent
-    public void readFlashArgs (JavaScriptObject args)
+    @Override // from FlashEvent
+    public String getEventName ()
     {
-        _action = FlashClients.getIntElement(args, 0);
-        _sceneName = FlashClients.getStringElement(args, 1);
-        _sceneId = FlashClients.getIntElement(args, 2);
+        return NAME;
     }
 
-    @Override // FlashEvent
+    @Override // from FlashEvent
+    public void fromJSObject (JavaScriptObject args)
+    {
+        _action = JavaScriptUtil.getIntElement(args, 0);
+        _sceneName = JavaScriptUtil.getStringElement(args, 1);
+        _sceneId = JavaScriptUtil.getIntElement(args, 2);
+    }
+
+    @Override // from FlashEvent
+    public void toJSObject (JavaScriptObject args)
+    {
+        JavaScriptUtil.setIntElement(args, 0, _action);
+        JavaScriptUtil.setStringElement(args, 1, _sceneName);
+        JavaScriptUtil.setIntElement(args, 2, _sceneId);
+    }
+
+    @Override // from FlashEvent
     public void notifyListener (FlashEventListener listener)
     {
         if (listener instanceof SceneBookmarkListener) {

@@ -5,7 +5,7 @@ package client.util.events;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-import client.util.FlashClients;
+import client.util.JavaScriptUtil;
 
 public class StatusChangeEvent extends FlashEvent
 {
@@ -29,21 +29,29 @@ public class StatusChangeEvent extends FlashEvent
         _oldValue = oldValue;
     }
 
-    @Override // FlashEvent
+    @Override // from FlashEvent
     public String getEventName ()
     {
         return NAME;
     }
 
-    @Override // FlashEvent
-    public void readFlashArgs (JavaScriptObject args)
+    @Override // from FlashEvent
+    public void fromJSObject (JavaScriptObject args)
     {
-        _type = FlashClients.getIntElement(args, 0);
-        _value = FlashClients.getIntElement(args, 1);
-        _oldValue = FlashClients.getIntElement(args, 2);
+        _type = JavaScriptUtil.getIntElement(args, 0);
+        _value = JavaScriptUtil.getIntElement(args, 1);
+        _oldValue = JavaScriptUtil.getIntElement(args, 2);
     }
 
-    @Override // FlashEvent
+    @Override // from FlashEvent
+    public void toJSObject (JavaScriptObject args)
+    {
+        JavaScriptUtil.setIntElement(args, 0, _type);
+        JavaScriptUtil.setIntElement(args, 1, _value);
+        JavaScriptUtil.setIntElement(args, 2, _oldValue);
+    }
+
+    @Override // from FlashEvent
     public void notifyListener (FlashEventListener listener)
     {
         if (listener instanceof StatusChangeListener) {

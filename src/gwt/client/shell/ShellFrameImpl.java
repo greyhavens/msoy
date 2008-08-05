@@ -30,6 +30,8 @@ import client.ui.MsoyUI;
 import client.util.FlashClients;
 import client.util.FlashVersion;
 import client.util.Link;
+import client.util.events.FlashEvent;
+import client.util.events.FlashEvents;
 
 /**
  * The frame wraps the top-level page HTML and handles displaying the navigation, the page content,
@@ -298,6 +300,13 @@ public class ShellFrameImpl
     public String checkFlashVersion (int width, int height)
     {
         return FlashVersion.checkFlashVersion(width, height);
+    }
+
+    // from interface Frame
+    public void dispatchEvent (FlashEvent event)
+    {
+        // dispatch the event locally
+        FlashEvents.internalDispatchEvent(event);
     }
 
     // from interface WorldClient.Container

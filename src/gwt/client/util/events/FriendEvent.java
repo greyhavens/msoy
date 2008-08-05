@@ -7,7 +7,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import client.util.FlashClients;
+import client.util.JavaScriptUtil;
 
 /**
  * Notifies when a friend is added or removed.
@@ -40,15 +40,23 @@ public class FriendEvent extends FlashEvent
         _displayName = friend.toString();
     }
 
-    @Override // FlashEvent
-    public void readFlashArgs (JavaScriptObject args)
+    @Override // from FlashEvent
+    public void fromJSObject (JavaScriptObject args)
     {
-        _action = FlashClients.getIntElement(args, 0);
-        _displayName = FlashClients.getStringElement(args, 1);
-        _memberId = FlashClients.getIntElement(args, 2);
+        _action = JavaScriptUtil.getIntElement(args, 0);
+        _displayName = JavaScriptUtil.getStringElement(args, 1);
+        _memberId = JavaScriptUtil.getIntElement(args, 2);
     }
 
-    @Override // FlashEvent
+    @Override // from FlashEvent
+    public void toJSObject (JavaScriptObject args)
+    {
+        JavaScriptUtil.setIntElement(args, 0, _action);
+        JavaScriptUtil.setStringElement(args, 1, _displayName);
+        JavaScriptUtil.setIntElement(args, 2, _memberId);
+    }
+
+    @Override // from FlashEvent
     public void notifyListener (FlashEventListener listener)
     {
         if (listener instanceof FriendsListener) {

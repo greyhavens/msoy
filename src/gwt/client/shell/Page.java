@@ -5,6 +5,7 @@ package client.shell;
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
@@ -17,6 +18,8 @@ import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 
 import client.util.Link;
+import client.util.events.FlashEvent;
+import client.util.events.FlashEvents;
 
 /**
  * Handles some standard services for a top-level MetaSOY page.
@@ -73,6 +76,11 @@ public abstract class Page
                 public void closeContent () {
                     frameCall(Frame.Calls.CLOSE_CONTENT, null);
                 }
+                public void dispatchEvent (FlashEvent event) {
+                    JavaScriptObject args = JavaScriptObject.createArray();
+                    event.toJSObject(args);
+                    frameTriggerEvent(event.getEventName(), args);
+                }
                 public String md5hex (String text) {
                     return frameCall(Frame.Calls.GET_MD5, new String[] { text });
                 }
@@ -108,6 +116,9 @@ public abstract class Page
                 public void navigateReplace (String token) {
                     History.back();
                     History.newItem(token);
+                }
+                public void dispatchEvent (FlashEvent event) {
+                    FlashEvents.internalDispatchEvent(event);
                 }
                 public String md5hex (String text) {
                     CShell.log("Pants! No md5 in standalone mode.");
@@ -258,6 +269,17 @@ public abstract class Page
     }
 
     /**
+     * Called when Flash (in standalone mode) or our parent frame wants us to dispatch an event.
+     */
+    protected void triggerEvent (String eventName, JavaScriptObject args)
+    {
+        FlashEvent event = FlashEvents.createEvent(eventName, args);
+        if (event != null) {
+            FlashEvents.internalDispatchEvent(event);
+        }
+    }
+
+    /**
      * Wires ourselves up to our enclosing frame.
      *
      * @return true if we're running as a subframe, false if we're running in standalone test mode.
@@ -266,11 +288,18 @@ public abstract class Page
         $wnd.setPageToken = function (token) {
             page.@client.shell.Page::setPageToken(Ljava/lang/String;)(token)
         };
+        $wnd.triggerEvent = function (eventName, args) {
+            page.@client.shell.Page::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
+        };
         return $wnd != $wnd.top;
     }-*/;
 
     protected static native String nativeFrameCall (String action, String[] args) /*-{
         return $wnd.top.frameCall(action, args);
+    }-*/;
+
+    protected static native void frameTriggerEvent (String name, JavaScriptObject args) /*-{
+        $wnd.top.triggerFlashEvent(name, args);
     }-*/;
 
     protected abstract class PageFrame implements Frame

@@ -5,7 +5,7 @@ package client.util.events;
 
 import com.google.gwt.core.client.JavaScriptObject;
 
-import client.util.FlashClients;
+import client.util.JavaScriptUtil;
 
 public class NameChangeEvent extends FlashEvent
 {
@@ -21,19 +21,25 @@ public class NameChangeEvent extends FlashEvent
         _name = newName;
     }
 
-    @Override // FlashEvent
+    @Override // from FlashEvent
     public String getEventName ()
     {
         return NAME;
     }
 
-    @Override // FlashEvent
-    public void readFlashArgs (JavaScriptObject args)
+    @Override // from FlashEvent
+    public void fromJSObject (JavaScriptObject args)
     {
-        _name = FlashClients.getStringElement(args, 0);
+        _name = JavaScriptUtil.getStringElement(args, 0);
     }
 
-    @Override // FlashEvent
+    @Override // from FlashEvent
+    public void toJSObject (JavaScriptObject args)
+    {
+        JavaScriptUtil.setStringElement(args, 0, _name);
+    }
+
+    @Override // from FlashEvent
     public void notifyListener (FlashEventListener listener)
     {
         if (listener instanceof NameChangeListener) {
