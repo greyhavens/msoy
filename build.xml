@@ -288,21 +288,10 @@
     <!-- generate our index.html and crossdomain.xml -->
     <propertyregex property="server_url_host_port" input="${server_url}"
                    regexp="http://" replace=""/>
-    <if><isset property="recaptcha_public"/><then>
-      <property name="recaptcha_in" value=""/>
-      <property name="recaptcha_out" value=""/>
-    </then><else>
-      <property name="recaptcha_in" value="&#60;!--"/>
-      <property name="recaptcha_out" value="--&#62;"/>
-      <property name="recaptcha_public" value=""/>
-    </else></if>
     <copy file="pages/index.html.in" tofile="pages/index.html" overwrite="true">
       <filterset>
         <filter token="SERVER_URL" value="${server_url}"/>
         <filter token="SERVER_URL_HOST_PORT" value="${server_url_host_port}"/>
-        <filter token="RECAPTCHA_IN" value="${recaptcha_in}"/>
-        <filter token="RECAPTCHA_OUT" value="${recaptcha_out}"/>
-        <filter token="RECAPTCHA_KEY" value="${recaptcha_public}"/>
       </filterset>
     </copy>
     <propertyregex property="server_url_host" input="${server_url}"
@@ -415,6 +404,7 @@
         <filter token="server_url" value="${server_url}"/>
         <filter token="static_media_url" value="${static_media_url}"/>
         <filter token="dev_deployment" value="${dev_deployment}"/>
+        <filter token="recaptcha_public" value="${recaptcha_public}"/>
       </filterset>
     </copy>
   </target>
