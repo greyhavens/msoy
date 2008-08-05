@@ -54,7 +54,6 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PeerList;
 
 import com.threerings.msoy.data.MemberObject;
@@ -62,21 +61,24 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 public class PartyPopup extends FlyingPanel
 {
     /** The width of the popup, defined by the width of the header image. */
     public static const POPUP_WIDTH :int = 219;
 
-    public function PartyPopup (ctx :MsoyContext) :void
+    public function PartyPopup (ctx :WorldContext) :void
     {
         super(ctx);
+        _wctx = ctx;
         showCloseButton = true;
         open();
     }
 
     override public function close () :void
     {
-        _ctx.getMemberObject().removeListener(_friendsList);
+        _wctx.getMemberObject().removeListener(_friendsList);
         super.close();
     }
 
@@ -97,11 +99,11 @@ public class PartyPopup extends FlyingPanel
         x = placeBounds.x + placeBounds.width - width - PADDING;
         y = placeBounds.y + PADDING;
 
-        _friendsList = new PeerList(_ctx, MemberObject.FRIENDS, PartyRenderer);
+        _friendsList = new PeerList(_wctx, MemberObject.FRIENDS, PartyRenderer);
 
         addChild(_friendsList);
 
-        var me :MemberObject = _ctx.getMemberObject();
+        var me :MemberObject = _wctx.getMemberObject();
         /*// add a little separator
         var separator :VBox = new VBox();
         separator.percentWidth = 100;
@@ -154,6 +156,8 @@ public class PartyPopup extends FlyingPanel
 
     /** Defined in Java as com.threerings.msoy.person.data.Profile.MAX_STATUS_LENGTH */
     protected static const PROFILE_MAX_STATUS_LENGTH :int = 100;
+
+    protected var _wctx :WorldContext;
 
     protected var _friendsList :PeerList;
     protected var _friends :ArrayCollection = new ArrayCollection();
