@@ -64,6 +64,24 @@ TitleWindow {
   fontWeight: bold;
 }
 
+.accordianHeader {
+  fontFamily: Arial;
+  fontSize: 12px;
+  paddingLeft: 4px;
+  paddingTop: 4px;
+  paddingBottom: 4px;
+  paddingRight: 4px;
+}
+
+Accordion {
+/*backgroundAlpha: 0;*/
+  headerStyleName: "accordianHeader";
+  borderColor: #408fd9;
+  borderSides: "left right";
+  borderStyle: "solid";
+  borderThickness: 2;
+}
+
 /*Accordion {
   headerHeight: 20;
   dropShadowEnabled: true;
