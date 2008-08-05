@@ -1015,8 +1015,6 @@
   <!-- cleans out the compiled GWT bits and caches -->
   <target name="gclean">
     <delete dir="${gwtout.dir}"/>
-    <!-- TODO: remove after next autobuild -->
-    <delete><fileset dir="${gsrc.dir}" includes="*.gwt.xml"/></delete>
   </target>
 
   <!-- fully cleans out all build results -->
