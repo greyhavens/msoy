@@ -52,6 +52,7 @@ public class RoomEditorPanel extends FloatingPanel
     public function RoomEditorPanel (ctx :WorldContext, controller :RoomEditorController)
     {
         super(ctx, Msgs.EDITING.get("t.editor_title"));
+        _wctx = ctx;
         _controller = controller;
 
         styleName = "roomEditPanel";
@@ -73,7 +74,7 @@ public class RoomEditorPanel extends FloatingPanel
     {
         super.close();
         _controller.actionEditorClosed();
-        (_ctx as WorldContext).getGameDirector().tutorialEvent("editorClosed");
+        _wctx.getGameDirector().tutorialEvent("editorClosed");
     }
 
     /** Updates object data displayed on the editing panel. */
@@ -492,6 +493,8 @@ public class RoomEditorPanel extends FloatingPanel
     protected static const Y_DELTA :Number = 0.1;
     protected static const ROTATE_DELTA :Number = 45;
     protected static const SCALEMULTI :Number = 1.2;
+
+    protected var _wctx :WorldContext;
         
     protected var _switchablePanels :Box;
     protected var _undoButtons :Array; // of CommandButton
