@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.ui;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -14,8 +14,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 
 import client.shell.ShellMessages;
-import client.ui.BorderedDialog;
-import client.ui.MsoyUI;
 
 /**
  * Displays a popup for complaining about a message.
@@ -25,13 +23,15 @@ public abstract class ComplainPopup extends BorderedDialog
 {
     public ComplainPopup ()
     {
-        setHeaderTitle(_mmsgs.complainHeader());
+        setHeaderTitle(_cmsgs.complainHeader());
+
         VerticalPanel vbox = new VerticalPanel();
         vbox.setStyleName("complainPopup");
         vbox.setSpacing(5);
-        vbox.add(MsoyUI.createLabel(_mmsgs.complainMessage(), null));
-        vbox.add(MsoyUI.createLabel(_mmsgs.complainDesc(), null));
+        vbox.add(MsoyUI.createLabel(_cmsgs.complainMessage(), null));
+        vbox.add(MsoyUI.createLabel(_cmsgs.complainDesc(), null));
         vbox.add(_description = MsoyUI.createTextBox("", 512, 50));
+        setContents(vbox);
 
         ClickListener sendComplain = new ClickListener() {
             public void onClick (Widget sender) {
@@ -40,11 +40,7 @@ public abstract class ComplainPopup extends BorderedDialog
         };
         _description.addKeyboardListener(new EnterClickAdapter(sendComplain));
 
-        setContents(vbox);
-
-        Button submit = new Button(_cmsgs.send(), sendComplain);
-        addButton(submit);
-
+        addButton(new Button(_cmsgs.send(), sendComplain));
         addButton(new Button(_cmsgs.cancel(), new ClickListener() {
             public void onClick (Widget sender) {
                 hide();
@@ -75,7 +71,10 @@ public abstract class ComplainPopup extends BorderedDialog
         // nothing by default
     }
 
-    protected abstract boolean callService();
+    /**
+     * Derived classes should override this method and submit the complaint.
+     */
+    protected abstract boolean callService ();
 
     @Override // from Widget
     protected void onLoad ()
@@ -87,7 +86,7 @@ public abstract class ComplainPopup extends BorderedDialog
     protected void sendComplain ()
     {
         if ("".equals(_description.getText())) {
-            MsoyUI.info(_mmsgs.complainNeedDescription());
+            MsoyUI.info(_cmsgs.complainNeedDescription());
             return;
         }
         if (callService() && hideOnSend()) {
@@ -98,5 +97,4 @@ public abstract class ComplainPopup extends BorderedDialog
     protected TextBox _description;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
 }

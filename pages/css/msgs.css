@@ -4,55 +4,6 @@
  * CSS styles for the common Msgs components.
  */
 
-.messagePanel .Photo {
-  background: #EDEDED;
-  padding: 5px;
-}
-
-.messagePanel .Info {
-  padding-top: 5px;
-}
-
-.messagePanel .Author {
-  font-weight: bold;
-  font-size: 12px;
-}
-
-.messagePanel .Icon, .messagePanel .ActionIcon {
-  vertical-align: middle;
-  display: inline;
-}
-
-.messagePanel .Icon {
-  margin-right: 5px;
-}
-
-.messagePanel .ActionIcon {
-  margin-left: 5px;
-}
-
-.messagePanel .Posted {
-  font-size: 12px;
-  color: #999999;
-}
-
-.messagePanel .Scroller {
-  width: 565px;
-}
-
-.messagePanel .Text {
-  padding: 5px 5px 0px 0px;
-  vertical-align: top;
-}
-
-.messagePanel .LeftPad {
-  padding-left: 10px;
-}
-
-.messagePanel .BottomPad {
-  padding-bottom: 5px;
-}
-
 .titledListPanel {
   width: 100%;
   border: 5px solid white;
@@ -235,8 +186,4 @@
 
 .replyPanel .Title {
   font-weight: bold;
-}
-
-.complainPopup {
-  width: 400px;
 }

@@ -876,6 +876,7 @@ img, embed, applet, object {
   border: 0;
 }
 
+/** SearchBox styles */
 .searchBox {
   border: 1px solid black;
   background: #E9F6FB;
@@ -894,6 +895,7 @@ img, embed, applet, object {
   margin-top: 3px;
 }
 
+/** Marquee styles */
 .marquee {
   background: url(/images/ui/marquee_tile.png) repeat-x top;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -904,4 +906,59 @@ img, embed, applet, object {
   text-align: center;
   padding-top: 8px;
   white-space: nowrap;
+}
+
+/** MessagePanel styles */
+.messagePanel .Photo {
+  background: #EDEDED;
+  padding: 5px;
+}
+
+.messagePanel .Info {
+  padding-top: 5px;
+}
+
+.messagePanel .Author {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.messagePanel .Icon, .messagePanel .ActionIcon {
+  vertical-align: middle;
+  display: inline;
+}
+
+.messagePanel .Icon {
+  margin-right: 5px;
+}
+
+.messagePanel .ActionIcon {
+  margin-left: 5px;
+}
+
+.messagePanel .Posted {
+  font-size: 12px;
+  color: #999999;
+}
+
+.messagePanel .Scroller {
+  width: 565px;
+}
+
+.messagePanel .Text {
+  padding: 5px 5px 0px 0px;
+  vertical-align: top;
+}
+
+.messagePanel .LeftPad {
+  padding-left: 10px;
+}
+
+.messagePanel .BottomPad {
+  padding-bottom: 5px;
+}
+
+/** ComplainPopup styles */
+.complainPopup {
+  width: 400px;
 }

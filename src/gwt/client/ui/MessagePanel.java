@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.ui;
 
 import java.util.Date;
 
@@ -23,8 +23,6 @@ import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Page;
 import client.shell.ShellMessages;
-import client.ui.MsoyUI;
-import client.ui.ThumbBox;
 import client.util.Link;
 
 /**

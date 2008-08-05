@@ -3,14 +3,14 @@
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 
+  <source path="com/threerings/msoy/comment/gwt"/>
   <source path="com/threerings/msoy/item/data/all"/>
   <source path="com/threerings/msoy/item/gwt"/>
-  <source path="com/threerings/msoy/fora/gwt"/>
   <source path="com/threerings/msoy/game/data/all"/>
   <source path="com/threerings/msoy/game/gwt"/>
 
+  <source path="client/comment"/>
   <source path="client/item"/>
-  <source path="client/msgs"/>
   <source path="client/games"/>
 
   <entry-point class="client.games.GamesPage"/>

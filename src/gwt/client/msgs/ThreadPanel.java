@@ -30,6 +30,7 @@ import client.shell.CShell;
 import client.shell.Page;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
+import client.ui.MessagePanel;
 import client.ui.MsoyUI;
 import client.ui.SearchBox;
 import client.util.ClickCallback;

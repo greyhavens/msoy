@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.fora.server.persist;
+package com.threerings.msoy.comment.server.persist;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -24,7 +24,7 @@ import com.samskivert.jdbc.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.fora.gwt.Comment;
+import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.server.persist.CountRecord;
 
 /**

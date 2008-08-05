@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.fora.server;
+package com.threerings.msoy.comment.server;
 
 import java.util.List;
 
@@ -15,10 +15,6 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.fora.gwt.Comment;
-import com.threerings.msoy.fora.gwt.CommentService;
-import com.threerings.msoy.fora.server.persist.CommentRecord;
-import com.threerings.msoy.fora.server.persist.CommentRepository;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.underwire.server.SupportLogic;
 
@@ -27,6 +23,10 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
+import com.threerings.msoy.comment.gwt.Comment;
+import com.threerings.msoy.comment.gwt.CommentService;
+import com.threerings.msoy.comment.server.persist.CommentRecord;
+import com.threerings.msoy.comment.server.persist.CommentRepository;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.StatLogic;

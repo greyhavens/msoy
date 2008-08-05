@@ -6,9 +6,9 @@ package com.threerings.msoy.notify.data;
 import com.threerings.util.ActionScript;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.fora.gwt.Comment;
 
 import com.threerings.msoy.item.data.all.Item;
 

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.fora.gwt;
+package com.threerings.msoy.comment.gwt;
 
 import java.util.List;
 

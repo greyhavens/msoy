@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.fora.server.persist;
+package com.threerings.msoy.comment.server.persist;
 
 import java.sql.Timestamp;
 
@@ -17,7 +17,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.web.data.MemberCard;
 
-import com.threerings.msoy.fora.gwt.Comment;
+import com.threerings.msoy.comment.gwt.Comment;
 
 /**
  * Contains a comment made on an entity of some sort (item, profile, room, etc.).

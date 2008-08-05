@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.msgs;
+package client.comment;
 
 import java.util.List;
 
@@ -18,13 +18,14 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedGrid;
 
+import com.threerings.msoy.comment.gwt.Comment;
+import com.threerings.msoy.comment.gwt.CommentService;
+import com.threerings.msoy.comment.gwt.CommentServiceAsync;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.fora.gwt.Comment;
-import com.threerings.msoy.fora.gwt.CommentService;
-import com.threerings.msoy.fora.gwt.CommentServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
+import client.ui.ComplainPopup;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.MsoyCallback;

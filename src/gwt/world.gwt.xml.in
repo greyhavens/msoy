@@ -9,7 +9,6 @@
 
   <source path="client/world"/>
   <source path="client/msgs"/>
-  <source path="client/editem"/>
   <source path="client/item"/>
 
   <entry-point class="client.world.WorldPage"/>

@@ -21,8 +21,8 @@ import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.item.data.all.Game;
 
+import client.comment.CommentsPanel;
 import client.item.ItemRating;
-import client.msgs.CommentsPanel;
 import client.shell.Page;
 import client.ui.StyledTabPanel;
 import client.ui.ThumbBox;

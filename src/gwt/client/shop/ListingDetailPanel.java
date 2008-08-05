@@ -23,10 +23,10 @@ import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.CostUpdatedException;
 
+import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
 import client.item.ItemActivator;
 import client.item.ShopUtil;
-import client.msgs.CommentsPanel;
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Page;

@@ -3,6 +3,8 @@
 
 package client.msgs;
 
+import client.ui.MessagePanel;
+
 import com.threerings.msoy.fora.gwt.ForumMessage;
 
 /**

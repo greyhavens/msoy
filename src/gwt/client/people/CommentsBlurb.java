@@ -7,11 +7,11 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.fora.gwt.Comment;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
-import client.msgs.CommentsPanel;
+import client.comment.CommentsPanel;
 import client.shell.ShellMessages;
 
 /**
