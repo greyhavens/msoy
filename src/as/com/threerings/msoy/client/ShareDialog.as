@@ -113,9 +113,10 @@ public class ShareDialog extends FloatingPanel
         var message :TextArea = new TextArea();
         box.addChild(message);
 
-        // TODO: Close the dialog on submit
-        var send :CommandButton = new CommandButton(null,
-            MsoyController.EMAIL_SHARE, [emails, message]);
+        var send :CommandButton = new CommandButton(null, function () :void {
+            _ctx.getMsoyController().handleEmailShare(emails, message);
+            close();
+        });
         send.styleName = "sendButton";
 
         box.addChild(send);
