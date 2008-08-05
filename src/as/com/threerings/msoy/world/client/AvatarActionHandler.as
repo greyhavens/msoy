@@ -22,8 +22,9 @@ import com.threerings.msoy.data.MsoyCodes;
  */
 public class AvatarActionHandler extends CommandHandler
 {
-    public function AvatarActionHandler (states :Boolean)
+    public function AvatarActionHandler (ctx :WorldContext, states :Boolean)
     {
+        _wctx = ctx;
         _states = states;
     }
 
@@ -34,8 +35,7 @@ public class AvatarActionHandler extends CommandHandler
             return "m.usage_" + cmd;
         }
 
-        var wctx :WorldContext = (ctx as WorldContext);
-        var roomView :RoomView = (wctx.getTopPanel().getPlaceView() as RoomView);
+        var roomView :RoomView = (_wctx.getTopPanel().getPlaceView() as RoomView);
         if (roomView == null) {
             // can't do it, not in a room
             return "e.avatar_only_cmd";
@@ -58,7 +58,7 @@ public class AvatarActionHandler extends CommandHandler
         } else {
             roomView.getRoomController().doAvatarAction(match);
         }
-        wctx.getChatDirector().displayFeedback(MsoyCodes.CHAT_MSGS,
+        _wctx.getChatDirector().displayFeedback(MsoyCodes.CHAT_MSGS,
             MessageBundle.tcompose(_states ? "m.changed_state" : "m.changed_action", match));
         return ChatCodes.SUCCESS;
     }
@@ -87,6 +87,8 @@ public class AvatarActionHandler extends CommandHandler
         }
         return best;
     }
+
+    protected var _wctx :WorldContext;
 
     /** Are we working with states rather than actions? */
     protected var _states :Boolean;

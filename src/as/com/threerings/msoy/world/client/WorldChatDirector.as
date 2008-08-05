@@ -17,8 +17,8 @@ public class WorldChatDirector extends MsoyChatDirector
         super(ctx);
 
         var msg :MessageBundle = _msgmgr.getBundle(_bundle);
-        registerCommandHandler(msg, "action", new AvatarActionHandler(false));
-        registerCommandHandler(msg, "state", new AvatarActionHandler(true));
+        registerCommandHandler(msg, "action", new AvatarActionHandler(ctx, false));
+        registerCommandHandler(msg, "state", new AvatarActionHandler(ctx, true));
     }
 }
 }
