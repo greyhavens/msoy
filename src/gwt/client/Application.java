@@ -213,10 +213,10 @@ public class Application
     protected static void displayPage (String page, String args)
     {
     	try {
-    		Link.go(Enum.valueOf(Pages.class, page), args);
+            Link.go(Enum.valueOf(Pages.class, page.toUpperCase()), args);
     	} catch (Exception e) {
-    		CShell.log("Unable to display page from Flash [page=" + page + 
-    				   ", args=" + args + "].", e);
+            CShell.log("Unable to display page from Flash [page=" + page +
+                       ", args=" + args + "].", e);
     	}
     }
 

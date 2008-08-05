@@ -34,6 +34,7 @@ import client.shell.ShellMessages;
 import client.shell.TitleBar;
 import client.shell.TrackingCookie;
 import client.shell.WorldClient;
+import client.util.FlashClients;
 import client.util.Link;
 
 /**
@@ -337,7 +338,7 @@ public class FrameEntryPoint
             // the content is just the supplied widget, no extra bits
             _content = pageContent;
 
-        } else {
+        } else { // TODO: if we're displaying world, avoid ever showing content
             // let the client know it about to be minimized
             WorldClient.setMinimized(true);
             int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
@@ -351,11 +352,13 @@ public class FrameEntryPoint
             contentTop = NAVI_HEIGHT;
             // add a titlebar to the top of the content
             FlowPanel content = new FlowPanel();
-            content.add(_bar = TitleBar.create(page.getTab(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    closeContent();
-                }
-            }));
+            if (page.getTab() != null) {
+                content.add(_bar = TitleBar.create(page.getTab(), new ClickListener() {
+                    public void onClick (Widget sender) {
+                        closeContent();
+                    }
+                }));
+            }
             pageContent.setWidth(contentWidth);
             pageContent.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
             content.add(pageContent);
@@ -367,6 +370,11 @@ public class FrameEntryPoint
         _content.setHeight(contentHeight);
         RootPanel.get(PAGE).add(_content);
         RootPanel.get(PAGE).setWidgetPosition(_content, 0, contentTop);
+
+        // activate our close button if we have a client
+        if (_bar != null) {
+            _bar.setCloseVisible(FlashClients.clientExists());
+        }
     }
 
     // from interface WorldClient.Container
@@ -490,10 +498,10 @@ public class FrameEntryPoint
     protected static void displayPage (String page, String args)
     {
     	try {
-    		Link.go(Enum.valueOf(Pages.class, page), args);
+            Link.go(Enum.valueOf(Pages.class, page.toUpperCase()), args);
     	} catch (Exception e) {
-    		CShell.log("Unable to display page from Flash [page=" + page + 
-    				   ", args=" + args + "].", e);
+            CShell.log("Unable to display page from Flash [page=" + page + 
+                       ", args=" + args + "].", e);
     	}
     }
 
