@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.web.data;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
@@ -27,4 +31,38 @@ public class SessionData implements IsSerializable
 
     /** If we've just created an account, this will be set to true. */
     public transient boolean justCreated;
+
+    /**
+     * Creates and initializes an instance from supplied {@link #flatten}ed string.
+     */
+    public static SessionData unflatten (Iterator<String> data)
+    {
+        if (data == null) {
+            return null;
+        }
+
+        SessionData sdata = new SessionData();
+        sdata.creds = WebCreds.unflatten(data);
+        sdata.flow = Integer.valueOf(data.next());
+        sdata.gold = Integer.valueOf(data.next());
+        sdata.level = Integer.valueOf(data.next());
+        sdata.newMailCount = Integer.valueOf(data.next());
+        sdata.justCreated = Boolean.valueOf(data.next());
+        return sdata;
+    }
+
+    /**
+     * Flattens this data into a list of strings we can send between frames in the GWT app.
+     */
+    public List<String> flatten ()
+    {
+        List<String> data = new ArrayList<String>();
+        data.addAll(creds.flatten());
+        data.add(String.valueOf(flow));
+        data.add(String.valueOf(gold));
+        data.add(String.valueOf(level));
+        data.add(String.valueOf(newMailCount));
+        data.add(String.valueOf(justCreated));
+        return data;
+    }
 }

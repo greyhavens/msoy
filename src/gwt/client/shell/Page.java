@@ -3,6 +3,8 @@
 
 package client.shell;
 
+import java.util.List;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.JavaScriptObject;
@@ -17,6 +19,7 @@ import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 
+import client.util.ArrayUtil;
 import client.util.Link;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
@@ -82,28 +85,28 @@ public abstract class Page
                     frameTriggerEvent(event.getEventName(), args);
                 }
                 public void dispatchDidLogon (SessionData data) {
-                    // TODO
+                    List<String> fdata = data.flatten();
+                    frameCall(Frame.Calls.DID_LOGON, fdata.toArray(new String[fdata.size()]));
                 }
                 public String md5hex (String text) {
-                    return frameCall(Frame.Calls.GET_MD5, new String[] { text });
+                    return frameCall(Frame.Calls.GET_MD5, new String[] { text })[0];
                 }
                 public String checkFlashVersion (int width, int height) {
                     return frameCall(Frame.Calls.CHECK_FLASH_VERSION,
-                                     new String[] { ""+width, ""+height });
+                                     new String[] { ""+width, ""+height })[0];
                 }
             };
 
             // obtain our current credentials from the frame
-            CShell.creds = WebCreds.unflatten(frameCall(Frame.Calls.GET_WEB_CREDS, null));
+            CShell.creds = WebCreds.unflatten(
+                ArrayUtil.toIterator(frameCall(Frame.Calls.GET_WEB_CREDS, null)));
             if (CShell.creds != null) {
                 CShell.ident = new WebIdent(CShell.creds.getMemberId(), CShell.creds.token);
             }
             // TODO: activeInvite
 
             // and get our current page token from our containing frame
-            setPageToken(frameCall(Frame.Calls.GET_PAGE_TOKEN, null));
-            // TODO: nix the above and just call didLogon() and have that get our page token
-            // properly instead of via History
+            setPageToken(frameCall(Frame.Calls.GET_PAGE_TOKEN, null)[0]);
 
         } else {
             // if we're running in standalone page test mode, we do a bunch of stuff
@@ -260,7 +263,7 @@ public abstract class Page
      */
     protected void setPageToken (String token)
     {
-        CShell.log("Got new page token " + token);
+        CShell.log("Got new page token '" + token + "'.");
         Args args = new Args();
         args.setToken(token);
         onHistoryChanged(args);
@@ -269,7 +272,7 @@ public abstract class Page
     /**
      * Calls up to our containing frame and takes an action and possibly returns a value.
      */
-    protected String frameCall (Frame.Calls call, String[] args)
+    protected String[] frameCall (Frame.Calls call, String[] args)
     {
         return nativeFrameCall(call.toString(), args);
     }
@@ -300,7 +303,7 @@ public abstract class Page
         return $wnd != $wnd.top;
     }-*/;
 
-    protected static native String nativeFrameCall (String action, String[] args) /*-{
+    protected static native String[] nativeFrameCall (String action, String[] args) /*-{
         return $wnd.top.frameCall(action, args);
     }-*/;
 

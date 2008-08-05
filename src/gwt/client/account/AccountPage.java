@@ -30,14 +30,10 @@ public class AccountPage extends Page
     public void onHistoryChanged (Args args)
     {
         String action = args.get(0, "");
-        if (action.equals("create")) {
-            if (CAccount.isGuest()) {
-                setContent(CAccount.msgs.createTitle(), new CreateAccountPanel());
-            } else {
-                Link.go(Pages.ME, "");
-            }
+        if (action.equals("create") && CAccount.isGuest()) {
+            setContent(CAccount.msgs.createTitle(), new CreateAccountPanel());
 
-        } else if (action.equals("login")) {
+        } else if (action.equals("login") && CAccount.isGuest()) {
             setContent(CAccount.msgs.loginPageTitle(), new LoginPagePanel());
 
         } else if (action.equals("optout")) {
@@ -51,6 +47,8 @@ public class AccountPage extends Page
 
         } else if (CAccount.ident == null) {
             setContent(MsoyUI.createLabel(CAccount.msgs.indexLogon(), "infoLabel"));
+        } else {
+            Link.go(Pages.ME, "");
         }
     }
 

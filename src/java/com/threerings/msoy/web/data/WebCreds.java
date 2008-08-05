@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.web.data;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -36,20 +40,36 @@ public class WebCreds implements IsSerializable
     /**
      * Unflattens a string created by a call to {@link #flatten}.
      */
-    public static WebCreds unflatten (String data)
+    public static WebCreds unflatten (Iterator<String> data)
     {
         if (data == null) {
             return null;
         }
-        String[] toks = data.split("\t");
+
         WebCreds creds = new WebCreds();
-        creds.token = toks[0];
-        creds.accountName = toks[1];
-        creds.name = new MemberName(toks[2], Integer.valueOf(toks[3]));
-        creds.permaName = toks[4];
-        creds.isSupport = Boolean.valueOf(toks[5]);
-        creds.isAdmin = Boolean.valueOf(toks[6]);
+        creds.token = data.next();
+        creds.accountName = data.next();
+        creds.name = new MemberName(data.next(), Integer.valueOf(data.next()));
+        creds.permaName = data.next();
+        creds.isSupport = Boolean.valueOf(data.next());
+        creds.isAdmin = Boolean.valueOf(data.next());
         return creds;
+    }
+
+    /**
+     * Flattens these creds into a string that can be passed between JavaScript apps.
+     */
+    public List<String> flatten ()
+    {
+        List<String> data = new ArrayList<String>();
+        data.add(token);
+        data.add(accountName);
+        data.add(name.toString());
+        data.add(String.valueOf(name.getMemberId()));
+        data.add(permaName);
+        data.add(String.valueOf(isSupport));
+        data.add(String.valueOf(isAdmin));
+        return data;
     }
 
     /**
@@ -58,15 +78,6 @@ public class WebCreds implements IsSerializable
     public int getMemberId ()
     {
         return (name == null) ? 0 : name.getMemberId();
-    }
-
-    /**
-     * Flattens these creds into a string that can be passed between JavaScript apps.
-     */
-    public String flatten ()
-    {
-        return token + "\t" + accountName + "\t" + name + "\t" + name.getMemberId() + "\t" +
-            permaName + "\t" + isSupport + "\t" + isAdmin;
     }
 
     /**

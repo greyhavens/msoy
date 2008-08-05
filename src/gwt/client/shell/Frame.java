@@ -35,7 +35,7 @@ public interface Frame
     /** Codes for use with our inner frame to top frame RPC mechanism. */
     public static enum Calls {
         SET_TITLE, NAVIGATE_TO, NAVIGATE_REPLACE, DISPLAY_WORLD_CLIENT, CLOSE_CLIENT, CLOSE_CONTENT,
-        GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, CHECK_FLASH_VERSION
+        DID_LOGON, GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, CHECK_FLASH_VERSION
     };
 
     /**

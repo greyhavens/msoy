@@ -36,6 +36,7 @@ import client.shell.ShellMessages;
 import client.shell.TitleBar;
 import client.shell.TrackingCookie;
 import client.shell.WorldClient;
+import client.util.ArrayUtil;
 import client.util.FlashClients;
 import client.util.FlashVersion;
 import client.util.Link;
@@ -47,16 +48,13 @@ import client.util.events.FlashEvents;
  * handles displaying the Flash client.
  */
 public class FrameEntryPoint
-    implements EntryPoint, HistoryListener, WindowResizeListener, Session.Observer,
-               client.shell.Frame, WorldClient.Container
+    implements EntryPoint, HistoryListener, Session.Observer, client.shell.Frame,
+               WorldClient.Container
 {
     // from interface EntryPoint
     public void onModuleLoad ()
     {
         CShell.frame = this;
-
-        // listen for window resize so that we can adjust the size of our scrollers
-        Window.addWindowResizeListener(this);
 
         // our main frame never scrolls
         Window.enableScrolling(false);
@@ -180,23 +178,14 @@ public class FrameEntryPoint
 //         _analytics.report(args.toPath(page));
     }
 
-    // from interface WindowResizeListener
-    public void onWindowResized (int width, int height)
-    {
-        if (_content != null) {
-            _content.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-        }
-        if (_iframe != null) {
-            _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
-        }
-    }
-
     // from interface Session.Observer
     public void didLogon (SessionData data)
     {
         WorldClient.didLogon(data.creds);
 
-        if (_page != null) {
+        if (_page == Pages.LANDING) {
+            Link.go(Pages.ME, "");
+        } else if (_page != null) {
             setPage(_page); // reloads the current page
         } else if (!data.justCreated) {
             onHistoryChanged(_currentToken);
@@ -353,8 +342,12 @@ public class FrameEntryPoint
             contentWidth = "100%";
             contentHeight = "100%";
             contentTop = 0;
+
             // the content is just the supplied widget, no extra bits
             _content = pageContent;
+
+            // we won't listen for resize because the iframe is height 100%
+            setWindowResizerEnabled(false);
             break;
 
 //         case WORLD:
@@ -369,10 +362,12 @@ public class FrameEntryPoint
                 _client.setWidth(clientWidth + "px");
                 RootPanel.get(PAGE).setWidgetPosition(_client, CONTENT_WIDTH, NAVI_HEIGHT);
             }
+
             // position the content normally
             contentWidth = CONTENT_WIDTH + "px";
             contentHeight = (Window.getClientHeight() - NAVI_HEIGHT) + "px";
             contentTop = NAVI_HEIGHT;
+
             // add a titlebar to the top of the content
             FlowPanel content = new FlowPanel();
             if (page.getTab() != null) {
@@ -386,6 +381,10 @@ public class FrameEntryPoint
             pageContent.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
             content.add(pageContent);
             _content = content;
+
+            // listen for window resize so that we can adjust the size of the content
+            setWindowResizerEnabled(true);
+            break;
         }
 
         // size, add and position the content
@@ -477,6 +476,7 @@ public class FrameEntryPoint
 
     protected void setPage (Pages page)
     {
+        CShell.log("Loading iframe for " + page + ": " + page.getPath() + "...");
         _page = page;
         _iframe = new Frame("/gwt/" + _page.getPath() + "/" + _page.getPath() + ".html");
         _iframe.setStyleName("pageIFrame");
@@ -495,7 +495,7 @@ public class FrameEntryPoint
     /**
      * Handles a variety of methods called by our iframed page.
      */
-    protected String frameCall (String callStr, String[] args)
+    protected String[] frameCall (String callStr, String[] args)
     {
         Calls call = Enum.valueOf(Calls.class, callStr);
         switch (call) {
@@ -517,15 +517,21 @@ public class FrameEntryPoint
         case CLOSE_CONTENT:
             closeContent();
             return null;
+        case DID_LOGON:
+            Session.didLogon(SessionData.unflatten(ArrayUtil.toIterator(args)));
+            return null;
         case GET_WEB_CREDS:
-            return (CShell.creds == null) ? null : CShell.creds.flatten();
+            return (CShell.creds == null) ? null : CShell.creds.flatten().toArray(new String[0]);
         case GET_PAGE_TOKEN:
-            return _pageToken;
+            return new String[] { _pageToken };
         case GET_MD5:
-            return nmd5hex(args[0]);
+            return new String[] { nmd5hex(args[0]) };
         case CHECK_FLASH_VERSION:
-            return checkFlashVersion(Integer.valueOf(args[0]), Integer.valueOf(args[1]));
+            return new String[] {
+                checkFlashVersion(Integer.valueOf(args[0]), Integer.valueOf(args[1]))
+            };
         }
+        CShell.log("Got unknown frameCall request [call=" + call + "].");
         return null; // not reached
     }
 
@@ -536,6 +542,27 @@ public class FrameEntryPoint
                 closeClient();
             }
         });
+    }
+
+    protected void setWindowResizerEnabled (boolean enabled)
+    {
+        if (!enabled && _resizer != null) {
+            Window.removeWindowResizeListener(_resizer);
+            _resizer = null;
+
+        } else if (enabled && _resizer == null) {
+            _resizer = new WindowResizeListener() {
+                public void onWindowResized (int width, int height) {
+                    if (_content != null) {
+                        _content.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+                    }
+                    if (_iframe != null) {
+                        _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
+                    }
+                }
+            };
+            Window.addWindowResizeListener(_resizer);
+        }
     }
 
     protected Pages getLandingPage ()
@@ -615,7 +642,9 @@ public class FrameEntryPoint
      */
     protected static native void setPageToken (String token, Element frame) /*-{
         try {
-            frame.contentWindow.setPageToken(token);
+            if (frame.contentWindow.setPageToken) {
+                frame.contentWindow.setPageToken(token);
+            }
         } catch (e) {
             if ($wnd.console) {
                 $wnd.console.log("Failed to set page token [token=" + token + ", error=" + e + "].");
@@ -628,7 +657,9 @@ public class FrameEntryPoint
      */
     protected static native void forwardEvent (Element frame, String name, JavaScriptObject args) /*-{
         try {
-            frame.contentWindow.triggerEvent(name, args);
+            if (frame.contentWindow.triggerEvent) {
+                frame.contentWindow.triggerEvent(name, args);
+            }
         } catch (e) {
             if ($wnd.console) {
                 $wnd.console.log("Failed to forward event [name=" + name + ", error=" + e + "].");
@@ -651,6 +682,9 @@ public class FrameEntryPoint
     protected TitleBar _bar;
     protected Frame _iframe;
     protected Panel _client;
+
+    /** Handles window resizes. */
+    protected WindowResizeListener _resizer;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 
