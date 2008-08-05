@@ -170,7 +170,7 @@ public class FrameEntryPoint
         _pageToken = Args.compose(args.splice(0));
 
         // replace the page if necessary
-        if (_page == null || !_page.equals(page)) {
+        if (_page != page) {
             setPage(page);
         } else {
             setPageToken(_pageToken, _iframe.getElement());
@@ -339,14 +339,15 @@ public class FrameEntryPoint
         clearDialog();
 
         // show the header for everything except the landing pages
-        setHeaderVisible(!Pages.LANDING.equals(page));
+        setHeaderVisible(Pages.LANDING != page);
 
         // select the appropriate header tab
         _header.selectTab(page.getTab());
 
         int contentTop;
         String contentWidth, contentHeight;
-        if (Pages.LANDING.equals(page)) {
+        switch (page) {
+        case LANDING:
             closeClient(); // no client on the landing page
             // content takes up whole page
             contentWidth = "100%";
@@ -354,8 +355,13 @@ public class FrameEntryPoint
             contentTop = 0;
             // the content is just the supplied widget, no extra bits
             _content = pageContent;
+            break;
 
-        } else { // TODO: if we're displaying world, avoid ever showing content
+//         case WORLD:
+//             // TODO: handle world page stuff directly, extract rooms page to ROOMS
+//             break;
+
+        default:
             // let the client know it about to be minimized
             WorldClient.setMinimized(true);
             int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
@@ -406,6 +412,12 @@ public class FrameEntryPoint
             event.toJSObject(args);
             forwardEvent(_iframe.getElement(), event.getEventName(), args);
         }
+    }
+
+    // from interface Frame
+    public void dispatchDidLogon (SessionData data)
+    {
+        Session.didLogon(data);
     }
 
     // from interface Frame

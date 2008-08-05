@@ -81,6 +81,9 @@ public abstract class Page
                     event.toJSObject(args);
                     frameTriggerEvent(event.getEventName(), args);
                 }
+                public void dispatchDidLogon (SessionData data) {
+                    // TODO
+                }
                 public String md5hex (String text) {
                     return frameCall(Frame.Calls.GET_MD5, new String[] { text });
                 }
@@ -119,6 +122,9 @@ public abstract class Page
                 }
                 public void dispatchEvent (FlashEvent event) {
                     FlashEvents.internalDispatchEvent(event);
+                }
+                public void dispatchDidLogon (SessionData data) {
+                    Session.didLogon(data);
                 }
                 public String md5hex (String text) {
                     CShell.log("Pants! No md5 in standalone mode.");

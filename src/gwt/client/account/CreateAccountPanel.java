@@ -38,7 +38,6 @@ import com.threerings.msoy.web.data.CaptchaException;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.Pages;
-import client.shell.Session;
 import client.shell.TrackingCookie;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -233,8 +232,8 @@ public class CreateAccountPanel extends FlowPanel
             response, TrackingCookie.get(), new AsyncCallback<SessionData>() {
                 public void onSuccess (SessionData result) {
                     result.justCreated = true;
-                    // pass our credentials into the session (which will trigger a redirect)
-                    Session.didLogon(result);
+                    // let the top-level frame know that we logged on (which will trigger a redirect)
+                    CAccount.frame.dispatchDidLogon(result);
                 }
                 public void onFailure (Throwable caught) {
                     if (hasRecaptchaKey()) {

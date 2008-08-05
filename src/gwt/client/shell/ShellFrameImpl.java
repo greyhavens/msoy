@@ -309,6 +309,12 @@ public class ShellFrameImpl
         FlashEvents.internalDispatchEvent(event);
     }
 
+    // from interface Frame
+    public void dispatchDidLogon (SessionData data)
+    {
+        Session.didLogon(data);
+    }
+
     // from interface WorldClient.Container
     public void setShowingClient (String closeToken)
     {

@@ -5,6 +5,8 @@ package client.shell;
 
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.web.data.SessionData;
+
 import client.util.events.FlashEvent;
 
 /**
@@ -105,10 +107,10 @@ public interface Frame
      */
     void dispatchEvent (FlashEvent event);
 
-//     /**
-//      * Logs on with the supplied username and (unencrypted) password.
-//      */
-//     void logon (String username, String password);
+    /**
+     * This should be called by any entity that logs us on.
+     */
+    void dispatchDidLogon (SessionData data);
 
     /**
      * MD5 encodes the supplied text.
