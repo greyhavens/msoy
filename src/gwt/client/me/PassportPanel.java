@@ -49,6 +49,18 @@ public class PassportPanel extends VerticalPanel
             header.add(MsoyUI.createLabel(_msgs.passportDescription(), "Description"));
             header.add(new Marquee(null, _msgs.passportMarquee()));
             add(header);
+
+            HorizontalPanel nextHeader = new HorizontalPanel();
+            nextHeader.addStyleName("NextHeader");
+            nextHeader.add(MsoyUI.createImage("/images/me/passport_header_left.png", null));
+            HorizontalPanel headerContent = new HorizontalPanel();
+            headerContent.setStyleName("NextHeaderContent");
+            headerContent.add(MsoyUI.createImage("/images/me/passport_next.png", null));
+            headerContent.add(MsoyUI.createLabel(_msgs.passportNextBar(), "NextHeaderText"));
+            headerContent.add(MsoyUI.createImage("/images/me/passport_shuffle.png", null));
+            nextHeader.add(headerContent);
+            nextHeader.add(MsoyUI.createImage("/images/me/passport_header_right.png", null));
+            add(nextHeader);
         }
     }
 

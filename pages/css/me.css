@@ -202,3 +202,17 @@
   padding-top: 10px;
   padding-right: 10px;
 }
+
+.passport .NextPanel .NextHeader {
+  background-image: url(/images/me/passport_header_tile.png);
+  width: 100%;
+  height: 27px;
+}
+
+.passport .NextPanel .NextHeaderContent {
+  width: 100%;
+}
+
+.passport .NextPanel .NextHeaderText {
+  width: 100%;
+}
