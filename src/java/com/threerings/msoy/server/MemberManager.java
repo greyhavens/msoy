@@ -584,7 +584,7 @@ public class MemberManager
                 String url = ServerConfig.getServerURL() + "/#world-m" + sceneId;
                 for (String recip : emails) {
                     MailSender.sendEmail(recip, from, "shareInvite", "name", name,
-                        "message", message, "link", "www.todo.com");
+                        "message", message, "link", url);
                 }
                 cl.requestProcessed();
             }
