@@ -113,10 +113,10 @@
   height: 34px;
   color: white;
   white-space: nowrap;
+  max-width: 400px;
+  overflow: hidden;
   opacity: 0.6; /* Firefox and Safari */
   filter: alpha(opacity=60); /* IE */
-  white-space: nowrap;
-  overflow: hidden;
 }
 
 .pageTitle .SubNavi {
