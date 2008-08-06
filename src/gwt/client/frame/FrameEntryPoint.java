@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
@@ -35,6 +34,7 @@ import client.shell.BrowserTest;
 import client.shell.CShell;
 import client.shell.FrameHeader;
 import client.shell.Pages;
+import client.shell.ReferrerCookie;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.shell.TitleBar;
@@ -183,8 +183,8 @@ public class FrameEntryPoint
         // if we still don't have a tracking cookie, try to manufacture one from 
         // the HTTP Referer header, which the server should have saved for us.
         if (!TrackingCookie.exists()) {
-            String ref = CookieUtil.get(ReferralInfo.REFERRER_COOKIE);
-            if (ref != null && ref.length() > 0) {
+            if (ReferrerCookie.exists()) {
+                String ref = ReferrerCookie.get();
                 maybeCreateReferral(ref, token, "");
             } else {
                 maybeCreateReferral("", "", "");

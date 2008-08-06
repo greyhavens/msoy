@@ -10,7 +10,6 @@ import java.net.URL;
 import java.util.Map;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,7 +32,6 @@ import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
 
-import com.samskivert.servlet.util.CookieUtil;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.admin.gwt.AdminService;
@@ -41,7 +39,6 @@ import com.threerings.msoy.admin.server.AdminServlet;
 import com.threerings.msoy.comment.gwt.CommentService;
 import com.threerings.msoy.comment.server.CommentServlet;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.server.ForumServlet;
@@ -144,23 +141,16 @@ public class MsoyHttpServer extends Server
          * over to the GWT side (which will then use it to construct the ReferralInfo)
          */
         protected void addReferralCookie (HttpServletRequest req, HttpServletResponse rsp) {
-            
             // do we already know the referer? if so, we're done
-            if (CookieUtil.getCookie(req, ReferralInfo.REFERRER_COOKIE) != null) {
+            if (ReferrerCookie.exists(req)) {
                 return; 
             }
-            
             // otherwise, this is the first time we got loaded - store the HTTP referer
             Object ref = req.getHeader("Referer");
             if (ref instanceof String) {
-                
                 try {
                     URL url = new URL((String) ref);
-                    Cookie cookie = new Cookie(ReferralInfo.REFERRER_COOKIE, url.getHost());
-                    cookie.setMaxAge(-1); // session only
-                    cookie.setPath("/");
-                    rsp.addCookie(cookie);
-                    
+                    ReferrerCookie.set(rsp, url.getHost());
                 } catch (MalformedURLException mue) {
                     // ignore - we just won't add this cookie
                 }

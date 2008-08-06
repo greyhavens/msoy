@@ -12,8 +12,6 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 
-import com.threerings.gwt.util.CookieUtil;
-
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
@@ -28,6 +26,7 @@ import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.Page;
 import client.shell.Pages;
+import client.shell.ReferrerCookie;
 import client.shell.Session;
 import client.shell.ShellFrameImpl;
 import client.shell.TrackingCookie;
@@ -126,15 +125,19 @@ public class Application
             // save our tracking info, but don't overwrite old values
             maybeCreateReferral(affiliate, vector, creative);
 
-        } else {
-            // try to load the HTTP referrer info, and manufacture a new referral from that.
-            String ref = CookieUtil.get(ReferralInfo.REFERRER_COOKIE);
-            if (ref != null && ref.length() > 0) {
+        } 
+        
+        
+        // if we still don't have a tracking cookie, try to manufacture one from 
+        // the HTTP Referer header, which the server should have saved for us.
+        if (!TrackingCookie.exists()) {
+            if (ReferrerCookie.exists()) {
+                String ref = ReferrerCookie.get();
                 maybeCreateReferral(ref, token, "");
             } else {
                 maybeCreateReferral("", "", "");
             }
-        }
+        }  
 
         // replace the page if necessary
         if (_page == null || !_page.getPageId().equals(page)) {
