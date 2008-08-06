@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -48,9 +49,8 @@ public class ItemListRepository extends DepotRepository
     public void createList (ItemListInfoRecord record)
         throws PersistenceException
     {
-        if (record.listId != 0) {
-            throw new IllegalArgumentException("Can't insert existing list with id [" + record.listId + "]");
-        }
+        Preconditions.checkArgument(
+            record.listId == 0, "Can't insert existing list with id [" + record.listId + "]");
         insert(record);
     }
 

@@ -6,6 +6,8 @@ package com.threerings.msoy.person.server.persist;
 import java.sql.Date;
 import java.util.Calendar;
 
+import com.google.common.base.Preconditions;
+
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.depot.Key;
@@ -217,9 +219,8 @@ public class ProfileRecord extends PersistentRecord
      */
     public Profile toProfile (MemberRecord member, int forMemberId)
     {
-        if (member.memberId != memberId) {
-            throw new IllegalArgumentException("toProfile() passed invalid member record.");
-        }
+        Preconditions.checkArgument(
+            member.memberId == memberId, "toProfile() passed invalid member record.");
 
         Profile profile = new Profile();
         profile.homePageURL = homePageURL;
