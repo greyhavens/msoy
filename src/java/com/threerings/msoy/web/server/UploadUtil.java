@@ -99,8 +99,8 @@ public class UploadUtil
      * Utility class to encapsulate the hash / digest creation process which is used at multiple
      * points in this method.
      */
-    protected static class Digester {
-        
+    protected static class Digester 
+    {        
         public MessageDigest digest;
 
         public Digester () 
@@ -127,7 +127,8 @@ public class UploadUtil
          * this method, the digest is ready and the data can be read again from the outputstream
          * of the digester.
          */
-        public void digest (InputStream inputStream) throws IOException
+        public void digest (InputStream inputStream) 
+            throws IOException
         {         
             IOUtils.copy(inputStream, getOutputStream());
             close();
@@ -136,7 +137,9 @@ public class UploadUtil
         /**
          * Closes the output stream used to pass data into the digester, finalizing the data.
          */
-        public void close () throws IOException {
+        public void close () 
+            throws IOException 
+        {
             if (_bout != null) {
                 _bout.close();                
             }
@@ -152,7 +155,8 @@ public class UploadUtil
             return bin;
         }
         
-        public String getHash() {
+        public String getHash() 
+        {
             return StringUtil.hexlate(digest.digest());
         }
         
