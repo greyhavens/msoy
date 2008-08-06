@@ -18,10 +18,14 @@
   <source path="client/images"/>
   <source path="client/shell"/>
 
-  <!-- this directory doesn't exist, but if we don't specify something, GWT
-    -- helpfully decides to copy the entire directory into every single page
-    -- that inherits from this definition. Thanks guys! -->
+  <!-- this directory doesn't exist, but if we don't specify something, GWT helpfully -->
+  <!-- decides to copy the entire directory into every single page that inherits from this -->
+  <!-- definition. Thanks guys! -->
   <public path="public/page"/>
+
+  <stylesheet src="/css/global.css"/>
+  <stylesheet src="/css/gwt.css"/>
+  <stylesheet src="/css/page.css"/>
 
   <replace-with class="com.threerings.gwt.ui.WidgetUtilImplMozilla">
     <when-type-is class="com.threerings.gwt.ui.WidgetUtilImpl"/>

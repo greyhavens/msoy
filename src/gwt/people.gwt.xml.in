@@ -1,11 +1,9 @@
 <module>
   <inherits name="com.google.gwt.xml.XML"/>
-  <inherits name="page"/>
+  <inherits name="item"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 
-  <source path="com/threerings/msoy/item/data/all"/>
-  <source path="com/threerings/msoy/item/gwt"/>
   <source path="com/threerings/msoy/comment/gwt"/>
   <source path="com/threerings/msoy/game/data/all"/>
   <source path="com/threerings/msoy/game/gwt"/>
@@ -19,13 +17,15 @@
   <source path="com/threerings/msoy/profile/gwt"/>
 
   <source path="client/comment"/>
-  <source path="client/item"/>
   <source path="client/mail"/>
   <source path="client/games"/>
   <source path="client/person"/>
   <source path="client/people"/>
 
   <public path="public/people"/>
+  <stylesheet src="/css/games.css"/> <!-- TODO: not sure I like this -->
+  <stylesheet src="/css/mail.css"/> <!-- this either -->
+  <stylesheet src="/css/people.css"/>
 
   <entry-point class="client.people.PeoplePage"/>
 </module>

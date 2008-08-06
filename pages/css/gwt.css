@@ -12,20 +12,6 @@ img, embed, applet, object {
   display: block; /* no descender padding thanks */
 }
 
-/** Our top-level loading indicator. */
-.loading {
-  text-align: center;
-}
-.loading h2 {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  padding: 25px 0 10px 0;
-  font-size: 18px;
-  color: #FFFFFF;
-  width: 190px;
-  margin: auto;
-  text-align: left;
-}
-
 /** Make GWT display some sensible defaults. */
 .gwt-TabBar .gwt-TabBarItem {
   border: 1px solid;

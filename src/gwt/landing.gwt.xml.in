@@ -1,5 +1,5 @@
 <module>
-  <inherits name="page"/>
+  <inherits name="item"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 
@@ -13,7 +13,6 @@
   <source path="com/threerings/msoy/group/gwt"/>
   <source path="com/threerings/msoy/landing/gwt"/>
 
-  <source path="client/item"/>
   <source path="client/account"/>
   <source path="client/comment"/>
   <source path="client/games"/>
@@ -22,6 +21,10 @@
   <source path="client/landing"/>
 
   <public path="public/landing"/>
+  <stylesheet src="/css/account.css"/> <!-- sigh -->
+  <stylesheet src="/css/games.css"/>
+  <stylesheet src="/css/whirleds.css"/> <!-- end sigh -->
+  <stylesheet src="/css/landing.css"/>
 
   <entry-point class="client.landing.LandingPage"/>
 </module>

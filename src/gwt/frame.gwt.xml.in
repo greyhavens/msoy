@@ -20,6 +20,9 @@
   <source path="client/util"/>
 
   <public path="public/frame"/>
+  <stylesheet src="/css/global.css"/>
+  <stylesheet src="/css/gwt.css"/>
+  <stylesheet src="/css/frame.css"/>
 
   <entry-point class="client.frame.FrameEntryPoint"/>
 

@@ -1,15 +1,13 @@
 <module>
-  <inherits name="page"/>
+  <inherits name="item"/>
 
-  <source path="com/threerings/msoy/item/data/all"/>
-  <source path="com/threerings/msoy/item/gwt"/>
   <source path="com/threerings/msoy/comment/gwt"/>
 
   <source path="client/shop"/>
-  <source path="client/item"/>
   <source path="client/comment"/>
 
   <public path="public/shop"/>
+  <stylesheet src="/css/shop.css"/>
 
   <entry-point class="client.shop.ShopPage"/>
 </module>

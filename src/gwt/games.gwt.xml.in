@@ -1,19 +1,17 @@
 <module>
-  <inherits name="page"/>
+  <inherits name="item"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 
   <source path="com/threerings/msoy/comment/gwt"/>
-  <source path="com/threerings/msoy/item/data/all"/>
-  <source path="com/threerings/msoy/item/gwt"/>
   <source path="com/threerings/msoy/game/data/all"/>
   <source path="com/threerings/msoy/game/gwt"/>
 
   <source path="client/comment"/>
-  <source path="client/item"/>
   <source path="client/games"/>
 
   <public path="public/games"/>
+  <stylesheet src="/css/games.css"/>
 
   <entry-point class="client.games.GamesPage"/>
 </module>

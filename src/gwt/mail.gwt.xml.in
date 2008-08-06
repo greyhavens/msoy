@@ -1,18 +1,16 @@
 <module>
-  <inherits name="page"/>
+  <inherits name="item"/>
 
-  <source path="com/threerings/msoy/item/data/all"/>
-  <source path="com/threerings/msoy/item/gwt"/>
   <source path="com/threerings/msoy/stuff/gwt"/>
   <source path="com/threerings/msoy/group/data/all"/>
   <source path="com/threerings/msoy/group/gwt"/>
   <source path="com/threerings/msoy/fora/gwt"/>
   <source path="com/threerings/msoy/mail/gwt"/>
 
-  <source path="client/item"/>
   <source path="client/mail"/>
 
   <public path="public/mail"/>
+  <stylesheet src="/css/mail.css"/>
 
   <entry-point class="client.mail.MailPage"/>
 </module>

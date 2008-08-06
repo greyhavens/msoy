@@ -1,0 +1,10 @@
+<module>
+  <inherits name="page"/>
+
+  <source path="com/threerings/msoy/item/data/all"/>
+  <source path="com/threerings/msoy/item/gwt"/>
+
+  <source path="client/item"/>
+  <stylesheet src="/css/item.css"/>
+
+</module>

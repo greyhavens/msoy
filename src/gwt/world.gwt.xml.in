@@ -9,6 +9,7 @@
   <source path="client/comment"/>
 
   <public path="public/world"/>
+  <stylesheet src="/css/world.css"/>
 
   <entry-point class="client.world.WorldPage"/>
 </module>

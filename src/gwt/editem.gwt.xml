@@ -1,0 +1,10 @@
+<module>
+  <inherits name="com.google.gwt.xml.XML"/>
+  <inherits name="item"/>
+
+  <source path="com/threerings/msoy/game/data/all"/>
+  <source path="com/threerings/msoy/game/gwt"/>
+
+  <source path="client/editem"/>
+  <stylesheet src="/css/editem.css"/>
+</module>

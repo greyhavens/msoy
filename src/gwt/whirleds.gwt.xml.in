@@ -1,17 +1,13 @@
 <module>
-  <inherits name="page"/>
+  <inherits name="msgs"/>
 
-  <source path="com/threerings/msoy/item/data/all"/>
-  <source path="com/threerings/msoy/item/gwt"/>
-  <source path="com/threerings/msoy/fora/gwt"/>
   <source path="com/threerings/msoy/group/data/all"/>
   <source path="com/threerings/msoy/group/gwt"/>
 
   <source path="client/whirleds"/>
-  <source path="client/msgs"/>
-  <source path="client/item"/>
 
   <public path="public/whirleds"/>
+  <stylesheet src="/css/whirleds.css"/>
 
   <entry-point class="client.whirleds.WhirledsPage"/>
 </module>

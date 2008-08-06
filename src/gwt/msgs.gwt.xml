@@ -1,0 +1,8 @@
+<module>
+  <inherits name="item"/>
+
+  <source path="com/threerings/msoy/fora/gwt"/>
+  <source path="client/msgs"/>
+
+  <stylesheet src="/css/msgs.css"/>
+</module>
