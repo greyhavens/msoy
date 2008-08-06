@@ -96,6 +96,70 @@ public class UploadUtil
     }
 
     /**
+     * Utility class to encapsulate the hash / digest creation process which is used at multiple
+     * points in this method.
+     */
+    protected static class Digester {
+        
+        public MessageDigest digest;
+
+        public Digester () 
+        {
+            try {
+                digest = MessageDigest.getInstance("SHA");
+            } catch (NoSuchAlgorithmException nsa) {
+                throw new RuntimeException(nsa.getMessage());
+            }
+        }
+        
+        /**
+         * Provides an output stream to write the data to be digested to.
+         */
+        public OutputStream getOutputStream () 
+        {
+            _bout = new ByteArrayOutputStream();
+            final DigestOutputStream digout = new DigestOutputStream(_bout, digest);
+            return digout;
+        }
+
+        /**
+         * Convenience method to drain and digest the contents of an input stream. After a call to
+         * this method, the digest is ready and the data can be read again from the outputstream
+         * of the digester.
+         */
+        public void digest (InputStream inputStream) throws IOException
+        {         
+            IOUtils.copy(inputStream, getOutputStream());
+            close();
+        }
+        
+        /**
+         * Closes the output stream used to pass data into the digester, finalizing the data.
+         */
+        public void close () throws IOException {
+            if (_bout != null) {
+                _bout.close();                
+            }
+        }
+        
+        /**
+         * Provides an input stream for the digested data, which should be identical to the data
+         * that was written to the output stream.
+         */
+        public InputStream getInputStream () 
+        {
+            final ByteArrayInputStream bin = new ByteArrayInputStream(_bout.toByteArray());
+            return bin;
+        }
+        
+        public String getHash() {
+            return StringUtil.hexlate(digest.digest());
+        }
+        
+        protected ByteArrayOutputStream _bout;
+    }
+    
+    /**
      * Publishes an InputStream to the default media store location, using the hash and the
      * mimeType of the stream.
      */
@@ -325,70 +389,6 @@ public class UploadUtil
 
          return new MediaInfo(hash, mimeType, constraint, width, height);
      }
-
-    /**
-     * Utility class to encapsulate the hash / digest creation process which is used at multiple
-     * points in this method.
-     */
-    private static class Digester {
-        
-        public MessageDigest digest;
-
-        public Digester () 
-        {
-            try {
-                digest = MessageDigest.getInstance("SHA");
-            } catch (NoSuchAlgorithmException nsa) {
-                throw new RuntimeException(nsa.getMessage());
-            }
-        }
-        
-        /**
-         * Provides an output stream to write the data to be digested to.
-         */
-        public OutputStream getOutputStream () 
-        {
-            _bout = new ByteArrayOutputStream();
-            final DigestOutputStream digout = new DigestOutputStream(_bout, digest);
-            return digout;
-        }
-
-        /**
-         * Convenience method to drain and digest the contents of an input stream. After a call to
-         * this method, the digest is ready and the data can be read again from the outputstream
-         * of the digester.
-         */
-        public void digest (InputStream inputStream) throws IOException
-        {         
-            IOUtils.copy(inputStream, getOutputStream());
-            close();
-        }
-        
-        /**
-         * Closes the output stream used to pass data into the digester, finalizing the data.
-         */
-        public void close () throws IOException {
-            if (_bout != null) {
-                _bout.close();                
-            }
-        }
-        
-        /**
-         * Provides an input stream for the digested data, which should be identical to the data
-         * that was written to the output stream.
-         */
-        public InputStream getInputStream () 
-        {
-            final ByteArrayInputStream bin = new ByteArrayInputStream(_bout.toByteArray());
-            return bin;
-        }
-        
-        public String getHash() {
-            return StringUtil.hexlate(digest.digest());
-        }
-        
-        protected ByteArrayOutputStream _bout;
-    }
 
     /**
      * Return the sampling model that should be used for rendering a given image prior to encoding
