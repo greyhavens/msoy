@@ -36,18 +36,22 @@ public class TitleBar extends SmartTable
 
         switch (tab) {
         case ME:
-            subnavi.addLink(null, "Me", Pages.ME, "");
-            if (DeploymentConfig.devDeployment) {
-                subnavi.addLink(null, "Passport", Pages.ME, "passport");
-            }
-            subnavi.addImageLink("/images/me/menu_home.png", "My Home", Pages.WORLD,
-                "m" + memberId);
-            subnavi.addLink(null, "My Rooms", Pages.ME, "rooms");
-            subnavi.addLink(null, "My Profile", Pages.PEOPLE, "" + memberId);
-            subnavi.addLink(null, "Mail", Pages.MAIL, "");
-            subnavi.addLink(null, "Account", Pages.ME, "account");
-            if (CShell.isSupport()) {
-                subnavi.addLink(null, "Admin", Pages.ADMIN, "");
+            if (CShell.isGuest()) {
+                subnavi.addLink(null, "Home", Pages.LANDING, "");
+            } else {
+                subnavi.addLink(null, "Me", Pages.ME, "");
+                if (DeploymentConfig.devDeployment) {
+                    subnavi.addLink(null, "Passport", Pages.ME, "passport");
+                }
+                subnavi.addImageLink("/images/me/menu_home.png", "My Home", Pages.WORLD,
+                                     "m" + memberId);
+                subnavi.addLink(null, "My Rooms", Pages.ME, "rooms");
+                subnavi.addLink(null, "My Profile", Pages.PEOPLE, "" + memberId);
+                subnavi.addLink(null, "Mail", Pages.MAIL, "");
+                subnavi.addLink(null, "Account", Pages.ME, "account");
+                if (CShell.isSupport()) {
+                    subnavi.addLink(null, "Admin", Pages.ADMIN, "");
+                }
             }
             break;
             
