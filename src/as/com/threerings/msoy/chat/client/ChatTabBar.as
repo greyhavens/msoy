@@ -153,15 +153,16 @@ public class ChatTabBar extends HBox
         if (event.getName() == MemberObject.FRIENDS) {
             var newEntry :FriendEntry = event.getEntry() as FriendEntry;
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
-            if (MemberName.BY_DISPLAY_NAME(newEntry.name, oldEntry.name) != 0) {
+            var newNameStr :String = newEntry.name.toString();
+            if (newNameStr != oldEntry.name.toString()) {
                 for each (var tab :ChatTab in _tabs) {
                     if (tab.getTellMemberId() == newEntry.name.getMemberId()) {
-                        tab.text = newEntry.name.toString();
+                        tab.text = newNameStr;
                         break;
                     }
                 }
             }   
-        }   
+        }
     }
     
     // from SetListener
