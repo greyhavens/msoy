@@ -9,7 +9,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.server.ItemLogic;
 
@@ -40,15 +39,6 @@ public class SnapshotItemUploadServlet extends AbstractSnapshotUploadServlet
         }
 
         // TODO: some other response?
-    }
-
-    protected MediaDesc createMediaDesc (MediaInfo info)
-    {
-        MediaDesc desc = new MediaDesc();
-        desc.hash = MediaDesc.stringToHash(info.hash);
-        desc.mimeType = info.mimeType;
-        desc.constraint = info.constraint;
-        return desc;
     }
 
     // our dependencies

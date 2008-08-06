@@ -12,7 +12,9 @@ import com.samskivert.servlet.util.CookieUtil;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MemberHelper;
+import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.server.ItemMediaUploadServlet;
 
 public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServlet
@@ -59,6 +61,19 @@ public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServl
         // in this version, we set the HTTP error code to something meaningful
         rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
         super.accessDenied(rsp);
+    }
+
+    /**
+     * Convert a MediaDesc object from a Media info object. Width and Height from the MediaInfo
+     * are ignored.
+     */
+    protected MediaDesc createMediaDesc (MediaInfo info)
+    {
+        MediaDesc desc = new MediaDesc();
+        desc.hash = MediaDesc.stringToHash(info.hash);
+        desc.mimeType = info.mimeType;
+        desc.constraint = info.constraint;
+        return desc;
     }
 
     // our dependencies
