@@ -74,6 +74,9 @@ public class FrameEntryPoint
             }
         }
 
+        // initialize our GA handler
+        _analytics.init();
+
         // set up the callbackd that our flash clients can call
         configureCallbacks(this);
 
@@ -199,8 +202,8 @@ public class FrameEntryPoint
             setPageToken(_pageToken, _iframe.getElement());
         }
 
-//         // convert the page to GA format and report it to Google Analytics
-//         _analytics.report(args.toPath(page));
+        // convert the page to GA format and report it to Google Analytics
+        _analytics.report(args.toPath(page));
     }
 
     // from interface Session.Observer
