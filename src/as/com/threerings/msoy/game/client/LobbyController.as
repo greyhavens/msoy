@@ -52,6 +52,9 @@ public class LobbyController extends Controller implements Subscriber
     /** A command to leave a table. */
     public static const LEAVE_TABLE :String = "LeaveTable";
 
+    /** A command to boot a player from the table. */
+    public static const BOOT_PLAYER :String = "BootPlayer";
+
     /** A command to close the lobby. */
     public static const CLOSE_LOBBY :String = "CloseLobby";
 
@@ -169,6 +172,14 @@ public class LobbyController extends Controller implements Subscriber
     {
         _closedByUser = true;
         forceShutdown();
+    }
+
+    /**
+     * Handles BOOT_PLAYER.
+     */
+    public function handleBootPlayer (tableId :int, position :int) :void
+    {
+        _tableDir.bootPlayer(tableId, position);
     }
 
     /**

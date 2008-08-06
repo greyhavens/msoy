@@ -199,11 +199,13 @@ class SeatPanel extends VBox
             _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
             _leaveBtn.visible = (_leaveBtn.includeInLayout = true);
         } else {
-            _leaveBtn.visible = (_leaveBtn.includeInLayout = false);
+            if (_ctx.getPlayerObject().memberName.equals(table.players[0])) {
+                _leaveBtn.setCommand(LobbyController.BOOT_PLAYER, [ _table.tableId, _index ]);
+                _leaveBtn.visible = (_leaveBtn.includeInLayout = true);
+            } else {
+                _leaveBtn.visible = (_leaveBtn.includeInLayout = false);
+            }
         }
-
-        // TODO: add support for booting players from tables to the TableService, make it 
-        // optional on TableManager creation, and support it here in the form of the closebox
     }
 
     protected function preparePlayer () :void
@@ -220,7 +222,7 @@ class SeatPanel extends VBox
             _leaveBtn.styleName = "closeButton";
             addChild(hbox);
             addChild(_name = FlexUtil.createLabel("", "nameLabel"));
-        } 
+        }
     }
 
     protected function prepareJoinButton () :void

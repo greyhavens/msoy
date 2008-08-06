@@ -42,6 +42,8 @@ public class MsoyTableManager extends TableManager
         _worldClient = worldClient;
         _lmgr = lmgr;
         _lobj = lmgr.getLobbyObject();
+
+        _allowBooting = true;
     }
 
     @Override
