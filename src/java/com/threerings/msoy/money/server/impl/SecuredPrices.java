@@ -5,6 +5,8 @@ package com.threerings.msoy.money.server.impl;
 
 import java.io.Serializable;
 
+import com.threerings.msoy.money.server.MoneyType;
+
 /**
  * Contains secured prices when a member views an item.  This can be cached and identified by
  * a {@link PriceKey}.
@@ -13,14 +15,15 @@ import java.io.Serializable;
  */
 class SecuredPrices implements Serializable
 {
-    public SecuredPrices (final int coins, final int bars, final int creatorId, final int affiliateId, 
-        final String description)
+    public SecuredPrices (final MoneyType listedType, final int coins, final int bars, final int creatorId, 
+        final int affiliateId, final String description)
     {
         this.coins = coins;
         this.bars = bars;
         this.creatorId = creatorId;
         this.affiliateId = affiliateId;
         this.description = description;
+        this.listedType = listedType;
     }
 
     public int getCoins ()
@@ -47,10 +50,16 @@ class SecuredPrices implements Serializable
     {
         return affiliateId;
     }
+
+    public MoneyType getListedType ()
+    {
+        return listedType;
+    }
     
     private final int coins;
     private final int bars;
     private final int creatorId;
     private final int affiliateId;
     private final String description;
+    private final MoneyType listedType;
 }

@@ -120,7 +120,8 @@ class MoneyLogicImpl
         final ItemIdent item, final int numBars, final String description)
     {
         // TODO: Use exchange rate to calculate coins.
-        securedPricesCache.securePrice(memberId, item, new SecuredPrices(0, numBars, creatorId, affiliateId, description));
+        securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.BARS, 0, numBars, 
+            creatorId, affiliateId, description));
         return 0;
     }
 
@@ -128,7 +129,8 @@ class MoneyLogicImpl
         final ItemIdent item, final int numCoins, final String description)
     {
         // TODO: Use exchange rate to calculate bars.
-        securedPricesCache.securePrice(memberId, item, new SecuredPrices(numCoins, 0, creatorId, affiliateId, description));
+        securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.COINS, numCoins, 0, 
+            creatorId, affiliateId, description));
         return 0;
     }
 
@@ -138,7 +140,7 @@ class MoneyLogicImpl
 
     }
     
-    private void buyItem (final int memberId, final ItemIdent item, final MoneyType type)
+    private void buyItem (final int memberId, final ItemIdent item, final MoneyType purchaseType)
         throws NotEnoughMoneyException, NotSecuredException
     {
         // Get the secured prices for the item.
@@ -146,13 +148,14 @@ class MoneyLogicImpl
         if (prices == null) {
             throw new NotSecuredException(memberId, item);
         }
-        final int amount = (type == MoneyType.BARS ? prices.getBars() : prices.getCoins());
+        final int amount = (purchaseType == MoneyType.BARS ? prices.getBars() : prices.getCoins());
         
         // Load up the accounts (member, creator, and affiliate).
         final MemberAccountRecord account = repo.getAccountById(memberId);
-        if (account == null || !account.canAfford(amount, type)) {
-            final int available = (account == null ? 0 : (type == MoneyType.BARS ? account.getBars() : account.getCoins()));
-            throw new NotEnoughMoneyException(available, amount, type, memberId);
+        if (account == null || !account.canAfford(amount, purchaseType)) {
+            final int available = (account == null ? 0 : (purchaseType == MoneyType.BARS ? account.getBars() : 
+                account.getCoins()));
+            throw new NotEnoughMoneyException(available, amount, purchaseType, memberId);
         }
         MemberAccountRecord creator = repo.getAccountById(prices.getCreatorId());
         if (creator == null) {
@@ -170,8 +173,10 @@ class MoneyLogicImpl
         securedPricesCache.removeSecuredPrice(memberId, item);
         
         // Update and save the accounts, and add history records for the changes.
-        repo.addHistory(account.buyItem(amount, type, prices.getDescription(), item));
-        // TODO: update creator and affiliate with some amount of bling.
+        repo.addHistory(account.buyItem(amount, purchaseType, prices.getDescription(), item));
+        repo.addHistory(creator.creatorPayout(amount, prices.getListedType(), "Item purchased: " + 
+            prices.getDescription(), item));
+        // TODO: update affiliate with some amount of bling.
         repo.saveAccount(account);
         repo.saveAccount(creator);
         if (affiliate != null) {

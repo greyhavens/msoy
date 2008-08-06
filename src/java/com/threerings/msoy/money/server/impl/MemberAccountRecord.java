@@ -100,7 +100,7 @@ public class MemberAccountRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #MemberAccountRecord}
      * with the supplied key values.
      */
-    public static Key<MemberAccountRecord> getKey (int memberId)
+    public static Key<MemberAccountRecord> getKey (final int memberId)
     {
         return new Key<MemberAccountRecord>(
                 MemberAccountRecord.class,
@@ -185,9 +185,45 @@ public class MemberAccountRecord extends PersistentRecord
             description, item.itemId, item.type);
     }
     
+    /**
+     * Returns true if the account can afford spending the amount of currency indicated.
+     * 
+     * @param amount Amount to spend.
+     * @param type Currency to spend, either BARS or COINS.
+     * @return True if the account can afford it, false otherwise.
+     */
     public boolean canAfford (final int amount, final MoneyType type)
     {
         return type == MoneyType.BARS ? (bars >= amount) : (coins >= amount);
+    }
+    
+    /**
+     * Pays the creator of an item purchased a certain percentage of the amount for the item.
+     * 
+     * @param amount Amount the item was worth.
+     * @param listingType Money type the item was listed with.
+     * @param description Description of the item purchased.
+     * @param item Item that was purchased.
+     * @return History record for the transaction.
+     */
+    public MemberAccountHistoryRecord creatorPayout (final int amount, final MoneyType listingType, 
+        final String description, final ItemIdent item)
+    {
+        // TODO: Determine percentage from administrator.
+        final double amountPaid = 0.3 * amount;
+        final MoneyType paymentType;
+        if (listingType == MoneyType.BARS) {
+            this.bling += amountPaid;
+            this.accBling += amountPaid;
+            paymentType = MoneyType.BLING;
+        } else {
+            this.coins += (int)amountPaid;
+            this.accCoins += (int)amountPaid;
+            paymentType = MoneyType.COINS;
+        }
+        this.dateLastUpdated = new Timestamp(new Date().getTime());
+        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, paymentType, amountPaid, false, 
+            description);
     }
     
     public int getMemberId ()
@@ -235,6 +271,9 @@ public class MemberAccountRecord extends PersistentRecord
         return accBling;
     }
     
+    /**
+     * Creates a {@link MemberMoney} object from this record.
+     */
     public MemberMoney getMemberMoney ()
     {
         return new MemberMoney(memberId, coins, bars, bling, accCoins, accBars, accBling);
