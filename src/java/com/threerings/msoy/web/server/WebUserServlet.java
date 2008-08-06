@@ -54,6 +54,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.profile.gwt.Profile;
 
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.data.AccountInfo;
@@ -86,7 +87,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
     // from interface WebUserService
     public SessionData register (
-        String clientVersion, String username, String password, final String displayName,
+        String clientVersion, String username, String password, String displayName,
         int[] bdayvec, MediaDesc photo, AccountInfo info, int expireDays, String inviteId,
         int guestId, String captchaChallenge, String captchaResponse, ReferralInfo referral)
         throws ServiceException
@@ -120,8 +121,9 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // validate display name length (this is enforced on the client)
-        if (displayName.length() < MemberName.MIN_DISPLAY_NAME_LENGTH ||
-            displayName.length() > MemberName.MAX_DISPLAY_NAME_LENGTH) {
+        displayName = displayName.trim();
+        if (!MemberName.isValidDisplayName(displayName) ||
+                !MemberName.isValidNonSupportName(displayName)) {
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -199,6 +201,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
                 // dispatch a notification to the inviter that the invite was accepted
                 final InvitationRecord finvite = invite;
+                final String fdisplayName = displayName;
                 _omgr.postRunnable(new Runnable() {
                     public void run () {
                         // TODO: This is really spammy; in fact, when somebody accepts your invite
@@ -212,7 +215,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
                         // and possibly send a runtime notification as well
                         _notifyMan.notifyInvitationAccepted(
-                            finvite.inviterId, displayName, mrec.memberId, finvite.inviteeEmail);
+                            finvite.inviterId, fdisplayName, mrec.memberId, finvite.inviteeEmail);
                     }
                 });
 

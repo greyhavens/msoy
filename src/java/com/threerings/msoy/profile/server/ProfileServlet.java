@@ -26,6 +26,7 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -121,8 +122,8 @@ public class ProfileServlet extends MsoyServiceServlet
         if (displayName != null) {
             displayName = displayName.trim();
         }
-        if (!Profile.isValidDisplayName(displayName) ||
-                (!memrec.isSupport() && !Profile.isValidNonSupportName(displayName))) {
+        if (!MemberName.isValidDisplayName(displayName) ||
+                (!memrec.isSupport() && !MemberName.isValidNonSupportName(displayName))) {
             // you'll only see this with a hacked client
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }

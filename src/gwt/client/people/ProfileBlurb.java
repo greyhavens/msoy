@@ -284,14 +284,14 @@ public class ProfileBlurb extends Blurb
     {
         // validate their display name
         final String name = _ename.getText().trim();
-        if (!Profile.isValidDisplayName(name)) {
-            MsoyUI.infoNear(CPeople.msgs.displayNameInvalid(
+        if (!MemberName.isValidDisplayName(name)) {
+            MsoyUI.infoNear(_cmsgs.displayNameInvalid(
                                 "" + MemberName.MIN_DISPLAY_NAME_LENGTH,
                                 "" + MemberName.MAX_DISPLAY_NAME_LENGTH), _ename);
             return;
         }
-        if (!CPeople.isSupport() && !Profile.isValidNonSupportName(name)) {
-            MsoyUI.infoNear(CPeople.msgs.nonSupportNameInvalid(), _ename);
+        if (!CPeople.isSupport() && !MemberName.isValidNonSupportName(name)) {
+            MsoyUI.infoNear(_cmsgs.nonSupportNameInvalid(), _ename);
             return;
         }
 

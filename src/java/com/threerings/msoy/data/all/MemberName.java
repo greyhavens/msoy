@@ -40,6 +40,50 @@ public class MemberName extends Name
         return new MemberName(null, memberId);
     }
 
+    /**
+     * Returns true if the supplied display name meets our length requirements. If we add other
+     * requirements in the future, we can enforce those here as well.
+     */
+    public static boolean isValidDisplayName (String name)
+    {
+        return (name != null && name.length() >= MIN_DISPLAY_NAME_LENGTH &&
+                name.length() <= MAX_DISPLAY_NAME_LENGTH);
+    }
+
+    /**
+     * Called after isValidDisplayName, if the user is not support.
+     */
+    @SuppressWarnings("deprecation") // GWT needs isSpace(), but it's deprecated in favor of
+    // isWhitespace() in the Java library.
+    public static boolean isValidNonSupportName (String name)
+    {
+        name = name.toLowerCase();
+        if (isPossibleA(name.charAt(0)) && (
+                name.startsWith("gent", 1) || name.startsWith("genl ", 1) ||
+                name.startsWith("gant ", 1) || name.startsWith("gint ", 1))) {
+            return false;
+        }
+
+        int lastDex = 2;
+        do {
+            int dex = name.indexOf("gent ", lastDex);
+            if (dex != -1 && Character.isSpace(name.charAt(dex - 2)) &&
+                    isPossibleA(name.charAt(dex - 1))) {
+                return false;
+            }
+            lastDex = dex + 1;
+        } while (lastDex > 0);
+        return true;
+    }
+
+    /** Helper for isValidNonSupportName. */
+    private static boolean isPossibleA (char c)
+    {
+        // it's an A, or it's something unicodey: kill.
+        // I don't want to enumerate all possible unicode A characters.
+        return (c == 'a') || (c > 127);
+    }
+
     /** Used to reprepsent a member that has been deleted but is still referenced as an item
      * creator or mail message sender, etc. */
     public static final MemberName DELETED_MEMBER = new MemberName("", -1);

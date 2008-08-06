@@ -37,6 +37,7 @@ import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.Pages;
+import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
@@ -155,8 +156,12 @@ public class CreateAccountPanel extends FlowPanel
             status = CAccount.msgs.createMissingDoB();
             // this is not a FocusWidget so we have to handle it specially
             _dateOfBirth.setFocus(true);
-        } else if (name.length() < MemberName.MIN_DISPLAY_NAME_LENGTH) {
-            status = CAccount.msgs.createNameTooShort(""+MemberName.MIN_DISPLAY_NAME_LENGTH);
+        } else if (!MemberName.isValidDisplayName(name)) {
+            status = _cmsgs.displayNameInvalid("" + MemberName.MIN_DISPLAY_NAME_LENGTH,
+                "" + MemberName.MAX_DISPLAY_NAME_LENGTH);
+            toFocus = _name;
+        } else if (!MemberName.isValidNonSupportName(name)) {
+            status = _cmsgs.nonSupportNameInvalid();
             toFocus = _name;
         } else if (!_tosBox.isChecked()) {
             status = CAccount.msgs.createMustAgreeTOS();
@@ -298,6 +303,7 @@ public class CreateAccountPanel extends FlowPanel
     protected CheckBox _tosBox;
     protected Label _status;
 
+    protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }
