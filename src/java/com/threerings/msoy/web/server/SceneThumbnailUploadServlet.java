@@ -12,7 +12,7 @@ import com.google.inject.Inject;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
-import com.threerings.msoy.web.server.UploadUtil.CanonicalSnapshotInfo;
+//import com.threerings.msoy.web.server.UploadUtil.CanonicalSnapshotInfo;
 import com.threerings.msoy.world.server.AbstractSnapshotUploadServlet;
 import com.threerings.msoy.world.server.SnapshotUploadFile;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
@@ -81,7 +81,7 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
         validateFileLength(uploadFile.getMimeType(), ctx.uploadLength);
 
         // publish the file, and we're done
-        CanonicalSnapshotInfo info = UploadUtil.publishSnapshot((SnapshotUploadFile) uploadFile);
+//        CanonicalSnapshotInfo info = UploadUtil.publishSnapshot((SnapshotUploadFile) uploadFile);
 
         // get media desc objects
 //        MediaDesc thumbDesc = createMediaDesc(info.thumbnail);
