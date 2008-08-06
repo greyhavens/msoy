@@ -79,7 +79,10 @@ final class DepotMoneyRepository extends DepotRepository
                     MemberAccountRecord.COINS, account.getCoins(),
                     MemberAccountRecord.BLING, account.getBling(),
                     MemberAccountRecord.DATE_LAST_UPDATED, account.dateLastUpdated,
-                    MemberAccountRecord.VERSION_ID, account.getVersionId());
+                    MemberAccountRecord.VERSION_ID, account.getVersionId(),
+                    MemberAccountRecord.ACC_BARS, account.getAccBars(),
+                    MemberAccountRecord.ACC_COINS, account.getAccCoins(),
+                    MemberAccountRecord.ACC_BLING, account.getAccBling());
                 if (count == 0) {
                     throw new StaleDataException("Member account record is stale: " + account.getMemberId());
                 }

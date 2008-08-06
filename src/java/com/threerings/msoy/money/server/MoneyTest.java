@@ -41,6 +41,7 @@ public class MoneyTest
         service.buyBars(1, 2);
         final MemberMoney newMoney = service.getMoneyFor(1);
         assertEquals(oldMoney.getBars() + 2, newMoney.getBars());
+        assertEquals(oldMoney.getAccBars() + 2, newMoney.getAccBars());
         final long endTime = System.currentTimeMillis() / 1000;
         
         final List<MoneyHistory> log = service.getLog(1, null, 0, 30, true);
@@ -60,6 +61,7 @@ public class MoneyTest
         service.buyItemWithBars(1, item);
         final MemberMoney newMoney = service.getMoneyFor(1);
         assertEquals(oldMoney.getBars() + 50, newMoney.getBars());
+        assertEquals(oldMoney.getAccBars() + 150, newMoney.getAccBars());
         final long endTime = System.currentTimeMillis() / 1000;
 
         final List<MoneyHistory> log = service.getLog(1, null, 0, 30, true);
@@ -109,6 +111,7 @@ public class MoneyTest
         service.buyItemWithCoins(1, item);
         final MemberMoney newMoney = service.getMoneyFor(1);
         assertEquals(oldMoney.getCoins() + 50, newMoney.getCoins());
+        assertEquals(oldMoney.getAccCoins() + 150, newMoney.getAccCoins());
         final long endTime = System.currentTimeMillis() / 1000;
         
         final List<MoneyHistory> log = service.getLog(1, null, 0, 30, true);

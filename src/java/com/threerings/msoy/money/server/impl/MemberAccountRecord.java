@@ -12,6 +12,7 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.MemberMoney;
@@ -23,7 +24,9 @@ import com.threerings.msoy.money.server.MoneyType;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-@Entity
+@Entity(indices={
+    @Index(name="ixVersion", fields={ MemberAccountRecord.VERSION_ID })
+})
 @NotThreadSafe
 public class MemberAccountRecord extends PersistentRecord
 {
@@ -69,6 +72,27 @@ public class MemberAccountRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #versionId} field. */
     public static final ColumnExp VERSION_ID_C =
         new ColumnExp(MemberAccountRecord.class, VERSION_ID);
+
+    /** The column identifier for the {@link #accCoins} field. */
+    public static final String ACC_COINS = "accCoins";
+
+    /** The qualified column identifier for the {@link #accCoins} field. */
+    public static final ColumnExp ACC_COINS_C =
+        new ColumnExp(MemberAccountRecord.class, ACC_COINS);
+
+    /** The column identifier for the {@link #accBars} field. */
+    public static final String ACC_BARS = "accBars";
+
+    /** The qualified column identifier for the {@link #accBars} field. */
+    public static final ColumnExp ACC_BARS_C =
+        new ColumnExp(MemberAccountRecord.class, ACC_BARS);
+
+    /** The column identifier for the {@link #accBling} field. */
+    public static final String ACC_BLING = "accBling";
+
+    /** The qualified column identifier for the {@link #accBling} field. */
+    public static final ColumnExp ACC_BLING_C =
+        new ColumnExp(MemberAccountRecord.class, ACC_BLING);
     // AUTO-GENERATED: FIELDS END
     
     // AUTO-GENERATED: METHODS START
@@ -76,7 +100,7 @@ public class MemberAccountRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #MemberAccountRecord}
      * with the supplied key values.
      */
-    public static Key<MemberAccountRecord> getKey (final int memberId)
+    public static Key<MemberAccountRecord> getKey (int memberId)
     {
         return new Key<MemberAccountRecord>(
                 MemberAccountRecord.class,
@@ -85,7 +109,7 @@ public class MemberAccountRecord extends PersistentRecord
     }
     // AUTO-GENERATED: METHODS END
     
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
     
     /**
      * Creates a new blank record for the given member.  All account balances are set to 0.
@@ -98,6 +122,9 @@ public class MemberAccountRecord extends PersistentRecord
         this.coins = 0;
         this.bars = 0;
         this.bling = 0.0;
+        this.accCoins = 0;
+        this.accBars = 0;
+        this.accBling = 0.0;
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         this.versionId = 0;
     }
@@ -116,6 +143,7 @@ public class MemberAccountRecord extends PersistentRecord
     public MemberAccountHistoryRecord buyBars (final int bars)
     {
         this.bars += bars;
+        this.accBars += bars;
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated, MoneyType.BARS,
             bars, false, "Purchased " + bars + " bars.");
@@ -130,6 +158,7 @@ public class MemberAccountRecord extends PersistentRecord
     public MemberAccountHistoryRecord awardCoins (final int coins)
     {
         this.coins += coins;
+        this.accCoins += coins;
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated, MoneyType.COINS,
             coins, false, "Awarded " + coins + " coins.");
@@ -190,10 +219,25 @@ public class MemberAccountRecord extends PersistentRecord
     {
         return versionId;
     }
+
+    public long getAccCoins ()
+    {
+        return accCoins;
+    }
+
+    public long getAccBars ()
+    {
+        return accBars;
+    }
+
+    public double getAccBling ()
+    {
+        return accBling;
+    }
     
     public MemberMoney getMemberMoney ()
     {
-        return new MemberMoney(memberId, coins, bars, bling);
+        return new MemberMoney(memberId, coins, bars, bling, accCoins, accBars, accBling);
     }
     
     /** ID of the member this account record is for.  Note: this is not part of the API, do not use it. */
@@ -215,4 +259,16 @@ public class MemberAccountRecord extends PersistentRecord
     
     /** ID of the version of this account.  Note: this is not part of the API, do not use it. */
     public long versionId;
+    
+    /** Cumulative count of coins this member has ever received.  Note: this is not part of the API, do
+     * not use it. */
+    public long accCoins;
+    
+    /** Cumulative count of bars this member has ever received.  Note: this is not part of the API, do
+     * not use it. */
+    public long accBars;
+    
+    /** Cumulative count of bling this member has ever received.  Note: this is not part of the API, do
+     * not use it. */
+    public double accBling;
 }

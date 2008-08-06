@@ -113,7 +113,7 @@ class MoneyLogicImpl
     public MemberMoney getMoneyFor (final int memberId)
     {
         final MemberAccountRecord account = repo.getAccountById(memberId);
-        return account != null ? account.getMemberMoney() : new MemberMoney(memberId, 0, 0, 0.0); 
+        return account != null ? account.getMemberMoney() : new MemberMoney(memberId); 
     }
 
     public int secureBarPrice (final int memberId, final int creatorId, final int affiliateId, 

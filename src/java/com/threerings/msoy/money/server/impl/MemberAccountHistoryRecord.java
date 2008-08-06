@@ -10,9 +10,11 @@ import net.jcip.annotations.NotThreadSafe;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
+import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.MoneyHistory;
@@ -24,6 +26,11 @@ import com.threerings.msoy.money.server.MoneyType;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
+@Entity(indices={
+    @Index(name="ixMemberId", fields={ MemberAccountHistoryRecord.MEMBER_ID }),
+    @Index(name="ixTimestamp", fields={ MemberAccountHistoryRecord.TIMESTAMP }),
+    @Index(name="ixType", fields={ MemberAccountHistoryRecord.TYPE})
+})
 @NotThreadSafe
 public class MemberAccountHistoryRecord extends PersistentRecord
 {
@@ -106,7 +113,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     }
     // AUTO-GENERATED: METHODS END
     
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
     
     /**
      * Creates an account history record involving some particular item.
