@@ -11,8 +11,8 @@ MSOY_HOME=`dirname $0 | sed s:/bin$::`
 HOSTNAME=`hostname`
 
 # Make sure our bureau id and port were properly supplied.
-if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$5" ]; then
-    echo "Usage: $0 confprefix bureauId connectToken server port"
+if [ -z "$1" -o -z "$2" -o -z "$3" -o -z "$4" -o -z "$5" -o -z "$6" ]; then
+    echo "Usage: $0 confprefix bureauId connectToken server port windowToken"
     echo "Parameters: $@"
     exit 255
 fi
@@ -22,6 +22,7 @@ BUREAU_ID=$2
 CONNECT_TOKEN=$3
 CONNECT_SERVER=$4
 CONNECT_PORT=$5
+WINDOW_TOKEN=$6
 
 LOGFILE=$MSOY_HOME/log/stdout-b$BUREAU_ID.log
 LOG_EMAIL=nightly-logs@threerings.net
@@ -69,11 +70,12 @@ echo "         Server: $CONNECT_SERVER"
 echo "           Port: $CONNECT_PORT"
 echo "           Libs: $LIBS"
 echo "           Main: $MAIN"
+echo "   Window Token: $WINDOW_TOKEN"
 echo "------------------------------------------------------------------------------";
 } >>$LOGFILE
 
 $THANE_INTERPRETER -Dinterp $LIBS $MAIN -- $BUREAU_ID $CONNECT_TOKEN \
-    $CONNECT_SERVER $CONNECT_PORT >>$LOGFILE 2>&1
+    $CONNECT_SERVER $CONNECT_PORT $WINDOW_TOKEN >>$LOGFILE 2>&1
 EXIT_CODE=$?
 
 # Archive the log

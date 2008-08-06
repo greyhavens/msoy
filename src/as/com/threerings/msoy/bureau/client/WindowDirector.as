@@ -14,9 +14,10 @@ public class WindowDirector
     /**
      * Creates a new window director.
      */
-    public function WindowDirector (bureauId :String)
+    public function WindowDirector (bureauId :String, token :String)
     {
         _bureauId = bureauId;
+        _token = token;
     }
 
     /**
@@ -43,7 +44,7 @@ public class WindowDirector
 
         if (window == null) {
             Assert.isTrue(_windows.get(key)==undefined);
-            window = new WindowImpl(host, port, _bureauId, _serviceGroups);
+            window = new WindowImpl(host, port, _bureauId, _token, _serviceGroups);
             _windows.put(key, window);
         }
 
@@ -82,6 +83,7 @@ public class WindowDirector
     protected var _windows :HashMap = new HashMap();
     protected var _serviceGroups :Array = [];
     protected var _bureauId :String;
+    protected var _token :String;
 
     WindowClientObject; // make sure this gets linked in for serialization
 }
@@ -108,9 +110,9 @@ class WindowImpl implements Window
      * requests the given service groups.
      */
     public function WindowImpl (
-        host :String, port :int, bureauId :String, serviceGroups :Array)
+        host :String, port :int, bureauId :String, token :String, serviceGroups :Array)
     {
-        var creds :WindowCredentials = new WindowCredentials(bureauId);
+        var creds :WindowCredentials = new WindowCredentials(bureauId, token);
         _client = new Client(creds);
         _client.setServer(host, [port]);
         _client.addEventListener(ClientEvent.CLIENT_DID_LOGON, clientDidLogon);
@@ -144,6 +146,8 @@ class WindowImpl implements Window
         return _client.requireService(sclass);
     }
 
+    /** @inheritDoc */
+    // from Window
     public function getClient () :Client
     {
         return _client;

@@ -11,7 +11,6 @@ import com.threerings.util.StringBuilder;
 
 /**
  * Extends the basic credentials to provide window-specific fields.
- * TODO: use more than just a special username
  */
 public class WindowCredentials extends Credentials
 {
@@ -24,9 +23,10 @@ public class WindowCredentials extends Credentials
     /**
      * Creates new credentials for a specific bureau.
      */
-    public function WindowCredentials (bureauId :String)
+    public function WindowCredentials (bureauId :String, sharedSecret :String)
     {
         super(new Name(PREFIX + bureauId + SUFFIX));
+        _sharedSecret = sharedSecret;
     }
 
     /** @inheritDoc */
@@ -39,12 +39,16 @@ public class WindowCredentials extends Credentials
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
+        _sharedSecret = ins.readField(String) as String;
     }
 
     // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
+        out.writeField(_sharedSecret);
     }
+
+    protected var _sharedSecret :String;
 }
 }

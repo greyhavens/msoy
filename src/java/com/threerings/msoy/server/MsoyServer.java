@@ -169,7 +169,7 @@ public class MsoyServer extends MsoyBaseServer
 
         // Add in the authenticator and client factory which will allow bureau windows (for avrgs)
         // to be distinguished and connected
-        _conmgr.addChainedAuthenticator(new WindowAuthenticator());
+        _conmgr.addChainedAuthenticator(new WindowAuthenticator(ServerConfig.windowSharedSecret));
         _clmgr.setClientFactory(new WindowClientFactory(_clmgr.getClientFactory()));
 
         // initialize the mail invoker

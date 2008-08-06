@@ -12,6 +12,7 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -236,10 +237,10 @@ public abstract class MsoyBaseServer extends WhirledServer
         public String[] createCommand (
             String bureauId,
             String token) {
+            String windowToken = StringUtil.md5hex(ServerConfig.windowSharedSecret);
             return new String[] {
-                ServerConfig.serverRoot + "/bin/runthaneclient",
-                "msoy", bureauId, token, "localhost",
-                String.valueOf(getListenPorts()[0])};
+                ServerConfig.serverRoot + "/bin/runthaneclient", "msoy", bureauId, token, 
+                "localhost", String.valueOf(getListenPorts()[0]), windowToken};
         }
     }
 

@@ -1,5 +1,6 @@
 package com.threerings.msoy.bureau.server;
 
+import com.samskivert.util.StringUtil;
 import com.threerings.msoy.bureau.data.WindowCredentials;
 import com.threerings.presents.data.AuthCodes;
 import com.threerings.presents.net.AuthRequest;
@@ -19,8 +20,9 @@ public class WindowAuthenticator extends ChainedAuthenticator
     /**
      * Creates a new bureau window authenticator.
      */
-    public WindowAuthenticator ()
+    public WindowAuthenticator (String sharedSecret)
     {
+        _token = StringUtil.md5hex(sharedSecret);
     }
 
     @Override // from abstract ChainedAuthenticator
@@ -30,18 +32,25 @@ public class WindowAuthenticator extends ChainedAuthenticator
     }
 
     @Override // from Authenticator
-    protected void processAuthentication (
-        AuthingConnection conn,
-        AuthResponse rsp)
+    protected void processAuthentication (AuthingConnection conn, AuthResponse rsp)
     {
         AuthRequest req = conn.getAuthRequest();
         WindowCredentials creds = (WindowCredentials)req.getCredentials();
         if (WindowCredentials.isWindow(creds.getUsername())) {
-            rsp.getData().code = AuthResponseData.SUCCESS;
+
+            if (creds.getToken().equals(_token)) {
+                rsp.getData().code = AuthResponseData.SUCCESS;
+
+            } else {
+                log.warning("Wrong token on bureau window auth request", "creds", creds);
+                rsp.getData().code = AuthCodes.INVALID_PASSWORD;
+            }
 
         } else {
             log.warning("Invalid bureau window auth request", "creds", creds);
             rsp.getData().code = AuthCodes.SERVER_ERROR;
         }
     }
+
+    protected String _token;
 }

@@ -109,6 +109,9 @@ public class ServerConfig
     /** True if the game server kicks off local proceses for bureaus. */
     public static boolean localBureaus;
 
+    /** The secret used to authenticate bureau window clients. */
+    public static String windowSharedSecret;
+
     /** True if the server should restart when code changes. */
     public static boolean autoRestart;
 
@@ -329,6 +332,7 @@ public class ServerConfig
         recaptchaPrivateKey = config.getValue("recaptcha_private", "");
         bureauSharedSecret = config.getValue("bureau_secret", "");
         localBureaus = config.getValue("local_bureaus", true);
+        windowSharedSecret = config.getValue("window_secret", "");
         autoRestart = config.getValue("auto_restart", false);
     }
 }

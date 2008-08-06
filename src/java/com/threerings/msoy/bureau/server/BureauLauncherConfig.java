@@ -29,6 +29,9 @@ public class BureauLauncherConfig
     /** The secret used to authenticate the bureau launching client. */
     public static String bureauSharedSecret;
 
+    /** The secret passed to bureaus for them to use when opening connections to world servers. */
+    public static String windowSharedSecret;
+
     /** True if the world/game servers will be restarting when code changes (and therefore
      * probably not calling BureauLauncherSender.shutdown. */
     public static boolean worldServerWillAutoRestart;
@@ -60,6 +63,7 @@ public class BureauLauncherConfig
         // fill in our standard properties
         serverRoot = new File(config.getValue("server_root", "/tmp"));
         bureauSharedSecret = config.getValue("bureau_secret", "");
+        windowSharedSecret = config.getValue("window_secret", "");
         worldServerWillAutoRestart = config.getValue("world_server_will_auto_restart", false);
     }
 }

@@ -37,14 +37,23 @@ public class WindowCredentials extends Credentials
     /**
      * Creates new credentials for a specific bureau.
      */
-    public WindowCredentials (String bureauId)
+    public WindowCredentials (String bureauId, String token)
     {
         super(new Name(PREFIX + bureauId + SUFFIX));
+        _token = token;
+    }
+
+    public String getToken ()
+    {
+        return _token;
     }
 
     @Override // inherit documentation
     protected void toString (StringBuilder buf)
     {
         super.toString(buf);
+        buf.append("token=").append(_token);
     }
+
+    protected String _token;
 }

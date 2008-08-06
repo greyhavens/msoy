@@ -19,18 +19,20 @@ public class MsoyBureauClient extends WhirledBureauClient
     public static function main (
         args :Array, userCodeLoader :UserCodeLoader, cleanup :Function) :void
     {
-        if (args.length != 4) {
-            throw new Error("Expected exactly 4 arguments: (bureauId) (token) (server) (port)");
+        if (args.length != 5) {
+            throw new Error(
+                "Expected exactly 5 arguments: (bureauId) (token) (server) (port) (windowToken)");
         }
 
         var bureauId :String = args[0];
         var token :String = args[1];
         var server :String = args[2];
         var port :int = parseInt(args[3]);
+        var windowToken :String = args[4];
 
         // create the client and log on
         var client :MsoyBureauClient = new MsoyBureauClient(
-            token, bureauId, userCodeLoader, cleanup);
+            token, bureauId, windowToken, userCodeLoader, cleanup);
         client.setVersion(DeploymentConfig.version);
         client.setServer(server, [port]);
         client.logon();
@@ -38,9 +40,11 @@ public class MsoyBureauClient extends WhirledBureauClient
 
     /** Creates a new client. */
     public function MsoyBureauClient (
-        token :String, bureauId :String, userCodeLoader :UserCodeLoader, cleanup :Function)
+        token :String, bureauId :String, windowToken :String, userCodeLoader :UserCodeLoader,
+        cleanup :Function)
     {
         super(token, bureauId, userCodeLoader, cleanup);
+        _windowToken = windowToken;
     }
 
     /** Access this client's window director. */
@@ -50,8 +54,7 @@ public class MsoyBureauClient extends WhirledBureauClient
         var thaneWorldServiceProvided :Boolean = true;
 
         if (enableWindowDirector && _windowDirector == null) {
-            _windowDirector = new WindowDirector(_bureauId);
-            // TODO: implement thane world service on the server and uncomment this
+            _windowDirector = new WindowDirector(_bureauId, _windowToken);
             if (thaneWorldServiceProvided) {
                 ThaneWorldMarshaller; // make sure we link in the marshaller
                 _windowDirector.addServiceGroup(ThaneCodes.THANE_GROUP);
@@ -78,6 +81,7 @@ public class MsoyBureauClient extends WhirledBureauClient
     }
 
     protected var _windowDirector :WindowDirector;
+    protected var _windowToken :String;
 }
 
 }

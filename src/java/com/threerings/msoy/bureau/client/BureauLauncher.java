@@ -10,6 +10,7 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.Interval;
 import com.samskivert.util.ProcessLogger;
 import com.samskivert.util.RunQueue;
+import com.samskivert.util.StringUtil;
 import com.threerings.msoy.bureau.server.BureauLauncherConfig;
 import com.threerings.presents.server.SunSignalHandler;
 import com.threerings.presents.server.ShutdownManager;
@@ -184,9 +185,10 @@ public class BureauLauncher
         // TODO: should this go on an invoker thread? Normally, yes, but this is only going to be
         // called when the first instance of a game is played since the last server restart, so it
         // is debatable.
+        String windowToken = StringUtil.md5hex(BureauLauncherConfig.windowSharedSecret);
         String [] command = {
-            BureauLauncherConfig.serverRoot + "/bin/runthaneclient",
-            "burl", bureauId, token, server, String.valueOf(port)};
+            BureauLauncherConfig.serverRoot + "/bin/runthaneclient", "burl", bureauId, token, 
+            server, String.valueOf(port), windowToken};
         log.info("Attempting to launch thane", "command", command);
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.redirectErrorStream(true);
