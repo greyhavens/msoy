@@ -16,7 +16,7 @@ import com.threerings.presents.annotation.BlockingThread;
  * @author Kyle Sampson <kyle@threerings.net>
  */
 @BlockingThread
-public interface MoneyService
+public interface MoneyLogic
 {
     /**
      * Secures a price for an item in bars.  This ensures the user will be able to purchase

@@ -156,5 +156,5 @@ public class MoneyTest
         assertEquals(expected.isSpent(), logEntry.isSpent());
     }
     
-    @Inject private MoneyService service;
+    @Inject private MoneyLogic service;
 }

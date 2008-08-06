@@ -13,7 +13,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.MemberMoney;
 import com.threerings.msoy.money.server.MoneyConfiguration;
 import com.threerings.msoy.money.server.MoneyHistory;
-import com.threerings.msoy.money.server.MoneyService;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyType;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 import com.threerings.msoy.money.server.NotSecuredException;
@@ -26,11 +26,11 @@ import com.threerings.msoy.money.server.NotSecuredException;
  * @author Kyle Sampson <kyle@threerings.net>
  */
 @Singleton
-class MoneyServiceImpl
-    implements MoneyService
+class MoneyLogicImpl
+    implements MoneyLogic
 {
     @Inject
-    public MoneyServiceImpl(final MoneyRepository repo, final SecuredPricesCache securedPricesCache)
+    public MoneyLogicImpl(final MoneyRepository repo, final SecuredPricesCache securedPricesCache)
     {
         this.repo = repo;
         this.securedPricesCache = securedPricesCache;

@@ -7,7 +7,7 @@ import static com.google.inject.matcher.Matchers.annotatedWith;
 import static com.google.inject.matcher.Matchers.any;
 
 import com.google.inject.AbstractModule;
-import com.threerings.msoy.money.server.MoneyService;
+import com.threerings.msoy.money.server.MoneyLogic;
 
 /**
  * Dependency injection module for the money service.
@@ -20,7 +20,7 @@ public final class MoneyModule extends AbstractModule
     protected void configure ()
     {
         bind(MoneyRepository.class).to(DepotMoneyRepository.class);
-        bind(MoneyService.class).to(MoneyServiceImpl.class);
+        bind(MoneyLogic.class).to(MoneyLogicImpl.class);
         bind(SecuredPricesCache.class).toInstance(new SecuredPricesEhcache(SECURED_PRICES_MAX_ELEMENTS,
             SECURED_PRICES_MAX_DURATION));
         bindInterceptor(any(), annotatedWith(Retry.class), new RetryInterceptor());
