@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
@@ -152,9 +153,7 @@ public class FrameEntryPoint
                     public void onSuccess (Invitation invite) {
                         _activeInvite = invite;
                         // also configure our tracking cookie
-                        TrackingCookie.save(new ReferralInfo(
-                                                ""+invite.inviter.getMemberId(), EMAIL_VECTOR,
-                                                "", ReferralInfo.makeRandomTracker()), false);
+                        maybeCreateReferral(""+invite.inviter.getMemberId(), EMAIL_VECTOR, "");
                     }
                 });
             }
@@ -178,16 +177,19 @@ public class FrameEntryPoint
             args.setToken(token);
 
             // save our tracking info, but don't overwrite old values
-            ReferralInfo ref = new ReferralInfo(
-                affiliate, vector, creative, ReferralInfo.makeRandomTracker());
-            TrackingCookie.save(ref, false);
+            maybeCreateReferral(affiliate, vector, creative);
+        } 
 
-        } else {
-            if (!TrackingCookie.exists()) {
-                String tracker = ReferralInfo.makeRandomTracker();
-                TrackingCookie.save(ReferralInfo.makeInstance("", "", "", tracker), false);
+        // if we still don't have a tracking cookie, try to manufacture one from 
+        // the HTTP Referer header, which the server should have saved for us.
+        if (!TrackingCookie.exists()) {
+            String ref = CookieUtil.get(ReferralInfo.REFERRER_COOKIE);
+            if (ref != null && ref.length() > 0) {
+                maybeCreateReferral(ref, token, "");
+            } else {
+                maybeCreateReferral("", "", "");
             }
-        }
+        }  
 
         // recreate the page token which we'll pass through to the page (or if it's being loaded
         // for the first time, it will request in a moment with a call to getPageToken)
@@ -601,6 +603,23 @@ public class FrameEntryPoint
     protected Pages getLandingPage ()
     {
         return CShell.isGuest() ? Pages.LANDING : Pages.ME;
+    }
+
+    /**
+     * If a tracking cookie doesn't already exist, creates a brand new one
+     * with the supplied referral info and a brand new tracking number.
+     * Also tells the server to log this as an event.
+     */
+    protected void maybeCreateReferral (String affiliate, String vector, String creative)
+    {
+        if (! TrackingCookie.exists()) {
+            ReferralInfo ref =
+                ReferralInfo.makeInstance(
+                    affiliate, vector, creative, ReferralInfo.makeRandomTracker());
+            TrackingCookie.save(ref, false);
+            _membersvc.trackReferralCreation(ref, null);
+            CShell.log("Created a new ReferralInfo: " + ref);
+        }
     }
 
     /**
