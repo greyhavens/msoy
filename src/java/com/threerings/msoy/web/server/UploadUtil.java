@@ -155,7 +155,7 @@ public class UploadUtil
             return bin;
         }
         
-        public String getHash() 
+        public String getHash () 
         {
             return StringUtil.hexlate(digest.digest());
         }
