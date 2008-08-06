@@ -410,6 +410,11 @@
     </copy>
   </target>
 
+  <!-- a depend used by the 'package' target to activate the full GWT client build -->
+  <target name="fullgclient">
+    <property name="gwtc.full" value="true"/>
+  </target>
+
   <!-- builds our GWT web client -->
   <property name="gwtc.style" value="OBF"/>
   <property name="pages" value="${gpages.list}"/>
@@ -419,7 +424,7 @@
       <mkdir dir="${gwtout.dir}"/>
       <delete dir="${gwtout.dir}/@{page}"/>
       <mkdir dir="${gwtout.dir}/@{page}"/>
-      <if><isset property="full"/><then>
+      <if><isset property="gwtc.full"/><then>
           <copy file="${gsrc.dir}/@{page}.gwt.xml.in"
                 tofile="${gsrc.dir}/@{page}.gwt.xml" overwrite="true"/>
         </then><else>
@@ -986,12 +991,8 @@
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
   <target name="distbits" depends="distprojects-extra,dist,flashapps,thane-client,jclients"/>
-  <target name="distall" depends="prepare,mavendeps,distbits,tests,checkstyle"
-          description="Rebuilds all subprojects and whole top-level distribution.">
-    <antcall target="gclient">
-      <param name="full" value="true"/>
-    </antcall>
-  </target>
+  <target name="distall" depends="prepare,mavendeps,distbits,tests,checkstyle,gclient"
+          description="Rebuilds all subprojects and whole top-level distribution."/>
 
   <!-- cleans out the compiled code -->
   <target name="clean" description="Cleans out compiled code.">
@@ -1050,7 +1051,7 @@
   </target>
 
   <!-- prepares and builds the msoy package(s) -->
-  <target name="package" depends="assignversion,distall,prepare-package">
+  <target name="package" depends="assignversion,fullgclient,distall,prepare-package">
 
     <!-- define the root of our packages on the target machine -->
     <property name="app.prefix" value="${ooo.prefix}/${app.name}"/>
