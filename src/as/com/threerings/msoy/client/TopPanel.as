@@ -459,15 +459,15 @@ public class TopPanel extends Canvas
 
         if (_rightPanel != null) {
             _rightPanel.setStyle("top", getTopPanelHeight() + getHeaderBarHeight());
-            _rightPanel.setStyle("right", 0);
+            _rightPanel.setStyle("left", 0);
             _rightPanel.setStyle("bottom", ControlBar.HEIGHT);
 
             // if we have no place view currently, stretch it all the way to the left; otherwise
             // let it be as wide as it wants to be
             if (_placeBox.parent == this) {
-                _rightPanel.clearStyle("left");
+                _rightPanel.clearStyle("right");
             } else {
-                _rightPanel.setStyle("left", 0);
+                _rightPanel.setStyle("right", 0);
             }
 
             _controlBar.setSpacerWidth(_ctx.getWidth() - _rightPanel.width);
@@ -516,8 +516,8 @@ public class TopPanel extends Canvas
             w -= _chatBounds.width + CHAT_PADDING;
             _chat.setStyle("top", top);
             _chat.setStyle("bottom", bottom);
-            _chat.setStyle("left", 0);
-            _chat.setStyle("right", getRightPanelWidth() + w + CHAT_PADDING);
+            _chat.setStyle("right", 0);
+            _chat.setStyle("left", getRightPanelWidth() + w + CHAT_PADDING);
             _chatBounds.height = h;
         }
         if (_comicOverlay != null) {
@@ -527,8 +527,8 @@ public class TopPanel extends Canvas
 
         _placeBox.setStyle("top", top);
         _placeBox.setStyle("bottom", bottom);
-        _placeBox.setStyle("left", left);
-        _placeBox.setStyle("right", getRightPanelWidth());
+        _placeBox.setStyle("right", left);
+        _placeBox.setStyle("left", getRightPanelWidth());
         _placeBox.setActualSize(w, h);
     }
 
