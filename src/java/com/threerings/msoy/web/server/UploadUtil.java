@@ -96,6 +96,22 @@ public class UploadUtil
     }
 
     /**
+     * Container class for information about the canonical snapshot images - both standard size
+     * and minimized.
+     */
+    public static class CanonicalSnapshotInfo 
+    {
+        public final MediaInfo canonical;
+        public final MediaInfo thumbnail;
+        
+        public CanonicalSnapshotInfo (MediaInfo canonicalInfo, MediaInfo thumbInfo)
+        {
+            this.canonical = canonicalInfo;
+            this.thumbnail = thumbInfo;
+        }        
+    }
+    
+    /**
      * Utility class to encapsulate the hash / digest creation process which is used at multiple
      * points in this method.
      */
@@ -264,8 +280,9 @@ public class UploadUtil
     /**
      * Publishes a canonical scene snapshot, saving both a standard size image, and a reduced size
      * thumbnail.  Both are saved under their respective hashes.
+     * @return 
      */
-    public static void publishSnapshot (SnapshotUploadFile uploadFile)
+    public static CanonicalSnapshotInfo publishSnapshot (SnapshotUploadFile uploadFile)
         throws IOException
     {
         log.warning("publish snapshot called");
@@ -278,8 +295,7 @@ public class UploadUtil
             publishImage(MediaDesc.SNAPSHOT_THUMB_SIZE, uploadFile,
             uploadFile.getMimeType(), "jpg");
 
-        log.info("MediaInfo for canonical is: "+canonicalInfo);
-        log.info("MediaInfo for thumbnail is: "+thumbInfo);
+        return new CanonicalSnapshotInfo(canonicalInfo, thumbInfo);
     }
 
     protected static MediaInfo publishCanonicalImage (SnapshotUploadFile uploadFile) 
