@@ -58,6 +58,8 @@ import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
@@ -971,7 +973,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /**
      * Return an sql operator representing a search for the given string in the item's
-     * name, description and tags.
+     * name, description, tags and creator name.
      *
      * an item matches the search query either if there is a full-text match against name
      * and/or description, or if one or more of the search words match one or more of the
@@ -980,7 +982,15 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected SQLOperator buildSearchStringClause (String search)
         throws PersistenceException
     {
+        // search item name and description
         SQLOperator ftMatch = new FullTextMatch(getItemClass(), ItemRecord.FTS_ND, search);
+
+        // look up all members whose name matches the search term exactly
+        List<Integer> memberIds = _memberRepo.findMembersByDisplayName(search, true, -1);
+        SQLOperator creatorNameMatch = null;
+        if (memberIds.size() > 0) {
+            creatorNameMatch = new In(getItemColumn(ItemRecord.CREATOR_ID), memberIds);
+        }
 
         // to match tags we first have to split our search up into words
         String[] searchTerms = search.toLowerCase().split("\\W+");
@@ -996,19 +1006,30 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
         }
 
-        // if we have no tags, just do the text match
-        if (tagIds.size() == 0) {
-            return ftMatch;
-
-        } else {
-            // a search match is either a full-text match, or a hit on the tag sub-query
-            return new Or(ftMatch, new Exists<TagRecord>(new SelectClause<TagRecord>(
+        // build a query to check tags if one or more tags exists
+        SQLOperator tagsMatch = null;
+        if (tagIds.size() > 0) {
+            tagsMatch = new Exists<TagRecord>(new SelectClause<TagRecord>(
                 getTagRepository().getTagClass(),
                 new String[] { TagRecord.TAG_ID },
                 new Where(new And(
                     new Equals(getTagColumn(TagRecord.TARGET_ID),
-                               getCatalogColumn(CatalogRecord.LISTED_ITEM_ID)),
-                    new In(getTagColumn(TagRecord.TAG_ID), tagIds))))));
+                        getCatalogColumn(CatalogRecord.LISTED_ITEM_ID)),
+                    new In(getTagColumn(TagRecord.TAG_ID), tagIds)))));
+        }
+
+        // return a combination of full text search, member search and/or tag search
+        if (creatorNameMatch != null && tagsMatch != null) {
+            return new Or(ftMatch, creatorNameMatch, tagsMatch);
+        }
+        else if (creatorNameMatch != null) {
+            return new Or(ftMatch, creatorNameMatch);
+        }
+        else if (tagsMatch != null) {
+            return new Or(ftMatch, tagsMatch);
+        }
+        else {
+            return ftMatch;
         }
     }
 
@@ -1192,6 +1213,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     // our dependencies
     @Inject protected MemoryRepository _memRepo;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MemberRepository _memberRepo;
 
     /** The number of seconds that causes an equivalent drop-off of 1 star in new & hot sorting. */
     protected static int _newAndHotDropoffSeconds = 7 * 60 * 60 * 24;
