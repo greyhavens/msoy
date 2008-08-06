@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.badge.data.all.Badge;
@@ -51,14 +52,17 @@ public class PassportPanel extends VerticalPanel
             add(header);
 
             HorizontalPanel nextHeader = new HorizontalPanel();
-            nextHeader.addStyleName("NextHeader");
             nextHeader.add(MsoyUI.createImage("/images/me/passport_header_left.png", null));
             HorizontalPanel headerContent = new HorizontalPanel();
             headerContent.setStyleName("NextHeaderContent");
+            headerContent.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
             headerContent.add(MsoyUI.createImage("/images/me/passport_next.png", null));
-            headerContent.add(MsoyUI.createLabel(_msgs.passportNextBar(), "NextHeaderText"));
+            Label label = MsoyUI.createLabel(_msgs.passportNextBar(), "NextHeaderText");
+            headerContent.add(label);
+            headerContent.setCellWidth(label, "100%");
             headerContent.add(MsoyUI.createImage("/images/me/passport_shuffle.png", null));
             nextHeader.add(headerContent);
+            nextHeader.setCellWidth(headerContent, "100%");
             nextHeader.add(MsoyUI.createImage("/images/me/passport_header_right.png", null));
             add(nextHeader);
         }
