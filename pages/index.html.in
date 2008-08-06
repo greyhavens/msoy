@@ -6,8 +6,8 @@
         name="description"/>
   <meta content="games,friends,explore,chat,shop,create,whirled" name="keywords"/>
   <script type="text/javascript">
-    if (document.location.host != "@SERVER_URL_HOST_PORT@") {
-       document.location = "@SERVER_URL@";
+    if (!@DEV_DEPLOYMENT@ && document.location.host != "@SERVER_URL_HOST_PORT@") {
+        document.location = "@SERVER_URL@";
     }
   </script>
 

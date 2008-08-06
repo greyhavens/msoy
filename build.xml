@@ -292,6 +292,7 @@
       <filterset>
         <filter token="SERVER_URL" value="${server_url}"/>
         <filter token="SERVER_URL_HOST_PORT" value="${server_url_host_port}"/>
+        <filter token="DEV_DEPLOYMENT" value="${dev_deployment}"/>
       </filterset>
     </copy>
     <propertyregex property="server_url_host" input="${server_url}"
