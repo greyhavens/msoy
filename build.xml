@@ -395,6 +395,12 @@
     </tstamp>
     <!-- set default properties -->
     <property name="dev_deployment" value="true"/>
+    <!-- fucking ant -->
+    <if><isset property="recaptcha_public"/><then>
+      <property name="recaptcha_token" value="${recaptcha_public}"/>
+    </then><else>
+      <property name="recaptcha_token" value=""/>
+    </else></if>
     <!-- then overwrite with values read from msoy-server.properties -->
     <copy file="${src.dir}/com/threerings/msoy/data/all/DeploymentConfig.java.tmpl"
           tofile="${src.dir}/com/threerings/msoy/data/all/DeploymentConfig.java" overwrite="true">
@@ -405,7 +411,7 @@
         <filter token="server_url" value="${server_url}"/>
         <filter token="static_media_url" value="${static_media_url}"/>
         <filter token="dev_deployment" value="${dev_deployment}"/>
-        <filter token="recaptcha_public" value="${recaptcha_public}"/>
+        <filter token="recaptcha_public" value="${recaptcha_token}"/>
       </filterset>
     </copy>
   </target>
