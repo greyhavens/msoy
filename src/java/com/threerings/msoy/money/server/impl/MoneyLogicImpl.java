@@ -7,8 +7,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.MemberMoney;
 import com.threerings.msoy.money.server.MoneyConfiguration;
@@ -39,15 +41,9 @@ class MoneyLogicImpl
     @Retry(exception=StaleDataException.class)
     public void awardCoins (final int memberId, final int creatorId, final int affiliateId, final int amount)
     {
-        if (memberId <= 0) {
-            throw new IllegalArgumentException("Cannot award coins to guests.");
-        }
-        if (creatorId <= 0) {
-            throw new IllegalArgumentException("Creator cannot be a guest.");
-        }
-        if (amount <= 0) {
-            throw new IllegalArgumentException("amount is invalid: " + amount);
-        }
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot award coins to guests.");
+        Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Cannot award coins to guests.");
+        Preconditions.checkArgument(amount > 0, "amount is invalid: %d", amount);
         
         MemberAccountRecord account = repo.getAccountById(memberId);
         if (account == null) {
@@ -62,12 +58,8 @@ class MoneyLogicImpl
     @Retry(exception=StaleDataException.class)
     public void buyBars (final int memberId, final int numBars)
     {
-        if (memberId <= 0) {
-            throw new IllegalArgumentException("memberId cannot be a guest.");
-        }
-        if (numBars <= 0) {
-            throw new IllegalArgumentException("numBars is invalid: " + numBars);
-        }
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy bars.");
+        Preconditions.checkArgument(numBars > 0, "numBars is invalid: %d", numBars);
         
         MemberAccountRecord account = repo.getAccountById(memberId);
         if (account == null) {
@@ -114,15 +106,9 @@ class MoneyLogicImpl
     public List<MoneyHistory> getLog (final int memberId, final MoneyType type, final int start, 
         final int count, final boolean descending)
     {
-        if (memberId <= 0) {
-            throw new IllegalArgumentException("Cannot retrieve money log for guests.");
-        }
-        if (start < 0) {
-            throw new IllegalArgumentException("start is invalid: " + start);
-        }
-        if (count <= 0) {
-            throw new IllegalArgumentException("count is invalid: " + count);
-        }
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot retrieve money log for guests.");
+        Preconditions.checkArgument(start >= 0, "start is invalid: %d", start);
+        Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
         
         final List<MoneyHistory> log = new ArrayList<MoneyHistory>();
         for (final MemberAccountHistoryRecord record : repo.getHistory(memberId, type, start, count, descending)) {
@@ -139,9 +125,8 @@ class MoneyLogicImpl
 
     public MemberMoney getMoneyFor (final int memberId)
     {
-        if (memberId <= 0) {
-            throw new IllegalArgumentException("Cannot retrieve money info for guests.");
-        }
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot retrieve money info for guests.");
+
         final MemberAccountRecord account = repo.getAccountById(memberId);
         return account != null ? account.getMemberMoney() : new MemberMoney(memberId); 
     }
@@ -149,18 +134,11 @@ class MoneyLogicImpl
     public int secureBarPrice (final int memberId, final int creatorId, final int affiliateId, 
         final ItemIdent item, final int numBars, final String description)
     {
-        if (memberId <= 0) {
-            throw new IllegalArgumentException("Guests cannot secure prices.");
-        }
-        if (creatorId <= 0) {
-            throw new IllegalArgumentException("Creators cannot be guests.");
-        }
-        if (item == null || item.type == 0 && item.itemId == 0) {
-            throw new IllegalArgumentException("item is invalid: " + item);
-        }
-        if (numBars <= 0) {
-            throw new IllegalArgumentException("numBars is invalid: " + numBars);
-        }
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Creators cannot be guests.");
+        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0), "item is invalid: %s", 
+            item.toString());
+        Preconditions.checkArgument(numBars > 0, "bars is invalid: %d", numBars);
         
         // TODO: Use exchange rate to calculate coins.
         securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.BARS, 0, numBars, 
@@ -171,18 +149,11 @@ class MoneyLogicImpl
     public int secureCoinPrice (final int memberId, final int creatorId, final int affiliateId, 
         final ItemIdent item, final int numCoins, final String description)
     {
-        if (memberId <= 0) {
-            throw new IllegalArgumentException("Guests cannot secure prices.");
-        }
-        if (creatorId <= 0) {
-            throw new IllegalArgumentException("Creators cannot be guests.");
-        }
-        if (item == null || item.type == 0 && item.itemId == 0) {
-            throw new IllegalArgumentException("item is invalid: " + item);
-        }
-        if (numCoins <= 0) {
-            throw new IllegalArgumentException("numCoins is invalid: " + numCoins);
-        }
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Creators cannot be guests.");
+        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0), "item is invalid: %s", 
+            item.toString());
+        Preconditions.checkArgument(numCoins > 0, "numCoins is invalid: %d", numCoins);
         
         // TODO: Use exchange rate to calculate bars.
         securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.COINS, numCoins, 0, 
@@ -199,15 +170,11 @@ class MoneyLogicImpl
     private void buyItem (final int memberId, final ItemIdent item, final MoneyType purchaseType)
         throws NotEnoughMoneyException, NotSecuredException
     {
-        if (memberId <= 0) {
-            throw new IllegalArgumentException("Guests cannot buy items.");
-        }
-        if (item == null || item.type == 0 && item.itemId == 0) {
-            throw new IllegalArgumentException("item is invalid: " + item);
-        }
-        if (purchaseType != MoneyType.BARS && purchaseType != MoneyType.COINS) {
-            throw new IllegalArgumentException("purchaseType is invalid: " + purchaseType);
-        }
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy items.");
+        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0), "item is invalid: %s", 
+            item.toString());
+        Preconditions.checkArgument(purchaseType == MoneyType.BARS || purchaseType == MoneyType.COINS, 
+            "purchaseType is invalid: %s", purchaseType.toString());
         
         // Get the secured prices for the item.
         final SecuredPrices prices = securedPricesCache.getSecuredPrice(memberId, item);
