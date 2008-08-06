@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.money.server.impl;
 
+import java.util.List;
+
+import com.threerings.msoy.money.server.MoneyType;
+
 /**
  * Interface for retrieving and persisting entities in the money service.
  * 
@@ -28,4 +32,7 @@ interface MoneyRepository
      * @param history History record to update.
      */
     void addHistory (MemberAccountHistoryRecord history);
+    
+    List<MemberAccountHistoryRecord> getHistory (int memberId, MoneyType type, 
+        int start, int count, boolean descending);
 }

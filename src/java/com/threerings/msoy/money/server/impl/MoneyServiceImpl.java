@@ -4,8 +4,8 @@
 package com.threerings.msoy.money.server.impl;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -94,10 +94,14 @@ class MoneyServiceImpl
         return null;
     }
 
-    public List<MoneyHistory> getLog (final int memberId, final Set<MoneyType> types)
+    public List<MoneyHistory> getLog (final int memberId, final MoneyType type, final int start, 
+        final int count, final boolean descending)
     {
-        // TODO Auto-generated method stub
-        return null;
+        final List<MoneyHistory> log = new ArrayList<MoneyHistory>();
+        for (final MemberAccountHistoryRecord record : repo.getHistory(memberId, type, start, count, descending)) {
+            log.add(record.createMoneyHistory());
+        }
+        return log;
     }
 
     public MoneyConfiguration getMoneyConfiguration ()
@@ -166,7 +170,7 @@ class MoneyServiceImpl
         securedPricesCache.removeSecuredPrice(memberId, item);
         
         // Update and save the accounts, and add history records for the changes.
-        repo.addHistory(account.buyItem(amount, type, prices.getDescription()));
+        repo.addHistory(account.buyItem(amount, type, prices.getDescription(), item));
         // TODO: update creator and affiliate with some amount of bling.
         repo.saveAccount(account);
         repo.saveAccount(creator);

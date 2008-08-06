@@ -4,6 +4,11 @@
 package com.threerings.msoy.money.server;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.util.Date;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,17 +36,23 @@ public class MoneyTest
     @Test
     public void testBuyBars ()
     {
+        final long startTime = System.currentTimeMillis() / 1000;
         final MemberMoney oldMoney = service.getMoneyFor(1);
         service.buyBars(1, 2);
         final MemberMoney newMoney = service.getMoneyFor(1);
         assertEquals(oldMoney.getBars() + 2, newMoney.getBars());
-        // TODO: check history.
+        final long endTime = System.currentTimeMillis() / 1000;
+        
+        final List<MoneyHistory> log = service.getLog(1, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 2.0, false, 
+            "Purchased 2 bars.", null), startTime, endTime);
     }
     
     @Test
     public void testBuyBarItemWithBars ()
         throws Exception
     {
+        final long startTime = System.currentTimeMillis() / 1000;
         final MemberMoney oldMoney = service.getMoneyFor(1);
         service.buyBars(1, 150);
         final ItemIdent item = new ItemIdent(Item.AVATAR, 1);
@@ -49,8 +60,13 @@ public class MoneyTest
         service.buyItemWithBars(1, item);
         final MemberMoney newMoney = service.getMoneyFor(1);
         assertEquals(oldMoney.getBars() + 50, newMoney.getBars());
+        final long endTime = System.currentTimeMillis() / 1000;
+
+        final List<MoneyHistory> log = service.getLog(1, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 100.0, true, 
+            "My bar item", item), startTime, endTime);
+        
         // TODO: check creator and affiliate
-        // TODO: check history
     }
     
     @Test(expected=NotEnoughMoneyException.class)
@@ -85,15 +101,22 @@ public class MoneyTest
     public void testBuyCoinItemWithCoins ()
         throws Exception
     {
+        final long startTime = System.currentTimeMillis() / 1000;
         final MemberMoney oldMoney = service.getMoneyFor(1);
         service.awardCoins(1, 2, 3, 150);
         final ItemIdent item = new ItemIdent(Item.AVATAR, 1);
-        service.secureCoinPrice(1, 2, 3, item, 100, "My coin item");
+        service.secureCoinPrice(1, 2, 3, item, 100, "testBuyCoinItemWithCoins - test");
         service.buyItemWithCoins(1, item);
         final MemberMoney newMoney = service.getMoneyFor(1);
         assertEquals(oldMoney.getCoins() + 50, newMoney.getCoins());
+        final long endTime = System.currentTimeMillis() / 1000;
+        
+        final List<MoneyHistory> log = service.getLog(1, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, true, 
+            "testBuyCoinItemWithCoins - test", item), startTime, endTime);
+        
         // TODO: check creator and affiliate
-        // TODO: check history
+        
     }
     
     @Before
@@ -109,6 +132,28 @@ public class MoneyTest
             }
         });
         injector.injectMembers(this);
+    }
+    
+    private void checkMoneyHistory (final List<MoneyHistory> log, final MoneyHistory expected, 
+        final long start, final long end)
+    {
+        MoneyHistory logEntry = null;
+        for (final MoneyHistory history : log) {
+            if (history.getDescription().equals(expected.getDescription())) {
+                logEntry = history;
+                break;
+            }
+        }
+        if (logEntry == null) {
+            fail("No appropriate log entry found.");
+        }
+        assertEquals(expected.getAmount(), logEntry.getAmount(), 0.0);
+        assertEquals(expected.getItem(), logEntry.getItem());
+        assertEquals(expected.getMemberId(), logEntry.getMemberId());
+        assertEquals(expected.getType(), logEntry.getType());
+        final long time = logEntry.getTimestamp().getTime() / 1000;
+        assertTrue(time >= start && time <= end);
+        assertEquals(expected.isSpent(), logEntry.isSpent());
     }
     
     @Inject private MoneyService service;

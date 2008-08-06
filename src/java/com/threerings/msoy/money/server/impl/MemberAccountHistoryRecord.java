@@ -14,6 +14,8 @@ import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.money.server.MoneyHistory;
 import com.threerings.msoy.money.server.MoneyType;
 
 /**
@@ -228,6 +230,12 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     public int getId ()
     {
         return id;
+    }
+    
+    public MoneyHistory createMoneyHistory ()
+    {
+        return new MoneyHistory(memberId, timestamp, type, amount, spent, description, 
+            itemId == 0 ? null : new ItemIdent((byte)itemType, itemId));
     }
     
     // These are not part of the api!  They should be private (depot requirement...)

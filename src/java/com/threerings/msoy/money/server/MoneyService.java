@@ -5,7 +5,6 @@ package com.threerings.msoy.money.server;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.annotation.BlockingThread;
@@ -146,12 +145,18 @@ public interface MoneyService
 
     /**
      * Retrieves a money transaction history for a member, including one or more money types.
+     * The returned list is sorted by transaction date ascending.  A portion of the log can
+     * be returned at a time for pagination.
      *
      * @param memberId ID of the member to retrieve money for.
-     * @param types Set of money types to retrieve logs for.  Must contain at least 1 type.
-     * @return List of past transactions, in no particular order.
+     * @param type Money type to retrieve logs for.  If null, then records for all money types are returned.
+     * @param start Zero-based index of the first log item to return.
+     * @param count The number of log items to return.  If Integer.MAX_VALUE, this will return
+     *      all records.
+     * @param descending If true, the log will be sorted by transaction date descending.
+     * @return List of requested past transactions.
      */
-    List<MoneyHistory> getLog (int memberId, Set<MoneyType> types);
+    List<MoneyHistory> getLog (int memberId, MoneyType type, int start, int count, boolean descending);
 
     /**
      * Retrieves the amount that a member's current bling is worth in American dollars.

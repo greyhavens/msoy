@@ -12,7 +12,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-public class PriceKey implements Serializable
+class PriceKey implements Serializable
 {
     public PriceKey (final int memberId, final ItemIdent item) {
         this.memberId = memberId;

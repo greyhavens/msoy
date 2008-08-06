@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.money.server.impl;
 
+import java.util.List;
 import java.util.Set;
 
 import net.jcip.annotations.NotThreadSafe;
@@ -13,7 +14,13 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.Limit;
+import com.samskivert.jdbc.depot.clause.OrderBy;
+import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
+import com.samskivert.jdbc.depot.operator.Logic.And;
+import com.threerings.msoy.money.server.MoneyType;
 import com.threerings.presents.annotation.BlockingThread;
 
 /**
@@ -56,7 +63,6 @@ final class DepotMoneyRepository extends DepotRepository
     }
 
     public void saveAccount (final MemberAccountRecord account)
-        throws StaleDataException
     {
         try {
             final long oldVersion = account.getVersionId();
@@ -78,6 +84,31 @@ final class DepotMoneyRepository extends DepotRepository
                     throw new StaleDataException("Member account record is stale: " + account.getMemberId());
                 }
             }
+        } catch (final PersistenceException pe) {
+            throw new RepositoryException(pe);
+        }
+    }
+    
+    public List<MemberAccountHistoryRecord> getHistory (final int memberId, final MoneyType type, 
+        final int start, final int count, final boolean descending)
+    {
+        try {
+            // select * from MemberAccountRecord where type in (?) and memberId=? order by timestamp
+            final QueryClause where = type == null ?
+                new Where(new Equals(MemberAccountHistoryRecord.MEMBER_ID_C, memberId)) :
+                new Where(new And(
+                    new Equals(MemberAccountHistoryRecord.TYPE_C, type),
+                    new Equals(MemberAccountHistoryRecord.MEMBER_ID_C, memberId)
+                ));
+            final QueryClause orderBy = descending ?
+                    OrderBy.descending(MemberAccountHistoryRecord.TIMESTAMP_C) :
+                    OrderBy.ascending(MemberAccountHistoryRecord.TIMESTAMP_C);
+            final QueryClause limit = new Limit(start, count);
+            
+            // Only include the limit clause if we're not getting all the values.
+            return count == Integer.MAX_VALUE ?
+                findAll(MemberAccountHistoryRecord.class, where, orderBy) :
+                findAll(MemberAccountHistoryRecord.class, where, orderBy, limit);
         } catch (final PersistenceException pe) {
             throw new RepositoryException(pe);
         }

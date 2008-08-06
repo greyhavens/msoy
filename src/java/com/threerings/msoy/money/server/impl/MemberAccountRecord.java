@@ -13,6 +13,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.MemberMoney;
 import com.threerings.msoy.money.server.MoneyType;
 
@@ -142,7 +143,8 @@ public class MemberAccountRecord extends PersistentRecord
      * @param description Description that should be used in the history record.
      * @return Account history record for this transaction.
      */
-    public MemberAccountHistoryRecord buyItem (final int amount, final MoneyType type, final String description)
+    public MemberAccountHistoryRecord buyItem (final int amount, final MoneyType type, final String description,
+        final ItemIdent item)
     {
         if (type == MoneyType.BARS) {
             this.bars -= amount;
@@ -151,7 +153,7 @@ public class MemberAccountRecord extends PersistentRecord
         }
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated, type, amount, true, 
-            description);
+            description, item.itemId, item.type);
     }
     
     public boolean canAfford (final int amount, final MoneyType type)

@@ -17,7 +17,7 @@ import com.threerings.msoy.money.server.NotSecuredException;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-public class SecuredPricesEhcache
+class SecuredPricesEhcache
     implements SecuredPricesCache
 {
     /**

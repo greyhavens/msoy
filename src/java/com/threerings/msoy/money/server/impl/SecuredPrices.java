@@ -11,7 +11,7 @@ import java.io.Serializable;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-public class SecuredPrices implements Serializable
+class SecuredPrices implements Serializable
 {
     public SecuredPrices (final int coins, final int bars, final int creatorId, final int affiliateId, 
         final String description)
