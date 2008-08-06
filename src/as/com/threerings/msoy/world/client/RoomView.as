@@ -37,7 +37,6 @@ import com.threerings.flash.MenuUtil;
 import com.threerings.whirled.spot.data.Location;
 import com.threerings.whirled.spot.data.Portal;
 
-import com.threerings.msoy.client.ChatPlaceView;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
@@ -62,7 +61,7 @@ import com.threerings.msoy.world.data.RoomPropertyEntry;
  * The base room view. Should not contain any RoomObject or other network-specific crap.
  */
 public class RoomView extends Sprite
-    implements MsoyPlaceView, ChatPlaceView, ContextMenuProvider
+    implements MsoyPlaceView, ContextMenuProvider
 {
     /** Logging facilities. */
     protected static const log :Log = Log.getLog(RoomView);
@@ -113,6 +112,12 @@ public class RoomView extends Sprite
 
     // from MsoyPlaceView
     public function padVertical () :Boolean
+    {
+        return true;
+    }
+
+    // from MsoyPlaceView
+    public function shouldUseChatOverlay () :Boolean
     {
         return true;
     }

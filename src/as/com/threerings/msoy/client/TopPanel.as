@@ -240,7 +240,8 @@ public class TopPanel extends Canvas
         layoutPanels();
 
         if (_comicOverlay != null) {
-            _comicOverlay.displayChat(view is ChatPlaceView);
+            _comicOverlay.displayChat(
+                (view is MsoyPlaceView) && (view as MsoyPlaceView).shouldUseChatOverlay());
         }
     }
 

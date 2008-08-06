@@ -24,8 +24,11 @@ import com.threerings.msoy.client.MsoyContext;
 
 public class GameChatContainer extends LayeredContainer
 {
-    public function GameChatContainer (ctx :MsoyContext, chatDtr :ChatDirector, 
-        playerList :UIComponent)
+    /**
+     * Create a GameChatContainer.
+     */
+    public function GameChatContainer (
+        ctx :MsoyContext, chatDtr :ChatDirector, playerList :UIComponent = null)
     {
         _ctx = ctx;
         _chatDtr = chatDtr;
@@ -33,20 +36,23 @@ public class GameChatContainer extends LayeredContainer
         width = TopPanel.RIGHT_SIDEBAR_WIDTH;
         styleName = "gameChatContainer";
 
-        _chatDtr = chatDtr;
-        _playerList = playerList;
-        _playerList.width = width - 3;
-        _listContainer = new HBox();
-        _listContainer.styleName = "gameListContainer";
-        _listContainer.height = _playerList.height;
-        _listContainer.width = width - 3;
-        _listContainer.addChild(_playerList);
-        addChild(_listContainer);
+        var hh :int = 0;
+        if (playerList != null) {
+            _playerList = playerList;
+            _playerList.width = width - 3;
+            _listContainer = new HBox();
+            _listContainer.styleName = "gameListContainer";
+            _listContainer.height = _playerList.height;
+            _listContainer.width = width - 3;
+            _listContainer.addChild(_playerList);
+            addChild(_listContainer);
+            hh += _playerList.height;
+        }
 
         var tabs :UIComponent = _ctx.getTopPanel().getHeaderBar().removeTabsContainer();
         _tabBar = new HBox();
         _tabBar.horizontalScrollPolicy = ScrollPolicy.OFF;
-        _tabBar.y = _playerList.height
+        _tabBar.y = hh;
         _tabBar.height = _ctx.getTopPanel().getHeaderBar().height;
         _tabBar.width = width - 3;
         _tabBar.styleName = "headerBar";
@@ -54,7 +60,7 @@ public class GameChatContainer extends LayeredContainer
         addChild(_tabBar);
 
         var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
-        //controlBar.inSidebar(true);
+        controlBar.inSidebar(true);
         controlBar.setChatDirector(_chatDtr);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
@@ -78,16 +84,8 @@ public class GameChatContainer extends LayeredContainer
 
         _ctx.getTopPanel().getHeaderBar().replaceTabsContainer();
         var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
-        //controlBar.inSidebar(false);
+        controlBar.inSidebar(false);
         controlBar.setChatDirector(_ctx.getMsoyChatDirector());
-    }
-
-    public function sendChat (message :String) :void
-    {
-        var result :String = _chatDtr.requestChat(null, message, true);
-        if (result != ChatCodes.SUCCESS) {
-            _chatDtr.displayFeedback(null, result);
-        }
     }
 
     public function displayOccupantList (occList :UIComponent) :void

@@ -72,10 +72,9 @@ public class ControlBar extends HBox
     public static const UI_GUEST :String = "Guest UI";
     public static const UI_SIDEBAR :String = "Member UI Sidebar";
     public static const UI_VIEWER :String = "Room Entity Viewer";
-    public static const UI_CHATREMOVED :String = "Standard, chat removed";
 
     public static const ALL_UI_GROUPS :Array = [
-        UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, UI_GUEST, UI_VIEWER, UI_CHATREMOVED ];
+        UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, UI_GUEST, UI_VIEWER ];
 
     public function ControlBar (ctx :MsoyContext)
     {
@@ -167,12 +166,6 @@ public class ControlBar extends HBox
         updateUI();
     }
 
-    public function setChatRemoved (chatRemoved :Boolean) :void
-    {
-        _chatRemoved = chatRemoved;
-        updateUI();
-    }
-
     /**
      * Configures our spacer width.
      */
@@ -260,16 +253,13 @@ public class ControlBar extends HBox
             _ctx, Msgs.CHAT.get("b.send"), this.height, this.height - 4);
         addGroupChild(_chatControl,
             [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR /*,UI_VIEWER*/ ]);
-        addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER,
-            UI_CHATREMOVED]);
-        addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT, UI_VIEWER, UI_CHATREMOVED ]);
+        addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER ]);
+        addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT, UI_VIEWER ]);
         if (_ctx.getTokens().isAdmin()) {
-            addGroupChild(_fullBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER,
-                UI_CHATREMOVED]);
+            addGroupChild(_fullBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER ]);
         }
 
-        //addGroupChild(_partyBtn, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER,
-        //    UI_CHATREMOVED ]);
+        //addGroupChild(_partyBtn, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
 
         // add our various control buttons
         addControlButtons();
@@ -278,8 +268,7 @@ public class ControlBar extends HBox
         _rightSpacer.styleName = "controlBarSpacer";
         _rightSpacer.height = this.height;
         _rightSpacer.percentWidth = 100;
-        addGroupChild(_rightSpacer, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER,
-            UI_CHATREMOVED ]);
+        addGroupChild(_rightSpacer, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
 
         // and remember how things are set for now
         _isMember = isMember;
@@ -341,8 +330,6 @@ public class ControlBar extends HBox
     {
         if (_isMinimized) {
             return UI_MINI;
-        } else if (_chatRemoved) {
-            return UI_CHATREMOVED;
         } else if (_inSidebar) {
             return UI_SIDEBAR;
         } else if (_isMember) {
@@ -396,8 +383,6 @@ public class ControlBar extends HBox
 
     /** Are we in a sidebar? */
     protected var _inSidebar :Boolean;
-
-    protected var _chatRemoved :Boolean;
 
     /** Object that contains all the different groups of UI elements. */
     protected var _groups :Object = new Object();

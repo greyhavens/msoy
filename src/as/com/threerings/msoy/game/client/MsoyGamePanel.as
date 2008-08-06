@@ -9,6 +9,8 @@ import mx.containers.VBox;
 
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.crowd.chat.client.ChatDirector;
+
 import com.threerings.flex.CommandCheckBox;
 
 import com.whirled.game.client.GamePlayerList;
@@ -20,8 +22,8 @@ import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyNameLabelCreator;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.chat.client.GameChatContainer;
 
-import com.threerings.msoy.client.ChatPlaceView;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
@@ -31,7 +33,7 @@ import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 public class MsoyGamePanel extends WhirledGamePanel
-    implements MsoyPlaceView, ChatPlaceView
+    implements MsoyPlaceView
 {
     // TEMP
     public static const GAMESTUB_DEBUG_MODE :Boolean = false;
@@ -60,6 +62,12 @@ public class MsoyGamePanel extends WhirledGamePanel
         return false;
     }
 
+    // from MsoyPlaceView
+    public function shouldUseChatOverlay () :Boolean
+    {
+        return GAMESTUB_DEBUG_MODE;
+    }
+
     // from WhirledGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
@@ -74,6 +82,7 @@ public class MsoyGamePanel extends WhirledGamePanel
             _gameView.getMediaContainer(), true);
 
         const bar :ControlBar = mctx.getTopPanel().getControlBar();
+        const gameChatDir :ChatDirector = _gctx.getChatDirector();
 
         if (GAMESTUB_DEBUG_MODE) {
             // set up a button to pop/hide the _playerList
@@ -92,13 +101,12 @@ public class MsoyGamePanel extends WhirledGamePanel
 
             var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
             overlay.setLocalType(null);
-            _gctx.getChatDirector().addChatDisplay(overlay);
-            bar.setChatDirector(_gctx.getChatDirector());
+            gameChatDir.addChatDisplay(overlay);
+            bar.setChatDirector(gameChatDir);
 
         } else {
             // put game chat in the sidebar
-            _gctx.getMsoyContext().getMsoyChatDirector().displayGameChat(
-                _gctx.getChatDirector(), _playerList);
+            mctx.getTopPanel().setRightPanel(new GameChatContainer(mctx, gameChatDir, _playerList));
         }
 
         bar.addCustomComponent(_rematch);
@@ -123,7 +131,12 @@ public class MsoyGamePanel extends WhirledGamePanel
             mctx.getTopPanel().getHeaderBar().getChatTabs().locationName = null;
 
         } else {
-            mctx.getMsoyChatDirector().clearGameChat();
+            var gameChat :GameChatContainer =
+                mctx.getTopPanel().getRightPanel() as GameChatContainer;
+            if (gameChat != null) {
+                gameChat.shutdown();
+                mctx.getTopPanel().clearRightPanel();
+            }
         }
 
         // clear our custom controlbar components
