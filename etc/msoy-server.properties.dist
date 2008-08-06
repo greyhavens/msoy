@@ -186,3 +186,4 @@ oooauth.access_denied_url = /register/access_denied.wm
 
 local_bureaus = true
 # bureau_secret = you can't guess this
+# window_secret = only the computer knows

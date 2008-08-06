@@ -37,3 +37,4 @@ db.default.password = PASSWORD
 # Keys for operating bureau launchers
 
 # bureau_secret = you can't guess this
+# window_secret = only the computer knows
