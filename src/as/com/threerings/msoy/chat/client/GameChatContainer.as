@@ -49,6 +49,8 @@ public class GameChatContainer extends LayeredContainer
             hh += _playerList.height;
         }
 
+        _ctx.getTopPanel().getHeaderBar().getChatTabs().width = TopPanel.RIGHT_SIDEBAR_WIDTH;
+
 //        var tabs :UIComponent = _ctx.getTopPanel().getHeaderBar().removeTabsContainer();
 //        _tabBar = new HBox();
 //        _tabBar.horizontalScrollPolicy = ScrollPolicy.OFF;
@@ -60,7 +62,7 @@ public class GameChatContainer extends LayeredContainer
 //        addChild(_tabBar);
 
         var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
-        controlBar.inSidebar(true);
+        //controlBar.inSidebar(true);
         controlBar.setChatDirector(_chatDtr);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
@@ -82,9 +84,10 @@ public class GameChatContainer extends LayeredContainer
 
         clearOverlay();
 
+        _ctx.getTopPanel().getHeaderBar().getChatTabs().width = NaN;
 //        _ctx.getTopPanel().getHeaderBar().replaceTabsContainer();
         var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
-        controlBar.inSidebar(false);
+        //controlBar.inSidebar(false);
         controlBar.setChatDirector(_ctx.getMsoyChatDirector());
     }
 
@@ -114,7 +117,7 @@ public class GameChatContainer extends LayeredContainer
     override public function setActualSize (uw :Number, uh :Number) :void
     {
         if (_overlay != null && (width != uh || height != uh)) {
-            var chatTop :Number = 0; //_tabBar.y + _tabBar.height;
+            var chatTop :Number = _listContainer.y + _listContainer.height; //_tabBar.y + _tabBar.height;
             _overlay.setTargetBounds(new Rectangle(0, chatTop, uw - 3, uh - chatTop));
         }
 
