@@ -21,18 +21,20 @@ import com.threerings.msoy.ui.MsoyNameLabelCreator;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 
+import com.threerings.msoy.client.ChatPlaceView;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyPlaceView;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 public class MsoyGamePanel extends WhirledGamePanel
-    implements MsoyPlaceView
+    implements MsoyPlaceView, ChatPlaceView
 {
     // TEMP
-    public static const GAMESTUB_CHAT_MODE :Boolean = false;
+    public static const GAMESTUB_DEBUG_MODE :Boolean = false;
 
     public function MsoyGamePanel (gctx :GameContext, ctrl :MsoyGameController)
     {
@@ -63,21 +65,22 @@ public class MsoyGamePanel extends WhirledGamePanel
     {
         super.willEnterPlace(plobj);
 
+        const mctx :MsoyContext = _gctx.getMsoyContext();
+
         var spinner :PlaceLoadingDisplay = new PlaceLoadingDisplay(
-            _gctx.getMsoyContext().getTopPanel().getPlaceContainer());
+            mctx.getTopPanel().getPlaceContainer());
         spinner.watchLoader(
             Loader(_gameView.getMediaContainer().getMedia()).contentLoaderInfo,
             _gameView.getMediaContainer(), true);
 
-        var bar :ControlBar = _gctx.getMsoyContext().getTopPanel().getControlBar();
+        const bar :ControlBar = mctx.getTopPanel().getControlBar();
 
-        if (GAMESTUB_CHAT_MODE) {
+        if (GAMESTUB_DEBUG_MODE) {
             // set up a button to pop/hide the _playerList
             _showPlayers = new CommandCheckBox("view scores");
             _showPlayers.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
                 // TODO: create a class for this puppy?
-                var panel :FloatingPanel = new FloatingPanel(_gctx.getMsoyContext(),
-                    "Players List"); // TODO i18n
+                var panel :FloatingPanel = new FloatingPanel(mctx, "Players List"); // TODO i18n
                 panel.showCloseButton = true;
                 var box :VBox = new VBox();
                 box.setStyle("backgroundColor", 0x000000);
@@ -86,6 +89,11 @@ public class MsoyGamePanel extends WhirledGamePanel
                 return panel;
             }, _showPlayers));
             bar.addCustomComponent(_showPlayers);
+
+            var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
+            overlay.setLocalType(null);
+            _gctx.getChatDirector().addChatDisplay(overlay);
+            bar.setChatDirector(_gctx.getChatDirector());
 
         } else {
             // put game chat in the sidebar
@@ -103,13 +111,19 @@ public class MsoyGamePanel extends WhirledGamePanel
     {
         super.didLeavePlace(plobj);
 
-        if (GAMESTUB_CHAT_MODE) {
+        const mctx :MsoyContext = _gctx.getMsoyContext();
+        const bar :ControlBar = mctx.getTopPanel().getControlBar();
+
+        if (GAMESTUB_DEBUG_MODE) {
             _showPlayers.parent.removeChild(_showPlayers);
 
-            // TODO: create an overlay for chat!
+            var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
+            _gctx.getChatDirector().removeChatDisplay(overlay);
+            bar.setChatDirector(mctx.getMsoyChatDirector());
+            mctx.getTopPanel().getHeaderBar().getChatTabs().locationName = null;
 
         } else {
-            _gctx.getMsoyContext().getMsoyChatDirector().clearGameChat();
+            mctx.getMsoyChatDirector().clearGameChat();
         }
 
         // clear our custom controlbar components

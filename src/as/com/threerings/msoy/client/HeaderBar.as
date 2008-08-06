@@ -33,6 +33,7 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
 
+import com.threerings.msoy.world.client.RoomView;
 import com.threerings.msoy.world.client.WorldController;
 
 public class HeaderBar extends HBox
@@ -69,7 +70,8 @@ public class HeaderBar extends HBox
         // allow text to center under the whirled logo if its not too long.
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
 
-        if (!inRoom()) {
+        // TODO: hard-coded shite should not be here
+        if (!(_ctx.getTopPanel().getPlaceView() is RoomView)) {
             _tabs.locationName = Msgs.CHAT.get("l.game_channel");
         }
     }
@@ -194,7 +196,7 @@ public class HeaderBar extends HBox
     public function stretchSpacer (stretch :Boolean) :void
     {
         var mini :Boolean = _ctx.getTopPanel().isMinimized();
-        var ownTabs :Boolean = inRoom();
+        var ownTabs :Boolean = (_tabsContainer.parent == this);
         var stretchTabs :Boolean = !(stretch && ownTabs && !mini);
         var stretchSpacer :Boolean = (stretch || !ownTabs) && !mini;
         if (stretchTabs == isNaN(_tabsContainer.percentWidth)) {
@@ -295,11 +297,6 @@ public class HeaderBar extends HBox
         _closeBox.addChild(closeBtn);
         
         setFullVersionLink(null);
-    }
-
-    protected function inRoom () :Boolean
-    {
-        return _tabsContainer.parent == this;
     }
 
     private static const log :Log = Log.getLog(HeaderBar);
