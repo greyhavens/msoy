@@ -84,9 +84,9 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
         CanonicalSnapshotInfo info = UploadUtil.publishSnapshot((SnapshotUploadFile) uploadFile);
 
         // get media desc objects
-        MediaDesc thumbDesc = createMediaDesc(info.thumbnail);
-        MediaDesc canonicalDesc = createMediaDesc(info.canonical);
-                
+//        MediaDesc thumbDesc = createMediaDesc(info.thumbnail);
+//        MediaDesc canonicalDesc = createMediaDesc(info.canonical);
+//                
         //todo: Notify the scene that the snapshot has changed.
     }
 
