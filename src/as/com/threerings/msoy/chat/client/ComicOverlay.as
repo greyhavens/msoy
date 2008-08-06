@@ -75,9 +75,10 @@ public class ComicOverlay extends ChatOverlay
         var overlays :Array = [ _scrollOverlay, _staticOverlay ];
         var layers :Array = [ PlaceBox.LAYER_CHAT_SCROLL, PlaceBox.LAYER_CHAT_STATIC ];
         for (var ii :int = 0; ii < overlays.length; ii++) {
-            if (display && !_target.containsOverlay(overlays[ii])) {
+            const contains :Boolean = _target.containsOverlay(overlays[ii]);
+            if (display && !contains) {
                 _target.addOverlay(overlays[ii], layers[ii]);
-            } else if (!display && _target.containsOverlay(overlays[ii])) {
+            } else if (!display && contains) {
                 _target.removeOverlay(overlays[ii]);
             }
         }
