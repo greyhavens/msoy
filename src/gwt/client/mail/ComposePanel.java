@@ -3,6 +3,8 @@
 
 package client.mail;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -19,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
@@ -174,6 +177,11 @@ public class ComposePanel extends FlowPanel
                     public void onSuccess (MemberService.FriendsResult result) {
                         _friends = result.friends;
                         _friendBox.addItem("Select...");
+                        Collections.sort(_friends, new Comparator<MemberCard>() {
+                            public int compare (MemberCard one, MemberCard two) {
+                                return MemberName.compareNames(one.name, two.name);
+                            }
+                        });
                         for (MemberCard friend : _friends) {
                             _friendBox.addItem("" + friend.name);
                         }
