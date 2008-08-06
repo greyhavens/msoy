@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.badge.data.all.Badge;
@@ -44,7 +45,13 @@ public class PassportPanel extends VerticalPanel
         public NextPanel ()
         {
             setStyleName("NextPanel");
+            setSpacing(0);
 
+            buildUI();
+        }
+
+        protected void buildUI ()
+        {
             HorizontalPanel header = new HorizontalPanel();
             header.add(MsoyUI.createImage("/images/me/passport_icon.png", "Icon"));
             header.add(MsoyUI.createLabel(_msgs.passportDescription(), "Description"));
@@ -52,6 +59,7 @@ public class PassportPanel extends VerticalPanel
             add(header);
 
             HorizontalPanel nextHeader = new HorizontalPanel();
+            nextHeader.setStyleName("NextHeader");
             nextHeader.add(MsoyUI.createImage("/images/me/passport_header_left.png", null));
             HorizontalPanel headerContent = new HorizontalPanel();
             headerContent.setStyleName("NextHeaderContent");
@@ -65,6 +73,22 @@ public class PassportPanel extends VerticalPanel
             nextHeader.setCellWidth(headerContent, "100%");
             nextHeader.add(MsoyUI.createImage("/images/me/passport_header_right.png", null));
             add(nextHeader);
+
+            // TODO pull out the real "next" badges
+            HorizontalPanel nextBadges = new HorizontalPanel();
+            nextBadges.setStyleName("NextBadges");
+            nextBadges.add(MsoyUI.createImage("/images/me/passport_box_left.png", null));
+            HorizontalPanel nextBadgesPanel = new HorizontalPanel();
+            nextBadgesPanel.setStyleName("NextBadgesPanel");
+            addNextBadges(nextBadgesPanel);
+            nextBadges.add(nextBadgesPanel);
+            nextBadges.setCellWidth(nextBadgesPanel, "100%");
+            nextBadges.add(MsoyUI.createImage("/images/me/passport_box_right.png", null));
+            add(nextBadges);
+        }
+
+        protected void addNextBadges (Panel badgePanel)
+        {
         }
     }
 

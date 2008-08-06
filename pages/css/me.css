@@ -202,6 +202,11 @@
   padding-top: 10px;
   padding-right: 10px;
 }
+
+.passport .NextPanel .NextHeader {
+  padding-top: 10px;
+}
+
 .passport .NextPanel .NextHeaderContent {
   background-image: url(/images/me/passport_header_tile.png);
   width: 100%;
@@ -219,4 +224,15 @@
 .passport .NextPanel .NextHeaderContent .gwt-Image {
   padding-right: 5px;
   padding-left: 5px;
+}
+
+.passport .NextPanel .NextBadgesPanel {
+  background-image: url(/images/me/passport_box_tile.png);
+  height: 144px;
+  width: 100%;
+}
+
+.passport .NextPanel .NextHeader, .passport .NextPanel .NextBadges {
+  padding-right: 3px;
+  padding-left: 3px;
 }
