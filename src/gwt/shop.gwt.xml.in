@@ -9,5 +9,7 @@
   <source path="client/item"/>
   <source path="client/comment"/>
 
+  <public path="public/shop"/>
+
   <entry-point class="client.shop.ShopPage"/>
 </module>

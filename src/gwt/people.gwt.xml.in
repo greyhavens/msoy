@@ -25,5 +25,7 @@
   <source path="client/person"/>
   <source path="client/people"/>
 
+  <public path="public/people"/>
+
   <entry-point class="client.people.PeoplePage"/>
 </module>

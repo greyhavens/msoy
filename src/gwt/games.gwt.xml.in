@@ -13,5 +13,7 @@
   <source path="client/item"/>
   <source path="client/games"/>
 
+  <public path="public/games"/>
+
   <entry-point class="client.games.GamesPage"/>
 </module>

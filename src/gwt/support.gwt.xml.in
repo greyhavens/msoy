@@ -7,5 +7,7 @@
 
   <source path="client/support"/>
 
+  <public path="public/support"/>
+
   <entry-point class="client.support.SupportPage"/>
 </module>

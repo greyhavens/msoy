@@ -12,5 +12,7 @@
   <source path="client/item"/>
   <source path="client/mail"/>
 
+  <public path="public/mail"/>
+
   <entry-point class="client.mail.MailPage"/>
 </module>

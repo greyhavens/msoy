@@ -8,5 +8,7 @@
   <source path="client/world"/>
   <source path="client/comment"/>
 
+  <public path="public/world"/>
+
   <entry-point class="client.world.WorldPage"/>
 </module>

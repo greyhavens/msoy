@@ -18,7 +18,10 @@
   <source path="client/images"/>
   <source path="client/shell"/>
 
-  <public path="public"/>
+  <!-- this directory doesn't exist, but if we don't specify something, GWT
+    -- helpfully decides to copy the entire directory into every single page
+    -- that inherits from this definition. Thanks guys! -->
+  <public path="public/page"/>
 
   <replace-with class="com.threerings.gwt.ui.WidgetUtilImplMozilla">
     <when-type-is class="com.threerings.gwt.ui.WidgetUtilImpl"/>

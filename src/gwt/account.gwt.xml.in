@@ -3,5 +3,7 @@
 
   <source path="client/account"/>
 
+  <public path="public/account"/>
+
   <entry-point class="client.account.AccountPage"/>
 </module>

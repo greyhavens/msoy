@@ -11,5 +11,7 @@
   <source path="client/msgs"/>
   <source path="client/item"/>
 
+  <public path="public/whirleds"/>
+
   <entry-point class="client.whirleds.WhirledsPage"/>
 </module>

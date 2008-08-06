@@ -18,7 +18,8 @@
   <source path="client/shell"/>
   <source path="client/ui"/>
   <source path="client/util"/>
-  <public path="public"/>
+
+  <public path="public/frame"/>
 
   <entry-point class="client.frame.FrameEntryPoint"/>
 

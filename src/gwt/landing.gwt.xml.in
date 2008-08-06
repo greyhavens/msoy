@@ -21,5 +21,7 @@
   <source path="client/whirleds"/>
   <source path="client/landing"/>
 
+  <public path="public/landing"/>
+
   <entry-point class="client.landing.LandingPage"/>
 </module>

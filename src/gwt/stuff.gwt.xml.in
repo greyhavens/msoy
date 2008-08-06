@@ -13,5 +13,7 @@
   <source path="client/editem"/>
   <source path="client/stuff"/>
 
+  <public path="public/stuff"/>
+
   <entry-point class="client.stuff.StuffPage"/>
 </module>

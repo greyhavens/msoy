@@ -509,7 +509,7 @@ public class FrameEntryPoint
     protected void setPage (Pages page)
     {
         _page = page;
-        _iframe = new Frame("/gwt/" + _page.getPath() + "/" + _page.getPath() + ".html");
+        _iframe = new Frame("/gwt/" + _page.getPath() + "/");
         _iframe.setStyleName("pageIFrame");
         showContent(_page, _iframe);
     }

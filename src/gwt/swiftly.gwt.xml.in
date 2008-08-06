@@ -7,5 +7,7 @@
 
   <source path="client/swiftly"/>
 
+  <public path="public/swiftly"/>
+
   <entry-point class="client.swiftly.SwiftlyPage"/>
 </module>

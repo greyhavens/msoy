@@ -10,5 +10,7 @@
   <source path="client/person"/>
   <source path="client/me"/>
 
+  <public path="public/me"/>
+
   <entry-point class="client.me.MePage"/>
 </module>

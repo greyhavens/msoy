@@ -3,5 +3,7 @@
 
   <source path="client/help"/>
 
+  <public path="public/help"/>
+
   <entry-point class="client.help.HelpPage"/>
 </module>
