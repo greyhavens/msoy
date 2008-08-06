@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shell;
+package client.frame;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Panel;
@@ -13,6 +13,7 @@ import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.shell.CShell;
 import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -38,34 +39,6 @@ public class WorldClient extends Widget
          * new client (and other bits if desired).
          */
         Panel getClientContainer ();
-    }
-
-    /**
-     * Displays a scene in a mini-world client. The scene will not display chat, and the player
-     * will not have an avatar in the scene. Clicking the scene will take the player there.
-     */
-    public static void displayFeaturedPlace (final int sceneId, final Panel container)
-    {
-        if (_defaultServer == null) {
-            _usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
-                public void onSuccess (ConnectConfig config) {
-                    _defaultServer = config;
-                    displayFeaturedPlace(sceneId, container);
-                }
-            });
-            return;
-        }
-
-        String flashArgs = "featuredPlace=" + sceneId;
-        if (!clientGo("featuredplace", flashArgs)) {
-            flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port;
-            String partner = CShell.getPartner();
-            if (partner != null) {
-                flashArgs += "&partner=" + partner;
-            }
-            container.clear();
-            FlashClients.embedFeaturedPlaceView(container, flashArgs);
-        }
     }
 
     public static void displayFlash (

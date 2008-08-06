@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shell;
+package client.frame;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
@@ -20,6 +20,11 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.shell.CShell;
+import client.shell.Pages;
+import client.shell.Session;
+import client.shell.ShellMessages;
+import client.shell.TrackingCookie;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.events.FlashEvents;

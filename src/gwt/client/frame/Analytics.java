@@ -1,12 +1,14 @@
 //
 // $Id$
 
-package client.shell;
+package client.frame;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.Timer;
+
+import client.shell.CShell;
 
 /**
  * Handles communication with Google Anayltics.

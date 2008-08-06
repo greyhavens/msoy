@@ -64,7 +64,7 @@ public class LandingPanel extends SimplePanel
         final FlowPanel login = new FlowPanel();
         PushButton loginButton = new PushButton(_msgs.landingLogin());
         loginButton.addStyleName("LoginButton");
-        login.add(new LogonPanel(true, loginButton, true));
+        login.add(new LogonPanel(true, loginButton));
         login.add(loginButton);
         content.add(login, 590, 0);
 

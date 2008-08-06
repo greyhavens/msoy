@@ -32,14 +32,11 @@ import com.threerings.msoy.web.data.SessionData;
 import client.shell.Args;
 import client.shell.BrowserTest;
 import client.shell.CShell;
-import client.shell.FrameHeader;
 import client.shell.Pages;
 import client.shell.ReferrerCookie;
 import client.shell.Session;
 import client.shell.ShellMessages;
-import client.shell.TitleBar;
 import client.shell.TrackingCookie;
-import client.shell.WorldClient;
 import client.util.ArrayUtil;
 import client.util.FlashClients;
 import client.util.FlashVersion;
@@ -309,12 +306,6 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
-    public void setHeaderVisible (boolean visible)
-    {
-        _header.setVisible(visible);
-    }
-
-    // from interface Frame
     public void ensureVisible (Widget widget)
     {
         // TEMP: not used, will go away
@@ -332,99 +323,9 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
-    public void showPopupDialog (String title, Widget dialog)
-    {
-//         _popup.setVisible(false);
-//         _popup.update(title, dialog);
-//         _popup.setVisible(true);
-//         _popup.center();
-    }
-
-    // from interface Frame
     public void clearDialog ()
     {
 //         RootPanel.get(HEADER).remove(_dialog);
-    }
-
-    // from interface Frame
-    public void showContent (Pages page, Widget pageContent)
-    {
-        // clear out any old content
-        clearContent();
-
-        // clear out any lingering dialog content
-        clearDialog();
-
-        // show the header for everything except the landing pages
-        setHeaderVisible(Pages.LANDING != page);
-
-        // select the appropriate header tab
-        _header.selectTab(page.getTab());
-
-        int contentTop;
-        String contentWidth, contentHeight;
-        switch (page) {
-        case LANDING:
-            closeClient(); // no client on the landing page
-            // content takes up whole page
-            contentWidth = "100%";
-            contentHeight = "100%";
-            contentTop = 0;
-
-            // the content is just the supplied widget, no extra bits
-            _content = pageContent;
-
-            // we won't listen for resize because the iframe is height 100%
-            setWindowResizerEnabled(false);
-            break;
-
-//         case WORLD:
-//             // TODO: handle world page stuff directly, extract rooms page to ROOMS
-//             break;
-
-        default:
-            // let the client know it about to be minimized
-            WorldClient.setMinimized(true);
-            int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
-            if (_client != null) {
-                _client.setWidth(clientWidth + "px");
-                RootPanel.get(PAGE).setWidgetPosition(_client, CONTENT_WIDTH, NAVI_HEIGHT);
-            }
-
-            // position the content normally
-            contentWidth = CONTENT_WIDTH + "px";
-            contentHeight = (Window.getClientHeight() - NAVI_HEIGHT) + "px";
-            contentTop = NAVI_HEIGHT;
-
-            // add a titlebar to the top of the content
-            FlowPanel content = new FlowPanel();
-            if (page.getTab() != null) {
-                content.add(_bar = TitleBar.create(page.getTab(), new ClickListener() {
-                    public void onClick (Widget sender) {
-                        closeContent();
-                    }
-                }));
-            }
-            pageContent.setWidth(contentWidth);
-            pageContent.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
-            content.add(pageContent);
-            _content = content;
-
-            // listen for window resize so that we can adjust the size of the content
-            setWindowResizerEnabled(true);
-            break;
-        }
-
-        // size, add and position the content
-        _content.setWidth(contentWidth);
-        _content.setHeight(contentHeight);
-        RootPanel.get(PAGE).add(_content);
-        RootPanel.get(PAGE).setWidgetPosition(_content, 0, contentTop);
-
-        // activate our close button if we have a client
-        if (_bar != null) {
-            _bar.setCloseVisible(FlashClients.clientExists());
-        }
     }
 
     // from interface Frame
@@ -483,7 +384,7 @@ public class FrameEntryPoint
         }
 
         // make sure the header is showing as we always want the header above the client
-        setHeaderVisible(true);
+        _header.setVisible(true);
         _header.selectTab(null);
     }
 
@@ -510,10 +411,87 @@ public class FrameEntryPoint
 
     protected void setPage (Pages page)
     {
+        // clear out any old content
+        clearContent();
+
+        // clear out any lingering dialog content
+        clearDialog();
+
+        // show the header for everything except the landing pages
+        _header.setVisible(Pages.LANDING != page);
+
+        // make a note of our current page and create our iframe
         _page = page;
         _iframe = new Frame("/gwt/" + _page.getPath() + "/");
         _iframe.setStyleName("pageIFrame");
-        showContent(_page, _iframe);
+
+        // select the appropriate header tab
+        _header.selectTab(page.getTab());
+
+        int contentTop;
+        String contentWidth, contentHeight;
+        switch (page) {
+        case LANDING:
+            closeClient(); // no client on the landing page
+            // content takes up whole page
+            contentWidth = "100%";
+            contentHeight = "100%";
+            contentTop = 0;
+
+            // the content is just the supplied widget, no extra bits
+            _content = _iframe;
+
+            // we won't listen for resize because the iframe is height 100%
+            setWindowResizerEnabled(false);
+            break;
+
+//         case WORLD:
+//             // TODO: handle world page stuff directly, extract rooms page to ROOMS
+//             break;
+
+        default:
+            // let the client know it about to be minimized
+            WorldClient.setMinimized(true);
+            int clientWidth = Math.max(Window.getClientWidth() - CONTENT_WIDTH, 300);
+            if (_client != null) {
+                _client.setWidth(clientWidth + "px");
+                RootPanel.get(PAGE).setWidgetPosition(_client, CONTENT_WIDTH, NAVI_HEIGHT);
+            }
+
+            // position the content normally
+            contentWidth = CONTENT_WIDTH + "px";
+            contentHeight = (Window.getClientHeight() - NAVI_HEIGHT) + "px";
+            contentTop = NAVI_HEIGHT;
+
+            // add a titlebar to the top of the content
+            FlowPanel content = new FlowPanel();
+            if (page.getTab() != null) {
+                content.add(_bar = TitleBar.create(page.getTab(), new ClickListener() {
+                    public void onClick (Widget sender) {
+                        closeContent();
+                    }
+                }));
+            }
+            _iframe.setWidth(contentWidth);
+            _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
+            content.add(_iframe);
+            _content = content;
+
+            // listen for window resize so that we can adjust the size of the content
+            setWindowResizerEnabled(true);
+            break;
+        }
+
+        // size, add and position the content
+        _content.setWidth(contentWidth);
+        _content.setHeight(contentHeight);
+        RootPanel.get(PAGE).add(_content);
+        RootPanel.get(PAGE).setWidgetPosition(_content, 0, contentTop);
+
+        // activate our close button if we have a client
+        if (_bar != null) {
+            _bar.setCloseVisible(FlashClients.clientExists());
+        }
     }
 
     protected void clearContent ()
@@ -756,4 +734,6 @@ public class FrameEntryPoint
         "md5", "/js/md5.js",
         "googanal", "http://www.google-analytics.com/ga.js",
     };
+
+    protected Analytics _analytics = new Analytics();
 }

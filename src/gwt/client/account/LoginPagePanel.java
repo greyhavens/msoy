@@ -19,7 +19,7 @@ public class LoginPagePanel extends FlowPanel
         PushButton loginButton = MsoyUI.createButton(
             MsoyUI.MEDIUM_THIN, CAccount.msgs.loginPageSubmit(), null);
         loginButton.addStyleName("LoginButton");
-        add(new LogonPanel(true, loginButton, false));
+        add(new LogonPanel(true, loginButton));
         add(loginButton);
     }
 }

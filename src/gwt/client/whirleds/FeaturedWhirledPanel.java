@@ -8,9 +8,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.Label;
 
 import com.threerings.gwt.ui.SmartTable;
 
@@ -18,8 +18,8 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GroupCard;
 
 import client.shell.ShellMessages;
-import client.shell.WorldClient;
 import client.ui.MsoyUI;
+import client.util.FeaturedPlaceUtil;
 import client.util.Link;
 import client.util.MediaUtil;
 
@@ -95,7 +95,7 @@ public class FeaturedWhirledPanel extends FlowPanel
         final GroupCard group = _whirleds[_selidx = index];
 
         if (!_showPlaceholder) {
-            WorldClient.displayFeaturedPlace(group.homeSceneId, _flashPanel);
+            FeaturedPlaceUtil.displayFeaturedPlace(group.homeSceneId, _flashPanel);
         }
 
         // display screenshot with click to play button
@@ -108,7 +108,7 @@ public class FeaturedWhirledPanel extends FlowPanel
                     _flashPanel.remove(_flashPanel.getWidget());
                     // after the placeholder is removed, do not readd it
                     _showPlaceholder = false;
-                    WorldClient.displayFeaturedPlace(group.homeSceneId, _flashPanel);
+                    FeaturedPlaceUtil.displayFeaturedPlace(group.homeSceneId, _flashPanel);
                 }
             };
             final Image clickToPlayImage = MsoyUI.createActionImage(

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shell;
+package client.frame;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -18,6 +18,11 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 
+import client.shell.Args;
+import client.shell.CShell;
+import client.shell.Frame;
+import client.shell.Page;
+import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 

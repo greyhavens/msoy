@@ -14,7 +14,4 @@ public class CWorld extends CShell
 {
     /** Provides world-related services. */
     public static WorldServiceAsync worldsvc;
-
-    /** Messages used by the world interfaces. */
-    public static WorldMessages msgs;
 }

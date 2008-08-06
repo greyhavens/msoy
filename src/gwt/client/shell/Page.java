@@ -11,15 +11,23 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.data.WebIdent;
 
+import client.ui.MsoyUI;
 import client.util.ArrayUtil;
 import client.util.Link;
 import client.util.events.FlashEvent;
@@ -47,8 +55,6 @@ public abstract class Page
             return null;
         }
     }
-
-    // NEW STUFF -- ignore for now
 
     // from interface EntryPoint
     public void onModuleLoad ()
@@ -167,8 +173,6 @@ public abstract class Page
         }
     }
 
-    // END NEW STUFF
-
     /**
      * Called when the page is first resolved to initialize its bits.
      */
@@ -244,7 +248,7 @@ public abstract class Page
      */
     protected void setContent (Widget content)
     {
-        setContent(null, content, true);
+        setContent(null, content);
     }
 
     /**
@@ -252,17 +256,19 @@ public abstract class Page
      */
     protected void setContent (String title, Widget content)
     {
-        setContent(title, content, true);
-    }
-
-    /**
-     * Clears out any existing content and sets the specified widget as the main page content.
-     */
-    protected void setContent (String title, Widget content, boolean withHeader)
-    {
-        CShell.frame.setHeaderVisible(withHeader);
-        CShell.frame.showContent(withHeader ? getPageId() : null, _content = content);
         CShell.frame.setTitle(title == null ? getDefaultTitle(getPageId().getTab()) : title);
+
+        RootPanel contentDiv = RootPanel.get();
+        if (_content != null) {
+            contentDiv.remove(_content);
+        }
+        _content = content;
+        if (_content != null) {
+            contentDiv.add(_content);
+        }
+
+        // clear out any lingering dialog
+        CShell.frame.clearDialog();
     }
 
     /**
@@ -318,6 +324,59 @@ public abstract class Page
         $wnd.top.triggerFlashEvent(name, args);
     }-*/;
 
+    protected class Dialog extends SimplePanel
+    {
+        public Dialog () {
+            init(new ClickListener() {
+                public void onClick (Widget sender) {
+                    CShell.frame.clearDialog();
+                }
+            });
+        }
+
+        public Dialog (ClickListener closeListener) {
+            init(closeListener);
+        }
+
+        protected void init(ClickListener closeListener) {
+            setWidget(_innerTable = new SmartTable("pageDialog", 0, 0));
+
+            _innerTable.setWidget(0, 1, MsoyUI.createCloseButton(closeListener), 1, "Close");
+            _innerTable.getFlexCellFormatter().setHorizontalAlignment(
+                1, 0, HasAlignment.ALIGN_CENTER);
+            _innerTable.setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);
+        }
+
+        public void update(String title, Widget content) {
+            _innerTable.setText(0, 0, title, 1, "DialogTitle");
+            _innerTable.setWidget(1, 0, content, 2, null);
+        }
+
+        protected SmartTable _innerTable;
+    }
+
+    protected class PopupDialog extends PopupPanel
+    {
+        public PopupDialog () {
+            super(false);
+            setAnimationEnabled(true);
+            setStyleName("floatingDialogBox");
+
+            _innerDialog = new Dialog(new ClickListener() {
+                public void onClick (Widget sender) {
+                    setVisible(false);
+                }
+            });
+            setWidget(_innerDialog);
+        }
+
+        public void update (String title, Widget content) {
+            _innerDialog.update(title, content);
+        }
+
+        protected Dialog _innerDialog;
+    }
+
     protected abstract class PageFrame implements Frame
     {
         public void navigateTo (String token) {
@@ -341,32 +400,26 @@ public abstract class Page
             CShell.log("Would close content.");
         }
 
-        public void setHeaderVisible (boolean visible) {
-        }
         public void ensureVisible (Widget widget) {
         }
         public void showDialog (String title, Widget dialog) {
-        }
-        public void showPopupDialog (String title, Widget dialog) {
+            clearDialog();
+            _popup = new PopupDialog();
+            _popup.setVisible(false);
+            _popup.update(title, dialog);
+            _popup.setVisible(true);
+            _popup.center();
         }
         public void clearDialog () {
-        }
-
-        public void showContent (Pages page, Widget pageContent) {
-            RootPanel contentDiv = RootPanel.get();
-            if (_pageContent != null) {
-                contentDiv.remove(_pageContent);
-            }
-            _pageContent = pageContent;
-            if (_pageContent != null) {
-                contentDiv.add(_pageContent);
+            if (_popup != null) {
+                _popup.hide();
+                _popup = null;
             }
         }
-
-        protected Widget _pageContent;
     }
 
     protected Widget _content;
+    protected PopupDialog _popup;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);

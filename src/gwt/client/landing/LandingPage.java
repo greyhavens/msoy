@@ -47,36 +47,36 @@ public class LandingPage extends Page
                 TrackingCookie.get(), "jul08CreatorsLanding", true, new MsoyCallback<Integer>() {
                     public void onSuccess (Integer group) {
                         if (group == 1) {
-                            setContent(_msgs.titleCreators(), new CreatorsSignupPanel(), false);
+                            setContent(_msgs.titleCreators(), new CreatorsSignupPanel());
                         } else if (group == 2) {
-                            setContent(_msgs.titleCreators(), new CreatorsLinksPanel(), false);
+                            setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
                         } else if (group == 3) {
                             Link.go(Pages.ME, "");
                         } else {
                             // group 4, and if test is not running visitors see info page
-                            setContent(_msgs.titleCreators(), new CreatorsPanel(), false);
+                            setContent(_msgs.titleCreators(), new CreatorsPanel());
                         }
                     }
             });
 
         // registration form ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
         } else if (action.equals("creatorssignuptest")) {
-            setContent(_msgs.titleCreators(), new CreatorsSignupPanel(), false);
+            setContent(_msgs.titleCreators(), new CreatorsSignupPanel());
 
         // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
         } else if (action.equals("creatorsinfotest")) {
-            setContent(_msgs.titleCreators(), new CreatorsPanel(), false);
+            setContent(_msgs.titleCreators(), new CreatorsPanel());
 
         // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
         } else if (action.equals("creatorslinkstest")) {
-            setContent(_msgs.titleCreators(), new CreatorsLinksPanel(), false);
+            setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
 
         // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
         } else if (action.equals("creatorsoldlandingtest")) {
             Link.go(Pages.ME, "");
 
         } else {
-            setContent(_msgs.landingTitle(), new LandingPanel(), false);
+            setContent(_msgs.landingTitle(), new LandingPanel());
         }
     }
 

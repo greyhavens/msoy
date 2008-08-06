@@ -277,7 +277,7 @@ public class FlashClients
     /** TEMP: Whether or not the client is in full-height mode. */
     protected static boolean _clientFullHeight = false;
 
-    // TODO: put this in Application?
+    // TODO: put this in Frame?
     protected static final int BLACKBAR_HEIGHT = 20;
 
     protected static final String HOOD_SKIN_URL = "/media/static/hood_pastoral.swf";

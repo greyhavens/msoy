@@ -81,18 +81,18 @@ public class WorldPage extends Page
                 displayHotSpots();
 
             } else if (CWorld.isGuest()) {
-                setContent(MsoyUI.createLabel(CWorld.msgs.logonForHome(), "infoLabel"));
+                setContent(MsoyUI.createLabel(_msgs.logonForHome(), "infoLabel"));
 
             } else if (action.startsWith("h")) {
                 // go to our home
                 CWorld.frame.displayWorldClient("memberHome=" + CWorld.getMemberId(), null);
 
             } else {
-                setContent(MsoyUI.createLabel(CWorld.msgs.unknownLocation(), "infoLabel"));
+                setContent(MsoyUI.createLabel(_msgs.unknownLocation(), "infoLabel"));
             }
 
         } catch (NumberFormatException e) {
-            MsoyUI.error(CWorld.msgs.unknownLocation());
+            MsoyUI.error(_msgs.unknownLocation());
         }
     }
 
@@ -109,15 +109,6 @@ public class WorldPage extends Page
         super.onPageUnload();
 
         clearCallbacks();
-    }
-
-    @Override // from Page
-    protected void initContext ()
-    {
-        super.initContext();
-
-        // load up our translation dictionaries
-        CWorld.msgs = (WorldMessages)GWT.create(WorldMessages.class);
     }
 
     @Override
@@ -210,7 +201,7 @@ public class WorldPage extends Page
             break;
 
         default:
-            setContent(config.name, new Label(CWorld.msgs.errUnknownGameType("" + config.type)));
+            setContent(config.name, new Label(_msgs.errUnknownGameType("" + config.type)));
             break;
         }
     }
@@ -256,6 +247,7 @@ public class WorldPage extends Page
     /** A command to be run when Java reports readiness. */
     protected Command _javaReadyCommand;
 
+    protected static final WorldMessages _msgs = GWT.create(WorldMessages.class);
     protected static final WorldServiceAsync _worldsvc = (WorldServiceAsync)
         ServiceUtil.bind(GWT.create(WorldService.class), WorldService.ENTRY_POINT);
 

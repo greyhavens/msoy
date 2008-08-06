@@ -34,11 +34,11 @@ import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.Pages;
 import client.shell.ShellMessages;
-import client.shell.WorldClient;
 import client.ui.MsoyUI;
 import client.ui.PrettyTextPanel;
 import client.ui.PromptPopup;
 import client.ui.ThumbBox;
+import client.util.FeaturedPlaceUtil;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
@@ -247,7 +247,7 @@ public class WhirledDetailPanel extends FlowPanel
         ClickListener liveVewClick = new ClickListener() {
             public void onClick (Widget sender) {
                 // replace the image with a live view
-                WorldClient.displayFeaturedPlace(_group.homeSceneId, _whirledViewPanel);
+                FeaturedPlaceUtil.displayFeaturedPlace(_group.homeSceneId, _whirledViewPanel);
             }
         };
         final Image clickToPlayImage = MsoyUI.createActionImage(

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shell;
+package client.frame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,12 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.images.navi.NaviImages;
+import client.shell.CShell;
+import client.shell.Frame;
+import client.shell.LogonPanel;
+import client.shell.Pages;
+import client.shell.Session;
+import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.util.Link;
 

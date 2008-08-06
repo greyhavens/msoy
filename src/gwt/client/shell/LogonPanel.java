@@ -35,29 +35,21 @@ import client.util.ServiceUtil;
 public class LogonPanel extends SmartTable
         implements AsyncCallback<SessionData>
 {
+    /**
+     * Creates a logon panel with an internal submit button.
+     */
     public LogonPanel (boolean headerMode)
     {
         this(headerMode, new Button(_cmsgs.logonLogon()));
     }
 
     /**
-     * Constructor that defaults showFloatingForgot to false
-     * @param headerMode headerMode Changes the location of the form elements
-     * @param logon logon Button to use for form submit
+     * Creates a logon panel with an external submit button.
+     *
+     * @param headerMode changes the location of the form elements.
+     * @param logon the button to use for form submit.
      */
     public LogonPanel (boolean headerMode, ButtonBase logon)
-    {
-        this(headerMode, logon, false);
-    }
-
-    /**
-     * Constructor
-     * @param headerMode Changes the location of the form elements
-     * @param logon Button to use for form submit
-     * @param showFloatingForgot If true, position it over the rest of the page, otherwise
-     *        display the forgot password dialog inside the page frame
-     */
-    public LogonPanel (boolean headerMode, ButtonBase logon, final boolean showFloatingForgot)
     {
         super("logonPanel", 0, 2);
 
@@ -81,11 +73,7 @@ public class LogonPanel extends SmartTable
                 String forgottenTitle = "Forgot your password?";
                 ForgotPasswordDialog forgottenDialog =
                     new ForgotPasswordDialog(_email.getText().trim());
-                if (showFloatingForgot) {
-                    CShell.frame.showPopupDialog(forgottenTitle, forgottenDialog);
-                } else {
-                    CShell.frame.showDialog(forgottenTitle, forgottenDialog);
-                }
+                CShell.frame.showDialog(forgottenTitle, forgottenDialog);
             }
         });
         logon.addClickListener(new ClickListener() {

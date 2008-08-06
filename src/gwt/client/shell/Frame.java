@@ -74,34 +74,19 @@ public interface Frame
     void closeContent ();
 
     /**
-     * Shows or hides the navigation header as desired.
-     */
-    void setHeaderVisible (boolean visible);
-
-    /**
      * Requests that the specified widget be scrolled into view.
      */
     void ensureVisible (Widget widget);
 
     /**
-     * Displays the supplied dialog in the frame.
+     * Displays the supplied dialog.
      */
     void showDialog (String title, Widget dialog);
-
-    /**
-     * Displays the supplied dialog in the frame or floating over the page.
-     */
-    void showPopupDialog (String title, Widget dialog);
 
     /**
      * Hides the current dialog contents.
      */
     void clearDialog ();
-
-    /**
-     * Displays the supplied page content.
-     */
-    void showContent (Pages page, Widget pageContent);
 
     /**
      * Dispatches a Flash event to all registered listeners.
