@@ -21,16 +21,6 @@ import client.util.ServiceUtil;
  */
 public class LandingPage extends Page
 {
-    /** Required to map this entry point to a page. */
-    public static Creator getCreator ()
-    {
-        return new Creator() {
-            public Page createPage () {
-                return new LandingPage();
-            }
-        };
-    }
-
     @Override // from Page
     public void onPageLoad ()
     {

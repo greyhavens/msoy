@@ -39,11 +39,6 @@ import client.util.events.FlashEvents;
 public abstract class Page
     implements EntryPoint
 {
-    /** Used to dynamically create the appropriate page when we are loaded. */
-    public static interface Creator {
-        Page createPage ();
-    }
-
     /**
      * Returns the default title for the specified page.
      */

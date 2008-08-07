@@ -12,16 +12,6 @@ import client.ui.MsoyUI;
 
 public class MailPage extends Page
 {
-    /** Required to map this entry point to a page. */
-    public static Creator getCreator ()
-    {
-        return new Creator() {
-            public Page createPage () {
-                return new MailPage();
-            }
-        };
-    }
-
     @Override // from Page
     public void onHistoryChanged (Args args)
     {

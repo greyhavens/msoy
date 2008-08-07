@@ -11,16 +11,6 @@ import client.shell.Pages;
 
 public class HelpPage extends Page
 {
-    /** Required to map this entry point to a page. */
-    public static Creator getCreator ()
-    {
-        return new Creator() {
-            public Page createPage () {
-                return new HelpPage();
-            }
-        };
-    }
-
     @Override // from Page
     public void onHistoryChanged (Args args)
     {

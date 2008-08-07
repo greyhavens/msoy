@@ -22,16 +22,6 @@ import client.util.MsoyCallback;
  */
 public class SwiftlyPage extends Page
 {
-    /** Required to map this entry point to a page. */
-    public static Creator getCreator ()
-    {
-        return new Creator() {
-            public Page createPage () {
-                return new SwiftlyPage();
-            }
-        };
-    }
-
     @Override // from Page
     public void onHistoryChanged (Args args)
     {

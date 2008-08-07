@@ -31,16 +31,6 @@ import client.util.ServiceUtil;
  */
 public class StuffPage extends Page
 {
-    /** Required to map this entry point to a page. */
-    public static Creator getCreator ()
-    {
-        return new Creator() {
-            public Page createPage () {
-                return new StuffPage();
-            }
-        };
-    }
-
     @Override // from Page
     public void onPageLoad ()
     {

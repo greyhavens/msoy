@@ -14,16 +14,6 @@ import client.shell.Pages;
 
 public class MePage extends Page
 {
-    /** Required to map this entry point to a page. */
-    public static Creator getCreator ()
-    {
-        return new Creator() {
-            public Page createPage () {
-                return new MePage();
-            }
-        };
-    }
-
     @Override // from Page
     public void onPageLoad ()
     {

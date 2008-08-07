@@ -16,16 +16,6 @@ import client.util.Link;
  */
 public class AccountPage extends Page
 {
-    /** Required to map this entry point to a page. */
-    public static Creator getCreator ()
-    {
-        return new Creator() {
-            public Page createPage () {
-                return new AccountPage();
-            }
-        };
-    }
-
     @Override // from Page
     public void onHistoryChanged (Args args)
     {

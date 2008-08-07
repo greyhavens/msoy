@@ -20,16 +20,6 @@ import client.ui.MsoyUI;
 
 public class WhirledsPage extends Page
 {
-    /** Required to map this entry point to a page. */
-    public static Creator getCreator ()
-    {
-        return new Creator() {
-            public Page createPage () {
-                return new WhirledsPage();
-            }
-        };
-    }
-
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
