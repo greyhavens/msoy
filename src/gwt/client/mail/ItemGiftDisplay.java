@@ -65,7 +65,7 @@ public class ItemGiftDisplay extends MailPayloadDisplay
                 add(MsoyUI.createLabel(CMail.msgs.giftItem(), null));
             }
 
-            _stuffsvc.loadItem(CMail.ident, _giftPayload.item, new MsoyCallback<Item>() {
+            _stuffsvc.loadItem(_giftPayload.item, new MsoyCallback<Item>() {
                 public void onSuccess (Item result) {
                     add(new ItemThumbnail(result, _enabled ? new ClickListener() {
                         public void onClick (Widget sender) {
@@ -84,7 +84,7 @@ public class ItemGiftDisplay extends MailPayloadDisplay
                 // click
                 return;
             }
-            _itemsvc.wrapItem(CMail.ident, _giftPayload.item, false, new MsoyCallback<Void>() {
+            _itemsvc.wrapItem(_giftPayload.item, false, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     // the item is unwrapped, just update the payload
                     _giftPayload.item = null;

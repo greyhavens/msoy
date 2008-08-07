@@ -16,7 +16,6 @@ import com.threerings.msoy.group.data.all.GroupMembership;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
-import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Defines group services available to the GWT/AJAX web client.
@@ -78,124 +77,123 @@ public interface GroupService extends RemoteService
     /**
      * Loads the information displayed on the Galaxy page.
      */
-    public GalaxyData getGalaxyData (WebIdent ident)
+    GalaxyData getGalaxyData ()
         throws ServiceException;
 
     /**
      * Get the list of all groups.
      */
-    public List<GroupCard> getGroupsList (WebIdent ident)
+    List<GroupCard> getGroupsList ()
         throws ServiceException;
 
     /**
      * Performs a search against the name, blurb and charter fields.
      */
-    public List<GroupCard> searchGroups (WebIdent ident, String searchString)
+    List<GroupCard> searchGroups (String searchString)
         throws ServiceException;
 
     /**
      * Return all groups that are tagged with the given tag.
      */
-    public List<GroupCard> searchForTag (WebIdent ident, String tag)
+    List<GroupCard> searchForTag (String tag)
         throws ServiceException;
 
     /**
      * Returns information on the specified group.
      */
-    public GroupInfo getGroupInfo (WebIdent ident, int groupId)
+    GroupInfo getGroupInfo (int groupId)
         throws ServiceException;
 
     /**
      * Look up a group by id and return the id of its home scene.
      */
-    public Integer getGroupHomeId (WebIdent ident, int groupId)
+    Integer getGroupHomeId (int groupId)
         throws ServiceException;
 
     /**
      * Fetch a list of {@link GroupMembership} records, one for each group of which memberId is a
      * member. If canInvite is true, only include groups to which the member can invite.
      */
-    public List<GroupMembership> getMembershipGroups (
-        WebIdent ident, int memberId, boolean canInvite)
+    List<GroupMembership> getMembershipGroups (int memberId, boolean canInvite)
         throws ServiceException;
 
     /**
      * Construct a {@link GroupDetail} object for one given group.
      */
-    public GroupDetail getGroupDetail (WebIdent ident, int groupId)
+    GroupDetail getGroupDetail (int groupId)
         throws ServiceException;
 
     /**
      * Returns a list of all the members for the specified group.
      */
-    public MembersResult getGroupMembers (WebIdent ident, int groupId)
+    MembersResult getGroupMembers (int groupId)
         throws ServiceException;
 
     /**
      * Returns a list of all the rooms owned by a specific group.
      */
-    public RoomsResult getGroupRooms (WebIdent ident, int groupId)
+    RoomsResult getGroupRooms (int groupId)
         throws ServiceException;
 
     /**
      * Transfers a room owned by the caller to the given group.  Only allowed by managers.
      */
-    public void transferRoom (WebIdent ident, int groupId, int sceneId)
+    void transferRoom (int groupId, int sceneId)
         throws ServiceException;
 
     /**
      * Create a new group in the system, with data supplied in the {@link Group} argument.
      */
-    public Group createGroup (WebIdent ident, Group group, GroupExtras extras)
+    Group createGroup (Group group, GroupExtras extras)
         throws ServiceException;
 
     /**
      * Update the data for a group according to the supplied {@link Group} argument.
      */
-    public void updateGroup (WebIdent ident, Group group, GroupExtras extras)
+    void updateGroup (Group group, GroupExtras extras)
         throws ServiceException;
 
     /**
      * Sever the membership connection between a group and a member.
      */
-    public void leaveGroup (WebIdent ident, int groupId, int memberId)
+    void leaveGroup (int groupId, int memberId)
         throws ServiceException;
 
     /**
      * Requests that the caller be added as a member of the specified group.
      */
-    public void joinGroup (WebIdent ident, int groupId)
+    void joinGroup (int groupId)
         throws ServiceException;
 
     /**
      * Update the rank of a group member.
      */
-    public void updateMemberRank (WebIdent ident, int groupId, int memberId, byte newRank)
+    void updateMemberRank (int groupId, int memberId, byte newRank)
         throws ServiceException;
 
     /**
      * Update a tag on a group.
      */
-    public TagHistory tagGroup (WebIdent ident, int groupId, String tag, boolean set)
+    TagHistory tagGroup (int groupId, String tag, boolean set)
         throws ServiceException;
 
     /**
      * Gets the tags recently used by the user.
      */
-    public Collection<TagHistory> getRecentTags (WebIdent ident)
+    Collection<TagHistory> getRecentTags ()
         throws ServiceException;
 
     /**
      * Gets the tags on the indicated Group.
      */
-    public Collection<String> getTags (WebIdent ident, int groupId)
+    Collection<String> getTags (int groupId)
         throws ServiceException;
 
     /**
      * Fetch a list of {@link MyGroupCard} records, one for each group of which the caller is a
      * member.
      */
-    public List<MyGroupCard> getMyGroups (WebIdent ident, byte sortMethod)
+    List<MyGroupCard> getMyGroups (byte sortMethod)
         throws ServiceException;
 
 }

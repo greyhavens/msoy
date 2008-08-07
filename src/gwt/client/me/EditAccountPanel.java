@@ -42,7 +42,7 @@ public class EditAccountPanel extends SmartTable
         setCellSpacing(10);
         setStyleName("editAccount");
 
-        _usersvc.getAccountInfo(CMe.ident, new MsoyCallback<AccountInfo>() {
+        _usersvc.getAccountInfo(new MsoyCallback<AccountInfo>() {
             public void onSuccess (AccountInfo info) {
                 init(info);
             }
@@ -179,7 +179,7 @@ public class EditAccountPanel extends SmartTable
         _accountInfo.realName = _rname.getText().trim();
         _uprname.setEnabled(false);
         _rname.setEnabled(false);
-        _usersvc.updateAccountInfo(CMe.ident, _accountInfo, new AsyncCallback<Void>() {
+        _usersvc.updateAccountInfo(_accountInfo, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _rname.setEnabled(true);
                 _uprname.setEnabled(false);
@@ -198,7 +198,7 @@ public class EditAccountPanel extends SmartTable
     {
         final String email = _email.getText().trim();
         _upemail.setEnabled(false);
-        _usersvc.updateEmail(CMe.ident, email, new AsyncCallback<Void>() {
+        _usersvc.updateEmail(email, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 CMe.creds.accountName = email;
                 setStatus(_msgs.emailUpdated());
@@ -213,8 +213,8 @@ public class EditAccountPanel extends SmartTable
     protected void updateEmailPrefs ()
     {
         _upeprefs.setEnabled(false);
-        _usersvc.updateEmailPrefs(CMe.ident, _whirledEmail.isChecked(),
-                                  _announceEmail.isChecked(), new AsyncCallback<Void>() {
+        _usersvc.updateEmailPrefs(
+            _whirledEmail.isChecked(), _announceEmail.isChecked(), new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _upeprefs.setEnabled(true);
                 setStatus(_msgs.eprefsUpdated());
@@ -232,7 +232,7 @@ public class EditAccountPanel extends SmartTable
         _uppass.setEnabled(false);
         _password.setEnabled(false);
         _confirm.setEnabled(false);
-        _usersvc.updatePassword(CMe.ident, password, new AsyncCallback<Void>() {
+        _usersvc.updatePassword(password, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _password.setText("");
                 _password.setEnabled(true);
@@ -254,7 +254,7 @@ public class EditAccountPanel extends SmartTable
         final String pname = _pname.getText().trim();
         _uppname.setEnabled(false);
         _pname.setEnabled(false);
-        _usersvc.configurePermaName(CMe.ident, pname, new AsyncCallback<Void>() {
+        _usersvc.configurePermaName(pname, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 CMe.creds.permaName = pname;
                 getFlexCellFormatter().setStyleName(_permaRow, 1, "PermaName");

@@ -27,7 +27,6 @@ import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -55,10 +54,10 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
-    public boolean getFriendStatus (WebIdent ident, final int memberId)
+    public boolean getFriendStatus (final int memberId)
         throws ServiceException
     {
-        final MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        final MemberRecord memrec = requireAuthedUser();
         try {
             return _memberRepo.getFriendStatus(memrec.memberId, memberId);
         } catch (PersistenceException pe) {
@@ -68,10 +67,10 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from interface WebMemberService
-    public FriendsResult loadFriends (WebIdent ident, int memberId)
+    public FriendsResult loadFriends (int memberId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
 
         try {
             MemberRecord tgtrec = _memberRepo.loadMember(memberId);
@@ -102,18 +101,18 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
-    public void addFriend (WebIdent ident, final int friendId)
+    public void addFriend (final int friendId)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         _memberLogic.establishFriendship(memrec, friendId);
     }
 
     // from WebMemberService
-    public void removeFriend (WebIdent ident, final int friendId)
+    public void removeFriend (final int friendId)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         _memberLogic.clearFriendship(memrec.memberId, friendId);
     }
 

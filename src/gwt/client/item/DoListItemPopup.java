@@ -159,9 +159,8 @@ public class DoListItemPopup extends VerticalPanel
             final String resultMsg = firstTime ? _imsgs.doListListed() : _imsgs.doListUpdated();
             new ClickCallback<Integer>(_doIt) {
                 public boolean callService () {
-                    _catalogsvc.listItem(
-                        CShell.ident, _item.getIdent(), _description.getText(), getPricing(),
-                        getSalesTarget(), getFlowCost(), getGoldCost(), this);
+                    _catalogsvc.listItem(_item.getIdent(), _description.getText(), getPricing(),
+                                         getSalesTarget(), getFlowCost(), getGoldCost(), this);
                     return true;
                 }
                 public boolean gotResult (Integer result) {
@@ -182,9 +181,8 @@ public class DoListItemPopup extends VerticalPanel
                         MsoyUI.error(_imsgs.doListHitLimit(""+listing.purchases));
                         return false;
                     }
-                    _catalogsvc.updatePricing(
-                        CShell.ident, _item.getType(), _item.catalogId, pricing,
-                        salesTarget, getFlowCost(), getGoldCost(), this);
+                    _catalogsvc.updatePricing(_item.getType(), _item.catalogId, pricing,
+                                              salesTarget, getFlowCost(), getGoldCost(), this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
@@ -198,8 +196,7 @@ public class DoListItemPopup extends VerticalPanel
         } else {
             new ClickCallback<Void>(_doIt) {
                 public boolean callService () {
-                    _catalogsvc.updateListing(
-                        CShell.ident, _item.getIdent(), _description.getText(), this);
+                    _catalogsvc.updateListing(_item.getIdent(), _description.getText(), this);
                     return true;
                 }
                 public boolean gotResult (Void result) {

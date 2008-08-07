@@ -41,8 +41,7 @@ public abstract class StartConvoCallback extends ClickCallback<Void>
             MsoyUI.error(_msgs.sccMissingBody());
             return false;
         }
-        _mailsvc.startConversation(
-            CMail.ident, getRecipientId(), subject, body, getPayload(), this);
+        _mailsvc.startConversation(getRecipientId(), subject, body, getPayload(), this);
         return true;
     }
 

@@ -12,7 +12,6 @@ import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
-import client.shell.CShell;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
@@ -61,7 +60,7 @@ public class IssueModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            _issuesvc.loadIssues(CShell.ident, _type, _state, start, count, needCount, this);
+            _issuesvc.loadIssues(_type, _state, start, count, needCount, this);
         }
 
         @Override // from ServiceBackedDataModel
@@ -93,7 +92,7 @@ public class IssueModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            _issuesvc.loadOwnedIssues(CShell.ident, _type, _state, start, count, needCount, this);
+            _issuesvc.loadOwnedIssues(_type, _state, start, count, needCount, this);
         }
     }
 

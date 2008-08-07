@@ -26,7 +26,6 @@ import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.shell.Args;
-import client.shell.CShell;
 import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
@@ -114,8 +113,8 @@ public class ThreadPanel extends TitledListPanel
     // from interface SearchBox.Listener
     public void search (String query)
     {
-        _forumsvc.findMessages(
-            CShell.ident, _threadId, query, MAX_RESULTS, new MsoyCallback<List<ForumMessage>>() {
+        _forumsvc.findMessages(_threadId, query, MAX_RESULTS,
+                               new MsoyCallback<List<ForumMessage>>() {
             public void onSuccess (List<ForumMessage> messages) {
                 _mpanel.setModel(new SimpleDataModel<ForumMessage>(messages), 0);
             }
@@ -189,7 +188,7 @@ public class ThreadPanel extends TitledListPanel
                     if (!checkMessageText(text)) {
                         return false;
                     }
-                    _forumsvc.postMessage(CShell.ident, _threadId, replyId, text, this);
+                    _forumsvc.postMessage(_threadId, replyId, text, this);
                     return true;
                 }
                 public boolean gotResult (ForumMessage result) {
@@ -233,7 +232,7 @@ public class ThreadPanel extends TitledListPanel
                     if (!checkMessageText(_text)) {
                         return false;
                     }
-                    _forumsvc.editMessage(CShell.ident, _message.messageId, _text, this);
+                    _forumsvc.editMessage(_message.messageId, _text, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
@@ -302,7 +301,7 @@ public class ThreadPanel extends TitledListPanel
                     _flags |= (_announce.isChecked() ? ForumThread.FLAG_ANNOUNCEMENT : 0);
                     _flags |= (_sticky.isChecked() ? ForumThread.FLAG_STICKY : 0);
                     _flags |= (_locked.isChecked() ? ForumThread.FLAG_LOCKED : 0);
-                    _forumsvc.updateThreadFlags(CShell.ident, _thread.threadId, _flags, this);
+                    _forumsvc.updateThreadFlags(_thread.threadId, _flags, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {

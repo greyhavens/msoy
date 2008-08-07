@@ -131,13 +131,12 @@ public class SwiftlyPanel extends FlexTable
 
     protected void loadOwner ()
     {
-        CSwiftly.swiftlysvc.getProjectOwner(
-            CSwiftly.ident, _project.projectId, new MsoyCallback<MemberName>() {
-                public void onSuccess (MemberName owner) {
-                    _ownerLinkPanel.clear();
-                    _ownerLinkPanel.add(Link.memberView(owner));
-                }
-            });
+        CSwiftly.swiftlysvc.getProjectOwner(_project.projectId, new MsoyCallback<MemberName>() {
+            public void onSuccess (MemberName owner) {
+                _ownerLinkPanel.clear();
+                _ownerLinkPanel.add(Link.memberView(owner));
+            }
+        });
     }
 
     /**

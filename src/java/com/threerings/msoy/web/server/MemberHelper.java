@@ -36,7 +36,6 @@ import com.threerings.msoy.group.gwt.GroupMemberCard;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -130,45 +129,41 @@ public class MemberHelper
     }
 
     /**
-     * Returns the member record for the supplied ident, or null if the ident represents an expired
-     * session, a guest or is null.
+     * Returns the member record for the supplied auth token, or null if the ident represents an
+     * expired session or is null.
      */
-    public MemberRecord getAuthedUser (WebIdent ident)
+    public MemberRecord getAuthedUser (String authToken)
         throws ServiceException
     {
-        if (ident == null || MemberName.isGuest(ident.memberId)) {
+        if (authToken == null) {
             return null;
         }
 
         // if we don't have a session token -> member id mapping, then...
-        Integer memberId = getMemberId(ident.token);
+        Integer memberId = getMemberId(authToken);
         if (memberId == null) {
             // ...try looking up this session token, they may have originally authenticated with
             // another server and then started talking to us
             try {
-                MemberRecord mrec = _memberRepo.loadMemberForSession(ident.token);
-                if (mrec == null || mrec.memberId != ident.memberId) {
+                MemberRecord mrec = _memberRepo.loadMemberForSession(authToken);
+                if (mrec == null) {
                     return null;
                 }
-                mapMemberId(ident.token, mrec.memberId);
+                mapMemberId(authToken, mrec.memberId);
                 return mrec;
             } catch (PersistenceException pe) {
-                log.warning("Failed to load session [tok=" + ident.token + "].", pe);
+                log.warning("Failed to load session [tok=" + authToken + "].", pe);
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
         }
 
         // otherwise we already have a valid session token -> member id mapping, so use it
-        if (memberId == ident.memberId) {
-            try {
-                return _memberRepo.loadMember(memberId);
-            } catch (PersistenceException pe) {
-                log.warning("Failed to load member [id=" + memberId + "].", pe);
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
+        try {
+            return _memberRepo.loadMember(memberId);
+        } catch (PersistenceException pe) {
+            log.warning("Failed to load member [id=" + memberId + "].", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-
-        return null;
     }
 
     /**
@@ -177,10 +172,10 @@ public class MemberHelper
      *
      * @exception ServiceException thrown if the session has expired or is otherwise invalid.
      */
-    public MemberRecord requireAuthedUser (WebIdent ident)
+    public MemberRecord requireAuthedUser (String authTok)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser(authTok);
         if (mrec == null) {
             throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
         }

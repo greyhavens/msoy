@@ -48,7 +48,7 @@ public class ImageChooserPopup extends VerticalPanel
     public static void displayImageChooser (
         final boolean thumbnail, final AsyncCallback<MediaDesc> callback)
     {
-        _itemsvc.loadPhotos(CShell.ident, new AsyncCallback<List<Photo>>() {
+        _itemsvc.loadPhotos(new AsyncCallback<List<Photo>>() {
             public void onSuccess (List<Photo> items) {
                 CShell.frame.showDialog(
                     _cmsgs.icTitle(), new ImageChooserPopup(items, thumbnail, callback));

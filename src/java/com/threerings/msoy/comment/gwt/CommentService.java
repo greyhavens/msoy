@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Service methods for reading and posting comments on various Whirled entities (items, profiles,
@@ -33,8 +32,8 @@ public interface CommentService extends RemoteService
     /**
      * Loads recent comments made about the specified entity.
      */
-    public CommentResult loadComments (int entityType, int entityId, int offset, int count,
-                                       boolean needCount)
+    CommentResult loadComments (int entityType, int entityId, int offset, int count,
+                                boolean needCount)
         throws ServiceException;
 
     /**
@@ -42,7 +41,7 @@ public interface CommentService extends RemoteService
      *
      * @return the comment that was posted, throws an exception on failure.
      */
-    public Comment postComment (WebIdent ident, int entityType, int entityId, String text)
+    Comment postComment (int entityType, int entityId, String text)
         throws ServiceException;
 
     /**
@@ -51,13 +50,12 @@ public interface CommentService extends RemoteService
      *
      * @return true if the comment was deleted, throws an exception on failure.
      */
-    public boolean deleteComment (WebIdent ident, int entityType, int entityId, long when)
+    boolean deleteComment (int entityType, int entityId, long when)
         throws ServiceException;
 
     /**
      * Complains the specified comment from the specified entity.
      */
-    public void complainComment (
-            WebIdent ident, String subject, int entityType, int entityId, long when)
+    void complainComment (String subject, int entityType, int entityId, long when)
         throws ServiceException;
 }

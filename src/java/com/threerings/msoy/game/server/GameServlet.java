@@ -71,7 +71,6 @@ import com.threerings.msoy.server.util.HTMLSanitizer;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
@@ -83,10 +82,10 @@ public class GameServlet extends MsoyServiceServlet
     implements GameService
 {
     // from interface GameService
-    public GameDetail loadGameDetail (WebIdent ident, int gameId)
+    public GameDetail loadGameDetail (int gameId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
 
         try {
             GameDetailRecord gdr = _gameRepo.loadGameDetail(gameId);
@@ -115,10 +114,12 @@ public class GameServlet extends MsoyServiceServlet
                     creatorId = item.creatorId;
                 }
                 if (mrec != null) {
-                    detail.memberItemInfo.memberRating = _gameRepo.getRating(item.itemId, mrec.memberId);
+                    detail.memberItemInfo.memberRating =
+                        _gameRepo.getRating(item.itemId, mrec.memberId);
                     //set whether the game is one of the member's favorites
                     if(detail.listedItem != null) {
-                        detail.memberItemInfo.favorite = _itemLogic.isFavorite(mrec.memberId, detail.listedItem);
+                        detail.memberItemInfo.favorite =
+                            _itemLogic.isFavorite(mrec.memberId, detail.listedItem);
                     }
                 }
             }
@@ -143,10 +144,10 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public GameMetrics loadGameMetrics (WebIdent ident, int gameId)
+    public GameMetrics loadGameMetrics (int gameId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         requireIsGameOwner(gameId, mrec);
 
         try {
@@ -178,10 +179,10 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public GameLogs loadGameLogs (WebIdent ident, int gameId)
+    public GameLogs loadGameLogs (int gameId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         requireIsGameOwner(gameId, mrec);
 
         try {
@@ -205,10 +206,10 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public void updateGameInstructions (WebIdent ident, int gameId, String instructions)
+    public void updateGameInstructions (int gameId, String instructions)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         requireIsGameOwner(gameId, mrec);
 
         try {
@@ -226,10 +227,10 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public void resetGameScores (WebIdent ident, int gameId, boolean single)
+    public void resetGameScores (int gameId, boolean single)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         requireIsGameOwner(gameId, mrec);
 
         try {
@@ -248,10 +249,10 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public List<Trophy> loadGameTrophies (WebIdent ident, int gameId)
+    public List<Trophy> loadGameTrophies (int gameId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
 
         try {
             GameRecord grec = _gameRepo.loadGameRecord(gameId);
@@ -267,10 +268,10 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public CompareResult compareTrophies (WebIdent ident, int gameId, int[] memberIds)
+    public CompareResult compareTrophies (int gameId, int[] memberIds)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
         int callerId = (mrec == null) ? 0 : mrec.memberId;
 
         try {
@@ -304,7 +305,7 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public TrophyCase loadTrophyCase (WebIdent ident, int memberId)
+    public TrophyCase loadTrophyCase (int memberId)
         throws ServiceException
     {
         try {
@@ -358,10 +359,10 @@ public class GameServlet extends MsoyServiceServlet
     }
 
     // from interface GameService
-    public PlayerRating[][] loadTopRanked (WebIdent ident, int gameId, boolean onlyMyFriends)
+    public PlayerRating[][] loadTopRanked (int gameId, boolean onlyMyFriends)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
         if (mrec == null && onlyMyFriends) {
             log.warning("Requested friend rankings for non-authed member [gameId=" + gameId + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -406,14 +407,14 @@ public class GameServlet extends MsoyServiceServlet
                                           toRatingResult(multi, players) };
 
         } catch (PersistenceException pe) {
-            log.warning("Failure loading rankings [for=" + ident + ", gameId=" + gameId +
+            log.warning("Failure loading rankings [for=" + who(mrec) + ", gameId=" + gameId +
                     ", friends=" + onlyMyFriends + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface GameService
-    public ArcadeData loadArcadeData (WebIdent ident)
+    public ArcadeData loadArcadeData ()
         throws ServiceException
     {
         try {
@@ -508,13 +509,13 @@ public class GameServlet extends MsoyServiceServlet
             return data;
 
         } catch (PersistenceException pe) {
-            log.warning("loadArcadeData failed [for=" + ident + "].");
+            log.warning("loadArcadeData failed", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface GameService
-    public List<GameInfo> loadGameGenre (WebIdent ident, byte genre, byte sortMethod, String query)
+    public List<GameInfo> loadGameGenre (byte genre, byte sortMethod, String query)
         throws ServiceException
     {
         try {
@@ -555,20 +556,20 @@ public class GameServlet extends MsoyServiceServlet
             return infos;
 
         } catch (PersistenceException pe) {
-            log.warning("loadGameGenre failed [for=" + ident + ", genre=" + genre + "].");
+            log.warning("loadGameGenre failed [genre=" + genre + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface GameService
-    public FeaturedGameInfo[] loadTopGamesData (WebIdent ident)
+    public FeaturedGameInfo[] loadTopGamesData ()
         throws ServiceException
     {
         try {
             return _gameLogic.loadTopGames(_memberMan.getPPSnapshot());
 
         } catch (PersistenceException pe) {
-            log.warning("loadTopGamesData failed [for=" + ident + "].");
+            log.warning("loadTopGamesData failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -603,7 +604,7 @@ public class GameServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.warning("Failed to load game source record to verify ownership " +
-                    "[gameId=" + gameId + ", mrec=" + mrec.who() + "].");
+                        "[gameId=" + gameId + ", mrec=" + mrec.who() + "].", pe);
         }
     }
 

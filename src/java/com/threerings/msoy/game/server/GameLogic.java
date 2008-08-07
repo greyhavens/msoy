@@ -40,7 +40,6 @@ import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.ServletWaiter;
 
 import static com.threerings.msoy.Log.log;
@@ -54,7 +53,7 @@ public class GameLogic
     /**
      * Loads the launch config for the specified game, resolving it on this server if necessary.
      */
-    public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
+    public LaunchConfig loadLaunchConfig (int gameId, boolean assignGuestId)
         throws ServiceException
     {
         // load up the metadata for this game
@@ -131,7 +130,7 @@ public class GameLogic
 
         // finally, if they are a guest and have not yet been assigned a guest id, do so now so
         // that they can log directly into the game server
-        if (ident == null || ident.memberId == 0) {
+        if (assignGuestId) {
             config.guestId = _peerMan.getNextGuestId(); // this method is thread safe
         }
 

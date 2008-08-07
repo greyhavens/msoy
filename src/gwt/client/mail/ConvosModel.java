@@ -75,7 +75,7 @@ public class ConvosModel extends ServiceBackedDataModel<Conversation, MailServic
 
     @Override // from ServiceBackedDataModel
     protected void callFetchService (int start, int count, boolean needCount) {
-        _mailsvc.loadConversations(CMail.ident, start, count, needCount, this);
+        _mailsvc.loadConversations(start, count, needCount, this);
     }
 
     @Override // from ServiceBackedDataModel

@@ -42,7 +42,7 @@ public class RenameHandler extends ClickCallback<String>
 
     // from ClickCallback
     public boolean callService () {
-        _stuffsvc.renameClone(CStuff.ident, _item.getIdent(), _name.getText(), this);
+        _stuffsvc.renameClone(_item.getIdent(), _name.getText(), this);
         return true;
     }
 

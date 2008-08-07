@@ -103,7 +103,7 @@ public class InterestsBlurb extends Blurb
         new ClickCallback<Void>(update) {
             public boolean callService () {
                 _newInterests = getNewInterests();
-                _profilesvc.updateInterests(CPeople.ident, _newInterests, this);
+                _profilesvc.updateInterests(_newInterests, this);
                 return true;
             }
 

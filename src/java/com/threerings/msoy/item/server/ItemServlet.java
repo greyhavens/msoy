@@ -35,7 +35,6 @@ import com.threerings.msoy.item.server.persist.PhotoRepository;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
@@ -47,10 +46,10 @@ public class ItemServlet extends MsoyServiceServlet
     implements ItemService
 {
     // from interface ItemService
-    public void scaleAvatar (WebIdent ident, int avatarId, float newScale)
+    public void scaleAvatar (int avatarId, float newScale)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
 
         AvatarRepository repo = _itemLogic.getAvatarRepository();
         try {
@@ -82,10 +81,10 @@ public class ItemServlet extends MsoyServiceServlet
     // TODO: this is dormant right now, but we might need something like it when we
     // enable listing purchased remixables.
 //    // from interface ItemService
-//    public Item remixItem (WebIdent ident, final ItemIdent iident)
+//    public Item remixItem (final ItemIdent iident)
 //        throws ServiceException
 //    {
-//        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+//        MemberRecord memrec = requireAuthedUser();
 //        ItemRepository<ItemRecord> repo = _itemMan.getRepository(iident.type);
 //
 //        try {
@@ -128,10 +127,10 @@ public class ItemServlet extends MsoyServiceServlet
 //    }
 
     // from interface ItemService
-    public float rateItem (WebIdent ident, ItemIdent iident, byte rating)
+    public float rateItem (ItemIdent iident, byte rating)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
 
         try {
@@ -166,7 +165,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public Collection<String> getTags (WebIdent ident, ItemIdent iident)
+    public Collection<String> getTags (ItemIdent iident)
         throws ServiceException
     {
         try {
@@ -183,7 +182,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public Collection<TagHistory> getTagHistory (WebIdent ident, final ItemIdent iident)
+    public Collection<TagHistory> getTagHistory (final ItemIdent iident)
         throws ServiceException
     {
         try {
@@ -212,10 +211,10 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public Collection<TagHistory> getRecentTags (WebIdent ident)
+    public Collection<TagHistory> getRecentTags ()
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         MemberName name = memrec.getName();
 
         try {
@@ -237,16 +236,16 @@ public class ItemServlet extends MsoyServiceServlet
             return list;
 
         } catch (PersistenceException pe) {
-            log.warning("Failed to get recent tags [ident=" + ident + "]", pe);
+            log.warning("Failed to get recent tags [for=" + who(memrec) + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface ItemService
-    public TagHistory tagItem (WebIdent ident, ItemIdent iident, String rawTagName, boolean set)
+    public TagHistory tagItem (ItemIdent iident, String rawTagName, boolean set)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
 
         // sanitize the tag name
         final String tagName = rawTagName.trim().toLowerCase();
@@ -286,29 +285,29 @@ public class ItemServlet extends MsoyServiceServlet
             return history;
 
         } catch (PersistenceException pe) {
-            log.warning("Failed to tag item", "ident", ident, "item", iident, "tag", tagName,
+            log.warning("Failed to tag item", "for", who(memrec), "item", iident, "tag", tagName,
                         "set", set, pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface ItemService
-    public void wrapItem (WebIdent ident, ItemIdent iident, boolean wrap)
+    public void wrapItem (ItemIdent iident, boolean wrap)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         byte type = iident.type;
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         try {
             final ItemRecord item = repo.loadItem(iident.itemId);
             if (item == null) {
                 log.warning("Trying to " + (wrap ? "" : "un") + "wrap non-existent item " +
-                            "[ident=" + ident + ", item=" + iident + "]");
+                            "[for=" + who(memrec) + ", item=" + iident + "]");
                 throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
             }
             if (wrap) {
                 if (item.ownerId != memrec.memberId) {
-                    log.warning("Trying to wrap un-owned item [ident=" + ident +
+                    log.warning("Trying to wrap un-owned item [for=" + who(memrec) +
                                 ", item=" + iident + "]");
                     throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
                 }
@@ -318,12 +317,12 @@ public class ItemServlet extends MsoyServiceServlet
                 if (item.ownerId != 0) {
                     if (item.ownerId == memrec.memberId) {
                         // if the owner is already correct, let it pass
-                        log.warning("Unwrapped item already belongs to me [ident=" + ident +
-                            ", item=" + iident + "]");
+                        log.warning("Unwrapped item already belongs to me [for=" + who(memrec) +
+                                    ", item=" + iident + "]");
                         return;
                     }
-                    log.warning("Trying to unwrap owned item [ident=" + ident +
-                        ", item=" + iident + "]");
+                    log.warning("Trying to unwrap owned item [for=" + who(memrec) +
+                                ", item=" + iident + "]");
                     throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
                 }
                 repo.updateOwnerId(item, memrec.memberId);
@@ -344,10 +343,10 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void setMature (WebIdent ident, ItemIdent iident, boolean value)
+    public void setMature (ItemIdent iident, boolean value)
         throws ServiceException
     {
-        MemberRecord mRec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mRec = requireAuthedUser();
         if (!mRec.isSupport()) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
@@ -370,10 +369,10 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public void setFlags (WebIdent ident, ItemIdent iident, byte mask, byte value)
+    public void setFlags (ItemIdent iident, byte mask, byte value)
         throws ServiceException
     {
-        _mhelper.requireAuthedUser(ident);
+        requireAuthedUser();
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
         try {
             // TODO: If things get really tight, this could use updatePartial() later.
@@ -394,10 +393,10 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from ItemService interface
-    public void setFavorite (WebIdent ident, ItemIdent item, boolean favorite)
+    public void setFavorite (ItemIdent item, boolean favorite)
         throws ServiceException
     {
-        MemberRecord member = _mhelper.requireAuthedUser(ident);
+        MemberRecord member = requireAuthedUser();
 
         try {
             if(favorite) {
@@ -413,10 +412,10 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public List<Photo> loadPhotos (WebIdent ident)
+    public List<Photo> loadPhotos ()
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
 
         try {
             List<Photo> photos = Lists.newArrayList();

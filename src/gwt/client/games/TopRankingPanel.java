@@ -47,16 +47,15 @@ public class TopRankingPanel extends VerticalPanel
         }
 
         addNote(_msgs.trpLoading());
-        _gamesvc.loadTopRanked(
-            CGames.ident, _gameId, _onlyMyFriends, new AsyncCallback<PlayerRating[][]>() {
-                public void onSuccess (PlayerRating[][] topRanked) {
-                    gotRankings(topRanked);
-                }
-                public void onFailure (Throwable caught) {
-                    CGames.log("getTopRanked failed", caught);
-                    addNote(CGames.serverError(caught));
-                }
-            });
+        _gamesvc.loadTopRanked(_gameId, _onlyMyFriends, new AsyncCallback<PlayerRating[][]>() {
+            public void onSuccess (PlayerRating[][] topRanked) {
+                gotRankings(topRanked);
+            }
+            public void onFailure (Throwable caught) {
+                CGames.log("getTopRanked failed", caught);
+                addNote(CGames.serverError(caught));
+            }
+        });
         _gameId = 0; // note that we've asked for our data
     }
 

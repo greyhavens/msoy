@@ -48,7 +48,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
         _invite.setEnabled(Group.canInvite(detail.group.policy, detail.myRank));
 
         _groupsvc.getGroupMembers(
-            CWhirleds.ident, _detail.group.groupId, new MsoyCallback<GroupService.MembersResult>() {
+            _detail.group.groupId, new MsoyCallback<GroupService.MembersResult>() {
                 public void onSuccess (GroupService.MembersResult result) {
                     setModel(new SimpleDataModel<GroupMemberCard>(result.members), 0);
                 }
@@ -89,8 +89,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
     {
         return new Command() {
             public void execute () {
-                _groupsvc.updateMemberRank(
-                    CWhirleds.ident, _detail.group.groupId, card.name.getMemberId(), rank,
+                _groupsvc.updateMemberRank(_detail.group.groupId, card.name.getMemberId(), rank,
                     new MsoyCallback<Void>() {
                         public void onSuccess (Void result) {
                             card.rank = rank;
@@ -107,8 +106,8 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
     {
         return new Command() {
             public void execute () {
-                _groupsvc.leaveGroup(CWhirleds.ident, _detail.group.groupId,
-                    card.name.getMemberId(), new MsoyCallback<Void>() {
+                _groupsvc.leaveGroup(
+                    _detail.group.groupId, card.name.getMemberId(), new MsoyCallback<Void>() {
                         public void onSuccess (Void result) {
                             removeItem(card);
                         }

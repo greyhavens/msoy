@@ -51,7 +51,6 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletLogic;
@@ -65,10 +64,10 @@ public class ProfileServlet extends MsoyServiceServlet
     implements ProfileService
 {
     // from interface ProfileService
-    public ProfileResult loadProfile (WebIdent ident, int memberId)
+    public ProfileResult loadProfile (int memberId)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.getAuthedUser(ident);
+        MemberRecord memrec = getAuthedUser();
 
         try {
             MemberRecord tgtrec = _memberRepo.loadMember(memberId);
@@ -114,10 +113,10 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public void updateProfile (WebIdent ident, String displayName, Profile profile)
+    public void updateProfile (String displayName, Profile profile)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
 
         if (displayName != null) {
             displayName = displayName.trim();
@@ -174,10 +173,10 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public void updateInterests (WebIdent ident, List<Interest> interests)
+    public void updateInterests (List<Interest> interests)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
 
         try {
             // store the supplied interests in the repository; blank interests will be deleted
@@ -190,10 +189,10 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // from interface ProfileService
-    public List<MemberCard> findProfiles (WebIdent ident, String search)
+    public List<MemberCard> findProfiles (String search)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
 
         try {
             // if the caller is a member, load up their friends set

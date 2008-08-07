@@ -32,7 +32,7 @@ public class MemberInfoPanel extends SmartTable
     {
         super("memberInfo", 0, 5);
 
-        _adminsvc.getMemberInfo(CAdmin.ident, memberId, new MsoyCallback<MemberAdminInfo>() {
+        _adminsvc.getMemberInfo(memberId, new MsoyCallback<MemberAdminInfo>() {
             public void onSuccess (MemberAdminInfo info) {
                 init(info);
             }
@@ -67,8 +67,7 @@ public class MemberInfoPanel extends SmartTable
                     if (_isSupport == info.isSupport) {
                         return false; // we're reverting due to failure, so do nothing
                     }
-                    _adminsvc.setIsSupport(
-                        CAdmin.ident, info.name.getMemberId(), _isSupport, this);
+                    _adminsvc.setIsSupport(info.name.getMemberId(), _isSupport, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {

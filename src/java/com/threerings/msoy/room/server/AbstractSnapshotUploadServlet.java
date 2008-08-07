@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.web.data.WebCreds;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 
@@ -23,9 +22,6 @@ public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServl
     protected void validateAccess (UploadContext ctx)
         throws AccessDeniedException
     {
-        Integer sceneId = -1;
-        Integer memberId = -1;
-
         // did we get all the right data in the POST request?
         if (!ctx.formFields.containsKey("member") || !ctx.formFields.containsKey("scene")) {
             throw new AccessDeniedException("Snapshot request is missing data.");
@@ -37,21 +33,16 @@ public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServl
             throw new AccessDeniedException("Must be logged in to upload screenshots.");
         }
 
+        Integer sceneId = -1;
         try {
-            memberId = Integer.decode(ctx.formFields.get("member"));
             sceneId = Integer.decode(ctx.formFields.get("scene"));
-
             // make sure the user is authenticated, and pull out their record object
-            WebIdent ident = new WebIdent(memberId, token);
-
-            // ok! They're validated!
-            ctx.memrec = _mhelper.requireAuthedUser(ident);
+            ctx.memrec = _mhelper.requireAuthedUser(token);
             ctx.data = sceneId;
 
         } catch (Exception e) {
-            throw new AccessDeniedException(
-                "Could not confirm player access to scene [memberId=" + memberId + ", sceneId=" +
-                sceneId + ", e=" + e + "].");
+            throw new AccessDeniedException("Could not confirm player access to scene " +
+                                            "[sceneId=" + sceneId + ", e=" + e + "].");
         }
     }
 

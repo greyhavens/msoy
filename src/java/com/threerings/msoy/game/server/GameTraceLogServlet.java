@@ -24,7 +24,6 @@ import com.threerings.msoy.item.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.item.server.persist.GameTraceLogRecord;
 
 import com.threerings.msoy.web.data.WebCreds;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MemberHelper;
 
 /**
@@ -48,12 +47,7 @@ public class GameTraceLogServlet extends HttpServlet
             }
 
             // make sure the user is authenticated, and pull out their record object
-            Integer memberId = _mhelper.getMemberId(token);
-            if (memberId == null) {
-                rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
-            MemberRecord member = _mhelper.getAuthedUser(new WebIdent(memberId, token));
+            MemberRecord member = _mhelper.getAuthedUser(token);
             if (member == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;

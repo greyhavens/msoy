@@ -35,7 +35,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
@@ -47,28 +46,28 @@ public class IssueServlet extends MsoyServiceServlet
     implements IssueService
 {
     // from interface IssueService
-    public IssueResult loadIssues (WebIdent ident, int type, int state, int offset, int count,
+    public IssueResult loadIssues (int type, int state, int offset, int count,
                                    boolean needTotalCount)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
         return loadIssues(mrec, type, state, 0, offset, count, needTotalCount);
     }
 
     // from interface IssueService
-    public IssueResult loadOwnedIssues (WebIdent ident, int type, int state, int offset, int count,
+    public IssueResult loadOwnedIssues (int type, int state, int offset, int count,
                                         boolean needTotalCount)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
         return loadIssues(mrec, type, state, mrec.memberId, offset, count, needTotalCount);
     }
 
     // from interface IssueService
-    public Issue loadIssue (WebIdent ident, int issueId)
+    public Issue loadIssue (int issueId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
 
         try {
             IssueRecord irec = _issueRepo.loadIssue(issueId);
@@ -88,10 +87,10 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
-    public List<ForumMessage> loadMessages (WebIdent ident, int issueId, int messageId)
+    public List<ForumMessage> loadMessages (int issueId, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
 
         try {
             List<ForumMessageRecord> msgrecs = _forumRepo.loadIssueMessages(issueId);
@@ -126,10 +125,10 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
-    public Issue createIssue (WebIdent ident, Issue issue, int messageId)
+    public Issue createIssue (Issue issue, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         try {
             if (!mrec.isSupport()) {
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
@@ -152,10 +151,10 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
-    public Issue updateIssue (WebIdent ident, Issue issue)
+    public Issue updateIssue (Issue issue)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         try {
             if (!mrec.isSupport()) {
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
@@ -183,10 +182,10 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
-    public void assignMessage (WebIdent ident, int issueId, int messageId)
+    public void assignMessage (int issueId, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         try {
             if (!mrec.isSupport()) {
                 throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
@@ -205,10 +204,10 @@ public class IssueServlet extends MsoyServiceServlet
     }
 
     // from interface IssueService
-    public List<MemberName> loadOwners (WebIdent ident)
+    public List<MemberName> loadOwners ()
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
 
         List<MemberName> owners = Lists.newArrayList();
 

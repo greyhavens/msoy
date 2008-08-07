@@ -95,8 +95,7 @@ public class GroupsBlurb extends Blurb
 //                 Button inviteButton = new Button(CPeople.msgs.inviteToGroup());
 //                 new ClickCallback<List<GroupMembership>>(inviteButton) {
 //                     public boolean callService () {
-//                         _groupsvc.getMembershipGroups(
-//                             CPeople.ident, CPeople.getMemberId(), true, this);
+//                         _groupsvc.getMembershipGroups(CPeople.getMemberId(), true, this);
 //                         return true;
 //                     }
 //                     public boolean gotResult (List<GropuMembership> inviteGroups) {

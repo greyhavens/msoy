@@ -9,7 +9,6 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.web.data.TagHistory;
-import com.threerings.msoy.web.data.WebIdent;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Photo;
@@ -22,60 +21,55 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#scaleAvatar}.
      */
-    void scaleAvatar (WebIdent ident, int avatarId, float newScale,
-                      AsyncCallback<Void> callback);
+    void scaleAvatar (int avatarId, float newScale, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#rateItem}.
      */
-    void rateItem (WebIdent ident, ItemIdent item, byte rating, AsyncCallback<Float> callback);
+    void rateItem (ItemIdent item, byte rating, AsyncCallback<Float> callback);
 
     /**
      * The asynchronous version of {@link ItemService.wrapItem}.
      */
-    void wrapItem (WebIdent ident, ItemIdent item, boolean wrap, AsyncCallback<Void> callback);
+    void wrapItem (ItemIdent item, boolean wrap, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#getTags}.
      */
-    void getTags (WebIdent ident, ItemIdent item, AsyncCallback<Collection<String>> callback);
+    void getTags (ItemIdent item, AsyncCallback<Collection<String>> callback);
 
     /**
      * The asynchronous versions of {@link ItemService#getTagHistory}.
      */
-    void getTagHistory (WebIdent ident, ItemIdent item,
-                        AsyncCallback<Collection<TagHistory>> callback);
+    void getTagHistory (ItemIdent item, AsyncCallback<Collection<TagHistory>> callback);
 
     /**
      * The asynchronous versions of {@link ItemService#getRecentTags}.
      */
-    void getRecentTags (WebIdent ident, AsyncCallback<Collection<TagHistory>> callback);
+    void getRecentTags (AsyncCallback<Collection<TagHistory>> callback);
 
     /**
      * The asynchronous version of {@link ItemService#tagItem}.
      */
-    void tagItem (WebIdent ident, ItemIdent item, String tag, boolean set,
-                  AsyncCallback<TagHistory> callback);
+    void tagItem (ItemIdent item, String tag, boolean set, AsyncCallback<TagHistory> callback);
 
     /**
      * The asynchronous version of {@link ItemService.setFlags}.
      */
-    void setFlags (WebIdent ident, ItemIdent item, byte mask, byte values,
-                   AsyncCallback<Void> callback);
+    void setFlags (ItemIdent item, byte mask, byte values, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService.setMature}.
      */
-    void setMature (WebIdent ident, ItemIdent item, boolean value, AsyncCallback<Void> callback);
+    void setMature (ItemIdent item, boolean value, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService.setFavorite}.
      */
-    void setFavorite (WebIdent ident, ItemIdent item, boolean favorite,
-                      AsyncCallback<Void> callback);
+    void setFavorite (ItemIdent item, boolean favorite, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#loadPhotos}.
      */
-    void loadPhotos (WebIdent ident, AsyncCallback<List<Photo>> callback);
+    void loadPhotos (AsyncCallback<List<Photo>> callback);
 }

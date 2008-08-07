@@ -64,7 +64,7 @@ public class ShopPanel extends HorizontalPanel
         _contents.add(WidgetUtil.makeShim(10, 10));
 
         // now load up our shop data
-        _catalogsvc.loadShopData(CShop.ident, new MsoyCallback<ShopData>() {
+        _catalogsvc.loadShopData(new MsoyCallback<ShopData>() {
             public void onSuccess (ShopData data) {
                 init(data);
             }

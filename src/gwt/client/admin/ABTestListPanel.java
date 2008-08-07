@@ -56,7 +56,7 @@ public class ABTestListPanel extends FlowPanel
 
         add(_contents = new SmartTable("Tests", 10, 0));
 
-        _adminsvc.getABTests(CAdmin.ident, new MsoyCallback<List<ABTest>>() {
+        _adminsvc.getABTests(new MsoyCallback<List<ABTest>>() {
             public void onSuccess (List<ABTest> tests) {
                 displayTests(tests);
             }

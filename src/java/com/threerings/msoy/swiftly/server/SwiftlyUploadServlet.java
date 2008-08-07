@@ -19,7 +19,6 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.AbstractUploadServlet;
 import com.threerings.msoy.web.server.FileItemUploadFile;
 import com.threerings.msoy.web.server.MemberHelper;
@@ -57,23 +56,18 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         }
 
         // now pull the integers out
-        final int memberId;
         final int projectId;
         try {
-            memberId = Integer.parseInt(split[1]);
             projectId = Integer.parseInt(split[2]);
 
         } catch (NumberFormatException nfe) {
             throw new FileUploadException(
                 "Failed to parse integer form field parameters from the upload request. " +
-                    "[memberId=" + split[1] + " projectId=" + split[2] + "]");
+                    "[projectId=" + split[2] + "]");
         }
 
-        // finally, instantiate the WebIdent
-        WebIdent ident = new WebIdent(memberId, token);
-
         // verify this user is logged in and is a collaborator
-        checkPermissions(ident, projectId);
+        checkPermissions(token, projectId);
 
         log.info("Swiftly upload: [type=" + ctx.file.getContentType() + ", size=" +
             ctx.file.getSize() + ", projectId=" + projectId + "].");
@@ -106,20 +100,19 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
     /**
      * Verify the supplied member can perform the requested upload.
      */
-    protected void checkPermissions (WebIdent ident, int projectId)
+    protected void checkPermissions (String authTok, int projectId)
         throws AccessDeniedException, FileUploadException
     {
         try {
-            MemberRecord record = _mhelper.requireAuthedUser(ident);
+            MemberRecord record = _mhelper.requireAuthedUser(authTok);
             if (!_swiftlyRepo.isCollaborator(projectId, record.memberId)) {
                 throw new AccessDeniedException("Access denied. Not a collaborator: [memberId=" +
                     record.memberId + ", projectId=" + projectId + "]");
             }
 
         } catch (ServiceException e) {
-            throw new AccessDeniedException("Access denied. Member not logged in: [memberId=" +
-                ident.memberId + ", projectId=" + projectId + "]");
-
+            throw new AccessDeniedException("Access denied. Member not logged in " +
+                                            "[token=" + authTok + ", projectId=" + projectId + "]");
         } catch (PersistenceException pe) {
             throw new FileUploadException("Failed when trying to check collaborator status");
         }

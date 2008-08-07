@@ -11,7 +11,6 @@ import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.RegisterInfo;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SessionData;
-import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Defines general user services available to the GWT/AJAX web client.
@@ -57,7 +56,7 @@ public interface WebUserService extends RemoteService
     /**
      * Loads the configuration needed to play (launch) the specified game.
      */
-    LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
+    LaunchConfig loadLaunchConfig (int gameId, boolean assignGuestId)
         throws ServiceException;
 
     /**
@@ -69,20 +68,20 @@ public interface WebUserService extends RemoteService
     /**
      * Updates the email address on file for this account.
      */
-    void updateEmail (WebIdent ident, String newEmail)
+    void updateEmail (String newEmail)
         throws ServiceException;
 
     /**
      * Updates the email preferences for this account.
      */
-    void updateEmailPrefs (WebIdent ident, boolean emailOnWhirledMail,
+    void updateEmailPrefs (boolean emailOnWhirledMail,
                                   boolean emailAnnouncements)
         throws ServiceException;
 
     /**
      * Updates the password on file for this account.
      */
-    void updatePassword (WebIdent ident, String newPassword)
+    void updatePassword (String newPassword)
         throws ServiceException;
 
     /**
@@ -94,18 +93,18 @@ public interface WebUserService extends RemoteService
     /**
      * Configures the permaname for this account.
      */
-    void configurePermaName (WebIdent ident, String permaName)
+    void configurePermaName (String permaName)
         throws ServiceException;
 
     /**
      * fetches the user's account info.
      */
-    AccountInfo getAccountInfo (WebIdent ident)
+    AccountInfo getAccountInfo ()
         throws ServiceException;
 
     /**
      * Updates the user's account info to match the AccountInfo object.
      */
-    void updateAccountInfo (WebIdent ident, AccountInfo info)
+    void updateAccountInfo (AccountInfo info)
         throws ServiceException;
 }

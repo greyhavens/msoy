@@ -42,8 +42,7 @@ public class CatalogModels
 
         public void doFetchRows (
             int start, int count, final AsyncCallback<List<ListingCard>> callback) {
-            _catalogsvc.loadCatalog(
-                CShop.ident, _query, start, count, _listingCount == -1,
+            _catalogsvc.loadCatalog(_query, start, count, _listingCount == -1,
                 new MsoyCallback<CatalogService.CatalogResult>() {
                     public void onSuccess (CatalogService.CatalogResult data) {
                         if (_listingCount == -1) {

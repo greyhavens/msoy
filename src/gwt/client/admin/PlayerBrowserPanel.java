@@ -117,22 +117,21 @@ public class PlayerBrowserPanel extends HorizontalPanel
             _playerLists = new ArrayList<PlayerList>();
         }
 
-        _adminsvc.getPlayerList(
-            CAdmin.ident, memberIdToFetch, new MsoyCallback<MemberInviteResult>() {
-                public void onSuccess (MemberInviteResult res) {
-                    PlayerList newList = new PlayerList(res);
-                    if (res.memberId != memberId) {
-                        // we're fetching a new parent.
-                        _playerLists.add(0, newList);
-                        PlayerList list = _parentList != null ? _parentList : _childList;
-                        newList.highlight(list.getResult().memberId);
-                        displayLists(1);
-                    } else {
-                        _playerLists.add(newList);
-                        displayLists(_playerLists.size() - 1);
-                    }
+        _adminsvc.getPlayerList(memberIdToFetch, new MsoyCallback<MemberInviteResult>() {
+            public void onSuccess (MemberInviteResult res) {
+                PlayerList newList = new PlayerList(res);
+                if (res.memberId != memberId) {
+                    // we're fetching a new parent.
+                    _playerLists.add(0, newList);
+                    PlayerList list = _parentList != null ? _parentList : _childList;
+                    newList.highlight(list.getResult().memberId);
+                    displayLists(1);
+                } else {
+                    _playerLists.add(newList);
+                    displayLists(_playerLists.size() - 1);
                 }
-            });
+            }
+        });
     }
 
     protected void clearLists ()
@@ -208,7 +207,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 new ClickCallback<Void>(grantInvites) {
                     public boolean callService () {
                         _adminsvc.grantInvitations(
-                            CAdmin.ident, numInvites.getValue().intValue(), _result.memberId, this);
+                            numInvites.getValue().intValue(), _result.memberId, this);
                         return true;
                     }
                     public boolean gotResult (Void result) {

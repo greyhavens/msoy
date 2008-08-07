@@ -76,22 +76,21 @@ public class StuffPage extends Page
                 setContent(title, new ItemDetailPanel(_models, _detail));
 
             } else {
-                _stuffsvc.loadItemDetail(CStuff.ident, ident,
-                    new MsoyCallback<StuffService.DetailOrIdent>() {
-                        public void onSuccess (StuffService.DetailOrIdent result) {
-                            if (result.detail != null) {
-                                _detail = result.detail;
-                                _models.updateItem(_detail.item);
-                                setContent(title, new ItemDetailPanel(_models, _detail));
+                _stuffsvc.loadItemDetail(ident, new MsoyCallback<StuffService.DetailOrIdent>() {
+                    public void onSuccess (StuffService.DetailOrIdent result) {
+                        if (result.detail != null) {
+                            _detail = result.detail;
+                            _models.updateItem(_detail.item);
+                            setContent(title, new ItemDetailPanel(_models, _detail));
 
-                            } else {
-                                // We didn't have access to that specific item, but have been given
-                                // the catalog id for the prototype.
-                                ItemIdent id = result.ident;
-                                Link.go(Pages.SHOP, Args.compose("l", "" + id.type, "" + id.itemId));
-                            }
+                        } else {
+                            // We didn't have access to that specific item, but have been given
+                            // the catalog id for the prototype.
+                            ItemIdent id = result.ident;
+                            Link.go(Pages.SHOP, Args.compose("l", "" + id.type, "" + id.itemId));
                         }
-                    });
+                    }
+                });
             }
 
         // if we're editing an item, display that interface

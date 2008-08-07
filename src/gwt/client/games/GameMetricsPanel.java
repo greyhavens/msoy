@@ -46,7 +46,7 @@ public class GameMetricsPanel extends VerticalPanel
         }
 
         add(MsoyUI.createLabel(_msgs.gmpLoading(), "Header"));
-        _gamesvc.loadGameMetrics(CGames.ident, _detail.gameId, new AsyncCallback<GameMetrics>() {
+        _gamesvc.loadGameMetrics(_detail.gameId, new AsyncCallback<GameMetrics>() {
             public void onSuccess (GameMetrics metrics) {
                 gotMetrics(metrics);
             }
@@ -130,7 +130,7 @@ public class GameMetricsPanel extends VerticalPanel
         row.add(reset);
         new ClickCallback<Void>(reset, _msgs.gmpResetConfirm()) {
             public boolean callService () {
-                _gamesvc.resetGameScores(CGames.ident, _detail.gameId, single, this);
+                _gamesvc.resetGameScores(_detail.gameId, single, this);
                 return true;
             }
             public boolean gotResult (Void result) {

@@ -11,7 +11,6 @@ import com.threerings.msoy.data.all.ReferralInfo;
 
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * The asynchronous (client-side) version of {@link WebMemberService}.
@@ -26,23 +25,23 @@ public interface WebMemberServiceAsync
     /**
      * The asynchronous version of {@link WebMemberService#getFriendStatus}.
      */
-    void getFriendStatus (WebIdent ident, int memberId, AsyncCallback<Boolean> callback);
+    void getFriendStatus (int memberId, AsyncCallback<Boolean> callback);
 
     /**
      * The asynchronous version of {@link WebMemberService#loadFriends}.
      */
-    void loadFriends (WebIdent ident, int memberId,
+    void loadFriends (int memberId,
                       AsyncCallback<WebMemberService.FriendsResult> callback);
 
     /**
      * The asynchronous version of {@link WebMemberService#acceptFriend}.
      */
-    void addFriend (WebIdent ident, int friendId, AsyncCallback<Void> callback);
+    void addFriend (int friendId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebMemberService#declineFriend}.
      */
-    void removeFriend (WebIdent ident, int friendId, AsyncCallback<Void> callback);
+    void removeFriend (int friendId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebMemberService#getInvitation}.

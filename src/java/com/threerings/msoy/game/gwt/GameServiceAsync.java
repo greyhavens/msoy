@@ -7,8 +7,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.web.data.WebIdent;
-
 import com.threerings.msoy.game.data.all.Trophy;
 
 /**
@@ -19,66 +17,64 @@ public interface GameServiceAsync
     /**
      * The asynchronous version of {@link GameService#loadGameDetail}.
      */
-    void loadGameDetail (WebIdent ident, int gameId, AsyncCallback<GameDetail> callback);
+    void loadGameDetail (int gameId, AsyncCallback<GameDetail> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameMetrics}.
      */
-    void loadGameMetrics (WebIdent ident, int gameId, AsyncCallback<GameMetrics> callback);
+    void loadGameMetrics (int gameId, AsyncCallback<GameMetrics> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameLogs}.
      */
-    void loadGameLogs (WebIdent ident, int gameId, AsyncCallback<GameLogs> callback);
+    void loadGameLogs (int gameId, AsyncCallback<GameLogs> callback);
 
     /**
      * The asynchronous version of {@link GameService#updateGameInstructions}.
      */
-    public void updateGameInstructions (WebIdent ident, int gameId, String instructions,
+    public void updateGameInstructions (int gameId, String instructions,
                                         AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GameService#resetGameScores}.
      */
-    public void resetGameScores (WebIdent ident, int gameId, boolean single,
-                                 AsyncCallback<Void> callback);
+    public void resetGameScores (int gameId, boolean single, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameTrophies}.
      */
-    public void loadGameTrophies (WebIdent ident, int gameId,
-                                  AsyncCallback<List<Trophy>> callback);
+    public void loadGameTrophies (int gameId, AsyncCallback<List<Trophy>> callback);
 
     /**
      * The asynchronous version of {@link GameService#compareTrophies}.
      */
-    public void compareTrophies (WebIdent ident, int gameId, int[] memberIds,
+    public void compareTrophies (int gameId, int[] memberIds,
                                  AsyncCallback<GameService.CompareResult> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadTrophyCase}.
      */
-    void loadTrophyCase (WebIdent ident, int memberId, AsyncCallback<TrophyCase> callback);
+    void loadTrophyCase (int memberId, AsyncCallback<TrophyCase> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadTopRanked}.
      */
-    public void loadTopRanked (WebIdent ident, int gameId, boolean onlyMyFriends,
+    public void loadTopRanked (int gameId, boolean onlyMyFriends,
                                AsyncCallback<PlayerRating[][]> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadArcadeData}.
      */
-    void loadArcadeData (WebIdent ident, AsyncCallback<ArcadeData> callback);
+    void loadArcadeData (AsyncCallback<ArcadeData> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadGameGenre}.
      */
-    public void loadGameGenre (WebIdent ident, byte genre, byte sortMethod, String query,
+    public void loadGameGenre (byte genre, byte sortMethod, String query,
                                AsyncCallback<List<GameInfo>> callback);
 
     /**
      * The asynchronous version of {@link GameService#loadTopGamesData}.
      */
-    void loadTopGamesData (WebIdent ident, AsyncCallback<FeaturedGameInfo[]> callback);
+    void loadTopGamesData (AsyncCallback<FeaturedGameInfo[]> callback);
 }

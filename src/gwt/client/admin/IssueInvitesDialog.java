@@ -65,8 +65,8 @@ public class IssueInvitesDialog extends BorderedDialog
                     // one week ago
                     activeSince = new Date((new Date()).getTime() - 7 * 24 * 60 * 60 * 1000);
                 }
-                _adminsvc.grantInvitations(CAdmin.ident, _numberInvites.getValue().intValue(),
-                    activeSince, new MsoyCallback<Void>() {
+                _adminsvc.grantInvitations(
+                    _numberInvites.getValue().intValue(), activeSince, new MsoyCallback<Void>() {
                         public void onSuccess (Void result) {
                             IssueInvitesDialog.this.hide();
                             String msg = _issueToSelection.getSelectedIndex() == 0 ?

@@ -18,7 +18,6 @@ import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
-import client.shell.CShell;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
@@ -99,7 +98,7 @@ public class ForumModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            _forumsvc.loadThreads(CShell.ident, _groupId, start, count, needCount, this);
+            _forumsvc.loadThreads(_groupId, start, count, needCount, this);
         }
 
         @Override // from ServiceBackedDataModel
@@ -168,19 +167,19 @@ public class ForumModels
                 return;
             }
 
-            _forumsvc.loadUnreadThreads(
-                CShell.ident, MAX_UNREAD_THREADS, new AsyncCallback<ForumService.ThreadResult>() {
-                    public void onSuccess (ForumService.ThreadResult result) {
-                        _items = result.threads;
-                        for (ForumThread thread : result.threads) {
-                            _threads.put(thread.threadId, thread);
-                        }
-                        doFetchRows(start, count, callback);
+            _forumsvc.loadUnreadThreads(MAX_UNREAD_THREADS,
+                                        new AsyncCallback<ForumService.ThreadResult>() {
+                public void onSuccess (ForumService.ThreadResult result) {
+                    _items = result.threads;
+                    for (ForumThread thread : result.threads) {
+                        _threads.put(thread.threadId, thread);
                     }
-                    public void onFailure (Throwable failure) {
-                        callback.onFailure(failure);
-                    }
-                });
+                    doFetchRows(start, count, callback);
+                }
+                public void onFailure (Throwable failure) {
+                    callback.onFailure(failure);
+                }
+           });
         }
 
         protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
@@ -263,8 +262,7 @@ public class ForumModels
 
         @Override // from ServiceBackedDataModel
         protected void callFetchService (int start, int count, boolean needCount) {
-            _forumsvc.loadMessages(CShell.ident, _threadId, _thread.lastReadPostId,
-                                   start, count, needCount, this);
+            _forumsvc.loadMessages(_threadId, _thread.lastReadPostId, start, count, needCount, this);
         }
 
         @Override // from ServiceBackedDataModel

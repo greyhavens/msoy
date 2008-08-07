@@ -62,7 +62,7 @@ public class MyWhirleds extends AbsolutePanel
             }
         });
 
-        _groupsvc.getMyGroups(CWhirleds.ident, sortMethod, new MsoyCallback<List<MyGroupCard>>() {
+        _groupsvc.getMyGroups(sortMethod, new MsoyCallback<List<MyGroupCard>>() {
             public void onSuccess (List<MyGroupCard> whirleds) {
                 gotData(whirleds);
             }

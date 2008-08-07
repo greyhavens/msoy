@@ -48,7 +48,7 @@ public class InventoryModels
             return;
         }
 
-        _stuffsvc.loadInventory(CStuff.ident, type, suiteId, new AsyncCallback<List<Item>>() {
+        _stuffsvc.loadInventory(type, suiteId, new AsyncCallback<List<Item>>() {
             public void onSuccess (List<Item> result) {
                 SimpleDataModel<Item> model = new SimpleDataModel<Item>(result);
                 _models.put(key, model);

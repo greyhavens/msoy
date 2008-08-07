@@ -41,7 +41,7 @@ public class FriendInviteDisplay extends MailPayloadDisplay
         protected void refreshUI (final boolean roundtrip)
         {
             int friendId = _message.author.name.getMemberId();
-            _membersvc.getFriendStatus(CMail.ident, friendId, new MsoyCallback<Boolean>() {
+            _membersvc.getFriendStatus(friendId, new MsoyCallback<Boolean>() {
                 public void onSuccess (Boolean result) {
                     buildUI(result, roundtrip);
                 }
@@ -61,7 +61,7 @@ public class FriendInviteDisplay extends MailPayloadDisplay
                 Button ayeButton = new Button(CMail.msgs.friendBtnAccept());
                 new ClickCallback<Void>(ayeButton) {
                     public boolean callService () {
-                        _membersvc.addFriend(CMail.ident, _message.author.name.getMemberId(), this);
+                        _membersvc.addFriend(_message.author.name.getMemberId(), this);
                         return true;
                     }
                     public boolean gotResult (Void result) {
@@ -76,7 +76,7 @@ public class FriendInviteDisplay extends MailPayloadDisplay
 
         protected void mailResponse ()
         {
-            _mailsvc.continueConversation(CMail.ident, _convoId, CMail.msgs.friendReplyBody(), null,
+            _mailsvc.continueConversation(_convoId, CMail.msgs.friendReplyBody(), null,
                 new MsoyCallback<ConvMessage>() {
                     public void onSuccess (ConvMessage result) {
                         // Well that's nice.

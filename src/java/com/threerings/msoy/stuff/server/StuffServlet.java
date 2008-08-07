@@ -18,9 +18,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
-
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
@@ -32,9 +30,9 @@ import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
-import com.threerings.msoy.stuff.gwt.StuffService;
-
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+
+import com.threerings.msoy.stuff.gwt.StuffService;
 
 import static com.threerings.msoy.Log.log;
 
@@ -45,18 +43,18 @@ public class StuffServlet extends MsoyServiceServlet
     implements StuffService
 {
     // from interface StuffService
-    public Item createItem (WebIdent ident, Item item, ItemIdent parent)
+    public Item createItem (Item item, ItemIdent parent)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         return _itemLogic.createItem(memrec, item, parent);
     }
 
     // from interface StuffService
-    public void updateItem (WebIdent ident, Item item)
+    public void updateItem (Item item)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
 
         // make sure the item in question is consistent as far as the item is concerned
         if (!item.isConsistent()) {
@@ -99,28 +97,28 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public Item remixItem (WebIdent ident, Item item)
+    public Item remixItem (Item item)
         throws ServiceException
     {
         if (item.sourceId == 0) {
             // it's an original being remixed, it's the same as updateItem
-            updateItem(ident, item);
+            updateItem(item);
             return item;
 
         } else {
-            return remixClone(ident, item.getIdent(), item);
+            return remixClone(item.getIdent(), item);
         }
     }
 
     // from interface StuffService
-    public Item revertRemixedClone (WebIdent ident, ItemIdent itemIdent)
+    public Item revertRemixedClone (ItemIdent itemIdent)
         throws ServiceException
     {
-        return remixClone(ident, itemIdent, null);
+        return remixClone(itemIdent, null);
     }
 
     // from interface StuffService
-    public String renameClone (WebIdent ident, ItemIdent itemIdent, String newName)
+    public String renameClone (ItemIdent itemIdent, String newName)
         throws ServiceException
     {
         if (newName != null) {
@@ -132,7 +130,7 @@ public class StuffServlet extends MsoyServiceServlet
         }
 
         final String fname = newName;
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         ItemRecord rec = _itemLogic.editClone(mrec, itemIdent, new ItemLogic.CloneEditOp() {
             public void doOp (CloneRecord record, ItemRecord orig, ItemRepository<ItemRecord> repo)
                 throws PersistenceException
@@ -151,15 +149,15 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public List<Item> loadInventory (WebIdent ident, byte type, int suiteId)
+    public List<Item> loadInventory (byte type, int suiteId)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
 
         // convert the string they supplied to an item enumeration
         if (Item.getClassForType(type) == null) {
             log.warning("Requested to load inventory for invalid item type " +
-                        "[who=" + ident + ", type=" + type + "].");
+                        "[who=" + who(memrec) + ", type=" + type + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
@@ -182,7 +180,7 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public Item loadItem (WebIdent ident, ItemIdent item)
+    public Item loadItem (ItemIdent item)
         throws ServiceException
     {
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
@@ -197,10 +195,10 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public DetailOrIdent loadItemDetail (WebIdent ident, final ItemIdent iident)
+    public DetailOrIdent loadItemDetail (final ItemIdent iident)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
 
         try {
@@ -239,16 +237,16 @@ public class StuffServlet extends MsoyServiceServlet
             return new DetailOrIdent(detail, null);
 
         } catch (PersistenceException pe) {
-            log.warning("Failed to load item detail [id=" + iident + "].", pe);
+            log.warning("Failed to load item detail [id=" + who(mrec) + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface StuffService
-    public void deleteItem (final WebIdent ident, final ItemIdent iident)
+    public void deleteItem (final ItemIdent iident)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
 
         try {
@@ -285,17 +283,18 @@ public class StuffServlet extends MsoyServiceServlet
      * Helper method for remixItem and revertRemixedClone.
      * @param item the updated item, or null to revert to the original mix.
      */
-    protected Item remixClone (WebIdent ident, ItemIdent itemIdent, final Item item)
+    protected Item remixClone (ItemIdent itemIdent, final Item item)
         throws ServiceException
     {
+        MemberRecord mrec = requireAuthedUser();
+
         // make sure the item isn't boochy
         if (item != null && !item.isConsistent()) {
-            log.warning("Requested to remix item with invalid version [who=" + ident +
-                ", item=" + item + "].");
+            log.warning("Requested to remix item with invalid version [who=" + who(mrec) +
+                        ", item=" + item + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
         ItemRecord rec = _itemLogic.editClone(mrec, itemIdent, new ItemLogic.CloneEditOp() {
             public void doOp (CloneRecord record, ItemRecord orig, ItemRepository<ItemRecord> repo)
                 throws PersistenceException

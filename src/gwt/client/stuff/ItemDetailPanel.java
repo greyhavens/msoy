@@ -210,8 +210,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, null);
                 new ClickCallback<CatalogListing>(button) {
                     public boolean callService () {
-                        _catalogsvc.loadListing(
-                            CStuff.ident, _item.getType(), _item.catalogId, this);
+                        _catalogsvc.loadListing(_item.getType(), _item.catalogId, this);
                         return true;
                     }
                     public boolean gotResult (CatalogListing listing) {
@@ -296,7 +295,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     {
         new ClickCallback<Void>(trigger, CStuff.msgs.detailConfirmDelete()) {
             public boolean callService () {
-                _stuffsvc.deleteItem(CStuff.ident, _item.getIdent(), this);
+                _stuffsvc.deleteItem(_item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Void result) {
@@ -320,7 +319,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     {
         new ClickCallback<Item>(trigger, CStuff.msgs.detailConfirmRevert()) {
             public boolean callService () {
-                _stuffsvc.revertRemixedClone(CStuff.ident, _item.getIdent(), this);
+                _stuffsvc.revertRemixedClone(_item.getIdent(), this);
                 return true;
             }
             public boolean gotResult (Item item) {

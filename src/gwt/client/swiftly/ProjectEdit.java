@@ -58,18 +58,17 @@ public class ProjectEdit extends FlexTable
 
     protected void loadProject (final int projectId)
     {
-        CSwiftly.swiftlysvc.loadProject(
-            CSwiftly.ident, projectId, new AsyncCallback<SwiftlyProject>() {
-                public void onSuccess (SwiftlyProject project) {
-                    _project = project;
-                    // now that we have our project, load our collaborators.
-                    loadCollaborators();
-                }
-                public void onFailure (Throwable caught) {
-                    CSwiftly.log("Loadling project failed projectId=[" + projectId + "]", caught);
-                    SwiftlyPanel.displayError(CSwiftly.serverError(caught));
-                }
-            });
+        CSwiftly.swiftlysvc.loadProject(projectId, new AsyncCallback<SwiftlyProject>() {
+            public void onSuccess (SwiftlyProject project) {
+                _project = project;
+                // now that we have our project, load our collaborators.
+                loadCollaborators();
+            }
+            public void onFailure (Throwable caught) {
+                CSwiftly.log("Loadling project failed projectId=[" + projectId + "]", caught);
+                SwiftlyPanel.displayError(CSwiftly.serverError(caught));
+            }
+        });
     }
 
     protected void displayProject ()
@@ -146,7 +145,7 @@ public class ProjectEdit extends FlexTable
         cell.add(submit);
         new ClickCallback<Void>(submit) {
             public boolean callService () {
-                CSwiftly.swiftlysvc.updateProject(CSwiftly.ident, _project, this);
+                CSwiftly.swiftlysvc.updateProject(_project, this);
                 return true;
             }
             public boolean gotResult (Void result) {
@@ -169,7 +168,7 @@ public class ProjectEdit extends FlexTable
     protected void loadCollaborators ()
     {
         _collaborators = new HashMap<Integer, MemberName>();
-        CSwiftly.swiftlysvc.getProjectCollaborators(CSwiftly.ident, _project.projectId,
+        CSwiftly.swiftlysvc.getProjectCollaborators(_project.projectId,
             new AsyncCallback<List<MemberName>>() {
                 public void onSuccess (List<MemberName> collaborators) {
                     for (MemberName name : collaborators) {
@@ -213,7 +212,7 @@ public class ProjectEdit extends FlexTable
     protected void loadFriends ()
     {
         _friends = new HashMap<Integer, FriendEntry>();
-        CSwiftly.swiftlysvc.getFriends(CSwiftly.ident, new AsyncCallback<List<FriendEntry>>() {
+        CSwiftly.swiftlysvc.getFriends(new AsyncCallback<List<FriendEntry>>() {
             public void onSuccess (List<FriendEntry> friends) {
                 for (FriendEntry friend : friends) {
                     _friends.put(new Integer(friend.getMemberId()), friend);
@@ -268,8 +267,7 @@ public class ProjectEdit extends FlexTable
      */
     protected void addCollaborator (final MemberName name)
     {
-        CSwiftly.swiftlysvc.joinCollaborators(
-            CSwiftly.ident, _project.projectId, name, new AsyncCallback<Void>() {
+        CSwiftly.swiftlysvc.joinCollaborators(_project.projectId, name, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _collaborators.put(new Integer(name.getMemberId()), name);
                 updateCollaboratorsList();
@@ -290,8 +288,7 @@ public class ProjectEdit extends FlexTable
      */
     protected void removeCollaborator (final MemberName name)
     {
-        CSwiftly.swiftlysvc.leaveCollaborators(
-            CSwiftly.ident, _project.projectId, name, new AsyncCallback<Void>() {
+        CSwiftly.swiftlysvc.leaveCollaborators(_project.projectId, name, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
                 _collaborators.remove(new Integer(name.getMemberId()));
                 updateCollaboratorsList();

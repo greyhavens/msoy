@@ -40,7 +40,6 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
@@ -101,10 +100,10 @@ public class CommentServlet extends MsoyServiceServlet
     }
 
     // from interface CommentService
-    public Comment postComment (WebIdent ident, int etype, int eid, String text)
+    public Comment postComment (int etype, int eid, String text)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         // validate the entity type and id (sort of; we can't *really* validate the id without a
         // bunch of entity specific befuckery which I don't particularly care to do)
@@ -185,10 +184,10 @@ public class CommentServlet extends MsoyServiceServlet
     }
 
     // from interface CommentService
-    public boolean deleteComment (WebIdent ident, int etype, int eid, long posted)
+    public boolean deleteComment (int etype, int eid, long posted)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         try {
             // if we're not support personel, ensure that we are the poster of this comment
             if (!mrec.isSupport()) {
@@ -210,10 +209,10 @@ public class CommentServlet extends MsoyServiceServlet
     }
 
     // from interface CommentService
-    public void complainComment (WebIdent ident, String subject, int etype, int eid, long posted)
+    public void complainComment (String subject, int etype, int eid, long posted)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         try {
             CommentRecord record = _commentRepo.loadComment(etype, eid, posted);
             if (record == null) {

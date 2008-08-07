@@ -84,11 +84,10 @@ public class GameGenrePanel extends FlowPanel
         }
         add(_header = new GameHeaderPanel(genre, sortMethod, query, titleText));
 
-        _gamesvc.loadGameGenre(
-            CGames.ident, genre, sortMethod, query, new MsoyCallback<List<GameInfo>>() {
-                public void onSuccess (List<GameInfo> games) {
-                    init(genre, games);
-                }
+        _gamesvc.loadGameGenre(genre, sortMethod, query, new MsoyCallback<List<GameInfo>>() {
+            public void onSuccess (List<GameInfo> games) {
+                init(genre, games);
+            }
         });
     }
 

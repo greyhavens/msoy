@@ -32,7 +32,7 @@ public class MyRoomsPanel extends VerticalPanel
     {
         setStyleName("myRooms");
 
-        _mesvc.loadMyRooms(CMe.ident, new MsoyCallback<List<MeService.Room>>() {
+        _mesvc.loadMyRooms(new MsoyCallback<List<MeService.Room>>() {
             public void onSuccess (List<MeService.Room> rooms) {
                 init(rooms);
             }

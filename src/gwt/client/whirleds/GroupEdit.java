@@ -141,16 +141,16 @@ public class GroupEdit extends FlexTable
         if (_group.groupId != 0 && _group.policy != Group.POLICY_EXCLUSIVE) {
             TagDetailPanel tags = new TagDetailPanel(new TagDetailPanel.TagService() {
                 public void tag (String tag, AsyncCallback<TagHistory> cback) {
-                    _groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, true, cback);
+                    _groupsvc.tagGroup(_group.groupId, tag, true, cback);
                 }
                 public void untag (String tag, AsyncCallback<TagHistory> cback) {
-                    _groupsvc.tagGroup(CWhirleds.ident, _group.groupId, tag, false, cback);
+                    _groupsvc.tagGroup(_group.groupId, tag, false, cback);
                 }
                 public void getRecentTags (AsyncCallback<Collection<TagHistory>> cback) {
-                    _groupsvc.getRecentTags(CWhirleds.ident, cback);
+                    _groupsvc.getRecentTags(cback);
                 }
                 public void getTags (AsyncCallback<Collection<String>> cback) {
-                    _groupsvc.getTags(CWhirleds.ident, _group.groupId, cback);
+                    _groupsvc.getTags(_group.groupId, cback);
                 }
                 public boolean supportFlags () {
                     return false;
@@ -218,23 +218,22 @@ public class GroupEdit extends FlexTable
         };
         // check if we're trying to set the policy to exclusive on a group that has tags
         if (_group.policy == Group.POLICY_EXCLUSIVE) {
-            _groupsvc.getTags(
-                CWhirleds.ident, _group.groupId, new MsoyCallback<Collection<String>>() {
-                    public void onSuccess (Collection<String> tags) {
-                        if (tags.size() > 0) {
-                            MsoyUI.error(_msgs.errTagsOnExclusive());
-                        } else if (_group.groupId > 0) {
-                            _groupsvc.updateGroup(CWhirleds.ident, _group, _extras, updateCallback);
-                        } else {
-                            _groupsvc.createGroup(CWhirleds.ident, _group, _extras, createCallback);
-                        }
+            _groupsvc.getTags(_group.groupId, new MsoyCallback<Collection<String>>() {
+                public void onSuccess (Collection<String> tags) {
+                    if (tags.size() > 0) {
+                        MsoyUI.error(_msgs.errTagsOnExclusive());
+                    } else if (_group.groupId > 0) {
+                        _groupsvc.updateGroup(_group, _extras, updateCallback);
+                    } else {
+                        _groupsvc.createGroup(_group, _extras, createCallback);
                     }
-                });
+                }
+            });
         } else {
             if (_group.groupId > 0) {
-                _groupsvc.updateGroup(CWhirleds.ident, _group, _extras, updateCallback);
+                _groupsvc.updateGroup(_group, _extras, updateCallback);
             } else {
-                _groupsvc.createGroup(CWhirleds.ident, _group, _extras, createCallback);
+                _groupsvc.createGroup(_group, _extras, createCallback);
             }
         }
     }

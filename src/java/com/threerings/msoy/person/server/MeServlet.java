@@ -30,7 +30,6 @@ import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletLogic;
 
@@ -46,10 +45,10 @@ public class MeServlet extends MsoyServiceServlet
     implements MeService
 {
     // from MeService
-    public MyWhirledData getMyWhirled (WebIdent ident)
+    public MyWhirledData getMyWhirled ()
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         try {
             MyWhirledData data = new MyWhirledData();
@@ -76,10 +75,10 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     // from interface MeService
-    public void updateWhirledNews (WebIdent ident, final String newsHtml)
+    public void updateWhirledNews (final String newsHtml)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         if (!mrec.isAdmin()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
@@ -92,10 +91,10 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     // from interface MeService
-    public List<MeService.Room> loadMyRooms (WebIdent ident)
+    public List<MeService.Room> loadMyRooms ()
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         try {
             List<MeService.Room> rooms = Lists.newArrayList();
@@ -115,10 +114,10 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     // from interface MeService
-    public List<FeedMessage> loadFeed (WebIdent ident, int cutoffDays)
+    public List<FeedMessage> loadFeed (int cutoffDays)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         try {
             List<GroupMembershipRecord> groups = _groupRepo.getMemberships(mrec.memberId);
@@ -135,10 +134,10 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     // from interface MeService
-    public PassportData loadBadges (WebIdent ident)
+    public PassportData loadBadges ()
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         // PassportData contains the owner's name because we'll eventually be viewing passports for
         // other players as well

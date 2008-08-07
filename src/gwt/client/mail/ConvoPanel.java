@@ -47,12 +47,11 @@ public class ConvoPanel extends FlowPanel
     protected void refresh ()
     {
         clear();
-        _mailsvc.loadConversation(CMail.ident, _convoId,
-            new MsoyCallback<MailService.ConvoResult>() {
-                public void onSuccess (MailService.ConvoResult result) {
-                    init(result);
-                }
-            });
+        _mailsvc.loadConversation(_convoId, new MsoyCallback<MailService.ConvoResult>() {
+            public void onSuccess (MailService.ConvoResult result) {
+                init(result);
+            }
+        });
     }
 
     protected void init (MailService.ConvoResult result)
@@ -91,7 +90,7 @@ public class ConvoPanel extends FlowPanel
         Button delete = new Button(CMail.msgs.convoDelete());
         new ClickCallback<Boolean>(delete, CMail.msgs.deleteConfirm()) {
             public boolean callService () {
-                _mailsvc.deleteConversation(CMail.ident, _convoId, this);
+                _mailsvc.deleteConversation(_convoId, this);
                 return true;
             }
             public boolean gotResult (Boolean deleted) {
@@ -197,7 +196,7 @@ public class ConvoPanel extends FlowPanel
                     }
 
                     // deliver the message to the recipient
-                    _mailsvc.continueConversation(CMail.ident, _convoId, text, null, this);
+                    _mailsvc.continueConversation(_convoId, text, null, this);
                     return true;
                 }
 

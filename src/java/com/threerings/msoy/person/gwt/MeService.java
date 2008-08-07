@@ -10,8 +10,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
-
 
 /**
  * Provides information for the Me page.
@@ -37,31 +35,31 @@ public interface MeService extends RemoteService
     /**
      * Loads the data for the MyWhirled view for the calling user.
      */
-    MyWhirledData getMyWhirled (WebIdent ident)
+    MyWhirledData getMyWhirled ()
         throws ServiceException;
 
     /**
      * Updates the Whirled news HTML. Caller must be an admin.
      */
-    void updateWhirledNews (WebIdent ident, String newsHtml)
+    void updateWhirledNews (String newsHtml)
         throws ServiceException;
 
     /**
      * Loads the list of rooms owned by the calling user.
      */
-    List<Room> loadMyRooms (WebIdent ident)
+    List<Room> loadMyRooms ()
         throws ServiceException;
 
     /**
      * Loads all items in a player's inventory of the specified type and optionally restricted to
      * the specified suite.
      */
-    List<FeedMessage> loadFeed (WebIdent ident, int cutoffDays)
+    List<FeedMessage> loadFeed (int cutoffDays)
         throws ServiceException;
 
     /**
      * Loads the badges relevant to this player.
      */
-    PassportData loadBadges (WebIdent ident)
+    PassportData loadBadges ()
         throws ServiceException;
 }

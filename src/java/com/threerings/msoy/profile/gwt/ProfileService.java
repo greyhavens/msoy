@@ -18,7 +18,6 @@ import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Defines profile-related services available to the GWT/AJAX web client.
@@ -77,31 +76,31 @@ public interface ProfileService extends RemoteService
     /**
      * Loads the specified member's profile information.
      */
-    public ProfileResult loadProfile (WebIdent ident, int memberId)
+    ProfileResult loadProfile (int memberId)
         throws ServiceException;
 
     /**
      * Requests that this user's profile be updated.
      */
-    public void updateProfile (WebIdent ident, String displayName, Profile profile)
+    void updateProfile (String displayName, Profile profile)
         throws ServiceException;
 
     /**
      * Updates the calling user's interests.
      */
-    public void updateInterests (WebIdent ident, List<Interest> interests)
+    void updateInterests (List<Interest> interests)
         throws ServiceException;
 
     /**
      * Looks for profiles that match the specified search term. We'll aim to be smart about what we
      * search. Returns a (possibly empty) list of {@link MemberCard} records.
      */
-    public List<MemberCard> findProfiles (WebIdent ident, String search)
+    List<MemberCard> findProfiles (String search)
         throws ServiceException;
 
     /**
      * Loads the self feed for the specified member
      */
-    public List<FeedMessage> loadSelfFeed (int profileMemberId, int cutoffDays)
+    List<FeedMessage> loadSelfFeed (int profileMemberId, int cutoffDays)
         throws ServiceException;
 }

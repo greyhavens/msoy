@@ -100,8 +100,7 @@ public class InvitePanel extends VerticalPanel
                     MsoyUI.info(CPeople.msgs.inviteEnterWebPassword());
                     return false;
                 }
-                _invitesvc.getWebMailAddresses(
-                    CPeople.ident, _webAddress.getText(), _webPassword.getText(), this);
+                _invitesvc.getWebMailAddresses(_webAddress.getText(), _webPassword.getText(), this);
                 return true;
             }
             public boolean gotResult (List<EmailContact> addresses) {
@@ -165,7 +164,7 @@ public class InvitePanel extends VerticalPanel
         _penders.setText(2, 0, CPeople.msgs.inviteNoPending());
         add(_penders);
 
-        _invitesvc.getInvitationsStatus(CPeople.ident, new MsoyCallback<MemberInvites>() {
+        _invitesvc.getInvitationsStatus(new MsoyCallback<MemberInvites>() {
             public void onSuccess (MemberInvites invites) {
                 gotStatus(invites);
             }
@@ -213,7 +212,7 @@ public class InvitePanel extends VerticalPanel
 
     protected void removeInvite (final Invitation inv)
     {
-        _invitesvc.removeInvitation(CPeople.ident, inv.inviteId, new MsoyCallback<Void>() {
+        _invitesvc.removeInvitation(inv.inviteId, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 for (int ii = 2, nn = _penders.getRowCount(); ii < nn; ii++) {
                     if (inv.inviteeEmail.equals(_penders.getText(ii, 1))) {
@@ -246,8 +245,7 @@ public class InvitePanel extends VerticalPanel
             msg = "";
         }
         boolean anon = _anonymous.isChecked();
-        _invitesvc.sendInvites(
-            CPeople.ident, invited, from, msg, anon, new MsoyCallback<InvitationResults>() {
+        _invitesvc.sendInvites(invited, from, msg, anon, new MsoyCallback<InvitationResults>() {
             public void onSuccess (InvitationResults ir) {
                 addPendingInvites(ir.pendingInvitations);
                 _emailList.clear();

@@ -69,7 +69,7 @@ public class ReviewItem extends FlowPanel
 //                 Button button = new Button("Delist");
 //                 new ClickCallback<Integer>(button) {
 //                     public boolean callService () {
-//                         _catalogsvc.listItem(CAdmin.ident, item.getIdent(), false, this);
+//                         _catalogsvc.listItem(item.getIdent(), false, this);
 //                         return true;
 //                     }
 //                     public boolean gotResult (Integer result) {
@@ -93,7 +93,7 @@ public class ReviewItem extends FlowPanel
                         // should not happen, but let's be careful
                         return false;
                     }
-                    _itemsvc.setMature(CAdmin.ident, _item.getIdent(), true, this);
+                    _itemsvc.setMature(_item.getIdent(), true, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
@@ -127,7 +127,7 @@ public class ReviewItem extends FlowPanel
                     return false;
                 }
                 byte flags = (byte) (Item.FLAG_FLAGGED_COPYRIGHT | Item.FLAG_FLAGGED_MATURE);
-                _itemsvc.setFlags(CAdmin.ident, _item.getIdent(), flags, (byte) 0, this);
+                _itemsvc.setFlags(_item.getIdent(), flags, (byte) 0, this);
                 return true;
             }
             public boolean gotResult (Void result) {
@@ -190,7 +190,7 @@ public class ReviewItem extends FlowPanel
             }
 
             _adminsvc.deleteItemAdmin(
-                CAdmin.ident, _item.getIdent(), CAdmin.msgs.reviewDeletionMailHeader(),
+                _item.getIdent(), CAdmin.msgs.reviewDeletionMailHeader(),
                 CAdmin.msgs.reviewDeletionMailMessage(_item.name, _area.getText().trim()),
                 new AsyncCallback<Integer>() {
                     public void onSuccess (Integer result) {

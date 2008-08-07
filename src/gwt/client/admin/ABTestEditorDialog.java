@@ -183,7 +183,7 @@ public class ABTestEditorDialog extends BorderedDialog
         }
 
         if (_isNewTest) {
-            _adminsvc.createTest(CAdmin.ident, _test, new MsoyCallback<Void>() {
+            _adminsvc.createTest(_test, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     MsoyUI.info(CAdmin.msgs.abTestCreated());
                     ABTestEditorDialog.this.hide();
@@ -198,7 +198,7 @@ public class ABTestEditorDialog extends BorderedDialog
         }
 
         else {
-            _adminsvc.updateTest(CAdmin.ident, _test, new MsoyCallback<Void>() {
+            _adminsvc.updateTest(_test, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     MsoyUI.info(CAdmin.msgs.abTestUpdated());
                     ABTestEditorDialog.this.hide();

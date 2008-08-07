@@ -26,7 +26,7 @@ public class PassportPanel extends VerticalPanel
     {
         setStyleName("passport");
 
-        _mesvc.loadBadges(CMe.ident, new MsoyCallback<PassportData> () {
+        _mesvc.loadBadges(new MsoyCallback<PassportData> () {
             public void onSuccess (PassportData data) {
                 init(data);
             }

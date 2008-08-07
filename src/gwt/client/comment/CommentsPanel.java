@@ -131,11 +131,11 @@ public class CommentsPanel extends PagedGrid<Comment>
 
     protected void postComment (String text)
     {
-        _commentsvc.postComment(CShell.ident, _etype, _entityId, text, new MsoyCallback<Comment>() {
-                public void onSuccess (Comment result) {
-                    postedComment(result);
-                }
-            });
+        _commentsvc.postComment(_etype, _entityId, text, new MsoyCallback<Comment>() {
+            public void onSuccess (Comment result) {
+                postedComment(result);
+            }
+        });
     }
 
     protected void postedComment (Comment comment)
@@ -160,7 +160,7 @@ public class CommentsPanel extends PagedGrid<Comment>
         return new Command() {
             public void execute () {
                 _commentsvc.deleteComment(
-                    CShell.ident, _etype, _entityId, comment.posted, new MsoyCallback<Boolean>() {
+                    _etype, _entityId, comment.posted, new MsoyCallback<Boolean>() {
                     public void onSuccess (Boolean deleted) {
                         if (deleted) {
                             MsoyUI.info(_cmsgs.commentDeleted());
@@ -236,8 +236,7 @@ public class CommentsPanel extends PagedGrid<Comment>
 
         protected boolean callService ()
         {
-            _commentsvc.complainComment(
-                CShell.ident, _description.getText(), _type, _id, _comment.posted, this);
+            _commentsvc.complainComment(_description.getText(), _type, _id, _comment.posted, this);
             return true;
         }
 

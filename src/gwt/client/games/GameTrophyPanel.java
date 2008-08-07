@@ -49,7 +49,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
             return;
         }
 
-        _gamesvc.loadGameTrophies(CGames.ident, _gameId, new AsyncCallback<List<Trophy>>() {
+        _gamesvc.loadGameTrophies(_gameId, new AsyncCallback<List<Trophy>>() {
             public void onSuccess (List<Trophy> result) {
                 setModel(new SimpleDataModel<Trophy>(result), 0);
             }

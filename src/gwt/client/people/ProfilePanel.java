@@ -21,17 +21,17 @@ public class ProfilePanel extends VerticalPanel
     public ProfilePanel (int memberId)
     {
         setStyleName("profile");
+        _memberId = memberId;
         // issue a request for this member's profile page data
-        _profilesvc.loadProfile(
-            CPeople.ident, _memberId = memberId, new AsyncCallback<ProfileService.ProfileResult>() {
-                public void onSuccess (ProfileService.ProfileResult result) {
-                    init(result);
-                }
-                public void onFailure (Throwable cause) {
-                    CPeople.log("Failed to load profile data [for=" + _memberId + "].", cause);
-                    add(new Label(CPeople.serverError(cause)));
-                }
-            });
+        _profilesvc.loadProfile(memberId, new AsyncCallback<ProfileService.ProfileResult>() {
+            public void onSuccess (ProfileService.ProfileResult result) {
+                init(result);
+            }
+            public void onFailure (Throwable cause) {
+                CPeople.log("Failed to load profile data [for=" + _memberId + "].", cause);
+                add(new Label(CPeople.serverError(cause)));
+            }
+        });
     }
 
     protected void init (ProfileService.ProfileResult pdata)

@@ -52,7 +52,7 @@ public class ReviewPanel extends FlowPanel
             remove(_contents);
         }
         add(_contents = new FlexTable());
-        _adminsvc.getFlaggedItems(CAdmin.ident, 10, new MsoyCallback<List<ItemDetail>>() {
+        _adminsvc.getFlaggedItems(10, new MsoyCallback<List<ItemDetail>>() {
             public void onSuccess (List<ItemDetail> items) {
                 populateUI(items);
             }

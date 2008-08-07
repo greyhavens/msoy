@@ -63,7 +63,7 @@ public class SpamPlayersDialog extends BorderedDialog
                 String subject = _subject.getText().trim();
                 String body = _body.getText().trim();
                 int sid = _startId.getValue().intValue(), eid = _endId.getValue().intValue();
-                _adminsvc.spamPlayers(CAdmin.ident, subject, body, sid, eid, this);
+                _adminsvc.spamPlayers(subject, body, sid, eid, this);
                 MsoyUI.info(CAdmin.msgs.spammingPleaseWait());
                 return true;
             }

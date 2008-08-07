@@ -13,7 +13,6 @@ import com.threerings.msoy.game.data.all.Trophy;
 
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Provides game related services.
@@ -46,26 +45,26 @@ public interface GameService extends RemoteService
     /**
      * Loads the details for the specified game.
      */
-    public GameDetail loadGameDetail (WebIdent ident, int gameId)
+    public GameDetail loadGameDetail (int gameId)
         throws ServiceException;
 
     /**
      * Loads the metrics for the specified game. Caller must be an admin or the owner of the game.
      */
-    public GameMetrics loadGameMetrics (WebIdent ident, int gameId)
+    public GameMetrics loadGameMetrics (int gameId)
         throws ServiceException;
 
     /**
      * Loads the logs for the specified game. Caller must be an admin or the owner of the game.
      */
-    public GameLogs loadGameLogs (WebIdent ident, int gameId)
+    public GameLogs loadGameLogs (int gameId)
         throws ServiceException;
 
     /**
      * Updates the instructions for the specified game. The caller must be the owner of the game's
      * source item.
      */
-    public void updateGameInstructions (WebIdent ident, int gameId, String instructions)
+    public void updateGameInstructions (int gameId, String instructions)
         throws ServiceException;
 
     /**
@@ -75,26 +74,26 @@ public interface GameService extends RemoteService
      * @param single if true the single player scores will be reset, if false the multiplayer
      * scores will be reset.
      */
-    public void resetGameScores (WebIdent ident, int gameId, boolean single)
+    public void resetGameScores (int gameId, boolean single)
         throws ServiceException;
 
     /**
      * Loads and returns the trophies awarded by the specified game. Filling in when they were
      * earned by the caller if possible.
      */
-    public List<Trophy> loadGameTrophies (WebIdent ident, int gameId)
+    public List<Trophy> loadGameTrophies (int gameId)
         throws ServiceException;
 
     /**
      * Compares the trophy earnings for the specified set of members in the specified game.
      */
-    public CompareResult compareTrophies (WebIdent ident, int gameId, int[] memberIds)
+    public CompareResult compareTrophies (int gameId, int[] memberIds)
         throws ServiceException;
 
     /**
      * Loads all trophies owned by the specified member.
      */
-    public TrophyCase loadTrophyCase (WebIdent ident, int memberId)
+    public TrophyCase loadTrophyCase (int memberId)
         throws ServiceException;
 
     /**
@@ -106,24 +105,24 @@ public interface GameService extends RemoteService
      * @return two arrays, the first the single-player rankings for this game, the second its
      * multiplayer rankings.
      */
-    public PlayerRating[][] loadTopRanked (WebIdent ident, int gameId, boolean onlyMyFriends)
+    public PlayerRating[][] loadTopRanked (int gameId, boolean onlyMyFriends)
         throws ServiceException;
 
     /**
      * Loads up information for the arcade.
      */
-    public ArcadeData loadArcadeData (WebIdent ident)
+    public ArcadeData loadArcadeData ()
         throws ServiceException;
 
     /**
      * Loads up information on the specified game genre.
      */
-    public List<GameInfo> loadGameGenre (WebIdent ident, byte genre, byte sortMethod, String query)
+    public List<GameInfo> loadGameGenre (byte genre, byte sortMethod, String query)
         throws ServiceException;
 
     /**
      * Loads up information for the landing page top games.
      */
-    public FeaturedGameInfo[] loadTopGamesData (WebIdent ident)
+    public FeaturedGameInfo[] loadTopGamesData ()
         throws ServiceException;
 }

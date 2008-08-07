@@ -315,7 +315,7 @@ public class ProfileBlurb extends Blurb
             _profile.age = 0;
         }
 
-        _profilesvc.updateProfile(CPeople.ident, name, _profile, new MsoyCallback<Void>() {
+        _profilesvc.updateProfile(name, _profile, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 displayProfile();
                 if (!name.equals(CPeople.creds.name.toString())) {

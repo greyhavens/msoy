@@ -23,7 +23,6 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.item.data.ItemCodes;
@@ -57,10 +56,10 @@ public class AdminServlet extends MsoyServiceServlet
     implements AdminService
 {
     // from interface AdminService
-    public void grantInvitations (WebIdent ident, int numberInvitations, Date activeSince)
+    public void grantInvitations (int numberInvitations, Date activeSince)
         throws ServiceException
     {
-        MemberRecord memrec = requireAdmin(ident);
+        MemberRecord memrec = requireAdmin();
 
         try {
             Timestamp since = activeSince != null ? new Timestamp(activeSince.getTime()) : null;
@@ -76,10 +75,10 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public void grantInvitations (WebIdent ident, int numberInvitations, int memberId)
+    public void grantInvitations (int numberInvitations, int memberId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAdmin(ident);
+        MemberRecord memrec = requireAdmin();
 
         try {
             _memberRepo.grantInvites(memberId, numberInvitations);
@@ -93,10 +92,10 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public MemberAdminInfo getMemberInfo (WebIdent ident, int memberId)
+    public MemberAdminInfo getMemberInfo (int memberId)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         if (!memrec.isSupport()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
@@ -136,10 +135,10 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public MemberInviteResult getPlayerList (WebIdent ident, int inviterId)
+    public MemberInviteResult getPlayerList (int inviterId)
         throws ServiceException
     {
-        requireAdmin(ident);
+        requireAdmin();
         MemberInviteResult res = new MemberInviteResult();
         try {
             MemberRecord memRec = inviterId == 0 ? null : _memberRepo.loadMember(inviterId);
@@ -165,10 +164,10 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public int[] spamPlayers (WebIdent ident, String subject, String body, int startId, int endId)
+    public int[] spamPlayers (String subject, String body, int startId, int endId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAdmin(ident);
+        MemberRecord memrec = requireAdmin();
 
         log.info("Spamming the players [spammer=" + memrec.who() + ", subject=" + subject +
                  ", startId=" + startId + ", endId=" + endId + "].");
@@ -239,10 +238,10 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public void setIsSupport (WebIdent ident, int memberId, boolean isSupport)
+    public void setIsSupport (int memberId, boolean isSupport)
         throws ServiceException
     {
-        MemberRecord memrec = requireAdmin(ident);
+        MemberRecord memrec = requireAdmin();
 
         try {
             MemberRecord tgtrec = _memberRepo.loadMember(memberId);
@@ -262,7 +261,7 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public List<ABTest> getABTests (WebIdent ident)
+    public List<ABTest> getABTests ()
         throws ServiceException
     {
         List<ABTestRecord> records;
@@ -281,7 +280,7 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public void createTest (WebIdent ident, ABTest test)
+    public void createTest (ABTest test)
         throws ServiceException
     {
         try {
@@ -297,7 +296,7 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public void updateTest (WebIdent ident, ABTest test)
+    public void updateTest (ABTest test)
         throws ServiceException
     {
         try {
@@ -314,10 +313,10 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public List<ItemDetail> getFlaggedItems (WebIdent ident, int count)
+    public List<ItemDetail> getFlaggedItems (int count)
         throws ServiceException
     {
-        MemberRecord mRec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mRec = requireAuthedUser();
         if (!mRec.isSupport()) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
@@ -351,10 +350,10 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public Integer deleteItemAdmin (WebIdent ident, ItemIdent iident, String subject, String body)
+    public Integer deleteItemAdmin (ItemIdent iident, String subject, String body)
         throws ServiceException
     {
-        MemberRecord admin = _mhelper.requireAuthedUser(ident);
+        MemberRecord admin = requireAuthedUser();
         if (!admin.isSupport()) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
@@ -407,10 +406,10 @@ public class AdminServlet extends MsoyServiceServlet
         }
     }
 
-    protected MemberRecord requireAdmin (WebIdent ident)
+    protected MemberRecord requireAdmin ()
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         if (!memrec.isAdmin()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }

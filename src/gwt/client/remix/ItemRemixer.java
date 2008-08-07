@@ -60,7 +60,7 @@ public class ItemRemixer extends FlexTable
 
     public void setItem (byte type, int itemId)
     {
-        _stuffsvc.loadItem(CShell.ident, new ItemIdent(type, itemId), new MsoyCallback<Item>() {
+        _stuffsvc.loadItem(new ItemIdent(type, itemId), new MsoyCallback<Item>() {
             public void onSuccess (Item result) {
                 setItem(result);
             }
@@ -140,7 +140,7 @@ public class ItemRemixer extends FlexTable
         }
 
         if (_catalogId != 0) {
-            _catalogsvc.purchaseItem(CShell.ident, _item.getType(), _catalogId, _flowCost, _goldCost,
+            _catalogsvc.purchaseItem(_item.getType(), _catalogId, _flowCost, _goldCost,
                                      new AsyncCallback<Item>() {
                     public void onSuccess (Item result) {
                         _item = result;
@@ -168,7 +168,7 @@ public class ItemRemixer extends FlexTable
 
         _item.setPrimaryMedia(new MediaDesc(mediaHash, (byte) mimeType, (byte) constraint));
 
-        _stuffsvc.remixItem(CShell.ident, _item, new MsoyCallback<Item>() {
+        _stuffsvc.remixItem(_item, new MsoyCallback<Item>() {
             public void onSuccess (Item item) {
                 MsoyUI.info(_emsgs.msgItemUpdated());
                 _parent.editComplete(item);

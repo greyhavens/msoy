@@ -51,13 +51,12 @@ public class GroupInviteDisplay extends MailPayloadDisplay
 
         protected void refreshUI ()
         {
-            _groupsvc.getGroupInfo(CMail.ident, _invitePayload.groupId,
-                new MsoyCallback<GroupService.GroupInfo>() {
-                    public void onSuccess (GroupService.GroupInfo result) {
-                        _info = result;
-                        buildUI();
-                    }
-                });
+            _groupsvc.getGroupInfo(_invitePayload.groupId, new MsoyCallback<GroupService.GroupInfo>() {
+                public void onSuccess (GroupService.GroupInfo result) {
+                    _info = result;
+                    buildUI();
+                }
+            });
         }
 
         protected void buildUI ()
@@ -83,7 +82,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
 
         protected void joinGroup ()
         {
-            _groupsvc.joinGroup(CMail.ident, _invitePayload.groupId, new MsoyCallback<Void>() {
+            _groupsvc.joinGroup(_invitePayload.groupId, new MsoyCallback<Void>() {
                 // if joining the group succeeds, mark this invitation as accepted
                 public void onSuccess (Void result) {
                     _invitePayload.responded = true;

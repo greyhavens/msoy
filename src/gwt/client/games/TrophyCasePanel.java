@@ -31,7 +31,7 @@ public class TrophyCasePanel extends VerticalPanel
         }
 
         setHeader(_msgs.caseLoading());
-        _gamesvc.loadTrophyCase(CGames.ident, memberId, new MsoyCallback<TrophyCase>() {
+        _gamesvc.loadTrophyCase(memberId, new MsoyCallback<TrophyCase>() {
             public void onSuccess (TrophyCase tc) {
                 setTrophyCase(tc);
             }

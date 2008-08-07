@@ -16,7 +16,6 @@ import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
-import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -90,7 +89,7 @@ public class NewThreadPanel extends TableFooterPanel
         if (_sticky != null && _sticky.isChecked()) {
             flags |= ForumThread.FLAG_STICKY;
         }
-        _forumsvc.createThread(CShell.ident, _groupId, flags, subject, message, callback);
+        _forumsvc.createThread(_groupId, flags, subject, message, callback);
         return true;
     }
 

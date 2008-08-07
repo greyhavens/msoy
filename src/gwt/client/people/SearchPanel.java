@@ -48,7 +48,7 @@ public class SearchPanel extends FlowPanel
         clearResults();
 
         if (query.length() > 0) {
-            _profilesvc.findProfiles(CPeople.ident, query, new MsoyCallback<List<MemberCard>>() {
+            _profilesvc.findProfiles(query, new MsoyCallback<List<MemberCard>>() {
                 public void onSuccess (List<MemberCard> members) {
                     setResults(members, page, query);
                 }

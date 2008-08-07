@@ -132,8 +132,7 @@ public class InstructionsPanel extends VerticalPanel
             MsoyUI.error(_msgs.ipInstructionsTooLong(""+excess));
             return;
         }
-        _gamesvc.updateGameInstructions(
-            CGames.ident, _detail.gameId, instructions, new MsoyCallback<Void>() {
+        _gamesvc.updateGameInstructions(_detail.gameId, instructions, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 _detail.instructions = instructions;
                 showInstructions();

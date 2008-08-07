@@ -155,12 +155,11 @@ public abstract class ItemEditor extends FlexTable
      */
     public void setItem (int itemId)
     {
-        _stuffsvc.loadItem(CShell.ident, new ItemIdent(_type, itemId),
-            new MsoyCallback<Item>() {
-                public void onSuccess (Item result) {
-                    setItem(result);
-                }
-            });
+        _stuffsvc.loadItem(new ItemIdent(_type, itemId), new MsoyCallback<Item>() {
+            public void onSuccess (Item result) {
+                setItem(result);
+            }
+        });
     }
 
     /**
@@ -556,7 +555,7 @@ public abstract class ItemEditor extends FlexTable
         }
 
         if (_item.itemId == 0) {
-            _stuffsvc.createItem(CShell.ident, _item, _parentItem, new MsoyCallback<Item>() {
+            _stuffsvc.createItem(_item, _parentItem, new MsoyCallback<Item>() {
                 public void onSuccess (Item item) {
                     MsoyUI.info(_emsgs.msgItemCreated());
                     _parent.editComplete(item);
@@ -564,7 +563,7 @@ public abstract class ItemEditor extends FlexTable
             });
 
         } else {
-            _stuffsvc.updateItem(CShell.ident, _item, new MsoyCallback<Void>() {
+            _stuffsvc.updateItem(_item, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     MsoyUI.info(_emsgs.msgItemUpdated());
                     _parent.editComplete(_item);

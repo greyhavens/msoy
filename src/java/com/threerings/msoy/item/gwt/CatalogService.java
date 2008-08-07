@@ -13,7 +13,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Provides digital items related services.
@@ -38,7 +37,7 @@ public interface CatalogService extends RemoteService
     /**
      * Loads the featured items shown on the top-level catalog page.
      */
-    public ShopData loadShopData (WebIdent ident)
+    public ShopData loadShopData ()
         throws ServiceException;
 
     /**
@@ -47,15 +46,13 @@ public interface CatalogService extends RemoteService
      * @param includeCount if true, the count of all listings matching the query terms will also be
      * computed and included in the result.
      */
-    public CatalogResult loadCatalog (WebIdent ident, CatalogQuery query, int offset, int rows,
-                                      boolean includeCount)
+    public CatalogResult loadCatalog (CatalogQuery query, int offset, int rows, boolean includeCount)
         throws ServiceException;
 
     /**
      * Purchases the item of the specified id and type.
      */
-    public Item purchaseItem (
-        WebIdent ident, byte itemType, int catalogId, int authedFlowCost, int authedGoldCost)
+    public Item purchaseItem (byte itemType, int catalogId, int authedFlowCost, int authedGoldCost)
         throws ServiceException;
 
     /**
@@ -63,40 +60,40 @@ public interface CatalogService extends RemoteService
      *
      * @return the catalog id of the newly listed item.
      */
-    public int listItem (WebIdent ident, ItemIdent item, String descrip, int pricing,
-                         int salesTarget, int flowCost, int goldCost)
+    public int listItem (ItemIdent item, String descrip, int pricing, int salesTarget,
+                         int flowCost, int goldCost)
         throws ServiceException;
 
     /**
      * Loads and returns the specified catalog listing.
      */
-    public CatalogListing loadListing (WebIdent ident, byte itemType, int catalogId)
+    public CatalogListing loadListing (byte itemType, int catalogId)
         throws ServiceException;
 
     /**
      * Updates the catalog listing associated with the supplied catalog original.
      */
-    public void updateListing (WebIdent ident, ItemIdent item, String descrip)
+    public void updateListing (ItemIdent item, String descrip)
         throws ServiceException;
 
     /**
      * Updates the specified catalog listing's price.
      */
-    public void updatePricing (WebIdent ident, byte itemType, int catalogId, int pricing,
-                               int salesTarget, int flowCost, int goldCost)
+    public void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
+                               int flowCost, int goldCost)
         throws ServiceException;
 
     /**
      * Removes the specified catalog listing.
      */
-    public void removeListing (WebIdent ident, byte itemType, int catalogId)
+    public void removeListing (byte itemType, int catalogId)
         throws ServiceException;
 
     /**
      * Executes an item return, potentially for a (potentially partial) refund.
      * Returns a two-element array containing { flow refunded, gold refunded }.
      */
-    public int[] returnItem (WebIdent ident, ItemIdent item)
+    public int[] returnItem (ItemIdent item)
         throws ServiceException;
 
     /**

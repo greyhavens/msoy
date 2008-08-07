@@ -145,7 +145,7 @@ public class MailPanel extends VerticalPanel
                 delete.addStyleName("actionLabel");
                 new ClickCallback<Boolean>(delete, CMail.msgs.deleteConfirm()) {
                     public boolean callService () {
-                        _mailsvc.deleteConversation(CMail.ident, convo.conversationId, this);
+                        _mailsvc.deleteConversation(convo.conversationId, this);
                         return true;
                     }
                     public boolean gotResult (Boolean deleted) {

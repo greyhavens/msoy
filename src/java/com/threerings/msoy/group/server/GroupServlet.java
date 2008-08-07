@@ -60,7 +60,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
@@ -77,7 +76,7 @@ public class GroupServlet extends MsoyServiceServlet
     implements GroupService
 {
     // from GroupService
-    public GalaxyData getGalaxyData (WebIdent ident)
+    public GalaxyData getGalaxyData ()
         throws ServiceException
     {
         try {
@@ -117,13 +116,13 @@ public class GroupServlet extends MsoyServiceServlet
             return data;
 
         } catch (PersistenceException pe) {
-            log.warning("getGalaxyData failed [for=" + ident + "]", pe);
+            log.warning("getGalaxyData failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from GroupService
-    public List<GroupCard> getGroupsList (WebIdent ident)
+    public List<GroupCard> getGroupsList ()
         throws ServiceException
     {
         try {
@@ -154,10 +153,10 @@ public class GroupServlet extends MsoyServiceServlet
      * does not distinguish between a nonexistent group and a group without members;
      * both situations yield empty collections.
      */
-    public GroupDetail getGroupDetail (WebIdent ident, int groupId)
+    public GroupDetail getGroupDetail (int groupId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
 
         try {
             // load the group record
@@ -207,7 +206,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public MembersResult getGroupMembers (WebIdent ident, int groupId)
+    public MembersResult getGroupMembers (int groupId)
         throws ServiceException
     {
         try {
@@ -227,10 +226,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public RoomsResult getGroupRooms (WebIdent ident, int groupId)
+    public RoomsResult getGroupRooms (int groupId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
 
         try {
             RoomsResult result = new RoomsResult();
@@ -266,14 +265,14 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void transferRoom (WebIdent ident, int groupId, int sceneId)
+    public void transferRoom (int groupId, int sceneId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
 
         try {
             // ensure the caller is a manager of this group
-            GroupMembershipRecord membership = _groupRepo.getMembership(groupId, ident.memberId);
+            GroupMembershipRecord membership = _groupRepo.getMembership(groupId, mrec.memberId);
             if (membership.rank != GroupMembership.RANK_MANAGER) {
                 throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
             }
@@ -296,10 +295,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public GroupInfo getGroupInfo (WebIdent ident, int groupId)
+    public GroupInfo getGroupInfo (int groupId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.getAuthedUser(ident);
+        MemberRecord mrec = getAuthedUser();
         try {
             GroupRecord grec = _groupRepo.loadGroup(groupId);
             if (grec == null) {
@@ -323,7 +322,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from GroupService
-    public Integer getGroupHomeId (WebIdent ident, final int groupId)
+    public Integer getGroupHomeId (final int groupId)
         throws ServiceException
     {
         try {
@@ -335,7 +334,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<GroupCard> searchGroups (WebIdent ident, String searchString)
+    public List<GroupCard> searchGroups (String searchString)
         throws ServiceException
     {
         try {
@@ -352,7 +351,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<GroupCard> searchForTag (WebIdent ident, String tag)
+    public List<GroupCard> searchForTag (String tag)
         throws ServiceException
     {
         try {
@@ -369,11 +368,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<GroupMembership> getMembershipGroups (
-        WebIdent ident, final int memberId, final boolean canInvite)
+    public List<GroupMembership> getMembershipGroups (final int memberId, final boolean canInvite)
         throws ServiceException
     {
-        MemberRecord reqrec = _mhelper.getAuthedUser(ident);
+        MemberRecord reqrec = getAuthedUser();
         final int requesterId = (reqrec == null) ? 0 : reqrec.memberId;
 
         try {
@@ -405,10 +403,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public Group createGroup (WebIdent ident, Group group, GroupExtras extras)
+    public Group createGroup (Group group, GroupExtras extras)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         // make sure the name is valid; this is checked on the client as well
         if (!isValidName(group.name)) {
@@ -461,10 +459,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void updateGroup (WebIdent ident, Group group, GroupExtras extras)
+    public void updateGroup (Group group, GroupExtras extras)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         // make sure the name is valid; this is checked on the client as well
         if (!isValidName(group.name)) {
@@ -500,10 +498,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void leaveGroup (WebIdent ident, int groupId, int memberId)
+    public void leaveGroup (int groupId, int memberId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         try {
             GroupMembershipRecord tgtrec = _groupRepo.getMembership(groupId, memberId);
@@ -548,10 +546,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void joinGroup (WebIdent ident, int groupId)
+    public void joinGroup (int groupId)
         throws ServiceException
     {
-        final MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        final MemberRecord mrec = requireAuthedUser();
 
         try {
             // make sure the group in question exists
@@ -581,10 +579,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public void updateMemberRank (WebIdent ident, int groupId, int memberId, byte newRank)
+    public void updateMemberRank (int groupId, int memberId, byte newRank)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         try {
             GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
@@ -606,7 +604,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public TagHistory tagGroup (WebIdent ident, int groupId, String tag, boolean set)
+    public TagHistory tagGroup (int groupId, String tag, boolean set)
         throws ServiceException
     {
         String tagName = tag.trim().toLowerCase();
@@ -615,7 +613,7 @@ public class GroupServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         try {
             GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
@@ -649,9 +647,9 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public Collection<TagHistory> getRecentTags (WebIdent ident) throws ServiceException
+    public Collection<TagHistory> getRecentTags () throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         try {
             MemberName memName = mrec.getName();
@@ -676,7 +674,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public Collection<String> getTags (WebIdent ident, int groupId) throws ServiceException
+    public Collection<String> getTags (int groupId) throws ServiceException
     {
         try {
             List<String> result = Lists.newArrayList();
@@ -691,10 +689,10 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public List<MyGroupCard> getMyGroups (WebIdent ident, byte sortMethod)
+    public List<MyGroupCard> getMyGroups (byte sortMethod)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         final int memberId = mrec.memberId;
 
         try {
@@ -743,16 +741,16 @@ public class GroupServlet extends MsoyServiceServlet
 
             // sort by the preferred sort method
             if (sortMethod == MyGroupCard.SORT_BY_PEOPLE_ONLINE) {
-                Collections.sort(myGroupCards, SORT_MYGROUPCARD_BY_PEOPLE_ONLINE);
+                Collections.sort(myGroupCards, SORT_BY_PEOPLE_ONLINE);
             }
             else if (sortMethod == MyGroupCard.SORT_BY_NAME) {
-                Collections.sort(myGroupCards, SORT_MYGROUPCARD_BY_NAME);
+                Collections.sort(myGroupCards, SORT_BY_NAME);
             }
             else if (sortMethod == MyGroupCard.SORT_BY_MANAGER) {
-                Collections.sort(myGroupCards, SORT_MYGROUPCARD_BY_MANAGER);
+                Collections.sort(myGroupCards, SORT_BY_MANAGER);
             }
             else if (sortMethod == MyGroupCard.SORT_BY_NEWEST_POST) {
-                Collections.sort(myGroupCards, SORT_MYGROUPCARD_BY_NEWEST_POST);
+                Collections.sort(myGroupCards, SORT_BY_NEWEST_POST);
             }
 
             return myGroupCards;
@@ -763,8 +761,9 @@ public class GroupServlet extends MsoyServiceServlet
         }
     }
 
-    /** Compartor for sorting MyGroupCards, by population then by last post date. */
-    public static Comparator<MyGroupCard> SORT_MYGROUPCARD_BY_PEOPLE_ONLINE = new Comparator<MyGroupCard>() {
+    /** Compartor for sorting by population then by last post date. */
+    public static Comparator<MyGroupCard> SORT_BY_PEOPLE_ONLINE =
+        new Comparator<MyGroupCard>() {
         public int compare (MyGroupCard c1, MyGroupCard c2) {
             int rv = c2.population - c1.population;
             if (rv != 0) {
@@ -772,11 +771,9 @@ public class GroupServlet extends MsoyServiceServlet
             }
             if (c1.latestThread != null && c2.latestThread == null) {
                 return -1;
-            }
-            else if (c1.latestThread == null && c2.latestThread != null) {
+            } else if (c1.latestThread == null && c2.latestThread != null) {
                 return 1;
-            }
-            else if (c1.latestThread != null && c2.latestThread != null) {
+            } else if (c1.latestThread != null && c2.latestThread != null) {
                 return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
             }
             // if neither has a single post or active user, sort by name
@@ -784,35 +781,33 @@ public class GroupServlet extends MsoyServiceServlet
         }
     };
 
-    /** Compartor for sorting MyGroupCards, by population then by last post date. */
-    public static Comparator<MyGroupCard> SORT_MYGROUPCARD_BY_NAME = new Comparator<MyGroupCard>() {
+    /** Compartor for sorting by population then by last post date. */
+    public static Comparator<MyGroupCard> SORT_BY_NAME = new Comparator<MyGroupCard>() {
         public int compare (MyGroupCard c1, MyGroupCard c2) {
             return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
         }
     };
 
-    /** Compartor for sorting MyGroupCards, by manager status then population then by last post date. */
-    public static Comparator<MyGroupCard> SORT_MYGROUPCARD_BY_MANAGER = new Comparator<MyGroupCard>() {
+    /** Compartor for sorting by manager status then population then by last post date. */
+    public static Comparator<MyGroupCard> SORT_BY_MANAGER = new Comparator<MyGroupCard>() {
         public int compare (MyGroupCard c1, MyGroupCard c2) {
             if (c1.rank == GroupMembership.RANK_MANAGER && c2.rank < GroupMembership.RANK_MANAGER) {
                 return -1;
-            }
-            else if (c2.rank == GroupMembership.RANK_MANAGER && c1.rank < GroupMembership.RANK_MANAGER) {
+            } else if (c2.rank == GroupMembership.RANK_MANAGER &&
+                       c1.rank < GroupMembership.RANK_MANAGER) {
                 return 1;
             }
 
-            // from here down is the same as SORT_MYGROUPCARD_BY_PEOPLE_ONLINE
+            // from here down is the same as SORT_BY_PEOPLE_ONLINE
             int rv = c2.population - c1.population;
             if (rv != 0) {
                 return rv;
             }
             if (c1.latestThread != null && c2.latestThread == null) {
                 return -1;
-            }
-            else if (c1.latestThread == null && c2.latestThread != null) {
+            } else if (c1.latestThread == null && c2.latestThread != null) {
                 return 1;
-            }
-            else if (c1.latestThread != null && c2.latestThread != null) {
+            } else if (c1.latestThread != null && c2.latestThread != null) {
                 return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
             }
             // if neither has a single post or active user, sort by name
@@ -820,16 +815,14 @@ public class GroupServlet extends MsoyServiceServlet
         }
     };
 
-    /** Compartor for sorting MyGroupCards, by last post date then by population. */
-    public static Comparator<MyGroupCard> SORT_MYGROUPCARD_BY_NEWEST_POST = new Comparator<MyGroupCard>() {
+    /** Compartor for sorting by last post date then by population. */
+    public static Comparator<MyGroupCard> SORT_BY_NEWEST_POST = new Comparator<MyGroupCard>() {
         public int compare (MyGroupCard c1, MyGroupCard c2) {
             if (c1.latestThread != null && c2.latestThread == null) {
                 return -1;
-            }
-            else if (c1.latestThread == null && c2.latestThread != null) {
+            } else if (c1.latestThread == null && c2.latestThread != null) {
                 return 1;
-            }
-            else if (c1.latestThread != null && c2.latestThread != null) {
+            } else if (c1.latestThread != null && c2.latestThread != null) {
                 return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
             }
             int rv = c2.population - c1.population;

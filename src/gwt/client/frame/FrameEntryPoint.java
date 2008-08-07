@@ -545,8 +545,10 @@ public class FrameEntryPoint
 
     protected void displayGame (final String action, int gameId, final int gameOid)
     {
+    	// if we are neither logged in nor have an assigned guest id, we need one
+    	boolean assignGuestId = (CShell.getMemberId() == 0);
         // load up the information needed to launch the game
-        _usersvc.loadLaunchConfig(CShell.ident, gameId, new MsoyCallback<LaunchConfig>() {
+        _usersvc.loadLaunchConfig(gameId, assignGuestId, new MsoyCallback<LaunchConfig>() {
             public void onSuccess (LaunchConfig result) {
                 launchGame(result, gameOid, action);
             }

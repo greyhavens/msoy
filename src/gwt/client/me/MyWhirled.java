@@ -33,7 +33,7 @@ public class MyWhirled extends VerticalPanel
     {
         setStyleName("myWhirled");
 
-        _mesvc.getMyWhirled(CMe.ident, new MsoyCallback<MyWhirledData>() {
+        _mesvc.getMyWhirled(new MsoyCallback<MyWhirledData>() {
             public void onSuccess (MyWhirledData data) {
                 init(data);
             }
@@ -49,7 +49,7 @@ public class MyWhirled extends VerticalPanel
             data.friendCount > 0 ? _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();
         FeedPanel feed = new FeedPanel(empty, true, new FeedPanel.FeedLoader() {
             public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback) {
-                _mesvc.loadFeed(CMe.ident, feedDays, callback);
+                _mesvc.loadFeed(feedDays, callback);
             }
         });
         feed.setFeed(data.feed, false);

@@ -141,23 +141,22 @@ public class ComposePanel extends FlowPanel
 
     public void setGiftItem (byte type, int itemId)
     {
-        _stuffsvc.loadItem(CMail.ident, new ItemIdent(type, itemId),
-            new MsoyCallback<Item>() {
-                public void onSuccess (Item result) {
-                    PresentPayload payload = new PresentPayload(
-                        result.getIdent(), result.name, result.getThumbnailMedia());
-                    _contents.setText(3, 0, CMail.msgs.composeAttachment(), 1, "Label");
-                    _contents.getFlexCellFormatter().setVerticalAlignment(
-                        3, 0, HasAlignment.ALIGN_TOP);
-                    _contents.setWidget(3, 1, new ThumbBox(payload.thumbMedia, null));
-                    _payload = payload;
-                }
-            });
+        _stuffsvc.loadItem(new ItemIdent(type, itemId), new MsoyCallback<Item>() {
+            public void onSuccess (Item result) {
+                PresentPayload payload = new PresentPayload(
+                    result.getIdent(), result.name, result.getThumbnailMedia());
+                _contents.setText(3, 0, CMail.msgs.composeAttachment(), 1, "Label");
+                _contents.getFlexCellFormatter().setVerticalAlignment(
+                    3, 0, HasAlignment.ALIGN_TOP);
+                _contents.setWidget(3, 1, new ThumbBox(payload.thumbMedia, null));
+                _payload = payload;
+            }
+        });
     }
 
     public void setGroupInviteId (int groupId)
     {
-        _groupsvc.getGroupInfo(CMail.ident, groupId, new MsoyCallback<GroupService.GroupInfo>() {
+        _groupsvc.getGroupInfo(groupId, new MsoyCallback<GroupService.GroupInfo>() {
             public void onSuccess (GroupService.GroupInfo result) {
                 _contents.setText(3, 0, CMail.msgs.composeGroupInvite(), 1, "Label");
                 _contents.setText(3, 1, CMail.msgs.composeGroupDeets("" + result.name));
@@ -172,7 +171,7 @@ public class ComposePanel extends FlowPanel
 
         // TODO: replace this with a magical auto-completing search box
         if (_friendBox.isAttached()) {
-            _membersvc.loadFriends(CMail.ident, CMail.getMemberId(),
+            _membersvc.loadFriends(CMail.getMemberId(),
                 new MsoyCallback<WebMemberService.FriendsResult>() {
                     public void onSuccess (WebMemberService.FriendsResult result) {
                         _friends = result.friends;

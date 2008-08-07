@@ -125,23 +125,23 @@ public abstract class BaseItemDetailPanel extends SmartTable
         getFlexCellFormatter().setHeight(1, 0, "10px");
         setWidget(1, 0, new TagDetailPanel(new TagDetailPanel.TagService() {
             public void tag (String tag, AsyncCallback<TagHistory> callback) {
-                _itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, true, callback);
+                _itemsvc.tagItem(_item.getIdent(), tag, true, callback);
             }
             public void untag (String tag, AsyncCallback<TagHistory> callback) {
-                _itemsvc.tagItem(CShell.ident, _item.getIdent(), tag, false, callback);
+                _itemsvc.tagItem(_item.getIdent(), tag, false, callback);
             }
             public void getRecentTags (AsyncCallback<Collection<TagHistory>> callback) {
-                _itemsvc.getRecentTags(CShell.ident, callback);
+                _itemsvc.getRecentTags(callback);
             }
             public void getTags (AsyncCallback<Collection<String>> callback) {
-                _itemsvc.getTags(CShell.ident, _item.getIdent(), callback);
+                _itemsvc.getTags(_item.getIdent(), callback);
             }
             public boolean supportFlags () {
                 return true;
             }
             public void setFlags (final byte flag) {
                 ItemIdent ident = new ItemIdent(_item.getType(), _item.getPrototypeId());
-                _itemsvc.setFlags(CShell.ident, ident, flag, flag, new MsoyCallback<Void>() {
+                _itemsvc.setFlags(ident, flag, flag, new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         _item.flagged |= flag;
                     }
@@ -235,8 +235,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
         // persist our new scale to the server
         if (_scaleUpdated && _item.ownerId == CShell.getMemberId()) {
-            _itemsvc.scaleAvatar(
-                CShell.ident, _item.itemId, ((Avatar) _item).scale, new MsoyCallback<Void>() {
+            _itemsvc.scaleAvatar(_item.itemId, ((Avatar) _item).scale, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     // nada
                 }

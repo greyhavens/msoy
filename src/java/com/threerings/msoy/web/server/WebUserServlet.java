@@ -64,7 +64,6 @@ import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
-import com.threerings.msoy.web.data.WebIdent;
 
 import static com.threerings.msoy.Log.log;
 
@@ -258,11 +257,11 @@ public class WebUserServlet extends MsoyServiceServlet
         return config;
     }
 
-    // from interface WebRoomService
-    public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
+    // from interface WebUserService
+    public LaunchConfig loadLaunchConfig (int gameId, boolean assignGuestId)
         throws ServiceException
     {
-        return _gameLogic.loadLaunchConfig(ident, gameId);
+        return _gameLogic.loadLaunchConfig(gameId, assignGuestId);
     }
 
     // from interface WebUserService
@@ -298,10 +297,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void updateEmail (WebIdent ident, String newEmail)
+    public void updateEmail (String newEmail)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         if (!MailUtil.isValidAddress(newEmail)) {
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
@@ -322,11 +321,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void updateEmailPrefs (WebIdent ident, boolean emailOnWhirledMail,
-                                  boolean emailAnnouncements)
+    public void updateEmailPrefs (boolean emailOnWhirledMail, boolean emailAnnouncements)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         // update their mail preferences if appropriate
         int oflags = mrec.flags;
@@ -344,10 +342,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void updatePassword (WebIdent ident, String newPassword)
+    public void updatePassword (String newPassword)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         _author.updateAccount(mrec.accountName, null, null, newPassword);
     }
 
@@ -380,10 +378,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void configurePermaName (WebIdent ident, String permaName)
+    public void configurePermaName (String permaName)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
         if (mrec.permaName != null) {
             log.warning("Rejecting attempt to reassing permaname [who=" + mrec.accountName +
                         ", oname=" + mrec.permaName + ", nname=" + permaName + "].");
@@ -412,10 +410,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public AccountInfo getAccountInfo (WebIdent ident)
+    public AccountInfo getAccountInfo ()
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         try {
             AccountInfo ainfo = new AccountInfo();
@@ -435,10 +433,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void updateAccountInfo (WebIdent ident, AccountInfo info)
+    public void updateAccountInfo (AccountInfo info)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         try {
             ProfileRecord prec = _profileRepo.loadProfile(mrec.memberId);

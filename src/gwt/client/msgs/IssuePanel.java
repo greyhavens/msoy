@@ -16,7 +16,6 @@ import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
-import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -87,7 +86,7 @@ public class IssuePanel extends TitledListPanel
             setContents(_mmsgs.viewIssue(issue.description), _ipanel, true);
 
         } else {
-            _issuesvc.loadIssue(CShell.ident, issueId, new AsyncCallback<Issue>() {
+            _issuesvc.loadIssue(issueId, new AsyncCallback<Issue>() {
                 public void onSuccess (Issue issue) {
                     _state = issue.state;
                     _type = issue.type;

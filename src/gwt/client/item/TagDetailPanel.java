@@ -155,8 +155,7 @@ public class TagDetailPanel extends VerticalPanel
 //             return;
 //         }
 
-//         _itemsvc.getTagHistory(
-//             CShell.ident, _itemId, new AsyncCallback<Collection<TagHistory>>() {
+//         _itemsvc.getTagHistory(_itemId, new AsyncCallback<Collection<TagHistory>>() {
 //             public void onSuccess (Collection<TagHistory> result) {
 //                 _tagHistory = new FlexTable();
 //                 _tagHistory.setBorderWidth(0);

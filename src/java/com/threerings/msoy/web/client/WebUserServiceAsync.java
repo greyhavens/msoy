@@ -10,7 +10,6 @@ import com.threerings.msoy.web.data.ConnectConfig;
 import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.RegisterInfo;
 import com.threerings.msoy.web.data.SessionData;
-import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * The asynchronous (client-side) version of {@link WebUserService}.
@@ -42,7 +41,7 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#loadLaunchConfig}.
      */
-    void loadLaunchConfig (WebIdent ident, int gameId, AsyncCallback<LaunchConfig> callback);
+    void loadLaunchConfig (int gameId, boolean assignGuestId, AsyncCallback<LaunchConfig> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#sendForgotPasswordEmail}.
@@ -52,18 +51,18 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#updateEmail}.
      */
-    void updateEmail (WebIdent ident, String newEmail, AsyncCallback<Void> callback);
+    void updateEmail (String newEmail, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updateEmailPrefs}.
      */
-    void updateEmailPrefs (WebIdent ident, boolean emailOnWhirledMail,
+    void updateEmailPrefs (boolean emailOnWhirledMail,
                            boolean emailAnnouncements, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updatePassword}.
      */
-    void updatePassword (WebIdent ident, String newPassword, AsyncCallback<Void> callback);
+    void updatePassword (String newPassword, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#resetPassword}.
@@ -74,15 +73,15 @@ public interface WebUserServiceAsync
     /**
      * The asynchronous version of {@link WebUserService#configurePermaName}.
      */
-    void configurePermaName (WebIdent ident, String permaName, AsyncCallback<Void> callback);
+    void configurePermaName (String permaName, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#getAccountInfo}.
      */
-    void getAccountInfo (WebIdent ident, AsyncCallback<AccountInfo> callback);
+    void getAccountInfo (AsyncCallback<AccountInfo> callback);
 
     /**
      * The asynchronous version of {@link WebUserService#updateAccountInfo}.
      */
-    void updateAccountInfo (WebIdent ident, AccountInfo info, AsyncCallback<Void> callback);
+    void updateAccountInfo (AccountInfo info, AsyncCallback<Void> callback);
 }

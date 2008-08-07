@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -48,7 +47,7 @@ public interface StuffService extends RemoteService
      *
      * @exception ServiceException thrown if there is any problem creating the item.
      */
-    Item createItem (WebIdent ident, Item item, ItemIdent parent)
+    Item createItem (Item item, ItemIdent parent)
         throws ServiceException;
 
     /**
@@ -56,50 +55,50 @@ public interface StuffService extends RemoteService
      *
      * @exception ServiceException thrown if there is a problem updating the item.
      */
-    void updateItem (WebIdent ident, Item item)
+    void updateItem (Item item)
         throws ServiceException;
 
     /**
      * Requests that the supplied item be remixed to the new media contained within it.
      */
-    Item remixItem (WebIdent ident, Item item)
+    Item remixItem (Item item)
         throws ServiceException;
 
     /**
      * Revert the specified clone back its default media.
      */
-    Item revertRemixedClone (WebIdent ident, ItemIdent itemIdent)
+    Item revertRemixedClone (ItemIdent itemIdent)
         throws ServiceException;
 
     /**
      * Rename the specified clone.
      * @param name the new name, or if blank, revert to the original name.
      */
-    String renameClone (WebIdent ident, ItemIdent itemIdent, String name)
+    String renameClone (ItemIdent itemIdent, String name)
         throws ServiceException;
 
     /**
      * Loads all items in a player's inventory of the specified type and optionally restricted to
      * the specified suite.
      */
-    List<Item> loadInventory (WebIdent ident, byte type, int suiteId)
+    List<Item> loadInventory (byte type, int suiteId)
         throws ServiceException;
 
     /**
      * Loads the details of a particular item.
      */
-    Item loadItem (WebIdent ident, ItemIdent item)
+    Item loadItem (ItemIdent item)
         throws ServiceException;
 
     /**
      * Loads the detailed details of a particular item.
      */
-    DetailOrIdent loadItemDetail (WebIdent ident, ItemIdent item)
+    DetailOrIdent loadItemDetail (ItemIdent item)
         throws ServiceException;
 
     /**
      * Deletes an item from the caller's inventory.
      */
-    void deleteItem (WebIdent ident, ItemIdent item)
+    void deleteItem (ItemIdent item)
         throws ServiceException;
 }

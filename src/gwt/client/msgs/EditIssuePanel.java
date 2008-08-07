@@ -22,6 +22,7 @@ import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
 import com.threerings.msoy.fora.gwt.IssueServiceAsync;
 
+import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -74,14 +75,13 @@ public class EditIssuePanel extends TableFooterPanel
         } else {
             fillViewPanel();
         }
-        _issuesvc.loadMessages(
-            CShell.ident, _issue.issueId, messageId, new MsoyCallback<List<ForumMessage>>() {
-                public void onSuccess (List<ForumMessage> messages) {
-                    if (messages != null) {
-                        setMessages(messages);
-                    }
+        _issuesvc.loadMessages(_issue.issueId, messageId, new MsoyCallback<List<ForumMessage>>() {
+            public void onSuccess (List<ForumMessage> messages) {
+                if (messages != null) {
+                    setMessages(messages);
                 }
-            });
+            }
+        });
     }
 
     protected void buildPanel ()
@@ -116,12 +116,12 @@ public class EditIssuePanel extends TableFooterPanel
             Button assign = new Button(_mmsgs.assign());
             new ClickCallback<Void>(assign) {
                 public boolean callService () {
-                    _issuesvc.assignMessage(CShell.ident, _issue.issueId, _messageId, this);
+                    _issuesvc.assignMessage(_issue.issueId, _messageId, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
-                    Link.go(Pages.WHIRLEDS,
-                            "t_" + _message.threadId + "_" + _page + "_" + _messageId);
+                    Link.go(Pages.WHIRLEDS, Args.compose(new String[] {
+                                "t", ""+_message.threadId, ""+_page, ""+_messageId }));
                     return false;
                 }
             };
@@ -142,7 +142,7 @@ public class EditIssuePanel extends TableFooterPanel
         _table.setText(row++, 1, _issue.creator.toString());
         _table.setWidget(row++, 1, _ownerBox = new ListBox());
         _ownerBox.addItem(_mmsgs.iNoOwner());
-        _issuesvc.loadOwners(CShell.ident, new MsoyCallback<List<MemberName>>() {
+        _issuesvc.loadOwners(new MsoyCallback<List<MemberName>>() {
             public void onSuccess (List<MemberName> owners) {
                 if (owners != null) {
                     setOwners(owners);
@@ -279,10 +279,9 @@ public class EditIssuePanel extends TableFooterPanel
         }
 
         if (create) {
-            _issuesvc.createIssue(
-                    CShell.ident, _issue, (_message == null ? 0 : _message.messageId), callback);
+            _issuesvc.createIssue(_issue, (_message == null ? 0 : _message.messageId), callback);
         } else {
-            _issuesvc.updateIssue(CShell.ident, _issue, callback);
+            _issuesvc.updateIssue(_issue, callback);
         }
         return true;
     }

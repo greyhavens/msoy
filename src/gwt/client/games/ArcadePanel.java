@@ -33,7 +33,7 @@ public class ArcadePanel extends FlowPanel
 
         add(_header = new GameHeaderPanel((byte)-1, GameInfo.SORT_BY_NAME, null, "Featured Games"));
 
-        _gamesvc.loadArcadeData(CGames.ident, new MsoyCallback<ArcadeData>() {
+        _gamesvc.loadArcadeData(new MsoyCallback<ArcadeData>() {
             public void onSuccess (ArcadeData data) {
                 init(data);
             }

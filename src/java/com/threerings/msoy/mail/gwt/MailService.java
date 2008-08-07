@@ -11,7 +11,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Defines mail services available to the GWT/AJAX web client.
@@ -50,27 +49,25 @@ public interface MailService extends RemoteService
     /**
      * Loads the specified range of conversations in which the caller is a participant.
      */
-    ConvosResult loadConversations (WebIdent ident, int offset, int count, boolean needCount)
+    ConvosResult loadConversations (int offset, int count, boolean needCount)
         throws ServiceException;
 
     /**
      * Loads the specified conversation.
      */
-    ConvoResult loadConversation (WebIdent ident, int convoId)
+    ConvoResult loadConversation (int convoId)
         throws ServiceException;
 
     /**
      * Starts a conversation with another member.
      */
-    void startConversation (WebIdent ident, int recipientId, String subject, String body,
-                            MailPayload attachment)
+    void startConversation (int recipientId, String subject, String body, MailPayload attachment)
         throws ServiceException;
 
     /**
      * Posts a message to an existing conversation.
      */
-    ConvMessage continueConversation (WebIdent ident, int convoId, String text,
-                                      MailPayload attachment)
+    ConvMessage continueConversation (int convoId, String text, MailPayload attachment)
         throws ServiceException;
 
     /**
@@ -79,12 +76,12 @@ public interface MailService extends RemoteService
      * @return true if the conversation was deleted, false if it could not be deleted because it
      * has unread messages.
      */
-    boolean deleteConversation (WebIdent ident, int convoId)
+    boolean deleteConversation (int convoId)
         throws ServiceException;
 
     /**
      * Updates the payload on the specified message.
      */
-    void updatePayload (WebIdent ident, int convoId, long sent, MailPayload payload)
+    void updatePayload (int convoId, long sent, MailPayload payload)
         throws ServiceException;
 }

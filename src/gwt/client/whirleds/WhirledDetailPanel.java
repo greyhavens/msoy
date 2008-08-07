@@ -85,7 +85,7 @@ public class WhirledDetailPanel extends FlowPanel
      */
     protected void loadGroup (int groupId)
     {
-        _groupsvc.getGroupDetail(CWhirleds.ident, groupId, new MsoyCallback<GroupDetail>() {
+        _groupsvc.getGroupDetail(groupId, new MsoyCallback<GroupDetail>() {
             public void onSuccess (GroupDetail detail) {
                 setGroupDetail(detail);
             }
@@ -279,7 +279,7 @@ public class WhirledDetailPanel extends FlowPanel
     {
         return new Command() {
             public void execute () {
-                _groupsvc.leaveGroup(CWhirleds.ident, _group.groupId, memberId, refresh());
+                _groupsvc.leaveGroup(_group.groupId, memberId, refresh());
             }
         };
     }
@@ -288,7 +288,7 @@ public class WhirledDetailPanel extends FlowPanel
     {
         return new Command() {
             public void execute () {
-                _groupsvc.joinGroup(CWhirleds.ident, _group.groupId, refresh());
+                _groupsvc.joinGroup(_group.groupId, refresh());
             }
         };
     }

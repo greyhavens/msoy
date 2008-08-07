@@ -14,7 +14,6 @@ import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Defines member-specific services available to the GWT/AJAX web client.
@@ -43,25 +42,25 @@ public interface WebMemberService extends RemoteService
     /**
      * Figure out whether or not a given member is your friend.
      */
-    boolean getFriendStatus (WebIdent ident, int memberId)
+    boolean getFriendStatus (int memberId)
         throws ServiceException;
 
     /**
      * Loads up all friends for the specified member.
      */
-    FriendsResult loadFriends (WebIdent ident, int memberId)
+    FriendsResult loadFriends (int memberId)
         throws ServiceException;
 
     /**
      * Accept a friend invitation.
      */
-    void addFriend (WebIdent ident, int friendId)
+    void addFriend (int friendId)
         throws ServiceException;
 
     /**
      * Remove a friend.
      */
-    void removeFriend (WebIdent ident, int friendId)
+    void removeFriend (int friendId)
         throws ServiceException;
 
     /**

@@ -69,9 +69,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     MsoyUI.infoAction(CShop.msgs.msgMustRegister(), CShop.msgs.msgRegister(),
                                       Link.createListener(Pages.ACCOUNT, "create"));
                 } else {
-                    _catalogsvc.purchaseItem(
-                        CShop.ident, _item.getType(), _listing.catalogId,
-                        _listing.flowCost, _listing.goldCost, this);
+                    _catalogsvc.purchaseItem(_item.getType(), _listing.catalogId,
+                                             _listing.flowCost, _listing.goldCost, this);
                 }
                 return true;
             }
@@ -136,8 +135,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             Label delist = new Label(CShop.msgs.listingDelist());
             new ClickCallback<Void>(delist, CShop.msgs.listingDelistConfirm()) {
                 public boolean callService () {
-                    _catalogsvc.removeListing(
-                        CShop.ident, _item.getType(), _listing.catalogId, this);
+                    _catalogsvc.removeListing(_item.getType(), _listing.catalogId, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {

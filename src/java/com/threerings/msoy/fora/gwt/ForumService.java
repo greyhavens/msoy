@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 
 /**
  * Defines forum related services available to the GWT client.
@@ -56,75 +55,73 @@ public interface ForumService extends RemoteService
      * which there are messages not yet read by same. The threads are sorted from most to least
      * recently active.
      */
-    public ThreadResult loadUnreadThreads (WebIdent ident, int maximum)
+    ThreadResult loadUnreadThreads (int maximum)
         throws ServiceException;
 
     /**
      * Loads the specified range of threads for the specified group.
      */
-    public ThreadResult loadThreads (WebIdent ident, int groupId, int offset, int count,
-                                     boolean needTotalCount)
+    ThreadResult loadThreads (int groupId, int offset, int count, boolean needTotalCount)
         throws ServiceException;
 
     /**
      * Searches the subjects and messages in all threads in the specified group.
      */
-    public List<ForumThread> findThreads (WebIdent ident, int groupId, String search, int limit)
+    List<ForumThread> findThreads (int groupId, String search, int limit)
         throws ServiceException;
 
     /**
      * Loads the specified range of messages for the specified thread.
      */
-    public MessageResult loadMessages (WebIdent ident, int threadId, int lastReadPostId,
-                                       int offset, int count, boolean needTotalCount)
+    MessageResult loadMessages (int threadId, int lastReadPostId, int offset, int count,
+                                boolean needTotalCount)
         throws ServiceException;
 
     /**
      * Searches the messages in a particular thread.
      */
-    public List<ForumMessage> findMessages (WebIdent ident, int threadId, String search, int limit)
+    List<ForumMessage> findMessages (int threadId, String search, int limit)
         throws ServiceException;
 
     /**
      * Creates a new thread for the specified group.
      */
-    public ForumThread createThread (WebIdent ident, int groupId, int flags,
-                                     String subject, String message)
+    ForumThread createThread (int groupId, int flags, String subject, String message)
         throws ServiceException;
 
     /**
      * Updates the specified thread's flags.
      */
-    public void updateThreadFlags (WebIdent ident, int threadId, int flags)
+    void updateThreadFlags (int threadId, int flags)
         throws ServiceException;
 
     /**
      * Marks the specified thread as ignored by this player.
      */
-    public void ignoreThread (WebIdent ident, int threadId)
+    void ignoreThread (int threadId)
         throws ServiceException;
 
     /**
      * Posts a message to the specified thread.
      */
-    public ForumMessage postMessage (WebIdent ident, int threadId, int inReplyTo, String message)
+    ForumMessage postMessage (int threadId, int inReplyTo, String message)
         throws ServiceException;
 
     /**
      * Edits a previously posted message.
      */
-    public void editMessage (WebIdent ident, int messageId, String message)
+    void editMessage (int messageId, String message)
         throws ServiceException;
 
     /**
      * Deletes the specified message.
      */
-    public void deleteMessage (WebIdent ident, int messageId)
+    void deleteMessage (int messageId)
         throws ServiceException;
 
     /**
      * Complains about the specified message.
      */
-    public void complainMessage (WebIdent ident, String complaint, int messageId)
+    void complainMessage (String complaint, int messageId)
         throws ServiceException;
 }

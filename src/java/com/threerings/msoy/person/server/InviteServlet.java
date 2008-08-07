@@ -31,7 +31,6 @@ import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.person.gwt.InvitationResults;
@@ -48,10 +47,10 @@ public class InviteServlet extends MsoyServiceServlet
     implements InviteService
 {
     // from InviteService
-    public List<EmailContact> getWebMailAddresses (WebIdent ident, String email, String password)
+    public List<EmailContact> getWebMailAddresses (String email, String password)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
 
         try {
             // don't let someone attempt more than 5 imports in a 5 minute period
@@ -106,10 +105,10 @@ public class InviteServlet extends MsoyServiceServlet
     }
 
     // from InviteService
-    public MemberInvites getInvitationsStatus (WebIdent ident)
+    public MemberInvites getInvitationsStatus ()
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         try {
             MemberInvites result = new MemberInvites();
@@ -130,11 +129,11 @@ public class InviteServlet extends MsoyServiceServlet
     }
 
     // from InviteService
-    public InvitationResults sendInvites (WebIdent ident, List<EmailContact> addresses,
-                                          String fromName, String customMessage, boolean anonymous)
+    public InvitationResults sendInvites (List<EmailContact> addresses, String fromName,
+                                          String customMessage, boolean anonymous)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         // if they're requesting anonymous invites and are not an admin, rejecto!
         if (anonymous && !mrec.isAdmin()) {
@@ -182,10 +181,10 @@ public class InviteServlet extends MsoyServiceServlet
     }
 
     // from InviteService
-    public void removeInvitation (WebIdent ident, String inviteId)
+    public void removeInvitation (String inviteId)
         throws ServiceException
     {
-        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord mrec = requireAuthedUser();
 
         try {
             InvitationRecord invRec = _memberRepo.loadInvite(inviteId, false);

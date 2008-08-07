@@ -103,7 +103,7 @@ public class GalaxyPanel extends VerticalPanel
         create.setWidget(1, 2, new Button(_msgs.galaxyCreate(), onClick), 1, "Button");
         add(create);
 
-        _groupsvc.getGalaxyData(CWhirleds.ident, new MsoyCallback<GalaxyData>() {
+        _groupsvc.getGalaxyData(new MsoyCallback<GalaxyData>() {
             public void onSuccess (GalaxyData galaxy) {
                 init(galaxy);
             }
@@ -133,7 +133,7 @@ public class GalaxyPanel extends VerticalPanel
         setModel("p", "", page, new ModelLoader() {
             public void loadModel (MsoyCallback<List<GroupCard>> callback) {
                 // TODO: this eventually needs to be a ServiceBackedDataModel
-                _groupsvc.getGroupsList(CWhirleds.ident, callback);
+                _groupsvc.getGroupsList(callback);
             }
         });
     }
@@ -174,7 +174,7 @@ public class GalaxyPanel extends VerticalPanel
 
         setModel("tag", tag, page, new ModelLoader() {
             public void loadModel (MsoyCallback<List<GroupCard>> callback) {
-                _groupsvc.searchForTag(CWhirleds.ident, tag, callback);
+                _groupsvc.searchForTag(tag, callback);
             }
         });
         return true;
@@ -188,7 +188,7 @@ public class GalaxyPanel extends VerticalPanel
         _searchInput.setText(query);
         setModel("search", query, page, new ModelLoader() {
             public void loadModel (MsoyCallback<List<GroupCard>> callback) {
-                _groupsvc.searchGroups(CWhirleds.ident, query, callback);
+                _groupsvc.searchGroups(query, callback);
             }
         });
         return true;

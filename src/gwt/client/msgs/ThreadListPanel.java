@@ -26,7 +26,6 @@ import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
 import client.shell.Args;
-import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -67,8 +66,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     // from interface SearchBox.Listener
     public void search (String search)
     {
-        _forumsvc.findThreads(
-            CShell.ident, _groupId, search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
+        _forumsvc.findThreads(_groupId, search, MAX_RESULTS, new MsoyCallback<List<ForumThread>>() {
             public void onSuccess (List<ForumThread> threads) {
                 setModel(new SimpleDataModel<ForumThread>(threads), 0);
             }
@@ -226,7 +224,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
                 ignoreThread.setTitle(_mmsgs.ignoreThreadTip());
                 new ClickCallback<Void>(ignoreThread) {
                     public boolean callService () {
-                        _forumsvc.ignoreThread(CShell.ident, thread.threadId, this);
+                        _forumsvc.ignoreThread(thread.threadId, this);
                         return true;
                     }
                     public boolean gotResult (Void result) {

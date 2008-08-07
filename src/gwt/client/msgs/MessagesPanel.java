@@ -97,7 +97,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         _ignoreThread.setTitle(_mmsgs.ignoreThreadTip());
         new ClickCallback<Void>(_ignoreThread) {
             public boolean callService () {
-                _forumsvc.ignoreThread(CShell.ident, _parent.getThreadId(), this);
+                _forumsvc.ignoreThread(_parent.getThreadId(), this);
                 return true;
             }
             public boolean gotResult (Void result) {
@@ -170,13 +170,12 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             public void execute () {
                 // TODO: if forum admin, make them send a mail to the poster explaining why their
                 // post was deleted?
-                _forumsvc.deleteMessage(
-                    CShell.ident, message.messageId, new MsoyCallback<Void>() {
-                        public void onSuccess (Void result) {
-                            removeItem(message);
-                            MsoyUI.info(_mmsgs.msgPostDeleted());
-                        }
-                    });
+                _forumsvc.deleteMessage(message.messageId, new MsoyCallback<Void>() {
+                    public void onSuccess (Void result) {
+                        removeItem(message);
+                        MsoyUI.info(_mmsgs.msgPostDeleted());
+                    }
+                });
             }
         };
     }
@@ -311,8 +310,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
         protected boolean callService ()
         {
-            _forumsvc.complainMessage(
-                CShell.ident, _description.getText(), _message.messageId, this);
+            _forumsvc.complainMessage(_description.getText(), _message.messageId, this);
             return true;
         }
 

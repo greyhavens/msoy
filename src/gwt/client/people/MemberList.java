@@ -66,8 +66,7 @@ public class MemberList extends PagedGrid<MemberCard>
     {
         return new Command() {
             public void execute () {
-                _membersvc.removeFriend(
-                    CPeople.ident, card.name.getMemberId(), new MsoyCallback<Void>() {
+                _membersvc.removeFriend(card.name.getMemberId(), new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         MsoyUI.info(CPeople.msgs.mlRemoved(card.name.toString()));
                         removeItem(card);

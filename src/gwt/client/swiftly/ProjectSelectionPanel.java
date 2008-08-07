@@ -108,8 +108,8 @@ public class ProjectSelectionPanel extends FlexTable
                     MsoyUI.error(CSwiftly.msgs.pleaseEnterProjectName());
                     return false;
                 }
-                CSwiftly.swiftlysvc.createProject(CSwiftly.ident, name, _selectedProjectType,
-                                                  _remixable.isChecked(), this);
+                CSwiftly.swiftlysvc.createProject(
+                    name, _selectedProjectType, _remixable.isChecked(), this);
                 return true;
             }
             public boolean gotResult (SwiftlyProject newProject) {
@@ -127,17 +127,16 @@ public class ProjectSelectionPanel extends FlexTable
     protected void loadRemixableProjects ()
     {
         _remixableProjects = new ArrayList<SwiftlyProject>();
-        CSwiftly.swiftlysvc.getRemixableProjects(
-            CSwiftly.ident, new AsyncCallback<List<SwiftlyProject>>() {
-                public void onSuccess (List<SwiftlyProject> projects) {
-                    _remixableProjects.addAll(projects);
-                    displayRemixableProjects();
-                }
-                public void onFailure (Throwable caught) {
-                    CSwiftly.log("loadRemixableProjects failed", caught);
-                    _remixableProjectsPanel.add(new Label(CSwiftly.serverError(caught)));
-                }
-            });
+        CSwiftly.swiftlysvc.getRemixableProjects(new AsyncCallback<List<SwiftlyProject>>() {
+            public void onSuccess (List<SwiftlyProject> projects) {
+                _remixableProjects.addAll(projects);
+                displayRemixableProjects();
+            }
+            public void onFailure (Throwable caught) {
+                CSwiftly.log("loadRemixableProjects failed", caught);
+                _remixableProjectsPanel.add(new Label(CSwiftly.serverError(caught)));
+            }
+        });
     }
 
     /**
@@ -166,17 +165,16 @@ public class ProjectSelectionPanel extends FlexTable
     protected void loadMembersProjects ()
     {
         _membersProjects = new ArrayList<SwiftlyProject>();
-        CSwiftly.swiftlysvc.getMembersProjects(
-            CSwiftly.ident, new AsyncCallback<List<SwiftlyProject>>() {
-                public void onSuccess (List<SwiftlyProject> projects) {
-                    _membersProjects.addAll(projects);
-                    displayMembersProjects();
-                }
-                public void onFailure (Throwable caught) {
-                    CSwiftly.log("loadMembersProjects failed", caught);
-                    _membersProjectsPanel.add(new Label(CSwiftly.serverError(caught)));
-                }
-            });
+        CSwiftly.swiftlysvc.getMembersProjects(new AsyncCallback<List<SwiftlyProject>>() {
+            public void onSuccess (List<SwiftlyProject> projects) {
+                _membersProjects.addAll(projects);
+                displayMembersProjects();
+            }
+            public void onFailure (Throwable caught) {
+                CSwiftly.log("loadMembersProjects failed", caught);
+                _membersProjectsPanel.add(new Label(CSwiftly.serverError(caught)));
+            }
+        });
     }
 
     /**
@@ -240,8 +238,7 @@ public class ProjectSelectionPanel extends FlexTable
         // from interface Command
         public void execute ()
         {
-            CSwiftly.swiftlysvc.deleteProject(
-                CSwiftly.ident, _project.projectId, new MsoyCallback<Void>() {
+            CSwiftly.swiftlysvc.deleteProject(_project.projectId, new MsoyCallback<Void>() {
                 public void onSuccess (Void result) {
                     _panel.projectWasRemoved(_project);
                 }

@@ -7,9 +7,11 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.presents.dobj.RootDObjectManager;
 
+import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -18,6 +20,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.WebCreds;
 
 /**
  * Provides services used by all remote service servlets.
@@ -35,6 +38,32 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         if (flowRec != null) {
             MemberNodeActions.flowUpdated(flowRec);
         }
+    }
+
+    /**
+     * Returns the member record for the member making this service request, or null if their
+     * session has expired, or they are not authenticated.
+     */
+    protected MemberRecord getAuthedUser ()
+        throws ServiceException
+    {
+        return _mhelper.getAuthedUser(
+            CookieUtil.getCookieValue(getThreadLocalRequest(), WebCreds.CREDS_COOKIE));
+    }
+
+    /**
+     * Returns the member record for the member making this service request.
+     *
+     * @exception ServiceException thrown if the session has expired or is otherwise invalid.
+     */
+    protected MemberRecord requireAuthedUser ()
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser();
+        if (mrec == null) {
+            throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
+        }
+        return mrec;
     }
 
     /**

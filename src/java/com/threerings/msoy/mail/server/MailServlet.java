@@ -32,7 +32,6 @@ import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
@@ -44,10 +43,10 @@ public class MailServlet extends MsoyServiceServlet
     implements MailService
 {
     // from interface MailService
-    public ConvosResult loadConversations (WebIdent ident, int offset, int count, boolean needCount)
+    public ConvosResult loadConversations (int offset, int count, boolean needCount)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         try {
             // load up the conversations in question
             List<Conversation> convos = Lists.newArrayList();
@@ -90,10 +89,10 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from interface MailService
-    public ConvoResult loadConversation (WebIdent ident, int convoId)
+    public ConvoResult loadConversation (int convoId)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         try {
             ConvoResult convo = new ConvoResult();
 
@@ -150,11 +149,10 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from interface MailService
-    public void startConversation (WebIdent ident, int recipId, String subject, String body,
-                                   MailPayload attachment)
+    public void startConversation (int recipId, String subject, String body, MailPayload attachment)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         try {
             // make sure the recipient exists
             MemberRecord recip = _memberRepo.loadMember(recipId);
@@ -175,11 +173,10 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from interface MailService
-    public ConvMessage continueConversation (WebIdent ident, int convoId, String body,
-                                             MailPayload attachment)
+    public ConvMessage continueConversation (int convoId, String body, MailPayload attachment)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         try {
             // pass the buck to the mail manager
             ConvMessageRecord cmr = _mailLogic.continueConversation(
@@ -201,10 +198,10 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from interface MailService
-    public boolean deleteConversation (WebIdent ident, int convoId)
+    public boolean deleteConversation (int convoId)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         try {
             // the repository handles all the juicy goodness
             return _mailRepo.deleteConversation(convoId, memrec.memberId);
@@ -217,10 +214,10 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from interface MailService
-    public void updatePayload (WebIdent ident, int convoId, long sent, MailPayload payload)
+    public void updatePayload (int convoId, long sent, MailPayload payload)
         throws ServiceException
     {
-        MemberRecord memrec = _mhelper.requireAuthedUser(ident);
+        MemberRecord memrec = requireAuthedUser();
         try {
             // note: we don't validate memberId because this method is legacy and going away
             byte[] state = JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
