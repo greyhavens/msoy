@@ -446,17 +446,15 @@ public class MsoyController extends Controller
         var url :String = evt.text;
         if (StringUtil.startsWith(url, COMMAND_URL)) {
             var cmd :String = url.substring(COMMAND_URL.length);
-            var arg :String = null;
+            var argStr :String = null;
             var slash :int = cmd.indexOf("/");
             if (slash != -1) {
-                arg = cmd.substring(slash + 1);
+                argStr = cmd.substring(slash + 1);
                 cmd = cmd.substring(0, slash);
             }
-            if (arg == null || arg.indexOf("/") == -1) {
-                CommandEvent.dispatch(evt.target as IEventDispatcher, cmd, arg);
-            } else {
-                CommandEvent.dispatch(evt.target as IEventDispatcher, cmd, arg.split(/\//));
-            }
+            var arg :Object = (argStr == null || argStr.indexOf("/") == -1)
+                ? argStr : argStr.split(/\//);
+            CommandEvent.dispatch(evt.target as IEventDispatcher, cmd, arg);
 
         } else {
             // A regular URL
