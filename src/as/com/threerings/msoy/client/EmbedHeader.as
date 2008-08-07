@@ -18,9 +18,14 @@ import com.threerings.flex.FlexWrapper;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 
+import com.threerings.util.CommandEvent;
+
+import com.threerings.whirled.data.Scene;
+
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldController;
 
 public class EmbedHeader extends Canvas
 {
@@ -35,10 +40,7 @@ public class EmbedHeader extends Canvas
         _ctx.getClient().addClientObserver(new ClientAdapter(null, didLogon));
 
         var logo :FlexWrapper = new FlexWrapper(new LOGO() as DisplayObject);
-        logo.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
-            var sceneId :int = _ctx.getSceneDirector().getScene().getId();
-            _ctx.getWorldController().handleViewFullVersion(sceneId);
-        });
+        logo.addEventListener(MouseEvent.CLICK, handleLogoClick);
         logo.setStyle("left", 0);
         logo.buttonMode = true;
         logo.mouseEnabled = true;
@@ -86,6 +88,18 @@ public class EmbedHeader extends Canvas
                 removeChild(_joinNow);
             }
         }
+    }
+
+    protected function handleLogoClick (... ignored) :void
+    {
+        var scene :Scene = _ctx.getSceneDirector().getScene();
+        if (scene != null) {
+            CommandEvent.dispatch(this, WorldController.VIEW_FULL_VERSION, scene.getId());
+        } else {
+            CommandEvent.dispatch(this, WorldController.VIEW_GAME,
+                _ctx.getGameDirector().getGameId())
+        }
+        // used to be: _ctx.getWorldController().handleViewFullVersion(sceneId);
     }
 
     [Embed(source="../../../../../../pages/images/header/header_logo.png")]
