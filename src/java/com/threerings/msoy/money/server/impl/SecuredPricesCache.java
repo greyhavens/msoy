@@ -11,7 +11,7 @@ import com.threerings.msoy.money.server.NotSecuredException;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-interface SecuredPricesCache
+public interface SecuredPricesCache
 {
     /**
      * Adds the secured price to the cache.  Subsequent calls to {@link #getSecuredPrice(int, ItemIdent)}

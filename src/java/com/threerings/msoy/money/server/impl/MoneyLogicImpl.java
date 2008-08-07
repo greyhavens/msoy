@@ -19,6 +19,10 @@ import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyType;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 import com.threerings.msoy.money.server.NotSecuredException;
+import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
+import com.threerings.msoy.money.server.persist.MemberAccountRecord;
+import com.threerings.msoy.money.server.persist.MoneyRepository;
+import com.threerings.msoy.money.server.persist.StaleDataException;
 
 /**
  * Default implementation of the money service.
@@ -28,7 +32,7 @@ import com.threerings.msoy.money.server.NotSecuredException;
  * @author Kyle Sampson <kyle@threerings.net>
  */
 @Singleton
-class MoneyLogicImpl
+public class MoneyLogicImpl
     implements MoneyLogic
 {
     @Inject

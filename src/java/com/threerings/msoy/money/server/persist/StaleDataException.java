@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.money.server.impl;
+package com.threerings.msoy.money.server.persist;
 
 /**
  * Indicates an update or insert was attempted on an entity, but the entity was updated in another

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.money.server.impl;
+package com.threerings.msoy.money.server.persist;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import com.threerings.msoy.money.server.MoneyType;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-interface MoneyRepository
+public interface MoneyRepository
 {
     /**
      * Retrieves a member's account info by member ID.

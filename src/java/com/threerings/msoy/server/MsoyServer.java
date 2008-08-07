@@ -63,7 +63,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
-import com.threerings.msoy.money.server.impl.MoneyModule;
+import com.threerings.msoy.money.server.MoneyModule;
 import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.persist.OOODatabase;

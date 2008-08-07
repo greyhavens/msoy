@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.money.server.impl;
+package com.threerings.msoy.money.server.persist;
 
 import java.util.List;
 import java.util.Set;
@@ -35,7 +35,7 @@ import com.threerings.presents.annotation.BlockingThread;
 @Singleton 
 @BlockingThread
 @NotThreadSafe
-final class DepotMoneyRepository extends DepotRepository
+public final class DepotMoneyRepository extends DepotRepository
     implements MoneyRepository
 {
     @Inject

@@ -21,7 +21,6 @@ import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.money.server.impl.MoneyModule;
 import com.threerings.msoy.server.ServerConfig;
 
 /**

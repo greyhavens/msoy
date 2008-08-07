@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.money.server.impl;
+package com.threerings.msoy.money.server.persist;
 
 /**
  * Generic exception indicating a problem has occurred accessing a repository.

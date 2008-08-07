@@ -1,13 +1,19 @@
 //
 // $Id$
 
-package com.threerings.msoy.money.server.impl;
+package com.threerings.msoy.money.server;
 
 import static com.google.inject.matcher.Matchers.annotatedWith;
 import static com.google.inject.matcher.Matchers.any;
 
 import com.google.inject.AbstractModule;
-import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.impl.MoneyLogicImpl;
+import com.threerings.msoy.money.server.impl.Retry;
+import com.threerings.msoy.money.server.impl.RetryInterceptor;
+import com.threerings.msoy.money.server.impl.SecuredPricesCache;
+import com.threerings.msoy.money.server.impl.SecuredPricesEhcache;
+import com.threerings.msoy.money.server.persist.DepotMoneyRepository;
+import com.threerings.msoy.money.server.persist.MoneyRepository;
 
 /**
  * Dependency injection module for the money service.

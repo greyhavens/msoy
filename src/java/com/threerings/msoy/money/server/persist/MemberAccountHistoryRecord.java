@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.money.server.impl;
+package com.threerings.msoy.money.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Date;
