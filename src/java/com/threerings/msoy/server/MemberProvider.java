@@ -44,6 +44,12 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#getABTestGroup} request.
+     */
+    void getABTestGroup (ClientObject caller, ReferralInfo arg1, String arg2, boolean arg3, InvocationService.ResultListener arg4)
+        throws InvocationException;
+
+    /**
      * Handles a {@link MemberService#getCurrentMemberLocation} request.
      */
     void getCurrentMemberLocation (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
@@ -109,9 +115,19 @@ public interface MemberProvider extends InvocationProvider
         throws InvocationException;
 
     /**
+     * Handles a {@link MemberService#trackClientAction} request.
+     */
+    void trackClientAction (ClientObject caller, ReferralInfo arg1, String arg2, String arg3);
+
+    /**
      * Handles a {@link MemberService#trackReferralCreation} request.
      */
     void trackReferralCreation (ClientObject caller, ReferralInfo arg1);
+
+    /**
+     * Handles a {@link MemberService#trackTestAction} request.
+     */
+    void trackTestAction (ClientObject caller, ReferralInfo arg1, String arg2, String arg3);
 
     /**
      * Handles a {@link MemberService#updateAvailability} request.
@@ -122,24 +138,5 @@ public interface MemberProvider extends InvocationProvider
      * Handles a {@link MemberService#updateStatus} request.
      */
     void updateStatus (ClientObject caller, String arg1, InvocationService.InvocationListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#getABTestGroup} request.
-     */
-    void getABTestGroup (ClientObject caller, ReferralInfo arg1, String arg2, boolean arg3,
-        InvocationService.ResultListener arg4)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#trackClientAction} request.
-     */
-    void trackClientAction (ClientObject caller, ReferralInfo arg1, String arg2, String arg3)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#trackTestAction} request.
-     */
-    void trackTestAction (ClientObject caller, ReferralInfo arg1, String arg2, String arg3)
         throws InvocationException;
 }

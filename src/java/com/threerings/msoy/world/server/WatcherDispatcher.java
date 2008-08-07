@@ -4,8 +4,6 @@
 package com.threerings.msoy.world.server;
 
 import com.threerings.msoy.world.data.WatcherMarshaller;
-
-
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationDispatcher;
 import com.threerings.presents.server.InvocationException;

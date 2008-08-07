@@ -37,8 +37,6 @@ public class BureauLauncherMarshaller extends InvocationMarshaller
     // from interface BureauLauncherService
     public void launcherInitialized (Client arg1)
     {
-        sendRequest(arg1, LAUNCHER_INITIALIZED, new Object[] {
-            
-        });
+        sendRequest(arg1, LAUNCHER_INITIALIZED, new Object[] {});
     }
 }

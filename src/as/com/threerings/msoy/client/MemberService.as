@@ -32,6 +32,9 @@ public interface MemberService extends InvocationService
     function followMember (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
+    function getABTestGroup (arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :Boolean, arg5 :InvocationService_ResultListener) :void;
+
+    // from Java interface MemberService
     function getCurrentMemberLocation (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
@@ -65,22 +68,18 @@ public interface MemberService extends InvocationService
     function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
+    function trackClientAction (arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :String) :void;
+
+    // from Java interface MemberService
     function trackReferralCreation (arg1 :Client, arg2 :ReferralInfo) :void;
+
+    // from Java interface MemberService
+    function trackTestAction (arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :String) :void;
 
     // from Java interface MemberService
     function updateAvailability (arg1 :Client, arg2 :int) :void;
 
     // from Java interface MemberService
     function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
-
-    // from Java interface MemberService
-    function getABTestGroup (arg1 :Client, arg2 :ReferralInfo,
-        arg3 :String, arg4 :Boolean, arg5: InvocationService_ResultListener) :void;
-
-    // from Java interface MemberService
-    function trackClientAction (arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :String):void;
-
-    // from Java interface MemberService
-    function trackTestAction (arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :String):void;
 }
 }

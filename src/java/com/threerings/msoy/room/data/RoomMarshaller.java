@@ -4,9 +4,7 @@
 package com.threerings.msoy.room.data;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.room.client.RoomService;
-
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;

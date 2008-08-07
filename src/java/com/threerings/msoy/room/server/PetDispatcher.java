@@ -4,7 +4,6 @@
 package com.threerings.msoy.room.server;
 
 import com.threerings.msoy.room.data.PetMarshaller;
-
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationDispatcher;

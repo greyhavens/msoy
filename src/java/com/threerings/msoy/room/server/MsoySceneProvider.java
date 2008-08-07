@@ -5,7 +5,6 @@ package com.threerings.msoy.room.server;
 
 import com.threerings.msoy.room.client.MsoySceneService;
 import com.threerings.msoy.room.data.MsoyLocation;
-
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationProvider;

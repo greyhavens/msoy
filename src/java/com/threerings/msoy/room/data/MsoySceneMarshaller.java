@@ -4,7 +4,6 @@
 package com.threerings.msoy.room.data;
 
 import com.threerings.msoy.room.client.MsoySceneService;
-
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.whirled.client.SceneService;
