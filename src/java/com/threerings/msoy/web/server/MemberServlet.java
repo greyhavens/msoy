@@ -191,14 +191,19 @@ public class MemberServlet extends MsoyServiceServlet
             log.warning(
                 "Failed to log client action with null referral", "actionName", actionName);
             return;
-        } 
-        
+        }
+
         _eventLog.clientAction(info.tracker, actionName, details);
     }
 
     // from MemberService
     public void trackTestAction (ReferralInfo info, String actionName, String testName)
     {
+        if (info == null) {
+            log.warning(
+                "Failed to log test action with null referral", "actionName", actionName);
+            return;
+        }
         int abTestGroup = -1;
         if (testName != null) {
             // grab the group without logging a tracking event about it
@@ -208,11 +213,11 @@ public class MemberServlet extends MsoyServiceServlet
         }
         _eventLog.testAction(info.tracker, actionName, testName, abTestGroup);
     }
-    
+
     // from MemberService
     public void trackReferralCreation(ReferralInfo info)
     {
-        _eventLog.referralCreated(info);        
+        _eventLog.referralCreated(info);
     }
 
     // our dependencies
@@ -222,5 +227,5 @@ public class MemberServlet extends MsoyServiceServlet
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;
-    
+
 }

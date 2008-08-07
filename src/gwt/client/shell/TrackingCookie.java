@@ -17,7 +17,8 @@ public class TrackingCookie
      */
     public static boolean exists ()
     {
-        return (CookieUtil.get(AFFILIATE_ID) != null);
+        return (CookieUtil.get(AFFILIATE_ID) != null && CookieUtil.get(VECTOR_ID) != null
+            && CookieUtil.get(CREATIVE_ID) != null && CookieUtil.get(TRACKER_ID) != null);
     }
 
     /**
