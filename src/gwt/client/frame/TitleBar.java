@@ -59,7 +59,7 @@ public class TitleBar extends SmartTable
                 }
             }
             break;
-            
+
         case FRIENDS:
             if (CShell.isGuest()) {
                 subnavi.addLink(null, "Search", Pages.PEOPLE, "");
@@ -68,9 +68,9 @@ public class TitleBar extends SmartTable
                 subnavi.addLink(null, "Invite Friends", Pages.PEOPLE, "invites");
             }
             break;
-            
+
         case GAMES:
-        	subnavi.addLink(null, "Games", Pages.GAMES, "");
+            subnavi.addLink(null, "Games", Pages.GAMES, "");
             if (!CShell.isGuest()) {
                 subnavi.addLink(null, "My Trophies", Pages.GAMES, Args.compose("t", memberId));
             }
@@ -88,7 +88,7 @@ public class TitleBar extends SmartTable
                 }
             }
             break;
-            
+
         case SHOP:
             subnavi.addLink(null, "Shop", Pages.SHOP, "");
             break;
@@ -99,10 +99,10 @@ public class TitleBar extends SmartTable
                 subnavi.addLink(null, "Admin", Pages.SUPPORT, "admin");
             }
             break;
-            
+
         default:
-        	// nada
-        	break;
+            // nada
+            break;
         }
 
         return new TitleBar(tab, Page.getDefaultTitle(tab), subnavi, onClose);
