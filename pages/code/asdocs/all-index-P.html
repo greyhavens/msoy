@@ -172,9 +172,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 </tr>
 <tr>
 <td width="20"></td><td>
-     Pick (do not remove) the specified number of elements from a bag,
-     and distribute them to a specific player or set them as a property
-     in the game data.</td>
+     Pick (do not remove) the specified number of elements from a bag, and distribute them to a
+     specific player or set them as a property in the game data.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RandomUtil.html#pickRandom()">pickRandom</a>(values, randomFn) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/RandomUtil.html">RandomUtil</a></td>
@@ -202,6 +201,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControl.html#playAvatarAction()">playAvatarAction</a>(action) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControl.html">RoomSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameControl.html#player">player</a> &mdash; Property in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameControl.html">GameControl</a></td>
 </tr>
 <tr>
@@ -213,6 +218,63 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
 </tr>
 <tr>
 <td width="20"></td><td> Is/was the occupant a player? If false, they are/were a watcher.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControl.html#event:playerEntered">playerEntered</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControl.html">RoomSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Dispatched either when somebody in our room entered our current game,
+ or somebody playing the game entered our current room.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html#PLAYER_ENTERED">PLAYER_ENTERED</a> &mdash; Constant static property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html">AVRGameControlEvent</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> An event type dispatched either when somebody in our room joined our current game,
+     or somebody playing the game entered our current room.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControl.html#event:playerLeft">playerLeft</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControl.html">RoomSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Dispatched either when somebody in our room left our current game,
+ or somebody playing the game left our current room.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html#PLAYER_LEFT">PLAYER_LEFT</a> &mdash; Constant static property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html">AVRGameControlEvent</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> An event type dispatched either when somebody in our room left our current game,
+     or somebody playing the game left our current room.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControl.html#event:playerMoved">playerMoved</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControl.html">RoomSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Dispatched when another player in our current room took up a new location.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html#PLAYER_MOVED">PLAYER_MOVED</a> &mdash; Constant static property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html">AVRGameControlEvent</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> An event type dispatched either when a player of our game who's also in our
+     current room took up a new location in the scene.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/StateSubControl.html#event:playerPropertyChanged">playerPropertyChanged</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/StateSubControl.html">StateSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Dispatched when a player-local state property has changed.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html#PLAYER_PROPERTY_CHANGED">PLAYER_PROPERTY_CHANGED</a> &mdash; Constant static property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html">AVRGameControlEvent</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> An event type dispatched when a datum of player-local game state has changed.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html#playerReady()">playerReady</a>() &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html">GameSubControl</a></td>
@@ -292,10 +354,37 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("PÂ
  Dispatched when a property has changed in the shared game state.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PropControl.html">PropControl</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Defines actions, accessors and callbacks available to all Props.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PropControl.html#PropControl()">PropControl</a>(disp) &mdash; Constructor in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PropControl.html">PropControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Creates a controller for a Prop.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#PROP_DIMENSIONS">PROP_DIMENSIONS</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td> The entity pixel dimensions (an Array [width, height]).</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/StateSubControl.html#event:propertyChanged">propertyChanged</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/StateSubControl.html">StateSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Dispatched when a game-global state property has changed.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html#PROPERTY_CHANGED">PROPERTY_CHANGED</a> &mdash; Constant static property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html">AVRGameControlEvent</a></td>
+</tr>
+<tr>
+<td width="20"></td><td> An event type dispatched when a datum of game state has changed.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PropertyChangedEvent.html#PROPERTY_CHANGED">PROPERTY_CHANGED</a> &mdash; Constant static property in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PropertyChangedEvent.html">PropertyChangedEvent</a></td>

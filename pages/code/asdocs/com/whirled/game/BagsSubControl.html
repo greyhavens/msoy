@@ -42,14 +42,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
- Contains 'bags' game services. Do not instantiate this class yourself, access it
- via GameControl.services.bags.
-  Bags are secret collections containing non-unique elements that are stored on the server.
- They can be used to implement game features where clients can't be trusted to not
- sniff their network.
+ Contains 'bags' game services. Do not instantiate this class yourself, access it via
+ GameControl.services.bags.
+  Bags are secret collections containing non-unique elements that are stored on the server. They
+ can be used to implement game features where clients can't be trusted to not sniff their network.
  
- For example you could create a bag called "dice" and fill it with [ 1, 2, 3, 4, 5, 6 ].
- Now you can roll the die with _ctrl.services.bags.pick("dice", 1, "diceProperty");
+ For example you could create a bag called "dice" and fill it with [ 1, 2, 3, 4, 5, 6 ]. Now you
+ can roll the die with _ctrl.services.bags.pick("dice", 1, "diceProperty");
  <p></p>
 <br>
 <hr>
@@ -90,8 +89,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#create()">create</a>(bagName:String, values:Array):void</div>
 <div class="summaryTableDescription">
-     Create a bag containing the specified values,
-     clearing any previous bag with the same name.</div>
+     Create a bag containing the specified values, clearing any previous bag with the same name.</div>
 </td><td class="summaryTableOwnerCol">BagsSubControl</td>
 </tr>
 <tr class="">
@@ -99,9 +97,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#deal()">deal</a>(bagName:String, count:int, msgOrPropName:String, callback:Function = null, playerId:int):void</div>
 <div class="summaryTableDescription">
-     Deal (remove) the specified number of elements from a bag,
-     and distribute them to a specific player or set them as a property
-     in the game data.</div>
+     Deal (remove) the specified number of elements from a bag, and distribute them to a 
+     specific player or set them as a property in the game data.</div>
 </td><td class="summaryTableOwnerCol">BagsSubControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -138,9 +135,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#pick()">pick</a>(bagName:String, count:int, msgOrPropName:String, playerId:int):void</div>
 <div class="summaryTableDescription">
-     Pick (do not remove) the specified number of elements from a bag,
-     and distribute them to a specific player or set them as a property
-     in the game data.</div>
+     Pick (do not remove) the specified number of elements from a bag, and distribute them to a
+     specific player or set them as a property in the game data.</div>
 </td><td class="summaryTableOwnerCol">BagsSubControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -209,8 +205,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function addTo(bagName:String, values:Array):void</code><p>
-     Add values to an existing bag. If it doesn't exist, it will
-     be created.
+     Add values to an existing bag. If it doesn't exist, it will be created.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -232,8 +227,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function create(bagName:String, values:Array):void</code><p>
-     Create a bag containing the specified values,
-     clearing any previous bag with the same name.
+     Create a bag containing the specified values, clearing any previous bag with the same name.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -255,9 +249,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function deal(bagName:String, count:int, msgOrPropName:String, callback:Function = null, playerId:int):void</code><p>
-     Deal (remove) the specified number of elements from a bag,
-     and distribute them to a specific player or set them as a property
-     in the game data.
+     Deal (remove) the specified number of elements from a bag, and distribute them to a 
+     specific player or set them as a property in the game data. Fails if the named collection 
+     could not be found or does not contain enough elements to complete the deal.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -275,25 +269,31 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">msgOrPropName</span>:String</code> &mdash; the name of the message or property
-            that will contain the picked elements.
+<td width="20px"></td><td><code><span class="label">msgOrPropName</span>:String</code> &mdash; the name of the message or property that will contain the picked 
+     elements.
      </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">callback</span>:Function</code> (default = <code>null</code>)<code></code> &mdash; if <code>SHOW_TO_ALL</code> (or unset), the picked elements should be 
-            set on the gameObject as a property for all to see.
-            If a playerId is specified, only that player will receive
-            the elements as a message.
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code> (default = <code>null</code>)<code></code> &mdash; optional function to call after the deal has completed. If provided, the 
+     signature of the function must be compatible with the following:
+         <div class='listing'><pre>
+             function onDealt (count :int) :void {}
+         </pre></div>
+     If the deal fails for any reason, the count will be 0, otherwise it will be the number of 
+     elements dealt.
      </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> &mdash; if <code>SHOW_TO_ALL</code> (or unset), the picked elements should be set on 
+     the gameObject as a property for all to see. If a playerId is specified, only that player 
+     will receive the elements as a message.
+     </td>
 </tr>
 </table>
 <p>
@@ -311,10 +311,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function merge(srcBag:String, intoBag:String):void</code><p>
-     Merge all values from the specified bag into the other bag.
-     The source bag will be destroyed. The elements from
-     the source bag will be shuffled and appended to the end
-     of the destination bag.
+     Merge all values from the specified bag into the other bag. The source bag will be destroyed.
+     The elements from the source bag will be shuffled and appended to the end of the destination
+     bag.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -336,9 +335,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function pick(bagName:String, count:int, msgOrPropName:String, playerId:int):void</code><p>
-     Pick (do not remove) the specified number of elements from a bag,
-     and distribute them to a specific player or set them as a property
-     in the game data.
+     Pick (do not remove) the specified number of elements from a bag, and distribute them to a
+     specific player or set them as a property in the game data.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -356,18 +354,17 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">msgOrPropName</span>:String</code> &mdash; the name of the message or property
-            that will contain the picked elements.
+<td width="20px"></td><td><code><span class="label">msgOrPropName</span>:String</code> &mdash; the name of the message or property that will contain the picked
+     elements.
      </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> &mdash; if <code>SHOW_TO_ALL</code> (or unset), the picked elements should be 
-            set on the gameObject as a property for all to see.
-            If a playerId is specified, only that player will receive
-            the elements as a message.
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> &mdash; if <code>SHOW_TO_ALL</code> (or unset), the picked elements should be set on
+     the gameObject as a property for all to see. If a playerId is specified, only that player
+     will receive the elements as a message.
      </td>
 </tr>
 </table>
