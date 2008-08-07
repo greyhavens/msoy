@@ -6,73 +6,68 @@ package com.threerings.msoy.badge.data;
 import java.util.zip.CRC32;
 
 import com.samskivert.util.HashIntMap;
+
+import com.threerings.stats.Log;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.StatType;
-import com.threerings.stats.Log;
+
+import com.threerings.msoy.badge.data.all.StampCategory;
 
 /** Defines the various badge types. */
 public enum BadgeType
 {
     // social badges
-    FRIEND_1(Category.SOCIAL, 1000, "Friends", 1) {
+    FRIEND_1(StampCategory.SOCIAL, 1000, "Friends", 1) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getIntStat(StatType.FRIENDS_MADE);
         }
     },
 
-    FRIEND_2(Category.SOCIAL, 2000, "Friends", 5) {
+    FRIEND_2(StampCategory.SOCIAL, 2000, "Friends", 5) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getIntStat(StatType.FRIENDS_MADE);
         }
     },
 
-    WHIRLEDS_1(Category.SOCIAL, 1000, "Whirleds", 1) {
+    WHIRLEDS_1(StampCategory.SOCIAL, 1000, "Whirleds", 1) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getIntStat(StatType.WHIRLEDS_CREATED);
         }
     },
 
-    INVITES_1(Category.SOCIAL, 1000, "Invites", 1) {
+    INVITES_1(StampCategory.SOCIAL, 1000, "Invites", 1) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getIntStat(StatType.INVITES_ACCEPTED);
         }
     },
 
-    PLAYTIME_1(Category.SOCIAL, 1000, "ActiveHours", 24) {
+    PLAYTIME_1(StampCategory.SOCIAL, 1000, "ActiveHours", 24) {
         protected int getAcquiredUnits (MemberObject user) {
             return (int)Math.floor(user.stats.getIntStat(StatType.MINUTES_ACTIVE) / 60);
         }
     },
 
     // game badges
-    GAMER_1(Category.GAME, 1000, "Games", 5) {
+    GAMER_1(StampCategory.GAME, 1000, "Games", 5) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getSetStatSize(StatType.UNIQUE_GAMES_PLAYED);
         }
     },
 
-    MULTIPLAYER_1(Category.GAME, 2000, "MultiplayerWins", 1) {
+    MULTIPLAYER_1(StampCategory.GAME, 2000, "MultiplayerWins", 1) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getIntStat(StatType.MP_GAMES_WON);
         }
     },
 
-    TROPHY_1(Category.GAME, 1000, "Trophies", 1) {
+    TROPHY_1(StampCategory.GAME, 1000, "Trophies", 1) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getIntStat(StatType.TROPHIES_EARNED);
         }
     },
 
     ;
-
-    /**
-     * Defines the various badge categories, which can be used to suggest to the user
-     * which badges to pursue next, based on their past activity.
-     */
-    public static enum Category
-    {
-        SOCIAL, GAME, CREATION, EXPLORATION
-    };
 
     /**
      * Maps a {@link BadgeType}'s code back to a {@link BadgeType} instance.
@@ -119,7 +114,7 @@ public enum BadgeType
     /**
      * Returns the Category this badge falls under.
      */
-    public Category getCategory ()
+    public StampCategory getCategory ()
     {
         return _category;
     }
@@ -141,7 +136,7 @@ public enum BadgeType
         return 0;
     }
 
-    BadgeType (Category category, int coinValue, String unitName, int requiredUnits)
+    BadgeType (StampCategory category, int coinValue, String unitName, int requiredUnits)
     {
         _category = category;
         _coinValue = coinValue;
@@ -184,7 +179,7 @@ public enum BadgeType
         return code;
     }
 
-    protected Category _category;
+    protected StampCategory _category;
     protected int _coinValue;
     protected int _code;
     protected String _unitName;
