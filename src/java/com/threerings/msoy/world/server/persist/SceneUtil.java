@@ -5,6 +5,8 @@ package com.threerings.msoy.world.server.persist;
 
 import java.nio.ByteBuffer;
 
+import com.google.common.base.Preconditions;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
@@ -42,10 +44,8 @@ public class SceneUtil
 
             // sanity check; if we later need to flatten other static types than furni, we can have
             // the type constant map to an integer and stuff that into the byte array as well
-            if (!sdesc.getMediaType().equals(Item.FURNI_MEDIA)) {
-                throw new IllegalArgumentException(
-                    "Cannot flatten non-furni static media " + desc + ".");
-            }
+            Preconditions.checkArgument(sdesc.getMediaType().equals(Item.FURNI_MEDIA),
+                                        "Cannot flatten non-furni static media " + desc + ".");
 
             ByteBuffer data = ByteBuffer.allocate(4);
             data.asIntBuffer().put(sdesc.getItemTypeCode());
