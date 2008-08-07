@@ -146,9 +146,9 @@ public class TrackingCookie
         char[] chars = input.toCharArray();
         
         for (int ii = 0; ii < chars.length; ii++) {
-            int num = (int) chars[ii];
+            int num = chars[ii];
             if (num < -128 || num > 127) {
-                num = (int) '_'; // just in case, although this shouldn't happen
+                num = '_'; // just in case, although this shouldn't happen
             }
             total += num; 
             bytes[ii] = (byte)(num ^ OBFUSCATION_MASK);
