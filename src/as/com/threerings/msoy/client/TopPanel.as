@@ -511,13 +511,14 @@ public class TopPanel extends Canvas
         h -= ControlBar.HEIGHT;
 
         var left :int = 0;
+        var right :int = 0;
         if (_chat != null) {
             left += _chatBounds.width + CHAT_PADDING;
             w -= _chatBounds.width + CHAT_PADDING;
             _chat.setStyle("top", top);
             _chat.setStyle("bottom", bottom);
-            _chat.setStyle("right", 0);
-            _chat.setStyle("left", getRightPanelWidth() + w + CHAT_PADDING);
+            _chat.setStyle("left", 0);
+            _chat.setStyle("right", getRightPanelWidth() + w + CHAT_PADDING);
             _chatBounds.height = h;
         }
         if (_comicOverlay != null) {
@@ -525,10 +526,11 @@ public class TopPanel extends Canvas
                 new Rectangle(0, 0, ChatOverlay.DEFAULT_WIDTH, h));
         }
 
+        //w -= ScrollBar.THICKNESS;
         _placeBox.setStyle("top", top);
         _placeBox.setStyle("bottom", bottom);
-        _placeBox.setStyle("right", left);
-        _placeBox.setStyle("left", getRightPanelWidth());
+        _placeBox.setStyle("right", right);
+        _placeBox.setStyle("left", left + getRightPanelWidth()); // + ScrollBar.THICKNESS);
         _placeBox.setActualSize(w, h);
     }
 
