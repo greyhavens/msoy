@@ -115,9 +115,7 @@ public class WorldControlBar extends ControlBar
         checkNotificationDisplay();
 
         if (_notificationDisplay != null && _notificationDisplay.visible) {
-            callLater(function () :void {
-                _notificationDisplay.updatePopupLocation();
-            });
+            callLater(_notificationDisplay.updatePopupLocation);
         }
     }
 
@@ -195,11 +193,11 @@ public class WorldControlBar extends ControlBar
         _isEditing = false;
 
         if (_notificationDisplay != null) {
-            addGroupChild(_notificationDisplay, [ UI_STD, UI_EDIT ]);
+            addGroupChild(_notificationDisplay, [ UI_STD, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);
         }
 
         if (_friendBtnBox != null) {
-            addGroupChild(_friendBtnBox, [ UI_STD, UI_EDIT ]);
+            addGroupChild(_friendBtnBox, [ UI_STD, UI_EDIT, UI_SIDEBAR ]);
         }
         
         return retVal;
