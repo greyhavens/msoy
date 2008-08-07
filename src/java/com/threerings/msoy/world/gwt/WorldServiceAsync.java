@@ -5,7 +5,6 @@ package com.threerings.msoy.world.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.WebIdent;
 
 /**
@@ -17,11 +16,6 @@ public interface WorldServiceAsync
      * The asynchronous version of {@link WorldService#serializePopularPlaces}.
      */
     void serializePopularPlaces (WebIdent ident, int n, AsyncCallback<String> callback);
-
-    /**
-     * The asynchronous version of {@link WorldService#loadLaunchConfig}.
-     */
-    void loadLaunchConfig (WebIdent ident, int gameId, AsyncCallback<LaunchConfig> callback);
 
     /**
      * The asynchronous version of {@link WorldService#loadRoomInfo}.

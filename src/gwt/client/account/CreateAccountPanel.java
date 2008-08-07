@@ -34,6 +34,7 @@ import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.CaptchaException;
 import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.RegisterInfo;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.Pages;
@@ -202,36 +203,39 @@ public class CreateAccountPanel extends FlowPanel
             return;
         }
 
-        String email = _email.getText().trim(), name = _name.getText().trim();
-        String password = _password.getText().trim();
+        RegisterInfo info = new RegisterInfo();
+        info.email = _email.getText().trim();
+        info.password = _password.getText().trim();
+        info.displayName = _name.getText().trim();
+        info.birthday = _dateOfBirth.getDate();
+        info.photo = null; // TODO: remove since we're not using this any more
+        info.info = new AccountInfo();
+        info.info.realName = _rname.getText().trim();
+        info.expireDays = 1; // TODO: unmagick?
         Invitation invite = CAccount.frame.getActiveInvitation();
-        String inviteId = (invite == null) ? null : invite.inviteId;
-        int guestId = CAccount.isGuest() ? CAccount.getMemberId() : 0;
-        AccountInfo info = new AccountInfo();
-        info.realName = _rname.getText().trim();
+        info.inviteId = (invite == null) ? null : invite.inviteId;
+        info.guestId = CAccount.isGuest() ? CAccount.getMemberId() : 0;
+        info.referral = TrackingCookie.get();
+        info.captchaChallenge = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getChallenge() : null;
+        info.captchaResponse = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getResponse() : null;
 
         setStatus(CAccount.msgs.creatingAccount());
-        String challenge = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getChallenge() : null;
-        String response = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getResponse() : null;
-        _usersvc.register(
-            DeploymentConfig.version, email, CAccount.frame.md5hex(password), name,
-            _dateOfBirth.getDate(), null, info, 1, inviteId, guestId, challenge,
-            response, TrackingCookie.get(), new AsyncCallback<SessionData>() {
-                public void onSuccess (SessionData result) {
-                    result.justCreated = true;
-                    // let the top-level frame know that we logged on (which will trigger a redirect)
-                    CAccount.frame.dispatchDidLogon(result);
-                }
-                public void onFailure (Throwable caught) {
-                    if (RecaptchaUtil.isEnabled()) {
-                        RecaptchaUtil.reload();
-                        if (caught instanceof CaptchaException) {
-                            RecaptchaUtil.focus();
-                        }
+        _usersvc.register(DeploymentConfig.version, info, new AsyncCallback<SessionData>() {
+            public void onSuccess (SessionData result) {
+                result.justCreated = true;
+                // let the top-level frame know that we logged on (which will trigger a redirect)
+                CAccount.frame.dispatchDidLogon(result);
+            }
+            public void onFailure (Throwable caught) {
+                if (RecaptchaUtil.isEnabled()) {
+                    RecaptchaUtil.reload();
+                    if (caught instanceof CaptchaException) {
+                        RecaptchaUtil.focus();
                     }
-                    setStatus(CAccount.serverError(caught));
                 }
-            });
+                setStatus(CAccount.serverError(caught));
+            }
+        });
     }
 
     protected void setStatus (String text)

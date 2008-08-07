@@ -17,23 +17,30 @@ import com.google.gwt.user.client.WindowResizeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.WidgetUtil;
+
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.MemberServiceAsync;
+import com.threerings.msoy.web.client.WebUserService;
+import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
+import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.SessionData;
 
 import client.shell.Args;
 import client.shell.BrowserTest;
 import client.shell.CShell;
-import client.shell.Pages;
 import client.shell.HttpReferrerCookie;
+import client.shell.Pages;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
@@ -45,14 +52,14 @@ import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
+import client.util.events.GotGuestIdEvent;
 
 /**
  * Handles the outer shell of the Whirled web application. Loads pages into an iframe and also
  * handles displaying the Flash client.
  */
 public class FrameEntryPoint
-    implements EntryPoint, HistoryListener, Session.Observer, client.shell.Frame,
-               WorldClient.Container
+    implements EntryPoint, HistoryListener, Session.Observer, client.shell.Frame
 {
     // from interface EntryPoint
     public void onModuleLoad ()
@@ -180,8 +187,8 @@ public class FrameEntryPoint
             maybeCreateReferral(affiliate, vector, creative);
         } 
 
-        // if we still don't have a tracking cookie, try to manufacture one from 
-        // the HTTP Referer header, which the server should have saved for us.
+        // if we still don't have a tracking cookie, try to manufacture one from the HTTP Referer
+        // header, which the server should have saved for us.
         if (!TrackingCookie.exists()) {
             if (HttpReferrerCookie.exists()) {
                 String ref = HttpReferrerCookie.get();
@@ -253,12 +260,6 @@ public class FrameEntryPoint
     {
         History.back();
         History.newItem(token);
-    }
-
-    // from interface Frame
-    public void displayWorldClient (String args, String closeToken)
-    {
-        WorldClient.displayFlash(args, closeToken, this);
     }
 
     // from interface Frame
@@ -369,49 +370,6 @@ public class FrameEntryPoint
         return _activeInvite;
     }
 
-    // from interface WorldClient.Container
-    public void setShowingClient (String closeToken)
-    {
-        // note the current history token so that we can restore it if needed
-        _closeToken = (closeToken == null) ? _currentToken : closeToken;
-
-        // hide our content
-        if (_content != null) {
-            _content.setVisible(false);
-        }
-
-        // have the client take up all the space
-        if (_client != null) {
-            RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
-            _client.setWidth("100%");
-        }
-
-        // make sure the header is showing as we always want the header above the client
-        _header.setVisible(true);
-        _header.selectTab(null);
-    }
-
-    // from interface WorldClient.Container
-    public Panel getClientContainer ()
-    {
-        if (_client != null) {
-            RootPanel.get(PAGE).remove(_client);
-            _client = null;
-        }
-
-        if (Window.getClientHeight() < (NAVI_HEIGHT + CLIENT_HEIGHT)) {
-            _client = new ScrollPanel();
-            _client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
-        } else {
-            _client = new SimplePanel();
-        }
-        _client.setWidth("100%");
-        RootPanel.get(PAGE).add(_client);
-        RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
-
-        return _client;
-    }
-
     protected void setPage (Pages page)
     {
         // clear out any old content
@@ -431,8 +389,8 @@ public class FrameEntryPoint
         // select the appropriate header tab
         _header.selectTab(page.getTab());
 
-        int contentTop;
-        String contentWidth, contentHeight;
+        int contentTop = 0;
+        String contentWidth = null, contentHeight = null;
         switch (page) {
         case LANDING:
             closeClient(); // no client on the landing page
@@ -448,9 +406,43 @@ public class FrameEntryPoint
             setWindowResizerEnabled(false);
             break;
 
-//         case WORLD:
-//             // TODO: handle world page stuff directly, extract rooms page to ROOMS
-//             break;
+        case WORLD: {
+            Args args = new Args();
+            args.setToken(_pageToken);
+            String action = args.get(0, "s1");
+            if (action.startsWith("s")) {
+                String sceneId = action.substring(1);
+                if (args.getArgCount() <= 1) {
+                    displayWorldClient("sceneId=" + sceneId, null);
+                } else {
+                    // if we have sNN-extra-args we want the close button to use just "sNN"
+                    displayWorldClient(
+                        "sceneId=" + sceneId + "&page=" + Args.compose(args.splice(1)),
+                        Pages.WORLD + "-s" + sceneId);
+                }
+
+            } else if (action.equals("game")) {
+                // display a game lobby or enter a game (action_gameId_gameOid)
+                displayGame(args.get(1, ""), args.get(2, 0), args.get(3, -1));
+
+            } else if (action.startsWith("g")) {
+                // go to a specific group's scene group
+                displayWorldClient("groupHome=" + action.substring(1), null);
+
+            } else if (action.startsWith("m")) {
+                // go to a specific member's home
+                displayWorldClient("memberHome=" + action.substring(1), null);
+
+            } else if (action.startsWith("c")) {
+                // join a group chat
+                displayWorldClient("groupChat=" + action.substring(1), null);
+
+            } else if (action.startsWith("h")) {
+                // go to our home
+                displayWorldClient("memberHome=" + CShell.getMemberId(), null);
+            }
+            break;
+        }
 
         default:
             // let the client know it about to be minimized
@@ -486,14 +478,16 @@ public class FrameEntryPoint
         }
 
         // size, add and position the content
-        _content.setWidth(contentWidth);
-        _content.setHeight(contentHeight);
-        RootPanel.get(PAGE).add(_content);
-        RootPanel.get(PAGE).setWidgetPosition(_content, 0, contentTop);
+        if (_content != null) {
+            _content.setWidth(contentWidth);
+            _content.setHeight(contentHeight);
+            RootPanel.get(PAGE).add(_content);
+            RootPanel.get(PAGE).setWidgetPosition(_content, 0, contentTop);
 
-        // activate our close button if we have a client
-        if (_bar != null) {
-            _bar.setCloseVisible(FlashClients.clientExists());
+            // activate our close button if we have a client
+            if (_bar != null) {
+                _bar.setCloseVisible(FlashClients.clientExists());
+            }
         }
     }
 
@@ -503,6 +497,130 @@ public class FrameEntryPoint
             _bar = null;
             RootPanel.get(PAGE).remove(_content);
             _content = null;
+        }
+    }
+
+    protected void displayWorldClient (String args, String closeToken)
+    {
+        // note the current history token so that we can restore it if needed
+        _closeToken = (closeToken == null) ? _currentToken : closeToken;
+
+        // hide our content
+        if (_content != null) {
+            _content.setVisible(false);
+        }
+
+        // have the client take up all the space
+        if (_client != null) {
+            RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
+            _client.setWidth("100%");
+        }
+
+        // make sure the header is showing as we always want the header above the client
+        _header.setVisible(true);
+        _header.selectTab(null);
+
+        // finally actually display the client
+        WorldClient.displayFlash(args, new WorldClient.PanelProvider() {
+            public Panel get () {
+                if (_client != null) {
+                    RootPanel.get(PAGE).remove(_client);
+                    _client = null;
+                }
+
+                if (Window.getClientHeight() < (NAVI_HEIGHT + CLIENT_HEIGHT)) {
+                    _client = new ScrollPanel();
+                    _client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
+                } else {
+                    _client = new SimplePanel();
+                }
+                _client.setWidth("100%");
+                RootPanel.get(PAGE).add(_client);
+                RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
+
+                return _client;
+            }
+        });
+    }
+
+    protected void displayGame (final String action, int gameId, final int gameOid)
+    {
+        // load up the information needed to launch the game
+        _usersvc.loadLaunchConfig(CShell.ident, gameId, new MsoyCallback<LaunchConfig>() {
+            public void onSuccess (LaunchConfig result) {
+                launchGame(result, gameOid, action);
+            }
+        });
+    }
+
+    protected void launchGame (final LaunchConfig config, final int gameOid, String action)
+    {
+    	// if we were assigned a guest id, make it known to everyone
+        if (config.guestId != 0) {
+        	CShell.frame.dispatchEvent(new GotGuestIdEvent(config.guestId));
+        }
+
+        switch (config.type) {
+        case LaunchConfig.FLASH_IN_WORLD:
+            displayWorldClient("worldGame=" + config.gameId, null);
+            break;
+
+        case LaunchConfig.FLASH_LOBBIED:
+            if (gameOid <= 0) {
+                String hostPort = "&ghost=" + config.server + "&gport=" + config.port;
+                if (action.equals("m") || action.equals("f") || action.equals("s")) {
+                    displayWorldClient(
+                        "playNow=" + config.gameId + "&mode=" + action + hostPort, null);
+                } else {
+                    displayWorldClient("gameLobby=" + config.gameId + hostPort, null);
+                }
+            } else {
+                displayWorldClient("gameLocation=" + gameOid, null);
+            }
+            break;
+
+        case LaunchConfig.JAVA_FLASH_LOBBIED:
+        case LaunchConfig.JAVA_SELF_LOBBIED:
+            if (config.type == LaunchConfig.JAVA_FLASH_LOBBIED && gameOid <= 0) {
+                displayWorldClient("gameLobby=" + config.gameId, null);
+
+            } else {
+                // clear out the client as we're going into Java land
+                closeClient();
+
+                // prepare a command to be invoked once we know Java is loaded
+                _javaReadyCommand = new Command() {
+                    public void execute () {
+                        displayJava(config, gameOid);
+                    }
+                };
+
+                // stick up a loading message and the HowdyPardner Java applet
+                FlowPanel bits = new FlowPanel();
+                bits.setStyleName("javaLoading");
+                bits.add(new Label("Loading game..."));
+
+                String hpath = "/clients/" + DeploymentConfig.version + "/howdy.jar";
+                bits.add(WidgetUtil.createApplet("game", config.getURL(hpath),
+                                                 "com.threerings.msoy.client.HowdyPardner",
+                                                 "100", "10", true, new String[0]));
+                // TODO
+                // setContent(bits);
+            }
+            break;
+
+//         case LaunchConfig.FLASH_SOLO:
+//             setFlashContent(
+//                     config.name, FlashClients.createSoloGameDefinition(config.gameMediaPath));
+//             break;
+
+//         case LaunchConfig.JAVA_SOLO:
+//             setContent(config.name, new Label("Not yet supported"));
+//             break;
+
+        default:
+            CShell.log("Requested to display unsupported game type " + config.type + ".");
+            break;
         }
     }
 
@@ -521,9 +639,6 @@ public class FrameEntryPoint
             return null;
         case NAVIGATE_REPLACE:
             navigateReplace(args[0]);
-            return null;
-        case DISPLAY_WORLD_CLIENT:
-            displayWorldClient(args[0], args[1]);
             return null;
         case CLOSE_CLIENT:
             closeClient();
@@ -627,6 +742,34 @@ public class FrameEntryPoint
     	}
     }
 
+    protected void displayJava (LaunchConfig config, int gameOid)
+    {
+// TODO: all this information needs to be passed up to the Frame, so maybe the frame should just
+// take care of all of this...
+//         String[] args = new String[] {
+//             "game_id", "" + config.gameId, "game_oid", "" + gameOid,
+//             "server", config.server, "port", "" + config.port,
+//             "authtoken", (CWorld.ident == null) ? "" : CWorld.ident.token };
+//         String gjpath = "/clients/" + DeploymentConfig.version + "/" +
+//             (config.lwjgl ? "lwjgl-" : "") + "game-client.jar";
+//         WorldClient.displayJava(
+//             WidgetUtil.createApplet(
+//                 // here we explicitly talk directly to our game server (not via the public facing
+//                 // URL which is a virtual IP) so that Java's security policy works
+//                 "game", config.getURL(gjpath) + "," + config.getURL(config.gameMediaPath),
+//                 "com.threerings.msoy.game.client." + (config.lwjgl ? "LWJGL" : "") + "GameApplet",
+//                 // TODO: allow games to specify their dimensions in their config
+//                 "100%", "600", false, args));
+    }
+
+    protected void javaReady ()
+    {
+        if (_javaReadyCommand != null) {
+            DeferredCommand.addCommand(_javaReadyCommand);
+            _javaReadyCommand = null;
+        }
+    }
+
     /**
      * Configures top-level functions that can be called by Flash.
      */
@@ -664,6 +807,9 @@ public class FrameEntryPoint
        }
        $wnd.triggerFlashEvent = function (eventName, args) {
            entry.@client.frame.FrameEntryPoint::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
+       }
+       $wnd.howdyPardner = function () {
+           entry.@client.frame.FrameEntryPoint::javaReady()();
        }
     }-*/;
 
@@ -720,9 +866,17 @@ public class FrameEntryPoint
     /** Handles window resizes. */
     protected WindowResizeListener _resizer;
 
+    /** Used to talk to Google Analytics. */
+    protected Analytics _analytics = new Analytics();
+
+    /** A command to be run when Java reports readiness. */
+    protected Command _javaReadyCommand;
+
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
         ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
+    protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
+        ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 
     // constants for our top-level elements
     protected static final String PAGE = "page";
@@ -737,6 +891,4 @@ public class FrameEntryPoint
         "md5", "/js/md5.js",
         "googanal", "http://www.google-analytics.com/ga.js",
     };
-
-    protected Analytics _analytics = new Analytics();
 }

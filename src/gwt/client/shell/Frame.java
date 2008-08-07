@@ -35,8 +35,8 @@ public interface Frame
 
     /** Codes for use with our inner frame to top frame RPC mechanism. */
     public static enum Calls {
-        SET_TITLE, NAVIGATE_TO, NAVIGATE_REPLACE, DISPLAY_WORLD_CLIENT, CLOSE_CLIENT, CLOSE_CONTENT,
-        DID_LOGON, GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, CHECK_FLASH_VERSION, GET_ACTIVE_INVITE
+        SET_TITLE, NAVIGATE_TO, NAVIGATE_REPLACE, CLOSE_CLIENT, CLOSE_CONTENT, DID_LOGON,
+        GET_WEB_CREDS, GET_PAGE_TOKEN, GET_MD5, CHECK_FLASH_VERSION, GET_ACTIVE_INVITE
     };
 
     /**
@@ -54,14 +54,6 @@ public interface Frame
      * current page from the browser history in the process.
      */
     void navigateReplace (String token);
-
-    /**
-     * Displays the Flash world client with the specified args. If the client is already showing,
-     * the args will be passed to the running client.
-     *
-     * @param pageToken a custom close token to override the default, or null for the default.
-     */
-    void displayWorldClient (String args, String closeToken);
 
     /**
      * Clears any open client and restores the content display.

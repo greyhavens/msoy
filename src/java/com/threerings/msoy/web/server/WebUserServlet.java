@@ -33,9 +33,7 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
@@ -47,6 +45,7 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.util.MailSender;
 
+import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MemberNodeAction;
@@ -59,6 +58,8 @@ import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.CaptchaException;
 import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.LaunchConfig;
+import com.threerings.msoy.web.data.RegisterInfo;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SessionData;
@@ -85,16 +86,13 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public SessionData register (
-        String clientVersion, String username, String password, String displayName,
-        int[] bdayvec, MediaDesc photo, AccountInfo info, int expireDays, String inviteId,
-        int guestId, String captchaChallenge, String captchaResponse, ReferralInfo referral)
+    public SessionData register (String clientVersion, RegisterInfo info)
         throws ServiceException
     {
-        checkClientVersion(clientVersion, username);
+        checkClientVersion(clientVersion, info.email);
 
         // check age restriction
-        java.sql.Date birthday = ProfileRecord.fromDateVec(bdayvec);
+        java.sql.Date birthday = ProfileRecord.fromDateVec(info.birthday);
         Calendar thirteenYearsAgo = Calendar.getInstance();
         thirteenYearsAgo.add(Calendar.YEAR, -13);
         if (birthday.compareTo(thirteenYearsAgo.getTime()) > 0) {
@@ -105,43 +103,43 @@ public class WebUserServlet extends MsoyServiceServlet
         // check invitation validity
         boolean ignoreRestrict = false;
         InvitationRecord invite = null;
-        if (inviteId != null) {
+        if (info.inviteId != null) {
             try {
-                invite = _memberRepo.inviteAvailable(inviteId);
+                invite = _memberRepo.inviteAvailable(info.inviteId);
                 if (invite == null) {
                     throw new ServiceException(MsoyAuthCodes.INVITE_ALREADY_REDEEMED);
                 }
                 ignoreRestrict = true;
             } catch (PersistenceException pe) {
-                log.warning("Checking invite availability failed " +
-                        "[inviteId=" + inviteId + "]", pe);
+                log.warning("Checking invite availability failed", "inviteId", info.inviteId, pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
         }
 
         // validate display name length (this is enforced on the client)
-        displayName = displayName.trim();
+        final String displayName = info.displayName.trim();
         if (!MemberName.isValidDisplayName(displayName) ||
-                !MemberName.isValidNonSupportName(displayName)) {
+            !MemberName.isValidNonSupportName(displayName)) {
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        // validate the captcha if necessary
+        // validate the captcha if appropriate
         if (!StringUtil.isBlank(ServerConfig.recaptchaPrivateKey)) {
-            verifyCaptcha(captchaChallenge, captchaResponse);
+            verifyCaptcha(info.captchaChallenge, info.captchaResponse);
         }
 
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         final MemberRecord mrec = _author.createAccount(
-            username, password, displayName, ignoreRestrict, invite, referral);
+            info.email, info.password, info.displayName, ignoreRestrict, invite,
+            info.referral);
 
         // store the user's birthday and realname in their profile
         ProfileRecord prec = new ProfileRecord();
         prec.memberId = mrec.memberId;
         prec.birthday = birthday;
-        prec.realName = info.realName;
-        prec.setPhoto(photo);
+        prec.realName = info.info.realName;
+        prec.setPhoto(info.photo);
         try {
             _profileRepo.storeProfile(prec);
         } catch (PersistenceException pe) {
@@ -151,17 +149,17 @@ public class WebUserServlet extends MsoyServiceServlet
 
         // if they have accumulated flow as a guest, transfer that to their account (note: only
         // negative ids are valid guest ids)
-        if (guestId < 0) {
-            _peerMan.invokeNodeAction(new TransferGuestFlowAction(guestId, mrec.memberId));
+        if (info.guestId < 0) {
+            _peerMan.invokeNodeAction(new TransferGuestFlowAction(info.guestId, mrec.memberId));
         }
 
         // if we are responding to an invitation, wire that all up
         if (invite != null && invite.inviterId != 0) {
             try {
-                _memberRepo.linkInvite(inviteId, mrec);
+                _memberRepo.linkInvite(info.inviteId, mrec);
             } catch (PersistenceException pe) {
-                log.warning("Linking invites failed [inviteId=" + inviteId +
-                        ", memberId=" + mrec.memberId + "]", pe);
+                log.warning("Linking invites failed", "inviteId", info.inviteId,
+                            "memberId", mrec.memberId, pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
 
@@ -169,7 +167,7 @@ public class WebUserServlet extends MsoyServiceServlet
             try {
                 inviter = _memberRepo.loadMember(invite.inviterId);
             } catch (PersistenceException pe) {
-                log.warning("Failed to lookup inviter [inviteId=" + inviteId +
+                log.warning("Failed to lookup inviter [inviteId=" + info.inviteId +
                         ", memberId=" + invite.inviterId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
@@ -223,7 +221,7 @@ public class WebUserServlet extends MsoyServiceServlet
             }
         }
 
-        return startSession(mrec, expireDays);
+        return startSession(mrec, info.expireDays);
     }
 
     // from interface WebUserService
@@ -258,6 +256,13 @@ public class WebUserServlet extends MsoyServiceServlet
         config.port = ServerConfig.serverPorts[0];
         config.httpPort = ServerConfig.httpPort;
         return config;
+    }
+
+    // from interface WorldService
+    public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
+        throws ServiceException
+    {
+        return _gameLogic.loadLaunchConfig(ident, gameId);
     }
 
     // from interface WebUserService
@@ -577,6 +582,7 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected FriendManager _friendMan;
     @Inject protected NotificationManager _notifyMan;
     @Inject protected MailLogic _mailLogic;
+    @Inject protected GameLogic _gameLogic;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected StatLogic _statLogic;
     @Inject protected MailRepository _mailRepo;

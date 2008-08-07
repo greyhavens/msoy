@@ -5,10 +5,10 @@ package com.threerings.msoy.web.client;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.ConnectConfig;
+import com.threerings.msoy.web.data.LaunchConfig;
+import com.threerings.msoy.web.data.RegisterInfo;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebIdent;
@@ -28,7 +28,7 @@ public interface WebUserService extends RemoteService
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    public SessionData login (String clientVersion, String email, String password, int expireDays)
+    SessionData login (String clientVersion, String email, String password, int expireDays)
         throws ServiceException;
 
     /**
@@ -38,71 +38,74 @@ public interface WebUserService extends RemoteService
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    public SessionData register (
-        String clientVersion, String email, String password, String displayName, int[] birthday,
-        MediaDesc photo, AccountInfo info, int expireDays, String inviteId, int guestId,
-        String captchaChallenge, String captchaResponse, ReferralInfo referral)
+    SessionData register (String clientVersion, RegisterInfo info)
         throws ServiceException;
 
     /**
      * Validates that the supplied session token is still active and refreshes its expiration time
      * if so.
      */
-    public SessionData validateSession (String clientVersion, String authtok, int expireDays)
+    SessionData validateSession (String clientVersion, String authtok, int expireDays)
         throws ServiceException;
 
     /**
      * Returns the connection information for this server's World services.
      */
-    public ConnectConfig getConnectConfig ()
+    ConnectConfig getConnectConfig ()
+        throws ServiceException;
+
+    /**
+     * Loads the configuration needed to play (launch) the specified game.
+     */
+    LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
         throws ServiceException;
 
     /**
      * Sends a "forgot my password" email to the account registered with the supplied address.
      */
-    public void sendForgotPasswordEmail (String email)
+    void sendForgotPasswordEmail (String email)
         throws ServiceException;
 
     /**
      * Updates the email address on file for this account.
      */
-    public void updateEmail (WebIdent ident, String newEmail)
+    void updateEmail (WebIdent ident, String newEmail)
         throws ServiceException;
 
     /**
      * Updates the email preferences for this account.
      */
-    public void updateEmailPrefs (WebIdent ident, boolean emailOnWhirledMail,
+    void updateEmailPrefs (WebIdent ident, boolean emailOnWhirledMail,
                                   boolean emailAnnouncements)
         throws ServiceException;
 
     /**
      * Updates the password on file for this account.
      */
-    public void updatePassword (WebIdent ident, String newPassword)
+    void updatePassword (WebIdent ident, String newPassword)
         throws ServiceException;
 
     /**
      * Resets the password on file for the specified account to the new value.
      */
-    public boolean resetPassword (int memberId, String code, String newPassword)
+    boolean resetPassword (int memberId, String code, String newPassword)
         throws ServiceException;
 
     /**
      * Configures the permaname for this account.
      */
-    public void configurePermaName (WebIdent ident, String permaName)
+    void configurePermaName (WebIdent ident, String permaName)
         throws ServiceException;
 
     /**
      * fetches the user's account info.
      */
-    public AccountInfo getAccountInfo (WebIdent ident)
+    AccountInfo getAccountInfo (WebIdent ident)
         throws ServiceException;
 
     /**
      * Updates the user's account info to match the AccountInfo object.
      */
-    public void updateAccountInfo (WebIdent ident, AccountInfo info)
+    void updateAccountInfo (WebIdent ident, AccountInfo info)
         throws ServiceException;
 }

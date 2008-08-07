@@ -77,9 +77,6 @@ public abstract class Page
                 public void navigateReplace (String token) {
                     frameCall(Frame.Calls.NAVIGATE_REPLACE, new String[] { token });
                 }
-                public void displayWorldClient (String args, String closeToken) {
-                    frameCall(Frame.Calls.DISPLAY_WORLD_CLIENT, new String[] { args, closeToken });
-                }
                 public void closeClient () {
                     frameCall(Frame.Calls.CLOSE_CLIENT, null);
                 }
@@ -390,9 +387,6 @@ public abstract class Page
             History.newItem(token);
         }
 
-        public void displayWorldClient (String args, String closeToken) {
-            CShell.log("Would display world [args=" + args + ", closeToken=" + closeToken + "].");
-        }
         public void closeClient () {
             CShell.log("Would close client.");
         }

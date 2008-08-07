@@ -39,7 +39,6 @@ import com.threerings.msoy.world.gwt.WorldService;
 import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 import com.threerings.msoy.world.server.persist.SceneRecord;
 
-import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
@@ -51,7 +50,6 @@ import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -102,13 +100,6 @@ public class WorldServlet extends MsoyServiceServlet
     }
 
     // from interface WorldService
-    public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
-        throws ServiceException
-    {
-        return _gameLogic.loadLaunchConfig(ident, gameId);
-    }
-
-    // from interface WorldService
     public RoomInfo loadRoomInfo (int sceneId)
         throws ServiceException
     {
@@ -136,6 +127,7 @@ public class WorldServlet extends MsoyServiceServlet
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
+
     @EventThread
     protected void addPopularChannels (MemberName name, Set<GroupName> groups, JSONObject result)
         throws JSONException
@@ -305,7 +297,6 @@ public class WorldServlet extends MsoyServiceServlet
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MemberManager _memberMan;
     @Inject protected ChatChannelManager _channelMan;
-    @Inject protected GameLogic _gameLogic;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupRepository _groupRepo;
 

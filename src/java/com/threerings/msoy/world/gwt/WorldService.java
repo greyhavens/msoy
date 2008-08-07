@@ -5,7 +5,6 @@ package com.threerings.msoy.world.gwt;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-import com.threerings.msoy.web.data.LaunchConfig;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -21,12 +20,6 @@ public interface WorldService extends RemoteService
      * Fetch the n most Popular Places data in JSON-serialized form.
      */
     String serializePopularPlaces (WebIdent ident, int n)
-        throws ServiceException;
-
-    /**
-     * Loads the configuration needed to play (launch) the specified game.
-     */
-    LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
         throws ServiceException;
 
     /**
