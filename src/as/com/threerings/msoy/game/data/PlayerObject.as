@@ -12,6 +12,7 @@ import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.game.data.GameData;
+import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.VizMemberName;
@@ -142,6 +143,23 @@ public class PlayerObject extends BodyObject
     {
         super.readObject(ins);
 
+        // first read any regular bits
+        readDefaultFields(ins);
+
+        // then user properties
+        var count :int = ins.readInt();
+        while (count-- > 0) {
+            var key :String = ins.readUTF();
+            var value :Object = WhirledGameObject.decodeProperty(ins.readObject());
+            _props[key] = value;
+        }
+    }
+
+    /**
+     * Reads the fields written by the default serializer for this instance.
+     */
+    protected function readDefaultFields (ins :ObjectInputStream) :void
+    {
         memberName = (ins.readObject() as VizMemberName);
         tokens = (ins.readObject() as MsoyTokenRing);
         humanity = ins.readInt();
@@ -150,5 +168,8 @@ public class PlayerObject extends BodyObject
         gameContent = (ins.readObject() as DSet);
         referral = (ins.readObject() as ReferralInfo);
     }
+
+    /** The raw properties set by the game. */
+    protected var _props :Object = new Object();
 }
 }

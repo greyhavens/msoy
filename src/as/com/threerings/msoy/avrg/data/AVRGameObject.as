@@ -5,6 +5,7 @@ package com.threerings.msoy.avrg.data {
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
+import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.io.ObjectInputStream;
 
@@ -62,9 +63,29 @@ public class AVRGameObject extends PlaceObject
     {
         super.readObject(ins);
 
+        // first read any regular bits
+        readDefaultFields(ins);
+
+        // then user properties
+        var count :int = ins.readInt();
+        while (count-- > 0) {
+            var key :String = ins.readUTF();
+            var value :Object = WhirledGameObject.decodeProperty(ins.readObject());
+            _props[key] = value;
+        }
+    }
+
+    /**
+     * Reads the fields written by the default serializer for this instance.
+     */
+    protected function readDefaultFields (ins :ObjectInputStream) :void
+    {
         gameMedia = (ins.readObject() as MediaDesc);
         playerLocs = (ins.readObject() as DSet);
         avrgService = (ins.readObject() as AVRGameMarshaller);
     }
+
+    /** The raw properties set by the game. */
+    protected var _props :Object = new Object();
 }
 }
