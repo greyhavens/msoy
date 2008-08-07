@@ -12,7 +12,6 @@ import com.threerings.stats.Log;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.StatType;
 
-import com.threerings.msoy.badge.data.all.StampCategory;
 
 /** Defines the various badge types. */
 public enum BadgeType

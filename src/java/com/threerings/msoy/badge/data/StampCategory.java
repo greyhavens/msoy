@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.badge.data.all;
+package com.threerings.msoy.badge.data;
 
 /**
  * Defines the various badge categories, which can be used to suggest to the user
