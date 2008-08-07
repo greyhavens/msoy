@@ -9,16 +9,22 @@ import java.io.PrintStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import com.google.inject.Inject;
+
 import com.samskivert.io.StreamUtil;
+import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.server.AbstractUploadServlet;
 import com.threerings.msoy.web.server.FileItemUploadFile;
+import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.UploadFile;
-import com.threerings.msoy.web.server.UploadUtil;
 import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
+import com.threerings.msoy.web.server.UploadUtil;
 
 import static com.threerings.msoy.Log.log;
 
@@ -27,9 +33,6 @@ import static com.threerings.msoy.Log.log;
  */
 public class ItemMediaUploadServlet extends AbstractUploadServlet
 {
-    // TODO: override validateAccess. check that the user is logged in.
-    // This will require the various item editors to pass a WebIdent down here.
-
     /**
      * Generates the MediaInfo object for this FileItem and publishes the data into the media store
      * and returns the results via Javascript to the GWT client.
@@ -152,6 +155,20 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
         return LARGE_MEDIA_MAX_SIZE;
     }
 
+    @Override // from AbstractUploadServlet
+    protected void validateAccess (UploadContext ctx)
+        throws AccessDeniedException
+    {
+        try {
+            String token = CookieUtil.getCookieValue(ctx.req, WebCreds.CREDS_COOKIE);
+            if (_mhelper.getAuthedUser(token) == null) {
+                throw new AccessDeniedException("Must be logged in to upload item media.");
+            }
+        } catch (ServiceException se) {
+            throw new AccessDeniedException(se.getMessage());
+        }
+    }
+
     /**
      * Validate that the upload size is acceptable for the specified mimetype.
      */
@@ -187,6 +204,9 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
 
     /** Represents different potential upload clients. */
     protected enum Client { GWT, MCHOOSER };
+
+    // our dependencies
+    @Inject protected MemberHelper _mhelper;
 
     /** Prevent Captain Insano from showing up to fill our drives. */
     protected static final int SMALL_MEDIA_MAX_SIZE = 5 * MEGABYTE;

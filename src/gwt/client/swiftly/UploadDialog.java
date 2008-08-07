@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.swiftly.gwt.SwiftlyConnectConfig;
-import com.threerings.msoy.web.data.WebIdent;
 
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
@@ -36,8 +35,8 @@ public class UploadDialog extends FlexTable
         void dialogClosed ();
     }
 
-    public UploadDialog (String projectId, WebIdent ident, SwiftlyConnectConfig config,
-        UploadDialogListener listener)
+    public UploadDialog (String projectId, SwiftlyConnectConfig config,
+                         UploadDialogListener listener)
     {
         setStyleName("swiftlyUploader");
 
@@ -56,8 +55,8 @@ public class UploadDialog extends FlexTable
                 _status.setText(event.toString());
             }
         };
-        // stuff the web credentials and the projectId into the field name
-        upload.setName(ident.token + "::" + ident.memberId + "::" + projectId);
+        // stuff the projectId into the field name
+        upload.setName(""+projectId);
         form.setWidget(upload);
 
         form.addFormHandler(new FormHandler() {

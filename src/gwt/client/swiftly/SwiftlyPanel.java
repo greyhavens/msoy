@@ -146,10 +146,9 @@ public class SwiftlyPanel extends FlexTable
     protected static void showUploadDialog (String projectId)
     {
         if (_uploadDialog == null) {
-            _uploadDialog = new UploadDialog(projectId, CSwiftly.ident, _config,
-                new UploadDialog.UploadDialogListener () {
-                public void dialogClosed ()
-                {
+            _uploadDialog = new UploadDialog(
+                projectId, _config, new UploadDialog.UploadDialogListener () {
+                public void dialogClosed () {
                     // clear the static reference to the upload dialog
                     _uploadDialog = null;
                 }

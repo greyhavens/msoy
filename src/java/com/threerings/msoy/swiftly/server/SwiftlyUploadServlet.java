@@ -12,6 +12,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
+import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -19,6 +20,7 @@ import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.server.AbstractUploadServlet;
 import com.threerings.msoy.web.server.FileItemUploadFile;
 import com.threerings.msoy.web.server.MemberHelper;
@@ -39,38 +41,33 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         // wrap the FileItem in an UploadFile for publishing
         final UploadFile uploadFile = new FileItemUploadFile(ctx.file);
 
-        // attempt to extract the projectId and auth token from the field name
+        // pull the session token from the request header
+        String token = CookieUtil.getCookieValue(ctx.req, WebCreds.CREDS_COOKIE);
+        if (token == null) {
+            throw new AccessDeniedException("Must be logged in to upload item data.");
+        }
+
+        // attempt to extract the projectId from the field name
         String field = ctx.file.getFieldName();
         if (field == null) {
             throw new FileUploadException("Failed to extract form field from the upload request.");
         }
 
-        // break the form field into the authentication components and the projectId
-        String[] split = field.split("::");
-
-        // first try to pull the authentication token out
-        String token = split[0];
-        if (StringUtil.isBlank(token)) {
-            throw new FileUploadException(
-                "The authentication token form field from the upload request is blank, aborting.");
-        }
-
         // now pull the integers out
         final int projectId;
         try {
-            projectId = Integer.parseInt(split[2]);
-
+            projectId = Integer.parseInt(field);
         } catch (NumberFormatException nfe) {
             throw new FileUploadException(
                 "Failed to parse integer form field parameters from the upload request. " +
-                    "[projectId=" + split[2] + "]");
+                "[projectId=" + field + "]");
         }
 
         // verify this user is logged in and is a collaborator
         checkPermissions(token, projectId);
 
-        log.info("Swiftly upload: [type=" + ctx.file.getContentType() + ", size=" +
-            ctx.file.getSize() + ", projectId=" + projectId + "].");
+        log.info("Swiftly upload: [type=" + ctx.file.getContentType() +
+                 ", size=" + ctx.file.getSize() + ", projectId=" + projectId + "].");
 
         // run a task on the dobject thread that first finds the ProjectRoomManager for this
         // project if it exists, and then commits the file to svn and adds it to the room
