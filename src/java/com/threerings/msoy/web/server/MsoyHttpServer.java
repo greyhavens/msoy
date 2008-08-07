@@ -76,7 +76,7 @@ import com.threerings.msoy.web.client.WebUserService;
 
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.SnapshotItemUploadServlet;
-import com.threerings.msoy.room.server.WorldServlet;
+import com.threerings.msoy.room.server.WebRoomServlet;
 
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.
@@ -285,7 +285,7 @@ public class MsoyHttpServer extends Server
         SERVLETS.put(StuffService.ENTRY_POINT, StuffServlet.class);
         SERVLETS.put(SwiftlyService.ENTRY_POINT, SwiftlyServlet.class);
         SERVLETS.put(WebUserService.ENTRY_POINT, WebUserServlet.class);
-        SERVLETS.put(WebRoomService.ENTRY_POINT, WorldServlet.class);
+        SERVLETS.put(WebRoomService.ENTRY_POINT, WebRoomServlet.class);
         SERVLETS.put("/facebook", FacebookServlet.class);
         SERVLETS.put("/gamestubsvc", GameStubServlet.class);
         SERVLETS.put("/remixuploadsvc", UploadRemixMediaServlet.class);
