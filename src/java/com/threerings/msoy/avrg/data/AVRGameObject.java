@@ -3,17 +3,27 @@
 
 package com.threerings.msoy.avrg.data;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.game.data.GameState;
+import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.server.PropertySpaceHelper;
 
 /**
  * The data shared between server, clients and agent for an AVR game.
  */
 public class AVRGameObject extends PlaceObject
+    implements PropertySpaceObject
 {
     /** The identifier for a MessageEvent containing a user message. */
     public static final String USER_MESSAGE = "Umsg";
@@ -41,9 +51,6 @@ public class AVRGameObject extends PlaceObject
     /** The defining media of the AVRGame. */
     public MediaDesc gameMedia;
 
-    /** Contains the game's memories. */
-    public DSet<GameState> state = new DSet<GameState>();
-
     /**
      * Tracks the (scene) location of each player. This data is only updated when the agent
      * has successfully subscribed to the scene's RoomObject and it's safe for clients to make
@@ -53,6 +60,18 @@ public class AVRGameObject extends PlaceObject
 
     /** Used to communicate with the AVRGameManager. */
     public AVRGameMarshaller avrgService;
+
+    // from PropertySpaceObject
+    public Map<String, Object> getUserProps ()
+    {
+        return _props;
+    }
+
+    // from PropertySpaceObject
+    public Set<String> getDirtyProps ()
+    {
+        return _dirty;
+    }
 
     // AUTO-GENERATED: METHODS START
     /**
@@ -69,53 +88,6 @@ public class AVRGameObject extends PlaceObject
         requestAttributeChange(
             GAME_MEDIA, value, ovalue);
         this.gameMedia = value;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>state</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToState (GameState elem)
-    {
-        requestEntryAdd(STATE, state, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>state</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromState (Comparable<?> key)
-    {
-        requestEntryRemove(STATE, state, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>state</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateState (GameState elem)
-    {
-        requestEntryUpdate(STATE, state, elem);
-    }
-
-    /**
-     * Requests that the <code>state</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setState (DSet<GameState> value)
-    {
-        requestAttributeChange(STATE, value, this.state);
-        DSet<GameState> clone = (value == null) ? null : value.typedClone();
-        this.state = clone;
     }
 
     /**
@@ -181,4 +153,38 @@ public class AVRGameObject extends PlaceObject
         this.avrgService = value;
     }
     // AUTO-GENERATED: METHODS END
+
+    /**
+     * A custom serialization method.
+     */
+    public void writeObject (ObjectOutputStream out)
+        throws IOException
+    {
+        out.defaultWriteObject();
+
+        PropertySpaceHelper.writeProperties(this, out);
+    }
+
+    /**
+     * A custom serialization method.
+     */
+    public void readObject (ObjectInputStream ins)
+        throws IOException, ClassNotFoundException
+    {
+        ins.defaultReadObject();
+
+        PropertySpaceHelper.readProperties(this, ins);
+    }
+
+    /**
+     * The current state of game data.
+     * On the server, this will be a byte[] for normal properties and a byte[][] for array
+     * properties. On the client, the actual values are kept whole.
+     */
+    protected transient HashMap<String, Object> _props = new HashMap<String, Object>();
+
+    /**
+     * The persistent properties that have been written to since startup.
+     */
+    protected transient Set<String> _dirty = new HashSet<String>();
 }

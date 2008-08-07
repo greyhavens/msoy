@@ -36,75 +36,22 @@ public class StateControlBackend
         _backend = backend;
 
         _gameObj = gameObj;
-        _gameObj.addListener(_gameListener);
         _gameObj.addListener(_messageListener);
 
         _playerObj = _gctx.getPlayerObject();
-        _playerObj.addListener(_playerStateListener);
         _playerObj.addListener(_playerMessageListener);
     }
 
     public function shutdown () :void
     {
-         _gameObj.removeListener(_gameListener);
-         _playerObj.removeListener(_playerStateListener);
     }
 
     public function populateSubProperties (o :Object) :void
     {
         // StateControl (sub)
-        o["getProperty_v1"] = getProperty_v1;
-        o["getProperties_v1"] = getProperties_v1;
-        o["setProperty_v1"] = setProperty_v1;
         o["getRoomProperty_v1"] = getRoomProperty_v1;
         o["setRoomProperty_v1"] = setRoomProperty_v1;
         o["getRoomProperties_v1"] = getRoomProperties_v1;
-//        o["setPropertyAt_v1"] = setPropertyAt_v1;
-        o["getPlayerProperty_v1"] = getPlayerProperty_v1;
-        o["setPlayerProperty_v1"] = setPlayerProperty_v1;
-//        o["setPlayerPropertyAt_v1"] = setPlayerPropertyAt_v1;
-        o["sendMessage_v1"] = sendMessage_v1;
-    }
-
-    protected function getProperty_v1 (key :String) :Object
-    {
-        if (key == null) {
-            return null;
-        }
-        var entry :GameState = GameState(_gameObj.state.get(key));
-        return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
-    }
-
-    protected function getProperties_v1 () :Object
-    {
-        var props :Object = { };
-        for each (var entry :GameState in _gameObj.state.toArray()) {
-            if (entry.value != null) {
-                props[entry.key] = ObjectMarshaller.decode(entry.value);
-            }
-        }
-        return props;
-    }
-
-    protected function setProperty_v1 (
-        key :String, value: Object, persistent :Boolean) :Boolean
-    {
-        if (key == null) {
-            return false;
-        }
-
-        var wgsvc :AVRGameService = _gameObj.avrgService;
-        if (value == null) {
-            wgsvc.deleteProperty(_gctx.getClient(), key,
-                                 loggingConfirmListener("deleteProperty"));
-
-        } else {
-            wgsvc.setProperty(_gctx.getClient(), key,
-                              ObjectMarshaller.validateAndEncode(value), persistent,
-                              loggingConfirmListener("setProperty"));
-
-        }
-        return true;
     }
 
     protected function getRoomProperties_v1 () :Object
@@ -126,58 +73,6 @@ public class StateControlBackend
             return view.getRoomController().setRoomProperty(key, value);
         }
         return false;
-    }
-   
-    protected function getPlayerProperty_v1 (key :String) :Object
-    {
-        if (key == null) {
-            return null;
-        }
-        var entry :GameState = GameState(_playerObj.gameState.get(key));
-        return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
-    }
-
-    protected function setPlayerProperty_v1 (
-        key :String, value: Object, persistent :Boolean) :Boolean
-    {
-        if (key == null) {
-            return false;
-        }
-
-        var wgsvc :AVRGameService = _gameObj.avrgService;
-        if (value == null) {
-            wgsvc.deletePlayerProperty(_gctx.getClient(), key,
-                                       loggingConfirmListener("deletePlayerProperty"));
-
-        } else {
-            wgsvc.setPlayerProperty(_gctx.getClient(), key,
-                                    ObjectMarshaller.validateAndEncode(value), persistent,
-                                    loggingConfirmListener("setPlayerProperty"));
-        }
-        return true;
-    }
-
-    protected function sendMessage_v1 (key :String, value :Object, playerId :int) :Boolean
-    {
-        if (key == null) {
-            return false;
-        }
-        _gameObj.avrgService.sendMessage(_gctx.getClient(), key,
-                                         ObjectMarshaller.validateAndEncode(value),
-                                         playerId, loggingInvocationListener("sendMessage"));
-        return true;
-    }
-
-    protected function callStateChanged (entry :GameState) :void
-    {
-        _backend.callUserCode(
-            "stateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
-    }
-    
-    protected function callPlayerStateChanged (entry :GameState) :void
-    {
-        _backend.callUserCode(
-            "playerStateChanged_v1", entry.key, ObjectMarshaller.decode(entry.value));
     }
 
     protected function loggingConfirmListener (svc :String, processed :Function = null)
@@ -201,18 +96,6 @@ public class StateControlBackend
     protected var _gameObj :AVRGameObject;
     protected var _playerObj :PlayerObject;
 
-    protected var _gameListener :SetAdapter = new SetAdapter(
-        function (event :EntryAddedEvent) :void {
-            if (event.getName() == AVRGameObject.STATE) {
-                callStateChanged(event.getEntry() as GameState);
-            }
-        },
-        function (event :EntryUpdatedEvent) :void {
-            if (event.getName() == AVRGameObject.STATE) {
-                callStateChanged(event.getEntry() as GameState);
-            }
-        });
-
     protected var _messageListener :MessageListener = new MessageAdapter(
         function (event :MessageEvent) :void {
             var name :String = event.getName();
@@ -224,18 +107,6 @@ public class StateControlBackend
 
             } else if (AVRGameObject.TICKER == name) {
                 _backend.callUserCode("messageReceived_v1", key, (args[1] as int));
-            }
-        });
-
-    protected var _playerStateListener :SetAdapter = new SetAdapter(
-        function (event :EntryAddedEvent) :void {
-            if (event.getName() == PlayerObject.GAME_STATE) {
-                callPlayerStateChanged(event.getEntry() as GameState);
-            }
-        },
-        function (event :EntryUpdatedEvent) :void {
-            if (event.getName() == PlayerObject.GAME_STATE) {
-                callPlayerStateChanged(event.getEntry() as GameState);
             }
         });
 

@@ -27,33 +27,9 @@ public interface AVRGameProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link AVRGameService#deletePlayerProperty} request.
-     */
-    void deletePlayerProperty (ClientObject caller, String arg1, InvocationService.ConfirmListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link AVRGameService#deleteProperty} request.
-     */
-    void deleteProperty (ClientObject caller, String arg1, InvocationService.ConfirmListener arg2)
-        throws InvocationException;
-
-    /**
      * Handles a {@link AVRGameService#sendMessage} request.
      */
     void sendMessage (ClientObject caller, String arg1, Object arg2, int arg3, InvocationService.InvocationListener arg4)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link AVRGameService#setPlayerProperty} request.
-     */
-    void setPlayerProperty (ClientObject caller, String arg1, byte[] arg2, boolean arg3, InvocationService.ConfirmListener arg4)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link AVRGameService#setProperty} request.
-     */
-    void setProperty (ClientObject caller, String arg1, byte[] arg2, boolean arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
 
     /**

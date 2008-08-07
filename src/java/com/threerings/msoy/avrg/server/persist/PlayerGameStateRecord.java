@@ -10,8 +10,6 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.game.data.GameState;
-
 /**
  * Maintains information associated with a given member for a given game.
  */
@@ -74,20 +72,12 @@ public class PlayerGameStateRecord extends PersistentRecord
     /**
      * Creates a memory record from the supplied memory information.
      */
-    public PlayerGameStateRecord (int gameId, int memberId, GameState entry)
+    public PlayerGameStateRecord (int gameId, int memberId, String key, byte[] data)
     {
         this.gameId = gameId;
         this.memberId = memberId;
-        this.datumKey = entry.key;
-        this.datumValue = entry.value;
-    }
-
-    /**
-     * Converts this persistent record to a runtime record.
-     */
-    public GameState toEntry ()
-    {
-        return new GameState(datumKey, datumValue, true);
+        this.datumKey = key;
+        this.datumValue = data;
     }
 
     // AUTO-GENERATED: METHODS START

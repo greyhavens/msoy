@@ -3,9 +3,7 @@
 
 package com.threerings.msoy.avrg.server;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import com.google.inject.Inject;
 
@@ -15,7 +13,6 @@ import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
-import com.samskivert.jdbc.WriteOnlyUnit;
 
 import com.threerings.parlor.server.PlayManager;
 import com.threerings.presents.annotation.EventThread;
@@ -36,11 +33,8 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
-import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.item.data.all.Game;
 
-import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
@@ -56,9 +50,6 @@ import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
-import com.threerings.msoy.avrg.server.persist.GameStateRecord;
-import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
-
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.server.WhirledGameManager;
 
@@ -99,21 +90,6 @@ public class AVRGameManager extends PlaceManager
     public AVRGameAgentObject getGameAgentObject ()
     {
         return _gameAgentObj;
-    }
-
-    /**
-     * Called with our hosted game's data once it's finished loading from the database.
-     */
-    public void initializeState (List<GameStateRecord> stateRecords)
-    {
-        _gameObj.startTransaction();
-        try {
-            for (GameStateRecord rec : stateRecords) {
-                _gameObj.addToState(rec.toEntry());
-            }
-        } finally {
-            _gameObj.commitTransaction();
-        }
     }
 
     @Override // from PlaceManager
@@ -236,71 +212,6 @@ public class AVRGameManager extends PlaceManager
     }
 
     // from AVRGameProvider
-    public void setProperty (ClientObject caller, String key, byte[] value, boolean persistent,
-                             InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        if (key == null) {
-            log.warning("Can't set null-keyed property [game=" + where() +
-                        ", who=" + caller.who() + "]");
-            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
-        }
-
-        GameState entry = new GameState(key, value, persistent);
-
-        // TODO: verify that the memory does not exceed legal size
-
-        entry.modified = true;
-        if (_gameObj.state.contains(entry)) {
-            _gameObj.updateState(entry);
-        } else if (value != null) {
-            _gameObj.addToState(entry);
-        }
-        listener.requestProcessed();
-    }
-
-    // from AVRGameProvider
-    public void deleteProperty (ClientObject caller, String key,
-                                InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        setProperty(caller, key, null, true, listener);
-    }
-
-    // from AVRGameProvider
-    public void setPlayerProperty (ClientObject caller, String key, byte[] value,
-                                   boolean persistent, InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        PlayerObject player = (PlayerObject) caller;
-        if (key == null) {
-            log.warning("Can't set null-keyed player property [game=" + where() +
-                        ", who=" + player.who() + "]");
-            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
-        }
-
-        GameState entry = new GameState(key, value, persistent);
-
-        // TODO: verify that the memory does not exceed legal size
-
-        entry.modified = true;
-        if (player.gameState.contains(entry)) {
-            player.updateGameState(entry);
-        } else if (value != null) {
-            player.addToGameState(entry);
-        }
-        listener.requestProcessed();
-    }
-
-    // from AVRGameProvider
-    public void deletePlayerProperty (ClientObject caller, String key,
-                                      InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        setPlayerProperty(caller, key, null, true, listener);
-    }
-
-    // from AVRGameProvider
     public void sendMessage (ClientObject caller, String msg, Object data, int playerId,
                              InvocationService.InvocationListener listener)
         throws InvocationException
@@ -403,22 +314,6 @@ public class AVRGameManager extends PlaceManager
             _breg.destroyAgent(_gameAgentObj);
         }
 
-        // identify any modified memory records for flushing to the database
-        final List<GameStateRecord> recs = new ArrayList<GameStateRecord>();
-        for (GameState entry : _gameObj.state) {
-            if (entry.persistent && entry.modified) {
-                recs.add(new GameStateRecord(_gameId, entry));
-            }
-        }
-
-        _invoker.postUnit(new WriteOnlyUnit("shutdown") {
-            public void invokePersist () throws Exception {
-                for (GameStateRecord rec : recs) {
-                    _repo.storeState(rec);
-                }
-            }
-        });
-
         if (_lifecycleObserver != null) {
             _lifecycleObserver.avrGameDidShutdown(this);
         }
@@ -488,35 +383,8 @@ public class AVRGameManager extends PlaceManager
 
     protected void flushPlayerGameState (final PlayerObject player)
     {
-        // find any modified memory records
-        final List<PlayerGameStateRecord> recs = new ArrayList<PlayerGameStateRecord>();
-
-        // unless we're a guest
-        if (!MemberName.isGuest(player.getMemberId())) {
-            for (GameState entry : player.gameState) {
-                if (entry.persistent && entry.modified) {
-                    recs.add(new PlayerGameStateRecord(_gameId, player.getMemberId(), entry));
-                }
-            }
-        }
-
         // then clear out the state associated with this game
         player.setQuestState(new DSet<QuestState>());
-        player.setGameState(new DSet<GameState>());
-
-        // if we didn't find any modified records we're done
-        if (recs.size() == 0) {
-            return;
-        }
-
-        // else flush them to the database
-        _invoker.postUnit(new WriteOnlyUnit("removePlayer(" + player + ")") {
-            public void invokePersist () throws Exception {
-                for (PlayerGameStateRecord rec : recs) {
-                    _repo.storePlayerState(rec);
-                }
-            }
-        });
     }
 
     /**

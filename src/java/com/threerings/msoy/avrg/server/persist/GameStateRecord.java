@@ -64,19 +64,11 @@ public class GameStateRecord extends PersistentRecord
     /**
      * Creates a memory record from the supplied memory information.
      */
-    public GameStateRecord (int gameId, GameState entry)
+    public GameStateRecord (int gameId, String key, byte[] data)
     {
         this.gameId = gameId;
-        this.datumKey = entry.key;
-        this.datumValue = entry.value;
-    }
-
-    /**
-     * Converts this persistent record to a runtime record.
-     */
-    public GameState toEntry ()
-    {
-        return new GameState(datumKey, datumValue, true);
+        this.datumKey = key;
+        this.datumValue = data;
     }
 
     // AUTO-GENERATED: METHODS START

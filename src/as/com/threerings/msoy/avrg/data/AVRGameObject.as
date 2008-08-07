@@ -36,9 +36,6 @@ public class AVRGameObject extends PlaceObject
     /** The field name of the <code>gameMedia</code> field. */
     public static const GAME_MEDIA :String = "gameMedia";
 
-    /** The field name of the <code>state</code> field. */
-    public static const STATE :String = "state";
-
     /** The field name of the <code>playerLocs</code> field. */
     public static const PLAYER_LOCS :String = "playerLocs";
 
@@ -49,9 +46,6 @@ public class AVRGameObject extends PlaceObject
 
     /** The defining media of the AVRGame. */
     public var gameMedia :MediaDesc;
-
-    /** Contains the game's state. */
-    public var state :DSet = new DSet();
 
     /**
      * Tracks the (scene) location of each player. This data is only updated when the agent
@@ -69,7 +63,6 @@ public class AVRGameObject extends PlaceObject
         super.readObject(ins);
 
         gameMedia = (ins.readObject() as MediaDesc);
-        state = (ins.readObject() as DSet);
         playerLocs = (ins.readObject() as DSet);
         avrgService = (ins.readObject() as AVRGameMarshaller);
     }

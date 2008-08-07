@@ -12,8 +12,6 @@ import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 import com.threerings.util.Float;
 import com.threerings.util.Integer;
-import com.threerings.util.langBoolean;
-import flash.utils.ByteArray;
 
 /**
  * Provides the implementation of the <code>AVRGameService</code> interface
@@ -51,34 +49,8 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>deletePlayerProperty</code> requests. */
-    public static const DELETE_PLAYER_PROPERTY :int = 3;
-
-    // from interface AVRGameService
-    public function deletePlayerProperty (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void
-    {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, DELETE_PLAYER_PROPERTY, [
-            arg2, listener3
-        ]);
-    }
-
-    /** The method id used to dispatch <code>deleteProperty</code> requests. */
-    public static const DELETE_PROPERTY :int = 4;
-
-    // from interface AVRGameService
-    public function deleteProperty (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void
-    {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, DELETE_PROPERTY, [
-            arg2, listener3
-        ]);
-    }
-
     /** The method id used to dispatch <code>sendMessage</code> requests. */
-    public static const SEND_MESSAGE :int = 5;
+    public static const SEND_MESSAGE :int = 3;
 
     // from interface AVRGameService
     public function sendMessage (arg1 :Client, arg2 :String, arg3 :Object, arg4 :int, arg5 :InvocationService_InvocationListener) :void
@@ -90,34 +62,8 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>setPlayerProperty</code> requests. */
-    public static const SET_PLAYER_PROPERTY :int = 6;
-
-    // from interface AVRGameService
-    public function setPlayerProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :Boolean, arg5 :InvocationService_ConfirmListener) :void
-    {
-        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, SET_PLAYER_PROPERTY, [
-            arg2, arg3, langBoolean.valueOf(arg4), listener5
-        ]);
-    }
-
-    /** The method id used to dispatch <code>setProperty</code> requests. */
-    public static const SET_PROPERTY :int = 7;
-
-    // from interface AVRGameService
-    public function setProperty (arg1 :Client, arg2 :String, arg3 :ByteArray, arg4 :Boolean, arg5 :InvocationService_ConfirmListener) :void
-    {
-        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, SET_PROPERTY, [
-            arg2, arg3, langBoolean.valueOf(arg4), listener5
-        ]);
-    }
-
     /** The method id used to dispatch <code>setTicker</code> requests. */
-    public static const SET_TICKER :int = 8;
+    public static const SET_TICKER :int = 4;
 
     // from interface AVRGameService
     public function setTicker (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_InvocationListener) :void
@@ -130,7 +76,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>startQuest</code> requests. */
-    public static const START_QUEST :int = 9;
+    public static const START_QUEST :int = 5;
 
     // from interface AVRGameService
     public function startQuest (arg1 :Client, arg2 :String, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
@@ -143,7 +89,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateQuest</code> requests. */
-    public static const UPDATE_QUEST :int = 10;
+    public static const UPDATE_QUEST :int = 6;
 
     // from interface AVRGameService
     public function updateQuest (arg1 :Client, arg2 :String, arg3 :int, arg4 :String, arg5 :InvocationService_ConfirmListener) :void

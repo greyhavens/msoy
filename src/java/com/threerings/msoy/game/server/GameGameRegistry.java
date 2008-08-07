@@ -5,8 +5,10 @@ package com.threerings.msoy.game.server;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.xml.sax.SAXException;
 
@@ -17,6 +19,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
@@ -45,11 +48,14 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 
 import com.whirled.game.data.GameData;
+import com.whirled.game.server.PropertySpaceDelegate;
+import com.whirled.game.server.PropertySpaceHelper;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
@@ -399,6 +405,27 @@ public class GameGameRegistry
                 delegates.add(new QuestDelegate(_content));
                 delegates.add(new AgentTraceDelegate(gameId));
 
+                final Map<String, byte[]> initialState = new HashMap<String, byte[]>();
+                for (GameStateRecord record : _recs) {
+                    initialState.put(record.datumKey, record.datumValue);
+                }
+                delegates.add(new PropertySpaceDelegate() {
+                    protected Map<String, byte[]> initialStateFromStore () {
+                        return initialState;
+                    }
+                    protected void writeDirtyStateToStore (final Map<String, byte[]> state) {
+                        // the map should be quite safe to pass to another thread
+                        _invoker.postUnit(new WriteOnlyUnit("shutdown") {
+                            public void invokePersist () throws Exception {
+                                for (Map.Entry<String, byte[]> entry : state.entrySet()) {
+                                    _avrgRepo.storeState(new GameStateRecord(
+                                        gameId, entry.getKey(), entry.getValue()));
+                                }
+                            }
+                        });
+                    }
+                });
+
                 AVRGameConfig config = new AVRGameConfig();
                 config.init(_content.game, def);
 
@@ -413,7 +440,6 @@ public class GameGameRegistry
 
                 mgr.getGameObject().setGameMedia(_content.game.gameMedia);
                 mgr.setLifecycleObserver(GameGameRegistry.this);
-                mgr.initializeState(_recs);
 
                 // now start up the agent, then wait for the avrGameReady callback
                 mgr.startAgent();
@@ -744,37 +770,41 @@ public class GameGameRegistry
     protected void joinAVRGame (final int playerId, final AVRGameManager mgr,
                                 final InvocationService.ResultListener listener)
     {
-        final PlayerObject player = _locator.lookupPlayer(playerId);
-        if (player == null) {
-            // they left while we were resolving the game, oh well
-            return;
-        }
-
-        final int placeOid = mgr.getGameObject().getOid();
-        try {
-            _locmgr.moveTo(player, placeOid);
-
-        } catch (InvocationException pe) {
-            log.warning("Move to AVRGameObject failed", "gameId", mgr.getGameId(), pe);
-            listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
-        }
-
         _invoker.postUnit(new RepositoryUnit("joinAVRGame") {
             public void invokePersist () throws Exception {
                 _questRecs = _avrgRepo.getQuests(mgr.getGameId(), playerId);
                 _stateRecs = _avrgRepo.getPlayerGameState(mgr.getGameId(), playerId);
             }
             public void handleSuccess () {
-                player.startTransaction();
+                final PlayerObject player = _locator.lookupPlayer(playerId);
+                if (player == null) {
+                    // they left while we were resolving the game, oh well
+                    return;
+                }
+
+                if (!MemberName.isGuest(player.getMemberId())) {
+                    final Map<String, byte[]> initialState = new HashMap<String, byte[]>();
+                    for (PlayerGameStateRecord record : _stateRecs) {
+                        initialState.put(record.datumKey, record.datumValue);
+                    }
+                    PropertySpaceHelper.initWithStateFromStore(player, initialState);
+
+                    player.startTransaction();
+                    try {
+                        for (QuestStateRecord rec: _questRecs) {
+                            player.addToQuestState(rec.toEntry());
+                        }
+                    } finally {
+                        player.commitTransaction();
+                    }
+                }
+                final int placeOid = mgr.getGameObject().getOid();
                 try {
-                    for (PlayerGameStateRecord rec : _stateRecs) {
-                        player.addToGameState(rec.toEntry());
-                    }
-                    for (QuestStateRecord rec: _questRecs) {
-                        player.addToQuestState(rec.toEntry());
-                    }
-                } finally {
-                    player.commitTransaction();
+                    _locmgr.moveTo(player, placeOid);
+
+                } catch (InvocationException pe) {
+                    log.warning("Move to AVRGameObject failed", "gameId", mgr.getGameId(), pe);
+                    listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
                 }
 
                 listener.requestProcessed(placeOid);

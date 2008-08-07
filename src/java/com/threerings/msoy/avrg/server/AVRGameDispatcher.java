@@ -47,33 +47,9 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
             );
             return;
 
-        case AVRGameMarshaller.DELETE_PLAYER_PROPERTY:
-            ((AVRGameProvider)provider).deletePlayerProperty(
-                source, (String)args[0], (InvocationService.ConfirmListener)args[1]
-            );
-            return;
-
-        case AVRGameMarshaller.DELETE_PROPERTY:
-            ((AVRGameProvider)provider).deleteProperty(
-                source, (String)args[0], (InvocationService.ConfirmListener)args[1]
-            );
-            return;
-
         case AVRGameMarshaller.SEND_MESSAGE:
             ((AVRGameProvider)provider).sendMessage(
                 source, (String)args[0], args[1], ((Integer)args[2]).intValue(), (InvocationService.InvocationListener)args[3]
-            );
-            return;
-
-        case AVRGameMarshaller.SET_PLAYER_PROPERTY:
-            ((AVRGameProvider)provider).setPlayerProperty(
-                source, (String)args[0], (byte[])args[1], ((Boolean)args[2]).booleanValue(), (InvocationService.ConfirmListener)args[3]
-            );
-            return;
-
-        case AVRGameMarshaller.SET_PROPERTY:
-            ((AVRGameProvider)provider).setProperty(
-                source, (String)args[0], (byte[])args[1], ((Boolean)args[2]).booleanValue(), (InvocationService.ConfirmListener)args[3]
             );
             return;
 

@@ -3,6 +3,12 @@
 
 package com.threerings.msoy.game.data;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 
@@ -12,8 +18,12 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.game.data.GameData;
+import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameOccupantInfo;
+import com.whirled.game.server.PropertySpaceHelper;
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.MsoyUserObject;
@@ -27,7 +37,7 @@ import com.threerings.msoy.data.all.ReferralInfo;
  * Contains information on a player logged on to an MSOY Game server.
  */
 public class PlayerObject extends BodyObject
-    implements MsoyUserObject
+    implements MsoyUserObject, PropertySpaceObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
@@ -69,9 +79,6 @@ public class PlayerObject extends BodyObject
      * status is not filled in and this set is *not* updated if friendship is made or broken during
      * a game. */
     public DSet<FriendEntry> friends;
-
-    /** Game state entries for the world game we're currently on. */
-    public DSet<GameState> gameState = new DSet<GameState>();
 
     /** The quests of our current world game that we're currently on. */
     public DSet<QuestState> questState = new DSet<QuestState>();
@@ -154,6 +161,18 @@ public class PlayerObject extends BodyObject
     public OccupantInfo createOccupantInfo (PlaceObject plobj)
     {
         return new WhirledGameOccupantInfo(this);
+    }
+
+    // from PropertySpaceObject
+    public Map<String, Object> getUserProps ()
+    {
+        return _props;
+    }
+
+    // from PropertySpaceObject
+    public Set<String> getDirtyProps ()
+    {
+        return _dirty;
     }
 
     // AUTO-GENERATED: METHODS START
@@ -250,53 +269,6 @@ public class PlayerObject extends BodyObject
         requestAttributeChange(FRIENDS, value, this.friends);
         DSet<FriendEntry> clone = (value == null) ? null : value.typedClone();
         this.friends = clone;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>gameState</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToGameState (GameState elem)
-    {
-        requestEntryAdd(GAME_STATE, gameState, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>gameState</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromGameState (Comparable<?> key)
-    {
-        requestEntryRemove(GAME_STATE, gameState, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>gameState</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateGameState (GameState elem)
-    {
-        requestEntryUpdate(GAME_STATE, gameState, elem);
-    }
-
-    /**
-     * Requests that the <code>gameState</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setGameState (DSet<GameState> value)
-    {
-        requestAttributeChange(GAME_STATE, value, this.gameState);
-        DSet<GameState> clone = (value == null) ? null : value.typedClone();
-        this.gameState = clone;
     }
 
     /**
@@ -416,4 +388,39 @@ public class PlayerObject extends BodyObject
         buf.append("id=").append(getMemberId()).append(" oid=");
         super.addWhoData(buf);
     }
+
+    /**
+     * A custom serialization method.
+     */
+    public void writeObject (ObjectOutputStream out)
+        throws IOException
+    {
+        out.defaultWriteObject();
+
+        PropertySpaceHelper.writeProperties(this, out);
+    }
+
+    /**
+     * A custom serialization method.
+     */
+    public void readObject (ObjectInputStream ins)
+        throws IOException, ClassNotFoundException
+    {
+        ins.defaultReadObject();
+
+        PropertySpaceHelper.readProperties(this, ins);
+    }
+
+
+    /**
+     * The current state of game data.
+     * On the server, this will be a byte[] for normal properties and a byte[][] for array
+     * properties. On the client, the actual values are kept whole.
+     */
+    protected transient HashMap<String, Object> _props = new HashMap<String, Object>();
+
+    /**
+     * The persistent properties that have been written to since startup.
+     */
+    protected transient Set<String> _dirty = new HashSet<String>();
 }
