@@ -243,8 +243,10 @@ public class ChatTabBar extends HBox
     {
         for (var ii :int = 0; ii < _tabs.length; ii++) {
             var tab :ChatTab = _tabs[ii] as ChatTab;
-            if (ChatChannel.typeOf(tab.localtype) == ChatChannel.ROOM_CHANNEL && !tab.checked &&
-                keep.indexOf(tab.localtype) < 0) {
+            var roomOrGame :Boolean = 
+                ChatChannel.typeOf(tab.localtype) == ChatChannel.ROOM_CHANNEL ||
+                tab.localtype == ChatCodes.PLACE_CHAT_TYPE;
+            if (roomOrGame && !tab.checked && keep.indexOf(tab.localtype) < 0) {
                 removeTabAt(ii);
             }
         }
