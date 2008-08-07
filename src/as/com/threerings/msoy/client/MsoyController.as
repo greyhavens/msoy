@@ -96,9 +96,6 @@ public class MsoyController extends Controller
     /** Command to visit the given index in the room history list. */
     public static const VISIT_BACKSTACK_INDEX :String = "VisitBackstackIndex";
 
-    /** Command to view a game, arg is [ gameId ] */
-    public static const VIEW_GAME :String = "ViewGame";
-
     /** Command to view an item, arg is [ itemTypeId, itemId ] */
     public static const VIEW_ITEM :String = "ViewItem";
 

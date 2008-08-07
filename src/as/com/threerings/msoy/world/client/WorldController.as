@@ -135,6 +135,9 @@ public class WorldController extends MsoyController
     /** Command to view a member's profile, arg is [ memberId ] */
     public static const VIEW_MEMBER :String = "ViewMember";
 
+    /** Command to view a game, arg is [ gameId ] */
+    public static const VIEW_GAME :String = "ViewGame";
+
     /** Command to visit a member's current location */
     public static const VISIT_MEMBER :String = "VisitMember";
 

@@ -293,7 +293,7 @@ public class RoomObjectController extends RoomController
             return;
 
         case FurniData.ACTION_LOBBY_GAME:
-            postAction(MsoyController.VIEW_GAME, int(furni.splitActionData()[0]));
+            postAction(WorldController.VIEW_GAME, int(furni.splitActionData()[0]));
             return;
 
         case FurniData.ACTION_PORTAL:
