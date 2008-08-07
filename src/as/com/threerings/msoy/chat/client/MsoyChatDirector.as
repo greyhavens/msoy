@@ -289,6 +289,11 @@ public class MsoyChatDirector extends ChatDirector
         return false;
     }
 
+    override protected function clearChatOnClientExit () :Boolean
+    {
+        return false; // TODO: we need this because on msoy we "exit" when change servers
+    }
+
     /**
      * Iterates over all known channels, and either cleans up or reconnects them,
      * based on the input parameter.
