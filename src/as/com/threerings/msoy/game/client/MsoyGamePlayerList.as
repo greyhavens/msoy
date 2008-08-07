@@ -14,6 +14,7 @@ public class MsoyGamePlayerList extends GamePlayerList
     public function MsoyGamePlayerList (labelCreator :NameLabelCreator = null)
     {
         super(labelCreator);
+        scrollBarOnLeft = true;
     }
 
     override public function setLabel (label :String) :void
