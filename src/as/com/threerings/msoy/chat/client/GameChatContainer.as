@@ -62,7 +62,7 @@ public class GameChatContainer extends LayeredContainer
 //        addChild(_tabBar);
 
         var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
-        //controlBar.inSidebar(true);
+        controlBar.inSidebar(true);
         controlBar.setChatDirector(_chatDtr);
 
         addEventListener(Event.ADDED_TO_STAGE, handleAddRemove);
@@ -87,7 +87,7 @@ public class GameChatContainer extends LayeredContainer
         _ctx.getTopPanel().getHeaderBar().getChatTabs().width = NaN;
 //        _ctx.getTopPanel().getHeaderBar().replaceTabsContainer();
         var controlBar :ControlBar = _ctx.getTopPanel().getControlBar();
-        //controlBar.inSidebar(false);
+        controlBar.inSidebar(false);
         controlBar.setChatDirector(_ctx.getMsoyChatDirector());
     }
 

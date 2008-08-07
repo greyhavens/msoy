@@ -143,11 +143,11 @@ public class ControlBar extends HBox
      */
     public function addCustomComponent (comp :UIComponent) :void
     {
-        if (_leftSpacer.width != 0) {
-            _leftSpacer.addChild(comp);
-        } else {
+//        if (_leftSpacer.width != 0) {
+//            _leftSpacer.addChild(comp);
+//        } else {
             addChild(comp);
-        }
+//        }
     }
 
     /**
@@ -246,7 +246,7 @@ public class ControlBar extends HBox
         removeAllChildren();
         clearAllGroups();
 
-        addGroupChild(_leftSpacer, [ UI_SIDEBAR ]);
+//        addGroupChild(_leftSpacer, [ UI_SIDEBAR ]);
 
         // add our standard control bar features
         addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
