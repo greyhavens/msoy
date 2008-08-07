@@ -21,55 +21,55 @@ public class MemberMoney
     public MemberMoney (final int memberId, final int coins, final int bars, final double bling,
         final long accCoins, final long accBars, final double accBling)
     {
-        this.memberId = memberId;
-        this.coins = coins;
-        this.bars = bars;
-        this.bling = bling;
-        this.accCoins = accCoins;
-        this.accBars = accBars;
-        this.accBling = accBling;
+        this._memberId = memberId;
+        this._coins = coins;
+        this._bars = bars;
+        this._bling = bling;
+        this._accCoins = accCoins;
+        this._accBars = accBars;
+        this._accBling = accBling;
     }
 
     public int getBars ()
     {
-        return bars;
+        return _bars;
     }
 
     public int getCoins ()
     {
-        return coins;
+        return _coins;
     }
 
     public double getBling ()
     {
-        return bling;
+        return _bling;
     }
 
     public int getMemberId ()
     {
-        return memberId;
+        return _memberId;
     }
 
     public long getAccBars ()
     {
-        return accBars;
+        return _accBars;
     }
 
     public long getAccCoins ()
     {
-        return accCoins;
+        return _accCoins;
     }
 
     public double getAccBling ()
     {
-        return accBling;
+        return _accBling;
     }
 
-    private final long accBars;
-    private final long accCoins;
-    private final double accBling;
-    private final int bars;
-    private final int coins;
-    private final double bling;
-    private final int memberId;
+    private final long _accBars;
+    private final long _accCoins;
+    private final double _accBling;
+    private final int _bars;
+    private final int _coins;
+    private final double _bling;
+    private final int _memberId;
 }

@@ -31,25 +31,25 @@ public class SecuredPricesEhcache
     public SecuredPricesEhcache (final int maxElements, final int expireSeconds)
     {
         if (CacheManager.getInstance().getCache(CACHE_NAME) == null) {
-            this.cache = new Cache(CACHE_NAME, maxElements, false, false, expireSeconds, expireSeconds);
+            this._cache = new Cache(CACHE_NAME, maxElements, false, false, expireSeconds, expireSeconds);
             
             // If we're running ehcache distributedly, then add an event listener to
             // send out updates.
             if (CacheManager.getInstance().getCacheManagerPeerProvider() != null) {
-                this.cache.getCacheEventNotificationService().registerListener(
+                this._cache.getCacheEventNotificationService().registerListener(
                     new RMIAsynchronousCacheReplicator(true, true, true, true, 1000));
             }
-            CacheManager.getInstance().addCache(cache);
+            CacheManager.getInstance().addCache(_cache);
         } else {
-            this.cache = CacheManager.getInstance().getCache(CACHE_NAME);
-            this.cache.removeAll();
+            this._cache = CacheManager.getInstance().getCache(CACHE_NAME);
+            this._cache.removeAll();
         }
     }
     
     public SecuredPrices getSecuredPrice (final int memberId, final ItemIdent item)
         throws NotSecuredException
     {
-        final Element e = cache.get(new PriceKey(memberId, item));
+        final Element e = _cache.get(new PriceKey(memberId, item));
         if (e == null) {
             return null;
         }
@@ -58,14 +58,14 @@ public class SecuredPricesEhcache
 
     public void securePrice (final int memberId, final ItemIdent item, final SecuredPrices prices)
     {
-        cache.put(new Element(new PriceKey(memberId, item), prices));
+        _cache.put(new Element(new PriceKey(memberId, item), prices));
     }
     
     public void removeSecuredPrice (final int memberId, final ItemIdent item)
     {
-        cache.remove(new PriceKey(memberId, item));
+        _cache.remove(new PriceKey(memberId, item));
     }
 
     private static final String CACHE_NAME = "secured_prices";
-    private final Cache cache;
+    private final Cache _cache;
 }

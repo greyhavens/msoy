@@ -20,13 +20,13 @@ public class MoneyHistory
     public MoneyHistory (final int memberId, final Date timestamp, final MoneyType type, final double amount,
         final boolean spent, final String description, final ItemIdent item)
     {
-        this.memberId = memberId;
-        this.timestamp = timestamp;
-        this.type = type;
-        this.amount = amount;
-        this.spent = spent;
-        this.description = description;
-        this.item = item;
+        this._memberId = memberId;
+        this._timestamp = timestamp;
+        this._type = type;
+        this._amount = amount;
+        this._spent = spent;
+        this._description = description;
+        this._item = item;
     }
 
     /**
@@ -34,7 +34,7 @@ public class MoneyHistory
      */
     public int getMemberId ()
     {
-        return memberId;
+        return _memberId;
     }
 
     /**
@@ -42,7 +42,7 @@ public class MoneyHistory
      */
     public Date getTimestamp ()
     {
-        return timestamp;
+        return _timestamp;
     }
 
     /**
@@ -50,7 +50,7 @@ public class MoneyHistory
      */
     public double getAmount ()
     {
-        return amount;
+        return _amount;
     }
 
     /**
@@ -59,7 +59,7 @@ public class MoneyHistory
      */
     public boolean isSpent ()
     {
-        return spent;
+        return _spent;
     }
 
     /**
@@ -67,7 +67,7 @@ public class MoneyHistory
      */
     public String getDescription ()
     {
-        return description;
+        return _description;
     }
 
     /**
@@ -75,7 +75,7 @@ public class MoneyHistory
      */
     public MoneyType getType ()
     {
-        return type;
+        return _type;
     }
 
     /**
@@ -83,14 +83,14 @@ public class MoneyHistory
      */
     public ItemIdent getItem ()
     {
-        return item;
+        return _item;
     }
 
-    private final int memberId;
-    private final Date timestamp;
-    private final MoneyType type;
-    private final double amount;
-    private final boolean spent;
-    private final String description;
-    private final ItemIdent item;
+    private final int _memberId;
+    private final Date _timestamp;
+    private final MoneyType _type;
+    private final double _amount;
+    private final boolean _spent;
+    private final String _description;
+    private final ItemIdent _item;
 }

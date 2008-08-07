@@ -42,13 +42,13 @@ public enum MoneyType implements ByteEnum {
     
     public byte toByte ()
     {
-        return value;
+        return _value;
     }
 
     private MoneyType (final int value)
     {
-        this.value = (byte)value;
+        this._value = (byte)value;
     }
     
-    private final byte value;
+    private final byte _value;
 }

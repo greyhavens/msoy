@@ -15,10 +15,10 @@ public class NotEnoughMoneyException extends MoneyException
     {
         super("An attempt to secure " + moneyRequested + " currency of type " + type + " from member ID " +
             memberId + " failed because only " + moneyAvailable + " is available.");
-        this.moneyAvailable = moneyAvailable;
-        this.moneyRequested = moneyRequested;
-        this.type = type;
-        this.memberId = memberId;
+        this._moneyAvailable = moneyAvailable;
+        this._moneyRequested = moneyRequested;
+        this._type = type;
+        this._memberId = memberId;
     }
 
     public NotEnoughMoneyException (final double moneyAvailable, final double moneyRequested,
@@ -26,34 +26,34 @@ public class NotEnoughMoneyException extends MoneyException
     {
         super("An attempt to secure " + moneyRequested + " currency of type " + type + " from member ID " +
             memberId + " failed because only " + moneyAvailable + " is available.", cause);
-        this.moneyAvailable = moneyAvailable;
-        this.moneyRequested = moneyRequested;
-        this.type = type;
-        this.memberId = memberId;
+        this._moneyAvailable = moneyAvailable;
+        this._moneyRequested = moneyRequested;
+        this._type = type;
+        this._memberId = memberId;
     }
 
     public int getMemberId ()
     {
-        return memberId;
+        return _memberId;
     }
 
     public double getMoneyAvailable ()
     {
-        return moneyAvailable;
+        return _moneyAvailable;
     }
 
     public double getMoneyRequested ()
     {
-        return moneyRequested;
+        return _moneyRequested;
     }
 
     public MoneyType getType ()
     {
-        return type;
+        return _type;
     }
 
-    private final double moneyAvailable;
-    private final double moneyRequested;
-    private final MoneyType type;
-    private final int memberId;
+    private final double _moneyAvailable;
+    private final double _moneyRequested;
+    private final MoneyType _type;
+    private final int _memberId;
 }

@@ -17,11 +17,11 @@ public class MoneyConfiguration
             final double coinsToBarsWeightValue, final double blingCashoutTransactionFee, final
             int maxSecuredPrices)
     {
-        this.creatorKickback = creatorKickback;
-        this.securePriceDuration = securePriceDuration;
-        this.coinsToBarsWeightValue = coinsToBarsWeightValue;
-        this.blingCashoutTransactionFee = blingCashoutTransactionFee;
-        this.maxSecuredPrices = maxSecuredPrices;
+        this._creatorKickback = creatorKickback;
+        this._securePriceDuration = securePriceDuration;
+        this._coinsToBarsWeightValue = coinsToBarsWeightValue;
+        this._blingCashoutTransactionFee = blingCashoutTransactionFee;
+        this._maxSecuredPrices = maxSecuredPrices;
     }
 
     /**
@@ -30,7 +30,7 @@ public class MoneyConfiguration
      */
     public double getCreatorKickback ()
     {
-        return creatorKickback;
+        return _creatorKickback;
     }
 
     /**
@@ -38,7 +38,7 @@ public class MoneyConfiguration
      */
     public long getSecurePriceDuration ()
     {
-        return securePriceDuration;
+        return _securePriceDuration;
     }
 
     /**
@@ -46,7 +46,7 @@ public class MoneyConfiguration
      */
     public double getCoinsToBarsWeightValue ()
     {
-        return coinsToBarsWeightValue;
+        return _coinsToBarsWeightValue;
     }
 
     /**
@@ -54,7 +54,7 @@ public class MoneyConfiguration
      */
     public double getBlingCashoutTransactionFee ()
     {
-        return blingCashoutTransactionFee;
+        return _blingCashoutTransactionFee;
     }
 
     /**
@@ -62,12 +62,12 @@ public class MoneyConfiguration
      */
     public int getMaxSecuredPrices ()
     {
-        return maxSecuredPrices;
+        return _maxSecuredPrices;
     }
 
-    private final double creatorKickback;
-    private final long securePriceDuration;
-    private final int maxSecuredPrices;
-    private final double coinsToBarsWeightValue;
-    private final double blingCashoutTransactionFee;
+    private final double _creatorKickback;
+    private final long _securePriceDuration;
+    private final int _maxSecuredPrices;
+    private final double _coinsToBarsWeightValue;
+    private final double _blingCashoutTransactionFee;
 }

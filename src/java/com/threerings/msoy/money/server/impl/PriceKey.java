@@ -15,19 +15,19 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 class PriceKey implements Serializable
 {
     public PriceKey (final int memberId, final ItemIdent item) {
-        this.memberId = memberId;
-        this.itemId = item.itemId;
-        this.itemType = item.type;
+        this._memberId = memberId;
+        this._itemId = item.itemId;
+        this._itemType = item.type;
     }
     
     public int getMemberId ()
     {
-        return memberId;
+        return _memberId;
     }
     
     public ItemIdent getItem ()
     {
-        return new ItemIdent(itemType, itemId);
+        return new ItemIdent(_itemType, _itemId);
     }
 
     @Override
@@ -35,8 +35,8 @@ class PriceKey implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + itemId;
-        result = prime * result + memberId;
+        result = prime * result + _itemId;
+        result = prime * result + _memberId;
         return result;
     }
 
@@ -50,16 +50,16 @@ class PriceKey implements Serializable
         if (getClass() != obj.getClass())
             return false;
         final PriceKey other = (PriceKey)obj;
-        if (itemId != other.itemId)
+        if (_itemId != other._itemId)
             return false;
-        if (itemType != other.itemType)
+        if (_itemType != other._itemType)
             return false;
-        if (memberId != other.memberId)
+        if (_memberId != other._memberId)
             return false;
         return true;
     }
     
-    private final int memberId;
-    private final int itemId;
-    private final byte itemType;
+    private final int _memberId;
+    private final int _itemId;
+    private final byte _itemType;
 }

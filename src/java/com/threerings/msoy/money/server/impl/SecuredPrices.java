@@ -18,48 +18,48 @@ class SecuredPrices implements Serializable
     public SecuredPrices (final MoneyType listedType, final int coins, final int bars, final int creatorId, 
         final int affiliateId, final String description)
     {
-        this.coins = coins;
-        this.bars = bars;
-        this.creatorId = creatorId;
-        this.affiliateId = affiliateId;
-        this.description = description;
-        this.listedType = listedType;
+        this._coins = coins;
+        this._bars = bars;
+        this._creatorId = creatorId;
+        this._affiliateId = affiliateId;
+        this._description = description;
+        this._listedType = listedType;
     }
 
     public int getCoins ()
     {
-        return coins;
+        return _coins;
     }
     
     public String getDescription ()
     {
-        return description;
+        return _description;
     }
 
     public int getBars ()
     {
-        return bars;
+        return _bars;
     }
 
     public int getCreatorId ()
     {
-        return creatorId;
+        return _creatorId;
     }
 
     public int getAffiliateId ()
     {
-        return affiliateId;
+        return _affiliateId;
     }
 
     public MoneyType getListedType ()
     {
-        return listedType;
+        return _listedType;
     }
     
-    private final int coins;
-    private final int bars;
-    private final int creatorId;
-    private final int affiliateId;
-    private final String description;
-    private final MoneyType listedType;
+    private final int _coins;
+    private final int _bars;
+    private final int _creatorId;
+    private final int _affiliateId;
+    private final String _description;
+    private final MoneyType _listedType;
 }

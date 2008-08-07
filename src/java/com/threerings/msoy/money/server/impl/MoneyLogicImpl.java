@@ -38,8 +38,8 @@ public class MoneyLogicImpl
     @Inject
     public MoneyLogicImpl(final MoneyRepository repo, final SecuredPricesCache securedPricesCache)
     {
-        this.repo = repo;
-        this.securedPricesCache = securedPricesCache;
+        this._repo = repo;
+        this._securedPricesCache = securedPricesCache;
     }
     
     @Retry(exception=StaleDataException.class)
@@ -49,13 +49,13 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Cannot award coins to guests.");
         Preconditions.checkArgument(amount > 0, "amount is invalid: %d", amount);
         
-        MemberAccountRecord account = repo.getAccountById(memberId);
+        MemberAccountRecord account = _repo.getAccountById(memberId);
         if (account == null) {
             account = new MemberAccountRecord(memberId);
         }
         final MemberAccountHistoryRecord history = account.awardCoins(amount);
-        repo.saveAccount(account);
-        repo.addHistory(history);
+        _repo.saveAccount(account);
+        _repo.addHistory(history);
         // TODO: creator and affiliate
     }
 
@@ -65,13 +65,13 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy bars.");
         Preconditions.checkArgument(numBars > 0, "numBars is invalid: %d", numBars);
         
-        MemberAccountRecord account = repo.getAccountById(memberId);
+        MemberAccountRecord account = _repo.getAccountById(memberId);
         if (account == null) {
             account = new MemberAccountRecord(memberId);
         }
         final MemberAccountHistoryRecord history = account.buyBars(numBars);
-        repo.saveAccount(account);
-        repo.addHistory(history);
+        _repo.saveAccount(account);
+        _repo.addHistory(history);
     }
 
     @Retry(exception=StaleDataException.class)
@@ -115,7 +115,7 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
         
         final List<MoneyHistory> log = new ArrayList<MoneyHistory>();
-        for (final MemberAccountHistoryRecord record : repo.getHistory(memberId, type, start, count, descending)) {
+        for (final MemberAccountHistoryRecord record : _repo.getHistory(memberId, type, start, count, descending)) {
             log.add(record.createMoneyHistory());
         }
         return log;
@@ -131,7 +131,7 @@ public class MoneyLogicImpl
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot retrieve money info for guests.");
 
-        final MemberAccountRecord account = repo.getAccountById(memberId);
+        final MemberAccountRecord account = _repo.getAccountById(memberId);
         return account != null ? account.getMemberMoney() : new MemberMoney(memberId); 
     }
 
@@ -145,7 +145,7 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(numBars > 0, "bars is invalid: %d", numBars);
         
         // TODO: Use exchange rate to calculate coins.
-        securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.BARS, 0, numBars, 
+        _securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.BARS, 0, numBars, 
             creatorId, affiliateId, description));
         return 0;
     }
@@ -160,7 +160,7 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(numCoins > 0, "numCoins is invalid: %d", numCoins);
         
         // TODO: Use exchange rate to calculate bars.
-        securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.COINS, numCoins, 0, 
+        _securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.COINS, numCoins, 0, 
             creatorId, affiliateId, description));
         return 0;
     }
@@ -181,46 +181,46 @@ public class MoneyLogicImpl
             "purchaseType is invalid: %s", purchaseType.toString());
         
         // Get the secured prices for the item.
-        final SecuredPrices prices = securedPricesCache.getSecuredPrice(memberId, item);
+        final SecuredPrices prices = _securedPricesCache.getSecuredPrice(memberId, item);
         if (prices == null) {
             throw new NotSecuredException(memberId, item);
         }
         final int amount = (purchaseType == MoneyType.BARS ? prices.getBars() : prices.getCoins());
         
         // Load up the accounts (member, creator, and affiliate).
-        final MemberAccountRecord account = repo.getAccountById(memberId);
+        final MemberAccountRecord account = _repo.getAccountById(memberId);
         if (account == null || !account.canAfford(amount, purchaseType)) {
             final int available = (account == null ? 0 : (purchaseType == MoneyType.BARS ? account.getBars() : 
                 account.getCoins()));
             throw new NotEnoughMoneyException(available, amount, purchaseType, memberId);
         }
-        MemberAccountRecord creator = repo.getAccountById(prices.getCreatorId());
+        MemberAccountRecord creator = _repo.getAccountById(prices.getCreatorId());
         if (creator == null) {
             creator = new MemberAccountRecord(prices.getCreatorId());
         }
         MemberAccountRecord affiliate = null;
         if (prices.getAffiliateId() != 0) {
-            affiliate = repo.getAccountById(prices.getAffiliateId());
+            affiliate = _repo.getAccountById(prices.getAffiliateId());
             if (affiliate == null) {
                 affiliate = new MemberAccountRecord(prices.getAffiliateId());
             }
         }
         
         // The item no longer needs to be in the cache.
-        securedPricesCache.removeSecuredPrice(memberId, item);
+        _securedPricesCache.removeSecuredPrice(memberId, item);
         
         // Update and save the accounts, and add history records for the changes.
-        repo.addHistory(account.buyItem(amount, purchaseType, prices.getDescription(), item));
-        repo.addHistory(creator.creatorPayout(amount, prices.getListedType(), "Item purchased: " + 
+        _repo.addHistory(account.buyItem(amount, purchaseType, prices.getDescription(), item));
+        _repo.addHistory(creator.creatorPayout(amount, prices.getListedType(), "Item purchased: " + 
             prices.getDescription(), item));
         // TODO: update affiliate with some amount of bling.
-        repo.saveAccount(account);
-        repo.saveAccount(creator);
+        _repo.saveAccount(account);
+        _repo.saveAccount(creator);
         if (affiliate != null) {
-            repo.saveAccount(affiliate);
+            _repo.saveAccount(affiliate);
         }
     }
     
-    private final MoneyRepository repo;
-    private final SecuredPricesCache securedPricesCache;
+    private final MoneyRepository _repo;
+    private final SecuredPricesCache _securedPricesCache;
 }

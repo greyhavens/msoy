@@ -33,7 +33,7 @@ public class RetryInterceptor
             } catch (final Throwable t) {
                 if (retryAnn.exception().isInstance(t)) {
                     retries++;
-                    logger.info("Retrying method: " + invocation.getMethod().toString() + 
+                    _logger.info("Retrying method: " + invocation.getMethod().toString() + 
                         ", exception: " + t.getMessage() + ", attempts: " + retries);
                     lastException = t;
                 } else {
@@ -46,5 +46,5 @@ public class RetryInterceptor
             invocation.getMethod().toString(), lastException);
     }
 
-    private static final Logger logger = Logger.getLogger(RetryInterceptor.class);
+    private static final Logger _logger = Logger.getLogger(RetryInterceptor.class);
 }
