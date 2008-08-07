@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.web.server;
 
 import javax.servlet.http.Cookie;
@@ -11,9 +14,9 @@ import com.samskivert.servlet.util.CookieUtil;
  * a Whirled page, and gets used later on to auto-populate the ReferralInfo struct.
  * 
  * This class contains server-side functionality; for browser-side code see
- * {@link client.shell.ReferrerCookie}. 
+ * {@link client.shell.HttpReferrerCookie}. 
  */
-public class ReferrerCookie
+public class HttpReferrerCookie
 {
     /**
      * Is referrer information already stored?

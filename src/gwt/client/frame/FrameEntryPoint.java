@@ -33,7 +33,7 @@ import client.shell.Args;
 import client.shell.BrowserTest;
 import client.shell.CShell;
 import client.shell.Pages;
-import client.shell.ReferrerCookie;
+import client.shell.HttpReferrerCookie;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
@@ -183,8 +183,8 @@ public class FrameEntryPoint
         // if we still don't have a tracking cookie, try to manufacture one from 
         // the HTTP Referer header, which the server should have saved for us.
         if (!TrackingCookie.exists()) {
-            if (ReferrerCookie.exists()) {
-                String ref = ReferrerCookie.get();
+            if (HttpReferrerCookie.exists()) {
+                String ref = HttpReferrerCookie.get();
                 maybeCreateReferral(ref, token, "");
             } else {
                 maybeCreateReferral("", "", "");

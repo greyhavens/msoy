@@ -1,5 +1,5 @@
 //
-// $Id: TrackingCookie.java 10137 2008-07-28 12:26:48Z mdb $
+// $Id$
 
 package client.shell;
 
@@ -10,9 +10,9 @@ import com.threerings.gwt.util.CookieUtil;
  * a Whirled page, and gets used later on to auto-populate the ReferralInfo struct.
  * 
  * This class contains browser-side functionality; for server-side code see
- * {@link com.threerings.msoy.web.server.ReferrerCookie}. 
+ * {@link com.threerings.msoy.web.server.HttpReferrerCookie}. 
  */
-public class ReferrerCookie
+public class HttpReferrerCookie
 {
     /**
      * Is referrer information already stored?
@@ -43,6 +43,11 @@ public class ReferrerCookie
     }
 
     private static final String REFERRAL_FIELD = "ref";
+    
+    /** 
+     * Some value that's not null (so the existence check passes), but
+     * also does not contain a meaningful HTTP Reference string. 
+     */
     private static final String REFERRER_DISABLED_VALUE = "";
 }
 

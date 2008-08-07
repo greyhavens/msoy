@@ -142,7 +142,7 @@ public class MsoyHttpServer extends Server
          */
         protected void addReferralCookie (HttpServletRequest req, HttpServletResponse rsp) {
             // do we already know the referer? if so, we're done
-            if (ReferrerCookie.exists(req)) {
+            if (HttpReferrerCookie.exists(req)) {
                 return; 
             }
             // otherwise, this is the first time we got loaded - store the HTTP referer
@@ -150,7 +150,7 @@ public class MsoyHttpServer extends Server
             if (ref instanceof String) {
                 try {
                     URL url = new URL((String) ref);
-                    ReferrerCookie.set(rsp, url.getHost());
+                    HttpReferrerCookie.set(rsp, url.getHost());
                 } catch (MalformedURLException mue) {
                     // ignore - we just won't add this cookie
                 }
