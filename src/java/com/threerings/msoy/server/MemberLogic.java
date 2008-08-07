@@ -148,6 +148,12 @@ public class MemberLogic
      */
     public int getABTestGroup (String testName, ReferralInfo info, boolean logEvent)
     {
+        if (info == null) { // sanity check
+            log.warning("Received bogus AB test group request [name=" + testName +
+                        ", info=" + info + ", logEvent=" + logEvent + "].");
+            return -1;
+        }
+
         ABTest test = null;
         try {
             ABTestRecord record = _testRepo.loadTestByName(testName);
