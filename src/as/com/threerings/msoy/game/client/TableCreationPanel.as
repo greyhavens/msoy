@@ -151,7 +151,7 @@ public class TableCreationPanel extends VBox
 
         var label :Label = new Label();
         label.text = Msgs.GAME.get("l.table");
-        label.toolTip = Msgs.GAME.get("t.table");
+        label.toolTip = Msgs.GAME.get("i.table");
         label.styleName = "lobbyLabel";
 
         box.addChild(label);
