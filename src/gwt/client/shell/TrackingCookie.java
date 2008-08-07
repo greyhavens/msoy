@@ -176,7 +176,7 @@ public class TrackingCookie
         
         // if the checksum doesn't check out, someone has been tampering with our cookies!
         // let's just return an empty string.
-        if (total == check) {
+        if (total != check) {
             return "";
         }
         
