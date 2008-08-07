@@ -3,6 +3,7 @@
 
 package client.util;
 
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
@@ -103,9 +104,9 @@ public class FlashClients
     public static void toggleClientHeight ()
     {
         if (_clientFullHeight = !_clientFullHeight) {
-            setClientHeightNative("100%");
+            setClientHeightNative(findClient(), "100%");
         } else {
-            setClientHeightNative(Frame.CLIENT_HEIGHT+"px");
+            setClientHeightNative(findClient(), Frame.CLIENT_HEIGHT+"px");
         }
     }
 
@@ -114,7 +115,7 @@ public class FlashClients
      */
     public static boolean clientExists ()
     {
-        return clientExistsNative();
+        return findClient() != null;
     }
 
     /**
@@ -122,7 +123,7 @@ public class FlashClients
      */
     public static int getSceneId ()
     {
-        return getSceneIdNative();
+        return getSceneIdNative(findClient());
     }
 
     /**
@@ -130,7 +131,7 @@ public class FlashClients
      */
     public static boolean inRoom ()
     {
-        return inRoomNative();
+        return inRoomNative(findClient());
     }
 
     /**
@@ -139,7 +140,7 @@ public class FlashClients
      */
     public static void useItem (byte itemType, int itemId)
     {
-        useItemNative(itemType, itemId);
+        useItemNative(findClient(), itemType, itemId);
     }
 
     /**
@@ -147,7 +148,7 @@ public class FlashClients
      */
     public static void clearItem (byte itemType, int itemId)
     {
-        clearItemNative(itemType, itemId);
+        clearItemNative(findClient(), itemType, itemId);
     }
 
     /**
@@ -156,7 +157,7 @@ public class FlashClients
      */
     public static void useAvatar (int avatarId, float scale)
     {
-        useAvatarNative(avatarId, scale);
+        useAvatarNative(findClient(), avatarId, scale);
     }
 
     /**
@@ -164,7 +165,7 @@ public class FlashClients
      */
     public static void tutorialEvent (String eventName)
     {
-        tutorialEventNative(eventName);
+        tutorialEventNative(findClient(), eventName);
     }
 
     /**
@@ -190,17 +191,16 @@ public class FlashClients
     }
 
     /**
-     * Does the actual <code>clientExists()</code> call.
+     * Returns the element that represents the Flash client.
      */
-    protected static native boolean clientExistsNative () /*-{
-        return $doc.getElementById("asclient") != null;
+    protected static native Element findClient () /*-{
+        return $wnd.top.document.getElementById("asclient");
     }-*/;
 
     /**
      * TEMP: Changes the height of the client already embedded in the page.
      */
-    protected static native void setClientHeightNative (String height) /*-{
-        var client = $doc.getElementById("asclient");
+    protected static native void setClientHeightNative (Element client, String height) /*-{
         if (client != null) {
             client.style.height = height;
         }
@@ -209,8 +209,7 @@ public class FlashClients
     /**
      * Does the actual <code>getSceneId()</code> call.
      */
-    protected static native int getSceneIdNative () /*-{
-        var client = $doc.getElementById("asclient");
+    protected static native int getSceneIdNative (Element client) /*-{
         if (client) {
             // exception from JavaScript break GWT; don't let that happen
             try { return client.getSceneId(); } catch (e) {}
@@ -221,8 +220,7 @@ public class FlashClients
     /**
      * Does the actual <code>inRoom()</code> call.
      */
-    protected static native boolean inRoomNative () /*-{
-        var client = $doc.getElementById("asclient");
+    protected static native boolean inRoomNative (Element client) /*-{
         if (client) {
             // exception from JavaScript break GWT; don't let that happen
             try { return client.inRoom(); } catch (e) {}
@@ -233,8 +231,7 @@ public class FlashClients
     /**
      * Does the actual <code>useItem()</code> call.
      */
-    protected static native void useItemNative (byte itemType, int itemId) /*-{
-        var client = $doc.getElementById("asclient");
+    protected static native void useItemNative (Element client, byte itemType, int itemId) /*-{
         if (client) {
             // exception from JavaScript break GWT; don't let that happen
             try { client.useItem(itemType, itemId); } catch (e) {}
@@ -244,8 +241,7 @@ public class FlashClients
     /**
      * Does the actual <code>clearItem()</code> call.
      */
-    protected static native void clearItemNative (byte itemType, int itemId) /*-{
-        var client = $doc.getElementById("asclient");
+    protected static native void clearItemNative (Element client, byte itemType, int itemId) /*-{
         if (client) {
             // exception from JavaScript break GWT; don't let that happen
             try { client.clearItem(itemType, itemId); } catch (e) {}
@@ -255,8 +251,7 @@ public class FlashClients
     /**
      * Does the actual <code>useAvatar()</code> call.
      */
-    protected static native void useAvatarNative (int avatarId, float scale) /*-{
-        var client = $doc.getElementById("asclient");
+    protected static native void useAvatarNative (Element client, int avatarId, float scale) /*-{
         if (client) {
             // exception from JavaScript break GWT; don't let that happen
             try { client.useAvatar(avatarId, scale); } catch (e) {}
@@ -266,8 +261,7 @@ public class FlashClients
     /**
      * Does the actual <code>tutorialEvent()</code> call.
      */
-    protected static native void tutorialEventNative (String eventName) /*-{
-        var client = $doc.getElementById("asclient");
+    protected static native void tutorialEventNative (Element client, String eventName) /*-{
         if (client) {
             // exception from JavaScript break GWT; don't let that happen
             try { client.tutorialEvent(eventName); } catch (e) {}
