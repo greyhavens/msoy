@@ -18,7 +18,6 @@ import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
-import com.threerings.msoy.web.data.WebIdent;
 
 import client.util.ServiceUtil;
 
@@ -102,7 +101,6 @@ public class Session
 
         // fill in our global creds info
         CShell.creds = data.creds;
-        CShell.ident = new WebIdent(data.creds.getMemberId(), data.creds.token);
 
         // let our observers know that we've just logged on
         for (Observer observer : _observers) {
@@ -125,7 +123,6 @@ public class Session
 
         // clear out our global creds info
         CShell.creds = null;
-        CShell.ident = null;
 
         // let our observers know that we've just logged off
         for (Observer observer : _observers) {

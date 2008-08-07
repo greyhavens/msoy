@@ -56,8 +56,8 @@ public class WorldClient extends Widget
             if (partner != null) {
                 flashArgs += "&partner=" + partner;
             }
-            if (CShell.ident != null) {
-                flashArgs += "&token=" + CShell.ident.token;
+            if (CShell.getAuthToken() != null) {
+                flashArgs += "&token=" + CShell.getAuthToken();
             }
             FlashClients.embedWorldClient(pprov.get(), flashArgs);
 
@@ -77,8 +77,8 @@ public class WorldClient extends Widget
             flashArgs += "&gameMode=" + action;
         }
         flashArgs += ("&host=" + config.server + "&port=" + config.port);
-        if (CShell.ident != null) {
-            flashArgs += "&token=" + CShell.ident.token;
+        if (CShell.getAuthToken() != null) {
+            flashArgs += "&token=" + CShell.getAuthToken();
         }
         FlashClients.embedGameClient(pprov.get(), flashArgs);
     }

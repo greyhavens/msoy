@@ -19,7 +19,7 @@ public class AdminPage extends Page
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        if (CAdmin.ident == null) {
+        if (CAdmin.isGuest()) {
             setContent(MsoyUI.createLabel(CAdmin.msgs.indexLogon(), "infoLabel"));
 
         } else if (!CAdmin.isSupport()) {

@@ -252,7 +252,7 @@ public class TagDetailPanel extends VerticalPanel
             _tags.add(new InlineLabel("none"));
         }
 
-//         if (CShell.ident != null) {
+//         if (!CShell.isGuest()) {
 //             _service.getRecentTags(new MsoyCallback<Collection<TagHistory>>() {
 //                 public void onSuccess (Collection<TagHistory> result) {
 //                     _quickTags.clear();

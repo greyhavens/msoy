@@ -35,7 +35,7 @@ public class AccountPage extends Page
         } else if (action.equals("welcome")) {
             setContent(CAccount.msgs.welcomeTitle(), new WelcomePanel());
 
-        } else if (CAccount.ident == null) {
+        } else if (CAccount.isGuest()) {
             setContent(MsoyUI.createLabel(CAccount.msgs.indexLogon(), "infoLabel"));
         } else {
             Link.go(Pages.ME, "");

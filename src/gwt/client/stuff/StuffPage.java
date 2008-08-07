@@ -50,7 +50,7 @@ public class StuffPage extends Page
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        if (CStuff.ident == null) {
+        if (CStuff.isGuest()) {
             // if we have no creds, just display a message saying login
             setContent(MsoyUI.createLabel(CStuff.msgs.logon(), "infoLabel"));
             return;

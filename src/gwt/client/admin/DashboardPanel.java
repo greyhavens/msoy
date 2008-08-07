@@ -118,7 +118,7 @@ public class DashboardPanel extends FlexTable
                       "com.threerings.msoy.admin.client.AdminApplet", 680, 400, false,
                       new String[] { "server", config.server,
                                      "port", "" + config.port,
-                                     "authtoken", CAdmin.ident.token }));
+                                     "authtoken", CAdmin.getAuthToken() }));
     }
 
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)

@@ -11,7 +11,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
-import com.threerings.msoy.web.data.WebIdent;
 
 import client.util.events.FlashEvents;
 import client.util.events.GotGuestIdEvent;
@@ -25,18 +24,23 @@ public class CShell
     /** Our credentials or null if we are not logged in. */
     public static WebCreds creds;
 
-    /** Use this to make service calls. */
-    public static WebIdent ident;
-
     /** Used to communicate with the frame. */
     public static Frame frame;
+
+    /**
+     * Returns our authentication token, or null if we don't have one.
+     */
+    public static String getAuthToken ()
+    {
+        return (creds == null) ? null : creds.token;
+    }
 
     /**
      * Returns our member id if we're logged in, 0 if we are not.
      */
     public static int getMemberId ()
     {
-        return (ident == null) ? 0 : ident.memberId;
+        return (creds == null) ? 0 : creds.name.getMemberId();
     }
 
     /**
@@ -77,11 +81,11 @@ public class CShell
                         "[memberId=" + getMemberId() + ", guestId=" + event.getGuestId() + "].");
                 } else {
                     log("Got guest id from Flash " + event.getGuestId() + ".");
-                    ident = new WebIdent();
-                    ident.memberId = event.getGuestId();
+                    creds = new WebCreds();
+                    creds.name = new MemberName("Guest" + event.getGuestId(), event.getGuestId());
                     // TODO: the code that knows how to do this is in MsoyCredentials which is not
                     // accessible to GWT currently for unrelated technical reasons
-                    ident.token = "G" + event.getGuestId();
+                    creds.token = "G" + event.getGuestId();
                 }
             }
         });

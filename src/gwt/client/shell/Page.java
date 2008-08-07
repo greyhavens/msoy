@@ -25,7 +25,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
-import com.threerings.msoy.web.data.WebIdent;
 
 import client.ui.MsoyUI;
 import client.util.ArrayUtil;
@@ -103,9 +102,6 @@ public abstract class Page
             // obtain our current credentials from the frame
             CShell.creds = WebCreds.unflatten(
                 ArrayUtil.toIterator(frameCall(Frame.Calls.GET_WEB_CREDS, null)));
-            if (CShell.creds != null) {
-                CShell.ident = new WebIdent(CShell.creds.getMemberId(), CShell.creds.token);
-            }
 
             // and get our current page token from our containing frame
             setPageToken(frameCall(Frame.Calls.GET_PAGE_TOKEN, null)[0]);

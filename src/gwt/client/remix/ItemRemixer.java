@@ -96,7 +96,7 @@ public class ItemRemixer extends FlexTable
             "&type=" + URL.encodeComponent(Item.getTypeName(item.getType())) +
             "&server=" + URL.encodeComponent(serverURL) +
             "&mediaId=" + URL.encodeComponent(Item.MAIN_MEDIA) +
-            "&auth=" + URL.encodeComponent(CShell.ident.token);
+            "&auth=" + URL.encodeComponent(CShell.getAuthToken());
 
         if (item instanceof Decor) {
             flashVars += "&" + ItemUtil.createDecorViewerParams((Decor) item);

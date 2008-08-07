@@ -16,7 +16,7 @@ public class MailPage extends Page
     public void onHistoryChanged (Args args)
     {
         // if we have no creds, just display a message saying login
-        if (CMail.ident == null) {
+        if (CMail.isGuest()) {
             setContent(MsoyUI.createLabel(CMail.msgs.logon(), "infoLabel"));
             return;
         }

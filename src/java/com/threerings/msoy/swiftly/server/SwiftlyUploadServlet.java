@@ -13,7 +13,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.servlet.util.CookieUtil;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.dobj.RootDObjectManager;
 
