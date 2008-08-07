@@ -158,12 +158,12 @@ public class MemberLogic
         try {
             ABTestRecord record = _testRepo.loadTestByName(testName);
             if (record == null) {
-                log.warning("Unknown A/B Test in getABTestGroup: " + testName);
+                log.warning("Unknown A/B Test in getABTestGroup", "name", testName);
                 return -1;
             }
             test = record.toABTest();
         } catch (PersistenceException pe) {
-            log.warning("Failed to select A/B Test", pe);
+            log.warning("Failed to load A/B Test", "name", testName, pe);
             return -1;
         }
 
