@@ -23,6 +23,8 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
@@ -318,6 +320,49 @@ public class StuffServlet extends MsoyServiceServlet
             }
         });
         return rec.toItem();
+    }
+
+    // from interface StuffService
+    public int getSize (ItemListQuery query) throws ServiceException
+    {
+        try {
+            return _itemLogic.getSize(query.listId, query.itemType);
+        } catch (PersistenceException pex) {
+            log.warning("Could not get size of item list.", "listId", query.listId, "itemType",
+                query.itemType, pex);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface StuffService
+    public ItemListResult loadItemList (ItemListQuery query) throws ServiceException
+    {
+        ItemListResult result = new ItemListResult();
+
+        try {
+            result.items = _itemLogic.loadItemList(query);
+            if (query.needsCount) {
+                result.totalCount = getSize(query);
+            }
+        } catch (PersistenceException pex) {
+            log.warning("Could not load item list.", "query", query, pex);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        return result;
+    }
+
+    // from interface StuffService
+    public ItemListInfo getFavoriteListInfo () throws ServiceException
+    {
+        MemberRecord memrec = requireAuthedUser();
+
+        try {
+            return _itemLogic.getFavoriteListInfo (memrec.memberId);
+        } catch (PersistenceException pex) {
+            log.warning("Could not get favorite list info.", "memrec", memrec, pex);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     // our dependencies

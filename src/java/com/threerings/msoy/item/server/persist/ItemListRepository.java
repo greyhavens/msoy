@@ -28,7 +28,9 @@ import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic;
 
 import com.threerings.presents.annotation.BlockingThread;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.server.persist.CountRecord;
 
 @Singleton
@@ -92,6 +94,23 @@ public class ItemListRepository extends DepotRepository
     }
 
     /**
+     * Gets the number of items of the given type in a list.
+     */
+    public int getSize (int listId, byte listType)
+        throws PersistenceException
+    {
+        Where where;
+        if (listType == Item.NOT_A_TYPE) {
+            where = new Where(ItemListElementRecord.LIST_ID_C, listId);
+        } else {
+            where = new Where(ItemListElementRecord.LIST_ID_C, listId, ItemListElementRecord.TYPE_C, listType);
+        }
+
+        CountRecord size = load(CountRecord.class, new FromOverride(ItemListElementRecord.class), where);
+        return size.count;
+    }
+
+    /**
      * Load the list info with the given id.
      */
     public ItemListInfoRecord loadInfo (int listId)
@@ -106,7 +125,6 @@ public class ItemListRepository extends DepotRepository
     public List<ItemListInfoRecord> loadInfos (int memberId)
         throws PersistenceException
     {
-        // List<ItemListInfoRecord> list = Collections.emptyList();
         return findAll(ItemListInfoRecord.class, new Where(ItemListInfoRecord.MEMBER_ID_C, memberId));
     }
 
@@ -132,39 +150,43 @@ public class ItemListRepository extends DepotRepository
             new Where(ItemListElementRecord.LIST_ID_C, listId),
             OrderBy.ascending(ItemListElementRecord.SEQUENCE_C));
 
-        int size = list.size();
-        ItemIdent[] idents = new ItemIdent[size];
-        for (int ii = 0; ii < size; ii++) {
-            idents[ii] = list.get(ii).toItemIdent();
-        }
-
-        return idents;
+        return toItemIdents(list);
     }
 
     /**
-     * Load a limited number of the item IDs in the list with the given id. Useful for
-     * pagination in case the number of items in a list is exceptionally large.
+     * Load item IDs from a list with optional query criteria for item type, number of results, and
+     * ordering Useful for pagination in case the number of items in a list is exceptionally large.
      *
-     * @param listId the list to query.
-     * @param offset the starting index for the results.
-     * @param count the number of results to return.
+     * @param query the search criteria for list elements.
      * @return an array containing the results.
      */
-    public ItemIdent[] loadList (int listId, int offset, int count)
+    public ItemIdent[] loadList (ItemListQuery query)
         throws PersistenceException
     {
-        List<ItemListElementRecord> list = findAll(ItemListElementRecord.class,
-            new Where(ItemListElementRecord.LIST_ID_C, listId),
-            OrderBy.ascending(ItemListElementRecord.SEQUENCE_C),
-            new Limit(offset, count));
-
-        int size = list.size();
-        ItemIdent[] idents = new ItemIdent[size];
-        for (int ii = 0; ii < size; ii++) {
-            idents[ii] = list.get(ii).toItemIdent();
+        Where where;
+        if(query.itemType == Item.NOT_A_TYPE) {
+            where = new Where(ItemListElementRecord.LIST_ID_C, query.listId);
+        } else {
+            where = new Where(ItemListElementRecord.LIST_ID_C, query.listId,
+                ItemListElementRecord.TYPE_C, query.itemType);
         }
 
-        return idents;
+        OrderBy orderBy;
+        if(query.descending) {
+            orderBy = OrderBy.descending(ItemListElementRecord.SEQUENCE_C);
+        } else {
+            orderBy = OrderBy.ascending(ItemListElementRecord.SEQUENCE_C);
+        }
+
+        List<ItemListElementRecord> results;
+        if (query.count > 0) {
+            results = findAll(ItemListElementRecord.class, where, orderBy, new Limit(query.offset,
+                query.count));
+        } else {
+            results = findAll(ItemListElementRecord.class, where, orderBy);
+        }
+
+        return toItemIdents(results);
     }
 
     /**
@@ -194,11 +216,16 @@ public class ItemListRepository extends DepotRepository
         // get the item's current location in the list
         final ItemListElementRecord record = loadElement(listId, item);
 
+        if (record == null) {
+            return false;
+        }
+
         // delete the item from the list
         int deleted = delete(record);
 
-        if(deleted == 1) {
-            // update the location of any items that come after the removed element,
+        if (deleted == 1) {
+            // update the location of any items that come after the removed
+            // element,
             // shift them to the left to fill in the gap
             shiftItemsLeft(listId, record.sequence);
             return true;
@@ -384,4 +411,19 @@ public class ItemListRepository extends DepotRepository
         classes.add(ItemListElementRecord.class);
         classes.add(ItemListInfoRecord.class);
     }
+
+    /**
+     * Utility method to convert a list of records into ItemIdents.
+     */
+    protected static ItemIdent[] toItemIdents (List<ItemListElementRecord> list)
+    {
+        int size = list.size();
+        ItemIdent[] idents = new ItemIdent[size];
+        for (int ii = 0; ii < size; ii++) {
+            idents[ii] = list.get(ii).toItemIdent();
+        }
+
+        return idents;
+    }
+
 }

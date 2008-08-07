@@ -324,8 +324,9 @@ public abstract class ItemRepository<T extends ItemRecord>
             return new ArrayList<T>();
         }
         Comparable<?>[] idArr = IntListUtil.box(itemIds);
+        Where cloneInClause = new Where(new In(getCloneClass(), ItemRecord.ITEM_ID, idArr));
+        List<T> items = loadClonedItems(cloneInClause);
         Where inClause = new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr));
-        List<T> items = loadClonedItems(inClause);
         items.addAll(findAll(getItemClass(), inClause));
         return items;
     }

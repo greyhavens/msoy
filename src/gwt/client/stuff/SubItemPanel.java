@@ -13,10 +13,9 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.gwt.ui.PagedGrid;
 
-import com.threerings.gwt.util.SimpleDataModel;
+import com.threerings.gwt.util.DataModel;
 
 import client.shell.DynamicMessages;
-import client.util.MsoyCallback;
 import client.util.NaviUtil;
 
 /**
@@ -24,12 +23,12 @@ import client.util.NaviUtil;
  */
 public class SubItemPanel extends PagedGrid<Item>
 {
-    public SubItemPanel (InventoryModels models, byte type, Item parent)
+    public SubItemPanel (DataModel<Item> model, byte type, Item parent)
     {
         super(ROWS, ItemPanel.COLUMNS, PagedGrid.NAV_ON_BOTTOM);
         addStyleName("subInventoryContents");
 
-        _models = models;
+        setModel(model, 0);
         _type = type;
         _parent = parent;
 
@@ -44,12 +43,6 @@ public class SubItemPanel extends PagedGrid<Item>
         if (!visible || hasModel()) {
             return;
         }
-
-        _models.loadModel(_type, _parent.getSuiteId(), new MsoyCallback<SimpleDataModel<Item>>() {
-            public void onSuccess (SimpleDataModel<Item> data) {
-                setModel(data, 0);
-            }
-        });
     }
 
     @Override // from PagedGrid
@@ -81,7 +74,6 @@ public class SubItemPanel extends PagedGrid<Item>
         });
     }
 
-    protected InventoryModels _models;
     protected byte _type;
     protected Item _parent;
     protected Button _create;

@@ -49,10 +49,10 @@ import client.util.events.ItemUsageListener;
 public class ItemDetailPanel extends BaseItemDetailPanel
     implements ItemUsageListener, DoListItemPopup.ListedListener
 {
-    public ItemDetailPanel (InventoryModels models, ItemDetail detail)
+    public ItemDetailPanel (ItemDetailListener listener, ItemDetail detail)
     {
         super(detail);
-        _models = models;
+        _listener = listener;
 
 // TODO
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);
@@ -61,17 +61,15 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (_item.ownerId == CShell.getMemberId() || CShell.isSupport()) {
             addOwnerButtons();
         }
+    }
 
-        // if this item supports sub-items, add a tab for those item types
-        SubItem[] types = _item.getSubTypes();
-        for (int ii = 0; ii < types.length; ii++) {
-            // if this is not an original item, only show salable subtypes
-            if (_item.sourceId != 0 && !types[ii].isSalable()) {
-                continue;
-            }
-            addTabBelow(_dmsgs.getString("pItemType" + types[ii].getType()),
-                        new SubItemPanel(models, types[ii].getType(), _item), false);
-        }
+    /**
+     * Adds a tab for an item subtype.
+     */
+    public void addSubTypeModel (SubItem subtype, DataModel<Item> subTypeModel)
+    {
+        addTabBelow(_dmsgs.getString("pItemType" + subtype.getType()),
+            new SubItemPanel(subTypeModel, subtype.getType(), _item), false);
     }
 
     // from DoListItemPopup.ListedListener
@@ -242,7 +240,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             PushButton rename = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRename(),
                 null);
             buttons.add(rename);
-            new RenameHandler(rename, _item, _models);
+            new RenameHandler(rename, _item, _listener);
         }
 
         // if remixable, add a button for that.
@@ -299,12 +297,9 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 return true;
             }
             public boolean gotResult (Void result) {
-                // remove the item from our cached models
-                int suiteId = (_item instanceof SubItem) ? ((SubItem)_item).suiteId : 0;
-                DataModel<Item> model = _models.getModel(_item.getType(), suiteId);
-                if (model != null) {
-                    model.removeItem(_item);
-                }
+                // remove the item from our data model
+                _listener.itemDeleted(_item);
+
                 MsoyUI.info(CStuff.msgs.msgItemDeleted());
                 History.back(); // back up to the page that contained the item
                 return false;
@@ -323,7 +318,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 return true;
             }
             public boolean gotResult (Item item) {
-                _models.updateItem(item);
+                _listener.itemUpdated(item);
                 _item = item;
                 _detail.item = item;
 
@@ -335,7 +330,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         };
     }
 
-    protected InventoryModels _models;
+    protected ItemDetailListener _listener;
     protected Label _listTip;
     protected PushButton _deleteBtn;
     protected PushButton _listBtn;

@@ -8,8 +8,11 @@ import java.util.HashMap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
+import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
@@ -31,6 +34,15 @@ import client.util.ServiceUtil;
  */
 public class StuffPage extends Page
 {
+    @Override // from Page
+    public void onModuleLoad ()
+    {
+        super.onModuleLoad();
+        // this needs to happen after the CShell has been initialized
+        // otherwise the WebIdent will be null
+        loadFavoriteListInfo();
+    }
+
     @Override // from Page
     public void onPageLoad ()
     {
@@ -73,7 +85,7 @@ public class StuffPage extends Page
                 if (item != null) {
                     _detail.item = item;
                 }
-                setContent(title, new ItemDetailPanel(_models, _detail));
+                setContent(title, createItemDetailPanel(_models, _detail));
 
             } else {
                 _stuffsvc.loadItemDetail(ident, new MsoyCallback<StuffService.DetailOrIdent>() {
@@ -81,8 +93,7 @@ public class StuffPage extends Page
                         if (result.detail != null) {
                             _detail = result.detail;
                             _models.updateItem(_detail.item);
-                            setContent(title, new ItemDetailPanel(_models, _detail));
-
+                            setContent(title, createItemDetailPanel(_models, _detail));
                         } else {
                             // We didn't have access to that specific item, but have been given
                             // the catalog id for the prototype.
@@ -130,6 +141,13 @@ public class StuffPage extends Page
                 remixer.setCatalogInfo(args.get(3, 0), args.get(4, 0), args.get(5, 0));
             }
 
+        } else if (ItemPanel.FAVORITES_ARG.equals(arg0)) {
+            // update favorite panel
+            byte type = (byte)args.get(1, Item.AVATAR);
+            String title = CStuff.msgs.stuffTitle(_dmsgs.getString("pItemType" + type));
+            ItemPanel panel = getItemPanel(type);
+            panel.setFavoritePage(args.get(2, -1));
+            setContent(title, panel);
         } else {
             // otherwise we're viewing our inventory
             byte type = (byte)args.get(0, Item.AVATAR);
@@ -175,13 +193,58 @@ public class StuffPage extends Page
         ItemPanel panel = _itemPanels.get(itemType);
         if (panel == null) {
             _itemPanels.put(itemType, panel = new ItemPanel(_models, itemType));
+            if (_favoriteList != null) {
+                panel.setFavoriteListId(_favoriteList.listId);
+            }
         }
         return panel;
+    }
+
+    protected void loadFavoriteListInfo ()
+    {
+        _stuffsvc.getFavoriteListInfo(new MsoyCallback<ItemListInfo>() {
+            public void onSuccess (ItemListInfo result) {
+                _favoriteList = result;
+                for (Byte key :_itemPanels.keySet()) {
+                    _itemPanels.get(key).setFavoriteListId(_favoriteList.listId);
+                }
+            }
+        });
+    }
+
+    protected ItemDetailPanel createItemDetailPanel (ItemDetailListener listener, ItemDetail itemDetail)
+    {
+        final ItemDetailPanel panel = new ItemDetailPanel(listener, itemDetail);
+
+        // load any subitems
+        if (itemDetail.item.getSubTypes().length > 0) {
+            setSubTypeModels(itemDetail, panel);
+        }
+
+        return panel;
+    }
+
+    protected void setSubTypeModels (ItemDetail itemDetail, final ItemDetailPanel panel)
+    {
+        boolean isSourceItem = itemDetail.item.sourceId == 0;
+
+        for (final SubItem subType : itemDetail.item.getSubTypes()) {
+            // if this is not an original item, only show salable subtypes
+            if (isSourceItem || subType.isSalable()) {
+                _models.loadModel(subType.getType(), itemDetail.item.getSuiteId(),
+                    new MsoyCallback<DataModel<Item>>() {
+                        public void onSuccess (DataModel<Item> subTypeModel) {
+                            panel.addSubTypeModel(subType, subTypeModel);
+                        }
+                });
+            }
+        }
     }
 
     protected InventoryModels _models = new InventoryModels();
     protected HashMap<Byte, ItemPanel> _itemPanels = new HashMap<Byte, ItemPanel>();
     protected ItemDetail _detail;
+    protected ItemListInfo _favoriteList;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)

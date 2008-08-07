@@ -9,12 +9,15 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import client.shell.CShell;
 import client.util.ServiceUtil;
 
 import client.util.events.FlashEvents;
 import client.util.events.ItemUsageEvent;
 import client.util.events.ItemUsageListener;
 
+import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
 
@@ -27,7 +30,7 @@ import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
  * Maintains information on our member's inventory.
  */
 public class InventoryModels
-    implements ItemUsageListener
+    implements ItemUsageListener, ItemDetailListener
 {
     public void startup ()
     {
@@ -39,7 +42,7 @@ public class InventoryModels
         FlashEvents.removeListener(this);
     }
 
-    public void loadModel (byte type, int suiteId, final AsyncCallback<SimpleDataModel<Item>> cb)
+    public void loadModel (byte type, int suiteId, final AsyncCallback<DataModel<Item>> cb)
     {
         final Key key = new Key(type, suiteId);
         SimpleDataModel<Item> model = _models.get(key);
@@ -107,6 +110,22 @@ public class InventoryModels
             // TODO: right now, the ItemActivators listen to the usageChangedEvent just
             // like we do, but perhaps this class should dispatch a more generic itemChanged
             // event, and have the ItemActivators respond to that.
+        }
+    }
+
+    // from ItemDetailListener
+    public void itemUpdated (Item item)
+    {
+        updateItem(item);
+    }
+
+    // from ItemDetailListener
+    public void itemDeleted (Item item)
+    {
+        int suiteId = (item instanceof SubItem) ? ((SubItem)item).suiteId : 0;
+        DataModel<Item> model = getModel(item.getType(), suiteId);
+        if (model != null) {
+            model.removeItem(item);
         }
     }
 

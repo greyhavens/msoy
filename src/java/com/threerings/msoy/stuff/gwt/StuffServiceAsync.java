@@ -9,6 +9,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.ItemListQuery;
+
+import com.threerings.msoy.stuff.gwt.StuffService.ItemListResult;
 
 /**
  * The asynchronous (client-side) version of {@link StuffService}.
@@ -59,4 +63,19 @@ public interface StuffServiceAsync
      * The asynchronous version of {@link ItemService#deleteItem}.
      */
     void deleteItem (ItemIdent item, AsyncCallback<Void> callback);
+
+    /**
+     * Loads items from a list that match the given criteria.
+     */
+    void loadItemList (ItemListQuery query, AsyncCallback<ItemListResult> callback);
+
+    /**
+     * Gets the number of list items that match the given query.
+     */
+    void getSize (ItemListQuery query, AsyncCallback<Integer> callback);
+
+    /**
+     * The asynchronous version of {@link ItemService#getFavoriteListInfo}.
+     */
+    void getFavoriteListInfo (AsyncCallback<ItemListInfo> callback);
 }

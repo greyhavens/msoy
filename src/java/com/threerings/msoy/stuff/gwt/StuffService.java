@@ -12,6 +12,8 @@ import com.threerings.msoy.web.data.ServiceException;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.gwt.ItemDetail;
 
 /**
@@ -35,6 +37,16 @@ public interface StuffService extends RemoteService
             this.detail = detail;
             this.ident = ident;
         }
+    }
+
+    /** Provides results from {@link #loadItemList}. */
+    public static class ItemListResult implements IsSerializable
+    {
+        /** The total number of items that would be returned for a query with no limit. */
+        public int totalCount;
+
+        /** The item results. */
+        public List<Item> items;
     }
 
     /** The entry point for this service. */
@@ -101,4 +113,19 @@ public interface StuffService extends RemoteService
      */
     void deleteItem (ItemIdent item)
         throws ServiceException;
+
+    /**
+     * Gets the number of results for the given query.
+     */
+    int getSize (ItemListQuery query) throws ServiceException;
+
+    /**
+     * Loads items from a list that match the given criteria.
+     */
+    ItemListResult loadItemList (ItemListQuery query) throws ServiceException;
+
+    /**
+     * Gets the favorite list info for the given member.
+     */
+    ItemListInfo getFavoriteListInfo () throws ServiceException;
 }

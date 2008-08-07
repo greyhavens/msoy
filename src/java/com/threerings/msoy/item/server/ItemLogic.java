@@ -31,6 +31,7 @@ import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.ListingCard;
 
@@ -316,7 +317,6 @@ public class ItemLogic
         }
     }
 
-
     public List<ItemListInfo> getItemLists (int memberId)
         throws PersistenceException
     {
@@ -363,7 +363,8 @@ public class ItemLogic
         _listRepo.addItem(listId, item);
     }
 
-    public void removeItem (int listId, ItemIdent item) throws PersistenceException
+    public void removeItem (int listId, ItemIdent item)
+        throws PersistenceException
     {
         _listRepo.removeItem(listId, item);
     }
@@ -375,50 +376,16 @@ public class ItemLogic
         _listRepo.addItem(favoriteList.listId, item);
     }
 
-    public void removeFavorite (int memberId, ItemIdent item)
+    public int getSize (int listId)
         throws PersistenceException
     {
-        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
-        _listRepo.removeItem(favoriteList.listId, item);
+        return _listRepo.getSize(listId);
     }
 
-    /**
-     * Check to see if the member's favorite list contains the given item.
-     */
-    public boolean isFavorite(int memberId, Item item)
+    public int getSize (int listId, byte itemType)
         throws PersistenceException
     {
-        return isFavorite(memberId, item.getIdent());
-    }
-
-    /**
-     * Check to see if the member's favorite list contains the given item.
-     */
-    public boolean isFavorite(int memberId, ItemIdent item)
-        throws PersistenceException
-    {
-        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
-        return _listRepo.contains(favoriteList.listId, item);
-    }
-
-    protected ItemListInfo getFavoriteListInfo (int memberId)
-        throws PersistenceException
-    {
-        List<ItemListInfoRecord> favoriteRecords = _listRepo.loadInfos(memberId, ItemListInfo.FAVORITES);
-        List<ItemListInfo> favoriteLists = convertRecords(favoriteRecords);
-
-        ItemListInfo favorites;
-
-        if (favoriteLists.isEmpty()) {
-            // create the favorites list for this user
-            favorites = createItemList(memberId, ItemListInfo.FAVORITES, ItemListInfo.FAVORITES_NAME);
-        } else {
-            // There should never be more than one FAVORITES list per member
-            // TODO If there is more than one list, merge them somehow?
-            favorites = favoriteLists.get(0);
-        }
-
-        return favorites;
+        return _listRepo.getSize(listId, itemType);
     }
 
     public List<Item> loadItemList (int listId)
@@ -429,11 +396,11 @@ public class ItemLogic
         return loadItems(idents);
     }
 
-    public List<Item> loadItemList (int listId, int offset, int limit)
+    public List<Item> loadItemList (ItemListQuery query)
         throws PersistenceException
     {
         // look up the list elements
-        ItemIdent[] idents = _listRepo.loadList(listId);
+        ItemIdent[] idents = _listRepo.loadList(query);
         return loadItems(idents);
     }
 
@@ -464,7 +431,56 @@ public class ItemLogic
         for (ItemIdent ident : idents) {
             list.add(items.get(ident));
         }
+
         return list;
+    }
+
+    public void removeFavorite (int memberId, ItemIdent item)
+        throws PersistenceException
+    {
+        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
+        _listRepo.removeItem(favoriteList.listId, item);
+    }
+
+    /**
+     * Check to see if the member's favorite list contains the given item.
+     */
+    public boolean isFavorite(int memberId, Item item)
+        throws PersistenceException
+    {
+        return isFavorite(memberId, item.getIdent());
+    }
+
+    /**
+     * Check to see if the member's favorite list contains the given item.
+     */
+    public boolean isFavorite(int memberId, ItemIdent item)
+        throws PersistenceException
+    {
+        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
+        return _listRepo.contains(favoriteList.listId, item);
+    }
+
+    public ItemListInfo getFavoriteListInfo (int memberId)
+        throws PersistenceException
+    {
+        List<ItemListInfoRecord> favoriteRecords = _listRepo.loadInfos(memberId, ItemListInfo.FAVORITES);
+        List<ItemListInfo> favoriteLists = convertRecords(favoriteRecords);
+
+        ItemListInfo favorites;
+
+        if (favoriteLists.isEmpty()) {
+            // create the favorites list for this user
+            favorites = createItemList(memberId, ItemListInfo.FAVORITES, ItemListInfo.FAVORITES_NAME);
+        } else {
+            // There should never be more than one FAVORITES list per member
+            if (favoriteLists.size() > 1) {
+                log.warning("More than one favorites list found for member.", "memberId", memberId);
+            }
+            favorites = favoriteLists.get(0);
+        }
+
+        return favorites;
     }
 
     public List<Item> loadFavoriteList (int memberId)
@@ -472,13 +488,6 @@ public class ItemLogic
     {
         ItemListInfo favoriteList = getFavoriteListInfo(memberId);
         return loadItemList(favoriteList.listId);
-    }
-
-    public List<Item> loadFavoriteList (int memberId, int offset, int limit)
-        throws PersistenceException
-    {
-        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
-        return loadItemList(favoriteList.listId, offset, limit);
     }
 
     /**

@@ -41,8 +41,7 @@ public class ItemRating extends FlexTable
         _ratingCount.setStyleName(STYLE_COUNT);
         updateRatingCount();
 
-        // TODO reveal favorite indicator when ready
-        // FavoriteIndicator favoriteIndicator = null;
+        FavoriteIndicator favoriteIndicator = null;
 
         if (writable) {
             _memberRating = memberItemInfo.memberRating;
@@ -58,8 +57,7 @@ public class ItemRating extends FlexTable
             starMouseOff();
 
             // indicate whether this a favorite item of the current member
-            // TODO reveal favorite indicator when ready
-            // favoriteIndicator = new FavoriteIndicator(_item, memberItemInfo);
+            favoriteIndicator = new FavoriteIndicator(_item, memberItemInfo);
         }
 
         Label ratingAverage = new Label(_cmsgs.averageRating());
@@ -83,8 +81,10 @@ public class ItemRating extends FlexTable
                 setWidget(1, 2, _playerStars);
                 getFlexCellFormatter().setColSpan(1, 2, 2);
                 // TODO hiding favorite indicator for now
-                // setWidget(0, 4, favoriteIndicator);
-                // getFlexCellFormatter().setRowSpan(0, 4, 2);
+                if (CShell.isAdmin()) {
+	                setWidget(0, 4, favoriteIndicator);
+                	getFlexCellFormatter().setRowSpan(0, 4, 2);
+                }
             }
         } else {
             setWidget(0, 0, ratingAverage);
@@ -99,7 +99,9 @@ public class ItemRating extends FlexTable
                 setWidget(3, 1, nbsp);
                 getFlexCellFormatter().setColSpan(3, 0, 2);
                 // TODO hiding favorite indicator for now
-                // setWidget(4, 0, favoriteIndicator);
+                if (CShell.isAdmin()) {
+	                setWidget(4, 0, favoriteIndicator);
+	            }
             }
         }
     }
