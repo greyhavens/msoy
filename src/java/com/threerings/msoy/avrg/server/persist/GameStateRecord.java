@@ -10,8 +10,6 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.msoy.game.data.GameState;
-
 /**
  * Maintains information associated with a given member for a given game.
  */
