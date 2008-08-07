@@ -14,14 +14,11 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.gwt.ui.SmartFileUpload;
-import com.threerings.gwt.ui.WidgetUtil;
 
-import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.MediaUtil;
 
@@ -71,68 +68,50 @@ public class ItemMediaUploader extends FlexTable
             mediaId += Item.PLUS_THUMB;
         }
 
-        // TEMP: display the media chooser applet only on dev until we're actually ready to go live
-        // with the new hotness
-        if (false && DeploymentConfig.devDeployment) {
-            String[] args = new String[] {
-                "server", GWT.isScript() ? GWT.getHostPageBaseURL() : "http://localhost:8080/",
-                "media", mediaId,
-                "auth", CShell.ident.token,
-                "mtype", type,
-            };
-            setWidget(1, 0, WidgetUtil.createApplet(
-                          "upload",
-                          "/clients/" + DeploymentConfig.version + "/mchooser-applet.jar," +
-                          "/clients/" + DeploymentConfig.version + "/mchooser.jar",
-                          "com.threerings.msoy.MediaChooserApplet",
-                          CHOOSER_WIDTH, CHOOSER_HEIGHT, true, args));
+        _form = new FormPanel();
+        _panel = new HorizontalPanel();
+        _form.setWidget(_panel);
+        _form.setStyleName("Controls");
 
+        if (GWT.isScript()) {
+            _form.setAction("/uploadsvc");
         } else {
-            _form = new FormPanel();
-            _panel = new HorizontalPanel();
-            _form.setWidget(_panel);
-            _form.setStyleName("Controls");
-
-            if (GWT.isScript()) {
-                _form.setAction("/uploadsvc");
-            } else {
-                _form.setAction("http://localhost:8080/uploadsvc");
-            }
-            _form.setEncoding(FormPanel.ENCODING_MULTIPART);
-            _form.setMethod(FormPanel.METHOD_POST);
-
-            _upload = new SmartFileUpload();
-            _upload.addChangeListener(new ChangeListener() {
-                public void onChange (Widget sender) {
-                    uploadMedia();
-                }
-            });
-
-            _upload.setName(mediaId);
-            _panel.add(_upload);
-
-            _form.addFormHandler(new FormHandler() {
-                public void onSubmit (FormSubmitEvent event) {
-                    // don't let them submit until they plug in a file...
-                    if (_upload.getFilename().length() == 0) {
-                        event.setCancelled(true);
-                    }
-                }
-                public void onSubmitComplete (FormSubmitCompleteEvent event) {
-                    String result = event.getResults();
-                    result = (result == null) ? "" : result.trim();
-                    if (result.length() > 0) {
-                        // TODO: This is fugly as all hell, but at least we're now reporting
-                        // *something* to the user
-                        MsoyUI.error(result);
-                    } else {
-                        _submitted = _upload.getFilename();
-                    }
-                }
-            });
-
-            setWidget(1, 0, _form);
+            _form.setAction("http://localhost:8080/uploadsvc");
         }
+        _form.setEncoding(FormPanel.ENCODING_MULTIPART);
+        _form.setMethod(FormPanel.METHOD_POST);
+
+        _upload = new SmartFileUpload();
+        _upload.addChangeListener(new ChangeListener() {
+            public void onChange (Widget sender) {
+                uploadMedia();
+            }
+        });
+
+        _upload.setName(mediaId);
+        _panel.add(_upload);
+
+        _form.addFormHandler(new FormHandler() {
+            public void onSubmit (FormSubmitEvent event) {
+                // don't let them submit until they plug in a file...
+                if (_upload.getFilename().length() == 0) {
+                    event.setCancelled(true);
+                }
+            }
+            public void onSubmitComplete (FormSubmitCompleteEvent event) {
+                String result = event.getResults();
+                result = (result == null) ? "" : result.trim();
+                if (result.length() > 0) {
+                    // TODO: This is fugly as all hell, but at least we're now reporting
+                    // *something* to the user
+                    MsoyUI.error(result);
+                } else {
+                    _submitted = _upload.getFilename();
+                }
+            }
+        });
+
+        setWidget(1, 0, _form);
         getFlexCellFormatter().setVerticalAlignment(1, 0, HorizontalPanel.ALIGN_BOTTOM);
     }
 
