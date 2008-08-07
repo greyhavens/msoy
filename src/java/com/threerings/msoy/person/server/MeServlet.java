@@ -22,10 +22,10 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
-import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MyWhirledData;
+import com.threerings.msoy.person.gwt.PassportData;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -134,10 +134,16 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     // from interface MeService
-    public List<Badge> loadBadges(WebIdent ident)
+    public PassportData loadBadges (WebIdent ident)
         throws ServiceException
     {
-        return null;
+        MemberRecord mrec = _mhelper.requireAuthedUser(ident);
+
+        // PassportData contains the owner's name because we'll eventually be viewing passports for
+        // other players as well
+        PassportData data = new PassportData();
+        data.stampOwner = mrec.name;
+        return data;
     }
 
     /**

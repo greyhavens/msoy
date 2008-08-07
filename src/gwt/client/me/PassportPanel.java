@@ -3,8 +3,6 @@
 
 package client.me;
 
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -12,11 +10,11 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.msoy.badge.data.all.Badge;
-
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
+import com.threerings.msoy.person.gwt.PassportData;
 
+import client.ui.HeaderBox;
 import client.ui.Marquee;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
@@ -28,29 +26,32 @@ public class PassportPanel extends VerticalPanel
     {
         setStyleName("passport");
 
-        _mesvc.loadBadges(CMe.ident, new MsoyCallback<List<Badge>>() {
-            public void onSuccess (List<Badge> badges) {
-                init(badges);
+        _mesvc.loadBadges(CMe.ident, new MsoyCallback<PassportData> () {
+            public void onSuccess (PassportData data) {
+                init(data);
             }
         });
     }
 
-    protected void init (List<Badge> badges)
+    protected void init (PassportData data)
     {
-        add(new NextPanel());
-    }
+        add(new NextPanel(data));
+        HeaderBox contents = new HeaderBox(null, _msgs.passportStampsTitle(data.stampOwner));
+        contents.makeRoundBottom();
+        add(contents);
+   }
 
     protected static class NextPanel extends VerticalPanel
     {
-        public NextPanel ()
+        public NextPanel (PassportData data)
         {
             setStyleName("NextPanel");
             setSpacing(0);
 
-            buildUI();
+            buildUI(data);
         }
 
-        protected void buildUI ()
+        protected void buildUI (PassportData data)
         {
             HorizontalPanel header = new HorizontalPanel();
             header.add(MsoyUI.createImage("/images/me/passport_icon.png", "Icon"));
@@ -80,14 +81,14 @@ public class PassportPanel extends VerticalPanel
             nextBadges.add(MsoyUI.createImage("/images/me/passport_box_left.png", null));
             HorizontalPanel nextBadgesPanel = new HorizontalPanel();
             nextBadgesPanel.setStyleName("NextBadgesPanel");
-            addNextBadges(nextBadgesPanel);
+            addNextBadges(nextBadgesPanel, data);
             nextBadges.add(nextBadgesPanel);
             nextBadges.setCellWidth(nextBadgesPanel, "100%");
             nextBadges.add(MsoyUI.createImage("/images/me/passport_box_right.png", null));
             add(nextBadges);
         }
 
-        protected void addNextBadges (Panel badgePanel)
+        protected void addNextBadges (Panel badgePanel, PassportData data)
         {
         }
     }

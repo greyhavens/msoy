@@ -9,9 +9,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MediaDesc;
-
-import com.threerings.msoy.badge.data.all.Badge;
-
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 
@@ -65,6 +62,6 @@ public interface MeService extends RemoteService
     /**
      * Loads the badges relevant to this player.
      */
-    List<Badge> loadBadges (WebIdent ident)
+    PassportData loadBadges (WebIdent ident)
         throws ServiceException;
 }
