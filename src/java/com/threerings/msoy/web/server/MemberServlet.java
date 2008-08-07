@@ -227,5 +227,4 @@ public class MemberServlet extends MsoyServiceServlet
 
     /** Maximum number of members to return for the leader board */
     protected static final int MAX_LEADER_MATCHES = 100;
-
 }
