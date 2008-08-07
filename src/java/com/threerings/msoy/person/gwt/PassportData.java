@@ -8,9 +8,9 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.badge.data.StampCategory;
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.badge.gwt.StampCategory;
 
 public class PassportData
     implements IsSerializable

@@ -9,6 +9,8 @@ import com.samskivert.util.HashIntMap;
 
 import com.threerings.stats.Log;
 
+import com.threerings.msoy.badge.gwt.StampCategory;
+
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.StatType;
 
