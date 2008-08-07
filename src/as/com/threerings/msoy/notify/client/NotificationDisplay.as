@@ -20,8 +20,6 @@ import flash.text.TextFormat;
 import mx.containers.Canvas;
 import mx.containers.HBox;
 
-import mx.controls.Button;
-
 import mx.core.Application;
 import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
@@ -30,6 +28,7 @@ import mx.managers.PopUpManager;
 
 import caurina.transitions.Tweener;
 
+import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexWrapper;
 import com.threerings.util.Log;
 
@@ -60,7 +59,6 @@ public class NotificationDisplay extends HBox
         }
 
         hideNotificationHistory();
-        _popupBtn.enabled = false;
     }
 
     public function displayNotification (notification :String) :void
@@ -83,6 +81,7 @@ public class NotificationDisplay extends HBox
         if (_nHistory != null) {
             var buttonPos :Point = localToGlobal(new Point(_popupBtn.x, _popupBtn.y));
             _nHistory.x = buttonPos.x;
+            _nHistory.y = buttonPos.y - _nHistory.height;
         }
     }
 
@@ -92,14 +91,10 @@ public class NotificationDisplay extends HBox
         styleName = "notificationDisplay"; 
         percentHeight = 100;
 
-        addChild(_popupBtn = new Button());
+        addChild(_popupBtn = new CommandButton(null, toggleNotificationHistory));
         _popupBtn.styleName = "notificationClosedBtn";
         _popupBtn.width = 20;
         _popupBtn.height = 19;
-        _popupBtn.buttonMode = true;
-        _popupBtn.enabled = false;
-        _popupBtn.addEventListener(MouseEvent.CLICK, displayNotificationHistory);
-        systemManager.addEventListener(MouseEvent.CLICK, checkMouseClick);
         
         addChild(_canvas = new Canvas());
         _canvas.styleName = "notificationCanvas";
@@ -109,7 +104,7 @@ public class NotificationDisplay extends HBox
         _canvas.verticalScrollPolicy = ScrollPolicy.OFF;
     }
 
-    protected function checkMouseClick (event :MouseEvent) :void
+    protected function maybeCloseHistory (event :MouseEvent) :void
     {
         if (_nHistory == null) {
             return;
@@ -132,7 +127,6 @@ public class NotificationDisplay extends HBox
         notification.x = _canvas.width;
         _canvas.removeAllChildren();
         _canvas.addChild(notification);
-        _popupBtn.enabled = true;
         Tweener.addTween(notification, 
             {x: _canvas.width - notification.width, time: 0.75, transition: "easeoutquart",
                 onComplete: function () :void {
@@ -180,9 +174,10 @@ public class NotificationDisplay extends HBox
         return box;
     }
 
-    protected function displayNotificationHistory (...ignored) :void
+    protected function toggleNotificationHistory () :void
     {
         if (_nHistory != null) {
+            hideNotificationHistory();
             return; 
         }
 
@@ -191,25 +186,19 @@ public class NotificationDisplay extends HBox
             _ctx.getNotificationDirector().getCurrentNotifications()));
         _nHistory.addEventListener(TextEvent.LINK, linkClicked);
         PopUpManager.addPopUp(_nHistory, _ctx.getTopPanel(), false);
-        var buttonPos :Point = localToGlobal(new Point(_popupBtn.x, _popupBtn.y));
-        _nHistory.x = buttonPos.x;
-        _nHistory.y = buttonPos.y - _nHistory.height;
-
-        // prevent the hide logic from firing off of this mouse click
-        _opening = true;
-        callLater(function () :void {
-            _opening = false;
-        });
+        updatePopupLocation();
+        systemManager.addEventListener(MouseEvent.CLICK, maybeCloseHistory);
     }
 
     protected function hideNotificationHistory (...ignored) :void
     {
-        if (_opening || _nHistory == null) {
+        if (_nHistory == null) {
             return;
         }
 
         _popupBtn.styleName = "notificationClosedBtn";
         PopUpManager.removePopUp(_nHistory);
+        systemManager.removeEventListener(MouseEvent.CLICK, maybeCloseHistory);
         _nHistory = null;
     }
 
@@ -257,10 +246,9 @@ public class NotificationDisplay extends HBox
 
     protected var _ctx :WorldContext;
     protected var _canvas :Canvas;
-    protected var _popupBtn :Button;
+    protected var _popupBtn :CommandButton;
     protected var _pendingNotifications :Array = [];
     protected var _currentlyAnimating :Boolean = false;
     protected var _nHistory :NotificationHistoryDisplay;
-    protected var _opening :Boolean = false;
 }
 }
