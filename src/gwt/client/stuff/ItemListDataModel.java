@@ -66,13 +66,14 @@ public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResu
      * @see client.util.ServiceBackedDataModel#callFetchService(int, int, boolean)
      */
     @Override
-    protected void callFetchService (int start, int count, boolean needCount)
+    protected void callFetchService (int start, int count, boolean needsCount)
     {
         if (!_initialized) {
             return;
         }
         _query.offset = start;
         _query.count = count;
+        _query.needsCount = needsCount;
         _stuffsvc.loadItemList(_query, this);
     }
 
