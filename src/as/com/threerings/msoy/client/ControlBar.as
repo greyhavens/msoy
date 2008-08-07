@@ -39,6 +39,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.SkinnableImage;
 import com.threerings.msoy.ui.SliderPopup;
 
+import com.threerings.msoy.world.client.WorldController;
+
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 
 /**
@@ -208,8 +210,8 @@ public class ControlBar extends HBox
         _leftSpacer.percentWidth = 100;
 
         _chatBtn = new CommandButton();
-        _chatBtn.toolTip = Msgs.GENERAL.get("i.channel"); // i.chatPrefs
-        _chatBtn.setCommand(MsoyController.POP_CHANNEL_MENU, _chatBtn); // MsoyController.CHAT_PREFS
+        _chatBtn.toolTip = Msgs.GENERAL.get("i.channel");
+        _chatBtn.setCommand(WorldController.POP_CHANNEL_MENU, _chatBtn);
         _chatBtn.styleName = "controlBarButtonChat";
 
         _volBtn = new CommandButton();

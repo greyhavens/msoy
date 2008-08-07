@@ -72,7 +72,7 @@ public class HeaderBar extends HBox
 
         // TODO: hard-coded shite should not be here
         if (!(_ctx.getTopPanel().getPlaceView() is RoomView)) {
-            _tabs.locationName = Msgs.CHAT.get("l.game_channel");
+            _tabs.locationName = loc; // Msgs.CHAT.get("l.game_channel");
         }
     }
 

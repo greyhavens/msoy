@@ -90,9 +90,6 @@ public class MsoyController extends Controller
     /** Command to display a volume slider. */
     public static const POP_VOLUME :String = "PopVolume";
 
-    /** Command to display the chat channel menu. */
-    public static const POP_CHANNEL_MENU :String = "PopChannelMenu";
-
     /** Command to display the room history list. */
     public static const POP_ROOM_HISTORY_LIST :String = "PopRoomHistoryList";
 

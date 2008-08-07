@@ -84,6 +84,9 @@ public class WorldController extends MsoyController
 //    /** Command to display the recent scenes list. */
 //    public static const POP_ROOMS_MENU :String = "PopRoomsMenu";
 
+    /** Command to display the chat channel menu. */
+    public static const POP_CHANNEL_MENU :String = "PopChannelMenu";
+
     /** Opens up a new toolbar and a new room editor. */
     public static const ROOM_EDIT :String = "RoomEdit";
 
@@ -234,23 +237,20 @@ public class WorldController extends MsoyController
     public function handlePopChannelMenu (trigger :Button) :void
     {
         var menuData :Array = [];
-        menuData.push({ label: Msgs.GENERAL.get("i.chatPrefs"), command: CHAT_PREFS });
+        menuData.push({ label: Msgs.GENERAL.get("b.chatPrefs"), command: CHAT_PREFS });
+        menuData.push({ label: Msgs.GENERAL.get("b.clearChat"),
+            callback: _wctx.getChatDirector().clearDisplays });
+        menuData.push({ type: "separator" });
 
         if (!(_wctx.getTopPanel().getPlaceView() is MsoyGamePanel)) {
             if (!Prefs.getSlidingChatHistory()) {
-                var toggleHideLabel :String = Prefs.getShowingChatHistory() ?
-                    Msgs.GENERAL.get("m.hide_chat") : Msgs.GENERAL.get("m.show_chat");
-                var toggleHide :Object = { label: toggleHideLabel, command: TOGGLE_CHAT_HIDE };
-                menuData.push(toggleHide);
+                menuData.push({ command: TOGGLE_CHAT_HIDE, label: Msgs.GENERAL.get(
+                        Prefs.getShowingChatHistory() ? "b.hide_chat" : "b.show_chat") });
             }
-            var toggleSlideLabel :String = Prefs.getSlidingChatHistory() ?
-                Msgs.GENERAL.get("m.overlay_chat") : Msgs.GENERAL.get("m.slide_chat");
-            var toggleSlide :Object = { label: toggleSlideLabel, command: TOGGLE_CHAT_SLIDE };
-            menuData.push(toggleSlide);
-            var toggleOccListLabel :String = Prefs.getShowingOccupantList() ?
-                Msgs.GENERAL.get("m.hide_occ_list") : Msgs.GENERAL.get("m.show_occ_list");
-            var toggleOccList :Object = { label: toggleOccListLabel, command: TOGGLE_OCC_LIST };
-            menuData.push(toggleOccList);
+            menuData.push({ command: TOGGLE_CHAT_SLIDE, label: Msgs.GENERAL.get(
+                    Prefs.getSlidingChatHistory() ? "b.overlay_chat" : "b.slide_chat") });
+            menuData.push({ command: TOGGLE_OCC_LIST, label: Msgs.GENERAL.get(
+                    Prefs.getShowingOccupantList() ? "b.hide_occ_list" : "b.show_occ_list") });
             menuData.push({ type: "separator" });
         }
 
@@ -285,7 +285,7 @@ public class WorldController extends MsoyController
             groups.push({ label: Msgs.GENERAL.get("m.no_groups"),
                           enabled : false });
         } else if (groups.length > 4) {
-            menuData.push({ label: Msgs.GENERAL.get("m.groups"), children: groups});
+            menuData.push({ label: Msgs.GENERAL.get("l.groups"), children: groups});
         } else {
             menuData = menuData.concat(groups);
         }
