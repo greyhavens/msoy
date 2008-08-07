@@ -19,7 +19,7 @@ public class MsoyGameMarshaller extends InvocationMarshaller
     implements MsoyGameService
 {
     /**
-     * Marshalls results to implementations of {@link LocationListener}.
+     * Marshalls results to implementations of {@link MsoyGameService.LocationListener}.
      */
     public static class LocationMarshaller extends ListenerMarshaller
         implements LocationListener
