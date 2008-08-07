@@ -9,6 +9,7 @@ import mx.core.ScrollPolicy;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.controls.Label;
+import mx.controls.TextInput;
 
 import com.threerings.io.TypedArray;
 import com.threerings.util.CommandEvent;
@@ -121,7 +122,11 @@ public class TableCreationPanel extends VBox
             return;
         }
 
-        var tconfigger :TableConfigurator = new MsoyTableConfigurator(plparam, wparam, pvparam);
+        var title :TextInput = new TextInput();
+        title.text = Msgs.GAME.get("l.default_table", _ctx.getPlayerObject().getVisibleName().toString());
+        title.percentWidth = 100;
+
+        var tconfigger :TableConfigurator = new MsoyTableConfigurator(plparam, wparam, pvparam, title);
         tconfigger.init(_ctx, gconf);
 
         var config :MsoyGameConfig = new MsoyGameConfig();
@@ -139,6 +144,18 @@ public class TableCreationPanel extends VBox
         _friendsBox.percentHeight = 100;
         _friendsBox.setStyle("verticalGap", 0);
         row.addChild(wrapBox(Msgs.GAME.get("l.invite_friends"), _friendsBox, true));
+
+        var box :HBox = new HBox();
+        box.styleName = "configBox";
+        box.percentWidth = 100;
+
+        var label :Label = new Label();
+        label.text = Msgs.GAME.get("l.table");
+        label.styleName = "lobbyLabel";
+
+        box.addChild(label);
+        box.addChild(title);
+        addChild(box);
 
         // finally add buttons for create and cancel
         var bottomRow :HBox = new HBox();

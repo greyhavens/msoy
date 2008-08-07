@@ -34,6 +34,7 @@ import com.threerings.msoy.ui.SimpleGrid;
 import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.data.MsoyTableConfig;
 
 public class TablePanel extends VBox
 {
@@ -141,7 +142,8 @@ public class TablePanel extends VBox
             }
         }
 
-        _info.text = info;
+        // TODO: Make the table title more prominent
+        _info.text = (table.tconfig as MsoyTableConfig).title + " - " + info;
     }
 
     protected var _gctx :GameContext;

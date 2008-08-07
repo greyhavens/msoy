@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.game.client {
 
+import mx.controls.TextInput;
+
 import com.threerings.parlor.client.DefaultFlexTableConfigurator;
 import com.threerings.parlor.client.TableConfigurator;
 import com.threerings.parlor.data.RangeParameter;
@@ -14,18 +16,26 @@ import com.threerings.msoy.game.data.MsoyTableConfig;
 public class MsoyTableConfigurator extends DefaultFlexTableConfigurator
 {
     public function MsoyTableConfigurator (
-        players :RangeParameter, watchable :ToggleParameter = null, prvate :ToggleParameter = null)
+        players :RangeParameter, watchable :ToggleParameter, prvate :ToggleParameter,
+        title :TextInput)
     {
         super(players, watchable, prvate);
+        _title = title;
     }
 
     override protected function createTableConfig () :TableConfig
     {
-        var tconf :MsoyTableConfig = new MsoyTableConfig();
-        tconf.title = "It's my table and I can cry if I want to";
-
-        return tconf;
+        return new MsoyTableConfig();
     }
+
+    override protected function flushTableConfig () :void
+    {
+        super.flushTableConfig();
+
+        (_config as MsoyTableConfig).title = _title.text;
+    }
+
+    protected var _title :TextInput;
 }
  
 }
