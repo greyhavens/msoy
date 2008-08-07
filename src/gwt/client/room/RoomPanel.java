@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.world;
+package client.room;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -65,7 +65,7 @@ public class RoomPanel extends SmartTable
         tabs.selectTab(0);
     }
 
-    protected static final WorldMessages _msgs = GWT.create(WorldMessages.class);
+    protected static final RoomMessages _msgs = GWT.create(RoomMessages.class);
     protected static final WorldServiceAsync _worldsvc = (WorldServiceAsync)
         ServiceUtil.bind(GWT.create(WorldService.class), WorldService.ENTRY_POINT);
 }

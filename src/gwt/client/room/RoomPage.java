@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.world;
+package client.room;
 
 import com.google.gwt.core.client.GWT;
 
@@ -18,14 +18,14 @@ import client.util.ServiceUtil;
 /**
  * Handles the MetaSOY main page.
  */
-public class WorldPage extends Page
+public class RoomPage extends Page
 {
     /** Required to map this entry point to a page. */
     public static Creator getCreator ()
     {
         return new Creator() {
             public Page createPage () {
-                return new WorldPage();
+                return new RoomPage();
             }
         };
     }
@@ -53,10 +53,10 @@ public class WorldPage extends Page
     @Override
     public Pages getPageId ()
     {
-        return Pages.WORLD;
+        return Pages.ROOM;
     }
 
-    protected static final WorldMessages _msgs = GWT.create(WorldMessages.class);
+    protected static final RoomMessages _msgs = GWT.create(RoomMessages.class);
     protected static final WorldServiceAsync _worldsvc = (WorldServiceAsync)
         ServiceUtil.bind(GWT.create(WorldService.class), WorldService.ENTRY_POINT);
 }

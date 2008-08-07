@@ -17,6 +17,7 @@ public enum Pages
     MAIL(Frame.Tabs.ME),
     ME(Frame.Tabs.ME),
     PEOPLE(Frame.Tabs.FRIENDS),
+    ROOM(Frame.Tabs.WHIRLEDS),
     SHOP(Frame.Tabs.SHOP),
     STUFF(Frame.Tabs.ME),
     SUPPORT(Frame.Tabs.HELP),

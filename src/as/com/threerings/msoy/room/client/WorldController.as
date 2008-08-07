@@ -459,7 +459,7 @@ public class WorldController extends MsoyController
      */
     public function handleViewRoom (sceneId :int) :void
     {
-        displayPage("world", "room_" + sceneId);
+        displayPage("room", "room_" + sceneId);
     }
 
     /**
