@@ -223,8 +223,15 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // update player stats if the seller wasn't also the purchaser
             if (mrec.memberId != listing.item.creatorId) {
-                _statLogic.incrementStat(mrec.memberId, StatType.ITEMS_PURCHASED, 1);
-                _statLogic.incrementStat(listing.item.creatorId, StatType.ITEMS_SOLD, 1);
+                StatType itemsPurchasedStat = StatType.getItemsPurchasedStat(itemType);
+                if (itemsPurchasedStat != null) {
+                    _statLogic.incrementStat(mrec.memberId, itemsPurchasedStat, 1);
+                }
+
+                StatType itemsSoldStat = StatType.getItemsSoldStat(itemType);
+                if (itemsSoldStat != null) {
+                    _statLogic.incrementStat(listing.item.creatorId, itemsSoldStat, 1);
+                }
             }
 
             // update their runtime inventory as appropriate
@@ -334,7 +341,10 @@ public class CatalogServlet extends MsoyServiceServlet
             }
 
             // update player stats
-            _statLogic.incrementStat(mrec.memberId, StatType.ITEMS_LISTED, 1);
+            StatType statType = StatType.getItemsListedStat(item.type);
+            if (statType != null) {
+                _statLogic.incrementStat(mrec.memberId, statType, 1);
+            }
 
             return record.catalogId;
 
