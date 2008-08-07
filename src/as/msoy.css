@@ -1118,6 +1118,11 @@ BasePanel {
   color: #6A859A;
 }
 
+.tableTitleLabel {
+  fontWeight: bold;
+  color: black;
+}
+
 .createBtnBox {
   verticalAlign: middle;
   horizontalAlign: center;

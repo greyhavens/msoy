@@ -62,11 +62,18 @@ public class TablePanel extends VBox
         }
         _seatsGrid.setStyle("horizontalGap", 10 * Math.max(1, 8-table.players.length));
 
+        var box :HBox = new HBox();
+        addChild(box);
+
+        _title = new Text();
+        _title.styleName = "tableTitleLabel";
+        box.addChild(_title);
+
         // create a place to hold configuration info
         _info = new Text();
         _info.styleName = "tableStatusLabel";
         _info.percentWidth = 100;
-        addChild(_info);
+        box.addChild(_info);
 
         // if we are the creator, add a button for starting the game now
         if (table.players.length > 0 &&
@@ -142,12 +149,13 @@ public class TablePanel extends VBox
             }
         }
 
-        // TODO: Make the table title more prominent
-        _info.text = (table.tconfig as MsoyTableConfig).title + " - " + info;
+        _title.text = (table.tconfig as MsoyTableConfig).title;
+        _info.text = info;
     }
 
     protected var _gctx :GameContext;
     protected var _watcherCount :int;
+    protected var _title :Text;
     protected var _info :Text;
     protected var _seatsGrid :SimpleGrid;
     protected var _startBtn :CommandButton;
