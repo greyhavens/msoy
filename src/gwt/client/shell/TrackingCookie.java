@@ -172,7 +172,7 @@ public class TrackingCookie
         
         total = (byte)(total % 128);
         byte check = bytes[bytes.length - 1];
-        CShell.log("CRC check: " + total + ", expected: " + check);
+        // CShell.log("CRC check: " + total + ", expected: " + check);
         
         // if the checksum doesn't check out, someone has been tampering with our cookies!
         // let's just return an empty string.
