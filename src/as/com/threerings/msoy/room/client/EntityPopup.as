@@ -13,7 +13,7 @@ import mx.containers.Canvas;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
 
-import com.threerings.msoy.room.client.WorldContext;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * A pop-up containing a user-code display object of some sort, to display

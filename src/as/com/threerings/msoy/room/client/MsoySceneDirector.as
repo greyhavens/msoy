@@ -21,6 +21,10 @@ import com.threerings.whirled.client.persist.SceneRepository;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldController;
+
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.MsoyScene;

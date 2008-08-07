@@ -19,7 +19,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.ui.FloatingPanel;
 
-import com.threerings.msoy.room.client.WorldContext;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;

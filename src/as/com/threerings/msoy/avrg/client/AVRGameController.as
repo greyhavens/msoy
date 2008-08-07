@@ -17,11 +17,13 @@ import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.msoy.client.MsoyClient;
-import com.threerings.msoy.game.client.GameContext;
+
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.MobSprite;
 import com.threerings.msoy.room.client.RoomObjectView;
-import com.threerings.msoy.room.client.WorldContext;
+
+import com.threerings.msoy.game.client.GameContext;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
 

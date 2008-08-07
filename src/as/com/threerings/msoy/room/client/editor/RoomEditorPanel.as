@@ -38,11 +38,11 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.TopPanel;
 
-import com.threerings.msoy.room.client.FurniSprite;
-import com.threerings.msoy.room.client.WorldContext;
-import com.threerings.msoy.room.client.WorldController;
-import com.threerings.msoy.room.data.FurniData;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldController;
 
+import com.threerings.msoy.room.client.FurniSprite;
+import com.threerings.msoy.room.data.FurniData;
 
 /**
  * A separate room editing panel, which lets the player edit furniture inside the room.

@@ -53,6 +53,8 @@ import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomCodes;

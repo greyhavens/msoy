@@ -70,11 +70,9 @@ import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.VizMemberName;
 
-import com.threerings.msoy.room.client.WorldContext;
-
-import com.threerings.msoy.room.data.MsoyScene;
-
 import com.threerings.msoy.game.client.MsoyGamePanel;
+import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class ChatOverlay
     implements TabbedChatDisplay

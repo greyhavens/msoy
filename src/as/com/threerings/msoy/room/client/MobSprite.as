@@ -9,6 +9,7 @@ import flash.display.Sprite;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.avrg.client.AVRGameBackend;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.data.MobInfo;
 

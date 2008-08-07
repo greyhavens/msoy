@@ -52,11 +52,11 @@ import com.threerings.crowd.util.CrowdContext;
 import com.threerings.whirled.client.SceneController;
 import com.threerings.whirled.data.Scene;
 
-import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LogonPanel;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
@@ -64,8 +64,11 @@ import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-
 import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.ui.MediaWrapper;
+import com.threerings.msoy.ui.RadialMenu;
+
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -77,9 +80,13 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemTypes;
 import com.threerings.msoy.item.data.all.Pet;
 
-import com.threerings.msoy.room.client.MsoySprite;
-import com.threerings.msoy.room.client.WorldContext;
+import com.threerings.msoy.world.client.WorldContext;
 
+import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.chat.client.MsoyChatDirector;
+import com.threerings.msoy.chat.client.ReportingListener;
+
+import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.Controllable;
@@ -94,13 +101,6 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertyEntry;
-
-import com.threerings.msoy.ui.MediaWrapper;
-import com.threerings.msoy.ui.RadialMenu;
-
-import com.threerings.msoy.chat.client.ChatOverlay;
-import com.threerings.msoy.chat.client.MsoyChatDirector;
-import com.threerings.msoy.chat.client.ReportingListener;
 
 /**
  * Manages the various interactions that take place in a room scene.

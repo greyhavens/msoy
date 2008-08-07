@@ -53,7 +53,7 @@ import com.threerings.msoy.chat.data.ChatChannelObject;
 import com.threerings.msoy.chat.data.JabberMarshaller;
 import com.threerings.msoy.chat.client.JabberService;
 
-import com.threerings.msoy.room.client.WorldContext;
+import com.threerings.msoy.world.client.WorldContext;
 
 /**
  * Handles the dispatching of chat messages based on their "channel" (room/game, individual, or

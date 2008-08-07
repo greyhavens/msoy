@@ -25,9 +25,10 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.world.client.WorldClient;
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.client.RoomView;
-import com.threerings.msoy.room.client.WorldClient;
-import com.threerings.msoy.room.client.WorldContext;
 
 /**
  * Controls the creation of scene snapshots.  Opens a control panel from which the user can choose

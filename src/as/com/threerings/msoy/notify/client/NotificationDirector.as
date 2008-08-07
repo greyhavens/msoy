@@ -41,8 +41,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.room.client.WorldContext;
-import com.threerings.msoy.room.client.WorldControlBar;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;

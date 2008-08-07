@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.world.client {
 
 import flash.events.MouseEvent;
 
@@ -19,11 +19,9 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.client.MsoyContext;
-
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
 
 public class FriendRenderer extends HBox 
 {

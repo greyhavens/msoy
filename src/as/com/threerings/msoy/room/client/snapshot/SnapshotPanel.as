@@ -30,10 +30,11 @@ import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.room.client.RoomView;
-import com.threerings.msoy.room.client.WorldContext;
 
 public class SnapshotPanel extends FloatingPanel
 {

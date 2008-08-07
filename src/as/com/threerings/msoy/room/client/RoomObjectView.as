@@ -56,8 +56,10 @@ import com.threerings.msoy.client.UberClient;
 
 import com.threerings.msoy.chat.client.ChatInfoProvider;
 import com.threerings.msoy.chat.client.ComicOverlay;
-
 import com.threerings.msoy.chat.data.ChatChannel;
+
+import com.threerings.msoy.world.client.WorldClient;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.editor.DoorTargetEditController;
 

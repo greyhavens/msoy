@@ -7,6 +7,9 @@ import com.threerings.util.Log;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Decor;
+
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomCodes;

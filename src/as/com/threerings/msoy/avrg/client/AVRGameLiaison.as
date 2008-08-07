@@ -17,7 +17,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.room.client.WorldContext;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.client.GameLiaison;
 import com.threerings.msoy.game.data.MsoyGameConfig;

@@ -22,13 +22,14 @@ import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
+
+import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.RoomObjectController;
-import com.threerings.msoy.room.client.WorldContext;
 import com.threerings.msoy.room.client.updates.FurniUpdateAction;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;

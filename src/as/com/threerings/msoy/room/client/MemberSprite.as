@@ -11,8 +11,10 @@ import com.threerings.util.CommandEvent;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
-
 import com.threerings.msoy.item.data.all.Game;
+
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.data.MemberInfo;
 
 /**
@@ -237,9 +239,10 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
+import com.threerings.msoy.world.client.WorldController;
+
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.MsoySprite;
-import com.threerings.msoy.room.client.WorldController;
 
 /**
  * A decoration used when this actor is at a table in a lobby.

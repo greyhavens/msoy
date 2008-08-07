@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.world.client {
 
 import flash.geom.Rectangle;
 
@@ -66,15 +66,16 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
-//import com.threerings.msoy.data.all.SceneBookmarkEntry;
+// import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
+import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.data.all.ContactEntry;
-import com.threerings.msoy.data.all.GatewayEntry;
 
 /**
  * Extends the MsoyController with World specific bits.

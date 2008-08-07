@@ -40,13 +40,14 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.PlayerObject;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.client.MemberSprite;
 import com.threerings.msoy.room.client.MobSprite;
 import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.room.client.RoomMetrics;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomView;
-import com.threerings.msoy.room.client.WorldContext;
 import com.threerings.msoy.room.client.layout.RoomLayout;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoyLocation;

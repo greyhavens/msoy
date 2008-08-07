@@ -19,6 +19,8 @@ import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyCodes;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetMarshaller;
 import com.threerings.msoy.room.data.RoomConfig;

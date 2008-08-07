@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -24,6 +24,10 @@ import com.threerings.whirled.util.WhirledContext;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.notify.client.NotificationDirector;
+import com.threerings.msoy.room.client.MediaDirector;
+import com.threerings.msoy.room.client.MsoySceneDirector;
+import com.threerings.msoy.room.client.WorldDirector;
+import com.threerings.msoy.room.client.WorldProperties;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MsoyContext;

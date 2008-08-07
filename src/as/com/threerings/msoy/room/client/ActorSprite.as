@@ -9,6 +9,9 @@ import com.threerings.util.Util;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.all.MediaDesc;
+
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoyLocation;

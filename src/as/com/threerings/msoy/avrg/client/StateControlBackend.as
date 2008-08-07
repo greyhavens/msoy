@@ -14,15 +14,17 @@ import com.threerings.presents.dobj.*;
 
 import com.threerings.msoy.client.ControlBackend;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.client.RoomView;
-import com.threerings.msoy.room.client.WorldContext;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertyEntry;
 
-import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.GameState;
 import com.threerings.msoy.game.data.PlayerObject;
+
+import com.threerings.msoy.avrg.data.AVRGameObject;
 
 public class StateControlBackend
 {

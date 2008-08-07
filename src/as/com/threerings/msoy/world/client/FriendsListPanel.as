@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.world.client {
 
 import flash.events.Event;
 import flash.events.FocusEvent;
@@ -49,9 +49,7 @@ import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PeerList;
-
 import com.threerings.msoy.data.MemberObject;
-
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 

@@ -31,14 +31,12 @@ import mx.managers.PopUpManager;
 import caurina.transitions.Tweener;
 
 import com.threerings.flex.FlexWrapper;
-
 import com.threerings.util.Log;
 
+import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.utils.TextUtil;
 
-import com.threerings.msoy.room.client.WorldContext;
-
-import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class NotificationDisplay extends HBox
 {

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.world.client {
 
 import com.threerings.util.MessageBundle;
 import com.threerings.util.StringUtil;
@@ -15,6 +15,8 @@ import com.threerings.crowd.chat.client.SpeakService;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
+
+import com.threerings.msoy.room.client.RoomView;
 
 /**
  * Allows users to switch their avatar's state or trigger an action from /slash commands entered in

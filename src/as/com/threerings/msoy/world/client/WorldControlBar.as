@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -31,23 +31,22 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.client.ControlBar;
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
-
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.UberClient;
-
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
-
 import com.threerings.msoy.notify.client.NotificationDisplay;
-
 import com.threerings.msoy.party.client.PartyPopup;
+
+import com.threerings.msoy.room.client.RoomObjectView;
+import com.threerings.msoy.room.client.RoomStudioView;
+import com.threerings.msoy.room.client.snapshot.SnapshotPanel;
+import com.threerings.msoy.room.data.RoomObject;
 
 /**
  * Configures the control bar with World-specific stuff.

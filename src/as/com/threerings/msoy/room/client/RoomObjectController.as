@@ -67,8 +67,8 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.MediaDesc;
-
 import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.item.client.ItemService;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -79,8 +79,11 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
 
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
+import com.threerings.msoy.world.client.WorldController;
+
 import com.threerings.msoy.room.client.MsoySprite;
-import com.threerings.msoy.room.client.WorldContext;
 import com.threerings.msoy.room.client.editor.DoorTargetEditController;
 import com.threerings.msoy.room.client.editor.ItemUsedDialog;
 import com.threerings.msoy.room.client.editor.RoomEditorController;

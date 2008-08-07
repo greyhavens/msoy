@@ -6,6 +6,7 @@ package com.threerings.msoy.room.client {
 import flash.display.Stage;
 
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.world.client.WorldClient;
 
 import com.threerings.msoy.room.data.RoomConfig;
 

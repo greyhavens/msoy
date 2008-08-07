@@ -26,7 +26,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.room.client.WorldContext;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.avrg.client.AVRGameController;

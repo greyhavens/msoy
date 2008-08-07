@@ -44,8 +44,10 @@ import com.threerings.msoy.client.MsoyPlaceView;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
+
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.layout.RoomLayout;
 import com.threerings.msoy.room.client.layout.RoomLayoutFactory;

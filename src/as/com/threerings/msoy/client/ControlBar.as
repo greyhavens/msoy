@@ -39,7 +39,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.SkinnableImage;
 import com.threerings.msoy.ui.SliderPopup;
 
-import com.threerings.msoy.room.client.WorldController;
+import com.threerings.msoy.world.client.WorldController;
 
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 

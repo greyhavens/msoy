@@ -15,9 +15,7 @@ import flash.net.URLLoader;
 import flash.net.URLRequest;
 
 import flash.system.Security;
-
 import flash.text.TextField;
-
 import flash.utils.Timer;
 
 import caurina.transitions.Tweener;
@@ -36,18 +34,16 @@ import com.whirled.game.data.WhirledGameObject;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceBox;
-
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.ui.AwardPanel;
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
-
-import com.threerings.msoy.room.client.WorldContext;
-
-import com.threerings.msoy.ui.AwardPanel;
 
 /**
  * Handles all the fiddly bits relating to connecting to a separate server to match-make and

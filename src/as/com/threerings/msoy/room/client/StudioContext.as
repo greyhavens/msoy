@@ -8,6 +8,8 @@ import com.threerings.whirled.client.SceneDirector;
 import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 public class StudioContext extends WorldContext
 {
     public function StudioContext (client :StudioClient)

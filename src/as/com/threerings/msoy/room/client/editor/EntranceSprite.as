@@ -4,8 +4,10 @@
 package com.threerings.msoy.room.client.editor {
 
 import com.threerings.msoy.data.all.MediaDesc;
+
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.client.FurniSprite;
-import com.threerings.msoy.room.client.WorldContext;
 import com.threerings.msoy.room.data.MsoyLocation;
 
 public class EntranceSprite extends FurniSprite

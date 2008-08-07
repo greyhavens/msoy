@@ -15,6 +15,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MemberInfo;

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 import flash.display.Stage;
@@ -34,6 +34,16 @@ import com.threerings.presents.net.Credentials;
 
 import com.threerings.whirled.data.Scene;
 
+import com.threerings.msoy.client.ContextMenuProvider;
+import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.EmbedHeader;
+import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyClient;
+import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyController;
+import com.threerings.msoy.client.MsoyParameters;
+import com.threerings.msoy.client.Prefs;
+
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
@@ -48,15 +58,7 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
-import com.threerings.msoy.client.EmbedHeader;
-import com.threerings.msoy.client.MsoyClient;
-import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.ContextMenuProvider;
-import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.MsoyParameters;
-import com.threerings.msoy.client.Prefs;
+import com.threerings.msoy.room.client.RoomObjectView;
 
 /**
  * An event dispatched for tutorial-specific purposes.
@@ -394,7 +396,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 //import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
-import com.threerings.msoy.room.client.WorldContext;
+import com.threerings.msoy.world.client.WorldContext;
 
 class AvatarUpdateNotifier implements AttributeChangeListener
 {

@@ -35,7 +35,8 @@ import com.threerings.msoy.client.PlaceBox;
 
 import com.threerings.msoy.data.all.RoomName;
 
-import com.threerings.msoy.room.client.WorldContext;
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.data.MsoyScene;
 
 /**

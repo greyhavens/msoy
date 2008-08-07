@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.ui {
 
 import flash.display.DisplayObjectContainer;
@@ -28,10 +31,8 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.game.data.all.Trophy;
-
 import com.threerings.msoy.item.data.all.Item;
-
-import com.threerings.msoy.room.client.WorldContext;
+import com.threerings.msoy.world.client.WorldContext;
 
 public class AwardPanel
 {

@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.world.client {
 
 import mx.controls.Label;
 import mx.controls.Text;
@@ -10,12 +10,12 @@ import mx.containers.Grid;
 import mx.containers.VBox;
 
 import com.threerings.flex.GridUtil;
+import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.util.MessageBundle;
 
 public class ComplainDialog extends FloatingPanel
 {

@@ -5,6 +5,8 @@ package com.threerings.msoy.room.client {
 
 import com.threerings.util.ValueEvent;
 
+import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.data.EffectData;
 import com.threerings.msoy.room.data.RoomCodes;
 
