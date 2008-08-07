@@ -223,7 +223,7 @@ public class MemberAccountRecord extends PersistentRecord
         }
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated, paymentType, amountPaid, false, 
-            description);
+            description, item.itemId, item.type);
     }
     
     public int getMemberId ()

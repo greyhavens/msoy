@@ -77,7 +77,7 @@ public class MoneyTest
         
         log = _service.getLog(2, null, 0, 30, true);
         checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.BLING, 100.0*0.3, false, 
-            "Item purchased: My bar item", null), startTime, endTime);
+            "Item purchased: My bar item", item), startTime, endTime);
         
         // TODO: check affiliate account
     }
@@ -139,7 +139,7 @@ public class MoneyTest
         
         log = _service.getLog(2, null, 0, 30, true);
         checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.COINS, 30.0, false, 
-            "Item purchased: testBuyCoinItemWithCoins - test", null), startTime, endTime);
+            "Item purchased: testBuyCoinItemWithCoins - test", item), startTime, endTime);
         
         // TODO: check affiliate account        
     }
