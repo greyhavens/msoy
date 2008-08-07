@@ -439,7 +439,7 @@ public class WorldController extends MsoyController
         displayPage("people", "" + memberId);
     }
 
-    /** 
+    /**
      * Handles hte VISIT_MEMBER command.
      */
     public function handleVisitMember (memberId :int) :void
@@ -469,6 +469,8 @@ public class WorldController extends MsoyController
     public function handleViewFullVersion (sceneId :int) :void
     {
         displayPage("world", "s" + sceneId);
+        // log that the full version button was clicked
+        _wctx.getMsoyClient().trackClientAction("flashFullVersionClicked", null);
     }
 
     /**
@@ -747,10 +749,10 @@ public class WorldController extends MsoyController
                 log.warning("Unable to handleToggleHeight via Javascript: " + e);
             }
         } else {
-        	log.warning("Can't access GWT to handleToggleHeight");
+            log.warning("Can't access GWT to handleToggleHeight");
         }
     }
-    
+
     /**
      * Called by the scene director when we've traveled to a new scene.
      */
@@ -842,7 +844,7 @@ public class WorldController extends MsoyController
 
         } else if (null != params["groupChat"]) {
             var groupId :int = int(params["groupChat"]);
-            var gm :GroupMembership = 
+            var gm :GroupMembership =
                 _wctx.getMemberObject().groups.get(groupId) as GroupMembership;
             if (gm != null) {
                 handleOpenChannel(gm.group);
@@ -922,7 +924,7 @@ public class WorldController extends MsoyController
         var memId :int = member.getMemberId();
         var us :MemberObject = _wctx.getMemberObject();
 
-        // if we're not a guest, populate availability menu.  
+        // if we're not a guest, populate availability menu.
         if (memId == us.getMemberId() && !MemberName.isGuest(memId)) {
             var availActions :Array = [];
             for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
@@ -1011,7 +1013,7 @@ public class WorldController extends MsoyController
         // if we're not in a scene, just go to the latest scene on the stack
         if (_wctx.getSceneDirector().getScene() == null) {
             if (_backstack.length > 0) {
-                handleVisitBackstackIndex(_backstack.length - 1); 
+                handleVisitBackstackIndex(_backstack.length - 1);
                 return;
             }
 
@@ -1042,7 +1044,7 @@ public class WorldController extends MsoyController
         // the full 7 items
         top = Math.min(bottom + 6, _backstack.length - 1);
         for (var ii :int = top; ii >= bottom; ii--) {
-            menuData.push({ label: _backstack[ii].name, command: VISIT_BACKSTACK_INDEX, arg: ii, 
+            menuData.push({ label: _backstack[ii].name, command: VISIT_BACKSTACK_INDEX, arg: ii,
                 enabled: ii != _backstackIdx });
             if (ii != bottom) {
                 menuData.push({ type: "separator" });
@@ -1061,7 +1063,7 @@ public class WorldController extends MsoyController
     public function handleVisitBackstackIndex (idx :int) :void
     {
         if (idx < 0 || idx > _backstack.length - 1) {
-            log.warning("asked to visit backstack index that is out of bounds! [idx=" + 
+            log.warning("asked to visit backstack index that is out of bounds! [idx=" +
                 idx + ", backstack.length=" + _backstack.length + "]");
             return;
         }
@@ -1207,7 +1209,7 @@ public class WorldController extends MsoyController
             _wctx.getMsoyClient().setWindowTitle(scene.getName());
             headerBar.setLocationName(scene.getName());
             headerBar.setEmbedVisible(!_wctx.getMsoyClient().isEmbedded());
-            var roomChannel :ChatChannel = 
+            var roomChannel :ChatChannel =
                 ChatChannel.makeRoomChannel(new RoomName(scene.getName(), scene.getId()));
             headerBar.getChatTabs().clearUncheckedRooms([roomChannel.toLocalType()]);
 
@@ -1259,7 +1261,7 @@ public class WorldController extends MsoyController
             // if we're not sitting at the end of the list, some special processing is called for.
             } else if (_backstackIdx != _backstack.length - 1) {
                 if (_backstack[_backstackIdx + 1].id == scene.getId()) {
-                    // we're just moving forward in the stack... 
+                    // we're just moving forward in the stack...
                     _backstackIdx++;
                     _backstack[_backstackIdx] = backstackEntry;
 

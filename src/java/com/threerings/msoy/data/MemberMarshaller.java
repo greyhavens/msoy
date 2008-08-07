@@ -253,4 +253,42 @@ public class MemberMarshaller extends InvocationMarshaller
             arg2, listener3
         });
     }
+
+    /** The method id used to dispatch {@link #getABTestGroup} requests. */
+    public static final int GET_AB_TEST_GROUP = 20;
+
+    // from interface MemberService
+    public void getABTestGroup (
+        Client arg1, ReferralInfo arg2, String arg3, boolean arg4,
+        InvocationService.ResultListener arg5)
+    {
+        InvocationMarshaller.ResultMarshaller listener5 =
+            new InvocationMarshaller.ResultMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, GET_AB_TEST_GROUP, new Object[] {
+            arg2, arg3, Boolean.valueOf(arg4), listener5
+        });
+    }
+
+    /** The method id used to dispatch {@link #trackClientAction} requests. */
+    public static final int TRACK_CLIENT_ACTION = 21;
+
+    // from interface MemberService
+    public void trackClientAction (Client arg1, ReferralInfo arg2, String arg3, String arg4)
+    {
+        sendRequest(arg1, TRACK_CLIENT_ACTION, new Object[] {
+            arg2, arg3, arg4
+        });
+    }
+
+    /** The method id used to dispatch {@link #trackTestAction} requests. */
+    public static final int TRACK_TEST_ACTION = 22;
+
+    // from interface MemberService
+    public void trackTestAction (Client arg1, ReferralInfo arg2, String arg3, String arg4)
+    {
+        sendRequest(arg1, TRACK_TEST_ACTION, new Object[] {
+            arg2, arg3, arg4
+        });
+    }
 }

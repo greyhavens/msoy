@@ -123,4 +123,23 @@ public interface MemberProvider extends InvocationProvider
      */
     void updateStatus (ClientObject caller, String arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
+
+    /**
+     * Handles a {@link MemberService#getABTestGroup} request.
+     */
+    void getABTestGroup (ClientObject caller, ReferralInfo arg1, String arg2, boolean arg3,
+        InvocationService.ResultListener arg4)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link MemberService#trackClientAction} request.
+     */
+    void trackClientAction (ClientObject caller, ReferralInfo arg1, String arg2, String arg3)
+        throws InvocationException;
+
+    /**
+     * Handles a {@link MemberService#trackTestAction} request.
+     */
+    void trackTestAction (ClientObject caller, ReferralInfo arg1, String arg2, String arg3)
+        throws InvocationException;
 }

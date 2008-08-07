@@ -26,6 +26,7 @@ import com.threerings.flash.MenuUtil;
 
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DSet;
 
@@ -93,7 +94,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         setVersion(DeploymentConfig.version);
         _referrals = [];
         _creds = createStartupCreds(null);
-        
+
         _featuredPlaceView = UberClient.isFeaturedPlaceView();
         if (_featuredPlaceView) {
             // mute all sound in featured place view.
@@ -250,6 +251,36 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
+     * Get the int testGroup for this visitor and return it in the listener.
+     */
+    public function getABTestGroup (
+        testName :String, logEvent :Boolean, listener :InvocationService_ResultListener) :void
+    {
+        var msvc :MemberService = requireService(MemberService) as MemberService;
+        msvc.getABTestGroup(this, getReferralInfo(), testName, logEvent, listener);
+    }
+
+    /**
+     * Track a client action such as clicking a button
+     */
+    public function trackClientAction (actionName :String, details :String) :void
+    {
+        var msvc :MemberService = requireService(MemberService) as MemberService;
+        msvc.trackClientAction(this, getReferralInfo(), actionName, details);
+    }
+
+    /**
+     * Track a test action such as clicking a button during an a/b test.  Denotes an action
+     * being tracked for the duration of an a/b test only.  trackClientAction may be used instead
+     * if we want to continue tracking the event after the test is over.
+     */
+    public function trackTestAction (actionName :String, testName :String) :void
+    {
+        var msvc :MemberService = requireService(MemberService) as MemberService;
+        msvc.trackTestAction(this, getReferralInfo(), actionName, testName);
+    }
+
+    /**
      * Called just before we logon to a server.
      */
     protected function clientWillLogon (event :ClientEvent) :void
@@ -302,7 +333,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             TrackingCookie.clear();
         }
     }
-    
+
     /**
      * Configure any external functions that we wish to expose to JavaScript.
      */
@@ -393,7 +424,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      *
      * This info will be offered to the server, which may override it with its own versions.
      */
-    protected function getReferralInfo () :ReferralInfo                                           
+    public function getReferralInfo () :ReferralInfo
     {
         // first, try the local cookie
         var ref :ReferralInfo = TrackingCookie.get();
@@ -401,12 +432,12 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         // if that didn't work, see if we can read it from the browser cookie
         if (ref == null && !isEmbedded() && ExternalInterface.available) {
             try {
-                log.debug("Querying browser cookie for referral info");        
+                log.debug("Querying browser cookie for referral info");
                 var result :Object = ExternalInterface.call("getReferral");
                 if (result != null) {
-	                ref = ReferralInfo.makeInstance(
-	                    result.affiliate as String, result.vector as String,
-	                    result.creative as String, result.tracker as String);
+                    ref = ReferralInfo.makeInstance(
+                        result.affiliate as String, result.vector as String,
+                        result.creative as String, result.tracker as String);
                 }
             } catch (e :Error) {
                 log.info("ExternalInterface.call('getReferral') failed", "error", e);
@@ -415,7 +446,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
         // if calling GWT didn't work either, check embed parameters, and create a new one
         if (ref == null) {
-            log.debug("Checking embed parameters for referral info");        
+            log.debug("Checking embed parameters for referral info");
             var params :Object = MsoyParameters.get();
             ref = makeNewReferral(params["aff"], params["vec"], params["cre"]);
         }
@@ -428,7 +459,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         }
 
         log.debug("Referral info: " + ref);
-        return ref;            
+        return ref;
     }
 
     /**
@@ -444,7 +475,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         _referrals.push(ref);
         return ref;
     }
-    
+
     /**
      * Returns the hostname of the game server to which we should connect, or null if that is not
      * configured in our parameters.

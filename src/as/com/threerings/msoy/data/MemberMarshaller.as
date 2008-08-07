@@ -36,7 +36,7 @@ public class MemberMarshaller extends InvocationMarshaller
     public function acknowledgeWarning (arg1 :Client) :void
     {
         sendRequest(arg1, ACKNOWLEDGE_WARNING, [
-            
+
         ]);
     }
 
@@ -263,6 +263,46 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, UPDATE_STATUS, [
             arg2, listener3
+        ]);
+    }
+
+    /** The method id used to dispatch <code>getABTestGroup</code> requests. */
+    public static const GET_AB_TEST_GROUP :int = 20;
+
+    // from interface MemberService
+    public function getABTestGroup (
+        arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :Boolean,
+        arg5: InvocationService_ResultListener) :void
+    {
+        var listener5 :InvocationMarshaller_ResultMarshaller =
+            new InvocationMarshaller_ResultMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, GET_AB_TEST_GROUP, [
+            arg2, arg3, langBoolean.valueOf(arg4), listener5
+        ]);
+    }
+
+    /** The method id used to dispatch <code>trackClientAction</code> requests. */
+    public static const TRACK_CLIENT_ACTION :int = 21;
+
+    // from interface MemberService
+    public function trackClientAction (
+        arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :String) :void
+    {
+        sendRequest(arg1, TRACK_CLIENT_ACTION, [
+            arg2, arg3, arg4
+        ]);
+    }
+
+    /** The method id used to dispatch <code>trackTestAction</code> requests. */
+    public static const TRACK_TEST_ACTION :int = 22;
+
+    // from interface MemberService
+    public function trackTestAction (
+        arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :String) :void
+    {
+        sendRequest(arg1, TRACK_TEST_ACTION, [
+            arg2, arg3, arg4
         ]);
     }
 }

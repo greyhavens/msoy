@@ -72,5 +72,15 @@ public interface MemberService extends InvocationService
 
     // from Java interface MemberService
     function updateStatus (arg1 :Client, arg2 :String, arg3 :InvocationService_InvocationListener) :void;
+
+    // from Java interface MemberService
+    function getABTestGroup (arg1 :Client, arg2 :ReferralInfo,
+        arg3 :String, arg4 :Boolean, arg5: InvocationService_ResultListener) :void;
+
+    // from Java interface MemberService
+    function trackClientAction (arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :String):void;
+
+    // from Java interface MemberService
+    function trackTestAction (arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :String):void;
 }
 }

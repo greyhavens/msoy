@@ -592,6 +592,54 @@ public class MemberManager
         });
     }
 
+    // from interface MemberProvider
+    public void getABTestGroup (
+        ClientObject caller, final ReferralInfo info, final String testName,
+        final boolean logEvent, InvocationService.ResultListener listener)
+    {
+        _invoker.postUnit(new PersistingUnit(listener) {
+            public void invokePersistent () throws PersistenceException {
+                _testGroup = new Integer(_memberLogic.getABTestGroup(testName, info, logEvent));
+            }
+            public void handleSuccess () {
+                ((InvocationService.ResultListener)_listener).requestProcessed(_testGroup);
+            }
+            protected Integer _testGroup;
+        });
+    }
+
+    // from interface MemberProvider
+    public void trackClientAction (
+        ClientObject caller, ReferralInfo info, String actionName, String details)
+    {
+        if (info == null) {
+            log.warning(
+                "Failed to log client action with null referral", "actionName", actionName);
+            return;
+        }
+
+        _eventLog.clientAction(info.tracker, actionName, details);
+    }
+
+    // from interface MemberProvider
+    public void trackTestAction (
+        ClientObject caller, ReferralInfo info, String actionName, String testName)
+    {
+        if (info == null) {
+            log.warning(
+                "Failed to log test action with null referral", "actionName", actionName);
+            return;
+        }
+        int abTestGroup = -1;
+        if (testName != null) {
+            // grab the group without logging a tracking event about it
+            abTestGroup = _memberLogic.getABTestGroup(testName, info, false);
+        } else {
+            testName = "";
+        }
+        _eventLog.testAction(info.tracker, actionName, testName, abTestGroup);
+    }
+
     /**
      * Grants flow to the member identified in the supplied user action details.
      *
