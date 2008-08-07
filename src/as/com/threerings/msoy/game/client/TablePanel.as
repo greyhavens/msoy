@@ -63,6 +63,7 @@ public class TablePanel extends VBox
         _seatsGrid.setStyle("horizontalGap", 10 * Math.max(1, 8-table.players.length));
 
         var box :HBox = new HBox();
+        box.percentWidth = 100;
         addChild(box);
 
         _title = new Text();
