@@ -17,7 +17,6 @@ import com.threerings.util.Log;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.parlor.client.DefaultFlexTableConfigurator;
 import com.threerings.parlor.client.TableConfigurator;
 import com.threerings.parlor.data.RangeParameter;
 import com.threerings.parlor.data.ToggleParameter;
@@ -122,8 +121,7 @@ public class TableCreationPanel extends VBox
             return;
         }
 
-        var tconfigger :TableConfigurator =
-            new DefaultFlexTableConfigurator(plparam, wparam, pvparam);
+        var tconfigger :TableConfigurator = new MsoyTableConfigurator(plparam, wparam, pvparam);
         tconfigger.init(_ctx, gconf);
 
         var config :MsoyGameConfig = new MsoyGameConfig();
