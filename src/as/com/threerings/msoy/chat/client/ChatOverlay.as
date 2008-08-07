@@ -563,7 +563,7 @@ public class ChatOverlay
             var rightPanel :UIComponent = _ctx.getTopPanel().getRightPanel();
             if (rightPanel is GameChatContainer) {
                 if (_occupantList != null) {
-                    _occupantList.scrollBarOnLeft = false;
+                    _occupantList.scrollBarOnLeft = (_scrollBarSide == SCROLL_BAR_LEFT);
                 }
                 (rightPanel as GameChatContainer).displayOccupantList(_occupantList);
             }
