@@ -1,9 +1,9 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.data;
+package com.threerings.msoy.world.data;
 
-import com.threerings.msoy.room.client.WatcherService;
+import com.threerings.msoy.world.client.WatcherService;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;

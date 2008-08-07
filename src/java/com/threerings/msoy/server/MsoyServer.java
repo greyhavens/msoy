@@ -69,11 +69,11 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.persist.OOODatabase;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
+import com.threerings.msoy.world.server.WorldWatcherManager;
 
 import com.threerings.msoy.room.server.MsoySceneFactory;
 import com.threerings.msoy.room.server.MsoySceneRegistry;
 import com.threerings.msoy.room.server.PetManager;
-import com.threerings.msoy.room.server.WorldWatcherManager;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 /**

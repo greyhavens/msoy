@@ -27,15 +27,15 @@ import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.world.client.WatcherDecoder;
+import com.threerings.msoy.world.client.WatcherReceiver;
+import com.threerings.msoy.world.client.WatcherService;
 
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.server.GameGameRegistry;
 import com.threerings.msoy.game.data.all.Trophy;
 
-import com.threerings.msoy.room.client.WatcherDecoder;
-import com.threerings.msoy.room.client.WatcherReceiver;
-import com.threerings.msoy.room.client.WatcherService;
 
 import static com.threerings.msoy.Log.log;
 

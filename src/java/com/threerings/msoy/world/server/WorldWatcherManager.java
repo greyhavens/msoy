@@ -1,7 +1,7 @@
 //
 // $Id: PetManager.java 9626 2008-06-29 14:08:13Z mdb $
 
-package com.threerings.msoy.room.server;
+package com.threerings.msoy.world.server;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -16,6 +16,7 @@ import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager.RemoteMemberObserver;
+
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
