@@ -203,7 +203,7 @@ public class FrameEntryPoint
         _pageToken = Args.compose(args.splice(0));
 
         // replace the page if necessary
-        if (_page != page) {
+        if (_page != page || _page == Pages.WORLD) {
             setPage(page);
         } else {
             setPageToken(_pageToken, _iframe.getElement());
