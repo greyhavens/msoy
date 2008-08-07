@@ -32,10 +32,34 @@ public enum BadgeType
         }
     },
 
+    INVITES_1(Category.SOCIAL, 1000, "Invites", 1) {
+        protected int getAcquiredUnits (MemberObject user) {
+            return user.stats.getIntStat(StatType.INVITES_ACCEPTED);
+        }
+    },
+
+    PLAYTIME_1(Category.SOCIAL, 1000, "ActiveHours", 24) {
+        protected int getAcquiredUnits (MemberObject user) {
+            return (int)Math.floor(user.stats.getIntStat(StatType.MINUTES_ACTIVE) / 60);
+        }
+    },
+
     // game badges
     GAMER_1(Category.GAME, 1000, "Games", 5) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getSetStatSize(StatType.UNIQUE_GAMES_PLAYED);
+        }
+    },
+
+    MULTIPLAYER_1(Category.GAME, 2000, "MultiplayerWins", 1) {
+        protected int getAcquiredUnits (MemberObject user) {
+            return user.stats.getIntStat(StatType.MP_GAMES_WON);
+        }
+    },
+
+    TROPHY_1(Category.GAME, 1000, "Trophies", 1) {
+        protected int getAcquiredUnits (MemberObject user) {
+            return user.stats.getIntStat(StatType.TROPHIES_EARNED);
         }
     },
 
