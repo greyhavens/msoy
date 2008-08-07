@@ -36,9 +36,9 @@ public class HttpReferrerCookie
      * Marks HTTP referrer as "disabled". This will prevent the server from trying
      * to overwrite it on future page views.
      */
-    public static void disable (String referrer)
+    public static void disable ()
     {
-        CookieUtil.set("/", -1, REFERRAL_FIELD, REFERRER_DISABLED_VALUE);
+        CookieUtil.set("/", 365, REFERRAL_FIELD, REFERRER_DISABLED_VALUE);
         CShell.log("Referrer disabled.");
     }
 

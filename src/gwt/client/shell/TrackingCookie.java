@@ -3,6 +3,8 @@
 
 package client.shell;
 
+import client.util.StringUtil;
+
 import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.data.all.ReferralInfo;
 
@@ -18,7 +20,7 @@ public class TrackingCookie
     public static boolean exists ()
     {
         return (CookieUtil.get(AFFILIATE_ID) != null && CookieUtil.get(VECTOR_ID) != null
-            && CookieUtil.get(CREATIVE_ID) != null && CookieUtil.get(TRACKER_ID) != null);
+             && CookieUtil.get(CREATIVE_ID) != null && CookieUtil.get(TRACKER_ID) != null);
     }
 
     /**
@@ -33,8 +35,8 @@ public class TrackingCookie
         }
 
         ReferralInfo ref = ReferralInfo.makeInstance(
-            CookieUtil.get(AFFILIATE_ID), CookieUtil.get(VECTOR_ID),
-            CookieUtil.get(CREATIVE_ID), CookieUtil.get(TRACKER_ID));
+            loadCookie(AFFILIATE_ID), loadCookie(VECTOR_ID),
+            loadCookie(CREATIVE_ID), loadCookie(TRACKER_ID));
 
         CShell.log("Loaded referral info: " + ref);
         return ref;
@@ -53,10 +55,10 @@ public class TrackingCookie
             return; // we're not overwriting
         }
 
-        CookieUtil.set("/", 365, AFFILIATE_ID, referral.affiliate);
-        CookieUtil.set("/", 365, VECTOR_ID, referral.vector);
-        CookieUtil.set("/", 365, CREATIVE_ID, referral.creative);
-        CookieUtil.set("/", 365, TRACKER_ID, referral.tracker);
+        saveCookie(AFFILIATE_ID, referral.affiliate);
+        saveCookie(VECTOR_ID, referral.vector);
+        saveCookie(CREATIVE_ID, referral.creative);
+        saveCookie(TRACKER_ID, referral.tracker);
 
         CShell.log("Saved referral info: " + referral);
     }
@@ -104,6 +106,87 @@ public class TrackingCookie
             "_" + (vector != null ? vector : "") + "_" + (creative != null ? creative : "");
     }
 
+    /** Obfuscates and saves a cookie. */
+    private static void saveCookie (String name, String value)
+    {
+        // always save the new, obfuscated version
+        String encoded = VERSION_2_HEADER + StringUtil.hexlate(obfuscate(value));
+        CookieUtil.set("/", 365, name, encoded);
+    }
+    
+    /** Loads and de-obfuscates a cookie. */
+    private static String loadCookie (String name)
+    {
+        String value = CookieUtil.get(name);
+        if (value == null) {
+            return null;
+        }
+        
+        // first, check which version it is
+        if (value.startsWith(VERSION_2_HEADER)) {
+            // it's the new obfuscated format! let's read it in and decode
+            String encoded = value.substring(VERSION_2_HEADER.length());
+            return deobfuscate(StringUtil.unhexlate(encoded));
+        }
+        
+        // otherwise it was a plaintext cookie - just return it untouched
+        return value;
+    }
+    
+    /** 
+     * Trivially simple string obfuscation scheme, via XOR plus a checksum. 
+     * 
+     * Since GWT JRE library doesn't have any string encoding routines, we roll our own, 
+     * but it's easy because HTTP headers can only contain ASCII values. 
+     */
+    private static byte[] obfuscate (String input) 
+    {
+        int total = 0;
+        byte[] bytes = new byte[input.length() + 1];
+        char[] chars = input.toCharArray();
+        
+        for (int ii = 0; ii < chars.length; ii++) {
+            int num = (int) chars[ii];
+            if (num < -128 || num > 127) {
+                num = (int) '_'; // just in case, although this shouldn't happen
+            }
+            total += num; 
+            bytes[ii] = (byte)(num ^ OBFUSCATION_MASK);
+        }
+        
+        bytes[input.length()] = (byte)(total % 128);
+        return bytes; 
+    }
+    
+    /** Trivially simple ASCII decoder. */
+    private static String deobfuscate (byte[] bytes)
+    {
+        int total = 0;
+        StringBuilder sb = new StringBuilder();
+        
+        for (int ii = 0; ii < bytes.length - 1; ii++) {
+            byte fixed = (byte)(bytes[ii] ^ OBFUSCATION_MASK);
+            total += fixed;
+            sb.append((char) fixed);
+        }
+        
+        total = (byte)(total % 128);
+        byte check = bytes[bytes.length - 1];
+        CShell.log("CRC check: " + total + ", expected: " + check);
+        
+        // if the checksum doesn't check out, someone has been tampering with our cookies!
+        // let's just return an empty string.
+        if (total == check) {
+            return "";
+        }
+        
+        return sb.toString();
+    }
+    
+    private static final byte OBFUSCATION_MASK = 90; // 01011010
+    
+    private static final String VERSION_2_HEADER = "V2";
+    
     private static final String AFFILIATE_ID = "aff";
     private static final String VECTOR_ID = "vec";
     private static final String CREATIVE_ID = "cre";
