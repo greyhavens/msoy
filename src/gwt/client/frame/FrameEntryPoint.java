@@ -28,8 +28,8 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.ReferralInfo;
-import com.threerings.msoy.web.client.MemberService;
-import com.threerings.msoy.web.client.MemberServiceAsync;
+import com.threerings.msoy.web.client.WebMemberService;
+import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.Invitation;
@@ -873,8 +873,8 @@ public class FrameEntryPoint
     protected Command _javaReadyCommand;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
-        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 

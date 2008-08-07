@@ -51,19 +51,19 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.gwt.RoomInfo;
-import com.threerings.msoy.room.gwt.WorldService;
+import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
 
 /**
- * Implements the {@link WorldService}.
+ * Implements the {@link WebRoomService}.
  */
 public class WorldServlet extends MsoyServiceServlet
-    implements WorldService
+    implements WebRoomService
 {
-    // from WorldService
+    // from WebRoomService
     public String serializePopularPlaces (WebIdent ident, final int n)
         throws ServiceException
     {
@@ -100,7 +100,7 @@ public class WorldServlet extends MsoyServiceServlet
         });
     }
 
-    // from interface WorldService
+    // from interface WebRoomService
     public RoomInfo loadRoomInfo (int sceneId)
         throws ServiceException
     {

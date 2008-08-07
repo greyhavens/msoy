@@ -19,7 +19,7 @@ import com.threerings.msoy.web.data.WebIdent;
 /**
  * Defines member-specific services available to the GWT/AJAX web client.
  */
-public interface MemberService extends RemoteService
+public interface WebMemberService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/membersvc";

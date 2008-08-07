@@ -14,8 +14,8 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.room.gwt.RoomInfo;
-import com.threerings.msoy.room.gwt.WorldService;
-import com.threerings.msoy.room.gwt.WorldServiceAsync;
+import com.threerings.msoy.room.gwt.WebRoomService;
+import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
 import client.comment.CommentsPanel;
 import client.shell.CShell;
@@ -66,6 +66,6 @@ public class RoomPanel extends SmartTable
     }
 
     protected static final RoomMessages _msgs = GWT.create(RoomMessages.class);
-    protected static final WorldServiceAsync _worldsvc = (WorldServiceAsync)
-        ServiceUtil.bind(GWT.create(WorldService.class), WorldService.ENTRY_POINT);
+    protected static final WebRoomServiceAsync _worldsvc = (WebRoomServiceAsync)
+        ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
 }

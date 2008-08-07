@@ -22,7 +22,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.person.server.persist.ProfileRepository;
 
-import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
@@ -32,12 +32,12 @@ import com.threerings.msoy.web.data.WebIdent;
 import static com.threerings.msoy.Log.log;
 
 /**
- * Provides the server implementation of {@link MemberService}.
+ * Provides the server implementation of {@link WebMemberService}.
  */
 public class MemberServlet extends MsoyServiceServlet
-    implements MemberService
+    implements WebMemberService
 {
-    // from interface MemberService
+    // from interface WebMemberService
     public MemberCard getMemberCard (int memberId)
         throws ServiceException
     {
@@ -54,7 +54,7 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
-    // from MemberService
+    // from WebMemberService
     public boolean getFriendStatus (WebIdent ident, final int memberId)
         throws ServiceException
     {
@@ -67,7 +67,7 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface MemberService
+    // from interface WebMemberService
     public FriendsResult loadFriends (WebIdent ident, int memberId)
         throws ServiceException
     {
@@ -101,7 +101,7 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
-    // from MemberService
+    // from WebMemberService
     public void addFriend (WebIdent ident, final int friendId)
         throws ServiceException
     {
@@ -109,7 +109,7 @@ public class MemberServlet extends MsoyServiceServlet
         _memberLogic.establishFriendship(memrec, friendId);
     }
 
-    // from MemberService
+    // from WebMemberService
     public void removeFriend (WebIdent ident, final int friendId)
         throws ServiceException
     {
@@ -117,7 +117,7 @@ public class MemberServlet extends MsoyServiceServlet
         _memberLogic.clearFriendship(memrec.memberId, friendId);
     }
 
-    // from MemberService
+    // from WebMemberService
     public Invitation getInvitation (String inviteId, boolean viewing)
         throws ServiceException
     {
@@ -144,7 +144,7 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
-    // from MemberService
+    // from WebMemberService
     public void optOut (String inviteId)
         throws ServiceException
     {
@@ -158,7 +158,7 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
-    // from MemberService
+    // from WebMemberService
     public List<MemberCard> getLeaderList ()
         throws ServiceException
     {
@@ -178,13 +178,13 @@ public class MemberServlet extends MsoyServiceServlet
         }
     }
 
-    // from MemberService
+    // from WebMemberService
     public int getABTestGroup (ReferralInfo info, String testName, boolean logEvent)
     {
         return _memberLogic.getABTestGroup(testName, info, logEvent);
     }
 
-    // from MemberService
+    // from WebMemberService
     public void trackClientAction (ReferralInfo info, String actionName, String details)
     {
         if (info == null) {
@@ -196,7 +196,7 @@ public class MemberServlet extends MsoyServiceServlet
         _eventLog.clientAction(info.tracker, actionName, details);
     }
 
-    // from MemberService
+    // from WebMemberService
     public void trackTestAction (ReferralInfo info, String actionName, String testName)
     {
         if (info == null) {
@@ -214,7 +214,7 @@ public class MemberServlet extends MsoyServiceServlet
         _eventLog.testAction(info.tracker, actionName, testName, abTestGroup);
     }
 
-    // from MemberService
+    // from WebMemberService
     public void trackReferralCreation(ReferralInfo info)
     {
         _eventLog.referralCreated(info);

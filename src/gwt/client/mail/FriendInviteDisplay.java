@@ -12,8 +12,8 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
-import com.threerings.msoy.web.client.MemberService;
-import com.threerings.msoy.web.client.MemberServiceAsync;
+import com.threerings.msoy.web.client.WebMemberService;
+import com.threerings.msoy.web.client.WebMemberServiceAsync;
 
 import client.util.ClickCallback;
 import client.util.MsoyCallback;
@@ -87,8 +87,8 @@ public class FriendInviteDisplay extends MailPayloadDisplay
         protected boolean _thirdPerson;
     }
 
-    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
-        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
     protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
         ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
 }

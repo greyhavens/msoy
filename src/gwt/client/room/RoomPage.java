@@ -5,8 +5,8 @@ package client.room;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.room.gwt.WorldService;
-import com.threerings.msoy.room.gwt.WorldServiceAsync;
+import com.threerings.msoy.room.gwt.WebRoomService;
+import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
 import client.shell.Args;
 import client.shell.CShell;
@@ -57,6 +57,6 @@ public class RoomPage extends Page
     }
 
     protected static final RoomMessages _msgs = GWT.create(RoomMessages.class);
-    protected static final WorldServiceAsync _worldsvc = (WorldServiceAsync)
-        ServiceUtil.bind(GWT.create(WorldService.class), WorldService.ENTRY_POINT);
+    protected static final WebRoomServiceAsync _worldsvc = (WebRoomServiceAsync)
+        ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
 }

@@ -31,8 +31,8 @@ import com.threerings.msoy.mail.gwt.MailPayload;
 import com.threerings.msoy.mail.gwt.PresentPayload;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
-import com.threerings.msoy.web.client.MemberService;
-import com.threerings.msoy.web.client.MemberServiceAsync;
+import com.threerings.msoy.web.client.WebMemberService;
+import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Pages;
@@ -173,8 +173,8 @@ public class ComposePanel extends FlowPanel
         // TODO: replace this with a magical auto-completing search box
         if (_friendBox.isAttached()) {
             _membersvc.loadFriends(CMail.ident, CMail.getMemberId(),
-                new MsoyCallback<MemberService.FriendsResult>() {
-                    public void onSuccess (MemberService.FriendsResult result) {
+                new MsoyCallback<WebMemberService.FriendsResult>() {
+                    public void onSuccess (WebMemberService.FriendsResult result) {
                         _friends = result.friends;
                         _friendBox.addItem("Select...");
                         Collections.sort(_friends, new Comparator<MemberCard>() {
@@ -211,8 +211,8 @@ public class ComposePanel extends FlowPanel
     protected TextArea _body;
     protected Button _send;
 
-    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
-        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
         ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)

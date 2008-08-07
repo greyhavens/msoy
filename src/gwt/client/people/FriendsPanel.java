@@ -8,8 +8,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 
 import com.threerings.gwt.util.SimpleDataModel;
 
-import com.threerings.msoy.web.client.MemberService;
-import com.threerings.msoy.web.client.MemberServiceAsync;
+import com.threerings.msoy.web.client.WebMemberService;
+import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.ui.HeaderBox;
@@ -34,14 +34,14 @@ public class FriendsPanel extends FlowPanel
 
         _memberId = memberId;
         _membersvc.loadFriends(CPeople.ident, _memberId,
-            new MsoyCallback<MemberService.FriendsResult>() {
-            public void onSuccess (MemberService.FriendsResult result) {
+            new MsoyCallback<WebMemberService.FriendsResult>() {
+            public void onSuccess (WebMemberService.FriendsResult result) {
                 gotFriends(result);
             }
         });
     }
 
-    protected void gotFriends (MemberService.FriendsResult data)
+    protected void gotFriends (WebMemberService.FriendsResult data)
     {
         if (data == null) {
             add(MsoyUI.createLabel(CPeople.msgs.friendsNoSuchMember(), null));
@@ -61,6 +61,6 @@ public class FriendsPanel extends FlowPanel
     protected int _memberId;
     protected MemberList _friends;
 
-    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
-        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

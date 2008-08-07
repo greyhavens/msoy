@@ -20,8 +20,8 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
-import com.threerings.msoy.web.client.MemberService;
-import com.threerings.msoy.web.client.MemberServiceAsync;
+import com.threerings.msoy.web.client.WebMemberService;
+import com.threerings.msoy.web.client.WebMemberServiceAsync;
 
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
@@ -121,8 +121,8 @@ public class ABTestListPanel extends FlowPanel
 
     protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("yyyy-MM-dd");
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
-        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
         ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

@@ -11,10 +11,10 @@ import com.threerings.msoy.web.data.WebIdent;
 /**
  * Provides information related to the world.
  */
-public interface WorldService extends RemoteService
+public interface WebRoomService extends RemoteService
 {
     /** The entry point for this service. */
-    public static final String ENTRY_POINT = "/worldsvc";
+    public static final String ENTRY_POINT = "/roomsvc";
 
     /**
      * Fetch the n most Popular Places data in JSON-serialized form.

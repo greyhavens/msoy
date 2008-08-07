@@ -258,7 +258,7 @@ public class WebUserServlet extends MsoyServiceServlet
         return config;
     }
 
-    // from interface WorldService
+    // from interface WebRoomService
     public LaunchConfig loadLaunchConfig (WebIdent ident, int gameId)
         throws ServiceException
     {

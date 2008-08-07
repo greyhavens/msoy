@@ -71,10 +71,10 @@ import com.threerings.msoy.swiftly.server.SwiftlyServlet;
 import com.threerings.msoy.swiftly.server.SwiftlyUploadServlet;
 import com.threerings.msoy.underwire.server.MsoyUnderwireServlet;
 
-import com.threerings.msoy.web.client.MemberService;
+import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebUserService;
 
-import com.threerings.msoy.room.gwt.WorldService;
+import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.server.SnapshotItemUploadServlet;
 import com.threerings.msoy.room.server.WorldServlet;
 
@@ -280,12 +280,12 @@ public class MsoyHttpServer extends Server
         SERVLETS.put(LandingService.ENTRY_POINT, LandingServlet.class);
         SERVLETS.put(MailService.ENTRY_POINT, MailServlet.class);
         SERVLETS.put(MeService.ENTRY_POINT, MeServlet.class);
-        SERVLETS.put(MemberService.ENTRY_POINT, MemberServlet.class);
+        SERVLETS.put(WebMemberService.ENTRY_POINT, MemberServlet.class);
         SERVLETS.put(ProfileService.ENTRY_POINT, ProfileServlet.class);
         SERVLETS.put(StuffService.ENTRY_POINT, StuffServlet.class);
         SERVLETS.put(SwiftlyService.ENTRY_POINT, SwiftlyServlet.class);
         SERVLETS.put(WebUserService.ENTRY_POINT, WebUserServlet.class);
-        SERVLETS.put(WorldService.ENTRY_POINT, WorldServlet.class);
+        SERVLETS.put(WebRoomService.ENTRY_POINT, WorldServlet.class);
         SERVLETS.put("/facebook", FacebookServlet.class);
         SERVLETS.put("/gamestubsvc", GameStubServlet.class);
         SERVLETS.put("/remixuploadsvc", UploadRemixMediaServlet.class);

@@ -5,8 +5,8 @@ package client.landing;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.web.client.MemberService;
-import com.threerings.msoy.web.client.MemberServiceAsync;
+import com.threerings.msoy.web.client.WebMemberService;
+import com.threerings.msoy.web.client.WebMemberServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;
@@ -87,6 +87,6 @@ public class LandingPage extends Page
     }
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
-    protected static final MemberServiceAsync _membersvc = (MemberServiceAsync)
-        ServiceUtil.bind(GWT.create(MemberService.class), MemberService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }
