@@ -10,11 +10,11 @@ import mx.core.Application;
 import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.utils.UberClientLoader;
 
-import com.threerings.msoy.world.client.WorldClient;
-import com.threerings.msoy.world.client.Viewer;
+import com.threerings.msoy.room.client.WorldClient;
+import com.threerings.msoy.room.client.Viewer;
 
-import com.threerings.msoy.world.client.StudioClient;
-import com.threerings.msoy.world.client.RoomStudioView;
+import com.threerings.msoy.room.client.StudioClient;
+import com.threerings.msoy.room.client.RoomStudioView;
 
 /**
  * Assists in the usage of the UberClient.

@@ -21,7 +21,6 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
-import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
@@ -34,6 +33,8 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
 import com.threerings.msoy.stuff.gwt.StuffService;
+
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 import static com.threerings.msoy.Log.log;
 

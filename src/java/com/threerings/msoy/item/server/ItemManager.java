@@ -48,8 +48,6 @@ import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.peer.server.GameNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.world.data.FurniData;
-import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Item;
@@ -63,6 +61,9 @@ import com.threerings.msoy.item.server.persist.*;
 
 import com.threerings.msoy.item.server.ItemLogic.LookupList;
 import com.threerings.msoy.item.server.ItemLogic.MissingRepositoryException;
+
+import com.threerings.msoy.room.data.FurniData;
+import com.threerings.msoy.room.server.RoomManager;
 
 import static com.threerings.msoy.Log.log;
 

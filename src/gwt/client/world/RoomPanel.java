@@ -12,9 +12,10 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.comment.gwt.Comment;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.world.gwt.RoomInfo;
-import com.threerings.msoy.world.gwt.WorldService;
-import com.threerings.msoy.world.gwt.WorldServiceAsync;
+
+import com.threerings.msoy.room.gwt.RoomInfo;
+import com.threerings.msoy.room.gwt.WorldService;
+import com.threerings.msoy.room.gwt.WorldServiceAsync;
 
 import client.comment.CommentsPanel;
 import client.ui.StyledTabPanel;

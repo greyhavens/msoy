@@ -43,9 +43,9 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
-import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.world.server.persist.MsoySceneRepository;
-import com.threerings.msoy.world.server.persist.SceneRecord;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
 

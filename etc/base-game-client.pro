@@ -23,7 +23,7 @@
 -injars ../dist/lib/gwt-user.jar(**/user/client/rpc/IsSerializable.class)
 -injars ../dist/msoy-code.jar(
     rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,**/msoy/item/data/all/**,
-    **/msoy/world/data/WorldMemberInfo.class,**/msoy/world/data/WorldOccupantInfo.class,
+    **/msoy/room/data/WorldMemberInfo.class,**/msoy/room/data/WorldOccupantInfo.class,
     **/msoy/notify/data/**,**/msoy/game/data/**,**/msoy/game/client/**)
 
 -dontskipnonpubliclibraryclasses

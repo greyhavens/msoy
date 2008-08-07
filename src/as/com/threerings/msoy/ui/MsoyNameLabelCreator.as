@@ -59,8 +59,8 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.ui.MediaWrapper;
 
-import com.threerings.msoy.world.client.NameField;
-import com.threerings.msoy.world.client.RoomObjectView;
+import com.threerings.msoy.room.client.NameField;
+import com.threerings.msoy.room.client.RoomObjectView;
 
 class LabelBox extends HBox
     implements NameLabel

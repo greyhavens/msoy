@@ -33,8 +33,8 @@ import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
 
-import com.threerings.msoy.world.client.RoomView;
-import com.threerings.msoy.world.client.WorldController;
+import com.threerings.msoy.room.client.RoomView;
+import com.threerings.msoy.room.client.WorldController;
 
 public class HeaderBar extends HBox
 {

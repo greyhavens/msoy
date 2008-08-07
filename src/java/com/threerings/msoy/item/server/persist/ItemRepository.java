@@ -64,11 +64,12 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
-import com.threerings.msoy.world.server.persist.MemoryRepository;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
+
+import com.threerings.msoy.room.server.persist.MemoryRepository;
 
 import static com.threerings.msoy.Log.log;
 

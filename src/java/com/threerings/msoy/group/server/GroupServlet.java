@@ -38,9 +38,6 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
-import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.world.server.persist.MsoySceneRepository;
-import com.threerings.msoy.world.server.persist.SceneRecord;
 
 import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
@@ -66,6 +63,10 @@ import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.data.WebIdent;
 import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
+
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
 

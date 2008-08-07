@@ -1,7 +1,7 @@
 //
 // $Id: FriendsListPanel.as 9910 2008-07-18 23:24:40Z nathan $
 
-package com.threerings.msoy.world.client {
+package com.threerings.msoy.room.client {
 
 import flash.events.Event;
 import flash.events.FocusEvent;

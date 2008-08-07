@@ -45,7 +45,7 @@ import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
 
-import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.room.client.WorldContext;
 
 import com.threerings.msoy.ui.AwardPanel;
 

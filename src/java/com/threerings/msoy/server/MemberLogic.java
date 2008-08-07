@@ -24,7 +24,6 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -35,6 +34,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+
+import com.threerings.msoy.room.data.MsoySceneModel;
 
 import static com.threerings.msoy.Log.log;
 

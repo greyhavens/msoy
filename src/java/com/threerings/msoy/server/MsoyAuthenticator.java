@@ -21,8 +21,6 @@ import com.threerings.presents.server.net.AuthingConnection;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -43,6 +41,9 @@ import com.threerings.msoy.server.persist.MemberWarningRecord;
 
 import com.threerings.msoy.web.data.BannedException;
 import com.threerings.msoy.web.data.ServiceException;
+
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 import static com.threerings.msoy.Log.log;
 

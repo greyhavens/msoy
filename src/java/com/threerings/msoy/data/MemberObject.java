@@ -13,9 +13,6 @@ import com.threerings.stats.data.StatSet;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 
-import com.threerings.msoy.world.data.MemberInfo;
-import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.world.data.ObserverInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -29,6 +26,10 @@ import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+
+import com.threerings.msoy.room.data.MemberInfo;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.data.ObserverInfo;
 
 import static com.threerings.msoy.Log.log;
 

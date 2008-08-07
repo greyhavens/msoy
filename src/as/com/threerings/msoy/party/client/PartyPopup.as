@@ -61,7 +61,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.room.client.WorldContext;
 
 public class PartyPopup extends FlyingPanel
 {

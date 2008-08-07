@@ -5,8 +5,8 @@ package client.world;
 
 import com.google.gwt.core.client.GWT;
 
-import com.threerings.msoy.world.gwt.WorldService;
-import com.threerings.msoy.world.gwt.WorldServiceAsync;
+import com.threerings.msoy.room.gwt.WorldService;
+import com.threerings.msoy.room.gwt.WorldServiceAsync;
 
 import client.shell.Args;
 import client.shell.Page;

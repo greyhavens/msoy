@@ -7,7 +7,7 @@ import mx.controls.Text;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.room.client.WorldContext;
 
 public class QuestCompletionPanel extends FloatingPanel
 {

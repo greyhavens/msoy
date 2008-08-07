@@ -14,7 +14,7 @@ import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.bureau.client.ThaneWorldService;
 import com.threerings.msoy.bureau.client.Window;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
-import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.presents.client.ResultAdapter;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -306,7 +306,7 @@ public class ThaneAVRGameController
 
 import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.bureau.client.Window;
-import com.threerings.msoy.world.data.RoomObject;
+import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.util.StringUtil;
 import com.threerings.presents.util.SafeSubscriber;
 

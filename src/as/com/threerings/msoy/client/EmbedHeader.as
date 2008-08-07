@@ -24,8 +24,8 @@ import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.world.client.WorldController;
+import com.threerings.msoy.room.client.WorldContext;
+import com.threerings.msoy.room.client.WorldController;
 
 public class EmbedHeader extends Canvas
 {

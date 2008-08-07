@@ -20,7 +20,7 @@ import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.room.client.WorldContext;
 
 import com.threerings.msoy.game.client.GameChatDirector;
 import com.threerings.msoy.game.data.MsoyGameCredentials;

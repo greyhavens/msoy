@@ -3,7 +3,7 @@
   <inherits name="page"/>
 
   <source path="com/threerings/msoy/comment/gwt"/>
-  <source path="com/threerings/msoy/world/gwt"/>
+  <source path="com/threerings/msoy/room/gwt"/>
 
   <source path="client/world"/>
   <source path="client/comment"/>

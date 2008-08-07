@@ -54,8 +54,8 @@ import com.threerings.msoy.chat.client.ChatChannelService;
 import com.threerings.msoy.chat.data.ChannelMessage;
 import com.threerings.msoy.chat.data.ChatChannel;
 
-import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.world.server.RoomManager;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.RoomManager;
 
 import static com.threerings.msoy.Log.log;
 

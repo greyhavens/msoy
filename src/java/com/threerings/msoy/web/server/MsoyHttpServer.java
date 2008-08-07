@@ -70,12 +70,13 @@ import com.threerings.msoy.swiftly.gwt.SwiftlyService;
 import com.threerings.msoy.swiftly.server.SwiftlyServlet;
 import com.threerings.msoy.swiftly.server.SwiftlyUploadServlet;
 import com.threerings.msoy.underwire.server.MsoyUnderwireServlet;
-import com.threerings.msoy.world.gwt.WorldService;
-import com.threerings.msoy.world.server.SnapshotItemUploadServlet;
-import com.threerings.msoy.world.server.WorldServlet;
 
 import com.threerings.msoy.web.client.MemberService;
 import com.threerings.msoy.web.client.WebUserService;
+
+import com.threerings.msoy.room.gwt.WorldService;
+import com.threerings.msoy.room.server.SnapshotItemUploadServlet;
+import com.threerings.msoy.room.server.WorldServlet;
 
 /**
  * Handles HTTP requests made of the Msoy server by the AJAX client and other entities.

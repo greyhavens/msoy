@@ -46,8 +46,6 @@ import com.samskivert.jdbc.depot.operator.Logic.*;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.world.data.MsoySceneModel;
-import com.threerings.msoy.world.server.persist.MsoySceneRepository;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -59,6 +57,9 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupCard;
+
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 
 import static com.threerings.msoy.Log.log;
 

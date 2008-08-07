@@ -12,7 +12,7 @@ import mx.core.Container;
 import mx.core.UIComponent;
 
 import com.threerings.flex.FlexWrapper;
-import com.threerings.msoy.world.client.snapshot.Framer;
+import com.threerings.msoy.room.client.snapshot.Framer;
 import com.threerings.util.Log;
 
 /**

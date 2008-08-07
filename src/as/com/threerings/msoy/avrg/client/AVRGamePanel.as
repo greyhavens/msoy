@@ -23,8 +23,8 @@ import com.threerings.msoy.client.TopPanel;
 
 import com.threerings.msoy.ui.MsoyMediaContainer;
 
-import com.threerings.msoy.world.client.RoomView;
-import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.room.client.RoomView;
+import com.threerings.msoy.room.client.WorldContext;
 
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.avrg.data.AVRGameObject;

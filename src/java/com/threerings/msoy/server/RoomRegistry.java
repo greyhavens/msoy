@@ -16,8 +16,10 @@ import com.threerings.msoy.bureau.data.ThaneCodes;
 import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.bureau.server.ThaneWorldDispatcher;
 import com.threerings.msoy.bureau.server.ThaneWorldProvider;
-import com.threerings.msoy.world.data.RoomObject;
-import com.threerings.msoy.world.server.RoomManager;
+
+import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.server.RoomManager;
+
 import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;

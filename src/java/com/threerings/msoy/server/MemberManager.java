@@ -61,7 +61,6 @@ import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.underwire.server.SupportLogic;
-import com.threerings.msoy.world.data.MsoySceneModel;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
@@ -81,8 +80,9 @@ import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.server.util.MailSender;
 
-import com.threerings.msoy.world.server.persist.MsoySceneRepository;
-import com.threerings.msoy.world.server.persist.SceneRecord;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
 
 import static com.threerings.msoy.Log.log;
 

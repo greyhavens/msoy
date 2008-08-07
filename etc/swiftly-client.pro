@@ -22,10 +22,10 @@
     **/user/client/rpc/SerializableException.class)
 -injars ../dist/msoy-code.jar(
     !**/*UnitTest.class,rsrc/i18n/**,**/msoy/Log.class,**/msoy/data/**,**/msoy/client/**,
-    **/msoy/world/data/WorldMemberInfo.class,**/msoy/item/data/all/**,
+    **/msoy/room/data/WorldMemberInfo.class,**/msoy/item/data/all/**,
     **/msoy/swiftly/data/**,**/msoy/swiftly/client/**,**/msoy/swiftly/util/**,
     **/msoy/game/data/GameMemberInfo.class,**/msoy/game/data/GameSummary.class,
-    **/msoy/notify/data/**,**/msoy/world/data/WorldOccupantInfo.class)
+    **/msoy/notify/data/**,**/msoy/room/data/WorldOccupantInfo.class)
 -injars ../dist/msoy-media.jar(**/icons/swiftly/**)
 -injars ../dist/lib/sdoc-0.5.0-beta-ooo.jar(!META-INF/*)
 -injars ../dist/lib/substance-lite.jar(!META-INF/*)

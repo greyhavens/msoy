@@ -36,7 +36,7 @@ import com.threerings.util.Log;
 
 import com.threerings.msoy.utils.TextUtil;
 
-import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.room.client.WorldContext;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 

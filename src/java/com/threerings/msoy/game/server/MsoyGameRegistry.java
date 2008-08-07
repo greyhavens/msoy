@@ -53,12 +53,13 @@ import com.threerings.msoy.bureau.data.ServerRegistryObject;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.world.server.RoomManager;
 
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
+
+import com.threerings.msoy.room.server.RoomManager;
 
 import static com.threerings.msoy.Log.log;
 
