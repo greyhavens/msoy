@@ -9,6 +9,7 @@ import com.threerings.msoy.room.gwt.WorldService;
 import com.threerings.msoy.room.gwt.WorldServiceAsync;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -37,7 +38,7 @@ public class WorldPage extends Page
             if (action.equals("room")) {
                 setContent(new RoomPanel(args.get(1, 0)));
 
-            } else if (CWorld.isGuest()) {
+            } else if (CShell.isGuest()) {
                 setContent(MsoyUI.createLabel(_msgs.logonForHome(), "infoLabel"));
 
             } else {
