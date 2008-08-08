@@ -61,6 +61,7 @@ import com.threerings.msoy.chat.server.JabberManager;
 import com.threerings.msoy.chat.server.MsoyChatProvider;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.money.server.MoneyModule;
@@ -295,7 +296,8 @@ public class MsoyServer extends MsoyBaseServer
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (final BodyObject bodyObj) {
-                return ((MemberObject) bodyObj).getMemberId(); // will return 0 for guests
+                int memberId = ((MemberObject) bodyObj).getMemberId();
+                return MemberName.isGuest(memberId) ? 0 : memberId;
             }
         });
 

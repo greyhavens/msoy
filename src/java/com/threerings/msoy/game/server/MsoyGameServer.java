@@ -33,6 +33,7 @@ import com.threerings.parlor.server.ParlorManager;
 import com.whirled.game.server.GameCookieManager;
 import com.whirled.game.server.RepoCookieManager;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyBaseServer;
 
 import com.threerings.msoy.game.data.PlayerObject;
@@ -105,7 +106,8 @@ public class MsoyGameServer extends MsoyBaseServer
 
         GameManager.setUserIdentifier(new GameManager.UserIdentifier() {
             public int getUserId (BodyObject bodyObj) {
-                return ((PlayerObject) bodyObj).getMemberId(); // will return 0 for guests
+                int memberId = ((PlayerObject) bodyObj).getMemberId();
+                return MemberName.isGuest(memberId) ? 0 : memberId;
             }
         });
 
