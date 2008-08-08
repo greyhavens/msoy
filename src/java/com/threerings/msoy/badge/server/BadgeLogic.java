@@ -4,10 +4,7 @@
 package com.threerings.msoy.badge.server;
 
 import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
@@ -78,7 +75,7 @@ public class BadgeLogic
     public void awardBadge (int memberId, EarnedBadge badge, boolean sendMemberNodeAction)
         throws PersistenceException
     {
-        awardBadge(memberId, badge.getType(), badge.level, badge.whenEarned, sendMemberNodeAction);
+        awardBadge(memberId, BadgeType.getType(badge.badgeCode), badge.level, badge.whenEarned, sendMemberNodeAction);
     }
 
     /**
