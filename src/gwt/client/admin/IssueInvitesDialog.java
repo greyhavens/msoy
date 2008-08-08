@@ -29,7 +29,7 @@ public class IssueInvitesDialog extends BorderedDialog
 {
     public IssueInvitesDialog ()
     {
-        setHeaderTitle(CAdmin.msgs.invitesTitle());
+        setHeaderTitle(_msgs.invitesTitle());
 
         FlexTable contents = new FlexTable();
         FlexTable.FlexCellFormatter formatter = contents.getFlexCellFormatter();
@@ -39,18 +39,18 @@ public class IssueInvitesDialog extends BorderedDialog
         int row = 0;
 
         formatter.setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CAdmin.msgs.invitesNumber());
+        contents.setText(row, 0, _msgs.invitesNumber());
         contents.setWidget(row++, 1, _numberInvites = new NumberTextBox(false, 3));
 
         formatter.setStyleName(row, 0, "rightLabel");
-        contents.setText(row, 0, CAdmin.msgs.invitesIssueSelection());
+        contents.setText(row, 0, _msgs.invitesIssueSelection());
         contents.setWidget(row++, 1, _issueToSelection = new ListBox());
-        _issueToSelection.addItem(CAdmin.msgs.invitesToAll());
-        _issueToSelection.addItem(CAdmin.msgs.invitesToActive());
+        _issueToSelection.addItem(_msgs.invitesToAll());
+        _issueToSelection.addItem(_msgs.invitesToActive());
 
         formatter.setStyleName(row, 0, "Tip");
         formatter.setColSpan(row, 0, 2);
-        contents.setText(row, 0, CAdmin.msgs.activeUsersTip());
+        contents.setText(row, 0, _msgs.activeUsersTip());
         setContents(contents);
 
         addButton(new Button(_cmsgs.cancel(), new ClickListener() {
@@ -58,7 +58,7 @@ public class IssueInvitesDialog extends BorderedDialog
                 hide();
             }
         }));
-        addButton(new Button(CAdmin.msgs.invitesIssueButton(), new ClickListener() {
+        addButton(new Button(_msgs.invitesIssueButton(), new ClickListener() {
             public void onClick (Widget widget) {
                 Date activeSince = null;
                 if (_issueToSelection.getSelectedIndex() == 1) {
@@ -70,9 +70,9 @@ public class IssueInvitesDialog extends BorderedDialog
                         public void onSuccess (Void result) {
                             IssueInvitesDialog.this.hide();
                             String msg = _issueToSelection.getSelectedIndex() == 0 ?
-                                CAdmin.msgs.invitesToAll() : CAdmin.msgs.invitesToActive();
+                                _msgs.invitesToAll() : _msgs.invitesToActive();
                             String count = _numberInvites.getValue().toString();
-                            MsoyUI.info(CAdmin.msgs.invitesSuccess(msg, count));
+                            MsoyUI.info(_msgs.invitesSuccess(msg, count));
                         }
                     });
             }
@@ -82,6 +82,7 @@ public class IssueInvitesDialog extends BorderedDialog
     protected NumberTextBox _numberInvites;
     protected ListBox _issueToSelection;
 
+    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
         ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);

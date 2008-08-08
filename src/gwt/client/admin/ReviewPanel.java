@@ -33,7 +33,7 @@ public class ReviewPanel extends FlowPanel
         setStyleName("reviewPanel");
 
         RowPanel buttons = new RowPanel();
-        Button reloadButton = new Button(CAdmin.msgs.reviewReload());
+        Button reloadButton = new Button(_msgs.reviewReload());
         reloadButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 refresh();
@@ -63,7 +63,7 @@ public class ReviewPanel extends FlowPanel
     protected void populateUI (List<ItemDetail> items)
     {
         if (items.size() == 0) {
-            _contents.setText(0, 0, CAdmin.msgs.reviewNoItems());
+            _contents.setText(0, 0, _msgs.reviewNoItems());
             return;
         }
 
@@ -78,6 +78,7 @@ public class ReviewPanel extends FlowPanel
 
     protected FlexTable _contents;
 
+    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
         ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

@@ -6,6 +6,7 @@ package client.admin;
 import com.google.gwt.core.client.GWT;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -19,47 +20,40 @@ public class AdminPage extends Page
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        if (CAdmin.isGuest()) {
-            setContent(MsoyUI.createLabel(CAdmin.msgs.indexLogon(), "infoLabel"));
+        if (CShell.isGuest()) {
+            setContent(MsoyUI.createLabel(_msgs.indexLogon(), "infoLabel"));
 
-        } else if (!CAdmin.isSupport()) {
-            setContent(MsoyUI.createLabel(CAdmin.msgs.lackPrivileges(), "infoLabel"));
+        } else if (!CShell.isSupport()) {
+            setContent(MsoyUI.createLabel(_msgs.lackPrivileges(), "infoLabel"));
 
         } else if (args.get(0, "").equals("browser")) {
             if (_playerBrowser == null) {
                 _playerBrowser = new PlayerBrowserPanel();
             }
-            setContent(CAdmin.msgs.browserTitle(), _playerBrowser);
+            setContent(_msgs.browserTitle(), _playerBrowser);
             _playerBrowser.displayPlayersInvitedBy(args.get(1, 0));
 
         } else if (args.get(0, "").equals("review")) {
-            setContent(CAdmin.msgs.reviewTitle(), new ReviewPanel());
+            setContent(_msgs.reviewTitle(), new ReviewPanel());
 
         } else if (args.get(0, "").equals("info")) {
-            setContent(CAdmin.msgs.infoTitle(), new MemberInfoPanel(args.get(1, 0)));
+            setContent(_msgs.infoTitle(), new MemberInfoPanel(args.get(1, 0)));
 
         } else if (args.get(0, "").equals("testlist")) {
-            setContent(CAdmin.msgs.abTestListTitle(), new ABTestListPanel());
+            setContent(_msgs.abTestListTitle(), new ABTestListPanel());
 
         } else {
-            setContent(CAdmin.msgs.title(), new DashboardPanel());
+            setContent(_msgs.title(), new DashboardPanel());
         }
     }
 
     @Override
     public Pages getPageId ()
     {
-        return Pages.ADMIN;
-    }
-
-    @Override // from Page
-    protected void initContext ()
-    {
-        super.initContext();
-
-        // load up our translation dictionaries
-        CAdmin.msgs = (AdminMessages)GWT.create(AdminMessages.class);
+        return Pages.ADMINZ;
     }
 
     protected PlayerBrowserPanel _playerBrowser;
+
+    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
 }

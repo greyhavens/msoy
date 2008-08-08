@@ -9,7 +9,7 @@ package client.shell;
 public enum Pages
 {
     ACCOUNT(Frame.Tabs.ME),
-    ADMIN(Frame.Tabs.ME),
+    ADMINZ(Frame.Tabs.ME),
     CREATE(null), // TODO: Frame.Tabs.CREATE
     GAMES(Frame.Tabs.GAMES), 
     HELP(Frame.Tabs.HELP),
@@ -26,7 +26,7 @@ public enum Pages
     WORLD(null);
 
     public String getPath () {
-    	return toString().toLowerCase();
+        return toString().toLowerCase();
     }
     
     public Frame.Tabs getTab () {

@@ -18,6 +18,7 @@ import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.ConnectConfig;
 
+import client.shell.CShell;
 import client.shell.Pages;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -41,37 +42,30 @@ public class DashboardPanel extends FlexTable
         controls.setSpacing(10);
         setWidget(row++, 0, controls);
 
-        controls.add(new Label(CAdmin.msgs.adminControls()));
-        if (CAdmin.isAdmin()) {
-            controls.add(new Button(CAdmin.msgs.displayDashboard(), new ClickListener() {
+        controls.add(new Label(_msgs.adminControls()));
+        if (CShell.isAdmin()) {
+            controls.add(new Button(_msgs.displayDashboard(), new ClickListener() {
                 public void onClick (Widget sender) {
                     ((Button)sender).setEnabled(false);
                     displayDashboard();
                 }
             }));
-            controls.add(new Button(CAdmin.msgs.browserPlayers(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.ADMIN, "browser");
-                }
-            }));
-            controls.add(new Button(CAdmin.msgs.spamPlayers(), new ClickListener() {
+            controls.add(new Button(_msgs.browserPlayers(),
+                                    Link.createListener(Pages.ADMINZ, "browser")));
+            controls.add(new Button(_msgs.spamPlayers(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new SpamPlayersDialog().show();
                 }
             }));
         }
-        controls.add(new Button(CAdmin.msgs.reviewButton(), new ClickListener() {
-            public void onClick (Widget sender) {
-                Link.go(Pages.ADMIN, "review");
-            }
-        }));
+        controls.add(new Button(_msgs.reviewButton(), Link.createListener(Pages.ADMINZ, "review")));
 
         controls = new HorizontalPanel();
         controls.setSpacing(10);
         setWidget(row++, 0, controls);
-        controls.add(new Label(CAdmin.msgs.inviteControls()));
-        if (CAdmin.isAdmin()) {
-            controls.add(new Button(CAdmin.msgs.issueInvites(), new ClickListener() {
+        controls.add(new Label(_msgs.inviteControls()));
+        if (CShell.isAdmin()) {
+            controls.add(new Button(_msgs.issueInvites(), new ClickListener() {
                 public void onClick (Widget sender) {
                     new IssueInvitesDialog().show();
                 }
@@ -82,13 +76,10 @@ public class DashboardPanel extends FlexTable
         controls = new HorizontalPanel();
         controls.setSpacing(10);
         setWidget(row++, 0, controls);
-        controls.add(new Label(CAdmin.msgs.testingControls()));
-        if (CAdmin.isAdmin()) {
-            controls.add(new Button(CAdmin.msgs.viewABTests(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.ADMIN, "testlist");
-                }
-            }));
+        controls.add(new Label(_msgs.testingControls()));
+        if (CShell.isAdmin()) {
+            controls.add(new Button(_msgs.viewABTests(),
+                                    Link.createListener(Pages.ADMINZ, "testlist")));
         }
     }
 
@@ -104,7 +95,7 @@ public class DashboardPanel extends FlexTable
 
     protected void finishDisplayDashboard (ConnectConfig config)
     {
-        CAdmin.frame.closeClient();
+        CShell.frame.closeClient();
 
         // we have to serve admin-client.jar from the server to which it will connect back due to
         // security restrictions and proxy the game jar through there as well
@@ -118,9 +109,10 @@ public class DashboardPanel extends FlexTable
                       "com.threerings.msoy.admin.client.AdminApplet", 680, 400, false,
                       new String[] { "server", config.server,
                                      "port", "" + config.port,
-                                     "authtoken", CAdmin.getAuthToken() }));
+                                     "authtoken", CShell.getAuthToken() }));
     }
 
+    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

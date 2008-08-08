@@ -16,6 +16,7 @@ import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.data.all.MemberName;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.ClickCallback;
@@ -55,7 +56,7 @@ public class MemberInfoPanel extends SmartTable
         row = addText("Perma name:", 1, "Label");
         setText(row, 1, info.permaName == null ? "" : info.permaName);
 
-        if (CAdmin.isAdmin()) {
+        if (CShell.isAdmin()) {
             row = addText("Admin:", 1, "Label");
             setText(row, 1, ""+info.isAdmin);
 
@@ -72,8 +73,7 @@ public class MemberInfoPanel extends SmartTable
                 }
                 public boolean gotResult (Void result) {
                     info.isSupport = _isSupport;
-                    MsoyUI.info(_isSupport ? CAdmin.msgs.mipMadeSupport() :
-                                CAdmin.msgs.mipMadeNotSupport());
+                    MsoyUI.info(_isSupport ? _msgs.mipMadeSupport() : _msgs.mipMadeNotSupport());
                     return true;
                 }
                 public void onFailure (Throwable cause) {
@@ -133,9 +133,10 @@ public class MemberInfoPanel extends SmartTable
 
     protected Widget infoLink (MemberName name)
     {
-        return Link.create("" + name, Pages.ADMIN, Args.compose("info", name.getMemberId()));
+        return Link.create("" + name, Pages.ADMINZ, Args.compose("info", name.getMemberId()));
     }
 
+    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
         ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

@@ -136,8 +136,8 @@ public class ProfileBlurb extends Blurb
             String since = _sfmt.format(new Date(_profile.memberSince));
             if (CPeople.isSupport()) {
                 addDetail(dbits, CPeople.msgs.memberSince(),
-                          Link.create(
-                              since, Pages.ADMIN, Args.compose("info", _name.getMemberId())));
+                          Link.create(since, Pages.ADMINZ,
+                                      Args.compose("info", _name.getMemberId())));
             } else {
                 addDetail(dbits, CPeople.msgs.memberSince(), since);
             }

@@ -32,14 +32,14 @@ public class SpamPlayersDialog extends BorderedDialog
 {
     public SpamPlayersDialog ()
     {
-        setHeaderTitle(CAdmin.msgs.spamTitle());
+        setHeaderTitle(_msgs.spamTitle());
 
         SmartTable contents = new SmartTable("spamPlayers", 0, 5);
 
-        contents.setText(0, 0, CAdmin.msgs.spamIntro(), 2, null);
+        contents.setText(0, 0, _msgs.spamIntro(), 2, null);
         contents.getFlexCellFormatter().setWidth(0, 0, "500px");
 
-        contents.setText(1, 0, CAdmin.msgs.spamSubject());
+        contents.setText(1, 0, _msgs.spamSubject());
         contents.setWidget(1, 1, _subject = new TextBox());
         _subject.setVisibleLength(50);
         _subject.setMaxLength(80);
@@ -49,7 +49,7 @@ public class SpamPlayersDialog extends BorderedDialog
         _body.setVisibleLines(20);
 
         RowPanel niggles = new RowPanel();
-        niggles.add(new Label(CAdmin.msgs.spamNiggles()));
+        niggles.add(new Label(_msgs.spamNiggles()));
         niggles.add(_startId = new NumberTextBox(false, 8));
         _startId.setText("0");
         niggles.add(_endId = new NumberTextBox(false, 8));
@@ -57,20 +57,20 @@ public class SpamPlayersDialog extends BorderedDialog
         contents.addWidget(niggles, 2, null);
         setContents(contents);
 
-        Button spam = new Button(CAdmin.msgs.spamSend());
-        new ClickCallback<int[]>(spam, CAdmin.msgs.spamConfirm()) {
+        Button spam = new Button(_msgs.spamSend());
+        new ClickCallback<int[]>(spam, _msgs.spamConfirm()) {
             public boolean callService () {
                 String subject = _subject.getText().trim();
                 String body = _body.getText().trim();
                 int sid = _startId.getValue().intValue(), eid = _endId.getValue().intValue();
                 _adminsvc.spamPlayers(subject, body, sid, eid, this);
-                MsoyUI.info(CAdmin.msgs.spammingPleaseWait());
+                MsoyUI.info(_msgs.spammingPleaseWait());
                 return true;
             }
             public boolean gotResult (int[] counts) {
-                MsoyUI.info(CAdmin.msgs.spamSent(Integer.toString(counts[0]),
-                                                 Integer.toString(counts[1]),
-                                                 Integer.toString(counts[2])));
+                MsoyUI.info(_msgs.spamSent(Integer.toString(counts[0]),
+                                           Integer.toString(counts[1]),
+                                           Integer.toString(counts[2])));
                 hide();
                 return false;
             }
@@ -87,6 +87,7 @@ public class SpamPlayersDialog extends BorderedDialog
     protected TextArea _body;
     protected NumberTextBox _startId, _endId;
 
+    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
         ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);

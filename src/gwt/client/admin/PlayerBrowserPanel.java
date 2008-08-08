@@ -27,6 +27,7 @@ import com.threerings.msoy.admin.gwt.MemberInviteStatus;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 
 import client.ui.MsoyUI;
@@ -57,7 +58,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     displayPlayersInvitedBy(_childList.getResult().memberId);
                 } else {
                     int memberId = _parentList.getResult().memberId;
-                    Link.go(Pages.ADMIN, Args.compose("browser", memberId));
+                    Link.go(Pages.ADMINZ, Args.compose("browser", memberId));
                 }
             }
         }));
@@ -74,7 +75,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     return;
                 }
                 int memberId = _playerLists.get(index +1).getResult().memberId;
-                Link.go(Pages.ADMIN, Args.compose("browser", memberId));
+                Link.go(Pages.ADMINZ, Args.compose("browser", memberId));
             }
         }));
         _forwardButton.setEnabled(false);
@@ -178,7 +179,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
         {
             _result = result;
             String title = _result.name != null && !_result.name.equals("") ?
-                CAdmin.msgs.browserInvitedBy(_result.name) : CAdmin.msgs.browserNoInviter();
+                _msgs.browserInvitedBy(_result.name) : _msgs.browserNoInviter();
             setStyleName("PlayerList");
             int row = 0;
             getFlexCellFormatter().setColSpan(row, 0, NUM_COLUMNS);
@@ -203,7 +204,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 buttons.add(shim);
                 final NumberTextBox numInvites = new NumberTextBox(false, 2);
                 buttons.add(numInvites);
-                Button grantInvites = new Button(CAdmin.msgs.browserGrantInv());
+                Button grantInvites = new Button(_msgs.browserGrantInv());
                 new ClickCallback<Void>(grantInvites) {
                     public boolean callService () {
                         _adminsvc.grantInvitations(
@@ -211,7 +212,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                         return true;
                     }
                     public boolean gotResult (Void result) {
-                        MsoyUI.info(CAdmin.msgs.browserAddInvites("" + numInvites.getValue(),
+                        MsoyUI.info(_msgs.browserAddInvites("" + numInvites.getValue(),
                                     _result.name));
                         PlayerBrowserPanel.this.addToAvailable(
                             _result.memberId, numInvites.getValue().intValue());
@@ -225,14 +226,14 @@ public class PlayerBrowserPanel extends HorizontalPanel
             getFlexCellFormatter().setColSpan(row, 1, 3);
             getFlexCellFormatter().addStyleName(row, 1, "Last");
             getFlexCellFormatter().addStyleName(row, 1, "Header");
-            setText(row++, 1, CAdmin.msgs.browserInvites());
+            setText(row++, 1, _msgs.browserInvites());
 
             getRowFormatter().addStyleName(row, "Clickable");
             getRowFormatter().addStyleName(row, "Separator");
             // organized in the same order as the NNN_COLUMN constants
-            String[] labelText = new String[] { CAdmin.msgs.browserName(),
-                CAdmin.msgs.browserAvailable(), CAdmin.msgs.browserUsed(),
-                CAdmin.msgs.browserTotal() };
+            String[] labelText = new String[] {
+                _msgs.browserName(), _msgs.browserAvailable(),
+                _msgs.browserUsed(), _msgs.browserTotal() };
             int[] sortType = new int[] { RowComparator.SORT_TYPE_STRING,
                 RowComparator.SORT_TYPE_INT, RowComparator.SORT_TYPE_INT,
                 RowComparator.SORT_TYPE_INT };
@@ -269,7 +270,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                 getRowFormatter().addStyleName(row, "DataRow");
                 Label nameLabel = new Label(member.name);
                 nameLabel.addClickListener(
-                    Link.createListener(Pages.ADMIN, Args.compose("browser", member.memberId)));
+                    Link.createListener(Pages.ADMINZ, Args.compose("browser", member.memberId)));
                 nameLabel.addStyleName("Clickable");
                 _memberIds.put(member.memberId, nameLabel);
                 setWidget(row, NAME_COLUMN, nameLabel);
@@ -296,7 +297,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             try {
                 text = "" + (Integer.parseInt(text) + amount);
             } catch (NumberFormatException nfe) {
-                CAdmin.log("NFE attempting to add to available invites: " + nfe.getMessage());
+                CShell.log("NFE attempting to add to available invites: " + nfe.getMessage());
             }
             DOM.setInnerText(cell, text);
             return true;
@@ -376,7 +377,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
                     try {
                         result = new Integer(s1).compareTo(new Integer(s2));
                     } catch (NumberFormatException nfe) {
-                        CAdmin.log("NFE when sorting player list: " + nfe.getMessage());
+                        CShell.log("NFE when sorting player list: " + nfe.getMessage());
                     }
                 } else {
                     result = s1.compareTo(s2);
@@ -387,7 +388,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
             protected String getCellContents (Element row)
             {
                 if (DOM.getChildCount(row) < _column) {
-                    CAdmin.log("Element row does not contain " + _column + " children.");
+                    CShell.log("Element row does not contain " + _column + " children.");
                     return "";
                 }
                 return DOM.getInnerText(DOM.getChild(row, _column));
@@ -414,6 +415,7 @@ public class PlayerBrowserPanel extends HorizontalPanel
     protected PlayerList _parentList, _childList;
     protected Button _backButton, _forwardButton;
 
+    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
         ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
 }

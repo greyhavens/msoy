@@ -74,10 +74,10 @@ public class ReviewItem extends FlowPanel
 //                     }
 //                     public boolean gotResult (Integer result) {
 //                         if (result != null) {
-//                             MsoyUI.info(CAdmin.msgs.reviewDelisted());
+//                             MsoyUI.info(_msgs.reviewDelisted());
 //                             return false; // don't reenable delist
 //                         }
-//                         MsoyUI.error(CAdmin.msgs.errListingNotFound());
+//                         MsoyUI.error(_msgs.errListingNotFound());
 //                         return true;
 //                     }
 //                 };
@@ -86,7 +86,7 @@ public class ReviewItem extends FlowPanel
 
         // a button to mark someting as mature
         if (_item.isFlagSet(Item.FLAG_FLAGGED_MATURE)) {
-            _mark = new Button(CAdmin.msgs.reviewMark());
+            _mark = new Button(_msgs.reviewMark());
             new ClickCallback<Void>(_mark) {
                 public boolean callService () {
                     if (_item == null) {
@@ -97,7 +97,7 @@ public class ReviewItem extends FlowPanel
                     return true;
                 }
                 public boolean gotResult (Void result) {
-                    MsoyUI.info(CAdmin.msgs.reviewMarked());
+                    MsoyUI.info(_msgs.reviewMarked());
                     return false; // don't reenable button
                 }
             };
@@ -106,7 +106,7 @@ public class ReviewItem extends FlowPanel
 
         // a button to delete an item and possibly all its clones
         _delete = new Button(_item.ownerId != 0 ?
-                             CAdmin.msgs.reviewDelete() : CAdmin.msgs.reviewDeleteAll());
+                             _msgs.reviewDelete() : _msgs.reviewDeleteAll());
         _delete.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 if (_item == null) {
@@ -119,7 +119,7 @@ public class ReviewItem extends FlowPanel
         line.add(_delete);
 
         // a button to signal we're done
-        _done = new Button(CAdmin.msgs.reviewDone());
+        _done = new Button(_msgs.reviewDone());
         new ClickCallback<Void>(_done) {
             public boolean callService () {
                 if (_item == null) {
@@ -149,17 +149,17 @@ public class ReviewItem extends FlowPanel
     {
         public DeleteDialog ()
         {
-            setHeaderTitle(CAdmin.msgs.reviewDeletionTitle());
+            setHeaderTitle(_msgs.reviewDeletionTitle());
 
             VerticalPanel contents = new VerticalPanel();
             contents.setSpacing(10);
             contents.setWidth("500px");
-            contents.add(MsoyUI.createLabel(CAdmin.msgs.reviewDeletionPrompt(), null));
+            contents.add(MsoyUI.createLabel(_msgs.reviewDeletionPrompt(), null));
             contents.add(_area = MsoyUI.createTextArea("", 50, 4));
             _area.addKeyboardListener(this);
             setContents(contents);
 
-            addButton(_yesButton = new Button(CAdmin.msgs.reviewDeletionDo(), new ClickListener () {
+            addButton(_yesButton = new Button(_msgs.reviewDeletionDo(), new ClickListener () {
                 public void onClick (Widget sender) {
                     doDelete();
                     hide();
@@ -167,7 +167,7 @@ public class ReviewItem extends FlowPanel
             }));
             _yesButton.setEnabled(false);
 
-            addButton(new Button(CAdmin.msgs.reviewDeletionDont(), new ClickListener () {
+            addButton(new Button(_msgs.reviewDeletionDont(), new ClickListener () {
                 public void onClick (Widget sender) {
                     hide();
                 }
@@ -190,11 +190,11 @@ public class ReviewItem extends FlowPanel
             }
 
             _adminsvc.deleteItemAdmin(
-                _item.getIdent(), CAdmin.msgs.reviewDeletionMailHeader(),
-                CAdmin.msgs.reviewDeletionMailMessage(_item.name, _area.getText().trim()),
+                _item.getIdent(), _msgs.reviewDeletionMailHeader(),
+                _msgs.reviewDeletionMailMessage(_item.name, _area.getText().trim()),
                 new AsyncCallback<Integer>() {
                     public void onSuccess (Integer result) {
-                        MsoyUI.info(CAdmin.msgs.reviewDeletionSuccess(result.toString()));
+                        MsoyUI.info(_msgs.reviewDeletionSuccess(result.toString()));
                         if (_mark != null) {
                             _mark.setEnabled(false);
                         }
@@ -203,7 +203,7 @@ public class ReviewItem extends FlowPanel
                         hide();
                     }
                     public void onFailure (Throwable caught) {
-                        MsoyUI.error(CAdmin.msgs.reviewErrDeletionFailed(caught.getMessage()));
+                        MsoyUI.error(_msgs.reviewErrDeletionFailed(caught.getMessage()));
                         if (_mark != null) {
                             _mark.setEnabled(true);
                         }
@@ -221,6 +221,7 @@ public class ReviewItem extends FlowPanel
     protected Item _item;
     protected Button _mark, _delete, _done;
 
+    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
     protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)

@@ -1,5 +1,7 @@
 <module>
-  <inherits name="page"/>
+  <inherits name="item"/>
+
+  <source path="com/threerings/msoy/admin/gwt"/>
 
   <source path="client/admin"/>
 

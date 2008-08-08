@@ -215,8 +215,7 @@
   <property name="gmsgs.list" value="${msgsN.list},${msgs5.list}"/>
 
   <!-- enumerate our GWT pages -->
-  <property name="pages1.list" value="account,games,help,landing,mail,me,people"/>
-  <!-- NOTE: admin should be in above list but it's freaking out right now -->
+  <property name="pages1.list" value="account,adminz,games,help,landing,mail,me,people"/>
   <property name="pages2.list" value="room,shop,stuff,support,swiftly,whirleds"/>
   <property name="gpages.list" value="frame,${pages1.list},${pages2.list}"/>
 

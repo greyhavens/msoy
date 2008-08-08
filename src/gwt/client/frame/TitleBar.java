@@ -55,7 +55,7 @@ public class TitleBar extends SmartTable
                 subnavi.addLink(null, "Mail", Pages.MAIL, "");
                 subnavi.addLink(null, "Account", Pages.ME, "account");
                 if (CShell.isSupport()) {
-                    subnavi.addLink(null, "Admin", Pages.ADMIN, "");
+                    subnavi.addLink(null, "Admin", Pages.ADMINZ, "");
                 }
             }
             break;

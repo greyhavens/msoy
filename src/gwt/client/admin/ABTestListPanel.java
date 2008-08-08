@@ -46,7 +46,7 @@ public class ABTestListPanel extends FlowPanel
     public void refresh ()
     {
         clear();
-        Button createButton = new Button(CAdmin.msgs.abTestCreateNew());
+        Button createButton = new Button(_msgs.abTestCreateNew());
         createButton.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 new ABTestEditorDialog(null, ABTestListPanel.this).show();
@@ -75,10 +75,10 @@ public class ABTestListPanel extends FlowPanel
 
         // header row
         int col = 0;
-        _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestName()));
-        _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestEnabled()));
-        _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestStarted()));
-        _contents.setWidget(0, col++, new Label(CAdmin.msgs.abTestEnded()));
+        _contents.setWidget(0, col++, new Label(_msgs.abTestName()));
+        _contents.setWidget(0, col++, new Label(_msgs.abTestEnabled()));
+        _contents.setWidget(0, col++, new Label(_msgs.abTestStarted()));
+        _contents.setWidget(0, col++, new Label(_msgs.abTestEnded()));
         _contents.setWidget(0, col++, new Label(""));
         _contents.getRowFormatter().addStyleName(0, "Header");
 
@@ -120,6 +120,7 @@ public class ABTestListPanel extends FlowPanel
     protected FlexTable _contents;
 
     protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("yyyy-MM-dd");
+    protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
