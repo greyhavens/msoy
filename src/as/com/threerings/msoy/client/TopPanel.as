@@ -239,9 +239,18 @@ public class TopPanel extends Canvas
         _placeBox.setPlaceView(view);
         layoutPanels();
 
+        const mView :MsoyPlaceView = view as MsoyPlaceView;
         if (_comicOverlay != null) {
-            _comicOverlay.displayChat(
-                (view is MsoyPlaceView) && (view as MsoyPlaceView).shouldUseChatOverlay());
+            _comicOverlay.displayChat((mView != null) && mView.shouldUseChatOverlay());
+        }
+
+        if (_topPanel is EmbedHeader) {
+            const embedHeader :EmbedHeader = _topPanel as EmbedHeader;
+            if (mView != null) {
+                embedHeader.setPlaceName(mView.getPlaceName(), mView.getPlaceLogo());
+            } else {
+                embedHeader.setPlaceName(null);
+            }
         }
     }
 

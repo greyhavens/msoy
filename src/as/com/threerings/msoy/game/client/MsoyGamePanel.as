@@ -18,6 +18,8 @@ import com.whirled.game.client.WhirledGamePanel;
 
 import com.whirled.game.data.WhirledGameObject;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MsoyNameLabelCreator;
 
@@ -66,6 +68,18 @@ public class MsoyGamePanel extends WhirledGamePanel
     public function shouldUseChatOverlay () :Boolean
     {
         return GAMESTUB_DEBUG_MODE;
+    }
+
+    // from MsoyPlaceView
+    public function getPlaceName () :String
+    {
+        return (_ctrl.getPlaceConfig() as MsoyGameConfig).name;
+    }
+
+    // from MsoyPlaceView
+    public function getPlaceLogo () :MediaDesc
+    {
+        return (_ctrl.getPlaceConfig() as MsoyGameConfig).thumbnail;
     }
 
     // from WhirledGamePanel

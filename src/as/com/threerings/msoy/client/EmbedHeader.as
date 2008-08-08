@@ -21,9 +21,13 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.util.Command;
 import com.threerings.util.CommandEvent;
 
+import com.threerings.flex.FlexUtil;
+
 import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
@@ -72,6 +76,33 @@ public class EmbedHeader extends Canvas
         addChild(_joinNow);
     }
 
+    public function setPlaceName (name :String, logo :MediaDesc = null) :void
+    {
+        // out with the old
+        if (_placeLogo != null) {
+            removeChild(_placeLogo);
+            _placeLogo = null;
+        }
+        if (_placeLabel != null) {
+            removeChild(_placeLabel);
+            _placeLabel  = null;
+        }
+
+        // in with the new
+        var xx :int = 0;
+        if (logo != null) {
+            _placeLogo = MediaWrapper.createView(logo);
+            _placeLogo.setStyle("left", xx);
+            addChild(_placeLogo);
+            xx += PAD + _placeLogo.measuredWidth;
+        }
+        if (name != null) {
+            _placeLabel = FlexUtil.createLabel(name, "embedHeaderPlaceName");
+            _placeLabel.setStyle("left", xx);
+            addChild(_placeLabel);
+        }
+    }
+
     protected function doLogon (event :MouseEvent) :void
     {
         (new LogonPanel(_ctx)).open();
@@ -111,8 +142,13 @@ public class EmbedHeader extends Canvas
     [Embed(source="../../../../../../rsrc/media/embedbuttons.swf#SignIn")]
     protected static const SIGN_IN :Class;
 
+    protected static const PAD :int = 10;
+
     protected var _ctx :WorldContext;
     protected var _signIn :FlexWrapper;
     protected var _joinNow :FlexWrapper;
+
+    protected var _placeLogo :MediaWrapper;
+    protected var _placeLabel :Label;
 }
 }

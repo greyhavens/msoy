@@ -5,6 +5,8 @@ package com.threerings.msoy.client {
 
 import com.threerings.crowd.data.PlaceObject;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 /**
  * A place view that isn't really. It merely allows the display of chat.
  */
@@ -38,6 +40,18 @@ public class NoPlaceView extends LayeredContainer
     public function shouldUseChatOverlay () :Boolean
     {
         return true;
+    }
+
+    // from MsoyPlaceView
+    public function getPlaceName () :String
+    {
+        return null;
+    }
+
+    // from MsoyPlaceView
+    public function getPlaceLogo () :MediaDesc
+    {
+        return null;
     }
 
     public function willEnterPlace (plobj :PlaceObject) :void

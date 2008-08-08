@@ -45,6 +45,8 @@ import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
@@ -122,6 +124,22 @@ public class RoomView extends Sprite
     public function shouldUseChatOverlay () :Boolean
     {
         return true;
+    }
+
+    // from MsoyPlaceView
+    public function getPlaceName () :String
+    {
+        return (_scene != null) ? _scene.getName() : null;
+    }
+
+    // from MsoyPlaceView
+    public function getPlaceLogo () :MediaDesc
+    {
+        return null; // see subclasses
+        // TODO: What might be the right thing to do, in the future, is
+        // just dispatch an event once we know our name/thumbnail, and have TopPanel
+        // capture that and pass it on to the EmbedHeader. That would make things
+        // work in case everything's not fully set-up when the placeview is first shown.
     }
 
     /**
