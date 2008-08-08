@@ -5,7 +5,6 @@ package com.threerings.msoy.avrg.data {
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
-import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.io.ObjectInputStream;
 
@@ -19,10 +18,15 @@ import com.threerings.util.Name;
 import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.data.all.MediaDesc;
 
+import com.whirled.game.client.PropertySpaceHelper;
+import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.data.WhirledGameObject;
+
 /**
  * Holds game state for an AVRGame.
  */
 public class AVRGameObject extends PlaceObject
+    implements PropertySpaceObject
 {
     /** The identifier for a MessageEvent containing a user message. */
     public static const USER_MESSAGE :String = "Umsg";
@@ -58,7 +62,14 @@ public class AVRGameObject extends PlaceObject
 
     /** Used to communicate with the AVRGameManager. */
     public var avrgService :AVRGameMarshaller;
-    
+
+     // from PropertySpaceObject
+    public function getUserProps () :Object
+    {
+        return _props;
+    }
+
+   
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
@@ -67,12 +78,7 @@ public class AVRGameObject extends PlaceObject
         readDefaultFields(ins);
 
         // then user properties
-        var count :int = ins.readInt();
-        while (count-- > 0) {
-            var key :String = ins.readUTF();
-            var value :Object = WhirledGameObject.decodeProperty(ins.readObject());
-            _props[key] = value;
-        }
+        PropertySpaceHelper.readProperties(this, ins);
     }
 
     /**

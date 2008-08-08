@@ -11,7 +11,9 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
+import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.GameData;
+import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -27,6 +29,7 @@ import com.threerings.msoy.item.data.all.Item;
  * Contains information on a player logged on to an MSOY Game server.
  */
 public class PlayerObject extends BodyObject
+    implements PropertySpaceObject
 {
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
@@ -138,6 +141,12 @@ public class PlayerObject extends BodyObject
         return gameContent.containsKey(key);
     }
 
+    // from PropertySpaceObject
+    public function getUserProps () :Object
+    {
+        return _props;
+    }
+
     // from BodyObject
     override public function readObject (ins :ObjectInputStream) :void
     {
@@ -147,12 +156,7 @@ public class PlayerObject extends BodyObject
         readDefaultFields(ins);
 
         // then user properties
-        var count :int = ins.readInt();
-        while (count-- > 0) {
-            var key :String = ins.readUTF();
-            var value :Object = WhirledGameObject.decodeProperty(ins.readObject());
-            _props[key] = value;
-        }
+        PropertySpaceHelper.readProperties(this, ins);
     }
 
     /**
