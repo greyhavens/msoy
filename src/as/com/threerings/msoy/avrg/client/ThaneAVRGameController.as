@@ -47,31 +47,30 @@ public class ThaneAVRGameController
             // This is an unexpected condition, but... if the game agent ever reloads the user code,
             // it may also recreate the controller?
             log.warning("Game object player locations already populated");
-            var iter :Iterator = _gameObj.playerLocs.iterator();
+        }
+
+        if (_gameAgentObj.scenes.size() > 0) {
+            log.warning("Agent object scenes already populated");
+            var iter :Iterator = _gameAgentObj.scenes.iterator();
             while (iter.hasNext()) {
-                bindPlayer(iter.next() as PlayerLocation);
+                bindScene(iter.next() as SceneInfo);
             }
         }
 
         // listen for player location changes
-        _gameObj.addListener(new SetAdapter(entryAdded, entryUpdated, entryRemoved));
-
-        // set up the flush timer
-        _flushTimer.addEventListener(TimerEvent.TIMER, handleFlushTimer);
-        _flushTimer.start();
+        var adapter :SetAdapter = new SetAdapter(entryAdded, entryUpdated, entryRemoved);
+        _gameObj.addListener(adapter);
+        _gameAgentObj.addListener(adapter);
     }
 
     /** Shuts down the AVRG controller. */
     public function shutdown () :void
     {
-        // stop the flush timer
-        _flushTimer.stop();
-
         // flush all player bindings
         var bindings :Array = _bindings.values();
         _bindings.clear();
-        for each (var binding :PlayerBinding in bindings) {
-            flushBinding(binding);
+        for each (var binding :SceneBinding in bindings) {
+            removeBinding(binding.sceneId);
         }
 
         // shutdown the backend
@@ -99,51 +98,65 @@ public class ThaneAVRGameController
     protected function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            bindPlayer(event.getEntry() as PlayerLocation);
+            updatePlayer(event.getEntry() as PlayerLocation, false);
+
+        } else if (event.getName() == AVRGameAgentObject.SCENES) {
+            bindScene(event.getEntry() as SceneInfo);
         }
     }
 
     protected function entryUpdated (event :EntryUpdatedEvent) :void
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            bindPlayer(event.getEntry() as PlayerLocation);
+            updatePlayer(event.getOldEntry() as PlayerLocation, true);
+            updatePlayer(event.getEntry() as PlayerLocation, false);
+
+        } else if (event.getName() == AVRGameAgentObject.SCENES) {
+            bindScene(event.getEntry() as SceneInfo);
         }
     }
 
     protected function entryRemoved (event :EntryRemovedEvent) :void
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            removeBinding((event.getOldEntry() as PlayerLocation).playerId);
+            updatePlayer(event.getOldEntry() as PlayerLocation, true);
+
+        } else if (event.getName() == AVRGameAgentObject.SCENES) {
+            removeBinding((event.getOldEntry() as SceneInfo).sceneId);
         }
     }
 
-    /** Sets up a new binding for the given player, removing the old one if it exists. */
-    protected function bindPlayer (location :PlayerLocation) :void
+    protected function updatePlayer (loc :PlayerLocation, remove :Boolean) :void
     {
-        // Get rid of the old PlayerBinding
-        var binding :PlayerBinding = _bindings.get(location.playerId);
-        if (binding != null) {
-            removeBinding(location.playerId);
+        // TODO: notify backend
+        var binding :SceneBinding = _bindings.get(loc.sceneId);
+        if (binding == null) {
+            log.warning("Player updated in unbound scene: [loc=" + loc + ", remove=" + remove);
         }
+        else if (binding.room == null) {
+            log.warning("Player updated in unsubscribed scene: [loc=" + loc + ", binding=" + 
+                binding + ", remove=" + remove);
+        }
+    }
 
-        // TODO: should we try to revive a previously removed binding if the sceneId is the same?
-        // The difficulty with this would be that a scene may suddenly change hosts for some
-        // reason.
-
-        // Get the scene info, if it isn't there this is a no go
-        var sceneInfo :SceneInfo = _gameAgentObj.scenes.get(location.sceneId) as SceneInfo;
-        if (sceneInfo == null) {
-            log.warning("Scene not found for player: " + location);
-            return;
+    /** Sets up a new binding for the given scene, removing the old one if it exists. */
+    protected function bindScene (scene :SceneInfo) :void
+    {
+        // Get rid of the old SceneBinding
+        var binding :SceneBinding = _bindings.get(scene.sceneId);
+        if (binding != null) {
+            // this shouldn't happen since scenes should be explicitly removed well before a host 
+            // change
+            log.warning("Unexpected host change: " + binding);
+            removeBinding(binding.sceneId);
         }
 
         // Create a binding and add it to the map
-        binding = new PlayerBinding();
-        binding.playerId = location.playerId;
-        binding.sceneId = location.sceneId;
-        _bindings.put(binding.playerId, binding);
+        binding = new SceneBinding();
+        binding.sceneId = scene.sceneId;
+        _bindings.put(scene.sceneId, binding);
 
-        var info :String = "scene=" + sceneInfo + ", location=" + location;
+        var info :String = "scene=" + scene;
 
         // Open the window to the server hosting the player's scene
         var resultListener :ResultAdapter = new ResultAdapter(
@@ -155,23 +168,23 @@ public class ThaneAVRGameController
             }
         );
 
-        log.info("Opening window ["  + info + "]");
-        _ctx.getWindowDirector().openWindow(sceneInfo.hostname, sceneInfo.port, resultListener);
+        log.debug("Opening window ["  + info + "]");
+        _ctx.getWindowDirector().openWindow(scene.hostname, scene.port, resultListener);
     }
 
-    protected function gotWindow (binding :PlayerBinding, window :Window) :void
+    protected function gotWindow (binding :SceneBinding, window :Window) :void
     {
         var info :String = "binding=" + binding + ", window=" + window;
 
         // close the window immediately if this binding has been removed
-        var check :PlayerBinding = _bindings.get(binding.playerId);
+        var check :SceneBinding = _bindings.get(binding.sceneId);
         if (check != binding) {
             log.warning("Window no longer needed [" + info + "]");
             _ctx.getWindowDirector().closeWindow(window);
             return;
         }
 
-        log.info("Got window [" + info + "]");
+        log.debug("Got window [" + info + "]");
 
         // set the window so it can be closed later
         binding.window = window;
@@ -192,18 +205,18 @@ public class ThaneAVRGameController
         thaneSvc.locateRoom(window.getClient(), binding.sceneId, resultListener);
     }
 
-    protected function gotRoomOid (binding :PlayerBinding, oid :int) :void
+    protected function gotRoomOid (binding :SceneBinding, oid :int) :void
     {
         var info :String = "binding=" + binding + ", roomOid=" + oid;
 
         // if this player has been removed, forget it
-        var check :PlayerBinding = _bindings.get(binding.playerId);
+        var check :SceneBinding = _bindings.get(binding.sceneId);
         if (check != binding) {
             log.warning("Room oid no longer needed [" + info + "]");
             return;
         }
         
-        log.info("Got room id ["  + info + "]");
+        log.debug("Got room id ["  + info + "]");
 
         // subscribe to the rooom object
         var subscriber :SubscriberAdapter = new SubscriberAdapter(
@@ -219,12 +232,12 @@ public class ThaneAVRGameController
         binding.subscriber.subscribe(binding.window.getDObjectManager());
     }
 
-    protected function gotRoomObject (binding :PlayerBinding, roomObj :RoomObject) :void
+    protected function gotRoomObject (binding :SceneBinding, roomObj :RoomObject) :void
     {
         var info :String = "binding=" + binding + ", roomOid=" + roomObj.getOid();
 
         // if this player has been removed, unsubscribe right away
-        var check :PlayerBinding = _bindings.get(binding.playerId);
+        var check :SceneBinding = _bindings.get(binding.sceneId);
         if (check != binding) {
             log.warning("Room no longer needed [" + info + "]");
             binding.subscriber.unsubscribe(binding.window.getDObjectManager());
@@ -235,49 +248,21 @@ public class ThaneAVRGameController
 
         binding.room = roomObj;
 
-        // TODO: let the server know that we've ratified the room entry now
+        // TODO: let the server know that we're ready for room entry now
     }
 
     /** Removes the binding of the given player. */
-    protected function removeBinding (playerId :int) :void
+    protected function removeBinding (sceneId :int) :void
     {
-        var binding :PlayerBinding = _bindings.remove(playerId) as PlayerBinding;
+        var binding :SceneBinding = _bindings.remove(sceneId) as SceneBinding;
         if (binding == null) {
-            log.warning("PlayerBinding not found to remove: " + playerId);
+            log.warning("SceneBinding not found to remove: " + sceneId);
             return;
         }
 
-        // Mark for flushing
-        log.info("Removing binding: " + binding);
-        binding.removalTime = getTimer();
-        _removed.push(binding);
-    }
+        log.debug("Removing binding: " + binding);
 
-    /** Checks for inactive bindings that need to be closed down. */
-    protected function handleFlushTimer (event :TimerEvent) :void
-    {
-        var now :Number = getTimer();
-        while (true) {
-            if (_removed.length == 0) {
-                break;
-            }
-
-            var binding :PlayerBinding = _removed[0] as PlayerBinding;
-
-            if (now - binding.removalTime < REMOVED_PLAYER_TIMEOUT) {
-                break;
-            }
-
-            flushBinding(binding);
-            _removed.shift();
-        }
-    }
-
-    /** Flushes a binding. */
-    protected function flushBinding (binding :PlayerBinding) :void
-    {
-        log.info("Flushing: " + binding);
-
+        // Release all resources
         if (binding.room != null) {
             binding.subscriber.unsubscribe(binding.window.getDObjectManager());
             binding.subscriber = null;
@@ -295,30 +280,22 @@ public class ThaneAVRGameController
     protected var _gameObj :AVRGameObject;
     protected var _gameAgentObj :AVRGameAgentObject;
     protected var _bindings :HashMap = new HashMap();
-    protected var _removed :Array = new Array();
-    protected var _flushTimer :Timer = new Timer(FLUSH_CHECK_INTERVAL);
-
-    protected static const FLUSH_CHECK_INTERVAL :int = 60 * 1000;
-    protected static const REMOVED_PLAYER_TIMEOUT :int = 60 * 1000;
 }
 
 }
 
-import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.bureau.client.Window;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.util.StringUtil;
 import com.threerings.presents.util.SafeSubscriber;
 
-/** Binds a player to its window, scene and room. */
-class PlayerBinding
+/** Binds a scene id to its window, room and players. */
+class SceneBinding
 {
-    public var playerId :int;
     public var sceneId :int;
     public var window :Window;
     public var subscriber :SafeSubscriber;
     public var room :RoomObject;
-    public var removalTime :Number;
 
     // from Object
     public function toString () :String

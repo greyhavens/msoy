@@ -4,15 +4,18 @@
 package com.threerings.msoy.avrg.server;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
+import com.samskivert.util.IntMap.IntEntry;
 
 import com.threerings.parlor.server.PlayManager;
 import com.threerings.presents.annotation.EventThread;
@@ -152,6 +155,13 @@ public class AVRGameManager extends PlaceManager
 
         _gameObj = (AVRGameObject)_plobj;
         _gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
+        
+        _sceneCheck = new Interval(_omgr) {
+            public void expired () {
+                checkScenes();
+            }
+        };
+        _sceneCheck.schedule(SCENE_CHECK_PERIOD, true);
     }
 
     public void startAgent ()
@@ -317,6 +327,8 @@ public class AVRGameManager extends PlaceManager
         if (_lifecycleObserver != null) {
             _lifecycleObserver.avrGameDidShutdown(this);
         }
+        
+        _sceneCheck.cancel();
     }
 
     @Override
@@ -343,6 +355,13 @@ public class AVRGameManager extends PlaceManager
 
         // clear out any pending move information
         _pendingMoves.remove(memberId);
+        
+        Scene scene = _players.remove(memberId);
+        if (scene == null) {
+            log.warning("Leaving body has no scene", "memberId", memberId);
+        } else {
+            scene.removePlayer(memberId);
+        }
 
         flushPlayerGameState(player);
     }
@@ -367,14 +386,31 @@ public class AVRGameManager extends PlaceManager
         _pendingMoves.put(memberId, sceneId);
 
         SceneInfo info = new SceneInfo(sceneId, hostname, port);
-        if (_gameAgentObj.scenes.contains(info)) {
-            // there might be old scene data lingering, with the scene now being hosted elsewhere
-            if (!info.equals(_gameAgentObj.scenes.get(sceneId))) {
+        SceneInfo existing = _gameAgentObj.scenes.get(info.getKey());
+        if (existing != null) {
+            if (!info.equals(existing)) {
+                // this should not happen in normal operation, but is feasible if a server goes 
+                // down abruptly
+                log.warning("Updating stale SceneInfo", "old", existing, "new", info);
                 _gameAgentObj.updateScenes(info);
             }
 
         } else {
             _gameAgentObj.addToScenes(info);
+        }
+
+        // Find our local scene object
+        Scene scene = _scenes.get(sceneId);
+        if (scene == null) {
+            _scenes.put(sceneId, scene = new Scene(sceneId));
+        }
+
+        // Transfer the player
+        Scene oldScene = _players.get(memberId);
+        _players.put(memberId, scene);
+        scene.addPlayer(memberId);
+        if (oldScene != null) {
+            oldScene.removePlayer(memberId);
         }
 
         // TODO: this is only for debugging
@@ -427,6 +463,28 @@ public class AVRGameManager extends PlaceManager
         }
         return agent;
     }
+    
+    /** 
+     * Eliminate any scenes that have been empty for a while. This is to prevent a large buildup
+     * for games that visit a lot of rooms. 
+     */
+    protected void checkScenes ()
+    {
+        long now = System.currentTimeMillis();
+        Iterator<IntEntry<Scene>> iter = _scenes.intEntrySet().iterator();
+        while (iter.hasNext()) {
+            Scene scene = iter.next().getValue();
+            if (scene.shouldFlush(now)) {
+                if (_gameAgentObj.scenes.containsKey(scene.sceneId)) {
+                    _gameAgentObj.removeFromScenes(scene.sceneId);
+
+                } else {
+                    log.warning("Flushing scene not found in agent", "scene", scene);
+                }
+                iter.remove();
+            }
+        }
+    }
 
     /**
      * A timer that fires message events to an AVRG. This is a precise copy of the same class
@@ -476,6 +534,64 @@ public class AVRGameManager extends PlaceManager
         protected int _value;
     } // End: static class Ticker
 
+    /**
+     * Data for tracking what players are in a scene, so that we know when to flush it.
+     */
+    protected static class Scene
+    {
+        public int sceneId;
+        public long modTime;
+        public ArrayIntSet players = new ArrayIntSet();
+        
+        public Scene (int sceneId)
+        {
+            this.sceneId = sceneId;
+            touch();
+        }
+
+        /** Sets the last modification time to the current time. */
+        public void touch ()
+        {
+            modTime = System.currentTimeMillis(); 
+        }
+        
+        /** Test if the scene has been empty for a while. */
+        public boolean shouldFlush (long now)
+        {
+            if (players.size() > 0) {
+                return false;
+            }
+            
+            return (now - modTime > SCENE_IDLE_UNLOAD_PERIOD);
+        }
+        
+        /** Add a player to the scene, automatically calling {@link #touch} as well. */
+        public void addPlayer (int id)
+        {
+            if (!players.add(id)) {
+                log.warning("Player added to scene twice", "memberId", id, "sceneId", sceneId);
+            }
+            touch();
+        }
+        
+        /** Remove a player from the scene, automatically calling {@link #touch} as well. */
+        public void removePlayer (int id)
+        {
+            if (!players.remove(id)) {
+                log.warning("Player not found to remove", "memberId", id, "sceneId", sceneId);
+            }
+            touch();
+        }
+        
+        public String toString ()
+        {
+            StringBuilder buf = new StringBuilder();
+            buf.append("AVRGameManager.Scene");
+            StringUtil.fieldsToString(buf, this);
+            return buf.toString();
+        }
+    }
+
     protected Observer _observer = new Observer() {
         public void memberMoved (int memberId, int sceneId, String hostname, int port) {
             playerEnteredScene(memberId, sceneId, hostname, port);
@@ -496,6 +612,15 @@ public class AVRGameManager extends PlaceManager
 
     /** The map of tickers, lazy-initialized. */
     protected HashMap<String, Ticker> _tickers;
+
+    /** The map of scenes by scene id, one to one. */
+    protected HashIntMap<Scene> _scenes = new HashIntMap<Scene>();
+
+    /** The map of player ids to scenes, many to one. */
+    protected HashIntMap<Scene> _players = new HashIntMap<Scene>();
+    
+    /** Interval to run our scene checker. */
+    protected Interval _sceneCheck;
 
     /** Observer of our shutdown. */
     protected LifecycleObserver _lifecycleObserver;
@@ -522,5 +647,11 @@ public class AVRGameManager extends PlaceManager
     protected static final int MAX_TICKERS = 3;
 
     /** idle time before shutting down the manager. */
-    protected static final long IDLE_UNLOAD_PERIOD = 60 * 1000L; // in ms
+    protected static final long IDLE_UNLOAD_PERIOD = 5 * 60 * 1000L; // in ms
+    
+    /** Minimum time a scene must remain idle before unloading. */
+    protected static final long SCENE_IDLE_UNLOAD_PERIOD = 60 * 1000;
+    
+    /** Time between checks to flush idle scenes. */
+    protected static final long SCENE_CHECK_PERIOD = 60 * 1000;
 }
