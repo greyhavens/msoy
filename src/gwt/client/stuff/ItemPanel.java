@@ -179,7 +179,7 @@ public class ItemPanel extends VerticalPanel
 
         // add the various "why to upload" pitches
         String why = getPitch("a") + "<br>" + getPitch("b") + "<br>" + getPitch("c");
-        _upload.setHTML(1, 0, why);
+        _upload.setWidget(1, 0, MsoyUI.createHTML(why, null));
         _upload.getFlexCellFormatter().setStyleName(1, 0, "Pitch");
 
         // add the create button
