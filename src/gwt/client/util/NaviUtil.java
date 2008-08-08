@@ -48,30 +48,30 @@ public class NaviUtil
         return Args.compose("d", ""+gameId, tab.code());
     }
 
-	public static void viewItem (byte type, int itemId)
-	{
-	    Link.go(Pages.STUFF, Args.compose(""+type, "-1", ""+itemId));
-	}
+    public static void viewItem (byte type, int itemId)
+    {
+        Link.go(Pages.STUFF, Args.compose(""+type, "-1", ""+itemId));
+    }
 
-	public static void editItem (byte type, int itemId)
-	{
-	    Link.go(Pages.STUFF, Args.compose("e", ""+type, ""+itemId));
-	}
+    public static void editItem (byte type, int itemId)
+    {
+        Link.go(Pages.STUFF, Args.compose("e", ""+type, ""+itemId));
+    }
 
-	public static void remixItem (byte type, int itemId)
-	{
-	    Link.go(Pages.STUFF, Args.compose("r", ""+type, ""+itemId));
-	}
+    public static void remixItem (byte type, int itemId)
+    {
+        Link.go(Pages.STUFF, Args.compose("r", ""+type, ""+itemId));
+    }
 
-	public static void remixCatalogItem (
-	    byte type, int itemId, int catalogId, int flowCost, int goldCost)
-	{
-	    Link.go(Pages.STUFF, Args.compose(
-	        new String[] { "r", ""+type, ""+itemId, ""+catalogId, ""+flowCost, ""+goldCost }));
-	}
+    public static void remixCatalogItem (
+        byte type, int itemId, int catalogId, int flowCost, int goldCost)
+    {
+        Link.go(Pages.STUFF, Args.compose(new String[] {
+                    "r", ""+type, ""+itemId, ""+catalogId, ""+flowCost, ""+goldCost }));
+    }
 
-	public static void createItem (byte type, byte ptype, int pitemId)
-	{
-	    Link.go(Pages.STUFF, Args.compose(new String[] { "c", ""+type, ""+ptype, ""+pitemId }));
-	}
+    public static void createItem (byte type, byte ptype, int pitemId)
+    {
+        Link.go(Pages.STUFF, Args.compose(new String[] { "c", ""+type, ""+ptype, ""+pitemId }));
+    }
 }
