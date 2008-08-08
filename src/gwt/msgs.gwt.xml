@@ -4,5 +4,6 @@
   <source path="com/threerings/msoy/fora/gwt"/>
   <source path="client/msgs"/>
 
+  <public path="public/msgs"/>
   <stylesheet src="/css/msgs.css"/>
 </module>

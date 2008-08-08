@@ -5,6 +5,7 @@
   <source path="com/threerings/msoy/item/gwt"/>
 
   <source path="client/item"/>
-  <stylesheet src="/css/item.css"/>
 
+  <public path="public/item"/>
+  <stylesheet src="/css/item.css"/>
 </module>

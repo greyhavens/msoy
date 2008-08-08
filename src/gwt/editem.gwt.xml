@@ -6,5 +6,7 @@
   <source path="com/threerings/msoy/game/gwt"/>
 
   <source path="client/editem"/>
+
+  <public path="public/editem"/>
   <stylesheet src="/css/editem.css"/>
 </module>
