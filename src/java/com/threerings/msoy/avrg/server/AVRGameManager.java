@@ -371,6 +371,15 @@ public class AVRGameManager extends PlaceManager
             log.warning("Leaving body has no scene", "memberId", memberId);
         } else {
             scene.removePlayer(memberId);
+
+            // remove from player locations
+            if (_gameObj.playerLocs.containsKey(memberId)) {
+                _gameObj.removeFromPlayerLocs(memberId);
+            
+            } else if (scene.subscribed) {
+                log.warning("Player leaving subscribed scene not in playerLocs?", 
+                    "scene", scene, "memberId", memberId);
+            }
         }
 
         flushPlayerGameState(player);
