@@ -87,7 +87,7 @@ public class Link
     {
         HTML escaper = new HTML();
         escaper.setText(label);
-        return "<a target=\"_top\" href=\"#" + createToken(page, args) + "\">" +
+        return "<a target=\"_top\" href=\"/#" + createToken(page, args) + "\">" +
             escaper.getHTML() + "</a>";
     }
 
