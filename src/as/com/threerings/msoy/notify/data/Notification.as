@@ -24,7 +24,7 @@ public /* abstract */ class Notification extends SimpleStreamableObject
     public static const SYSTEM :int = 0;
     public static const INVITE :int = 1;
     public static const PERSONAL :int = 2;
-    public static const BUTTSCRATCHING :int = 2;
+    public static const BUTTSCRATCHING :int = 3;
 
     /**
      * Get the chat message used to announce this notification, or null.
