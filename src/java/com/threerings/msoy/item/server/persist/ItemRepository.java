@@ -984,12 +984,11 @@ public abstract class ItemRepository<T extends ItemRecord>
         throws PersistenceException
     {
         List<SQLOperator> matches = Lists.newArrayList();
-
         // search item name and description
         matches.add(new FullTextMatch(getItemClass(), ItemRecord.FTS_ND, search));
 
-        // look up all members whose name matches the search term exactly
-        List<Integer> memberIds = _memberRepo.findMembersByDisplayName(search, true, -1);
+        // look up the first 100 members whose name matches the search term exactly
+        List<Integer> memberIds = _memberRepo.findMembersByDisplayName(search, true, 100);
         if (memberIds.size() > 0) {
             matches.add(new In(getItemColumn(ItemRecord.CREATOR_ID), memberIds));
         }
