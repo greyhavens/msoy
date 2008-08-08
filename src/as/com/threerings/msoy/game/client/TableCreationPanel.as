@@ -9,18 +9,17 @@ import mx.core.ScrollPolicy;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
-import mx.controls.CheckBox;
 import mx.controls.Label;
 import mx.controls.TextInput;
 
 import flash.events.Event;
-import mx.events.FlexEvent;
 
 import com.threerings.io.TypedArray;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.parlor.client.TableConfigurator;
@@ -74,34 +73,32 @@ public class TableCreationPanel extends VBox
                 var fcb :FriendCheckBox = new FriendCheckBox(friend);
 
                 // Have to use VALUE_COMMIT here instead of CHANGED, since fcb fakes clicks
-                fcb.check.addEventListener(FlexEvent.VALUE_COMMIT, friendToggled);
+                fcb.check.addEventListener(Event.CHANGE, friendToggled);
                 _friendsGrid.addCell(fcb);
             }
             _friendsBox.addChild(_friendsGrid);
         }
     }
 
-    protected function friendToggled (event :FlexEvent) :void
+    protected function friendToggled (event :Event) :void
     {
-        // _inviteAll.selected = every friend box selected?
-        _inviteAll.selected = true;
-        for (var i :int = 0; i < _friendsGrid.numChildren; ++i) {
-            if ( ! (_friendsGrid.getCellAt(i) as FriendCheckBox).check.selected) {
-                _inviteAll.selected = false;
-                return;
-            }
-        }
+        _inviteAll.selected = false;
+//
+//        // _inviteAll.selected = every friend box selected?
+//        _inviteAll.selected = true;
+//        for (var i :int = 0; i < _friendsGrid.numChildren; ++i) {
+//            if ( ! (_friendsGrid.getCellAt(i) as FriendCheckBox).check.selected) {
+//                _inviteAll.selected = false;
+//                return;
+//            }
+//        }
     }
 
-    protected function inviteAllToggled (event :Event) :void
+    protected function inviteAllToggled (selected :Boolean) :void
     {
-        for (var i :int = 0; i < _friendsGrid.numChildren; ++i) {
+        for (var i :int = 0; i < _friendsGrid.cellCount; ++i) {
             var fcb :FriendCheckBox = _friendsGrid.getCellAt(i) as FriendCheckBox;
-
-            // *grumble grumble*
-            fcb.check.removeEventListener(FlexEvent.VALUE_COMMIT, friendToggled);
-            fcb.check.selected = _inviteAll.selected;
-            fcb.check.addEventListener(FlexEvent.VALUE_COMMIT, friendToggled);
+            fcb.check.selected = selected;
         }
     }
 
@@ -184,10 +181,8 @@ public class TableCreationPanel extends VBox
         _friendsBox.setStyle("verticalGap", 0);
         row.addChild(wrapBox(Msgs.GAME.get("l.invite_friends"), _friendsBox, true));
 
-        _inviteAll = new CheckBox();
-        _inviteAll.label = Msgs.GAME.get("l.invite_all");
+        _inviteAll = new CommandCheckBox(Msgs.GAME.get("l.invite_all"), inviteAllToggled);
         _inviteAll.styleName = "lobbyLabel";
-        _inviteAll.addEventListener(Event.CHANGE, inviteAllToggled);
 
         var box :HBox = new HBox();
         box.styleName = "configBox";
@@ -253,12 +248,13 @@ public class TableCreationPanel extends VBox
     protected var _configBox :Container;
     protected var _friendsBox :VBox;
     protected var _friendsGrid :SimpleGrid;
-    protected var _inviteAll :CheckBox;
+    protected var _inviteAll :CommandCheckBox;
 
     protected static const FRIENDS_GRID_COLUMNS :int = 6;
 }
 }
 
+import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.containers.VBox;
@@ -297,6 +293,7 @@ class FriendCheckBox extends VBox
     {
         if (event.target != check) { // because the checkbox will have already handled it
             check.selected = !check.selected;
+            check.dispatchEvent(new Event(Event.CHANGE));
         }
     }
 }
