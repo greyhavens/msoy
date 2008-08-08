@@ -75,7 +75,8 @@ public class BadgeLogic
     public void awardBadge (int memberId, EarnedBadge badge, boolean sendMemberNodeAction)
         throws PersistenceException
     {
-        awardBadge(memberId, BadgeType.getType(badge.badgeCode), badge.level, badge.whenEarned, sendMemberNodeAction);
+        awardBadge(memberId, BadgeType.getType(badge.badgeCode), badge.level, badge.whenEarned,
+                   sendMemberNodeAction);
     }
 
     /**
