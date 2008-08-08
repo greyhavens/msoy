@@ -16,7 +16,6 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.server.CrowdClientResolver;
 
 import com.threerings.stats.data.Stat;
-import com.threerings.stats.data.StatSet;
 import com.threerings.stats.server.persist.StatRepository;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -33,7 +32,8 @@ import com.threerings.msoy.item.server.persist.AvatarRecord;
 
 import com.threerings.msoy.badge.data.BadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
-import com.threerings.msoy.badge.server.persist.BadgeRecord;
+import com.threerings.msoy.badge.server.ServerStatSet;
+import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 
 import com.threerings.msoy.data.LurkerName;
@@ -127,12 +127,12 @@ public class MsoyClientResolver extends CrowdClientResolver
         @SuppressWarnings("unused") StatType dummy = StatType.UNUSED;
         // load up this member's persistent stats
         List<Stat> stats = _statRepo.loadStats(member.memberId);
-        userObj.stats = new StatSet(stats.iterator());
+        userObj.stats = new ServerStatSet(stats.iterator(), userObj);
 
         // and their badges
-        List<BadgeRecord> badgeRecs = _badgeRepo.loadBadges(member.memberId);
+        List<EarnedBadgeRecord> badgeRecs = _badgeRepo.loadEarnedBadges(member.memberId);
         List<EarnedBadge> badges = Lists.newArrayListWithExpectedSize(badgeRecs.size());
-        for (BadgeRecord rec : badgeRecs) {
+        for (EarnedBadgeRecord rec : badgeRecs) {
             badges.add(rec.toBadge());
         }
         userObj.badges = new BadgeSet(badges);

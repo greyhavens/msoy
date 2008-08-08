@@ -754,7 +754,7 @@ public class RoomManager extends SpotSceneManager
             member.metrics.room.init(isMemberScene, model.ownerId);
 
             if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                member.getStats().addToSetStat(StatType.WHIRLEDS_VISITED, model.ownerId);
+                member.stats.addToSetStat(StatType.WHIRLEDS_VISITED, model.ownerId);
             }
         }
     }

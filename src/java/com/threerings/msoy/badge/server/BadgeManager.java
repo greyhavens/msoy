@@ -15,6 +15,7 @@ import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.toybox.Log;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
@@ -29,11 +30,11 @@ public class BadgeManager
     /**
      * Awards a badge of the specified type to the user if they don't already have it.
      */
-    public void awardBadge (MemberObject user, BadgeType badgeType)
+    public void awardBadge (MemberObject user, BadgeType badgeType, int level)
     {
         if (!user.badges.containsBadge(badgeType)) {
-            List<BadgeType> badgeList = Lists.newArrayList();
-            badgeList.add(badgeType);
+            List<EarnedBadge> badgeList = Lists.newArrayList();
+            badgeList.add(new EarnedBadge(badgeType.getCode(), level, 0));
             awardBadges(user, badgeList);
         }
     }
@@ -50,7 +51,7 @@ public class BadgeManager
         }
 
         // iterate the list of badges to see if the player has won any new ones
-        List<BadgeType> newBadges = null;
+        /*List<BadgeType> newBadges = null;
         for (BadgeType badgeType : BadgeType.values()) {
             if (!user.badges.containsBadge(badgeType) && badgeType.hasEarned(user)) {
                 if (newBadges == null) {
@@ -62,19 +63,25 @@ public class BadgeManager
 
         if (newBadges != null) {
             awardBadges(user, newBadges);
-        }
+        }*/
     }
 
-    protected void awardBadges (final MemberObject user, final List<BadgeType> badgeTypes)
+    protected void awardBadges (final MemberObject user, final List<EarnedBadge> badges)
     {
-        final long whenEarned = System.currentTimeMillis();
-
-        // create badges and stick them in the MemberObject
+        // stick the badges in the user's BadgeSet, and award coins
+        long whenEarned = System.currentTimeMillis();
         int coinValue = 0;
-        final List<EarnedBadge> badges = createBadges(badgeTypes, whenEarned);
         for (EarnedBadge badge : badges) {
-            user.awardBadge(badge);
-            coinValue += BadgeType.getType(badge.badgeCode).getCoinValue();
+            BadgeType type = BadgeType.getType(badge.badgeCode);
+            BadgeType.Level level = type.getLevel(badge.level);
+            if (level == null) {
+                Log.log.warning("Failed to award invalid badge level",
+                    "memberId", user.getMemberId(), "BadgeType", type, "level", level);
+            } else {
+                badge.whenEarned = whenEarned;
+                user.awardBadge(badge);
+                coinValue += coinValue;
+            }
         }
         user.setFlow(user.flow + coinValue);
         user.setAccFlow(user.accFlow + coinValue);
@@ -83,18 +90,18 @@ public class BadgeManager
         final int totalCoinValue = coinValue;
         _invoker.postUnit(new WriteOnlyUnit("awardBadges") {
             public void invokePersist () throws PersistenceException {
-                for (BadgeType badgeType : badgeTypes) {
+                for (EarnedBadge badge : badges) {
                     // BadgeLogic.awardBadge handles putting the badge in the repository and
                     // publishing a member feed about the event. We don't need awardBadge()
                     // to send a MemberNodeAction about this badge being earned, because we
                     // already know about it.
-                    _badgeLogic.awardBadge(user.getMemberId(), badgeType, whenEarned, false);
+                    _badgeLogic.awardBadge(user.getMemberId(), badge, false);
                 }
             }
             public void handleFailure (Exception error) {
                 // rollback the changes to the user's BadgeSet and flow
                 for (EarnedBadge badge : badges) {
-                    user.badges.removeBadge(badge);
+                    user.badges.removeBadge(badge.badgeCode);
                 }
                 user.setFlow(user.flow - totalCoinValue);
                 user.setAccFlow(user.accFlow - totalCoinValue);
@@ -102,21 +109,12 @@ public class BadgeManager
             }
             protected String getFailureMessage () {
                 StringBuilder builder = new StringBuilder("Failed to award badges: ");
-                for (BadgeType badgeType : badgeTypes) {
-                    builder.append(badgeType.name()).append(", ");
+                for (EarnedBadge badge : badges) {
+                    builder.append(badge.getType().name()).append(", ");
                 }
                 return builder.toString();
             }
         });
-    }
-
-    protected static List<EarnedBadge> createBadges (List<BadgeType> badgeTypes, long whenEarned)
-    {
-        List<EarnedBadge> badges = Lists.newArrayListWithExpectedSize(badgeTypes.size());
-        for (BadgeType type : badgeTypes) {
-            badges.add(new EarnedBadge(type.getCode(), whenEarned));
-        }
-        return badges;
     }
 
     @Inject protected BadgeLogic _badgeLogic;

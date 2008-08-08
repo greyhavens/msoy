@@ -5,24 +5,20 @@ package com.threerings.msoy.badge.data;
 
 public class BadgeProgress
 {
-    String unitName;
-    int requiredUnits;
-    int acquiredUnits;
+    int highestLevel;
+    int nextLevelRequiredUnits;
+    int nextLevelAcquiredUnits;
 
-    public BadgeProgress (String unitName, int requiredUnits, int acquiredUnits)
+    public BadgeProgress (int highestLevel, int nextLevelRequiredUnits, int nextLevelAcquiredUnits)
     {
-        this.unitName = unitName;
-        this.requiredUnits = requiredUnits;
-        this.acquiredUnits = acquiredUnits;
+        this.highestLevel = highestLevel;
+        this.nextLevelRequiredUnits = nextLevelRequiredUnits;
+        this.nextLevelAcquiredUnits = nextLevelAcquiredUnits;
     }
 
-    public boolean isComplete ()
+    public float getNextLevelProgress ()
     {
-        return acquiredUnits >= requiredUnits;
-    }
-
-    public float getPercentComplete ()
-    {
-        return Math.max((float)acquiredUnits / (float)requiredUnits, 1f);
+        return (nextLevelRequiredUnits > 0 ?
+            Math.max((float)nextLevelAcquiredUnits / (float)nextLevelRequiredUnits, 1f) : 0);
     }
 }

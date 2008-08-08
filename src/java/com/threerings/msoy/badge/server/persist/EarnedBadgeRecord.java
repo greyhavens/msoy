@@ -12,7 +12,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 
-public class BadgeRecord extends PersistentRecord
+public class EarnedBadgeRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #memberId} field. */
@@ -20,21 +20,28 @@ public class BadgeRecord extends PersistentRecord
 
     /** The qualified column identifier for the {@link #memberId} field. */
     public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(BadgeRecord.class, MEMBER_ID);
+        new ColumnExp(EarnedBadgeRecord.class, MEMBER_ID);
 
     /** The column identifier for the {@link #badgeCode} field. */
     public static final String BADGE_CODE = "badgeCode";
 
     /** The qualified column identifier for the {@link #badgeCode} field. */
     public static final ColumnExp BADGE_CODE_C =
-        new ColumnExp(BadgeRecord.class, BADGE_CODE);
+        new ColumnExp(EarnedBadgeRecord.class, BADGE_CODE);
+
+    /** The column identifier for the {@link #level} field. */
+    public static final String LEVEL = "level";
+
+    /** The qualified column identifier for the {@link #level} field. */
+    public static final ColumnExp LEVEL_C =
+        new ColumnExp(EarnedBadgeRecord.class, LEVEL);
 
     /** The column identifier for the {@link #whenEarned} field. */
     public static final String WHEN_EARNED = "whenEarned";
 
     /** The qualified column identifier for the {@link #whenEarned} field. */
     public static final ColumnExp WHEN_EARNED_C =
-        new ColumnExp(BadgeRecord.class, WHEN_EARNED);
+        new ColumnExp(EarnedBadgeRecord.class, WHEN_EARNED);
     // AUTO-GENERATED: FIELDS END
 
     /** Increment this value if you modify the definition of this persistent object in a way that
@@ -49,6 +56,9 @@ public class BadgeRecord extends PersistentRecord
     @Id
     public int badgeCode;
 
+    /** The highest badge level that the player has attained. */
+    public int level;
+
     /** The date and time when this badge was earned. */
     public Timestamp whenEarned;
 
@@ -57,22 +67,18 @@ public class BadgeRecord extends PersistentRecord
      */
     public EarnedBadge toBadge ()
     {
-        EarnedBadge badge = new EarnedBadge();
-        badge.badgeCode = badgeCode;
-        badge.whenEarned = whenEarned.getTime();
-
-        return badge;
+        return new EarnedBadge(badgeCode, level, whenEarned.getTime());
     }
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #BadgeRecord}
+     * Create and return a primary {@link Key} to identify a {@link #EarnedBadgeRecord}
      * with the supplied key values.
      */
-    public static Key<BadgeRecord> getKey (int memberId, int badgeCode)
+    public static Key<EarnedBadgeRecord> getKey (int memberId, int badgeCode)
     {
-        return new Key<BadgeRecord>(
-                BadgeRecord.class,
+        return new Key<EarnedBadgeRecord>(
+                EarnedBadgeRecord.class,
                 new String[] { MEMBER_ID, BADGE_CODE },
                 new Comparable[] { memberId, badgeCode });
     }

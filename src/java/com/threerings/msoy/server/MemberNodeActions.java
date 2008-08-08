@@ -13,7 +13,7 @@ import com.threerings.stats.data.StatModifier;
 
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.server.BadgeManager;
-import com.threerings.msoy.badge.server.persist.BadgeRecord;
+import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.item.server.ItemManager;
@@ -143,7 +143,7 @@ public class MemberNodeActions
     /**
      * Dispatches a notification that a member has won a badge.
      */
-    public static void badgeAwarded (BadgeRecord record)
+    public static void badgeAwarded (EarnedBadgeRecord record)
     {
         _peerMan.invokeNodeAction(new BadgeAwarded(record));
     }
@@ -319,7 +319,7 @@ public class MemberNodeActions
 
     protected static class BadgeAwarded extends MemberNodeAction
     {
-        public BadgeAwarded (BadgeRecord record) {
+        public BadgeAwarded (EarnedBadgeRecord record) {
             super(record.memberId);
             _badge = record.toBadge();
         }
@@ -339,7 +339,7 @@ public class MemberNodeActions
         }
 
         protected void execute (MemberObject memobj) {
-            memobj.getStats().syncStat(_modifier);
+            memobj.stats.syncStat(_modifier);
             _badgeMan.updateBadges(memobj);
         }
 

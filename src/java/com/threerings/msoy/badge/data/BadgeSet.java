@@ -37,13 +37,24 @@ public final class BadgeSet extends DSet<EarnedBadge>
     }
 
     /**
-     * Adds a badge to the BadgeSet.
+     * Adds a new badge to the BadgeSet, or updates an existing badge if the specified badge
+     * already exists and the specified level is higher than the existing level.
      *
-     * @return true if the badge was newly added, false if it already existed in the set.
+     * @return true if the badge was newly added or updated, false otherwise.
      */
-    public boolean addBadge (EarnedBadge badge)
+    public boolean addOrUpdateBadge (EarnedBadge badge)
     {
-        return super.add(badge);
+        EarnedBadge existingBadge = this.get(badge.badgeCode);
+        if (existingBadge == null) {
+            super.add(badge);
+            return true;
+        } else if (badge.level > existingBadge.level) {
+            existingBadge.level = badge.level;
+            existingBadge.whenEarned = badge.whenEarned;
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -51,8 +62,8 @@ public final class BadgeSet extends DSet<EarnedBadge>
      *
      * @return true if the badge was removed, false if it wasn't in the set.
      */
-    public boolean removeBadge (EarnedBadge badge)
+    public boolean removeBadge (int badgeCode)
     {
-        return super.remove(badge);
+        return (super.removeKey(badgeCode) != null);
     }
 }

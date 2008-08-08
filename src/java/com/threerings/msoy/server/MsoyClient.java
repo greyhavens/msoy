@@ -133,7 +133,7 @@ public class MsoyClient extends WhirledClient
         // update session related stats in their MemberRecord
         final int activeMins = Math.round(activeSeconds / 60f);
         final MemberName name = _memobj.memberName;
-        final StatSet stats = _memobj.getStats();
+        final StatSet stats = _memobj.stats;
         stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
         _invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
             public boolean invoke () {

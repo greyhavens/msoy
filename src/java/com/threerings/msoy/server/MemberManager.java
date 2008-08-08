@@ -40,8 +40,6 @@ import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
-import com.threerings.stats.data.StatSet;
-
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.MailLogic;
@@ -56,6 +54,7 @@ import com.threerings.msoy.item.server.ItemManager;
 
 import com.threerings.msoy.badge.data.BadgeSet;
 import com.threerings.msoy.badge.server.BadgeManager;
+import com.threerings.msoy.badge.server.ServerStatSet;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -114,17 +113,19 @@ public class MemberManager
 
                 // store our transient bits in the additional data map
                 data.put("MO.actorState", memobj.actorState);
-                data.put("MO.stats", memobj.stats);
                 data.put("MO.metrics", memobj.metrics);
                 data.put("MO.badges", memobj.badges);
+                data.put("MO.stats", memobj.stats);
             }
 
             public void unpackMember (MemberObject memobj, Map<String,Object> data) {
                 // grab and reinstate our bits
                 memobj.actorState = (String)data.get("MO.actorState");
-                memobj.stats = (StatSet)data.get("MO.stats");
                 memobj.metrics = (PlayerMetrics)data.get("MO.metrics");
                 memobj.badges = (BadgeSet)data.get("MO.badges");
+                ServerStatSet stats = (ServerStatSet)data.get("MO.stats");
+                stats.setMemberObject(memobj);
+                memobj.stats = stats;
             }
         });
     }

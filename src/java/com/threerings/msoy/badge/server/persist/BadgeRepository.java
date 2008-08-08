@@ -28,24 +28,34 @@ public class BadgeRepository extends DepotRepository
     /**
      * Stores the supplied badge record in the database.
      */
-    public void storeBadge (BadgeRecord badge)
+    public void storeBadge (EarnedBadgeRecord badge)
         throws PersistenceException
     {
         insert(badge);
     }
 
     /**
-     * Loads all of the specific member's badges.
+     * Loads all of the specific member's earned badges.
      */
-    public List<BadgeRecord> loadBadges (int memberId)
+    public List<EarnedBadgeRecord> loadEarnedBadges (int memberId)
         throws PersistenceException
     {
-        return findAll(BadgeRecord.class, new Where(BadgeRecord.MEMBER_ID_C, memberId));
+        return findAll(EarnedBadgeRecord.class, new Where(EarnedBadgeRecord.MEMBER_ID_C, memberId));
+    }
+
+    /**
+     * Loads all of the specified member's in-progress badges.
+     */
+    public List<InProgressBadgeRecord> loadInProgressBadges (int memberId)
+        throws PersistenceException
+    {
+        return findAll(InProgressBadgeRecord.class, new Where(InProgressBadgeRecord.MEMBER_ID_C,
+            memberId));
     }
 
     @Override
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
-        classes.add(BadgeRecord.class);
+        classes.add(EarnedBadgeRecord.class);
     }
 }

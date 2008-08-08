@@ -223,13 +223,6 @@ public class MemberObject extends MsoyBodyObject
     /** The set of badges that this player owns. */
     public transient BadgeSet badges;
 
-    /** Until Passport is live, we don't want to update the player's real StatSet. */
-    private transient StatSet _dummyStats = new StatSet();
-    public StatSet getStats ()
-    {
-        return (DeploymentConfig.devDeployment ? stats : _dummyStats);
-    }
-
     /**
      * Adds an EarnedBadge to the member's BadgeSet, and dispatches an event indicating that
      * a new badge was awarded.
@@ -239,7 +232,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public boolean awardBadge (EarnedBadge badge)
     {
-        boolean added = badges.addBadge(badge);
+        boolean added = badges.addOrUpdateBadge(badge);
         if (added) {
             this.postMessage(BADGE_AWARDED, badge);
             log.info("BadgeAwarded message sent", "badge", badge);
