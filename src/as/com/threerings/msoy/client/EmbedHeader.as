@@ -40,7 +40,7 @@ public class EmbedHeader extends Canvas
         _ctx = ctx;
         _ctx.getClient().addClientObserver(new ClientAdapter(null, didLogon));
 
-        var logo :FlexWrapper = new FlexWrapper(new LOGO() as DisplayObject);
+        var logo :FlexWrapper = new FlexWrapper(new LOGO() as DisplayObject, true);
         logo.addEventListener(MouseEvent.CLICK, handleLogoClick);
         logo.setStyle("right", 0);
         logo.buttonMode = true;

@@ -160,9 +160,7 @@ public class NotificationDisplay extends HBox
             }
         }
 
-        var wrapper :FlexWrapper = new FlexWrapper(text);
-        wrapper.width = text.width;
-        wrapper.height = text.height;
+        var wrapper :FlexWrapper = new FlexWrapper(text, true);
         if (!forHistory) {
             return wrapper;
         }
