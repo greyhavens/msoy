@@ -81,6 +81,8 @@ public class WorldControlBar extends ControlBar
     public function setNotificationDisplay (notificationDisplay :NotificationDisplay) :void
     {
         _notificationDisplay = notificationDisplay;
+        setupControls();
+        updateUI();
     }
 
     // from ControlBar
@@ -184,12 +186,17 @@ public class WorldControlBar extends ControlBar
     override protected function checkControls () :Boolean
     {
         var retVal :Boolean = super.checkControls();
-        // if our parent didn't recheck, we don't either
-        if (!retVal) {
-            return retVal;
+        // if our parent rechecked, we do a well
+        if (retVal) {
+            _isEditing = false;
         }
+        return retVal;
+    }
 
-        _isEditing = false;
+    // from ControlBar
+    override protected function setupControls() :void
+    {
+        super.setupControls();
 
         if (_notificationDisplay != null) {
             addGroupChild(_notificationDisplay, [ UI_STD, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);
@@ -198,14 +205,13 @@ public class WorldControlBar extends ControlBar
         if (_friendBtnBox != null) {
             addGroupChild(_friendBtnBox, [ UI_STD, UI_EDIT, UI_SIDEBAR ]);
         }
-        
-        return retVal;
     }
 
     // from ControlBar
     override protected function addControlButtons () :void
     {
         super.addControlButtons(); 
+
         addGroupChild(_roomeditBtn, [ UI_STD ]);
         addGroupChild(_hotZoneBtn, [ UI_STD, UI_GUEST ]);
         // TODO: snapshots are not functional; revisit

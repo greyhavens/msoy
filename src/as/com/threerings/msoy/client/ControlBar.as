@@ -243,34 +243,8 @@ public class ControlBar extends HBox
             return false;
         }
 
-        removeAllChildren();
-        clearAllGroups();
-
-//        addGroupChild(_leftSpacer, [ UI_SIDEBAR ]);
-
-        // add our standard control bar features
-        addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
-        _chatControl = null;
-        _chatControl = new ChatControl(
-            _ctx, Msgs.CHAT.get("b.send"), this.height, this.height - 4);
-        addGroupChild(_chatControl,
-            [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR /*,UI_VIEWER*/ ]);
-        addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER ]);
-        addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT, UI_VIEWER ]);
-        if (_ctx.getTokens().isAdmin()) {
-            addGroupChild(_fullBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER ]);
-        }
-
-        //addGroupChild(_partyBtn, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
-
         // add our various control buttons
-        addControlButtons();
-
-        _rightSpacer = new Canvas();
-        _rightSpacer.styleName = "controlBarSpacer";
-        _rightSpacer.height = this.height;
-        _rightSpacer.percentWidth = 100;
-        addGroupChild(_rightSpacer, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
+        setupControls();
 
         // and remember how things are set for now
         _isMember = isMember;
@@ -287,19 +261,44 @@ public class ControlBar extends HBox
 //        }
 //    }
 
+    protected function setupControls () :void
+    {
+        removeAllChildren();
+        clearAllGroups();
+
+//        addGroupChild(_leftSpacer, [ UI_SIDEBAR ]);
+
+        addControlButtons();
+
+        _rightSpacer = new Canvas();
+        _rightSpacer.styleName = "controlBarSpacer";
+        _rightSpacer.height = this.height;
+        _rightSpacer.percentWidth = 100;
+        addGroupChild(_rightSpacer, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
+    }
+
     protected function addControlButtons () :void
     {
-        // derived classes can add other buttons here
+        // add our standard control bar features
+        addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
+        _chatControl = null;
+        _chatControl = new ChatControl(
+            _ctx, Msgs.CHAT.get("b.send"), this.height, this.height - 4);
+        addGroupChild(_chatControl,
+            [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR /*,UI_VIEWER*/ ]);
+        addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER ]);
+        addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT, UI_VIEWER ]);
+        if (_ctx.getTokens().isAdmin()) {
+            addGroupChild(_fullBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER ]);
+        }
+
+        //addGroupChild(_partyBtn, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
     }
 
     protected function clearAllGroups () :void
     {
         for each (var key :String in ALL_UI_GROUPS) {
-            if (_groups[key] == null) {
-                _groups[key] = new Array();
-            } else {
-                _groups[key].length = 0;
-            }
+            _groups[key] = new Array();
         }
     }
 
