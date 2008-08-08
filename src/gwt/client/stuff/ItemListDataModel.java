@@ -9,7 +9,6 @@ import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import com.threerings.msoy.stuff.gwt.StuffService.ItemListResult;
 
-import client.shell.CShell;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
