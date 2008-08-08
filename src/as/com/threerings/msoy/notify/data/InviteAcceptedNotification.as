@@ -19,6 +19,12 @@ public class InviteAcceptedNotification extends Notification
             "m.invite_accepted", _inviteeEmail, _inviteeDisplayName, _inviteeId);
     }
 
+    // from Notification
+    override public function getCategory () :int
+    {
+        return PERSONAL;
+    }
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);

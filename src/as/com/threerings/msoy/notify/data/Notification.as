@@ -19,6 +19,13 @@ import mx.core.UIComponent;
  */
 public /* abstract */ class Notification extends SimpleStreamableObject
 {
+    // TODO: these are just placeholder categories. These will expand and users will
+    // be able to customize a filtering level.
+    public static const SYSTEM :int = 0;
+    public static const INVITE :int = 1;
+    public static const PERSONAL :int = 2;
+    public static const BUTTSCRATCHING :int = 2;
+
     /**
      * Get the chat message used to announce this notification, or null.
      * WTF are you doing with a null announcement?
@@ -27,6 +34,14 @@ public /* abstract */ class Notification extends SimpleStreamableObject
      * You can qualify the string if you want a different bundle.
      */
     public function getAnnouncement () :String
+    {
+        throw new Error("Abstract");
+    }
+    
+    /**
+     * Get the category of the notification.
+     */
+    public function getCategory () :int
     {
         throw new Error("Abstract");
     }

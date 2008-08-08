@@ -18,6 +18,12 @@ public class GameInviteNotification extends Notification
         return MessageBundle.tcompose("m.game_invite", _inviter, _inviterId, _game, _gameId);
     }
 
+    // from Notification
+    override public function getCategory () :int
+    {
+        return INVITE;
+    }
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);

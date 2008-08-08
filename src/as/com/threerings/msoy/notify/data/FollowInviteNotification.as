@@ -18,6 +18,12 @@ public class FollowInviteNotification extends Notification
         return MessageBundle.tcompose("m.follow_invite", _inviter, _inviterId);
     }
 
+    // from Notification
+    override public function getCategory () :int
+    {
+        return INVITE;
+    }
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);

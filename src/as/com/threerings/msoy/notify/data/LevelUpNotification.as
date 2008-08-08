@@ -18,6 +18,12 @@ public class LevelUpNotification extends Notification
         return MessageBundle.tcompose("m.level_up", _newLevel);
     }
 
+    // from Notification
+    override public function getCategory () :int
+    {
+        return PERSONAL;
+    }
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);

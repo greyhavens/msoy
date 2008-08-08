@@ -48,6 +48,7 @@ import com.threerings.msoy.notify.data.EntityCommentedNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.FollowInviteNotification;
 import com.threerings.msoy.notify.data.GameInviteNotification;
+import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.notify.data.InviteAcceptedNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.ReleaseNotesNotification;
@@ -84,7 +85,7 @@ public class NotificationDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.NEW_MAIL_COUNT) {
             if (event.getValue() > 0 && !event.getOldValue()) {
-                addNotification(Msgs.NOTIFY.get("m.new_mail"));
+                notifyNewMail();
             }
         }
     }
@@ -95,8 +96,10 @@ public class NotificationDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.FRIENDS) {
             var entry :FriendEntry = event.getEntry() as FriendEntry;
-            addNotification(
-                Msgs.NOTIFY.get("m.friend_added", entry.name, entry.name.getMemberId()));
+            addGenericNotification(
+                MessageBundle.tcompose(
+                "m.friend_added", entry.name, entry.name.getMemberId()),
+                Notification.PERSONAL);
         }
     }
 
@@ -115,7 +118,9 @@ public class NotificationDirector extends BasicDirector
                 if (entry.online) {
                     // if they weren't listed in the set, report them as newly coming online
                     if (!_membersLoggingOff.remove(entry)) {
-                        addNotification(Msgs.NOTIFY.get("m.friend_online", entry.name, memberId));
+                        addGenericNotification(
+                            MessageBundle.tcompose("m.friend_online", entry.name, memberId),
+                            Notification.BUTTSCRATCHING);
                     }
 
                 } else {
@@ -125,12 +130,16 @@ public class NotificationDirector extends BasicDirector
 
             // they may have changed something else we'd like to know about.
             if (MemberName.BY_DISPLAY_NAME(entry.name, oldEntry.name) != 0) {
-                addNotification(Msgs.NOTIFY.get(
-                    "m.friend_name_changed", entry.name, memberId, oldEntry.name));
+                addGenericNotification(
+                    MessageBundle.tcompose("m.friend_name_changed", entry.name, memberId,
+                        oldEntry.name),
+                    Notification.BUTTSCRATCHING);
                                         
             } else if (entry.status != oldEntry.status) {
-                addNotification(Msgs.NOTIFY.get(
-                    "m.friend_status_changed", entry.name, memberId, entry.status));
+                addGenericNotification(
+                    MessageBundle.tcompose("m.friend_status_changed", entry.name, memberId,
+                        entry.status),
+                    Notification.BUTTSCRATCHING);
             }
         }
     }
@@ -141,8 +150,10 @@ public class NotificationDirector extends BasicDirector
         var name :String = event.getName();
         if (name == MemberObject.FRIENDS) {
             var oldEntry :FriendEntry = event.getOldEntry() as FriendEntry;
-            addNotification(
-                Msgs.NOTIFY.get("m.friend_removed", oldEntry.name, oldEntry.name.getMemberId()));
+            addGenericNotification(
+                MessageBundle.tcompose("m.friend_removed", oldEntry.name,
+                    oldEntry.name.getMemberId()),
+                Notification.PERSONAL);
         }
     }
 
@@ -153,7 +164,7 @@ public class NotificationDirector extends BasicDirector
         if (name == MemberObject.NOTIFICATION) {
             var notification :Notification = event.getArgs()[0] as Notification;
             if (notification != null) {
-                addNotification(Msgs.NOTIFY.xlate(notification.getAnnouncement()));
+                addNotification(notification);
             }
         }
     }
@@ -182,13 +193,23 @@ public class NotificationDirector extends BasicDirector
     {
         var us :MemberObject = _wctx.getMemberObject();
         if (us.newMailCount > 0) {
-            addNotification(Msgs.NOTIFY.get("m.new_mail"));
+            notifyNewMail();
         }
 
         // and so forth..
     }
 
-    protected function addNotification (notification :String) :void
+    protected function notifyNewMail () :void
+    {
+        addGenericNotification("m.new_mail", Notification.PERSONAL);
+    }
+
+    protected function addGenericNotification (announcement :String, category :int) :void
+    {
+        addNotification(new GenericNotification(announcement, category));
+    }
+
+    protected function addNotification (notification :Notification) :void
     {
         // we can't just store the notifications in the array, because some notifications may be
         // identical (bob invites you to play captions twice within 15 minutes);

@@ -32,10 +32,14 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexWrapper;
 import com.threerings.util.Log;
 
-import com.threerings.msoy.chat.client.ChatOverlay;
+import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.utils.TextUtil;
 
+import com.threerings.msoy.chat.client.ChatOverlay;
+
 import com.threerings.msoy.world.client.WorldContext;
+
+import com.threerings.msoy.notify.data.Notification;
 
 public class NotificationDisplay extends HBox
 {
@@ -61,7 +65,7 @@ public class NotificationDisplay extends HBox
         hideNotificationHistory();
     }
 
-    public function displayNotification (notification :String) :void
+    public function displayNotification (notification :Notification) :void
     {
         _pendingNotifications.push(notification);
         checkPendingNotifications();
@@ -123,7 +127,8 @@ public class NotificationDisplay extends HBox
         }
         
         _currentlyAnimating = true;
-        var notification :UIComponent = createDisplay(_pendingNotifications.shift() as String);
+        var notification :UIComponent = createDisplay(
+            _pendingNotifications.shift() as Notification);
         notification.x = _canvas.width;
         _canvas.removeAllChildren();
         _canvas.addChild(notification);
@@ -136,11 +141,11 @@ public class NotificationDisplay extends HBox
             });
     }
 
-    protected function createDisplay (notification :String, 
-        forHistory :Boolean = false) :UIComponent
+    protected function createDisplay (
+        notification :Notification, forHistory :Boolean = false) :UIComponent
     {
         var format :TextFormat = ChatOverlay.createChatFormat();
-        format.color = 0x999999;
+        format.color = getColor(notification);
         var text :TextField = new TextField();
         text.multiline = forHistory;
         text.wordWrap = forHistory;
@@ -149,7 +154,8 @@ public class NotificationDisplay extends HBox
         text.selectable = true; 
         text.autoSize = TextFieldAutoSize.LEFT;
         text.antiAliasType = AntiAliasType.ADVANCED;
-        TextUtil.setText(text, TextUtil.parseLinks(notification, format, true, true), format);
+        const announcement :String = Msgs.NOTIFY.xlate(notification.getAnnouncement());
+        TextUtil.setText(text, TextUtil.parseLinks(announcement, format, true, true), format);
 
         if (forHistory) {
             text.width = 200;
@@ -231,13 +237,24 @@ public class NotificationDisplay extends HBox
         text.dispatchEvent(event.clone());
     }
 
-    protected function prepareNotifications (strings :Array) :Array
+    protected function prepareNotifications (notifs :Array) :Array
     {
         var notifications :Array = [];
-        for each (var notification :String in strings) {
+        for each (var notification :Notification in notifs) {
             notifications.push(createDisplay(notification, true));
         }
         return notifications;
+    }
+
+    protected function getColor (notification :Notification) :uint
+    {
+        switch (notification.getCategory()) {
+        case Notification.SYSTEM: return 0xFF0000;
+        case Notification.INVITE: return 0xFF6699;
+        case Notification.PERSONAL: return 0x00CC99;
+        case Notification.BUTTSCRATCHING: // fall through to default
+        default: return 0x999999;
+        }
     }
 
     protected static const log :Log = Log.getLog(NotificationDisplay);
