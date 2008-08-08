@@ -71,7 +71,6 @@ public class TableCreationPanel extends VBox
             _friendsGrid.setStyle("horizontalGap", 5);
             for each (var friend :FriendEntry in onlineFriends) {
                 var fcb :FriendCheckBox = new FriendCheckBox(friend);
-
                 fcb.check.addEventListener(Event.CHANGE, friendToggled);
                 _friendsGrid.addCell(fcb);
             }
