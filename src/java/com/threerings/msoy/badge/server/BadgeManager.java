@@ -110,7 +110,7 @@ public class BadgeManager
             protected String getFailureMessage () {
                 StringBuilder builder = new StringBuilder("Failed to award badges: ");
                 for (EarnedBadge badge : badges) {
-                    builder.append(badge.getType().name()).append(", ");
+                    builder.append(BadgeType.getType(badge.badgeCode).name()).append(", ");
                 }
                 return builder.toString();
             }
