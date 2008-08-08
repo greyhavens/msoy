@@ -58,7 +58,7 @@ public class EmbedHeader extends Canvas
         var signInObject :DisplayObject = new SIGN_IN() as DisplayObject;
         signInObject.x = signInObject.width / 2;
         signInObject.y = signInObject.height / 2 - 3;
-        _signIn = new FlexWrapper(signInObject);
+        _signIn = new FlexWrapper(signInObject, true);
         _signIn.addEventListener(MouseEvent.CLICK, doLogon);
         _signIn.setStyle("right", 150); // TODO: we need a real HGroup, or something
         addChild(_signIn);
@@ -66,7 +66,7 @@ public class EmbedHeader extends Canvas
         var joinNowObject :DisplayObject = new JOIN_NOW() as DisplayObject;
         joinNowObject.x = joinNowObject.width / 2;
         joinNowObject.y = joinNowObject.height / 2 - 3;
-        _joinNow = new FlexWrapper(joinNowObject);
+        _joinNow = new FlexWrapper(joinNowObject, true);
         Command.bind(_joinNow, MouseEvent.CLICK, WorldController.CREATE_ACCOUNT);
         _joinNow.setStyle("right", 240); // TODO: we need a real HGroup, or something
         addChild(_joinNow);
