@@ -18,6 +18,7 @@ import com.threerings.flex.FlexWrapper;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 
+import com.threerings.util.Command;
 import com.threerings.util.CommandEvent;
 
 import com.threerings.whirled.data.Scene;
@@ -41,7 +42,7 @@ public class EmbedHeader extends Canvas
 
         var logo :FlexWrapper = new FlexWrapper(new LOGO() as DisplayObject);
         logo.addEventListener(MouseEvent.CLICK, handleLogoClick);
-        logo.setStyle("left", 0);
+        logo.setStyle("right", 0);
         logo.buttonMode = true;
         logo.mouseEnabled = true;
         addChild(logo);
@@ -55,24 +56,25 @@ public class EmbedHeader extends Canvas
         addChild(title);
 
         var signInObject :DisplayObject = new SIGN_IN() as DisplayObject;
-        signInObject.x = -signInObject.width / 2;
+        signInObject.x = signInObject.width / 2;
         signInObject.y = signInObject.height / 2 - 3;
         _signIn = new FlexWrapper(signInObject);
-        _signIn.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
-            (new LogonPanel(ctx)).open();
-        });
-        _signIn.setStyle("right", 10);
+        _signIn.addEventListener(MouseEvent.CLICK, doLogon);
+        _signIn.setStyle("right", 150); // TODO: we need a real HGroup, or something
         addChild(_signIn);
 
         var joinNowObject :DisplayObject = new JOIN_NOW() as DisplayObject;
-        joinNowObject.x = -joinNowObject.width / 2;
+        joinNowObject.x = joinNowObject.width / 2;
         joinNowObject.y = joinNowObject.height / 2 - 3;
         _joinNow = new FlexWrapper(joinNowObject);
-        _joinNow.addEventListener(MouseEvent.CLICK, function (...ignored) :void {
-            _ctx.getWorldController().handleCreateAccount();
-        });
-        _joinNow.setStyle("right", 100);
+        Command.bind(_joinNow, MouseEvent.CLICK, WorldController.CREATE_ACCOUNT);
+        _joinNow.setStyle("right", 240); // TODO: we need a real HGroup, or something
         addChild(_joinNow);
+    }
+
+    protected function doLogon (event :MouseEvent) :void
+    {
+        (new LogonPanel(_ctx)).open();
     }
 
     protected function didLogon (event :ClientEvent) :void
