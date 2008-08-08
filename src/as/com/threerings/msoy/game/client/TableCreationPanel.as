@@ -72,7 +72,6 @@ public class TableCreationPanel extends VBox
             for each (var friend :FriendEntry in onlineFriends) {
                 var fcb :FriendCheckBox = new FriendCheckBox(friend);
 
-                // Have to use VALUE_COMMIT here instead of CHANGED, since fcb fakes clicks
                 fcb.check.addEventListener(Event.CHANGE, friendToggled);
                 _friendsGrid.addCell(fcb);
             }
@@ -159,10 +158,11 @@ public class TableCreationPanel extends VBox
         }
 
         var title :TextInput = new TextInput();
-        title.text = Msgs.GAME.get("l.default_table", _ctx.getPlayerObject().getVisibleName().toString());
+        title.text = Msgs.GAME.get("l.default_table", _ctx.getPlayerObject().getVisibleName());
         title.percentWidth = 100;
 
-        var tconfigger :TableConfigurator = new MsoyTableConfigurator(plparam, wparam, pvparam, title);
+        var tconfigger :TableConfigurator = new MsoyTableConfigurator(
+            plparam, wparam, pvparam, title);
         tconfigger.init(_ctx, gconf);
 
         var config :MsoyGameConfig = new MsoyGameConfig();
