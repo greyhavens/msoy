@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.badge.data;
 
+import java.util.Map;
 import java.util.zip.CRC32;
 
 import com.samskivert.util.HashIntMap;
@@ -69,6 +70,18 @@ public enum BadgeType
     },
 
     ;
+
+    /**
+     * A main method so that this class can be run on its own for Badge code discovery.
+     */
+    public static void main (String[] args)
+    {
+        // dump all of the known badge types and their code
+        System.out.println("  Code   -   Badge\n--------------------");
+        for (Map.Entry<Integer, BadgeType> entry : _codeToType.entrySet()) {
+            System.out.println(Integer.toHexString(entry.getKey()) + " - " + entry.getValue());
+        }
+    }
 
     /**
      * Maps a {@link BadgeType}'s code back to a {@link BadgeType} instance.
