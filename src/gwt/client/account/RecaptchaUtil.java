@@ -3,6 +3,7 @@
 
 package client.account;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
@@ -10,6 +11,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 
 /**
@@ -37,7 +39,7 @@ public class RecaptchaUtil
 
         Element e = DOM.getElementById("recaptcha");
         if (e == null) {
-            CAccount.log("Zoiks! Requested RECAPTCHA but have no 'recaptcha' <script> tag.");
+            CShell.log("Zoiks! Requested RECAPTCHA but have no 'recaptcha' <script> tag.");
             return;
         }
 
@@ -49,7 +51,7 @@ public class RecaptchaUtil
 
         // display a little "loading" indicator
         RootPanel.get(element).add(
-            MsoyUI.createLabel(CAccount.msgs.createCaptchaLoading(), "label"));
+            MsoyUI.createLabel(_msgs.createCaptchaLoading(), "label"));
 
         // start a timer that will initialize the captcha bits once our async JS is loaded
         initCaptcha(element);
@@ -100,4 +102,6 @@ public class RecaptchaUtil
         }
         return false;
     }-*/;
+
+    protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
 }

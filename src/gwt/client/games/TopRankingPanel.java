@@ -15,6 +15,7 @@ import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 import com.threerings.msoy.game.gwt.PlayerRating;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -41,7 +42,7 @@ public class TopRankingPanel extends VerticalPanel
         }
 
         // it's possible to have this tab shown and be a guest; so we avoid freakoutage
-        if (_onlyMyFriends && CGames.isGuest()) {
+        if (_onlyMyFriends && CShell.isGuest()) {
             addNote(_msgs.trpLogin());
             return;
         }
@@ -52,8 +53,8 @@ public class TopRankingPanel extends VerticalPanel
                 gotRankings(topRanked);
             }
             public void onFailure (Throwable caught) {
-                CGames.log("getTopRanked failed", caught);
-                addNote(CGames.serverError(caught));
+                CShell.log("getTopRanked failed", caught);
+                addNote(CShell.serverError(caught));
             }
         });
         _gameId = 0; // note that we've asked for our data
@@ -127,7 +128,7 @@ public class TopRankingPanel extends VerticalPanel
             _grid.setHTML(row, col+4, "&nbsp;", 1, "Cell");
             _grid.getFlexCellFormatter().addStyleName(row, col+4, "Gap");
 
-            if (rating.name.getMemberId() == CGames.getMemberId()) {
+            if (rating.name.getMemberId() == CShell.getMemberId()) {
                 for (int cc = 0; cc < COLUMNS; cc++) {
                     _grid.getFlexCellFormatter().addStyleName(row, col+cc, "Self");
                 }

@@ -37,6 +37,7 @@ import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.RegisterInfo;
 import com.threerings.msoy.web.data.SessionData;
 
+import client.shell.CShell;
 import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
@@ -57,59 +58,52 @@ public class CreateAccountPanel extends FlowPanel
 
         FlowPanel loginLink = MsoyUI.createFlowPanel("Login");
         add(loginLink);
-        loginLink.add(new Label(CAccount.msgs.createAlreadyMember()));
+        loginLink.add(new Label(_msgs.createAlreadyMember()));
         PushButton loginButton = MsoyUI.createButton(
-            MsoyUI.SHORT_THIN, CAccount.msgs.createLoginLink(),
+            MsoyUI.SHORT_THIN, _msgs.createLoginLink(),
             Link.createListener(Pages.ACCOUNT, "login"));
         loginButton.addClickListener(
             MsoyUI.createTrackingListener("signupLoginButtonClicked", null));
         loginLink.add(loginButton);
 
-        add(MsoyUI.createLabel(CAccount.msgs.createIntro(), "Intro"));
-        add(MsoyUI.createLabel(CAccount.msgs.createCoins(), "Coins"));
+        add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
+        add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));
 
-        add(new LabeledBox(
-            CAccount.msgs.createEmail(), _email = new TextBox(), CAccount.msgs.createEmailTip()));
+        add(new LabeledBox(_msgs.createEmail(), _email = new TextBox(), _msgs.createEmailTip()));
         _email.addKeyboardListener(_onType);
-        Invitation invite = CAccount.frame.getActiveInvitation();
+        Invitation invite = CShell.frame.getActiveInvitation();
         if (invite != null && invite.inviteeEmail.matches(MsoyUI.EMAIL_REGEX)) {
             // provide the invitation email as the default
             _email.setText(invite.inviteeEmail);
         }
 
-        add(new LabeledBox(
-            CAccount.msgs.createRealName(), _rname = new TextBox(),
-            CAccount.msgs.createRealNameTip()));
+        add(new LabeledBox(_msgs.createRealName(), _rname = new TextBox(),
+                           _msgs.createRealNameTip()));
         _rname.addKeyboardListener(_onType);
 
-        add(new LabeledBox(
-            CAccount.msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
-            CAccount.msgs.createDateOfBirthTip()));
+        add(new LabeledBox(_msgs.createDateOfBirth(), _dateOfBirth = new DateFields(),
+                           _msgs.createDateOfBirthTip()));
 
-        add(new LabeledBox(
-            CAccount.msgs.createPassword(), _password = new PasswordTextBox(),
-            CAccount.msgs.createPasswordTip()));
+        add(new LabeledBox(_msgs.createPassword(), _password = new PasswordTextBox(),
+                           _msgs.createPasswordTip()));
         _password.addKeyboardListener(_onType);
 
-        add(new LabeledBox(
-            CAccount.msgs.createConfirm(), _confirm = new PasswordTextBox(),
-            CAccount.msgs.createConfirmTip()));
+        add(new LabeledBox(_msgs.createConfirm(), _confirm = new PasswordTextBox(),
+                           _msgs.createConfirmTip()));
         _confirm.addKeyboardListener(_onType);
 
         _name = MsoyUI.createTextBox("", MemberName.MAX_DISPLAY_NAME_LENGTH, -1);
         _name.addKeyboardListener(_onType);
-        add(new LabeledBox(
-            CAccount.msgs.createDisplayName(), _name, CAccount.msgs.createDisplayNameTip()));
+        add(new LabeledBox(_msgs.createDisplayName(), _name, _msgs.createDisplayNameTip()));
 
         // optionally add the recaptcha component
         if (RecaptchaUtil.isEnabled()) {
-            add(new LabeledBox(CAccount.msgs.createCaptcha(),
+            add(new LabeledBox(_msgs.createCaptcha(),
                                new HTML("<div id=\"recaptchaDiv\"></div>"), null));
             add(new HTML("<div id=\"recaptchaDiv\"></div>"));
         }
 
-        add(new LabeledBox(CAccount.msgs.createTOS(),
-                           _tosBox = new CheckBox(CAccount.msgs.createTOSAgree()), null));
+        add(new LabeledBox(_msgs.createTOS(), _tosBox = new CheckBox(_msgs.createTOSAgree()), null));
 
         HorizontalPanel controls = new HorizontalPanel();
         controls.setWidth("500px");
@@ -121,7 +115,7 @@ public class CreateAccountPanel extends FlowPanel
                 createAccount();
             }
         };
-        controls.add(MsoyUI.createButton(MsoyUI.LONG_THICK, CAccount.msgs.createGo(), createGo));
+        controls.add(MsoyUI.createButton(MsoyUI.LONG_THICK, _msgs.createGo(), createGo));
         add(controls);
     }
 
@@ -142,19 +136,19 @@ public class CreateAccountPanel extends FlowPanel
         String status;
         FocusWidget toFocus = null;
         if (email.length() == 0) {
-            status = CAccount.msgs.createMissingEmail();
+            status = _msgs.createMissingEmail();
             toFocus = _email;
         } else if (password.length() == 0) {
-            status = CAccount.msgs.createMissingPassword();
+            status = _msgs.createMissingPassword();
             toFocus = _password;
         } else if (confirm.length() == 0) {
-            status = CAccount.msgs.createMissingConfirm();
+            status = _msgs.createMissingConfirm();
             toFocus = _confirm;
         } else if (!password.equals(confirm)) {
-            status = CAccount.msgs.createPasswordMismatch();
+            status = _msgs.createPasswordMismatch();
             toFocus = _confirm;
         } else if (_dateOfBirth.getDate() == null) {
-            status = CAccount.msgs.createMissingDoB();
+            status = _msgs.createMissingDoB();
             // this is not a FocusWidget so we have to handle it specially
             _dateOfBirth.setFocus(true);
         } else if (!MemberName.isValidDisplayName(name)) {
@@ -165,10 +159,10 @@ public class CreateAccountPanel extends FlowPanel
             status = _cmsgs.nonSupportNameInvalid();
             toFocus = _name;
         } else if (!_tosBox.isChecked()) {
-            status = CAccount.msgs.createMustAgreeTOS();
+            status = _msgs.createMustAgreeTOS();
         } else if (RecaptchaUtil.isEnabled() && (RecaptchaUtil.getResponse() == null ||
                                                  RecaptchaUtil.getResponse().length() == 0)) {
-            status = CAccount.msgs.createMustCaptcha();
+            status = _msgs.createMustCaptcha();
             RecaptchaUtil.focus();
         } else {
             return true;
@@ -199,7 +193,7 @@ public class CreateAccountPanel extends FlowPanel
 
         Date dob = DateUtil.toDate(_dateOfBirth.getDate());
         if (DateUtil.newDate(thirteenYearsAgo).compareTo(dob) < 0) {
-            setStatus(CAccount.msgs.createNotThirteen());
+            setStatus(_msgs.createNotThirteen());
             return;
         }
 
@@ -212,19 +206,19 @@ public class CreateAccountPanel extends FlowPanel
         info.info = new AccountInfo();
         info.info.realName = _rname.getText().trim();
         info.expireDays = 1; // TODO: unmagick?
-        Invitation invite = CAccount.frame.getActiveInvitation();
+        Invitation invite = CShell.frame.getActiveInvitation();
         info.inviteId = (invite == null) ? null : invite.inviteId;
-        info.guestId = CAccount.isGuest() ? CAccount.getMemberId() : 0;
+        info.guestId = CShell.isGuest() ? CShell.getMemberId() : 0;
         info.referral = TrackingCookie.get();
         info.captchaChallenge = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getChallenge() : null;
         info.captchaResponse = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getResponse() : null;
 
-        setStatus(CAccount.msgs.creatingAccount());
+        setStatus(_msgs.creatingAccount());
         _usersvc.register(DeploymentConfig.version, info, new AsyncCallback<SessionData>() {
             public void onSuccess (SessionData result) {
                 result.justCreated = true;
                 // let the top-level frame know that we logged on (which will trigger a redirect)
-                CAccount.frame.dispatchDidLogon(result);
+                CShell.frame.dispatchDidLogon(result);
             }
             public void onFailure (Throwable caught) {
                 if (RecaptchaUtil.isEnabled()) {
@@ -233,7 +227,7 @@ public class CreateAccountPanel extends FlowPanel
                         RecaptchaUtil.focus();
                     }
                 }
-                setStatus(CAccount.serverError(caught));
+                setStatus(CShell.serverError(caught));
             }
         });
     }
@@ -308,6 +302,7 @@ public class CreateAccountPanel extends FlowPanel
     protected Label _status;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

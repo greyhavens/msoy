@@ -21,6 +21,7 @@ import com.threerings.msoy.item.data.all.TrophySource;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
@@ -39,7 +40,7 @@ public class TrophyComparePanel extends SmartTable
         super("trophyCompare", 0, 10);
         setText(0, 0, _msgs.compareLoading());
 
-        int[] memberIds = new int[] { targetId, CGames.getMemberId() };
+        int[] memberIds = new int[] { targetId, CShell.getMemberId() };
         _gamesvc.compareTrophies(gameId, memberIds, new MsoyCallback<GameService.CompareResult>() {
             public void onSuccess (GameService.CompareResult result) {
                 init(gameId, result);

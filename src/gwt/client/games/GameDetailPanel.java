@@ -23,6 +23,7 @@ import com.threerings.msoy.item.data.all.Game;
 
 import client.comment.CommentsPanel;
 import client.item.ItemRating;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.StyledTabPanel;
 import client.ui.ThumbBox;
@@ -62,7 +63,7 @@ public class GameDetailPanel extends SmartTable
         // Note: the gameId may be the negative original gameId, but GameDetail's id is never
         // negative to match
         _gameId = gameId;
-        CGames.frame.setTitle(detail.getGame().name);
+        CShell.frame.setTitle(detail.getGame().name);
 
         Game game = detail.getGame();
         VerticalPanel shot = new VerticalPanel();
@@ -106,7 +107,7 @@ public class GameDetailPanel extends SmartTable
         addTab(GameDetails.TROPHIES, _msgs.tabTrophies(), new GameTrophyPanel(gameId));
 
         // add top rankings tabs
-        if (!CGames.isGuest()) {
+        if (!CShell.isGuest()) {
             addTab(GameDetails.MYRANKINGS, _msgs.tabMyRankings(),
                    new TopRankingPanel(detail.gameId, true));
         }
@@ -114,8 +115,8 @@ public class GameDetailPanel extends SmartTable
                new TopRankingPanel(detail.gameId, false));
 
         // if we're the owner of the game or an admin, add the metrics tab
-        if ((detail.sourceItem != null && detail.sourceItem.ownerId == CGames.getMemberId()) ||
-            CGames.isAdmin()) {
+        if ((detail.sourceItem != null && detail.sourceItem.ownerId == CShell.getMemberId()) ||
+            CShell.isAdmin()) {
             addTab(GameDetails.METRICS, _msgs.tabMetrics(), new GameMetricsPanel(detail));
             addTab(GameDetails.LOGS, _msgs.tabLogs(), new GameLogsPanel(gameId));
         }

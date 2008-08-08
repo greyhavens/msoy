@@ -17,6 +17,7 @@ import com.threerings.msoy.game.gwt.GameLogs;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.ServiceUtil;
 
@@ -45,8 +46,8 @@ public class GameLogsPanel extends VerticalPanel
                 gotLogs(logs);
             }
             public void onFailure (Throwable caught) {
-                CGames.log("loadGameLogs failed", caught);
-                add(MsoyUI.createLabel(CGames.serverError(caught), "Header"));
+                CShell.log("loadGameLogs failed", caught);
+                add(MsoyUI.createLabel(CShell.serverError(caught), "Header"));
             }
         });
     }

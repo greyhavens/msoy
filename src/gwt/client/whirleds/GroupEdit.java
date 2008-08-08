@@ -29,6 +29,7 @@ import com.threerings.msoy.web.data.TagHistory;
 
 import client.item.TagDetailPanel;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.DynamicMessages;
 import client.shell.Pages;
 import client.shell.ShellMessages;
@@ -61,8 +62,7 @@ public class GroupEdit extends FlexTable
         setCellSpacing(5);
         setCellPadding(0);
 
-        CWhirleds.frame.setTitle(
-            _group.groupId == 0 ? _msgs.editCreateTitle() : group.name);
+        CShell.frame.setTitle(_group.groupId == 0 ? _msgs.editCreateTitle() : group.name);
 
         // set up our editor contents
         _name = MsoyUI.createTextBox(_group.name, GroupName.LENGTH_MAX, 20);

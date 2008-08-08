@@ -21,6 +21,7 @@ import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 
 import client.shell.Args;
+import client.shell.CShell;
 
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
@@ -41,8 +42,8 @@ public class ResetPasswordPanel extends FlexTable
         getFlexCellFormatter().setStyleName(row, 0, "Intro");
 
         // make sure we're not currently logged in
-        if (!CAccount.isGuest()) {
-            setText(row, 0, CAccount.msgs.resetLogout());
+        if (!CShell.isGuest()) {
+            setText(row, 0, _msgs.resetLogout());
             return;
         }
 
@@ -50,15 +51,15 @@ public class ResetPasswordPanel extends FlexTable
         _memberId = args.get(1, 0);
         _code = args.get(2, "");
         if (_memberId == 0 || _code.equals("")) {
-            setText(row, 0, CAccount.msgs.resetInvalid());
+            setText(row, 0, _msgs.resetInvalid());
             return;
         }
 
         // all systems go!
-        setText(row++, 0, CAccount.msgs.resetIntro());
+        setText(row++, 0, _msgs.resetIntro());
 
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CAccount.msgs.resetPassword());
+        setText(row, 0, _msgs.resetPassword());
         setWidget(row++, 1, _password = new PasswordTextBox());
         _password.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
@@ -74,7 +75,7 @@ public class ResetPasswordPanel extends FlexTable
         };
 
         getFlexCellFormatter().setStyleName(row, 0, "rightLabel");
-        setText(row, 0, CAccount.msgs.resetConfirm());
+        setText(row, 0, _msgs.resetConfirm());
         setWidget(row++, 1, _confirm = new PasswordTextBox());
         _confirm.addKeyboardListener(new EnterClickAdapter(submit));
         _confirm.addKeyboardListener(_validator);
@@ -82,11 +83,11 @@ public class ResetPasswordPanel extends FlexTable
         getFlexCellFormatter().setColSpan(row, 0, 2);
         getFlexCellFormatter().setStyleName(row, 0, "Status");
         setWidget(row++, 0, _status = new Label(""));
-        _status.setText(CAccount.msgs.resetMissingPassword());
+        _status.setText(_msgs.resetMissingPassword());
 
         getFlexCellFormatter().setColSpan(row, 0, 2);
         getFlexCellFormatter().setHorizontalAlignment(row, 0, HasAlignment.ALIGN_RIGHT);
-        setWidget(row++, 0, _submit = new Button(CAccount.msgs.resetSubmit(), submit));
+        setWidget(row++, 0, _submit = new Button(_msgs.resetSubmit(), submit));
     }
 
     protected void validateData ()
@@ -94,13 +95,13 @@ public class ResetPasswordPanel extends FlexTable
         boolean valid = false;
         String password = _password.getText().trim(), confirm = _confirm.getText().trim();
         if (password.length() == 0) {
-            _status.setText(CAccount.msgs.resetMissingPassword());
+            _status.setText(_msgs.resetMissingPassword());
         } else if (confirm.length() == 0) {
-            _status.setText(CAccount.msgs.resetMissingConfirm());
+            _status.setText(_msgs.resetMissingConfirm());
         } else if (!password.equals(confirm)) {
-            _status.setText(CAccount.msgs.resetPasswordMismatch());
+            _status.setText(_msgs.resetPasswordMismatch());
         } else {
-            _status.setText(CAccount.msgs.resetReady());
+            _status.setText(_msgs.resetReady());
             valid = true;
         }
         _submit.setEnabled(valid);
@@ -108,13 +109,13 @@ public class ResetPasswordPanel extends FlexTable
 
     protected void sendResetRequest ()
     {
-        String password = CAccount.frame.md5hex(_password.getText().trim());
+        String password = CShell.frame.md5hex(_password.getText().trim());
         _usersvc.resetPassword(_memberId, _code, password, new MsoyCallback<Boolean>() {
             public void onSuccess (Boolean result) {
                 if (result) {
-                    MsoyUI.info(CAccount.msgs.resetReset());
+                    MsoyUI.info(_msgs.resetReset());
                 } else {
-                    MsoyUI.error(CAccount.msgs.resetInvalid());
+                    MsoyUI.error(_msgs.resetInvalid());
                 }
             }
         });
@@ -137,6 +138,7 @@ public class ResetPasswordPanel extends FlexTable
     protected Button _submit;
     protected Label _status;
 
+    protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
 }

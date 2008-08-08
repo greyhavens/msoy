@@ -23,6 +23,7 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MemberStatusLabel;
 import client.ui.MsoyUI;
@@ -134,7 +135,7 @@ public class WhirledMembersPanel extends PagedGrid<GroupMemberCard>
 
             // if we're not a manager above this member in rank, or we're not support+ don't add
             // the edit controls
-            if (!CWhirleds.isSupport() &&
+            if (!CShell.isSupport() &&
                 (_detail.myRank != GroupMembership.RANK_MANAGER || !amSenior(card))) {
                 return;
             }

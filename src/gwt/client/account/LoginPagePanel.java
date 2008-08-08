@@ -3,8 +3,10 @@
 
 package client.account;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PushButton;
+
 import client.shell.LogonPanel;
 import client.ui.MsoyUI;
 
@@ -17,9 +19,11 @@ public class LoginPagePanel extends FlowPanel
     {
         setStyleName("loginPagePanel");
         PushButton loginButton = MsoyUI.createButton(
-            MsoyUI.MEDIUM_THIN, CAccount.msgs.loginPageSubmit(), null);
+            MsoyUI.MEDIUM_THIN, _msgs.loginPageSubmit(), null);
         loginButton.addStyleName("LoginButton");
         add(new LogonPanel(true, loginButton));
         add(loginButton);
     }
+
+    protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
 }

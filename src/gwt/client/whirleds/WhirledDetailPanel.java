@@ -32,6 +32,7 @@ import com.threerings.msoy.group.gwt.GroupServiceAsync;
 
 import client.item.ShopUtil;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
@@ -105,7 +106,7 @@ public class WhirledDetailPanel extends FlowPanel
             add(MsoyUI.createLabel("That Whirled could not be found.", "infoLabel"));
             return;
         }
-        CWhirleds.frame.setTitle(_detail.group.name);
+        CShell.frame.setTitle(_detail.group.name);
         _group = _detail.group;
         _extras = _detail.extras;
 
@@ -172,7 +173,7 @@ public class WhirledDetailPanel extends FlowPanel
 
         // join this whirled
         if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
-            if (Group.canJoin(_group.policy) && !CWhirleds.isGuest()) {
+            if (Group.canJoin(_group.policy) && !CShell.isGuest()) {
                 actions.add(MsoyUI.createActionLabel(
                                _msgs.detailJoin(), new PromptPopup(
                                    _msgs.detailJoinPrompt(), joinGroup()).setContext(
@@ -184,7 +185,7 @@ public class WhirledDetailPanel extends FlowPanel
             actions.add(MsoyUI.createActionLabel(
                            _msgs.detailLeave(), new PromptPopup(
                                _msgs.detailLeavePrompt(_group.name),
-                               removeMember(CWhirleds.getMemberId()))));
+                               removeMember(CShell.getMemberId()))));
         }
         if (Group.canInvite(detail.group.policy, detail.myRank)) {
             String args = Args.compose("w", "g", ""+_detail.group.groupId);

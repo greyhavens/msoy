@@ -14,6 +14,7 @@ import client.msgs.IssueModels;
 import client.msgs.IssuePanel;
 import client.msgs.ThreadPanel;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -61,13 +62,13 @@ public class WhirledsPage extends Page
             tpanel.showThread(_fmodels, args.get(1, 0), args.get(2, 0), args.get(3, 0));
             setContent(_msgs.forumsTitle(), tpanel);
 
-        } else if (action.equals("owned") && CWhirleds.isSupport()) {
+        } else if (action.equals("owned") && CShell.isSupport()) {
             int type = args.get(1, Issue.TYPE_BUG);
             IssuePanel issues = new IssuePanel(_imodels);
             issues.displayOwnedIssues(type, Issue.STATE_OPEN, false);
             setContent(_msgs.myIssuesTitle(), issues);
 
-        } else if (action.equals("assign") && CWhirleds.isSupport()) {
+        } else if (action.equals("assign") && CShell.isSupport()) {
             int messageId = args.get(1, 0), page = args.get(2, 0);
             IssuePanel issues = new IssuePanel(_imodels);
             issues.displayAssignIssues(Issue.TYPE_BUG, messageId, page);
@@ -82,7 +83,7 @@ public class WhirledsPage extends Page
         } else if (action.equals("a")) {
             int messageId = args.get(1, 0), page = args.get(2, 0), issueId = args.get(3, 0);
             IssuePanel issues = new IssuePanel(_imodels);
-            if (CWhirleds.isSupport()) {
+            if (CShell.isSupport()) {
                 issues.displayIssue(issueId, 0, messageId, page);
             } else {
                 issues.displayIssue(issueId, 0);

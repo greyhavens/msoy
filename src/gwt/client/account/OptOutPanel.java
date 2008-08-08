@@ -38,25 +38,25 @@ public class OptOutPanel extends FlexTable
     {
         int row = 0;
         getFlexCellFormatter().setStyleName(row, 0, "Header");
-        setText(row++, 0, CAccount.msgs.optOutIntro(invite.inviteeEmail));
+        setText(row++, 0, _msgs.optOutIntro(invite.inviteeEmail));
 
         getFlexCellFormatter().setColSpan(row, 0, 2);
         getFlexCellFormatter().setStyleName(row, 0, "Body");
-        setText(row++, 0, CAccount.msgs.optOutBody1());
+        setText(row++, 0, _msgs.optOutBody1());
 
         HorizontalPanel footer = new HorizontalPanel();
-        footer.add(new Button(CAccount.msgs.optOutAccept(), new ClickListener() {
+        footer.add(new Button(_msgs.optOutAccept(), new ClickListener() {
             public void onClick (Widget widget) {
                 _membersvc.optOut(invite.inviteId, new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         clear();
-                        setText(1, 0, CAccount.msgs.optOutSuccessful(invite.inviteeEmail));
+                        setText(1, 0, _msgs.optOutSuccessful(invite.inviteeEmail));
                     }
                 });
             }
         }));
         footer.add(WidgetUtil.makeShim(10, 10));
-        footer.add(new Button(CAccount.msgs.optOutReject(), new ClickListener() {
+        footer.add(new Button(_msgs.optOutReject(), new ClickListener() {
             public void onClick (Widget widget) {
                 Link.go(Pages.ME, "");
             }
@@ -66,6 +66,7 @@ public class OptOutPanel extends FlexTable
         setWidget(row++, 0, footer);
     }
 
+    protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

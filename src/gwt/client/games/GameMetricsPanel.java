@@ -21,6 +21,7 @@ import com.threerings.msoy.game.gwt.GameMetrics;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.ClickCallback;
@@ -51,8 +52,8 @@ public class GameMetricsPanel extends VerticalPanel
                 gotMetrics(metrics);
             }
             public void onFailure (Throwable caught) {
-                CGames.log("loadGameMetrics failed", caught);
-                add(MsoyUI.createLabel(CGames.serverError(caught), "Header"));
+                CShell.log("loadGameMetrics failed", caught);
+                add(MsoyUI.createLabel(CShell.serverError(caught), "Header"));
             }
         });
     }

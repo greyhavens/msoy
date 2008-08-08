@@ -23,6 +23,7 @@ import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
+import client.shell.CShell;
 import client.util.MediaUtil;
 import client.util.ServiceUtil;
 
@@ -54,8 +55,8 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
                 setModel(new SimpleDataModel<Trophy>(result), 0);
             }
             public void onFailure (Throwable caught) {
-                CGames.log("loadGameTrophies failed", caught);
-                add(new Label(CGames.serverError(caught)));
+                CShell.log("loadGameTrophies failed", caught);
+                add(new Label(CShell.serverError(caught)));
             }
         });
         _gameId = 0; // note that we've asked for our data

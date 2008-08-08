@@ -18,6 +18,7 @@ import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.item.RichTextToolbar;
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -56,7 +57,7 @@ public class InstructionsPanel extends VerticalPanel
         }
 
         // if this is the owner of the game, add an edit button below the instructions
-        if (_detail.sourceItem != null && _detail.sourceItem.ownerId == CGames.getMemberId()) {
+        if (_detail.sourceItem != null && _detail.sourceItem.ownerId == CShell.getMemberId()) {
             setHorizontalAlignment(ALIGN_RIGHT);
             add(new Button("Edit", new ClickListener() {
                 public void onClick (Widget source) {
