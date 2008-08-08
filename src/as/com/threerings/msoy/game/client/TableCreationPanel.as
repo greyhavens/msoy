@@ -8,8 +8,13 @@ import mx.core.ScrollPolicy;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
+
+import mx.controls.CheckBox;
 import mx.controls.Label;
 import mx.controls.TextInput;
+
+import flash.events.Event;
+import mx.events.FlexEvent;
 
 import com.threerings.io.TypedArray;
 import com.threerings.util.CommandEvent;
@@ -56,13 +61,47 @@ public class TableCreationPanel extends VBox
         if (onlineFriends.length ==  0) {
             _friendsBox.addChild(FlexUtil.createLabel(Msgs.GAME.get("l.invite_no_friends")));
         } else {
+            // Only show Invite All if you have more than one friend to invite
+            if (onlineFriends.length > 1) {
+                _inviteAll.selected = false;
+                _friendsBox.addChild(_inviteAll);
+            }
+
             var columns :int = Math.min(FRIENDS_GRID_COLUMNS, onlineFriends.length);
             _friendsGrid = new SimpleGrid(columns);
             _friendsGrid.setStyle("horizontalGap", 5);
             for each (var friend :FriendEntry in onlineFriends) {
-                _friendsGrid.addCell(new FriendCheckBox(friend));
+                var fcb :FriendCheckBox = new FriendCheckBox(friend);
+
+                // Have to use VALUE_COMMIT here instead of CHANGED, since fcb fakes clicks
+                fcb.check.addEventListener(FlexEvent.VALUE_COMMIT, friendToggled);
+                _friendsGrid.addCell(fcb);
             }
             _friendsBox.addChild(_friendsGrid);
+        }
+    }
+
+    protected function friendToggled (event :FlexEvent) :void
+    {
+        // _inviteAll.selected = every friend box selected?
+        _inviteAll.selected = true;
+        for (var i :int = 0; i < _friendsGrid.numChildren; ++i) {
+            if ( ! (_friendsGrid.getCellAt(i) as FriendCheckBox).check.selected) {
+                _inviteAll.selected = false;
+                return;
+            }
+        }
+    }
+
+    protected function inviteAllToggled (event :Event) :void
+    {
+        for (var i :int = 0; i < _friendsGrid.numChildren; ++i) {
+            var fcb :FriendCheckBox = _friendsGrid.getCellAt(i) as FriendCheckBox;
+
+            // *grumble grumble*
+            fcb.check.removeEventListener(FlexEvent.VALUE_COMMIT, friendToggled);
+            fcb.check.selected = _inviteAll.selected;
+            fcb.check.addEventListener(FlexEvent.VALUE_COMMIT, friendToggled);
         }
     }
 
@@ -145,6 +184,11 @@ public class TableCreationPanel extends VBox
         _friendsBox.setStyle("verticalGap", 0);
         row.addChild(wrapBox(Msgs.GAME.get("l.invite_friends"), _friendsBox, true));
 
+        _inviteAll = new CheckBox();
+        _inviteAll.label = Msgs.GAME.get("l.invite_all");
+        _inviteAll.styleName = "lobbyLabel";
+        _inviteAll.addEventListener(Event.CHANGE, inviteAllToggled);
+
         var box :HBox = new HBox();
         box.styleName = "configBox";
         box.percentWidth = 100;
@@ -187,7 +231,7 @@ public class TableCreationPanel extends VBox
         if (_friendsGrid != null) {
             for (var ii :int = 0; ii < _friendsGrid.cellCount; ii++) {
                 var fcb :FriendCheckBox = (_friendsGrid.getCellAt(ii) as FriendCheckBox);
-                if (fcb.checked) {
+                if (fcb.check.selected) {
                     invIds.push(fcb.friend.name.getMemberId());
                 }
             }
@@ -209,6 +253,7 @@ public class TableCreationPanel extends VBox
     protected var _configBox :Container;
     protected var _friendsBox :VBox;
     protected var _friendsGrid :SimpleGrid;
+    protected var _inviteAll :CheckBox;
 
     protected static const FRIENDS_GRID_COLUMNS :int = 6;
 }
@@ -230,6 +275,7 @@ import com.threerings.msoy.ui.MediaWrapper;
 class FriendCheckBox extends VBox
 {
     public var friend :FriendEntry;
+    public var check :CheckBox;
 
     public function FriendCheckBox (friend :FriendEntry)
     {
@@ -240,24 +286,17 @@ class FriendCheckBox extends VBox
         var name :Label = FlexUtil.createLabel(friend.name.toString());
         name.maxWidth = 2*MediaDesc.THUMBNAIL_WIDTH/3;
         addChild(name);
-        addChild(_check = new CheckBox());
-        _check.width = 14; // don't ask; go punch someone at adobe instead
+        addChild(check = new CheckBox());
+        check.width = 14; // don't ask; go punch someone at adobe instead
 
         addEventListener(MouseEvent.CLICK, handleClick);
-    }
-
-    public function get checked () :Boolean
-    {
-        return _check.selected;
     }
 
     // allow all kinds of sloppy clicking to toggle the checkbox
     protected function handleClick (event :MouseEvent) :void
     {
-        if (event.target != _check) { // because the checkbox will have already handled it
-            _check.selected = !_check.selected;
+        if (event.target != check) { // because the checkbox will have already handled it
+            check.selected = !check.selected;
         }
     }
-
-    protected var _check :CheckBox;
 }
