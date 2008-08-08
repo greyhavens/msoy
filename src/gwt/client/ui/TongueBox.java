@@ -68,6 +68,7 @@ public class TongueBox extends SmartTable
         if (isHTML) {
             setHTML(1, 0, content);
             getFlexCellFormatter().setStyleName(1, 0, "Content");
+            SafeHTML.fixAnchors(getBodyElement()); // we can't call getCellElement(), yay!
         } else {
             setText(1, 0, content, 1, "Content");
         }

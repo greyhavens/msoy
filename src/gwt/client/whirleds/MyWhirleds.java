@@ -14,7 +14,6 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -203,11 +202,8 @@ public class MyWhirleds extends AbsolutePanel
                     time.addStyleName("Time");
                     date.add(time);
 
-                }
-                else {
-                    HTML noThreads = new HTML("No discussions");
-                    noThreads.setStyleName("NoThreads");
-                    add(noThreads);
+                } else {
+                    add(MsoyUI.createHTML("No discussions.", "NoThreads"));
                 }
 
                 // #threads and #posts link to discussions

@@ -5,8 +5,8 @@ package client.person;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +17,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -34,7 +33,7 @@ import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicMessages;
 import client.shell.Pages;
-
+import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.DateUtil;
 import client.util.Link;
@@ -536,7 +535,7 @@ public class FeedPanel extends TongueBox
             addStyleName("FeedBasic");
             setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
             setHorizontalAlignment(HorizontalPanel.ALIGN_LEFT);
-            add(new HTML(html));
+            add(MsoyUI.createHTML(html, null));
         }
     }
 
@@ -553,7 +552,7 @@ public class FeedPanel extends TongueBox
             setWidget(0, 0, image);
             getFlexCellFormatter().setStyleName(0, 0, "IconContainer");
 
-            setWidget(0, 1, new HTML(html));
+            setWidget(0, 1, MsoyUI.createHTML(html, null));
             getFlexCellFormatter().addStyleName(0, 1, "TextContainer");
         }
     }
@@ -584,7 +583,7 @@ public class FeedPanel extends TongueBox
                 getFlexCellFormatter().setStyleName(0, col++, "ThumbnailContainer");
             }
 
-            setWidget(0, col, new HTML(html));
+            setWidget(0, col, MsoyUI.createHTML(html, null));
             getFlexCellFormatter().addStyleName(0, col, "TextContainer");
         }
     }

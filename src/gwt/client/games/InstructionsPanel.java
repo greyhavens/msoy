@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -20,6 +19,7 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 import client.item.RichTextToolbar;
 import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.ui.SafeHTML;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -47,7 +47,7 @@ public class InstructionsPanel extends VerticalPanel
         } else {
             // snip off our background color if we have one
             String[] bits = decodeInstructions(_detail.instructions);
-            add(new HTML(bits[0]));
+            add(new SafeHTML(bits[0]));
             if (bits[1] != null) {
                 DOM.setStyleAttribute(getElement(), "color", bits[1]);
             }

@@ -79,7 +79,7 @@ public class MsoyUI
      */
     public static HTML createHTML (String text, String styleName)
     {
-        HTML label = new HTML(text);
+        HTML label = new SafeHTML(text); // SafeHTML is needed to rewrite our hrefs
         if (styleName != null) {
             label.addStyleName(styleName);
         }
@@ -155,10 +155,8 @@ public class MsoyUI
         html = html.replaceAll("<", "&lt;");
         html = html.replaceAll(">", "&gt;");
         html = html.replaceAll("\"", "&quot;");
-
         html = html.replaceAll("(http://(.*?\\.)?whirled.com/([^ ]+))", "<a href=\"$1\">$3</a>");
-
-        return new HTML(html);
+        return createHTML(html, null);
     }
 
     /**

@@ -10,7 +10,6 @@ import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -256,15 +255,11 @@ public class WhirledDetailPanel extends FlowPanel
         _whirledViewPanel.add(clickToPlayImage);
 
         if (_detail.population > 0) {
-            HTML online = new HTML(_msgs.featuredOnline(""+_detail.population));
-            online.setStyleName("Online");
-            screenshot.add(online);
+            screenshot.add(MsoyUI.createHTML(_msgs.featuredOnline(""+_detail.population), "Online"));
         }
 
         if (_group.blurb != null) {
-            HTML blurb = new HTML(_group.blurb);
-            blurb.setStyleName("Blurb");
-            screenshot.add(blurb);
+            screenshot.add(MsoyUI.createHTML(_group.blurb, "Blurb"));
         }
 
         HorizontalPanel lowerArea = new HorizontalPanel();
@@ -400,8 +395,8 @@ public class WhirledDetailPanel extends FlowPanel
     {
         public TopMembersPanel () {
             setStyleName("TopMembersPanel");
-            add(MsoyUI.createSimplePanel("Title",
-                new HTML(_msgs.detailTopMembersTitle())));
+            add(MsoyUI.createSimplePanel(
+                    "Title", MsoyUI.createHTML(_msgs.detailTopMembersTitle(), null)));
 
             FlowPanel content = new FlowPanel();
             content.setStyleName("Content");

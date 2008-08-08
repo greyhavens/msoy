@@ -11,7 +11,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -22,6 +21,7 @@ import com.threerings.msoy.fora.gwt.Issue;
 
 import client.shell.CShell;
 import client.shell.Pages;
+import client.ui.MsoyUI;
 import client.util.Link;
 
 /**
@@ -65,9 +65,7 @@ public class IssueListPanel extends PagedGrid<Issue>
     @Override // from PagedGrid
     protected Widget createEmptyContents ()
     {
-        HTML empty = new HTML(_mmsgs.noIssues());
-        empty.setStyleName("Empty");
-        return empty;
+        return MsoyUI.createHTML(_mmsgs.noIssues(), "Empty");
     }
 
     @Override // from PagedGrid

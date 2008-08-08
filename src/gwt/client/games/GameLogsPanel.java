@@ -7,7 +7,6 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -78,8 +77,8 @@ public class GameLogsPanel extends VerticalPanel
             String href = "/gamelogs?gameId=" + _gameId + "&logId=" + logs.logIds[ii];
             String label = _dfmt.format(logs.logTimes[ii]);
 
-            table.setWidget(row, col, new HTML(
-                                "<a target='_blank' href='" + href + "'>" + label + "</a>"));
+            table.setWidget(
+                row, col, MsoyUI.createHTML("<a href='" + href + "'>" + label + "</a>", null));
             row ++;
             if (row * (TABLE_COLUMNS - col - 1) >= (logs.logIds.length - ii)) {
                 row = 0;

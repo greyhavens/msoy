@@ -5,7 +5,6 @@ package client.games;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 
 import client.ui.MsoyUI;
 
@@ -18,7 +17,7 @@ public class WhyPlayPanel extends FlowPanel
     {
         setStyleName("whyPlay");
         add(MsoyUI.createLabel(_msgs.whyPlayTitle(), "Title"));
-        add(new HTML(_msgs.whyPlayBlurb()));
+        add(MsoyUI.createHTML(_msgs.whyPlayBlurb(), null));
     }
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);

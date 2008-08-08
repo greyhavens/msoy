@@ -8,7 +8,6 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -149,7 +148,7 @@ public class ConvoPanel extends FlowPanel
                     _contents.add(WidgetUtil.makeShim(10, 10));
                 }
             }
-            _contents.add(new HTML(MailUtil.textToHTML(msg.body)));
+            _contents.add(MsoyUI.createHTML(MailUtil.textToHTML(msg.body), null));
             setWidget(0, 2, _contents, 1, "Body");
             getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
 

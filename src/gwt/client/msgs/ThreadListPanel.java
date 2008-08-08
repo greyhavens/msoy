@@ -11,7 +11,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -88,13 +87,8 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     @Override // from PagedGrid
     protected Widget createEmptyContents ()
     {
-        if (_groupId != 0) {
-            return super.createEmptyContents();
-        }
-
-        HTML empty = new HTML(_mmsgs.noUnreadThreads());
-        empty.setStyleName("Empty");
-        return empty;
+        return (_groupId != 0) ? super.createEmptyContents() :
+            MsoyUI.createHTML(_mmsgs.noUnreadThreads(), "Empty");
     }
 
     @Override // from PagedGrid

@@ -9,7 +9,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -66,9 +65,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
 
         // there are no threads, print a message
         if (_detail.threads.size() == 0) {
-            HTML noThreads = new HTML(_msgs.discussionNoThreads());
-            noThreads.setStyleName("NoThreads");
-            add(noThreads);
+            add(MsoyUI.createHTML(_msgs.discussionNoThreads(), "NoThreads"));
             return;
         }
 
@@ -101,9 +98,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
             subject.setStyleName("Subject");
             add(subject);
 
-            HTML text = new HTML(thread.firstPost.message);
-            text.setStyleName("Text");
-            add(text);
+            add(MsoyUI.createHTML(thread.firstPost.message, "Text"));
 
             ClickListener posterClick = Link.createListener(
                 Pages.PEOPLE, "" + thread.firstPost.poster.name.getMemberId());

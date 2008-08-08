@@ -87,7 +87,7 @@ public class LandingPanel extends SimplePanel
         content.add(video, 465, 90);
 
         // tagline
-        final HTML tagline = new HTML(_msgs.landingTagline());
+        final HTML tagline = MsoyUI.createHTML(_msgs.landingTagline(), null);
         tagline.setStyleName("LandingTagline");
         content.add(tagline, 425, 275);
 

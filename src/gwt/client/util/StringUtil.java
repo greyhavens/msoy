@@ -69,7 +69,13 @@ public class StringUtil
         return data;
     }
 
-
+    /**
+     * Returns true if the supplied string is null or zero length.
+     */
+    public static boolean isBlank (String text)
+    {
+        return (text == null) || (text.length() == 0);
+    }
 
     /** Used by {@link #hexlate} and {@link #unhexlate}. */
     protected static final String XLATE = "0123456789abcdef";

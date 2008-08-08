@@ -9,7 +9,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.util.CookieUtil;
 
@@ -58,7 +57,7 @@ public class BrowserTest
             FlowPanel messageBox = MsoyUI.createFlowPanel("Message");
             browserTestWidget.add(messageBox);
             messageBox.add(MsoyUI.createLabel(_cmsgs.browserTitle(), "Title"));
-            messageBox.add(new HTML(message));
+            messageBox.add(MsoyUI.createHTML(message, null));
 
             ClickListener getFF = new ClickListener() {
                 public void onClick (Widget widget) {

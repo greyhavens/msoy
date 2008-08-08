@@ -6,7 +6,6 @@ package client.stuff;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
@@ -137,7 +136,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         // if this item is in use, mention that
         if (used) {
             _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(new HTML(getUsageMessage()));
+            _details.add(MsoyUI.createHTML(getUsageMessage(), null));
         }
 
         RowPanel buttons = new RowPanel();

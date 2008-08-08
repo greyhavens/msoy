@@ -16,7 +16,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.UberClientModes;
-
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Furniture;
@@ -29,6 +28,7 @@ import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
 import client.shell.ShellMessages;
+import client.ui.MsoyUI;
 import client.util.Link;
 
 /**
@@ -112,7 +112,7 @@ public class ItemUtil
         // see if we need to display an upgrade message
         String definition = CShell.frame.checkFlashVersion(w, h);
         if (definition != null) {
-            return new HTML(definition);
+            return MsoyUI.createHTML(definition, null);
         }
 
         MediaDesc preview = item.getPreviewMedia();

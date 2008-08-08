@@ -9,7 +9,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ScrollPanel;
@@ -78,7 +77,7 @@ public class MessagePanel extends FlexTable
             text = text.replaceAll(WHIRLED_REGEX, WHIRLED_REPLACE);
             text = text.replaceAll(
                 "href=\"\\s*[Jj][Aa][Vv][Aa][Ss][Cc][Rr][Ii][Pp][Tt]:.*\"", "href=\"#\"");
-            scroller.add(new HTML(text));
+            scroller.add(MsoyUI.createHTML(text, null));
         } else {
             scroller.add(MsoyUI.createRestrictedHTML(text));
         }

@@ -6,8 +6,9 @@ package client.help;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.gwt.user.client.ui.HTML;
 import com.threerings.gwt.ui.SmartTable;
+
+import client.ui.SafeHTML;
 
 /**
  * Displays the list of HTML values evenly in a table with a set number of columns
@@ -28,7 +29,7 @@ public class ColumnList extends SmartTable
                 if (!iter.hasNext()) {
                     break;
                 }
-                setWidget(jj, ii, new HTML(iter.next()));
+                setWidget(jj, ii, new SafeHTML(iter.next()));
             }
         }
     }

@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.ui.TongueBox;
 
@@ -29,15 +30,14 @@ public class HelpPanel extends VerticalPanel
 
         // header table includes report bug tab, help title, and thank you box
         SmartTable header = new SmartTable(0, 0);
-        HTML reportBug = new HTML(CHelp.msgs.helpReportBug());
-        reportBug.setStyleName("reportBug");
+        HTML reportBug = MsoyUI.createHTML(CHelp.msgs.helpReportBug(), "reportBug");
         header.setWidget(0, 0, reportBug);
         header.getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
         header.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         header.setWidget(0, 1, new Image("/images/help/help_header.png"), 1, "helpTitle");
         header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
         header.setWidget(1, 0, WidgetUtil.makeShim(10, 10), 2, "");
-        header.setWidget(2, 0, new HTML(CHelp.msgs.helpIntro()), 2, "helpIntro");
+        header.setWidget(2, 0, MsoyUI.createHTML(CHelp.msgs.helpIntro(), null), 2, "helpIntro");
         header.getFlexCellFormatter().setHorizontalAlignment(2, 0, HasAlignment.ALIGN_CENTER);
         add(header);
         add(WidgetUtil.makeShim(10, 15));
@@ -48,10 +48,10 @@ public class HelpPanel extends VerticalPanel
 
         // asking questions
         SmartTable questions = new SmartTable(0, 0);
-        questions.setHTML(0, 0, CHelp.msgs.helpQuestionsIntro());
+        questions.setWidget(0, 0, MsoyUI.createHTML(CHelp.msgs.helpQuestionsIntro(), null));
         questions.setWidget(1, 0, WidgetUtil.makeShim(5, 10));
         RoundBox faqBox = new RoundBox(RoundBox.MEDIUM_BLUE);
-        faqBox.add(new HTML(CHelp.msgs.helpQuestions()));
+        faqBox.add(MsoyUI.createHTML(CHelp.msgs.helpQuestions(), null));
         questions.setWidget(2, 0, faqBox);
         add(new TongueBox(CHelp.msgs.helpQuestionsTitle(), questions));
         add(WidgetUtil.makeShim(10, 10));
@@ -67,27 +67,27 @@ public class HelpPanel extends VerticalPanel
         FlowPanel team = new FlowPanel();
         team.setStyleName("helpTeam");
 
-        team.add(new HTML(CHelp.msgs.helpTeamEngineers()));
+        team.add(MsoyUI.createHTML(CHelp.msgs.helpTeamEngineers(), null));
         List<String> helpTeamEngineersList =
             Arrays.asList(CHelp.msgs.helpTeamEngineersList().split(","));
         ColumnList helpTeamEngineers = new ColumnList(helpTeamEngineersList, 2);
         team.add(helpTeamEngineers);
         team.add(WidgetUtil.makeShim(10, 10));
 
-        team.add(new HTML(CHelp.msgs.helpTeamArtists()));
+        team.add(MsoyUI.createHTML(CHelp.msgs.helpTeamArtists(), null));
         List<String> helpTeamArtistsList =
             Arrays.asList(CHelp.msgs.helpTeamArtistsList().split(","));
         ColumnList helpTeamArtists = new ColumnList(helpTeamArtistsList, 2);
         team.add(helpTeamArtists);
         team.add(WidgetUtil.makeShim(10, 10));
 
-        team.add(new HTML(CHelp.msgs.helpTeamInfra()));
+        team.add(MsoyUI.createHTML(CHelp.msgs.helpTeamInfra(), null));
         List<String> helpTeamInfraList = Arrays.asList(CHelp.msgs.helpTeamInfraList().split(","));
         ColumnList helpTeamInfra = new ColumnList(helpTeamInfraList, 2);
         team.add(helpTeamInfra);
         team.add(WidgetUtil.makeShim(10, 10));
 
-        team.add(new HTML(CHelp.msgs.helpTeamWaving()));
+        team.add(MsoyUI.createHTML(CHelp.msgs.helpTeamWaving(), null));
         List<String> helpTeamWavingList = Arrays.asList(CHelp.msgs.helpTeamWavingList().split(","));
         ColumnList helpTeamWaving = new ColumnList(helpTeamWavingList, 2);
         team.add(helpTeamWaving);

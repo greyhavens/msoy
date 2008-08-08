@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -69,9 +68,7 @@ public class DoListItemPopup extends VerticalPanel
             if (salableItem) {
                 message += _imsgs.doUpdateSalableNote();
             }
-            HTML update = new HTML(message);
-            update.setStyleName("Blurb");
-            add(update);
+            add(MsoyUI.createHTML(message, "Blurb"));
         }
 
         // only add the description if we're not repricing

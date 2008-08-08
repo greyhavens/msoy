@@ -7,7 +7,6 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.TabPanel;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 
 import com.threerings.gwt.ui.InlineLabel;
@@ -46,7 +45,7 @@ public class StyledTabPanel extends TabPanel
         tab.getCellFormatter().setStyleName(0, 1, "TabCenter");
         tab.getCellFormatter().setStyleName(0, 2, "TabRight");
         if (asHTML) {
-            tab.setWidget(0, 1, new HTML(tabText));
+            tab.setWidget(0, 1, MsoyUI.createHTML(tabText, null));
         } else {
             tab.setWidget(0, 1, new InlineLabel(tabText, false, false, false));
         }

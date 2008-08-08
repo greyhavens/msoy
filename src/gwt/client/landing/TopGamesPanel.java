@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -117,7 +116,7 @@ public class TopGamesPanel extends AbsolutePanel
 
         SimplePanel name = new SimplePanel();
         name.setStyleName("Name");
-        name.add(new HTML(game.name));
+        name.add(MsoyUI.createHTML(game.name, null));
         gamePanelInner.setWidget(0, 1, name);
         gamePanelInner.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_MIDDLE);
 
