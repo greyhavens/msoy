@@ -76,6 +76,9 @@ public class EmbedHeader extends Canvas
         addChild(_joinNow);
     }
 
+    /**
+     * Set the name and logo for the current place. Either one may be null.
+     */
     public function setPlaceName (name :String, logo :MediaDesc = null) :void
     {
         // out with the old

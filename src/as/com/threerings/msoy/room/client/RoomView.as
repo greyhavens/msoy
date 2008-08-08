@@ -135,7 +135,7 @@ public class RoomView extends Sprite
     // from MsoyPlaceView
     public function getPlaceLogo () :MediaDesc
     {
-        return null; // see subclasses
+        return null;
         // TODO: What might be the right thing to do, in the future, is
         // just dispatch an event once we know our name/thumbnail, and have TopPanel
         // capture that and pass it on to the EmbedHeader. That would make things
