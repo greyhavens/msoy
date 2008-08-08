@@ -20,6 +20,9 @@ public interface AVRGameService extends InvocationService
     function completeQuest (arg1 :Client, arg2 :String, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService
+    function roomSubscriptionComplete (arg1 :Client, arg2 :int) :void;
+
+    // from Java interface AVRGameService
     function sendMessage (arg1 :Client, arg2 :String, arg3 :Object, arg4 :int, arg5 :InvocationService_InvocationListener) :void;
 
     // from Java interface AVRGameService

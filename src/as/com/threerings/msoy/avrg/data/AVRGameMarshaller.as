@@ -49,8 +49,19 @@ public class AVRGameMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch <code>roomSubscriptionComplete</code> requests. */
+    public static const ROOM_SUBSCRIPTION_COMPLETE :int = 3;
+
+    // from interface AVRGameService
+    public function roomSubscriptionComplete (arg1 :Client, arg2 :int) :void
+    {
+        sendRequest(arg1, ROOM_SUBSCRIPTION_COMPLETE, [
+            Integer.valueOf(arg2)
+        ]);
+    }
+
     /** The method id used to dispatch <code>sendMessage</code> requests. */
-    public static const SEND_MESSAGE :int = 3;
+    public static const SEND_MESSAGE :int = 4;
 
     // from interface AVRGameService
     public function sendMessage (arg1 :Client, arg2 :String, arg3 :Object, arg4 :int, arg5 :InvocationService_InvocationListener) :void
@@ -63,7 +74,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setTicker</code> requests. */
-    public static const SET_TICKER :int = 4;
+    public static const SET_TICKER :int = 5;
 
     // from interface AVRGameService
     public function setTicker (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_InvocationListener) :void
@@ -76,7 +87,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>startQuest</code> requests. */
-    public static const START_QUEST :int = 5;
+    public static const START_QUEST :int = 6;
 
     // from interface AVRGameService
     public function startQuest (arg1 :Client, arg2 :String, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
@@ -89,7 +100,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateQuest</code> requests. */
-    public static const UPDATE_QUEST :int = 6;
+    public static const UPDATE_QUEST :int = 7;
 
     // from interface AVRGameService
     public function updateQuest (arg1 :Client, arg2 :String, arg3 :int, arg4 :String, arg5 :InvocationService_ConfirmListener) :void

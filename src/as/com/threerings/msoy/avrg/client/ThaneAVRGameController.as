@@ -128,7 +128,6 @@ public class ThaneAVRGameController
 
     protected function updatePlayer (loc :PlayerLocation, remove :Boolean) :void
     {
-        // TODO: notify backend
         var binding :SceneBinding = _bindings.get(loc.sceneId);
         if (binding == null) {
             log.warning("Player updated in unbound scene: [loc=" + loc + ", remove=" + remove);
@@ -136,6 +135,9 @@ public class ThaneAVRGameController
         else if (binding.room == null) {
             log.warning("Player updated in unsubscribed scene: [loc=" + loc + ", binding=" + 
                 binding + ", remove=" + remove);
+        } else {
+            // TODO: notify backend
+            log.debug("Player updated [loc=" + loc + ", remove=" + remove);
         }
     }
 
@@ -248,7 +250,7 @@ public class ThaneAVRGameController
 
         binding.room = roomObj;
 
-        // TODO: let the server know that we're ready for room entry now
+        _gameObj.avrgService.roomSubscriptionComplete(_ctx.getClient(), binding.sceneId);
     }
 
     /** Removes the binding of the given player. */

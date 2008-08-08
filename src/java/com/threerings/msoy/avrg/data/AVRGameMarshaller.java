@@ -44,8 +44,19 @@ public class AVRGameMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #roomSubscriptionComplete} requests. */
+    public static final int ROOM_SUBSCRIPTION_COMPLETE = 3;
+
+    // from interface AVRGameService
+    public void roomSubscriptionComplete (Client arg1, int arg2)
+    {
+        sendRequest(arg1, ROOM_SUBSCRIPTION_COMPLETE, new Object[] {
+            Integer.valueOf(arg2)
+        });
+    }
+
     /** The method id used to dispatch {@link #sendMessage} requests. */
-    public static final int SEND_MESSAGE = 3;
+    public static final int SEND_MESSAGE = 4;
 
     // from interface AVRGameService
     public void sendMessage (Client arg1, String arg2, Object arg3, int arg4, InvocationService.InvocationListener arg5)
@@ -58,7 +69,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setTicker} requests. */
-    public static final int SET_TICKER = 4;
+    public static final int SET_TICKER = 5;
 
     // from interface AVRGameService
     public void setTicker (Client arg1, String arg2, int arg3, InvocationService.InvocationListener arg4)
@@ -71,7 +82,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #startQuest} requests. */
-    public static final int START_QUEST = 5;
+    public static final int START_QUEST = 6;
 
     // from interface AVRGameService
     public void startQuest (Client arg1, String arg2, String arg3, InvocationService.ConfirmListener arg4)
@@ -84,7 +95,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateQuest} requests. */
-    public static final int UPDATE_QUEST = 6;
+    public static final int UPDATE_QUEST = 7;
 
     // from interface AVRGameService
     public void updateQuest (Client arg1, String arg2, int arg3, String arg4, InvocationService.ConfirmListener arg5)

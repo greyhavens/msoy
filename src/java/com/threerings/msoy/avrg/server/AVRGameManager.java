@@ -10,8 +10,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
-import com.samskivert.util.IntIntMap;
-import com.samskivert.util.IntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
@@ -222,6 +220,17 @@ public class AVRGameManager extends PlaceManager
     }
 
     // from AVRGameProvider
+    public void roomSubscriptionComplete (ClientObject caller, int sceneId)
+    {
+        if (caller.getOid() != _gameAgentObj.clientOid) {
+            log.warning("Unknown client completing room subscription?", "caller", caller);
+            return;
+        }
+        
+        roomSubscriptionComplete(sceneId);
+    }
+
+    // from AVRGameProvider
     public void sendMessage (ClientObject caller, String msg, Object data, int playerId,
                              InvocationService.InvocationListener listener)
         throws InvocationException
@@ -289,29 +298,34 @@ public class AVRGameManager extends PlaceManager
 
     /**
      * This method is called when the agent completes the subscription of a scene's RoomObject.
-     * TODO: wire up
      */
     public void roomSubscriptionComplete (int sceneId)
     {
-        IntSet removes = new ArrayIntSet();
-
-        for (IntIntMap.IntIntEntry entry : _pendingMoves.entrySet()) {
-            if (entry.getValue() == sceneId) {
-                int memberId = entry.getKey();
-                removes.add(memberId);
-
-                PlayerLocation loc = new PlayerLocation(memberId, sceneId);
-                if (_gameObj.playerLocs.contains(loc)) {
-                    _gameObj.updatePlayerLocs(loc);
-
-                } else {
-                    _gameObj.addToPlayerLocs(loc);
-                }
-            }
+        Scene scene = _scenes.get(sceneId);
+        
+        if (scene == null) {
+            log.warning("Subscription completed to removed scene", "sceneId", sceneId);
+            return;
         }
+        
+        scene.subscribed = true;
+        
+        for (int memberId : scene.players) {
+            postPlayerMove(memberId, scene.sceneId);
+        }
+    }
+    
+    /**
+     * Post the given member's movement to the game object for all to see.
+     */
+    protected void postPlayerMove (int memberId, int sceneId)
+    {
+        PlayerLocation loc = new PlayerLocation(memberId, sceneId);
+        if (_gameObj.playerLocs.contains(loc)) {
+            _gameObj.updatePlayerLocs(loc);
 
-        for (int memberId : removes) {
-            _pendingMoves.remove(memberId);
+        } else {
+            _gameObj.addToPlayerLocs(loc);
         }
     }
 
@@ -338,8 +352,6 @@ public class AVRGameManager extends PlaceManager
 
         PlayerObject player = (PlayerObject) _omgr.getObject(bodyOid);
         _watchmgr.addWatch(player.getMemberId(), _observer);
-
-        // TODO: make sure the AVRG does not initialize for this player until Room Subscription
     }
 
     @Override
@@ -353,9 +365,7 @@ public class AVRGameManager extends PlaceManager
         // stop watching this player's movements
         _watchmgr.clearWatch(memberId);
 
-        // clear out any pending move information
-        _pendingMoves.remove(memberId);
-        
+        // clear out from our internal record
         Scene scene = _players.remove(memberId);
         if (scene == null) {
             log.warning("Leaving body has no scene", "memberId", memberId);
@@ -378,13 +388,6 @@ public class AVRGameManager extends PlaceManager
             "Player entered scene [memberId=" + memberId + ", sceneId=" + sceneId +
             ", hostname=" + hostname + ", port=" + port + "]");
 
-        // TODO: this is incomplete, we need to keep a set of rooms that we've added to 'scenes'
-        // TODO: but which have not yet completed subscription; we should obviously not add
-        // TODO: players to _pendingMoves when they're moving into rooms we already know of
-
-        // until room subscription completes, just make a note that this player is in this scene
-        _pendingMoves.put(memberId, sceneId);
-
         SceneInfo info = new SceneInfo(sceneId, hostname, port);
         SceneInfo existing = _gameAgentObj.scenes.get(info.getKey());
         if (existing != null) {
@@ -399,22 +402,22 @@ public class AVRGameManager extends PlaceManager
             _gameAgentObj.addToScenes(info);
         }
 
-        // Find our local scene object
+        // Update our internal records
         Scene scene = _scenes.get(sceneId);
+        Scene oldScene = _players.get(memberId);
         if (scene == null) {
             _scenes.put(sceneId, scene = new Scene(sceneId));
         }
-
-        // Transfer the player
-        Scene oldScene = _players.get(memberId);
         _players.put(memberId, scene);
         scene.addPlayer(memberId);
         if (oldScene != null) {
             oldScene.removePlayer(memberId);
         }
 
-        // TODO: this is only for debugging
-        roomSubscriptionComplete(sceneId);
+        // Expose the transfer to dobj (or else wait until agent calls roomSubscriptionComplete)
+        if (scene.subscribed || _gameAgentObj==null) {
+            postPlayerMove(memberId, sceneId);
+        }
     }
 
     protected void flushPlayerGameState (final PlayerObject player)
@@ -541,6 +544,7 @@ public class AVRGameManager extends PlaceManager
     {
         public int sceneId;
         public long modTime;
+        public boolean subscribed;
         public ArrayIntSet players = new ArrayIntSet();
         
         public Scene (int sceneId)
@@ -606,9 +610,6 @@ public class AVRGameManager extends PlaceManager
 
     /** The distributed object that only our agent sees. */
     protected AVRGameAgentObject _gameAgentObj;
-
-    /** Tracks player that've moved to a scene not yet subscribed to by the agent. */
-    protected IntIntMap _pendingMoves = new IntIntMap();
 
     /** The map of tickers, lazy-initialized. */
     protected HashMap<String, Ticker> _tickers;

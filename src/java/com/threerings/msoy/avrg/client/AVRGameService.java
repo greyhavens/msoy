@@ -27,6 +27,12 @@ public interface AVRGameService extends InvocationService
         Client caller, String questId, ConfirmListener listener);
 
     /**
+     * Inform the server that we have finished resolving the RoomObject for the given scene.
+     */
+    public void roomSubscriptionComplete (
+        Client caller, int sceneId);
+    
+    /**
      * Start a ticker that will send out timestamp information at the interval specified.
      *
      * @param msOfDelay must be at least 50, or 0 may be set to halt and clear a previously started
