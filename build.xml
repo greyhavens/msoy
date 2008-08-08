@@ -1159,7 +1159,13 @@
     <!-- copy in the swiftly build stuff (msoy only) -->
     <mkdir dir="${approot.server}/data"/>
     <copy todir="${approot.server}/data">
-      <fileset dir="data" includes="**"/>
+      <fileset dir="data">
+        <include name="**"/>
+        <exclude name="swiftly/flex_sdk/asdoc/**"/>
+        <exclude name="swiftly/flex_sdk/runtimes/**"/>
+        <exclude name="swiftly/flex_sdk/samples/**"/>
+        <exclude name="swiftly/flex_sdk/templates/**"/>
+      </fileset>
     </copy>
 
     <!-- need some xml files (msoy only) -->
@@ -1224,7 +1230,7 @@
     <!-- build the actual Debian packages -->
 
     <!-- msoy-server-code -->
-    <dpkg output="${package.output}" prefix="${app.prefix}" distribution="${ooo.distribution}">
+    <dpkg output="${pkgroot.root}" prefix="${app.prefix}" distribution="${ooo.distribution}">
       <package destroot="${pkgroot.server.code}">
         <info>
           <name>${app.name}-server-code</name>
@@ -1251,7 +1257,7 @@
     </dpkg>
 
     <!-- msoy-server -->
-    <dpkg output="${package.output}" prefix="${app.prefix}" distribution="${ooo.distribution}">
+    <dpkg output="${pkgroot.root}" prefix="${app.prefix}" distribution="${ooo.distribution}">
       <package destroot="${pkgroot.server}">
         <info>
           <name>${app.name}-server</name>
@@ -1288,7 +1294,7 @@
     </dpkg>
 
     <!-- burl-server -->
-    <dpkg output="${package.output}" prefix="${app.prefix}" distribution="${ooo.distribution}">
+    <dpkg output="${pkgroot.root}" prefix="${app.prefix}" distribution="${ooo.distribution}">
       <package destroot="${pkgroot.burlserver}">
         <info>
           <name>burl-server</name>
@@ -1317,6 +1323,10 @@
       </package>
     </dpkg>
 
+    <!-- now that all of our packages are generated, move them into place all at once -->
+    <move todir="${package.output}">
+      <fileset dir="${pkgroot.root}" includes="*.dpkg"/>
+    </move>
   </target>
 
   <!-- builds our javadocs and packages them up (TODO: add asdocs) -->
