@@ -413,11 +413,10 @@ public class WhirledDetailPanel extends FlowPanel
                 members.setWidget(ii * 2, 0, icon, 1, "Icon");
                 members.getFlexCellFormatter().setRowSpan(ii * 2, 0, 2);
                 if (member.rank == GroupMembership.RANK_MANAGER) {
-                    members.setHTML(
-                        ii * 2, 1, _msgs.detailTopMembersManager(), 1, "Manager");
+                    members.setHTML(ii * 2, 1, _msgs.detailTopMembersManager(), 1, "Manager");
                 }
                 SimplePanel name = MsoyUI.createSimplePanel(
-                  "Name", Link.memberView("" + member.name, member.name.getMemberId()));
+                    "Name", Link.memberView("" + member.name, member.name.getMemberId()));
                 members.setWidget((ii * 2) + 1, 0, name);
             }
 
