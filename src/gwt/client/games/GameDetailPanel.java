@@ -81,7 +81,8 @@ public class GameDetailPanel extends SmartTable
         setWidget(0, 1, new GameNamePanel(
                       game.name, game.genre, detail.creator, game.description), 2, null);
         setWidget(1, 0, new GameBitsPanel(detail.minPlayers, detail.maxPlayers,
-                                          detail.averageDuration, detail.gamesPlayed));
+                                          detail.averageDuration, detail.gamesPlayed,
+                                          detail.sourceItem.itemId));
         setWidget(1, 1, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers,
                                       detail.playingNow), 1, "Play");
 

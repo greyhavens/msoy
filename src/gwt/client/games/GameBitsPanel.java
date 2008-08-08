@@ -4,7 +4,15 @@
 package client.games;
 
 import com.google.gwt.core.client.GWT;
+
 import com.threerings.gwt.ui.SmartTable;
+
+import com.threerings.msoy.item.data.all.Item;
+
+import client.shell.Args;
+import client.shell.CShell;
+import client.shell.Pages;
+import client.util.Link;
 
 /**
  * Displays informational bits about a game: number of players, average duration, number of games
@@ -12,7 +20,8 @@ import com.threerings.gwt.ui.SmartTable;
  */
 public class GameBitsPanel extends SmartTable
 {
-    public GameBitsPanel (int minPlayers, int maxPlayers, int avgTime, int gamesPlayed)
+    public GameBitsPanel (int minPlayers, int maxPlayers, int avgTime, int gamesPlayed,
+                          int originalItemId)
     {
         super("gameBits", 0, 0);
 
@@ -32,6 +41,11 @@ public class GameBitsPanel extends SmartTable
         if (gamesPlayed > 0) {
             setText(row, 0, _msgs.bitsGamesPlayed(), 1, "Label");
             setText(row++, 1, ""+gamesPlayed);
+        }
+
+        if (originalItemId != 0 && CShell.isSupport()) {
+            String args = Args.compose(new String[] { "d", ""+Item.GAME, ""+originalItemId });
+            setWidget(row++, 0, Link.create(_msgs.bitsSeeOriginal(), Pages.STUFF, args), 2, null);
         }
     }
 
