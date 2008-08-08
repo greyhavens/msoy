@@ -32,13 +32,13 @@ public class MemberStatusLabel extends FlowPanel
 
         } else if (status instanceof MemberCard.InGame) {
             MemberCard.InGame gs = (MemberCard.InGame)status;
-            add(new InlineLabel(_cmsgs.mslOnlinePlaying(gs.gameName), false, false, true));
+            add(new InlineLabel(_cmsgs.mslOnlinePlaying(gs.gameName), true, false, true));
             add(Link.create(_cmsgs.mslJoin(), Pages.WORLD,
                                        Args.compose("game", gs.gameId)));
 
         } else if (status instanceof MemberCard.InScene) {
             MemberCard.InScene ss = (MemberCard.InScene)status;
-            add(new InlineLabel(_cmsgs.mslOnlineIn(ss.sceneName), false, false, true));
+            add(new InlineLabel(_cmsgs.mslOnlineIn(ss.sceneName), true, false, true));
             add(Link.create(_cmsgs.mslJoin(), Pages.WORLD, "s" + ss.sceneId));
         }
     }
