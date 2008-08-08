@@ -215,13 +215,13 @@ public class MemberObject extends MsoyBodyObject
     public int partyId;
 
     /** Statistics tracked for this player. */
-    public transient StatSet stats = new StatSet();
+    public transient StatSet stats;
 
     /** Metrics tracked for this player. */
     public transient PlayerMetrics metrics = new PlayerMetrics();
 
     /** The set of badges that this player owns. */
-    public transient BadgeSet badges = new BadgeSet();
+    public transient BadgeSet badges;
 
     /** Until Passport is live, we don't want to update the player's real StatSet. */
     private transient StatSet _dummyStats = new StatSet();
