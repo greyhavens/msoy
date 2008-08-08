@@ -25,11 +25,7 @@ public class SimpleGrid extends Grid
 
     public function get cellCount () :int
     {
-        var count :int = 0;
-        for (var ii :int = 0; ii < numChildren; ii++) {
-            count += (getChildAt(ii) as GridRow).numChildren;
-        }
-        return count;
+        return GridUtil.getCellCount(this);
     }
 
     public function addCell (child :UIComponent, horizontalAlign :String = "center",
