@@ -3,10 +3,7 @@
 
 package com.threerings.msoy.client {
 
-import flash.system.System;
-
 import flash.events.Event;
-import flash.events.FocusEvent;
 import flash.events.MouseEvent;
 
 import mx.events.FlexEvent;
@@ -24,7 +21,9 @@ import mx.controls.TextInput;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
+
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.ui.CopyableText;
 import com.threerings.msoy.ui.FloatingPanel;
 
 public class ShareDialog extends FloatingPanel
@@ -63,33 +62,6 @@ public class ShareDialog extends FloatingPanel
             "&" + TrackingCookie.makeFlashVars(affiliate, TrackingCookie.ROOM_VECTOR, "");
 
         return Msgs.GENERAL.get("m.embed", flashVars, url, EMBED_SIZES[size][0], EMBED_SIZES[size][1]);
-    }
-
-    protected function createCopyable (field :TextInput) :HBox
-    {
-        var box :HBox = new HBox();
-        box.percentWidth = 100;
-
-        field.editable = false;
-        field.percentWidth = 100;
-
-        // On focus, select all
-        field.addEventListener(FocusEvent.FOCUS_IN, function (... ignored) :void {
-            field.selectionBeginIndex = 0;
-            field.selectionEndIndex = field.text.length;
-        });
-
-        box.addChild(field);
-
-        var button :CommandButton = new CommandButton(null, function () :void {
-            System.setClipboard(field.text);
-        });
-        button.styleName = "copyButton";
-
-        box.addChild(button);
-        box.defaultButton = button;
-
-        return box;
     }
 
     protected function createEmailBox () :VBox
@@ -142,9 +114,7 @@ public class ShareDialog extends FloatingPanel
         url = url.replace(/(http:\/\/[^\/]*).*/,
             "$1/#world-s" + _ctx.getMsoyController().getSceneIdString());
 
-        var field :TextInput = new TextInput();
-        field.text = url;
-        box.addChild(createCopyable(field));
+        box.addChild(new CopyableText(url));
 
         return box;
     }
@@ -196,7 +166,7 @@ public class ShareDialog extends FloatingPanel
             info.selectable = false;
         box.addChild(info);
 
-        box.addChild(createCopyable(code));
+        box.addChild(new CopyableText(code));
 
         return box;
     }
