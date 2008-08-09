@@ -82,8 +82,8 @@ public class ItemRating extends FlexTable
                 getFlexCellFormatter().setColSpan(1, 2, 2);
                 // TODO hiding favorite indicator for now
                 if (CShell.isAdmin()) {
-	                setWidget(0, 4, favoriteIndicator);
-                	getFlexCellFormatter().setRowSpan(0, 4, 2);
+                    setWidget(0, 4, favoriteIndicator);
+                    getFlexCellFormatter().setRowSpan(0, 4, 2);
                 }
             }
         } else {
@@ -100,8 +100,8 @@ public class ItemRating extends FlexTable
                 getFlexCellFormatter().setColSpan(3, 0, 2);
                 // TODO hiding favorite indicator for now
                 if (CShell.isAdmin()) {
-	                setWidget(4, 0, favoriteIndicator);
-	            }
+                    setWidget(4, 0, favoriteIndicator);
+                }
             }
         }
     }
