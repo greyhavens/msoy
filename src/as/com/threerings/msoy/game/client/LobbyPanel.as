@@ -504,9 +504,9 @@ public class LobbyPanel extends FloatingPanel
     {
         var havePending :Boolean = (_pendingList.numChildren > 1);
         var haveRunning :Boolean = (_runningList.numChildren > 1);
-        _pendingList.visible = _pendingList.includeInLayout = havePending;
-        _runningList.visible = _runningList.includeInLayout = haveRunning;
-        _noTablesLabel.visible = _noTablesLabel.includeInLayout = !(havePending || haveRunning);
+        FlexUtil.setVisible(_pendingList, havePending);
+        FlexUtil.setVisible(_runningList, haveRunning);
+        FlexUtil.setVisible(_noTablesLabel, !(havePending || haveRunning));
     }
 
     protected function getTablePanel (tableId :int) :TablePanel

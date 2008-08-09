@@ -68,11 +68,8 @@ public class DecorViewerComp extends Canvas
     protected function gotParams (params :Object) :void
     {
         if (null != params["readonly"]) {
-            _mousePanel.visible = false;
-            _mousePanel.includeInLayout = false;
-            _optionPanel.visible = false;
-            _optionPanel.includeInLayout = false;
-
+            FlexUtil.setVisible(_mousePanel, false);
+            FlexUtil.setVisible(_optionPanel, false);
             for each (var input :TextInput in getTextInputs()) {
                 input.editable = false;
             }
@@ -205,7 +202,7 @@ public class DecorViewerComp extends Canvas
             input.addEventListener(Event.CHANGE, advancedOptionsChanged);
         }
 
-        _horizonXBox.visible = _horizonXBox.includeInLayout = false; // for now
+        FlexUtil.setVisible(_horizonXBox, false); // for now
         
         // init pointer resources. produces a tree of the same topology as POINTERS,
         // only containing references to initialized Image objects.

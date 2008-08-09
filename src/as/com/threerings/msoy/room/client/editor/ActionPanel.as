@@ -23,6 +23,7 @@ import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
+import com.threerings.flex.FlexUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.room.data.FurniData;
 
@@ -63,9 +64,9 @@ public class ActionPanel extends BasePanel
                 _actionTypeSelection.selectedIndex = 0;
             }
 
-            _actionPanels.visible = _actionPanels.includeInLayout = editable;
-            _actionTypeSelection.visible = _actionTypeSelection.includeInLayout = editable;
-            _readOnlyActionLabel.visible = _readOnlyActionLabel.includeInLayout = ! editable;
+            FlexUtil.setVisible(_actionPanels, editable);
+            FlexUtil.setVisible(_actionTypeSelection, editable);
+            FlexUtil.setVisible(_readOnlyActionLabel, !editable);
         }
     }
 
@@ -105,7 +106,7 @@ public class ActionPanel extends BasePanel
         _readOnlyActionLabel.enabled = false;
         _readOnlyActionLabel.width = 120; // not too big
         // hide this one initially
-        _readOnlyActionLabel.visible = _readOnlyActionLabel.includeInLayout = false;
+        FlexUtil.setVisible(_readOnlyActionLabel, false);
 
         var action :VBox = new VBox();
         action.addChild(_readOnlyActionLabel);

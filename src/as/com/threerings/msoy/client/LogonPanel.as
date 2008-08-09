@@ -21,6 +21,7 @@ import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
@@ -73,7 +74,7 @@ public class LogonPanel extends FloatingPanel
         addChild(buttons);
 
         _error = new Label();
-        _error.visible = _error.includeInLayout = false;
+        FlexUtil.setVisible(_error, false);
         addChild(_error);
 
         checkTexts();
@@ -119,7 +120,7 @@ public class LogonPanel extends FloatingPanel
             _ctx.getClient().removeClientObserver(observer);
             Log.getLog(this).debug("failed: " + Msgs.GENERAL.get(evt.getCause().message));
             _error.text = "Logon failed: " + Msgs.GENERAL.get(evt.getCause().message);
-            _error.visible = _error.includeInLayout = true;
+            FlexUtil.setVisible(_error, true);
         };
         observer = new ClientAdapter(null, didLogon, null, null, failed, failed);
         _ctx.getClient().addClientObserver(observer);

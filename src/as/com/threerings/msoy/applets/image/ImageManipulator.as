@@ -108,9 +108,7 @@ public class ImageManipulator extends HBox
         _editor.setImage(image);
 
         if (_controlBar != null) {
-            var showControls :Boolean = (image != null);
-            _controlBar.includeInLayout = showControls;
-            _controlBar.visible = showControls;
+            FlexUtil.setVisible(_controlBar, (image != null);
         }
     }
 

@@ -22,6 +22,7 @@ import mx.core.ScrollPolicy;
 import mx.containers.HBox;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
@@ -250,9 +251,9 @@ public class WorldControlBar extends ControlBar
         callLater(function () :void {
             // if we're mini, make sure we have room for the display
             if (!_notificationDisplay.visible && _rightSpacer.width > _notificationDisplay.width) {
-                _notificationDisplay.visible = _notificationDisplay.includeInLayout = true;
+                FlexUtil.setVisible(_notificationDisplay, true);
             } else if (_notificationDisplay.visible && _rightSpacer.width <= 0) {
-                _notificationDisplay.visible = _notificationDisplay.includeInLayout = false;
+                FlexUtil.setVisible(_notificationDisplay, false);
             }
         });
     }

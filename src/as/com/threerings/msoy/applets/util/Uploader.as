@@ -30,6 +30,7 @@ import mx.managers.PopUpManager;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.utils.Base64Decoder;
 
@@ -106,9 +107,7 @@ public class Uploader extends TitleWindow
 
     protected function handleUploadError (event :ErrorEvent) :void
     {
-        _progress.visible = false;
-        _progress.includeInLayout = false;
-
+        FlexUtil.setVisible(_progress, false);
         _label.text = _ctx.APPLET.get("e.upload", event.text);
         _stop.label = _ctx.APPLET.get("b.ok");
         // wait to continue until the user hits "OK"

@@ -19,6 +19,7 @@ import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.parlor.data.Parameter;
 import com.threerings.parlor.data.Table;
@@ -206,17 +207,15 @@ class SeatPanel extends VBox
         preparePlayer();
         _headShot.setMediaDesc(player.getPhoto());
         _name.text = player.toString();
+        var canLeave :Boolean = false;
         if (player.equals(_ctx.getPlayerObject().memberName)) {
             _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
-            _leaveBtn.visible = (_leaveBtn.includeInLayout = true);
-        } else {
-            if (_ctx.getPlayerObject().memberName.equals(table.players[0])) {
-                _leaveBtn.setCommand(LobbyController.BOOT_PLAYER, [ _table.tableId, _index ]);
-                _leaveBtn.visible = (_leaveBtn.includeInLayout = true);
-            } else {
-                _leaveBtn.visible = (_leaveBtn.includeInLayout = false);
-            }
+            canLeave = true;
+        } else if (_ctx.getPlayerObject().memberName.equals(table.players[0])) {
+            _leaveBtn.setCommand(LobbyController.BOOT_PLAYER, [ _table.tableId, _index ]);
+            canLeave = true;
         }
+        FlexUtil.setVisible(_leaveBtn, canLeave);
     }
 
     protected function preparePlayer () :void

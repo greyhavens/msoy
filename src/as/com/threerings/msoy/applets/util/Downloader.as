@@ -56,9 +56,7 @@ public class Downloader extends TitleWindow
         }
 
         _forcedName = forcedName;
-        _progress.includeInLayout = true;
-        _progress.visible = true;
-
+        FlexUtil.setVisible(_progress, true);
         _url = url;
         _loader.load(new URLRequest(url));
     }
@@ -86,8 +84,7 @@ public class Downloader extends TitleWindow
 
         _progress = new ProgressBar();
         _progress.percentWidth = 100;
-        _progress.visible = false;
-        _progress.includeInLayout = false;
+        FlexUtil.setVisible(_progress, false);
         _progress.source = _loader;
         box.addChild(_progress);
     }
@@ -109,8 +106,7 @@ public class Downloader extends TitleWindow
 
     protected function downloadStopped () :void
     {
-        _progress.includeInLayout = false;
-        _progress.visible = false;
+        FlexUtil.setVisible(_progress, false);
     }
 
     protected function handleDownloadComplete (event :Event) :void
