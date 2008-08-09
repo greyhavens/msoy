@@ -24,6 +24,7 @@ import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
+import com.threerings.flex.FlexUtil;
 import com.threerings.flex.FlexWrapper;
 
 import com.threerings.util.CommandEvent;
@@ -99,9 +100,7 @@ public class HeaderBar extends HBox
     public function setInstructionsLink (onClick :Function , arg :Object = null) :void
     {
         _instructionsLink.setCallback(onClick, arg);
-        _instructionsVisible = (onClick != null);
-        _instructionsLink.visible = _instructionsVisible;
-        _instructionsLink.includeInLayout = _instructionsVisible;
+        setCompVisible(_instructionsLink, (onClick != null));
     }
 
     /**
@@ -110,9 +109,7 @@ public class HeaderBar extends HBox
     public function setCommentLink (onClick :Function, arg :Object = null) :void
     {
         _commentLink.setCallback(onClick, arg);
-        _commentVisible = (onClick != null);
-        _commentLink.visible = _commentVisible;
-        _commentLink.includeInLayout = _commentVisible;
+        setCompVisible(_commentLink, (onClick != null));
     }
 
     /**
@@ -123,15 +120,13 @@ public class HeaderBar extends HBox
     public function setFullVersionLink (onClick :Function, arg :Object = null) :void
     {
         _fullVersionLink.setCallback(onClick, arg);
-        _fullVersionVisible = (onClick != null);
-        _fullVersion.includeInLayout = _fullVersion.visible = _fullVersionVisible;
-        _closeBox.includeInLayout = _closeBox.visible = !_fullVersionVisible;
+        setCompVisible(_fullVersion, (onClick != null));
+        setCompVisible(_closeBox, (onClick == null));
     }
 
     public function setEmbedVisible (visible :Boolean) :void
     {
-        _embedVisible = visible;
-        _embedLink.includeInLayout = _embedLink.visible = visible;
+        setCompVisible(_embedLink, visible);
     }
 
     public function setHistoryButtonEnabled (enabled :Boolean) :void
@@ -143,20 +138,12 @@ public class HeaderBar extends HBox
     {
         if (_ctx.getTopPanel().isMinimized()) {
             for each (var comp :UIComponent in _extras) {
-                comp.includeInLayout = comp.visible = false;
+                FlexUtil.setVisible(comp, false);
             }
             stretchSpacer(false);
         } else {
-            // TODO: clean this shite up, just store it in a dictionary, always?
-            var visibles :Dictionary = new Dictionary();
-            visibles[_embedLink] = _embedVisible;
-            visibles[_commentLink] = _commentVisible;
-            visibles[_instructionsLink] = _instructionsVisible;
-            visibles[_fullVersion] = _fullVersionVisible;
-            visibles[_closeBox] = !_fullVersionVisible;
             for each (comp in _extras) {
-                comp.includeInLayout = comp.visible = 
-                    visibles[comp] === undefined || visibles[comp];
+                FlexUtil.setVisible(comp, (_visibles[comp] === undefined) || _visibles[comp]);
             }
             stretchSpacer(true);
         }
@@ -171,12 +158,12 @@ public class HeaderBar extends HBox
         if (_tabsContainer.parent == this) {
             removeChild(_tabsContainer);
         }
-        _loc.visible = _loc.includeInLayout = true;
+        FlexUtil.setVisible(_loc, true);
         _loc.validateNow();
         // allow text to center under the whirled logo if its not too long.
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
         stretchSpacer(false);
-        _backBtn.includeInLayout = _backBtn.visible = false;
+        FlexUtil.setVisible(_backBtn, false);
         return _tabsContainer;
     }
 
@@ -187,9 +174,9 @@ public class HeaderBar extends HBox
         }
         _tabs.locationName = null;
         if (_loc.parent == this) {
-            _loc.visible = _loc.includeInLayout = false;
+            FlexUtil.setVisible(_loc, false);
         }
-        _backBtn.includeInLayout = _backBtn.visible = true;
+        FlexUtil.setVisible(_backBtn, true);
         addChildAt(_tabsContainer, 1);
     }
 
@@ -223,7 +210,7 @@ public class HeaderBar extends HBox
         _loc = new Label();
         _loc.styleName = "locationName";
         _loc.width = WHIRLED_LOGO_WIDTH;
-        _loc.visible = _loc.includeInLayout = false;
+        FlexUtil.setVisible(_loc, false);
         addChild(_loc);
 
         _tabsContainer = new TabsContainer(this);
@@ -299,6 +286,11 @@ public class HeaderBar extends HBox
         setFullVersionLink(null);
     }
 
+    protected function setCompVisible (comp :UIComponent, visible :Boolean) :void
+    {
+        _visibles[comp] = FlexUtil.setVisible(comp, visible);
+    }
+
     private static const log :Log = Log.getLog(HeaderBar);
 
     [Embed(source="../../../../../../rsrc/media/arrow_corner.png")]
@@ -312,18 +304,16 @@ public class HeaderBar extends HBox
     protected var _owner :HBox;
     protected var _spacer :HBox;
 
-    protected var _instructionsVisible :Boolean;
     protected var _instructionsLink :CommandLinkButton;
 
-    protected var _commentVisible :Boolean;
     protected var _commentLink :CommandLinkButton;
 
-    protected var _embedVisible :Boolean;
     protected var _embedLink :CommandLinkButton;
 
-    protected var _fullVersionVisible :Boolean;
     protected var _fullVersionLink :CommandLinkButton;
     protected var _fullVersion :HBox;
+
+    protected var _visibles :Dictionary = new Dictionary(true);
 
     protected var _closeBox :HBox;
 
