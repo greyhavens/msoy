@@ -220,11 +220,11 @@ public class GameLiaison
         } else if (name == WhirledGameObject.COINS_AWARDED_MESSAGE &&
                 _gctx.getPlayerObject().isGuest() && Boolean(args[2]) /* for real */) {
             // if a guest earns flow, we want to show them the "please register" dialog
-            displayGuestFlowEarnage(int(args[0]));
+            displayGuestFlowEarnage(int(args[0]), Boolean(args[3]));
         }
     }
 
-    protected function displayGuestFlowEarnage (amount :int) :void
+    protected function displayGuestFlowEarnage (amount :int, hasCookie :Boolean) :void
     {
         if (_guestFlowPanel == null) {
             _guestFlowPanel = LOADING;
@@ -233,7 +233,7 @@ public class GameLiaison
             MultiLoader.getContents(
                 GUEST_FLOW_PANEL, function (result :DisplayObjectContainer) :void {
                 _guestFlowPanel = result;
-                displayGuestFlowEarnage(amount);
+                displayGuestFlowEarnage(amount, hasCookie);
             });
 
         } else if (_guestFlowPanel == LOADING || _guestFlowPanel.stage != null) {
@@ -243,7 +243,11 @@ public class GameLiaison
             var field :TextField = (_guestFlowPanel.getChildByName("youearned") as TextField);
             field.text = Msgs.GAME.get("l.guest_flow_title", ""+amount);
             field = (_guestFlowPanel.getChildByName("ifyousign") as TextField);
-            field.text = Msgs.GAME.get("l.guest_flow_note");
+            if (hasCookie) {
+                field.text = Msgs.GAME.get("l.guest_flowprog_note");
+            } else {
+                field.text = Msgs.GAME.get("l.guest_flow_note");
+            }
 
             var later :SimpleButton = (_guestFlowPanel.getChildByName("Later") as SimpleButton);
             later.addEventListener(MouseEvent.CLICK, clearGuestFlow);
