@@ -557,6 +557,9 @@ public class MsoyGameRegistry
             _game = game;
         }
 
+        public InviteNodeAction () {
+        }
+
         protected void execute (MemberObject tgtobj) {
             _notifyMan.notifyGameInvite(tgtobj, _inviter, _inviterId, _game, _gameId);
         }
@@ -574,6 +577,9 @@ public class MsoyGameRegistry
             _game = game;
         }
 
+        public UpdatePlayerAction () {
+        }
+
         protected void execute (MemberObject memObj) {
             _gameReg.updatePlayerOnPeer(memObj, _game);
         }
@@ -589,6 +595,9 @@ public class MsoyGameRegistry
             super(memberId);
         }
 
+        public LeaveAVRGameAction () {
+        }
+
         protected void execute (MemberObject memObj) {
             // clear their AVRG affiliation
             memObj.setAvrGameId(0);
@@ -601,6 +610,9 @@ public class MsoyGameRegistry
         public ReportCoinsAwardAction (int memberId, int deltaCoins) {
             super(memberId);
             _deltaCoins = deltaCoins;
+        }
+
+        public ReportCoinsAwardAction () {
         }
 
         protected void execute (MemberObject memObj) {

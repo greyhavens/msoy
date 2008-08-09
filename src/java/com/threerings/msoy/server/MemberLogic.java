@@ -232,6 +232,9 @@ public class MemberLogic
             _friendStatus = friend.headline;
         }
 
+        public AddFriend () {
+        }
+
         protected void execute (final MemberObject memobj) {
             MemberName friend = new MemberName(_friendName, _friendId);
             boolean online = (_peerMan.locateClient(friend) != null);
@@ -253,6 +256,9 @@ public class MemberLogic
         public RemoveFriend (int memberId, int friendId) {
             super(memberId);
             _friendId = friendId;
+        }
+
+        public RemoveFriend () {
         }
 
         protected void execute (MemberObject memobj) {

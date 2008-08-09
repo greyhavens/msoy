@@ -25,6 +25,10 @@ public abstract class MemberNodeAction extends PeerManager.NodeAction
         _memberId = memberId;
     }
 
+    public MemberNodeAction ()
+    {
+    }
+
     @Override // from PeerManager.NodeAction
     public boolean isApplicable (NodeObject nodeobj)
     {

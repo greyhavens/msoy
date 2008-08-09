@@ -165,6 +165,9 @@ public class MemberNodeActions
             _status = status;
         }
 
+        public InfoChanged () {
+        }
+
         protected void execute (MemberObject memobj) {
             memobj.updateDisplayName(_displayName, _photo);
             memobj.setHeadline(_status);
@@ -195,6 +198,9 @@ public class MemberNodeActions
             _accFlow = record.accFlow;
         }
 
+        public FlowUpdated () {
+        }
+
         protected void execute (MemberObject memobj) {
             memobj.startTransaction();
             try {
@@ -217,6 +223,9 @@ public class MemberNodeActions
             _newMailCount = newMailCount;
         }
 
+        public ReportUnreadMail () {
+        }
+
         protected void execute (MemberObject memobj) {
             if (_newMailCount < 0) {
                 memobj.setNewMailCount(memobj.newMailCount + _newMailCount);
@@ -235,6 +244,9 @@ public class MemberNodeActions
             _gm = gm;
         }
 
+        public JoinedGroup () {
+        }
+
         protected void execute (MemberObject memobj) {
             memobj.addToGroups(_gm);
         }
@@ -247,6 +259,9 @@ public class MemberNodeActions
         public LeftGroup (int memberId, int groupId) {
             super(memberId);
             _groupId = groupId;
+        }
+
+        public LeftGroup () {
         }
 
         protected void execute (MemberObject memobj) {
@@ -262,6 +277,9 @@ public class MemberNodeActions
             super(memberId);
         }
 
+        public BootMember () {
+        }
+
         protected void execute (MemberObject memobj) {
             _memberMan.bootMember(_memberId);
         }
@@ -274,6 +292,9 @@ public class MemberNodeActions
         public AvatarDeleted (int memberId, int avatarId) {
             super(memberId);
             _avatarId = avatarId;
+        }
+
+        public AvatarDeleted () {
         }
 
         protected void execute (MemberObject memobj) {
@@ -292,6 +313,9 @@ public class MemberNodeActions
             _avatarId = avatarId;
         }
 
+        public AvatarUpdated () {
+        }
+
         protected void execute (MemberObject memobj) {
             _itemMan.avatarUpdatedOnPeer(memobj, _avatarId);
         }
@@ -306,6 +330,9 @@ public class MemberNodeActions
         public SendNotification (int memberId, Notification notification) {
             super(memberId);
             _notification = notification;
+        }
+
+        public SendNotification () {
         }
 
         protected void execute (MemberObject memobj) {
@@ -324,6 +351,9 @@ public class MemberNodeActions
             _badge = record.toBadge();
         }
 
+        public BadgeAwarded () {
+        }
+
         protected void execute (MemberObject memobj) {
             memobj.awardBadge(_badge);
         }
@@ -338,6 +368,9 @@ public class MemberNodeActions
             _modifier = modifier;
         }
 
+        public StatUpdated () {
+        }
+
         protected void execute (MemberObject memobj) {
             memobj.stats.syncStat(_modifier);
             _badgeMan.updateBadges(memobj);
@@ -350,13 +383,16 @@ public class MemberNodeActions
 
     protected static class FriendEntryUpdate extends PeerManager.NodeAction
     {
-        public FriendEntryUpdate (
-            int[] friends, int memberId, String displayName, MediaDesc photo, String status) {
+        public FriendEntryUpdate (int[] friends, int memberId, String displayName, MediaDesc photo,
+                                  String status) {
             _friends = friends;
             _memberId = memberId;
             _displayName = displayName;
             _photo = photo;
             _status = status;
+        }
+
+        public FriendEntryUpdate () {
         }
 
         @Override // from PeerManager.NodeAction

@@ -15,7 +15,7 @@ import com.threerings.msoy.item.data.all.Item;
  * Contains metadata about a game for which a player is currently matchmaking.
  */
 public class GameSummary extends SimpleStreamableObject
-    implements Serializable, Cloneable
+    implements Cloneable
 {
     /** The game id */
     public int gameId;

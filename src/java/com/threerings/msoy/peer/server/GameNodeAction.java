@@ -18,6 +18,10 @@ public abstract class GameNodeAction extends PeerManager.NodeAction
         _gameId = gameId;
     }
 
+    public GameNodeAction ()
+    {
+    }
+
     @Override // from PeerManager.NodeAction
     public boolean isApplicable (NodeObject nodeobj)
     {

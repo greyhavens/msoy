@@ -569,8 +569,8 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void emailShare (ClientObject caller, final int sceneId, final String[] emails, final String message,
-                            final InvocationService.ConfirmListener cl)
+    public void emailShare (ClientObject caller, final int sceneId, final String[] emails,
+                            final String message, final InvocationService.ConfirmListener cl)
     {
         final MemberObject memObj = (MemberObject) caller;
 

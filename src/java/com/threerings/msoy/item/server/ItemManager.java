@@ -846,6 +846,9 @@ public class ItemManager
             super(gameId);
         }
 
+        public GameUpdatedAction () {
+        }
+
         @Override protected void execute () {
             _gameReg.gameUpdatedOnPeer(_gameId);
         }

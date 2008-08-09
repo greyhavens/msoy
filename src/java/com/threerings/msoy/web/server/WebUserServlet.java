@@ -558,6 +558,9 @@ public class WebUserServlet extends MsoyServiceServlet
             _toMemberId = toMemberId;
         }
 
+        public TransferGuestFlowAction () {
+        }
+
         protected void execute (MemberObject memobj) {
             final int flow = memobj.flow;
             if (flow > 0) {

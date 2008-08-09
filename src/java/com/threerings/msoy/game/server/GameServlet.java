@@ -692,6 +692,9 @@ public class GameServlet extends MsoyServiceServlet
             _single = single;
         }
 
+        public ResetScoresAction () {
+        }
+
         @Override // from PeerManager.NodeAction
         protected void execute () {
             _gameReg.resetGameScores(_gameId, _single);
