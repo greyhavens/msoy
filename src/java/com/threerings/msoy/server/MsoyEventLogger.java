@@ -10,8 +10,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.presents.server.ShutdownManager;
-
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserActionDetails;
@@ -31,14 +29,10 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class MsoyEventLogger
-    implements ShutdownManager.Shutdowner
 {
-    @Inject public MsoyEventLogger (ShutdownManager shutmgr)
-    {
-        shutmgr.registerShutdowner(this);
-    }
-
-    /** Initializes the logger; this must happen before any events can be logged. */
+    /**
+     * Initializes the logger; this must happen before any events can be logged.
+     */
     public void init (String ident)
     {
         // log locally (always for now)
@@ -73,7 +67,10 @@ public class MsoyEventLogger
         }
     }
 
-    // from interface MsoyBaseServer.Shutdowner
+    /**
+     * Shuts down our event logger. This is called by MsoyBaseServer after everything else has
+     * shutdown so that we can log events during the shutdown process.
+     */
     public void shutdown ()
     {
         if (_remote != null) {

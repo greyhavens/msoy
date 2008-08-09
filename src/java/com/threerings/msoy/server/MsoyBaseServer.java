@@ -185,6 +185,9 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // shutdown our persistence context (cache, JDBC connections)
         _perCtx.shutdown();
+
+        // and shutdown our event logger now that everything else is done shutting down
+        _eventLog.shutdown();
     }
 
     /**
