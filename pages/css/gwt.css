@@ -677,8 +677,8 @@ img, embed, applet, object {
 }
 
 .actionLabel {
-  cursor: pointer; /* for IE */
-  cursor: hand; /* for Mozilla */
+  cursor: pointer; /* for modern browsers */
+  cursor: hand; /* for IE5 */
   text-decoration: underline;
 }
 
