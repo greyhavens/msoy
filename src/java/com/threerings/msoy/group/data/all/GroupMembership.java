@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.group.data.all;
 
-import java.io.Serializable;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
@@ -16,7 +14,7 @@ import com.threerings.msoy.data.all.GroupName;
  * Summarizes a person's membership in a group.
  */
 public class GroupMembership
-    implements Streamable, IsSerializable, DSet.Entry, Serializable
+    implements Streamable, IsSerializable, DSet.Entry
 {
     /** Unused rank code. This is not ever stored in a GroupMembership record, but is useful for
      * methods that return a user's rank as a byte. */

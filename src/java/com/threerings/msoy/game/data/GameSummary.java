@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.game.data;
 
-import java.io.Serializable;
-
 import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.msoy.data.all.MediaDesc;

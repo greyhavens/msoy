@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.person.server.persist;
 
-import java.io.Serializable;
-
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 
 /**
@@ -13,7 +11,6 @@ import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
  */
 @Entity
 public class BlurbRecord
-    implements Serializable
 {
     /** A unique identifier assigned to all blurbs. */
     @Id

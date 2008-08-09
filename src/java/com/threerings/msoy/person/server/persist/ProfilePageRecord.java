@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.person.server.persist;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
@@ -13,7 +12,6 @@ import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
  */
 @Entity
 public class ProfilePageRecord
-    implements Serializable
 {
     /** The id of the member whose profile page this describes. */
     @Id
