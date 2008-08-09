@@ -16,6 +16,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.crowd.server.CrowdClientResolver;
 
 import com.threerings.stats.data.Stat;
+import com.threerings.stats.data.StatSet;
 import com.threerings.stats.server.persist.StatRepository;
 
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -85,6 +86,8 @@ public class MsoyClientResolver extends CrowdClientResolver
             MemberName aname = (MemberName)_username;
             userObj.memberName = new VizMemberName(
                 aname.toString(), aname.getMemberId(), MemberCard.DEFAULT_PHOTO);
+            userObj.stats = new StatSet();
+            userObj.badges = new BadgeSet();
 
         } else if (_username instanceof LurkerName) {
             // we are lurker, we have no visible name to speak of
