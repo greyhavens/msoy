@@ -38,6 +38,7 @@ import com.threerings.flash.MathUtil;
 
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.GridUtil;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
 
