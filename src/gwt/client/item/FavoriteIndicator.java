@@ -23,7 +23,8 @@ import client.util.ServiceUtil;
 
 public class FavoriteIndicator extends VerticalPanel
 {
-    public FavoriteIndicator(Item item, MemberItemInfo memberItemInfo) {
+    public FavoriteIndicator(Item item, MemberItemInfo memberItemInfo)
+    {
         super();
         _item = item;
         _memberItemInfo = memberItemInfo;
@@ -34,6 +35,7 @@ public class FavoriteIndicator extends VerticalPanel
 
         ToggleButton favoriteToggle = new ToggleButton(ADD_FAVORITE_IMAGE, FAVORITE_IMAGE);
         favoriteToggle.setStyleName(STYLE_FAVORITE_TOGGLE);
+        favoriteToggle.addStyleName("actionLabel");
         favoriteToggle.setDown(memberItemInfo.favorite);
         favoriteToggle.addClickListener(new FavoriteClickListener());
         add(favoriteToggle);
