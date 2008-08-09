@@ -13,7 +13,6 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.MobInfo;
-import com.threerings.msoy.room.data.RoomPropertyEntry;
 
 /**
  * Service requests for rooms.
@@ -75,11 +74,6 @@ public interface RoomService extends InvocationService
      * particular item).
      */
     void updateMemory (Client client, EntityMemoryEntry entry);
-
-    /**
-     * Issues a request to update a property in the shared room state.
-     */
-    void setRoomProperty (Client client, RoomPropertyEntry entry);
 
     /**
      * Issues a request to update the current scene location of the specified item. This is called

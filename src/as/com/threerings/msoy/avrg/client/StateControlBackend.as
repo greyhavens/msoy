@@ -18,7 +18,6 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.RoomPropertyEntry;
 
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.game.data.GameState;
@@ -58,22 +57,19 @@ public class StateControlBackend
 
     protected function getRoomProperties_v1 () :Object
     {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        return (view == null) ? {} : view.getRoomProperties();
+        trace("Call to deprecated getRoomProperties_v1");
+        return null;
     }
 
     protected function getRoomProperty_v1 (key :String) :Object
     {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        return (view == null) ? null : view.getRoomProperty(key);
+        trace("Call to deprecated getRoomProperty_v1");
+        return null;
     }
 
     protected function setRoomProperty_v1 (key :String, value :Object) :Boolean
     {
-        var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
-        if (key != null && view != null) {
-            return view.getRoomController().setRoomProperty(key, value);
-        }
+        trace("Call to deprecated setRoomProperty_v1");
         return false;
     }
 

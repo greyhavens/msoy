@@ -110,7 +110,6 @@ import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.RoomPropertyEntry;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 
 import com.threerings.msoy.ui.MediaWrapper;
@@ -504,21 +503,6 @@ public class RoomObjectController extends RoomController
     {
         var mkey :EntityMemoryEntry = new EntityMemoryEntry(ident, key, null);
         var entry :EntityMemoryEntry = _roomObj.memories.get(mkey) as EntityMemoryEntry;
-        return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
-    }
-
-    override public function getRoomProperties () :Object
-    {
-        var props :Object = {};
-        for each (var entry :RoomPropertyEntry in _roomObj.roomProperties.toArray()) {
-            props[entry.key] = ObjectMarshaller.decode(entry.value);
-        }
-        return props;
-    }
-
-    override public function getRoomProperty (key :String) :Object
-    {
-        var entry :RoomPropertyEntry = _roomObj.roomProperties.get(key) as RoomPropertyEntry;
         return (entry == null) ? null : ObjectMarshaller.decode(entry.value);
     }
 
@@ -1020,14 +1004,6 @@ public class RoomObjectController extends RoomController
         // ship the update request off to the server
         _roomObj.roomService.updateMemory(_wdctx.getClient(),
             new EntityMemoryEntry(ident, key, data));
-    }
-
-    // documentation inherited
-    override protected function setRoomProperty2 (key :String, data: ByteArray) :void
-    {
-        // ship the update request off to the server
-        _roomObj.roomService.setRoomProperty(_wdctx.getClient(), 
-            new RoomPropertyEntry(key, data));
     }
 
     // documentation inherited

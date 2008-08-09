@@ -19,9 +19,6 @@ public class RoomObject extends SpotSceneObject
     /** The field name of the <code>memories</code> field. */
     public static final String MEMORIES = "memories";
 
-    /** The field name of the <code>roomProperties</code> field. */
-    public static final String ROOM_PROPERTIES = "roomProperties";
-
     /** The field name of the <code>controllers</code> field. */
     public static final String CONTROLLERS = "controllers";
 
@@ -60,9 +57,6 @@ public class RoomObject extends SpotSceneObject
 
     /** Contains the memories for all entities in this room. */
     public DSet<EntityMemoryEntry> memories = new DSet<EntityMemoryEntry>();
-
-    /** Contains the shared property space for this room. */
-    public DSet<RoomPropertyEntry> roomProperties = new DSet<RoomPropertyEntry>();
 
     /** Contains mappings for all controlled entities in this room. */
     public DSet<EntityControl> controllers = new DSet<EntityControl>();
@@ -132,53 +126,6 @@ public class RoomObject extends SpotSceneObject
         requestAttributeChange(MEMORIES, value, this.memories);
         DSet<EntityMemoryEntry> clone = (value == null) ? null : value.typedClone();
         this.memories = clone;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>roomProperties</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToRoomProperties (RoomPropertyEntry elem)
-    {
-        requestEntryAdd(ROOM_PROPERTIES, roomProperties, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>roomProperties</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromRoomProperties (Comparable<?> key)
-    {
-        requestEntryRemove(ROOM_PROPERTIES, roomProperties, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>roomProperties</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateRoomProperties (RoomPropertyEntry elem)
-    {
-        requestEntryUpdate(ROOM_PROPERTIES, roomProperties, elem);
-    }
-
-    /**
-     * Requests that the <code>roomProperties</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setRoomProperties (DSet<RoomPropertyEntry> value)
-    {
-        requestAttributeChange(ROOM_PROPERTIES, value, this.roomProperties);
-        DSet<RoomPropertyEntry> clone = (value == null) ? null : value.typedClone();
-        this.roomProperties = clone;
     }
 
     /**

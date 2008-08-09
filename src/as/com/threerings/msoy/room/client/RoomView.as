@@ -59,7 +59,6 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.RoomPropertyEntry;
 
 /**
  * The base room view. Should not contain any RoomObject or other network-specific crap.
@@ -241,16 +240,6 @@ public class RoomView extends Sprite
     }
 
     public function lookupMemory (ident :ItemIdent, key :String) :Object
-    {
-        return null;
-    }
-
-    public function getRoomProperties () :Object
-    {
-        return {};
-    }
-
-    public function getRoomProperty (key :String) :Object
     {
         return null;
     }
@@ -581,26 +570,6 @@ public class RoomView extends Sprite
             log.info("Received memory update for unknown sprite [item=" + ident +
                 ", key=" + key + "].");
         }
-    }
-
-    /**
-     * Called when a memory entry is added or updated in the room object.
-     */
-    public function dispatchRoomPropertyChanged (key :String, data :ByteArray) :void
-    {
-        // TODO: We are decoding the data for each sprite, because we can't trust
-        // the usercode to not destructively modify the value in its event handler.
-        // In the future, it might be good to rework this so that the value is not decoded
-        // until the event handler actually requests the value using a getter(), but I
-        // suspect that will require an increment to the version number in the function we
-        // call... I don't want to do that just now.
-        _entities.forEach(function (mapKey :Object, sprite :Object) :void {
-            if (sprite is MsoySprite) {
-                MsoySprite(sprite).roomPropertyChanged(key, ObjectMarshaller.decode(data));
-            } else {
-                log.warning("Erk, non-sprite entity [key=" + mapKey + ", entity=" + sprite + "]");
-            }
-        });
     }
 
     public function dispatchEntityEntered (item :ItemIdent) :void

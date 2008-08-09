@@ -58,7 +58,6 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomCodes;
-import com.threerings.msoy.room.data.RoomPropertyEntry;
 import com.threerings.msoy.room.data.RoomObject;
 
 /**
@@ -824,39 +823,6 @@ public class MsoySprite extends DataPackMediaContainer
         }
 
         return callUserCode("lookupEntityProperty_v1", key);
-    }
-
-    /**
-     * Return all room properties in an associative hash.
-     */
-    internal function getRoomProperties () :Object
-    {
-        // TODO: do you need an _ident (be an entity) to read properties?
-        var ctrl :RoomController = getController(true);
-        return (ctrl != null) ? ctrl.getRoomProperties() : {};
-    }
-
-    /**
-     * Locate the value bound to a particular key in the room's properties.
-     */
-    internal function getRoomProperty (key :String) :Object
-    {
-        // TODO: do you need an _ident (be an entity) to read properties?
-        var ctrl :RoomController = getController(true);
-        return (ctrl != null) ? ctrl.getRoomProperty(key) : null;
-    }
-
-    /**
-     * Update a room property.
-     */
-    internal function setRoomProperty (key :String, value: Object) :Boolean
-    {
-        // don't let mobiles set memories
-        if (_ident == null || _ident.type == Item.AVATAR || _ident.type == Item.PET) {
-            return false;
-        }
-        var ctrl :RoomController = getController(true);
-        return (ctrl != null) && ctrl.setRoomProperty(key, value); // false if ctrl is null
     }
 
     /**

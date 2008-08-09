@@ -13,6 +13,10 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 public class EntityMemoryEntry
     implements DSet.Entry, Comparable<EntityMemoryEntry>
 {
+    /** Maximum size for a memory. */
+    // TODO: make sure this is used everywhere we try to save memories.
+    public static final int MAX_ENCODED_PROPERTY_LENGTH = 16 * 256;
+
     /** The item with which this memory datum is associated. */
     public ItemIdent item;
 

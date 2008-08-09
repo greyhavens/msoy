@@ -87,22 +87,6 @@ public class RoomStudioController extends RoomController
     }
 
     // documentation inherited
-    override public function getRoomProperties () :Object
-    {
-        var props :Object = {};
-        for (var key :String in _properties) {
-            props[key] = ObjectMarshaller.decode(_properties[key]);
-        }
-        return props;
-    }
-
-    // documentation inherited
-    override public function getRoomProperty (key :String) :Object
-    {
-        return ObjectMarshaller.decode(_properties[key]);
-    }
-
-    // documentation inherited
     override public function canManageRoom () :Boolean
     {
         // Pretend we have rights to this room
@@ -220,23 +204,9 @@ public class RoomStudioController extends RoomController
         MethodQueue.callLater(_studioView.dispatchMemoryChanged, [ ident, key, data ]);
     }
 
-    override protected function setRoomProperty2 (key :String, data :ByteArray) :void
-    {
-        if (data == null) {
-            delete _properties[key];
-        } else {
-            _properties[key] = data;
-        }
-
-        MethodQueue.callLater(_studioView.dispatchRoomPropertyChanged, [ key, data ]);
-    }
-
     protected var _studioView :RoomStudioView;
 
     /** Maps ItemIdent -> (Dictionary[key] -> encoded value) */
     protected var _memories :HashMap = new HashMap();
-
-    /** Maps key -> encoded value */
-    protected var _properties :Dictionary = new Dictionary();
 }
 }

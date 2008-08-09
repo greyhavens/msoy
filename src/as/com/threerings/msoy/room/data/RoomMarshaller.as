@@ -121,19 +121,8 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>setRoomProperty</code> requests. */
-    public static const SET_ROOM_PROPERTY :int = 9;
-
-    // from interface RoomService
-    public function setRoomProperty (arg1 :Client, arg2 :RoomPropertyEntry) :void
-    {
-        sendRequest(arg1, SET_ROOM_PROPERTY, [
-            arg2
-        ]);
-    }
-
     /** The method id used to dispatch <code>spawnMob</code> requests. */
-    public static const SPAWN_MOB :int = 10;
+    public static const SPAWN_MOB :int = 9;
 
     // from interface RoomService
     public function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :InvocationService_InvocationListener) :void
@@ -146,7 +135,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateMemory</code> requests. */
-    public static const UPDATE_MEMORY :int = 11;
+    public static const UPDATE_MEMORY :int = 10;
 
     // from interface RoomService
     public function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry) :void
@@ -157,7 +146,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>updateRoom</code> requests. */
-    public static const UPDATE_ROOM :int = 12;
+    public static const UPDATE_ROOM :int = 11;
 
     // from interface RoomService
     public function updateRoom (arg1 :Client, arg2 :SceneUpdate, arg3 :InvocationService_InvocationListener) :void

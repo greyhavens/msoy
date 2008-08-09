@@ -10,7 +10,6 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.room.data.EntityMemoryEntry;
-import com.threerings.msoy.room.data.RoomPropertyEntry;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EffectData;
 
@@ -26,9 +25,6 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>memories</code> field. */
     public static const MEMORIES :String = "memories";
-
-    /** The field name of the <code>roomProperties</code> field. */
-    public static const ROOM_PROPERTIES :String = "roomProperties";
 
     /** The field name of the <code>controllers</code> field. */
     public static const CONTROLLERS :String = "controllers";
@@ -70,10 +66,6 @@ public class RoomObject extends SpotSceneObject
     public var memories :DSet = new DSet();
     EntityMemoryEntry; // reference to force linkage
 
-    /** Contains the shared property space for this room. */
-    public var roomProperties :DSet = new DSet();
-    RoomPropertyEntry; // reference to force linkage
-
     /** Contains mappings for all controlled entities in this room. */
     public var controllers :DSet = new DSet();
     EntityControl; // reference to force linkage
@@ -88,7 +80,6 @@ public class RoomObject extends SpotSceneObject
 
         roomService = (ins.readObject() as RoomMarshaller);
         memories = (ins.readObject() as DSet);
-        roomProperties = (ins.readObject() as DSet);
         controllers = (ins.readObject() as DSet);
         effects = (ins.readObject() as DSet);
     }

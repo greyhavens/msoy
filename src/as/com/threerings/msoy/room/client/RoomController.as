@@ -100,7 +100,6 @@ import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.RoomPropertyEntry;
 
 /**
  * Manages the various interactions that take place in a room scene.
@@ -179,22 +178,6 @@ public class RoomController extends SceneController
      * Look up a particular memory key for the specified item.
      */
     public function lookupMemory (ident :ItemIdent, key :String) :Object
-    {
-        return null; // see subclasses
-    }
-
-    /**
-     * Get the non-persistent room properties in a map.
-     */
-    public function getRoomProperties () :Object
-    {
-        return {}; // see subclasses
-    }
-
-    /**
-     * Look up a particular non-persistent room property.
-     */
-    public function getRoomProperty (key :String) :Object
     {
         return null; // see subclasses
     }
@@ -292,28 +275,8 @@ public class RoomController extends SceneController
         // This will validate that the property set isn't greater than the MAXIMUM
         //      alloted memory space, but further checks are done serverside.
         var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
-                RoomPropertyEntry.MAX_ENCODED_PROPERTY_LENGTH);
+                EntityMemoryEntry.MAX_ENCODED_PROPERTY_LENGTH);
         updateMemory2(ident, key, data);
-        return true;
-    }
-
-    /**
-     * Handles a request to update a property in this room.
-     */
-    public function setRoomProperty (key :String, value: Object) :Boolean
-    {
-        // TODO: I want to know wtf is requesting to set-props after it's been shut down...
-//        if (_roomObj == null) {
-//            log.info("Dropping room property update, not in room [key=" + key + "].");
-//            return false;
-//        }
-
-        // serialize datum
-        // This will validate that the property set isn't greater than the MAXIMUM
-        //      alloted memory space, but further checks are done serverside.
-        var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
-                RoomPropertyEntry.MAX_ENCODED_PROPERTY_LENGTH);
-        setRoomProperty2(key, data);
         return true;
     }
 
@@ -785,14 +748,6 @@ public class RoomController extends SceneController
      * Once a memory update is validated and ready to go, it is sent here.
      */
     protected function updateMemory2 (ident :ItemIdent, key :String, data :ByteArray) :void
-    {
-        // see subclasses
-    }
-
-    /**
-     * Once a property update is validated and ready to go, it is sent here.
-     */
-    protected function setRoomProperty2 (key :String, data :ByteArray) :void
     {
         // see subclasses
     }

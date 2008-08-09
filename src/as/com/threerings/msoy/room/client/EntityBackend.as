@@ -147,17 +147,20 @@ public class EntityBackend extends ControlBackend
 
     protected function getRoomProperties_v1 () :Object
     {
-        return (_sprite == null) ? null : _sprite.getRoomProperties();
+        trace("Call to deprecated getRoomProperties_v1");
+        return null;
     }
 
     protected function getRoomProperty_v1 (key :String) :Object
     {
-        return (_sprite == null) ? null : _sprite.getRoomProperty(key);
+        trace("Call to deprecated getRoomProperty_v1");
+        return null;
     }
 
     protected function setRoomProperty_v1 (key :String, value :Object) :Boolean
     {
-        return (_sprite == null) ? false : _sprite.setRoomProperty(key, value);
+        trace("Call to deprecated setRoomProperty_v1");
+        return false;
     }
 
     protected function setHotSpot_v1 (x :Number, y :Number, height :Number = NaN) :void

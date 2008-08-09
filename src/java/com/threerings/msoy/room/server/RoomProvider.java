@@ -6,7 +6,6 @@ package com.threerings.msoy.room.server;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.client.RoomService;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
-import com.threerings.msoy.room.data.RoomPropertyEntry;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -61,11 +60,6 @@ public interface RoomProvider extends InvocationProvider
      * Handles a {@link RoomService#setActorState} request.
      */
     void setActorState (ClientObject caller, ItemIdent arg1, int arg2, String arg3);
-
-    /**
-     * Handles a {@link RoomService#setRoomProperty} request.
-     */
-    void setRoomProperty (ClientObject caller, RoomPropertyEntry arg1);
 
     /**
      * Handles a {@link RoomService#spawnMob} request.

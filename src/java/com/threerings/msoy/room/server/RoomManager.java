@@ -89,7 +89,6 @@ import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.RoomPropertyEntry;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.server.persist.MemoryRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
@@ -561,29 +560,6 @@ public class RoomManager extends SpotSceneManager
             _roomObj.updateMemories(entry);
         } else {
             _roomObj.addToMemories(entry);
-        }
-    }
-
-    // documentation inherited from RoomProvider
-    public void setRoomProperty (ClientObject caller, final RoomPropertyEntry entry)
-    {
-        // Make sure this property won't put us over the total size limit
-        int totalSize = 0;
-        for (RoomPropertyEntry rent : _roomObj.roomProperties) {
-            if ( ! rent.key.equals(entry.key)) {
-                totalSize += rent.getSize();
-            }
-        }
-        if (totalSize + entry.getSize() > MAX_ROOM_PROPERTY_SIZE) {
-            log.info("Rejecting room property update as too large [otherSize=" + totalSize +
-                     ", newEntrySize=" + entry.getSize() + "].");
-            return; // no feedback, just don't update it
-        }
-
-        if (_roomObj.roomProperties.contains(entry)) {
-            _roomObj.updateRoomProperties(entry);
-        } else {
-            _roomObj.addToRoomProperties(entry);
         }
     }
 

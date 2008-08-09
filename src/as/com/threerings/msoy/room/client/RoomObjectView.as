@@ -78,7 +78,6 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.RoomPropertyEntry;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 
 /**
@@ -291,10 +290,6 @@ public class RoomObjectView extends RoomView
             var mem :EntityMemoryEntry = event.getEntry() as EntityMemoryEntry;
             dispatchMemoryChanged(mem.item, mem.key, mem.value);
 
-        } else if (RoomObject.ROOM_PROPERTIES == name) {
-            var prop :RoomPropertyEntry = event.getEntry() as RoomPropertyEntry;
-            dispatchRoomPropertyChanged(prop.key, prop.value);
-
         } else if (RoomObject.CONTROLLERS == name) {
             var ctrl :EntityControl = (event.getEntry() as EntityControl);
             if (ctrl.controllerOid == _ctx.getMemberObject().getOid()) {
@@ -328,10 +323,6 @@ public class RoomObjectView extends RoomView
             var mem :EntityMemoryEntry = event.getEntry() as EntityMemoryEntry;
             dispatchMemoryChanged(mem.item, mem.key, mem.value);
 
-        } else if (RoomObject.ROOM_PROPERTIES == name) {
-            var prop :RoomPropertyEntry = event.getEntry() as RoomPropertyEntry;
-            dispatchRoomPropertyChanged(prop.key, prop.value);
-
         } else if (RoomObject.EFFECTS == name) {
             updateEffect(event.getEntry() as EffectData);
         }
@@ -348,8 +339,6 @@ public class RoomObjectView extends RoomView
         } else if (RoomObject.EFFECTS == name) {
             removeEffect(event.getKey() as int);
 
-        } else if (RoomObject.ROOM_PROPERTIES == name) {
-            dispatchRoomPropertyChanged(event.getKey() as String, null);
         }
     }
 
@@ -491,14 +480,6 @@ public class RoomObjectView extends RoomView
         }
     }
 
-    // documentation inherited
-    override public function dispatchRoomPropertyChanged (key :String, data :ByteArray) :void
-    {
-        super.dispatchRoomPropertyChanged(key, data);
-        // TODO: Fuck me, I wish we could not decode unless there is a backend..
-        callAVRGCode("roomPropertyChanged_v1", key, ObjectMarshaller.decode(data));
-    }
- 
     // documentation inherited
     override protected function populateSpriteContextMenu (
         sprite :MsoySprite, menuItems :Array) :void
