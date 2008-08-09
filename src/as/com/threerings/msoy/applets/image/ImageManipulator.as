@@ -49,6 +49,7 @@ import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 import com.threerings.flex.KeyboardManager;
 import com.threerings.flex.ScrollBox;
+import com.threerings.flex.FlexUtil;
 
 /**
  * Dispatched when the size of the image is known.
@@ -108,7 +109,7 @@ public class ImageManipulator extends HBox
         _editor.setImage(image);
 
         if (_controlBar != null) {
-            FlexUtil.setVisible(_controlBar, (image != null);
+            FlexUtil.setVisible(_controlBar, (image != null));
         }
     }
 

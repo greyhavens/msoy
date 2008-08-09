@@ -30,6 +30,8 @@ import mx.managers.PopUpManager;
 
 import com.threerings.util.ValueEvent;
 
+import com.threerings.flex.FlexUtil;
+
 import com.threerings.msoy.applets.AppletContext;
 
 public class Downloader extends TitleWindow
