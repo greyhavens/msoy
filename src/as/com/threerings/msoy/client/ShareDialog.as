@@ -20,6 +20,7 @@ import mx.controls.TextArea;
 import mx.controls.TextInput;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.data.MemberObject;
@@ -32,15 +33,18 @@ public class ShareDialog extends FloatingPanel
     {
         super(ctx);
         showCloseButton = true;
-
         styleName = "shareWindow";
         //setStyle("horizontalAlign", "center");
+
 
         var cord :Accordion = new Accordion();
 
         cord.width = 323;
         cord.height = 250;
-        cord.addChild(createEmailBox());
+        // TODO: guests can't abuse the email thingy?
+//        if (!_memObj.isGuest()) {
+            cord.addChild(createEmailBox());
+//        }
         cord.addChild(createLinkBox());
         cord.addChild(createEmbedBox());
 
@@ -53,40 +57,52 @@ public class ShareDialog extends FloatingPanel
 
     public function getEmbedCode (size :int) :String
     {
+        _memObj = _ctx.getClient().getClientObject() as MemberObject;
+
         var url :String = _ctx.getTopPanel().root.loaderInfo.loaderURL;
         url = url.replace(/(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
         
-        var memberObject :MemberObject = _ctx.getClient().getClientObject() as MemberObject;
-        var affiliate :String = memberObject ? memberObject.getMemberId().toString() : "";
-        var flashVars :String = "sceneId=" + _ctx.getMsoyController().getSceneIdString() + 
-            "&" + TrackingCookie.makeFlashVars(affiliate, TrackingCookie.ROOM_VECTOR, "");
+        var affiliate :String = _memObj.isGuest() ? "" : String(_memObj.getMemberId());
+        var flashVars :String = "";
+        const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
+        var vector :String;
+        if (sceneAndGame[0] != 0) {
+            flashVars += "sceneId=" + sceneAndGame[0];
+            vector = TrackingCookie.ROOM_VECTOR;
 
-        return Msgs.GENERAL.get("m.embed", flashVars, url, EMBED_SIZES[size][0], EMBED_SIZES[size][1]);
+        } else if (sceneAndGame[1] != 0) {
+            // TODO: go to the game's whirled, not just the lobby
+            flashVars += "gameLobby=" + sceneAndGame[1];
+            vector = TrackingCookie.GAME_VECTOR;
+
+        } else {
+            vector = TrackingCookie.GENERIC_VECTOR;
+        }
+        flashVars += "&" + TrackingCookie.makeFlashVars(affiliate, vector, "");
+
+        return Msgs.GENERAL.get("m.embed", flashVars, url,
+            EMBED_SIZES[size][0], EMBED_SIZES[size][1]);
     }
 
     protected function createEmailBox () :VBox
     {
         var box :VBox = new VBox();
-        box.label = "Email this room";
+        box.label = "Email this room"; // TODO!
         box.percentWidth = 100;
         box.percentHeight = 100;
 
-        var info :Label = new Label();
-        info.text = Msgs.GENERAL.get("l.email_addresses");
-        box.addChild(info);
+        box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.email_addresses")));
 
         var emails :TextInput = new TextInput();
         box.addChild(emails);
 
-        info = new Label();
-        info.text = Msgs.GENERAL.get("l.email_message");
-        box.addChild(info);
+        box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.email_message")));
 
         var message :TextArea = new TextArea();
         box.addChild(message);
 
         var send :CommandButton = new CommandButton(null, function () :void {
-            _ctx.getMsoyController().handleEmailShare(emails, message);
+            _ctx.getMsoyController().handleEmailShare(emails.text, message);
             close();
         });
         send.styleName = "sendButton";
@@ -100,7 +116,7 @@ public class ShareDialog extends FloatingPanel
     protected function createLinkBox () :VBox
     {
         var box :VBox = new VBox();
-        box.label = "Grab the link";
+        box.label = "Grab the link"; // TODO
         box.percentWidth = 100;
         box.percentHeight = 100;
 
@@ -110,9 +126,14 @@ public class ShareDialog extends FloatingPanel
         box.addChild(info);
 
         var url :String = _ctx.getTopPanel().root.loaderInfo.loaderURL;
-        // TODO: Proper way to get the URL for both rooms and games
-        url = url.replace(/(http:\/\/[^\/]*).*/,
-            "$1/#world-s" + _ctx.getMsoyController().getSceneIdString());
+        url = url.replace(/(http:\/\/[^\/]*).*/, "$1/");
+        const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
+        if (sceneAndGame[0] != 0) {
+            url += "#world-s" + sceneAndGame[0];
+
+        } else if (sceneAndGame[1] != 0) {
+            url += "#world-game_g_" + sceneAndGame[1];
+        }
 
         box.addChild(new CopyableText(url));
 
@@ -160,10 +181,9 @@ public class ShareDialog extends FloatingPanel
 
         box.addChild(grid);
 
-        var info :Label = new Label();
-            info.width = 300;
-            info.text = Msgs.GENERAL.get("l.embed_instruction");
-            info.selectable = false;
+        var info :Label = FlexUtil.createLabel(Msgs.GENERAL.get("l.embed_instruction"));
+        info.width = 300;
+        info.selectable = false;
         box.addChild(info);
 
         box.addChild(new CopyableText(code));
@@ -174,5 +194,7 @@ public class ShareDialog extends FloatingPanel
     protected static const EMBED_SIZES :Array = [
         [320, 240], [800, 550], ["100%", 550]
     ];
+
+    protected var _memObj :MemberObject;
 }
 }

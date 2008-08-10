@@ -181,11 +181,13 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Returns a string that can be used to embed the current flash client.
+     * Returns an array containing [ currentSceneId, currentGameId ], either or both
+     * might be 0.
+     * This is total hackery, but it's better than the ubertotalhackery that it used to be.
      */
-    public function getSceneIdString () :String
+    public function getSceneAndGame () :Array
     {
-        return "";
+        return [ 0, 0 ];
     }
 
     /**
@@ -362,17 +364,18 @@ public class MsoyController extends Controller
     /**
      * Handle the EMAIL_SHARE command.
      */
-    public function handleEmailShare (emails :TextInput, message :TextArea) :void
+    public function handleEmailShare (emails :String, message :TextArea) :void
     {
         var msvc :MemberService =
             _mctx.getClient().requireService(MemberService) as MemberService;
 
         var out :TypedArray = TypedArray.create(String);
-        for each (var email :String in emails.text.split(/[ ,]/)) {
+        for each (var email :String in emails.split(/[ ,]/)) {
             out.push(email);
         }
 
-        msvc.emailShare(_mctx.getClient(), int(getSceneIdString()), out, message.text,
+        const sceneAndGame :Array = getSceneAndGame();
+        msvc.emailShare(_mctx.getClient(), int(sceneAndGame[0]), out, message.text,
             new ConfirmAdapter(function (cause :String) :void {
                 trace("failure"); // TODO
             }

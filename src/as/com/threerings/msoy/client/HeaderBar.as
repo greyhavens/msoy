@@ -119,11 +119,6 @@ public class HeaderBar extends HBox
         setCompVisible(_commentLink, (onClick != null));
     }
 
-    public function setEmbedVisible (visible :Boolean) :void
-    {
-        setCompVisible(_embedLink, visible);
-    }
-
     public function miniChanged () :void
     {
         if (_ctx.getTopPanel().isMinimized()) {
@@ -226,14 +221,13 @@ public class HeaderBar extends HBox
         setCommentLink(null);
         _extras.push(_commentLink);
 
-        _embedLink = new CommandLinkButton(Msgs.GENERAL.get("b.share"),
+        _shareLink = new CommandLinkButton(Msgs.GENERAL.get("b.share"),
             FloatingPanel.createPopper(function () :ShareDialog {
                 return new ShareDialog(_ctx);
             }));
-        _embedLink.styleName = "headerShareLink";
-        controlBox.addChild(_embedLink);
-        setEmbedVisible(false);
-        _extras.push(_embedLink);
+        _shareLink.styleName = "headerShareLink";
+        controlBox.addChild(_shareLink);
+        _extras.push(_shareLink);
 
         _spacer = new Spacer(this);
         addChild(_spacer);
@@ -304,7 +298,7 @@ public class HeaderBar extends HBox
 
     protected var _commentLink :CommandLinkButton;
 
-    protected var _embedLink :CommandLinkButton;
+    protected var _shareLink :CommandLinkButton;
 
     protected var _fullVersionLink :CommandLinkButton;
     protected var _fullVersion :HBox;

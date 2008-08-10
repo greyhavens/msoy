@@ -13,6 +13,15 @@ import com.threerings.util.Log;
  */
 public class TrackingCookie
 {
+    /** This vector string represents an embedded room. */
+    public static const ROOM_VECTOR :String = "room";
+
+    /** This vector string represents an embedded game. */
+    public static const GAME_VECTOR :String = "game";
+
+    /** This vector string represents my butt. */
+    public static const GENERIC_VECTOR :String = "?";
+
     /**
      * Does the Flash cookie already contains referral information?
      */
@@ -100,8 +109,5 @@ public class TrackingCookie
     protected static const VECTOR_ID :String = "vec";
     protected static const CREATIVE_ID :String = "cre";
     protected static const TRACKER_ID :String = "grp";
-
-    /** This vector string represents an embedded room */
-    public static const ROOM_VECTOR :String = "room";
 }
 }

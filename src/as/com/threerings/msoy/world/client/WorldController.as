@@ -469,14 +469,14 @@ public class WorldController extends MsoyController
         _wctx.getMsoyClient().trackClientAction("flashFullVersionClicked", null);
 
         // then go to the appropriate place..
-        var scene :Scene = _wctx.getSceneDirector().getScene();
-        if (scene != null) {
-            displayPage("world", "s" + scene.getId());
+        const sceneId :int = getCurrentSceneId();
+        if (sceneId != 0) {
+            displayPage("world", "s" + sceneId);
 
         } else {
-            var cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
-            if (cfg != null) {
-                handleViewGame(cfg.getGameId());
+            const gameId :int = getCurrentGameId();
+            if (gameId != 0) {
+                handleViewGame(gameId);
 
             } else {
                 displayPage("", "");
@@ -782,11 +782,10 @@ public class WorldController extends MsoyController
         }
         // this will result in another request to move to the scene we're already in, but we'll
         // ignore it because we're already there
-        var scene :String = sceneId + "";
-        if (_sceneIdString != null) {
-            displayPageGWT("world", "s" + scene);
+        if (_oldCrustyShit) {
+            displayPageGWT("world", "s" + sceneId);
         }
-        _sceneIdString = scene;
+        _oldCrustyShit = true;
     }
 
     /**
@@ -828,23 +827,23 @@ public class WorldController extends MsoyController
     {
         // first, see if we should hit a specific scene
         if (null != params["memberHome"]) {
-            _sceneIdString = null;
+            _oldCrustyShit = false;
             handleGoMemberHome(int(params["memberHome"]), true);
 
         } else if (null != params["groupHome"]) {
-            _sceneIdString = null;
+            _oldCrustyShit = false;
             handleGoGroupHome(int(params["groupHome"]), true);
 
         } else if (null != params["memberScene"]) {
-            _sceneIdString = null;
+            _oldCrustyShit = false;
             handleGoMemberLocation(int(params["memberScene"]));
 
         } else if (null != params["playerTable"]) {
-            _sceneIdString = null;
+            _oldCrustyShit = false;
             handleJoinPlayerTable(int(params["playerTable"]));
 
         } else if (null != params["gameLocation"]) {
-            _sceneIdString = null;
+            _oldCrustyShit = false;
             _wctx.getGameDirector().enterGame(int(params["gameLocation"]));
 
         } else if (null != params["noplace"]) {
@@ -933,9 +932,9 @@ public class WorldController extends MsoyController
     }
 
     // from MsoyController
-    override public function getSceneIdString () :String
+    override public function getSceneAndGame () :Array
     {
-        return _sceneIdString;
+        return [ getCurrentSceneId(), getCurrentGameId() ];
     }
 
     // from MsoyController
@@ -1198,8 +1197,6 @@ public class WorldController extends MsoyController
     {
         super.updateTopPanel(headerBar, controlBar);
 
-        const embedded :Boolean = _wctx.getMsoyClient().isEmbedded();
-
         // TODO: The way I think we should consider doing this is have PlaceView's dispatch
         // some sort of NewPlaceEvent when they're showing and have downloaded whatever data
         // needed, and then various components up the hierarchy can react to this event.
@@ -1209,7 +1206,6 @@ public class WorldController extends MsoyController
         if (scene != null) {
             _wctx.getMsoyClient().setWindowTitle(scene.getName());
             headerBar.setLocationName(scene.getName());
-            headerBar.setEmbedVisible(!embedded);
             var roomChannel :ChatChannel =
                 ChatChannel.makeRoomChannel(new RoomName(scene.getName(), scene.getId()));
             headerBar.getChatTabs().clearUncheckedRooms([roomChannel.toLocalType()]);
@@ -1245,7 +1241,7 @@ public class WorldController extends MsoyController
                 } else {
                     headerBar.setOwnerLink("");
                 }
-                if (!embedded) {
+                if (!_wctx.getMsoyClient().isEmbedded()) {
                     headerBar.setCommentLink(handleViewRoom, model.sceneId);
                 }
                 headerBar.setInstructionsLink(null);
@@ -1260,10 +1256,6 @@ public class WorldController extends MsoyController
         }
 
 
-        // For now we can embed scenes with game lobbies attached, but not game instances - when we
-        // have a unique URL for game instance locations, then we can embed those locations as
-        // well, and have the embedded page bring the game lobby attached to the default game room.
-        headerBar.setEmbedVisible(false);
         (controlBar as WorldControlBar).sceneEditPossible = false;
 
         // if we're in a game, display the game name and activate the back button
@@ -1296,6 +1288,15 @@ public class WorldController extends MsoyController
     {
         const scene :Scene = _wctx.getSceneDirector().getScene();
         return (scene == null) ? 0 : scene.getId();
+    }
+
+    /**
+     * Returns the game id, or 0 if none.
+     */
+    protected function getCurrentGameId () :int
+    {
+        const cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
+        return (cfg == null) ? 0 : cfg.getGameId();
     }
 
     protected function addRecentScene (scene :Scene) :void
@@ -1346,8 +1347,8 @@ public class WorldController extends MsoyController
     /** A scene to which to go after we logon. */
     protected var _postLogonScene :int;
 
-    /** A string to give up for embedding your local scene. */
-    protected var _sceneIdString :String;
+    // TODO: remove, but it seems to be doing something
+    protected var _oldCrustyShit :Boolean;
 
     /** The current AVRG display, if any. */
     protected var _avrGamePanel :AVRGamePanel;
