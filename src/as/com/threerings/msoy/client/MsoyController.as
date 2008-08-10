@@ -30,6 +30,8 @@ import mx.controls.Button;
 import mx.controls.TextArea;
 import mx.controls.TextInput;
 
+import mx.events.MenuEvent;
+
 import com.threerings.io.TypedArray;
 
 import com.threerings.util.ArrayUtil;
@@ -228,8 +230,7 @@ public class MsoyController extends Controller
     public function handlePopGoMenu (trigger :Button) :void
     {
         if (_goMenu != null) {
-            _goMenu.hide();
-            _goMenu = null;
+            _goMenu.hide(); // and then will be nulled automatically
             return;
         }
 
@@ -240,6 +241,9 @@ public class MsoyController extends Controller
         _goMenu = CommandMenu.createMenu(menuData, _topPanel);
         _goMenu.variableRowHeight = true;
         _goMenu.popUpAt(r.left, r.bottom);
+        _goMenu.addEventListener(MenuEvent.MENU_HIDE, function (... ignored) :void {
+            _goMenu = null;
+        });
     }
 
     /**
@@ -369,10 +373,9 @@ public class MsoyController extends Controller
     {
         updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getTopPanel().getControlBar());
 
-        // hackery. TODO: cleanup
         if (_goMenu != null) {
             _goMenu.hide();
-            _goMenu = null;
+            // will be nulled automatically...
         }
     }
 
