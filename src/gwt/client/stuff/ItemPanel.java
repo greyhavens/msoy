@@ -30,7 +30,6 @@ import com.threerings.msoy.item.data.all.Item;
 import client.item.StuffNaviBar;
 import client.shell.Args;
 import client.shell.DynamicMessages;
-import client.shell.Frame;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.FlashClients;
@@ -84,7 +83,7 @@ public class ItemPanel extends VerticalPanel
         }
 
         // compute the number of rows of items we can fit on the page
-        int used = Frame.HEADER_HEIGHT + NAV_BAR_ETC;
+        int used = NAV_BAR_ETC;
         if (isCatalogType) {
             used += BLURB_HEIGHT;
         }
@@ -121,7 +120,8 @@ public class ItemPanel extends VerticalPanel
         _favoriteModel = new ItemListDataModel(type);
         // order favorites starting with the most recently favorited items
         _favoriteModel.setDescending(true);
-        _favorites = new ItemGrid(Pages.STUFF, FAVORITES_ARG, _type, 1, COLUMNS, CStuff.msgs.noFavorites());
+        _favorites = new ItemGrid(
+            Pages.STUFF, FAVORITES_ARG, _type, 1, COLUMNS, CStuff.msgs.noFavorites());
         _favorites.addStyleName("Contents");
         _favorites.setModel(_favoriteModel, 0);
 

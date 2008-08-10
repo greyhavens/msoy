@@ -32,7 +32,6 @@ import com.threerings.msoy.item.gwt.ListingCard;
 import client.shell.DynamicMessages;
 import client.item.ShopUtil;
 import client.item.TagCloud;
-import client.shell.Frame;
 import client.shell.Pages;
 import client.ui.Marquee;
 import client.util.Link;
@@ -90,7 +89,7 @@ public class CatalogPanel extends SmartTable
             }
         });
 
-        int rows = Math.max(1, (Window.getClientHeight() - Frame.HEADER_HEIGHT -
+        int rows = Math.max(1, (Window.getClientHeight() -
                                 HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT);
         _items = new PagedGrid<ListingCard>(rows, COLUMNS) {
             protected void displayPageFromClick (int page) {
