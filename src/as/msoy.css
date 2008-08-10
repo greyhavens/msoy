@@ -1182,13 +1182,6 @@ BasePanel {
   verticalGap: 0;
 }
 
-.embedHeaderLabel {
-  fontFamily: Arial;
-  fontWeight: bold;
-  fontSize: 14;
-  color: white;
-}
-
 .embedHeaderPlaceName {
   fontWeight: bold;
   fontSize: 12;

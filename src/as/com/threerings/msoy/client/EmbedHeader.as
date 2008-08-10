@@ -53,14 +53,6 @@ public class EmbedHeader extends Canvas
         logo.mouseEnabled = true;
         addChild(logo);
 
-        var title :Label = new Label();
-        title.styleName = "embedHeaderLabel";
-        title.text = Msgs.GENERAL.get("t.embed_header");
-        title.setStyle("bottom", 0);
-        // center between the right edge of the logo (126px wide) and the right edge of the canvas
-        title.setStyle("horizontalCenter", 63);
-        addChild(title);
-
         var signInObject :DisplayObject = new SIGN_IN() as DisplayObject;
         signInObject.x = signInObject.width / 2;
         signInObject.y = signInObject.height / 2 - 3;
