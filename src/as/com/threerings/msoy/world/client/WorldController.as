@@ -1013,7 +1013,7 @@ public class WorldController extends MsoyController
     {
         // go to the first recent scene that's not the one we're in
         const curSceneId :int = getCurrentSceneId();
-        for (var entry :Object in _recentScenes) {
+        for each (var entry :Object in _recentScenes) {
             if (entry.id != curSceneId) {
                 handleGoScene(entry.id);
                 return;
@@ -1026,6 +1026,23 @@ public class WorldController extends MsoyController
         } else {
             handleGoScene(_wctx.getMemberObject().getHomeSceneId());
         }
+    }
+
+    // from MsoyController
+    override public function canMoveBack () :Boolean
+    {
+        // you can only NOT move back if you are in your home room and there are no
+        // other scenes in your history
+        const curSceneId :int = getCurrentSceneId();
+        if (_wctx.getMemberObject().getHomeSceneId() != curSceneId) {
+            return true;
+        }
+        for each (var entry :Object in _recentScenes) {
+            if (entry.id != curSceneId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // from MsoyController
@@ -1285,10 +1302,8 @@ public class WorldController extends MsoyController
         const curSceneId :int = getCurrentSceneId();
         var sceneSubmenu :Array = [];
         for each (var entry :Object in _recentScenes) {
-            if (entry.id != curSceneId) { // don't show the current scene on the menu
-                sceneSubmenu.push({ label: StringUtil.truncate(entry.name, 50, "..."),
-                    command: GO_SCENE, arg: entry.id });
-            }
+            sceneSubmenu.push({ label: StringUtil.truncate(entry.name, 50, "..."),
+                command: GO_SCENE, arg: entry.id, enabled: (entry.id != curSceneId) });
         }
         if (sceneSubmenu.length == 0) {
             sceneSubmenu.push({ label: Msgs.GENERAL.get("m.none"), enabled: false });

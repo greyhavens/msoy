@@ -34,12 +34,6 @@ public class MsoyGameController extends WhirledGameController
         _occReporter.didLeavePlace(plobj);
     }
 
-    // from BaseGameController
-    override public function backToWhirled (showLobby :Boolean = false) :void
-    {
-        (_pctx as GameContext).backToWhirled(showLobby);
-    }
-
     // from BootablePlaceController
     public function canBoot () :Boolean
     {

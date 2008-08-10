@@ -88,6 +88,7 @@ public class MsoyGamePanel extends WhirledGamePanel
         super.willEnterPlace(plobj);
 
         const mctx :MsoyContext = _gctx.getMsoyContext();
+        mctx.getMsoyController().addGoMenuProvider(populateGoMenu);
 
         var spinner :PlaceLoadingDisplay = new PlaceLoadingDisplay(
             mctx.getTopPanel().getPlaceContainer());
@@ -124,8 +125,6 @@ public class MsoyGamePanel extends WhirledGamePanel
         }
 
         bar.addCustomComponent(_rematch);
-        bar.addCustomComponent(_backToLobby);
-        bar.addCustomComponent(_backToWhirled);
     }
 
     // from WhirledGamePanel
@@ -135,6 +134,8 @@ public class MsoyGamePanel extends WhirledGamePanel
 
         const mctx :MsoyContext = _gctx.getMsoyContext();
         const bar :ControlBar = mctx.getTopPanel().getControlBar();
+
+        mctx.getMsoyController().removeGoMenuProvider(populateGoMenu);
 
         if (GAMESTUB_DEBUG_MODE) {
             _showPlayers.parent.removeChild(_showPlayers);
@@ -155,8 +156,6 @@ public class MsoyGamePanel extends WhirledGamePanel
 
         // clear our custom controlbar components
         _rematch.parent.removeChild(_rematch);
-        _backToLobby.parent.removeChild(_backToLobby);
-        _backToWhirled.parent.removeChild(_backToWhirled);
     }
 
     // from WhirledGamePanel
@@ -167,13 +166,24 @@ public class MsoyGamePanel extends WhirledGamePanel
     }
 
     // from WhirledGamePanel
-    override protected function getButtonLabels (plobj :PlaceObject) :Array
+    override protected function getRematchLabel (plobj :PlaceObject) :String
     {
-        var gameObj :WhirledGameObject = plobj as WhirledGameObject;
-        return [
-            Msgs.GAME.get("b.backToWhirled"),
-            Msgs.GAME.get("b.backToLobby", (_ctrl.getPlaceConfig() as MsoyGameConfig).name),
-            Msgs.GAME.get((gameObj.players.length == 1) ? "b.replay" : "b.rematch") ];
+        const gameObj :WhirledGameObject = plobj as WhirledGameObject;
+        return Msgs.GAME.get((gameObj.players.length == 1) ? "b.replay" : "b.rematch");
+    }
+
+    /**
+     * Populates any game-specific entries on the client's "go" menu.
+     */
+    protected function populateGoMenu (menuData :Array) :void
+    {
+        menuData.push({ type: "separator" });
+        menuData.push({ label: Msgs.GAME.get("b.allGames") /* TODO */ });
+        menuData.push({ label: Msgs.GAME.get("b.backToLobby"),
+            callback: _gctx.backToWhirled, arg: true });
+//        menuData.push({ label: Msgs.GAME.get("b.shop") /* TODO */ });
+//        menuData.push({ label: Msgs.GAME.get("b.gameWhirled") /* TODO */ });
+        menuData.push({ type: "separator" });
     }
 
     /** convenience reference to our game context */

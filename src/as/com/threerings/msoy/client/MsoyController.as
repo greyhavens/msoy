@@ -32,6 +32,7 @@ import mx.controls.TextInput;
 
 import com.threerings.io.TypedArray;
 
+import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
@@ -179,6 +180,23 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Add a function for populating the "go" menu.
+     * signature: function (menuData :Array) :void;
+     */
+    public function addGoMenuProvider (fn :Function) :void
+    {
+        _goMenuProviders.push(fn);
+    }
+
+    /**
+     * Remove a previously-registered "go" menu provider function.
+     */
+    public function removeGoMenuProvider (fn :Function) :void
+    {
+        ArrayUtil.removeAll(_goMenuProviders, fn);
+    }
+
+    /**
      * Update our away status.
      */
     public function setAway (nowAway :Boolean, message :String = null) :void
@@ -246,6 +264,14 @@ public class MsoyController extends Controller
     public function handleMoveBack (closeInsteadOfHome :Boolean = false) :void
     {
         // handled by our derived classes
+    }
+
+    /**
+     * Can we move back?
+     */
+    public function canMoveBack () :Boolean
+    {
+        return false;
     }
 
     /**
@@ -607,7 +633,14 @@ public class MsoyController extends Controller
      */
     protected function populateGoMenu (menuData :Array) :void
     {
-        // TODO
+        // always put "back" first
+        menuData.push({ label: Msgs.GENERAL.get("b.back"), callback: handleMoveBack,
+            enabled: canMoveBack() });
+
+        // then, populate the menu with any providers
+        for each (var fn :Function in _goMenuProviders) {
+            fn(menuData);
+        }
     }
 
     /** Provides access to client-side directors and services. */
@@ -630,6 +663,9 @@ public class MsoyController extends Controller
 
     /** The "go" menu, while it's up. */
     protected var _goMenu :CommandMenu;
+
+    /** Functions that can be called to populate the "go" menu. */
+    protected var _goMenuProviders :Array = [];
 
     /** The URL prefix for 'command' URLs, that post CommendEvents. */
     protected static const COMMAND_URL :String = "command://";
