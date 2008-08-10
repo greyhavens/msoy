@@ -131,19 +131,6 @@ public class HeaderBar extends HBox
         setCompVisible(_embedLink, visible);
     }
 
-    /**
-     * Called by the controller if we're in GWT.
-     */
-    public function setInGWT (inGWT :Boolean) :void
-    {
-        if (inGWT) {
-            var heightBtn :CommandButton = new CommandButton(null, WorldController.TOGGLE_HEIGHT);
-            heightBtn.toolTip = Msgs.GENERAL.get("i.height");
-            heightBtn.styleName = "heightButton";
-            _closeBox.addChildAt(heightBtn, 0);
-        }
-    }
-
     public function miniChanged () :void
     {
         if (_ctx.getTopPanel().isMinimized()) {
@@ -281,12 +268,16 @@ public class HeaderBar extends HBox
         _closeBox = new HBox();
         _closeBox.styleName = "headerCloseBox";
         addChild(_closeBox);
+
+        var heightBtn :CommandButton = new CommandButton(null, WorldController.TOGGLE_HEIGHT);
+        heightBtn.toolTip = Msgs.GENERAL.get("i.height");
+        heightBtn.styleName = "heightButton";
+        _closeBox.addChild(heightBtn);
         
         var closeBtn :CommandButton = new CommandButton(null, MsoyController.CLOSE_PLACE_VIEW);
         closeBtn.styleName = "closeButton";
         _closeBox.addChild(closeBtn);
-        
-        setFullVersionLink(null);
+        FlexUtil.setVisible(_closeBox, false) // start out hidden
     }
 
     protected function setCompVisible (comp :UIComponent, visible :Boolean) :void

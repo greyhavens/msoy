@@ -1233,6 +1233,7 @@ public class WorldController extends MsoyController
                 if (_wctx.getMsoyClient().isEmbedded()) {
                     headerBar.setFullVersionLink(handleViewFullVersion, model.sceneId);
                 } else {
+                    headerBar.setFullVersionLink(null);
                     headerBar.setCommentLink(handleViewRoom, model.sceneId);
                 }
                 headerBar.setInstructionsLink(null);

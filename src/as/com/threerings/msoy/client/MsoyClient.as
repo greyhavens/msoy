@@ -112,7 +112,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
                 configureExternalFunctions();
             }
         } catch (err :Error) {
-            _embedded = true;
             // nada: ExternalInterface isn't there. Oh well!
             log.info("Unable to configure external functions.");
         }
@@ -345,7 +344,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         try {
             _embedded = !(ExternalInterface.call("helloWhirled") as Boolean);
         } catch (err :Error) {
-            _embedded = true;
+            // we default _embedded to true now.
         }
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
     }
@@ -500,7 +499,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected var _stage :Stage;
 
     protected var _minimized :Boolean;
-    protected var _embedded :Boolean;
+    protected var _embedded :Boolean = true; // default to true until proven false
     protected var _featuredPlaceView :Boolean;
 
     /** Array of ReferralInfo objects to be sent out to the server, once we finish handshake. */
