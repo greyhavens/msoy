@@ -105,6 +105,9 @@ public class MsoyController extends Controller
     /** Command to view an item, arg is [ itemTypeId, itemId ] */
     public static const VIEW_ITEM :String = "ViewItem";
 
+    /** Command to view all games */
+    public static const VIEW_GAMES :String = "ViewGames";
+
     /** Command to go to a running game (gameId + placeOid). */
     public static const GO_GAME :String = "GoGame";
 
@@ -258,6 +261,14 @@ public class MsoyController extends Controller
      * Handles the CLOSE_PLACE_VIEW command.
      */
     public function handleClosePlaceView () : void
+    {
+        // handled by our derived classes
+    }
+
+    /**
+     * Handles the VIEW_GAMES command.
+     */
+    public function handleViewGames () :void
     {
         // handled by our derived classes
     }

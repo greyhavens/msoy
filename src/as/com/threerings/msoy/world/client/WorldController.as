@@ -486,6 +486,14 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the VIEW_GAMES command.
+     */
+    override public function handleViewGames () :void
+    {
+        displayPage("games", "");
+    }
+
+    /**
      * Handles the VIEW_GAME_COMMENTS command.
      */
     public function handleViewGameComments (gameId :int) :void

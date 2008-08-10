@@ -30,6 +30,7 @@ import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.MsoyPlaceView;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -178,7 +179,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     protected function populateGoMenu (menuData :Array) :void
     {
         menuData.push({ type: "separator" });
-        menuData.push({ label: Msgs.GAME.get("b.allGames") /* TODO */ });
+        menuData.push({ label: Msgs.GAME.get("b.allGames"), command: MsoyController.VIEW_GAMES });
         menuData.push({ label: Msgs.GAME.get("b.backToLobby"),
             callback: _gctx.backToWhirled, arg: true });
 //        menuData.push({ label: Msgs.GAME.get("b.shop") /* TODO */ });
