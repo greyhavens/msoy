@@ -401,9 +401,6 @@ public class FrameEntryPoint
 
             // the content is just the supplied widget, no extra bits
             _content = _iframe;
-
-            // we won't listen for resize because the iframe is height 100%
-            setWindowResizerEnabled(false);
             break;
 
         case WORLD: {
@@ -471,11 +468,11 @@ public class FrameEntryPoint
             _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
             content.add(_iframe);
             _content = content;
-
-            // listen for window resize so that we can adjust the size of the content
-            setWindowResizerEnabled(true);
             break;
         }
+
+        // on LANDING, we ddon't listen for resize as the iframe is height 100%, otherwise do
+        setWindowResizerEnabled(page != Pages.LANDING);
 
         // size, add and position the content
         if (_content != null) {
@@ -530,11 +527,11 @@ public class FrameEntryPoint
 
                 if (Window.getClientHeight() < (NAVI_HEIGHT + CLIENT_HEIGHT)) {
                     _client = new ScrollPanel();
-                    _client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
                 } else {
                     _client = new SimplePanel();
                 }
                 _client.setWidth("100%");
+                _client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
                 RootPanel.get(PAGE).add(_client);
                 RootPanel.get(PAGE).setWidgetPosition(_client, 0, NAVI_HEIGHT);
 
@@ -691,6 +688,9 @@ public class FrameEntryPoint
                     }
                     if (_iframe != null) {
                         _iframe.setHeight((Window.getClientHeight() - HEADER_HEIGHT) + "px");
+                    }
+                    if (_client != null) {
+                        _client.setHeight((Window.getClientHeight() - NAVI_HEIGHT) + "px");
                     }
                 }
             };
