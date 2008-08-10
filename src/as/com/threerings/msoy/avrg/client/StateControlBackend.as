@@ -57,19 +57,19 @@ public class StateControlBackend
 
     protected function getRoomProperties_v1 () :Object
     {
-        trace("Call to deprecated getRoomProperties_v1");
-        return null;
+        log.warning("Call to deprecated getRoomProperties_v1");
+        return {};
     }
 
     protected function getRoomProperty_v1 (key :String) :Object
     {
-        trace("Call to deprecated getRoomProperty_v1");
+        log.warning("Call to deprecated getRoomProperty_v1");
         return null;
     }
 
     protected function setRoomProperty_v1 (key :String, value :Object) :Boolean
     {
-        trace("Call to deprecated setRoomProperty_v1");
+        log.warning("Call to deprecated setRoomProperty_v1");
         return false;
     }
 
