@@ -140,7 +140,7 @@ public class EmbedHeader extends Canvas
         // used to be: _ctx.getWorldController().handleViewFullVersion(sceneId);
     }
 
-    [Embed(source="../../../../../../pages/images/header/header_logo.png")]
+    [Embed(source="../../../../../../rsrc/media/skins/embed_header_logo.png")]
     protected static const LOGO :Class;
     [Embed(source="../../../../../../rsrc/media/embedbuttons.swf#JoinNow")]
     protected static const JOIN_NOW :Class;
