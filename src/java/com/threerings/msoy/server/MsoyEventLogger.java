@@ -5,7 +5,6 @@ package com.threerings.msoy.server;
 
 import java.io.File;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;

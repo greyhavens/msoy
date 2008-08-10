@@ -182,6 +182,7 @@ public class SwiftlyManager
                 if (msnobj.hostedProjects.containsKey(project.projectId)) {
                     msnobj.peerProjectService.projectUpdated(data.left, project);
                 }
+                return null;
             }
         });
     }
