@@ -237,7 +237,7 @@ public class MsoyPeerManager extends CrowdPeerManager
         return lookupNodeDatum(new Function<NodeObject,MsoyNodeObject>() {
             public MsoyNodeObject apply (NodeObject nodeobj) {
                 MsoyNodeObject node = (MsoyNodeObject) nodeobj;
-                return node.hostedChannels.get(channelKey) == null ? null : node;
+                return node.hostedChannelz.get(channelKey) == null ? null : node;
             }
         });
     }

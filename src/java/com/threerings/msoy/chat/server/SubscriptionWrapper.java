@@ -34,7 +34,7 @@ public class SubscriptionWrapper extends ChannelWrapper
     {
         // let's create a proxy to a channel object hosted on another server
         MsoyNodeObject host = _peerMan.getChannelHost(_channel);
-        HostedChannel hosted = host.hostedChannels.get(HostedChannel.getKey(_channel));
+        HostedChannel hosted = host.hostedChannelz.get(HostedChannel.getKey(_channel));
         if (hosted == null) {
             // the host used to have this channel, but it disappeared. where did it go?
             log.warning("Remote channel no longer hosted, cannot be subscribed! " +
@@ -87,7 +87,7 @@ public class SubscriptionWrapper extends ChannelWrapper
             return;
         }
 
-        HostedChannel hostedInfo = host.hostedChannels.get(HostedChannel.getKey(_channel));
+        HostedChannel hostedInfo = host.hostedChannelz.get(HostedChannel.getKey(_channel));
         _peerMan.unproxyRemoteObject(host.nodeName, hostedInfo.oid);
     }
 

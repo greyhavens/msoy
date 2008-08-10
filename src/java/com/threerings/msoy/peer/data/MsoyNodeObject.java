@@ -26,8 +26,8 @@ public class MsoyNodeObject extends CrowdNodeObject
     /** The field name of the <code>hostedProjects</code> field. */
     public static final String HOSTED_PROJECTS = "hostedProjects";
 
-    /** The field name of the <code>hostedChannels</code> field. */
-    public static final String HOSTED_CHANNELS = "hostedChannels";
+    /** The field name of the <code>hostedChannelz</code> field. */
+    public static final String HOSTED_CHANNELZ = "hostedChannelz";
 
     /** The field name of the <code>memberLocs</code> field. */
     public static final String MEMBER_LOCS = "memberLocs";
@@ -52,7 +52,7 @@ public class MsoyNodeObject extends CrowdNodeObject
     public DSet<HostedProject> hostedProjects = new DSet<HostedProject>();
 
     /** Contains info on all chat channels hosted by this server. */
-    public DSet<HostedChannel> hostedChannels = new DSet<HostedChannel>();
+    public DSet<HostedChannel> hostedChannelz = new DSet<HostedChannel>();
 
     /** Contains the current location of all members on this server. */
     public DSet<MemberLocation> memberLocs = new DSet<MemberLocation>();
@@ -243,36 +243,36 @@ public class MsoyNodeObject extends CrowdNodeObject
 
     /**
      * Requests that the specified entry be added to the
-     * <code>hostedChannels</code> set. The set will not change until the event is
+     * <code>hostedChannelz</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void addToHostedChannels (HostedChannel elem)
+    public void addToHostedChannelz (HostedChannel elem)
     {
-        requestEntryAdd(HOSTED_CHANNELS, hostedChannels, elem);
+        requestEntryAdd(HOSTED_CHANNELZ, hostedChannelz, elem);
     }
 
     /**
      * Requests that the entry matching the supplied key be removed from
-     * the <code>hostedChannels</code> set. The set will not change until the
+     * the <code>hostedChannelz</code> set. The set will not change until the
      * event is actually propagated through the system.
      */
-    public void removeFromHostedChannels (Comparable<?> key)
+    public void removeFromHostedChannelz (Comparable<?> key)
     {
-        requestEntryRemove(HOSTED_CHANNELS, hostedChannels, key);
+        requestEntryRemove(HOSTED_CHANNELZ, hostedChannelz, key);
     }
 
     /**
      * Requests that the specified entry be updated in the
-     * <code>hostedChannels</code> set. The set will not change until the event is
+     * <code>hostedChannelz</code> set. The set will not change until the event is
      * actually propagated through the system.
      */
-    public void updateHostedChannels (HostedChannel elem)
+    public void updateHostedChannelz (HostedChannel elem)
     {
-        requestEntryUpdate(HOSTED_CHANNELS, hostedChannels, elem);
+        requestEntryUpdate(HOSTED_CHANNELZ, hostedChannelz, elem);
     }
 
     /**
-     * Requests that the <code>hostedChannels</code> field be set to the
+     * Requests that the <code>hostedChannelz</code> field be set to the
      * specified value. Generally one only adds, updates and removes
      * entries of a distributed set, but certain situations call for a
      * complete replacement of the set value. The local value will be
@@ -281,11 +281,11 @@ public class MsoyNodeObject extends CrowdNodeObject
      * change. Proxied copies of this object (on clients) will apply the
      * value change when they received the attribute changed notification.
      */
-    public void setHostedChannels (DSet<HostedChannel> value)
+    public void setHostedChannelz (DSet<HostedChannel> value)
     {
-        requestAttributeChange(HOSTED_CHANNELS, value, this.hostedChannels);
+        requestAttributeChange(HOSTED_CHANNELZ, value, this.hostedChannelz);
         DSet<HostedChannel> clone = (value == null) ? null : value.typedClone();
-        this.hostedChannels = clone;
+        this.hostedChannelz = clone;
     }
 
     /**

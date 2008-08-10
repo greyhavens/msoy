@@ -40,7 +40,7 @@ public class HostedWrapper extends ChannelWrapper
 
         // and advertise to other peers that we're hosting this channel
         HostedChannel hosted = new HostedChannel(_channel, _ccobj.getOid());
-        ((MsoyNodeObject) _peerMan.getNodeObject()).addToHostedChannels(hosted);
+        ((MsoyNodeObject) _peerMan.getNodeObject()).addToHostedChannelz(hosted);
 
         // initialize speak service
         SpeakDispatcher sd = new SpeakDispatcher(new HostedSpeakHandler(this, _mgr));
