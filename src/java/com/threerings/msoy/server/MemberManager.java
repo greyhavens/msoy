@@ -577,12 +577,12 @@ public class MemberManager
 
         _invoker.postUnit(new RepositoryUnit("emailShare") {
             public void invokePersist () throws PersistenceException {
-                _sender = _memberRepo.loadMember(memObj.getMemberId());
-            }
-            public void handleSuccess () {
-                String from = (_sender == null) ?
-                    "no-reply@whirled.com" : _sender.accountName;
-                String name = (_sender == null) ? null : _sender.name;
+                MemberRecord sender = _memberRepo.loadMember(memObj.getMemberId());
+
+                // Send the email on the invoker thread... TODO?
+                String from = (sender == null) ?
+                    "no-reply@whirled.com" : sender.accountName;
+                String name = (sender == null) ? null : sender.name;
                 String url = ServerConfig.getServerURL() + "/";
                 if (sceneId != 0) {
                     url += "#world-s" + sceneId;
@@ -593,9 +593,11 @@ public class MemberManager
                     MailSender.sendEmail(recip, from, "shareInvite", "name", name,
                         "message", message, "link", url);
                 }
+            }
+
+            public void handleSuccess () {
                 cl.requestProcessed();
             }
-            protected MemberRecord _sender;
         });
     }
 
