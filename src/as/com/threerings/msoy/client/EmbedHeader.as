@@ -29,6 +29,8 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.ui.MediaWrapper;
 
+import com.threerings.msoy.client.MsoyController;
+
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
 
@@ -88,7 +90,7 @@ public class EmbedHeader extends Canvas
         // in with the new
         var xx :int = 0;
         if (logo != null) {
-            _placeLogo = MediaWrapper.createView(logo);
+            _placeLogo = MediaWrapper.createView(logo, MediaDesc.HALF_THUMBNAIL_SIZE);
             _placeLogo.setStyle("left", xx);
             addChild(_placeLogo);
             xx += PAD + _placeLogo.measuredWidth;
@@ -122,14 +124,7 @@ public class EmbedHeader extends Canvas
 
     protected function handleLogoClick (... ignored) :void
     {
-        var scene :Scene = _ctx.getSceneDirector().getScene();
-        if (scene != null) {
-            CommandEvent.dispatch(this, WorldController.VIEW_FULL_VERSION, scene.getId());
-        } else {
-            CommandEvent.dispatch(this, WorldController.VIEW_GAME,
-                _ctx.getGameDirector().getGameId())
-        }
-        // used to be: _ctx.getWorldController().handleViewFullVersion(sceneId);
+        CommandEvent.dispatch(this, MsoyController.VIEW_FULL_VERSION);
     }
 
     [Embed(source="../../../../../../rsrc/media/skins/embed_header_logo.png")]

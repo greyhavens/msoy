@@ -31,8 +31,11 @@ import com.threerings.flex.FlexWrapper;
 import com.threerings.util.Command;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.ui.FloatingPanel;
+
+import com.threerings.msoy.client.MsoyClient;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
 
@@ -59,6 +62,8 @@ public class HeaderBar extends HBox
         addEventListener(Event.ADDED_TO_STAGE, function (evt :Event) :void {
             _ctx.getMsoyClient().setWindowTitle(getChatTabs().locationName);
         });
+
+        _ctx.getMsoyClient().addEventListener(MsoyClient.EMBEDDED_STATE_KNOWN, handleEmbeddedKnown);
     }
 
     public function getChatTabs () :ChatTabBar
@@ -112,18 +117,6 @@ public class HeaderBar extends HBox
     {
         _commentLink.setCallback(onClick, arg);
         setCompVisible(_commentLink, (onClick != null));
-    }
-
-    /**
-     * Shows or clears the "full version" link.  Passing null for the onClick function will clear
-     * the link.  If a link is specified, the close box is cleared out, as this link is used in 
-     * embedded clients, and the close box does nothing there.
-     */
-    public function setFullVersionLink (onClick :Function, arg :Object = null) :void
-    {
-        _fullVersionLink.setCallback(onClick, arg);
-        setCompVisible(_fullVersion, (onClick != null));
-        setCompVisible(_closeBox, (onClick == null));
     }
 
     public function setEmbedVisible (visible :Boolean) :void
@@ -255,7 +248,8 @@ public class HeaderBar extends HBox
         _fullVersion.styleName = "headerBox";
         _fullVersion.percentHeight = 100;
         controlBox.addChild(_fullVersion);
-        _fullVersionLink = new CommandLinkButton(Msgs.GENERAL.get("b.full_version"));
+        _fullVersionLink = new CommandLinkButton(Msgs.GENERAL.get("b.full_version"),
+            MsoyController.VIEW_FULL_VERSION);
         _fullVersionLink.styleName = "headerLink";
         _fullVersion.addChild(_fullVersionLink);
         var arrowImage :DisplayObject = new ARROW_CORNER() as DisplayObject;
@@ -278,6 +272,14 @@ public class HeaderBar extends HBox
         closeBtn.styleName = "closeButton";
         _closeBox.addChild(closeBtn);
         FlexUtil.setVisible(_closeBox, false) // start out hidden
+        FlexUtil.setVisible(_fullVersion, false);
+    }
+
+    protected function handleEmbeddedKnown (event :ValueEvent) :void
+    {
+        const embedded :Boolean = event.value as Boolean;
+        setCompVisible(_fullVersion, embedded);
+        setCompVisible(_closeBox, !embedded);
     }
 
     protected function setCompVisible (comp :UIComponent, visible :Boolean) :void

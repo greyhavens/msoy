@@ -41,6 +41,7 @@ import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
+import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.net.Credentials;
 
@@ -107,6 +108,9 @@ public class MsoyController extends Controller
 
     /** Command to view all games */
     public static const VIEW_GAMES :String = "ViewGames";
+
+    /** Command to display the full Whirled (used in the embedded client). */
+    public static const VIEW_FULL_VERSION :String = "ViewFullVersion";
 
     /** Command to go to a running game (gameId + placeOid). */
     public static const GO_GAME :String = "GoGame";

@@ -115,6 +115,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             // nada: ExternalInterface isn't there. Oh well!
             log.info("Unable to configure external functions.");
         }
+        dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
 
         // allow connecting the media server if it differs from the game server
         if (DeploymentConfig.mediaURL.indexOf(DeploymentConfig.serverHost) == -1) {
@@ -346,7 +347,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         } catch (err :Error) {
             // we default _embedded to true now.
         }
-        dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
     }
 
     /**

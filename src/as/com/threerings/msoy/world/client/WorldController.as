@@ -166,9 +166,6 @@ public class WorldController extends MsoyController
     /** Command to complain about a member. */
     public static const COMPLAIN_MEMBER :String = "ComplainMember";
 
-    /** Command to display the given room in Whirled (used in the embedded client). */
-    public static const VIEW_FULL_VERSION :String = "ViewFullVersion";
-
     /** Command to toggle the client to full browser height. */
     public static const TOGGLE_HEIGHT :String = "ToggleHeight";
 
@@ -466,11 +463,25 @@ public class WorldController extends MsoyController
     /**
      * Handles the VIEW_FULL_VERSION command, used in embedded clients.
      */
-    public function handleViewFullVersion (sceneId :int) :void
+    public function handleViewFullVersion () :void
     {
-        displayPage("world", "s" + sceneId);
         // log that the full version button was clicked
         _wctx.getMsoyClient().trackClientAction("flashFullVersionClicked", null);
+
+        // then go to the appropriate place..
+        var scene :Scene = _wctx.getSceneDirector().getScene();
+        if (scene != null) {
+            displayPage("world", "s" + scene.getId());
+
+        } else {
+            var cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
+            if (cfg != null) {
+                handleViewGame(cfg.getGameId());
+
+            } else {
+                displayPage("", "");
+            }
+        }
     }
 
     /**
@@ -1164,7 +1175,9 @@ public class WorldController extends MsoyController
             // we're in embed mode and are trying to get out) don't do the scene wrap business
             const sceneId :int = getCurrentSceneId();
             if (sceneId == 0 || (page == "world" && args == ("s"+sceneId))) {
-                fullURL += "/#" + page + "-" + args;
+                if (!StringUtil.isBlank(page)) {
+                    fullURL += "/#" + page + "-" + args;
+                }
             } else {
                 fullURL += "/#world-s" + sceneId + "_" + page + "-" + args;
             }
@@ -1185,6 +1198,8 @@ public class WorldController extends MsoyController
     {
         super.updateTopPanel(headerBar, controlBar);
 
+        const embedded :Boolean = _wctx.getMsoyClient().isEmbedded();
+
         // TODO: The way I think we should consider doing this is have PlaceView's dispatch
         // some sort of NewPlaceEvent when they're showing and have downloaded whatever data
         // needed, and then various components up the hierarchy can react to this event.
@@ -1194,7 +1209,7 @@ public class WorldController extends MsoyController
         if (scene != null) {
             _wctx.getMsoyClient().setWindowTitle(scene.getName());
             headerBar.setLocationName(scene.getName());
-            headerBar.setEmbedVisible(!_wctx.getMsoyClient().isEmbedded());
+            headerBar.setEmbedVisible(!embedded);
             var roomChannel :ChatChannel =
                 ChatChannel.makeRoomChannel(new RoomName(scene.getName(), scene.getId()));
             headerBar.getChatTabs().clearUncheckedRooms([roomChannel.toLocalType()]);
@@ -1230,10 +1245,7 @@ public class WorldController extends MsoyController
                 } else {
                     headerBar.setOwnerLink("");
                 }
-                if (_wctx.getMsoyClient().isEmbedded()) {
-                    headerBar.setFullVersionLink(handleViewFullVersion, model.sceneId);
-                } else {
-                    headerBar.setFullVersionLink(null);
+                if (!embedded) {
                     headerBar.setCommentLink(handleViewRoom, model.sceneId);
                 }
                 headerBar.setInstructionsLink(null);
@@ -1246,6 +1258,7 @@ public class WorldController extends MsoyController
             (controlBar as WorldControlBar).sceneEditPossible = canManageScene();
             return;
         }
+
 
         // For now we can embed scenes with game lobbies attached, but not game instances - when we
         // have a unique URL for game instance locations, then we can embed those locations as
