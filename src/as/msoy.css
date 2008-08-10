@@ -841,7 +841,7 @@ BasePanel {
   backgroundSize: "100%";
 }
 
-.headerBarButtonBack {
+.headerBarGoButton {
   upSkin: Embed(source="../../rsrc/media/skins/headerbar/recent_arrow.png");
   overSkin: Embed(source="../../rsrc/media/skins/headerbar/recent_arrow_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/headerbar/recent_arrow_down.png");

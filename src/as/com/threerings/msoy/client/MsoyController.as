@@ -10,11 +10,16 @@ import flash.events.MouseEvent;
 import flash.events.TextEvent;
 import flash.events.TimerEvent;
 
+import flash.external.ExternalInterface;
+
 import flash.display.Stage;
 
-import flash.external.ExternalInterface;
+import flash.geom.Rectangle;
+
 import flash.system.Capabilities;
+
 import flash.text.TextField;
+
 import flash.ui.Keyboard;
 
 import flash.net.URLRequest;
@@ -43,6 +48,7 @@ import com.threerings.crowd.data.CrowdCodes;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.flex.ChatControl;
+import com.threerings.flex.CommandMenu;
 
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
@@ -90,8 +96,8 @@ public class MsoyController extends Controller
     /** Command to display a volume slider. */
     public static const POP_VOLUME :String = "PopVolume";
 
-    /** Command to display the room history list. */
-    public static const POP_ROOM_HISTORY_LIST :String = "PopRoomHistoryList";
+    /** Command to display the go menu. */
+    public static const POP_GO_MENU :String = "PopGoMenu";
 
     /** Command to view an item, arg is [ itemTypeId, itemId ] */
     public static const VIEW_ITEM :String = "ViewItem";
@@ -196,6 +202,26 @@ public class MsoyController extends Controller
                 new BackFromAwayDialog(_mctx, message);
             }*/
         }
+    }
+
+    /**
+     * Handles the POP_GO_MENU command.
+     */
+    public function handlePopGoMenu (trigger :Button) :void
+    {
+        if (_goMenu != null) {
+            _goMenu.hide();
+            _goMenu = null;
+            return;
+        }
+
+        var menuData :Array = [];
+        populateGoMenu(menuData);
+
+        var r :Rectangle = trigger.getBounds(trigger.stage);
+        _goMenu = CommandMenu.createMenu(menuData, _topPanel);
+        _goMenu.variableRowHeight = true;
+        _goMenu.popUpAt(r.left, r.bottom);
     }
 
     /**
@@ -316,6 +342,12 @@ public class MsoyController extends Controller
     public function updateLocationDisplay () :void
     {
         updateTopPanel(_mctx.getTopPanel().getHeaderBar(), _mctx.getTopPanel().getControlBar());
+
+        // hackery. TODO: cleanup
+        if (_goMenu != null) {
+            _goMenu.hide();
+            _goMenu = null;
+        }
     }
 
     /**
@@ -570,6 +602,14 @@ public class MsoyController extends Controller
         }
     }
 
+    /**
+     * Populate the go menu.
+     */
+    protected function populateGoMenu (menuData :Array) :void
+    {
+        // TODO
+    }
+
     /** Provides access to client-side directors and services. */
     protected var _mctx :MsoyContext;
 
@@ -587,6 +627,9 @@ public class MsoyController extends Controller
 
     /** A timer to watch our idleness. */
     protected var _idleTimer :Timer;
+
+    /** The "go" menu, while it's up. */
+    protected var _goMenu :CommandMenu;
 
     /** The URL prefix for 'command' URLs, that post CommendEvents. */
     protected static const COMMAND_URL :String = "command://";

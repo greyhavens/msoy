@@ -1028,28 +1028,6 @@ public class WorldController extends MsoyController
         }
     }
 
-    /**
-     * Handles the POP_ROOM_HISTORY_LIST command.
-     */
-    public function handlePopRoomHistoryList (trigger :Button) :void
-    {
-        var menuData :Array = [];
-        const curSceneId :int = getCurrentSceneId();
-        var sceneSubmenu :Array = [];
-        for each (var entry :Object in _recentScenes) {
-            if (entry.id != curSceneId) { // don't show the current scene on the menu
-                sceneSubmenu.push({ label: StringUtil.truncate(entry.name, 50, "..."),
-                    command: GO_SCENE, arg: entry.id });
-            }
-        }
-        menuData.push({ label: Msgs.WORLD.get("l.recent_scenes"), children: sceneSubmenu });
-
-        var r :Rectangle = trigger.getBounds(trigger.stage);
-        _historyMenu = CommandMenu.createMenu(menuData, _topPanel);
-        _historyMenu.variableRowHeight = true;
-        _historyMenu.popUpAt(r.left, r.bottom);
-    }
-
     // from MsoyController
     override public function handleLogon (creds :Credentials) :void
     {
@@ -1237,12 +1215,6 @@ public class WorldController extends MsoyController
 
             addRecentScene(scene);
 
-            if (_historyMenu != null) {
-                // make sure its no longer showing when we move rooms
-                _historyMenu.hide();
-                _historyMenu == null;
-            }
-
             // display location name, modify buttons
             controlBar.enableZoomControl(true);
             (controlBar as WorldControlBar).sceneEditPossible = canManageScene();
@@ -1306,6 +1278,24 @@ public class WorldController extends MsoyController
         _recentScenes.length = Math.min(_recentScenes.length, MAX_RECENT_SCENES);
     }
 
+    override protected function populateGoMenu (menuData :Array) :void
+    {
+        super.populateGoMenu(menuData);
+
+        const curSceneId :int = getCurrentSceneId();
+        var sceneSubmenu :Array = [];
+        for each (var entry :Object in _recentScenes) {
+            if (entry.id != curSceneId) { // don't show the current scene on the menu
+                sceneSubmenu.push({ label: StringUtil.truncate(entry.name, 50, "..."),
+                    command: GO_SCENE, arg: entry.id });
+            }
+        }
+        if (sceneSubmenu.length == 0) {
+            sceneSubmenu.push({ label: Msgs.GENERAL.get("m.none"), enabled: false });
+        }
+        menuData.push({ label: Msgs.WORLD.get("l.recent_scenes"), children: sceneSubmenu });
+    }
+
     /** Giver of life, context. */
     protected var _wctx :WorldContext;
 
@@ -1327,9 +1317,6 @@ public class WorldController extends MsoyController
 
     /** Recently visited scenes, ordered from most-recent to least-recent */
     protected var _recentScenes :Array = [];
-
-    /** Our room history menu. */
-    protected var _historyMenu :CommandMenu;
 
     /** The maximum number of recent scenes we track. */
     protected static const MAX_RECENT_SCENES :int = 11; 

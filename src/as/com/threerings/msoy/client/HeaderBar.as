@@ -17,6 +17,7 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.controls.Label;
+import mx.controls.scrollClasses.ScrollBar;
 
 import flexlib.containers.ButtonScrollingCanvas;
 
@@ -158,7 +159,7 @@ public class HeaderBar extends HBox
         // allow text to center under the whirled logo if its not too long.
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
         stretchSpacer(false);
-        FlexUtil.setVisible(_backBtn, false);
+        FlexUtil.setVisible(_goBtn, false);
         return _tabsContainer;
     }
 
@@ -171,7 +172,7 @@ public class HeaderBar extends HBox
         if (_loc.parent == this) {
             FlexUtil.setVisible(_loc, false);
         }
-        FlexUtil.setVisible(_backBtn, true);
+        FlexUtil.setVisible(_goBtn, true);
         addChildAt(_tabsContainer, 1);
     }
 
@@ -193,12 +194,14 @@ public class HeaderBar extends HBox
     {
         super.createChildren();
 
-        _backBtn = new CommandButton();
-        _backBtn.toolTip = Msgs.GENERAL.get("i.recent_rooms");
-        _backBtn.setCommand(MsoyController.POP_ROOM_HISTORY_LIST, _backBtn);
-        _backBtn.styleName = "headerBarButtonBack";
-        addChild(_backBtn);
-        _extras.push(_backBtn);
+        _goBtn = new CommandButton();
+        _goBtn.toolTip = Msgs.GENERAL.get("i.go");
+        _goBtn.setCommand(MsoyController.POP_GO_MENU, _goBtn);
+        _goBtn.styleName = "headerBarGoButton";
+        // we lock it to the scrollbar thickness so that it matches the gutter area on the left
+        _goBtn.width = ScrollBar.THICKNESS;
+        addChild(_goBtn);
+        _extras.push(_goBtn);
 
         _loc = new Label();
         _loc.styleName = "locationName";
@@ -315,8 +318,8 @@ public class HeaderBar extends HBox
 
     protected var _tabsContainer :TabsContainer;
 
-    /** The back-movement button. */
-    protected var _backBtn :CommandButton;
+    /** The go button. */
+    protected var _goBtn :CommandButton;
 }
 }
 
