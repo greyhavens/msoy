@@ -271,9 +271,10 @@ public class RoomController extends SceneController
     
         // NOTE: there is no need to be "in control" to update memory.
       
-        // serialize datum
-        // This will validate that the property set isn't greater than the MAXIMUM
-        //      alloted memory space, but further checks are done serverside.
+        // This will validate that the memory being set isn't greater than the maximum
+        // alloted space for all memories, becauses that will surely fail on the server,
+        // but the server will do further checks to ensure that this entry can be
+        // safely added to the memory set such that combined they're all under the maximum.
         var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
                 EntityMemoryEntry.MAX_ENCODED_MEMORY_LENGTH);
         updateMemory2(ident, key, data);

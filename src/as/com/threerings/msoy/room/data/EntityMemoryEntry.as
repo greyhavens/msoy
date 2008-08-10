@@ -22,7 +22,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 public class EntityMemoryEntry
     implements DSet_Entry, Hashable
 {
-    /** Maximum size for a memory. */
+    /** The maximum size for ALL memory entries, keys + values. */
     public static const MAX_ENCODED_MEMORY_LENGTH :int = 4096;
 
     /** The item with which this memory datum is associated. */
