@@ -775,8 +775,9 @@ public class WorldController extends MsoyController
      */
     public function restoreSceneURL () :void
     {
-        if (_wctx.getSceneDirector().getScene() != null) {
-            displayPageGWT("world", "s" + _wctx.getSceneDirector().getScene().getId());
+        const sceneId :int = getCurrentSceneId();
+        if (sceneId != 0) {
+            displayPageGWT("world", "s" + sceneId);
         }
     }
 
@@ -1010,20 +1011,16 @@ public class WorldController extends MsoyController
     // from MsoyController
     override public function handleMoveBack (closeInsteadOfHome :Boolean = false) :void
     {
-        // if we're not in a scene, just go to the latest scene on the stack
-        if (_wctx.getSceneDirector().getScene() == null) {
-            if (_backstack.length > 0) {
-                handleVisitBackstackIndex(_backstack.length - 1);
+        // go to the first recent scene that's not the one we're in
+        const curSceneId :int = getCurrentSceneId();
+        for (var entry :Object in _recentScenes) {
+            if (entry.id != curSceneId) {
+                handleGoScene(entry.id);
                 return;
             }
-
-        // otherwise, visit the previous scene if valid
-        } else if (_backstack.length > _backstackIdx + 1) {
-            handleVisitBackstackIndex(_backstackIdx - 1);
-            return;
         }
 
-        // nothing on the stack, so either close the client or go home
+        // there are no recent scenes, so either close the client or go home
         if (closeInsteadOfHome && inGWTApp()) {
             _wctx.getWorldClient().closeClient();
         } else {
@@ -1037,19 +1034,15 @@ public class WorldController extends MsoyController
     public function handlePopRoomHistoryList (trigger :Button) :void
     {
         var menuData :Array = [];
-        // show up to 7 items - potentially 3 before current room and 3 after
-        var top :int = Math.min(_backstackIdx + 3, _backstack.length - 1);
-        var bottom :int = Math.max(top - 6, 0);
-        // if we're currently in a room that's near the bottom of the list, lets go ahead and show
-        // the full 7 items
-        top = Math.min(bottom + 6, _backstack.length - 1);
-        for (var ii :int = top; ii >= bottom; ii--) {
-            menuData.push({ label: _backstack[ii].name, command: VISIT_BACKSTACK_INDEX, arg: ii,
-                enabled: ii != _backstackIdx });
-            if (ii != bottom) {
-                menuData.push({ type: "separator" });
+        const curSceneId :int = getCurrentSceneId();
+        var sceneSubmenu :Array = [];
+        for each (var entry :Object in _recentScenes) {
+            if (entry.id != curSceneId) { // don't show the current scene on the menu
+                sceneSubmenu.push({ label: StringUtil.truncate(entry.name, 50, "..."),
+                    command: GO_SCENE, arg: entry.id });
             }
         }
+        menuData.push({ label: Msgs.WORLD.get("l.recent_scenes"), children: sceneSubmenu });
 
         var r :Rectangle = trigger.getBounds(trigger.stage);
         _historyMenu = CommandMenu.createMenu(menuData, _topPanel);
@@ -1057,27 +1050,13 @@ public class WorldController extends MsoyController
         _historyMenu.popUpAt(r.left, r.bottom);
     }
 
-    /**
-     * Handles the VISIT_BACKSTACK_INDEX command.
-     */
-    public function handleVisitBackstackIndex (idx :int) :void
-    {
-        if (idx < 0 || idx > _backstack.length - 1) {
-            log.warning("asked to visit backstack index that is out of bounds! [idx=" +
-                idx + ", backstack.length=" + _backstack.length + "]");
-            return;
-        }
-
-        handleGoScene(int(_backstack[_backstackIdx = idx].id));
-    }
-
     // from MsoyController
     override public function handleLogon (creds :Credentials) :void
     {
         // if we're currently logged on, save our current scene so that we can go back there once
         // we're relogged on as a non-guest; otherwise go to Brave New Whirled
-        var scene :Scene = _wctx.getSceneDirector().getScene();
-        _postLogonScene = (scene == null) ? 1 : scene.getId();
+        const currentSceneId :int = getCurrentSceneId();
+        _postLogonScene = (currentSceneId == 0) ? 1 : currentSceneId;
         _wctx.getClient().logoff(false);
 
         super.handleLogon(creds);
@@ -1178,13 +1157,13 @@ public class WorldController extends MsoyController
 
         } else {
             var fullURL :String = DeploymentConfig.serverURL;
-            var scene :Scene = _wctx.getSceneDirector().getScene();
             // if we have no current scene, or we're asking to display our current scene (because
             // we're in embed mode and are trying to get out) don't do the scene wrap business
-            if (scene == null || (page == "world" && args == ("s"+scene.getId()))) {
+            const sceneId :int = getCurrentSceneId();
+            if (sceneId == 0 || (page == "world" && args == ("s"+sceneId))) {
                 fullURL += "/#" + page + "-" + args;
             } else {
-                fullURL += "/#world-s" + scene.getId() + "_" + page + "-" + args;
+                fullURL += "/#world-s" + sceneId + "_" + page + "-" + args;
             }
             log.info("Showing external URL " + fullURL);
             return super.showExternalURL(fullURL, true);
@@ -1202,6 +1181,10 @@ public class WorldController extends MsoyController
     override protected function updateTopPanel (headerBar :HeaderBar, controlBar :ControlBar) :void
     {
         super.updateTopPanel(headerBar, controlBar);
+
+        // TODO: The way I think we should consider doing this is have PlaceView's dispatch
+        // some sort of NewPlaceEvent when they're showing and have downloaded whatever data
+        // needed, and then various components up the hierarchy can react to this event.
 
         // if we moved to a scene, set things up thusly
         var scene :Scene = _wctx.getSceneDirector().getScene();
@@ -1252,41 +1235,13 @@ public class WorldController extends MsoyController
                 headerBar.setInstructionsLink(null);
             }
 
-            var backstackEntry :Object = {name: scene.getName(), id: scene.getId()};
-            // check if the previous entry is the same room as we're going to
-            if (_backstackIdx > 0 && _backstack[_backstackIdx - 1].id == scene.getId()) {
-                _backstackIdx--;
-                _backstack[_backstackIdx] = backstackEntry;
-
-            // if we're not sitting at the end of the list, some special processing is called for.
-            } else if (_backstackIdx != _backstack.length - 1) {
-                if (_backstack[_backstackIdx + 1].id == scene.getId()) {
-                    // we're just moving forward in the stack...
-                    _backstackIdx++;
-                    _backstack[_backstackIdx] = backstackEntry;
-
-                } else if (_backstack[_backstackIdx].id != scene.getId()) {
-                    // we're going down a new path.. truncate the list
-                    _backstack.length = _backstackIdx + 1;
-                    _backstack.push(backstackEntry);
-                    _backstackIdx++;
-                }
-
-            // if we're going to the room that we think we're in, backstackage was already done
-            // (see handleVisitBackstackIndex())
-            } else if (_backstackIdx < 0 || _backstack[_backstackIdx].id != scene.getId()) {
-                _backstack.push(backstackEntry);
-                _backstackIdx++;
-            }
+            addRecentScene(scene);
 
             if (_historyMenu != null) {
                 // make sure its no longer showing when we move rooms
                 _historyMenu.hide();
                 _historyMenu == null;
             }
-
-            // if the room history list has less than 2 entries, disable it
-            _wctx.getTopPanel().getHeaderBar().setHistoryButtonEnabled(_backstack.length > 1);
 
             // display location name, modify buttons
             controlBar.enableZoomControl(true);
@@ -1323,6 +1278,34 @@ public class WorldController extends MsoyController
         }
     }
 
+    /**
+     * Returns the current sceneId, or 0 if none.
+     */
+    protected function getCurrentSceneId () :int
+    {
+        const scene :Scene = _wctx.getSceneDirector().getScene();
+        return (scene == null) ? 0 : scene.getId();
+    }
+
+    protected function addRecentScene (scene :Scene) :void
+    {
+        const id :int = scene.getId();
+
+        // first, see if it's already in the list of recent scenes, and remove it if so
+        for (var ii :int = _recentScenes.length - 1; ii >= 0; ii--) {
+            if (_recentScenes[ii].id == id) {
+                _recentScenes.splice(ii, 1);
+                break;
+            }
+        }
+
+        // now add it to the beginning of the list
+        _recentScenes.unshift({ name: scene.getName(), id: id });
+
+        // and make sure we're not tracking too many
+        _recentScenes.length = Math.min(_recentScenes.length, MAX_RECENT_SCENES);
+    }
+
     /** Giver of life, context. */
     protected var _wctx :WorldContext;
 
@@ -1342,14 +1325,14 @@ public class WorldController extends MsoyController
     /** The current AVRG display, if any. */
     protected var _avrGamePanel :AVRGamePanel;
 
-    /** Back-stack of previously visited scenes. */
-    protected var _backstack :Array = [];
-
-    /** Current index into the backstack. */
-    protected var _backstackIdx :int = -1;
+    /** Recently visited scenes, ordered from most-recent to least-recent */
+    protected var _recentScenes :Array = [];
 
     /** Our room history menu. */
     protected var _historyMenu :CommandMenu;
+
+    /** The maximum number of recent scenes we track. */
+    protected static const MAX_RECENT_SCENES :int = 11; 
 
     private static const log :Log = Log.getLog(WorldController);
 }

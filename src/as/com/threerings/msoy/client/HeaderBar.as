@@ -129,11 +129,6 @@ public class HeaderBar extends HBox
         setCompVisible(_embedLink, visible);
     }
 
-    public function setHistoryButtonEnabled (enabled :Boolean) :void
-    {
-        _backBtn.enabled = enabled;
-    }
-
     public function miniChanged () :void
     {
         if (_ctx.getTopPanel().isMinimized()) {
@@ -202,8 +197,6 @@ public class HeaderBar extends HBox
         _backBtn.toolTip = Msgs.GENERAL.get("i.recent_rooms");
         _backBtn.setCommand(MsoyController.POP_ROOM_HISTORY_LIST, _backBtn);
         _backBtn.styleName = "headerBarButtonBack";
-        // default to disabled... it'll get enabled when ready.
-        _backBtn.enabled = false;
         addChild(_backBtn);
         _extras.push(_backBtn);
 
@@ -272,14 +265,12 @@ public class HeaderBar extends HBox
         _closeBox.styleName = "headerCloseBox";
         addChild(_closeBox);
         
-        var heightBtn :CommandButton = new CommandButton();
-        heightBtn.setCommand(WorldController.TOGGLE_HEIGHT);
+        var heightBtn :CommandButton = new CommandButton(null, WorldController.TOGGLE_HEIGHT);
         heightBtn.toolTip = Msgs.GENERAL.get("i.height");
         heightBtn.styleName = "heightButton";
         _closeBox.addChild(heightBtn);
         
-        var closeBtn :CommandButton = new CommandButton();
-        closeBtn.setCommand(MsoyController.CLOSE_PLACE_VIEW);
+        var closeBtn :CommandButton = new CommandButton(null, MsoyController.CLOSE_PLACE_VIEW);
         closeBtn.styleName = "closeButton";
         _closeBox.addChild(closeBtn);
         
