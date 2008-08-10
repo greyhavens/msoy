@@ -275,7 +275,7 @@ public class RoomController extends SceneController
         // This will validate that the property set isn't greater than the MAXIMUM
         //      alloted memory space, but further checks are done serverside.
         var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
-                EntityMemoryEntry.MAX_ENCODED_PROPERTY_LENGTH);
+                EntityMemoryEntry.MAX_ENCODED_MEMORY_LENGTH);
         updateMemory2(ident, key, data);
         return true;
     }
