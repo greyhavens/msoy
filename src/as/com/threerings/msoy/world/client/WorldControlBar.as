@@ -181,6 +181,18 @@ public class WorldControlBar extends ControlBar
             partyBtn.focusEnabled = false;
             _friendBtnBox.addChild(partyBtn);
         }
+
+
+        // TODO
+        // TEMP: remove once new artwork is in place
+        _chatBtn.height = HEIGHT;
+        _volBtn.height = HEIGHT;
+        _zoomBtn.height = HEIGHT;
+        _fullBtn.height = HEIGHT;
+        _roomeditBtn.height = HEIGHT;
+        _hotZoneBtn.height = HEIGHT;
+        _snapBtn.height = HEIGHT;
+        _friendBtnBox.height = HEIGHT;
     }
 
     // from ControlBar

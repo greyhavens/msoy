@@ -207,7 +207,7 @@ public class ControlBar extends HBox
     {
         _leftSpacer = new HBox();
         _leftSpacer.styleName = "controlBarSpacer";
-        _leftSpacer.height = this.height;
+        _leftSpacer.height = HEIGHT;
         _leftSpacer.percentWidth = 100;
 
         _chatBtn = new CommandButton();
