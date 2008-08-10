@@ -58,7 +58,7 @@ public class HostedWrapper extends ChannelWrapper
 
         log.info("Shutting down hosted chat channel: " + _channel + ".");
         MsoyNodeObject host = (MsoyNodeObject)_peerMan.getNodeObject();
-        host.removeFromHostedChannels(HostedChannel.getKey(_channel));
+        host.removeFromHostedChannelz(HostedChannel.getKey(_channel));
 
         // clean up the hosted dobject
         _omgr.destroyObject(_ccobj.getOid());
