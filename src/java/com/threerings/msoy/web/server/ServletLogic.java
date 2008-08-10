@@ -5,6 +5,7 @@ package com.threerings.msoy.web.server;
 
 import java.util.List;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -16,7 +17,7 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 
 import com.threerings.presents.dobj.RootDObjectManager;
-import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.presents.peer.data.NodeObject;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
@@ -47,7 +48,7 @@ public class ServletLogic
      * Invokes the supplied operation on all peer nodes (on the distributed object manager thread)
      * and blocks the current thread until the execution has completed.
      */
-    public void invokePeerOperation (String name, final PeerManager.Operation op)
+    public void invokePeerOperation (String name, final Function<NodeObject,Void> op)
         throws ServiceException
     {
         final ServletWaiter<Void> waiter = new ServletWaiter<Void>(name);

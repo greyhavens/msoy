@@ -6,6 +6,7 @@ package com.threerings.msoy.server;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import com.samskivert.util.Comparators;
@@ -17,7 +18,6 @@ import com.threerings.msoy.data.MemberLocation;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.HostedRoom;
@@ -130,18 +130,19 @@ public class PopularPlacesSnapshot
         // any member on any world server can be playing any game on any game server, so we first
         // need to make a first pass to collect metadata on all hosted games
         final IntMap<HostedPlace> hostedGames = IntMaps.newHashIntMap();
-        peerMan.applyToNodes(new PeerManager.Operation() {
-            public void apply (NodeObject nodeobj) {
+        peerMan.applyToNodes(new Function<NodeObject,Void>() {
+            public Void apply (NodeObject nodeobj) {
                 MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
                 for (HostedPlace game : mnobj.hostedGames) {
                     hostedGames.put(game.placeId, game);
                 }
+                return null;
             }
         });
 
         // now we can count up the population in all scenes and games
-        peerMan.applyToNodes(new PeerManager.Operation() {
-            public void apply (NodeObject nodeobj) {
+        peerMan.applyToNodes(new Function<NodeObject,Void>() {
+            public Void apply (NodeObject nodeobj) {
                 MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
                 for (MemberLocation memloc : mnobj.memberLocs) {
                     _totalPopulation++;
@@ -165,6 +166,7 @@ public class PopularPlacesSnapshot
                         }
                     }
                 }
+                return null;
             }
 
             protected void increment (IntMap<Place> places, List<Place> plist,

@@ -11,6 +11,7 @@ import com.samskivert.util.ObserverList;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -143,8 +144,8 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public MemberLocation getMemberLocation (final int memberId)
     {
-        return lookupNodeDatum(new Lookup<MemberLocation>() {
-            public MemberLocation lookup (NodeObject nodeobj) {
+        return lookupNodeDatum(new Function<NodeObject,MemberLocation>() {
+            public MemberLocation apply (NodeObject nodeobj) {
                 return ((MsoyNodeObject)nodeobj).memberLocs.get(memberId);
             }
         });
@@ -188,8 +189,8 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public Tuple<String, HostedRoom> getSceneHost (final int sceneId)
     {
-        return lookupNodeDatum(new Lookup<Tuple<String, HostedRoom>>() {
-            public Tuple<String, HostedRoom> lookup (NodeObject nodeobj) {
+        return lookupNodeDatum(new Function<NodeObject,Tuple<String,HostedRoom>>() {
+            public Tuple<String,HostedRoom> apply (NodeObject nodeobj) {
                 HostedRoom info = ((MsoyNodeObject)nodeobj).hostedScenes.get(sceneId);
                 return (info == null) ? null :
                     new Tuple<String, HostedRoom>(nodeobj.nodeName, info);
@@ -203,8 +204,8 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public Tuple<String, Integer> getGameHost (final int gameId)
     {
-        return lookupNodeDatum(new Lookup<Tuple<String, Integer>>() {
-            public Tuple<String, Integer> lookup (NodeObject nodeobj) {
+        return lookupNodeDatum(new Function<NodeObject,Tuple<String,Integer>>() {
+            public Tuple<String,Integer> apply (NodeObject nodeobj) {
                 HostedGame info = ((MsoyNodeObject) nodeobj).hostedGames.get(gameId);
                 return (info == null) ? null :
                     new Tuple<String, Integer>(nodeobj.nodeName, info.port);
@@ -218,8 +219,8 @@ public class MsoyPeerManager extends CrowdPeerManager
      */
     public ConnectConfig getProjectConnectConfig (final int projectId)
     {
-        return lookupNodeDatum(new Lookup<ConnectConfig>() {
-            public ConnectConfig lookup (NodeObject nodeobj) {
+        return lookupNodeDatum(new Function<NodeObject,ConnectConfig>() {
+            public ConnectConfig apply (NodeObject nodeobj) {
                 HostedProject info = ((MsoyNodeObject) nodeobj).hostedProjects.get(projectId);
                 return (info == null) ? null : info.createConnectConfig();
             }
@@ -233,8 +234,8 @@ public class MsoyPeerManager extends CrowdPeerManager
     public MsoyNodeObject getChannelHost (final ChatChannel channel)
     {
         final Comparable<?> channelKey = HostedChannel.getKey(channel);
-        return lookupNodeDatum(new Lookup<MsoyNodeObject>() {
-            public MsoyNodeObject lookup (NodeObject nodeobj) {
+        return lookupNodeDatum(new Function<NodeObject,MsoyNodeObject>() {
+            public MsoyNodeObject apply (NodeObject nodeobj) {
                 MsoyNodeObject node = (MsoyNodeObject) nodeobj;
                 return node.hostedChannels.get(channelKey) == null ? null : node;
             }

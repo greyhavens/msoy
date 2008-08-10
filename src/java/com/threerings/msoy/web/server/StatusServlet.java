@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
@@ -18,7 +19,6 @@ import com.samskivert.io.StreamUtil;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.ClientInfo;
 import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MemberName;
@@ -39,9 +39,10 @@ public class StatusServlet extends HttpServlet
         throws IOException
     {
         final Map<String,ServerInfo> info = Maps.newHashMap();
-        final PeerManager.Operation collector = new PeerManager.Operation() {
-            public void apply (NodeObject nodeobj) {
+        final Function<NodeObject,Void> collector = new Function<NodeObject,Void>() {
+            public Void apply (NodeObject nodeobj) {
                 info.put(nodeobj.nodeName, collectInfo((MsoyNodeObject)nodeobj));
+                return null;
             }
         };
 

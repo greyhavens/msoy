@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -21,7 +22,6 @@ import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 
 import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerManager;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -200,8 +200,8 @@ public class MemberHelper
         // hop over to the dobj thread and figure out which of these members is online
         final IntMap<MemberCard.Status> statuses = IntMaps.newHashIntMap();
         _servletLogic.invokePeerOperation(
-            "resolveMemberCards(" + memberIds + ")", new PeerManager.Operation() {
-            public void apply (NodeObject nodeobj) {
+            "resolveMemberCards(" + memberIds + ")", new Function<NodeObject,Void>() {
+            public Void apply (NodeObject nodeobj) {
                 MsoyNodeObject mnobj = (MsoyNodeObject)nodeobj;
                 for (int memberId : memberIds) {
                     MemberCard.Status status = mnobj.getMemberStatus(memberId);
@@ -209,6 +209,7 @@ public class MemberHelper
                         statuses.put(memberId, status);
                     }
                 }
+                return null;
             }
         });
 

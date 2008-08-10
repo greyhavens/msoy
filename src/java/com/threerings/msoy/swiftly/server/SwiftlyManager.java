@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -19,6 +20,7 @@ import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
+import com.samskivert.util.Tuple;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -174,11 +176,11 @@ public class SwiftlyManager
         }
 
         // locate the peer that is hosting this project and forward the project update there
-        _peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-            public void invoke (Client client, NodeObject nodeobj) {
-                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+        _peerMan.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Void>() {
+            public Void apply (Tuple<Client,NodeObject> data) {
+                MsoyNodeObject msnobj = (MsoyNodeObject)data.right;
                 if (msnobj.hostedProjects.containsKey(project.projectId)) {
-                    msnobj.peerProjectService.projectUpdated(client, project);
+                    msnobj.peerProjectService.projectUpdated(data.left, project);
                 }
             }
         });
@@ -199,12 +201,13 @@ public class SwiftlyManager
         }
 
         // locate the peer that is hosting this project and forward the collaborator update there
-        _peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-            public void invoke (Client client, NodeObject nodeobj) {
-                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+        _peerMan.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Void>() {
+            public Void apply (Tuple<Client,NodeObject> data) {
+                MsoyNodeObject msnobj = (MsoyNodeObject)data.right;
                 if (msnobj.hostedProjects.containsKey(projectId)) {
-                    msnobj.peerProjectService.collaboratorAdded(client, projectId, name);
+                    msnobj.peerProjectService.collaboratorAdded(data.left, projectId, name);
                 }
+                return null;
             }
         });
     }
@@ -226,12 +229,13 @@ public class SwiftlyManager
         }
 
         // locate the peer that is hosting this project and forward the collaborator update there
-        _peerMan.invokeOnNodes(new MsoyPeerManager.Function() {
-            public void invoke (Client client, NodeObject nodeobj) {
-                MsoyNodeObject msnobj = (MsoyNodeObject)nodeobj;
+        _peerMan.invokeOnNodes(new Function<Tuple<Client,NodeObject>,Void>() {
+            public Void apply (Tuple<Client,NodeObject> data) {
+                MsoyNodeObject msnobj = (MsoyNodeObject)data.right;
                 if (msnobj.hostedProjects.containsKey(projectId)) {
-                    msnobj.peerProjectService.collaboratorRemoved(client, projectId, name);
+                    msnobj.peerProjectService.collaboratorRemoved(data.left, projectId, name);
                 }
+                return null;
             }
         });
     }
