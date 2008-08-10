@@ -221,13 +221,13 @@ public class HeaderBar extends HBox
         setCommentLink(null);
         _extras.push(_commentLink);
 
-        _shareLink = new CommandLinkButton(Msgs.GENERAL.get("b.share"),
+        var shareLink :CommandLinkButton = new CommandLinkButton(Msgs.GENERAL.get("b.share"),
             FloatingPanel.createPopper(function () :ShareDialog {
                 return new ShareDialog(_ctx);
             }));
-        _shareLink.styleName = "headerShareLink";
-        controlBox.addChild(_shareLink);
-        _extras.push(_shareLink);
+        shareLink.styleName = "headerShareLink";
+        controlBox.addChild(shareLink);
+        _extras.push(shareLink);
 
         _spacer = new Spacer(this);
         addChild(_spacer);
@@ -297,8 +297,6 @@ public class HeaderBar extends HBox
     protected var _instructionsLink :CommandLinkButton;
 
     protected var _commentLink :CommandLinkButton;
-
-    protected var _shareLink :CommandLinkButton;
 
     protected var _fullVersionLink :CommandLinkButton;
     protected var _fullVersion :HBox;
