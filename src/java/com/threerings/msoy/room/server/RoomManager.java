@@ -548,7 +548,7 @@ public class RoomManager extends SpotSceneManager
                 totalSize += rent.getSize();
             }
         }
-        if (totalSize + entry.getSize() > MAX_MEMORY_SIZE) {
+        if (totalSize + entry.getSize() > EntityMemoryEntry.MAX_ENCODED_MEMORY_LENGTH) {
             log.info("Rejecting memory update as too large [otherSize=" + totalSize +
                      ", newEntrySize=" + entry.getSize() + "].");
             return; // no feedback, just don't update it
@@ -1166,12 +1166,6 @@ public class RoomManager extends SpotSceneManager
 
     /** The next id to use for an effect. */
     protected short _nextEffectId;
-
-    /** The maximum size of an entity's memory, including all keys and values. */
-    protected static final int MAX_MEMORY_SIZE = 4096;
-
-    /** The maximum size of a room's properties, including all keys and values. */
-    protected static final int MAX_ROOM_PROPERTY_SIZE = 4096;
 
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ChatChannelManager _channelMan;

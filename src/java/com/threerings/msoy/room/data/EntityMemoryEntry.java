@@ -14,8 +14,7 @@ public class EntityMemoryEntry
     implements DSet.Entry, Comparable<EntityMemoryEntry>
 {
     /** Maximum size for a memory. */
-    // TODO: make sure this is used everywhere we try to save memories.
-    public static final int MAX_ENCODED_PROPERTY_LENGTH = 16 * 256;
+    public static final int MAX_ENCODED_MEMORY_LENGTH = 4096;
 
     /** The item with which this memory datum is associated. */
     public ItemIdent item;
