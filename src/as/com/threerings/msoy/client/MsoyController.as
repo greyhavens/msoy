@@ -124,6 +124,7 @@ public class MsoyController extends Controller
         _mctx.getClient().addClientObserver(this);
         _topPanel = topPanel;
 
+        topPanel.getHeaderBar().setInGWT(inGWTApp());
         setControlledPanel(topPanel);
         var stage :Stage = mctx.getStage();
         stage.addEventListener(FocusEvent.FOCUS_OUT, handleUnfocus);

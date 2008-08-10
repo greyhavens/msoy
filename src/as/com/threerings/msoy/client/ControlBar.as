@@ -22,6 +22,7 @@ import mx.events.FlexEvent;
 import com.threerings.flex.ChatControl;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.FlexUtil;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Log;
@@ -315,9 +316,8 @@ public class ControlBar extends HBox
 
     protected function updateGroup (groupName :String, value :Boolean) :void
     {
-        var elt :UIComponent = null;
-        for each (elt in _groups[groupName]) {
-            elt.visible = elt.includeInLayout = value;
+        for each (var elt :UIComponent in _groups[groupName]) {
+            FlexUtil.setVisible(elt, value);
         }
     }
 
