@@ -40,7 +40,7 @@ import com.threerings.msoy.world.client.WorldController;
 
 public class HeaderBar extends HBox
 {
-    public static const HEIGHT :int = 20;
+    public static const HEIGHT :int = 17;
 
     public function HeaderBar (ctx :MsoyContext, chatTabs :ChatTabBar) 
     {

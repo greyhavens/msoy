@@ -64,7 +64,7 @@ public class ControlBar extends HBox
     public static const DISPLAY_LIST_VALID :String = "displayListValid";
 
     /** The height of the control bar. This is fixed. */
-    public static const HEIGHT :int = 24;
+    public static const HEIGHT :int = 28;
 
     /** Different groups of UI elements. */
     public static const UI_ALL :String = "All UI Elements"; // created automatically

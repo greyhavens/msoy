@@ -34,10 +34,12 @@ import com.threerings.msoy.world.client.WorldController;
 
 public class EmbedHeader extends Canvas
 {
+    public static const HEIGHT :int = 30;
+
     public function EmbedHeader (ctx :WorldContext)
     {
         // this is the height of the header logo image.
-        height = 50;
+        height = HEIGHT;
         horizontalScrollPolicy = ScrollPolicy.OFF;
         verticalScrollPolicy = ScrollPolicy.OFF;
 
