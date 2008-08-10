@@ -375,8 +375,8 @@ public class MsoyController extends Controller
         }
 
         const sceneAndGame :Array = getSceneAndGame();
-        msvc.emailShare(_mctx.getClient(), int(sceneAndGame[0]), out, message.text,
-            new ConfirmAdapter(function (cause :String) :void {
+        msvc.emailShare(_mctx.getClient(), int(sceneAndGame[0]), int(sceneAndGame[1]), out,
+            message.text, new ConfirmAdapter(function (cause :String) :void {
                 trace("failure"); // TODO
             }
         ));

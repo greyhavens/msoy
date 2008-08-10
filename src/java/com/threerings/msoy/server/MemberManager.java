@@ -569,8 +569,9 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void emailShare (ClientObject caller, final int sceneId, final String[] emails,
-                            final String message, final InvocationService.ConfirmListener cl)
+    public void emailShare (
+        ClientObject caller, final int sceneId, final int gameId, final String[] emails,
+        final String message, final InvocationService.ConfirmListener cl)
     {
         final MemberObject memObj = (MemberObject) caller;
 
@@ -582,7 +583,12 @@ public class MemberManager
                 String from = (_sender == null) ?
                     "no-reply@whirled.com" : _sender.accountName;
                 String name = (_sender == null) ? null : _sender.name;
-                String url = ServerConfig.getServerURL() + "/#world-s" + sceneId;
+                String url = ServerConfig.getServerURL() + "/";
+                if (sceneId != 0) {
+                    url += "#world-s" + sceneId;
+                } else if (gameId != 0) {
+                    url += "#world-game_g_" + gameId;
+                }
                 for (String recip : emails) {
                     MailSender.sendEmail(recip, from, "shareInvite", "name", name,
                         "message", message, "link", url);

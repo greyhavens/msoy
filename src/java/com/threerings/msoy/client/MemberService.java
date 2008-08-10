@@ -81,8 +81,8 @@ public interface MemberService extends InvocationService
     /**
      * Set the given scene as the owner's home scene
      */
-    void setHomeSceneId (Client client, int ownerType, int ownerId, int sceneId,
-                         ConfirmListener listener);
+    void setHomeSceneId (
+        Client client, int ownerType, int ownerId, int sceneId, ConfirmListener listener);
 
     /**
      * Get the given group's home scene id.
@@ -112,13 +112,16 @@ public interface MemberService extends InvocationService
     /**
      * Shares a scene by emailing offsite friends.
      */
-    void emailShare (Client client, int sceneId, String[] emails, String message, ConfirmListener listener);
+    void emailShare (
+        Client client, int sceneId, int gameId, String[] emails, String message,
+        ConfirmListener listener);
 
     /**
      * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.
      */
-    void getABTestGroup (Client client, ReferralInfo info,
-        String testName, boolean logEvent, ResultListener listener);
+    void getABTestGroup (
+        Client client, ReferralInfo info, String testName, boolean logEvent,
+        ResultListener listener);
 
     /**
      * Generic method for tracking a client-side action such as clicking a button.
