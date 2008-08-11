@@ -94,6 +94,13 @@ public class AwardDelegate extends RatingDelegate
             highestScore = Math.max(highestScore, thisScore);
         }
 
+        // if we have no non-zero scores then end the game without awarding flow or updating
+        // ratings or percentilers
+        if (highestScore <= 0) {
+            _gmgr.endGame();
+            return;
+        }
+
         // update stats: we assume (for stat purposes) in games with scores that everyone who has
         // the highscore is a winner and everyone else is a loser; this is somewhat dubious
         List<Integer> winnerOids = Lists.newArrayList();
@@ -105,13 +112,6 @@ public class AwardDelegate extends RatingDelegate
             }
         }
         updatePlayerStats(players.keySet(), winnerOids);
-
-        // if we have no non-zero scores then end the game without awarding flow or updating
-        // ratings or percentilers
-        if (highestScore <= 0) {
-            _gmgr.endGame();
-            return;
-        }
 
         // record the scores of all players in the game
         Percentiler tiler = getScoreDistribution();
