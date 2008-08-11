@@ -59,11 +59,20 @@ public /*abstract*/ class MsoyContext
         _topPanel = new TopPanel(this, createControlBar());
     }
 
+    /**
+     * Get the width of the client.
+     * By default this is just the stage width, but that should not be assumed!
+     * Certain subclasses override this method and in the future it could become
+     * more complicated due to embedding.
+     */
     public function getWidth () :Number
     {
         return _client.getStage().stageWidth;
     }
 
+    /**
+     * Get the width of the client. Please review the the notes in getWidth().
+     */
     public function getHeight () :Number
     {
         return _client.getStage().stageHeight;
