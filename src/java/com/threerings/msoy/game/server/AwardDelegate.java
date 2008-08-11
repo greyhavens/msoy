@@ -184,20 +184,20 @@ public class AwardDelegate extends RatingDelegate
         // award flow according to the rankings and the payout type
         awardFlow(players, payoutType);
 
-        // determine the oids of the winners
-        ArrayIntSet winnerOids = new ArrayIntSet();
+        // regenerate the set of winners now that we've filtered out duplicates and whatnot
+        ArrayIntSet fWinnerOids = new ArrayIntSet();
         for (Player player : players.values()) {
             if (player.score == 1) {
-                winnerOids.add(player.playerOid);
+                fWinnerOids.add(player.playerOid);
             }
         }
 
         // update the various game-related stats
-        updatePlayerStats(players.keySet(), winnerOids);
+        updatePlayerStats(players.keySet(), fWinnerOids);
 
         // tell the game manager about our winners which will be used to compute ratings, etc.
         if (_gmgr instanceof WhirledGameManager) {
-            ((WhirledGameManager)_gmgr).setWinners(winnerOids.toIntArray());
+            ((WhirledGameManager)_gmgr).setWinners(fWinnerOids.toIntArray());
         } else {
             log.warning("Unable to configure WhirledGameManager with winners", "where", where(),
                         "isa", _gmgr.getClass().getName());
