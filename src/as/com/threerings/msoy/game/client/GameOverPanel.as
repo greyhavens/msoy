@@ -28,7 +28,7 @@ public class GameOverPanel extends FloatingPanel
 {
     public function GameOverPanel (gctx :GameContext, rematch :UIComponent)
     {
-        super(gctx.getMsoyContext());
+        super(gctx.getMsoyContext(), "(beta feature: art is on the way!)");
         _gctx = gctx;
         _rematch = rematch;
 
