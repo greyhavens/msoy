@@ -467,6 +467,7 @@ public class AVRGameManager extends PlaceManager
         AVRGameAgentObject agent = new AVRGameAgentObject();
         agent.bureauId = BureauTypes.GAME_BUREAU_ID_PREFIX + gameId;
         agent.bureauType = BureauTypes.THANE_BUREAU_TYPE;
+        agent.gameId = gameId;
         agent.code = code;
         if (StringUtil.isBlank(def.server)) {
             agent.className = WhirledGameManager.DEFAULT_SERVER_CLASS;
