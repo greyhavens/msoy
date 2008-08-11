@@ -83,6 +83,17 @@ public class MsoyGamePanel extends WhirledGamePanel
         return (_ctrl.getPlaceConfig() as MsoyGameConfig).thumbnail;
     }
 
+    /**
+     * Shuttle the specified values to the GameOverPanel, if it exists.
+     */
+    public function displayGameOverCoinAward (
+        forReal :Boolean, coins :int, hasCookie :Boolean) :void
+    {
+        createGameOverPanel();
+        _gameOverPanel.displayCoinAward(forReal, coins, hasCookie);
+        // but do not yet open the panel...
+    }
+
     // from WhirledGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
@@ -124,8 +135,6 @@ public class MsoyGamePanel extends WhirledGamePanel
             // put game chat in the sidebar
             mctx.getTopPanel().setRightPanel(new GameChatContainer(mctx, gameChatDir, _playerList));
         }
-
-        bar.addCustomComponent(_rematch);
     }
 
     // from WhirledGamePanel
@@ -155,8 +164,9 @@ public class MsoyGamePanel extends WhirledGamePanel
             }
         }
 
-        // clear our custom controlbar components
-        _rematch.parent.removeChild(_rematch);
+        if (_gameOverPanel != null) {
+            _gameOverPanel.close();
+        }
     }
 
     // from WhirledGamePanel
@@ -187,9 +197,33 @@ public class MsoyGamePanel extends WhirledGamePanel
         menuData.push({ type: "separator" });
     }
 
+    override protected function displayGameOver (gameOver :Boolean) :void
+    {
+        if (gameOver) {
+            createGameOverPanel();
+            if (!_gameOverPanel.isOpen()) {
+                _gameOverPanel.open();
+            }
+
+        } else if (_gameOverPanel != null) {
+            _gameOverPanel.close();
+            _gameOverPanel = null;
+        }
+    }
+
+    protected function createGameOverPanel () :void
+    {
+        if (_gameOverPanel == null) {
+            _gameOverPanel = new GameOverPanel(_gctx, _rematch);
+        }
+    }
+
     /** convenience reference to our game context */
     protected var _gctx :GameContext;
 
     protected var _showPlayers :CommandCheckBox;
+
+    /** The game over panel, or null if not being shown. */
+    protected var _gameOverPanel :GameOverPanel;
 }
 }

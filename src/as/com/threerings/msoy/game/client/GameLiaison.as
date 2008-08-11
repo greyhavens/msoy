@@ -217,13 +217,30 @@ public class GameLiaison
             }
             _awardPanel.displayAward(args[0]);
 
-        } else if (name == WhirledGameObject.COINS_AWARDED_MESSAGE &&
-                _gctx.getPlayerObject().isGuest() && Boolean(args[2]) /* for real */) {
-            // if a guest earns flow, we want to show them the "please register" dialog
-            displayGuestFlowEarnage(int(args[0]), Boolean(args[3]));
+        } else if (name == WhirledGameObject.COINS_AWARDED_MESSAGE) {
+            const coins :int = int(args[0]);
+            const forReal :Boolean = Boolean(args[2]);
+            const hasCookie :Boolean = Boolean(args[3]);
+            const gamePanel :MsoyGamePanel = getMsoyGamePanel();
+            if (forReal && _gctx.getPlayerObject().isGuest() &&
+                    gamePanel.getController().isParty()) {
+                // if a guest earns flow, we want to show them the "please register" dialog
+                displayGuestFlowEarnage(coins, hasCookie);
+            }
+            // and always pass the buck to the panel, even if it doesn't care..
+            gamePanel.displayGameOverCoinAward(forReal, coins, hasCookie);
         }
     }
 
+    protected function getMsoyGamePanel () :MsoyGamePanel
+    {
+        return (_wctx.getTopPanel().getPlaceView() as MsoyGamePanel);
+    }
+
+    /**
+     * Display a slide-down panel to guests in situations in which they otherwise
+     * wouldn't see the standard GameOverPanel.
+     */
     protected function displayGuestFlowEarnage (amount :int, hasCookie :Boolean) :void
     {
         if (_guestFlowPanel == null) {
@@ -259,7 +276,7 @@ public class GameLiaison
                 _guestFlowPanel, PlaceBox.LAYER_TRANSIENT);
             _guestFlowPanel.x = 150;
             _guestFlowPanel.y = -_guestFlowPanel.height;
-            Tweener.addTween(_guestFlowPanel, {y: 0, time: 0.75, transition: EASING_OUT});
+            Tweener.addTween(_guestFlowPanel, { y: 0, time: 0.75, transition: EASING_OUT });
             _flowPanelAutoDismiss.start();
         }
     }

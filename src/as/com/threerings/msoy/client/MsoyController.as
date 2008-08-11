@@ -103,6 +103,9 @@ public class MsoyController extends Controller
     /** Command to display the go menu. */
     public static const POP_GO_MENU :String = "PopGoMenu";
 
+    /** Command to display sign-up info for guests. */
+    public static const SHOW_SIGN_UP :String = "ShowSignUp";
+
     /** Command to view an item, arg is [ itemTypeId, itemId ] */
     public static const VIEW_ITEM :String = "ViewItem";
 
