@@ -9,7 +9,6 @@ import java.util.zip.CRC32;
 import com.samskivert.util.HashIntMap;
 
 import com.threerings.stats.Log;
-import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.badge.gwt.StampCategory;

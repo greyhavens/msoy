@@ -81,7 +81,6 @@ public class StatLogic
                     "statType", modifier.getType().name());
             }
         } catch (PersistenceException pe) {
-            updatedStat = null;
             log.warning("updateStat failed", "memberId", memberId, "type", modifier.getType(), pe);
         }
 
