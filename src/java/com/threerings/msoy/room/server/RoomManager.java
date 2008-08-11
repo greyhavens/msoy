@@ -89,6 +89,8 @@ import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomCodes;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.RoomPropertiesObject;
+import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.server.persist.MemoryRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
@@ -648,6 +650,7 @@ public class RoomManager extends SpotSceneManager
     public void occupantEnteredAVRGame (MemberObject member)
     {
         ensureAVRGameControl(member);
+        ensureAVRGamePropertySpace(member);
     }
 
     /**
@@ -725,6 +728,7 @@ public class RoomManager extends SpotSceneManager
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject) body;
             ensureAVRGameControl(member);
+            ensureAVRGamePropertySpace(member);
             MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
             boolean isMemberScene = (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER);
             member.metrics.room.init(isMemberScene, model.ownerId);
@@ -791,6 +795,13 @@ public class RoomManager extends SpotSceneManager
 
         // flush any modified memory records to the database
         flushMemories(_invoker, _memoryRepo, _roomObj.memories);
+        
+        // flush modified property spaces and destroy dobjects
+        for (RoomPropertiesEntry entry : _roomObj.propertySpaces) {
+            RoomPropertiesObject properties = (RoomPropertiesObject)_omgr.getObject(entry.propsOid);
+            flushAVRGamePropertySpace(properties);
+            _omgr.destroyObject(entry.propsOid);
+        }
     }
 
     // if the given member is playing an AVRG, make sure it's controlled; if not, control it
@@ -807,6 +818,46 @@ public class RoomManager extends SpotSceneManager
         }
     }
 
+    /**
+     * If the given member is playing an AVRG, make sure the {@link RoomObject#propertySpaces} 
+     * contains an entry for its game. If the new object is created, load persistent properties 
+     * from the database.
+     */
+    protected void ensureAVRGamePropertySpace (MemberObject member)
+    {
+        if (member.game == null || !member.game.avrGame || 
+            _roomObj.propertySpaces.containsKey(member.game.gameId)) {
+            return;
+        }
+
+        // TODO: Read values from the database
+        // TODO: Call {@link PropertySpaceHelper.initWithStateFromStore}
+
+        RoomPropertiesObject props = new RoomPropertiesObject();
+        _omgr.registerObject(props);
+        
+        RoomPropertiesEntry entry = new RoomPropertiesEntry();
+        entry.ownerId = member.game.gameId;
+        entry.propsOid = props.getOid();
+        _roomObj.addToPropertySpaces(entry);
+        
+        log.info("Added property space", "roomOid", _roomObj.getOid(), "gameId", member.game.gameId,
+            "propsOid", props.getOid());
+    }
+
+    /**
+     * Write changed room properties to the database.
+     * @param properties
+     */
+    protected void flushAVRGamePropertySpace  (RoomPropertiesObject properties)
+    {
+        log.info("Flushing avrg room properties", "roomOid", _roomObj.getOid(), 
+            "propsOid", properties.getOid());
+
+        // TODO: call {@link PropertySpaceHelper.encodeDirtyStateForStore}
+        // TODO: write dirty values to the database
+    }
+    
     @Override // documentation inherited
     protected SceneLocation computeEnteringLocation (BodyObject body, Portal from, Portal entry)
     {

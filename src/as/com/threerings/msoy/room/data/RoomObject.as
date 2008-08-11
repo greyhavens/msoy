@@ -12,6 +12,7 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EffectData;
+import com.threerings.msoy.room.data.RoomPropertiesEntry;
 
 
 /**
@@ -31,6 +32,9 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>effects</code> field. */
     public static const EFFECTS :String = "effects";
+
+    /** The field name of the <code>propertySpaces</code> field. */
+    public static const PROPERTY_SPACES :String = "propertySpaces";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to have occupants load, but not play,
@@ -74,6 +78,10 @@ public class RoomObject extends SpotSceneObject
     public var effects :DSet = new DSet();
     EffectData; // reference to force linkage
 
+    /** The property spaces associated with this room. */
+    public var propertySpaces :DSet = new DSet();
+    RoomPropertiesEntry; // reference to force linkage
+    
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
@@ -82,6 +90,7 @@ public class RoomObject extends SpotSceneObject
         memories = (ins.readObject() as DSet);
         controllers = (ins.readObject() as DSet);
         effects = (ins.readObject() as DSet);
+        propertySpaces = (ins.readObject() as DSet);
     }
 }
 }

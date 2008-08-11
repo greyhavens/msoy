@@ -24,6 +24,9 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>effects</code> field. */
     public static final String EFFECTS = "effects";
+
+    /** The field name of the <code>propertySpaces</code> field. */
+    public static final String PROPERTY_SPACES = "propertySpaces";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to have occupants load, but not play,
@@ -64,6 +67,9 @@ public class RoomObject extends SpotSceneObject
     /** Contains the currently displayed "effects" (temporary furniture..). */
     public DSet<EffectData> effects = new DSet<EffectData>();
 
+    /** The property spaces associated with this room. */
+    public DSet<RoomPropertiesEntry> propertySpaces = DSet.newDSet();
+    
     // AUTO-GENERATED: METHODS START
     /**
      * Requests that the <code>roomService</code> field be set to the
@@ -220,6 +226,53 @@ public class RoomObject extends SpotSceneObject
         requestAttributeChange(EFFECTS, value, this.effects);
         DSet<EffectData> clone = (value == null) ? null : value.typedClone();
         this.effects = clone;
+    }
+
+    /**
+     * Requests that the specified entry be added to the
+     * <code>propertySpaces</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void addToPropertySpaces (RoomPropertiesEntry elem)
+    {
+        requestEntryAdd(PROPERTY_SPACES, propertySpaces, elem);
+    }
+
+    /**
+     * Requests that the entry matching the supplied key be removed from
+     * the <code>propertySpaces</code> set. The set will not change until the
+     * event is actually propagated through the system.
+     */
+    public void removeFromPropertySpaces (Comparable<?> key)
+    {
+        requestEntryRemove(PROPERTY_SPACES, propertySpaces, key);
+    }
+
+    /**
+     * Requests that the specified entry be updated in the
+     * <code>propertySpaces</code> set. The set will not change until the event is
+     * actually propagated through the system.
+     */
+    public void updatePropertySpaces (RoomPropertiesEntry elem)
+    {
+        requestEntryUpdate(PROPERTY_SPACES, propertySpaces, elem);
+    }
+
+    /**
+     * Requests that the <code>propertySpaces</code> field be set to the
+     * specified value. Generally one only adds, updates and removes
+     * entries of a distributed set, but certain situations call for a
+     * complete replacement of the set value. The local value will be
+     * updated immediately and an event will be propagated through the
+     * system to notify all listeners that the attribute did
+     * change. Proxied copies of this object (on clients) will apply the
+     * value change when they received the attribute changed notification.
+     */
+    public void setPropertySpaces (DSet<RoomPropertiesEntry> value)
+    {
+        requestAttributeChange(PROPERTY_SPACES, value, this.propertySpaces);
+        DSet<RoomPropertiesEntry> clone = (value == null) ? null : value.typedClone();
+        this.propertySpaces = clone;
     }
     // AUTO-GENERATED: METHODS END
 }
