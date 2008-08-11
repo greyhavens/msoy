@@ -92,6 +92,8 @@ public class MsoyClientResolver extends CrowdClientResolver
         } else if (_username instanceof LurkerName) {
             // we are lurker, we have no visible name to speak of
             userObj.memberName = new VizMemberName("", 0, MemberCard.DEFAULT_PHOTO);
+            userObj.stats = new StatSet();
+            userObj.badges = new BadgeSet();
 
         } else {
             resolveMember(userObj);
