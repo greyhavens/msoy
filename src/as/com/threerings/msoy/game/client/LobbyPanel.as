@@ -89,7 +89,7 @@ public class LobbyPanel extends FloatingPanel
         _gctx = gctx;
         _ctrl = ctrl;
 
-        styleName = "lobbyPanel";
+        styleName = "sexyPopup";
         maxWidth = LOBBY_PANEL_MAX_WIDTH;
         maxHeight = LOBBY_PANEL_MAX_HEIGHT;
         showCloseButton = true;

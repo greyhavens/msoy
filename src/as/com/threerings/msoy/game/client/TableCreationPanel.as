@@ -157,6 +157,7 @@ public class TableCreationPanel extends VBox
         }
 
         var title :TextInput = new TextInput();
+        title.styleName = "sexyTextInput";
         title.text = Msgs.GAME.get("l.default_table", _ctx.getPlayerObject().getVisibleName());
         title.percentWidth = 100;
 

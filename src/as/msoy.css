@@ -48,6 +48,21 @@ TitleWindow {
   closeButtonUpSkin: Embed(source="../../pages/images/ui/close.png");
 }
 
+/** Eventually, all our popups should move to this style. */
+LobbyPanel {
+  backgroundImage: none;
+  backgroundColor: black;
+  backgroundAlpha: 0.8;
+
+  paddingTop: 10px;
+  paddingRight: 10px;
+  paddingBottom: 10px;
+  paddingLeft: 10px;
+
+  /* All elements in this container will have color=white. This is Flex's "C" in "CSS" */
+  color: white;
+}
+
 .topPanel {
   backgroundColor: #000000;
 }
@@ -125,6 +140,7 @@ NumericStepper {
 
 ComboBox {
   fontSize: 9;
+  color: black;
   upSkin: Embed(source="../../rsrc/media/skins/combobox/up.png",
           scaleGridTop="5", scaleGridBottom="13",
           scaleGridLeft="5", scaleGridRight="40");
@@ -146,8 +162,17 @@ CheckBox {
   fillColors: #403424, #403424, #ffffff, #eeeeee;
 }
 
+.sexyCheckBox {
+  upSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox.png");
+  overSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
+  selectedDownSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
+}
+
 RadioButton {
-  borderColor: #403424;
+  borderColor: #FFFFFF;
   highlightAlphas: 0, 0;
   fillAlphas: 0, 0, 0.75, 0.65;
   fillColors: #403424, #403424, #ffffff, #eeeeee;
@@ -193,6 +218,7 @@ Button {
   upSkin: Embed(source="../../rsrc/media/skins/button/up.png",
           scaleGridTop="1", scaleGridBottom="19",
           scaleGridLeft="2", scaleGridRight="19");
+  color: black;
 }
 
 ColorPicker {
@@ -371,10 +397,10 @@ TabNavigator, TabBar {
 }
 
 .tabCheckBox {
-  downSkin: Embed(source="../../rsrc/media/skins/checkbox_down.png");
-  upSkin: Embed(source="../../rsrc/media/skins/checkbox.png");
-  overSkin: Embed(source="../../rsrc/media/skins/checkbox_over.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/checkbox_selected.png");
+  downSkin: Embed(source="../../rsrc/media/skins/checkbox/tab_down.png");
+  upSkin: Embed(source="../../rsrc/media/skins/checkbox/tab.png");
+  overSkin: Embed(source="../../rsrc/media/skins/checkbox/tab_over.png");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/checkbox/tab_selected.png");
 }
 
 .controlBar, .headerBar { 
@@ -934,12 +960,12 @@ BasePanel {
   paddingBottom: 10px;
 }
 
-.lobbyPanel {
+/*.lobbyPanel {
   paddingTop: 10px;
   paddingRight: 10px;
   paddingBottom: 10px;
   paddingLeft: 10px;
-}
+}*/
 
 .titleBox {
   borderStyle: "solid";
@@ -980,16 +1006,16 @@ BasePanel {
 }
 
 .lobbyTableList {
-  backgroundAlpha: 1;
-  backgroundColor: #E0EAEB;
+  borderThickness: 1px;
+  borderStyle: "solid";
+  borderColor: #408FD9;
+  /*borderSides: "left right bottom";*/
+
   paddingLeft: 5px;
   paddingRight: 5px;
   paddingTop: 0px;
   paddingBottom: 5px;
   borderAlpha: 1;
-  borderColor: #4E97CC;
-  borderStyle: "solid";
-  borderSides: "left right bottom";
   borderThicknessTop: 0;
   verticalGap: 0;
 }
@@ -1036,9 +1062,9 @@ BasePanel {
   selectedUpSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
 }
 
-.lobbyLabel {
+/*.lobbyLabel {
   fontWeight: bold;
-}
+}*/
 
 .friendCheckBox {
   horizontalAlign: center;
@@ -1076,10 +1102,10 @@ BasePanel {
 }
 
 .tablePanel, .configBox, .friendsBox {
-  backgroundImage: Embed(source="../../rsrc/media/skins/lobby/pending_game_bg.png",
+  /*backgroundImage: Embed(source="../../rsrc/media/skins/lobby/pending_game_bg.png",
           scaleGridTop="10", scaleGridBottom="67",
           scaleGridLeft="10", scaleGridRight="67");
-  backgroundSize: "100%";
+  backgroundSize: "100%";*/
 }
 
 .runningTablePanel {
@@ -1120,7 +1146,6 @@ BasePanel {
 
 .tableTitleLabel {
   fontWeight: bold;
-  color: black;
 }
 
 .createBtnBox {
@@ -1134,9 +1159,9 @@ BasePanel {
 
 .tableCreationPanel {
   verticalAlign: middle;
-  backgroundColor: #E0E7EE;
-  borderThickness: 0;
-  borderStyle: "none";
+  /*backgroundColor: #E0E7EE;*/
+  /*borderThickness: 0;
+  borderStyle: "none";*/
   paddingTop: 5px;
   paddingLeft: 5px;
   paddingRight: 5px;
@@ -1144,11 +1169,18 @@ BasePanel {
 }
 
 .configBox, .friendsBox {
+  borderThickness: 1px;
+  borderStyle: "solid";
+  borderColor: #408FD9;
   verticalGap: 4;
   paddingLeft: 5px;
   paddingRight: 5px;
   paddingTop: 5px;
   paddingBottom: 5px;
+}
+
+.configBox {
+fontWeight: bold;
 }
 
 .chatContainer {
@@ -1341,14 +1373,17 @@ BasePanel {
   borderThickness: 2;
 }
 
-.statusEdit, .statusEditHover {
+.sexyTextInput, .statusEdit, .statusEditHover {
   backgroundAlpha: 0;
   borderStyle: "none";
   color: #568EAF;
+}
+
+.statusEdit, .statusEditHover {
   fontSize: 10;
 }
 
-.statusEdit {
+.sexyTextInput, .statusEdit {
   textDecoration: "none";
 }
 
