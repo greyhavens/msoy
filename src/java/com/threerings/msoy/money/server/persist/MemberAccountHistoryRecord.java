@@ -104,7 +104,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #MemberAccountHistoryRecord}
      * with the supplied key values.
      */
-    public static Key<MemberAccountHistoryRecord> getKey (final int id)
+    public static Key<MemberAccountHistoryRecord> getKey (int id)
     {
         return new Key<MemberAccountHistoryRecord>(
                 MemberAccountHistoryRecord.class,
