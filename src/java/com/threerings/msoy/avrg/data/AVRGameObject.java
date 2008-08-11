@@ -38,9 +38,6 @@ public class AVRGameObject extends PlaceObject
     /** The field name of the <code>gameMedia</code> field. */
     public static final String GAME_MEDIA = "gameMedia";
 
-    /** The field name of the <code>state</code> field. */
-    public static final String STATE = "state";
-
     /** The field name of the <code>playerLocs</code> field. */
     public static final String PLAYER_LOCS = "playerLocs";
 

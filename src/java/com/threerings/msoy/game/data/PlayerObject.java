@@ -52,9 +52,6 @@ public class PlayerObject extends BodyObject
     /** The field name of the <code>friends</code> field. */
     public static final String FRIENDS = "friends";
 
-    /** The field name of the <code>gameState</code> field. */
-    public static final String GAME_STATE = "gameState";
-
     /** The field name of the <code>questState</code> field. */
     public static final String QUEST_STATE = "questState";
 
