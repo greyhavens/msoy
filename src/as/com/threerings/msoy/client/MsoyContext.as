@@ -71,7 +71,7 @@ public /*abstract*/ class MsoyContext
     }
 
     /**
-     * Get the width of the client. Please review the the notes in getWidth().
+     * Get the height of the client. Please review the the notes in getWidth().
      */
     public function getHeight () :Number
     {
