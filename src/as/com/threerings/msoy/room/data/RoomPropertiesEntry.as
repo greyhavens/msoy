@@ -12,13 +12,13 @@ public class RoomPropertiesEntry
     implements DSet_Entry
 {
     /**
-     * Identifier for the unique owber of the properties. This is currently expected to just be 
-     * the avrg game id, but may be extended to include other scopes, hence the 64 bits.
+     * Unique identifier for the owner of the properties. This is currently expected to just be
+     * the avrg game id.
      */
     public var ownerId :int;
 
     /**
-     * Object id of the <code>RoomPropertiesObject</code> if a client is interested in subscribing to 
+     * Object id of the <code>RoomPropertiesObject</code> if a client is interested in subscribing to
      * the properties.
      * @see RoomPropertiesObject
      */
