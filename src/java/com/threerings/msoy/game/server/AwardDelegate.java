@@ -564,11 +564,9 @@ public class AwardDelegate extends RatingDelegate
             // report to the game that this player earned some flow
             DObject user = _omgr.getObject(player.playerOid);
             if (user != null) {
-                boolean hasCookie = false;
-                if (_plmgr instanceof MsoyGameManager) {
-                    hasCookie = ((WhirledGameObject)_plmgr.getPlaceObject()).
-                        userCookies.containsKey(user.getOid());
-                }
+                boolean hasCookie = (_plmgr instanceof MsoyGameManager) &&
+                    ((WhirledGameObject)_plmgr.getPlaceObject()).userCookies.containsKey(
+                    user.getOid());
                 user.postMessage(WhirledGameObject.COINS_AWARDED_MESSAGE,
                                  player.flowAward, player.percentile, actuallyAward, hasCookie);
             }

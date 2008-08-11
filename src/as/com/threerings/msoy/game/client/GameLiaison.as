@@ -243,11 +243,7 @@ public class GameLiaison
             var field :TextField = (_guestFlowPanel.getChildByName("youearned") as TextField);
             field.text = Msgs.GAME.get("l.guest_flow_title", ""+amount);
             field = (_guestFlowPanel.getChildByName("ifyousign") as TextField);
-            if (hasCookie) {
-                field.text = Msgs.GAME.get("l.guest_flowprog_note");
-            } else {
-                field.text = Msgs.GAME.get("l.guest_flow_note");
-            }
+            field.text = Msgs.GAME.get(hasCookie ? "l.guest_flowprog_note" : "l.guest_flow_note");
 
             var later :SimpleButton = (_guestFlowPanel.getChildByName("Later") as SimpleButton);
             later.addEventListener(MouseEvent.CLICK, clearGuestFlow);
