@@ -13,7 +13,7 @@ import java.sql.Timestamp;
 
 import com.samskivert.util.StringUtil;
 
-import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.WebCreds;
 
@@ -261,7 +261,7 @@ public class MemberRecord extends PersistentRecord
     /** The time at which the player ended their last session. */
     public Timestamp lastSession;
 
-    /** This member's current humanity rating, between 0 and {@link MemberObject#MAX_HUMANITY}. */
+    /** This member's current humanity rating, between 0 and {@link MsoyCodes#MAX_HUMANITY}. */
     public int humanity;
 
     /** The time at which we last assessed this member's humanity. */
