@@ -10,13 +10,13 @@ public class RoomPropertiesEntry
     implements DSet.Entry
 {
     /**
-     * Identifier for the unique owber of the properties. This is currently expected to just be 
-     * the avrg game id, but may be extended to include other scopes, hence the 64 bits.
+     * Unique identifier for the owner of the properties. This is currently expected to just be
+     * the avrg game id.
      */
     public int ownerId;
 
     /**
-     * Object id of the {@link RoomPropertiesObject} if a client is interested in subscribing to 
+     * Object id of the {@link RoomPropertiesObject} if a client is interested in subscribing to
      * the properties.
      */
     public int propsOid;
