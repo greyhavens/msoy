@@ -104,11 +104,9 @@ public class AwardDelegate extends RatingDelegate
         // update stats: we assume (for stat purposes) in games with scores that everyone who has
         // the highscore is a winner and everyone else is a loser; this is somewhat dubious
         List<Integer> winnerOids = Lists.newArrayList();
-        if (highestScore > 0) {
-            for (int ii = 0; ii < playerOids.length; ii++) {
-                if (scores[ii] == highestScore) {
-                    winnerOids.add(playerOids[ii]);
-                }
+        for (int ii = 0; ii < playerOids.length; ii++) {
+            if (scores[ii] == highestScore) {
+                winnerOids.add(playerOids[ii]);
             }
         }
         updatePlayerStats(players.keySet(), winnerOids);
