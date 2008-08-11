@@ -79,7 +79,7 @@ public class BadgeManager
                     "memberId", user.getMemberId(), "BadgeType", type, "level", level);
             } else {
                 badge.whenEarned = whenEarned;
-                user.awardBadge(badge);
+                user.badgeAwarded(badge);
                 coinValue += coinValue;
             }
         }

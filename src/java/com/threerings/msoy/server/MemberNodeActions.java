@@ -355,7 +355,7 @@ public class MemberNodeActions
         }
 
         protected void execute (MemberObject memobj) {
-            memobj.awardBadge(_badge);
+            memobj.badgeAwarded(_badge);
         }
 
         protected EarnedBadge _badge;

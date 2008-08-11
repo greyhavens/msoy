@@ -234,7 +234,7 @@ public class MemberObject extends MsoyBodyObject
      * @return true if the badge was added to the member's BadgeSet, and false if already
      * existed in the set.
      */
-    public boolean awardBadge (EarnedBadge badge, InProgressBadge inProgressBadge)
+    public boolean badgeAwarded (EarnedBadge badge, InProgressBadge inProgressBadge)
     {
         boolean added = badges.addOrUpdateBadge(badge);
         if (added) {
@@ -256,9 +256,9 @@ public class MemberObject extends MsoyBodyObject
      * @return true if the badge was added to the member's BadgeSet, and false if already
      * existed in the set.
      */
-    public boolean awardBadge (EarnedBadge badge)
+    public boolean badgeAwarded (EarnedBadge badge)
     {
-        return awardBadge(badge, null);
+        return badgeAwarded(badge, null);
     }
 
     /**
