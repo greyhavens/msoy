@@ -184,22 +184,20 @@ public class AwardDelegate extends RatingDelegate
         // award flow according to the rankings and the payout type
         awardFlow(players, payoutType);
 
-        // pull the winners out of the IntMap
-        ArrayIntSet winners = new ArrayIntSet();
+        // determine the oids of the winners
+        ArrayIntSet winnerOids = new ArrayIntSet();
         for (Player player : players.values()) {
             if (player.score == 1) {
-                winners.add(player.playerOid);
+                winnerOids.add(player.playerOid);
             }
         }
 
-        // Update stats. We do this here instead of in gameDidEnd, because the list of winners
-        // isn't available there if endGameWithScores() is called.
-        updatePlayerStats(players.keySet(), winners);
+        // update the various game-related stats
+        updatePlayerStats(players.keySet(), winnerOids);
 
         // tell the game manager about our winners which will be used to compute ratings, etc.
         if (_gmgr instanceof WhirledGameManager) {
-            ((WhirledGameManager)_gmgr).setWinners(winners.toIntArray());
-
+            ((WhirledGameManager)_gmgr).setWinners(winnerOids.toIntArray());
         } else {
             log.warning("Unable to configure WhirledGameManager with winners", "where", where(),
                         "isa", _gmgr.getClass().getName());
@@ -451,7 +449,6 @@ public class AwardDelegate extends RatingDelegate
 
         switch (payoutType) {
         case WhirledGameObject.WINNERS_TAKE_ALL: {
-            // TODO: review and possibly remove
             // scale all available flow (even losers?) by their performance
             scaleAvailableFlowToPercentiles(players);
 
@@ -482,7 +479,6 @@ public class AwardDelegate extends RatingDelegate
         } // end: case WINNERS_TAKE_ALL
 
         case WhirledGameObject.CASCADING_PAYOUT: {
-            // TODO: review and possibly remove
             // scale all available flow (even losers?) by their performance
             scaleAvailableFlowToPercentiles(players);
 
@@ -665,9 +661,8 @@ public class AwardDelegate extends RatingDelegate
     }
 
     /**
-     * Reset tracking. Done at the end of a game so that the secondsPlayed is
-     * fresh for the next round. This may change if games can reward flow without
-     * ending the game.
+     * Reset tracking. Done at the end of a game so that the secondsPlayed is fresh for the next
+     * round. This may change if games can reward flow without ending the game.
      */
     protected void resetTracking ()
     {
@@ -686,19 +681,6 @@ public class AwardDelegate extends RatingDelegate
         float avgMins = getAverageGameDuration(playerSecs);
         float playerMins = playerSecs/60f;
 
-//        if (RAY_GETS_HIS_WAY) {
-//            // What the fuck?
-//            // Not our problem! If someone writes a buggy game, they can deal with the
-//            // consequences, fix their game, and reset the score distribution. Why should we
-//            // *always* do this wack-a-doo adjustment on all the NORMAL, PERFECTLY-FUNCTIONAL
-//            // games just to protect against a theoretical "problem"? Wrong wrong wrong.
-//            // This should be simplified so that games can do interesting things without
-//            // getting penalized for being "wrong". Example: a racing game with a shortcut
-//            // that's really hard to do, but if you can do it, you can shave massive time
-//            // off your lap and should reap a corresponding reward.
-//
-//        } else {
-//      // The non-ray-gets-his-way way, which by the way Zell believes is a good idea:
         // a player within 80% of the average time will receive a payout based on the average time
         // to accomodate games where faster performance is desirable; however, below 80% we scale
         // down to prevent players who manage to get a game to payout in a degenerately low time
@@ -718,7 +700,6 @@ public class AwardDelegate extends RatingDelegate
                      "memberId", record.memberId, "avgMins", avgMins, "playerMins", playerMins,
                      "awardMins", awardMins);
         }
-//        }
 
         return Math.round(record.humanity * _flowPerMinute * awardMins);
     }
