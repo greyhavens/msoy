@@ -15,6 +15,8 @@ import com.threerings.msoy.bureau.client.ThaneWorldService;
 import com.threerings.msoy.bureau.client.Window;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.RoomPropertiesEntry;
+import com.threerings.msoy.room.data.RoomPropertiesObject;
 import com.threerings.presents.client.ResultAdapter;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -179,8 +181,7 @@ public class ThaneAVRGameController
         var info :String = "binding=" + binding + ", window=" + window;
 
         // close the window immediately if this binding has been removed
-        var check :SceneBinding = _bindings.get(binding.sceneId);
-        if (check != binding) {
+        if (wasRemoved(binding)) {
             log.warning("Window no longer needed [" + info + "]");
             _ctx.getWindowDirector().closeWindow(window);
             return;
@@ -212,15 +213,14 @@ public class ThaneAVRGameController
         var info :String = "binding=" + binding + ", roomOid=" + oid;
 
         // if this player has been removed, forget it
-        var check :SceneBinding = _bindings.get(binding.sceneId);
-        if (check != binding) {
+        if (wasRemoved(binding)) {
             log.warning("Room oid no longer needed [" + info + "]");
             return;
         }
         
         log.debug("Got room id ["  + info + "]");
 
-        // subscribe to the rooom object
+        // subscribe to the room object
         var subscriber :SubscriberAdapter = new SubscriberAdapter(
             function (obj :RoomObject) :void {
                 gotRoomObject(binding, obj);
@@ -238,9 +238,8 @@ public class ThaneAVRGameController
     {
         var info :String = "binding=" + binding + ", roomOid=" + roomObj.getOid();
 
-        // if this player has been removed, unsubscribe right away
-        var check :SceneBinding = _bindings.get(binding.sceneId);
-        if (check != binding) {
+        // if this scene has been removed, unsubscribe right away
+        if (wasRemoved(binding)) {
             log.warning("Room no longer needed [" + info + "]");
             binding.subscriber.unsubscribe(binding.window.getDObjectManager());
             return;
@@ -249,8 +248,76 @@ public class ThaneAVRGameController
         log.info("Got room [" + info + "]");
 
         binding.room = roomObj;
+        
+        var entry :RoomPropertiesEntry;
+        entry = binding.room.propertySpaces.get(_gameAgentObj.gameId) as RoomPropertiesEntry;
+        if (entry != null) {
+            gotRoomPropsOid(binding, entry.propsOid);
+            return;
+        }
 
+        var adapter :SetAdapter = new SetAdapter(
+            function (event :EntryAddedEvent) :void {
+                if (event.getName() == RoomObject.PROPERTY_SPACES) {
+                    entry = event.getEntry() as RoomPropertiesEntry;
+                    if (entry.ownerId == _gameAgentObj.gameId) {
+                        binding.room.removeListener(adapter);
+                        gotRoomPropsOid(binding, entry.propsOid);
+                    }
+                }
+            }, null, null);
+
+        // TODO: does this need to timeout in case the room manager has caught fire?
+        binding.room.addListener(adapter);
+    }
+
+    protected function gotRoomPropsOid (binding :SceneBinding, propsOid :int) :void
+    {
+        var info :String = "binding=" + binding + ", propsOid=" + propsOid;
+        
+        if (wasRemoved(binding)) {
+            log.warning("Room props oid no longer needed [" + info + "]");
+            return;
+        }
+
+        log.debug("Got room props id [" + info + "]");
+
+        // subscribe to the properties object
+        var subscriber :SubscriberAdapter = new SubscriberAdapter(
+            function (obj :RoomPropertiesObject) :void {
+                gotRoomPropertiesObject(binding, obj);
+            },
+            function (oid :int, cause :ObjectAccessError) :void {
+                log.warning(
+                    "Failed to subscribe to room props [" + info + ", cause=\"" + cause + "\"]");
+            }
+        );
+
+        binding.propsSubscriber = new SafeSubscriber(propsOid, subscriber);
+        binding.propsSubscriber.subscribe(binding.window.getDObjectManager());
+    }
+
+    protected function gotRoomPropertiesObject (
+        binding :SceneBinding, propsObj :RoomPropertiesObject) :void
+    {
+        var info :String = "binding=" + binding + ", propsOid=" + propsObj.getOid();
+
+        // if this scene has been removed, unsubscribe right away
+        if (wasRemoved(binding)) {
+            log.warning("Room props no longer needed [" + info + "]");
+            binding.propsSubscriber.unsubscribe(binding.window.getDObjectManager());
+            return;
+        }
+
+        log.info("Got room props [" + info + "]");
+
+        binding.roomProps = propsObj;
         _gameObj.avrgService.roomSubscriptionComplete(_ctx.getClient(), binding.sceneId);
+    }
+
+    protected function wasRemoved (binding :SceneBinding) :Boolean
+    {
+        return binding != _bindings.get(binding.sceneId);
     }
 
     /** Removes the binding of the given player. */
@@ -271,6 +338,12 @@ public class ThaneAVRGameController
             binding.room = null;
         }
 
+        if (binding.roomProps != null) {
+            binding.propsSubscriber.unsubscribe(binding.window.getDObjectManager());
+            binding.propsSubscriber = null;
+            binding.roomProps = null;
+        }
+
         if (binding.window != null) {
             _ctx.getWindowDirector().closeWindow(binding.window);
             binding.window = null;
@@ -288,6 +361,7 @@ public class ThaneAVRGameController
 
 import com.threerings.msoy.bureau.client.Window;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.RoomPropertiesObject;
 import com.threerings.util.StringUtil;
 import com.threerings.presents.util.SafeSubscriber;
 
@@ -298,6 +372,8 @@ class SceneBinding
     public var window :Window;
     public var subscriber :SafeSubscriber;
     public var room :RoomObject;
+    public var propsSubscriber :SafeSubscriber;
+    public var roomProps :RoomPropertiesObject;
 
     // from Object
     public function toString () :String

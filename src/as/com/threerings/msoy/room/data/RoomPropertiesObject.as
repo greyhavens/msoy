@@ -1,5 +1,6 @@
 package com.threerings.msoy.room.data {
 
+import com.threerings.presents.dobj.DObject;
 import com.whirled.game.data.PropertySpaceObject;
 
 /**
@@ -20,4 +21,5 @@ public class RoomPropertiesObject extends DObject
      * properties. On the client, the actual values are kept whole.
      */
     protected var _props :Object = new Object();
+}
 }
