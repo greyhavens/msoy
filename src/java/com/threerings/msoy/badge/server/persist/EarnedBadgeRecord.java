@@ -70,6 +70,16 @@ public class EarnedBadgeRecord extends PersistentRecord
         return new EarnedBadge(badgeCode, level, whenEarned.getTime());
     }
 
+    /**
+     * @return a String representation of the record.
+     */
+    @Override
+    public String toString ()
+    {
+        return "memberId=" + memberId + " badgeCode=" + badgeCode + " level=" + level +
+            " whenEarned=" + whenEarned;
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link #EarnedBadgeRecord}

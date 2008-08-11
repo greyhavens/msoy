@@ -52,7 +52,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemManager;
 
-import com.threerings.msoy.badge.data.BadgeSet;
+import com.threerings.msoy.badge.data.EarnedBadgeSet;
+import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.ServerStatSet;
 import com.threerings.msoy.notify.data.LevelUpNotification;
@@ -115,6 +116,7 @@ public class MemberManager
                 data.put("MO.actorState", memobj.actorState);
                 data.put("MO.metrics", memobj.metrics);
                 data.put("MO.badges", memobj.badges);
+                data.put("MO.inProgressBadges", memobj.inProgressBadges);
                 data.put("MO.stats", memobj.stats);
             }
 
@@ -122,7 +124,8 @@ public class MemberManager
                 // grab and reinstate our bits
                 memobj.actorState = (String)data.get("MO.actorState");
                 memobj.metrics = (PlayerMetrics)data.get("MO.metrics");
-                memobj.badges = (BadgeSet)data.get("MO.badges");
+                memobj.badges = (EarnedBadgeSet)data.get("MO.badges");
+                memobj.inProgressBadges = (InProgressBadgeSet)data.get("MO.inProgressBadges");
                 ServerStatSet stats = (ServerStatSet)data.get("MO.stats");
                 stats.setMemberObject(memobj);
                 memobj.stats = stats;

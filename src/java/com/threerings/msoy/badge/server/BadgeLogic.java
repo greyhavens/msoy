@@ -36,29 +36,24 @@ public class BadgeLogic
      * a. calling into BadgeRepository to create and store the BadgeRecord
      * b. recording to the member's feed that they earned the stamp in question
      */
-    public void awardBadge (int memberId, BadgeType type, int level, long whenEarned,
-        boolean sendMemberNodeAction)
+    public void awardBadge (EarnedBadgeRecord brec, boolean sendMemberNodeAction)
         throws PersistenceException
     {
         // ensure this is a valid badge level
-        BadgeType.Level levelData = type.getLevel(level);
+        BadgeType type = BadgeType.getType(brec.badgeCode);
+        BadgeType.Level levelData = type.getLevel(brec.level);
         if (levelData == null) {
-            Log.log.warning("Failed to award invalid badge level", "memberId", memberId,
-                "BadgeType", type, "level", level);
+            Log.log.warning("Failed to award invalid badge level", "EarnedBadgeRecord", brec,
+                "BadgeType", type);
             return;
         }
 
-        EarnedBadgeRecord brec = new EarnedBadgeRecord();
-        brec.memberId = memberId;
-        brec.badgeCode = type.getCode();
-        brec.level = level;
-        brec.whenEarned = new Timestamp(whenEarned);
         _badgeRepo.storeBadge(brec);
 
-        _feedRepo.publishMemberMessage(memberId, FeedMessageType.FRIEND_WON_BADGE,
+        _feedRepo.publishMemberMessage(brec.memberId, FeedMessageType.FRIEND_WON_BADGE,
             "some data here");
 
-        UserActionDetails info = new UserActionDetails(memberId, UserAction.EARNED_BADGE);
+        UserActionDetails info = new UserActionDetails(brec.memberId, UserAction.EARNED_BADGE);
         MemberFlowRecord mfrec = _flowRepo.grantFlow(info, levelData.coinValue);
 
         if (sendMemberNodeAction) {
@@ -75,8 +70,12 @@ public class BadgeLogic
     public void awardBadge (int memberId, EarnedBadge badge, boolean sendMemberNodeAction)
         throws PersistenceException
     {
-        awardBadge(memberId, BadgeType.getType(badge.badgeCode), badge.level, badge.whenEarned,
-                   sendMemberNodeAction);
+        EarnedBadgeRecord brec = new EarnedBadgeRecord();
+        brec.memberId = memberId;
+        brec.badgeCode = badge.badgeCode;
+        brec.level = badge.level;
+        brec.whenEarned = new Timestamp(badge.whenEarned);
+        awardBadge(brec, sendMemberNodeAction);
     }
 
     /**

@@ -9,6 +9,7 @@ import java.util.zip.CRC32;
 import com.samskivert.util.HashIntMap;
 
 import com.threerings.stats.Log;
+import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.badge.gwt.StampCategory;
@@ -31,6 +32,7 @@ public enum BadgeType
             return stats.getIntStat(StatType.FRIENDS_MADE);
         }
     },
+
     /*FRIEND_1(StampCategory.SOCIAL, 1000, "Friends", 1) {
         protected int getAcquiredUnits (MemberObject user) {
             return user.stats.getIntStat(StatType.FRIENDS_MADE);
@@ -118,7 +120,7 @@ public enum BadgeType
      * Badge types can override this to apply constraints to Badges (e.g., only unlocked when
      * another badge is earned.)
      */
-    public boolean isUnlocked (BadgeSet badges)
+    public boolean isUnlocked (EarnedBadgeSet badges)
     {
         return true;
     }

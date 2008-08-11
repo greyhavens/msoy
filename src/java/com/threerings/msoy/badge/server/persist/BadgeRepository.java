@@ -31,7 +31,16 @@ public class BadgeRepository extends DepotRepository
     public void storeBadge (EarnedBadgeRecord badge)
         throws PersistenceException
     {
-        insert(badge);
+        store(badge);
+    }
+
+    /**
+     * Stores the supplied in-progress badge record in the database.
+     */
+    public void storeInProgressBadge (InProgressBadgeRecord badge)
+        throws PersistenceException
+    {
+        store(badge);
     }
 
     /**
@@ -51,6 +60,36 @@ public class BadgeRepository extends DepotRepository
     {
         return findAll(InProgressBadgeRecord.class, new Where(InProgressBadgeRecord.MEMBER_ID_C,
             memberId));
+    }
+
+    /**
+     * Loads the EarnedBadgeRecord, if it exists, for the specified member and badge type.
+     */
+    public EarnedBadgeRecord loadEarnedBadge (int memberId, int badgeCode)
+        throws PersistenceException
+    {
+        return load(EarnedBadgeRecord.class, EarnedBadgeRecord.getKey(memberId, badgeCode));
+    }
+
+    /**
+     * Loads the InProgressBadgeRecord, if it exists, for the specified member and badge type.
+     */
+    public InProgressBadgeRecord loadInProgressBadge (int memberId, int badgeCode)
+        throws PersistenceException
+    {
+        return load(InProgressBadgeRecord.class, InProgressBadgeRecord.getKey(memberId, badgeCode));
+    }
+
+    /**
+     * Deletes the InProgressBadgeRecord, if it exists, for the specified member and badge type.
+     *
+     * @return true if the record was deleted; false if it did not exist
+     */
+    public boolean deleteInProgressBadge (int memberId, int badgeCode)
+        throws PersistenceException
+    {
+        return (delete(InProgressBadgeRecord.class, InProgressBadgeRecord.getKey(memberId,
+            badgeCode)) > 0);
     }
 
     @Override

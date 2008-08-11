@@ -5,9 +5,8 @@ package com.threerings.msoy.badge.server;
 
 import java.util.Iterator;
 
-import com.threerings.msoy.badge.data.BadgeType;
+import com.google.inject.Inject;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
@@ -44,7 +43,7 @@ public class ServerStatSet extends StatSet
         }
 
         super.addStat(stat);
-        updatedAssociatedBadges(stat.getType());
+        _badgeMan.updateBadges(_memObj);
     }
 
     @Override // from StatSet
@@ -56,29 +55,9 @@ public class ServerStatSet extends StatSet
         }
 
         super.updateStat(stat);
-        updatedAssociatedBadges(stat.getType());
-    }
-
-    /** Called when a Stat has been modified to update any associated badges for the member. */
-    protected void updatedAssociatedBadges (Stat.Type type)
-    {
-        if (!(type instanceof StatType)) {
-            return;
-        }
-
-        StatType statType = (StatType) type;
-        for (BadgeType badgeType : BadgeType.values()) {
-            if (badgeType.getRelevantStat() == statType) {
-                updateBadge(badgeType);
-            }
-        }
-    }
-
-    /** Called to update a single badge type when its associated StatType is modified. */
-    protected void updateBadge (BadgeType badgeType)
-    {
-        // TODO
+        _badgeMan.updateBadges(_memObj);
     }
 
     protected transient MemberObject _memObj;
+    protected transient @Inject BadgeManager _badgeMan;
 }

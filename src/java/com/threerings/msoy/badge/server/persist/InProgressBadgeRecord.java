@@ -68,6 +68,16 @@ public class InProgressBadgeRecord extends PersistentRecord
         return new InProgressBadge(badgeCode, nextLevel, progress);
     }
 
+    /**
+     * @return a String representation of the record.
+     */
+    @Override
+    public String toString ()
+    {
+        return "memberId=" + memberId + " badgeCode=" + badgeCode + " nextLevel=" + nextLevel +
+            " progress=" + progress;
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link #InProgressBadgeRecord}

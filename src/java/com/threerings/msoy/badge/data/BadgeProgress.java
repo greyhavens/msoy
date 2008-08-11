@@ -5,9 +5,9 @@ package com.threerings.msoy.badge.data;
 
 public class BadgeProgress
 {
-    int highestLevel;
-    int nextLevelRequiredUnits;
-    int nextLevelAcquiredUnits;
+    public int highestLevel;
+    public int nextLevelRequiredUnits;
+    public int nextLevelAcquiredUnits;
 
     public BadgeProgress (int highestLevel, int nextLevelRequiredUnits, int nextLevelAcquiredUnits)
     {

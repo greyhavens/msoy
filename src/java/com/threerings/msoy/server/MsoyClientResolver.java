@@ -31,11 +31,14 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 
-import com.threerings.msoy.badge.data.BadgeSet;
+import com.threerings.msoy.badge.data.EarnedBadgeSet;
+import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.ServerStatSet;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
+import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
@@ -87,13 +90,15 @@ public class MsoyClientResolver extends CrowdClientResolver
             userObj.memberName = new VizMemberName(
                 aname.toString(), aname.getMemberId(), MemberCard.DEFAULT_PHOTO);
             userObj.stats = new StatSet();
-            userObj.badges = new BadgeSet();
+            userObj.badges = new EarnedBadgeSet();
+            userObj.inProgressBadges = new InProgressBadgeSet();
 
         } else if (_username instanceof LurkerName) {
             // we are lurker, we have no visible name to speak of
             userObj.memberName = new VizMemberName("", 0, MemberCard.DEFAULT_PHOTO);
             userObj.stats = new StatSet();
-            userObj.badges = new BadgeSet();
+            userObj.badges = new EarnedBadgeSet();
+            userObj.inProgressBadges = new InProgressBadgeSet();
 
         } else {
             resolveMember(userObj);
@@ -140,7 +145,16 @@ public class MsoyClientResolver extends CrowdClientResolver
         for (EarnedBadgeRecord rec : badgeRecs) {
             badges.add(rec.toBadge());
         }
-        userObj.badges = new BadgeSet(badges);
+        userObj.badges = new EarnedBadgeSet(badges);
+
+        List<InProgressBadgeRecord> inProgressBadgeRecs =
+            _badgeRepo.loadInProgressBadges(member.memberId);
+        List<InProgressBadge> inProgressBadges =
+            Lists.newArrayListWithExpectedSize(inProgressBadgeRecs.size());
+        for (InProgressBadgeRecord rec : inProgressBadgeRecs) {
+            inProgressBadges.add(rec.toBadge());
+        }
+        userObj.inProgressBadges = new InProgressBadgeSet(inProgressBadges);
 
 //        // load up any item lists they may have
 //        List<ItemListInfo> itemLists = _itemMan.getItemLists(member.memberId);

@@ -16,10 +16,13 @@ import com.threerings.msoy.item.data.all.ItemListInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.badge.data.BadgeSet;
+import com.threerings.msoy.badge.data.EarnedBadgeSet;
+import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.badge.data.all.InProgressBadge;
 
 import com.threerings.msoy.data.all.ContactEntry;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -220,7 +223,32 @@ public class MemberObject extends MsoyBodyObject
     public transient PlayerMetrics metrics = new PlayerMetrics();
 
     /** The set of badges that this player owns. */
-    public transient BadgeSet badges;
+    public transient EarnedBadgeSet badges;
+
+    /** The set of badges that this player is working towards. */
+    public transient InProgressBadgeSet inProgressBadges;
+
+    /**
+     * Adds an EarnedBadge to the member's BadgeSet, and dispatches an event indicating that
+     * a new badge was awarded.
+     *
+     * @return true if the badge was added to the member's BadgeSet, and false if already
+     * existed in the set.
+     */
+    public boolean awardBadge (EarnedBadge badge, InProgressBadge inProgressBadge)
+    {
+        boolean added = badges.addOrUpdateBadge(badge);
+        if (added) {
+            this.postMessage(BADGE_AWARDED, badge);
+            log.info("BadgeAwarded message sent", "badge", badge);
+        }
+
+        if (inProgressBadge != null) {
+            inProgressBadges.addOrUpdateBadge(inProgressBadge);
+        }
+
+        return added;
+    }
 
     /**
      * Adds an EarnedBadge to the member's BadgeSet, and dispatches an event indicating that
@@ -231,12 +259,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public boolean awardBadge (EarnedBadge badge)
     {
-        boolean added = badges.addOrUpdateBadge(badge);
-        if (added) {
-            this.postMessage(BADGE_AWARDED, badge);
-            log.info("BadgeAwarded message sent", "badge", badge);
-        }
-        return added;
+        return awardBadge(badge, null);
     }
 
     /**
