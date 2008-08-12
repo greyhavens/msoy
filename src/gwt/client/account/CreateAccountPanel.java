@@ -199,7 +199,7 @@ public class CreateAccountPanel extends FlowPanel
 
         RegisterInfo info = new RegisterInfo();
         info.email = _email.getText().trim();
-        info.password = _password.getText().trim();
+        info.password = CShell.frame.md5hex(_password.getText().trim());
         info.displayName = _name.getText().trim();
         info.birthday = _dateOfBirth.getDate();
         info.photo = null; // TODO: remove since we're not using this any more
