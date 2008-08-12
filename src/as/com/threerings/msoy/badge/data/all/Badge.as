@@ -3,7 +3,6 @@ package com.threerings.msoy.badge.data.all {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.presents.dobj.DSet_Entry;
 
 public class Badge extends SimpleStreamableObject
@@ -31,8 +30,7 @@ public class Badge extends SimpleStreamableObject
      */
     public function get imageUrl () :String
     {
-        return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR +
-            uint(badgeCode).toString(16) + BADGE_IMAGE_TYPE;
+        throw new Error("abstract");
     }
 
     // from interface Streamable

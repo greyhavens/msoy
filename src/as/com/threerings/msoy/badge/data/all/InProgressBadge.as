@@ -2,41 +2,41 @@ package com.threerings.msoy.badge.data.all {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
-import com.threerings.util.Long;
 import com.threerings.msoy.client.DeploymentConfig;
 
 /**
- * Contains information on a badge earned by the player.
+ * Contains information on a badge that a player is working towards.
  */
-public class EarnedBadge extends Badge
+public class InProgressBadge extends Badge
 {
-    /** The highest badge level that the player has attained. */
-    public var level :int;
+    /** The badge level that the member is working towards. */
+    public var nextLevel :int;
 
-    /** When this badge was earned. */
-    public var whenEarned :Long;
+    /** The progress that has been made on this badge. */
+    public var progress :Number;
 
     // from Badge
     override public function get imageUrl () :String
     {
         return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR +
-            uint(badgeCode).toString(16) + "_" + level + "f" + BADGE_IMAGE_TYPE;
+            uint(badgeCode).toString(16) + "_" +
+            (nextLevel > 0 ? (nextLevel -1) + "f" : nextlevel + "e") + BADGE_IMAGE_TYPE;
     }
 
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        level = ins.readInt();
-        whenEarned = (ins.readField(Long) as Long);
+        nextLevel = ins.readInt();
+        progress = ins.readFloat();
     }
 
     // from interface Streamable
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeInt(level);
-        out.writeField(whenEarned);
+        out.writeInt(nextLevel);
+        out.writeFloat(progress);
     }
 }
 
