@@ -63,8 +63,6 @@ public enum BadgeType
         // TODO
     },
 
-    // TODO: Builder - under discussion
-
     // game badges
     GAMER(StampCategory.GAME, StatType.GAME_SESSIONS, new Level[] {
         new Level(1, 1000),
