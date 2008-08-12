@@ -112,9 +112,11 @@ public class MsoyGamePanel extends WhirledGamePanel
         const bar :ControlBar = mctx.getTopPanel().getControlBar();
         const gameChatDir :ChatDirector = _gctx.getChatDirector();
 
-        // if we're too small to display chat in a sidebar, we go into "gamestub" mode and do
-        // an overlay instead.
-        if (GAMESTUB_DEBUG_MODE || mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH) {
+        // if we're embedded and too small to display chat in a sidebar,
+        // we go into "gamestub" mode and do an overlay instead.
+        if (GAMESTUB_DEBUG_MODE ||
+                (mctx.getMsoyClient().isEmbedded() &&
+                mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH)) {
             // set up a button to pop/hide the _playerList
             _showPlayers = new CommandButton();
             _showPlayers.toolTip = Msgs.GAME.get("i.scores");
