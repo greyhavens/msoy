@@ -1308,7 +1308,7 @@ fontWeight: bold;
 GameOverPanel {
   borderColor: #408fd9;
   borderThickness: 3;
-  borderSides: "left right top bottom";
+  borderSides: "left right bottom";
   backgroundColor: #000000;
   backgroundAlpha: 0.8;
   backgroundImage: null;
@@ -1318,6 +1318,11 @@ GameOverPanel {
 .gameOverTitle {
   fontSize: 24;
   color: #ffffff;
+}
+
+.gameOverMessage {
+  fontSize: 12;
+  color: #519cdd;
 }
 
 .coinsGameOverPanel {

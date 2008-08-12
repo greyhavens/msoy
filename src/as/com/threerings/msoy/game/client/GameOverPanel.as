@@ -33,7 +33,6 @@ public class GameOverPanel extends FloatingPanel
         _rematch = rematch;
 
         _topArea.setStyle("horizontalAlign", "center");
-//        makeTrans(_topArea);
     }
 
     /**
@@ -53,13 +52,13 @@ public class GameOverPanel extends FloatingPanel
                 WhirledGameCodes.WHIRLEDGAME_MESSAGE_BUNDLE);
             this.title = wgMsgs.get("m.coins_awarded", coins);
 
+            var msg :String;
             if (_gctx.getPlayerObject().isGuest()) {
-                _topArea.addChild(FlexUtil.createLabel(Msgs.GAME.get(hasCookie ?
-                    "l.guest_flowprog_note" : "l.guest_flow_note")));
+                msg = hasCookie ? "l.guest_flowprog_note" : "l.guest_flow_note";
             } else {
-                _topArea.addChild(FlexUtil.createLabel(Msgs.GAME.get("m.goShopping")));
+                msg = "m.goShopping";
             }
-            // TODO: style all these labels!
+            _topArea.addChild(FlexUtil.createLabel(Msgs.GAME.get(msg), "gameOverMessage"));
         }
     }
 
@@ -76,7 +75,6 @@ public class GameOverPanel extends FloatingPanel
             var box :VBox = new VBox();
             box.percentWidth = 100;
             box.setStyle("horizontalAlign", "center");
-//            makeTrans(box);
             box.addChild(signUpBtn);
             addChild(box);
         }
@@ -94,17 +92,9 @@ public class GameOverPanel extends FloatingPanel
 //        whirledBtn.styleName = "blueButton";
 
         var grid :Grid = new Grid();
-//        makeTrans(grid);
         GridUtil.addRow(grid, _rematch, allGamesBtn);
         GridUtil.addRow(grid, lobbyBtn /*, whirledBtn */);
         addChild(grid);
-    }
-
-    protected function makeTrans (comp :UIComponent) :void
-    {
-        comp.setStyle("backgroundAlpha", 0);
-        comp.setStyle("backgroundColor", 0);
-        comp.setStyle("backgroundImage", null);
     }
 
     /** A snakeskin filled with our own piss. */
