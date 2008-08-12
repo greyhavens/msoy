@@ -372,6 +372,26 @@ public class MsoySceneRepository extends DepotRepository
                       SceneRecord.OWNER_ID, ownerId);
     }
 
+    /** Loads the room properties. */
+    public List<RoomPropertyRecord> loadProperties (int ownerId, int sceneId)
+        throws PersistenceException
+    {
+        return findAll(RoomPropertyRecord.class, new Where(
+            RoomPropertyRecord.OWNER_ID_C, ownerId,
+            RoomPropertyRecord.SCENE_ID_C, sceneId));
+    }
+    
+    /** Saves a room property, deleting if the value is null. */
+    public void storeProperty (RoomPropertyRecord record)
+        throws PersistenceException
+    {
+        if (record.value == null) {
+            delete(record);
+        } else {
+            store(record);
+        }
+    }
+
     /**
      * Insert a new scene, with furni and all, into the database and return the newly assigned
      * sceneId.
