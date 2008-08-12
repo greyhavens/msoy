@@ -369,6 +369,14 @@ public class MediaDesc
     }
 
     /**
+     * Is this media a SWF?
+     */
+    public function isSWF () :Boolean
+    {
+        return (mimeType == APPLICATION_SHOCKWAVE_FLASH);
+    }
+
+    /**
      * Return true if this media has a visual component that can be shown
      * in flash.
      */
