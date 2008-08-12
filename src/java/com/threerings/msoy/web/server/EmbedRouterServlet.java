@@ -38,8 +38,7 @@ public class EmbedRouterServlet extends HttpServlet
         try {
             if (info.startsWith("/g")) {
                 int gameId = Integer.parseInt(info.substring(2));
-                // TODO: do we need to assign guest ids?
-                LaunchConfig config = _gameLogic.loadLaunchConfig(gameId, false);
+                LaunchConfig config = _gameLogic.loadLaunchConfig(gameId, true);
                 sendResponse(rsp, config.server + ":" + config.port + ":" + config.guestId);
 
             } else if (info.startsWith("/s")) {
