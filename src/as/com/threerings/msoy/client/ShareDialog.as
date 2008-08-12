@@ -80,6 +80,10 @@ public class ShareDialog extends FloatingPanel
         }
         flashVars += "&" + TrackingCookie.makeFlashVars(affiliate, vector, "");
 
+        if (size == 0) {
+            flashVars += "&featuredPlace=true";
+        }
+
         return Msgs.GENERAL.get("m.embed", flashVars, url,
             EMBED_SIZES[size][0], EMBED_SIZES[size][1]);
     }
@@ -192,7 +196,7 @@ public class ShareDialog extends FloatingPanel
     }
 
     protected static const EMBED_SIZES :Array = [
-        [320, 240], [800, 550], ["100%", 550]
+        [350, 200], [400, 415], ["100%", 550]
     ];
 
     protected var _memObj :MemberObject;
