@@ -458,6 +458,12 @@ TabNavigator, TabBar {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet.png");
 }
 
+.controlBarButtonSend {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/send_default.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/send_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/send_down.png");
+}
+
 .controlBarButtonChat {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_chat.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_chat_over.png");

@@ -303,8 +303,8 @@ public class ControlBar extends HBox
     {
         // add our standard control bar features
         addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ], CHAT_PRIORITY);
-        _chatControl = new ChatControl(
-            _ctx, Msgs.CHAT.get("b.send"), this.height, this.height - 4);
+        _chatControl = new ChatControl(_ctx, null, this.height, this.height - 4);
+        _chatControl.sendButton.styleName = "controlBarButtonSend";
         addGroupChild(_chatControl,
             [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR /*,UI_VIEWER*/ ], CHAT_PRIORITY);
         addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER ]);
