@@ -101,8 +101,8 @@ public class AwardDelegate extends RatingDelegate
             return;
         }
 
-        // update stats: we assume (for stat purposes) in games with scores that everyone who has
-        // the highscore is a winner and everyone else is a loser; this is somewhat dubious
+        // update stats: in games with scores everyone who has the high score is a winner and
+        // everyone else is a loser
         List<Integer> winnerOids = Lists.newArrayList();
         for (int ii = 0; ii < playerOids.length; ii++) {
             if (scores[ii] == highestScore) {
