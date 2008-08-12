@@ -1,12 +1,16 @@
 package com.threerings.msoy.room.data;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
 import com.threerings.presents.dobj.DObject;
 import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.server.PropertySpaceHelper;
 
 /**
  * Provides a property space for a room.
@@ -24,6 +28,26 @@ public class RoomPropertiesObject extends DObject
     public Set<String> getDirtyProps ()
     {
         return _dirty;
+    }
+
+    /**
+     * A custom serialization method.
+     */
+    public void writeObject (ObjectOutputStream out)
+        throws IOException
+    {
+        out.defaultWriteObject();
+        PropertySpaceHelper.writeProperties(this, out);
+    }
+
+    /**
+     * A custom serialization method.
+     */
+    public void readObject (ObjectInputStream ins)
+        throws IOException, ClassNotFoundException
+    {
+        ins.defaultReadObject();
+        PropertySpaceHelper.readProperties(this, ins);
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.threerings.msoy.room.data {
 
+import com.threerings.io.ObjectInputStream;
 import com.threerings.presents.dobj.DObject;
+import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.PropertySpaceObject;
 
 /**
@@ -13,6 +15,13 @@ public class RoomPropertiesObject extends DObject
     public function getUserProps () :Object
     {
         return _props;
+    }
+
+    /** @inheritDocs */
+    override public function readObject (ins :ObjectInputStream) :void
+    {
+        super.readObject(ins);
+        PropertySpaceHelper.readProperties(this, ins);
     }
 
     /**
