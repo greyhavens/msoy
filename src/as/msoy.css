@@ -356,6 +356,7 @@ TabNavigator, TabBar {
   downSkin: Embed(source="../../rsrc/media/skins/button/joinnow_down.png");
 }
 
+
 .unselectedRoomTab, .attentionRoomTab, .unselectedTellTab, .attentionTellTab, .unselectedGroupTab,
     .attentionGroupTab {
   fontFamily: Arial;
@@ -1246,6 +1247,24 @@ fontWeight: bold;
   fontWeight: bold;
   fontSize: 12;
   color: white;
+}
+
+.embedHeaderSignupButton {
+  upSkin: Embed(source="../../rsrc/media/skins/embedheader/signup_default.jpg");
+  overSkin: Embed(source="../../rsrc/media/skins/embedheader/signup_over.jpg");
+  downSkin: Embed(source="../../rsrc/media/skins/embedheader/signup_down.jpg");
+}
+
+.embedHeaderLogonButton {
+  upSkin: Embed(source="../../rsrc/media/skins/embedheader/logon_default.jpg");
+  overSkin: Embed(source="../../rsrc/media/skins/embedheader/logon_over.jpg");
+  downSkin: Embed(source="../../rsrc/media/skins/embedheader/logon_down.jpg");
+}
+
+.embedHeaderAllgamesButton {
+  upSkin: Embed(source="../../rsrc/media/skins/embedheader/allgames_default.jpg");
+  overSkin: Embed(source="../../rsrc/media/skins/embedheader/allgames_over.jpg");
+  downSkin: Embed(source="../../rsrc/media/skins/embedheader/allgames_down.jpg");
 }
 
 .noPlaceView {
