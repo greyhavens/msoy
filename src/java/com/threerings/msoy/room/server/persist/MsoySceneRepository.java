@@ -441,6 +441,7 @@ public class MsoySceneRepository extends DepotRepository
     {
         classes.add(SceneRecord.class);
         classes.add(SceneFurniRecord.class);
+        classes.add(RoomPropertyRecord.class);
     }
 
     /** Utility class that compresses related scene updates. */
