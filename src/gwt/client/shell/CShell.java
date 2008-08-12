@@ -6,6 +6,7 @@ package client.shell;
 import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.IncompatibleRemoteServiceException;
 
 import com.threerings.msoy.data.all.MemberName;
 
@@ -96,7 +97,9 @@ public class CShell
      */
     public static String serverError (Throwable error)
     {
-        if (error instanceof ServiceException) {
+        if (error instanceof IncompatibleRemoteServiceException) {
+            return _smsgs.getString("version_mismatch");
+        } else if (error instanceof ServiceException) {
             return serverError(error.getMessage());
         } else {
             return _smsgs.getString("internal_error");
