@@ -182,26 +182,23 @@ public class StatLogic
 
             // we store badge progress in quantized increments to prevent excess database
             // traffic for minor progress bumps
-            float quantizedProgress =
-                (float)(Math.floor(progress.getNextLevelProgress() / MIN_BADGE_PROGRESS_INCREMENT) *
-                        MIN_BADGE_PROGRESS_INCREMENT);
+            float quantizedProgress = InProgressBadgeRecord.quantizeProgress(
+                progress.getNextLevelProgress());
 
             if (progress.highestLevel >= inProgressBadge.nextLevel ||
-                    quantizedProgress > inProgressBadge.progress) {
+                    (progress.highestLevel == inProgressBadge.nextLevel - 1 &&
+                            quantizedProgress > inProgressBadge.progress)) {
                 inProgressBadge.nextLevel = progress.highestLevel + 1;
                 inProgressBadge.progress = quantizedProgress;
                 try {
-                    _badgeRepo.storeInProgressBadge(inProgressBadge);
-                    log.info("storeInProgressBadge succeeded", "BadgeType", badgeType,
+                    _badgeLogic.updateInProgressBadge(inProgressBadge, true);
+                    log.info("updateInProgressBadge succeeded", "BadgeType", badgeType,
                         "InProgressBadgeRecord", inProgressBadge);
                 } catch (PersistenceException pe) {
-                    log.warning("storeInProgressBadge failed", "BadgeType", badgeType,
+                    log.warning("updateInProgressBadge failed", "BadgeType", badgeType,
                         "InProgressBadgeRecord", inProgressBadge);
                     return;
                 }
-
-                // if the player is logged in, let their MemberObject know what happened
-                MemberNodeActions.inProgressBadgeUpdated(inProgressBadge);
             }
         }
     }
@@ -209,6 +206,4 @@ public class StatLogic
     @Inject StatRepository _statRepo;
     @Inject BadgeRepository _badgeRepo;
     @Inject BadgeLogic _badgeLogic;
-
-    protected static final float MIN_BADGE_PROGRESS_INCREMENT = 0.1f;
 }

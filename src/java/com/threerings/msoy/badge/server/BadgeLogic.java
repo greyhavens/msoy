@@ -20,8 +20,10 @@ import com.threerings.msoy.server.persist.MemberFlowRecord;
 
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
+import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 
@@ -76,6 +78,34 @@ public class BadgeLogic
         brec.level = badge.level;
         brec.whenEarned = new Timestamp(badge.whenEarned);
         awardBadge(brec, sendMemberNodeAction);
+    }
+
+    /**
+     * Creates or updates an InProgressBadge for the specified member.
+     */
+    public void updateInProgressBadge (InProgressBadgeRecord brec, boolean sendMemberNodeAction)
+    throws PersistenceException
+    {
+        _badgeRepo.storeInProgressBadge(brec);
+
+        if (sendMemberNodeAction) {
+            MemberNodeActions.inProgressBadgeUpdated(brec);
+        }
+    }
+
+    /**
+     * Creates or updates an InProgressBadge for the specified member.
+     */
+    public void updateInProgressBadge (int memberId, InProgressBadge badge,
+        boolean sendMemberNodeAction)
+        throws PersistenceException
+    {
+        InProgressBadgeRecord brec = new InProgressBadgeRecord();
+        brec.memberId = memberId;
+        brec.badgeCode = badge.badgeCode;
+        brec.nextLevel = badge.nextLevel;
+        brec.progress = badge.progress;
+        updateInProgressBadge(brec, sendMemberNodeAction);
     }
 
     /**

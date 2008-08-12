@@ -17,8 +17,11 @@ import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.toybox.Log;
 
+import com.threerings.msoy.badge.data.BadgeProgress;
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 import com.threerings.msoy.data.MemberObject;
 
 /**
@@ -51,19 +54,59 @@ public class BadgeManager
         }
 
         // iterate the list of badges to see if the player has won any new ones
-        /*List<BadgeType> newBadges = null;
+        List<EarnedBadge> newBadges = null;
+        List<InProgressBadge> inProgressBadges = null;
         for (BadgeType badgeType : BadgeType.values()) {
-            if (!user.badges.containsBadge(badgeType) && badgeType.hasEarned(user)) {
-                if (newBadges == null) {
-                    newBadges = Lists.newArrayList();
+            BadgeProgress progress = badgeType.getProgress(user.stats);
+
+            if (progress.highestLevel >= 0) {
+                EarnedBadge earnedBadge = user.badges.getBadge(badgeType);
+                if (earnedBadge == null) {
+                    // whenEarned timestamp will be filled in by awardBadges()
+                    earnedBadge = new EarnedBadge(badgeType.getCode(), -1, 0);
                 }
-                newBadges.add(badgeType);
+                if (earnedBadge.level < progress.highestLevel) {
+                    earnedBadge.level = progress.highestLevel;
+
+                    if (newBadges == null) {
+                        newBadges = Lists.newArrayList();
+                    }
+                    newBadges.add(earnedBadge);
+                }
+            }
+
+            if (progress.highestLevel >= 0 && progress.highestLevel < badgeType.getNumLevels()-1) {
+                // If we haven't reached the highest badge level for this badge,
+                // we should have a corresponding InProgressBadge for it.
+                InProgressBadge inProgressBadge = user.inProgressBadges.getBadge(badgeType);
+                if (inProgressBadge == null) {
+                    inProgressBadge = new InProgressBadge(badgeType.getCode(), -1, 0);
+                }
+
+                float quantizedProgress = InProgressBadgeRecord.quantizeProgress(
+                    progress.getNextLevelProgress());
+
+                if (progress.highestLevel >= inProgressBadge.nextLevel ||
+                        (progress.highestLevel == inProgressBadge.nextLevel - 1 &&
+                                quantizedProgress > inProgressBadge.progress)) {
+                    inProgressBadge.nextLevel = progress.highestLevel + 1;
+                    inProgressBadge.progress = quantizedProgress;
+
+                    if (inProgressBadges == null) {
+                        inProgressBadges = Lists.newArrayList();
+                    }
+                    inProgressBadges.add(inProgressBadge);
+                }
             }
         }
 
         if (newBadges != null) {
             awardBadges(user, newBadges);
-        }*/
+        }
+
+        if (inProgressBadges != null) {
+            updateInProgressBadges(user, inProgressBadges);
+        }
     }
 
     protected void awardBadges (final MemberObject user, final List<EarnedBadge> badges)
@@ -110,6 +153,42 @@ public class BadgeManager
             protected String getFailureMessage () {
                 StringBuilder builder = new StringBuilder("Failed to award badges: ");
                 for (EarnedBadge badge : badges) {
+                    builder.append(BadgeType.getType(badge.badgeCode).name()).append(", ");
+                }
+                return builder.toString();
+            }
+        });
+    }
+
+    protected void updateInProgressBadges (final MemberObject user,
+        final List<InProgressBadge> badges)
+    {
+        // stick the badges in the user's BadgeSet
+        for (InProgressBadge badge : badges) {
+            user.inProgressBadgeUpdated(badge);
+        }
+
+        // and then in the database
+        _invoker.postUnit(new WriteOnlyUnit("updateInProgressBadges") {
+            public void invokePersist () throws PersistenceException {
+                for (InProgressBadge badge : badges) {
+                    // BadgeLogic.updateInProgressBadge handles putting the badge in the repository and
+                    // publishing a member feed about the event. We don't need awardBadge()
+                    // to send a MemberNodeAction about this badge being earned, because we
+                    // already know about it.
+                    _badgeLogic.updateInProgressBadge(user.getMemberId(), badge, false);
+                }
+            }
+            public void handleFailure (Exception error) {
+                // rollback the changes to the user's BadgeSet
+                for (InProgressBadge badge : badges) {
+                    user.inProgressBadges.removeBadge(badge.badgeCode);
+                }
+                super.handleFailure(error);
+            }
+            protected String getFailureMessage () {
+                StringBuilder builder = new StringBuilder("Failed to update in-progress badges: ");
+                for (InProgressBadge badge : badges) {
                     builder.append(BadgeType.getType(badge.badgeCode).name()).append(", ");
                 }
                 return builder.toString();

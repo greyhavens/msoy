@@ -400,7 +400,6 @@ public class MemberNodeActions
 
         protected void execute (MemberObject memobj) {
             memobj.stats.syncStat(_modifier);
-            _badgeMan.updateBadges(memobj);
         }
 
         protected StatModifier<T> _modifier;

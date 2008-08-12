@@ -22,18 +22,37 @@ public final class InProgressBadgeSet extends DSet<InProgressBadge>
     {
     }
 
-    /** Returns true if the set contains a badge of the given type. */
+    /** @return true if the set contains a badge of the given type. */
     public boolean containsBadge (BadgeType type)
     {
         return this.containsBadge(type.getCode());
     }
 
-    /** Returns true if the set contains a badge of the given type. */
+    /** @return true if the set contains a badge of the given type. */
     public boolean containsBadge (int badgeCode)
     {
         InProgressBadge badge = new InProgressBadge();
         badge.badgeCode = badgeCode;
         return this.contains(badge);
+    }
+
+    /**
+     * @return a copy of the InProgressBadge that matches the specified badge code, or null if the
+     * badge is not contained in this set.
+     */
+    public InProgressBadge getBadge (int badgeCode)
+    {
+        InProgressBadge badge = get(badgeCode);
+        return (badge != null ? (InProgressBadge)badge.clone() : null);
+    }
+
+    /**
+     * @return the InProgressBadge that matches the specified badge type, or null if the badge
+     * is not contained in this set.
+     */
+    public InProgressBadge getBadge (BadgeType type)
+    {
+        return getBadge(type.getCode());
     }
 
     /**

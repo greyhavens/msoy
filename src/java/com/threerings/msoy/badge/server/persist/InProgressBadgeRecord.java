@@ -46,6 +46,11 @@ public class InProgressBadgeRecord extends PersistentRecord
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 1;
 
+    /** Before being stored in the database, InProgressBadgeRecords should have their progress
+     * rounded down to a multiple of PROGRESS_INCREMENT (to prevent hammering the database with
+     * insignificant badge progress updates). See {@link #quantizeProgress}. */
+    public static final float PROGRESS_INCREMENT = 0.1f;
+
     /** The id of the member that holds this badge. */
     @Id
     public int memberId;
@@ -66,6 +71,11 @@ public class InProgressBadgeRecord extends PersistentRecord
     public InProgressBadge toBadge ()
     {
         return new InProgressBadge(badgeCode, nextLevel, progress);
+    }
+
+    public static float quantizeProgress (float progress)
+    {
+        return (float)(Math.floor(progress / PROGRESS_INCREMENT) * PROGRESS_INCREMENT);
     }
 
     /**

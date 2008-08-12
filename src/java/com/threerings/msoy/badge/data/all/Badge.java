@@ -8,7 +8,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.threerings.presents.dobj.DSet;
 
 public abstract class Badge
-    implements DSet.Entry, IsSerializable
+    implements DSet.Entry, IsSerializable, Cloneable
 {
     /** The unique code representing the type of this badge. */
     public int badgeCode;
@@ -35,6 +35,16 @@ public abstract class Badge
     public Comparable<Integer> getKey ()
     {
         return new Integer(badgeCode);
+    }
+
+    @Override // from Object
+    public Object clone ()
+    {
+        try {
+            return super.clone();
+        } catch (Exception e) {
+            throw new RuntimeException("Clone failed", e);
+        }
     }
 
     protected static final String BADGE_IMAGE_DIR = "badge/";
