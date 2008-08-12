@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.badge.data.all;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+
 public class InProgressBadge extends Badge
 {
     /** The badge level that the member is working towards. */
@@ -22,5 +24,12 @@ public class InProgressBadge extends Badge
 
         this.nextLevel = nextLevel;
         this.progress = progress;
+    }
+
+    @Override // from Badge
+    public String imageUrl ()
+    {
+        return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR + Integer.toHexString(badgeCode) +
+            "_" + (nextLevel > 0 ? (nextLevel - 1) + "f" : nextLevel + "e") + BADGE_IMAGE_TYPE;
     }
 }

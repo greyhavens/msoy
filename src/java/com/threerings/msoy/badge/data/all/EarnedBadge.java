@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.badge.data.all;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+
 public class EarnedBadge extends Badge
 {
     /** The highest badge level that the player has attained. */
@@ -30,5 +32,12 @@ public class EarnedBadge extends Badge
     public String toString ()
     {
         return "badgeCode=" + badgeCode + " level=" + level + " whenEarned=" + whenEarned;
+    }
+
+    @Override // from Badge
+    public String imageUrl ()
+    {
+        return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR + Integer.toHexString(badgeCode) +
+            "_" + level + "f" + BADGE_IMAGE_TYPE;
     }
 }

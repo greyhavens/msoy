@@ -7,8 +7,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-
 public abstract class Badge
     implements DSet.Entry, IsSerializable
 {
@@ -31,11 +29,7 @@ public abstract class Badge
     /**
      * Returns the public access image URL for this badge.
      */
-    public String imageUrl ()
-    {
-        return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR + Integer.toHexString(badgeCode) +
-            BADGE_IMAGE_TYPE;
-    }
+    abstract public String imageUrl ();
 
     // from interface DSet.Entry
     public Comparable<Integer> getKey ()
