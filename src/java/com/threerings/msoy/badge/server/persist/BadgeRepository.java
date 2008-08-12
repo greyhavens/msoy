@@ -96,5 +96,6 @@ public class BadgeRepository extends DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(EarnedBadgeRecord.class);
+        classes.add(InProgressBadgeRecord.class);
     }
 }
