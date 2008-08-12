@@ -897,10 +897,10 @@ BasePanel {
 }
 
 .headerBarGoButton {
-  upSkin: Embed(source="../../rsrc/media/skins/headerbar/recent_arrow.png");
-  overSkin: Embed(source="../../rsrc/media/skins/headerbar/recent_arrow_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/headerbar/recent_arrow_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/headerbar/recent_arrow_disabled.png");
+  upSkin: Embed(source="../../rsrc/media/skins/headerbar/go_default.jpg");
+  overSkin: Embed(source="../../rsrc/media/skins/headerbar/go_over.jpg");
+  downSkin: Embed(source="../../rsrc/media/skins/headerbar/go_down.jpg");
+  disabledSkin: Embed(source="../../rsrc/media/skins/headerbar/go_disabled.jpg");
 }
 
 .closeButton {
