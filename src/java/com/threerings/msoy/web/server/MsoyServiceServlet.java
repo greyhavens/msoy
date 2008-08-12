@@ -3,7 +3,12 @@
 
 package com.threerings.msoy.web.server;
 
+import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
+import com.google.gwt.user.server.rpc.UnexpectedException;
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
@@ -21,6 +26,8 @@ import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides services used by all remote service servlets.
@@ -91,6 +98,31 @@ public class MsoyServiceServlet extends RemoteServiceServlet
             }
         });
         return waiter.waitForResult();
+    }
+
+    @Override // from RemoteServiceServlet
+    protected void doUnexpectedFailure (Throwable e)
+    {
+        HttpServletRequest req = getThreadLocalRequest();
+        String path = req.getServletPath();
+        if (e instanceof org.mortbay.jetty.EofException) {
+            log.info("Servlet response stream unexpectedly closed", "path", path, e);
+        } else if (e instanceof IllegalStateException && "STREAM".equals(e.getMessage())) {
+            log.info("Servlet response stream unavailable", "servlet", path, e);
+        } else {
+            log.warning("Servlet service failure", "path", path,
+                        (e instanceof UnexpectedException) ? e.getCause() : e);
+        }
+
+        // send a generic failure message with 500 status
+        try {
+            HttpServletResponse rsp = getThreadLocalResponse();
+            rsp.setContentType("text/plain");
+            rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            rsp.getWriter().write("We are experiencing technical difficults. Eet broke!");
+        } catch (IOException ioe) {
+            log.warning("Failed writing faiure response", ioe);
+        }
     }
 
     /**
