@@ -116,7 +116,9 @@ public class WorldClient extends MsoyClient
             loader.load(new URLRequest(url));
             log.info("Loading server info from " + url + ".");
 
-            _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
+            if ( ! _featuredPlaceView) {
+                _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
+            }
 
         } else {
             logon();
