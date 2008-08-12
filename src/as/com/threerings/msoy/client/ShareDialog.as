@@ -178,8 +178,18 @@ public class ShareDialog extends FloatingPanel
         var initialSize :RadioButton = createSizeButton(code, 2);
         grid.percentWidth = 100;
         //GridUtil.addRow(grid, "small", "medium", "large");
-        GridUtil.addRow(grid,
-            createSizeButton(code, 0), createSizeButton(code, 1), initialSize);
+
+        // TODO: review once we figure some shit out
+        // the small scenes cannot host non-rooms, at least for now
+        const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
+        if (sceneAndGame[0] != 0) {
+            GridUtil.addRow(grid,
+                createSizeButton(code, 0), createSizeButton(code, 1), initialSize);
+
+        } else {
+            // games may only be in the large size, for now
+            GridUtil.addRow(grid, initialSize);
+        }
 
         initialSize.selected = true;
 
