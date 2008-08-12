@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.display.StageQuality;
 import flash.events.Event;
+import flash.events.MouseEvent;
 import flash.external.ExternalInterface;
 import flash.geom.Point;
 import flash.net.URLLoader;
@@ -116,7 +117,12 @@ public class WorldClient extends MsoyClient
             loader.load(new URLRequest(url));
             log.info("Loading server info from " + url + ".");
 
-            if (!_featuredPlaceView) {
+            if (_featuredPlaceView) {
+                // Clicking this embed will send you to Whirled
+                stage.addEventListener(MouseEvent.CLICK, function (... _) :void {
+                    _wctx.getWorldController().handleViewFullVersion();
+                });
+            } else {
                 _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
             }
 
