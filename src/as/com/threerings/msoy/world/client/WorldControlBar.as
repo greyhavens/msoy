@@ -212,7 +212,8 @@ public class WorldControlBar extends ControlBar
         super.setupControls();
 
         if (_notificationDisplay != null) {
-            addGroupChild(_notificationDisplay, [ UI_STD, UI_GUEST, UI_EDIT, UI_SIDEBAR ]);
+            addGroupChild(_notificationDisplay, [ UI_STD, UI_GUEST, UI_EDIT, UI_SIDEBAR ],
+                LAST_PRIORITY);
         }
 
         if (_friendBtnBox != null) {

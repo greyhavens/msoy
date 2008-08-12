@@ -8,6 +8,8 @@ import flash.events.MouseEvent;
 
 import flash.display.StageDisplayState;
 
+import flash.utils.Dictionary;
+
 import mx.core.Container;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
@@ -19,14 +21,17 @@ import mx.core.UIComponent;
 
 import mx.events.FlexEvent;
 
+import com.threerings.util.ArrayUtil;
+import com.threerings.util.Integer;
+import com.threerings.util.Log;
+import com.threerings.util.ValueEvent;
+
+import com.threerings.flash.DisplayUtil;
+
 import com.threerings.flex.ChatControl;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
-
-import com.threerings.util.ArrayUtil;
-import com.threerings.util.Log;
-import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientEvent;
@@ -78,6 +83,12 @@ public class ControlBar extends HBox
 
     public static const ALL_UI_GROUPS :Array = [
         UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, UI_GUEST, UI_VIEWER ];
+
+    /** These will probably be expanded soon. */
+    public static const CHAT_PRIORITY :int = 0;
+    public static const BUTTON_PRIORITY :int = 10;
+    public static const SPACER_PRIORITY :int = 100;
+    public static const LAST_PRIORITY :int = 1000;
 
     public function ControlBar (ctx :MsoyContext)
     {
@@ -142,12 +153,14 @@ public class ControlBar extends HBox
      * Add a custom component to the control bar.
      * Note that there is no remove: just do component.parent.removeChild(component);
      */
-    public function addCustomComponent (comp :UIComponent) :void
+    public function addCustomComponent (comp :UIComponent, priority :int = BUTTON_PRIORITY) :void
     {
 //        if (_leftSpacer.width != 0) {
 //            _leftSpacer.addChild(comp);
 //        } else {
+            _priorities[comp] = priority;
             addChild(comp);
+            sortControls();
 //        }
     }
 
@@ -275,18 +288,25 @@ public class ControlBar extends HBox
         _rightSpacer.styleName = "controlBarSpacer";
         _rightSpacer.height = this.height;
         _rightSpacer.percentWidth = 100;
-        addGroupChild(_rightSpacer, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
+        addGroupChild(_rightSpacer, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ],
+            SPACER_PRIORITY);
+
+        sortControls();
+    }
+
+    protected function sortControls () :void
+    {
+        DisplayUtil.sortDisplayChildren(this, comparePriority);
     }
 
     protected function addControlButtons () :void
     {
         // add our standard control bar features
-        addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ]);
-        _chatControl = null;
+        addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ], CHAT_PRIORITY);
         _chatControl = new ChatControl(
             _ctx, Msgs.CHAT.get("b.send"), this.height, this.height - 4);
         addGroupChild(_chatControl,
-            [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR /*,UI_VIEWER*/ ]);
+            [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR /*,UI_VIEWER*/ ], CHAT_PRIORITY);
         addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER ]);
         addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT, UI_VIEWER ]);
         if (_ctx.getTokens().isAdmin()) {
@@ -296,6 +316,16 @@ public class ControlBar extends HBox
         //addGroupChild(_partyBtn, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
     }
 
+    /**
+     * Used to sort the buttons.
+     */
+    protected function comparePriority (comp1 :Object, comp2 :Object) :int
+    {
+        const pri1 :int = int(_priorities[comp1]);
+        const pri2 :int = int(_priorities[comp2]);
+        return Integer.compare(pri1, pri2);
+    }
+
     protected function clearAllGroups () :void
     {
         for each (var key :String in ALL_UI_GROUPS) {
@@ -303,8 +333,10 @@ public class ControlBar extends HBox
         }
     }
 
-    protected function addGroupChild (child :UIComponent, groupNames :Array) :void
+    protected function addGroupChild (
+        child :UIComponent, groupNames :Array, priority :int = BUTTON_PRIORITY) :void
     {
+        _priorities[child] = priority;
         addChild(child);
         if (!ArrayUtil.contains(groupNames, UI_ALL)) {
             groupNames.push(UI_ALL);
@@ -387,6 +419,9 @@ public class ControlBar extends HBox
 
     /** Object that contains all the different groups of UI elements. */
     protected var _groups :Object = new Object();
+
+    /** Button priority levels. */
+    protected var _priorities :Dictionary = new Dictionary(true);
 
     /** Our chat control. */
     protected var _chatControl :ChatControl;
