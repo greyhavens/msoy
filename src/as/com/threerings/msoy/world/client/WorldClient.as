@@ -116,7 +116,7 @@ public class WorldClient extends MsoyClient
             loader.load(new URLRequest(url));
             log.info("Loading server info from " + url + ".");
 
-            if ( ! _featuredPlaceView) {
+            if (!_featuredPlaceView) {
                 _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
             }
 
@@ -366,7 +366,7 @@ public class WorldClient extends MsoyClient
         
         creds.ident = Prefs.getMachineIdent();
         creds.sessionToken = (token == null) ? params["token"] : token;
-        creds.featuredPlaceView = null != params["featuredPlace"];
+        creds.featuredPlaceView = _featuredPlaceView;
         creds.referral = getReferralInfo();
         
         return creds;

@@ -33,7 +33,7 @@ public class FeaturedPlaceUtil
             return;
         }
 
-        String flashArgs = "featuredPlace=" + sceneId;
+        String flashArgs = "sceneId=" + sceneId + "&featuredPlace=true";
         if (!clientGo("featuredplace", flashArgs)) {
             flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port;
             String partner = CShell.getPartner();

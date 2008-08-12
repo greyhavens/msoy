@@ -88,6 +88,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
     public function MsoyClient (stage :Stage)
     {
+        _featuredPlaceView = UberClient.isFeaturedPlaceView();
         super(null);
         _stage = stage;
 
@@ -95,7 +96,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         _referrals = [];
         _creds = createStartupCreds(null);
 
-        _featuredPlaceView = UberClient.isFeaturedPlaceView();
         if (_featuredPlaceView) {
             // mute all sound in featured place view.
             var mute :SoundTransform = new SoundTransform();
