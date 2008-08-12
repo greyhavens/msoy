@@ -74,9 +74,9 @@ public class LandingPanel extends SimplePanel
         ClickListener onClick = new ClickListener() {
             public void onClick (Widget sender) {
                 video.remove(0);
-                // slideshow actual size is 360x260
+                // controls skin hardcoded in the swf as /images/landing/landing_movie_skin.swf
                 video.add(WidgetUtil.createFlashContainer(
-                        "preview", "/images/landing/slideshow.swf", 200, 140, null), 38, 9);
+                    "preview", "/images/landing/landing_movie.swf", 208, 154, null), 34, 1);
             }
         };
         final Image clickToPlayImage = MsoyUI.createActionImage(
