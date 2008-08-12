@@ -5,7 +5,6 @@ package com.threerings.msoy.badge.server;
 
 import java.util.Iterator;
 
-import com.google.inject.Inject;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.stats.data.Stat;
