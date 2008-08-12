@@ -11,7 +11,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 
-import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.CommandButton;
 
 import com.whirled.game.client.GamePlayerList;
 import com.whirled.game.client.WhirledGamePanel;
@@ -116,7 +116,9 @@ public class MsoyGamePanel extends WhirledGamePanel
         // an overlay instead.
         if (GAMESTUB_DEBUG_MODE || mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH) {
             // set up a button to pop/hide the _playerList
-            _showPlayers = new CommandCheckBox("view scores"); // TODO: icon coming, not i18n
+            _showPlayers = new CommandButton();
+            _showPlayers.toolTip = Msgs.GAME.get("i.scores");
+            _showPlayers.styleName = "controlBarButtonScores";
             _showPlayers.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
                 // TODO: create a class for this puppy?
                 var panel :FloatingPanel = new FloatingPanel(mctx, Msgs.GAME.get("t.players"));
@@ -224,7 +226,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     /** convenience reference to our game context */
     protected var _gctx :GameContext;
 
-    protected var _showPlayers :CommandCheckBox;
+    protected var _showPlayers :CommandButton;
 
     /** The game over panel, or null if not being shown. */
     protected var _gameOverPanel :GameOverPanel;

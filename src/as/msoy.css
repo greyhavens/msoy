@@ -474,6 +474,15 @@ TabNavigator, TabBar {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_scale.png");
 }
 
+.controlBarButtonScores {
+  /* other states TODO */
+  upSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  skin: Embed(source="../../rsrc/media/skins/controlbar/scores.png");
+}
+
 .controlBarHoverZone {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/hoverzone.png");
 }
