@@ -127,7 +127,7 @@ public class EmbedHeader extends Canvas
         CommandEvent.dispatch(this, MsoyController.VIEW_FULL_VERSION);
     }
 
-    [Embed(source="../../../../../../rsrc/media/skins/embed_header_logo.png")]
+    [Embed(source="../../../../../../rsrc/media/skins/embedheader/logo.jpg")]
     protected static const LOGO :Class;
     [Embed(source="../../../../../../rsrc/media/embedbuttons.swf#JoinNow")]
     protected static const JOIN_NOW :Class;
