@@ -380,7 +380,7 @@ public class MsoySceneRepository extends DepotRepository
             RoomPropertyRecord.OWNER_ID_C, ownerId,
             RoomPropertyRecord.SCENE_ID_C, sceneId));
     }
-    
+
     /** Saves a room property, deleting if the value is null. */
     public void storeProperty (RoomPropertyRecord record)
         throws PersistenceException
@@ -390,6 +390,17 @@ public class MsoySceneRepository extends DepotRepository
         } else {
             store(record);
         }
+    }
+
+    public void setCanonicalImage (int sceneId, byte[] canonicalHash, byte canonicalType,
+        byte[] thumbnailHash, byte thumbnailType)
+        throws PersistenceException
+    {
+        updatePartial(SceneRecord.class, sceneId,
+            SceneRecord.CANONICAL_IMAGE_HASH, canonicalHash,
+            SceneRecord.CANONICAL_IMAGE_TYPE, canonicalType,
+            SceneRecord.THUMBNAIL_HASH, thumbnailHash,
+            SceneRecord.THUMBNAIL_TYPE, thumbnailType);
     }
 
     /**
@@ -449,16 +460,4 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Internal reference to the decor repository, used to load up decor for each scene. */
     @Inject protected DecorRepository _decorRepo;
-
-    @Override
-    public void setCanonicalImage (int sceneId, byte[] canonicalHash, byte canonicalType,
-        byte[] thumbnailHash, byte thumbnailType) 
-        throws PersistenceException
-    {
-        updatePartial(SceneRecord.class, sceneId, 
-            SceneRecord.CANONICAL_IMAGE_HASH, canonicalHash, 
-            SceneRecord.CANONICAL_IMAGE_TYPE, canonicalType,
-            SceneRecord.THUMBNAIL_HASH, thumbnailHash,
-            SceneRecord.THUMBNAIL_TYPE, thumbnailType);
-    }
 }
