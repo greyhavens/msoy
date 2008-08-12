@@ -18,12 +18,10 @@ import com.samskivert.util.StringUtil;
 import com.threerings.presents.data.InvocationCodes;
 
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
-import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -218,19 +216,6 @@ public class CatalogServlet extends MsoyServiceServlet
                 }
             }
 
-            // update player stats if the seller wasn't also the purchaser
-            if (mrec.memberId != listing.item.creatorId) {
-                StatType itemsPurchasedStat = StatType.getItemsPurchasedStat(itemType);
-                if (itemsPurchasedStat != null) {
-                    _statLogic.incrementStat(mrec.memberId, itemsPurchasedStat, 1);
-                }
-
-                StatType itemsSoldStat = StatType.getItemsSoldStat(itemType);
-                if (itemsSoldStat != null) {
-                    _statLogic.incrementStat(listing.item.creatorId, itemsSoldStat, 1);
-                }
-            }
-
             // update their runtime inventory as appropriate
             final Item nitem = newClone.toItem();
             postDObjectAction(new Runnable() {
@@ -336,12 +321,6 @@ public class CatalogServlet extends MsoyServiceServlet
                     FeedMessageType.FRIEND_LISTED_ITEM, listItem.name + "\t" +
                     String.valueOf(repo.getItemType()) + "\t" + String.valueOf(record.catalogId) +
                     "\t" + MediaDesc.mdToString(listItem.getThumbMediaDesc()));
-            }
-
-            // update player stats
-            StatType statType = StatType.getItemsListedStat(item.type);
-            if (statType != null) {
-                _statLogic.incrementStat(mrec.memberId, statType, 1);
             }
 
             return record.catalogId;
@@ -690,5 +669,4 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected ItemManager _itemMan;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected FeedRepository _feedRepo;
-    @Inject protected StatLogic _statLogic;
 }

@@ -9,5 +9,5 @@ package com.threerings.msoy.badge.gwt;
  */
 public enum StampCategory
 {
-    SOCIAL, GAME, CREATION
+    SOCIAL, GAME, CREATION, SHOPPING
 }

@@ -19,67 +19,105 @@ import com.threerings.msoy.data.StatType;
 public enum BadgeType
 {
     // social badges
-    FRIEND(StampCategory.SOCIAL, StatType.FRIENDS_MADE, new Level[] {
+    FRIENDLY(StampCategory.SOCIAL, StatType.FRIENDS_MADE, new Level[] {
+        new Level(1, 1000),
+        new Level(5, 2000),
+        new Level(15, 3000),
+        new Level(50, 4000),
+        new Level(150, 5000),
+        new Level(500, 6000)
+        }) {
+        // TODO
+    },
+
+    IRONMAN(StampCategory.SOCIAL, StatType.CONSEC_DAILY_LOGINS, new Level[] {
+        new Level(2, 1000),
+        new Level(4, 2000),
+        new Level(10, 3000),
+        new Level(25, 4000),
+        new Level(90, 5000),
+        new Level(180, 6000)
+        }) {
+        // TODO
+    },
+
+    MAGNET(StampCategory.SOCIAL, StatType.INVITES_ACCEPTED, new Level[] {
         new Level(1, 1000),
         new Level(5, 2000),
         new Level(10, 3000),
-        new Level(25, 5000),
-        new Level(100, 10000),
-        new Level(200, 20000),
+        new Level(20, 4000),
+        new Level(50, 5000),
+        new Level(100, 6000)
         }) {
-        protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.FRIENDS_MADE);
-        }
+        // TODO
     },
 
-    /*FRIEND_1(StampCategory.SOCIAL, 1000, "Friends", 1) {
-        protected int getAcquiredUnits (MemberObject user) {
-            return user.stats.getIntStat(StatType.FRIENDS_MADE);
-        }
+    FIXTURE(StampCategory.SOCIAL, StatType.MINUTES_ACTIVE, new Level[] {
+        new Level(3 * 60, 1000),
+        new Level(24 * 60, 2000),
+        new Level(48 * 60, 3000),
+        new Level(96 * 60, 4000),
+        new Level(200 * 60, 5000),
+        new Level(500 * 60, 6000)
+        }) {
+        // TODO
     },
 
-    FRIEND_2(StampCategory.SOCIAL, 2000, "Friends", 5) {
-        protected int getAcquiredUnits (MemberObject user) {
-            return user.stats.getIntStat(StatType.FRIENDS_MADE);
-        }
-    },
-
-    WHIRLEDS_1(StampCategory.SOCIAL, 1000, "Whirleds", 1) {
-        protected int getAcquiredUnits (MemberObject user) {
-            return user.stats.getIntStat(StatType.WHIRLEDS_CREATED);
-        }
-    },
-
-    INVITES_1(StampCategory.SOCIAL, 1000, "Invites", 1) {
-        protected int getAcquiredUnits (MemberObject user) {
-            return user.stats.getIntStat(StatType.INVITES_ACCEPTED);
-        }
-    },
-
-    PLAYTIME_1(StampCategory.SOCIAL, 1000, "ActiveHours", 24) {
-        protected int getAcquiredUnits (MemberObject user) {
-            return (int)Math.floor(user.stats.getIntStat(StatType.MINUTES_ACTIVE) / 60);
-        }
-    },
+    // TODO: Builder - under discussion
 
     // game badges
-    GAMER_1(StampCategory.GAME, 1000, "Games", 5) {
-        protected int getAcquiredUnits (MemberObject user) {
-            return user.stats.getSetStatSize(StatType.UNIQUE_GAMES_PLAYED);
-        }
+    GAMER(StampCategory.GAME, StatType.GAME_SESSIONS, new Level[] {
+        new Level(1, 1000),
+        new Level(5, 2000),
+        new Level(25, 3000),
+        new Level(100, 4000),
+        new Level(500, 5000),
+        new Level(2000, 6000)
+        }) {
+        // TODO
     },
 
-    MULTIPLAYER_1(StampCategory.GAME, 2000, "MultiplayerWins", 1) {
-        protected int getAcquiredUnits (MemberObject user) {
-            return user.stats.getIntStat(StatType.MP_GAMES_WON);
-        }
+    CONTENDER(StampCategory.GAME, StatType.MP_GAMES_WON, new Level[] {
+        new Level(1, 1000),
+        new Level(5, 2000),
+        new Level(10, 3000),
+        new Level(25, 4000),
+        new Level(50, 5000),
+        new Level(100, 6000)
+        }) {
+        // TODO
     },
 
-    TROPHY_1(StampCategory.GAME, 1000, "Trophies", 1) {
-        protected int getAcquiredUnits (MemberObject user) {
-            return user.stats.getIntStat(StatType.TROPHIES_EARNED);
-        }
-    },*/
+    COLLECTOR(StampCategory.GAME, StatType.TROPHIES_EARNED, new Level[] {
+        new Level(1, 1000),
+        new Level(5, 2000),
+        new Level(10, 3000),
+        new Level(25, 4000),
+        new Level(50, 5000),
+        new Level(100, 6000)
+        }) {
+        // TODO
+    },
+
+    // TODO: SOCIAL_GAMER - under discussion
+
+    // creation badges
+    // TODO: this whole category is under discussion
+
+    // shopping badges
+    OUTSPOKEN(StampCategory.SHOPPING, StatType.WHIRLED_COMMENTS, new Level[] {
+        new Level(1, 1000),
+        new Level(5, 2000),
+        new Level(25, 3000),
+        new Level(100, 4000),
+        new Level(500, 5000),
+        new Level(2000, 6000)
+        }) {
+        // TODO
+    },
+
+    // TODO: Judge - needs an item ratings stat
+    // TODO: Shopper - needs an items purchased stat
 
     ;
 
