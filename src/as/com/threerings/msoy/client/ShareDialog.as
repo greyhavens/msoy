@@ -196,7 +196,7 @@ public class ShareDialog extends FloatingPanel
     }
 
     protected static const EMBED_SIZES :Array = [
-        [350, 200], [400, 415], ["100%", 550]
+        [350, 200], [400, 415], ["100%", 575]
     ];
 
     protected var _memObj :MemberObject;
