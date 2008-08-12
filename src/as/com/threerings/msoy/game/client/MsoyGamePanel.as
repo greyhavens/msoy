@@ -32,6 +32,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.MsoyPlaceView;
+import com.threerings.msoy.client.TopPanel;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
@@ -111,12 +112,14 @@ public class MsoyGamePanel extends WhirledGamePanel
         const bar :ControlBar = mctx.getTopPanel().getControlBar();
         const gameChatDir :ChatDirector = _gctx.getChatDirector();
 
-        if (GAMESTUB_DEBUG_MODE) {
+        // if we're too small to display chat in a sidebar, we go into "gamestub" mode and do
+        // an overlay instead.
+        if (GAMESTUB_DEBUG_MODE || mctx.getWidth() < TopPanel.RIGHT_SIDEBAR_WIDTH + GAME_WIDTH) {
             // set up a button to pop/hide the _playerList
-            _showPlayers = new CommandCheckBox("view scores");
+            _showPlayers = new CommandCheckBox("view scores"); // TODO: icon coming, not i18n
             _showPlayers.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
                 // TODO: create a class for this puppy?
-                var panel :FloatingPanel = new FloatingPanel(mctx, "Players List"); // TODO i18n
+                var panel :FloatingPanel = new FloatingPanel(mctx, Msgs.GAME.get("t.players"));
                 panel.showCloseButton = true;
                 var box :VBox = new VBox();
                 box.setStyle("backgroundColor", 0x000000);
@@ -147,7 +150,7 @@ public class MsoyGamePanel extends WhirledGamePanel
 
         mctx.getMsoyController().removeGoMenuProvider(populateGoMenu);
 
-        if (GAMESTUB_DEBUG_MODE) {
+        if (_showPlayers != null) { // indicates we're in "gamestub" mode where chat is an overlay
             _showPlayers.parent.removeChild(_showPlayers);
 
             var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
