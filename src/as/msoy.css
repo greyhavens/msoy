@@ -162,13 +162,13 @@ CheckBox {
   fillColors: #403424, #403424, #ffffff, #eeeeee;
 }
 
-.sexyCheckBox {
-  upSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox.png");
-  overSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
+.gconfCheckBox {
+  upIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox.png");
+  overIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
+  downIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
+  selectedUpIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
+  selectedOverIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
+  selectedDownIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
 }
 
 RadioButton {
