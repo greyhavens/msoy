@@ -28,11 +28,12 @@ public class GameOverPanel extends FloatingPanel
 {
     public function GameOverPanel (gctx :GameContext, rematch :UIComponent)
     {
-        super(gctx.getMsoyContext(), "(beta feature: art is on the way!)");
+        super(gctx.getMsoyContext(), Msgs.GAME.get("t.gameOver"));
         _gctx = gctx;
         _rematch = rematch;
 
         _topArea.setStyle("horizontalAlign", "center");
+//        makeTrans(_topArea);
     }
 
     /**
@@ -46,9 +47,11 @@ public class GameOverPanel extends FloatingPanel
         }
 
         if (coins > 0) {
+            this.styleName = "coinsGameOverPanel";
+
             const wgMsgs :MessageBundle = _ctx.getMessageManager().getBundle(
                 WhirledGameCodes.WHIRLEDGAME_MESSAGE_BUNDLE);
-            _topArea.addChild(FlexUtil.createLabel(wgMsgs.get("m.coins_awarded", coins)));
+            this.title = wgMsgs.get("m.coins_awarded", coins);
 
             if (_gctx.getPlayerObject().isGuest()) {
                 _topArea.addChild(FlexUtil.createLabel(Msgs.GAME.get(hasCookie ?
@@ -67,12 +70,13 @@ public class GameOverPanel extends FloatingPanel
         addChild(_topArea);
 
         if (_gctx.getPlayerObject().isGuest()) {
-            const signUpBtn :CommandButton = new CommandButton(
-                Msgs.GENERAL.get("b.signUp"), MsoyController.SHOW_SIGN_UP);
-            // TODO: style button
+            const signUpBtn :CommandButton = new CommandButton(null, MsoyController.SHOW_SIGN_UP);
+            signUpBtn.styleName = "joinNowButton";
 
             var box :VBox = new VBox();
+            box.percentWidth = 100;
             box.setStyle("horizontalAlign", "center");
+//            makeTrans(box);
             box.addChild(signUpBtn);
             addChild(box);
         }
@@ -84,12 +88,23 @@ public class GameOverPanel extends FloatingPanel
 //        const whirledBtn :CommandButton = new CommandButton(
 //            Msgs.GAME.get("b.gameWhirled"), /* TODO */);
 
-        // TODO: style these buttons
+        _rematch.styleName = "blueButton";
+        allGamesBtn.styleName = "blueButton";
+        lobbyBtn.styleName = "blueButton";
+//        whirledBtn.styleName = "blueButton";
 
         var grid :Grid = new Grid();
+//        makeTrans(grid);
         GridUtil.addRow(grid, _rematch, allGamesBtn);
         GridUtil.addRow(grid, lobbyBtn /*, whirledBtn */);
         addChild(grid);
+    }
+
+    protected function makeTrans (comp :UIComponent) :void
+    {
+        comp.setStyle("backgroundAlpha", 0);
+        comp.setStyle("backgroundColor", 0);
+        comp.setStyle("backgroundImage", null);
     }
 
     /** A snakeskin filled with our own piss. */

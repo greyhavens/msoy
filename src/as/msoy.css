@@ -337,6 +337,25 @@ TabNavigator, TabBar {
           scaleGridLeft="3", scaleGridRight="9");
 }
 
+.blueButton {
+  /* TODO: scale9? */
+  upSkin: Embed(source="../../rsrc/media/skins/button/blue_default.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/blue_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/blue_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/blue_disabled.png");
+  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/blue_disabled.png");
+  color: #ffffff;
+  textRollOverColor: #ffffff;
+  textSelectedColor: #ffffff;
+  fontSize: 16;
+}
+
+.joinNowButton {
+  upSkin: Embed(source="../../rsrc/media/skins/button/joinnow_default.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/joinnow_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/joinnow_down.png");
+}
+
 .unselectedRoomTab, .attentionRoomTab, .unselectedTellTab, .attentionTellTab, .unselectedGroupTab,
     .attentionGroupTab {
   fontFamily: Arial;
@@ -1284,6 +1303,26 @@ fontWeight: bold;
   paddingRight: 3;
   paddingTop: 3;
   paddingBottom: 3;
+}
+
+GameOverPanel {
+  borderColor: #408fd9;
+  borderThickness: 3;
+  borderSides: "left right top bottom";
+  backgroundColor: #000000;
+  backgroundAlpha: 0.8;
+  backgroundImage: null;
+  titleStyleName: "gameOverTitle";
+}
+
+.gameOverTitle {
+  fontSize: 24;
+  color: #ffffff;
+}
+
+.coinsGameOverPanel {
+  headerHeight: 43;
+  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/game/coins_gameover_title.png");
 }
 
 .friendsListPanel {
