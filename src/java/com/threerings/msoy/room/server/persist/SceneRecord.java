@@ -130,6 +130,34 @@ public class SceneRecord extends PersistentRecord
     public static final ColumnExp AUDIO_MEDIA_TYPE_C =
         new ColumnExp(SceneRecord.class, AUDIO_MEDIA_TYPE);
 
+    /** The column identifier for the {@link #canonicalImageHash} field. */
+    public static final String CANONICAL_IMAGE_HASH = "canonicalImageHash";
+
+    /** The qualified column identifier for the {@link #canonicalImageHash} field. */
+    public static final ColumnExp CANONICAL_IMAGE_HASH_C =
+        new ColumnExp(SceneRecord.class, CANONICAL_IMAGE_HASH);
+
+    /** The column identifier for the {@link #canonicalImageType} field. */
+    public static final String CANONICAL_IMAGE_TYPE = "canonicalImageType";
+
+    /** The qualified column identifier for the {@link #canonicalImageType} field. */
+    public static final ColumnExp CANONICAL_IMAGE_TYPE_C =
+        new ColumnExp(SceneRecord.class, CANONICAL_IMAGE_TYPE);
+
+    /** The column identifier for the {@link #thumbnailHash} field. */
+    public static final String THUMBNAIL_HASH = "thumbnailHash";
+
+    /** The qualified column identifier for the {@link #thumbnailHash} field. */
+    public static final ColumnExp THUMBNAIL_HASH_C =
+        new ColumnExp(SceneRecord.class, THUMBNAIL_HASH);
+
+    /** The column identifier for the {@link #thumbnailType} field. */
+    public static final String THUMBNAIL_TYPE = "thumbnailType";
+
+    /** The qualified column identifier for the {@link #thumbnailType} field. */
+    public static final ColumnExp THUMBNAIL_TYPE_C =
+        new ColumnExp(SceneRecord.class, THUMBNAIL_TYPE);
+
     /** The column identifier for the {@link #audioVolume} field. */
     public static final String AUDIO_VOLUME = "audioVolume";
 
@@ -161,7 +189,7 @@ public class SceneRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /** The unique identifier for this scene. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=6)
@@ -194,6 +222,18 @@ public class SceneRecord extends PersistentRecord
     /** The mime type of this scene's background music. */
     public byte audioMediaType;
 
+    /** The hash of this scene's canonical image. */
+    public byte[] canonicalImageHash;
+
+    /** The mime type of this scene's image type. */
+    public byte canonicalImageType;
+
+    /** The hash of this scene's thumbnail image. */
+    public byte[] thumbnailHash;
+
+    /** The mime type of this scene's thumbnail image. */
+    public byte thumbnailType;
+    
     /** The volume configure for this scene's background music. */
     public float audioVolume;
 

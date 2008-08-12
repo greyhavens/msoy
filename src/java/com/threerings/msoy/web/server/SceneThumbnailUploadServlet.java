@@ -10,12 +10,15 @@ import org.apache.commons.fileupload.FileUploadException;
 
 import com.google.inject.Inject;
 
+import com.samskivert.io.PersistenceException;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
 //import com.threerings.msoy.web.server.UploadUtil.CanonicalSnapshotInfo;
 import com.threerings.msoy.room.server.AbstractSnapshotUploadServlet;
 import com.threerings.msoy.room.server.SnapshotUploadFile;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.web.server.UploadUtil.CanonicalSnapshotInfo;
 
 import static com.threerings.msoy.Log.log;
 
@@ -62,7 +65,7 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
 
     @Override // from UploadServlet
     protected void handleFileItems (UploadContext ctx)
-        throws IOException, FileUploadException, AccessDeniedException
+        throws IOException, FileUploadException, AccessDeniedException, PersistenceException
     {
         // note - no call to the superclass, this is a complete replacement!
 
@@ -81,13 +84,10 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
         validateFileLength(uploadFile.getMimeType(), ctx.uploadLength);
 
         // publish the file, and we're done
-//        CanonicalSnapshotInfo info = UploadUtil.publishSnapshot((SnapshotUploadFile) uploadFile);
-
-        // get media desc objects
-//        MediaDesc thumbDesc = createMediaDesc(info.thumbnail);
-//        MediaDesc canonicalDesc = createMediaDesc(info.canonical);
-//                
-        //todo: Notify the scene that the snapshot has changed.
+        CanonicalSnapshotInfo info = UploadUtil.publishSnapshot((SnapshotUploadFile) uploadFile);
+        
+        _sceneRepo.setCanonicalImage(sceneId, info.canonical.hash, info.canonical.type,
+            info.thumbnail.hash, info.thumbnail.type);
     }
 
     // our dependencies

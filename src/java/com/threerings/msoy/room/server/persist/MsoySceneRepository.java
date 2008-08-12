@@ -449,4 +449,16 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Internal reference to the decor repository, used to load up decor for each scene. */
     @Inject protected DecorRepository _decorRepo;
+
+    @Override
+    public void setCanonicalImage (int sceneId, byte[] canonicalHash, byte canonicalType,
+        byte[] thumbnailHash, byte thumbnailType) 
+        throws PersistenceException
+    {
+        updatePartial(SceneRecord.class, sceneId, 
+            SceneRecord.CANONICAL_IMAGE_HASH, canonicalHash, 
+            SceneRecord.CANONICAL_IMAGE_TYPE, canonicalType,
+            SceneRecord.THUMBNAIL_HASH, thumbnailHash,
+            SceneRecord.THUMBNAIL_TYPE, thumbnailType);
+    }
 }

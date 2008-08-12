@@ -97,20 +97,73 @@ public class UploadUtil
         }
     }
 
+    public static class SnapshotInfo
+    {
+        public final byte[] hash;
+        public final byte type;
+        
+        public SnapshotInfo(byte[] hash, byte type)
+        {
+            this.hash = hash;
+            this.type = type;
+        }
+        
+        public String toString () {
+            return "SnapshotInfo: hash=" + hash + ", mimeType = "+type;
+        }
+    }
+    
     /**
      * Container class for information about the canonical snapshot images - both standard size
      * and minimized.
      */
     public static class CanonicalSnapshotInfo 
     {
-        public final MediaInfo canonical;
-        public final MediaInfo thumbnail;
-        
-        public CanonicalSnapshotInfo (MediaInfo canonicalInfo, MediaInfo thumbInfo)
+        public final SnapshotInfo canonical;
+        public final SnapshotInfo thumbnail;
+
+        public CanonicalSnapshotInfo(SnapshotInfo canonical, SnapshotInfo thumbnail) 
         {
-            this.canonical = canonicalInfo;
-            this.thumbnail = thumbInfo;
+            this.canonical = canonical;
+            this.thumbnail = thumbnail;
         }        
+    }
+    
+    /**
+     * Simple class to represent a 2 dimensional size.
+     */
+    protected static class Rectangle 
+    {
+        public final int width;
+        public final int height;
+        
+        /**
+         * Create a dimensions object from integer sizes.
+         * @param width the width
+         * @param height the height
+         */
+        public Rectangle(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+        }
+        
+        /**
+         * Create a dimensions object from a buffered image.
+         */
+        public Rectangle(BufferedImage image) 
+        {
+            this.width = image.getWidth();
+            this.height = image.getHeight();
+        }
+        
+        /**
+         * Returns true if this dimension covers the one passed in.
+         */
+        public boolean covers (Rectangle d) 
+        {
+            return (this.width > d.width && this.height > d.height);
+        }
     }
     
     /**
@@ -120,6 +173,7 @@ public class UploadUtil
     protected static class Digester 
     {        
         public MessageDigest digest;
+        protected String hex;
 
         public Digester () 
         {
@@ -173,12 +227,79 @@ public class UploadUtil
             return bin;
         }
         
-        public String getHash () 
+        /**
+         * Return the hash as a hexadecimal string.
+         */
+        public String hexHash () 
         {
-            return StringUtil.hexlate(digest.digest());
+            if (hex != null) {
+                return hex;
+            }
+            hex = StringUtil.hexlate(digest.digest());
+            return hex;
         }
         
         protected ByteArrayOutputStream _bout;
+
+        /**
+         * Return the raw bytes of the hash.
+         */
+        public byte[] binaryHash ()
+        {
+            return digest.digest();
+        }
+    }
+
+    /**
+     * Intermediate representation of the results of publishing an image. Used to convert the
+     * results into various formats required by different consumers.
+     */
+    protected static class PublishingResult 
+    {
+        public final Integer thumbSize;
+        public final Rectangle originalSize;
+        public final Rectangle finalSize;
+        public final byte mimeType;
+        public final Digester digester;
+        
+        /**
+         * Create a publishing result.
+         * 
+         * @param originalSize The original size of the image.
+         * @param finalSize The final size of the image - will be the same as the original if the image has not been resized.
+         * @param thumbSize The integer thumbnail size number from MediaDesc- not a pixel size. 
+         * @param mimeType The mime-type of the final image.
+         * @param digester The digester used to compute the hash of what's been uploaded.
+         */
+        public PublishingResult (Rectangle originalSize, Rectangle finalSize, Integer thumbSize,
+                byte mimeType, Digester digester)
+        {
+            this.thumbSize = thumbSize;
+            this.originalSize = originalSize;
+            this.finalSize = finalSize;
+            this.mimeType = mimeType;
+            this.digester = digester;
+        }
+        
+        /**
+         * Convert the result into a MediaInfo object.
+         */
+        public MediaInfo getMediaInfo () {
+            int constraintSize = thumbSize == null ? MediaDesc.PREVIEW_SIZE : thumbSize.intValue();
+
+            byte constraint = MediaDesc.computeConstraint(constraintSize, originalSize.width,
+                originalSize.height);
+
+            return new MediaInfo(digester.hexHash(), mimeType, constraint,
+                finalSize.width, finalSize.height);
+        }
+        
+        /**
+         * Convert the result into a SnapshotInfo object.
+         */
+        public SnapshotInfo getSnapshotInfo () {
+            return new SnapshotInfo (digester.binaryHash(), mimeType);
+        }
     }
     
     /**
@@ -290,22 +411,28 @@ public class UploadUtil
         log.warning("publish snapshot called");
 
         // publish the regular sized image
-        MediaInfo canonicalInfo = publishCanonicalImage(uploadFile);
+        SnapshotInfo canonicalInfo = publishCanonicalImage(uploadFile);
 
         // publish a reduced sized version of the image
-        MediaInfo thumbInfo =
+        SnapshotInfo thumbInfo =
             publishImage(MediaDesc.SNAPSHOT_THUMB_SIZE, uploadFile,
-            uploadFile.getMimeType(), "jpg");
-
+            uploadFile.getMimeType(), "jpg").getSnapshotInfo();
+     
         return new CanonicalSnapshotInfo(canonicalInfo, thumbInfo);
     }
 
-    protected static MediaInfo publishCanonicalImage (SnapshotUploadFile uploadFile) 
+    /**
+     * Publish the canonical image at it's predefined size.
+     */
+    protected static SnapshotInfo publishCanonicalImage (SnapshotUploadFile uploadFile) 
         throws IOException 
     {
-        publishStreamAsHash(uploadFile.getInputStream(), uploadFile.getHash(),
+        Digester digester = new Digester();
+        digester.digest(uploadFile.getInputStream());
+        
+        publishStreamAsHash(digester.getInputStream(), digester.hexHash(),
             uploadFile.getMimeType());
-        return new MediaInfo(uploadFile.getHash(), uploadFile.getMimeType(), (byte) 0, 0, 0);
+        return new SnapshotInfo(digester.binaryHash(), uploadFile.getMimeType());        
     }
     
     /**
@@ -327,11 +454,35 @@ public class UploadUtil
     public static MediaInfo publishImage (String mediaId, UploadFile uploadFile)
         throws IOException
     {
-        int size = Item.THUMB_MEDIA.equals(mediaId)
-            ? MediaDesc.THUMBNAIL_SIZE : MediaDesc.PREVIEW_SIZE;
-        return publishImage(size, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT);
+        int size = Item.THUMB_MEDIA.equals(mediaId) ? MediaDesc.THUMBNAIL_SIZE
+            : MediaDesc.PREVIEW_SIZE;
+        return publishImage(
+            size, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT).getMediaInfo();
     }
 
+    /**
+     * Return new dimensions if the image provided needs scaling down to make it fit the supplied
+     * thumbnail dimension, or null if rescaling isn't needed.
+     */
+    protected static Rectangle needsResizing (Integer thumbSize, BufferedImage image)
+    {
+        if (thumbSize == null) return null;
+        Rectangle target = thumbnailDimensions(thumbSize);
+        if (! target.covers(new Rectangle(image))) {
+            return target;
+        }
+        return null;        
+    }
+    
+    /**
+     * Return the dimensions of a given thumbnail size.
+     */
+    public static Rectangle thumbnailDimensions (int thumbSize)
+    {
+        return new Rectangle(MediaDesc.DIMENSIONS[thumbSize * 2],
+            MediaDesc.DIMENSIONS[thumbSize * 2 + 1]);
+    }
+    
     /**
      * Computes and fills in the constraints on the supplied image, scaling thumbnails as
      * necessary, and publishes the image data to the media store.
@@ -341,76 +492,91 @@ public class UploadUtil
      *
      * @return a MediaInfo object filled in with the published image info.
      */
-     public static MediaInfo publishImage (
-         Integer thumbSize, UploadFile uploadFile, byte thumbMime, String thumbFormat)
-         throws IOException
-     {
-         // convert the uploaded file data into an image object
-         final BufferedImage image = ImageIO.read(uploadFile.getInputStream());
-         if (image == null) {
-             throw new IOException("Invalid image data. Unable to complete upload.");
-         }
+     public static PublishingResult publishImage (Integer thumbSize, UploadFile uploadFile,
+        byte thumbMime, String thumbFormat)
+        throws IOException
+    {
+        // convert the uploaded file data into an image object
+        final BufferedImage original = ImageIO.read(uploadFile.getInputStream());
+        if (original == null) {
+            throw new IOException("Invalid image data. Unable to complete upload.");
+        }
 
-         String hash = uploadFile.getHash();
-         byte mimeType = uploadFile.getMimeType();
-         int width = image.getWidth();
-         int height = image.getHeight();
+        // if we're uploading a thumbnail image...
+        Rectangle target = needsResizing(thumbSize, original);
+        if (target != null) {
+            return publishReducedSize(thumbSize, thumbMime, thumbFormat, original, target);
+        }
 
-         // if we're uploading a thumbnail image...
-         boolean published = false;
-         if (thumbSize != null) {
-             final int targetWidth = MediaDesc.DIMENSIONS[thumbSize * 2];
-             final int targetHeight = MediaDesc.DIMENSIONS[thumbSize * 2 + 1];
-             // ...and we may need to scale our image
-             if (width > targetWidth || height > targetHeight) {
-                 // determine the size of our to be scaled image
-                 final float tratio = targetWidth / (float)targetHeight;
-                 final float iratio = image.getWidth() / (float)image.getHeight();
-                 final float scale = iratio > tratio ?
-                     targetWidth / (float)image.getWidth() :
-                     targetHeight / (float)image.getHeight();
-                 width = Math.max(1, Math.round(scale * image.getWidth()));
-                 height = Math.max(1, Math.round(scale * image.getHeight()));
+        return publishOriginalSize(thumbSize, uploadFile, original);
+    }
 
-                 // generate the scaled image
-                 final BufferedImage timage =
-                     new BufferedImage(width, height, samplingModelForFormat(thumbFormat));
-                 final Graphics2D gfx = timage.createGraphics();
-                 try {
-                     gfx.drawImage(image, 0, 0, width, height, null);
-                 } finally {
-                     gfx.dispose();
-                 }
+    /**
+     * Publish an image at it's original size and return a publishing result.
+     */
+    protected static PublishingResult publishOriginalSize (Integer thumbSize, UploadFile uploadFile,
+        final BufferedImage original)
+        throws IOException
+    {
+        // if we haven't yet published our image, do so
+        // (this happens when we didn't need to scale the image to produce a thumbnail)
+        Digester digester = new Digester();
+        digester.digest(uploadFile.getInputStream());
+        publishStreamAsHash(digester.getInputStream(), digester.hexHash(),
+            uploadFile.getMimeType());
+        
+        Rectangle originalSize = new Rectangle(original);
+        return new PublishingResult(originalSize, originalSize, thumbSize,
+            uploadFile.getMimeType(), digester);        
+    }
 
-                 mimeType = thumbMime;
+    /**
+     * Reduce the size of an image to the specified target size and publish it.
+     */
+    protected static PublishingResult publishReducedSize (Integer thumbSize, byte thumbMime,
+        String thumbFormat, final BufferedImage original, Rectangle target)
+        throws IOException
+    {
+        final BufferedImage thumbnail = resizeImage(thumbFormat, original, target);
 
-                 Digester digester = new Digester();
-                 ImageIO.write(timage, thumbFormat, 
-                     new MemoryCacheImageOutputStream(digester.getOutputStream()));
-                 digester.close();
+        Digester digester = new Digester();
+        ImageIO.write(thumbnail, thumbFormat, new MemoryCacheImageOutputStream(
+            digester.getOutputStream()));
+        digester.close();
 
-                 hash = digester.getHash();
-                 
-                 // publish the thumbnail
-                 publishStreamAsHash(digester.getInputStream(), hash, mimeType);
+        // publish the thumbnail
+        publishStreamAsHash(digester.getInputStream(), digester.hexHash(), thumbMime);
 
-                 published = true;
-             }
-         }
+        return new PublishingResult(new Rectangle(original), target, thumbSize, thumbMime,
+            digester);        
+    }
 
-         // if we haven't yet published our image, do so
-         // (this happens when we didn't need to scale the image to produce a thumbnail)
-         if (!published) {
-             publishUploadFile(uploadFile);
-         }
+    /**
+     * Resize a given image to a new set of dimensions. The buffered image will use a sampling
+     * model appropriate to the given format so that it can be successfully encoded.
+     */
+    private static BufferedImage resizeImage (String format, final BufferedImage image,
+        final Rectangle target)
+        throws IOException
+    {
+        final BufferedImage timage;
+        final float tratio = target.width / (float)target.height;
+        final float iratio = image.getWidth() / (float)image.getHeight();
+        final float scale = iratio > tratio ? target.width / (float)image.getWidth()
+            : target.height / (float)image.getHeight();
+        int newWidth = Math.max(1, Math.round(scale * image.getWidth()));
+        int newHeight = Math.max(1, Math.round(scale * image.getHeight()));
 
-         // finally compute our constraint and return a media info
-         // todo: this is broken if thumbsize is null
-         int constraintSize = thumbSize == null ? MediaDesc.PREVIEW_SIZE : thumbSize.intValue();
-         byte constraint = MediaDesc.computeConstraint(constraintSize, width, height);
-
-         return new MediaInfo(hash, mimeType, constraint, width, height);
-     }
+        // generate the scaled image
+        timage = new BufferedImage(newWidth, newHeight, samplingModelForFormat(format));
+        final Graphics2D gfx = timage.createGraphics();
+        try {
+            gfx.drawImage(image, 0, 0, newWidth, newHeight, null);
+        } finally {
+            gfx.dispose();
+        }
+        return timage;
+    }
 
     /**
      * Return the sampling model that should be used for rendering a given image prior to encoding

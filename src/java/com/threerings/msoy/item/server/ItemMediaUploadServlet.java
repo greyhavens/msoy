@@ -11,6 +11,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.inject.Inject;
 
+import com.samskivert.io.PersistenceException;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 
@@ -36,10 +37,11 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
     /**
      * Generates the MediaInfo object for this FileItem and publishes the data into the media store
      * and returns the results via Javascript to the GWT client.
+     * @throws PersistenceException 
      */
     @Override // from AbstractUploadServlet
     protected void handleFileItems (UploadContext ctx)
-        throws IOException, FileUploadException, AccessDeniedException
+        throws IOException, FileUploadException, AccessDeniedException, PersistenceException
     {
         // wrap the FileItem in an UploadFile for publishing
         UploadFile uploadFile = new FileItemUploadFile(ctx.file);
