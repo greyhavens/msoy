@@ -287,7 +287,7 @@ public class GameGameRegistry
     public void resetScorePercentiler (int gameId, boolean single)
     {
         log.info("Resetting in-memory percentiler [gameId=" + gameId + ", single=" + single + "].");
-        _distribs.put(single ? -gameId : gameId, new Percentiler());
+        _distribs.put(single ? -Math.abs(gameId) : Math.abs(gameId), new Percentiler());
     }
 
     /**
