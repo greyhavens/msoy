@@ -106,9 +106,9 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         HttpServletRequest req = getThreadLocalRequest();
         String path = req.getServletPath();
         if (e instanceof org.mortbay.jetty.EofException) {
-            log.info("Servlet response stream unexpectedly closed", "path", path, e);
+            log.info("Servlet response stream unexpectedly closed", "path", path);
         } else if (e instanceof IllegalStateException && "STREAM".equals(e.getMessage())) {
-            log.info("Servlet response stream unavailable", "servlet", path, e);
+            log.info("Servlet response stream unavailable", "servlet", path);
         } else {
             log.warning("Servlet service failure", "path", path,
                         (e instanceof UnexpectedException) ? e.getCause() : e);
