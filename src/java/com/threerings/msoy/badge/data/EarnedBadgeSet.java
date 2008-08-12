@@ -37,13 +37,12 @@ public final class EarnedBadgeSet extends DSet<EarnedBadge>
     }
 
     /**
-     * @return a copy of the EarnedBadge that matches the specified badge code, or null if the badge
+     * @return the EarnedBadge that matches the specified badge code, or null if the badge
      * is not contained in this set.
      */
     public EarnedBadge getBadge (int badgeCode)
     {
-        EarnedBadge badge = get(badgeCode);
-        return (badge != null ? (EarnedBadge)badge.clone() : null);
+        return get(badgeCode);
     }
 
     /**

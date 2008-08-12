@@ -37,7 +37,7 @@ public class BadgeManager
     {
         if (!user.badges.containsBadge(badgeType)) {
             List<EarnedBadge> badgeList = Lists.newArrayList();
-            badgeList.add(new EarnedBadge(badgeType.getCode(), level, 0));
+            badgeList.add(new EarnedBadge(badgeType.getCode(), level, System.currentTimeMillis()));
             awardBadges(user, badgeList);
         }
     }
@@ -54,24 +54,23 @@ public class BadgeManager
         }
 
         // iterate the list of badges to see if the player has won any new ones
+        long whenEarned = System.currentTimeMillis();
         List<EarnedBadge> newBadges = null;
         List<InProgressBadge> inProgressBadges = null;
         for (BadgeType badgeType : BadgeType.values()) {
             BadgeProgress progress = badgeType.getProgress(user.stats);
-
             if (progress.highestLevel >= 0) {
                 EarnedBadge earnedBadge = user.badges.getBadge(badgeType);
-                if (earnedBadge == null) {
-                    // whenEarned timestamp will be filled in by awardBadges()
-                    earnedBadge = new EarnedBadge(badgeType.getCode(), -1, 0);
-                }
-                if (earnedBadge.level < progress.highestLevel) {
-                    earnedBadge.level = progress.highestLevel;
+                if (earnedBadge == null || earnedBadge.level < progress.highestLevel) {
+                    EarnedBadge newBadge = new EarnedBadge();
+                    newBadge.badgeCode = badgeType.getCode();
+                    newBadge.level = progress.highestLevel;
+                    newBadge.whenEarned = whenEarned;
 
                     if (newBadges == null) {
                         newBadges = Lists.newArrayList();
                     }
-                    newBadges.add(earnedBadge);
+                    newBadges.add(newBadge);
                 }
             }
 
@@ -79,23 +78,22 @@ public class BadgeManager
                 // If we haven't reached the highest badge level for this badge,
                 // we should have a corresponding InProgressBadge for it.
                 InProgressBadge inProgressBadge = user.inProgressBadges.getBadge(badgeType);
-                if (inProgressBadge == null) {
-                    inProgressBadge = new InProgressBadge(badgeType.getCode(), -1, 0);
-                }
 
                 float quantizedProgress = InProgressBadgeRecord.quantizeProgress(
                     progress.getNextLevelProgress());
 
-                if (progress.highestLevel >= inProgressBadge.nextLevel ||
+                if (inProgressBadge == null || progress.highestLevel >= inProgressBadge.nextLevel ||
                         (progress.highestLevel == inProgressBadge.nextLevel - 1 &&
                                 quantizedProgress > inProgressBadge.progress)) {
-                    inProgressBadge.nextLevel = progress.highestLevel + 1;
-                    inProgressBadge.progress = quantizedProgress;
+                    InProgressBadge newBadge = new InProgressBadge();
+                    newBadge.badgeCode = badgeType.getCode();
+                    newBadge.nextLevel = progress.highestLevel + 1;
+                    newBadge.progress = quantizedProgress;
 
                     if (inProgressBadges == null) {
                         inProgressBadges = Lists.newArrayList();
                     }
-                    inProgressBadges.add(inProgressBadge);
+                    inProgressBadges.add(newBadge);
                 }
             }
         }
@@ -111,8 +109,7 @@ public class BadgeManager
 
     protected void awardBadges (final MemberObject user, final List<EarnedBadge> badges)
     {
-        // stick the badges in the user's BadgeSet, and award coins
-        long whenEarned = System.currentTimeMillis();
+        // award coins and add the badges to the user's badge set
         int coinValue = 0;
         for (EarnedBadge badge : badges) {
             BadgeType type = BadgeType.getType(badge.badgeCode);
@@ -121,7 +118,6 @@ public class BadgeManager
                 Log.log.warning("Failed to award invalid badge level",
                     "memberId", user.getMemberId(), "BadgeType", type, "level", level);
             } else {
-                badge.whenEarned = whenEarned;
                 user.badgeAwarded(badge);
                 coinValue += coinValue;
             }

@@ -37,13 +37,12 @@ public final class InProgressBadgeSet extends DSet<InProgressBadge>
     }
 
     /**
-     * @return a copy of the InProgressBadge that matches the specified badge code, or null if the
+     * @return the InProgressBadge that matches the specified badge code, or null if the
      * badge is not contained in this set.
      */
     public InProgressBadge getBadge (int badgeCode)
     {
-        InProgressBadge badge = get(badgeCode);
-        return (badge != null ? (InProgressBadge)badge.clone() : null);
+        return get(badgeCode);
     }
 
     /**
