@@ -1318,6 +1318,7 @@ GameOverPanel {
 .gameOverTitle {
   fontSize: 24;
   color: #ffffff;
+  textAlign: center;
 }
 
 .gameOverMessage {
