@@ -404,6 +404,9 @@ public class RemixControls extends HBox
         trace("Oh noes! : " + event.text);
         _saveBtn.enabled = true;
         _cancelBtn.enabled = true;
+
+        var uploader :MediaUploader = event.target as MediaUploader;
+        uploader.close();
     }
 
     protected var _previewReady :Boolean;
