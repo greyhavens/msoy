@@ -59,7 +59,7 @@ public class ShareDialog extends FloatingPanel
     {
         _memObj = _ctx.getClient().getClientObject() as MemberObject;
 
-        var url :String = _ctx.getTopPanel().root.loaderInfo.loaderURL;
+        var url :String = DeploymentConfig.serverURL;
         url = url.replace(/(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
         
         var affiliate :String = _memObj.isGuest() ? "" : String(_memObj.getMemberId());
@@ -129,7 +129,7 @@ public class ShareDialog extends FloatingPanel
         info.text = Msgs.GENERAL.get("l.link_instruction");
         box.addChild(info);
 
-        var url :String = _ctx.getTopPanel().root.loaderInfo.loaderURL;
+        var url :String = DeploymentConfig.serverURL;
         url = url.replace(/(http:\/\/[^\/]*).*/, "$1/");
         const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
         if (sceneAndGame[0] != 0) {
