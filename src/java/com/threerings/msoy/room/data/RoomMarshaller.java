@@ -115,8 +115,21 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #setProperty} requests. */
+    public static final int SET_PROPERTY = 9;
+
+    // from interface RoomService
+    public void setProperty (Client arg1, String arg2, Object arg3, Integer arg4, boolean arg5, boolean arg6, Object arg7, InvocationService.InvocationListener arg8)
+    {
+        ListenerMarshaller listener8 = new ListenerMarshaller();
+        listener8.listener = arg8;
+        sendRequest(arg1, SET_PROPERTY, new Object[] {
+            arg2, arg3, arg4, Boolean.valueOf(arg5), Boolean.valueOf(arg6), arg7, listener8
+        });
+    }
+
     /** The method id used to dispatch {@link #spawnMob} requests. */
-    public static final int SPAWN_MOB = 9;
+    public static final int SPAWN_MOB = 10;
 
     // from interface RoomService
     public void spawnMob (Client arg1, int arg2, String arg3, String arg4, InvocationService.InvocationListener arg5)
@@ -129,7 +142,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateMemory} requests. */
-    public static final int UPDATE_MEMORY = 10;
+    public static final int UPDATE_MEMORY = 11;
 
     // from interface RoomService
     public void updateMemory (Client arg1, EntityMemoryEntry arg2)
@@ -140,7 +153,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateRoom} requests. */
-    public static final int UPDATE_ROOM = 11;
+    public static final int UPDATE_ROOM = 12;
 
     // from interface RoomService
     public void updateRoom (Client arg1, SceneUpdate arg2, InvocationService.InvocationListener arg3)

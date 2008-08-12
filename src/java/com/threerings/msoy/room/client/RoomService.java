@@ -95,4 +95,14 @@ public interface RoomService extends InvocationService
      * @see MobInfo
      */
     void despawnMob (Client caller, int gameId, String mobId, InvocationListener listener);
+
+    /**
+     * Set a property on the room.  The owner of the property (game id) is implied by the caller.
+     * @see RoomPropertiesObject
+     * @see PropertySpaceHelper#testProperty
+     * @see PropertySpaceHelper#applyPropertySet
+     */
+    void setProperty (Client caller, String propName, Object data, Integer key,
+        boolean isArray, boolean testAndSet, Object testValue,
+        InvocationService.InvocationListener listener);
 }

@@ -15,6 +15,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.text.MessageUtil;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Comparators;
@@ -27,6 +28,7 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService.InvocationListener;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
@@ -63,6 +65,7 @@ import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyEventLogger;
 
+import com.threerings.msoy.bureau.data.WindowClientObject;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 
 import com.threerings.msoy.item.data.all.Decor;
@@ -95,6 +98,12 @@ import com.threerings.msoy.room.data.SceneAttrsUpdate;
 import com.threerings.msoy.room.server.persist.MemoryRecord;
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.RoomPropertyRecord;
+
+import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.data.PropertySetEvent;
+import com.whirled.game.data.WhirledGameObject.ArrayRangeException;
+import com.whirled.game.server.PropertySpaceHelper;
 
 import static com.threerings.msoy.Log.log;
 
@@ -635,6 +644,50 @@ public class RoomManager extends SpotSceneManager
         _mobs.remove(key);
     }
 
+    // from RoomProvider
+    public void setProperty (ClientObject caller, String propName, Object data, Integer key, 
+        boolean isArray, boolean testAndSet, Object testValue, 
+        InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        // This call is only allowed from a bureau window
+        if (!(caller instanceof WindowClientObject)) {
+            throw new InvocationException(RoomCodes.E_CANNOT_SET_PROPERTY);
+        }
+        
+        // Fish out the game id
+        String bureauId = ((WindowClientObject)caller).bureauId;
+        if (!bureauId.startsWith(BureauTypes.GAME_BUREAU_ID_PREFIX)) {
+            log.warning("Bad bureau id", "bureauId", bureauId, "caller", caller);
+            throw new InvocationException(RoomCodes.E_CANNOT_SET_PROPERTY);
+        }
+        int gameId = Integer.parseInt(bureauId.substring(
+            BureauTypes.GAME_BUREAU_ID_PREFIX.length()));
+
+        // Find the properties
+        RoomPropertiesEntry entry = _roomObj.propertySpaces.get(gameId);
+        if (entry == null) {
+            log.warning("Properties not loaded", "caller", caller);
+            throw new InvocationException(RoomCodes.E_CANNOT_SET_PROPERTY);
+        }
+        RoomPropertiesObject props = (RoomPropertiesObject)_omgr.getObject(entry.propsOid);
+        
+        // Test, if requested
+        if (testAndSet && !PropertySpaceHelper.testProperty(props, propName, testValue)) {
+            return; // the test failed: do not set the property
+        }
+
+        // And apply
+        try {
+            Object oldData = PropertySpaceHelper.applyPropertySet(
+                props, propName, data, key, isArray);
+            props.postEvent(
+                new PropertySetEvent(props.getOid(), propName, data, key, isArray, oldData));
+        } catch (ArrayRangeException are) {
+            throw new InvocationException(RoomCodes.E_CANNOT_SET_PROPERTY);
+        }
+    }
+
     @Override // from PlaceManager
     public void messageReceived (MessageEvent event)
     {
@@ -799,7 +852,7 @@ public class RoomManager extends SpotSceneManager
         // flush modified property spaces and destroy dobjects
         for (RoomPropertiesEntry entry : _roomObj.propertySpaces) {
             RoomPropertiesObject properties = (RoomPropertiesObject)_omgr.getObject(entry.propsOid);
-            flushAVRGamePropertySpace(properties);
+            flushAVRGamePropertySpace(entry.ownerId, properties);
             _omgr.destroyObject(entry.propsOid);
         }
     }
@@ -825,37 +878,81 @@ public class RoomManager extends SpotSceneManager
      */
     protected void ensureAVRGamePropertySpace (MemberObject member)
     {
-        if (member.game == null || !member.game.avrGame || 
-            _roomObj.propertySpaces.containsKey(member.game.gameId)) {
+        if (member.game == null || !member.game.avrGame) {
             return;
         }
 
-        // TODO: Read values from the database
-        // TODO: Call {@link PropertySpaceHelper.initWithStateFromStore}
+        final int gameId = member.game.gameId;
+        if (_roomObj.propertySpaces.containsKey(gameId) || _pendingGameIds.contains(gameId)) {
+            return;
+        }
+            
+        _pendingGameIds.add(gameId);
+        _invoker.postUnit(new Invoker.Unit("load props") {
+            public boolean invoke () {
+                try {
+                    _propRecs = _sceneRepo.loadProperties(gameId, _scene.getId());
+                } catch (PersistenceException pe) {
+                    log.warning(
+                        "Failed to load room properties", "where", where(), "gameId", gameId, pe);
+                }
+                return true;
+            }
+            
+            public void handleResult () {
+                // Create map of loaded properties
+                Map<String, byte[]> propsMap = Maps.newHashMap();
+                if (_propRecs != null) {
+                    for (RoomPropertyRecord propRec : _propRecs) {
+                        propsMap.put(propRec.name, propRec.value);
+                    }
+                }
 
-        RoomPropertiesObject props = new RoomPropertiesObject();
-        _omgr.registerObject(props);
-        
-        RoomPropertiesEntry entry = new RoomPropertiesEntry();
-        entry.ownerId = member.game.gameId;
-        entry.propsOid = props.getOid();
-        _roomObj.addToPropertySpaces(entry);
-        
-        log.info("Added property space", "roomOid", _roomObj.getOid(), "gameId", member.game.gameId,
-            "propsOid", props.getOid());
+                // Create the dobj
+                RoomPropertiesObject props = new RoomPropertiesObject();
+                _omgr.registerObject(props);
+
+                // Populate
+                PropertySpaceHelper.initWithStateFromStore(props, propsMap);
+
+                // Add to room
+                RoomPropertiesEntry entry = new RoomPropertiesEntry();
+                entry.ownerId = gameId;
+                entry.propsOid = props.getOid();
+                _roomObj.addToPropertySpaces(entry);
+
+                // Clear from pending
+                _pendingGameIds.remove(gameId);
+                
+                log.info("Added property space", "roomOid", _roomObj.getOid(), "gameId", gameId,
+                    "propsOid", props.getOid());
+            }
+
+            Collection<RoomPropertyRecord> _propRecs;
+        });
     }
 
     /**
      * Write changed room properties to the database.
-     * @param properties
      */
-    protected void flushAVRGamePropertySpace  (RoomPropertiesObject properties)
+    protected void flushAVRGamePropertySpace  (final int ownerId, RoomPropertiesObject properties)
     {
         log.info("Flushing avrg room properties", "roomOid", _roomObj.getOid(), 
             "propsOid", properties.getOid());
 
-        // TODO: call {@link PropertySpaceHelper.encodeDirtyStateForStore}
-        // TODO: write dirty values to the database
+        final Map<String, byte[]> encodedMap =
+            PropertySpaceHelper.encodeDirtyStateForStore(properties);
+        final int sceneId = _scene.getId();
+        _invoker.postUnit(new WriteOnlyUnit("save room props") {
+            public void invokePersist() 
+                throws PersistenceException
+            {
+                for (Map.Entry<String, byte[]> entry : encodedMap.entrySet()) {
+                    _sceneRepo.storeProperty(new RoomPropertyRecord(
+                        ownerId, sceneId, entry.getKey(), entry.getValue()));
+                }
+            }
+        });
     }
     
     @Override // documentation inherited
@@ -1202,6 +1299,9 @@ public class RoomManager extends SpotSceneManager
 
     /** The room object. */
     protected RoomObject _roomObj;
+    
+    /** Game ids of properties we are currently loading. */
+    protected ArrayIntSet _pendingGameIds = new ArrayIntSet();
 
     /** If non-null, a list of memberId blocked from the room. */
     protected ArrayIntSet _booted;

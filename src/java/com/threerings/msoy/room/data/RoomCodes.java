@@ -29,6 +29,9 @@ public interface RoomCodes extends InvocationCodes
     /** Error reported when a pet owner calls a pet into a room they cannot. */
     public static final String E_CANNOT_ADD_PET = "e.cannot_add_pet";
 
+    /** Error reported when a client attempt to set a room property when they cannot. */
+    public static final String E_CANNOT_SET_PROPERTY = "e.cannot_add_set_property";
+
     /** A room layer that is in front of normal furniture and such. */
     public static final byte FOREGROUND_EFFECT_LAYER = 0;
 

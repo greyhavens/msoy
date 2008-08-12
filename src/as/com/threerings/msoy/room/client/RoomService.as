@@ -9,6 +9,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.client.InvocationService_ResultListener;
+import com.threerings.util.Integer;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.spot.data.Location;
 import flash.utils.ByteArray;
@@ -41,6 +42,9 @@ public interface RoomService extends InvocationService
 
     // from Java interface RoomService
     function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void;
+
+    // from Java interface RoomService
+    function setProperty (arg1 :Client, arg2 :String, arg3 :Object, arg4 :Integer, arg5 :Boolean, arg6 :Boolean, arg7 :Object, arg8 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
     function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :InvocationService_InvocationListener) :void;

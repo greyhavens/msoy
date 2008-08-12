@@ -17,6 +17,8 @@ import com.threerings.msoy.bureau.util.MsoyBureauContext;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.ResultAdapter;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -28,6 +30,7 @@ import com.threerings.presents.util.SafeSubscriber;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
+import com.whirled.game.client.PropertySpaceHelper;
 
 public class ThaneAVRGameController
 {
@@ -313,6 +316,28 @@ public class ThaneAVRGameController
 
         binding.roomProps = propsObj;
         _gameObj.avrgService.roomSubscriptionComplete(_ctx.getClient(), binding.sceneId);
+
+        var test :Boolean = false;
+        if (test) {
+            trace("Properties:");
+            var propsMap :Object = propsObj.getUserProps();
+            for (var key :String in propsMap) {
+                trace("    " + key + " = " + propsMap[key]);
+            }
+
+            var adapter :InvocationAdapter = new InvocationAdapter(
+                function (cause :String) :void {
+                    log.warning("Failed to set a property: " + cause);
+                }
+            );
+            var client :Client = binding.window.getClient();
+            var value :Object = "Hello World!";
+            value = PropertySpaceHelper.encodeProperty(value, true);
+            binding.room.roomService.setProperty(
+                client, "Message", value, null, false, false, null, adapter);
+            binding.room.roomService.setProperty(
+                client, "@Message", value, null, false, false, null, adapter);
+        }
     }
 
     protected function wasRemoved (binding :SceneBinding) :Boolean

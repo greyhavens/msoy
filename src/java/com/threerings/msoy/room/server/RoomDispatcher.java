@@ -87,6 +87,12 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
             );
             return;
 
+        case RoomMarshaller.SET_PROPERTY:
+            ((RoomProvider)provider).setProperty(
+                source, (String)args[0], args[1], (Integer)args[2], ((Boolean)args[3]).booleanValue(), ((Boolean)args[4]).booleanValue(), args[5], (InvocationService.InvocationListener)args[6]
+            );
+            return;
+
         case RoomMarshaller.SPAWN_MOB:
             ((RoomProvider)provider).spawnMob(
                 source, ((Integer)args[0]).intValue(), (String)args[1], (String)args[2], (InvocationService.InvocationListener)args[3]
