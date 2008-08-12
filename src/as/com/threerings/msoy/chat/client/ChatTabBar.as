@@ -70,7 +70,7 @@ public class ChatTabBar extends HBox
         super.setActualSize(w, h);
         rawChildren.setChildIndex(_scrollLayer, rawChildren.numChildren - 1);
         _scrollLayer.setActualSize(w, h);
-        displayScrollTabs(w < getExplicitOrMeasuredWidth());
+        checkScrollTabs();
         horizontalScrollPosition = _scrollPercent * maxHorizontalScrollPosition;
     }
 
@@ -396,6 +396,18 @@ public class ChatTabBar extends HBox
         _scrollRepeater.addEventListener(TimerEvent.TIMER, scrollRepeat);
     }
 
+    protected function checkScrollTabs () :void
+    {
+        // this mostly works. Crap.
+        callLater(function () :void {
+            var w :int = 0;
+            for each (var tab :ChatTab in _tabs) {
+                w += tab.width;
+            }
+            displayScrollTabs(w > width);
+        });
+    }
+
     protected function displayScrollTabs (display :Boolean) :void
     {
         callLater(function () :void {
@@ -457,6 +469,8 @@ public class ChatTabBar extends HBox
                 _selectedIndex++;
             }
         }
+
+        checkScrollTabs();
     }
 
     protected function addAndSelect (tab :ChatTab) :void
@@ -514,6 +528,8 @@ public class ChatTabBar extends HBox
         if (shutdown) {
             _ctx.getMsoyChatDirector().tabClosed(tab.localtype);
         }
+
+        checkScrollTabs();
     }
 
     protected function getLocalTypeIndex (localtype :String) :int
