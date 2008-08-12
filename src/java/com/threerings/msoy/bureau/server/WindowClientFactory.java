@@ -55,6 +55,16 @@ public class WindowClientFactory implements ClientFactory
         {
             return new WindowClientObject();
         }
+
+        @Override
+        protected void resolveClientData (ClientObject clobj)
+            throws Exception
+        {
+            super.resolveClientData(clobj);
+            
+            String bureauId = WindowCredentials.extractBureauId(_username);
+            ((WindowClientObject)clobj).bureauId = bureauId;
+        }
     }
     
     protected ClientFactory _delegate;
