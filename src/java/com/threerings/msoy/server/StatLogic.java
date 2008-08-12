@@ -150,7 +150,9 @@ public class StatLogic
         }
 
         if (progress.highestLevel >= badgeType.getNumLevels() - 1) {
-            // if we've reached the highest badge level, delete the InProgressBadgeRecord
+            // If we've reached the highest badge level, delete the InProgressBadgeRecord.
+            // Note - no MemberNodeAction is sent here; MemberObject removes obsolete
+            // InProgressBadgeRecords when badges are awarded.
             try {
                 _badgeRepo.deleteInProgressBadge(memberId, badgeType.getCode());
                 log.info("deleteInProgressBadge succeeded", "memberId", memberId, "BadgeType",
@@ -198,6 +200,8 @@ public class StatLogic
                     return;
                 }
 
+                // if the player is logged in, let their MemberObject know what happened
+                MemberNodeActions.inProgressBadgeUpdated(inProgressBadge);
             }
         }
     }

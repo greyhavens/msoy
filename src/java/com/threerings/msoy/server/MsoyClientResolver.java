@@ -35,6 +35,7 @@ import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.ServerStatSet;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
@@ -137,7 +138,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         @SuppressWarnings("unused") StatType dummy = StatType.UNUSED;
         // load up this member's persistent stats
         List<Stat> stats = _statRepo.loadStats(member.memberId);
-        userObj.stats = new ServerStatSet(stats.iterator(), userObj);
+        userObj.stats = new ServerStatSet(stats.iterator(), _badgeMan, userObj);
 
         // and their badges
         List<EarnedBadgeRecord> badgeRecs = _badgeRepo.loadEarnedBadges(member.memberId);
@@ -237,4 +238,5 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Inject protected MailRepository _mailRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected StatRepository _statRepo;
+    @Inject protected BadgeManager _badgeMan;
 }

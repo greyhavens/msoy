@@ -18,9 +18,10 @@ import com.threerings.stats.data.StatSet;
 public class ServerStatSet extends StatSet
 {
     /** Creates a stat set with the specified contents. */
-    public ServerStatSet (Iterator<Stat> contents, MemberObject memObj)
+    public ServerStatSet (Iterator<Stat> contents, BadgeManager badgeMan, MemberObject memObj)
     {
         super(contents);
+        _badgeMan = badgeMan;
         _memObj = memObj;
     }
 
@@ -29,8 +30,9 @@ public class ServerStatSet extends StatSet
     {
     }
 
-    public void setMemberObject (MemberObject memObj)
+    public void init (BadgeManager badgeMan, MemberObject memObj)
     {
+        _badgeMan = badgeMan;
         _memObj = memObj;
     }
 
@@ -58,6 +60,6 @@ public class ServerStatSet extends StatSet
         _badgeMan.updateBadges(_memObj);
     }
 
+    protected transient BadgeManager _badgeMan;
     protected transient MemberObject _memObj;
-    protected transient @Inject BadgeManager _badgeMan;
 }

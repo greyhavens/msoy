@@ -16,6 +16,7 @@ import com.threerings.msoy.item.data.all.ItemListInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
@@ -228,13 +229,12 @@ public class MemberObject extends MsoyBodyObject
     public transient InProgressBadgeSet inProgressBadges;
 
     /**
-     * Adds an EarnedBadge to the member's BadgeSet, and dispatches an event indicating that
-     * a new badge was awarded.
+     * Adds an EarnedBadge to the member's BadgeSet (or updates the existing badge if the badge
+     * level has increased) and dispatches an event indicating that a new badge was awarded.
      *
-     * @return true if the badge was added to the member's BadgeSet, and false if already
-     * existed in the set.
+     * @return true if the badge was updated in the member's BadgeSet, and false otherwise.
      */
-    public boolean badgeAwarded (EarnedBadge badge, InProgressBadge inProgressBadge)
+    public boolean badgeAwarded (EarnedBadge badge)
     {
         boolean added = badges.addOrUpdateBadge(badge);
         if (added) {
@@ -242,23 +242,26 @@ public class MemberObject extends MsoyBodyObject
             log.info("BadgeAwarded message sent", "badge", badge);
         }
 
-        if (inProgressBadge != null) {
-            inProgressBadges.addOrUpdateBadge(inProgressBadge);
+        // remove this badge's associated InProgressBadge if the badge's highest level has
+        // been reached
+        BadgeType badgeType = BadgeType.getType(badge.badgeCode);
+        if (badgeType != null && badge.level >= badgeType.getNumLevels() - 1) {
+            inProgressBadges.removeBadge(badge.badgeCode);
         }
 
         return added;
     }
 
     /**
-     * Adds an EarnedBadge to the member's BadgeSet, and dispatches an event indicating that
-     * a new badge was awarded.
+     * Adds an InProgressBadge to the member's in-progress badge set (or updates the existing badge
+     * if the badge level has increased).
      *
-     * @return true if the badge was added to the member's BadgeSet, and false if already
-     * existed in the set.
+     * @return true if the badge was updated in the member's in-progress badge set, and false
+     * otherwise.
      */
-    public boolean badgeAwarded (EarnedBadge badge)
+    public boolean inProgressBadgeUpdated (InProgressBadge badge)
     {
-        return badgeAwarded(badge, null);
+        return inProgressBadges.addOrUpdateBadge(badge);
     }
 
     /**

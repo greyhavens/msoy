@@ -12,8 +12,10 @@ import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 
 import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
+import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.item.server.ItemManager;
@@ -146,6 +148,14 @@ public class MemberNodeActions
     public static void badgeAwarded (EarnedBadgeRecord record)
     {
         _peerMan.invokeNodeAction(new BadgeAwarded(record));
+    }
+
+    /**
+     * Dispatches a notification that an in-progress badge record has been updated.
+     */
+    public static void inProgressBadgeUpdated (InProgressBadgeRecord record)
+    {
+        _peerMan.invokeNodeAction(new InProgressBadgeUpdated(record));
     }
 
     /**
@@ -359,6 +369,23 @@ public class MemberNodeActions
         }
 
         protected EarnedBadge _badge;
+    }
+
+    protected static class InProgressBadgeUpdated extends MemberNodeAction
+    {
+        public InProgressBadgeUpdated (InProgressBadgeRecord record) {
+            super(record.memberId);
+            _badge = record.toBadge();
+        }
+
+        public InProgressBadgeUpdated () {
+        }
+
+        protected void execute (MemberObject memobj) {
+            memobj.inProgressBadgeUpdated(_badge);
+        }
+
+        protected InProgressBadge _badge;
     }
 
     protected static class StatUpdated<T extends Stat> extends MemberNodeAction

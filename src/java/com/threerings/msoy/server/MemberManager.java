@@ -127,7 +127,7 @@ public class MemberManager
                 memobj.badges = (EarnedBadgeSet)data.get("MO.badges");
                 memobj.inProgressBadges = (InProgressBadgeSet)data.get("MO.inProgressBadges");
                 ServerStatSet stats = (ServerStatSet)data.get("MO.stats");
-                stats.setMemberObject(memobj);
+                stats.init(_badgeMan, memobj);
                 memobj.stats = stats;
             }
         });
