@@ -553,6 +553,14 @@ public class MediaDesc implements Streamable, IsSerializable
     }
 
     /**
+     * Is this media a SWF?
+     */
+    public boolean isSWF ()
+    {
+        return (mimeType == APPLICATION_SHOCKWAVE_FLASH);
+    }
+
+    /**
      * Is this media purely audio?
      */
     public boolean isAudio ()

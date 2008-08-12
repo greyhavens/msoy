@@ -291,11 +291,18 @@ public abstract class ItemEditor extends FlexTable
      */
     protected boolean isValidPrimaryMedia (MediaDesc desc)
     {
-        // normally it has to have a flash visual, but certain types allow for remixables
-        return desc.hasFlashVisual() || (
-            desc.isRemixable() && (
-                (_type == Item.FURNITURE) || (_type == Item.AVATAR) || (_type == Item.PET) ||
-                (_type == Item.DECOR) || (_type == Item.TOY)));
+        if (_type == Item.AVATAR || _type == Item.PET) {
+            // avatars and pets must be swfs or remixable
+            return desc.isSWF() || desc.isRemixable();
+
+        } else if (_type == Item.FURNITURE || _type == Item.TOY || _type == Item.DECOR) {
+            // these can be swfs, images, or remixable
+            return desc.hasFlashVisual() || desc.isRemixable();
+
+        } else {
+            // other types are not yet remixable
+            return desc.hasFlashVisual();
+        }
     }
 
     protected void safeSetText (TextBoxBase box, String value)
