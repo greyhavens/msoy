@@ -88,7 +88,7 @@ public class ItemRemixer extends FlexTable
     protected Widget createRemixControls (Item item)
     {
         MediaDesc main = item.getPrimaryMedia();
-        String serverURL = GWT.isScript() ? GWT.getHostPageBaseURL()
+        String serverURL = GWT.isScript() ? DeploymentConfig.serverURL
                                           : "http://localhost:8080/";
 
         String flashVars = "media=" + URL.encodeComponent(main.getMediaPath()) +
