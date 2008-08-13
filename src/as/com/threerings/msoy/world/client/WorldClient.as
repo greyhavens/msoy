@@ -113,8 +113,8 @@ public class WorldClient extends MsoyClient
             // embedded clients should link to a particular scene (or game in which case we'll just
             // connect to any old world server)
             var sceneId :int = int(params["sceneId"]);
-            var url :String = DeploymentConfig.serverURL +
-                "/embed/" + (sceneId == 0 ? "" : ("s"+sceneId));
+            var url :String = DeploymentConfig.serverURL + "embed/" +
+                (sceneId == 0 ? "" : ("s"+sceneId));
             loader.load(new URLRequest(url));
             log.info("Loading server info from " + url + ".");
 

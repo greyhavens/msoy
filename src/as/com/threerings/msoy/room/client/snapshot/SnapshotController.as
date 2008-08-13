@@ -37,8 +37,8 @@ import com.threerings.msoy.room.client.RoomView;
  */
 public class SnapshotController extends Controller
 {
-    public static const SCENE_THUMBNAIL_SERVICE :String = "/scenethumbsvc";    
-    public static const SCENE_SNAPSHOT_SERVICE :String = "/snapshotsvc";
+    public static const SCENE_THUMBNAIL_SERVICE :String = "scenethumbsvc";    
+    public static const SCENE_SNAPSHOT_SERVICE :String = "snapshotsvc";
     
     public function SnapshotController (ctx :WorldContext, view :RoomView, panel :SnapshotPanel)
     {

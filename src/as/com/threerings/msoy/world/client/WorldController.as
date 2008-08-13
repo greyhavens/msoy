@@ -915,7 +915,7 @@ public class WorldController extends MsoyController
     override public function showExternalURL (url :String, top :Boolean = false) :Boolean
     {
         // if our page refers to a Whirled page...
-        var gwtPrefix :String = DeploymentConfig.serverURL + "/#";
+        var gwtPrefix :String = DeploymentConfig.serverURL + "#";
         var gwtUrl :String;
         if (url.indexOf(gwtPrefix) == 0) {
             gwtUrl = url.substring(gwtPrefix.length);
@@ -1178,10 +1178,10 @@ public class WorldController extends MsoyController
             const sceneId :int = getCurrentSceneId();
             if (sceneId == 0 || (page == "world" && args == ("s"+sceneId))) {
                 if (!StringUtil.isBlank(page)) {
-                    fullURL += "/#" + page + "-" + args;
+                    fullURL += "#" + page + "-" + args;
                 }
             } else {
-                fullURL += "/#world-s" + sceneId + "_" + page + "-" + args;
+                fullURL += "#world-s" + sceneId + "_" + page + "-" + args;
             }
             log.info("Showing external URL " + fullURL);
             return super.showExternalURL(fullURL, true);

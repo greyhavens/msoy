@@ -104,7 +104,7 @@ public class GameLiaison
                 gameLocated(bits[0], int(bits[1]));
             });
             // TODO: add listeners for failure events? give feedback on failure?
-            loader.load(new URLRequest(DeploymentConfig.serverURL + "/embed/g" + _gameId));
+            loader.load(new URLRequest(DeploymentConfig.serverURL + "embed/g" + _gameId));
         }
     }
 
