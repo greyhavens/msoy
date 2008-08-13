@@ -59,14 +59,13 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
         // check the file size now that we know mimetype,
         // or freak out if we still don't know the mimetype.
         byte mimeType = uploadFile.getMimeType();
-        if (mimeType != MediaDesc.INVALID_MIME_TYPE) {
-            // now we can validate the file size
-            validateFileLength(mimeType, ctx.uploadLength);
-
-        } else {
+        if (mimeType == MediaDesc.INVALID_MIME_TYPE) {
             throw new FileUploadException("Received upload of unknown mime type [type=" +
                 ctx.file.getContentType() + ", name=" + ctx.file.getName() + "].");
         }
+
+        // now we can validate the file size
+        validateFileLength(mimeType, ctx.uploadLength);
 
         // determine whether they also want a thumbnail media generated
         boolean generateThumb = mediaId.endsWith(Item.PLUS_THUMB);
