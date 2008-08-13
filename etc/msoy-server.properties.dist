@@ -12,7 +12,7 @@ dev_deployment = true
 # The public URL that should be used to access this Whirled installation. This
 # URL *must* end in a slash.
 
-# server_url = http://www.whirled.com
+# server_url = http://www.whirled.com/
 
 #
 # The hostname used by the client to connect to the game server
