@@ -21,7 +21,7 @@ public class FeaturedPlaceUtil
      * Displays a scene in a mini-world client. The scene will not display chat, and the player
      * will not have an avatar in the scene. Clicking the scene will take the player there.
      */
-    public static void displayFeaturedPlace (final int sceneId, final Panel container)
+    public static boolean displayFeaturedPlace (final int sceneId, final Panel container)
     {
         if (_defaultServer == null) {
             _usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
@@ -52,7 +52,7 @@ public class FeaturedPlaceUtil
         var client = $doc.getElementById(id);
         if (client) {
             // exception from JavaScript break GWT; don't let that happen
-            try { client.clientGo(where);  return true; } catch (e) {}
+            try { return client.clientGo(where); } catch (e) {}
         }
         return false;
     }-*/;
