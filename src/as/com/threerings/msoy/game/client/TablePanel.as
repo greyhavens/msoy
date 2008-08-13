@@ -151,7 +151,8 @@ public class TablePanel extends VBox
             }
         }
 
-        _title.text = (table.tconfig as MsoyTableConfig).title;
+        const tableConfig :MsoyTableConfig = table.tconfig as MsoyTableConfig;
+        _title.text = (tableConfig != null) ? tableConfig.title : "";
         _info.text = info;
     }
 
