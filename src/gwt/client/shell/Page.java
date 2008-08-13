@@ -279,7 +279,7 @@ public abstract class Page
     }
 
     /**
-     * Called when Flash (in standalone mode) or our parent frame wants us to dispatch an event.
+     * Called when Flash or our parent frame wants us to dispatch an event.
      */
     protected void triggerEvent (String eventName, JavaScriptObject args)
     {
@@ -300,6 +300,12 @@ public abstract class Page
         };
         $wnd.triggerEvent = function (eventName, args) {
             page.@client.shell.Page::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
+        };
+        $wnd.helloWhirled = function () {
+             return true;
+        };
+        $wnd.displayPage = function (page, args) {
+            @client.util.Link::goFromFlash(Ljava/lang/String;Ljava/lang/String;)(page, args);
         };
         return $wnd != $wnd.top;
     }-*/;

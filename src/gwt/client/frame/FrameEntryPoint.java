@@ -731,19 +731,6 @@ public class FrameEntryPoint
         }
     }
 
-    /**
-     * Called when Flash wants us to display a page.
-     */
-    protected static void displayPage (String page, String args)
-    {
-    	try {
-            Link.go(Enum.valueOf(Pages.class, page.toUpperCase()), args);
-    	} catch (Exception e) {
-            CShell.log("Unable to display page from Flash [page=" + page + 
-                       ", args=" + args + "].", e);
-    	}
-    }
-
     protected void displayJava (LaunchConfig config, int gameOid)
     {
 // TODO: all this information needs to be passed up to the Frame, so maybe the frame should just
@@ -776,43 +763,43 @@ public class FrameEntryPoint
      * Configures top-level functions that can be called by Flash.
      */
     protected static native void configureCallbacks (FrameEntryPoint entry) /*-{
-       $wnd.onunload = function (event) {
-           var client = $doc.getElementById("asclient");
-           if (client) {
-               client.onUnload();
-           }
-           return true;
-       };
-       $wnd.frameCall = function (action, args) {
-           return entry.@client.frame.FrameEntryPoint::frameCall(Ljava/lang/String;[Ljava/lang/String;)(action, args);
-       };
-       $wnd.helloWhirled = function () {
+        $wnd.onunload = function (event) {
+            var client = $doc.getElementById("asclient");
+            if (client) {
+                client.onUnload();
+            }
             return true;
-       };
-       $wnd.setWindowTitle = function (title) {
-           entry.@client.frame.FrameEntryPoint::setTitle(Ljava/lang/String;)(title);
-       };
-       $wnd.displayPage = function (page, args) {
-           @client.frame.FrameEntryPoint::displayPage(Ljava/lang/String;Ljava/lang/String;)(page, args);
-       };
-       $wnd.clearClient = function () {
-            entry.@client.frame.FrameEntryPoint::deferredCloseClient()();
-       };
-       $wnd.getReferral = function () {
-           return @client.shell.TrackingCookie::getAsObject()();
-       };
-       $wnd.setReferral = function (ref) {
-           @client.shell.TrackingCookie::saveAsObject(Ljava/lang/Object;Z)(ref, true);
-       };
-       $wnd.toggleClientHeight = function () {
-           @client.util.FlashClients::toggleClientHeight()();
-       }
-       $wnd.triggerFlashEvent = function (eventName, args) {
-           entry.@client.frame.FrameEntryPoint::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
-       }
-       $wnd.howdyPardner = function () {
-           entry.@client.frame.FrameEntryPoint::javaReady()();
-       }
+        };
+        $wnd.frameCall = function (action, args) {
+            return entry.@client.frame.FrameEntryPoint::frameCall(Ljava/lang/String;[Ljava/lang/String;)(action, args);
+        };
+        $wnd.helloWhirled = function () {
+             return true;
+        };
+        $wnd.setWindowTitle = function (title) {
+            entry.@client.frame.FrameEntryPoint::setTitle(Ljava/lang/String;)(title);
+        };
+        $wnd.displayPage = function (page, args) {
+            @client.util.Link::goFromFlash(Ljava/lang/String;Ljava/lang/String;)(page, args);
+        };
+        $wnd.clearClient = function () {
+             entry.@client.frame.FrameEntryPoint::deferredCloseClient()();
+        };
+        $wnd.getReferral = function () {
+            return @client.shell.TrackingCookie::getAsObject()();
+        };
+        $wnd.setReferral = function (ref) {
+            @client.shell.TrackingCookie::saveAsObject(Ljava/lang/Object;Z)(ref, true);
+        };
+        $wnd.toggleClientHeight = function () {
+            @client.util.FlashClients::toggleClientHeight()();
+        }
+        $wnd.triggerFlashEvent = function (eventName, args) {
+            entry.@client.frame.FrameEntryPoint::triggerEvent(Ljava/lang/String;Lcom/google/gwt/core/client/JavaScriptObject;)(eventName, args);
+        }
+        $wnd.howdyPardner = function () {
+            entry.@client.frame.FrameEntryPoint::javaReady()();
+        }
     }-*/;
 
     /**

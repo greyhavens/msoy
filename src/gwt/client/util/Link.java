@@ -132,6 +132,19 @@ public class Link
     }
 
     /**
+     * Called when Flash wants us to display a page.
+     */
+    public static void goFromFlash (String page, String args)
+    {
+    	try {
+            go(Enum.valueOf(Pages.class, page.toUpperCase()), args);
+    	} catch (Exception e) {
+            CShell.log("Unable to display page from Flash [page=" + page +
+                       ", args=" + args + "].", e);
+    	}
+    }
+
+    /**
      * A helper function for both {@link #getImageLink}s.
      */
     protected static Widget createHyperlink (String html, String tip, Pages page, String args)
