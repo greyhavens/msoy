@@ -122,11 +122,16 @@ public class WorldClient extends MsoyClient
                 // Clicking this embed will send you to Whirled
                 Command.bind(stage, MouseEvent.CLICK, //MsoyController.VIEW_FULL_VERSION);
                     _wctx.getWorldController().handleViewFullVersion);
+
             } else {
                 _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
             }
 
         } else {
+            if (_featuredPlaceView) {
+                Command.bind(stage, MouseEvent.CLICK, _wctx.getWorldController().handleGoScene,
+                    int(params["sceneId"]));
+            }
             logon();
         }
 
