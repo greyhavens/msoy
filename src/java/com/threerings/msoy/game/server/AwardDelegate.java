@@ -3,11 +3,7 @@
 
 package com.threerings.msoy.game.server;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.common.collect.Comparators;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
@@ -15,8 +11,6 @@ import com.google.inject.Inject;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.CollectionUtil;
-import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
