@@ -22,7 +22,7 @@ public interface Frame
     public static final int HEADER_HEIGHT = NAVI_HEIGHT + 37 /* title bar */;
 
     /** The height of our Flash or Java client in pixels. */
-    public static final int CLIENT_HEIGHT = 544;
+    public static final int CLIENT_HEIGHT = 545;
 
     /** The maximum width of our content UI, the remainder is used by the world client. */
     public static final int CONTENT_WIDTH = 700;
