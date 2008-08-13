@@ -34,14 +34,14 @@ public class LayeredContainer extends Container
     {
         clearBaseLayer();
         addChildAt(_base = wrap(base), 0);
-        log.debug("Base layer set [base=" + base + "]");
+//         log.debug("Base layer set [base=" + base + "]");
     }
 
     public function clearBaseLayer () :void
     {
         if (_base != null) {
             removeChild(_base);
-            log.debug("Base layer cleared [base=" + _base + "]");
+//             log.debug("Base layer cleared [base=" + _base + "]");
             _base = null;
         }
     }
