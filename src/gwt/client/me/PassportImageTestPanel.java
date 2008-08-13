@@ -30,8 +30,7 @@ import client.util.ServiceUtil;
  * are set up correctly.  This only gets compiled on dev deployments, because the only place
  * it gets created (MePage) only creates it conditionally on DeploymentConfig.devDeployment.
  */
-public class PassportImageTestPanel
-    extends PagedGrid<Badge>
+public class PassportImageTestPanel extends PagedGrid<Badge>
 {
     public PassportImageTestPanel ()
     {
