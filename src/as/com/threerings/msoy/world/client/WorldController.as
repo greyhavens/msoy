@@ -469,7 +469,13 @@ public class WorldController extends MsoyController
         _wctx.getMsoyClient().trackClientAction("flashFullVersionClicked", null);
 
         // then go to the appropriate place..
-        const sceneId :int = getCurrentSceneId();
+        var sceneId :int = getCurrentSceneId();
+
+        // if we're a featuredPlaceView and *still loading* the current place, figure out
+        // what it was and cope
+        if (sceneId == 0 && UberClient.isFeaturedPlaceView()) {
+            sceneId = int(MsoyParameters.get()["sceneId"]);
+        }
         if (sceneId != 0) {
             displayPage("world", "s" + sceneId);
 
