@@ -8,6 +8,8 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.badge.data.all.Badge;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ServiceException;
 
@@ -61,5 +63,11 @@ public interface MeService extends RemoteService
      * Loads the badges relevant to this player.
      */
     PassportData loadBadges ()
+        throws ServiceException;
+
+    /**
+     * Loads all available badges. For testing only.
+     */
+    List<Badge> loadAllBadges()
         throws ServiceException;
 }

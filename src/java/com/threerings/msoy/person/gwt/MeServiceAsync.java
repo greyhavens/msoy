@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.msoy.badge.data.all.Badge;
+
 /**
  * The asynchronous (client-side) version of {@link MeService}.
  */
@@ -36,4 +38,9 @@ public interface MeServiceAsync
      * The asynchronous version of {@link MeService#loadBadges}.
      */
     void loadBadges (AsyncCallback<PassportData> callback);
+
+    /**
+     * Load all available badges.  For testing.
+     */
+    void loadAllBadges (AsyncCallback<List<Badge>> callback);
 }

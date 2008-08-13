@@ -4,9 +4,12 @@
 package com.threerings.msoy.person.server;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
@@ -21,6 +24,10 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.badge.data.BadgeType;
+import com.threerings.msoy.badge.data.all.Badge;
+import com.threerings.msoy.badge.data.all.EarnedBadge;
+import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MyWhirledData;
@@ -144,6 +151,22 @@ public class MeServlet extends MsoyServiceServlet
         PassportData data = new PassportData();
         data.stampOwner = mrec.name;
         return data;
+    }
+
+    // from interface MeService
+    public List<Badge> loadAllBadges ()
+        throws ServiceException
+    {
+        long now = (new Date()).getTime();
+        List<Badge> badges = new ArrayList<Badge>();
+        for (BadgeType type : BadgeType.values()) {
+            int code = type.getCode();
+            for (int ii = 0; ii < type.getNumLevels(); ii++) {
+                badges.add(new InProgressBadge(code, ii, (float)0.5));
+                badges.add(new EarnedBadge(code, ii, now));
+            }
+        }
+        return badges;
     }
 
     /**

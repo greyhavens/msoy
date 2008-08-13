@@ -5,12 +5,13 @@ package client.me;
 
 import com.google.gwt.core.client.GWT;
 
-import client.util.FlashClients;
-import client.util.Link;
+import com.threerings.msoy.data.all.DeploymentConfig;
 
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.Pages;
+import client.util.FlashClients;
+import client.util.Link;
 
 public class MePage extends Page
 {
@@ -32,6 +33,9 @@ public class MePage extends Page
 
         } else if (action.equals("passport")) {
             setContent(_msgs.titlePassport(), new PassportPanel());
+
+        } else if (DeploymentConfig.devDeployment && action.equals("passportimagetest")) {
+            setContent(_msgs.titlePassportTest(), new PassportImageTestPanel());
 
         } else if (!CMe.isGuest()) {
             setContent(new MyWhirled());

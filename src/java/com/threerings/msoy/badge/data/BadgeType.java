@@ -97,8 +97,6 @@ public enum BadgeType
         // TODO
     },
 
-    // TODO: SOCIAL_GAMER - under discussion
-
     // creation badges
     // TODO: this whole category is under discussion
 
