@@ -231,11 +231,12 @@ public class SceneRecord extends PersistentRecord
     public byte canonicalImageType;
 
     /** The hash of this scene's thumbnail image. */
+    @Column(nullable=true)
     public byte[] thumbnailHash;
 
     /** The mime type of this scene's thumbnail image. */
     public byte thumbnailType;
-    
+
     /** The volume configure for this scene's background music. */
     public float audioVolume;
 
