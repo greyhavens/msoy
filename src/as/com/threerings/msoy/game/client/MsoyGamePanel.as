@@ -69,7 +69,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from MsoyPlaceView
     public function shouldUseChatOverlay () :Boolean
     {
-        return GAMESTUB_DEBUG_MODE;
+        return (_showPlayers != null);
     }
 
     // from MsoyPlaceView
