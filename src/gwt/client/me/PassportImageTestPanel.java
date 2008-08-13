@@ -58,13 +58,16 @@ public class PassportImageTestPanel
     {
         public BadgeDisplay (Badge badge)
         {
-            DOM.setStyleAttribute(getElement(), "padding", "3px");
+            DOM.setStyleAttribute(getElement(), "padding", "10px");
 
             String type = "UNKNOWN BADGE TYPE";
+            String level = "LEVEL UNKNOWN";
             if (badge instanceof EarnedBadge) {
                 type = "EarnedBadge";
+                level = "Level: " + ((EarnedBadge)badge).level;
             } else if (badge instanceof InProgressBadge) {
                 type = "InProgressBadge";
+                level = "Next Level: " + ((InProgressBadge)badge).nextLevel;
             }
 
             String name = Integer.toHexString(badge.badgeCode);
@@ -76,6 +79,7 @@ public class PassportImageTestPanel
 
             add(MsoyUI.createLabel(name, null));
             add(MsoyUI.createLabel(type, null));
+            add(MsoyUI.createLabel(level, null));
             add(MsoyUI.createImage(badge.imageUrl(), null));
         }
     }
@@ -84,7 +88,6 @@ public class PassportImageTestPanel
         ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
-    // displays one badge per page - 6 levels * 2 types = 12
-    protected static final int GRID_ROWS = 3;
+    protected static final int GRID_ROWS = 4;
     protected static final int GRID_COLUMNS = 4;
 }
