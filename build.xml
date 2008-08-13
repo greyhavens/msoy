@@ -286,7 +286,7 @@
 
     <!-- generate our index.html and crossdomain.xml -->
     <propertyregex property="server_url_host_port" input="${server_url}"
-                   regexp="http://" replace=""/>
+                   regexp="http://(.*)/" replace="\1"/>
     <copy file="pages/index.html.in" tofile="pages/index.html" overwrite="true">
       <filterset>
         <filter token="SERVER_URL" value="${server_url}"/>
