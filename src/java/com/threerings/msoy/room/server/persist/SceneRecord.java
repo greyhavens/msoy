@@ -5,6 +5,7 @@ package com.threerings.msoy.room.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
@@ -223,6 +224,7 @@ public class SceneRecord extends PersistentRecord
     public byte audioMediaType;
 
     /** The hash of this scene's canonical image. */
+    @Column(nullable=true)
     public byte[] canonicalImageHash;
 
     /** The mime type of this scene's image type. */
