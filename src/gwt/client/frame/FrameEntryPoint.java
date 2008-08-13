@@ -14,6 +14,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.HistoryListener;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.WindowResizeListener;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
@@ -715,7 +716,14 @@ public class FrameEntryPoint
                 ReferralInfo.makeInstance(
                     affiliate, vector, creative, ReferralInfo.makeRandomTracker());
             TrackingCookie.save(ref, false);
-            _membersvc.trackReferralCreation(ref, null);
+            _membersvc.trackReferralCreation(ref, new AsyncCallback<Void>() {
+                public void onSuccess (Void result) {
+                    // noop
+                }
+                public void onFailure (Throwable caught) {
+                    CShell.log("Failed to send referral creation to server.", caught);
+                }
+            });
             CShell.log("Created a new ReferralInfo: " + ref);
         }
     }
