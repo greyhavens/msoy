@@ -148,7 +148,7 @@ public class HeaderBar extends HBox
         // allow text to center under the whirled logo if its not too long.
         _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
         stretchSpacer(false);
-        FlexUtil.setVisible(_goBtn, false);
+        //FlexUtil.setVisible(_goBtn, false);
         return _tabsContainer;
     }
 
@@ -161,7 +161,7 @@ public class HeaderBar extends HBox
         if (_loc.parent == this) {
             FlexUtil.setVisible(_loc, false);
         }
-        FlexUtil.setVisible(_goBtn, true);
+        //FlexUtil.setVisible(_goBtn, true);
         addChildAt(_tabsContainer, 1);
     }
 
@@ -190,7 +190,6 @@ public class HeaderBar extends HBox
         // we lock it to the scrollbar thickness so that it matches the gutter area on the left
         _goBtn.width = ScrollBar.THICKNESS;
         addChild(_goBtn);
-        _extras.push(_goBtn);
 
         _loc = new Label();
         _loc.styleName = "locationName";
