@@ -40,6 +40,8 @@ import com.threerings.crowd.server.BodyManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
+import com.threerings.stats.data.StatSet;
+
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.person.server.MailLogic;
@@ -126,8 +128,10 @@ public class MemberManager
                 memobj.metrics = (PlayerMetrics)data.get("MO.metrics");
                 memobj.badges = (EarnedBadgeSet)data.get("MO.badges");
                 memobj.inProgressBadges = (InProgressBadgeSet)data.get("MO.inProgressBadges");
-                ServerStatSet stats = (ServerStatSet)data.get("MO.stats");
-                stats.init(_badgeMan, memobj);
+                StatSet stats = (StatSet)data.get("MO.stats");
+                if (stats instanceof ServerStatSet) {
+                    ((ServerStatSet)stats).init(_badgeMan, memobj);
+                }
                 memobj.stats = stats;
             }
         });
