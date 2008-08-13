@@ -605,7 +605,7 @@ public class AwardDelegate extends RatingDelegate
                         "score", player.score, "min", tiler.getMinScore(), "range", range);
             return tiler.getMinScore() - range/2;
 
-        } else if (player.score < tiler.getMaxScore() + range/2) {
+        } else if (player.score > tiler.getMaxScore() + range/2) {
             log.warning("Capping extremely high score", "game", where(), "player", player.name,
                         "score", player.score, "max", tiler.getMaxScore(), "range", range);
             return tiler.getMaxScore() + range/2;
