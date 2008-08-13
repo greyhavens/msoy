@@ -383,7 +383,7 @@
 
 .galaxy .Browse {
   width: 100%;
-  margin-left: 5px;
+  padding-left: 5px;
 }
 
 .galaxy .Browse .Title {
@@ -396,7 +396,7 @@
 }
 
 .galaxy .Contents {
-  width: 665px;
+  width: 660px;
   margin: 0px 10px;
 }
 
