@@ -70,6 +70,9 @@ public class MediaDirector extends BasicDirector
             // view-only members have no sprite visualization
             return null;
 
+        // NOTE: if you add a new type here, please also add it to src/thane/Reference.as so that 
+        // server side code for avrg's doesn't break
+
         } else {
             log.warning("Don't know how to create sprite for occupant " + occInfo + ".");
             return null;

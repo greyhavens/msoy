@@ -12,6 +12,7 @@ import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.ObserverInfo;
+import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -41,5 +42,6 @@ public class Reference
     ControllableEntity;
     MobInfo;
     ObserverInfo;
+    PetInfo;
 }
 }
