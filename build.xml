@@ -420,81 +420,80 @@
     <property name="gwtc.full" value="true"/>
   </target>
 
-  <!-- builds our GWT web client -->
-  <property name="gwtc.style" value="OBF"/>
+  <!-- builds our numerous GWT web client -->
   <property name="pages" value="${gpages.list}"/>
-  <target name="gclient" depends="jprepare,gmsgs"
-          description="Rebuilds the GWT client (but only for Mozilla).">
-    <for list="${pages}" param="page"><sequential>
-      <mkdir dir="${gwtout.dir}"/>
-      <delete dir="${gwtout.dir}/@{page}"/>
-      <mkdir dir="${gwtout.dir}/@{page}"/>
-      <if><isset property="gwtc.full"/><then>
-          <copy file="${gsrc.dir}/@{page}.gwt.xml.in"
-                tofile="${gsrc.dir}/@{page}.gwt.xml" overwrite="true"/>
-        </then><else>
-          <echo>Doing Gecko-only compile...</echo>
-          <exec executable="bin/quickify" failonerror="true">
-            <arg value="${gsrc.dir}/@{page}.gwt.xml"/>
-          </exec>
-      </else></if>
-      <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
-            classname="com.google.gwt.dev.GWTCompiler">
-        <classpath>
-          <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
-          <fileset dir="${deploy.dir}/lib">
-            <include name="gwt-user.jar"/>
-            <include name="gwt-widgets.jar"/>
-            <include name="underwire-gwt-0.0-SNAPSHOT.jar"/>
-          </fileset>
-          <pathelement location="${src.dir}"/>
-          <pathelement location="${gsrc.dir}"/>
-        </classpath>
-        <arg value="-style"/><arg value="${gwtc.style}"/>
-        <arg value="-out"/>
-        <arg value="${gwtout.dir}"/>
-        <arg value="@{page}"/>
-        <!-- gather all the compiler output into a property -->
-        <redirector outputproperty="redirector.out"/>
-      </java>
+  <target name="gclients" depends="jprepare,gmsgs" description="Rebuilds the GWT client.">
+    <property name="gwt_build_threads" value="1"/> <!-- override in build_settings.properties -->
+    <foreach list="${pages}" param="page" target="gclient" parallel="true"
+             maxThreads="${gwt_build_threads}"/>
+  </target>
 
-      <!-- delete our temporary .gwt.xml file -->
-      <delete file="${gsrc.dir}/@{page}.gwt.xml"/>
+  <!-- builds a single GWT web client -->
+  <property name="gwtc.style" value="OBF"/>
+  <target name="gclient" description="Rebuilds a particular GWT client.">
+    <mkdir dir="${gwtout.dir}"/>
+    <delete dir="${gwtout.dir}/${page}"/>
+    <mkdir dir="${gwtout.dir}/${page}"/>
+    <if><isset property="gwtc.full"/><then>
+        <copy file="${gsrc.dir}/${page}.gwt.xml.in"
+              tofile="${gsrc.dir}/${page}.gwt.xml" overwrite="true"/>
+      </then><else>
+        <echo>Doing Gecko-only compile...</echo>
+        <exec executable="bin/quickify" failonerror="true">
+          <arg value="${gsrc.dir}/${page}.gwt.xml"/>
+        </exec>
+    </else></if>
+    <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
+          classname="com.google.gwt.dev.GWTCompiler">
+      <classpath>
+        <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/> <!-- the GWT compiler -->
+        <fileset dir="${deploy.dir}/lib">
+          <include name="gwt-user.jar"/>
+          <include name="gwt-widgets.jar"/>
+          <include name="underwire-gwt-0.0-SNAPSHOT.jar"/>
+        </fileset>
+        <pathelement location="${src.dir}"/>
+        <pathelement location="${gsrc.dir}"/>
+      </classpath>
+      <arg value="-style"/><arg value="${gwtc.style}"/>
+      <arg value="-out"/>
+      <arg value="${gwtout.dir}"/>
+      <arg value="${page}"/>
+      <!-- gather all the compiler output into a property -->
+      <redirector outputproperty="redirector.out"/>
+    </java>
 
-      <!-- until the GWT compiler does the right thing echo errors/warnings correctly -->
-      <if><contains string="${redirector.out}" substring="[ERROR]"/><then>
-          <echo level="error">${redirector.out}</echo>
-          <!-- be really, really sure that the build fails if we get an error logs -->
-          <property name="has.errors" value="true"/>
-        </then><elseif><contains string="${redirector.out}" substring="[WARNING]"/><then>
-            <echo level="warning">${redirector.out}</echo>
-        </then></elseif><else>
-          <echo level="info">${redirector.out}</echo>
-      </else></if>
+    <!-- delete our temporary .gwt.xml file -->
+    <delete file="${gsrc.dir}/${page}.gwt.xml"/>
 
-      <!-- fail the build if the GWT compiler returned 1 or errors were detected -->
-      <fail message="The GWT build failed. See output for details.">
-        <condition><or>
-            <equals arg1="${gwt.result}" arg2="1"/>
-            <isset property="has.errors"/>
-        </or></condition>
-      </fail>
+    <!-- until the GWT compiler does the right thing echo errors/warnings correctly -->
+    <if><contains string="${redirector.out}" substring="[ERROR]"/><then>
+        <echo level="error">${redirector.out}</echo>
+        <!-- be really, really sure that the build fails if we get an error logs -->
+        <property name="has.errors" value="true"/>
+      </then><elseif><contains string="${redirector.out}" substring="[WARNING]"/><then>
+          <echo level="warning">${redirector.out}</echo>
+      </then></elseif><else>
+        <echo level="info">${redirector.out}</echo>
+    </else></if>
 
-      <!-- if we succeeded, gzip our generated HTML output -->
-      <apply failonerror="true" executable="gzip">
-        <arg value="-c"/>
-        <srcfile/>
-        <fileset dir="${gwtout.dir}/@{page}" includes="*.cache.html"/>
-        <redirector>
-          <outputmapper type="glob" from="*.cache.html" to="${gwtout.dir}/@{page}/*.cache.html.gz"/>
-        </redirector>
-      </apply>
+    <!-- fail the build if the GWT compiler returned 1 or errors were detected -->
+    <fail message="The GWT build failed. See output for details.">
+      <condition><or>
+          <equals arg1="${gwt.result}" arg2="1"/>
+          <isset property="has.errors"/>
+      </or></condition>
+    </fail>
 
-      <!-- clear out some variables -->
-      <var name="gwt.result" unset="true"/>
-      <var name="redirector.out" unset="true"/>
-      <var name="has.errors" unset="true"/>
-    </sequential></for>
+    <!-- if we succeeded, gzip our generated HTML output -->
+    <apply failonerror="true" executable="gzip">
+      <arg value="-c"/>
+      <srcfile/>
+      <fileset dir="${gwtout.dir}/${page}" includes="*.cache.html"/>
+      <redirector>
+        <outputmapper type="glob" from="*.cache.html" to="${gwtout.dir}/${page}/*.cache.html.gz"/>
+      </redirector>
+    </apply>
   </target>
 
   <!-- prepares to build our Flash client -->
@@ -996,7 +995,7 @@
 
   <!-- rebuilds all subprojects and the whole top-level distribution -->
   <target name="distbits" depends="distprojects-extra,dist,flashapps,thane-client,jclients"/>
-  <target name="distall" depends="prepare,mavendeps,distbits,tests,checkstyle,gclient"
+  <target name="distall" depends="prepare,mavendeps,distbits,tests,checkstyle,gclients"
           description="Rebuilds all subprojects and whole top-level distribution."/>
 
   <!-- cleans out the compiled code -->
