@@ -331,10 +331,12 @@
     </path>
     <available property="gwt.present" classname="com.google.gwt.dev.GWTShell"
                classpathref="gwt.classpath"/>
-    <fail message="You must symlink 'lib/gwt' to a current GWT distribution."
-          unless="gwt.present"/>
-
+    <fail message="You must symlink 'lib/gwt' to a current GWT distribution." unless="gwt.present"/>
     <fail message="You must specify -Dpage=(mail|stuff|shop|etc.)." unless="page"/>
+
+    <!-- we need to copy our .gwt.xml into place while gshell is running -->
+    <copy file="${gsrc.dir}/${page}.gwt.xml.in" tofile="${gsrc.dir}/${page}.gwt.xml"
+          overwrite="true"/>
 
     <if><equals arg1="${platform.darwin}" arg2="true"/><then>
       <java classpathref="gwt.classpath" fork="true" maxmemory="256M"
@@ -355,9 +357,12 @@
         <arg value="${http_port}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
-        <arg value="gwt/${page}/${page}.html"/>
+        <arg value="gwt/${page}/"/>
       </java>
     </else></if>
+
+    <!-- now delete our temporary .gwt.xml file -->
+    <delete file="${gsrc.dir}/@{page}.gwt.xml"/>
   </target>
 
   <!-- regenerates our i18n messages classes -->
@@ -385,6 +390,7 @@
         </java>
       </sequential></for>
     </then></if>
+    <exec executable="${basedir}/bin/unfuckmsgs.sh" failonerror="true"/>
   </target>
 
   <!-- prepares to build our GWT client -->

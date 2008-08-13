@@ -11,83 +11,51 @@ import com.google.gwt.user.client.ui.ImageBundle;
  */
 public interface BoxImages extends ImageBundle
 {
-    /**
-     * @gwt.resource blue_upper_left.png
-     */
+    @Resource("blue_upper_left.png")
     AbstractImagePrototype blue_upper_left ();
 
-    /**
-     * @gwt.resource blue_upper_right.png
-     */
+    @Resource("blue_upper_right.png")
     AbstractImagePrototype blue_upper_right ();
 
-    /**
-     * @gwt.resource blue_lower_left.png
-     */
+    @Resource("blue_lower_left.png")
     AbstractImagePrototype blue_lower_left ();
 
-    /**
-     * @gwt.resource blue_lower_right.png
-     */
+    @Resource("blue_lower_right.png")
     AbstractImagePrototype blue_lower_right ();
 
-    /**
-     * @gwt.resource white_upper_left.png
-     */
+    @Resource("white_upper_left.png")
     AbstractImagePrototype white_upper_left ();
 
-    /**
-     * @gwt.resource white_upper_right.png
-     */
+    @Resource("white_upper_right.png")
     AbstractImagePrototype white_upper_right ();
 
-    /**
-     * @gwt.resource white_lower_left.png
-     */
+    @Resource("white_lower_left.png")
     AbstractImagePrototype white_lower_left ();
 
-    /**
-     * @gwt.resource white_lower_right.png
-     */
+    @Resource("white_lower_right.png")
     AbstractImagePrototype white_lower_right ();
 
-    /**
-     * @gwt.resource darkblue_upper_left.png
-     */
+    @Resource("darkblue_upper_left.png")
     AbstractImagePrototype darkblue_upper_left ();
 
-    /**
-     * @gwt.resource darkblue_upper_right.png
-     */
+    @Resource("darkblue_upper_right.png")
     AbstractImagePrototype darkblue_upper_right ();
 
-    /**
-     * @gwt.resource darkblue_lower_left.png
-     */
+    @Resource("darkblue_lower_left.png")
     AbstractImagePrototype darkblue_lower_left ();
 
-    /**
-     * @gwt.resource darkblue_lower_right.png
-     */
+    @Resource("darkblue_lower_right.png")
     AbstractImagePrototype darkblue_lower_right ();
 
-    /**
-     * @gwt.resource medblue_upper_left.png
-     */
+    @Resource("medblue_upper_left.png")
     AbstractImagePrototype medblue_upper_left ();
 
-    /**
-     * @gwt.resource medblue_upper_right.png
-     */
+    @Resource("medblue_upper_right.png")
     AbstractImagePrototype medblue_upper_right ();
 
-    /**
-     * @gwt.resource medblue_lower_left.png
-     */
+    @Resource("medblue_lower_left.png")
     AbstractImagePrototype medblue_lower_left ();
 
-    /**
-     * @gwt.resource medblue_lower_right.png
-     */
+    @Resource("medblue_lower_right.png")
     AbstractImagePrototype medblue_lower_right ();
 }

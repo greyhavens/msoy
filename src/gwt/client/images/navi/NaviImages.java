@@ -11,93 +11,57 @@ import com.google.gwt.user.client.ui.ImageBundle;
  */
 public interface NaviImages extends ImageBundle
 {
-    /**
-     * @gwt.resource shop.png
-     */
+    @Resource("shop.png")
     AbstractImagePrototype shop ();
 
-    /**
-     * @gwt.resource shop_over.png
-     */
+    @Resource("shop_over.png")
     AbstractImagePrototype oshop ();
 
-    /**
-     * @gwt.resource shop_selected.png
-     */
+    @Resource("shop_selected.png")
     AbstractImagePrototype sshop ();
 
-    /**
-     * @gwt.resource games.png
-     */
+    @Resource("games.png")
     AbstractImagePrototype games ();
 
-    /**
-     * @gwt.resource games_over.png
-     */
+    @Resource("games_over.png")
     AbstractImagePrototype ogames ();
 
-    /**
-     * @gwt.resource games_selected.png
-     */
+    @Resource("games_selected.png")
     AbstractImagePrototype sgames ();
 
-    /**
-     * @gwt.resource help.png
-     */
+    @Resource("help.png")
     AbstractImagePrototype help ();
 
-    /**
-     * @gwt.resource help_over.png
-     */
+    @Resource("help_over.png")
     AbstractImagePrototype ohelp ();
 
-    /**
-     * @gwt.resource help_selected.png
-     */
+    @Resource("help_selected.png")
     AbstractImagePrototype shelp ();
 
-    /**
-     * @gwt.resource me.png
-     */
+    @Resource("me.png")
     AbstractImagePrototype me ();
 
-    /**
-     * @gwt.resource me_over.png
-     */
+    @Resource("me_over.png")
     AbstractImagePrototype ome ();
 
-    /**
-     * @gwt.resource me_selected.png
-     */
+    @Resource("me_selected.png")
     AbstractImagePrototype sme ();
 
-    /**
-     * @gwt.resource friends.png
-     */
+    @Resource("friends.png")
     AbstractImagePrototype friends ();
 
-    /**
-     * @gwt.resource friends_over.png
-     */
+    @Resource("friends_over.png")
     AbstractImagePrototype ofriends ();
 
-    /**
-     * @gwt.resource friends_selected.png
-     */
+    @Resource("friends_selected.png")
     AbstractImagePrototype sfriends ();
 
-    /**
-     * @gwt.resource worlds.png
-     */
+    @Resource("worlds.png")
     AbstractImagePrototype worlds ();
 
-    /**
-     * @gwt.resource worlds_over.png
-     */
+    @Resource("worlds_over.png")
     AbstractImagePrototype oworlds ();
 
-    /**
-     * @gwt.resource worlds_selected.png
-     */
+    @Resource("worlds_selected.png")
     AbstractImagePrototype sworlds ();
 }

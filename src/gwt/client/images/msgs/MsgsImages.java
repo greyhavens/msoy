@@ -11,48 +11,30 @@ import com.google.gwt.user.client.ui.ImageBundle;
  */
 public interface MsgsImages extends ImageBundle
 {
-    /**
-     * @gwt.resource assign_issue.png
-     */
+    @Resource("assign_issue.png")
     AbstractImagePrototype assign_issue ();
 
-    /**
-     * @gwt.resource delete_post.png
-     */
+    @Resource("delete_post.png")
     AbstractImagePrototype delete_post ();
 
-    /**
-     * @gwt.resource edit_post.png
-     */
+    @Resource("edit_post.png")
     AbstractImagePrototype edit_post ();
 
-    /**
-     * @gwt.resource new_issue.png
-     */
+    @Resource("new_issue.png")
     AbstractImagePrototype new_issue ();
 
-    /**
-     * @gwt.resource reply_post.png
-     */
+    @Resource("reply_post.png")
     AbstractImagePrototype reply_post ();
 
-    /**
-     * @gwt.resource reply_post_quote.png
-     */
+    @Resource("reply_post_quote.png")
     AbstractImagePrototype reply_post_quote ();
 
-    /**
-     * @gwt.resource view_issue.png
-     */
+    @Resource("view_issue.png")
     AbstractImagePrototype view_issue ();
 
-    /**
-     * @gwt.resource rss.png
-     */
+    @Resource("rss.png")
     AbstractImagePrototype rss ();
 
-    /**
-     * @gwt.resource complain_post.png
-     */
+    @Resource("complain_post.png")
     AbstractImagePrototype complain_post ();
 }

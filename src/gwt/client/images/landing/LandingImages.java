@@ -11,33 +11,21 @@ import com.google.gwt.user.client.ui.ImageBundle;
  */
 public interface LandingImages extends ImageBundle
 {
-    /**
-     * @gwt.resource login.png
-     */
+    @Resource("login.png")
     AbstractImagePrototype login ();
 
-    /**
-     * @gwt.resource login_over.png
-     */
+    @Resource("login_over.png")
     AbstractImagePrototype login_over ();
 
-    /**
-     * @gwt.resource signup.png
-     */
+    @Resource("signup.png")
     AbstractImagePrototype signup ();
 
-    /**
-     * @gwt.resource signup_over.png
-     */
+    @Resource("signup_over.png")
     AbstractImagePrototype signup_over ();
 
-    /**
-     * @gwt.resource playgames.png
-     */
+    @Resource("playgames.png")
     AbstractImagePrototype playgames ();
 
-    /**
-     * @gwt.resource playgames_over.png
-     */
+    @Resource("playgames_over.png")
     AbstractImagePrototype playgames_over ();
 }

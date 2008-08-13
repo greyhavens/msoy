@@ -11,58 +11,36 @@ import com.google.gwt.user.client.ui.ImageBundle;
  */
 public interface NextImages extends ImageBundle
 {
-    /**
-     * @gwt.resource astro_shot.png
-     */
+    @Resource("astro_shot.png")
     AbstractImagePrototype astro_shot ();
 
-    /**
-     * @gwt.resource brawler_shot.png
-     */
+    @Resource("brawler_shot.png")
     AbstractImagePrototype brawler_shot ();
 
-    /**
-     * @gwt.resource dict_shot.png
-     */
+    @Resource("dict_shot.png")
     AbstractImagePrototype dict_shot ();
 
-    /**
-     * @gwt.resource drift_shot.png
-     */
+    @Resource("drift_shot.png")
     AbstractImagePrototype drift_shot ();
 
-    /**
-     * @gwt.resource lol_shot.png
-     */
+    @Resource("lol_shot.png")
     AbstractImagePrototype lol_shot ();
 
-    /**
-     * @gwt.resource brave_shot.png
-     */
+    @Resource("brave_shot.png")
     AbstractImagePrototype brave_shot ();
 
-    /**
-     * @gwt.resource kawaii_shot.png
-     */
+    @Resource("kawaii_shot.png")
     AbstractImagePrototype kawaii_shot ();
 
-    /**
-     * @gwt.resource nap_shot.png
-     */
+    @Resource("nap_shot.png")
     AbstractImagePrototype nap_shot ();
 
-    /**
-     * @gwt.resource pirate_shot.png
-     */
+    @Resource("pirate_shot.png")
     AbstractImagePrototype pirate_shot ();
 
-    /**
-     * @gwt.resource rave_shot.png
-     */
+    @Resource("rave_shot.png")
     AbstractImagePrototype rave_shot ();
 
-    /**
-     * @gwt.resource home_shot.png
-     */
+    @Resource("home_shot.png")
     AbstractImagePrototype home_shot ();
 }
