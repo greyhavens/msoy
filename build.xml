@@ -406,8 +406,8 @@
       <filterset>
         <filter token="build_time" value="${build_time}"/>
         <filter token="build_version" value="${version}"/>
-        <filter token="media_url" value="${media_url}"/>
         <filter token="server_url" value="${server_url}"/>
+        <filter token="media_url" value="${media_url}"/>
         <filter token="static_media_url" value="${static_media_url}"/>
         <filter token="dev_deployment" value="${dev_deployment}"/>
         <filter token="recaptcha_public" value="${recaptcha_token}"/>
