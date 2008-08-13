@@ -216,10 +216,16 @@ public class WorldClient extends MsoyClient
     /**
      * Exposed to javascript so that it may notify us to move to a new location.
      */
-    protected function externalClientGo (where :String) :void
+    protected function externalClientGo (where :String) :Boolean
     {
-        log.info("Changing scenes per external request [where=" + where + "].");
-        _wctx.getWorldController().goToPlace(new URLVariables(where));
+        if (_wctx.getClient().isLoggedOn()) {
+            log.info("Changing scenes per external request [where=" + where + "].");
+            _wctx.getWorldController().goToPlace(new URLVariables(where));
+            return true;
+        } else {
+            log.info("Not ready to change scenes (we're not logged on) [where=" + where + "].");
+            return false;
+        }
     }
 
     /**
