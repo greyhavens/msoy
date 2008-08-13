@@ -36,16 +36,18 @@ public class FeaturedPlaceOverlay extends Sprite
         graphics.drawRect(0, 0, width, height);
         graphics.endFill();
 
-        if (_ctx.getMsoyClient().isEmbedded()) {
-            if (_waterMark == null) {
-                _waterMark = new WATER_MARK() as DisplayObject;
-                addChild(_waterMark);
-            }
+// TEMP: reenable when watermark.png is committed
+//
+//         if (_ctx.getMsoyClient().isEmbedded()) {
+//             if (_waterMark == null) {
+//                 _waterMark = new WATER_MARK() as DisplayObject;
+//                 addChild(_waterMark);
+//             }
 
-            // Put it in bottom right, with a bit of padding
-            _waterMark.x = width - _waterMark.width - 4;
-            _waterMark.y = height - _waterMark.height - 6;
-        }
+//             // Put it in bottom right, with a bit of padding
+//             _waterMark.x = width - _waterMark.width - 4;
+//             _waterMark.y = height - _waterMark.height - 6;
+//         }
     }
 
     /** Now with 20% more context. */
@@ -53,8 +55,8 @@ public class FeaturedPlaceOverlay extends Sprite
 
     protected var _waterMark :DisplayObject;
 
-    [Embed(source="../../../../../../../rsrc/media/skins/watermark.png")]
-    protected static const WATER_MARK :Class;
+//     [Embed(source="../../../../../../../../rsrc/media/skins/watermark.png")]
+//     protected static const WATER_MARK :Class;
 }
 
 }
