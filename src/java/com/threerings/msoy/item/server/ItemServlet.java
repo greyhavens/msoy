@@ -127,7 +127,7 @@ public class ItemServlet extends MsoyServiceServlet
 //    }
 
     // from interface ItemService
-    public float rateItem (ItemIdent iident, byte rating)
+    public float rateItem (ItemIdent iident, byte rating, boolean previouslyRated)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
@@ -152,6 +152,11 @@ public class ItemServlet extends MsoyServiceServlet
                 }
                 // and use our real ID
                 originalId = iident.itemId;
+            }
+
+            // if this is the first time the player has rated this item, increment the stat.
+            if (!previouslyRated) {
+                // TODO: stat magic
             }
 
             // record this player's rating and obtain the new summarized rating

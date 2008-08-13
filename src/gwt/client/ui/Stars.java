@@ -46,6 +46,11 @@ public class Stars extends FlowPanel
         updateStarImage(_rating = rating);
     }
 
+    public float getRating ()
+    {
+        return _rating;
+    }
+
     protected void updateStarImage (float rating)
     {
         int filledStars = (int) (rating * 2);

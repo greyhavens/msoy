@@ -33,7 +33,7 @@ public interface ItemService extends RemoteService
      *
      * @return the new average rating for the item.
      */
-    float rateItem (ItemIdent item, byte rating)
+    float rateItem (ItemIdent item, byte rating, boolean previouslyRate)
         throws ServiceException;
 
     /**
@@ -82,7 +82,7 @@ public interface ItemService extends RemoteService
     /**
      * Flags an item as the current member's favorite or not.
      */
-    void setFavorite(ItemIdent item, boolean favorite)
+    void setFavorite (ItemIdent item, boolean favorite)
         throws ServiceException;
 
     /**

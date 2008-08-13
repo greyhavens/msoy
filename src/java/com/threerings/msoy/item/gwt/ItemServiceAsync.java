@@ -26,7 +26,8 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#rateItem}.
      */
-    void rateItem (ItemIdent item, byte rating, AsyncCallback<Float> callback);
+    void rateItem (
+        ItemIdent item, byte rating, boolean previouslyRated, AsyncCallback<Float> callback);
 
     /**
      * The asynchronous version of {@link ItemService.wrapItem}.
