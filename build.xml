@@ -425,9 +425,9 @@
   <property name="pages" value="${gpages.list}"/>
   <target name="gclient" depends="jprepare,gmsgs"
           description="Rebuilds the GWT client (but only for Mozilla).">
+    <mkdir dir="${gwtout.dir}"/>
     <property name="gwt_build_threads" value="1"/> <!-- override in build_settings.properties -->
     <for list="${pages}" param="page" parallel="true" threadCount="${gwt_build_threads}"><sequential>
-      <mkdir dir="${gwtout.dir}"/>
       <delete dir="${gwtout.dir}/@{page}"/>
       <mkdir dir="${gwtout.dir}/@{page}"/>
       <if><isset property="gwtc.full"/><then>
