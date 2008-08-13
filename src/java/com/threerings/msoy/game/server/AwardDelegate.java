@@ -74,25 +74,21 @@ public class AwardDelegate extends RatingDelegate
             throw new InvocationException("e.game_already_ended");
         }
 
-        // TEMP? Log scores.
-        List<Integer> playerOidList = CollectionUtil.addAll(
-            new ArrayList<Integer>(), IntListUtil.box(playerOids));
-        log.info("endGameWithScores", "name", _content.game.name, "id", _content.game.gameId,
-                 "payoutType", payoutType, "playerOids", playerOids,
-                 "playerIds", playerOidsToMemberIds(playerOidList, false), "scores", scores);
-
-        int now = now();
-
         // convert the players into record indexed on player oid which will weed out duplicates and
         // avoid funny business
+        int now = now();
         int highestScore = Integer.MIN_VALUE;
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < playerOids.length; ii++) {
             int availFlow = getAwardableFlow(now, playerOids[ii]);
-            players.put(playerOids[ii], new Player(playerOids[ii], scores[ii], availFlow));
+            players.put(playerOids[ii], new Player(lookupName(playerOids[ii]), playerOids[ii],
+                                                   scores[ii], availFlow));
             int thisScore = scores[ii];
             highestScore = Math.max(highestScore, thisScore);
         }
+
+        log.info("endGameWithScores", "name", _content.game.name, "id", _content.game.gameId,
+                 "payoutType", payoutType, "players", players.values());
 
         // if we have no non-zero scores then end the game without awarding flow or updating
         // ratings or percentilers
@@ -101,20 +97,15 @@ public class AwardDelegate extends RatingDelegate
             return;
         }
 
-        // update stats: in games with scores everyone who has the high score is a winner and
-        // everyone else is a loser
-        List<Integer> winnerOids = Lists.newArrayList();
-        for (int ii = 0; ii < playerOids.length; ii++) {
-            if (scores[ii] == highestScore) {
-                winnerOids.add(playerOids[ii]);
-            }
-        }
-        updatePlayerStats(players.keySet(), winnerOids);
+        // update the various game-related stats
+        updatePlayerStats(players.values(), highestScore);
 
         // record the scores of all players in the game
         Percentiler tiler = getScoreDistribution();
         for (Player player : players.values()) {
-            tiler.recordValue(player.score);
+            // we want to avoid hackers or bugs totally freaking out the score distribution, so we
+            // do some sanity checking of the score value before recording it
+            tiler.recordValue(getCappedScore(tiler, player));
         }
 
         // convert scores to percentiles
@@ -169,14 +160,16 @@ public class AwardDelegate extends RatingDelegate
         // any funny business
         IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < winnerOids.length; ii++) {
-            Player pl = new Player(winnerOids[ii], 1, getAwardableFlow(now, winnerOids[ii]));
+            Player pl = new Player(lookupName(winnerOids[ii]), winnerOids[ii], 1,
+                                   getAwardableFlow(now, winnerOids[ii]));
             // everyone gets ranked as a 50% performance in multiplayer and we award portions of
             // the losers' winnings to the winners
             pl.percentile = 49;
             players.put(winnerOids[ii], pl);
         }
         for (int ii = 0; ii < loserOids.length; ii++) {
-            Player pl = new Player(loserOids[ii], 0, getAwardableFlow(now, loserOids[ii]));
+            Player pl = new Player(lookupName(loserOids[ii]), loserOids[ii], 0,
+                                   getAwardableFlow(now, loserOids[ii]));
             pl.percentile = 49;
             players.put(loserOids[ii], pl);
         }
@@ -184,19 +177,17 @@ public class AwardDelegate extends RatingDelegate
         // award flow according to the rankings and the payout type
         awardFlow(players, payoutType);
 
-        // regenerate the set of winners now that we've filtered out duplicates and whatnot
-        ArrayIntSet fWinnerOids = new ArrayIntSet();
-        for (Player player : players.values()) {
-            if (player.score == 1) {
-                fWinnerOids.add(player.playerOid);
-            }
-        }
-
         // update the various game-related stats
-        updatePlayerStats(players.keySet(), fWinnerOids);
+        updatePlayerStats(players.values(), 1);
 
         // tell the game manager about our winners which will be used to compute ratings, etc.
         if (_gmgr instanceof WhirledGameManager) {
+            ArrayIntSet fWinnerOids = new ArrayIntSet();
+            for (Player player : players.values()) {
+                if (player.score == 1) {
+                    fWinnerOids.add(player.playerOid);
+                }
+            }
             ((WhirledGameManager)_gmgr).setWinners(fWinnerOids.toIntArray());
         } else {
             log.warning("Unable to configure WhirledGameManager with winners", "where", where(),
@@ -303,7 +294,7 @@ public class AwardDelegate extends RatingDelegate
 
         // potentially create a flow record for this occupant
         if (!_flowRecords.containsKey(bodyOid) && plobj != null) {
-            FlowRecord record = new FlowRecord(plobj.getMemberId(), plobj.getHumanity());
+            FlowRecord record = new FlowRecord(plobj.memberName, plobj.getHumanity());
             _flowRecords.put(bodyOid, record);
             // if we're currently tracking, note that they're "starting" immediately
             if (_tracking) {
@@ -355,54 +346,46 @@ public class AwardDelegate extends RatingDelegate
     /**
      * Called when a game ends to update various Passport-related stats.
      */
-    protected void updatePlayerStats (Iterable<Integer> playerOids, Iterable<Integer> winnerOids)
+    protected void updatePlayerStats (Iterable<Player> players, int winningScore)
     {
         // we're currently not persisting any stats for in-development games
         if (Game.isDeveloperVersion(_content.detail.gameId)) {
             return;
         }
 
-        List<Integer> memberIds = playerOidsToMemberIds(playerOids, true);
-        for (int memberId : memberIds) {
+        for (Player player : players) {
+            int memberId = player.getMemberId();
+            if (MemberName.isGuest(memberId)) {
+                continue;
+            }
+
             // track total game sessions
             _worldClient.incrementStat(memberId, StatType.GAME_SESSIONS, 1);
             // track unique games played
-            _worldClient.addToSetStat(memberId, StatType.UNIQUE_GAMES_PLAYED,
-                _content.detail.gameId);
+            _worldClient.addToSetStat(
+                memberId, StatType.UNIQUE_GAMES_PLAYED, _content.detail.gameId);
 
             if (isMultiplayer()) {
+                // track multiplayer game wins
+                if (player.score == winningScore) {
+                    _worldClient.incrementStat(memberId, StatType.MP_GAMES_WON, 1);
+                }
+
                 // track unique game partners
-                for (int otherMemberId : memberIds) {
-                    if (otherMemberId != memberId) {
-                        _worldClient.addToSetStat(
-                            memberId, StatType.MP_GAME_PARTNERS, otherMemberId);
+                for (Player oplayer : players) {
+                    int oMemberId = oplayer.getMemberId();
+                    if (oMemberId != memberId && !MemberName.isGuest(oMemberId)) {
+                        _worldClient.addToSetStat(memberId, StatType.MP_GAME_PARTNERS, oMemberId);
                     }
                 }
             }
         }
-
-        // track multiplayer game wins
-        if (isMultiplayer()) {
-            for (int memberId : playerOidsToMemberIds(winnerOids, true)) {
-                _worldClient.incrementStat(memberId, StatType.MP_GAMES_WON, 1);
-            }
-        }
     }
 
-    protected List<Integer> playerOidsToMemberIds (
-        Iterable<Integer> playerOids, boolean pruneGuests)
+    protected MemberName lookupName (int playerOid)
     {
-        final List<Integer> memberIds = Lists.newArrayList();
-        for (int playerOid : playerOids) {
-            DObject dobj = _omgr.getObject(playerOid);
-            if (dobj instanceof PlayerObject) {
-                int memberId = ((PlayerObject)dobj).getMemberId();
-                if (!MemberName.isGuest(memberId) || !pruneGuests) {
-                    memberIds.add(memberId);
-                }
-            }
-        }
-        return memberIds;
+        FlowRecord record = _flowRecords.get(playerOid);
+        return (record == null) ? null : record.name;
     }
 
     protected void updateScoreBasedRating (Player player, Rating rating)
@@ -539,7 +522,7 @@ public class AwardDelegate extends RatingDelegate
         } // end: case PROPORTIONAL
         }
 
-        log.info("Awarding flow", "game", where(), "type", payoutType, "to" + players);
+        log.info("Awarding flow", "game", where(), "type", payoutType, "to", players.values());
 
         // finally, award the flow and report it to the player
         boolean actuallyAward = !_content.game.isDeveloperVersion();
@@ -581,21 +564,6 @@ public class AwardDelegate extends RatingDelegate
         }
     }
 
-    @Override // from RatingDelegate
-    protected int getGameId ()
-    {
-        // single player ratings are stored as -gameId, multi-player as gameId
-        int gameId = Math.abs(super.getGameId());
-        return isMultiplayer() ? gameId : -gameId;
-    }
-
-    @Override
-    protected boolean shouldRateGame ()
-    {
-        // we don't support ratings for non-published games
-        return !_content.game.isDeveloperVersion() && super.shouldRateGame();
-    }
-
     /**
      * Returns the average duration for this game in fractional minutes.
      */
@@ -630,6 +598,27 @@ public class AwardDelegate extends RatingDelegate
     {
         return (tiler.getRecordedCount() < MIN_VALID_SCORES) ?
             DEFAULT_PERCENTILE : tiler.getPercentile(score);
+    }
+
+    protected int getCappedScore (Percentiler tiler, Player player)
+    {
+        int range = tiler.getMaxScore() - tiler.getMinScore();
+        if (tiler.getRecordedCount() < MIN_VALID_SCORES) {
+            return player.score;
+
+        } else if (player.score < tiler.getMinScore() - range/2) {
+            log.warning("Capping extremely low score", "game", where(), "player", player.name,
+                        "score", player.score, "min", tiler.getMinScore(), "range", range);
+            return tiler.getMinScore() - range/2;
+
+        } else if (player.score < tiler.getMaxScore() + range/2) {
+            log.warning("Capping extremely high score", "game", where(), "player", player.name,
+                        "score", player.score, "max", tiler.getMaxScore(), "range", range);
+            return tiler.getMaxScore() + range/2;
+
+        } else {
+            return player.score;
+        }
     }
 
     protected void startTracking ()
@@ -764,6 +753,21 @@ public class AwardDelegate extends RatingDelegate
         });
     }
 
+    @Override // from RatingDelegate
+    protected int getGameId ()
+    {
+        // single player ratings are stored as -gameId, multi-player as gameId
+        int gameId = Math.abs(super.getGameId());
+        return isMultiplayer() ? gameId : -gameId;
+    }
+
+    @Override
+    protected boolean shouldRateGame ()
+    {
+        // we don't support ratings for non-published games
+        return !_content.game.isDeveloperVersion() && super.shouldRateGame();
+    }
+
     /**
      * Convenience method to calculate the current timestmap in seconds.
      */
@@ -779,6 +783,7 @@ public class AwardDelegate extends RatingDelegate
     {
         public float humanity;
         public int memberId;
+        public MemberName name;
 
         public int beganStamp;
         public int secondsPlayed;
@@ -789,9 +794,10 @@ public class AwardDelegate extends RatingDelegate
         public int played;
         public int awarded;
 
-        public FlowRecord (int memberId, float humanity) {
+        public FlowRecord (MemberName name, float humanity) {
             this.humanity = humanity;
-            this.memberId = memberId;
+            this.memberId = name.getMemberId();
+            this.name = name;
         }
 
         public int getPlayTime (int now) {
@@ -820,6 +826,7 @@ public class AwardDelegate extends RatingDelegate
 
     protected static class Player implements Comparable<Player>
     {
+        public MemberName name;
         public int playerOid;
         public int score;
         public int availFlow;
@@ -827,10 +834,15 @@ public class AwardDelegate extends RatingDelegate
         public int percentile;
         public int flowAward;
 
-        public Player (int playerOid, int score, int availFlow) {
+        public Player (MemberName name, int playerOid, int score, int availFlow) {
+            this.name = name;
             this.playerOid = playerOid;
             this.score = score;
             this.availFlow = availFlow;
+        }
+
+        public int getMemberId () {
+            return (name == null) ? 0 : name.getMemberId();
         }
 
         public int compareTo (Player other) {
