@@ -44,6 +44,7 @@ import com.threerings.msoy.world.client.WorldController;
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.data.FurniData;
 
+// TODO: Update this panel to the sexy black theme
 /**
  * A separate room editing panel, which lets the player edit furniture inside the room.
  */
@@ -485,9 +486,10 @@ public class RoomEditorPanel extends FloatingPanel
         spacer.height = 10;
         box.addChild(spacer);
 
-        box.addChild(new CommandCheckBox(Msgs.EDITING.get("l.advanced_editing"),
-                                         _controller.actionAdvancedEditing));
-
+        var ccb :CommandCheckBox = new CommandCheckBox(
+            Msgs.EDITING.get("l.advanced_editing"), _controller.actionAdvancedEditing);
+        ccb.styleName = "oldCheckBox";
+        box.addChild(ccb);
     }
 
     protected static const Y_DELTA :Number = 0.1;

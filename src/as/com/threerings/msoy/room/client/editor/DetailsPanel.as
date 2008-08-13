@@ -142,6 +142,7 @@ public class DetailsPanel extends BasePanel
         // more options below the grid
         
         _noscale = new CheckBox();
+        _noscale.styleName = "oldCheckBox";
         _noscale.label = Msgs.EDITING.get("b.noscale");
         _noscale.toolTip = Msgs.EDITING.get("b.noscale_tip");
         _noscale.addEventListener(Event.CHANGE, applyHandler);
