@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.data;
 
-import com.samskivert.util.HashIntMap;
 import com.samskivert.util.StringUtil;
 import com.threerings.util.ActionScript;
 import com.threerings.util.MessageBundle;
@@ -34,6 +33,9 @@ public enum StatType implements Stat.Type
     UNIQUE_GAMES_PLAYED(new IntSetStat(), true),
     MP_GAMES_WON(new IntStat(), true),
     MP_GAME_PARTNERS(new IntSetStat(), true),
+
+    // shopping stats
+    ITEMS_RATED(new IntStat(), true),
 
     UNUSED(new IntStat());
 
@@ -80,15 +82,4 @@ public enum StatType implements Stat.Type
     protected Stat _prototype;
     protected int _code;
     protected boolean _persist;
-
-    protected static HashIntMap<StatType> _itemsListedStats;
-    protected static HashIntMap<StatType> _itemsSoldStats;
-    protected static HashIntMap<StatType> _itemsPurchasedStats;
-
-    static
-    {
-        _itemsListedStats = new HashIntMap<StatType>();
-        _itemsSoldStats = new HashIntMap<StatType>();
-        _itemsPurchasedStats = new HashIntMap<StatType>();
-    }
 }
