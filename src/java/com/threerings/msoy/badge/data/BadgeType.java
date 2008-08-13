@@ -101,7 +101,7 @@ public enum BadgeType
     // TODO: this whole category is under discussion
 
     // shopping badges
-    OUTSPOKEN(StampCategory.SHOPPING, StatType.WHIRLED_COMMENTS, new Level[] {
+    OUTSPOKEN(StampCategory.SHOPPING, StatType.ITEM_COMMENTS, new Level[] {
         new Level(1, 1000),
         new Level(5, 2000),
         new Level(25, 3000),

@@ -133,9 +133,6 @@ public class CommentServlet extends MsoyServiceServlet
                     entityName = scene.name;
                 }
 
-                // update the member's WHIRLED_COMMENTS stat
-                _statLogic.incrementStat(mrec.memberId, StatType.WHIRLED_COMMENTS, 1);
-
             } else if (etype == Comment.TYPE_PROFILE_WALL) {
                 ownerId = eid;
 
@@ -161,6 +158,12 @@ public class CommentServlet extends MsoyServiceServlet
                     log.warning("unable to load the item commented on [" + etype + ", " + eid +
                         ", " + pe + "]");
                 }
+            }
+
+            // if this is a comment on an item, update the commenter's stat
+            if (etype <= Comment.TYPE_ITEM_MAX && etype >= Comment.TYPE_ITEM_MIN) {
+                // update the member's ITEM_COMMENTS stat
+                _statLogic.incrementStat(mrec.memberId, StatType.ITEM_COMMENTS, 1);
             }
 
             // notify the item creator that a comment was made

@@ -21,7 +21,6 @@ public enum StatType implements Stat.Type
     // social stats
     FRIENDS_MADE(new IntStat(), true),
     INVITES_ACCEPTED(new IntStat(), true),
-    WHIRLED_COMMENTS(new IntStat(), true),
     MINUTES_ACTIVE(new IntStat(), true),
     CONSEC_DAILY_LOGINS(new MaxValueIntStat(), true),
     WHIRLEDS_VISITED(new IntSetStat(), true),
@@ -36,6 +35,7 @@ public enum StatType implements Stat.Type
 
     // shopping stats
     ITEMS_RATED(new IntStat(), true),
+    ITEM_COMMENTS(new IntStat(), true),
 
     UNUSED(new IntStat());
 
