@@ -954,17 +954,6 @@ public class RoomObjectController extends RoomController
         super.checkMouse2(grabAll, allowMovement, setHitter);
     }
 
-    override protected function mouseClicked (event :MouseEvent) :void
-    {
-        // if we're in a featured place view, any click should take the member to this room.
-        if (UberClient.isFeaturedPlaceView()) {
-            _wdctx.getWorldController().handleGoScene(_scene.getId());
-            return;
-        }
-
-        super.mouseClicked(event);
-    }
-
     override protected function requestAvatarMove (newLoc :MsoyLocation) :void
     {
         _wdctx.getSpotSceneDirector().changeLocation(newLoc, null);
