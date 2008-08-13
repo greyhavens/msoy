@@ -471,9 +471,14 @@ public class UploadUtil
         throws IOException
     {
         // convert the uploaded file data into an image object
-        final BufferedImage original = ImageIO.read(uploadFile.getInputStream());
-        if (original == null) {
-            throw new IOException("Invalid image data. Unable to complete upload.");
+        final BufferedImage original;
+        try {
+            original = ImageIO.read(uploadFile.getInputStream());
+            if (original == null) {
+                throw new Exception("Unknown format.");
+            }
+        } catch (Exception e) {
+            throw new IOException("Invalid image data. Unable to complete upload.", e);
         }
 
         // if we're uploading a thumbnail image...
