@@ -573,6 +573,7 @@ public class WorldController extends MsoyController
     {
         if (!displayPageGWT("world", "s" + sceneId)) {
             // fall back to breaking the back button
+            log.info("Can't go to scene via GWT. Going direct to " + sceneId + ".");
             _wctx.getSceneDirector().moveTo(sceneId);
         }
     }
