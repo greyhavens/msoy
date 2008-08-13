@@ -20,9 +20,19 @@ public class FeaturedPlaceUtil
     /**
      * Displays a scene in a mini-world client. The scene will not display chat, and the player
      * will not have an avatar in the scene. Clicking the scene will take the player there.
+     *
+     * @return true if the place was told to display the specified scene, false if we asked the
+     * client to display the scene and it was unable to do so.
      */
     public static boolean displayFeaturedPlace (final int sceneId, final Panel container)
     {
+        // if the client is already there, just tell it to change scenes
+        String flashArgs = "sceneId=" + sceneId + "&featuredPlace=true";
+        if (haveClient("featuredplace")) {
+            return clientGo("featuredplace", flashArgs);
+        }
+
+        // otherwise we may have to look up our default server
         if (_defaultServer == null) {
             _usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
                 public void onSuccess (ConnectConfig config) {
@@ -30,20 +40,28 @@ public class FeaturedPlaceUtil
                     displayFeaturedPlace(sceneId, container);
                 }
             });
-            return;
+            // this isn't strictly correct, but it's mostly correct as long as the above RPC call
+            // doesn't take so long to return that the user clicks "next" and asks us to display a
+            // new featured place before we know about our server
+            return true;
         }
 
-        String flashArgs = "sceneId=" + sceneId + "&featuredPlace=true";
-        if (!clientGo("featuredplace", flashArgs)) {
-            flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port;
-            String partner = CShell.getPartner();
-            if (partner != null) {
-                flashArgs += "&partner=" + partner;
-            }
-            container.clear();
-            FlashClients.embedFeaturedPlaceView(container, flashArgs);
+        flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port;
+        String partner = CShell.getPartner();
+        if (partner != null) {
+            flashArgs += "&partner=" + partner;
         }
+        container.clear();
+        FlashClients.embedFeaturedPlaceView(container, flashArgs);
+        return true;
     }
+
+    /**
+     * Returns the element that represents the Flash client.
+     */
+    protected static native boolean haveClient (String id) /*-{
+        return $doc.getElementById(id) != null;
+    }-*/;
 
     /**
      * Tells the featured place client to go to a particular location.

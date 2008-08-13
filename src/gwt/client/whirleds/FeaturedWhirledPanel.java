@@ -95,11 +95,12 @@ public class FeaturedWhirledPanel extends FlowPanel
         final GroupCard group = _whirleds[_selidx = index];
 
         if (!_showPlaceholder) {
-            FeaturedPlaceUtil.displayFeaturedPlace(group.homeSceneId, _flashPanel);
-        }
+            if (!FeaturedPlaceUtil.displayFeaturedPlace(group.homeSceneId, _flashPanel)) {
+                return; // client not yet ready to switch scenes
+            }
 
-        // display screenshot with click to play button
-        else {
+        } else {
+            // display screenshot with click to play button
             if (_flashPanel.getWidget() != null) {
                 _flashPanel.remove(_flashPanel.getWidget());
             }
