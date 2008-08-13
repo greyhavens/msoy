@@ -16,7 +16,9 @@ import com.samskivert.util.IntMap;
 
 import com.threerings.presents.data.InvocationCodes;
 
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
@@ -156,7 +158,7 @@ public class ItemServlet extends MsoyServiceServlet
 
             // if this is the first time the player has rated this item, increment the stat.
             if (!previouslyRated) {
-                // TODO: stat magic
+                _statLogic.incrementStat(memrec.memberId, StatType.ITEMS_RATED, 1);
             }
 
             // record this player's rating and obtain the new summarized rating
@@ -443,4 +445,5 @@ public class ItemServlet extends MsoyServiceServlet
     @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
     @Inject protected PhotoRepository _photoRepo;
+    @Inject protected StatLogic _statLogic;
 }

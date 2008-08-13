@@ -101,6 +101,17 @@ public enum BadgeType
     // TODO: this whole category is under discussion
 
     // shopping badges
+    JUDGE(StampCategory.SHOPPING, StatType.ITEMS_RATED, new Level[] {
+        new Level(1, 1000),
+        new Level(5, 2000),
+        new Level(25, 3000),
+        new Level(100, 4000),
+        new Level(500, 5000),
+        new Level(2000, 6000)
+        }) {
+        // TODO
+    },
+
     OUTSPOKEN(StampCategory.SHOPPING, StatType.ITEM_COMMENTS, new Level[] {
         new Level(1, 1000),
         new Level(5, 2000),
@@ -112,7 +123,6 @@ public enum BadgeType
         // TODO
     },
 
-    // TODO: Judge - needs an item ratings stat
     // TODO: Shopper - needs an items purchased stat
 
     ;
