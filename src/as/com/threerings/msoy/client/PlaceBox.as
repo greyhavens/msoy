@@ -44,6 +44,9 @@ public class PlaceBox extends LayeredContainer
     /** The layer priority of the trophy award, avatar intro, and chat tip. */
     public static const LAYER_TRANSIENT :int = 50;
 
+    /** The layer priority of the clickable featured place overlay. */
+    public static const LAYER_FEATURED_PLACE :int = 100;
+
     public function PlaceBox ()
     {
         mask = (_mask = new Shape());

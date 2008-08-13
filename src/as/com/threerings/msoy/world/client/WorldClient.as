@@ -39,11 +39,13 @@ import com.threerings.whirled.data.Scene;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.EmbedHeader;
+import com.threerings.msoy.client.FeaturedPlaceOverlay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.MsoyParameters;
+import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.MemberLocation;
@@ -118,29 +120,17 @@ public class WorldClient extends MsoyClient
             loader.load(new URLRequest(url));
             log.info("Loading server info from " + url + ".");
 
-            if (_featuredPlaceView) {
-                // Clicking this embed will send you to Whirled
-                Command.bind(stage, MouseEvent.CLICK, //MsoyController.VIEW_FULL_VERSION);
-                    _wctx.getWorldController().handleViewFullVersion);
-
-            } else {
+            if (!_featuredPlaceView) {
                 _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
             }
 
         } else {
-            if (_featuredPlaceView) {
-                stage.addEventListener(MouseEvent.CLICK, function (... ignored) :void {
-                    const wc :WorldController = _wctx.getWorldController();
-                    var sceneId :int = int(wc.getSceneAndGame()[0]);
-                    if (sceneId == 0) {
-                        // TODO: before falling back to the initial scene, we should try
-                        // any pending scene...
-                        sceneId = int(params["sceneId"]);
-                    }
-                    wc.handleGoScene(sceneId);
-                });
-            }
             logon();
+        }
+
+        if (_featuredPlaceView) {
+            var overlay :FeaturedPlaceOverlay = new FeaturedPlaceOverlay(_ctx);
+            _ctx.getTopPanel().getPlaceContainer().addOverlay(overlay, PlaceBox.LAYER_FEATURED_PLACE);
         }
 
         // if we are actually going right into a game lobby, do that now
