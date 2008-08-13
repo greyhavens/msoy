@@ -427,9 +427,9 @@ public class UploadUtil
     public static MediaInfo publishImage (String mediaId, UploadFile uploadFile)
         throws IOException
     {
-        int size = Item.THUMB_MEDIA.equals(mediaId) ? MediaDesc.THUMBNAIL_SIZE
-            : MediaDesc.PREVIEW_SIZE;
-        return publishImage(size, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT).getMediaInfo();
+        Integer thumbSize = Item.THUMB_MEDIA.equals(mediaId) ? MediaDesc.THUMBNAIL_SIZE : null;
+        return publishImage(thumbSize, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT
+            ).getMediaInfo();
     }
 
     /**
@@ -461,13 +461,12 @@ public class UploadUtil
      * Computes and fills in the constraints on the supplied image, scaling thumbnails as
      * necessary, and publishes the image data to the media store.
      *
-     * @param size the size of the thumbnail to generate, or previewSize to not generate a
-     * thumbnail. Wacky, I know.
+     * @param size the size of the thumbnail to generate, or null to omit the thumbnail.
      *
      * @return a MediaInfo object filled in with the published image info.
      */
-    public static PublishingResult publishImage (Integer thumbSize, UploadFile uploadFile,
-        byte thumbMime, String thumbFormat)
+    public static PublishingResult publishImage (
+        Integer thumbSize, UploadFile uploadFile, byte thumbMime, String thumbFormat)
         throws IOException
     {
         // convert the uploaded file data into an image object
@@ -494,8 +493,8 @@ public class UploadUtil
     /**
      * Publish an image at it's original size and return a publishing result.
      */
-    protected static PublishingResult publishOriginalSize (Integer thumbSize,
-        UploadFile uploadFile, final BufferedImage original)
+    protected static PublishingResult publishOriginalSize (
+        Integer thumbSize, UploadFile uploadFile, final BufferedImage original)
         throws IOException
     {
         // if we haven't yet published our image, do so
@@ -513,8 +512,9 @@ public class UploadUtil
     /**
      * Reduce the size of an image to the specified target size and publish it.
      */
-    protected static PublishingResult publishReducedSize (Integer thumbSize, byte thumbMime,
-        String thumbFormat, final BufferedImage original, Rectangle target)
+    protected static PublishingResult publishReducedSize (
+        Integer thumbSize, byte thumbMime, String thumbFormat, final BufferedImage original,
+        Rectangle target)
         throws IOException
     {
         final BufferedImage thumbnail = resizeImage(thumbFormat, original, target);
@@ -535,8 +535,8 @@ public class UploadUtil
      * Resize a given image to a new set of dimensions. The buffered image will use a sampling
      * model appropriate to the given format so that it can be successfully encoded.
      */
-    private static BufferedImage resizeImage (String format, final BufferedImage image,
-        final Rectangle target)
+    private static BufferedImage resizeImage (
+        String format, final BufferedImage image, final Rectangle target)
         throws IOException
     {
         final BufferedImage timage;
