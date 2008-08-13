@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.client {
+package com.threerings.msoy.world.client {
 
 import flash.display.DisplayObject;
 import flash.display.Sprite;
@@ -9,6 +9,9 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import com.threerings.util.Command;
+
+import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.PlaceLayer;
 
 public class FeaturedPlaceOverlay extends Sprite
     implements PlaceLayer
@@ -23,7 +26,7 @@ public class FeaturedPlaceOverlay extends Sprite
         // Mostly just to get the hand cursor
         buttonMode = true;
 
-        Command.bind(this, MouseEvent.CLICK, MsoyController.FEATURED_PLACE_CLICKED);
+        Command.bind(this, MouseEvent.CLICK, WorldController.FEATURED_PLACE_CLICKED);
     }
 
     public function setPlaceSize (width :Number, height :Number) :void
@@ -36,13 +39,12 @@ public class FeaturedPlaceOverlay extends Sprite
         if (_ctx.getMsoyClient().isEmbedded()) {
             if (_waterMark == null) {
                 _waterMark = new WATER_MARK() as DisplayObject;
-                _waterMark.alpha = 0.5; // Hack until we get a real watermark graphic
                 addChild(_waterMark);
             }
 
-            // Put it in bottom right
-            _waterMark.x = width - _waterMark.width;
-            _waterMark.y = height - _waterMark.height;
+            // Put it in bottom right, with a bit of padding
+            _waterMark.x = width - _waterMark.width - 4;
+            _waterMark.y = height - _waterMark.height - 6;
         }
     }
 
@@ -51,8 +53,7 @@ public class FeaturedPlaceOverlay extends Sprite
 
     protected var _waterMark :DisplayObject;
 
-    // TODO: Get real watermark
-    [Embed(source="../../../../../../rsrc/media/skins/embedheader/logo.jpg")]
+    [Embed(source="../../../../../../../rsrc/media/skins/watermark.png")]
     protected static const WATER_MARK :Class;
 }
 

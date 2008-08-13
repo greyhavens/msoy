@@ -39,7 +39,6 @@ import com.threerings.whirled.data.Scene;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.EmbedHeader;
-import com.threerings.msoy.client.FeaturedPlaceOverlay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;

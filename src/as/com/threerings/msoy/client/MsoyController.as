@@ -115,9 +115,6 @@ public class MsoyController extends Controller
     /** Command to display the full Whirled (used in the embedded client). */
     public static const VIEW_FULL_VERSION :String = "ViewFullVersion";
 
-    /** Command to invoke when the featured place was clicked. */
-    public static const FEATURED_PLACE_CLICKED :String = "FeaturedPlaceClicked";
-
     /** Command to go to a running game (gameId + placeOid). */
     public static const GO_GAME :String = "GoGame";
 

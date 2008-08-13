@@ -175,6 +175,9 @@ public class WorldController extends MsoyController
     /** Command to promote a partymate to leader. */
     public static const PROMOTE_PARTYMATE :String = "PromotePartymate";
 
+    /** Command to invoke when the featured place was clicked. */
+    public static const FEATURED_PLACE_CLICKED :String = "FeaturedPlaceClicked";
+
     public function WorldController (ctx :WorldContext, topPanel :TopPanel)
     {
         super(ctx, topPanel);
