@@ -586,7 +586,7 @@ public class MemberManager
                 String from = (sender == null) ?
                     "no-reply@whirled.com" : sender.accountName;
                 String name = (sender == null) ? null : sender.name;
-                String url = ServerConfig.getServerURL() + "/";
+                String url = ServerConfig.getServerURL();
                 if (sceneId != 0) {
                     url += "#world-s" + sceneId;
                 } else if (gameId != 0) {
@@ -594,7 +594,7 @@ public class MemberManager
                 }
                 for (String recip : emails) {
                     MailSender.sendEmail(recip, from, "shareInvite", "name", name,
-                        "message", message, "link", url);
+                                         "message", message, "link", url);
                 }
             }
 

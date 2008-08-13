@@ -220,9 +220,9 @@ public class CommentServlet extends MsoyServiceServlet
             }
             String link = ServerConfig.getServerURL();
             if (etype >= Comment.TYPE_ITEM_MIN && etype <= Comment.TYPE_ITEM_MAX) {
-                link += "/#shop-l_" + etype + "_" + eid;
+                link += "#shop-l_" + etype + "_" + eid;
             } else if (etype == Comment.TYPE_ROOM) {
-                link += "/#world-room_" + eid;
+                link += "#world-room_" + eid;
             } else {
                 link = null;
             }

@@ -148,11 +148,12 @@ public class ServerConfig
     }
 
     /**
-     * Returns a URL that can be used to make HTTP requests from this server.
+     * Returns a URL that can be used to make HTTP requests from this server. The returned URL will
+     * not need a slash appended to it.
      */
     public static String getServerURL ()
     {
-        String defurl = "http://" + serverHost + (httpPort != 80 ? ":" + httpPort : "");
+        String defurl = "http://" + serverHost + (httpPort != 80 ? ":" + httpPort : "") + "/";
         return config.getValue("server_url", defurl);
     }
 

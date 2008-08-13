@@ -119,7 +119,7 @@ public class InviteServlet extends MsoyServiceServlet
                 pending.add(iRec.toInvitation(mrec.getName()));
             }
             result.pendingInvitations = pending;
-            result.serverUrl = ServerConfig.getServerURL() + "/#invite-";
+            result.serverUrl = ServerConfig.getServerURL() + "#invite-";
             return result;
 
         } catch (PersistenceException pe) {

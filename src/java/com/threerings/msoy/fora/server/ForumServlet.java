@@ -497,7 +497,7 @@ public class ForumServlet extends MsoyServiceServlet
             }
             _supportLogic.addMessageComplaint(
                 mrec.getName(), fmr.posterId, fmr.message, complaint,
-                ServerConfig.getServerURL() + "/#whirleds-t_" + fmr.threadId);
+                ServerConfig.getServerURL() + "#whirleds-t_" + fmr.threadId);
         } catch (PersistenceException pe) {
             log.warning("Failed to complain message [for=" + who(mrec) +
                     ", mid=" + messageId + "].", pe);

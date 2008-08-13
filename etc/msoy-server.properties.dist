@@ -9,7 +9,8 @@
 dev_deployment = true
 
 #
-# The public URL that should be used to access this Whirled installation
+# The public URL that should be used to access this Whirled installation. This
+# URL *must* end in a slash.
 
 # server_url = http://www.whirled.com
 
@@ -107,6 +108,7 @@ server_root = /export/msoy
 #
 # Defines the directory into which uploaded media will be stored (in addition
 # to S3, if that is enabled) and the URL from which media will be downloaded.
+# These URLs *must* end in a slash.
 
 media_dir = /export/msoy/pages/media
 media_url = http://localhost:8080/media/
