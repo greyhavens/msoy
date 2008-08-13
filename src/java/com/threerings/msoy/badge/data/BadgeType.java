@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.badge.data;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.zip.CRC32;
 
@@ -160,6 +161,20 @@ public enum BadgeType
     }
 
     /**
+     * Returns a set of the badges that depend on the given stat.  When that stat is changed, the
+     * party responsible for the change should call this method and find out what badges potentially
+     * need updating.
+     */
+    public static HashSet<BadgeType> getDependantBadges (StatType stat)
+    {
+        if (stat != null) {
+            return _statDependencies.get(stat.code());
+        }
+
+        return null;
+    }
+
+    /**
      * Badge types can override this to apply constraints to Badges (e.g., only unlocked when
      * another badge is earned.)
      */
@@ -271,6 +286,24 @@ public enum BadgeType
 
         for (BadgeType type : BadgeType.values()) {
             type._code = mapCodeForType(type);
+            mapStatDependencies(type);
+        }
+    }
+
+    protected static void mapStatDependencies (BadgeType type)
+    {
+        if (_statDependencies == null) {
+            _statDependencies = new HashIntMap<HashSet<BadgeType>>();
+        }
+
+        StatType stat = type.getRelevantStat();
+        if (stat != null) {
+            int code = stat.code();
+            HashSet<BadgeType> dependantTypes = _statDependencies.get(code);
+            if (dependantTypes == null) {
+                _statDependencies.put(code, dependantTypes = new HashSet<BadgeType>());
+            }
+            dependantTypes.add(type);
         }
     }
 
@@ -302,6 +335,9 @@ public enum BadgeType
 
     /** The table mapping stat codes to enumerated types. */
     protected static HashIntMap<BadgeType> _codeToType;
+
+    /** The mapping of stats to the badges that depend on them. */
+    protected static HashIntMap<HashSet<BadgeType>> _statDependencies;
 
     protected static CRC32 _crc;
 };
