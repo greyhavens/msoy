@@ -479,7 +479,7 @@ public class UploadUtil
             }
         } catch (Exception e) {
             String errmsg = "Invalid image data. Unable to complete upload.";
-            throw (IOException)new IOException().initCause(e);
+            throw (IOException)new IOException(errmsg).initCause(e);
         }
 
         // if we're uploading a thumbnail image...
