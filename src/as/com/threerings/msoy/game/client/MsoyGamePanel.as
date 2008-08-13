@@ -90,9 +90,10 @@ public class MsoyGamePanel extends WhirledGamePanel
     public function displayGameOverCoinAward (
         forReal :Boolean, coins :int, hasCookie :Boolean) :void
     {
-        createGameOverPanel();
-        _gameOverPanel.displayCoinAward(forReal, coins, hasCookie);
-        // but do not yet open the panel...
+// TODO: sort out game-over panel
+//        createGameOverPanel();
+//        _gameOverPanel.displayCoinAward(forReal, coins, hasCookie);
+//        // but do not yet open the panel...
     }
 
     // from WhirledGamePanel
@@ -206,16 +207,27 @@ public class MsoyGamePanel extends WhirledGamePanel
 
     override protected function displayGameOver (gameOver :Boolean) :void
     {
-        if (gameOver) {
-            createGameOverPanel();
-            if (!_gameOverPanel.isOpen()) {
-                _gameOverPanel.open();
-            }
-
-        } else if (_gameOverPanel != null) {
-            _gameOverPanel.close();
-            _gameOverPanel = null;
+        if (gameOver == (_rematch.parent != null)) {
+            return;
         }
+        if (gameOver) {
+            _gctx.getMsoyContext().getTopPanel().getControlBar().addCustomComponent(_rematch);
+
+        } else {
+            _rematch.parent.removeChild(_rematch);
+        }
+
+// TODO: sort out game-over panel
+//        if (gameOver) {
+//            createGameOverPanel();
+//            if (!_gameOverPanel.isOpen()) {
+//                _gameOverPanel.open();
+//            }
+//
+//        } else if (_gameOverPanel != null) {
+//            _gameOverPanel.close();
+//            _gameOverPanel = null;
+//        }
     }
 
     protected function createGameOverPanel () :void

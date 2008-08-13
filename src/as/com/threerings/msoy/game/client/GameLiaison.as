@@ -222,8 +222,9 @@ public class GameLiaison
             const forReal :Boolean = Boolean(args[2]);
             const hasCookie :Boolean = Boolean(args[3]);
             const gamePanel :MsoyGamePanel = getMsoyGamePanel();
-            if (forReal && _gctx.getPlayerObject().isGuest() &&
-                    gamePanel.getController().isParty()) {
+            if (forReal && _gctx.getPlayerObject().isGuest() /*&&
+// TODO: sort out game-over panel
+                    gamePanel.getController().isParty()*/) {
                 // if a guest earns flow, we want to show them the "please register" dialog
                 displayGuestFlowEarnage(coins, hasCookie);
             }
