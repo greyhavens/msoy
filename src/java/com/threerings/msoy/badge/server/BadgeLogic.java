@@ -4,7 +4,10 @@
 package com.threerings.msoy.badge.server;
 
 import java.sql.Timestamp;
+import java.util.Collections;
+import java.util.List;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
@@ -84,7 +87,7 @@ public class BadgeLogic
      * Creates or updates an InProgressBadge for the specified member.
      */
     public void updateInProgressBadge (InProgressBadgeRecord brec, boolean sendMemberNodeAction)
-    throws PersistenceException
+        throws PersistenceException
     {
         _badgeRepo.storeInProgressBadge(brec);
 
@@ -120,22 +123,23 @@ public class BadgeLogic
      * @return a List of BadgeTypes. The list will have maxBadges entries, unless there aren't
      * enough badges left for the player to pursue.
      */
-    /*public List<BadgeType> getNextBadges (int memberId, int maxBadges)
+    public List<InProgressBadge> getNextBadges (int memberId, int maxBadges)
+        throws PersistenceException
     {
-        List<BadgeType> nextBadges = Lists.newArrayList();
-        for (BadgeType badgeType : BadgeType.values()) {
-            if (!user.badges.containsBadge(badgeType) && badgeType.isUnlocked(user)) {
-                nextBadges.add(badgeType);
+        List<InProgressBadge> nextBadges = Lists.newArrayList();
+
+        // Read in our in-progress badges and choose a number of them randomly
+        List<InProgressBadgeRecord> badgeRecords = _badgeRepo.loadInProgressBadges(memberId);
+        if (!badgeRecords.isEmpty()) {
+            Collections.shuffle(badgeRecords);
+            badgeRecords = badgeRecords.subList(0, Math.min(maxBadges, badgeRecords.size()));
+            for (InProgressBadgeRecord brec : badgeRecords) {
+                nextBadges.add(brec.toBadge());
             }
         }
 
-        if (!nextBadges.isEmpty()) {
-            Collections.shuffle(nextBadges);
-            nextBadges = nextBadges.subList(0, Math.min(maxBadges, nextBadges.size()));
-        }
-
         return nextBadges;
-    }*/
+    }
 
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected FeedRepository _feedRepo;
