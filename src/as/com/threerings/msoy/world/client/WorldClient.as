@@ -133,6 +133,8 @@ public class WorldClient extends MsoyClient
                     const wc :WorldController = _wctx.getWorldController();
                     var sceneId :int = int(wc.getSceneAndGame()[0]);
                     if (sceneId == 0) {
+                        // TODO: before falling back to the initial scene, we should try
+                        // any pending scene...
                         sceneId = int(params["sceneId"]);
                     }
                     wc.handleGoScene(sceneId);
