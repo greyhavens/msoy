@@ -491,6 +491,24 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the FEATURED_PLACE_CLICKED command.
+     */
+    public function handleFeaturedPlaceClicked () :void
+    {
+        if (_wctx.getMsoyClient().isEmbedded()) {
+            handleViewFullVersion();
+        } else {
+            var sceneId :int = int(getSceneAndGame()[0]);
+            if (sceneId == 0) {
+                // TODO: before falling back to the initial scene, we should try
+                // any pending scene...
+                sceneId = int(MsoyParameters.get()["sceneId"]);
+            }
+            handleGoScene(sceneId);
+        }
+    }
+
+    /**
      * Handles the VIEW_GAME command.
      */
     public function handleViewGame (gameId :int) :void

@@ -23,7 +23,7 @@ public class FeaturedPlaceOverlay extends Sprite
         // Mostly just to get the hand cursor
         buttonMode = true;
 
-        Command.bind(this, MouseEvent.CLICK, MsoyController.VIEW_FULL_VERSION);
+        Command.bind(this, MouseEvent.CLICK, MsoyController.FEATURED_PLACE_CLICKED);
     }
 
     public function setPlaceSize (width :Number, height :Number) :void
