@@ -898,7 +898,7 @@ BasePanel {
 }
 
 .headerBar {
-  backgroundImage: Embed(source="../../rsrc/media/skins/headerbar_bg.png");
+  backgroundImage: Embed(source="../../rsrc/media/skins/headerbar/bg.png");
   backgroundSize: "100%";
 }
 
