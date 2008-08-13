@@ -129,8 +129,14 @@ public class WorldClient extends MsoyClient
 
         } else {
             if (_featuredPlaceView) {
-                Command.bind(stage, MouseEvent.CLICK, _wctx.getWorldController().handleGoScene,
-                    int(params["sceneId"]));
+                stage.addEventListener(MouseEvent.CLICK, function (... ignored) :void {
+                    const wc :WorldController = _wctx.getWorldController();
+                    var sceneId :int = int(wc.getSceneAndGame()[0]);
+                    if (sceneId == 0) {
+                        sceneId = int(params["sceneId"]);
+                    }
+                    wc.handleGoScene(sceneId);
+                });
             }
             logon();
         }
