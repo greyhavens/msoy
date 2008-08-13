@@ -59,20 +59,17 @@ public class UploadUtil
         public final int height;
 
         // a "blank" thumbnail
-        public MediaInfo ()
-        {
+        public MediaInfo () {
             this("", (byte)0);
         }
 
         // for non image data
-        public MediaInfo (String hash, byte mimeType)
-        {
+        public MediaInfo (String hash, byte mimeType) {
             this(hash, mimeType, (byte)0, 0, 0);
         }
 
         // for image data
-        public MediaInfo (String hash, byte mimeType, byte constraint, int width, int height)
-        {
+        public MediaInfo (String hash, byte mimeType, byte constraint, int width, int height) {
             this.hash = hash;
             this.mimeType = mimeType;
             this.constraint = constraint;
@@ -81,8 +78,7 @@ public class UploadUtil
         }
 
         // for thumbnails
-        public MediaInfo (MediaInfo other, byte constraint)
-        {
+        public MediaInfo (MediaInfo other, byte constraint) {
             hash = other.hash;
             mimeType = other.mimeType;
             this.constraint = constraint;
@@ -101,97 +97,86 @@ public class UploadUtil
     {
         public final byte[] hash;
         public final byte type;
-        
-        public SnapshotInfo(byte[] hash, byte type)
-        {
+
+        public SnapshotInfo (byte[] hash, byte type) {
             this.hash = hash;
             this.type = type;
         }
-        
+
         public String toString () {
-            return "SnapshotInfo: hash=" + hash + ", mimeType = "+type;
+            return "SnapshotInfo: hash=" + hash + ", mimeType = " + type;
         }
     }
-    
+
     /**
      * Container class for information about the canonical snapshot images - both standard size
      * and minimized.
      */
-    public static class CanonicalSnapshotInfo 
+    public static class CanonicalSnapshotInfo
     {
         public final SnapshotInfo canonical;
         public final SnapshotInfo thumbnail;
 
-        public CanonicalSnapshotInfo(SnapshotInfo canonical, SnapshotInfo thumbnail) 
-        {
+        public CanonicalSnapshotInfo (SnapshotInfo canonical, SnapshotInfo thumbnail) {
             this.canonical = canonical;
             this.thumbnail = thumbnail;
-        }        
+        }
     }
-    
+
     /**
      * Simple class to represent a 2 dimensional size.
      */
-    protected static class Rectangle 
+    protected static class Rectangle
     {
         public final int width;
         public final int height;
-        
+
         /**
          * Create a dimensions object from integer sizes.
          * @param width the width
          * @param height the height
          */
-        public Rectangle(int width, int height)
-        {
+        public Rectangle (int width, int height) {
             this.width = width;
             this.height = height;
         }
-        
+
         /**
          * Create a dimensions object from a buffered image.
          */
-        public Rectangle(BufferedImage image) 
-        {
+        public Rectangle (BufferedImage image) {
             this.width = image.getWidth();
             this.height = image.getHeight();
         }
-        
+
         /**
          * Returns true if this dimension covers the one passed in.
          */
-        public boolean covers (Rectangle d) 
-        {
+        public boolean covers (Rectangle d) {
             return (this.width > d.width && this.height > d.height);
         }
     }
-    
+
     /**
      * Utility class to encapsulate the hash / digest creation process which is used at multiple
      * points in this method.
      */
-    protected static class Digester 
-    {        
-        public MessageDigest digest;
-        protected String hex;
-
-        public Digester () 
-        {
+    protected static class Digester
+    {
+        public Digester () {
             try {
-                digest = MessageDigest.getInstance("SHA");
+                _digest = MessageDigest.getInstance("SHA");
             } catch (NoSuchAlgorithmException nsa) {
                 throw new RuntimeException(nsa.getMessage());
             }
         }
-        
+
         /**
          * Provides an output stream to write the data to be digested to.
          */
-        public OutputStream getOutputStream () 
-        {
+        public OutputStream getOutputStream () {
             _bout = new ByteArrayOutputStream();
-            final DigestOutputStream digout = new DigestOutputStream(_bout, digest);
-            return digout;
+            return new DigestOutputStream(_bout, _digest);
         }
 
         /**
@@ -199,109 +184,100 @@ public class UploadUtil
          * this method, the digest is ready and the data can be read again from the outputstream
          * of the digester.
          */
-        public void digest (InputStream inputStream) 
-            throws IOException
-        {         
+        public void digest (InputStream inputStream) throws IOException {
             IOUtils.copy(inputStream, getOutputStream());
             close();
         }
-        
+
         /**
          * Closes the output stream used to pass data into the digester, finalizing the data.
          */
-        public void close () 
-            throws IOException 
-        {
+        public void close () throws IOException {
             if (_bout != null) {
-                _bout.close();                
+                _bout.close();
             }
         }
-        
+
         /**
          * Provides an input stream for the digested data, which should be identical to the data
          * that was written to the output stream.
          */
-        public InputStream getInputStream () 
-        {
-            final ByteArrayInputStream bin = new ByteArrayInputStream(_bout.toByteArray());
-            return bin;
+        public InputStream getInputStream () {
+            return new ByteArrayInputStream(_bout.toByteArray());
         }
-        
+
         /**
          * Return the hash as a hexadecimal string.
          */
-        public String hexHash () 
-        {
-            if (hex != null) {
-                return hex;
+        public String hexHash () {
+            if (_hex == null) {
+                _hex = StringUtil.hexlate(_digest.digest());
             }
-            hex = StringUtil.hexlate(digest.digest());
-            return hex;
+            return _hex;
         }
-        
-        protected ByteArrayOutputStream _bout;
 
         /**
          * Return the raw bytes of the hash.
          */
-        public byte[] binaryHash ()
-        {
-            return digest.digest();
+        public byte[] binaryHash () {
+            return _digest.digest();
         }
+
+        protected ByteArrayOutputStream _bout;
+        protected String _hex;
+        protected MessageDigest _digest;
     }
 
     /**
      * Intermediate representation of the results of publishing an image. Used to convert the
      * results into various formats required by different consumers.
      */
-    protected static class PublishingResult 
+    protected static class PublishingResult
     {
         public final Integer thumbSize;
         public final Rectangle originalSize;
         public final Rectangle finalSize;
         public final byte mimeType;
         public final Digester digester;
-        
+
         /**
          * Create a publishing result.
-         * 
+         *
          * @param originalSize The original size of the image.
-         * @param finalSize The final size of the image - will be the same as the original if the image has not been resized.
-         * @param thumbSize The integer thumbnail size number from MediaDesc- not a pixel size. 
+         * @param finalSize The final size of the image - will be the same as the original if the
+         * image has not been resized.
+         * @param thumbSize The integer thumbnail size number from MediaDesc- not a pixel size.
          * @param mimeType The mime-type of the final image.
          * @param digester The digester used to compute the hash of what's been uploaded.
          */
         public PublishingResult (Rectangle originalSize, Rectangle finalSize, Integer thumbSize,
-                byte mimeType, Digester digester)
-        {
+                byte mimeType, Digester digester) {
             this.thumbSize = thumbSize;
             this.originalSize = originalSize;
             this.finalSize = finalSize;
             this.mimeType = mimeType;
             this.digester = digester;
         }
-        
+
         /**
          * Convert the result into a MediaInfo object.
          */
         public MediaInfo getMediaInfo () {
             int constraintSize = thumbSize == null ? MediaDesc.PREVIEW_SIZE : thumbSize.intValue();
-
-            byte constraint = MediaDesc.computeConstraint(constraintSize, originalSize.width,
-                originalSize.height);
-
-            return new MediaInfo(digester.hexHash(), mimeType, constraint,
-                finalSize.width, finalSize.height);
+            byte constraint = MediaDesc.computeConstraint(
+                constraintSize, originalSize.width, originalSize.height);
+            return new MediaInfo(digester.hexHash(), mimeType, constraint, finalSize.width,
+                finalSize.height);
         }
-        
+
         /**
          * Convert the result into a SnapshotInfo object.
          */
         public SnapshotInfo getSnapshotInfo () {
-            return new SnapshotInfo (digester.binaryHash(), mimeType);
+            return new SnapshotInfo(digester.binaryHash(), mimeType);
         }
     }
-    
+
     /**
      * Publishes an InputStream to the default media store location, using the hash and the
      * mimeType of the stream.
@@ -320,16 +296,16 @@ public class UploadUtil
      * name of the stream (usually its hash) and a supplied mime type. Currently this is to the
      * filesystem first, and then s3 if enabled. A map of headers to be added to the s3 object may
      * be supplied.
-     * 
+     *
      * @return MediaInfo Note that the dimensions and constraint will be zero in the returned
      * MediaInfo object because the image is not decoded.
      */
     protected static void publishStream (InputStream input, String subdirectory, String name,
-                                      String mimeType, byte mime, Map<String,String> headers)
+        String mimeType, byte mime, Map<String, String> headers)
         throws IOException
     {
         // copy the uploaded file data to the local file system media store. eventually we will
-        // only be keeping a local file on developer's machines        
+        // only be keeping a local file on developer's machines
         final File target = copyStreamToFile(input, subdirectory, name);
 
         // ALSO publish to s3 if enabled
@@ -341,7 +317,7 @@ public class UploadUtil
 
     /**
      * Copy the supplied input stream to a file in the specified subdirectory with the specified
-     * name.  If null is supplied as the subdirectory, a default is used, and if the subdirectory
+     * name. If null is supplied as the subdirectory, a default is used, and if the subdirectory
      * specified does not exist, an attempt is made to create it.
      */
     private static File copyStreamToFile (InputStream input, String subdirectory, String name)
@@ -352,7 +328,7 @@ public class UploadUtil
         // if a subdirectory was specified, set that as the new location, and make sure it exists
         if (subdirectory != null) {
             location = new File(ServerConfig.mediaDir, subdirectory);
-            if (! location.exists()) {
+            if (!location.exists()) {
                 location.mkdir();
             }
         }
@@ -366,21 +342,20 @@ public class UploadUtil
     /**
      * Copy the supplied file to S3
      */
-    protected static boolean copyFileToS3 (
-        File file, String mimeType, String name, String subdirectory, Map<String, String> headers)
+    protected static boolean copyFileToS3 (File file, String mimeType, String name,
+        String subdirectory, Map<String, String> headers)
         throws IOException
     {
         try {
-            S3Connection conn = new S3Connection(
-                ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
+            S3Connection conn = new S3Connection(ServerConfig.mediaS3Id, ServerConfig.mediaS3Key);
             S3FileObject uploadTarget = new S3FileObject(name, file, mimeType);
 
-            if (headers == null ) {
+            if (headers == null) {
                 headers = Collections.emptyMap();
             }
 
             conn.putObject(ServerConfig.mediaS3Bucket, uploadTarget,
-                           AccessControlList.StandardPolicy.PUBLIC_READ, headers);
+                AccessControlList.StandardPolicy.PUBLIC_READ, headers);
 
             log.info("Uploaded media to S3 [bucket=" + ServerConfig.mediaS3Bucket +
                      ", name=" + name + "].");
@@ -402,8 +377,7 @@ public class UploadUtil
 
     /**
      * Publishes a canonical scene snapshot, saving both a standard size image, and a reduced size
-     * thumbnail.  Both are saved under their respective hashes.
-     * @return 
+     * thumbnail. Both are saved under their respective hashes.
      */
     public static CanonicalSnapshotInfo publishSnapshot (SnapshotUploadFile uploadFile)
         throws IOException
@@ -414,27 +388,26 @@ public class UploadUtil
         SnapshotInfo canonicalInfo = publishCanonicalImage(uploadFile);
 
         // publish a reduced sized version of the image
-        SnapshotInfo thumbInfo =
-            publishImage(MediaDesc.SNAPSHOT_THUMB_SIZE, uploadFile,
+        SnapshotInfo thumbInfo = publishImage(MediaDesc.SNAPSHOT_THUMB_SIZE, uploadFile,
             uploadFile.getMimeType(), "jpg").getSnapshotInfo();
-     
+
         return new CanonicalSnapshotInfo(canonicalInfo, thumbInfo);
     }
 
     /**
      * Publish the canonical image at it's predefined size.
      */
-    protected static SnapshotInfo publishCanonicalImage (SnapshotUploadFile uploadFile) 
-        throws IOException 
+    protected static SnapshotInfo publishCanonicalImage (SnapshotUploadFile uploadFile)
+        throws IOException
     {
         Digester digester = new Digester();
         digester.digest(uploadFile.getInputStream());
-        
+
         publishStreamAsHash(digester.getInputStream(), digester.hexHash(),
             uploadFile.getMimeType());
-        return new SnapshotInfo(digester.binaryHash(), uploadFile.getMimeType());        
+        return new SnapshotInfo(digester.binaryHash(), uploadFile.getMimeType());
     }
-    
+
     /**
      * Publishes an UploadFile to the media store.
      */
@@ -456,8 +429,7 @@ public class UploadUtil
     {
         int size = Item.THUMB_MEDIA.equals(mediaId) ? MediaDesc.THUMBNAIL_SIZE
             : MediaDesc.PREVIEW_SIZE;
-        return publishImage(
-            size, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT).getMediaInfo();
+        return publishImage(size, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT).getMediaInfo();
     }
 
     /**
@@ -466,14 +438,16 @@ public class UploadUtil
      */
     protected static Rectangle needsResizing (Integer thumbSize, BufferedImage image)
     {
-        if (thumbSize == null) return null;
+        if (thumbSize == null) {
+            return null;
+        }
         Rectangle target = thumbnailDimensions(thumbSize);
-        if (! target.covers(new Rectangle(image))) {
+        if (!target.covers(new Rectangle(image))) {
             return target;
         }
-        return null;        
+        return null;
     }
-    
+
     /**
      * Return the dimensions of a given thumbnail size.
      */
@@ -482,17 +456,17 @@ public class UploadUtil
         return new Rectangle(MediaDesc.DIMENSIONS[thumbSize * 2],
             MediaDesc.DIMENSIONS[thumbSize * 2 + 1]);
     }
-    
+
     /**
      * Computes and fills in the constraints on the supplied image, scaling thumbnails as
      * necessary, and publishes the image data to the media store.
      *
-     * @param size the size of the thumbnail to generate, or previewSize to
-     * not generate a thumbnail. Wacky, I know.
+     * @param size the size of the thumbnail to generate, or previewSize to not generate a
+     * thumbnail. Wacky, I know.
      *
      * @return a MediaInfo object filled in with the published image info.
      */
-     public static PublishingResult publishImage (Integer thumbSize, UploadFile uploadFile,
+    public static PublishingResult publishImage (Integer thumbSize, UploadFile uploadFile,
         byte thumbMime, String thumbFormat)
         throws IOException
     {
@@ -514,8 +488,8 @@ public class UploadUtil
     /**
      * Publish an image at it's original size and return a publishing result.
      */
-    protected static PublishingResult publishOriginalSize (Integer thumbSize, UploadFile uploadFile,
-        final BufferedImage original)
+    protected static PublishingResult publishOriginalSize (Integer thumbSize,
+        UploadFile uploadFile, final BufferedImage original)
         throws IOException
     {
         // if we haven't yet published our image, do so
@@ -524,10 +498,10 @@ public class UploadUtil
         digester.digest(uploadFile.getInputStream());
         publishStreamAsHash(digester.getInputStream(), digester.hexHash(),
             uploadFile.getMimeType());
-        
+
         Rectangle originalSize = new Rectangle(original);
         return new PublishingResult(originalSize, originalSize, thumbSize,
-            uploadFile.getMimeType(), digester);        
+            uploadFile.getMimeType(), digester);
     }
 
     /**
@@ -548,7 +522,7 @@ public class UploadUtil
         publishStreamAsHash(digester.getInputStream(), digester.hexHash(), thumbMime);
 
         return new PublishingResult(new Rectangle(original), target, thumbSize, thumbMime,
-            digester);        
+            digester);
     }
 
     /**
@@ -590,7 +564,7 @@ public class UploadUtil
     {
         final Integer found = samplingModels.get(informalName.toLowerCase());
         if (found == null) {
-            throw new IOException("image sampling model not known for format: "+informalName);
+            throw new IOException("image sampling model not known for format: " + informalName);
         }
         return found;
     }
@@ -599,16 +573,15 @@ public class UploadUtil
      * Mapping of informal image format names to buffer sample mode.
      */
     protected static final Map<String, Integer> samplingModels = ImmutableMap.of(
-            "jpg", BufferedImage.TYPE_INT_RGB,
-            "jpeg", BufferedImage.TYPE_INT_RGB,
-            "png", BufferedImage.TYPE_INT_ARGB,
-            "tiff", BufferedImage.TYPE_INT_ARGB
-        );
+        "jpg", BufferedImage.TYPE_INT_RGB,
+        "jpeg", BufferedImage.TYPE_INT_RGB,
+        "png", BufferedImage.TYPE_INT_ARGB,
+        "tiff", BufferedImage.TYPE_INT_ARGB);
 
     protected static final byte THUMBNAIL_MIME_TYPE = MediaDesc.IMAGE_PNG;
     protected static final String THUMBNAIL_IMAGE_FORMAT = "PNG";
 
     // Effectively 'never' expire date.
-    protected static final Map<String,String> EXPIRES_2038 =
+    protected static final Map<String, String> EXPIRES_2038 =
         ImmutableMap.of("Expires", "Sun, 17 Jan 2038 19:14:07 GMT");
 }
