@@ -5,7 +5,6 @@
 for FILE in `find src/gwt -name '*Messages.java'`; do
     if [ "$FILE" != "src/gwt/client/shell/DynamicMessages.java" -a \
         "$FILE" != "src/gwt/client/shell/ServerMessages.java" ]; then
-        echo Fixing $FILE
         grep -v gwt.key $FILE > $FILE.new
         mv $FILE.new $FILE
     fi
