@@ -40,6 +40,8 @@ import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
 import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
 
+import com.threerings.msoy.data.StatType;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -270,7 +272,11 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Currently logged in bureau launchers. */
     protected HashIntMap<ClientObject> _launchers = new HashIntMap<ClientObject>();
-    
+
+    /** This is needed to ensure that the StatType enum's static initializer runs before anything
+     * else in the server that might rely on stats runs. */
+    protected static final StatType STAT_TRIGGER = StatType.UNUSED;
+
     /** Time to wait for bureaus to connect back. */
     protected static final int BUREAU_TIMEOUT = 30 * 1000;
 }

@@ -134,8 +134,6 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.accFlow = member.accFlow;
         userObj.level = member.level;
 
-        // Ensure that the StatType enum is loaded before StatRepo.loadStats() is called
-        @SuppressWarnings("unused") StatType dummy = StatType.UNUSED;
         // load up this member's persistent stats
         List<Stat> stats = _statRepo.loadStats(member.memberId);
         userObj.stats = new ServerStatSet(stats.iterator(), _badgeMan, userObj);
