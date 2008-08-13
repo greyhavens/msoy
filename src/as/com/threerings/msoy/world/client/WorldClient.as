@@ -20,6 +20,7 @@ import mx.core.Application;
 
 import com.adobe.crypto.MD5;
 
+import com.threerings.util.Command;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
@@ -119,9 +120,8 @@ public class WorldClient extends MsoyClient
 
             if (_featuredPlaceView) {
                 // Clicking this embed will send you to Whirled
-                stage.addEventListener(MouseEvent.CLICK, function (... _) :void {
-                    _wctx.getWorldController().handleViewFullVersion();
-                });
+                Command.bind(stage, MouseEvent.CLICK, //MsoyController.VIEW_FULL_VERSION);
+                    _wctx.getWorldController().handleViewFullVersion);
             } else {
                 _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
             }
