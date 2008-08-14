@@ -31,13 +31,13 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.flash.DisplayUtil;
 
-import com.threerings.parlor.game.data.GameObject;
-
 import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
 import com.threerings.msoy.chat.client.MsoyChatDirector;
+
+import com.threerings.msoy.game.client.MsoyGamePanel;
 
 public class TopPanel extends Canvas
     implements LocationObserver
@@ -522,7 +522,12 @@ public class TopPanel extends Canvas
         var left :int = 0;
         var right :int = 0;
         if (_chat != null) {
-            left += _chatBounds.width + CHAT_PADDING;
+            // TODO
+            // This is total hackery, we shouldn't have to do this.
+            if (!(_placeBox.getPlaceView() is MsoyGamePanel)) {
+                left += _chatBounds.width + CHAT_PADDING;
+            }
+            // END: TODO
             w -= _chatBounds.width + CHAT_PADDING;
             _chat.setStyle("top", top);
             _chat.setStyle("bottom", bottom);
