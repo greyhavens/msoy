@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.person.server;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -171,19 +170,20 @@ public class MeServlet extends MsoyServiceServlet
                 data.stamps.put(category, Lists.newArrayList(
                     Iterables.filter(stamps, new FilterByCategory(category))));
             }
+            return data;
+
         } catch (PersistenceException pe) {
             log.warning("Loading badges failed ", "memberId", mrec.memberId, pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
-        return data;
     }
 
     // from interface MeService
     public List<Badge> loadAllBadges ()
         throws ServiceException
     {
-        long now = (new Date()).getTime();
-        List<Badge> badges = new ArrayList<Badge>();
+        long now = System.currentTimeMillis();
+        List<Badge> badges = Lists.newArrayList();
         for (BadgeType type : BadgeType.values()) {
             int code = type.getCode();
             for (int ii = 0; ii < type.getNumLevels(); ii++) {
