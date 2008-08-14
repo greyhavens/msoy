@@ -15,12 +15,12 @@ class Connections
     /**
      * Time that a server will be blacklisted after a logon failure.
      */
-    public static long CLIENT_RENEW_TIME = 60000;
+    public static long CLIENT_RENEW_TIME = 15 * 1000;
 
     /**
      * Time between checks to renew (unblacklist) servers.
      */
-    protected static long CLIENT_RENEW_INTERVAL = 60000;
+    protected static long CLIENT_RENEW_INTERVAL = 15 * 1000;
 
     /**
      * Creates a new set of clients that will be created using the given launcher.
@@ -117,7 +117,7 @@ class Connections
         {
             Entry entry = getEntry(client, "failure to logon", State.PENDING);
             if (entry != null) {
-                log.warning("Client failed to logon", "entry", entry, cause);
+                log.info("Client failed to logon", "entry", entry, cause);
                 entry.setState(State.FAILED);
             }
         }

@@ -315,13 +315,13 @@ public class BureauLauncher
     @Inject protected NodeRepository _nodeRepo;
 
     /** Time between checks of the <code>NODES</code> table. */
-    protected static long PEER_POLL_INTERVAL = 60000;
+    protected static long PEER_POLL_INTERVAL = 30000;
 
     /** Time between checks of the <code>NODES</code> table when a recent logoff has been
      * encountered. */
     protected static long HYPER_PEER_POLL_INTERVAL = 1000;
 
-    /** Time between checks of the <code>NODES</code> table. */
+    /** Duration to perform hyper polling before switching back to normal. */
     protected static long RESUME_NORMAL_INTERVAL = 10000;
 
 }
