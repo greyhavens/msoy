@@ -6,7 +6,6 @@ package com.threerings.msoy.server;
 import java.util.List;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ResultListener;
@@ -34,8 +33,6 @@ import com.threerings.msoy.item.server.persist.AvatarRecord;
 
 import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
-import com.threerings.msoy.badge.data.all.EarnedBadge;
-import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.ServerStatSet;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
@@ -44,7 +41,6 @@ import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -161,8 +157,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 //            _sceneRepo.getOwnedScenes(member.memberId).iterator());
 
         // fill in this member's raw friends list; the friend manager will update it later
-        userObj.friends = new DSet<FriendEntry>(
-            _memberRepo.loadFriends(member.memberId, -1));
+        userObj.friends = new DSet<FriendEntry>(_memberRepo.loadFriends(member.memberId, -1));
 
         // load up this member's group memberships
         userObj.groups = new DSet<GroupMembership>(

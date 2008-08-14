@@ -6,12 +6,13 @@ package com.threerings.msoy.badge.data;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.CRC32;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.samskivert.util.HashIntMap;
@@ -28,7 +29,7 @@ import com.threerings.msoy.data.StatType;
 /** Defines the various badge types. */
 public enum BadgeType
 {
-    /* TODO - remove these testing badges
+//    /* TODO - remove these testing badges
     SERVLET_BADGE(StampCategory.SOCIAL, StatType.ITEM_COMMENTS, new Level[] {
         new Level(1, 1000),
         new Level(3, 1000),
@@ -48,10 +49,11 @@ public enum BadgeType
             return stats.getSetStatSize(StatType.WHIRLEDS_VISITED);
         }
 
-        @Override protected Collection<BadgeType> getUnlockRequirements () {
-            return Collections.singleton(SERVLET_BADGE);
+        @Override protected List<BadgeType> getUnlockRequirements () {
+            return Collections.singletonList(SERVLET_BADGE);
         }
-    },*/
+    },
+//    },*/
 
     // social badges
     FRIENDLY(StampCategory.SOCIAL, StatType.FRIENDS_MADE, new Level[] {
@@ -234,7 +236,7 @@ public enum BadgeType
     public boolean isUnlocked (Collection<EarnedBadge> badges)
     {
         return Sets.newHashSet(Iterables.transform(badges, BADGE_TO_CODE)).containsAll(
-            Sets.newHashSet(Iterables.transform(getUnlockRequirements(), TYPE_TO_CODE)));
+            Lists.transform(getUnlockRequirements(), TYPE_TO_CODE));
     }
 
     /**
@@ -314,7 +316,7 @@ public enum BadgeType
      * Optionally overridden by badge types to indicate that players must earn a particular set
      * of badges before this badge becomes unlocked.
      */
-    protected Collection<BadgeType> getUnlockRequirements ()
+    protected List<BadgeType> getUnlockRequirements ()
     {
         return Collections.emptyList();
     }
