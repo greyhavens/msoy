@@ -161,4 +161,6 @@ public interface DynamicMessages extends ConstantsWithLookup
     String badge_ac95aafe ();
     String badge_fa58270b ();
     String badge_e6af01a4 ();
+    String badge_1923c147 ();
+    String badge_26873aba ();
 }

@@ -99,7 +99,18 @@ public enum BadgeType
     },
 
     // creation badges
-    // TODO: this whole category is under discussion
+    PROFESSIONAL(StampCategory.CREATION, StatType.COINS_EARNED_SELLING, new Level[] {
+        new Level(10000, 1000),
+        new Level(100000, 2000),
+        new Level(500000, 3000),
+        new Level(1000000, 4000),
+        new Level(2000000, 5000),
+        new Level(5000000, 6000)
+        }) {
+        // TODO
+    },
+
+    // TODO: Character Designer, Furniture Builder, Landscape Painter, Professional, Popular
 
     // shopping badges
     JUDGE(StampCategory.SHOPPING, StatType.ITEMS_RATED, new Level[] {
@@ -123,6 +134,17 @@ public enum BadgeType
         }) {
         // TODO
     },
+
+    SHOPPER(StampCategory.SHOPPING, StatType.ITEMS_PURCHASED, new Level[] {
+        new Level(1, 1000),
+        new Level(3, 2000),
+        new Level(10, 3000),
+        new Level(50, 4000),
+        new Level(250, 5000),
+        new Level(1000, 6000),
+        }) {
+        // TODO
+    }
 
     // TODO: Shopper - needs an items purchased stat
 

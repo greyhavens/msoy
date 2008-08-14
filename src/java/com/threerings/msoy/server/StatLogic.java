@@ -101,6 +101,7 @@ public class StatLogic
                     return stat;
                 }
             };
+
             for (BadgeType badgeType : BadgeType.getDependantBadges(statType)) {
                 updateBadge(memberId, badgeType, singleStatSet);
             }
