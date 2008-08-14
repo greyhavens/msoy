@@ -32,15 +32,16 @@ public class ShareDialog extends FloatingPanel
     public function ShareDialog (ctx :MsoyContext)
     {
         super(ctx);
-        showCloseButton = true;
-        styleName = "shareWindow";
-        //setStyle("horizontalAlign", "center");
 
+        title = Msgs.GENERAL.get("t.share");
+        showCloseButton = true;
+        styleName = "sexyWindow";
 
         var cord :Accordion = new Accordion();
 
+        cord.resizeToContent = true;
         cord.width = 323;
-        cord.height = 250;
+        cord.height = 260;
         // TODO: guests can't abuse the email thingy?
 //        if (!_memObj.isGuest()) {
             cord.addChild(createEmailBox());

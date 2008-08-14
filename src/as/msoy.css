@@ -119,12 +119,8 @@ TitleWindow {
 }
 
 Accordion {
-/*backgroundAlpha: 0;*/
+  backgroundAlpha: 0;
   headerStyleName: "accordianHeader";
-  borderColor: #408fd9;
-  borderSides: "left right";
-  borderStyle: "solid";
-  borderThickness: 2;
 }
 
 /*Accordion {
@@ -157,6 +153,10 @@ TextInput {
   cornerRadius: 0;
   textIndent: 2;
   dropShadowEnabled: false;
+}
+
+TextArea {
+  color: black;
 }
 
 NumericStepper {
@@ -208,13 +208,21 @@ CheckBox {
   selectedOverIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
   selectedDownIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
   color: white;
+  textRollOverColor: white;
+  textSelectedColor: white;
 }
 
+/** TODO: Get actual radio button art (Circles instead of squares) */
 RadioButton {
-  borderColor: #FFFFFF;
-  highlightAlphas: 0, 0;
-  fillAlphas: 0, 0, 0.75, 0.65;
-  fillColors: #403424, #403424, #ffffff, #eeeeee;
+  upIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox.png");
+  overIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
+  downIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
+  selectedUpIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
+  selectedOverIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
+  selectedDownIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
+  color: white;
+  textRollOverColor: white;
+  textSelectedColor: white;
 }
 
 HSlider {
