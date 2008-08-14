@@ -24,5 +24,8 @@ public class LobbyCodes extends InvocationCodes
 
     /** Used by the lobby controller and liaison. */
     public static const JOIN_PLAYER :int = 4;
+
+    /** Used by the lobby liaison to start a single player game if that's the only option. */
+    public static const PLAY_NOW_IF_SINGLE :int = 5;
 }
 }

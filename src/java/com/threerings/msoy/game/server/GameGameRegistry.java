@@ -44,6 +44,8 @@ import com.threerings.presents.util.ResultListenerList;
 
 import com.threerings.parlor.data.Table;
 
+import com.threerings.parlor.game.data.GameConfig;
+
 import com.threerings.parlor.rating.server.persist.RatingRepository;
 import com.threerings.parlor.rating.util.Percentiler;
 
@@ -576,6 +578,7 @@ public class GameGameRegistry
     }
 
     // from LobbyProvider
+    @SuppressWarnings("fallthrough")
     public void playNow (final ClientObject caller, final int gameId, final int mode,
                          final InvocationService.ResultListener listener)
         throws InvocationException
@@ -597,6 +600,14 @@ public class GameGameRegistry
                 PlayerObject plobj = (PlayerObject)caller;
                 boolean gameCreated;
                 switch (mode) {
+                case LobbyCodes.PLAY_NOW_IF_SINGLE:
+                    MsoyMatchConfig match = (MsoyMatchConfig) mgr.getLobbyObject().gameDef.match;
+                    if (match.getMatchType() != GameConfig.PARTY && match.getMaximumPlayers() > 1) {
+                        gameCreated = false;
+                        break;
+                    }
+                    // else, fall through to PLAY_NOW_SINGLE
+
                 default:
                 case LobbyCodes.PLAY_NOW_SINGLE:
                     gameCreated = mgr.playNowSingle(plobj);
