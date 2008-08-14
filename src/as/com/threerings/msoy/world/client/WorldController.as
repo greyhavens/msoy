@@ -472,14 +472,14 @@ public class WorldController extends MsoyController
         _wctx.getMsoyClient().trackClientAction("flashFullVersionClicked", null);
 
         // then go to the appropriate place..
-        var sceneId :int = getCurrentSceneId();
+        const sceneId :int = getCurrentSceneId();
         if (sceneId != 0) {
             displayPage("world", "s" + sceneId);
 
         } else {
             const gameId :int = getCurrentGameId();
             if (gameId != 0) {
-                handleViewGame(gameId);
+                displayPage("games", "d_" + gameId);
 
             } else {
                 displayPage("", "");
