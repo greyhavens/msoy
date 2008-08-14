@@ -108,6 +108,7 @@ public class EmbedHeader extends Canvas
         }
         if (name != null) {
             _placeLabel = FlexUtil.createLabel(name, "embedHeaderPlaceName");
+            _placeLabel.maxWidth = 250;
             _placeLabel.x = xx;
             addChild(_placeLabel);
         }
