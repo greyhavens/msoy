@@ -6,7 +6,6 @@ package com.threerings.msoy.badge.data;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.zip.CRC32;
 
@@ -48,8 +47,8 @@ public enum BadgeType
             return stats.getSetStatSize(StatType.WHIRLEDS_VISITED);
         }
 
-        @Override protected List<BadgeType> getUnlockRequirements () {
-            return Collections.singletonList(SERVLET_BADGE);
+        @Override protected Collection<BadgeType> getUnlockRequirements () {
+            return Collections.singleton(SERVLET_BADGE);
         }
     },*/
 
@@ -314,7 +313,7 @@ public enum BadgeType
      * Optionally overridden by badge types to indicate that players must earn a particular set
      * of badges before this badge becomes unlocked.
      */
-    protected List<BadgeType> getUnlockRequirements ()
+    protected Collection<BadgeType> getUnlockRequirements ()
     {
         return Collections.emptyList();
     }
