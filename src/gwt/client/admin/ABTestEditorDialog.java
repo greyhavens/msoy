@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -95,8 +96,10 @@ public class ABTestEditorDialog extends BorderedDialog
 
         final TextBox numGroups = new TextBox();
         contents.add(new FormElement(_msgs.abTestNumGroupsLabel(), numGroups));
+        contents.add(new FormElement("", new Label(_msgs.abTestNumGroupsDisabled())));
         numGroups.setMaxLength(3);
         numGroups.setText(_test.numGroups+"");
+        numGroups.setEnabled(_test.started == null);
         numGroups.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
                 try {
