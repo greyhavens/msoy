@@ -90,26 +90,30 @@ public class ShareDialog extends FloatingPanel
 
     protected function createEmailBox () :VBox
     {
-        var box :VBox = new VBox();
-        box.label = "Email this room"; // TODO!
-        box.percentWidth = 100;
-        box.percentHeight = 100;
+        var box :VBox = createContainer("t.email_share");
 
         box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.email_addresses")));
 
         var emails :TextInput = new TextInput();
+        emails.percentWidth = 100;
         box.addChild(emails);
 
         box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.email_message")));
 
         var message :TextArea = new TextArea();
+        message.percentWidth = 100;
         box.addChild(message);
 
-        var send :CommandButton = new CommandButton(null, function () :void {
+        var send :HBox = new HBox();
+        send.setStyle("horizontalAlign", "right");
+        send.percentWidth = 100;
+
+        var button :CommandButton = new CommandButton(null, function () :void {
             _ctx.getMsoyController().handleEmailShare(emails.text, message);
             close();
         });
-        send.styleName = "sendButton";
+        button.styleName = "sendButton";
+        send.addChild(button);
 
         box.addChild(send);
         box.defaultButton = send;
@@ -117,17 +121,27 @@ public class ShareDialog extends FloatingPanel
         return box;
     }
 
-    protected function createLinkBox () :VBox
+    protected function createContainer (key :String) :VBox
     {
         var box :VBox = new VBox();
-        box.label = "Grab the link"; // TODO
+
+        box.label = Msgs.GENERAL.get(key);
         box.percentWidth = 100;
         box.percentHeight = 100;
 
-        var info :Label = new Label();
-        info.width = 300;
-        info.text = Msgs.GENERAL.get("l.link_instruction");
-        box.addChild(info);
+        box.setStyle("paddingLeft", 6);
+        box.setStyle("paddingRight", 6);
+        box.setStyle("paddingTop", 6);
+        box.setStyle("paddingBottom", 6);
+
+        return box;
+    }
+
+    protected function createLinkBox () :VBox
+    {
+        var box :VBox = createContainer("t.grab_link");
+
+        box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.link_instruction")));
 
         var url :String = DeploymentConfig.serverURL;
         url = url.replace(/(http:\/\/[^\/]*).*/, "$1/");
@@ -163,14 +177,9 @@ public class ShareDialog extends FloatingPanel
 
     protected function createEmbedBox () :VBox
     {
-        var box :VBox = new VBox();
-        box.percentWidth = 100;
-        box.percentHeight = 100;
-        box.label = "Embed";
+        var box :VBox = createContainer("t.embed");
 
-        var choose :Label = new Label();
-            choose.text = Msgs.GENERAL.get("l.embed_choose_size");
-        box.addChild(choose);
+        box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.embed_choose_size")));
 
         var code :TextInput = new TextInput();
 
