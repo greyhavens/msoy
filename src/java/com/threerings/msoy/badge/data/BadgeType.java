@@ -12,7 +12,6 @@ import java.util.zip.CRC32;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import com.samskivert.util.HashIntMap;
@@ -234,8 +233,8 @@ public enum BadgeType
      */
     public boolean isUnlocked (Collection<EarnedBadge> badges)
     {
-        return Sets.newHashSet(Iterables.transform(badges, BADGE_TO_CODE)).containsAll(
-            Lists.transform(getUnlockRequirements(), TYPE_TO_CODE));
+        return Sets.newHashSet(Iterables.transform(badges, BADGE_TO_TYPE)).containsAll(
+            getUnlockRequirements());
     }
 
     /**
@@ -406,18 +405,10 @@ public enum BadgeType
     protected static CRC32 _crc;
 
     /** Helper function. */
-    protected static final Function<Badge, Integer> BADGE_TO_CODE =
-        new Function<Badge, Integer>() {
-        public Integer apply (Badge badge) {
-            return badge.badgeCode;
-        }
-    };
-
-    /** Helper function. */
-    protected static final Function<BadgeType, Integer> TYPE_TO_CODE =
-        new Function<BadgeType, Integer>() {
-        public Integer apply (BadgeType type) {
-            return type.getCode();
+    protected static final Function<Badge, BadgeType> BADGE_TO_TYPE =
+        new Function<Badge, BadgeType>() {
+        public BadgeType apply (Badge badge) {
+            return BadgeType.getType(badge.badgeCode);
         }
     };
 };
