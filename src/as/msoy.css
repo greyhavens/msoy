@@ -51,6 +51,10 @@ TitleWindow {
 /**
  * The new style for our windows.
  * IN PROGRESS
+ *
+ * The following styles work, and work pretty well. The notes below this line were what
+ * learned on the way here..
+ * 
  * Unfortunately, if we have a background image, then the background color is also used.
  * if we have alpha in the image, then the color shows through.
  * There is no way to turn off the backgroundColor.
@@ -60,18 +64,33 @@ TitleWindow {
  * background image, but do it purely with the color and alpha.
  */
 .sexyWindow {
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/window/sexy_title.png",
+  borderColor: #3db8eb;
+  borderAlpha: 1;
+  borderThicknessLeft: 3;
+  borderThicknessRight: 3;
+  borderThicknessBottom: 3;
+  borderThicknessTop: 0;
+  borderThickness: 0;
+  borderSides: "left right bottom";
+  /*
+  roundedBottomCorners: false;
+  */
+  cornerRadius: 4;
+  backgroundColor: #000000;
+  backgroundAlpha: 0.8;
+  backgroundImage: null;
+  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/window/sexy_title_alt2.png",
           scaleGridTop="8", scaleGridBottom="14",
           scaleGridLeft="8", scaleGridRight="28");
-  backgroundImage: Embed(source="../../rsrc/media/skins/window/sexy_bg.png",
-          scaleGridTop="10", scaleGridBottom="20",
-          scaleGridLeft="10", scaleGridRight="20");
-  backgroundColor: 0;
-  backgroundAlpha: 1;
   paddingTop: 10px;
   paddingRight: 10px;
   paddingBottom: 10px;
   paddingLeft: 10px;
+
+  horizontalAlign: center;
+
+  /* this cascades to our children */
+  color: white;
 }
 
 /** Eventually, all our popups should move to this style. */
@@ -1365,23 +1384,8 @@ fontWeight: bold;
 }
 
 GameOverPanel {
-/*
-  borderColor: #408fd9;
-  borderAlpha: 1;
-  borderThicknessLeft: 3;
-  borderThicknessRight: 3;
-  borderThicknessBottom: 3;
-  borderThicknessTop: 0;
-  borderThickness: 0;
-  borderSides: "left right bottom";
-  cornerRadius: 8;
-  */
-  /*
-  backgroundColor: #000000;
-  backgroundAlpha: 0.8;
-  backgroundImage: null;
-  */
   titleStyleName: "gameOverTitle";
+  headerHeight: 32;
 }
 
 .gameOverTitle {
