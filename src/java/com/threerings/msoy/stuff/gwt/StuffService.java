@@ -127,5 +127,5 @@ public interface StuffService extends RemoteService
     /**
      * Gets the favorite list info for the given member.
      */
-    ItemListInfo getFavoriteListInfo () throws ServiceException;
+    ItemListInfo getFavoriteListInfo (int memberId) throws ServiceException;
 }

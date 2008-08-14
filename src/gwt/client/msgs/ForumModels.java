@@ -82,7 +82,9 @@ public class ForumModels
         }
 
         @Override // from ServiceBackedDataModel
-        public void onSuccess (ForumService.ThreadResult result) {
+        protected void onSuccess (ForumService.ThreadResult result,
+            AsyncCallback<List<ForumThread>> callback)
+        {
             _canStartThread = result.canStartThread;
             _isManager = result.isManager;
             // note all of our threads so that we can provide them later to non-PagedGrid consumers
@@ -93,12 +95,14 @@ public class ForumModels
             if (result.threads.size() > 0) {
                 gotGroupName(result.threads.get(0).group);
             }
-            super.onSuccess(result);
+            super.onSuccess(result, callback);
         }
 
         @Override // from ServiceBackedDataModel
-        protected void callFetchService (int start, int count, boolean needCount) {
-            _forumsvc.loadThreads(_groupId, start, count, needCount, this);
+        protected void callFetchService (int start, int count, boolean needCount,
+            AsyncCallback<ForumService.ThreadResult> callback)
+        {
+            _forumsvc.loadThreads(_groupId, start, count, needCount, callback);
         }
 
         @Override // from ServiceBackedDataModel
@@ -237,7 +241,7 @@ public class ForumModels
         }
 
         @Override // from ServiceBackedDataModel
-        public void onSuccess (ForumService.MessageResult result) {
+        protected void onSuccess (ForumService.MessageResult result, AsyncCallback<List<ForumMessage>> callback) {
             // note some bits
             if (result.thread != null) {
                 _thread = result.thread;
@@ -246,7 +250,7 @@ public class ForumModels
             _isManager = result.isManager;
 
             // let the PagedGrid know that we're good and to render the items
-            super.onSuccess(result);
+            super.onSuccess(result, callback);
 
             // finally update our thread's last read post id so that subsequent renders will show
             // messages as having been read
@@ -261,8 +265,10 @@ public class ForumModels
         }
 
         @Override // from ServiceBackedDataModel
-        protected void callFetchService (int start, int count, boolean needCount) {
-            _forumsvc.loadMessages(_threadId, _thread.lastReadPostId, start, count, needCount, this);
+        protected void callFetchService (int start, int count, boolean needCount,
+            AsyncCallback<ForumService.MessageResult> callback)
+        {
+            _forumsvc.loadMessages(_threadId, _thread.lastReadPostId, start, count, needCount, callback);
         }
 
         @Override // from ServiceBackedDataModel

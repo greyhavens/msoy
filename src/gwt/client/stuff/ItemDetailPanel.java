@@ -48,7 +48,7 @@ import client.util.events.ItemUsageListener;
 public class ItemDetailPanel extends BaseItemDetailPanel
     implements ItemUsageListener, DoListItemPopup.ListedListener
 {
-    public ItemDetailPanel (ItemDetailListener listener, ItemDetail detail)
+    public ItemDetailPanel (ItemDataModel listener, ItemDetail detail)
     {
         super(detail);
         _listener = listener;
@@ -329,7 +329,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         };
     }
 
-    protected ItemDetailListener _listener;
+    protected ItemDataModel _listener;
     protected Label _listTip;
     protected PushButton _deleteBtn;
     protected PushButton _listBtn;

@@ -3,6 +3,7 @@
 
 package client.stuff;
 
+import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 
@@ -17,7 +18,7 @@ import client.util.NaviUtil;
 public class CStuff extends CShell
 {
     /** Messages used by the stuff interfaces. */
-    public static StuffMessages msgs;
+    public static StuffMessages msgs = (StuffMessages)GWT.create(StuffMessages.class);
 
     public static void viewParent (Item item)
     {

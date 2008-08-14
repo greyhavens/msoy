@@ -358,14 +358,12 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public ItemListInfo getFavoriteListInfo () throws ServiceException
+    public ItemListInfo getFavoriteListInfo (int memberId) throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
-
         try {
-            return _itemLogic.getFavoriteListInfo (memrec.memberId);
+            return _itemLogic.getFavoriteListInfo (memberId);
         } catch (PersistenceException pex) {
-            log.warning("Could not get favorite list info.", "memrec", memrec, pex);
+            log.warning("Could not get favorite list info.", "memberId", memberId, pex);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

@@ -3,10 +3,15 @@ package client.stuff;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.threerings.gwt.util.DataModel;
+import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
+import com.threerings.msoy.stuff.gwt.StuffService.DetailOrIdent;
 import com.threerings.msoy.stuff.gwt.StuffService.ItemListResult;
 
 import client.util.ServiceBackedDataModel;
@@ -19,6 +24,7 @@ import client.util.ServiceUtil;
  * @author mjensen
  */
 public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResult>
+    implements ItemDataModel
 {
     public ItemListDataModel ()
     {
@@ -45,10 +51,12 @@ public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResu
 
     public void setItemType (byte itemType)
     {
-        _query.itemType = itemType;
+        if (_query.itemType != itemType ) {
+            _query.itemType = itemType;
 
-        // make sure that the model reloads next time a fetch is called
-        reset();
+            // make sure that the model reloads next time a fetch is called
+            reset();
+        }
     }
 
     /**
@@ -60,12 +68,87 @@ public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResu
     }
 
     /**
-     * Sends an item list query to the service using this as a callback to collect the results.
-     *
-     * @see client.util.ServiceBackedDataModel#callFetchService(int, int, boolean)
+     * Looks for the given item in the currently loaded items.
      */
-    @Override
-    protected void callFetchService (int start, int count, boolean needsCount)
+    // from ItemDataModel
+    public Item findItem (byte itemType, int itemId)
+    {
+        for (Item item : _pageItems) {
+            if (item.itemId == itemId && item.getType() == itemType) {
+                return item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the item type filter used by this model.
+     */
+    // from ItemDataModel
+    public byte getDefaultItemType ()
+    {
+        return _query.itemType;
+    }
+
+    /**
+     * This is called when the user has deleted an item.
+     */
+    // from ItemDataModel
+    public void itemDeleted (Item item)
+    {
+        _pageItems.remove(item);
+    }
+
+    /**
+     * This is called when the user has modified an item.
+     */
+    // from ItemDataModel
+    public void itemUpdated (Item item)
+    {
+        // TODO
+    }
+
+    /**
+     * This callback method is used to get the item details for a particular item.
+     */
+    // from ItemDataModel
+    public void loadItemDetail (ItemIdent ident, AsyncCallback<DetailOrIdent> resultCallback)
+    {
+        _stuffsvc.loadItemDetail(ident, resultCallback);
+    }
+
+    /**
+     * Used to load subtypes for
+     */
+    // from ItemDataModel
+    public void loadModel (byte itemType, int suiteId, final AsyncCallback<DataModel<Item>> resultCallback)
+    {
+        _stuffsvc.loadInventory(itemType, suiteId, new AsyncCallback<List<Item>>() {
+            public void onSuccess (List<Item> result) {
+                SimpleDataModel<Item> model = new SimpleDataModel<Item>(result);
+                resultCallback.onSuccess(model);
+            }
+            public void onFailure (Throwable caught) {
+                resultCallback.onFailure(caught);
+            }
+        });
+    }
+
+    /**
+     * Sets the item type and returns this model.
+     */
+    // from ItemDataModel
+    public DataModel<Item> getGridModel (byte itemType)
+    {
+        setItemType(itemType);
+        return this;
+    }
+
+    /**
+     * Sends an item list query to the service using the given callback to collect the results.
+     */
+    @Override // from ServiceBackedDataModel
+    protected void callFetchService (int start, int count, boolean needsCount, AsyncCallback<ItemListResult> callback)
     {
         if (!_initialized) {
             return;
@@ -73,7 +156,7 @@ public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResu
         _query.offset = start;
         _query.count = count;
         _query.needsCount = needsCount;
-        _stuffsvc.loadItemList(_query, this);
+        _stuffsvc.loadItemList(_query, callback);
     }
 
     /**

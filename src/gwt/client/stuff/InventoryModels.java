@@ -21,15 +21,17 @@ import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
+import com.threerings.msoy.stuff.gwt.StuffService.DetailOrIdent;
 
 /**
  * Maintains information on our member's inventory.
  */
 public class InventoryModels
-    implements ItemUsageListener, ItemDetailListener
+    implements ItemUsageListener, ItemDataModel
 {
     public void startup ()
     {
@@ -41,6 +43,7 @@ public class InventoryModels
         FlashEvents.removeListener(this);
     }
 
+    // from interface ItemDataModel
     public void loadModel (byte type, int suiteId, final AsyncCallback<DataModel<Item>> cb)
     {
         final Key key = new Key(type, suiteId);
@@ -67,6 +70,7 @@ public class InventoryModels
         return _models.get(new Key(type, suiteId));
     }
 
+    // from interface ItemDataModel
     public Item findItem (byte type, final int itemId)
     {
         Predicate<Item> itemP = new Predicate<Item>() {
@@ -87,16 +91,6 @@ public class InventoryModels
         return null;
     }
 
-    public void updateItem (Item item)
-    {
-        for (Map.Entry<Key, SimpleDataModel<Item>> entry : _models.entrySet()) {
-            Key key = entry.getKey();
-            if (key.matches(item)) {
-                entry.getValue().updateItem(item);
-            }
-        }
-    }
-
     // from interface ItemUsageListener
     public void itemUsageChanged (ItemUsageEvent event)
     {
@@ -112,13 +106,18 @@ public class InventoryModels
         }
     }
 
-    // from ItemDetailListener
+    // from interface ItemDataModel
     public void itemUpdated (Item item)
     {
-        updateItem(item);
+        for (Map.Entry<Key, SimpleDataModel<Item>> entry : _models.entrySet()) {
+            Key key = entry.getKey();
+            if (key.matches(item)) {
+                entry.getValue().updateItem(item);
+            }
+        }
     }
 
-    // from ItemDetailListener
+    // from interface ItemDataModel
     public void itemDeleted (Item item)
     {
         int suiteId = (item instanceof SubItem) ? ((SubItem)item).suiteId : 0;
@@ -126,6 +125,31 @@ public class InventoryModels
         if (model != null) {
             model.removeItem(item);
         }
+    }
+
+    /**
+     * Gets the default item type to use in the case that one wasn't specified.
+     */
+    public byte getDefaultItemType ()
+    {
+        return Item.AVATAR;
+    }
+
+    /**
+     * Loads the item detail from the service and feeds the results to the given callback.
+     */
+    public void loadItemDetail (ItemIdent ident, AsyncCallback<DetailOrIdent> resultCallback)
+    {
+        _stuffsvc.loadItemDetail(ident, resultCallback);
+    }
+
+    /**
+     * Returns the correct model for a PagedGrid based off the given item type.
+     */
+    // from interface ItemDataModel
+    public DataModel<Item> getGridModel (byte itemType)
+    {
+        return getModel(itemType, 0);
     }
 
     protected static class Key {

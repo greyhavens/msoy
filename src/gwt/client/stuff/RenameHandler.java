@@ -28,7 +28,7 @@ import client.util.ClickCallback;
 
 public class RenameHandler extends ClickCallback<String>
 {
-    public RenameHandler (SourcesClickEvents trigger, Item item, ItemDetailListener detailListener)
+    public RenameHandler (SourcesClickEvents trigger, Item item, ItemDataModel detailListener)
     {
         super(trigger, "");
 
@@ -111,7 +111,7 @@ public class RenameHandler extends ClickCallback<String>
     }
 
     protected Item _item;
-    protected ItemDetailListener _listener;
+    protected ItemDataModel _listener;
     protected TextBox _name;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

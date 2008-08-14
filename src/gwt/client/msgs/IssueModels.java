@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.fora.gwt.Issue;
 import com.threerings.msoy.fora.gwt.IssueService;
@@ -50,17 +51,19 @@ public class IssueModels
         }
 
         @Override // from ServiceBackedDataModel
-        public void onSuccess (IssueService.IssueResult result) {
+        protected void onSuccess (IssueService.IssueResult result, AsyncCallback<List<Issue>> callback) {
             _isManager = result.isManager;
             for (Issue issue : result.issues) {
                 mapIssue(issue);
             }
-            super.onSuccess(result);
+            super.onSuccess(result, callback);
         }
 
         @Override // from ServiceBackedDataModel
-        protected void callFetchService (int start, int count, boolean needCount) {
-            _issuesvc.loadIssues(_type, _state, start, count, needCount, this);
+        protected void callFetchService (int start, int count, boolean needCount,
+            AsyncCallback<IssueService.IssueResult> callback)
+        {
+            _issuesvc.loadIssues(_type, _state, start, count, needCount, callback);
         }
 
         @Override // from ServiceBackedDataModel
@@ -90,9 +93,11 @@ public class IssueModels
             super(type, state);
         }
 
-        @Override // from ServiceBackedDataModel
-        protected void callFetchService (int start, int count, boolean needCount) {
-            _issuesvc.loadOwnedIssues(_type, _state, start, count, needCount, this);
+        @Override // from Issues
+        protected void callFetchService (int start, int count, boolean needCount,
+            AsyncCallback<IssueService.IssueResult> callback)
+        {
+            _issuesvc.loadOwnedIssues(_type, _state, start, count, needCount, callback);
         }
     }
 

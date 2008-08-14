@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -184,8 +185,8 @@ public class CommentsPanel extends PagedGrid<Comment>
         extends ServiceBackedDataModel<Comment, CommentService.CommentResult>
     {
         @Override
-        protected void callFetchService (int start, int count, boolean needCount) {
-            _commentsvc.loadComments(_etype, _entityId, start, count, needCount, this);
+        protected void callFetchService (int start, int count, boolean needCount, AsyncCallback<CommentService.CommentResult> callback) {
+            _commentsvc.loadComments(_etype, _entityId, start, count, needCount, callback);
         }
         @Override
         protected int getCount (CommentService.CommentResult result) {

@@ -14,6 +14,7 @@ import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.Pages;
+import client.stuff.FavoritesPanel;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -22,11 +23,15 @@ import client.util.ServiceUtil;
  */
 public class ShopPage extends Page
 {
+    public static final String LOAD_LISTING = "l";
+
+    public static final String FAVORITES = "f";
+
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
         String action = args.get(0, "");
-        if (action.equals("l")) {
+        if (action.equals(LOAD_LISTING)) {
             byte type = (byte)args.get(1, Item.NOT_A_TYPE);
             int catalogId = args.get(2, 0);
             _catalogsvc.loadListing(type, catalogId, new MsoyCallback<CatalogListing>() {
@@ -34,12 +39,20 @@ public class ShopPage extends Page
                     setContent(new ListingDetailPanel(_models, listing));
                 }
             });
-
+        } else if (action.equals(FAVORITES)) {
+            // get the member id from args, if no member id, use the current user
+            int memberId = args.get(1, CShop.getMemberId());
+            String[] prefixArgs = new String[]{FAVORITES, String.valueOf(memberId)};
+            // TODO get member's name (passed from the profile page?) from id and display is in the
+            // title
+            String title = (memberId == CShop.getMemberId()) ? CShop.msgs.myFavoritesTitle()
+                : CShop.msgs.favoritesTitle();
+            setContent(title, _favorites);
+            _favorites.update(memberId, prefixArgs, args);
         } else {
             byte type = (byte)args.get(0, Item.NOT_A_TYPE);
             if (type == Item.NOT_A_TYPE) {
                 setContent(CShop.msgs.catalogTitle(), new ShopPanel());
-
             } else {
                 if (!_catalog.isAttached()) {
                     setContent(_catalog);
@@ -64,8 +77,17 @@ public class ShopPage extends Page
         CShop.msgs = (ShopMessages)GWT.create(ShopMessages.class);
     }
 
+    @Override
+    public void onPageLoad ()
+    {
+        super.onPageLoad();
+
+        _favorites = new FavoritesPanel(Pages.SHOP, 3, 5, true);
+    }
+
     protected CatalogModels _models = new CatalogModels();
     protected CatalogPanel _catalog = new CatalogPanel(_models);
+    protected FavoritesPanel _favorites;
 
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);

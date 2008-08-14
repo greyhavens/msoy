@@ -45,9 +45,6 @@ public class ItemPanel extends VerticalPanel
     /** The number of columns of items to display. */
     public static final int COLUMNS = 5;
 
-    /** The page argument used to update the favorites grid */
-    public static final String FAVORITES_ARG = "f";
-
     public ItemPanel (InventoryModels models, byte type)
     {
         setStyleName("itemPanel");
@@ -116,15 +113,6 @@ public class ItemPanel extends VerticalPanel
         };
         _contents.addStyleName("Contents");
 
-        // create the favorites panel
-        _favoriteModel = new ItemListDataModel(type);
-        // order favorites starting with the most recently favorited items
-        _favoriteModel.setDescending(true);
-        _favorites = new ItemGrid(
-            Pages.STUFF, FAVORITES_ARG, _type, 1, COLUMNS, CStuff.msgs.noFavorites());
-        _favorites.addStyleName("Contents");
-        _favorites.setModel(_favoriteModel, 0);
-
         // finally optionally add the "create your own" sales blurb
         if (isCatalogType) {
             createUploadInterface();
@@ -144,21 +132,6 @@ public class ItemPanel extends VerticalPanel
 
         // make sure we're showing and have our data
         showInventory(page, null);
-    }
-
-    public void setFavoritePage (int page)
-    {
-        if (page < 0) {
-            page = 0;
-        }
-        _favorites.displayPage(page, true);
-        showInventory(_mostRecentPage, null);
-    }
-
-    public void setFavoriteListId (int listId)
-    {
-        _favoriteModel.setListId(listId);
-        _favorites.setModel(_favoriteModel, 0);
     }
 
     protected boolean isCatalogItem (byte type)
@@ -215,11 +188,6 @@ public class ItemPanel extends VerticalPanel
                 setCellHorizontalAlignment(_shop, HasAlignment.ALIGN_RIGHT);
             }
             add(_contents);
-            // TODO hiding favorites list for non-admin-type-folks - this isn't meant to be its
-            // final resting place anyhow
-            if (CStuff.isAdmin()) {
-                add(_favorites);
-            }
             if (_upload != null) {
                 add(_upload);
             }
@@ -254,8 +222,6 @@ public class ItemPanel extends VerticalPanel
     protected HorizontalPanel _shop;
     protected ListBox _filters;
     protected PagedGrid<Item> _contents;
-    protected ItemListDataModel _favoriteModel;
-    protected ItemGrid _favorites;
     protected SmartTable _upload;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);

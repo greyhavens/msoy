@@ -22,6 +22,9 @@
   <source path="client/games"/>
   <source path="client/person"/>
   <source path="client/people"/>
+  <source path="client/editem"/>
+  <source path="client/remix"/>
+  <source path="client/stuff"/>
 
   <public path="public/people"/>
   <stylesheet src="/css/games.css"/> <!-- TODO: not sure I like this -->

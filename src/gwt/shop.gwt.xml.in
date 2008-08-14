@@ -1,10 +1,17 @@
 <module>
+  <inherits name="com.google.gwt.xml.XML"/>
   <inherits name="item"/>
 
   <source path="com/threerings/msoy/comment/gwt"/>
+  <source path="com/threerings/msoy/stuff/gwt"/>
+  <source path="com/threerings/msoy/game/data/all"/>
+  <source path="com/threerings/msoy/game/gwt"/>
 
   <source path="client/shop"/>
   <source path="client/comment"/>
+  <source path="client/editem"/>
+  <source path="client/remix"/>
+  <source path="client/stuff"/>
 
   <public path="public/shop"/>
   <stylesheet src="/css/shop.css"/>

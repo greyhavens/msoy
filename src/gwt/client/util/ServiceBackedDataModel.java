@@ -21,7 +21,7 @@ import client.ui.MsoyUI;
  * return in a list from DataModel.doFetchRows.  Type R is for the AsyncCallback, and can be
  * anything - it is passed into getCount() and getRows() from the service call.
  */
-public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>, AsyncCallback<R>
+public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
 {
     /**
      * Prepends an item to an already loaded model. The model must have at least been asked to
@@ -80,30 +80,21 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>, Asyn
         if (_pageOffset == start && _pageCount == count) {
             callback.onSuccess(_pageItems);
         } else {
-            _callback = callback;
-            callFetchService(_pageOffset = start, _pageCount = count, _count < 0);
+            callFetchService(_pageOffset = start, _pageCount = count, _count < 0, new ResultCallback(callback));
         }
     }
 
-    // from interface AsyncCallback
-    public void onSuccess (R result)
+    protected void onSuccess (R result, AsyncCallback<List<T>> callback)
     {
         if (_count < 0) {
             _count = getCount(result);
         }
-        try {
-            _pageItems = getRows(result);
-            _callback.onSuccess(_pageItems);
-        } finally {
-            _callback = null;
-        }
+        _pageItems = getRows(result);
+        callback.onSuccess(_pageItems);
     }
 
-    // from interface AsyncCallback
-    public void onFailure (Throwable caught)
+    protected void onFailure (Throwable caught, AsyncCallback<List<T>> callback)
     {
-        CShell.log(this + " failed", caught);
-
         if (GwtAuthCodes.SESSION_EXPIRED.equals(caught.getMessage())) {
             MsoyUI.showPasswordExpired(CShell.serverError(caught));
         } else {
@@ -111,8 +102,31 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>, Asyn
         }
     }
 
+    /**
+     * This prevents the callback field from being set to null in the case that the rows are fetched
+     * multiple times in short succession.
+     */
+    protected class ResultCallback implements AsyncCallback<R> {
+
+        public ResultCallback (AsyncCallback<List<T>> callback) {
+            _callback = callback;
+        }
+
+        // from interface AsyncCallback
+        public void onSuccess (R result) {
+            ServiceBackedDataModel.this.onSuccess(result, _callback);
+        }
+
+        // from interface AsyncCallback
+        public void onFailure (Throwable caught) {
+            ServiceBackedDataModel.this.onFailure(caught, _callback);
+        }
+
+        protected AsyncCallback<List<T>> _callback;
+    }
+
     /** Calls the service to obtain data, should pass this as the callback. */
-    protected abstract void callFetchService (int start, int count, boolean needCount);
+    protected abstract void callFetchService (int start, int count, boolean needCount, AsyncCallback<R> callback);
 
     /** Returns the count from the service result. */
     protected abstract int getCount (R result);
@@ -131,7 +145,4 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>, Asyn
 
     /** The items we got back for the page we're currently displaying. */
     protected List<T> _pageItems = Collections.emptyList();
-
-    /** A pending callback stored while we're making our service call. */
-    protected AsyncCallback<List<T>> _callback;
 }

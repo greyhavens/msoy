@@ -1,5 +1,8 @@
 package client.stuff;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Pages;
@@ -18,24 +21,45 @@ import com.threerings.msoy.item.data.all.Item;
  */
 public class ItemGrid extends PagedGrid<Item>
 {
-    public ItemGrid (Pages parentPage, String pageArg, byte itemType, int rows, int columns, String emptyMessage)
+    public ItemGrid (Pages parentPage, byte itemType, int rows, int columns, String title, String emptyMessage)
     {
         super(rows, columns);
-        this._parentPage = parentPage;
-        this._firstArg = pageArg;
-        this._itemType = itemType;
-        this._emptyMessage = emptyMessage;
+        _parentPage = parentPage;
+        _itemType = itemType;
+        _emptyMessage = emptyMessage;
+        _title = title;
+
+        addStyleName("Contents");
+    }
+
+    /**
+     * Sets the optional command arguments to passed to the page. This is particularly useful when this
+     * is not the only grid on the page.
+     */
+    public void setPrefixArgs (String[] prefixArgs)
+    {
+        _prefixArgs = prefixArgs;
+    }
+
+    public void setItemType (byte itemType)
+    {
+        _itemType = itemType;
     }
 
     protected void displayPageFromClick (int page)
     {
         // route our page navigation through the URL
-        String[] args;
-        if (_firstArg != null) {
-            args = new String[] { _firstArg, String.valueOf(_itemType), String.valueOf(page) };
-        } else {
-            args = new String[] { String.valueOf(_itemType), String.valueOf(page) };
+        List<String> args = new ArrayList<String>();
+
+        if (_prefixArgs != null) {
+            for (String arg : _prefixArgs) {
+                args.add(arg);
+            }
         }
+
+        args.add(String.valueOf(_itemType));
+        args.add(String.valueOf(page));
+
         Link.go(_parentPage, Args.compose(args));
     }
 
@@ -49,14 +73,20 @@ public class ItemGrid extends PagedGrid<Item>
         return _emptyMessage;
     }
 
-    protected boolean displayNavi (int items)
+    @Override
+    protected boolean displayNavi (int itemCount)
     {
-        return true;
+        return _displayNavigation;
+    }
+
+    public void setDisplayNavigation (boolean displayControls)
+    {
+        _displayNavigation = displayControls;
     }
 
     protected void addCustomControls (FlexTable controls)
     {
-        controls.setText(0, 0, CStuff.msgs.favorites());
+        controls.setText(0, 0, _title);
         controls.getFlexCellFormatter().setStyleName(0, 0, "Show");
     }
 
@@ -64,9 +94,13 @@ public class ItemGrid extends PagedGrid<Item>
 
     protected Pages _parentPage;
 
-    protected String _firstArg;
+    protected String[] _prefixArgs;
+
+    protected String _title;
 
     protected String _emptyMessage;
+
+    protected boolean _displayNavigation = true;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

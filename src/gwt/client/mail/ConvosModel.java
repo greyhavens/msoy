@@ -6,6 +6,7 @@ package client.mail;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
@@ -74,8 +75,8 @@ public class ConvosModel extends ServiceBackedDataModel<Conversation, MailServic
     }
 
     @Override // from ServiceBackedDataModel
-    protected void callFetchService (int start, int count, boolean needCount) {
-        _mailsvc.loadConversations(start, count, needCount, this);
+    protected void callFetchService (int start, int count, boolean needCount, AsyncCallback<MailService.ConvosResult> callback) {
+        _mailsvc.loadConversations(start, count, needCount, callback);
     }
 
     @Override // from ServiceBackedDataModel

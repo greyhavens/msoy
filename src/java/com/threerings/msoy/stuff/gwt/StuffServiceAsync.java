@@ -77,5 +77,5 @@ public interface StuffServiceAsync
     /**
      * The asynchronous version of {@link ItemService#getFavoriteListInfo}.
      */
-    void getFavoriteListInfo (AsyncCallback<ItemListInfo> callback);
+    void getFavoriteListInfo (int memberId, AsyncCallback<ItemListInfo> callback);
 }

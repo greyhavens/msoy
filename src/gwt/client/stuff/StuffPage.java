@@ -11,7 +11,6 @@ import com.google.gwt.user.client.History;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.stuff.gwt.StuffService;
@@ -34,15 +33,6 @@ import client.util.ServiceUtil;
  */
 public class StuffPage extends Page
 {
-    @Override // from Page
-    public void onModuleLoad ()
-    {
-        super.onModuleLoad();
-        // this needs to happen after the CShell has been initialized
-        // otherwise the WebIdent will be null
-        loadFavoriteListInfo();
-    }
-
     @Override // from Page
     public void onPageLoad ()
     {
@@ -92,7 +82,7 @@ public class StuffPage extends Page
                     public void onSuccess (StuffService.DetailOrIdent result) {
                         if (result.detail != null) {
                             _detail = result.detail;
-                            _models.updateItem(_detail.item);
+                            _models.itemUpdated(_detail.item);
                             setContent(title, createItemDetailPanel(_models, _detail));
                         } else {
                             // We didn't have access to that specific item, but have been given
@@ -141,13 +131,6 @@ public class StuffPage extends Page
                 remixer.setCatalogInfo(args.get(3, 0), args.get(4, 0), args.get(5, 0));
             }
 
-        } else if (ItemPanel.FAVORITES_ARG.equals(arg0)) {
-            // update favorite panel
-            byte type = (byte)args.get(1, Item.AVATAR);
-            String title = CStuff.msgs.stuffTitle(_dmsgs.getString("pItemType" + type));
-            ItemPanel panel = getItemPanel(type);
-            panel.setFavoritePage(args.get(2, -1));
-            setContent(title, panel);
         } else {
             // otherwise we're viewing our inventory
             byte type = (byte)args.get(0, Item.AVATAR);
@@ -163,7 +146,7 @@ public class StuffPage extends Page
         return new EditorHost() {
             public void editComplete (Item item) {
                 if (item != null) {
-                    _models.updateItem(item);
+                    _models.itemUpdated(item);
                     Link.go(Pages.STUFF,
                         Args.compose("d", "" + item.getType(), "" + item.itemId));
                 } else {
@@ -193,26 +176,11 @@ public class StuffPage extends Page
         ItemPanel panel = _itemPanels.get(itemType);
         if (panel == null) {
             _itemPanels.put(itemType, panel = new ItemPanel(_models, itemType));
-            if (_favoriteList != null) {
-                panel.setFavoriteListId(_favoriteList.listId);
-            }
         }
         return panel;
     }
 
-    protected void loadFavoriteListInfo ()
-    {
-        _stuffsvc.getFavoriteListInfo(new MsoyCallback<ItemListInfo>() {
-            public void onSuccess (ItemListInfo result) {
-                _favoriteList = result;
-                for (Byte key :_itemPanels.keySet()) {
-                    _itemPanels.get(key).setFavoriteListId(_favoriteList.listId);
-                }
-            }
-        });
-    }
-
-    protected ItemDetailPanel createItemDetailPanel (ItemDetailListener listener, ItemDetail itemDetail)
+    protected ItemDetailPanel createItemDetailPanel (ItemDataModel listener, ItemDetail itemDetail)
     {
         final ItemDetailPanel panel = new ItemDetailPanel(listener, itemDetail);
 
@@ -244,7 +212,6 @@ public class StuffPage extends Page
     protected InventoryModels _models = new InventoryModels();
     protected HashMap<Byte, ItemPanel> _itemPanels = new HashMap<Byte, ItemPanel>();
     protected ItemDetail _detail;
-    protected ItemListInfo _favoriteList;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
