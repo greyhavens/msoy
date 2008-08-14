@@ -7,8 +7,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.ui.HTML;
 
-import client.shell.CShell;
-
 /**
  * Displays HTML entered by the user (be sure to validate all user-supplied HTML on the server
  * using HTMLSanitizer!). Rewrites any hrefs in that HTML to properly point to the top-level frame
@@ -28,13 +26,11 @@ public class SafeHTML extends HTML
             anchor.setAttribute("href", fixLink(anchor.getAttribute("href")));
             if (isWhirledLink(anchor.getAttribute("href"))) {
                 anchor.setAttribute("target", "_top");
-                CShell.log("Retargeting " + anchor);
             } else {
                 anchor.setAttribute("target", "_blank");
                 if (anchor.getInnerHTML().indexOf("<img") == -1) {
                     anchor.setClassName("external");
                 }
-                CShell.log("Externalizing " + anchor);
             }
         }
     }
