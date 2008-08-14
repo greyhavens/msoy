@@ -160,22 +160,17 @@ public class BadgeLogic
             return Collections.emptyList();
         }
 
+        // Load up our badge records
         List<InProgressBadgeRecord> badgeRecords = _badgeRepo.loadInProgressBadges(memberId);
-        if (badgeRecords.isEmpty()) {
-            // if we have no InProgressBadgeRecords, create the initial set of them for this player,
-            // and create a dummy InProgressBadge that lets us know this initialization has taken
-            // place
-            InProgressBadge dummy = new InProgressBadge(BadgeType.HIDDEN.getCode(), 0, 0);
-            updateInProgressBadge(memberId, dummy, dobjNeedsUpdate);
 
-            return createNewInProgressBadges(memberId, dobjNeedsUpdate);
+        // If we have no badge records, our initial batch of in-progress badges hasn't yet
+        // been created, and we do that now. Otherwise, transform the records into badges.
+        Iterable<InProgressBadge> badges = (badgeRecords.isEmpty() ?
+            createNewInProgressBadges(memberId, dobjNeedsUpdate) :
+            Iterables.transform(badgeRecords, InProgressBadgeRecord.TO_BADGE));
 
-        } else {
-            // Otherwise, convert our records into badges, making sure to omit the HIDDEN badge
-            Iterable<InProgressBadge> badges = Iterables.transform(badgeRecords,
-                InProgressBadgeRecord.TO_BADGE);
-            return Lists.newArrayList(Iterables.filter(badges, BadgeType.IS_VISIBLE_BADGE));
-        }
+        // Return the badges we just loaded or created, minus the "HIDDEN" marker badge.
+        return Lists.newArrayList(Iterables.filter(badges, BadgeType.IS_VISIBLE_BADGE));
     }
 
     /**
