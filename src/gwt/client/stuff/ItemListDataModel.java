@@ -105,7 +105,14 @@ public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResu
     // from ItemDataModel
     public void itemUpdated (Item item)
     {
-        // TODO
+        for (int i = 0; i < _pageItems.size(); i++) {
+            Item pageItem = _pageItems.get(i);
+            if (pageItem.itemId == item.itemId && pageItem.getType() == item.getType()) {
+                // replace the item
+                _pageItems.set(i, item);
+                return;
+            }
+        }
     }
 
     /**
