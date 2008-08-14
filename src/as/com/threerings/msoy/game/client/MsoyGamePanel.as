@@ -106,16 +106,17 @@ public class MsoyGamePanel extends WhirledGamePanel
         super.willEnterPlace(plobj);
 
         const mctx :MsoyContext = _gctx.getMsoyContext();
+        const bar :ControlBar = mctx.getTopPanel().getControlBar();
+        const gameChatDir :ChatDirector = _gctx.getChatDirector();
+
         mctx.getMsoyController().addGoMenuProvider(populateGoMenu);
+        bar.setInGame(true);
 
         var spinner :PlaceLoadingDisplay = new PlaceLoadingDisplay(
             mctx.getTopPanel().getPlaceContainer());
         spinner.watchLoader(
             Loader(_gameView.getMediaContainer().getMedia()).contentLoaderInfo,
             _gameView.getMediaContainer(), true);
-
-        const bar :ControlBar = mctx.getTopPanel().getControlBar();
-        const gameChatDir :ChatDirector = _gctx.getChatDirector();
 
         // if we're embedded and too small to display chat in a sidebar,
         // we go into "gamestub" mode and do an overlay instead.
@@ -157,6 +158,7 @@ public class MsoyGamePanel extends WhirledGamePanel
         const mctx :MsoyContext = _gctx.getMsoyContext();
         const bar :ControlBar = mctx.getTopPanel().getControlBar();
 
+        bar.setInGame(false);
         mctx.getMsoyController().removeGoMenuProvider(populateGoMenu);
 
         if (_showPlayers != null) { // indicates we're in "gamestub" mode where chat is an overlay

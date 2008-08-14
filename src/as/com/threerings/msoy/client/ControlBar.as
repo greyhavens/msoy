@@ -74,15 +74,12 @@ public class ControlBar extends HBox
 
     /** Different groups of UI elements. */
     public static const UI_ALL :String = "All UI Elements"; // created automatically
-    public static const UI_STD :String = "Standard Member UI";
-    public static const UI_MINI :String = "Member UI Mini";
-    public static const UI_EDIT :String = "Member UI Edit";
-    public static const UI_GUEST :String = "Guest UI";
-    public static const UI_SIDEBAR :String = "Member UI Sidebar";
-    public static const UI_VIEWER :String = "Room Entity Viewer";
+    public static const UI_ROOM :String = "Room UI";
+    public static const UI_GAME :String = "Game UI";
+    public static const UI_MINI :String = "Mini UI";
+    public static const UI_VIEWER :String = "Room Entity Viewer UI";
 
-    public static const ALL_UI_GROUPS :Array = [
-        UI_ALL, UI_STD, UI_SIDEBAR, UI_MINI, UI_EDIT, UI_GUEST, UI_VIEWER ];
+    public static const ALL_UI_GROUPS :Array = [ UI_ALL, UI_ROOM, UI_GAME, UI_MINI, UI_VIEWER ];
 
     /** These will probably be expanded soon. */
     public static const CHAT_PRIORITY :int = 0;
@@ -174,11 +171,11 @@ public class ControlBar extends HBox
     }
 
     /**
-     * Called to tell us when we're in sidebar mode.
+     * Called to tell us when we're in game mode.
      */
-    public function inSidebar (sidebaring :Boolean) :void
+    public function setInGame (inGame :Boolean) :void
     {
-        _inSidebar = sidebaring;
+        _inGame = inGame;
         updateUI();
     }
 
@@ -251,18 +248,18 @@ public class ControlBar extends HBox
      */
     protected function checkControls () :Boolean
     {
-        var isMember :Boolean = (_ctx.getMyName() != null &&
-                                 !MemberName.isGuest(_ctx.getMyName().getMemberId()));
+        const memName :MemberName = _ctx.getMyName();
+        const isMember :Boolean = (memName != null) && !memName.isGuest();
         if (numChildren > 0 && (isMember == _isMember)) {
             return false;
         }
 
-        // add our various control buttons
-        setupControls();
-
-        // and remember how things are set for now
+        // remember how things are set for now
         _isMember = isMember;
         _isMinimized = false;
+
+        // and add our various control buttons
+        setupControls();
         return true;
     }
 
@@ -280,7 +277,7 @@ public class ControlBar extends HBox
         removeAllChildren();
         clearAllGroups();
 
-//        addGroupChild(_leftSpacer, [ UI_SIDEBAR ]);
+//        addGroupChild(_leftSpacer, [ UI_GAME ]);
 
         addControlButtons();
 
@@ -288,10 +285,7 @@ public class ControlBar extends HBox
         _rightSpacer.styleName = "controlBarSpacer";
         _rightSpacer.height = this.height;
         _rightSpacer.percentWidth = 100;
-        addGroupChild(_rightSpacer, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ],
-            SPACER_PRIORITY);
-
-        sortControls();
+        addGroupChild(_rightSpacer, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ], SPACER_PRIORITY);
     }
 
     protected function sortControls () :void
@@ -302,18 +296,17 @@ public class ControlBar extends HBox
     protected function addControlButtons () :void
     {
         // add our standard control bar features
-        addGroupChild(_chatBtn, [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR ], CHAT_PRIORITY);
+        addGroupChild(_chatBtn, [ UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
         _chatControl = new ChatControl(_ctx, null, this.height, this.height - 4);
         _chatControl.sendButton.styleName = "controlBarButtonSend";
-        addGroupChild(_chatControl,
-            [ UI_STD, UI_MINI, UI_EDIT, UI_GUEST, UI_SIDEBAR /*,UI_VIEWER*/ ], CHAT_PRIORITY);
-        addGroupChild(_volBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER ]);
-        addGroupChild(_zoomBtn, [ UI_STD, UI_GUEST, UI_EDIT, UI_VIEWER ]);
+        addGroupChild(_chatControl, [ UI_ROOM, UI_MINI, UI_GAME, /*,UI_VIEWER*/ ], CHAT_PRIORITY);
+        addGroupChild(_volBtn, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
+        addGroupChild(_zoomBtn, [ UI_ROOM, UI_VIEWER ]);
         if (_ctx.getTokens().isAdmin()) {
-            addGroupChild(_fullBtn, [ UI_STD, UI_MINI, UI_GUEST, UI_EDIT, UI_SIDEBAR, UI_VIEWER ]);
+            addGroupChild(_fullBtn, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
         }
 
-        //addGroupChild(_partyBtn, [ UI_STD, UI_EDIT, UI_MINI, UI_GUEST, UI_SIDEBAR, UI_VIEWER ]);
+        //addGroupChild(_partyBtn, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
     }
 
     /**
@@ -357,18 +350,17 @@ public class ControlBar extends HBox
     {
         updateGroup(UI_ALL, false);
         updateGroup(getMode(), true);
+        sortControls();
     }
 
     protected function getMode () :String
     {
         if (_isMinimized) {
             return UI_MINI;
-        } else if (_inSidebar) {
-            return UI_SIDEBAR;
-        } else if (_isMember) {
-            return UI_STD;
+        } else if (_inGame) {
+            return UI_GAME;
         } else {
-            return UI_GUEST;
+            return UI_ROOM;
         }
     }
 
@@ -414,8 +406,8 @@ public class ControlBar extends HBox
     /** Are we in a minimized mode? */
     protected var _isMinimized :Boolean;
 
-    /** Are we in a sidebar? */
-    protected var _inSidebar :Boolean;
+    /** Are we in a game? */
+    protected var _inGame :Boolean;
 
     /** Object that contains all the different groups of UI elements. */
     protected var _groups :Object = new Object();

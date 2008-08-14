@@ -87,13 +87,6 @@ public class WorldControlBar extends ControlBar
     }
 
     // from ControlBar
-    override public function miniChanged () :void
-    {
-        _isEditing = (_isEditing && !_ctx.getTopPanel().isMinimized());
-        super.miniChanged();
-    }
-
-    // from ControlBar
     override public function locationDidChange (place :PlaceObject) :void
     {
         super.locationDidChange(place);
@@ -196,28 +189,17 @@ public class WorldControlBar extends ControlBar
     }
 
     // from ControlBar
-    override protected function checkControls () :Boolean
-    {
-        var retVal :Boolean = super.checkControls();
-        // if our parent rechecked, we do a well
-        if (retVal) {
-            _isEditing = false;
-        }
-        return retVal;
-    }
-
-    // from ControlBar
     override protected function setupControls() :void
     {
         super.setupControls();
 
         if (_notificationDisplay != null) {
-            addGroupChild(_notificationDisplay, [ UI_STD, UI_GUEST, UI_EDIT, UI_SIDEBAR ],
-                LAST_PRIORITY);
+            addGroupChild(_notificationDisplay, [ UI_ROOM, UI_GAME ], LAST_PRIORITY);
         }
 
-        if (_friendBtnBox != null) {
-            addGroupChild(_friendBtnBox, [ UI_STD, UI_EDIT, UI_SIDEBAR ]);
+        // TODO: enable friends for guests, even if it just goads them into signup
+        if (_friendBtnBox != null && _isMember) {
+            addGroupChild(_friendBtnBox, [ UI_ROOM, UI_GAME ]);
         }
     }
 
@@ -226,23 +208,18 @@ public class WorldControlBar extends ControlBar
     {
         super.addControlButtons(); 
 
-        addGroupChild(_roomeditBtn, [ UI_STD ]);
-        addGroupChild(_hotZoneBtn, [ UI_STD, UI_GUEST ]);
+        addGroupChild(_roomeditBtn, [ UI_ROOM ]);
+        addGroupChild(_hotZoneBtn, [ UI_ROOM ]);
         // TODO: snapshots are not functional; revisit
         if (_ctx.getTokens().isSupport()) {
-            addGroupChild(_snapBtn, [ UI_STD ]);
+            addGroupChild(_snapBtn, [ UI_ROOM ]);
         }
     }
 
     // from ControlBar
     override protected function getMode () :String
     {
-        if (!UberClient.isRegularClient()) {
-            return UI_VIEWER;
-        }
-
-        var mode :String = super.getMode();
-        return (mode == UI_STD && _isEditing) ? UI_EDIT : mode;
+        return UberClient.isRegularClient() ? super.getMode() : UI_VIEWER;
     }
 
     // from ControlBar
@@ -385,9 +362,6 @@ public class WorldControlBar extends ControlBar
 
     /** Our context, cast as a WorldContext. */
     protected var _wctx :WorldContext;
-
-    /** Are we in room editing mode? */
-    protected var _isEditing :Boolean;
 
     /** Button for editing the current scene. */
     protected var _roomeditBtn :CommandButton;
