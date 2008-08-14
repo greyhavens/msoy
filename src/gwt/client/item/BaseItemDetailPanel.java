@@ -6,7 +6,6 @@ package client.item;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -75,23 +74,15 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
         // set up our detail bits
         _details.add(_creator = new CreatorLabel());
-        _creator.setMember(_detail.creator, new PopupMenu() {
-            protected void addMenuItems () {
-                this.addMenuItem(_imsgs.viewProfile(), new Command() {
-                    public void execute () {
-                        Link.go(Pages.PEOPLE, "" + _detail.creator.getMemberId());
-                    }
-                });
-                this.addMenuItem(_imsgs.browseCatalogFor(), new Command() {
-                    public void execute () {
-                        CatalogQuery query = new CatalogQuery();
-                        query.itemType = _detail.item.getType();
-                        query.creatorId = _detail.creator.getMemberId();
-                        Link.go(Pages.SHOP, ShopUtil.composeArgs(query, 0));
-                    }
-                });
-            }
-        });
+        _creator.setMember(_detail.creator);
+
+        // add link to creator's shop
+        CatalogQuery query = new CatalogQuery();
+        query.itemType = _detail.item.getType();
+        query.creatorId = _detail.creator.getMemberId();
+        _details.add(WidgetUtil.makeShim(10, 10));
+        _details.add(Link.create(_imsgs.browseCatalogFor(_detail.creator.toString()), Pages.SHOP,
+            ShopUtil.composeArgs(query, 0)));
 
         // if we're not viewing the actual prototype item, create a link to it
         if (_item.catalogId != 0 && _item.ownerId != 0) {
