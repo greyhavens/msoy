@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -14,23 +15,25 @@ import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
 
 import com.threerings.presents.annotation.BlockingThread;
-import com.threerings.toybox.Log;
 
-import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.persist.FlowRepository;
 import com.threerings.msoy.server.persist.MemberFlowRecord;
 
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
+
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
-import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
+import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.UserActionDetails;
-import com.threerings.msoy.data.all.DeploymentConfig;
+
+import static com.threerings.msoy.badge.Log.log;
 
 /**
  * Provides badge related services to servlets and other blocking thread entities.
@@ -55,8 +58,7 @@ public class BadgeLogic
         BadgeType type = BadgeType.getType(brec.badgeCode);
         BadgeType.Level levelData = type.getLevel(brec.level);
         if (levelData == null) {
-            Log.log.warning("Failed to award invalid badge level", "EarnedBadgeRecord", brec,
-                "BadgeType", type);
+            log.warning("Failed to award invalid badge level", "record", brec, "type", type);
             return;
         }
 
@@ -106,25 +108,18 @@ public class BadgeLogic
         }
 
         // read this member's in-progress and earned badge records
-        List<EarnedBadgeRecord> earnedBadgeRecs = _badgeRepo.loadEarnedBadges(memberId);
-        Set<EarnedBadge> earnedBadges = Sets.newHashSetWithExpectedSize(earnedBadgeRecs.size());
-        for (EarnedBadgeRecord brec : earnedBadgeRecs) {
-            earnedBadges.add(brec.toBadge());
-        }
-
-        List<InProgressBadgeRecord> inProgressBadgeRecs = _badgeRepo.loadInProgressBadges(memberId);
-        Set<InProgressBadge> inProgressBadges = Sets.newHashSetWithExpectedSize(
-            inProgressBadgeRecs.size());
-        for (InProgressBadgeRecord brec : inProgressBadgeRecs) {
-            inProgressBadges.add(brec.toBadge());
-        }
+        Set<EarnedBadge> earnedBadges = Sets.newHashSet(
+            Iterables.transform(_badgeRepo.loadEarnedBadges(memberId), EarnedBadgeRecord.TO_BADGE));
+        Set<InProgressBadge> inProgressBadges = Sets.newHashSet(
+            Iterables.transform(_badgeRepo.loadInProgressBadges(memberId),
+                                InProgressBadgeRecord.TO_BADGE));
 
         // discover any new in-progress badges
-        List<InProgressBadge> newInProgressBadges = _badgeMan.getNewInProgressBadges(earnedBadges,
-            inProgressBadges);
+        List<InProgressBadge> newInProgressBadges =
+            _badgeMan.getNewInProgressBadges(earnedBadges, inProgressBadges);
         for (InProgressBadge badge : newInProgressBadges) {
-            Log.log.info("created new InProgressBadge", "memberId", memberId,
-                "type", BadgeType.getType(badge.badgeCode));
+            log.info("Created new InProgressBadge", "memberId", memberId,
+                     "type", BadgeType.getType(badge.badgeCode));
             updateInProgressBadge(memberId, badge, true);
         }
     }

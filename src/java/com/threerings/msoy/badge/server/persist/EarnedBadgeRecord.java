@@ -5,6 +5,8 @@ package com.threerings.msoy.badge.server.persist;
 
 import java.sql.Timestamp;
 
+import com.google.common.base.Function;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -48,6 +50,14 @@ public class EarnedBadgeRecord extends PersistentRecord
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 1;
+
+    /** Transforms a persistent record to a runtime record. */
+    public static Function<EarnedBadgeRecord, EarnedBadge> TO_BADGE =
+        new Function<EarnedBadgeRecord, EarnedBadge>() {
+        public EarnedBadge apply (EarnedBadgeRecord record) {
+            return record.toBadge();
+        }
+    };
 
     /** The id of the member that holds this badge. */
     @Id

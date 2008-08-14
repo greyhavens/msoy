@@ -5,6 +5,7 @@ package com.threerings.msoy.server;
 
 import java.util.List;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
@@ -139,21 +140,12 @@ public class MsoyClientResolver extends CrowdClientResolver
         userObj.stats = new ServerStatSet(stats.iterator(), _badgeMan, userObj);
 
         // and their badges
-        List<EarnedBadgeRecord> badgeRecs = _badgeRepo.loadEarnedBadges(member.memberId);
-        List<EarnedBadge> badges = Lists.newArrayListWithExpectedSize(badgeRecs.size());
-        for (EarnedBadgeRecord rec : badgeRecs) {
-            badges.add(rec.toBadge());
-        }
-        userObj.badges = new EarnedBadgeSet(badges);
-
-        List<InProgressBadgeRecord> inProgressBadgeRecs =
-            _badgeRepo.loadInProgressBadges(member.memberId);
-        List<InProgressBadge> inProgressBadges =
-            Lists.newArrayListWithExpectedSize(inProgressBadgeRecs.size());
-        for (InProgressBadgeRecord rec : inProgressBadgeRecs) {
-            inProgressBadges.add(rec.toBadge());
-        }
-        userObj.inProgressBadges = new InProgressBadgeSet(inProgressBadges);
+        userObj.badges = new EarnedBadgeSet(
+            Iterables.transform(_badgeRepo.loadEarnedBadges(member.memberId),
+                                EarnedBadgeRecord.TO_BADGE));
+        userObj.inProgressBadges = new InProgressBadgeSet(
+            Iterables.transform(_badgeRepo.loadInProgressBadges(member.memberId),
+                                InProgressBadgeRecord.TO_BADGE));
 
 //        // load up any item lists they may have
 //        List<ItemListInfo> itemLists = _itemMan.getItemLists(member.memberId);

@@ -7,13 +7,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.CRC32;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 import com.samskivert.util.HashIntMap;
 
 import com.threerings.stats.Log;
 import com.threerings.stats.data.StatSet;
 
+import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.gwt.StampCategory;
 
@@ -227,24 +233,8 @@ public enum BadgeType
      */
     public boolean isUnlocked (Collection<EarnedBadge> badges)
     {
-        Collection<BadgeType> unlockBadges = getUnlockRequirements();
-        if (unlockBadges != null) {
-            for (BadgeType requiredBadge : unlockBadges) {
-                boolean foundBadge = false;
-                for (EarnedBadge earnedBadge : badges) {
-                    if (earnedBadge.badgeCode == requiredBadge.getCode()) {
-                        foundBadge = true;
-                        break;
-                    }
-                }
-
-                if (!foundBadge) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        return Sets.newHashSet(Iterables.transform(badges, BADGE_TO_CODE)).containsAll(
+            Sets.newHashSet(Iterables.transform(getUnlockRequirements(), TYPE_TO_CODE)));
     }
 
     /**
@@ -326,7 +316,7 @@ public enum BadgeType
      */
     protected Collection<BadgeType> getUnlockRequirements ()
     {
-        return null;
+        return Collections.emptyList();
     }
 
     /** Constructs a new BadgeType. */
@@ -413,4 +403,20 @@ public enum BadgeType
     protected static HashIntMap<HashSet<BadgeType>> _statDependencies;
 
     protected static CRC32 _crc;
+
+    /** Helper function. */
+    protected static final Function<Badge, Integer> BADGE_TO_CODE =
+        new Function<Badge, Integer>() {
+        public Integer apply (Badge badge) {
+            return badge.badgeCode;
+        }
+    };
+
+    /** Helper function. */
+    protected static final Function<BadgeType, Integer> TYPE_TO_CODE =
+        new Function<BadgeType, Integer>() {
+        public Integer apply (BadgeType type) {
+            return type.getCode();
+        }
+    };
 };

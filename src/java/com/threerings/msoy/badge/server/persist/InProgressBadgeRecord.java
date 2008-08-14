@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.badge.server.persist;
 
+import com.google.common.base.Function;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -51,6 +53,14 @@ public class InProgressBadgeRecord extends PersistentRecord
      * rounded down to a multiple of PROGRESS_INCREMENT (to prevent hammering the database with
      * insignificant badge progress updates). See {@link #quantizeProgress}. */
     public static final float PROGRESS_INCREMENT = 0.1f;
+
+    /** Transforms a persistent record to a runtime record. */
+    public static Function<InProgressBadgeRecord, InProgressBadge> TO_BADGE =
+        new Function<InProgressBadgeRecord, InProgressBadge>() {
+        public InProgressBadge apply (InProgressBadgeRecord record) {
+            return record.toBadge();
+        }
+    };
 
     /** The id of the member that holds this badge. */
     @Id
