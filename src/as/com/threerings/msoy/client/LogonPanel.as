@@ -42,6 +42,7 @@ public class LogonPanel extends FloatingPanel
     {
         super.createChildren();
         styleName = "logonPanel";
+        showCloseButton = true;
 
         var label :UITextField = new UITextField();
         label.text = Msgs.GENERAL.get("l.email");
@@ -59,18 +60,17 @@ public class LogonPanel extends FloatingPanel
         _password.displayAsPassword = true;
         addChild(_password);
 
-        _email.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
-        _password.addEventListener(Event.CHANGE, checkTexts, false, 0, true);
-        _password.addEventListener(FlexEvent.ENTER, doLogon, false, 0, true);
+        _email.addEventListener(Event.CHANGE, checkTexts);
+        _password.addEventListener(Event.CHANGE, checkTexts);
+        _password.addEventListener(FlexEvent.ENTER, doLogon);
+
+        _logonBtn = new CommandButton(null, doLogon);
+        _logonBtn.styleName = "logonButton";
 
         var buttons :HBox = new HBox();
         buttons.percentWidth = 100;
-        _logonBtn = new CommandButton(Msgs.GENERAL.get("b.logon"), doLogon);
+        buttons.setStyle("horizontalAlign", "right");
         buttons.addChild(_logonBtn);
-        var spacer :HBox = new HBox();
-        spacer.percentWidth = 100;
-        buttons.addChild(spacer);
-        buttons.addChild(new CommandButton(Msgs.GENERAL.get("b.cancel"), close));
         addChild(buttons);
 
         _error = new Label();
