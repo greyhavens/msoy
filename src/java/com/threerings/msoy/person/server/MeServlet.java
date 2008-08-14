@@ -124,7 +124,7 @@ public class MeServlet extends MsoyServiceServlet
             return rooms;
 
         } catch (PersistenceException pe) {
-            log.warning("Load rooms failed", "memberId", mrec.memberId, "exception", pe);
+            log.warning("Load rooms failed", "memberId", mrec.memberId, pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
@@ -144,7 +144,7 @@ public class MeServlet extends MsoyServiceServlet
             return loadFeed(mrec, groupIds, cutoffDays);
 
         } catch (PersistenceException pe) {
-            log.warning("Load feed failed", "memberId", mrec.memberId, "exception", pe);
+            log.warning("Load feed failed", "memberId", mrec.memberId, pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
@@ -176,7 +176,7 @@ public class MeServlet extends MsoyServiceServlet
                 data.stamps.put(category, catBadges);
             }
         } catch (PersistenceException pe) {
-            log.warning("Loading badges failed ", "memberId", mrec.memberId, "exception", pe);
+            log.warning("Loading badges failed ", "memberId", mrec.memberId, pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
         return data;
