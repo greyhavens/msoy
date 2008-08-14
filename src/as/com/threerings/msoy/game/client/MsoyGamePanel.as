@@ -176,8 +176,14 @@ public class MsoyGamePanel extends WhirledGamePanel
             }
         }
 
-        if (_gameOverPanel != null) {
-            _gameOverPanel.close();
+        if (USE_GAMEOVER_POPUP) {
+            if (_gameOverPanel != null) {
+                _gameOverPanel.close();
+            }
+        } else {
+            if (_rematch.parent != null) {
+                _rematch.parent.removeChild(_rematch);
+            }
         }
     }
 
