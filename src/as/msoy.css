@@ -394,6 +394,12 @@ TabNavigator, TabBar {
   downSkin: Embed(source="../../rsrc/media/skins/button/joinnow_down.png");
 }
 
+.logonButton {
+  upSkin: Embed(source="../../rsrc/media/skins/button/logon_default.png");
+  overSkin: Embed(source="../../rsrc/media/skins/button/logon_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/button/logon_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/logon_disabled.png");
+}
 
 .unselectedRoomTab, .attentionRoomTab, .unselectedTellTab, .attentionTellTab, .unselectedGroupTab,
     .attentionGroupTab {
