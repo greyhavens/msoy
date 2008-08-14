@@ -201,9 +201,9 @@ public class TableCreationPanel extends VBox
         var bottomRow :HBox = new HBox();
         bottomRow.percentWidth = 100;
         bottomRow.setStyle("horizontalAlign", "right");
+        bottomRow.addChild(new CommandButton(Msgs.GAME.get("b.cancel"), _panel.showTables));
         bottomRow.addChild(
             new CommandButton(Msgs.GAME.get("b.create"), createGame, [ tconfigger, gconf ]));
-        bottomRow.addChild(new CommandButton(Msgs.GAME.get("b.cancel"), _panel.showTables));
         addChild(bottomRow);
     }
 
