@@ -32,6 +32,9 @@ public class GameOverPanel extends FloatingPanel
         _gctx = gctx;
         _rematch = rematch;
 
+        // TODO
+        styleName = "sexyWindow";
+
         _topArea.setStyle("horizontalAlign", "center");
     }
 
@@ -46,11 +49,11 @@ public class GameOverPanel extends FloatingPanel
         }
 
         if (coins > 0) {
-            this.styleName = "coinsGameOverPanel";
-
+            // TODO: the return of the coins image
             const wgMsgs :MessageBundle = _ctx.getMessageManager().getBundle(
                 WhirledGameCodes.WHIRLEDGAME_MESSAGE_BUNDLE);
-            this.title = wgMsgs.get("m.coins_awarded", coins);
+            _topArea.addChild(
+                FlexUtil.createLabel(wgMsgs.get("m.coins_awarded", coins), "gameOverCoins"));
 
             var msg :String;
             if (_gctx.getPlayerObject().isGuest()) {
@@ -67,16 +70,12 @@ public class GameOverPanel extends FloatingPanel
         super.createChildren();
 
         addChild(_topArea);
+        //setStyle("horizontalAlign", "center");
 
         if (_gctx.getPlayerObject().isGuest()) {
             const signUpBtn :CommandButton = new CommandButton(null, MsoyController.SHOW_SIGN_UP);
             signUpBtn.styleName = "joinNowButton";
-
-            var box :VBox = new VBox();
-            box.percentWidth = 100;
-            box.setStyle("horizontalAlign", "center");
-            box.addChild(signUpBtn);
-            addChild(box);
+            addChild(signUpBtn);
         }
 
         const allGamesBtn :CommandButton = new CommandButton(
