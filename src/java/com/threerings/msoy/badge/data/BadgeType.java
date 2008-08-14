@@ -195,6 +195,8 @@ public enum BadgeType
 
     ;
 
+    // This can't be in InProgressBadge, because InProgressBadge is visible to GWT, and BadgeType
+    // is incompatible with GWT.
     public static Predicate<InProgressBadge> IS_VISIBLE_BADGE =
         new Predicate<InProgressBadge>() {
         public boolean apply (InProgressBadge badge) {
