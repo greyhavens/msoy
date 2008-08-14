@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.zip.CRC32;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -20,6 +21,7 @@ import com.threerings.stats.Log;
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.badge.data.all.Badge;
+import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.gwt.StampCategory;
 
@@ -178,11 +180,27 @@ public enum BadgeType
         new Level(1000, 6000),
         }) {
         // TODO
-    }
+    },
 
     // TODO: Shopper - needs an items purchased stat
 
+    // Every member will have an InProgressBadgeRecord created for the HIDDEN badge, but they will
+    // never earn it (to allow Passport to determine whether a player's initial set of
+    // InProgressBadges needs to be created).
+    HIDDEN(StampCategory.SOCIAL, 0) {
+        @Override public boolean isHidden () {
+            return true;
+        }
+    }
+
     ;
+
+    public static Predicate<InProgressBadge> IS_VISIBLE_BADGE =
+        new Predicate<InProgressBadge>() {
+        public boolean apply (InProgressBadge badge) {
+            return !(getType(badge.badgeCode).isHidden());
+        }
+    };
 
     public static class Level
     {
@@ -320,6 +338,15 @@ public enum BadgeType
         return Collections.emptyList();
     }
 
+    /**
+     * Overridden only by the HIDDEN BadgeType to indicate that the badge shouldn't be shown
+     * to players.
+     */
+    public boolean isHidden ()
+    {
+        return false;
+    }
+
     /** Constructs a new BadgeType. */
     BadgeType (StampCategory category, StatType relevantStat, Level[] levels)
     {
@@ -329,14 +356,14 @@ public enum BadgeType
 
         // ensure the badge has at least one level
         if (_levels == null || _levels.length == 0) {
-            _levels = new Level[] { new Level(0, 0) };
+            _levels = new Level[] { new Level(1, 0) };
         }
     }
 
     /** Constructs a new BadgeType with no relevant stat and a single level. */
     BadgeType (StampCategory category, int coinValue)
     {
-        this(category, null, new Level[] { new Level(0, coinValue) });
+        this(category, null, new Level[] { new Level(1, coinValue) });
     }
 
     /**
