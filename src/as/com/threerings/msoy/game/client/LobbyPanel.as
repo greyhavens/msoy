@@ -456,7 +456,7 @@ public class LobbyPanel extends FloatingPanel
         startBox.styleName = "startBox";
         startBox.percentHeight = 100;
 
-        _soloBtn = new CommandButton( Msgs.GAME.get("b.start_solo"), LobbyController.PLAY_SOLO);
+        _soloBtn = new CommandButton(Msgs.GAME.get("b.start_solo"), LobbyController.PLAY_SOLO);
         startBox.addChild(_soloBtn);
         _multiBtn = new CommandButton(Msgs.GAME.get("b.start_multi"), showCreateMulti);
         startBox.addChild(_multiBtn);
@@ -465,7 +465,7 @@ public class LobbyPanel extends FloatingPanel
         var tablesHeader :HBox = new HBox();
         tablesHeader.styleName = "tablesTitle";
         tablesHeader.percentWidth = 100;
-        tablesHeader.addChild(FlexUtil.createLabel("Join a Game"));
+        tablesHeader.addChild(FlexUtil.createLabel(Msgs.GAME.get("t.tables")));
         _contents.addChild(tablesHeader);
 
         _tableList = new VBox();

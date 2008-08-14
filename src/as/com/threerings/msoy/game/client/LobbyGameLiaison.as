@@ -115,7 +115,7 @@ public class LobbyGameLiaison extends GameLiaison
     }
 
     /**
-     * Attempst to go right into a game based on the supplied mode.
+     * Attempts to go right into a game based on the supplied mode.
      *
      * @see LobbyCodes
      */
@@ -127,11 +127,11 @@ public class LobbyGameLiaison extends GameLiaison
             _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             shutdown();
         },
-        function (result :Object) :void {
-            if (int(result) != 0) {
+        function (lobbyOid :int) :void {
+            if (lobbyOid != 0) {
                 // we failed to start a game (see below) so join the lobby instead
                 _enterNextGameDirect = false;
-                gotLobbyOid(result);
+                gotLobbyOid(lobbyOid);
             }
         });
         // we want to avoid routing this game entry through the URL because our current URL is very
@@ -262,9 +262,9 @@ public class LobbyGameLiaison extends GameLiaison
         }
     }
 
-    protected function gotLobbyOid (result :Object) :void
+    protected function gotLobbyOid (lobbyOid :int) :void
     {
-        _lobby.enterLobby(int(result));
+        _lobby.enterLobby(lobbyOid);
 
         // if we have a player table to enter do that now
         if (_playerIdTable != 0) {
