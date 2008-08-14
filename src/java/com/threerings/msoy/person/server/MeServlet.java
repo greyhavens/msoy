@@ -168,12 +168,8 @@ public class MeServlet extends MsoyServiceServlet
             List<EarnedBadge> stamps = Lists.transform(
                 _badgeRepo.loadEarnedBadges(mrec.memberId), EarnedBadgeRecord.TO_BADGE);
             for (StampCategory category : StampCategory.values()) {
-                // the list returned from Lists.newArrayList() can't be sent to GWT, or this would
-                // all sit happily in one statement.
-                List<EarnedBadge> catBadges = new ArrayList<EarnedBadge>();
-                Iterables.addAll(
-                    catBadges, Iterables.filter(stamps, new FilterByCategory(category)));
-                data.stamps.put(category, catBadges);
+                data.stamps.put(category, Lists.newArrayList(
+                    Iterables.filter(stamps, new FilterByCategory(category))));
             }
         } catch (PersistenceException pe) {
             log.warning("Loading badges failed ", "memberId", mrec.memberId, pe);
@@ -211,11 +207,9 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     /** Helper for loadBadges */
-    protected static class FilterByCategory
-        implements Predicate<EarnedBadge>
+    protected static class FilterByCategory implements Predicate<EarnedBadge>
     {
-        public FilterByCategory (StampCategory category)
-        {
+        public FilterByCategory (StampCategory category) {
             _category = category;
         }
 
