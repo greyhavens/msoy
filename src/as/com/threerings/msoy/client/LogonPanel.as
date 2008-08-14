@@ -41,7 +41,8 @@ public class LogonPanel extends FloatingPanel
     override protected function createChildren () :void
     {
         super.createChildren();
-        styleName = "logonPanel";
+        styleName = "sexyWindow";
+        setStyle("horizontalAlign", "left");
         showCloseButton = true;
 
         var label :UITextField = new UITextField();

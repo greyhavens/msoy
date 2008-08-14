@@ -899,10 +899,6 @@ BasePanel {
   disabledSkin: Embed(source="../../rsrc/media/skins/button/roomeditor/reset_rotation.png");
 }
 
-.logonPanel {
-  paddingRight: 2;
-}
-
 .sliderPopup {
   backgroundSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_background.png",
           scaleGridTop="1", scaleGridBottom="23",
