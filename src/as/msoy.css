@@ -207,6 +207,7 @@ CheckBox {
   selectedUpIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
   selectedOverIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
   selectedDownIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
+  color: white;
 }
 
 RadioButton {
