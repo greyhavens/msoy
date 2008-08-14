@@ -29,7 +29,7 @@ import com.threerings.msoy.data.StatType;
 /** Defines the various badge types. */
 public enum BadgeType
 {
-//    /* TODO - remove these testing badges
+    /* TODO - remove these testing badges
     SERVLET_BADGE(StampCategory.SOCIAL, StatType.ITEM_COMMENTS, new Level[] {
         new Level(1, 1000),
         new Level(3, 1000),
@@ -52,8 +52,7 @@ public enum BadgeType
         @Override protected List<BadgeType> getUnlockRequirements () {
             return Collections.singletonList(SERVLET_BADGE);
         }
-    },
-//    },*/
+    },*/
 
     // social badges
     FRIENDLY(StampCategory.SOCIAL, StatType.FRIENDS_MADE, new Level[] {
