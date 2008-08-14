@@ -4,7 +4,10 @@
 package client.landing;
 
 import com.google.gwt.core.client.GWT;
-
+import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.landing.gwt.LandingData;
+import com.threerings.msoy.landing.gwt.LandingService;
+import com.threerings.msoy.landing.gwt.LandingServiceAsync;
 import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebMemberServiceAsync;
 
@@ -34,7 +37,7 @@ public class LandingPage extends Page
         // landing page for creators (a/b test: half see signup, half see info - default is info)
         if (action.equals("creators")) {
             _membersvc.getABTestGroup(
-                TrackingCookie.get(), "jul08CreatorsLanding", true, new MsoyCallback<Integer>() {
+                TrackingCookie.get(), "aug08CreatorsLanding", true, new MsoyCallback<Integer>() {
                     public void onSuccess (Integer group) {
                         if (group == 1) {
                             setContent(_msgs.titleCreators(), new CreatorsSignupPanel());
@@ -42,8 +45,10 @@ public class LandingPage extends Page
                             setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
                         } else if (group == 3) {
                             Link.go(Pages.ME, "");
+                        } else if (group == 4) {
+                            redirectToPopularWhirled();
                         } else {
-                            // group 4, and if test is not running visitors see info page
+                            // group 5, and if test is not running visitors see info page
                             setContent(_msgs.titleCreators(), new CreatorsPanel());
                         }
                     }
@@ -61,9 +66,9 @@ public class LandingPage extends Page
         } else if (action.equals("creatorslinkstest")) {
             setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
 
-        // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
-        } else if (action.equals("creatorsoldlandingtest")) {
-            Link.go(Pages.ME, "");
+        // redirect to some popular whirled (TODO: FOR TESTING, DO NOT LINK)
+        } else if (action.equals("creatorsredirect")) {
+            redirectToPopularWhirled();
 
         } else {
             setContent(_msgs.landingTitle(), new LandingPanel());
@@ -76,7 +81,39 @@ public class LandingPage extends Page
         return Pages.LANDING;
     }
 
+    /**
+     * Redirects the viewer to a popular Whirled, or to Brave New Whirled if
+     * a suitable whirled is not available.
+     *
+     * Part of the aug08CreatorsLanding A/B test. See JIRA WRLD-251.
+     *
+     * TODO: remove me after the test has ended.
+     */
+    protected void redirectToPopularWhirled ()
+    {
+        // population min and max for determining suitable whirled
+        final int min = 2;
+        final int max = 15;
+
+        _landingsvc.getLandingData(new MsoyCallback<LandingData>() {
+            public void onSuccess (LandingData data) {
+                // take people to Brave New Whirled by default
+                int target = 1;
+                // but maybe there's a better place for them
+                for (GroupCard card : data.featuredWhirleds) {
+                    if (card.population > min && card.population < max) {
+                        target = card.homeSceneId;
+                    }
+                }
+
+                Link.go(Pages.WORLD, "s"+target);
+            }
+        });
+    }
+
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
+    protected static final LandingServiceAsync _landingsvc = (LandingServiceAsync)
+        ServiceUtil.bind(GWT.create(LandingService.class), LandingService.ENTRY_POINT);
 }
