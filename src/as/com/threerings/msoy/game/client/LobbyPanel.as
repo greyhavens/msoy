@@ -174,6 +174,8 @@ public class LobbyPanel extends FloatingPanel
             // Only show this button if we can start this game alone
             _soloBtn.visible = (_lobbyObj.gameDef.match.getMinimumPlayers() <= 1);
 
+            _multiBtn.visible = (_lobbyObj.gameDef.match.getMaximumPlayers() > 1);
+
         } else {
             noPendersMsg = Msgs.GAME.get(
                 _friendsOnly ? "m.no_friends_party" : "m.no_penders_party");
