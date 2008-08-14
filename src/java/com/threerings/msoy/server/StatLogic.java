@@ -101,11 +101,8 @@ public class StatLogic
                     return stat;
                 }
             };
-            Collection<BadgeType> dependantBadges = BadgeType.getDependantBadges(statType);
-            if (dependantBadges != null) {
-                for (BadgeType badgeType : dependantBadges) {
-                    updateBadge(memberId, badgeType, singleStatSet);
-                }
+            for (BadgeType badgeType : BadgeType.getDependantBadges(statType)) {
+                updateBadge(memberId, badgeType, singleStatSet);
             }
         }
     }

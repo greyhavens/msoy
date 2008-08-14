@@ -5,15 +5,16 @@ package com.threerings.msoy.badge.data;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.CRC32;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
-import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
 
 import com.threerings.stats.Log;
 import com.threerings.stats.data.StatSet;
@@ -220,9 +221,10 @@ public enum BadgeType
      * party responsible for the change should call this method and find out what badges potentially
      * need updating.
      */
-    public static HashSet<BadgeType> getDependantBadges (StatType stat)
+    public static Set<BadgeType> getDependantBadges (StatType stat)
     {
-        return (stat != null ? _statDependencies.get(stat.code()) : null);
+        Set<BadgeType> depends = (stat == null) ? null : _statDependencies.get(stat.code());
+        return (depends == null) ? Collections.<BadgeType>emptySet() : depends;
     }
 
     /**
@@ -355,15 +357,15 @@ public enum BadgeType
     protected static void mapStatDependencies (BadgeType type)
     {
         if (_statDependencies == null) {
-            _statDependencies = new HashIntMap<HashSet<BadgeType>>();
+            _statDependencies = IntMaps.newHashIntMap();
         }
 
         StatType stat = type.getRelevantStat();
         if (stat != null) {
             int code = stat.code();
-            HashSet<BadgeType> dependantTypes = _statDependencies.get(code);
+            Set<BadgeType> dependantTypes = _statDependencies.get(code);
             if (dependantTypes == null) {
-                _statDependencies.put(code, dependantTypes = new HashSet<BadgeType>());
+                _statDependencies.put(code, dependantTypes = Sets.newHashSet());
             }
             dependantTypes.add(type);
         }
@@ -378,7 +380,7 @@ public enum BadgeType
 
         // store the hash in a map
         if (_codeToType == null) {
-            _codeToType = new HashIntMap<BadgeType>();
+            _codeToType = IntMaps.newHashIntMap();
         }
         if (_codeToType.containsKey(code)) {
             Log.log.warning("Badge type collision! " + type + " and " + _codeToType.get(code) +
@@ -396,10 +398,10 @@ public enum BadgeType
     protected Level[] _levels;
 
     /** The table mapping stat codes to enumerated types. */
-    protected static HashIntMap<BadgeType> _codeToType;
+    protected static IntMap<BadgeType> _codeToType;
 
     /** The mapping of stats to the badges that depend on them. */
-    protected static HashIntMap<HashSet<BadgeType>> _statDependencies;
+    protected static IntMap<Set<BadgeType>> _statDependencies;
 
     protected static CRC32 _crc;
 
