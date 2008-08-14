@@ -30,6 +30,7 @@ import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.all.DeploymentConfig;
 
 /**
  * Provides badge related services to servlets and other blocking thread entities.
@@ -45,6 +46,11 @@ public class BadgeLogic
     public void awardBadge (EarnedBadgeRecord brec, boolean dobjNeedsUpdate)
         throws PersistenceException
     {
+        // TODO: remove this when passport goes live
+        if (!DeploymentConfig.devDeployment) {
+            return;
+        }
+
         // ensure this is a valid badge level
         BadgeType type = BadgeType.getType(brec.badgeCode);
         BadgeType.Level levelData = type.getLevel(brec.level);
@@ -94,6 +100,11 @@ public class BadgeLogic
     public void createNewInProgressBadges (int memberId)
         throws PersistenceException
     {
+        // TODO: remove this when passport goes live
+        if (!DeploymentConfig.devDeployment) {
+            return;
+        }
+
         // read this member's in-progress and earned badge records
         List<EarnedBadgeRecord> earnedBadgeRecs = _badgeRepo.loadEarnedBadges(memberId);
         Set<EarnedBadge> earnedBadges = Sets.newHashSetWithExpectedSize(earnedBadgeRecs.size());

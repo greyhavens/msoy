@@ -20,6 +20,7 @@ import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.data.LurkerName;
@@ -565,6 +566,9 @@ public class MsoyAuthenticator extends Authenticator
         final String tracker = (referral == null) ? null : referral.tracker;
         _eventLog.accountCreated(mrec.memberId, iid, tracker);
 
+        // create InProgressBadgeRecords for the initial set of badges
+        _badgeLogic.createNewInProgressBadges(mrec.memberId);
+
         return mrec;
     }
 
@@ -617,6 +621,7 @@ public class MsoyAuthenticator extends Authenticator
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected BadgeLogic _badgeLogic;
 
     /** The number of times we'll try generate a unique ident before failing. */
     protected static final int MAX_TRIES = 100;
