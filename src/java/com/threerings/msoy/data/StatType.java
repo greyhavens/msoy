@@ -29,9 +29,9 @@ public enum StatType implements Stat.Type
     // game stats
     TROPHIES_EARNED(new IntStat(), true),
     GAME_SESSIONS(new IntStat(), true),
-    UNIQUE_GAMES_PLAYED(new IntSetStat(), true),
+    //UNIQUE_GAMES_PLAYED(new IntSetStat(), true),
     MP_GAMES_WON(new IntStat(), true),
-    MP_GAME_PARTNERS(new IntSetStat(), true),
+    //MP_GAME_PARTNERS(new IntSetStat(), true),
 
     // creation stats
     COINS_EARNED_SELLING(new IntStat(), true),

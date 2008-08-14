@@ -64,7 +64,9 @@ public enum BadgeType
         new Level(150, 5000),
         new Level(500, 6000)
         }) {
-        // TODO
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.FRIENDS_MADE);
+        }
     },
 
     IRONMAN(StampCategory.SOCIAL, StatType.CONSEC_DAILY_LOGINS, new Level[] {
@@ -75,7 +77,13 @@ public enum BadgeType
         new Level(90, 5000),
         new Level(180, 6000)
         }) {
-        // TODO
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.CONSEC_DAILY_LOGINS);
+        }
+
+        @Override protected Collection<BadgeType> getUnlockRequirements () {
+            return Collections.singleton(BadgeType.FRIENDLY);
+        }
     },
 
     MAGNET(StampCategory.SOCIAL, StatType.INVITES_ACCEPTED, new Level[] {
@@ -86,7 +94,13 @@ public enum BadgeType
         new Level(50, 5000),
         new Level(100, 6000)
         }) {
-        // TODO
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.INVITES_ACCEPTED);
+        }
+
+        @Override protected Collection<BadgeType> getUnlockRequirements () {
+            return Collections.singleton(BadgeType.FRIENDLY);
+        }
     },
 
     FIXTURE(StampCategory.SOCIAL, StatType.MINUTES_ACTIVE, new Level[] {
@@ -97,7 +111,13 @@ public enum BadgeType
         new Level(200 * 60, 5000),
         new Level(500 * 60, 6000)
         }) {
-        // TODO
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.MINUTES_ACTIVE);
+        }
+
+        @Override protected Collection<BadgeType> getUnlockRequirements () {
+            return Collections.singleton(BadgeType.FRIENDLY);
+        }
     },
 
     // game badges
@@ -109,7 +129,9 @@ public enum BadgeType
         new Level(500, 5000),
         new Level(2000, 6000)
         }) {
-        // TODO
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.GAME_SESSIONS);
+        }
     },
 
     CONTENDER(StampCategory.GAME, StatType.MP_GAMES_WON, new Level[] {
@@ -120,7 +142,13 @@ public enum BadgeType
         new Level(50, 5000),
         new Level(100, 6000)
         }) {
-        // TODO
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.MP_GAMES_WON);
+        }
+
+        @Override protected Collection<BadgeType> getUnlockRequirements () {
+            return Collections.singleton(BadgeType.GAMER);
+        }
     },
 
     COLLECTOR(StampCategory.GAME, StatType.TROPHIES_EARNED, new Level[] {
@@ -131,7 +159,13 @@ public enum BadgeType
         new Level(50, 5000),
         new Level(100, 6000)
         }) {
-        // TODO
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.TROPHIES_EARNED);
+        }
+
+        @Override protected Collection<BadgeType> getUnlockRequirements () {
+            return Collections.singleton(BadgeType.GAMER);
+        }
     },
 
     // creation badges
@@ -143,12 +177,36 @@ public enum BadgeType
         new Level(2000000, 5000),
         new Level(5000000, 6000)
         }) {
-        // TODO
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.COINS_EARNED_SELLING);
+        }
+
+        // PROFESSIONAL is unlocked once you have at least one other CREATION badge
+        @Override public boolean isUnlocked (Collection<EarnedBadge> badges) {
+            return (Iterables.find(badges, new Predicate<EarnedBadge>() {
+                public boolean apply (EarnedBadge badge) {
+                    return getType(badge.badgeCode).getCategory() == StampCategory.CREATION;
+                }
+            }) != null);
+        }
     },
 
     // TODO: Character Designer, Furniture Builder, Landscape Painter, Professional, Popular
 
     // shopping badges
+    SHOPPER(StampCategory.SHOPPING, StatType.ITEMS_PURCHASED, new Level[] {
+        new Level(1, 1000),
+        new Level(3, 2000),
+        new Level(10, 3000),
+        new Level(50, 4000),
+        new Level(250, 5000),
+        new Level(1000, 6000),
+        }) {
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.ITEMS_PURCHASED);
+        }
+    },
+
     JUDGE(StampCategory.SHOPPING, StatType.ITEMS_RATED, new Level[] {
         new Level(1, 1000),
         new Level(5, 2000),
@@ -157,7 +215,13 @@ public enum BadgeType
         new Level(500, 5000),
         new Level(2000, 6000)
         }) {
-        // TODO
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.ITEMS_RATED);
+        }
+
+        @Override protected Collection<BadgeType> getUnlockRequirements () {
+            return Collections.singleton(BadgeType.SHOPPER);
+        }
     },
 
     OUTSPOKEN(StampCategory.SHOPPING, StatType.ITEM_COMMENTS, new Level[] {
@@ -168,18 +232,13 @@ public enum BadgeType
         new Level(500, 5000),
         new Level(2000, 6000)
         }) {
-        // TODO
-    },
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.ITEM_COMMENTS);
+        }
 
-    SHOPPER(StampCategory.SHOPPING, StatType.ITEMS_PURCHASED, new Level[] {
-        new Level(1, 1000),
-        new Level(3, 2000),
-        new Level(10, 3000),
-        new Level(50, 4000),
-        new Level(250, 5000),
-        new Level(1000, 6000),
-        }) {
-        // TODO
+        @Override protected Collection<BadgeType> getUnlockRequirements () {
+            return Collections.singleton(BadgeType.SHOPPER);
+        }
     },
 
     // TODO: Shopper - needs an items purchased stat

@@ -356,8 +356,9 @@ public class AwardDelegate extends RatingDelegate
             // track total game sessions
             _worldClient.incrementStat(memberId, StatType.GAME_SESSIONS, 1);
             // track unique games played
-            _worldClient.addToSetStat(
-                memberId, StatType.UNIQUE_GAMES_PLAYED, _content.detail.gameId);
+            // Note: commented out because we don't have a badge for this right now
+            /*_worldClient.addToSetStat(
+                memberId, StatType.UNIQUE_GAMES_PLAYED, _content.detail.gameId);*/
 
             if (isMultiplayer()) {
                 // track multiplayer game wins
@@ -366,12 +367,13 @@ public class AwardDelegate extends RatingDelegate
                 }
 
                 // track unique game partners
-                for (Player oplayer : players) {
+                // Note - commented out because we don't have a badge for this right now
+                /*for (Player oplayer : players) {
                     int oMemberId = oplayer.getMemberId();
                     if (oMemberId != memberId && !MemberName.isGuest(oMemberId)) {
                         _worldClient.addToSetStat(memberId, StatType.MP_GAME_PARTNERS, oMemberId);
                     }
-                }
+                }*/
             }
         }
     }
