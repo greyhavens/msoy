@@ -441,4 +441,4 @@ public enum BadgeType
             return BadgeType.getType(badge.badgeCode);
         }
     };
-};
+}

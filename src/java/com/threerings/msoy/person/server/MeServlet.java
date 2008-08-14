@@ -3,12 +3,16 @@
 
 package com.threerings.msoy.person.server;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import java.sql.Timestamp;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import com.google.inject.Inject;
 
@@ -28,6 +32,11 @@ import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.badge.gwt.StampCategory;
+import com.threerings.msoy.badge.server.BadgeLogic;
+import com.threerings.msoy.badge.server.persist.BadgeRepository;
+import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
+
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MyWhirledData;
@@ -76,7 +85,7 @@ public class MeServlet extends MsoyServiceServlet
             return data;
 
         } catch (PersistenceException pe) {
-            log.warning("getMyWhirled failed [for=" + mrec.memberId + "]", pe);
+            log.warning("getMyWhirled failed", "memberId", mrec.memberId, "exception", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
@@ -115,7 +124,7 @@ public class MeServlet extends MsoyServiceServlet
             return rooms;
 
         } catch (PersistenceException pe) {
-            log.warning("Load rooms failed [memberId=" + mrec.memberId + "]", pe);
+            log.warning("Load rooms failed", "memberId", mrec.memberId, "exception", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
@@ -135,7 +144,7 @@ public class MeServlet extends MsoyServiceServlet
             return loadFeed(mrec, groupIds, cutoffDays);
 
         } catch (PersistenceException pe) {
-            log.warning("Load feed failed [memberId=" + mrec.memberId + "]", pe);
+            log.warning("Load feed failed", "memberId", mrec.memberId, "exception", pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
@@ -150,6 +159,26 @@ public class MeServlet extends MsoyServiceServlet
         // other players as well
         PassportData data = new PassportData();
         data.stampOwner = mrec.name;
+
+        try {
+            // for now, we just ship along every badge relevant to this player.
+            data.nextBadges = _badgeLogic.getInProgressBadges(mrec.memberId, true);
+
+            data.stamps = Maps.newHashMap();
+            List<EarnedBadge> stamps = Lists.transform(
+                _badgeRepo.loadEarnedBadges(mrec.memberId), EarnedBadgeRecord.TO_BADGE);
+            for (StampCategory category : StampCategory.values()) {
+                // the list returned from Lists.newArrayList() can't be sent to GWT, or this would
+                // all sit happily in one statement.
+                List<EarnedBadge> catBadges = new ArrayList<EarnedBadge>();
+                Iterables.addAll(
+                    catBadges, Iterables.filter(stamps, new FilterByCategory(category)));
+                data.stamps.put(category, catBadges);
+            }
+        } catch (PersistenceException pe) {
+            log.warning("Loading badges failed ", "memberId", mrec.memberId, "exception", pe);
+            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+        }
         return data;
     }
 
@@ -181,12 +210,30 @@ public class MeServlet extends MsoyServiceServlet
             _feedRepo.loadPersonalFeed(mrec.memberId, friendIds, groupIds, since));
     }
 
+    /** Helper for loadBadges */
+    protected static class FilterByCategory
+        implements Predicate<EarnedBadge>
+    {
+        public FilterByCategory (StampCategory category)
+        {
+            _category = category;
+        }
+
+        public boolean apply (EarnedBadge badge) {
+            return BadgeType.getType(badge.badgeCode).getCategory().equals(_category);
+        }
+
+        protected StampCategory _category;
+    }
+
     // our dependencies
     @Inject protected MemberManager _memberMan;
     @Inject protected ServletLogic _servletLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected BadgeRepository _badgeRepo;
+    @Inject protected BadgeLogic _badgeLogic;
 
     protected static final int TARGET_MYWHIRLED_GAMES = 6;
     protected static final int DEFAULT_FEED_DAYS = 2;
