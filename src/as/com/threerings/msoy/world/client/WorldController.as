@@ -962,11 +962,12 @@ public class WorldController extends MsoyController
     // from MsoyController
     override public function addMemberMenuItems (member :MemberName, menuItems :Array) :void
     {
-        var memId :int = member.getMemberId();
-        var us :MemberObject = _wctx.getMemberObject();
+        const memId :int = member.getMemberId();
+        const us :MemberObject = _wctx.getMemberObject();
+        const isUs :Boolean = (memId == us.getMemberId());
 
         // if we're not a guest, populate availability menu.
-        if (memId == us.getMemberId() && !MemberName.isGuest(memId)) {
+        if (isUs && !MemberName.isGuest(memId)) {
             var availActions :Array = [];
             for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
                 availActions.push({
@@ -975,12 +976,12 @@ public class WorldController extends MsoyController
             }
             menuItems.push({ label: Msgs.GENERAL.get("l.avail_menu"), children: availActions });
 
-        } else if (memId != us.getMemberId()) {
-            menuItems.push({ label: Msgs.GENERAL.get("l.open_channel"),
+        } else if (!isUs) {
+            menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
                              command: OPEN_CHANNEL, arg: member });
             if (!MemberName.isGuest(memId)) {
                 if (!_wctx.getMsoyClient().isEmbedded()) {
-                    menuItems.push({ label: Msgs.GENERAL.get("l.view_member"),
+                    menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
                                      command: VIEW_MEMBER, arg: memId });
                 }
                 if (!us.isGuest() && !us.friends.containsKey(memId)) {
@@ -1009,14 +1010,12 @@ public class WorldController extends MsoyController
     override public function addFriendMenuItems (member :MemberName, menuItems :Array) :void
     {
         var memId :int = member.getMemberId();
-        menuItems.push({ label: Msgs.GENERAL.get("l.open_channel"),
+        menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
                          command: OPEN_CHANNEL, arg: member });
-        if (!_wctx.getMsoyClient().isEmbedded()) {
-            menuItems.push({ label: Msgs.GENERAL.get("l.view_member"),
-                             command: VIEW_MEMBER, arg: memId });
-            menuItems.push({ label: Msgs.GENERAL.get("l.visit_member"),
-                             command: VISIT_MEMBER, arg: memId });
-        }
+        menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
+                         command: VIEW_MEMBER, arg: memId });
+        menuItems.push({ label: Msgs.GENERAL.get("b.visit_member"),
+                         command: VISIT_MEMBER, arg: memId });
     }
 
     override public function addPartymateMenuItems (member :MemberName, menuItems :Array) :void

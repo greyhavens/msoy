@@ -378,9 +378,9 @@ public class RoomObjectController extends RoomController
 
             if (!MemberName.isGuest(memId)) {
                 // TODO: move up when we can forward MemberObjects between servers for guests
-                menuItems.push({ label: Msgs.GENERAL.get("l.invite_follow"),
+                menuItems.push({ label: Msgs.GENERAL.get("b.invite_follow"),
                                  callback: inviteFollow, arg: occInfo.username });
-                menuItems.push({ label: Msgs.GENERAL.get("l.visit_home"),
+                menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
                                  command: WorldController.GO_MEMBER_HOME, arg: memId });
 
                 var kind :String = Msgs.GENERAL.get(avatar.getDesc());
