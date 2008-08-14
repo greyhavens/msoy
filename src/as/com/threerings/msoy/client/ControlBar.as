@@ -74,12 +74,14 @@ public class ControlBar extends HBox
 
     /** Different groups of UI elements. */
     public static const UI_ALL :String = "All UI Elements"; // created automatically
+    public static const UI_BASE :String = "Base UI";
     public static const UI_ROOM :String = "Room UI";
     public static const UI_GAME :String = "Game UI";
     public static const UI_MINI :String = "Mini UI";
     public static const UI_VIEWER :String = "Room Entity Viewer UI";
 
-    public static const ALL_UI_GROUPS :Array = [ UI_ALL, UI_ROOM, UI_GAME, UI_MINI, UI_VIEWER ];
+    public static const ALL_UI_GROUPS :Array = [
+        UI_ALL, UI_BASE, UI_ROOM, UI_GAME, UI_MINI, UI_VIEWER ];
 
     /** These will probably be expanded soon. */
     public static const CHAT_PRIORITY :int = 0;
@@ -180,6 +182,15 @@ public class ControlBar extends HBox
     }
 
     /**
+     * Called to tell us when we're in room mode.
+     */
+    public function setInRoom (inRoom :Boolean) :void
+    {
+        _inRoom = inRoom;
+        updateUI();
+    }
+
+    /**
      * Configures our spacer width.
      */
     public function setSpacerWidth (width :Number) :void
@@ -239,7 +250,7 @@ public class ControlBar extends HBox
 
         _fullBtn = new CommandButton();
         _fullBtn.styleName = "controlBarButtonFull";
-        _fullBtn.toolTip = Msgs.GENERAL.get("i.full");
+        _fullBtn.toolTip = Msgs.GENERAL.get("i.full") + " TODO: admin only for testing";
         _fullBtn.setCallback(handleFullScreen);
     }
 
@@ -285,7 +296,8 @@ public class ControlBar extends HBox
         _rightSpacer.styleName = "controlBarSpacer";
         _rightSpacer.height = this.height;
         _rightSpacer.percentWidth = 100;
-        addGroupChild(_rightSpacer, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ], SPACER_PRIORITY);
+        addGroupChild(_rightSpacer, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
+            SPACER_PRIORITY);
     }
 
     protected function sortControls () :void
@@ -296,14 +308,14 @@ public class ControlBar extends HBox
     protected function addControlButtons () :void
     {
         // add our standard control bar features
-        addGroupChild(_chatBtn, [ UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
+        addGroupChild(_chatBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
         _chatControl = new ChatControl(_ctx, null, this.height, this.height - 4);
         _chatControl.sendButton.styleName = "controlBarButtonSend";
-        addGroupChild(_chatControl, [ UI_ROOM, UI_MINI, UI_GAME, /*,UI_VIEWER*/ ], CHAT_PRIORITY);
-        addGroupChild(_volBtn, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
+        addGroupChild(_chatControl, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
+        addGroupChild(_volBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
         addGroupChild(_zoomBtn, [ UI_ROOM, UI_VIEWER ]);
         if (_ctx.getTokens().isAdmin()) {
-            addGroupChild(_fullBtn, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
+            addGroupChild(_fullBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
         }
 
         //addGroupChild(_partyBtn, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
@@ -359,8 +371,10 @@ public class ControlBar extends HBox
             return UI_MINI;
         } else if (_inGame) {
             return UI_GAME;
-        } else {
+        } else if (_inRoom) {
             return UI_ROOM;
+        } else {
+            return UI_BASE;
         }
     }
 
@@ -408,6 +422,9 @@ public class ControlBar extends HBox
 
     /** Are we in a game? */
     protected var _inGame :Boolean;
+
+    /** Are we in a room? */
+    protected var _inRoom :Boolean;
 
     /** Object that contains all the different groups of UI elements. */
     protected var _groups :Object = new Object();

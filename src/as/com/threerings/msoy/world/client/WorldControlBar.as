@@ -194,12 +194,12 @@ public class WorldControlBar extends ControlBar
         super.setupControls();
 
         if (_notificationDisplay != null) {
-            addGroupChild(_notificationDisplay, [ UI_ROOM, UI_GAME ], LAST_PRIORITY);
+            addGroupChild(_notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME ], LAST_PRIORITY);
         }
 
         // TODO: enable friends for guests, even if it just goads them into signup
         if (_friendBtnBox != null && _isMember) {
-            addGroupChild(_friendBtnBox, [ UI_ROOM, UI_GAME ]);
+            addGroupChild(_friendBtnBox, [ UI_BASE, UI_ROOM, UI_GAME ]);
         }
     }
 
