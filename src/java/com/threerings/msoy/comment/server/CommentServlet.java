@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.comment.server;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -116,7 +117,7 @@ public class CommentServlet extends MsoyServiceServlet
 
         try {
             // record the comment to the data-ma-base
-            _commentRepo.postComment(etype, eid, mrec.memberId, text);
+            CommentRecord crec = _commentRepo.postComment(etype, eid, mrec.memberId, text);
 
             // find out the owner id of and the entity name for the entity that was commented on
             int ownerId = 0;
@@ -171,11 +172,9 @@ public class CommentServlet extends MsoyServiceServlet
                 _notifyMan.notifyEntityCommented(ownerId, etype, eid, entityName);
             }
 
-            // fake up a comment record to return to the client
-            Comment comment = new Comment();
+            // convert the record to a runtime record to return to the caller
+            Comment comment = crec.toComment(Collections.<Integer, MemberCard>emptyMap());
             comment.commentor = mrec.getName();
-            comment.posted = System.currentTimeMillis();
-            comment.text = text;
             return comment;
 
         } catch (PersistenceException pe) {

@@ -81,7 +81,7 @@ public class CommentRepository extends DepotRepository
     /**
      * Posts a new comment on the specified entity by the specified member.
      */
-    public void postComment (int entityType, int entityId, int memberId, String text)
+    public CommentRecord postComment (int entityType, int entityId, int memberId, String text)
         throws PersistenceException
     {
         if (text.length() > Comment.MAX_TEXT_LENGTH) { // sanity check
@@ -97,6 +97,8 @@ public class CommentRepository extends DepotRepository
         record.memberId = memberId;
         record.text = text;
         insert(record);
+
+        return record;
     }
 
     /**

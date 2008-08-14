@@ -4,8 +4,7 @@
 package com.threerings.msoy.comment.server.persist;
 
 import java.sql.Timestamp;
-
-import com.samskivert.util.IntMap;
+import java.util.Map;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -93,7 +92,7 @@ public class CommentRecord extends PersistentRecord
      * @param names a mapping from member id to {@link MemberCard} that should contain {@link
      * #memberId}.
      */
-    public Comment toComment (IntMap<MemberCard> cards)
+    public Comment toComment (Map<Integer, MemberCard> cards)
     {
         Comment comment = new Comment();
         MemberCard card = cards.get(memberId);
