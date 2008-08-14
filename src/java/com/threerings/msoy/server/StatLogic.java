@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.Collections;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

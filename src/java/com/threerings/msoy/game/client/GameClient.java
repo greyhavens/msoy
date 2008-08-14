@@ -19,7 +19,8 @@ import com.samskivert.util.RunQueue;
 
 import com.threerings.media.FrameManager;
 import com.threerings.media.image.ImageManager;
-import com.threerings.media.sound.SoundManager;
+import com.threerings.media.sound.JavaSoundPlayer;
+import com.threerings.media.sound.SoundPlayer;
 import com.threerings.media.tile.TileManager;
 
 import com.threerings.resource.ResourceManager;
@@ -197,7 +198,7 @@ public class GameClient
         _msgmgr = new MessageManager(MESSAGE_MANAGER_PREFIX);
         _imgmgr = new ImageManager(_rsrcmgr, _applet);
         _tilemgr = new TileManager(_imgmgr);
-        _sndmgr = new SoundManager(_rsrcmgr);
+        _sndmgr = new JavaSoundPlayer(_rsrcmgr);
 
         // and our directors
         _locdir = new LocationDirector(_ctx) {
@@ -306,7 +307,7 @@ public class GameClient
             return _tilemgr;
         }
 
-        public SoundManager getSoundManager () {
+        public SoundPlayer getSoundManager () {
             return _sndmgr;
         }
     }
@@ -324,7 +325,7 @@ public class GameClient
 
     protected ImageManager _imgmgr;
     protected TileManager _tilemgr;
-    protected SoundManager _sndmgr;
+    protected SoundPlayer _sndmgr;
 
     protected LocationDirector _locdir;
     protected OccupantDirector _occdir;
