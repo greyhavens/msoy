@@ -455,7 +455,7 @@ public class MemberNodeActions
         protected String _status;
 
         /** Used to look up member objects. */
-        @Inject protected MemberLocator _locator;
+        @Inject protected transient MemberLocator _locator;
     }
 
     protected static MsoyPeerManager _peerMan;
