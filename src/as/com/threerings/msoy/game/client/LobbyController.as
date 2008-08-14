@@ -7,6 +7,7 @@ import flash.events.Event;
 import mx.events.CloseEvent;
 
 import com.threerings.io.TypedArray;
+import com.threerings.util.Command;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
@@ -61,7 +62,8 @@ public class LobbyController extends Controller implements Subscriber
     /** A command to start a single player game immediately. */
     public static const PLAY_SOLO :String = "PlaySolo";
 
-    public function LobbyController (gctx :GameContext, mode :int, onClear :Function, playNow :Function) 
+    public function LobbyController (
+        gctx :GameContext, mode :int, onClear :Function, playNow :Function)
     {
         _gctx = gctx;
         _mctx = gctx.getMsoyContext();
@@ -76,9 +78,7 @@ public class LobbyController extends Controller implements Subscriber
         // create our lobby panel
         _panel = new LobbyPanel(_gctx, this);
         _panel.addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
-        _panel.addEventListener(CloseEvent.CLOSE, function (event :Event) :void {
-            handleCloseLobby();
-        });
+        Command.bind(_panel, CloseEvent.CLOSE, handleCloseLobby);
         setControlledPanel(_panel);
 
         // we may be being created during the very beginning of client initialization, so don't

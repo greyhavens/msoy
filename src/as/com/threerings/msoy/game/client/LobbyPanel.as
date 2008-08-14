@@ -89,7 +89,7 @@ public class LobbyPanel extends FloatingPanel
         _gctx = gctx;
         _ctrl = ctrl;
 
-        styleName = "sexyPopup";
+        styleName = "sexyWindow";
         maxWidth = LOBBY_PANEL_MAX_WIDTH;
         maxHeight = LOBBY_PANEL_MAX_HEIGHT;
         showCloseButton = true;
@@ -388,7 +388,6 @@ public class LobbyPanel extends FloatingPanel
     override protected function createChildren () :void
     {
         super.createChildren();
-        styleName = "lobbyPanel";
 //         percentHeight = 100;
 
 //         var titleBox :HBox = new HBox();
