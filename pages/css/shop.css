@@ -204,3 +204,7 @@
   font-size: 18px;
   font-weight: bold;
 }
+
+.listingDetailPanel .messagePanel .Scroller {
+  width: 555px;
+}
