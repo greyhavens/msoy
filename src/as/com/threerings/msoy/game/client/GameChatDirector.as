@@ -42,6 +42,16 @@ public class GameChatDirector extends ChatDirector
         return super.requestChat(speakSvc, text, record);
     }
 
+    override protected function suppressTooManyCaps () :Boolean
+    {
+        return false;
+    }
+
+    override protected function clearChatOnClientExit () :Boolean
+    {
+        return false; // TODO: we need this because on msoy we "exit" when change servers
+    }
+
     protected var _mctx :MsoyContext;
 }
 }
