@@ -119,17 +119,12 @@ public class BadgeManager
     {
         // Construct a set of badges that contains all earned and in-progress badges.
         Set<Badge> existingBadges = Sets.newHashSet();
-        for (Badge badge : earnedBadges) {
-            existingBadges.add(badge);
-        }
-        for (Badge badge : inProgressBadges) {
-            existingBadges.add(badge);
-        }
+        existingBadges.addAll(earnedBadges);
+        existingBadges.addAll(inProgressBadges);
 
         List<InProgressBadge> newBadges = Lists.newArrayList();
         for (BadgeType badgeType : BadgeType.values()) {
-            // create a dummy badge to check if this BadgeType is already in the set
-            // of existing badges
+            // create a dummy badge to check if this type is already in the set of existing badges
             Badge dummyBadge = new Badge(badgeType.getCode()) {
                 @Override public String imageUrl () { return ""; }
             };
