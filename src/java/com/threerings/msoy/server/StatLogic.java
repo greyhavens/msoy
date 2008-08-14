@@ -4,8 +4,8 @@
 package com.threerings.msoy.server;
 
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Collections;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -101,9 +101,11 @@ public class StatLogic
                     return stat;
                 }
             };
-
-            for (BadgeType badgeType : BadgeType.getDependantBadges(statType)) {
-                updateBadge(memberId, badgeType, singleStatSet);
+            Collection<BadgeType> dependantBadges = BadgeType.getDependantBadges(statType);
+            if (dependantBadges != null) {
+                for (BadgeType badgeType : dependantBadges) {
+                    updateBadge(memberId, badgeType, singleStatSet);
+                }
             }
         }
     }

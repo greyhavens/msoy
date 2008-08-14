@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.badge.data;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.zip.CRC32;
@@ -12,6 +14,7 @@ import com.samskivert.util.HashIntMap;
 import com.threerings.stats.Log;
 import com.threerings.stats.data.StatSet;
 
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.gwt.StampCategory;
 
 import com.threerings.msoy.data.StatType;
@@ -19,6 +22,31 @@ import com.threerings.msoy.data.StatType;
 /** Defines the various badge types. */
 public enum BadgeType
 {
+    /* TODO - remove these testing badges
+    SERVLET_BADGE(StampCategory.SOCIAL, StatType.ITEM_COMMENTS, new Level[] {
+        new Level(1, 1000),
+        new Level(3, 1000),
+        new Level(5, 1000),
+    }) {
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.ITEM_COMMENTS);
+        }
+    },
+
+    DOBJ_BADGE(StampCategory.SOCIAL, StatType.WHIRLEDS_VISITED, new Level[] {
+        new Level(1, 1000),
+        new Level(3, 1000),
+        new Level(5, 1000),
+    }) {
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getSetStatSize(StatType.WHIRLEDS_VISITED);
+        }
+
+        @Override protected Collection<BadgeType> getUnlockRequirements () {
+            return Collections.singleton(SERVLET_BADGE);
+        }
+    },*/
+
     // social badges
     FRIENDLY(StampCategory.SOCIAL, StatType.FRIENDS_MADE, new Level[] {
         new Level(1, 1000),
@@ -189,19 +217,33 @@ public enum BadgeType
      */
     public static HashSet<BadgeType> getDependantBadges (StatType stat)
     {
-        if (stat != null) {
-            return _statDependencies.get(stat.code());
-        }
-
-        return null;
+        return (stat != null ? _statDependencies.get(stat.code()) : null);
     }
 
     /**
-     * Badge types can override this to apply constraints to Badges (e.g., only unlocked when
-     * another badge is earned.)
+     * Certain badges are only unlocked once one or more other badges are earned.
+     *
+     * @return true if this badge has been unlocked, given the specified collection of EarnedBadges.
      */
-    public boolean isUnlocked (EarnedBadgeSet badges)
+    public boolean isUnlocked (Collection<EarnedBadge> badges)
     {
+        Collection<BadgeType> unlockBadges = getUnlockRequirements();
+        if (unlockBadges != null) {
+            for (BadgeType requiredBadge : unlockBadges) {
+                boolean foundBadge = false;
+                for (EarnedBadge earnedBadge : badges) {
+                    if (earnedBadge.badgeCode == requiredBadge.getCode()) {
+                        foundBadge = true;
+                        break;
+                    }
+                }
+
+                if (!foundBadge) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
@@ -276,6 +318,15 @@ public enum BadgeType
     protected int getAcquiredUnits (StatSet stats)
     {
         return 0;
+    }
+
+    /**
+     * Optionally overridden by badge types to indicate that players must earn a particular set
+     * of badges before this badge becomes unlocked.
+     */
+    protected Collection<BadgeType> getUnlockRequirements ()
+    {
+        return null;
     }
 
     /** Constructs a new BadgeType. */

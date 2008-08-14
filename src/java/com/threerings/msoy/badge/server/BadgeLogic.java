@@ -3,11 +3,12 @@
 
 package com.threerings.msoy.badge.server;
 
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
@@ -41,7 +42,7 @@ public class BadgeLogic
      * a. calling into BadgeRepository to create and store the BadgeRecord
      * b. recording to the member's feed that they earned the stamp in question
      */
-    public void awardBadge (EarnedBadgeRecord brec, boolean sendMemberNodeAction)
+    public void awardBadge (EarnedBadgeRecord brec, boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         // ensure this is a valid badge level
@@ -61,9 +62,14 @@ public class BadgeLogic
         UserActionDetails info = new UserActionDetails(brec.memberId, UserAction.EARNED_BADGE);
         MemberFlowRecord mfrec = _flowRepo.grantFlow(info, levelData.coinValue);
 
-        if (sendMemberNodeAction) {
+        if (dobjNeedsUpdate) {
+            // if dobjNeedsUpdate is true, this function was called from a servlet, or other
+            // blocking code, and we need to update the MemberObject if it exists. Otherwise,
+            // the MemberObject initiated the badge award and does not to be updated (and also
+            // will have taken care of creating new in-progress badges).
             MemberNodeActions.badgeAwarded(brec);
             MemberNodeActions.flowUpdated(mfrec);
+            createNewInProgressBadges(brec.memberId);
         }
     }
 
@@ -72,15 +78,44 @@ public class BadgeLogic
      * a. calling into BadgeRepository to create and store the BadgeRecord
      * b. recording to the member's feed that they earned the stamp in question
      */
-    public void awardBadge (int memberId, EarnedBadge badge, boolean sendMemberNodeAction)
+    public void awardBadge (int memberId, EarnedBadge badge, boolean dobjNeedsUpdate)
         throws PersistenceException
     {
-        EarnedBadgeRecord brec = new EarnedBadgeRecord();
-        brec.memberId = memberId;
-        brec.badgeCode = badge.badgeCode;
-        brec.level = badge.level;
-        brec.whenEarned = new Timestamp(badge.whenEarned);
-        awardBadge(brec, sendMemberNodeAction);
+        awardBadge(new EarnedBadgeRecord(memberId, badge), dobjNeedsUpdate);
+    }
+
+    /**
+     * Creates and stores any InProgressBadges that have been newly unlocked (as a result of a
+     * member joining Whirled, or completing another badge).
+     *
+     * <b>NB:</b> this function makes a number of demands on the database and should be called
+     * only when necessary.
+     */
+    public void createNewInProgressBadges (int memberId)
+        throws PersistenceException
+    {
+        // read this member's in-progress and earned badge records
+        List<EarnedBadgeRecord> earnedBadgeRecs = _badgeRepo.loadEarnedBadges(memberId);
+        Set<EarnedBadge> earnedBadges = Sets.newHashSetWithExpectedSize(earnedBadgeRecs.size());
+        for (EarnedBadgeRecord brec : earnedBadgeRecs) {
+            earnedBadges.add(brec.toBadge());
+        }
+
+        List<InProgressBadgeRecord> inProgressBadgeRecs = _badgeRepo.loadInProgressBadges(memberId);
+        Set<InProgressBadge> inProgressBadges = Sets.newHashSetWithExpectedSize(
+            inProgressBadgeRecs.size());
+        for (InProgressBadgeRecord brec : inProgressBadgeRecs) {
+            inProgressBadges.add(brec.toBadge());
+        }
+
+        // discover any new in-progress badges
+        List<InProgressBadge> newInProgressBadges = _badgeMan.getNewInProgressBadges(earnedBadges,
+            inProgressBadges);
+        for (InProgressBadge badge : newInProgressBadges) {
+            Log.log.info("created new InProgressBadge", "memberId", memberId,
+                "type", BadgeType.getType(badge.badgeCode));
+            updateInProgressBadge(memberId, badge, true);
+        }
     }
 
     /**
@@ -103,12 +138,7 @@ public class BadgeLogic
         boolean sendMemberNodeAction)
         throws PersistenceException
     {
-        InProgressBadgeRecord brec = new InProgressBadgeRecord();
-        brec.memberId = memberId;
-        brec.badgeCode = badge.badgeCode;
-        brec.nextLevel = badge.nextLevel;
-        brec.progress = badge.progress;
-        updateInProgressBadge(brec, sendMemberNodeAction);
+        updateInProgressBadge(new InProgressBadgeRecord(memberId, badge), sendMemberNodeAction);
     }
 
     /**
@@ -144,4 +174,5 @@ public class BadgeLogic
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected FlowRepository _flowRepo;
+    @Inject protected BadgeManager _badgeMan;
 }

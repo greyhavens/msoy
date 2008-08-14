@@ -4,8 +4,10 @@
 package com.threerings.msoy.badge.server;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -19,6 +21,7 @@ import com.threerings.toybox.Log;
 
 import com.threerings.msoy.badge.data.BadgeProgress;
 import com.threerings.msoy.badge.data.BadgeType;
+import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
@@ -107,6 +110,42 @@ public class BadgeManager
         }
     }
 
+    /**
+     * @return a List of InProgressBadges, for badges that have been newly unlocked (as a result
+     * of a member joining Whirled, or completing another badge).
+     */
+    public List<InProgressBadge> getNewInProgressBadges (Set<EarnedBadge> earnedBadges,
+        Set<InProgressBadge> inProgressBadges)
+    {
+        // Construct a set of badges that contains all earned and in-progress badges.
+        Set<Badge> existingBadges = Sets.newHashSet();
+        for (Badge badge : earnedBadges) {
+            existingBadges.add(badge);
+        }
+        for (Badge badge : inProgressBadges) {
+            existingBadges.add(badge);
+        }
+
+        List<InProgressBadge> newBadges = Lists.newArrayList();
+        for (BadgeType badgeType : BadgeType.values()) {
+            // create a dummy badge to check if this BadgeType is already in the set
+            // of existing badges
+            Badge dummyBadge = new Badge(badgeType.getCode()) {
+                @Override public String imageUrl () { return ""; }
+            };
+
+            // If the badge is newly unlocked, add it to our list. Note that the badge's progress
+            // is set to 0, while the player may actually have made some progress on it. Progress
+            // will be correctly updated next time the player bumps the stat that this badge
+            // depends on.
+            if (!existingBadges.contains(dummyBadge) && badgeType.isUnlocked(earnedBadges)) {
+                newBadges.add(new InProgressBadge(badgeType.getCode(), 0, 0));
+            }
+        }
+
+        return newBadges;
+    }
+
     protected void awardBadges (final MemberObject user, final List<EarnedBadge> badges)
     {
         // award coins and add the badges to the user's badge set
@@ -125,6 +164,13 @@ public class BadgeManager
         user.setFlow(user.flow + coinValue);
         user.setAccFlow(user.accFlow + coinValue);
 
+        // create any in-progress badges that have been newly unlocked
+        final List<InProgressBadge> newInProgressBadges = getNewInProgressBadges(
+            user.badges.asSet(), user.inProgressBadges.asSet());
+        for (InProgressBadge inProgressBadge : newInProgressBadges) {
+            user.inProgressBadgeUpdated(inProgressBadge);
+        }
+
         // stick the badges in the database
         final int totalCoinValue = coinValue;
         _invoker.postUnit(new WriteOnlyUnit("awardBadges") {
@@ -136,11 +182,17 @@ public class BadgeManager
                     // already know about it.
                     _badgeLogic.awardBadge(user.getMemberId(), badge, false);
                 }
+                for (InProgressBadge badge : newInProgressBadges) {
+                    _badgeLogic.updateInProgressBadge(user.getMemberId(), badge, false);
+                }
             }
             public void handleFailure (Exception error) {
                 // rollback the changes to the user's BadgeSet and flow
                 for (EarnedBadge badge : badges) {
                     user.badges.removeBadge(badge.badgeCode);
+                }
+                for (InProgressBadge badge : newInProgressBadges) {
+                    user.inProgressBadges.removeBadge(badge.badgeCode);
                 }
                 user.setFlow(user.flow - totalCoinValue);
                 user.setAccFlow(user.accFlow - totalCoinValue);

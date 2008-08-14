@@ -8,6 +8,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 
 public class InProgressBadgeRecord extends PersistentRecord
@@ -66,6 +67,24 @@ public class InProgressBadgeRecord extends PersistentRecord
     public float progress;
 
     /**
+     * Constructs an empty InProgressBadgeRecord.
+     */
+    public InProgressBadgeRecord ()
+    {
+    }
+
+    /**
+     * Constructs an InProgressBadgeRecord from an InProgressBadge.
+     */
+    public InProgressBadgeRecord (int memberId, InProgressBadge badge)
+    {
+        this.memberId = memberId;
+        this.badgeCode = badge.badgeCode;
+        this.nextLevel = badge.nextLevel;
+        this.progress = badge.progress;
+    }
+
+    /**
      * Converts this persistent record to a runtime record.
      */
     public InProgressBadge toBadge ()
@@ -84,8 +103,8 @@ public class InProgressBadgeRecord extends PersistentRecord
     @Override
     public String toString ()
     {
-        return "memberId=" + memberId + " badgeCode=" + badgeCode + " nextLevel=" + nextLevel +
-            " progress=" + progress;
+        return "memberId=" + memberId + " BadgeType=" + BadgeType.getType(badgeCode) +
+            " nextLevel=" + nextLevel + " progress=" + progress;
     }
 
     // AUTO-GENERATED: METHODS START

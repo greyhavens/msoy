@@ -32,4 +32,9 @@ public class InProgressBadge extends Badge
         return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR + Integer.toHexString(badgeCode) +
             "_" + (nextLevel > 0 ? (nextLevel - 1) + "f" : nextLevel + "e") + BADGE_IMAGE_TYPE;
     }
+
+    public String toString ()
+    {
+        return "badgeCode=" + badgeCode + " nextLevel=" + nextLevel + " progress=" + progress;
+    }
 }

@@ -10,6 +10,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 
 public class EarnedBadgeRecord extends PersistentRecord
@@ -63,6 +64,24 @@ public class EarnedBadgeRecord extends PersistentRecord
     public Timestamp whenEarned;
 
     /**
+     * Constructs an empty EarnedBadgeRecord.
+     */
+    public EarnedBadgeRecord ()
+    {
+    }
+
+    /**
+     * Constructs an EarnedBadgeRecord from an EarnedBadge.
+     */
+    public EarnedBadgeRecord (int memberId, EarnedBadge badge)
+    {
+        this.memberId = memberId;
+        this.badgeCode = badge.badgeCode;
+        this.level = badge.level;
+        this.whenEarned = new Timestamp(badge.whenEarned);
+    }
+
+    /**
      * Converts this persistent record to a runtime record.
      */
     public EarnedBadge toBadge ()
@@ -76,8 +95,8 @@ public class EarnedBadgeRecord extends PersistentRecord
     @Override
     public String toString ()
     {
-        return "memberId=" + memberId + " badgeCode=" + badgeCode + " level=" + level +
-            " whenEarned=" + whenEarned;
+        return "memberId=" + memberId + " BadgeType=" + BadgeType.getType(badgeCode) +
+        " level=" + level + " whenEarned=" + whenEarned;
     }
 
     // AUTO-GENERATED: METHODS START
