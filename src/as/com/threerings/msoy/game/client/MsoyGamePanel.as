@@ -42,6 +42,9 @@ public class MsoyGamePanel extends WhirledGamePanel
     // TEMP
     public static const GAMESTUB_DEBUG_MODE :Boolean = false;
 
+    // TEMP
+    public static const USE_GAMEOVER_POPUP :Boolean = false;
+
     public function MsoyGamePanel (gctx :GameContext, ctrl :MsoyGameController)
     {
         super(gctx, ctrl);
@@ -90,10 +93,11 @@ public class MsoyGamePanel extends WhirledGamePanel
     public function displayGameOverCoinAward (
         forReal :Boolean, coins :int, hasCookie :Boolean) :void
     {
-// TODO: sort out game-over panel
-//        createGameOverPanel();
-//        _gameOverPanel.displayCoinAward(forReal, coins, hasCookie);
-//        // but do not yet open the panel...
+        if (USE_GAMEOVER_POPUP) {
+            createGameOverPanel();
+            _gameOverPanel.displayCoinAward(forReal, coins, hasCookie);
+            // but do not yet open the panel...
+        }
     }
 
     // from WhirledGamePanel
@@ -207,27 +211,29 @@ public class MsoyGamePanel extends WhirledGamePanel
 
     override protected function displayGameOver (gameOver :Boolean) :void
     {
-        if (gameOver == (_rematch.parent != null)) {
-            return;
-        }
-        if (gameOver) {
-            _gctx.getMsoyContext().getTopPanel().getControlBar().addCustomComponent(_rematch);
+        if (USE_GAMEOVER_POPUP) {
+            if (gameOver) {
+                createGameOverPanel();
+                if (!_gameOverPanel.isOpen()) {
+                    _gameOverPanel.open();
+                }
+
+            } else if (_gameOverPanel != null) {
+                _gameOverPanel.close();
+                _gameOverPanel = null;
+            }
 
         } else {
-            _rematch.parent.removeChild(_rematch);
-        }
+            if (gameOver == (_rematch.parent != null)) {
+                return;
+            }
+            if (gameOver) {
+                _gctx.getMsoyContext().getTopPanel().getControlBar().addCustomComponent(_rematch);
 
-// TODO: sort out game-over panel
-//        if (gameOver) {
-//            createGameOverPanel();
-//            if (!_gameOverPanel.isOpen()) {
-//                _gameOverPanel.open();
-//            }
-//
-//        } else if (_gameOverPanel != null) {
-//            _gameOverPanel.close();
-//            _gameOverPanel = null;
-//        }
+            } else {
+                _rematch.parent.removeChild(_rematch);
+            }
+        }
     }
 
     protected function createGameOverPanel () :void
