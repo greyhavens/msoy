@@ -566,9 +566,6 @@ public class MsoyAuthenticator extends Authenticator
         final String tracker = (referral == null) ? null : referral.tracker;
         _eventLog.accountCreated(mrec.memberId, iid, tracker);
 
-        // create InProgressBadgeRecords for the initial set of badges
-        _badgeLogic.createNewInProgressBadges(mrec.memberId);
-
         return mrec;
     }
 

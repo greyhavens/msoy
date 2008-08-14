@@ -77,7 +77,7 @@ public class BadgeLogic
             // will have taken care of creating new in-progress badges).
             MemberNodeActions.badgeAwarded(brec);
             MemberNodeActions.flowUpdated(mfrec);
-            createNewInProgressBadges(brec.memberId);
+            createNewInProgressBadges(brec.memberId, true);
         }
     }
 
@@ -99,12 +99,12 @@ public class BadgeLogic
      * <b>NB:</b> this function makes a number of demands on the database and should be called
      * only when necessary.
      */
-    public void createNewInProgressBadges (int memberId)
+    public List<InProgressBadge> createNewInProgressBadges (int memberId, boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         // TODO: remove this when passport goes live
         if (!DeploymentConfig.devDeployment) {
-            return;
+            return Collections.emptyList();
         }
 
         // read this member's in-progress and earned badge records
@@ -120,19 +120,21 @@ public class BadgeLogic
         for (InProgressBadge badge : newInProgressBadges) {
             log.info("Created new InProgressBadge", "memberId", memberId,
                      "type", BadgeType.getType(badge.badgeCode));
-            updateInProgressBadge(memberId, badge, true);
+            updateInProgressBadge(memberId, badge, dobjNeedsUpdate);
         }
+
+        return newInProgressBadges;
     }
 
     /**
      * Creates or updates an InProgressBadge for the specified member.
      */
-    public void updateInProgressBadge (InProgressBadgeRecord brec, boolean sendMemberNodeAction)
+    public void updateInProgressBadge (InProgressBadgeRecord brec, boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         _badgeRepo.storeInProgressBadge(brec);
 
-        if (sendMemberNodeAction) {
+        if (dobjNeedsUpdate) {
             MemberNodeActions.inProgressBadgeUpdated(brec);
         }
     }
@@ -140,16 +142,45 @@ public class BadgeLogic
     /**
      * Creates or updates an InProgressBadge for the specified member.
      */
-    public void updateInProgressBadge (int memberId, InProgressBadge badge,
-        boolean sendMemberNodeAction)
+    public void updateInProgressBadge (int memberId, InProgressBadge badge, boolean dobjNeedsUpdate)
         throws PersistenceException
     {
-        updateInProgressBadge(new InProgressBadgeRecord(memberId, badge), sendMemberNodeAction);
+        updateInProgressBadge(new InProgressBadgeRecord(memberId, badge), dobjNeedsUpdate);
+    }
+
+    /**
+     * Returns a List containing the set of badges that the member is working towards. This
+     * method also checks that the member has had their initial set of InProgressBadgeRecords
+     * created, and creates them if they haven't.
+     */
+    public List<InProgressBadge> getInProgressBadges (int memberId, boolean dobjNeedsUpdate)
+        throws PersistenceException
+    {
+        if (!DeploymentConfig.devDeployment) {
+            return Collections.emptyList();
+        }
+
+        List<InProgressBadgeRecord> badgeRecords = _badgeRepo.loadInProgressBadges(memberId);
+        if (badgeRecords.isEmpty()) {
+            // if we have no InProgressBadgeRecords, create the initial set of them for this player,
+            // and create a dummy InProgressBadge that lets us know this initialization has taken
+            // place
+            InProgressBadge dummy = new InProgressBadge(BadgeType.HIDDEN.getCode(), 0, 0);
+            updateInProgressBadge(memberId, dummy, dobjNeedsUpdate);
+
+            return createNewInProgressBadges(memberId, dobjNeedsUpdate);
+
+        } else {
+            // Otherwise, convert our records into badges, making sure to omit the HIDDEN badge
+            Iterable<InProgressBadge> badges = Iterables.transform(badgeRecords,
+                InProgressBadgeRecord.TO_BADGE);
+            return Lists.newArrayList(Iterables.filter(badges, BadgeType.IS_VISIBLE_BADGE));
+        }
     }
 
     /**
      * Returns a set of badges for the given to pursue next. (Currently, this is just
-     * a random set of unlocked badges.)
+     * a random set of in-progress badges.)
      *
      * TODO: We may want to tweak this to choose badges that reflect the member's play style or
      * previously-earned badges.
@@ -159,22 +190,17 @@ public class BadgeLogic
      * @return a List of BadgeTypes. The list will have maxBadges entries, unless there aren't
      * enough badges left for the player to pursue.
      */
-    public List<InProgressBadge> getNextBadges (int memberId, int maxBadges)
+    public List<InProgressBadge> getNextSuggestedBadges (int memberId, int maxBadges)
         throws PersistenceException
     {
-        List<InProgressBadge> nextBadges = Lists.newArrayList();
-
         // Read in our in-progress badges and choose a number of them randomly
-        List<InProgressBadgeRecord> badgeRecords = _badgeRepo.loadInProgressBadges(memberId);
-        if (!badgeRecords.isEmpty()) {
-            Collections.shuffle(badgeRecords);
-            badgeRecords = badgeRecords.subList(0, Math.min(maxBadges, badgeRecords.size()));
-            for (InProgressBadgeRecord brec : badgeRecords) {
-                nextBadges.add(brec.toBadge());
-            }
+        List<InProgressBadge> badges = getInProgressBadges(memberId, false);
+        if (!badges.isEmpty()) {
+            Collections.shuffle(badges);
+            badges = badges.subList(0, Math.min(maxBadges, badges.size()));
         }
 
-        return nextBadges;
+        return badges;
     }
 
     @Inject protected BadgeRepository _badgeRepo;
