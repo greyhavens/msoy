@@ -4,7 +4,6 @@
 package com.threerings.msoy.group.gwt;
 
 import java.util.List;
-import java.util.Collection;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -180,13 +179,13 @@ public interface GroupService extends RemoteService
     /**
      * Gets the tags recently used by the user.
      */
-    Collection<TagHistory> getRecentTags ()
+    List<TagHistory> getRecentTags ()
         throws ServiceException;
 
     /**
      * Gets the tags on the indicated Group.
      */
-    Collection<String> getTags (int groupId)
+    List<String> getTags (int groupId)
         throws ServiceException;
 
     /**

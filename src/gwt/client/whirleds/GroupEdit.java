@@ -3,7 +3,7 @@
 
 package client.whirleds;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -146,10 +146,10 @@ public class GroupEdit extends FlexTable
                 public void untag (String tag, AsyncCallback<TagHistory> cback) {
                     _groupsvc.tagGroup(_group.groupId, tag, false, cback);
                 }
-                public void getRecentTags (AsyncCallback<Collection<TagHistory>> cback) {
+                public void getRecentTags (AsyncCallback<List<TagHistory>> cback) {
                     _groupsvc.getRecentTags(cback);
                 }
-                public void getTags (AsyncCallback<Collection<String>> cback) {
+                public void getTags (AsyncCallback<List<String>> cback) {
                     _groupsvc.getTags(_group.groupId, cback);
                 }
                 public boolean supportFlags () {
@@ -165,7 +165,7 @@ public class GroupEdit extends FlexTable
                         }
                     });
                 }
-            }, true);
+            }, null, true);
             addRow("", WidgetUtil.makeShim(1, 20));
             addRow("", tags);
         }
@@ -218,8 +218,8 @@ public class GroupEdit extends FlexTable
         };
         // check if we're trying to set the policy to exclusive on a group that has tags
         if (_group.policy == Group.POLICY_EXCLUSIVE) {
-            _groupsvc.getTags(_group.groupId, new MsoyCallback<Collection<String>>() {
-                public void onSuccess (Collection<String> tags) {
+            _groupsvc.getTags(_group.groupId, new MsoyCallback<List<String>>() {
+                public void onSuccess (List<String> tags) {
                     if (tags.size() > 0) {
                         MsoyUI.error(_msgs.errTagsOnExclusive());
                     } else if (_group.groupId > 0) {

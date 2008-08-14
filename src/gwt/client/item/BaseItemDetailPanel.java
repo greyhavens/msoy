@@ -3,7 +3,7 @@
 
 package client.item;
 
-import java.util.Collection;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -130,10 +130,10 @@ public abstract class BaseItemDetailPanel extends SmartTable
             public void untag (String tag, AsyncCallback<TagHistory> callback) {
                 _itemsvc.tagItem(_item.getIdent(), tag, false, callback);
             }
-            public void getRecentTags (AsyncCallback<Collection<TagHistory>> callback) {
+            public void getRecentTags (AsyncCallback<List<TagHistory>> callback) {
                 _itemsvc.getRecentTags(callback);
             }
-            public void getTags (AsyncCallback<Collection<String>> callback) {
+            public void getTags (AsyncCallback<List<String>> callback) {
                 _itemsvc.getTags(_item.getIdent(), callback);
             }
             public boolean supportFlags () {
@@ -150,7 +150,7 @@ public abstract class BaseItemDetailPanel extends SmartTable
             public void addMenuItems (String tag, PopupMenu menu) {
                 addTagMenuItems(tag, menu);
             }
-        }, true));
+        }, detail.tags, true));
 
         configureCallbacks(this);
     }

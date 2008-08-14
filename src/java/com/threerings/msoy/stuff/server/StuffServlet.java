@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
@@ -15,6 +16,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
@@ -236,6 +238,9 @@ public class StuffServlet extends MsoyServiceServlet
                 detail.useLocation = _sceneRepo.identifyScene(detail.item.location);
                 break;
             }
+            List<TagNameRecord> trecs = repo.getTagRepository().getTags(iident.itemId);
+            detail.tags = Lists.newArrayList(Iterables.transform(trecs, TagNameRecord.TO_TAG));
+
             return new DetailOrIdent(detail, null);
 
         } catch (PersistenceException pe) {

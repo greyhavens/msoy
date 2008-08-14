@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.gwt;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -37,17 +36,17 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#getTags}.
      */
-    void getTags (ItemIdent item, AsyncCallback<Collection<String>> callback);
+    void getTags (ItemIdent item, AsyncCallback<List<String>> callback);
 
     /**
      * The asynchronous versions of {@link ItemService#getTagHistory}.
      */
-    void getTagHistory (ItemIdent item, AsyncCallback<Collection<TagHistory>> callback);
+    void getTagHistory (ItemIdent item, AsyncCallback<List<TagHistory>> callback);
 
     /**
      * The asynchronous versions of {@link ItemService#getRecentTags}.
      */
-    void getRecentTags (AsyncCallback<Collection<TagHistory>> callback);
+    void getRecentTags (AsyncCallback<List<TagHistory>> callback);
 
     /**
      * The asynchronous version of {@link ItemService#tagItem}.

@@ -3,11 +3,11 @@
 
 package com.threerings.msoy.item.server;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
@@ -172,16 +172,13 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public Collection<String> getTags (ItemIdent iident)
+    public List<String> getTags (ItemIdent iident)
         throws ServiceException
     {
         try {
             ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
-            List<String> result = Lists.newArrayList();
-            for (TagNameRecord tagName : repo.getTagRepository().getTags(iident.itemId)) {
-                result.add(tagName.tag);
-            }
-            return result;
+            List<TagNameRecord> trecs = repo.getTagRepository().getTags(iident.itemId);
+            return Lists.newArrayList(Iterables.transform(trecs, TagNameRecord.TO_TAG));
         } catch (PersistenceException pe) {
             log.warning("Failed to get tags [item=" + iident + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -189,7 +186,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public Collection<TagHistory> getTagHistory (final ItemIdent iident)
+    public List<TagHistory> getTagHistory (final ItemIdent iident)
         throws ServiceException
     {
         try {
@@ -218,7 +215,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public Collection<TagHistory> getRecentTags ()
+    public List<TagHistory> getRecentTags ()
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();

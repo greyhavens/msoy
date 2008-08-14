@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.group.gwt;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -107,12 +106,12 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService.getRecentTags}
      */
-    void getRecentTags (AsyncCallback<Collection<TagHistory>> callback);
+    void getRecentTags (AsyncCallback<List<TagHistory>> callback);
 
     /**
      * The asynchronous version of {@link GroupService.getTags}
      */
-    void getTags (int groupId, AsyncCallback<Collection<String>> callback);
+    void getTags (int groupId, AsyncCallback<List<String>> callback);
 
     /**
      * The asynchronous version of {@link GroupService#getMyGroups}

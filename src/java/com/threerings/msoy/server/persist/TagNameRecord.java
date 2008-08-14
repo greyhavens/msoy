@@ -5,6 +5,8 @@ package com.threerings.msoy.server.persist;
 
 import java.util.regex.Pattern;
 
+import com.google.common.base.Function;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -48,6 +50,13 @@ public class TagNameRecord extends PersistentRecord
     /** A regexp pattern to validate tags */
     public static final Pattern VALID_TAG = Pattern.compile(
         "([_a-z0-9]){" + TagCodes.MIN_TAG_LENGTH + "," + TagCodes.MAX_TAG_LENGTH + "}");
+
+    /** Extracts the {@link #tag} from a {@link TagNameRecord}. */
+    public static Function<TagNameRecord, String> TO_TAG = new Function<TagNameRecord, String>() {
+        public String apply (TagNameRecord record) {
+            return record.tag;
+        }
+    };
 
     /** The ID of this tag. */
     @Id

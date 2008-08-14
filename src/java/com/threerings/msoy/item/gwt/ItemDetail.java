@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.gwt;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
@@ -31,4 +33,7 @@ public class ItemDetail implements Streamable, IsSerializable
 
     /** Contains member rating and favorite information about the item. */
     public MemberItemInfo memberItemInfo = new MemberItemInfo();
+
+    /** The tags on this item. */
+    public List<String> tags;
 }

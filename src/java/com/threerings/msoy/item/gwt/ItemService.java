@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.gwt;
 
-import java.util.Collection;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -46,19 +45,19 @@ public interface ItemService extends RemoteService
     /**
      * Fetches the tags associated with an item.
      */
-    Collection<String> getTags (ItemIdent item)
+    List<String> getTags (ItemIdent item)
         throws ServiceException;
 
     /**
      * Fetches the tagging history for a given item.
      */
-    Collection<TagHistory> getTagHistory (ItemIdent item)
+    List<TagHistory> getTagHistory (ItemIdent item)
         throws ServiceException;
 
     /**
      * Fetches the recently used tags for the calling member.
      */
-    Collection<TagHistory> getRecentTags ()
+    List<TagHistory> getRecentTags ()
         throws ServiceException;
 
     /**

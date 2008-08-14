@@ -3,9 +3,9 @@
 
 package client.item;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
@@ -54,8 +54,8 @@ public class TagDetailPanel extends VerticalPanel
     {
         void tag (String tag, AsyncCallback<TagHistory> callback);
         void untag (String tag, AsyncCallback<TagHistory> callback);
-        void getRecentTags (AsyncCallback<Collection<TagHistory>> callback);
-        void getTags (AsyncCallback<Collection<String>> callback);
+        void getRecentTags (AsyncCallback<List<TagHistory>> callback);
+        void getTags (AsyncCallback<List<String>> callback);
         boolean supportFlags ();
 
         /**
@@ -73,7 +73,7 @@ public class TagDetailPanel extends VerticalPanel
         void addMenuItems (String tag, PopupMenu menu);
     }
 
-    public TagDetailPanel (TagService service, boolean showAddUI)
+    public TagDetailPanel (TagService service, List<String> tags, boolean showAddUI)
     {
         setStyleName("tagDetailPanel");
         _service = service;
@@ -129,7 +129,11 @@ public class TagDetailPanel extends VerticalPanel
             add(addRow);
         }
 
-        refreshTags();
+        if (tags == null) {
+            refreshTags();
+        } else {
+            gotTags(tags);
+        }
     }
 
     protected Command updateFlag (final byte flag)
@@ -155,8 +159,8 @@ public class TagDetailPanel extends VerticalPanel
 //             return;
 //         }
 
-//         _itemsvc.getTagHistory(_itemId, new AsyncCallback<Collection<TagHistory>>() {
-//             public void onSuccess (Collection<TagHistory> result) {
+//         _itemsvc.getTagHistory(_itemId, new AsyncCallback<List<TagHistory>>() {
+//             public void onSuccess (List<TagHistory> result) {
 //                 _tagHistory = new FlexTable();
 //                 _tagHistory.setBorderWidth(0);
 //                 _tagHistory.setCellSpacing(0);
@@ -203,8 +207,8 @@ public class TagDetailPanel extends VerticalPanel
 
     protected void refreshTags ()
     {
-        _service.getTags(new AsyncCallback<Collection<String>>() {
-            public void onSuccess (Collection<String> tags) {
+        _service.getTags(new AsyncCallback<List<String>>() {
+            public void onSuccess (List<String> tags) {
                 gotTags(tags);
             }
             public void onFailure (Throwable caught) {
@@ -214,12 +218,12 @@ public class TagDetailPanel extends VerticalPanel
         });
     }
 
-    protected void gotTags (Collection<String> tags)
+    protected void gotTags (List<String> tags)
     {
         _tags.clear();
         _tags.add(new InlineLabel("Tags:", false, false, true));
 
-        final ArrayList<String> addedTags = new ArrayList<String>();
+        final List<String> addedTags = new ArrayList<String>();
         for (Iterator<String> iter = tags.iterator(); iter.hasNext() ; ) {
             final String tag = iter.next();
             InlineLabel tagLabel = new InlineLabel(tag);
@@ -253,8 +257,8 @@ public class TagDetailPanel extends VerticalPanel
         }
 
 //         if (!CShell.isGuest()) {
-//             _service.getRecentTags(new MsoyCallback<Collection<TagHistory>>() {
-//                 public void onSuccess (Collection<TagHistory> result) {
+//             _service.getRecentTags(new MsoyCallback<List<TagHistory>>() {
+//                 public void onSuccess (List<TagHistory> result) {
 //                     _quickTags.clear();
 //                     _quickTags.addItem(_cmsgs.tagSelectOne());
 //                     for (TagHistory history : result) {

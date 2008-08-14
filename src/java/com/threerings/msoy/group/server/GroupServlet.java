@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.group.server;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -11,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -647,7 +647,7 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public Collection<TagHistory> getRecentTags () throws ServiceException
+    public List<TagHistory> getRecentTags () throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
 
@@ -674,14 +674,11 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from interface GroupService
-    public Collection<String> getTags (int groupId) throws ServiceException
+    public List<String> getTags (int groupId) throws ServiceException
     {
         try {
-            List<String> result = Lists.newArrayList();
-            for (TagNameRecord tagName : _groupRepo.getTagRepository().getTags(groupId)) {
-                result.add(tagName.tag);
-            }
-            return result;
+            List<TagNameRecord> trecs = _groupRepo.getTagRepository().getTags(groupId);
+            return Lists.newArrayList(Iterables.transform(trecs, TagNameRecord.TO_TAG));
         } catch (PersistenceException pe) {
             log.warning("getTags failed [groupId=" + groupId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
