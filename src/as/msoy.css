@@ -93,21 +93,6 @@ TitleWindow {
   color: white;
 }
 
-/** Eventually, all our popups should move to this style. */
-LobbyPanel {
-  backgroundImage: none;
-  backgroundColor: black;
-  backgroundAlpha: 0.8;
-
-  paddingTop: 10px;
-  paddingRight: 10px;
-  paddingBottom: 10px;
-  paddingLeft: 10px;
-
-  /* All elements in this container will have color=white. This is Flex's "C" in "CSS" */
-  color: white;
-}
-
 .topPanel {
   backgroundColor: #000000;
 }
