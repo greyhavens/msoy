@@ -8,13 +8,13 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.dobj.DSet;
 
-import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameObject;
+import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.VizMemberName;
@@ -28,7 +28,7 @@ import com.threerings.msoy.item.data.all.Item;
 /**
  * Contains information on a player logged on to an MSOY Game server.
  */
-public class PlayerObject extends BodyObject
+public class PlayerObject extends WhirledPlayerObject
     implements PropertySpaceObject
 {
     // AUTO-GENERATED: FIELDS START

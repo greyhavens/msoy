@@ -12,14 +12,11 @@ import java.util.Set;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 
-import com.threerings.crowd.data.BodyObject;
-import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.PropertySpaceObject;
-import com.whirled.game.data.WhirledGameOccupantInfo;
+import com.whirled.game.data.WhirledPlayerObject;
 import com.whirled.game.server.PropertySpaceHelper;
 
 import com.threerings.io.ObjectInputStream;
@@ -36,7 +33,7 @@ import com.threerings.msoy.data.all.ReferralInfo;
 /**
  * Contains information on a player logged on to an MSOY Game server.
  */
-public class PlayerObject extends BodyObject
+public class PlayerObject extends WhirledPlayerObject
     implements MsoyUserObject, PropertySpaceObject
 {
     // AUTO-GENERATED: FIELDS START
@@ -152,12 +149,6 @@ public class PlayerObject extends BodyObject
     public Name getVisibleName ()
     {
         return memberName;
-    }
-
-    @Override // from BodyObject
-    public OccupantInfo createOccupantInfo (PlaceObject plobj)
-    {
-        return new WhirledGameOccupantInfo(this);
     }
 
     // from PropertySpaceObject
