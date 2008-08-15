@@ -33,16 +33,16 @@ public class AVRGameController extends PlaceController
         super.init(ctx, config);
 
         _gctx = (ctx as GameContext);
-
-        _wctx.getClient().addEventListener(
-            MsoyClient.MINI_WILL_CHANGE, function (ev :ValueEvent) :void {
-                miniWillChange(ev.value);
-            });
     }
 
     public function initializeWorldContext (wctx :WorldContext) :void
     {
         _wctx = wctx;
+
+        _wctx.getClient().addEventListener(
+            MsoyClient.MINI_WILL_CHANGE, function (ev :ValueEvent) :void {
+                miniWillChange(ev.value);
+        });
 
         // willEnterPlace() may have already run
         maybeStartup();
