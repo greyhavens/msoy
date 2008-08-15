@@ -3,15 +3,17 @@
 
 package com.threerings.msoy.person.server;
 
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import java.sql.Timestamp;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import com.google.inject.Inject;
 
@@ -164,11 +166,17 @@ public class MeServlet extends MsoyServiceServlet
             data.nextBadges = _badgeLogic.getInProgressBadges(mrec.memberId, true);
 
             data.stamps = Maps.newHashMap();
-            List<EarnedBadge> stamps = Lists.transform(
-                _badgeRepo.loadEarnedBadges(mrec.memberId), EarnedBadgeRecord.TO_BADGE);
+            // Create a set union between the in progress badges retrieved above, and earned
+            // badge records from the database.  Due to InProgressFilter, we're guaranteed that
+            // in the intersection between the EarnedBadges and InProgressBadges, we'll end
+            // up with an InProgressBadge, which is what we want for client display.
+            Iterable<Badge> badgeUnion = Sets.union(
+                Sets.newHashSet(Lists.transform(_badgeRepo.loadEarnedBadges(mrec.memberId),
+                                                new InProgressFilter(data.nextBadges))),
+                Sets.newHashSet(data.nextBadges));
             for (StampCategory category : StampCategory.values()) {
                 data.stamps.put(category, Lists.newArrayList(
-                    Iterables.filter(stamps, new FilterByCategory(category))));
+                    Iterables.filter(badgeUnion, new FilterByCategory(category))));
             }
             return data;
 
@@ -207,17 +215,34 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     /** Helper for loadBadges */
-    protected static class FilterByCategory implements Predicate<EarnedBadge>
+    protected static class FilterByCategory implements Predicate<Badge>
     {
         public FilterByCategory (StampCategory category) {
             _category = category;
         }
 
-        public boolean apply (EarnedBadge badge) {
+        public boolean apply (Badge badge) {
             return BadgeType.getType(badge.badgeCode).getCategory().equals(_category);
         }
 
         protected StampCategory _category;
+    }
+
+    /** Helper for loadBadges. */
+    protected static class InProgressFilter implements Function<EarnedBadgeRecord, Badge>
+    {
+        public InProgressFilter (List<InProgressBadge> existing)  {
+            _index = Maps.uniqueIndex(existing, BadgeType.BADGE_TO_CODE);
+        }
+
+        public Badge apply (EarnedBadgeRecord record) {
+            // Return an EarnedBadge only in the case where an InProgressBadge isn't found for the
+            // EarnedBadgeRecord's badgeCode.
+            Badge badge = _index.get(record.badgeCode);
+            return badge == null ? record.toBadge() : badge;
+        }
+
+        protected Map<Integer, InProgressBadge> _index;
     }
 
     // our dependencies

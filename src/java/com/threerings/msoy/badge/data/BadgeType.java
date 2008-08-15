@@ -260,6 +260,13 @@ public enum BadgeType
         }
     };
 
+    /** Function to get the badgeCode out of a Badge */
+    public static Function<Badge, Integer> BADGE_TO_CODE = new Function<Badge, Integer>() {
+        public Integer apply (Badge badge) {
+            return badge.badgeCode;
+        }
+    };
+
     /** Encapsulates a stat requirement and coin reward for a single badge level. */
     public static class Level
     {
