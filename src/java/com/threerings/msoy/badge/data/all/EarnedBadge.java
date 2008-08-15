@@ -40,4 +40,21 @@ public class EarnedBadge extends Badge
         return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR + Integer.toHexString(badgeCode) +
             "_" + level + "f" + BADGE_IMAGE_TYPE;
     }
+
+    @Override // from Badge
+    public boolean equals (Object o)
+    {
+        if (o instanceof EarnedBadge) {
+            EarnedBadge other = (EarnedBadge)o;
+            return super.equals(other) && other.level == this.level &&
+                other.whenEarned == this.whenEarned;
+        }
+        return false;
+    }
+
+    @Override // from Badge
+    public int hashCode ()
+    {
+        return badgeCode * level + (whenEarned != null ? whenEarned.intValue() : 0);
+    }
 }

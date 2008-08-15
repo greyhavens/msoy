@@ -31,6 +31,22 @@ public abstract class Badge
      */
     abstract public String imageUrl ();
 
+    @Override // from Object
+    public boolean equals (Object o)
+    {
+        if (o instanceof Badge) {
+            Badge other = (Badge)o;
+            return other.badgeCode == this.badgeCode;
+        }
+        return false;
+    }
+
+    @Override // from Object
+    public int hashCode ()
+    {
+        return badgeCode;
+    }
+
     // from interface DSet.Entry
     public Comparable<Integer> getKey ()
     {
