@@ -64,11 +64,6 @@ public interface GroupServiceAsync
     void getGroupMembers (int groupId, AsyncCallback<GroupService.MembersResult> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.getGroupRooms}
-     */
-    void getGroupRooms (int groupId, AsyncCallback<GroupService.RoomsResult> callback);
-
-    /**
      * The asynchronous version of {@link GroupService.transferRoom}
      */
     void transferRoom (int groupId, int sceneId, AsyncCallback<Void> callback);

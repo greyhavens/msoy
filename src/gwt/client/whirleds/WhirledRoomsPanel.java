@@ -21,6 +21,8 @@ import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.room.gwt.RoomInfo;
+import com.threerings.msoy.room.gwt.WebRoomService;
+import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -39,14 +41,15 @@ public class WhirledRoomsPanel extends VerticalPanel
     {
         _detail = detail;
 
-        _groupsvc.getGroupRooms(_detail.group.groupId, new MsoyCallback<GroupService.RoomsResult>() {
-            public void onSuccess (GroupService.RoomsResult result) {
+        _roomsvc.loadGroupRooms(
+            _detail.group.groupId, new MsoyCallback<WebRoomService.RoomsResult>() {
+            public void onSuccess (WebRoomService.RoomsResult result) {
                 init(result);
             }
         });
     }
 
-    protected void init (GroupService.RoomsResult rooms)
+    protected void init (WebRoomService.RoomsResult rooms)
     {
         _roomsResult = rooms;
         add(new TongueBox(null, _msgs.detailRoomsDetail(_detail.group.name), false));
@@ -123,13 +126,15 @@ public class WhirledRoomsPanel extends VerticalPanel
     }
 
     protected GroupDetail _detail;
-    protected GroupService.RoomsResult _roomsResult;
+    protected WebRoomService.RoomsResult _roomsResult;
     protected ListBox _roomsListBox;
     protected SmartTable _roomsGrid;
 
     protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
+    protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
+        ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
 
     protected static final int ROOM_COLUMNS = 6;
 }

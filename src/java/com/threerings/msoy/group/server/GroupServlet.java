@@ -57,7 +57,6 @@ import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 
@@ -215,38 +214,6 @@ public class GroupServlet extends MsoyServiceServlet
 
         } catch (PersistenceException pe) {
             log.warning("getGroupMembers failed [groupId=" + groupId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-    }
-
-    // from interface GroupService
-    public RoomsResult getGroupRooms (int groupId)
-        throws ServiceException
-    {
-        final MemberRecord mrec = getAuthedUser();
-
-        try {
-            RoomsResult result = new RoomsResult();
-
-            // load up all scenes owned by this group
-            List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(
-                MsoySceneModel.OWNER_TYPE_GROUP, groupId);
-            result.groupRooms = Lists.newArrayList(
-                Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
-
-            // load up all scenes owned by this member, filtering out their home
-            Predicate<RoomInfo> notHome = new Predicate<RoomInfo>() {
-                public boolean apply (RoomInfo info) {
-                    return info.sceneId != mrec.homeSceneId;
-                }
-            };
-            rooms = _sceneRepo.getOwnedScenes(mrec.memberId);
-            result.callerRooms = Lists.newArrayList(
-                Iterables.filter(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO), notHome));
-            return result;
-
-        } catch (PersistenceException pe) {
-            log.warning("getGroupRooms failed [groupId=" + groupId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

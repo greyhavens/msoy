@@ -10,8 +10,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.GroupName;
 
-import com.threerings.msoy.room.gwt.RoomInfo;
-
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 
@@ -33,20 +31,6 @@ public interface GroupService extends RemoteService
          * The members of this group.
          */
         public List<GroupMemberCard> members;
-    }
-
-    /** Delivers the respose to {@link #getGroupRooms}. */
-    public static class RoomsResult implements IsSerializable
-    {
-        /**
-         * The rooms of this group.
-         */
-        public List<RoomInfo> groupRooms;
-
-        /**
-         * The rooms owned by the caller.
-         */
-        public List<RoomInfo> callerRooms;
     }
 
     /** Delivers the response to {@link #getGroupInfo}. */
@@ -115,12 +99,6 @@ public interface GroupService extends RemoteService
      * Returns a list of all the members for the specified group.
      */
     MembersResult getGroupMembers (int groupId)
-        throws ServiceException;
-
-    /**
-     * Returns a list of all the rooms owned by a specific group.
-     */
-    RoomsResult getGroupRooms (int groupId)
         throws ServiceException;
 
     /**

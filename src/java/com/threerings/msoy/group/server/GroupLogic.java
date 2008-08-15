@@ -36,7 +36,6 @@ import static com.threerings.msoy.Log.log;
 @BlockingThread @Singleton
 public class GroupLogic
 {
-
     /**
      * Create a new group
      */
@@ -90,8 +89,9 @@ public class GroupLogic
         }
     }
 
-
-    // from interface GroupService
+    /**
+     * Updates information for a particular group.
+     */
     public void updateGroup (MemberRecord mrec, Group group, GroupExtras extras)
         throws ServiceException
     {

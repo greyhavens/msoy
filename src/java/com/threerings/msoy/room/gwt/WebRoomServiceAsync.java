@@ -21,4 +21,9 @@ public interface WebRoomServiceAsync
      * The asynchronous version of {@link WebRoomService#loadMyRooms}.
      */
     void loadMyRooms (AsyncCallback<List<RoomInfo>> callback);
+
+    /**
+     * The asynchronous version of {@link WebRoomService.loadGroupRooms}
+     */
+    void loadGroupRooms (int groupId, AsyncCallback<WebRoomService.RoomsResult> callback);
 }
