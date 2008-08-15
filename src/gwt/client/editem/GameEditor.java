@@ -243,7 +243,7 @@ public class GameEditor extends ItemEditor
                     // populate the whirleds dropdown
                     _whirled.addItem(_emsgs.gameWhirledSelectNew(), -1+"");
                     for (GroupMembership whirled : whirleds) {
-                        if (whirled.rank >= whirled.RANK_MANAGER) {
+                        if (whirled.rank >= GroupMembership.RANK_MANAGER) {
                             _whirled.addItem(
                                 whirled.group.toString(), whirled.group.getGroupId()+"");
                         }
