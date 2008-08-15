@@ -213,7 +213,7 @@ class SeatPanel extends VBox
             _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
             canLeave = true;
         } else if (_ctx.getPlayerObject().memberName.equals(table.players[0])) {
-            _leaveBtn.setCommand(LobbyController.BOOT_PLAYER, [ _table.tableId, _index ]);
+            _leaveBtn.setCommand(LobbyController.BOOT_PLAYER, [ _table.tableId, player ]);
             canLeave = true;
         }
         FlexUtil.setVisible(_leaveBtn, canLeave);

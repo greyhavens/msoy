@@ -177,9 +177,9 @@ public class LobbyController extends Controller implements Subscriber
     /**
      * Handles BOOT_PLAYER.
      */
-    public function handleBootPlayer (tableId :int, position :int) :void
+    public function handleBootPlayer (tableId :int, target :Name) :void
     {
-        _tableDir.bootPlayer(tableId, position);
+        _tableDir.bootPlayer(tableId, target);
     }
 
     /**
