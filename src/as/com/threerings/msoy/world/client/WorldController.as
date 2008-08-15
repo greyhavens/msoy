@@ -6,11 +6,9 @@ package com.threerings.msoy.world.client {
 import flash.geom.Rectangle;
 
 import flash.events.Event;
-import flash.events.TimerEvent;
 import flash.external.ExternalInterface;
 import flash.net.URLRequest;
 import flash.system.Capabilities;
-import flash.utils.Timer;
 
 import mx.controls.Button;
 import mx.core.Application;
@@ -182,9 +180,6 @@ public class WorldController extends MsoyController
     {
         super(ctx, topPanel);
         _wctx = ctx;
-
-        _tipTimer = new Timer(15000, 1);
-        _tipTimer.addEventListener(TimerEvent.TIMER, displayChatTip);
 
         // ensure that the compiler includes these necessary symbols
         var c :Class;
@@ -1140,22 +1135,6 @@ public class WorldController extends MsoyController
     }
 
     /**
-     * Display a tip of the day in chat.
-     */
-    protected function displayChatTip (... ignored) :void
-    {
-        try {
-            var tips :Array = Msgs.GENERAL.getAll("m.tip_");
-            _wctx.displayInfo(null, MessageBundle.taint(tips[int(Math.random() * tips.length)]));
-        } catch (err :Error) {
-            // just omit the tip
-        }
-
-        // we are now done with this timer..
-        _tipTimer = null;
-    }
-
-    /**
      * Calls our GWT application and requests that the specified page be displayed.
      */
     protected function displayPageGWT (page :String, args :String) :Boolean
@@ -1285,17 +1264,6 @@ public class WorldController extends MsoyController
         }
     }
 
-    // from MsoyController
-    override protected function restartIdleTimer () :void
-    {
-        super.restartIdleTimer();
-
-        if (_tipTimer != null) {
-            _tipTimer.reset();
-            _tipTimer.start();
-        }
-    }
-
     /**
      * Returns the current sceneId, or 0 if none.
      */
@@ -1351,9 +1319,6 @@ public class WorldController extends MsoyController
 
     /** Giver of life, context. */
     protected var _wctx :WorldContext;
-
-    /** A timer to wait for a little bit of idle to pop up a chat tip. */
-    protected var _tipTimer :Timer;
 
     /** Tracks whether we've done our first-logon movement so that we avoid trying to redo it as we
      * subsequently move between servers (and log off and on in the process). */
