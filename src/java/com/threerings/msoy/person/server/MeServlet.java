@@ -193,6 +193,11 @@ public class MeServlet extends MsoyServiceServlet
         long now = System.currentTimeMillis();
         List<Badge> badges = Lists.newArrayList();
         for (BadgeType type : BadgeType.values()) {
+            if (type.equals(BadgeType.HIDDEN)) {
+                // don't ever send HIDDEN to the browser
+                continue;
+            }
+
             int code = type.getCode();
             for (int ii = 0; ii < type.getNumLevels(); ii++) {
                 badges.add(new InProgressBadge(code, ii, (float)0.5, type.getLevel(ii).coinValue));
