@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
-import com.google.gwt.user.client.Window;
 
 import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.data.all.Item;
