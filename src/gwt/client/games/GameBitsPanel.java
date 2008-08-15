@@ -20,9 +20,6 @@ import client.util.Link;
 public class GameBitsPanel extends SmartTable
 {
     /**
-     * @param minPlayers
-     * @param maxPlayers
-     * @param avgTime
      * @param gamesPlayed If > 0 will display the total # of games played
      * @param originalItemId If > 0 and player is support, show link to original item
      * @param groupId If > 0 will display a link to the game's Whirled
