@@ -32,7 +32,7 @@ public interface ItemService extends RemoteService
      *
      * @return the new average rating for the item.
      */
-    float rateItem (ItemIdent item, byte rating, boolean previouslyRate)
+    float rateItem (ItemIdent item, byte rating, boolean isFirstRating)
         throws ServiceException;
 
     /**
