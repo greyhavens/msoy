@@ -4,7 +4,6 @@
 package com.threerings.msoy.web.server;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.commons.fileupload.FileUploadException;
 
