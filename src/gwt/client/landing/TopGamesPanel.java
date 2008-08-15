@@ -33,7 +33,7 @@ import client.util.Link;
 import client.util.MediaUtil;
 
 /**
- * Displays a summary of what Whirled is and calls to action.
+ * Displays a list of popular games for the landing page
  */
 public class TopGamesPanel extends AbsolutePanel
 {
@@ -160,7 +160,7 @@ public class TopGamesPanel extends AbsolutePanel
         }
 
         left.add(WidgetUtil.makeShim(10, 10));
-        left.add(new GameBitsPanel(game.minPlayers, game.maxPlayers, game.avgDuration, 0, 0));
+        left.add(new GameBitsPanel(game.minPlayers, game.maxPlayers, game.avgDuration, 0, 0, 0));
 
         // left and right arrows
         left.add(WidgetUtil.makeShim(10, 10));

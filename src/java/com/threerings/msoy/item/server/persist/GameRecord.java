@@ -91,6 +91,13 @@ public class GameRecord extends ItemRecord
     public static final ColumnExp SERVER_MIME_TYPE_C =
         new ColumnExp(GameRecord.class, SERVER_MIME_TYPE);
 
+    /** The column identifier for the {@link #groupId} field. */
+    public static final String GROUP_ID = "groupId";
+
+    /** The qualified column identifier for the {@link #groupId} field. */
+    public static final ColumnExp GROUP_ID_C =
+        new ColumnExp(GameRecord.class, GROUP_ID);
+
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(GameRecord.class, ITEM_ID);
@@ -172,7 +179,7 @@ public class GameRecord extends ItemRecord
         new ColumnExp(GameRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 14;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 15;
 
     /** This game's genre. */
     public byte genre;
@@ -204,6 +211,10 @@ public class GameRecord extends ItemRecord
 
     /** The MIME type of the {@link #serverMediaHash} media. */
     public byte serverMimeType;
+
+    /** Optional group associated with this game; values < 0 mean no group */
+    @Column(defaultValue="-1")
+    public int groupId;
 
     /**
      * Returns true if the specified game is in development.
@@ -297,6 +308,7 @@ public class GameRecord extends ItemRecord
             serverMediaHash = game.serverMedia.hash;
             serverMimeType = game.serverMedia.mimeType;
         }
+        groupId = game.groupId;
     }
 
     @Override // from ItemRecord
@@ -330,6 +342,7 @@ public class GameRecord extends ItemRecord
             new MediaDesc(shotMediaHash, shotMimeType);
         object.serverMedia = (serverMediaHash == null) ? null :
             new MediaDesc(serverMediaHash, serverMimeType);
+        object.groupId = groupId;
         return object;
     }
 

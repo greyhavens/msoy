@@ -16,13 +16,11 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Predicate;
 import com.samskivert.util.Tuple;
 
-import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.SceneBookmarkEntry;
@@ -30,7 +28,6 @@ import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
-import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberCardRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -47,7 +44,6 @@ import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GalaxyData;
 import com.threerings.msoy.group.gwt.GroupCard;
-import com.threerings.msoy.group.gwt.GroupCodes;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.gwt.GroupMemberCard;
@@ -56,7 +52,6 @@ import com.threerings.msoy.group.gwt.MyGroupCard;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
@@ -406,95 +401,14 @@ public class GroupServlet extends MsoyServiceServlet
     public Group createGroup (Group group, GroupExtras extras)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-
-        // make sure the name is valid; this is checked on the client as well
-        if (!isValidName(group.name)) {
-            log.warning("Asked to create group with invalid name [for=" + mrec.who() +
-                    ", name=" + group.name + "].");
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        try {
-            final GroupRecord grec = new GroupRecord();
-            grec.name = group.name;
-            grec.blurb = group.blurb;
-            grec.policy = group.policy;
-            if (group.logo != null) {
-                grec.logoMimeType = group.logo.mimeType;
-                grec.logoMediaHash = group.logo.hash;
-                grec.logoMediaConstraint = group.logo.constraint;
-            }
-            grec.homepageUrl = extras.homepageUrl;
-            grec.charter = extras.charter;
-            grec.catalogItemType = extras.catalogItemType;
-            grec.catalogTag = extras.catalogTag;
-
-            // we fill this in ourselves
-            grec.creatorId = mrec.memberId;
-
-            // create the group and then add the creator to it
-            _groupRepo.createGroup(grec);
-            _groupRepo.joinGroup(grec.groupId, grec.creatorId, GroupMembership.RANK_MANAGER);
-
-            // if the creator is online, update their runtime data
-            GroupMembership gm = new GroupMembership();
-            gm.group = grec.toGroupName();
-            gm.rank = GroupMembership.RANK_MANAGER;
-            MemberNodeActions.joinedGroup(grec.creatorId, gm);
-
-            // update player stats
-            _statLogic.incrementStat(mrec.memberId, StatType.WHIRLEDS_CREATED, 1);
-
-            return grec.toGroupObject();
-
-        } catch (DuplicateKeyException dke) {
-            throw new ServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
-
-        } catch (PersistenceException pe) {
-            log.warning("Failed to create group [for=" + mrec.who() +
-                    ", group=" + group + ", extras=" + extras + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        return _groupLogic.createGroup(requireAuthedUser(), group, extras);
     }
 
     // from interface GroupService
     public void updateGroup (Group group, GroupExtras extras)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-
-        // make sure the name is valid; this is checked on the client as well
-        if (!isValidName(group.name)) {
-            log.warning("Asked to update group with invalid name [for=" + mrec.who() +
-                    ", name=" + group.name + "].");
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        try {
-            GroupMembershipRecord gmrec = _groupRepo.getMembership(group.groupId, mrec.memberId);
-            if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
-                log.warning("in updateGroup, invalid permissions");
-                throw new ServiceException("m.invalid_permissions");
-            }
-
-            GroupRecord grec = _groupRepo.loadGroup(group.groupId);
-            if (grec == null) {
-                throw new PersistenceException("Group not found [id=" + group.groupId + "]");
-            }
-            Map<String, Object> updates = grec.findUpdates(group, extras);
-            if (updates.size() > 0) {
-                _groupRepo.updateGroup(group.groupId, updates);
-            }
-
-        } catch (DuplicateKeyException dke) {
-            throw new ServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
-
-        } catch (PersistenceException pe) {
-            log.warning("updateGroup failed [group=" + group +
-                    ", extras=" + extras + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        _groupLogic.updateGroup(requireAuthedUser(), group, extras);
     }
 
     // from interface GroupService
@@ -887,11 +801,6 @@ public class GroupServlet extends MsoyServiceServlet
         }
     }
 
-    protected static boolean isValidName (String name)
-    {
-        return Character.isLetter(name.charAt(0)) || Character.isDigit(name.charAt(0));
-    }
-
     // our dependencies
     @Inject protected MemberManager _memberMan;
     @Inject protected MemberLogic _memberLogic;
@@ -899,5 +808,5 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
-    @Inject protected StatLogic _statLogic;
+    @Inject protected GroupLogic _groupLogic;
 }

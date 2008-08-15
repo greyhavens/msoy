@@ -79,6 +79,9 @@ public class Game extends Item
      */
     public MediaDesc serverMedia;
 
+    /** Optional group associated with this game; values < 0 mean no group */
+    public int groupId;
+
     /**
      * Returns true if the specified game is a developer's in-progress original game rather than
      * one listed in the catalog.

@@ -544,7 +544,7 @@ public class MsoyAuthenticator extends Authenticator
         // create a blank room for them, store it
         String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
         mrec.homeSceneId = _sceneRepo.createBlankRoom(
-            MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true);
+            MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true, null);
         _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
         // emit a created_account action which will grant them some starting flow

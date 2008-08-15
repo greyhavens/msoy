@@ -38,6 +38,7 @@ import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.persist.CountRecord;
 
 import com.threerings.msoy.item.data.all.Decor;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 
@@ -302,11 +303,16 @@ public class MsoySceneRepository extends DepotRepository
 
     /**
      * Create a new blank room for the specified member.
-     *
+     * @param ownerType May be an individual member or a group
+     * @param ownerId
+     * @param roomName
+     * @param portalAction Where to link the new room's door to
+     * @param firstTime Is this the first room this owner has created?
+     * @param gameId If >= 0, add the furni representation of this game to the new room
      * @return the scene id of the newly created room.
      */
     public int createBlankRoom (byte ownerType, int ownerId, String roomName, String portalAction,
-                                boolean firstTime)
+                                boolean firstTime, Game game)
         throws PersistenceException
     {
         // determine the scene id to clone
@@ -317,7 +323,8 @@ public class MsoySceneRepository extends DepotRepository
                 SceneRecord.Stock.EXTRA_MEMBER_ROOM;
             break;
         case MsoySceneModel.OWNER_TYPE_GROUP:
-            stock = firstTime ? SceneRecord.Stock.FIRST_MEMBER_ROOM :
+            stock = game != null ? SceneRecord.Stock.GAME_GROUP_HALL :
+                firstTime ? SceneRecord.Stock.FIRST_MEMBER_ROOM :
                 SceneRecord.Stock.EXTRA_MEMBER_ROOM;
             break;
         }
@@ -359,6 +366,14 @@ public class MsoySceneRepository extends DepotRepository
                     SceneRecord.Stock.PUBLIC_ROOM.getSceneId() + ":")) {
                 furni.actionData = portalAction;
             }
+
+            // for game groups, point the appropriate furni to the right game
+            if (stock == SceneRecord.Stock.GAME_GROUP_HALL &&
+                (furni.actionType == FurniData.ACTION_LOBBY_GAME)) {
+                final String gameAction = game.gameId + ":" + game.name;
+                furni.actionData = gameAction;
+            }
+
             insert(furni);
         }
 

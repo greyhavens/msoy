@@ -13,6 +13,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.item.data.all.Game;
 
 /**
  * Contains the basic data of a group.
@@ -201,5 +202,31 @@ public class Group
         } else {
             return nameComparison;
         }
+    }
+
+    /**
+     * Create a new group for a given game using default values
+     */
+    public static Group fromGame (Game game)
+    {
+        Group group = new Group();
+
+        // Deal with name issues as best we can
+        String name = game.name + " Whirled";
+        if (name.length() > GroupName.LENGTH_MAX) {
+            name = name.substring(0, GroupName.LENGTH_MAX - 1);
+        }
+        if (!Character.isLetter(name.charAt(0)) || Character.isDigit(name.charAt(0))) {
+            name = "The " + name;
+        }
+        group.name = name;
+
+        group.blurb = "A place to discuss the game " + game.name;
+        // may be the default game icon
+        group.logo = game.getThumbnailMedia();
+        group.policy = Group.POLICY_PUBLIC;
+        group.forumPerms = Group.makePerms(Group.PERM_ALL, Group.PERM_ALL);
+
+        return group;
     }
 }

@@ -3,6 +3,8 @@
 
 package client.editem;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ListBox;
@@ -17,11 +19,16 @@ import com.google.gwt.xml.client.XMLParser;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameDetail;
+import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.gwt.GroupService;
+import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Game;
 
 import client.shell.CShell;
 import client.shell.DynamicMessages;
+import client.util.MsoyCallback;
+import client.util.ServiceUtil;
 
 /**
  * A class for creating and editing {@link Game} digital items.
@@ -54,6 +61,9 @@ public class GameEditor extends ItemEditor
                 break;
             }
         }
+
+        // select our whirled if the dropdown has been populated.
+        setWhirled();
 
         // read our configuration information out of the game's XML config data
         Document xml;
@@ -192,6 +202,11 @@ public class GameEditor extends ItemEditor
         addRow(_emsgs.gameAVRG(), _avrg = new CheckBox());
         addSpacer();
 
+        // list of whirleds this player is a member of
+        _whirled = new ListBox();
+        addRow(_emsgs.gameWhirledLabel(), _whirled, _emsgs.gameWhirledTip());
+        addSpacer();
+
         // add a tab for uploading the game server code
         addSpacer();
         addTip(_emsgs.gameServerHeadingTip());
@@ -220,6 +235,41 @@ public class GameEditor extends ItemEditor
             _serverClass = new TextBox(),
             _emsgs.gameServerClassTip());
         _serverClass.setVisibleLength(40);
+
+        // fetch the list of whirleds this player is a manager of
+        _groupsvc.getMembershipGroups(
+            CShell.getMemberId(), false, new MsoyCallback<List<GroupMembership>>() {
+                public void onSuccess (List<GroupMembership> whirleds) {
+                    // populate the whirleds dropdown
+                    _whirled.addItem(_emsgs.gameWhirledSelectNew(), -1+"");
+                    for (GroupMembership whirled : whirleds) {
+                        if (whirled.rank >= whirled.RANK_MANAGER) {
+                            _whirled.addItem(
+                                whirled.group.toString(), whirled.group.getGroupId()+"");
+                        }
+                    }
+                    setWhirled();
+                }
+        });
+    }
+
+    /**
+     * If the whirled dropdown is populated and the game exists, select the correct whirled,
+     * otherwise wait to be called again once all data is in place.
+     */
+    protected void setWhirled ()
+    {
+        if (_whirled == null || _whirled.getItemCount() == 0
+            || _game == null || _game.itemId == 0) {
+            return;
+        }
+
+        for (int ii = 0; ii < _whirled.getItemCount(); ii++) {
+            if (_whirled.getValue(ii).equals(_game.groupId+"")) {
+                _whirled.setSelectedIndex(ii);
+                break;
+            }
+        }
     }
 
     @Override // from ItemEditor
@@ -266,6 +316,9 @@ public class GameEditor extends ItemEditor
         if (_avrg.isChecked()) {
             xml.getFirstChild().appendChild(xml.createElement("avrg"));
         }
+
+        // show a notice that a new Whirled will be created
+        _game.groupId = new Integer(_whirled.getValue(_whirled.getSelectedIndex()));
 
         String extras = _extras.getText();
         if (extras.length() > 0) {
@@ -320,7 +373,12 @@ public class GameEditor extends ItemEditor
     protected TextBox _serverClass;
     protected CheckBox _avrg;
     protected TextArea _extras;
+    protected ListBox _whirled;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+
+    // connection to fetching list of the player's Whirleds
+    protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
+        ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }

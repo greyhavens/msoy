@@ -57,6 +57,7 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupCard;
+import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -194,6 +195,15 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
+     * Returns the single group with the given unique name, or null if none is found.
+     */
+    public GroupRecord loadGroupByName (String name)
+        throws PersistenceException
+    {
+        return load(GroupRecord.class, new Where(new Equals(GroupRecord.NAME_C, name)));
+    }
+
+    /**
      * Fetches multiple groups by id.
      */
     public List<GroupRecord> loadGroups (Set<Integer> groupIds)
@@ -234,11 +244,20 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
+     * Convenience function for createGroup(GroupRecord, int)
+     */
+    public int createGroup (GroupRecord record)
+        throws PersistenceException
+    {
+        return createGroup(record, null);
+    }
+
+    /**
      * Creates a new group, defined by a {@link GroupRecord}. The key of the record must be null --
      * it will be filled in through the insertion, and returned.  A blank room is also created that
      * is owned by the group.
      */
-    public int createGroup (GroupRecord record)
+    public int createGroup (GroupRecord record, Game game)
         throws PersistenceException
     {
         if (record.groupId != 0) {
@@ -249,7 +268,7 @@ public class GroupRepository extends DepotRepository
         insert(record);
 
         int sceneId = _sceneRepo.createBlankRoom(
-            MsoySceneModel.OWNER_TYPE_GROUP, record.groupId, record.name, null, true);
+            MsoySceneModel.OWNER_TYPE_GROUP, record.groupId, record.name, null, true, game);
         updateGroup(record.groupId, GroupRecord.HOME_SCENE_ID, sceneId);
 
         return record.groupId;
