@@ -297,12 +297,12 @@ public class MsoySceneRepository extends DepotRepository
 
     /**
      * Create a new blank room for the specified member.
-     * @param ownerType May be an individual member or a group
-     * @param ownerId
-     * @param roomName
-     * @param portalAction Where to link the new room's door to
-     * @param firstTime Is this the first room this owner has created?
-     * @param gameId If >= 0, add the furni representation of this game to the new room
+     *
+     * @param ownerType may be an individual member or a group.
+     * @param portalAction to where to link the new room's door.
+     * @param firstTime whether this the first room this owner has created.
+     * @param game the game to which to link for game group halls, or null.
+     *
      * @return the scene id of the newly created room.
      */
     public int createBlankRoom (byte ownerType, int ownerId, String roomName, String portalAction,
