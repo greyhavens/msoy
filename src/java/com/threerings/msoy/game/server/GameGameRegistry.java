@@ -254,7 +254,7 @@ public class GameGameRegistry
                         throw new PersistenceException(
                             "Failed to find GameRecord [gameId=" + gameId + "]");
                     }
-                    _game = (Game) gRec.toItem();
+//                    _game = (Game) gRec.toItem();
                 }
 
                 @Override
@@ -268,7 +268,7 @@ public class GameGameRegistry
                     log.warning("Failed to resolve AVRGame [id=" + gameId + "].", pe);
                 }
 
-                protected Game _game;
+//                protected Game _game;
             });
             return;
         }
