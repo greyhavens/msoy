@@ -892,7 +892,9 @@ BasePanel {
 .chatControl {  
   paddingLeft: 4;
   paddingRight: 4;
-  paddingTop: 2;
+  paddingTop: 0;
+  paddingBottom: 1;
+  verticalAlign: "bottom";
   backgroundAlpha: 0;
 }
 
