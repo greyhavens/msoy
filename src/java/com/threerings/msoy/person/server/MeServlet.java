@@ -195,7 +195,7 @@ public class MeServlet extends MsoyServiceServlet
         for (BadgeType type : BadgeType.values()) {
             int code = type.getCode();
             for (int ii = 0; ii < type.getNumLevels(); ii++) {
-                badges.add(new InProgressBadge(code, ii, (float)0.5));
+                badges.add(new InProgressBadge(code, ii, (float)0.5, type.getLevel(ii).coinValue));
                 badges.add(new EarnedBadge(code, ii, now));
             }
         }

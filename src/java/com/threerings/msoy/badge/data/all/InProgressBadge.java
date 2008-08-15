@@ -13,12 +13,15 @@ public class InProgressBadge extends Badge
     /** The progress that has been made on the badge, in [0, 1) */
     public float progress;
 
+    /** The number of coins that will be given for the successful completion of this badge. */
+    public int coinReward;
+
     /** Constructs a new empty EarnedBadge. */
     public InProgressBadge ()
     {
     }
 
-    public InProgressBadge (int badgeCode, int nextLevel, float progress)
+    public InProgressBadge (int badgeCode, int nextLevel, float progress, int coinReward)
     {
         super(badgeCode);
 

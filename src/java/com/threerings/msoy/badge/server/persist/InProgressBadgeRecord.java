@@ -99,7 +99,9 @@ public class InProgressBadgeRecord extends PersistentRecord
      */
     public InProgressBadge toBadge ()
     {
-        return new InProgressBadge(badgeCode, nextLevel, progress);
+        BadgeType.Level level = BadgeType.getType(badgeCode).getLevel(nextLevel);
+        int coinReward = level != null ? level.coinValue : 0;
+        return new InProgressBadge(badgeCode, nextLevel, progress, coinReward);
     }
 
     public static float quantizeProgress (float progress)

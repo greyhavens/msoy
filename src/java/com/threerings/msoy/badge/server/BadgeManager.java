@@ -134,7 +134,8 @@ public class BadgeManager
             // will be correctly updated next time the player bumps the stat that this badge
             // depends on.
             if (!existingBadges.contains(dummyBadge) && badgeType.isUnlocked(earnedBadges)) {
-                newBadges.add(new InProgressBadge(badgeType.getCode(), 0, 0));
+                newBadges.add(new InProgressBadge(
+                    badgeType.getCode(), 0, 0, badgeType.getLevel(0).coinValue));
             }
         }
 

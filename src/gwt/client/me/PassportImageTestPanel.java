@@ -1,12 +1,9 @@
 package client.me;
 
 import java.util.List;
-import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.util.SimpleDataModel;
@@ -14,14 +11,11 @@ import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.msoy.badge.data.all.Badge;
-import com.threerings.msoy.badge.data.all.EarnedBadge;
-import com.threerings.msoy.badge.data.all.InProgressBadge;
 
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 
 import client.shell.DynamicMessages;
-import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -51,36 +45,6 @@ public class PassportImageTestPanel extends PagedGrid<Badge>
     @Override
     protected String getEmptyMessage() {
         return "ZOMG! The server gave us no badges! Run away!!!!!11one!";
-    }
-
-    protected static class BadgeDisplay extends VerticalPanel
-    {
-        public BadgeDisplay (Badge badge)
-        {
-            DOM.setStyleAttribute(getElement(), "padding", "10px");
-
-            String type = "UNKNOWN BADGE TYPE";
-            String level = "LEVEL UNKNOWN";
-            if (badge instanceof EarnedBadge) {
-                type = "EarnedBadge";
-                level = "Level: " + ((EarnedBadge)badge).level;
-            } else if (badge instanceof InProgressBadge) {
-                type = "InProgressBadge";
-                level = "Next Level: " + ((InProgressBadge)badge).nextLevel;
-            }
-
-            String name = Integer.toHexString(badge.badgeCode);
-            try {
-                name = _dmsgs.getString("badge_" + name);
-            } catch (MissingResourceException mre) {
-                // nada, default already set.
-            }
-
-            add(MsoyUI.createLabel(name, null));
-            add(MsoyUI.createLabel(type, null));
-            add(MsoyUI.createLabel(level, null));
-            add(MsoyUI.createImage(badge.imageUrl(), null));
-        }
     }
 
     protected static final MeServiceAsync _mesvc = (MeServiceAsync)
