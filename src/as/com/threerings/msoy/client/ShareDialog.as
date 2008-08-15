@@ -34,6 +34,10 @@ public class ShareDialog extends FloatingPanel
         title = Msgs.GENERAL.get("t.share");
         showCloseButton = true;
         styleName = "sexyWindow";
+        setStyle("paddingTop", 0);
+        setStyle("paddingBottom", 0);
+        setStyle("paddingLeft", 0);
+        setStyle("paddingRight", 0);
 
         var cord :Accordion = new Accordion();
 
