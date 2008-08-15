@@ -76,12 +76,8 @@ public class FriendInviteDisplay extends MailPayloadDisplay
 
         protected void mailResponse ()
         {
-            _mailsvc.continueConversation(_convoId, CMail.msgs.friendReplyBody(), null,
-                new MsoyCallback<ConvMessage>() {
-                    public void onSuccess (ConvMessage result) {
-                        // Well that's nice.
-                    }
-                });
+            _mailsvc.continueConversation(
+                _convoId, CMail.msgs.friendReplyBody(), null, new MsoyCallback.NOOP<ConvMessage>());
         }
 
         protected boolean _thirdPerson;

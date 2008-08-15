@@ -51,7 +51,8 @@ public class GroupInviteDisplay extends MailPayloadDisplay
 
         protected void refreshUI ()
         {
-            _groupsvc.getGroupInfo(_invitePayload.groupId, new MsoyCallback<GroupService.GroupInfo>() {
+            _groupsvc.getGroupInfo(
+                _invitePayload.groupId, new MsoyCallback<GroupService.GroupInfo>() {
                 public void onSuccess (GroupService.GroupInfo result) {
                     _info = result;
                     buildUI();
@@ -86,14 +87,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
                 // if joining the group succeeds, mark this invitation as accepted
                 public void onSuccess (Void result) {
                     _invitePayload.responded = true;
-                    updateState(_invitePayload, new MsoyCallback<Void>() {
-                        // and if that succeded to, let the mail app know to refresh
-                        public void onSuccess (Void result) {
-//                             if (_listener != null) {
-//                                 _listener.messageChanged(_convoId, _message);
-//                             }
-                        }
-                    });
+                    updateState(_invitePayload, new MsoyCallback.NOOP<Void>());
                 }
             });
         }

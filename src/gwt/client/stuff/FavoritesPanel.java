@@ -75,8 +75,7 @@ public class FavoritesPanel extends SimplePanel
 
         _memberId = memberId;
         _stuffsvc.getFavoriteListInfo(_memberId, new MsoyCallback<ItemListInfo>() {
-            public void onSuccess (ItemListInfo favoriteListInfo)
-            {
+            public void onSuccess (ItemListInfo favoriteListInfo) {
                 setListId(favoriteListInfo.listId);
             }
         });

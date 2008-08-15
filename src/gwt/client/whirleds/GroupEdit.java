@@ -206,14 +206,12 @@ public class GroupEdit extends FlexTable
 
         final MsoyCallback<Void> updateCallback = new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
-                Link.go(
-                    Pages.WHIRLEDS, Args.compose("d", String.valueOf(_group.groupId), "r"));
+                Link.go(Pages.WHIRLEDS, Args.compose("d", String.valueOf(_group.groupId), "r"));
             }
         };
         final MsoyCallback<Group> createCallback = new MsoyCallback<Group>() {
             public void onSuccess (Group group) {
-                Link.go(
-                    Pages.WHIRLEDS, Args.compose("d", String.valueOf(group.groupId), "r"));
+                Link.go(Pages.WHIRLEDS, Args.compose("d", String.valueOf(group.groupId), "r"));
             }
         };
         // check if we're trying to set the policy to exclusive on a group that has tags

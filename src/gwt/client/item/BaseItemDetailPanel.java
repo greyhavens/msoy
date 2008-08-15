@@ -228,11 +228,8 @@ public abstract class BaseItemDetailPanel extends SmartTable
 
         // persist our new scale to the server
         if (_scaleUpdated && _item.ownerId == CShell.getMemberId()) {
-            _itemsvc.scaleAvatar(_item.itemId, ((Avatar) _item).scale, new MsoyCallback<Void>() {
-                public void onSuccess (Void result) {
-                    // nada
-                }
-            });
+            _itemsvc.scaleAvatar(
+                _item.itemId, ((Avatar) _item).scale, new MsoyCallback.NOOP<Void>());
         }
     }
 

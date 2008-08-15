@@ -13,6 +13,13 @@ import client.ui.MsoyUI;
  */
 public abstract class MsoyCallback<T> implements AsyncCallback<T>
 {
+    /** Used for those times when you just don't care enough to look at the response. */
+    public static class NOOP<N> extends MsoyCallback<N> {
+        public void onSuccess (N value) {
+            // noop!
+        }
+    };
+
     // from AsyncCallback
     public void onFailure (Throwable cause)
     {
