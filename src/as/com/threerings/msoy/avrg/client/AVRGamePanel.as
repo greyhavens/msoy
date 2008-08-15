@@ -11,60 +11,65 @@ import flash.display.LoaderInfo;
 import mx.core.UIComponent;
 import mx.events.ResizeEvent;
 
+import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.data.PlaceObject;
+import com.threerings.flash.MediaContainer;
 import com.threerings.util.Log;
-
-import com.threerings.presents.dobj.AttributeChangeListener;
-import com.threerings.presents.dobj.AttributeChangedEvent;
 
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.TopPanel;
 
-import com.threerings.msoy.ui.MsoyMediaContainer;
-
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.room.client.RoomView;
 
 import com.threerings.msoy.game.client.GameContext;
+import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 
 public class AVRGamePanel extends UIComponent
-    implements AttributeChangeListener, PlaceLayer
+    implements PlaceView, PlaceLayer
 {
     public static const log :Log = Log.getLog(AVRGamePanel);
 
-    public function AVRGamePanel (wctx :WorldContext, gctx :GameContext, ctrl :AVRGameController)
+    public function AVRGamePanel (ctrl :AVRGameController)
     {
         super();
 
-        _wctx = wctx;
-        _gctx = gctx;
         _ctrl = ctrl;
     }
 
-    public function init (gameObj :AVRGameObject) :void
+    // from PlaceView
+    public function willEnterPlace (plobj :PlaceObject) :void
     {
-        _gameObj = gameObj;
-
-        // create the backend
-        _backend = new AVRGameBackend(_wctx, _gctx, _ctrl, _gameObj);
-
-        loadMedia();
-
-        _gameObj.addListener(this);
-
-        _wctx.getWorldController().setAVRGamePanel(this);
-
-        addEventListener(ResizeEvent.RESIZE, handleResize);
+        _gameObj = (plobj as AVRGameObject);
     }
 
-    public function attributeChanged (event :AttributeChangedEvent) :void
+    // from PlaceView
+    public function didLeavePlace (plobj :PlaceObject) :void
     {
-        if (event.getName() == AVRGameObject.GAME_MEDIA) {
-            // if the media changes, brutally reload the AVRG
-            loadMedia();
-        }
+        // null gameObj for mediaComplete to find if it should run after us
+        _gameObj = null;
+    }
+
+    // called by our controller when it's created the backend and we should load our media
+    public function backendIsReady () :void
+    {
+        var cfg :AVRGameConfig = (_ctrl.getPlaceConfig() as AVRGameConfig);
+
+        // create the container for the user media
+        _mediaHolder = new MediaContainer(
+            cfg.getGameDefinition().getMediaPath(cfg.getGameId()));
+        var loader :Loader = Loader(_mediaHolder.getMedia());
+
+        // hook the backend up with the media: no context needed here
+        _ctrl.backend.init(null, loader);
+
+        // set ourselves up properly once the media is loaded
+        loader.contentLoaderInfo.addEventListener(Event.COMPLETE, mediaComplete);
+
+        addEventListener(ResizeEvent.RESIZE, handleResize);
     }
 
     // from PlaceLayer
@@ -74,47 +79,11 @@ public class AVRGamePanel extends UIComponent
         setActualSize(unscaledWidth, unscaledHeight);
     }
 
-    protected function loadMedia () :void {
-        if (_mediaHolder != null) {
-            // if this is a reload, remove the old holder
-            if (_mediaHolder.parent != null) {
-                removeChild(_mediaHolder);
-            }
-            // and make sure the contents are properly unloaded
-            _mediaHolder.shutdown();
-
-            // also make sure the backend is shut down until the new media is ready
-            _backend.shutdown();
-        }
-
-        // create the container for the user media
-        _mediaHolder = new MsoyMediaContainer(_gameObj.gameMedia);
-        var loader :Loader = Loader(_mediaHolder.getMedia());
-
-        // hook the backend up with the media
-        _backend.init(_wctx, loader);
-
-        // set ourselves up properly once the media is loaded
-        loader.contentLoaderInfo.addEventListener(Event.COMPLETE, mediaComplete);
-    }
-
-    public function getAVRGameBackend () :AVRGameBackend
-    {
-        return _backend;
-    }
-
     public function tutorialEvent (eventName :String) :void
     {
-        if (_backend) {
-            _backend.tutorialEvent(eventName);
+        if (_ctrl.backend) {
+            _ctrl.backend.tutorialEvent(eventName);
         }
-    }
-
-    public function shutdown () :void
-    {
-        _wctx.getWorldController().setAVRGamePanel(null);
-        // null gameObj for mediaComplete to find if it should run after us
-        _gameObj = null;
     }
 
     // We want to give the AVRG control over what pixels it considers 'hits' and which
@@ -130,7 +99,7 @@ public class AVRGamePanel extends UIComponent
     override public function hitTestPoint (
         x :Number, y :Number, shapeFlag :Boolean = false) :Boolean
     {
-        var hit :Boolean = _backend && _backend.hitTestPoint(x, y, shapeFlag);
+        var hit :Boolean = (_ctrl.backend != null) && _ctrl.backend.hitTestPoint(x, y, shapeFlag);
         this.mouseEnabled = this.mouseChildren = hit;
         return hit;
     }
@@ -152,16 +121,13 @@ public class AVRGamePanel extends UIComponent
 
     protected function handleResize (evt :ResizeEvent) :void
     {
-        if (stage != null) {
-            _backend.panelResized();
+        if (stage != null && _ctrl.backend != null) {
+            _ctrl.backend.panelResized();
         }
     }
 
-    protected var _wctx :WorldContext;
-    protected var _gctx :GameContext;
     protected var _ctrl :AVRGameController;
-    protected var _mediaHolder :MsoyMediaContainer;
+    protected var _mediaHolder :MediaContainer;
     protected var _gameObj :AVRGameObject;
-    protected var _backend :AVRGameBackend;
 }
 }

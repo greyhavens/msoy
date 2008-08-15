@@ -80,6 +80,8 @@ import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
+import com.threerings.msoy.avrg.client.AVRService;
+import com.threerings.msoy.avrg.client.AVRService.AVRGameJoinListener;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.server.AVRDispatcher;
 import com.threerings.msoy.avrg.server.AVRGameManager;
@@ -267,7 +269,8 @@ public class GameGameRegistry
                 }
 
                 public void handleSuccess () {
-                    amgr.updateGame(_game);
+// TODO: so what do we do?
+//                    amgr.updateGame(_game);
                 }
 
                 public void handleFailure (Exception pe) {
@@ -338,7 +341,7 @@ public class GameGameRegistry
 
     // from AVRProvider
     public void activateGame (ClientObject caller, final int gameId,
-                              final InvocationService.ResultListener listener)
+                              final AVRService.AVRGameJoinListener listener)
         throws InvocationException
     {
         // TODO: transition
@@ -440,7 +443,8 @@ public class GameGameRegistry
                     return;
                 }
 
-                mgr.getGameObject().setGameMedia(_content.game.gameMedia);
+// TODO: now handled in MsoyGameDefinition
+//                mgr.getGameObject().setGameMedia(_content.game.gameMedia);
                 mgr.setLifecycleObserver(GameGameRegistry.this);
 
                 // now start up the agent, then wait for the avrGameReady callback
@@ -779,7 +783,7 @@ public class GameGameRegistry
     }
 
     protected void joinAVRGame (final int playerId, final AVRGameManager mgr,
-                                final InvocationService.ResultListener listener)
+                                final AVRService.AVRGameJoinListener listener)
     {
         _invoker.postUnit(new RepositoryUnit("joinAVRGame") {
             public void invokePersist () throws Exception {
@@ -809,16 +813,20 @@ public class GameGameRegistry
                         player.commitTransaction();
                     }
                 }
-                final int placeOid = mgr.getGameObject().getOid();
+
+                int gameOid = mgr.getGameObject().getOid();
+                // when we're ready, move the player into the AVRG 'place'
                 try {
-                    _locmgr.moveTo(player, placeOid);
+                    _locmgr.moveTo(player, gameOid);
 
                 } catch (InvocationException pe) {
                     log.warning("Move to AVRGameObject failed", "gameId", mgr.getGameId(), pe);
                     listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
+                    return;
                 }
 
-                listener.requestProcessed(placeOid);
+                // if all went well, return the AVRGameConfig to the client
+                listener.avrgJoined(gameOid, (AVRGameConfig) mgr.getConfig());
             }
             public void handleFailure (Exception pe) {
                 log.warning("Unable to resolve player state [gameId=" +
@@ -862,7 +870,7 @@ public class GameGameRegistry
     protected final class AVRGameJoinListener
         implements InvocationService.ResultListener
     {
-        protected AVRGameJoinListener (int player, InvocationService.ResultListener listener)
+        protected AVRGameJoinListener (int player, AVRService.AVRGameJoinListener listener)
         {
             _listener = listener;
             _player = player;
@@ -873,6 +881,7 @@ public class GameGameRegistry
             return _player;
         }
 
+
         public void requestProcessed (Object result) {
             joinAVRGame(_player, (AVRGameManager) result, _listener);
         }
@@ -882,7 +891,7 @@ public class GameGameRegistry
         }
 
         protected final int _player;
-        protected final InvocationService.ResultListener _listener;
+        protected final AVRService.AVRGameJoinListener _listener;
     }
 
     /** Maps game id -> lobby. */

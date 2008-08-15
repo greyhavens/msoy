@@ -17,7 +17,7 @@ public interface AVRProvider extends InvocationProvider
     /**
      * Handles a {@link AVRService#activateGame} request.
      */
-    void activateGame (ClientObject caller, int arg1, InvocationService.ResultListener arg2)
+    void activateGame (ClientObject caller, int arg1, AVRService.AVRGameJoinListener arg2)
         throws InvocationException;
 
     /**

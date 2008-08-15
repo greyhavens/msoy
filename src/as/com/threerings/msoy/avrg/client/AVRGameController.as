@@ -3,72 +3,82 @@
 
 package com.threerings.msoy.avrg.client {
 
-import com.threerings.util.Controller;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectAccessError;
-import com.threerings.presents.dobj.Subscriber;
-import com.threerings.presents.util.SafeSubscriber;
 
+import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.msoy.client.MsoyClient;
 
 import com.threerings.msoy.world.client.WorldContext;
-
-import com.threerings.msoy.room.client.MobSprite;
 import com.threerings.msoy.room.client.RoomObjectView;
-
 import com.threerings.msoy.game.client.GameContext;
 
+import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 
-public class AVRGameController extends Controller
-    implements Subscriber
+public class AVRGameController extends PlaceController
 {
     public static const log :Log = Log.getLog(AVRGameController);
 
-    public function AVRGameController (
-        wctx :WorldContext, gctx :GameContext, gameId :int, gameOid :int)
+    // from PlaceController
+    override public function init (ctx :CrowdContext, config :PlaceConfig) :void
     {
-        super();
+        super.init(ctx, config);
 
-        _gctx = gctx;
-        _wctx = wctx;
-        _gameId = gameId;
+        _gctx = (ctx as GameContext);
 
         _wctx.getClient().addEventListener(
             MsoyClient.MINI_WILL_CHANGE, function (ev :ValueEvent) :void {
                 miniWillChange(ev.value);
             });
-
-        _panel = new AVRGamePanel(_wctx, _gctx, this);
-        setControlledPanel(_panel);
-
-        _subscriber = new SafeSubscriber(gameOid, this)
-        _subscriber.subscribe(_gctx.getDObjectManager());
     }
 
-    public function forceShutdown () :void
+    public function initializeWorldContext (wctx :WorldContext) :void
     {
-        shutdown();
+        _wctx = wctx;
+
+        // willEnterPlace() may have already run
+        maybeStartup();
     }
 
-    // from interface Subscriber
-    public function objectAvailable (obj :DObject) :void
+    // from PlaceController
+    override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
-        if (_gameObj) {
-            log.warning("Already subscribed to game object [gameObj=" + _gameObj + "]");
-            return;
-        }
+        return new AVRGamePanel(this);
+    }
 
-        _gameObj = (obj as AVRGameObject);
+    // from PlaceController
+    override public function willEnterPlace (plobj :PlaceObject) :void
+    {
+        super.willEnterPlace(plobj);
 
-        _panel.init(_gameObj);
+        _gameObj = (plobj as AVRGameObject);
+
+        // initializeWorldContext() may have already run
+        maybeStartup();
+    }
+
+    // from PlaceController
+    override public function didLeavePlace (plobj :PlaceObject) :void
+    {
+        _wctx.getWorldController().setAVRGamePanel(null);
+
+        _wctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
+
+        gameAvailable(0);
+
+        _backend.shutdown();
+
+        _gameObj = null;
+
+        super.didLeavePlace(plobj);
     }
 
     // from interface Subscriber
@@ -87,29 +97,53 @@ public class AVRGameController extends Controller
             tutorialEvent("gamePlayed");
         }
 
-        gameAvailable(_gameId);
+        gameAvailable(getGameId());
     }
 
     public function tutorialEvent (eventName :String) :void
     {
-        if (_panel) {
-            _panel.tutorialEvent(eventName);
-        }
+        // TODO: are we ready to drop all this tutorial scaffolding?
+//        if (_panel) {
+//            _panel.tutorialEvent(eventName);
+//        }
+    }
+
+    public function get backend () :AVRGameBackend
+    {
+        return _backend;
+    }
+
+    public function getAVRGameConfig () :AVRGameConfig
+    {
+        return (_config as AVRGameConfig);
+    }
+    
+    public function getAVRGameObject () :AVRGameObject
+    {
+        return (_plobj as AVRGameObject);
     }
 
     public function getGameId () :int
     {
-        return _gameId;
+        return getAVRGameConfig().getGameId();
     }
 
-    public function getAVRGameObject () :AVRGameObject
+    // both initializeWorldContext() and willEnterPlace() contribute data that is vital to
+    // the creation of the backend, and we cannot know which order they will execute in, so
+    // we call this method in both; it will be executed when both have done their job.
+    protected function maybeStartup () :void
     {
-        return _gameObj;
-    }
+        // if we're not fully configured yet, wait for next call
+        if (_gameObj == null || _wctx == null) {
+            return;
+        }
 
-    public function getAVRGameBackend () :AVRGameBackend
-    {
-        return _panel != null ? _panel.getAVRGameBackend() : null;
+        // else create the backend!
+        _backend = new AVRGameBackend(_wctx, _gctx, this, _gameObj);
+
+        var panel :AVRGamePanel = (getPlaceView() as AVRGamePanel);
+        _wctx.getWorldController().setAVRGamePanel(panel);
+        panel.backendIsReady();
     }
 
     protected function miniWillChange (mini :Boolean) :void
@@ -117,16 +151,6 @@ public class AVRGameController extends Controller
         if (_wctx.getGameDirector().isPlayingTutorial()) {
             tutorialEvent(mini ? "willMinimize" : "willUnminimize");
         }
-    }
-
-    protected function shutdown () :void
-    {
-        _wctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
-        _subscriber.unsubscribe(_wctx.getDObjectManager());
-
-        gameAvailable(0);
-
-        _panel.shutdown();
     }
 
     protected function gameAvailable (gameId :int) :void
@@ -139,9 +163,8 @@ public class AVRGameController extends Controller
 
     protected var _wctx :WorldContext;
     protected var _gctx :GameContext;
-    protected var _gameId :int;
+
     protected var _gameObj :AVRGameObject;
-    protected var _subscriber :SafeSubscriber;
-    protected var _panel :AVRGamePanel;
+    protected var _backend :AVRGameBackend;
 }
 }

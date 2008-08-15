@@ -1,11 +1,12 @@
 //
 // $Id: AVRGameConfig.java 9198 2008-05-16 19:21:43Z jamie $
 
-package com.threerings.msoy.avrg.data;
+package com.threerings.msoy.avrg.data {
 
+import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.data.PlaceConfig;
-import com.threerings.util.ActionScript;
 import com.whirled.game.data.GameDefinition;
+import com.threerings.msoy.avrg.client.AVRGameController;
 import com.threerings.msoy.item.data.all.Game;
 
 /**
@@ -15,29 +16,28 @@ import com.threerings.msoy.item.data.all.Game;
 public class AVRGameConfig extends PlaceConfig
 {
     /** The creator provided name of this game. */
-    public String name;
+    public var name :String;
 
     /**
      * Configures this config with information from the supplied {@link Game} item.
      */
-    public void init (Game game, GameDefinition gameDef)
+    public function init (game :Game, gameDef :GameDefinition) :void
     {
         this.name = game.name;
         _gameId = game.gameId;
         _gameDef = gameDef;
     }
 
-    @Override @ActionScript(omit=true)
-    public String getManagerClassName ()
+    // from PlaceConfig
+    override public function createController () :PlaceController
     {
-        String manager = getGameDefinition().manager;
-        return (manager != null) ? manager : "com.threerings.msoy.avrg.server.AVRGameManager";
+        return new AVRGameController();
     }
 
     /**
      * Returns the non-changing metadata that defines this game.
      */
-    public GameDefinition getGameDefinition ()
+    public function getGameDefinition () :GameDefinition
     {
         return _gameDef;
     }
@@ -45,14 +45,15 @@ public class AVRGameConfig extends PlaceConfig
     /**
      * Returns the gameId of this game.
      */
-    public int getGameId ()
+    public function getGameId () :int
     {
         return _gameId;
     }
 
     /** Our game's unique id. */
-    protected int _gameId;
+    protected var _gameId :int;
 
     /** Our game definition. */
-    protected GameDefinition _gameDef;
+    protected var _gameDef :GameDefinition;
+}
 }

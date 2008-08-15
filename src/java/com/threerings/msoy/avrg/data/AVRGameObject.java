@@ -15,7 +15,6 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.server.PropertySpaceHelper;
 
@@ -35,18 +34,12 @@ public class AVRGameObject extends PlaceObject
     public static final String COINS_AWARDED_MESSAGE = "FlowAwarded";
 
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>gameMedia</code> field. */
-    public static final String GAME_MEDIA = "gameMedia";
-
     /** The field name of the <code>playerLocs</code> field. */
     public static final String PLAYER_LOCS = "playerLocs";
 
     /** The field name of the <code>avrgService</code> field. */
     public static final String AVRG_SERVICE = "avrgService";
     // AUTO-GENERATED: FIELDS END
-
-    /** The defining media of the AVRGame. */
-    public MediaDesc gameMedia;
 
     /**
      * Tracks the (scene) location of each player. This data is only updated when the agent
@@ -71,22 +64,6 @@ public class AVRGameObject extends PlaceObject
     }
 
     // AUTO-GENERATED: METHODS START
-    /**
-     * Requests that the <code>gameMedia</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setGameMedia (MediaDesc value)
-    {
-        MediaDesc ovalue = this.gameMedia;
-        requestAttributeChange(
-            GAME_MEDIA, value, ovalue);
-        this.gameMedia = value;
-    }
-
     /**
      * Requests that the specified entry be added to the
      * <code>playerLocs</code> set. The set will not change until the event is

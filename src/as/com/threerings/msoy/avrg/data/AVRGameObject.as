@@ -16,7 +16,6 @@ import com.threerings.util.Iterator;
 import com.threerings.util.Name;
 
 import com.threerings.msoy.avrg.data.PlayerLocation;
-import com.threerings.msoy.data.all.MediaDesc;
 
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.PropertySpaceObject;
@@ -38,9 +37,6 @@ public class AVRGameObject extends PlaceObject
     public static const COINS_AWARDED_MESSAGE :String = "FlowAwarded";
 
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>gameMedia</code> field. */
-    public static const GAME_MEDIA :String = "gameMedia";
-
     /** The field name of the <code>playerLocs</code> field. */
     public static const PLAYER_LOCS :String = "playerLocs";
 
@@ -48,9 +44,6 @@ public class AVRGameObject extends PlaceObject
     public static const AVRG_SERVICE :String = "avrgService";
 
     // AUTO-GENERATED: FIELDS END
-
-    /** The defining media of the AVRGame. */
-    public var gameMedia :MediaDesc;
 
     /**
      * Tracks the (scene) location of each player. This data is only updated when the agent
@@ -86,7 +79,6 @@ public class AVRGameObject extends PlaceObject
      */
     protected function readDefaultFields (ins :ObjectInputStream) :void
     {
-        gameMedia = (ins.readObject() as MediaDesc);
         playerLocs = (ins.readObject() as DSet);
         avrgService = (ins.readObject() as AVRGameMarshaller);
     }

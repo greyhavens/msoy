@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.avrg.server;
 
+import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRMarshaller;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -37,7 +38,7 @@ public class AVRDispatcher extends InvocationDispatcher<AVRMarshaller>
         switch (methodId) {
         case AVRMarshaller.ACTIVATE_GAME:
             ((AVRProvider)provider).activateGame(
-                source, ((Integer)args[0]).intValue(), (InvocationService.ResultListener)args[1]
+                source, ((Integer)args[0]).intValue(), (AVRService.AVRGameJoinListener)args[1]
             );
             return;
 

@@ -6,7 +6,6 @@ package com.threerings.msoy.avrg.client {
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
-import com.threerings.presents.client.InvocationService_ResultListener;
 
 /**
  * An ActionScript version of the Java AVRService interface.
@@ -14,7 +13,7 @@ import com.threerings.presents.client.InvocationService_ResultListener;
 public interface AVRService extends InvocationService
 {
     // from Java interface AVRService
-    function activateGame (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
+    function activateGame (arg1 :Client, arg2 :int, arg3 :AVRService_AVRGameJoinListener) :void;
 
     // from Java interface AVRService
     function deactivateGame (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;

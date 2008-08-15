@@ -4,12 +4,11 @@
 package com.threerings.msoy.avrg.data {
 
 import com.threerings.msoy.avrg.client.AVRService;
+import com.threerings.msoy.avrg.client.AVRService_AVRGameJoinListener;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
-import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.data.InvocationMarshaller_ConfirmMarshaller;
-import com.threerings.presents.data.InvocationMarshaller_ResultMarshaller;
 import com.threerings.util.Integer;
 
 /**
@@ -26,9 +25,9 @@ public class AVRMarshaller extends InvocationMarshaller
     public static const ACTIVATE_GAME :int = 1;
 
     // from interface AVRService
-    public function activateGame (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void
+    public function activateGame (arg1 :Client, arg2 :int, arg3 :AVRService_AVRGameJoinListener) :void
     {
-        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        var listener3 :AVRMarshaller_AVRGameJoinMarshaller = new AVRMarshaller_AVRGameJoinMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, ACTIVATE_GAME, [
             Integer.valueOf(arg2), listener3

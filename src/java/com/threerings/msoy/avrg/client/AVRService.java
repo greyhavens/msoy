@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.avrg.client;
 
+import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
@@ -12,12 +13,25 @@ import com.threerings.presents.client.InvocationService;
 public interface AVRService extends InvocationService
 {
     /**
+     * Used to communicate the response to a {@link #activateGame} request.
+     */
+    public static interface AVRGameJoinListener extends InvocationListener
+    {
+        /**
+         * Notifies the caller that an AVRG was successfully joined.
+         *
+         * @param placeId the object id of the AVRG's place object
+         * @param config metadata related to the newly occupied game
+         */
+        public void avrgJoined (int placeId, AVRGameConfig config);
+    }
+    /**
      * Requests to active an AVR Game.
      *
      * @param gameId the item id of a Game-type item.
      * @param listener a listener to return result to or notify on failure.
      */
-    void activateGame (Client client, int gameId, ResultListener listener);
+    void activateGame (Client client, int gameId, AVRGameJoinListener listener);
 
     /**
      * Requests to deactivate the given AVR Game, which must be current to the player.

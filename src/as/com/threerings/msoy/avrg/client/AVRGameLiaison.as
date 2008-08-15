@@ -22,6 +22,8 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.game.client.GameLiaison;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
+import com.threerings.msoy.avrg.client.AVRService_AVRGameJoinListener;
+import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameMarshaller;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.AVRMarshaller;
@@ -30,6 +32,7 @@ import com.threerings.msoy.avrg.data.AVRMarshaller;
  * Handles the AVRG-specific aspects of the game server connection.
  */
 public class AVRGameLiaison extends GameLiaison
+    implements AVRService_AVRGameJoinListener
 {
     public static const log :Log = Log.getLog(AVRGameLiaison);
 
@@ -57,25 +60,31 @@ public class AVRGameLiaison extends GameLiaison
         super.clientDidLogon(event);
 
         var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
-        var cb :ResultWrapper = new ResultWrapper(
-            function (cause :String) :void {
-                _gctx.getChatDirector().displayFeedback(MsoyCodes.GAME_MSGS, cause);
-                shutdown();
-            },
-            function (result :Object) :void {
-                log.info("Initializing AVRG... [gameId=" + _gameId + "]");
-                _ctrl = new AVRGameController(_wctx, _gctx, _gameId, int(result));
-            }
-        );
-        svc.activateGame(_gctx.getClient(), _gameId, cb);
+        svc.activateGame(_gctx.getClient(), _gameId, this)
+    }
+
+    // from AVRGameJoinListener
+    override public function requestFailed (cause :String) :void
+    {
+        // GameLiaison conveniently already handles this
+        super.requestFailed(cause);
+
+        shutdown();
+    }
+
+    // from AVRGameJoinListener
+    public function avrgJoined (placeOid :int, config :AVRGameConfig) :void
+    {
+        // since we hijacked the movement process server-side, let the client catch up
+        _gctx.getLocationDirector().didMoveTo(placeOid, config);
+
+        // now that the controller is created, tell it about the world context as well
+        getAVRGameController().initializeWorldContext(_wctx);
     }
 
     override public function shutdown () :void
     {
-        if (_ctrl != null) {
-            _ctrl.forceShutdown();
-            _ctrl = null;
-        }
+        _gctx.getLocationDirector().leavePlace();
 
         super.shutdown();
     }
@@ -95,15 +104,8 @@ public class AVRGameLiaison extends GameLiaison
      */
     public function getAVRGameBackend () :AVRGameBackend
     {
-        return (_ctrl == null) ? null : _ctrl.getAVRGameBackend();
-    }
-
-    /**
-     * Returns the game object if we're currently in an AVRG, null otherwise.
-     */
-    public function getAVRGameObject () :AVRGameObject
-    {
-        return (_ctrl == null) ? null : _ctrl.getAVRGameObject();
+        var ctrl :AVRGameController = getAVRGameController();
+        return (ctrl != null) ? ctrl.backend : null;
     }
 
     /**
@@ -111,10 +113,8 @@ public class AVRGameLiaison extends GameLiaison
      */
     public function getAVRGameController () :AVRGameController
     {
-        return _ctrl;
+        var ctrl :PlaceController = _gctx.getLocationDirector().getPlaceController();
+        return (ctrl != null) ? (ctrl as AVRGameController) : null;
     }
-
-    /** The controller for the current world game. */
-    protected var _ctrl :AVRGameController;
 }
 }

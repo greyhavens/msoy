@@ -184,7 +184,8 @@ public class AVRGameManager extends PlaceManager
      */
     public void updateGame (Game game)
     {
-        _gameObj.setGameMedia(game.gameMedia);
+// TODO
+//        _gameObj.setGameMedia(game.gameMedia);
     }
 
     // from AVRGameProvider
