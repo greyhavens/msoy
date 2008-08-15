@@ -34,7 +34,6 @@ import com.threerings.whirled.util.NoSuchSceneException;
 import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.persist.CountRecord;
 
 import com.threerings.msoy.item.data.all.Decor;
@@ -99,25 +98,20 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
-     * Retrieve a list of all the scenes that the user directly owns.
+     * Retrieve a list of all the scenes that the user owns.
      */
-    public List<SceneBookmarkEntry> getOwnedScenes (byte ownerType, int memberId)
+    public List<SceneRecord> getOwnedScenes (byte ownerType, int memberId)
         throws PersistenceException
     {
-        List<SceneBookmarkEntry> marks = Lists.newArrayList();
         Where where = new Where(new Logic.And(new Equals(SceneRecord.OWNER_TYPE_C, ownerType),
                                               new Equals(SceneRecord.OWNER_ID_C, memberId)));
-        // TODO: use a @Computed record?
-        for (SceneRecord scene : findAll(SceneRecord.class, where)) {
-            marks.add(new SceneBookmarkEntry(scene.sceneId, scene.name, 0L));
-        }
-        return marks;
+        return findAll(SceneRecord.class, where);
     }
 
     /**
      * Retrieve a list of all the member scenes that the user directly owns.
      */
-    public List<SceneBookmarkEntry> getOwnedScenes (int memberId)
+    public List<SceneRecord> getOwnedScenes (int memberId)
         throws PersistenceException
     {
         return getOwnedScenes(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);

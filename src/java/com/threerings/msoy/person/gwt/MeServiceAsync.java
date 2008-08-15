@@ -25,11 +25,6 @@ public interface MeServiceAsync
     void updateWhirledNews (String newsHtml, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link MeService#loadMyRooms}.
-     */
-    void loadMyRooms (AsyncCallback<List<MeService.Room>> callback);
-
-    /**
      * The asynchronous version of {@link MeService#loadFeed}.
      */
     void loadFeed (int cutoffDays, AsyncCallback<List<FeedMessage>> callback);

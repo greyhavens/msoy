@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.room.server.persist;
 
+import com.google.common.base.Function;
+
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
@@ -12,13 +16,13 @@ import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.item.data.all.Decor;
 
 import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.gwt.RoomInfo;
 
 /**
  * Contains metadata for a scene in the Whirled.
@@ -194,6 +198,19 @@ public class SceneRecord extends PersistentRecord
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 3;
+
+    /** Converts this scene record in to a partially initialized room info record. The {@link
+     * RoomInfo#owner} and {@link RoomInfof#decor} fields must be filled in manually if they are
+     * needed. */
+    public static final Function<SceneRecord,RoomInfo> TO_ROOM_INFO =
+        new Function<SceneRecord,RoomInfo>() {
+        public RoomInfo apply (SceneRecord record) {
+            RoomInfo info = new RoomInfo();
+            info.sceneId = record.sceneId;
+            info.name = record.name;
+            return info;
+        }
+    };
 
     /** The unique identifier for this scene. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=6)

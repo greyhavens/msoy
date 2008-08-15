@@ -20,6 +20,7 @@ import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.room.gwt.RoomInfo;
 
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -63,7 +64,7 @@ public class WhirledRoomsPanel extends VerticalPanel
         transferPanel.add(transferForm);
         transferForm.setSpacing(10);
         transferForm.add(_roomsListBox = new ListBox());
-        for (GroupService.Room callerRoom : _roomsResult.callerRooms) {
+        for (RoomInfo callerRoom : _roomsResult.callerRooms) {
             _roomsListBox.addItem(callerRoom.name);
         }
         Button transferButton = new Button(_msgs.detailTransferRoom(_detail.group.name),
@@ -82,7 +83,7 @@ public class WhirledRoomsPanel extends VerticalPanel
         if (index < 0) {
             return;
         }
-        GroupService.Room room = _roomsResult.callerRooms.get(index);
+        RoomInfo room = _roomsResult.callerRooms.get(index);
         _groupsvc.transferRoom(_detail.group.groupId, room.sceneId, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 moveSceneToGrid(index);
@@ -94,7 +95,7 @@ public class WhirledRoomsPanel extends VerticalPanel
     {
         // TODO if we leave this tab and come back to it, this data should be refreshed from the
         // server
-        GroupService.Room room = _roomsResult.callerRooms.remove(index);
+        RoomInfo room = _roomsResult.callerRooms.remove(index);
         _roomsListBox.removeItem(index);
         int row = _roomsGrid.getRowCount() - 1;
         int col = _roomsGrid.getCellCount(row);
@@ -109,7 +110,7 @@ public class WhirledRoomsPanel extends VerticalPanel
 
     protected static class RoomWidget extends SmartTable
     {
-        public RoomWidget (GroupService.Room room)
+        public RoomWidget (RoomInfo room)
         {
             super("Room", 0, 2);
             ClickListener onClick = Link.createListener(Pages.WORLD, "s"+room.sceneId);

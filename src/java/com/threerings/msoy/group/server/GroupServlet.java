@@ -10,20 +10,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
-import com.samskivert.util.Predicate;
 import com.samskivert.util.Tuple;
 
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -34,7 +33,6 @@ import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.server.persist.TagRepository;
-
 
 import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
@@ -59,6 +57,7 @@ import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 
@@ -224,35 +223,28 @@ public class GroupServlet extends MsoyServiceServlet
     public RoomsResult getGroupRooms (int groupId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser();
+        final MemberRecord mrec = getAuthedUser();
 
         try {
             RoomsResult result = new RoomsResult();
-            List<GroupService.Room> rooms = Lists.newArrayList();
-            for (SceneBookmarkEntry scene : _sceneRepo.getOwnedScenes(
-                    MsoySceneModel.OWNER_TYPE_GROUP, groupId)) {
-                GroupService.Room room = new GroupService.Room();
-                room.sceneId = scene.sceneId;
-                room.name = scene.sceneName;
-                // TODO: load decor thumbnail
-                rooms.add(room);
-            }
-            result.groupRooms = rooms;
 
-            rooms = Lists.newArrayList();
-            for (SceneBookmarkEntry scene : _sceneRepo.getOwnedScenes(mrec.memberId)) {
-                if (scene.sceneId == mrec.homeSceneId) {
-                    continue;
+            // load up all scenes owned by this group
+            List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(
+                MsoySceneModel.OWNER_TYPE_GROUP, groupId);
+            result.groupRooms = Lists.newArrayList(
+                Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
+
+            // load up all scenes owned by this member, filtering out their home
+            Predicate<RoomInfo> notHome = new Predicate<RoomInfo>() {
+                public boolean apply (RoomInfo info) {
+                    return info.sceneId != mrec.homeSceneId;
                 }
-                GroupService.Room room = new GroupService.Room();
-                room.sceneId = scene.sceneId;
-                room.name = scene.sceneName;
-                // TODO: load decor thumbnail for when a room is transfered to the group
-                rooms.add(room);
-            }
-            result.callerRooms = rooms;
-
+            };
+            rooms = _sceneRepo.getOwnedScenes(mrec.memberId);
+            result.callerRooms = Lists.newArrayList(
+                Iterables.filter(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO), notHome));
             return result;
+
         } catch (PersistenceException pe) {
             log.warning("getGroupRooms failed [groupId=" + groupId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -378,7 +370,7 @@ public class GroupServlet extends MsoyServiceServlet
 
             return _groupRepo.resolveGroupMemberships(
                 memberId, new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
-                    public boolean isMatch (Tuple<GroupRecord,GroupMembershipRecord> info) {
+                    public boolean apply (Tuple<GroupRecord,GroupMembershipRecord> info) {
                         // if we're not the person in question, don't show exclusive groups
                         if (memberId != requesterId && info.left.policy == Group.POLICY_EXCLUSIVE) {
                             return false;

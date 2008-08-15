@@ -17,9 +17,9 @@ import java.sql.Timestamp;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
-import com.samskivert.util.Predicate;
 import com.samskivert.util.Tuple;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -379,8 +379,8 @@ public class GroupRepository extends DepotRepository
         // potentially filter exclusive groups and resolve the group names
         IntMap<GroupName> groupNames = IntMaps.newHashIntMap();
         for (GroupRecord group : loadGroups(rmap.keySet())) {
-            if (filter == null || filter.isMatch(new Tuple<GroupRecord,GroupMembershipRecord>(
-                                                     group, rmap.get(group.groupId)))) {
+            if (filter == null || filter.apply(new Tuple<GroupRecord,GroupMembershipRecord>(
+                                                   group, rmap.get(group.groupId)))) {
                 groupNames.put(group.groupId, group.toGroupName());
             }
         }

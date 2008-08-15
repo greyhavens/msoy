@@ -5,12 +5,10 @@ package com.threerings.msoy.person.gwt;
 
 import java.util.List;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.badge.data.all.Badge;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.data.ServiceException;
 
 /**
@@ -18,19 +16,6 @@ import com.threerings.msoy.web.data.ServiceException;
  */
 public interface MeService extends RemoteService
 {
-    /** Contains information about one of our rooms. */
-    public static class Room implements IsSerializable
-    {
-        /** The room's scene id. */
-        public int sceneId;
-
-        /** The room's name. */
-        public String name;
-
-        /** The room's decor thumbnail image. */
-        public MediaDesc decor;
-    }
-
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/mesvc";
 
@@ -44,12 +29,6 @@ public interface MeService extends RemoteService
      * Updates the Whirled news HTML. Caller must be an admin.
      */
     void updateWhirledNews (String newsHtml)
-        throws ServiceException;
-
-    /**
-     * Loads the list of rooms owned by the calling user.
-     */
-    List<Room> loadMyRooms ()
         throws ServiceException;
 
     /**

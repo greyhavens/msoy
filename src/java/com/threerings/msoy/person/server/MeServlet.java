@@ -28,7 +28,6 @@ import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
@@ -105,29 +104,6 @@ public class MeServlet extends MsoyServiceServlet
                 RuntimeConfig.server.setWhirledwideNewsHtml(newsHtml);
             }
         });
-    }
-
-    // from interface MeService
-    public List<MeService.Room> loadMyRooms ()
-        throws ServiceException
-    {
-        MemberRecord mrec = requireAuthedUser();
-
-        try {
-            List<MeService.Room> rooms = Lists.newArrayList();
-            for (SceneBookmarkEntry scene : _sceneRepo.getOwnedScenes(mrec.memberId)) {
-                MeService.Room room = new MeService.Room();
-                room.sceneId = scene.sceneId;
-                room.name = scene.sceneName;
-                // TODO: load decor thumbnail
-                rooms.add(room);
-            }
-            return rooms;
-
-        } catch (PersistenceException pe) {
-            log.warning("Load rooms failed", "memberId", mrec.memberId, pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
-        }
     }
 
     // from interface MeService

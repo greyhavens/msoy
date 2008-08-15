@@ -12,8 +12,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.person.gwt.MeService;
-import com.threerings.msoy.person.gwt.MeServiceAsync;
+import com.threerings.msoy.room.gwt.RoomInfo;
+import com.threerings.msoy.room.gwt.WebRoomService;
+import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -32,14 +33,14 @@ public class MyRoomsPanel extends VerticalPanel
     {
         setStyleName("myRooms");
 
-        _mesvc.loadMyRooms(new MsoyCallback<List<MeService.Room>>() {
-            public void onSuccess (List<MeService.Room> rooms) {
+        _roomsvc.loadMyRooms(new MsoyCallback<List<RoomInfo>>() {
+            public void onSuccess (List<RoomInfo> rooms) {
                 init(rooms);
             }
         });
     }
 
-    protected void init (List<MeService.Room> rooms)
+    protected void init (List<RoomInfo> rooms)
     {
         add(new TongueBox(null, _msgs.roomsIntro(), false));
         SmartTable grid = new SmartTable(0, 0);
@@ -52,7 +53,7 @@ public class MyRoomsPanel extends VerticalPanel
 
     protected static class RoomWidget extends SmartTable
     {
-        public RoomWidget (final MeService.Room room)
+        public RoomWidget (final RoomInfo room)
         {
             super("Room", 0, 2);
             ClickListener onClick = Link.createListener(Pages.WORLD, "s"+room.sceneId);
@@ -65,8 +66,8 @@ public class MyRoomsPanel extends VerticalPanel
     }
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
-    protected static final MeServiceAsync _mesvc = (MeServiceAsync)
-        ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
+    protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
+        ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
 
     protected static final int ROOM_COLUMNS = 3;
 }

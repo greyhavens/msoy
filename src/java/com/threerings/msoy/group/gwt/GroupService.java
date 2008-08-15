@@ -9,7 +9,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MediaDesc;
+
+import com.threerings.msoy.room.gwt.RoomInfo;
+
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 
@@ -39,25 +41,12 @@ public interface GroupService extends RemoteService
         /**
          * The rooms of this group.
          */
-        public List<Room> groupRooms;
+        public List<RoomInfo> groupRooms;
 
         /**
          * The rooms owned by the caller.
          */
-        public List<Room> callerRooms;
-    }
-
-    /** Contains information about one of our rooms. */
-    public static class Room implements IsSerializable
-    {
-        /** The room's scene id. */
-        public int sceneId;
-
-        /** The room's name. */
-        public String name;
-
-        /** The room's decor thumbnail image. */
-        public MediaDesc decor;
+        public List<RoomInfo> callerRooms;
     }
 
     /** Delivers the response to {@link #getGroupInfo}. */

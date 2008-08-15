@@ -7,6 +7,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.util.Name;
 
+import com.threerings.msoy.data.all.MediaDesc;
+
 /**
  * Contains information on a particular room.
  */
@@ -21,4 +23,7 @@ public class RoomInfo
 
     /** The owner of this room (either a MemberName or a GroupName). */
     public Name owner;
+
+    /** The room's decor thumbnail image. */
+    public MediaDesc decor;
 }
