@@ -102,7 +102,7 @@ import com.threerings.msoy.room.server.persist.RoomPropertyRecord;
 
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.data.PropertySetEvent;
-import com.whirled.game.data.WhirledGameObject.ArrayRangeException;
+import com.whirled.game.data.PropertySpaceObject.ArrayRangeException;
 import com.whirled.game.server.PropertySpaceHelper;
 
 import static com.threerings.msoy.Log.log;
