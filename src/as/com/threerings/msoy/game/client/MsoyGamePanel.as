@@ -131,6 +131,11 @@ public class MsoyGamePanel extends WhirledGamePanel
                 // TODO: create a class for this puppy?
                 var panel :FloatingPanel = new FloatingPanel(mctx, Msgs.GAME.get("t.players"));
                 panel.showCloseButton = true;
+                panel.styleName = "sexyWindow";
+                panel.setStyle("paddingLeft", 0);
+                panel.setStyle("paddingTop", 0);
+                panel.setStyle("paddingRight", 0);
+                panel.setStyle("paddingBottom", 0);
                 var box :VBox = new VBox();
                 box.setStyle("backgroundColor", 0x000000);
                 box.addChild(_playerList);
