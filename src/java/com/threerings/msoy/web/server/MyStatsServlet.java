@@ -47,11 +47,12 @@ public class MyStatsServlet extends HttpServlet
 
             // make sure the user is authenticated, and pull out their record object
             final MemberRecord member = _mhelper.getAuthedUser(token);
-            final MemberMoney money = _moneyLogic.getMoneyFor(member.memberId);
             if (member == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
+            // get their money
+            final MemberMoney money = _moneyLogic.getMoneyFor(member.memberId);
 
             // now get their friend ids
             final IntSet friendIds = _memberRepo.loadFriendIds(member.memberId);
@@ -69,7 +70,8 @@ public class MyStatsServlet extends HttpServlet
         }
     }
 
-    protected String makeResults (final MemberRecord member, final List<MemberCard> friends, final MemberMoney money)
+    protected String makeResults (final MemberRecord member, final List<MemberCard> friends,
+                                  final MemberMoney money)
         throws JSONException, UnsupportedEncodingException
     {
         final JSONObject result = new JSONObject();
