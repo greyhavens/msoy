@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.Tuple;
 
 import com.threerings.presents.data.InvocationCodes;
 
@@ -162,7 +163,12 @@ public class ItemServlet extends MsoyServiceServlet
             }
 
             // record this player's rating and obtain the new summarized rating
-            return repo.rateItem(originalId, memrec.memberId, rating);
+            Tuple<Float, Boolean> ratingResult = repo.rateItem(originalId, memrec.memberId, rating);
+            // if this qualifies as a new "solid 4+ rating", we have a stat to update
+            if (ratingResult.right) {
+                _statLogic.addToSetStat(item.creatorId, StatType.SOLID_4_STAR_RATINGS, originalId);
+            }
+            return ratingResult.left;
 
         } catch (PersistenceException pe) {
             log.warning("Failed to rate item [item=" + iident +

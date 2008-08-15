@@ -27,6 +27,7 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
+import com.samskivert.util.Tuple;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.CacheInvalidator;
@@ -834,8 +835,13 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /**
      * Insert/update a rating row, calculate the new rating and finally update the item's rating.
+     *
+     * @return First the new rating as a float.  Also, the tuple will contain true if this newly
+     *         added rating qualifies this item as a new "solid" 4+ star rating.  That means that
+     *         it either just breached the rating threshold for "solid" and has 4+ stars or just
+     *         went from below 4 to above 4, and has more than the requisite "solid" ratings.
      */
-    public float rateItem (int itemId, int memberId, byte rating)
+    public Tuple<Float, Boolean> rateItem (int itemId, int memberId, byte rating)
         throws PersistenceException
     {
         // first create a new rating record
@@ -862,7 +868,14 @@ public abstract class ItemRepository<T extends ItemRecord>
         // and then smack the new value into the item using yummy depot code
         updatePartial(getItemClass(), itemId, ItemRecord.RATING, newRating,
                       ItemRecord.RATING_COUNT, average.count);
-        return newRating;
+
+        float oldRating = (average.count < 2) ? 0f :
+            (average.sum - rating)/(float)(average.count - 1);
+        boolean newSolid =
+            (average.count == MIN_SOLID_RATINGS && newRating >= 4) ||
+            (average.count > MIN_SOLID_RATINGS && newRating >= 4 && oldRating < 4);
+
+        return new Tuple<Float, Boolean>(newRating, newSolid);
     }
 
     /**
@@ -1208,4 +1221,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /** The minimum number of purchases before we'll start attenuating price based on returns. */
     protected static final int MIN_ATTEN_PURCHASES = 5;
+
+    /** The minimum number of ratings required to qualify a rating as "solid" */
+    protected static final int MIN_SOLID_RATINGS = 20;
 }
