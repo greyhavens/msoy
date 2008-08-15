@@ -284,9 +284,10 @@ public enum BadgeType
     public static void main (String[] args)
     {
         // dump all of the known badge types and their code
-        System.out.println("  Code   -   Badge\n--------------------");
+        System.out.println("  Hex    -   Integer   - Badge\n--------------------");
         for (Map.Entry<Integer, BadgeType> entry : _codeToType.entrySet()) {
-            System.out.println(Integer.toHexString(entry.getKey()) + " - " + entry.getValue());
+            System.out.println(Integer.toHexString(entry.getKey()) + " - " + entry.getKey() +
+                " - " + entry.getValue());
         }
     }
 
