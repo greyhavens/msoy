@@ -34,25 +34,9 @@ public class LandingPage extends Page
     {
         String action = args.get(0, "");
 
-        // landing page for creators (a/b test: half see signup, half see info - default is info)
+        // landing page for creators runs our custom A/B tests
         if (action.equals("creators")) {
-            _membersvc.getABTestGroup(
-                TrackingCookie.get(), "aug08CreatorsLanding", true, new MsoyCallback<Integer>() {
-                    public void onSuccess (Integer group) {
-                        if (group == 1) {
-                            setContent(_msgs.titleCreators(), new CreatorsSignupPanel());
-                        } else if (group == 2) {
-                            setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
-                        } else if (group == 3) {
-                            Link.go(Pages.ME, "");
-                        } else if (group == 4) {
-                            redirectToPopularWhirled();
-                        } else {
-                            // group 5, and if test is not running visitors see info page
-                            setContent(_msgs.titleCreators(), new CreatorsPanel());
-                        }
-                    }
-            });
+            runABTests();
 
         // registration form ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
         } else if (action.equals("creatorssignuptest")) {
@@ -67,8 +51,12 @@ public class LandingPage extends Page
             setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
 
         // redirect to some popular whirled (TODO: FOR TESTING, DO NOT LINK)
-        } else if (action.equals("creatorsredirect")) {
+        } else if (action.equals("creatorswhirleds")) {
             redirectToPopularWhirled();
+
+            // redirect to some popular whirled (TODO: FOR TESTING, DO NOT LINK)
+        } else if (action.equals("creatorsrooms")) {
+            redirectToStoryRooms();
 
         } else {
             setContent(_msgs.landingTitle(), new LandingPanel());
@@ -79,6 +67,70 @@ public class LandingPage extends Page
     public Pages getPageId ()
     {
         return Pages.LANDING;
+    }
+
+    /**
+     * Runs AB tests defined on the landing page.
+     */
+    protected void runABTests ()
+    {
+        // the old July test (soon to be removed)
+        // TODO: replace with
+        //    runAugustTest();
+        //
+        _membersvc.getABTestGroup(
+            TrackingCookie.get(), "jul08CreatorsLanding", true, new MsoyCallback<Integer>() {
+                public void onSuccess (Integer group) {
+                    // CShell.log("jul08 - group " + group);
+                    switch (group) {
+                        case -1:
+                            // if the test is not running, fall over to the next one
+                            runAugustTest();
+                            break;
+                        case 1:
+                            setContent(_msgs.titleCreators(), new CreatorsSignupPanel());
+                            break;
+                        case 2:
+                            setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
+                            break;
+                        case 3:
+                            Link.go(Pages.ME, "");
+                            break;
+                        default:
+                            // group 4 redirect to the info page
+                            setContent(_msgs.titleCreators(), new CreatorsPanel());
+                    }
+                }});
+    }
+
+    protected void runAugustTest ()
+    {
+        // the new August test
+        _membersvc.getABTestGroup(
+            TrackingCookie.get(), "aug08CreatorsLanding", true, new MsoyCallback<Integer>() {
+                public void onSuccess (Integer group) {
+                    // CShell.log("aug08 - group " + group);
+                    switch (group) {
+                    case 1:
+                        setContent(_msgs.titleCreators(), new CreatorsSignupPanel());
+                        break;
+                    case 2:
+                        setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
+                        break;
+                    case 3:
+                        Link.go(Pages.ME, "");
+                        break;
+                    case 4:
+                        redirectToPopularWhirled();
+                        break;
+                    case 5:
+                        redirectToStoryRooms();
+                        break;
+                    default:
+                        // group 6, and if test is not running visitors see info page
+                        setContent(_msgs.titleCreators(), new CreatorsPanel());
+                    }
+                }});
     }
 
     /**
@@ -109,6 +161,18 @@ public class LandingPage extends Page
                 Link.go(Pages.WORLD, "s"+target);
             }
         });
+    }
+
+    /**
+     * Redirects the viewer to a set of story rooms designed specifically for this test.
+     *
+     * Part of the aug08CreatorsLanding A/B test. See JIRA WRLD-251.
+     *
+     * TODO: remove me after the test has ended.
+     */
+    protected void redirectToStoryRooms ()
+    {
+        Link.go(Pages.WORLD, "s1"); // TODO: replace with the actual id
     }
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
