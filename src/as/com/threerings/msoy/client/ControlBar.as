@@ -98,13 +98,8 @@ public class ControlBar extends HBox
     public function init (top :TopPanel) :void
     {
         styleName = "controlBar";
-
-        var cls :Class = getStyle("backgroundSkin");
-        setStyle("backgroundImage", cls);
-
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
-
         height = HEIGHT;
         percentWidth = 100;
 
@@ -226,9 +221,7 @@ public class ControlBar extends HBox
      */
     protected function createControls () :void
     {
-        _leftSpacer = new HBox();
-        _leftSpacer.styleName = "controlBarSpacer";
-        _leftSpacer.height = HEIGHT;
+        _leftSpacer = new Spacer();
         _leftSpacer.percentWidth = 100;
 
         _chatBtn = new CommandButton();
@@ -292,9 +285,7 @@ public class ControlBar extends HBox
 
         addControlButtons();
 
-        _rightSpacer = new Canvas();
-        _rightSpacer.styleName = "controlBarSpacer";
-        _rightSpacer.height = this.height;
+        _rightSpacer = new Spacer();
         _rightSpacer.percentWidth = 100;
         addGroupChild(_rightSpacer, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
             SPACER_PRIORITY);
@@ -309,7 +300,7 @@ public class ControlBar extends HBox
     {
         // add our standard control bar features
         addGroupChild(_chatBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
-        _chatControl = new ChatControl(_ctx, null, this.height, this.height - 4);
+        _chatControl = new ChatControl(_ctx, null, this.height);
         _chatControl.sendButton.styleName = "controlBarButtonSend";
         addGroupChild(_chatControl, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
         addGroupChild(_volBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
@@ -448,9 +439,10 @@ public class ControlBar extends HBox
     protected var _zoomBtn :CommandButton;
 
     /** A spacer to bump the UI bits over to the right if needed */
-    protected var _leftSpacer :HBox;
+    protected var _leftSpacer :Spacer;
 
     /** A spacer to the right of the UI bits in this class, set to percentWidth = 100 */
-    protected var _rightSpacer :Canvas;
+    //protected var _rightSpacer :Canvas;
+    protected var _rightSpacer :Spacer;
 }
 }

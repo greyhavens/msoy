@@ -487,28 +487,9 @@ TabNavigator, TabBar {
 }
 
 .controlBar {
-  backgroundColor: white;
-}
-
-.controlBarText { 
-  color: #dddddd;
-}
-
-.controlBarButtons {
-  fillAlphas: 0.6, 0.4;
-}
-
-.controlBarButtonAvatar {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_avatar.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_avatar_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_avatar_down.png");
-}
-
-.controlBarButtonPet {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_pet.png");
+  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
+  backgroundSize: "100%";
+  horizontalGap: 2;
 }
 
 .controlBarButtonSend {
@@ -567,10 +548,12 @@ TabNavigator, TabBar {
 }
 
 .controlBarButtonSnapshot {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_snapshot.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_snapshot_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_snapshot_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_snapshot_disabled.png");
+  /* other states TODO */
+  upSkin: ClassReference(null);
+  overSkin: ClassReference(null);
+  downSkin: ClassReference(null);
+  disabledSkin: ClassReference(null);
+  skin: Embed(source="../../rsrc/media/skins/controlbar/snapshot.png");
 }
 
 .controlBarFriendButton {
@@ -579,25 +562,7 @@ TabNavigator, TabBar {
   downSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_down.png");
 }
 
-.controlBarFriendButtonBox {
-  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
-  backgroundSize: "100%";
-  borderStyle: "none";
-  paddingTop: 1;
-  paddingRight: 4;
-  horizontalGap: 0;
-  verticalGap: 0;
-}
-
-.controlBarSpacer { 
-  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
-  backgroundSize: "100%";
-  borderStyle: "none";
-  horizontalAlign: "right";
-  paddingRight: 10;
-}
-
-.roomEditPanel {  
+.roomEditPanel {
   paddingBottom: 0;
   paddingTop: 0;
   paddingLeft: 0;
@@ -606,12 +571,12 @@ TabNavigator, TabBar {
   verticalGap: 1;
 } 
 
-.roomEditDetailsPanelGrid { 
+.roomEditDetailsPanelGrid {
   horizontalGap: 1;
   verticalGap: 2;
 }
 
-BasePanel { 
+BasePanel {
   backgroundDisabledColor: #e0eaeb;
   disabledColor: #e0eaeb;
 }
@@ -928,15 +893,15 @@ BasePanel {
   paddingLeft: 4;
   paddingRight: 4;
   paddingTop: 2;
-  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
-  backgroundSize: "100%";
+  backgroundAlpha: 0;
 }
 
 .chatInput {
     color: #000000;
-    themeColor: #54a9da;
+    /*themeColor: #54a9da; */
+    themeColor: #3db8eb;
     fontFamily: "Arial";
-    fontSize: 9;
+    fontSize: 12;
 }
 
 .chatTargetButton {
@@ -1043,13 +1008,6 @@ BasePanel {
 .descriptionBox {
   paddingBottom: 10px;
 }
-
-/*.lobbyPanel {
-  paddingTop: 10px;
-  paddingRight: 10px;
-  paddingBottom: 10px;
-  paddingLeft: 10px;
-}*/
 
 .titleBox {
   borderStyle: "solid";

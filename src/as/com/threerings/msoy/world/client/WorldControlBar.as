@@ -148,44 +148,26 @@ public class WorldControlBar extends ControlBar
         _snapBtn.styleName = "controlBarButtonSnapshot";
         _snapBtn.enabled = true;
 
-        _friendBtnBox = new HBox();
-        _friendBtnBox.styleName = "controlBarFriendButtonBox";
-        _friendBtnBox.verticalScrollPolicy = ScrollPolicy.OFF;
-        _friendBtnBox.horizontalScrollPolicy = ScrollPolicy.OFF;
-        var friendBtn :CommandButton = new CommandButton();
-        friendBtn.toolTip = Msgs.GENERAL.get("i.friends");
-        friendBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+        _friendsBtn = new CommandButton();
+        _friendsBtn.toolTip = Msgs.GENERAL.get("i.friends");
+        _friendsBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
             return new FriendsListPanel(_wctx);
-        }, friendBtn));
-        friendBtn.styleName = "controlBarFriendButton";
-        friendBtn.enabled = true;
-        friendBtn.focusEnabled = false;
-        _friendBtnBox.addChild(friendBtn);
+        }, _friendsBtn));
+        _friendsBtn.styleName = "controlBarFriendButton";
+        _friendsBtn.enabled = true;
+        _friendsBtn.focusEnabled = false;
 
         // Not ready for consumption
         if (_ctx.getTokens().isAdmin()) {
-            var partyBtn :CommandButton = new CommandButton();
-            partyBtn.toolTip = Msgs.GENERAL.get("i.party");
-            partyBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
+            _partyBtn = new CommandButton();
+            _partyBtn.toolTip = Msgs.GENERAL.get("i.party");
+            _partyBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
                 return new PartyPopup(_wctx);
-            }, partyBtn));
-            partyBtn.styleName = "controlBarPartyButton";
-            partyBtn.enabled = true;
-            partyBtn.focusEnabled = false;
-            _friendBtnBox.addChild(partyBtn);
+            }, _partyBtn));
+            _partyBtn.styleName = "controlBarPartyButton";
+            _partyBtn.enabled = true;
+            _partyBtn.focusEnabled = false;
         }
-
-
-        // TODO
-        // TEMP: remove once new artwork is in place
-        _chatBtn.height = HEIGHT;
-        _volBtn.height = HEIGHT;
-        _zoomBtn.height = HEIGHT;
-        _fullBtn.height = HEIGHT;
-        _roomeditBtn.height = HEIGHT;
-        _hotZoneBtn.height = HEIGHT;
-        _snapBtn.height = HEIGHT;
-        _friendBtnBox.height = HEIGHT;
     }
 
     // from ControlBar
@@ -198,8 +180,8 @@ public class WorldControlBar extends ControlBar
         }
 
         // TODO: enable friends for guests, even if it just goads them into signup
-        if (_friendBtnBox != null && _isMember) {
-            addGroupChild(_friendBtnBox, [ UI_BASE, UI_ROOM, UI_GAME ]);
+        if (_friendsBtn != null && _isMember) {
+            addGroupChild(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME ]);
         }
     }
 
@@ -372,6 +354,11 @@ public class WorldControlBar extends ControlBar
     /** Button for room snapshots. */
     protected var _snapBtn :CommandButton;
 
+    /** A button for popping up the friends list. */
+    protected var _friendsBtn :CommandButton;
+
+    protected var _partyBtn :CommandButton;
+
     /** A tip shown when we first enter a room. */
     protected var _chatTip :DisplayObject;
 
@@ -380,9 +367,6 @@ public class WorldControlBar extends ControlBar
 
     /** The little gray area that displays incoming notifications. */
     protected var _notificationDisplay :NotificationDisplay;
-
-    /** A button for popping up the friend list. */
-    protected var _friendBtnBox :HBox;
 
     /** We stop showing the "type here to chat" tip after the user reaches level 5. */
     protected static const CHAT_TIP_GRADUATE_LEVEL :int = 5;
