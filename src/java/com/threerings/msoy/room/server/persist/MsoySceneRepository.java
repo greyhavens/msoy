@@ -317,9 +317,9 @@ public class MsoySceneRepository extends DepotRepository
                 SceneRecord.Stock.EXTRA_MEMBER_ROOM;
             break;
         case MsoySceneModel.OWNER_TYPE_GROUP:
-            stock = game != null ? SceneRecord.Stock.GAME_GROUP_HALL :
-                firstTime ? SceneRecord.Stock.FIRST_MEMBER_ROOM :
-                SceneRecord.Stock.EXTRA_MEMBER_ROOM;
+            stock = (game != null) ? SceneRecord.Stock.GAME_GROUP_HALL :
+                (firstTime ? SceneRecord.Stock.FIRST_GROUP_HALL :
+                 SceneRecord.Stock.EXTRA_GROUP_HALL);
             break;
         }
 
