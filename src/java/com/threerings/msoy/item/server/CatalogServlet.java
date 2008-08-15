@@ -195,8 +195,10 @@ public class CatalogServlet extends MsoyServiceServlet
                 }
             });
 
-            // update their stat set.
-            _statLogic.incrementStat(mrec.memberId, StatType.ITEMS_PURCHASED, 1);
+            // update their stat set, if they aren't buying something from themselves.
+            if (mrec.memberId != listing.item.creatorId) {
+                _statLogic.incrementStat(mrec.memberId, StatType.ITEMS_PURCHASED, 1);
+            }
 
             return nitem;
 

@@ -13,8 +13,12 @@ public abstract class Badge
     /** The unique code representing the type of this badge. */
     public int badgeCode;
 
-    /** The level pertinant to this Badge object */
+    /** The level pertinent to this Badge object */
     public int level;
+
+    /** The units required to attain this level.  This will typically be something like "7" or
+     * "10k", and is used in a translation message on the client. May be null if not applicable. */
+    public String levelUnits;
 
     public Badge ()
     {
@@ -24,10 +28,11 @@ public abstract class Badge
     /**
      * Creates a new badge, and automatically fills in the badge imageUrl from the BadgeType Enum.
      */
-    public Badge (int badgeCode, int level)
+    public Badge (int badgeCode, int level, String levelUnits)
     {
         this.badgeCode = badgeCode;
         this.level = level;
+        this.levelUnits = levelUnits;
     }
 
     /**

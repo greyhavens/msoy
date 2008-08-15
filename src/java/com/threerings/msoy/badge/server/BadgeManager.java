@@ -40,7 +40,8 @@ public class BadgeManager
     {
         if (!user.badges.containsBadge(badgeType)) {
             List<EarnedBadge> badgeList = Lists.newArrayList();
-            badgeList.add(new EarnedBadge(badgeType.getCode(), level, System.currentTimeMillis()));
+            badgeList.add(new EarnedBadge(badgeType.getCode(), level,
+                badgeType.getLevelUnits(level),  System.currentTimeMillis()));
             awardBadges(user, badgeList);
         }
     }
@@ -124,7 +125,7 @@ public class BadgeManager
         for (BadgeType badgeType : BadgeType.values()) {
             // create a dummy badge to check if this type is already in the set of existing badges
             // All badges check equality and hash purely based on their badge code.
-            Badge dummyBadge = new Badge(badgeType.getCode(), 0) {
+            Badge dummyBadge = new Badge(badgeType.getCode(), 0, null) {
                 @Override public String imageUrl () { return ""; }
             };
 
@@ -133,8 +134,8 @@ public class BadgeManager
             // will be correctly updated next time the player bumps the stat that this badge
             // depends on.
             if (!existingBadges.contains(dummyBadge) && badgeType.isUnlocked(earnedBadges)) {
-                newBadges.add(new InProgressBadge(
-                    badgeType.getCode(), 0, 0, badgeType.getLevel(0).coinValue));
+                newBadges.add(new InProgressBadge(badgeType.getCode(), 0,
+                    badgeType.getLevelUnits(0), 0, badgeType.getLevel(0).coinValue));
             }
         }
 

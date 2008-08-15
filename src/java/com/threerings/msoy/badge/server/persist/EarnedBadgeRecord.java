@@ -96,7 +96,8 @@ public class EarnedBadgeRecord extends PersistentRecord
      */
     public EarnedBadge toBadge ()
     {
-        return new EarnedBadge(badgeCode, level, whenEarned.getTime());
+        return new EarnedBadge(
+            badgeCode, level, BadgeType.getLevelUnits(badgeCode, level), whenEarned.getTime());
     }
 
     /**

@@ -118,6 +118,12 @@ public enum BadgeType
         @Override protected Collection<BadgeType> getUnlockRequirements () {
             return Collections.singleton(FRIENDLY);
         }
+
+        @Override public String getLevelUnits (int levelNumber) {
+            Level level = getLevel(levelNumber);
+            // the real unit is minutes, but we tell the player hours
+            return level == null ? null : "" + (level.requiredUnits / 60);
+        }
     },
 
     // game badges
@@ -226,6 +232,22 @@ public enum BadgeType
                     return getType(badge.badgeCode).getCategory() == StampCategory.CREATION;
                 }
             });
+        }
+
+        @Override public String getLevelUnits (int levelNumber) {
+            Level level = getLevel(levelNumber);
+            if (level == null) {
+                return null;
+            }
+
+            // these get big, so lets abbreviate them.
+            if (level.requiredUnits >= 1000000) {
+                return (level.requiredUnits / 1000000) + "M";
+            } else if (level.requiredUnits >= 1000) {
+                return (level.requiredUnits / 1000) + "k";
+            } else {
+                return "" + level.requiredUnits;
+            }
         }
     },
 
@@ -357,6 +379,15 @@ public enum BadgeType
     }
 
     /**
+     * Pulls the levelUnits string out of the type that maps to the given code
+     */
+    public static String getLevelUnits (int code, int level)
+    {
+        BadgeType type = getType(code);
+        return type == null ? null : type.getLevelUnits(level);
+    }
+
+    /**
      * Returns a set of the badges that depend on the given stat.  When that stat is changed, the
      * party responsible for the change should call this method and find out what badges potentially
      * need updating.
@@ -392,6 +423,12 @@ public enum BadgeType
     public Level getLevel (int level)
     {
         return (level >= 0 && level < _levels.length ? _levels[level] : null);
+    }
+
+    public String getLevelUnits (int levelNumber)
+    {
+        Level level = getLevel(levelNumber);
+        return level == null ? null : "" + level.requiredUnits;
     }
 
     /**

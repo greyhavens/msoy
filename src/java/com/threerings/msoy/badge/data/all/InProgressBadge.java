@@ -18,9 +18,10 @@ public class InProgressBadge extends Badge
     {
     }
 
-    public InProgressBadge (int badgeCode, int nextLevel, float progress, int coinReward)
+    public InProgressBadge (int badgeCode, int nextLevel, String levelUnits, float progress,
+        int coinReward)
     {
-        super(badgeCode, nextLevel);
+        super(badgeCode, nextLevel, levelUnits);
 
         this.progress = progress;
         this.coinReward = coinReward;

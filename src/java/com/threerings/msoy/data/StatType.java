@@ -24,7 +24,6 @@ public enum StatType implements Stat.Type
     // TODO: This stat requires some thought.  Punted for now, hopefully short-term
 //    CONSEC_DAILY_LOGINS(new MaxValueIntStat(), true),
     WHIRLEDS_VISITED(new IntSetStat(), true),
-    WHIRLEDS_CREATED(new IntStat(), true),
 
     // game stats
     TROPHIES_EARNED(new IntStat(), true),

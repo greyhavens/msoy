@@ -69,6 +69,7 @@ public final class EarnedBadgeSet extends DSet<EarnedBadge>
         } else if (badge.level > existingBadge.level) {
             existingBadge.level = badge.level;
             existingBadge.whenEarned = badge.whenEarned;
+            existingBadge.levelUnits = badge.levelUnits;
             return true;
         }
 

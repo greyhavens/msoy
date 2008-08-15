@@ -14,6 +14,10 @@ public /* abstract */ class Badge extends SimpleStreamableObject
     /** The level that pertains to this Badge object. */
     public var level :int;
 
+    /** The level units that can be used in a translation message for the description of this
+     * badge level. */
+    public var levelUnits :String;
+
     // from DSet_Entry
     public function getKey () :Object
     {
@@ -42,6 +46,7 @@ public /* abstract */ class Badge extends SimpleStreamableObject
         super.readObject(ins);
         badgeCode = ins.readInt();
         level = ins.readInt();
+        levelUnits = ins.readField(String) as String;
     }
 
     // from interface Streamable
@@ -50,6 +55,7 @@ public /* abstract */ class Badge extends SimpleStreamableObject
         super.writeObject(out);
         out.writeInt(badgeCode);
         out.writeInt(level);
+        out.writeField(levelUnits);
     }
 
     protected static const BADGE_IMAGE_DIR :String = "badge/";

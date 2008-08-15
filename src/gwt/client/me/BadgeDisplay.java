@@ -4,6 +4,7 @@
 package client.me;
 
 import java.util.Date;
+import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
 
@@ -36,8 +37,35 @@ class BadgeDisplay extends VerticalPanel
         imageRow.add(MsoyUI.createImage(badge.imageUrl(), null));
         add(imageRow);
         imageRow.add(_nameColumn = new VerticalPanel());
-        _nameColumn.add(MsoyUI.createLabel(
-            _dmsgs.getString("badge_" + Integer.toHexString(badge.badgeCode)), null));
+        String hexCode = Integer.toHexString(badge.badgeCode);
+        String badgeName = hexCode;
+        try {
+            badgeName = _dmsgs.getString("badge_" + hexCode);
+        } catch (MissingResourceException mre) {
+            // displaying the hex code is the failure case - make sure to test all new badges
+            // before letting them out to production.
+        }
+        _nameColumn.add(MsoyUI.createLabel(badgeName, null));
+
+        String badgeDesc = null;
+        try {
+            // first look for a specific message for this level
+            badgeDesc = _dmsgs.getString("badgeDesc" + badge.level + "_" + hexCode);
+        } catch (MissingResourceException mre) {
+            // No big deal, we'll check for the dynamic version next
+        }
+
+        if (badgeDesc == null) {
+            try {
+                badgeDesc =
+                    _dmsgs.getString("badgeDescN_" + hexCode).replace("{0}", badge.levelUnits);
+            } catch (MissingResourceException mre) {
+                // again, this is a testing failure case - never let a badge make it to production
+                // with this in the description field.
+                badgeDesc = "MISSING DESCRIPTION [" + hexCode + "]";
+            }
+        }
+        add(MsoyUI.createLabel(badgeDesc, null));
     }
 
     protected void addEarnedBits (EarnedBadge badge)

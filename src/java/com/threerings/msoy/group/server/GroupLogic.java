@@ -3,16 +3,20 @@
 
 package com.threerings.msoy.group.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.Map;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.presents.annotation.BlockingThread;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DuplicateKeyException;
-import com.threerings.msoy.data.StatType;
+
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.StatLogic;
+
+import com.threerings.msoy.server.persist.MemberRecord;
+
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupCodes;
@@ -20,12 +24,11 @@ import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.persist.MemberRecord;
+
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.presents.annotation.BlockingThread;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Contains group related services used by servlets and other blocking thread code.
@@ -74,9 +77,6 @@ public class GroupLogic
             gm.group = grec.toGroupName();
             gm.rank = GroupMembership.RANK_MANAGER;
             MemberNodeActions.joinedGroup(grec.creatorId, gm);
-
-            // update player stats
-            _statLogic.incrementStat(mrec.memberId, StatType.WHIRLEDS_CREATED, 1);
 
             return grec.toGroupObject();
 
