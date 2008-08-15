@@ -183,11 +183,11 @@ public enum BadgeType
 
         // PROFESSIONAL is unlocked once you have at least one other CREATION badge
         @Override public boolean isUnlocked (Collection<EarnedBadge> badges) {
-            return (Iterables.find(badges, new Predicate<EarnedBadge>() {
+            return Iterables.any(badges, new Predicate<EarnedBadge>() {
                 public boolean apply (EarnedBadge badge) {
                     return getType(badge.badgeCode).getCategory() == StampCategory.CREATION;
                 }
-            }) != null);
+            });
         }
     },
 
