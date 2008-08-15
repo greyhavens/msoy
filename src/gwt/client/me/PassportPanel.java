@@ -96,10 +96,11 @@ public class PassportPanel extends VerticalPanel
         protected void shuffle ()
         {
             _badgePanel.clear();
+            CMe.log("_badges size [" + _badges.size() + "]");
             // the GWT people didn't both to implement shuffle ><  This will have to be different
             //Collections.shuffle(_badges);
             for (int ii = 0, max = Math.min(MAX_NEXT_BADGES, _badges.size()); ii < max; ii++) {
-                add(new BadgeDisplay(_badges.get(ii)));
+                _badgePanel.add(new BadgeDisplay(_badges.get(ii)));
             }
         }
 
