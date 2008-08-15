@@ -36,6 +36,10 @@ public enum StatType implements Stat.Type
     // creation stats
     COINS_EARNED_SELLING(new IntStat(), true),
     SOLID_4_STAR_RATINGS(new IntSetStat(), true),
+    // these three are special, and are modified in a custom way.
+    AVATARS_CREATED(new IntStat(), true),
+    FURNITURE_CREATED(new IntStat(), true),
+    BACKDROPS_CREATED(new IntStat(), true),
 
     // shopping stats
     ITEMS_RATED(new IntStat(), true),

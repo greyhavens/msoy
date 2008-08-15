@@ -82,7 +82,7 @@ public enum BadgeType
 //        }
 //
 //        @Override protected Collection<BadgeType> getUnlockRequirements () {
-//            return Collections.singleton(BadgeType.FRIENDLY);
+//            return Collections.singleton(FRIENDLY);
 //        }
 //    },
 
@@ -99,7 +99,7 @@ public enum BadgeType
         }
 
         @Override protected Collection<BadgeType> getUnlockRequirements () {
-            return Collections.singleton(BadgeType.FRIENDLY);
+            return Collections.singleton(FRIENDLY);
         }
     },
 
@@ -116,7 +116,7 @@ public enum BadgeType
         }
 
         @Override protected Collection<BadgeType> getUnlockRequirements () {
-            return Collections.singleton(BadgeType.FRIENDLY);
+            return Collections.singleton(FRIENDLY);
         }
     },
 
@@ -147,7 +147,7 @@ public enum BadgeType
         }
 
         @Override protected Collection<BadgeType> getUnlockRequirements () {
-            return Collections.singleton(BadgeType.GAMER);
+            return Collections.singleton(GAMER);
         }
     },
 
@@ -164,11 +164,49 @@ public enum BadgeType
         }
 
         @Override protected Collection<BadgeType> getUnlockRequirements () {
-            return Collections.singleton(BadgeType.GAMER);
+            return Collections.singleton(GAMER);
         }
     },
 
     // creation badges
+    CHARACTER_DESIGNER(StampCategory.CREATION, StatType.AVATARS_CREATED, new Level[] {
+        new Level(1, 1000),
+        new Level(2, 2000),
+        new Level(3, 5000)
+        }) {
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.AVATARS_CREATED);
+        }
+
+        @Override protected Collection<BadgeType> getUnlockRequirements () {
+            return Collections.singleton(FURNITURE_BUILDER);
+        }
+    },
+
+    FURNITURE_BUILDER(StampCategory.CREATION, StatType.FURNITURE_CREATED, new Level[] {
+        new Level(1, 1000),
+        new Level(2, 2000),
+        new Level(3, 5000)
+        }) {
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.FURNITURE_CREATED);
+        }
+    },
+
+    LANDSCAPE_PAINTER(StampCategory.CREATION, StatType.BACKDROPS_CREATED, new Level[] {
+        new Level(1, 1000),
+        new Level(2, 2000),
+        new Level(3, 5000)
+        }) {
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.BACKDROPS_CREATED);
+        }
+
+        @Override protected Collection<BadgeType> getUnlockRequirements () {
+            return Collections.singleton(FURNITURE_BUILDER);
+        }
+    },
+
     PROFESSIONAL(StampCategory.CREATION, StatType.COINS_EARNED_SELLING, new Level[] {
         new Level(10000, 1000),
         new Level(100000, 2000),
@@ -213,8 +251,6 @@ public enum BadgeType
         }
     },
 
-    // TODO: Character Designer, Furniture Builder, Landscape Painter
-
     // shopping badges
     SHOPPER(StampCategory.SHOPPING, StatType.ITEMS_PURCHASED, new Level[] {
         new Level(1, 1000),
@@ -242,7 +278,7 @@ public enum BadgeType
         }
 
         @Override protected Collection<BadgeType> getUnlockRequirements () {
-            return Collections.singleton(BadgeType.SHOPPER);
+            return Collections.singleton(SHOPPER);
         }
     },
 
@@ -259,7 +295,7 @@ public enum BadgeType
         }
 
         @Override protected Collection<BadgeType> getUnlockRequirements () {
-            return Collections.singleton(BadgeType.SHOPPER);
+            return Collections.singleton(SHOPPER);
         }
     },
 
