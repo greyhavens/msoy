@@ -193,8 +193,7 @@ public class MeServlet extends MsoyServiceServlet
         long now = System.currentTimeMillis();
         List<Badge> badges = Lists.newArrayList();
         for (BadgeType type : BadgeType.values()) {
-            if (type.equals(BadgeType.HIDDEN)) {
-                // don't ever send HIDDEN to the browser
+            if (type.isHidden()) {
                 continue;
             }
 
