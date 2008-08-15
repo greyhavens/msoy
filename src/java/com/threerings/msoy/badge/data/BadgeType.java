@@ -68,22 +68,23 @@ public enum BadgeType
         }
     },
 
-    IRONMAN(StampCategory.SOCIAL, StatType.CONSEC_DAILY_LOGINS, new Level[] {
-        new Level(2, 1000),
-        new Level(4, 2000),
-        new Level(10, 3000),
-        new Level(25, 4000),
-        new Level(90, 5000),
-        new Level(180, 6000)
-        }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.CONSEC_DAILY_LOGINS);
-        }
-
-        @Override protected Collection<BadgeType> getUnlockRequirements () {
-            return Collections.singleton(BadgeType.FRIENDLY);
-        }
-    },
+    // TODO: IRONMAN has been punted on for now, hopefully short-term
+//    IRONMAN(StampCategory.SOCIAL, StatType.CONSEC_DAILY_LOGINS, new Level[] {
+//        new Level(2, 1000),
+//        new Level(4, 2000),
+//        new Level(10, 3000),
+//        new Level(25, 4000),
+//        new Level(90, 5000),
+//        new Level(180, 6000)
+//        }) {
+//        @Override protected int getAcquiredUnits (StatSet stats) {
+//            return stats.getIntStat(StatType.CONSEC_DAILY_LOGINS);
+//        }
+//
+//        @Override protected Collection<BadgeType> getUnlockRequirements () {
+//            return Collections.singleton(BadgeType.FRIENDLY);
+//        }
+//    },
 
     MAGNET(StampCategory.SOCIAL, StatType.INVITES_ACCEPTED, new Level[] {
         new Level(1, 1000),
@@ -261,8 +262,6 @@ public enum BadgeType
             return Collections.singleton(BadgeType.SHOPPER);
         }
     },
-
-    // TODO: Shopper - needs an items purchased stat
 
     // Every member will have an InProgressBadgeRecord created for the HIDDEN badge, but they will
     // never earn it (to allow Passport to determine whether a player's initial set of

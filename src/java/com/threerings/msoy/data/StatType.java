@@ -9,7 +9,6 @@ import com.threerings.util.MessageBundle;
 
 import com.threerings.stats.data.IntSetStat;
 import com.threerings.stats.data.IntStat;
-import com.threerings.stats.data.MaxValueIntStat;
 import com.threerings.stats.data.Stat;
 
 /**
@@ -22,7 +21,8 @@ public enum StatType implements Stat.Type
     FRIENDS_MADE(new IntStat(), true),
     INVITES_ACCEPTED(new IntStat(), true),
     MINUTES_ACTIVE(new IntStat(), true),
-    CONSEC_DAILY_LOGINS(new MaxValueIntStat(), true),
+    // TODO: This stat requires some thought.  Punted for now, hopefully short-term
+//    CONSEC_DAILY_LOGINS(new MaxValueIntStat(), true),
     WHIRLEDS_VISITED(new IntSetStat(), true),
     WHIRLEDS_CREATED(new IntStat(), true),
 
