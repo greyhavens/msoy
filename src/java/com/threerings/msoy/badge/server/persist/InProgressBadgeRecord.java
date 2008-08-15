@@ -90,7 +90,7 @@ public class InProgressBadgeRecord extends PersistentRecord
     {
         this.memberId = memberId;
         this.badgeCode = badge.badgeCode;
-        this.nextLevel = badge.nextLevel;
+        this.nextLevel = badge.level;
         this.progress = badge.progress;
     }
 

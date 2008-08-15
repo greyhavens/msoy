@@ -13,6 +13,9 @@ public abstract class Badge
     /** The unique code representing the type of this badge. */
     public int badgeCode;
 
+    /** The level pertinant to this Badge object */
+    public int level;
+
     public Badge ()
     {
         // for deserialization
@@ -21,9 +24,10 @@ public abstract class Badge
     /**
      * Creates a new badge, and automatically fills in the badge imageUrl from the BadgeType Enum.
      */
-    public Badge (int badgeCode)
+    public Badge (int badgeCode, int level)
     {
         this.badgeCode = badgeCode;
+        this.level = level;
     }
 
     /**
@@ -36,6 +40,8 @@ public abstract class Badge
     {
         if (o instanceof Badge) {
             Badge other = (Badge)o;
+            // Badge equality ignores the current level - Sets should only contain one Badge at
+            // at given level at once.
             return other.badgeCode == this.badgeCode;
         }
         return false;
@@ -44,13 +50,14 @@ public abstract class Badge
     @Override // from Object
     public int hashCode ()
     {
+        // Badges need to hash the same, regardless of level.
         return badgeCode;
     }
 
     // from interface DSet.Entry
     public Comparable<Integer> getKey ()
     {
-        return new Integer(badgeCode);
+        return hashCode();
     }
 
     protected static final String BADGE_IMAGE_DIR = "badge/";

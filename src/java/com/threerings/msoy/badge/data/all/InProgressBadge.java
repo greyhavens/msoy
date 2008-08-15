@@ -7,9 +7,6 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 
 public class InProgressBadge extends Badge
 {
-    /** The badge level that the member is working towards. */
-    public int nextLevel;
-
     /** The progress that has been made on the badge, in [0, 1) */
     public float progress;
 
@@ -23,9 +20,8 @@ public class InProgressBadge extends Badge
 
     public InProgressBadge (int badgeCode, int nextLevel, float progress, int coinReward)
     {
-        super(badgeCode);
+        super(badgeCode, nextLevel);
 
-        this.nextLevel = nextLevel;
         this.progress = progress;
         this.coinReward = coinReward;
     }
@@ -34,28 +30,11 @@ public class InProgressBadge extends Badge
     public String imageUrl ()
     {
         return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR + Integer.toHexString(badgeCode) +
-            "_" + (nextLevel > 0 ? (nextLevel - 1) + "f" : nextLevel + "e") + BADGE_IMAGE_TYPE;
-    }
-
-    @Override // from Badge
-    public boolean equals (Object o)
-    {
-        if (o instanceof InProgressBadge) {
-            InProgressBadge other = (InProgressBadge)o;
-            return super.equals(other) && other.nextLevel == this.nextLevel &&
-                other.progress == this.progress;
-        }
-        return false;
-    }
-
-    @Override // from Badge
-    public int hashCode ()
-    {
-        return badgeCode * nextLevel + (int)(progress * 100);
+            "_" + (level > 0 ? (level - 1) + "f" : level + "e") + BADGE_IMAGE_TYPE;
     }
 
     public String toString ()
     {
-        return "badgeCode=" + badgeCode + " nextLevel=" + nextLevel + " progress=" + progress;
+        return "badgeCode=" + badgeCode + " nextLevel=" + level + " progress=" + progress;
     }
 }

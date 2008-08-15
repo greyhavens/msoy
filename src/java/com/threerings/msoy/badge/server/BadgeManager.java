@@ -85,12 +85,12 @@ public class BadgeManager
                 float quantizedProgress = InProgressBadgeRecord.quantizeProgress(
                     progress.getNextLevelProgress());
 
-                if (inProgressBadge == null || progress.highestLevel >= inProgressBadge.nextLevel ||
-                        (progress.highestLevel == inProgressBadge.nextLevel - 1 &&
+                if (inProgressBadge == null || progress.highestLevel >= inProgressBadge.level ||
+                        (progress.highestLevel == inProgressBadge.level - 1 &&
                                 quantizedProgress > inProgressBadge.progress)) {
                     InProgressBadge newBadge = new InProgressBadge();
                     newBadge.badgeCode = badgeType.getCode();
-                    newBadge.nextLevel = progress.highestLevel + 1;
+                    newBadge.level = progress.highestLevel + 1;
                     newBadge.progress = quantizedProgress;
 
                     if (inProgressBadges == null) {
@@ -118,14 +118,13 @@ public class BadgeManager
         Set<InProgressBadge> inProgressBadges)
     {
         // Construct a set of badges that contains all earned and in-progress badges.
-        Set<Badge> existingBadges = Sets.newHashSet();
-        existingBadges.addAll(earnedBadges);
-        existingBadges.addAll(inProgressBadges);
+        Set<Badge> existingBadges = Sets.union(earnedBadges, inProgressBadges);
 
         List<InProgressBadge> newBadges = Lists.newArrayList();
         for (BadgeType badgeType : BadgeType.values()) {
             // create a dummy badge to check if this type is already in the set of existing badges
-            Badge dummyBadge = new Badge(badgeType.getCode()) {
+            // All badges check equality and hash purely based on their badge code.
+            Badge dummyBadge = new Badge(badgeType.getCode(), 0) {
                 @Override public String imageUrl () { return ""; }
             };
 

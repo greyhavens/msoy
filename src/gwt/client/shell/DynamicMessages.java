@@ -165,6 +165,30 @@ public interface DynamicMessages extends ConstantsWithLookup
     String badge_26873aba ();
     String badge_325f4c9 ();
 
+    String badgeDesc1_3aa0bef4 ();
+    String badgeDescN_3aa0bef4 ();
+    String badgeDesc1_c4fd834b ();
+    String badgeDescN_c4fd834b ();
+    String badgeDesc1_3ca5a071 ();
+    String badgeDescN_3ca5a071 ();
+    String badgeDesc1_e6a0e95b ();
+    String badgeDescN_e6a0e95b ();
+    String badgeDesc1_8a19eba3 ();
+    String badgeDescN_8a19eba3 ();
+    String badgeDesc1_7f70d917 ();
+    String badgeDescN_7f70d917 ();
+    String badgeDesc1_ac95aafe ();
+    String badgeDescN_ac95aafe ();
+    String badgeDesc1_fa58270b ();
+    String badgeDescN_fa58270b ();
+    String badgeDesc1_e6af01a4 ();
+    String badgeDescN_e6af01a4 ();
+    String badgeDesc1_1923c147 ();
+    String badgeDescN_1923c147 ();
+    String badgeDescN_26873aba ();
+    String badgeDesc1_325f4c9 ();
+    String badgeDescN_325f4c9 ();
+
     String month_0 ();
     String month_1 ();
     String month_2 ();

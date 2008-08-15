@@ -66,8 +66,8 @@ public final class InProgressBadgeSet extends DSet<InProgressBadge>
         if (existingBadge == null) {
             super.add(badge);
             return true;
-        } else if (badge.nextLevel > existingBadge.nextLevel) {
-            existingBadge.nextLevel = badge.nextLevel;
+        } else if (badge.level > existingBadge.level) {
+            existingBadge.level = badge.level;
             return true;
         }
 

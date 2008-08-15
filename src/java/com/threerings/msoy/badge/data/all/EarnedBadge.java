@@ -7,9 +7,6 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 
 public class EarnedBadge extends Badge
 {
-    /** The highest badge level that the player has attained. */
-    public int level;
-
     /**
      * When this badge was earned.
      * Long, instead of a long, because we can't stream longs to the ActionScript client.
@@ -24,8 +21,7 @@ public class EarnedBadge extends Badge
     /** Constructs a new EarnedBadge with the specified type. */
     public EarnedBadge (int badgeCode, int level, long whenEarned)
     {
-        super(badgeCode);
-        this.level = level;
+        super(badgeCode, level);
         this.whenEarned = whenEarned;
     }
 
@@ -39,23 +35,5 @@ public class EarnedBadge extends Badge
     {
         return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR + Integer.toHexString(badgeCode) +
             "_" + level + "f" + BADGE_IMAGE_TYPE;
-    }
-
-    @Override // from Badge
-    public boolean equals (Object o)
-    {
-        if (o instanceof EarnedBadge) {
-            EarnedBadge other = (EarnedBadge)o;
-            return super.equals(other) && other.level == this.level &&
-                (this.whenEarned == null ? other.whenEarned == null :
-                                           this.whenEarned.equals(other.whenEarned));
-        }
-        return false;
-    }
-
-    @Override // from Badge
-    public int hashCode ()
-    {
-        return badgeCode * level + (whenEarned != null ? whenEarned.intValue() : 0);
     }
 }
