@@ -1287,8 +1287,6 @@ fontWeight: bold;
 .notificationDisplay {
   horizontalGap: 0;
   verticalGap: 0;
-  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
-  backgroundSize: "100%";
   borderStyle: none;
   paddingTop: 3px;
   paddingRight: 4px;

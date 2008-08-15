@@ -93,7 +93,6 @@ public class NotificationDisplay extends HBox
     {
         super.createChildren();
         styleName = "notificationDisplay"; 
-        percentHeight = 100;
 
         addChild(_popupBtn = new CommandButton(null, toggleNotificationHistory));
         _popupBtn.styleName = "notificationClosedBtn";
