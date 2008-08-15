@@ -42,12 +42,6 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
         // now, we need to make sure they have access to take the scene's canonical snapshot
         int sceneId = (Integer) ctx.data;
 
-        if (ctx.memrec.isSupport()) {
-            log.info("Allowing support+ to upload a screenshot of another user's room [sceneId=" +
-                     sceneId + ", memberId=" + ctx.memrec.memberId + "].");
-            return; // we're good to go!
-        }
-
         try {
             SceneRecord scene = _sceneRepo.loadScene(sceneId);
             if (hasAccess(scene, ctx.memrec)) {
@@ -57,6 +51,12 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
             throw new AccessDeniedException(
                 "Could not confirm player access to scene [memberId=" + ctx.memrec.memberId +
                 ", sceneId=" + sceneId + ", e=" + e + "].");
+        }
+
+        if (ctx.memrec.isSupport()) {
+            log.info("Allowing support+ to upload a screenshot of another user's room [sceneId=" +
+                     sceneId + ", memberId=" + ctx.memrec.memberId + "].");
+            return; // we're good to go!
         }
 
         // we've exhausted all possibilities
