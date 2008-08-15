@@ -13,11 +13,14 @@ import com.google.inject.Inject;
 import com.samskivert.io.PersistenceException;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.SceneBookmarkEntry;
-//import com.threerings.msoy.web.server.UploadUtil.CanonicalSnapshotInfo;
+
+import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.AbstractSnapshotUploadServlet;
 import com.threerings.msoy.room.server.SnapshotUploadFile;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
+
+//import com.threerings.msoy.web.server.UploadUtil.CanonicalSnapshotInfo;
 import com.threerings.msoy.web.server.UploadUtil.CanonicalSnapshotInfo;
 
 import static com.threerings.msoy.Log.log;
@@ -33,29 +36,25 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
     {
         super.validateAccess(ctx);
 
-        // now, we need to make sure they have access to take the scene's canonical snapshot.
+        // now, we need to make sure they have access to take the scene's canonical snapshot
         int sceneId = (Integer) ctx.data;
 
+        if (ctx.memrec.isSupport()) {
+            log.info("Allowing support+ to upload a screenshot of another user's room [sceneId=" +
+                     sceneId + ", memberId=" + ctx.memrec.memberId + "].");
+            return; // we're good to go!
+        }
+
         try {
-            // TODO: just check the one scene, not load them all, ffs
-            // now load the scene, and check who's the owner (todo: deal with group rooms)
-            List<SceneBookmarkEntry> scenes = _sceneRepo.getOwnedScenes(ctx.memrec.memberId);
-            for (SceneBookmarkEntry scene : scenes) {
-                if (scene.sceneId == sceneId) {
-                    return; // we're good to go!
-                }
+            SceneRecord scene = _sceneRepo.loadScene(sceneId);
+            if (scene != null && scene.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER &&
+                scene.ownerId == ctx.memrec.memberId) {
+                return; // we're good to go!
             }
         } catch (Exception e) {
             throw new AccessDeniedException(
                 "Could not confirm player access to scene [memberId=" + ctx.memrec.memberId +
                 ", sceneId=" + sceneId + ", e=" + e + "].");
-        }
-
-        // scene is not owned; maybe the user is special?
-        if (ctx.memrec.isSupport()) {
-            log.info("Allowing support+ to upload a screenshot of another user's room [sceneId=" +
-                     sceneId + ", memberId=" + ctx.memrec.memberId + "].");
-            return; // we're good to go!
         }
 
         // we've exhausted all possibilities
