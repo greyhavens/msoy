@@ -79,7 +79,7 @@ TitleWindow {
   backgroundColor: #000000;
   backgroundAlpha: 0.8;
   backgroundImage: null;
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/window/sexy_title_alt2.png",
+  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/window/sexy_title.png",
           scaleGridTop="8", scaleGridBottom="14",
           scaleGridLeft="8", scaleGridRight="28");
   paddingTop: 10px;
@@ -250,6 +250,7 @@ Button {
   overSkin: Embed(source="../../rsrc/media/skins/button/up.png",
           scaleGridTop="1", scaleGridBottom="19",
           scaleGridLeft="2", scaleGridRight="19");
+          /*
   selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/disabled.png",
           scaleGridTop="1", scaleGridBottom="19",
           scaleGridLeft="2", scaleGridRight="19");
@@ -262,6 +263,7 @@ Button {
   selectedUpSkin: Embed(source="../../rsrc/media/skins/button/selectedUp.png",
           scaleGridTop="1", scaleGridBottom="19",
           scaleGridLeft="2", scaleGridRight="19");
+          */
   upSkin: Embed(source="../../rsrc/media/skins/button/up.png",
           scaleGridTop="1", scaleGridBottom="19",
           scaleGridLeft="2", scaleGridRight="19");
