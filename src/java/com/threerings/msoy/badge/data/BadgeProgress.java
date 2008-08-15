@@ -19,6 +19,6 @@ public class BadgeProgress
     public float getNextLevelProgress ()
     {
         return (nextLevelRequiredUnits > 0 ?
-            Math.max((float)nextLevelAcquiredUnits / (float)nextLevelRequiredUnits, 1f) : 0);
+            Math.min((float)nextLevelAcquiredUnits / (float)nextLevelRequiredUnits, 1f) : 0);
     }
 }
