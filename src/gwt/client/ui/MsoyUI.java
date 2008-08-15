@@ -79,26 +79,16 @@ public class MsoyUI
     }
 
     /**
-     * Creates a label of the form "August 14th, 2008" from the supplied Date object
+     * Creates a label of the form "2008 August 15"
      */
     public static String createDateString (Date date)
     {
-        // This is certainly not i18n'd... hopefully by the time we need that, GWT will have
-        // Calendar implemented for us.
-        String dayString;
-        int day = DateUtil.getDayOfMonth(date);
-        int dayEnd = day % 10;
-        if (dayEnd == 1) {
-            dayString = day + "st";
-        } else if (dayEnd == 2) {
-            dayString = day + "nd";
-        } else if (dayEnd == 3) {
-            dayString = day + "rd";
-        } else {
-            dayString = day + "th";
-        }
-        return _cmsgs.dateString("" + (DateUtil.getYear(date) + 1900),
-            _dmsgs.getString("month_" + DateUtil.getMonth(date)), dayString);
+        // The i18n just puts a space between each of these, but we may have to get fancier at some
+        // point.
+        return _cmsgs.dateString(
+            "" + (DateUtil.getYear(date) + 1900),
+            _dmsgs.getString("month_" + DateUtil.getMonth(date)),
+            "" + DateUtil.getDayOfMonth(date));
     }
 
     /**
