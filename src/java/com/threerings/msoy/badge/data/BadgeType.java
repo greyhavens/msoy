@@ -190,7 +190,29 @@ public enum BadgeType
         }
     },
 
-    // TODO: Character Designer, Furniture Builder, Landscape Painter, Professional, Popular
+    ARTISAN(StampCategory.CREATION, StatType.SOLID_4_STAR_RATINGS, new Level[] {
+        new Level(1, 1000),
+        new Level(5, 2000),
+        new Level(10, 3000),
+        new Level(15, 4000),
+        new Level(20, 5000),
+        new Level(25, 6000)
+        }) {
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getSetStatSize(StatType.SOLID_4_STAR_RATINGS);
+        }
+
+        // ARTISAN is unlocked once you have at least one other CREATION badge
+        @Override public boolean isUnlocked (Collection<EarnedBadge> badges) {
+            return Iterables.any(badges, new Predicate<EarnedBadge>() {
+                public boolean apply (EarnedBadge badge) {
+                    return getType(badge.badgeCode).getCategory() == StampCategory.CREATION;
+                }
+            });
+        }
+    },
+
+    // TODO: Character Designer, Furniture Builder, Landscape Painter
 
     // shopping badges
     SHOPPER(StampCategory.SHOPPING, StatType.ITEMS_PURCHASED, new Level[] {
