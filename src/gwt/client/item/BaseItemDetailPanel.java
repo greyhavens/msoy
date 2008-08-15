@@ -76,13 +76,15 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _details.add(_creator = new CreatorLabel());
         _creator.setMember(_detail.creator);
 
-        // add link to creator's shop
+        // add a link to the creator's shop
+        _creator.add(MsoyUI.createHTML("&nbsp;", "inline"));
         CatalogQuery query = new CatalogQuery();
         query.itemType = _detail.item.getType();
         query.creatorId = _detail.creator.getMemberId();
-        _details.add(WidgetUtil.makeShim(10, 10));
-        _details.add(Link.create(_imsgs.browseCatalogFor(_detail.creator.toString()), Pages.SHOP,
-            ShopUtil.composeArgs(query, 0)));
+        Widget bshop = Link.create(_imsgs.browseCatalogFor(), Pages.SHOP,
+                                   ShopUtil.composeArgs(query, 0));
+        bshop.setTitle(_imsgs.browseCatalogTip(_detail.creator.toString()));
+        _creator.add(bshop);
 
         // if we're not viewing the actual prototype item, create a link to it
         if (_item.catalogId != 0 && _item.ownerId != 0) {
