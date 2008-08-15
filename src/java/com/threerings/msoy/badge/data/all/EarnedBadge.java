@@ -47,7 +47,7 @@ public class EarnedBadge extends Badge
         if (o instanceof EarnedBadge) {
             EarnedBadge other = (EarnedBadge)o;
             return super.equals(other) && other.level == this.level &&
-                other.whenEarned == this.whenEarned;
+                ((long)other.whenEarned) == ((long)this.whenEarned);
         }
         return false;
     }
