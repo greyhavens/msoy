@@ -3,8 +3,6 @@
 
 package client.whirleds;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -134,7 +132,7 @@ public class WhirledDetailPanel extends FlowPanel
         FlowPanel established = new FlowPanel();
         established.setStyleName("Established");
         established.add(new InlineLabel(
-            _msgs.groupEst(_efmt.format(_group.creationDate)), false, false, true));
+            _msgs.groupEst(MsoyUI.formatDate(_group.creationDate)), false, false, true));
         established.add(new InlineLabel(_cmsgs.creatorBy(), false, false, true));
         Widget creator = Link.memberView(_detail.creator.toString(), _detail.creator.getMemberId());
         creator.addStyleName("Creator");
@@ -440,7 +438,6 @@ public class WhirledDetailPanel extends FlowPanel
     protected SimplePanel _whirledViewPanel;
     protected ContentPanel _contentPanel;
 
-    protected static final SimpleDateFormat _efmt = new SimpleDateFormat("MMM dd, yyyy");
     protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)

@@ -47,8 +47,7 @@ class BadgeDisplay extends VerticalPanel
         }
 
         Date earnedDate = new Date(badge.whenEarned);
-        add(MsoyUI.createLabel(
-            _msgs.passportFinishedSeries(MsoyUI.createDateString(earnedDate)), null));
+        add(MsoyUI.createLabel(_msgs.passportFinishedSeries(MsoyUI.formatDate(earnedDate)), null));
     }
 
     protected void addInProgressBits (InProgressBadge badge)
@@ -66,8 +65,8 @@ class BadgeDisplay extends VerticalPanel
         }
     }
 
+    protected VerticalPanel _nameColumn;
+
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
-
-    protected VerticalPanel _nameColumn;
 }

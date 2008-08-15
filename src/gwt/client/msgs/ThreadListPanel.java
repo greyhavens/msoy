@@ -5,8 +5,6 @@ package client.msgs;
 
 import java.util.List;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -202,7 +200,7 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
             getFlexCellFormatter().setStyleName(0, col++, "Posts");
 
             VerticalPanel mrp = new VerticalPanel();
-            mrp.add(new Label(_pdate.format(thread.mostRecentPostTime)));
+            mrp.add(new Label(MsoyUI.formatDateTime(thread.mostRecentPostTime)));
             Widget latest = Link.create(
                 _mmsgs.tlpBy(thread.mostRecentPoster.toString()),
                 Pages.WHIRLEDS, threadArgs(thread.threadId, thread.posts-1,
@@ -261,7 +259,6 @@ public class ThreadListPanel extends PagedGrid<ForumThread>
     /** A button for refreshing the current model. */
     protected Button _refresh;
 
-    protected static final SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
     protected static final ForumServiceAsync _forumsvc = (ForumServiceAsync)
         ServiceUtil.bind(GWT.create(ForumService.class), ForumService.ENTRY_POINT);

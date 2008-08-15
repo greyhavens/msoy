@@ -3,9 +3,10 @@
 
 package client.msgs;
 
-import client.ui.MessagePanel;
-
 import com.threerings.msoy.fora.gwt.ForumMessage;
+
+import client.ui.MessagePanel;
+import client.ui.MsoyUI;
 
 /**
  * A message panel that displays a forum message with a last edited date.
@@ -27,7 +28,7 @@ public class SimpleMessagePanel extends MessagePanel
 
         if (!message.lastEdited.equals(message.created)) {
             getFlexCellFormatter().setRowSpan(0, 0, 3); // extend the photo cell
-            setText(2, 0, "Edited on " + _pfmt.format(message.lastEdited));
+            setText(2, 0, "Edited on " + MsoyUI.formatDateTime(message.lastEdited));
             getFlexCellFormatter().setStyleName(2, 0, "Posted");
             getFlexCellFormatter().addStyleName(2, 0, "LeftPad");
             getFlexCellFormatter().addStyleName(2, 0, "BottomPad");
@@ -40,4 +41,3 @@ public class SimpleMessagePanel extends MessagePanel
         return true;
     }
 }
-

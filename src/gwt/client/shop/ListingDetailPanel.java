@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
-import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -111,7 +110,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         // create a table to display miscellaneous info and admin/owner actions
         SmartTable info = new SmartTable("Info", 0, 5);
         info.setText(0, 0, CShop.msgs.listingListed(), 1, "What");
-        info.setText(0, 1, _lfmt.format(listing.listedDate));
+        info.setText(0, 1, MsoyUI.formatDate(listing.listedDate));
         info.setText(1, 0, CShop.msgs.listingPurchases(), 1, "What");
         info.setText(1, 1, "" + listing.purchases);
 
@@ -234,7 +233,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected FlowPanel _buyPanel;
     protected PriceLabel _priceLabel;
 
-    protected static final SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy");
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)

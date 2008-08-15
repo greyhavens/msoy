@@ -3,8 +3,6 @@
 
 package client.games;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
@@ -75,7 +73,7 @@ public class GameLogsPanel extends VerticalPanel
         int col = 0;
         for (int ii = 0; ii < logs.logIds.length; ii ++) {
             String href = "/gamelogs?gameId=" + _gameId + "&logId=" + logs.logIds[ii];
-            String label = _dfmt.format(logs.logTimes[ii]);
+            String label = MsoyUI.formatDateTime(logs.logTimes[ii]);
 
             table.setWidget(
                 row, col, MsoyUI.createHTML("<a href='" + href + "'>" + label + "</a>", null));
@@ -92,7 +90,6 @@ public class GameLogsPanel extends VerticalPanel
     protected int _gameId;
     protected GameLogs _logs;
 
-    protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("h:mm aa, MMMMM dd, yyyy");
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);

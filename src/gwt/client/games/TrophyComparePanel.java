@@ -5,8 +5,6 @@ package client.games;
 
 import java.util.Date;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -97,7 +95,7 @@ public class TrophyComparePanel extends SmartTable
                 if (earned != null) {
                     setWidget(row, pp+1, new ThumbBox(trophy.trophyMedia, TrophySource.TROPHY_WIDTH,
                                                       TrophySource.TROPHY_HEIGHT, null));
-                    info = _pfmt.format(new Date(earned.longValue()));
+                    info = MsoyUI.formatDate(new Date(earned.longValue()));
                 } else {
                     info = _msgs.compareUnearned();
                     getFlexCellFormatter().addStyleName(row+1, pp, "Italic");
@@ -115,7 +113,6 @@ public class TrophyComparePanel extends SmartTable
         getFlexCellFormatter().setVerticalAlignment(row, col, HasAlignment.ALIGN_MIDDLE);
     }
 
-    protected static final SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy");
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);

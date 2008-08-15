@@ -23,6 +23,8 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;
 
@@ -34,7 +36,6 @@ import client.shell.DynamicMessages;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
-import client.util.DateUtil;
 import client.util.ServiceUtil;
 
 /**
@@ -79,16 +80,19 @@ public class MsoyUI
     }
 
     /**
-     * Creates a label of the form "2008 August 15"
+     * Creates a label of the form "Aug 15, 2008"
      */
-    public static String createDateString (Date date)
+    public static String formatDate (Date date)
     {
-        // The i18n just puts a space between each of these, but we may have to get fancier at some
-        // point.
-        return _cmsgs.dateString(
-            "" + (DateUtil.getYear(date) + 1900),
-            _dmsgs.getString("month_" + DateUtil.getMonth(date)),
-            "" + DateUtil.getDayOfMonth(date));
+        return _dfmt.format(date);
+    }
+
+    /**
+     * Creates a label of the form "Aug 15, 2008 9:15 am"
+     */
+    public static String formatDateTime (Date date)
+    {
+        return _dtfmt.format(date);
     }
 
     /**
@@ -524,6 +528,9 @@ public class MsoyUI
         }
         return text.substring(0, maxLen-3) + "...";
     }
+
+    protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("MMM dd, yyyy");
+    protected static final SimpleDateFormat _dtfmt = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);

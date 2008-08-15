@@ -5,8 +5,6 @@ package client.people;
 
 import java.util.Date;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
@@ -133,7 +131,7 @@ public class ProfileBlurb extends Blurb
             addDetail(dbits, CPeople.msgs.permaName(), _profile.permaName);
         }
         if (_profile.memberSince > 0L) {
-            String since = _sfmt.format(new Date(_profile.memberSince));
+            String since = MsoyUI.formatDate(new Date(_profile.memberSince));
             if (CPeople.isSupport()) {
                 addDetail(dbits, CPeople.msgs.memberSince(),
                           Link.create(since, Pages.ADMINZ,
@@ -144,7 +142,7 @@ public class ProfileBlurb extends Blurb
         }
         if (_profile.lastLogon > 0L) {
             addDetail(dbits, CPeople.msgs.lastOnline(),
-                      _lfmt.format(new Date(_profile.lastLogon)));
+                      MsoyUI.formatDateTime(new Date(_profile.lastLogon)));
         }
         if (!isBlank(_profile.homePageURL)) {
             Anchor homepage = new Anchor(_profile.homePageURL, _profile.homePageURL, "_blank", true);
@@ -345,8 +343,6 @@ public class ProfileBlurb extends Blurb
     protected ListBox _esex;
     protected DateFields _ebirthday;
 
-    protected static final SimpleDateFormat _sfmt = new SimpleDateFormat("MMM dd, yyyy");
-    protected static final SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd, yyyy h:mmaa");
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
         ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);

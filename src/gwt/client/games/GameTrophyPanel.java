@@ -6,8 +6,6 @@ package client.games;
 import java.util.Date;
 import java.util.List;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -24,6 +22,7 @@ import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.CShell;
+import client.ui.MsoyUI;
 import client.util.MediaUtil;
 import client.util.ServiceUtil;
 
@@ -104,8 +103,8 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
                     setText(1, 0, trophy.description);
                 }
                 if (trophy.whenEarned != null) {
-                    setText(2, 0, _msgs.gameTrophyEarnedOn(
-                                _pfmt.format(new Date(trophy.whenEarned.longValue()))));
+                    Date date = new Date(trophy.whenEarned.longValue());
+                    setText(2, 0, _msgs.gameTrophyEarnedOn(MsoyUI.formatDate(date)));
                     getFlexCellFormatter().setStyleName(2, 0, "Earned");
                 }
             }
@@ -119,7 +118,6 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
 
     protected int _gameId;
 
-    protected static final SimpleDateFormat _pfmt = new SimpleDateFormat("MMM dd, yyyy");
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
