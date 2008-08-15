@@ -6,10 +6,7 @@ package com.threerings.msoy.server.persist;
 import static com.threerings.msoy.Log.log;
 
 import java.io.Serializable;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
@@ -20,14 +17,19 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.DatabaseLiaison;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntListUtil;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
+import com.samskivert.util.IntSet;
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.jdbc.DuplicateKeyException;
-import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -51,12 +53,7 @@ import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.operator.Logic.Or;
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntListUtil;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
-import com.samskivert.util.IntSet;
-import com.samskivert.util.StringUtil;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -105,111 +102,6 @@ public class MemberRepository extends DepotRepository
                 return "MemberRecord -> MemberNameRecord";
             }
         });
-
-        // TEMP added 2008.3.15
-        _ctx.registerMigration(MemberRecord.class, new EntityMigration(15) {
-            @Override
-            public int invoke (final Connection conn, final DatabaseLiaison liaison) throws SQLException {
-                final String tName = liaison.tableSQL("MemberRecord");
-                final String cName = liaison.columnSQL(MemberRecord.EXPERIENCES);
-                final Statement stmt = conn.createStatement();
-                try {
-                    final int rows = stmt.executeUpdate(
-                        "UPDATE " + tName + " set " + cName + " = 0");
-                    log.info("Cleared experiences from " + rows + " members.");
-                    return rows;
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-            @Override
-            public boolean runBeforeDefault () {
-                return false;
-            }
-        });
-        // END TEMP
-
-        // TEMP added 2008.2.13
-        _ctx.registerMigration(MemberRecord.class, new EntityMigration(12) {
-            @Override
-            public int invoke (final Connection conn, final DatabaseLiaison liaison) throws SQLException {
-                final String tName = liaison.tableSQL("MemberRecord");
-                final String cName = liaison.columnSQL("accountName");
-
-                final Statement stmt = conn.createStatement();
-                try {
-                    final int rows = stmt.executeUpdate(
-                        "UPDATE " + tName + " set " + cName + " = LOWER(" + cName + ")");
-                    log.info("Lowercased " + rows + " accountName rows in MemberRecord");
-                    return rows;
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-        });
-
-        _ctx.registerMigration(OptOutRecord.class, new EntityMigration(2) {
-            @Override
-            public int invoke (final Connection conn, final DatabaseLiaison liaison) throws SQLException {
-                final String tName = liaison.tableSQL("OptOutRecord");
-                final String cName = liaison.columnSQL("email");
-
-                final Statement stmt = conn.createStatement();
-                try {
-                    final int rows = stmt.executeUpdate(
-                        "UPDATE " + tName + " set " + cName + " = LOWER(" + cName + ")");
-                    log.info("Lowercased " + rows + " email rows in OptOutRecord");
-                    return rows;
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-        });
-
-        _ctx.registerMigration(MemberRecord.class, new EntityMigration(19) {
-            @Override
-            public int invoke (final Connection conn, final DatabaseLiaison liaison) throws SQLException {
-                final String tName = liaison.tableSQL("MemberRecord");
-                final String cName = liaison.columnSQL("permaName");
-
-                final Statement stmt = conn.createStatement();
-                try {
-                    final int rows = stmt.executeUpdate(
-                        "UPDATE " + tName + " set " + cName + " = LOWER(" + cName + ")");
-                    log.info("Lowercased " + rows + " permaName rows in MemberRecord");
-                    return rows;
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-        });
-
-        _ctx.registerMigration(MemberRecord.class, new EntityMigration(20) {
-            @Override
-            public int invoke (final Connection conn, final DatabaseLiaison liaison) throws SQLException {
-                final String tName = liaison.tableSQL("MemberRecord");
-                final String cName = liaison.columnSQL("permaName");
-
-                final Statement stmt = conn.createStatement();
-                try {
-                    final int rows = stmt.executeUpdate(
-                        "UPDATE " + tName + " set " + cName + " = LOWER(" + cName + ")");
-                    log.info("Lowercased " + rows + " permaName rows in MemberRecord");
-                    return rows;
-                } finally {
-                    JDBCUtil.close(stmt);
-                }
-            }
-        });
-
-        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(21,
-            "normalizedPermaName"));
-
-        // END TEMP
-
-        // TEMP added 2008.2.21
-        _ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(13, "avrGameId"));
-        // END TEMP
     }
 
     /**
@@ -1202,6 +1094,31 @@ public class MemberRepository extends DepotRepository
         throws PersistenceException
     {
         return load(MemberWarningRecord.class, memberId);
+    }
+
+    /**
+     * Runs the supplied migration on all members in the repository (note: don't use this function
+     * unless you understand the implications of doing something for potentially millions of
+     * members). If any migration fails, your operation will be aborted but the partially applied
+     * migrations will not be rolled back. So be sure that your migration is written idempotently
+     * so that it can be partially applied and then run again and won't break. Note also that we do
+     * not do any distributed locking, so it is up to the caller to be safely running in a entity
+     * migration that will properly guard against simultaneous execution on multiple servers.
+     *
+     * @return the number of member records that were migrated (which will be all of them if the
+     * migration executes without failure, but we return the number anyway so that you can be
+     * excited about how large it is).
+     */
+    public int runMemberMigration (Function<MemberRecord, Void> migration)
+        throws PersistenceException
+    {
+        // TODO: break this up into chunks when our member base is larger
+        int migrated = 0;
+        for (MemberRecord mrec : findAll(MemberRecord.class)) {
+            migration.apply(mrec);
+            migrated++;
+        }
+        return migrated;
     }
 
     protected String randomInviteId ()
