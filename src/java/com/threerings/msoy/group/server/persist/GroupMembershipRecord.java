@@ -68,7 +68,7 @@ public class GroupMembershipRecord extends PersistentRecord
     /** The id of the group in the group membership. */
     public int groupId;
 
-    /** The rank of the member in the group, defined in {@link GroupMemberCard}. */
+    /** The rank of the member in the group, defined in {@link GroupMembership}. */
     public byte rank;
 
     /** The date that this rank was assigned on.  Used to decide rank seniority. */
