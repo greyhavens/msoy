@@ -250,26 +250,23 @@ public enum BadgeType
         @Override public boolean isHidden () {
             return true;
         }
-    }
-
-    ;
+    };
 
     // This can't be in InProgressBadge, because InProgressBadge is visible to GWT, and BadgeType
     // is incompatible with GWT.
-    public static Predicate<InProgressBadge> IS_VISIBLE_BADGE =
-        new Predicate<InProgressBadge>() {
+    public static Predicate<InProgressBadge> IS_VISIBLE_BADGE = new Predicate<InProgressBadge>() {
         public boolean apply (InProgressBadge badge) {
             return !(getType(badge.badgeCode).isHidden());
         }
     };
 
+    /** Encapsulates a stat requirement and coin reward for a single badge level. */
     public static class Level
     {
         public int requiredUnits;
         public int coinValue;
 
-        Level (int requiredUnits, int coinValue)
-        {
+        public Level (int requiredUnits, int coinValue) {
             this.requiredUnits = requiredUnits;
             this.coinValue = coinValue;
         }
