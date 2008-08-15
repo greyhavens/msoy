@@ -16,7 +16,6 @@ import com.threerings.msoy.badge.data.all.InProgressBadge;
 
 import client.shell.DynamicMessages;
 import client.ui.MsoyUI;
-import client.util.DateUtil;
 
 class BadgeDisplay extends VerticalPanel
 {
@@ -48,7 +47,8 @@ class BadgeDisplay extends VerticalPanel
         }
 
         Date earnedDate = new Date(badge.whenEarned);
-        add(MsoyUI.createLabel(_msgs.passportFinishedSeries(earnedDate.toLocaleString()), null));
+        add(MsoyUI.createLabel(
+            _msgs.passportFinishedSeries(MsoyUI.createDateString(earnedDate)), null));
     }
 
     protected void addInProgressBits (InProgressBadge badge)

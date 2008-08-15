@@ -15,7 +15,6 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 
-import client.shell.DynamicMessages;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -49,7 +48,6 @@ public class PassportImageTestPanel extends PagedGrid<Badge>
 
     protected static final MeServiceAsync _mesvc = (MeServiceAsync)
         ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
     protected static final int GRID_ROWS = 4;
     protected static final int GRID_COLUMNS = 4;

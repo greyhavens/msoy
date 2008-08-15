@@ -3,7 +3,10 @@
 
 package client.ui;
 
+import java.util.Date;
+
 import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -27,10 +30,12 @@ import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.data.SessionData;
 
-import client.util.ServiceUtil;
+import client.shell.DynamicMessages;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
+import client.util.DateUtil;
+import client.util.ServiceUtil;
 
 /**
  * Contains useful user interface related methods.
@@ -71,6 +76,29 @@ public class MsoyUI
             label.setStyleName(styleName);
         }
         return label;
+    }
+
+    /**
+     * Creates a label of the form "August 14th, 2008" from the supplied Date object
+     */
+    public static String createDateString (Date date)
+    {
+        // This is certainly not i18n'd... hopefully by the time we need that, GWT will have
+        // Calendar implemented for us.
+        String dayString;
+        int day = DateUtil.getDayOfMonth(date);
+        int dayEnd = day % 10;
+        if (dayEnd == 1) {
+            dayString = day + "st";
+        } else if (dayEnd == 2) {
+            dayString = day + "nd";
+        } else if (dayEnd == 3) {
+            dayString = day + "rd";
+        } else {
+            dayString = day + "th";
+        }
+        return _cmsgs.dateString("" + (DateUtil.getYear(date) + 1900),
+            _dmsgs.getString("month_" + DateUtil.getMonth(date)), dayString);
     }
 
     /**
@@ -386,7 +414,7 @@ public class MsoyUI
     }
 
     /**
-     * Create a ClickListener that will track an arbitrary click on any widget during an a/b test. 
+     * Create a ClickListener that will track an arbitrary click on any widget during an a/b test.
      * No callback is performed on success or failure.
      * @param action String identifier for the action to be logged
      * @param testName Optional string identifier for the a/b test if associated with one
@@ -508,6 +536,7 @@ public class MsoyUI
     }
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }
