@@ -296,7 +296,7 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
-     * Create a new blank room for the specified member.
+     * Creates a new blank room for the specified member.
      *
      * @param ownerType may be an individual member or a group.
      * @param portalAction to where to link the new room's door.
