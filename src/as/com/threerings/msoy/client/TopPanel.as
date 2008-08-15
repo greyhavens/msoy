@@ -91,7 +91,6 @@ public class TopPanel extends Canvas
             _controlBar.setStyle("left", 0);
             _controlBar.setStyle("right", 0);
             addChild(_controlBar);
-            _controlBar.enableZoomControl(false);
 
             // show a subtle build-stamp on dev builds
             if (DeploymentConfig.devDeployment) {

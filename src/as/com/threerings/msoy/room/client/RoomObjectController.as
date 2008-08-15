@@ -266,6 +266,10 @@ public class RoomObjectController extends RoomController
      */
     public function handleRoomEdit () :void
     {
+        if (!canManageRoom()) {
+            return;
+        }
+
         // TODO: debounce the button, since we're round-trippin' to the server..
         if (isRoomEditing()) {
             cancelRoomEditing();
@@ -802,6 +806,9 @@ public class RoomObjectController extends RoomController
         // get a copy of the scene
         _scene = (_wdctx.getSceneDirector().getScene() as MsoyScene);
 
+        _roomEditBtn = WorldControlBar(_wdctx.getTopPanel().getControlBar()).roomEditBtn;
+        _roomEditBtn.enabled = canManageRoom();
+
         _walkTarget.visible = false;
         _flyTarget.visible = false;
         _roomView.addChildAt(_flyTarget, _roomView.numChildren);
@@ -910,16 +917,14 @@ public class RoomObjectController extends RoomController
         setHoverSprite(null);
 
         // put the room edit button in the selected state
-        var roomEditBtn :Button =
-            (_wdctx.getTopPanel().getControlBar() as WorldControlBar).roomEditBtn;
-        roomEditBtn.selected = true;
+        _roomEditBtn.selected = true;
 
         // this function will be called when the edit panel is closing
         var wrapupFn :Function = function () :void {
             if (_music != null && ! _musicIsBackground) {
                 _music.play(); // restart non-background music
             }
-            roomEditBtn.selected = false;
+            _roomEditBtn.selected = false;
             _editor = null;
         }
 
@@ -1206,6 +1211,9 @@ public class RoomObjectController extends RoomController
 
     /** Our general-purpose room listener. */
     protected var _roomListener :ChangeListener;
+
+    /** The room edit button, on the control bar (imported). */
+    protected var _roomEditBtn :Button;
 
     /** The current scene we're viewing. */
     protected var _scene :MsoyScene;

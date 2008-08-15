@@ -43,7 +43,6 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.SkinnableImage;
-import com.threerings.msoy.ui.SliderPopup;
 
 import com.threerings.msoy.world.client.WorldController;
 
@@ -85,9 +84,9 @@ public class ControlBar extends HBox
 
     /** These will probably be expanded soon. */
     public static const CHAT_PRIORITY :int = 0;
-    public static const BUTTON_PRIORITY :int = 10;
-    public static const SPACER_PRIORITY :int = 100;
-    public static const LAST_PRIORITY :int = 1000;
+    public static const BUTTON_PRIORITY :int = 100;
+    public static const SPACER_PRIORITY :int = 200;
+    public static const LAST_PRIORITY :int = 300;
 
     public function ControlBar (ctx :MsoyContext)
     {
@@ -201,12 +200,6 @@ public class ControlBar extends HBox
         _chatControl.setChatColor(color);
     }
 
-    public function enableZoomControl (enabled :Boolean ) :void
-    {
-        _zoomBtn.enabled = enabled;
-        _zoomBtn.toolTip = Msgs.GENERAL.get(enabled ? "i.zoom" : "i.zoom_disabled");
-    }
-
     // from HBox
     override protected function updateDisplayList (w :Number, h :Number) :void
     {
@@ -233,11 +226,6 @@ public class ControlBar extends HBox
         _volBtn.toolTip = Msgs.GENERAL.get("i.volume");
         _volBtn.setCommand(MsoyController.POP_VOLUME, _volBtn);
         _volBtn.styleName = "controlBarButtonVolume";
-
-        _zoomBtn = new CommandButton();
-        _zoomBtn.styleName = "controlBarButtonZoom";
-        _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
-        _zoomBtn.setCallback(handlePopZoom);
 
         //_partyBtn = new CommandCheckBox("Party", handleJoinLeaveParty);
 
@@ -303,10 +291,11 @@ public class ControlBar extends HBox
         _chatControl = new ChatControl(_ctx, null, this.height);
         _chatControl.sendButton.styleName = "controlBarButtonSend";
         addGroupChild(_chatControl, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
-        addGroupChild(_volBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
-        addGroupChild(_zoomBtn, [ UI_ROOM, UI_VIEWER ]);
+        addGroupChild(_volBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
+            BUTTON_PRIORITY - 2);
         if (_ctx.getTokens().isAdmin()) {
-            addGroupChild(_fullBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
+            addGroupChild(_fullBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
+                BUTTON_PRIORITY + 1);
         }
 
         //addGroupChild(_partyBtn, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
@@ -380,26 +369,6 @@ public class ControlBar extends HBox
         }
     }
 
-    /**
-     * Handle the zoom button popup.
-     */
-    protected function handlePopZoom () :void
-    {
-        SliderPopup.toggle(_zoomBtn, getZoom(), setZoom);
-    }
-
-    // overrideable
-    protected function getZoom () :Number
-    {
-        return Prefs.getZoom();
-    }
-
-    // overrideable
-    protected function setZoom (newZoom :Number) :void
-    {
-        Prefs.setZoom(newZoom);
-    }
-
     /** Our clientside context. */
     protected var _ctx :MsoyContext;
 
@@ -434,9 +403,6 @@ public class ControlBar extends HBox
 
     /** Handles full screening. */
     protected var _fullBtn :CommandButton;
-
-    /** Handles room zooming. */
-    protected var _zoomBtn :CommandButton;
 
     /** A spacer to bump the UI bits over to the right if needed */
     protected var _leftSpacer :Spacer;

@@ -736,9 +736,7 @@ public class WorldController extends MsoyController
      */
     public function handleRoomEdit () :void
     {
-        if (canManageScene()) {
-            (_topPanel.getPlaceView() as RoomObjectView).getRoomObjectController().handleRoomEdit();
-        }
+        (_topPanel.getPlaceView() as RoomObjectView).getRoomObjectController().handleRoomEdit();
     }
 
     /**
@@ -1179,13 +1177,6 @@ public class WorldController extends MsoyController
         }
     }
 
-    /** Can this scene be managed by the local client? */
-    protected function canManageScene () :Boolean
-    {
-        var scene :MsoyScene = _wctx.getSceneDirector().getScene() as MsoyScene;
-        return (scene != null && scene.canManage(_wctx.getMemberObject()));
-    }
-
     // from MsoyController
     override protected function updateTopPanel (headerBar :HeaderBar, controlBar :ControlBar) :void
     {
@@ -1242,19 +1233,11 @@ public class WorldController extends MsoyController
             }
 
             addRecentScene(scene);
-
-            // display location name, modify buttons
-            controlBar.enableZoomControl(true);
-            (controlBar as WorldControlBar).sceneEditPossible = canManageScene();
             return;
         }
 
-
-        (controlBar as WorldControlBar).sceneEditPossible = false;
-
         // if we're in a game, display the game name and activate the back button
         var cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
-        controlBar.enableZoomControl(false);
         if (cfg != null) {
             _wctx.getMsoyClient().setWindowTitle(cfg.name);
             headerBar.setLocationName(cfg.name);

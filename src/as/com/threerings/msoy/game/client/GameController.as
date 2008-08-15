@@ -97,8 +97,6 @@ public class GameController extends MsoyController
             headerBar.setLocationName(cfg.name);
             headerBar.setOwnerLink("");
         }
-
-        controlBar.enableZoomControl(false);
     }
 
     protected var _gctx :GameContext;

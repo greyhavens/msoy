@@ -30,6 +30,7 @@ import com.threerings.util.MultiLoader;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.SliderPopup;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.DeploymentConfig;
@@ -68,15 +69,10 @@ public class WorldControlBar extends ControlBar
         return _roomeditBtn;
     }
 
-    /**
-     * Receives notification whether scene editing is possible for this scene.
-     */
-    public function set sceneEditPossible (value :Boolean) :void
+    public function enableZoomControl (enabled :Boolean ) :void
     {
-        // currently we just enable or disable the room edit button
-        if (_roomeditBtn != null) {
-            _roomeditBtn.enabled = value;
-        }                
+        _zoomBtn.enabled = enabled;
+        _zoomBtn.toolTip = Msgs.GENERAL.get(enabled ? "i.zoom" : "i.zoom_disabled");
     }
 
     public function setNotificationDisplay (notificationDisplay :NotificationDisplay) :void
@@ -125,6 +121,11 @@ public class WorldControlBar extends ControlBar
         _roomeditBtn.styleName = "controlBarButtonEdit";
         _roomeditBtn.enabled = false;
 
+        _zoomBtn = new CommandButton();
+        _zoomBtn.styleName = "controlBarButtonZoom";
+        _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
+        _zoomBtn.setCallback(handlePopZoom);
+
         _hotZoneBtn = new CommandButton();
         _hotZoneBtn.toolTip = Msgs.GENERAL.get("i.hover");
         _hotZoneBtn.styleName = "controlBarHoverZone";
@@ -171,30 +172,28 @@ public class WorldControlBar extends ControlBar
     }
 
     // from ControlBar
-    override protected function setupControls() :void
+    override protected function addControlButtons () :void
     {
-        super.setupControls();
+        super.addControlButtons(); 
 
+        addGroupChild(_hotZoneBtn, [ UI_ROOM ]);
+        addGroupChild(_zoomBtn, [ UI_ROOM, UI_VIEWER ]);
+
+        // TODO: snapshots are not functional; revisit
+        if (_ctx.getTokens().isSupport()) {
+            addGroupChild(_snapBtn, [ UI_ROOM ]);
+        }
+        addGroupChild(_roomeditBtn, [ UI_ROOM ]);
+
+        // TODO: notifications are global, yes? They should be in ControlBar
         if (_notificationDisplay != null) {
             addGroupChild(_notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME ], LAST_PRIORITY);
         }
 
         // TODO: enable friends for guests, even if it just goads them into signup
+        // TODO: friends are global, yes? They should be in ControlBar
         if (_friendsBtn != null && _isMember) {
-            addGroupChild(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME ]);
-        }
-    }
-
-    // from ControlBar
-    override protected function addControlButtons () :void
-    {
-        super.addControlButtons(); 
-
-        addGroupChild(_roomeditBtn, [ UI_ROOM ]);
-        addGroupChild(_hotZoneBtn, [ UI_ROOM ]);
-        // TODO: snapshots are not functional; revisit
-        if (_ctx.getTokens().isSupport()) {
-            addGroupChild(_snapBtn, [ UI_ROOM ]);
+            addGroupChild(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME ], BUTTON_PRIORITY - 1);
         }
     }
 
@@ -324,26 +323,37 @@ public class WorldControlBar extends ControlBar
         });
     }
 
-    override protected function getZoom () :Number
+    /**
+     * Handle the zoom button popup.
+     */
+    protected function handlePopZoom () :void
+    {   
+        SliderPopup.toggle(_zoomBtn, getZoom(), setZoom);
+    }       
+
+    protected function getZoom () :Number
     {
         // in the "viewer", we don't save the zoom in preferences
         var studioView :RoomStudioView = _ctx.getTopPanel().getPlaceView() as RoomStudioView;
-        return (studioView != null) ? studioView.getZoom() : super.getZoom();
+        return (studioView != null) ? studioView.getZoom() : Prefs.getZoom();
     }
 
-    override protected function setZoom (newZoom :Number) :void
+    protected function setZoom (newZoom :Number) :void
     {
         // in the "viewer", we don't save the zoom in preferences
         var studioView :RoomStudioView = _ctx.getTopPanel().getPlaceView() as RoomStudioView;
         if (studioView != null) {
             studioView.setZoom(newZoom);
         } else {
-            super.setZoom(newZoom);
+            Prefs.setZoom(newZoom);
         }
     }
 
     /** Our context, cast as a WorldContext. */
     protected var _wctx :WorldContext;
+
+    /** Handles room zooming. */
+    protected var _zoomBtn :CommandButton;
 
     /** Button for editing the current scene. */
     protected var _roomeditBtn :CommandButton;

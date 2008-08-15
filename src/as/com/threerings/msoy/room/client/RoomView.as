@@ -50,6 +50,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.msoy.world.client.WorldControlBar;
 
 import com.threerings.msoy.room.client.layout.RoomLayout;
 import com.threerings.msoy.room.client.layout.RoomLayoutFactory;
@@ -696,7 +697,7 @@ public class RoomView extends Sprite
         const minScale :Number = _fullSizeActualWidth / _layout.metrics.sceneWidth;
         if (!UberClient.isFeaturedPlaceView()) {
             const canScale :Boolean = maxScale > minScale;
-            _ctx.getTopPanel().getControlBar().enableZoomControl(canScale);
+            WorldControlBar(_ctx.getTopPanel().getControlBar()).enableZoomControl(canScale);
             if (canScale) {
                 return minScale + (maxScale - minScale) * getZoom();
             }
