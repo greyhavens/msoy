@@ -12,6 +12,11 @@ import com.google.inject.Inject;
 import com.samskivert.io.PersistenceException;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.server.persist.MemberRecord;
+
+import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.AbstractSnapshotUploadServlet;
@@ -19,7 +24,6 @@ import com.threerings.msoy.room.server.SnapshotUploadFile;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 
-//import com.threerings.msoy.web.server.UploadUtil.CanonicalSnapshotInfo;
 import com.threerings.msoy.web.server.UploadUtil.CanonicalSnapshotInfo;
 
 import static com.threerings.msoy.Log.log;
@@ -46,8 +50,7 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
 
         try {
             SceneRecord scene = _sceneRepo.loadScene(sceneId);
-            if (scene != null && scene.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER &&
-                scene.ownerId == ctx.memrec.memberId) {
+            if (hasAccess(scene, ctx.memrec)) {
                 return; // we're good to go!
             }
         } catch (Exception e) {
@@ -88,6 +91,33 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
             info.thumbnail.hash, info.thumbnail.type);
     }
 
+    /**
+     * Helper function for {@link #validateAccess}.
+     */
+    protected boolean hasAccess (SceneRecord scene, MemberRecord member)
+        throws PersistenceException
+    {
+        if (scene == null) {
+            return false;
+        }
+
+        switch (scene.ownerType) {
+        case MsoySceneModel.OWNER_TYPE_MEMBER:
+            return (scene.ownerId == member.memberId);
+
+        case MsoySceneModel.OWNER_TYPE_GROUP: {
+            GroupMembershipRecord gmr = _groupRepo.getMembership(scene.ownerId, member.memberId);
+            return (gmr != null) && (gmr.rank == GroupMembership.RANK_MANAGER);
+        }
+
+        default:
+            log.warning("Can't determine access for unknown scene ownership type",
+                        "sceneId", scene.sceneId, "otype", scene.ownerType);
+            return false;
+        }
+    }
+
     // our dependencies
     @Inject protected MsoySceneRepository _sceneRepo;
+    @Inject protected GroupRepository _groupRepo;
 }
