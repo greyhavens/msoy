@@ -21,7 +21,6 @@ import com.threerings.stats.Log;
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.badge.data.all.Badge;
-import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.gwt.StampCategory;
 
@@ -254,8 +253,8 @@ public enum BadgeType
 
     // This can't be in InProgressBadge, because InProgressBadge is visible to GWT, and BadgeType
     // is incompatible with GWT.
-    public static Predicate<InProgressBadge> IS_VISIBLE_BADGE = new Predicate<InProgressBadge>() {
-        public boolean apply (InProgressBadge badge) {
+    public static Predicate<Badge> IS_VISIBLE_BADGE = new Predicate<Badge>() {
+        public boolean apply (Badge badge) {
             return !(getType(badge.badgeCode).isHidden());
         }
     };
