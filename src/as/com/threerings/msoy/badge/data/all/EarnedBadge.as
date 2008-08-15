@@ -10,9 +10,6 @@ import com.threerings.msoy.client.DeploymentConfig;
  */
 public class EarnedBadge extends Badge
 {
-    /** The highest badge level that the player has attained. */
-    public var level :int;
-
     /** When this badge was earned. */
     public var whenEarned :Long;
 
@@ -27,7 +24,6 @@ public class EarnedBadge extends Badge
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        level = ins.readInt();
         whenEarned = (ins.readField(Long) as Long);
     }
 
@@ -35,7 +31,6 @@ public class EarnedBadge extends Badge
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeInt(level);
         out.writeField(whenEarned);
     }
 }

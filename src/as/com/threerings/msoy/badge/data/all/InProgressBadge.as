@@ -9,9 +9,6 @@ import com.threerings.msoy.client.DeploymentConfig;
  */
 public class InProgressBadge extends Badge
 {
-    /** The badge level that the member is working towards. */
-    public var nextLevel :int;
-
     /** The progress that has been made on this badge. */
     public var progress :Number;
 
@@ -23,14 +20,13 @@ public class InProgressBadge extends Badge
     {
         return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR +
             uint(badgeCode).toString(16) + "_" +
-            (nextLevel > 0 ? (nextLevel -1) + "f" : nextlevel + "e") + BADGE_IMAGE_TYPE;
+            (level > 0 ? (level -1) + "f" : level + "e") + BADGE_IMAGE_TYPE;
     }
 
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
-        nextLevel = ins.readInt();
         progress = ins.readFloat();
         coinReward = ins.readInt();
     }
@@ -39,7 +35,6 @@ public class InProgressBadge extends Badge
     override public function writeObject (out :ObjectOutputStream) :void
     {
         super.writeObject(out);
-        out.writeInt(nextLevel);
         out.writeFloat(progress);
         out.writeInt(coinReward);
     }

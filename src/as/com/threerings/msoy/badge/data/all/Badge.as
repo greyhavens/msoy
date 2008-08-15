@@ -5,11 +5,14 @@ import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
 import com.threerings.presents.dobj.DSet_Entry;
 
-public class Badge extends SimpleStreamableObject
+public /* abstract */ class Badge extends SimpleStreamableObject
     implements DSet_Entry
 {
     /** The code that uniquely identifies this badge type. */
     public var badgeCode :int;
+
+    /** The level that pertains to this Badge object. */
+    public var level :int;
 
     // from DSet_Entry
     public function getKey () :Object
@@ -38,6 +41,7 @@ public class Badge extends SimpleStreamableObject
     {
         super.readObject(ins);
         badgeCode = ins.readInt();
+        level = ins.readInt();
     }
 
     // from interface Streamable
@@ -45,6 +49,7 @@ public class Badge extends SimpleStreamableObject
     {
         super.writeObject(out);
         out.writeInt(badgeCode);
+        out.writeInt(level);
     }
 
     protected static const BADGE_IMAGE_DIR :String = "badge/";
