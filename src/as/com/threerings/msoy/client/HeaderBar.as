@@ -237,21 +237,6 @@ public class HeaderBar extends HBox
         addChild(_owner);
         _extras.push(_owner);
 
-        _fullVersion = new HBox();
-        _fullVersion.styleName = "headerBox";
-        _fullVersion.percentHeight = 100;
-        controlBox.addChild(_fullVersion);
-        _fullVersionLink = new CommandLinkButton(Msgs.GENERAL.get("b.full_version"),
-            MsoyController.VIEW_FULL_VERSION);
-        _fullVersionLink.styleName = "headerLink";
-        _fullVersion.addChild(_fullVersionLink);
-        var arrowImage :DisplayObject = new ARROW_CORNER() as DisplayObject;
-        var arrowWrapper :FlexWrapper = new FlexWrapper(arrowImage);
-        arrowWrapper.height = arrowImage.height + (HEIGHT - arrowImage.height) / 2;
-        arrowWrapper.width = arrowImage.width + 3;
-        _fullVersion.addChild(arrowWrapper);
-        _extras.push(_fullVersion);
-
         _closeBox = new HBox();
         _closeBox.styleName = "headerCloseBox";
         addChild(_closeBox);
@@ -265,13 +250,11 @@ public class HeaderBar extends HBox
         closeBtn.styleName = "closeButton";
         _closeBox.addChild(closeBtn);
         FlexUtil.setVisible(_closeBox, false) // start out hidden
-        FlexUtil.setVisible(_fullVersion, false);
     }
 
     protected function handleEmbeddedKnown (event :ValueEvent) :void
     {
         const embedded :Boolean = event.value as Boolean;
-        setCompVisible(_fullVersion, embedded);
         setCompVisible(_closeBox, !embedded);
     }
 
@@ -281,9 +264,6 @@ public class HeaderBar extends HBox
     }
 
     private static const log :Log = Log.getLog(HeaderBar);
-
-    [Embed(source="../../../../../../rsrc/media/arrow_corner.png")]
-    protected static const ARROW_CORNER :Class;
 
     protected static const WHIRLED_LOGO_WIDTH :int = 124;
 
@@ -296,9 +276,6 @@ public class HeaderBar extends HBox
     protected var _instructionsLink :CommandLinkButton;
 
     protected var _commentLink :CommandLinkButton;
-
-    protected var _fullVersionLink :CommandLinkButton;
-    protected var _fullVersion :HBox;
 
     protected var _visibles :Dictionary = new Dictionary(true);
 
