@@ -172,7 +172,7 @@ public class LandingPage extends Page
      */
     protected void redirectToStoryRooms ()
     {
-        Link.go(Pages.WORLD, "s1"); // TODO: replace with the actual id
+        Link.go(Pages.WORLD, "s57218");
     }
 
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
