@@ -27,6 +27,7 @@ public class InProgressBadge extends Badge
 
         this.nextLevel = nextLevel;
         this.progress = progress;
+        this.coinReward = coinReward;
     }
 
     @Override // from Badge

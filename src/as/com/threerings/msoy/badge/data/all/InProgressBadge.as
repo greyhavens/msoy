@@ -15,6 +15,9 @@ public class InProgressBadge extends Badge
     /** The progress that has been made on this badge. */
     public var progress :Number;
 
+    /** The reward the player will receive for completing the current level. */
+    public var coinRewards :int;
+
     // from Badge
     override public function get imageUrl () :String
     {
@@ -29,6 +32,7 @@ public class InProgressBadge extends Badge
         super.readObject(ins);
         nextLevel = ins.readInt();
         progress = ins.readFloat();
+        coinReward = ins.readInt();
     }
 
     // from interface Streamable
@@ -37,6 +41,7 @@ public class InProgressBadge extends Badge
         super.writeObject(out);
         out.writeInt(nextLevel);
         out.writeFloat(progress);
+        out.writeInt(coinReward);
     }
 }
 
