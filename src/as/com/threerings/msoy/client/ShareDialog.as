@@ -9,7 +9,6 @@ import flash.events.MouseEvent;
 import mx.events.FlexEvent;
 
 import mx.containers.Accordion;
-import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.containers.TitleWindow;
@@ -21,7 +20,6 @@ import mx.controls.TextInput;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
-import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.ui.CopyableText;
@@ -55,6 +53,11 @@ public class ShareDialog extends FloatingPanel
         //setButtonWidth(0); // free-size
         open(false);
     }
+
+    //
+    // TODO: Everything below this line is a train wreck
+    //       MXML?
+    //
 
     public function getEmbedCode (size :int) :String
     {
@@ -159,12 +162,16 @@ public class ShareDialog extends FloatingPanel
         return box;
     }
 
-    protected function createSizeButton (code :TextInput, size :int) :RadioButton
+    protected function createSizeControl (code :TextInput, size :int) :VBox
     {
+        var box :VBox = new VBox();
+        box.setStyle("horizontalAlign", "center");
+        box.setStyle("verticalGap", 0);
+        box.percentWidth = 100;
+
         var button :RadioButton = new RadioButton();
         button.groupName = "embedSize";
         //button.styleName = "embedSize" + size;
-        button.label = Msgs.GENERAL.get("l.embed_size" + size);
         button.labelPlacement = "top";
 
         button.addEventListener(FlexEvent.VALUE_COMMIT, function (... ignored) :void {
@@ -173,7 +180,25 @@ public class ShareDialog extends FloatingPanel
             }
         });
 
-        return button;
+        var label :Label = FlexUtil.createLabel(Msgs.GENERAL.get("l.embed_size" + size));
+        label.setStyle("fontWeight", "bold");
+        box.addChild(label);
+
+        box.addChild(button);
+
+        label = FlexUtil.createLabel(Msgs.GENERAL.get("l.embed_dimensions", EMBED_SIZES[size]));
+        label.setStyle("color", "gray");
+        box.addChild(label);
+
+        box.addEventListener(MouseEvent.CLICK, function (... ignored) :void {
+            button.selected = true;
+        });
+
+        if (size == DEFAULT_SIZE) {
+            button.selected = true;
+        }
+
+        return box;
     }
 
     protected function createEmbedBox () :VBox
@@ -184,26 +209,25 @@ public class ShareDialog extends FloatingPanel
 
         var code :TextInput = new TextInput();
 
-        var grid :Grid = new Grid();
-        var initialSize :RadioButton = createSizeButton(code, 2);
-        grid.percentWidth = 100;
-        //GridUtil.addRow(grid, "small", "medium", "large");
+        var checks :HBox = new HBox();
+        checks.percentWidth = 100;
 
         // TODO: review once we figure some shit out
         // the small scenes cannot host non-rooms, at least for now
         const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
         if (sceneAndGame[0] != 0) {
-            GridUtil.addRow(grid,
-                createSizeButton(code, 0), createSizeButton(code, 1), initialSize);
+            for (var i:int=0; i<EMBED_SIZES.length; ++i) {
+                checks.addChild(createSizeControl(code, i));
+            }
 
         } else {
-            // games may only be in the large size, for now
-            GridUtil.addRow(grid, initialSize);
+            // Games don't have all the options
+            for (var j:int=2; j<EMBED_SIZES.length; ++j) {
+                checks.addChild(createSizeControl(code, j));
+            }
         }
 
-        initialSize.selected = true;
-
-        box.addChild(grid);
+        box.addChild(checks);
 
         var info :Label = FlexUtil.createLabel(Msgs.GENERAL.get("l.embed_instruction"));
         info.width = 300;
@@ -216,8 +240,11 @@ public class ShareDialog extends FloatingPanel
     }
 
     protected static const EMBED_SIZES :Array = [
-        [350, 200], [400, 415], ["100%", 575]
+        ["350", "200"], ["400", "415"], ["700", "575"], ["100%", "575"]
     ];
+
+    // Default to full 100% size
+    protected static const DEFAULT_SIZE :int = 3;
 
     protected var _memObj :MemberObject;
 }
