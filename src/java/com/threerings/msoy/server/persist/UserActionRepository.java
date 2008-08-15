@@ -11,6 +11,7 @@ import java.util.Set;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -19,6 +20,7 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.util.IntIntMap;
+
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -49,15 +51,16 @@ public class UserActionRepository extends DepotRepository
         record.data = info.misc;
         insert(record);
     }
-    
+
     /**
-     * Retrieves the log records for the specified member ID.  Since {@link #assessHumanity(int, int, int)}
-     * deletes all of these records for a member, this will only return the records since the last time
-     * that method was called.
-     * 
+     * Retrieves the log records for the specified member ID.  Since {@link #assessHumanity(int,
+     * int, int)} deletes all of these records for a member, this will only return the records
+     * since the last time that method was called.
+     *
      * @param memberId ID of the member to retrieve records for.
      * @return Collection of action log records for that member.
-     * @throws PersistenceException An error occurred while retrieving the logs from persistent storage.
+     * @throws PersistenceException An error occurred while retrieving the logs from persistent
+     * storage.
      */
     public Collection<MemberActionLogRecord> getLogRecords (final int memberId)
         throws PersistenceException
@@ -69,7 +72,8 @@ public class UserActionRepository extends DepotRepository
     /**
      * Assess this member's humanity based on actions taken between the last assessment and now.
      */
-    public int assessHumanity (final int memberId, final int currentHumanity, final int secsSinceLast)
+    public int assessHumanity (final int memberId, final int currentHumanity,
+                               final int secsSinceLast)
         throws PersistenceException
     {
         // load up all of their actions since our last humanity assessment
@@ -112,13 +116,14 @@ public class UserActionRepository extends DepotRepository
 
         // clear their log tables -- no cache invalidation needed because these records do not
         // define a primary key at all
-        deleteAll(MemberActionLogRecord.class, new Where(MemberActionLogRecord.MEMBER_ID_C, memberId), null);
+        deleteAll(MemberActionLogRecord.class,
+                  new Where(MemberActionLogRecord.MEMBER_ID_C, memberId), null);
 
         // finally compute a new humanity assessment for this member (TODO: load up action summary
         // counts, pass that data in as well)
         return helper.computeNewHumanity(memberId, currentHumanity, secsSinceLast);
     }
-    
+
     @Override // from DepotRepository
     protected void getManagedRecords (final Set<Class<? extends PersistentRecord>> classes)
     {
