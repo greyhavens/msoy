@@ -10,19 +10,27 @@ import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.samskivert.io.PersistenceException;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.MemberMoney;
 import com.threerings.msoy.money.server.MoneyConfiguration;
 import com.threerings.msoy.money.server.MoneyHistory;
 import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyResult;
 import com.threerings.msoy.money.server.MoneyType;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 import com.threerings.msoy.money.server.NotSecuredException;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
+import com.threerings.msoy.money.server.persist.RepositoryException;
 import com.threerings.msoy.money.server.persist.StaleDataException;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.UserActionRepository;
 
 /**
  * Default implementation of the money service.
@@ -36,31 +44,42 @@ public class MoneyLogicImpl
     implements MoneyLogic
 {
     @Inject
-    public MoneyLogicImpl(final MoneyRepository repo, final SecuredPricesCache securedPricesCache)
+    public MoneyLogicImpl(final MoneyRepository repo, final SecuredPricesCache securedPricesCache, 
+        final MoneyHistoryExpirer expirer, final UserActionRepository userActionRepo, final MsoyEventLogger eventLog)
     {
         this._repo = repo;
         this._securedPricesCache = securedPricesCache;
+        this._userActionRepo = userActionRepo;
+        this._eventLog = eventLog;
+        this._expirer = expirer;
     }
     
     @Retry(exception=StaleDataException.class)
-    public void awardCoins (final int memberId, final int creatorId, final int affiliateId, final int amount)
+    public MoneyResult awardCoins (final int memberId, final int creatorId, final int affiliateId, 
+        final ItemIdent item, final int amount, final String description, final UserAction userAction)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot award coins to guests.");
-        Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Cannot award coins to guests.");
         Preconditions.checkArgument(amount > 0, "amount is invalid: %d", amount);
+        Preconditions.checkArgument(item == null || item.itemId != 0 || item.type != 0, 
+            "item is invalid: %s", (item == null ? null : item.toString()));
         
         MemberAccountRecord account = _repo.getAccountById(memberId);
         if (account == null) {
             account = new MemberAccountRecord(memberId);
         }
-        final MemberAccountHistoryRecord history = account.awardCoins(amount);
+        final MemberAccountHistoryRecord history = account.awardCoins(amount, item, description);
         _repo.saveAccount(account);
         _repo.addHistory(history);
+        
         // TODO: creator and affiliate
+        
+        logUserAction(memberId, UserActionDetails.INVALID_ID, userAction, item, description);
+        
+        return new MoneyResult(account.getMemberMoney(), null, null, history.createMoneyHistory(), null, null);
     }
 
     @Retry(exception=StaleDataException.class)
-    public void buyBars (final int memberId, final int numBars)
+    public MoneyResult buyBars (final int memberId, final int numBars)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy bars.");
         Preconditions.checkArgument(numBars > 0, "numBars is invalid: %d", numBars);
@@ -72,20 +91,24 @@ public class MoneyLogicImpl
         final MemberAccountHistoryRecord history = account.buyBars(numBars);
         _repo.saveAccount(account);
         _repo.addHistory(history);
+        
+        logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS, null, history.getDescription());
+        
+        return new MoneyResult(account.getMemberMoney(), null, null, history.createMoneyHistory(), null, null);
     }
 
     @Retry(exception=StaleDataException.class)
-    public void buyItemWithBars (final int memberId, final ItemIdent item)
-    throws NotEnoughMoneyException, NotSecuredException
-    {
-        buyItem(memberId, item, MoneyType.BARS);
-    }
-
-    @Retry(exception=StaleDataException.class)
-    public void buyItemWithCoins (final int memberId, final ItemIdent item)
+    public MoneyResult buyItemWithBars (final int memberId, final ItemIdent item, final boolean support)
         throws NotEnoughMoneyException, NotSecuredException
     {
-        buyItem(memberId, item, MoneyType.COINS);
+        return buyItem(memberId, item, MoneyType.BARS, support);
+    }
+
+    @Retry(exception=StaleDataException.class)
+    public MoneyResult buyItemWithCoins (final int memberId, final ItemIdent item, final boolean support)
+        throws NotEnoughMoneyException, NotSecuredException
+    {
+        return buyItem(memberId, item, MoneyType.COINS, support);
     }
 
     public void deductBling (final int memberId, final double amount)
@@ -171,7 +194,13 @@ public class MoneyLogicImpl
 
     }
     
-    private void buyItem (final int memberId, final ItemIdent item, final MoneyType purchaseType)
+    public void init ()
+    {
+        _expirer.start();
+    }
+    
+    private MoneyResult buyItem (final int memberId, final ItemIdent item, final MoneyType purchaseType,
+        final boolean support)
         throws NotEnoughMoneyException, NotSecuredException
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy items.");
@@ -185,42 +214,94 @@ public class MoneyLogicImpl
         if (prices == null) {
             throw new NotSecuredException(memberId, item);
         }
-        final int amount = (purchaseType == MoneyType.BARS ? prices.getBars() : prices.getCoins());
+        int amount = (purchaseType == MoneyType.BARS ? prices.getBars() : prices.getCoins());
         
-        // Load up the accounts (member, creator, and affiliate).
+        // If the creator is buying their own item, don't give them a payback, and deduct the amount
+        // they would have received.
+        boolean payCreator = true;
+        if (memberId == prices.getCreatorId()) {
+            amount -= (int)(0.3 * amount);
+            payCreator = false;
+        }
+        
+        // Get buyer account and make sure they can afford the item.
         final MemberAccountRecord account = _repo.getAccountById(memberId);
-        if (account == null || !account.canAfford(amount, purchaseType)) {
+        if (!support && (account == null || !account.canAfford(amount, purchaseType))) {
             final int available = (account == null ? 0 : (purchaseType == MoneyType.BARS ? account.getBars() : 
                 account.getCoins()));
             throw new NotEnoughMoneyException(available, amount, purchaseType, memberId);
         }
-        MemberAccountRecord creator = _repo.getAccountById(prices.getCreatorId());
-        if (creator == null) {
-            creator = new MemberAccountRecord(prices.getCreatorId());
-        }
-        MemberAccountRecord affiliate = null;
-        if (prices.getAffiliateId() != 0) {
-            affiliate = _repo.getAccountById(prices.getAffiliateId());
-            if (affiliate == null) {
-                affiliate = new MemberAccountRecord(prices.getAffiliateId());
+        
+        // Get creator.
+        MemberAccountRecord creator;
+        if (memberId == prices.getCreatorId()) {
+            creator = account;
+        } else {
+            creator = _repo.getAccountById(prices.getCreatorId());
+            if (creator == null) {
+                creator = new MemberAccountRecord(prices.getCreatorId());
             }
         }
+        
+        // Update the member account
+        final MemberAccountHistoryRecord history = account.buyItem(amount, purchaseType, prices.getDescription(), item, support); 
+        _repo.addHistory(history);
+        _repo.saveAccount(account);
+        UserActionDetails info = logUserAction(memberId, UserActionDetails.INVALID_ID, 
+            UserAction.BOUGHT_ITEM, item, prices.getDescription());
+        logInPanopticon(info, purchaseType, history.getSignedAmount(), account);
+        
+        // Update the creator account, if they get a payment.
+        MemberAccountHistoryRecord creatorHistory = history;
+        if (payCreator) {
+            creatorHistory = creator.creatorPayout((int)history.getAmount(), prices.getListedType(), "Item purchased: " + 
+                prices.getDescription(), item, 0.3);
+            _repo.addHistory(creatorHistory);
+            _repo.saveAccount(creator);
+            info = logUserAction(prices.getCreatorId(), memberId, UserAction.RECEIVED_PAYOUT, item, prices.getDescription());
+            logInPanopticon(info, purchaseType, history.getSignedAmount(), account);
+        }
+        
+        // TODO: update affiliate with some amount of bling.
         
         // The item no longer needs to be in the cache.
         _securedPricesCache.removeSecuredPrice(memberId, item);
         
-        // Update and save the accounts, and add history records for the changes.
-        _repo.addHistory(account.buyItem(amount, purchaseType, prices.getDescription(), item));
-        _repo.addHistory(creator.creatorPayout(amount, prices.getListedType(), "Item purchased: " + 
-            prices.getDescription(), item));
-        // TODO: update affiliate with some amount of bling.
-        _repo.saveAccount(account);
-        _repo.saveAccount(creator);
-        if (affiliate != null) {
-            _repo.saveAccount(affiliate);
+        return new MoneyResult(account.getMemberMoney(), payCreator ? creator.getMemberMoney() : null, null,
+            history.createMoneyHistory(), payCreator ? creatorHistory.createMoneyHistory() : null, null);
+    }
+    
+    private void logInPanopticon (final UserActionDetails info, final MoneyType type, final double delta, 
+        final MemberAccountRecord account)
+    {
+        if (type == MoneyType.COINS) {
+            _eventLog.flowTransaction(info, (int)delta, account.getCoins());
+        } else if (type == MoneyType.BARS) {
+            // TODO
+        } else {
+            // TODO: bling
         }
     }
     
+    private UserActionDetails logUserAction (final int memberId, final int otherMemberId, final UserAction userAction, 
+        final ItemIdent item, final String description)
+    {
+        try {
+            final UserActionDetails details = item == null ?
+                new UserActionDetails(memberId, userAction, otherMemberId, Item.NOT_A_TYPE, 
+                    UserActionDetails.INVALID_ID, description) :
+                new UserActionDetails(memberId, userAction, otherMemberId, item.type, 
+                    item.itemId, description);
+            _userActionRepo.logUserAction(details);
+            return details;
+        } catch (final PersistenceException pe) {
+            throw new RepositoryException(pe);
+        }
+    }
+    
+    private final MoneyHistoryExpirer _expirer;
+    private final MsoyEventLogger _eventLog;
+    private final UserActionRepository _userActionRepo;
     private final MoneyRepository _repo;
     private final SecuredPricesCache _securedPricesCache;
 }

@@ -11,14 +11,14 @@ import com.threerings.msoy.web.data.ServiceException;
 public class CostUpdatedException extends ServiceException
 {
     /** The error message associated with this exception. */
-    public static final String E_COST_INCREASED = "e.cost_increased";
+    public static final String E_COST_UPDATED = "e.cost_updated";
 
     /**
      * Create a CostUpdatedException.
      */
-    public CostUpdatedException (int flowCost, int goldCost)
+    public CostUpdatedException (final int flowCost, final int goldCost)
     {
-        super(E_COST_INCREASED);
+        super(E_COST_UPDATED);
         _flowCost = flowCost;
         _goldCost = goldCost;
     }

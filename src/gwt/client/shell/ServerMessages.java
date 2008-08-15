@@ -35,7 +35,8 @@ public interface ServerMessages extends ConstantsWithLookup
     String insufficient_flow ();
     String insufficient_gold ();
     String list_super_item ();
-
+    String cost_updated ();
+    
     String no_such_project ();
     String project_name_exists ();
 

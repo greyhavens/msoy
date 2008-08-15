@@ -3,17 +3,31 @@
 
 package com.threerings.msoy.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.security.Security;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.StringUtil;
-
+import com.threerings.admin.server.AdminProvider;
+import com.threerings.admin.server.ConfigRegistry;
+import com.threerings.bureau.server.BureauAuthenticator;
+import com.threerings.bureau.server.BureauRegistry;
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.bureau.data.BureauLauncherCodes;
+import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
+import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
+import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
+import com.threerings.msoy.bureau.server.BureauLauncherProvider;
+import com.threerings.msoy.bureau.server.BureauLauncherSender;
+import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyModule;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
@@ -22,27 +36,9 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
-import com.threerings.bureau.server.BureauRegistry;
-import com.threerings.bureau.server.BureauAuthenticator;
-
-import com.threerings.admin.server.AdminProvider;
-import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.whirled.server.WhirledServer;
-
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.server.DictionaryManager;
-
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.bureau.data.BureauLauncherCodes;
-import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
-import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
-import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
-import com.threerings.msoy.bureau.server.BureauLauncherProvider;
-import com.threerings.msoy.bureau.server.BureauLauncherSender;
-
-import com.threerings.msoy.data.StatType;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the set of services that are shared between the Game and World servers.
@@ -58,7 +54,7 @@ public abstract class MsoyBaseServer extends WhirledServer
             try {
                 _conprov = ServerConfig.createConnectionProvider();
                 _cacher = ServerConfig.createCacheAdapter();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 addError(e);
             }
             // depot dependencies
@@ -67,6 +63,7 @@ public abstract class MsoyBaseServer extends WhirledServer
             // presents dependencies
             bind(ReportManager.class).to(QuietReportManager.class);
             // msoy dependencies
+            install(new MoneyModule());
         }
 
         protected ConnectionProvider _conprov;
@@ -90,7 +87,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         _omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
         // create and set up our configuration registry and admin service
-        ConfigRegistry confReg = createConfigRegistry();
+        final ConfigRegistry confReg = createConfigRegistry();
         AdminProvider.init(_invmgr, confReg);
 
         // initialize the bureau registry (subclasses will enable specific bureau types)
@@ -99,6 +96,8 @@ public abstract class MsoyBaseServer extends WhirledServer
         // initialize our dictionary services
         _dictMan.init("data/dictionary");
 
+        _moneyLogic.init();
+        
         // now initialize our runtime configuration, postponing the remaining server initialization
         // until our configuration objects are available
         RuntimeConfig.init(_omgr, confReg);
@@ -106,7 +105,7 @@ public abstract class MsoyBaseServer extends WhirledServer
             public void run () {
                 try {
                     finishInit(injector);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     log.warning("Server initialization failed.", e);
                     System.exit(-1);
                 }
@@ -139,21 +138,21 @@ public abstract class MsoyBaseServer extends WhirledServer
     }
 
     // from BureauLauncherProvider
-    public void launcherInitialized (ClientObject launcher)
+    public void launcherInitialized (final ClientObject launcher)
     {
         // this launcher is now available to take sender requests
         log.info("Launcher initialized", "client", launcher);
         _launchers.put(launcher.getOid(), launcher);
         launcher.addListener(new ObjectDeathListener () {
-            public void objectDestroyed (ObjectDestroyedEvent event) {
+            public void objectDestroyed (final ObjectDestroyedEvent event) {
                 launcherDestroyed(event.getTargetOid());
             }
         });
     }
 
     // from BureauLauncherProvider
-    public void getGameServerRegistryOid (ClientObject caller,
-                                          InvocationService.ResultListener arg1)
+    public void getGameServerRegistryOid (final ClientObject caller,
+                                          final InvocationService.ResultListener arg1)
         throws InvocationException
     {
         arg1.requestProcessed(0);
@@ -163,7 +162,7 @@ public abstract class MsoyBaseServer extends WhirledServer
      * Called internally when a launcher connection is terminated. The specific launcher may no
      * longer be used to fulfill bureau requests.
      */
-    protected void launcherDestroyed (int oid)
+    protected void launcherDestroyed (final int oid)
     {
         log.info("Launcher destroyed", "oid", oid);
         _launchers.remove(oid);
@@ -174,7 +173,7 @@ public abstract class MsoyBaseServer extends WhirledServer
      */
     protected void shutdownLaunchers ()
     {
-        for (ClientObject launcher : _launchers.values()) {
+        for (final ClientObject launcher : _launchers.values()) {
             log.info("Shutting down launcher", "launcher", launcher);
             BureauLauncherSender.shutdownLauncher(launcher);
         }
@@ -195,7 +194,7 @@ public abstract class MsoyBaseServer extends WhirledServer
     /**
      * Called once our runtime configuration information is loaded and ready.
      */
-    protected void finishInit (Injector injector)
+    protected void finishInit (final Injector injector)
         throws Exception
     {
         // prepare for bureau launcher connections
@@ -210,8 +209,8 @@ public abstract class MsoyBaseServer extends WhirledServer
         // TODO: select the one with the lowest current load. this should involve some measure
         // of the actual machine load since some bureaus may have more game instances than others
         // and some instances may produce more load than others.
-        int size = _launchers.size();
-        ClientObject[] launchers = new ClientObject[size];
+        final int size = _launchers.size();
+        final ClientObject[] launchers = new ClientObject[size];
         _launchers.values().toArray(launchers);
         return launchers[(new java.util.Random()).nextInt(size)];
     }
@@ -231,7 +230,7 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** Disables state of the server report logging. */
     protected static class QuietReportManager extends ReportManager
     {
-        @Override protected void logReport (String report) {
+        @Override protected void logReport (final String report) {
             // TODO: nix this and publish this info via JMX
         }
     }
@@ -240,9 +239,9 @@ public abstract class MsoyBaseServer extends WhirledServer
         implements BureauRegistry.CommandGenerator
     {
         public String[] createCommand (
-            String bureauId,
-            String token) {
-            String windowToken = StringUtil.md5hex(ServerConfig.windowSharedSecret);
+            final String bureauId,
+            final String token) {
+            final String windowToken = StringUtil.md5hex(ServerConfig.windowSharedSecret);
             return new String[] {
                 ServerConfig.serverRoot + "/bin/runthaneclient", "msoy", bureauId, token, 
                 "localhost", String.valueOf(getListenPorts()[0]), windowToken};
@@ -252,8 +251,8 @@ public abstract class MsoyBaseServer extends WhirledServer
     protected class RemoteBureauLauncher
         implements BureauRegistry.Launcher
     {
-        public void launchBureau (String bureauId, String token) {
-            ClientObject launcher = selectLauncher();
+        public void launchBureau (final String bureauId, final String token) {
+            final ClientObject launcher = selectLauncher();
             BureauLauncherSender.launchThane(launcher, bureauId, token);
         }
     }
@@ -270,6 +269,9 @@ public abstract class MsoyBaseServer extends WhirledServer
     /** Handles dictionary services for games. */
     @Inject protected DictionaryManager _dictMan;
 
+    /** Handles services involving virtual money in whirled. */
+    @Inject protected MoneyLogic _moneyLogic;
+    
     /** Currently logged in bureau launchers. */
     protected HashIntMap<ClientObject> _launchers = new HashIntMap<ClientObject>();
 

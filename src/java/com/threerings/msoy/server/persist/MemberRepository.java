@@ -3,13 +3,14 @@
 
 package com.threerings.msoy.server.persist;
 
+import static com.threerings.msoy.Log.log;
+
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -19,28 +20,20 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DatabaseLiaison;
-import com.samskivert.jdbc.JDBCUtil;
-import com.samskivert.jdbc.depot.EntityMigration;
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntListUtil;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
-import com.samskivert.util.IntSet;
-import com.samskivert.util.StringUtil;
-
 import com.samskivert.jdbc.DuplicateKeyException;
+import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
-import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
-import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.SimpleCacheKey;
+import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
+import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
@@ -50,21 +43,27 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
-import com.samskivert.jdbc.depot.operator.Conditionals.*;
-import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
-
-import com.threerings.presents.annotation.BlockingThread;
-
-import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.web.data.MemberCard;
-
+import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
+import com.samskivert.jdbc.depot.operator.Conditionals.FullTextMatch;
+import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThan;
+import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThanEquals;
+import com.samskivert.jdbc.depot.operator.Conditionals.In;
+import com.samskivert.jdbc.depot.operator.Logic.And;
+import com.samskivert.jdbc.depot.operator.Logic.Or;
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntListUtil;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
+import com.samskivert.util.IntSet;
+import com.samskivert.util.StringUtil;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.presents.annotation.BlockingThread;
 
 /**
  * Manages persistent information stored on a per-member basis.
@@ -75,19 +74,20 @@ public class MemberRepository extends DepotRepository
     /** The cache identifier for the friends-of-a-member collection query. */
     public static final String FRIENDS_CACHE_ID = "FriendsCache";
 
-    @Inject public MemberRepository (PersistenceContext ctx)
+    @Inject public MemberRepository (final PersistenceContext ctx)
     {
         super(ctx);
 
         // add a cache invalidator that listens to single FriendRecord updates
         _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
-            public void entryInvalidated (CacheKey key, FriendRecord friend) {
+            public void entryInvalidated (final CacheKey key, final FriendRecord friend) {
                 _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviterId);
                 _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviteeId);
             }
-            public void entryCached (CacheKey key, FriendRecord newEntry, FriendRecord oldEntry) {
+            public void entryCached (final CacheKey key, final FriendRecord newEntry, final FriendRecord oldEntry) {
                 // nothing to do here
             }
+            @Override
             public String toString () {
                 return "FriendRecord -> FriendsCache";
             }
@@ -95,11 +95,12 @@ public class MemberRepository extends DepotRepository
 
         // add a cache invalidator that listens to MemberRecord updates
         _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
-            public void entryInvalidated (CacheKey key, MemberRecord member) {
+            public void entryInvalidated (final CacheKey key, final MemberRecord member) {
                 _ctx.cacheInvalidate(MemberNameRecord.getKey(member.memberId));
             }
-            public void entryCached (CacheKey key, MemberRecord newEntry, MemberRecord oldEntry) {
+            public void entryCached (final CacheKey key, final MemberRecord newEntry, final MemberRecord oldEntry) {
             }
+            @Override
             public String toString () {
                 return "MemberRecord -> MemberNameRecord";
             }
@@ -107,12 +108,13 @@ public class MemberRepository extends DepotRepository
 
         // TEMP added 2008.3.15
         _ctx.registerMigration(MemberRecord.class, new EntityMigration(15) {
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                String tName = liaison.tableSQL("MemberRecord");
-                String cName = liaison.columnSQL(MemberRecord.EXPERIENCES);
-                Statement stmt = conn.createStatement();
+            @Override
+            public int invoke (final Connection conn, final DatabaseLiaison liaison) throws SQLException {
+                final String tName = liaison.tableSQL("MemberRecord");
+                final String cName = liaison.columnSQL(MemberRecord.EXPERIENCES);
+                final Statement stmt = conn.createStatement();
                 try {
-                    int rows = stmt.executeUpdate(
+                    final int rows = stmt.executeUpdate(
                         "UPDATE " + tName + " set " + cName + " = 0");
                     log.info("Cleared experiences from " + rows + " members.");
                     return rows;
@@ -120,6 +122,7 @@ public class MemberRepository extends DepotRepository
                     JDBCUtil.close(stmt);
                 }
             }
+            @Override
             public boolean runBeforeDefault () {
                 return false;
             }
@@ -128,13 +131,14 @@ public class MemberRepository extends DepotRepository
 
         // TEMP added 2008.2.13
         _ctx.registerMigration(MemberRecord.class, new EntityMigration(12) {
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                String tName = liaison.tableSQL("MemberRecord");
-                String cName = liaison.columnSQL("accountName");
+            @Override
+            public int invoke (final Connection conn, final DatabaseLiaison liaison) throws SQLException {
+                final String tName = liaison.tableSQL("MemberRecord");
+                final String cName = liaison.columnSQL("accountName");
 
-                Statement stmt = conn.createStatement();
+                final Statement stmt = conn.createStatement();
                 try {
-                    int rows = stmt.executeUpdate(
+                    final int rows = stmt.executeUpdate(
                         "UPDATE " + tName + " set " + cName + " = LOWER(" + cName + ")");
                     log.info("Lowercased " + rows + " accountName rows in MemberRecord");
                     return rows;
@@ -145,13 +149,14 @@ public class MemberRepository extends DepotRepository
         });
 
         _ctx.registerMigration(OptOutRecord.class, new EntityMigration(2) {
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                String tName = liaison.tableSQL("OptOutRecord");
-                String cName = liaison.columnSQL("email");
+            @Override
+            public int invoke (final Connection conn, final DatabaseLiaison liaison) throws SQLException {
+                final String tName = liaison.tableSQL("OptOutRecord");
+                final String cName = liaison.columnSQL("email");
 
-                Statement stmt = conn.createStatement();
+                final Statement stmt = conn.createStatement();
                 try {
-                    int rows = stmt.executeUpdate(
+                    final int rows = stmt.executeUpdate(
                         "UPDATE " + tName + " set " + cName + " = LOWER(" + cName + ")");
                     log.info("Lowercased " + rows + " email rows in OptOutRecord");
                     return rows;
@@ -162,13 +167,14 @@ public class MemberRepository extends DepotRepository
         });
 
         _ctx.registerMigration(MemberRecord.class, new EntityMigration(19) {
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                String tName = liaison.tableSQL("MemberRecord");
-                String cName = liaison.columnSQL("permaName");
+            @Override
+            public int invoke (final Connection conn, final DatabaseLiaison liaison) throws SQLException {
+                final String tName = liaison.tableSQL("MemberRecord");
+                final String cName = liaison.columnSQL("permaName");
 
-                Statement stmt = conn.createStatement();
+                final Statement stmt = conn.createStatement();
                 try {
-                    int rows = stmt.executeUpdate(
+                    final int rows = stmt.executeUpdate(
                         "UPDATE " + tName + " set " + cName + " = LOWER(" + cName + ")");
                     log.info("Lowercased " + rows + " permaName rows in MemberRecord");
                     return rows;
@@ -179,13 +185,14 @@ public class MemberRepository extends DepotRepository
         });
 
         _ctx.registerMigration(MemberRecord.class, new EntityMigration(20) {
-            public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
-                String tName = liaison.tableSQL("MemberRecord");
-                String cName = liaison.columnSQL("permaName");
+            @Override
+            public int invoke (final Connection conn, final DatabaseLiaison liaison) throws SQLException {
+                final String tName = liaison.tableSQL("MemberRecord");
+                final String cName = liaison.columnSQL("permaName");
 
-                Statement stmt = conn.createStatement();
+                final Statement stmt = conn.createStatement();
                 try {
-                    int rows = stmt.executeUpdate(
+                    final int rows = stmt.executeUpdate(
                         "UPDATE " + tName + " set " + cName + " = LOWER(" + cName + ")");
                     log.info("Lowercased " + rows + " permaName rows in MemberRecord");
                     return rows;
@@ -206,18 +213,10 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
-     * Returns the repository used by this repository to manage flow.
-     */
-    public FlowRepository getFlowRepository ()
-    {
-        return _flowRepo;
-    }
-
-    /**
      * Loads up the member record associated with the specified account.  Returns null if no
      * matching record could be found.
      */
-    public MemberRecord loadMember (String accountName)
+    public MemberRecord loadMember (final String accountName)
         throws PersistenceException
     {
         return load(MemberRecord.class,
@@ -228,7 +227,7 @@ public class MemberRepository extends DepotRepository
      * Loads up a member record by id. Returns null if no member exists with the specified id. The
      * record will be fetched from the cache if possible and cached if not.
      */
-    public MemberRecord loadMember (int memberId)
+    public MemberRecord loadMember (final int memberId)
         throws PersistenceException
     {
         return load(MemberRecord.class, memberId);
@@ -237,7 +236,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads the member records with the supplied set of ids.
      */
-    public List<MemberRecord> loadMembers (Set<Integer> memberIds)
+    public List<MemberRecord> loadMembers (final Set<Integer> memberIds)
         throws PersistenceException
     {
         if (memberIds.isEmpty()) {
@@ -262,9 +261,9 @@ public class MemberRepository extends DepotRepository
     public int getActivePopulationCount ()
         throws PersistenceException
     {
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -60); // TODO: unmagick
-        Date when = new Date(cal.getTimeInMillis());
+        final Date when = new Date(cal.getTimeInMillis());
         return load(CountRecord.class, new FromOverride(MemberRecord.class),
                     new Where(new GreaterThan(MemberRecord.LAST_SESSION_C, // TODO: DateExp?
                                               new LiteralExp("'" + when + "'")))).count;
@@ -273,10 +272,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Looks up a member's name by id. Returns null if no member exists with the specified id.
      */
-    public MemberName loadMemberName (int memberId)
+    public MemberName loadMemberName (final int memberId)
         throws PersistenceException
     {
-        MemberNameRecord name = load(MemberNameRecord.class,
+        final MemberNameRecord name = load(MemberNameRecord.class,
                                      new Where(MemberRecord.MEMBER_ID_C, memberId));
         return (name == null) ? null : name.toMemberName();
     }
@@ -285,11 +284,11 @@ public class MemberRepository extends DepotRepository
      * Extracts the set of member id from the supplied collection of records using the supplied
      * <code>getId</code> function and loads up the associated names.
      */
-    public <C> IntMap<MemberName> loadMemberNames (Iterable<C> records, Function<C,Integer> getId)
+    public <C> IntMap<MemberName> loadMemberNames (final Iterable<C> records, final Function<C,Integer> getId)
         throws PersistenceException
     {
-        Set<Integer> memberIds = new ArrayIntSet();
-        for (C record : records) {
+        final Set<Integer> memberIds = new ArrayIntSet();
+        for (final C record : records) {
             memberIds.add(getId.apply(record));
         }
         return loadMemberNames(memberIds);
@@ -301,12 +300,12 @@ public class MemberRepository extends DepotRepository
      * TODO: Implement findAll(Persistent.class, Comparable... keys) or the like,
      *       as per MDB's suggestion, say so we can cache properly.
      */
-    public IntMap<MemberName> loadMemberNames (Set<Integer> memberIds)
+    public IntMap<MemberName> loadMemberNames (final Set<Integer> memberIds)
         throws PersistenceException
     {
-        IntMap<MemberName> names = IntMaps.newHashIntMap();
+        final IntMap<MemberName> names = IntMaps.newHashIntMap();
         if (memberIds.size() > 0) {
-            for (MemberNameRecord name : findAll(
+            for (final MemberNameRecord name : findAll(
                      MemberNameRecord.class,
                      new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)))) {
                 names.put(name.memberId, name.toMemberName());
@@ -318,10 +317,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Looks up a member name and id from by username.
      */
-    public MemberName loadMemberName (String username)
+    public MemberName loadMemberName (final String username)
         throws PersistenceException
     {
-        MemberNameRecord record = load(MemberNameRecord.class,
+        final MemberNameRecord record = load(MemberNameRecord.class,
                 new Where(MemberRecord.ACCOUNT_NAME_C, username));
         return (record == null ? null : record.toMemberName());
     }
@@ -329,10 +328,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads up the card for the specified member. Returns null if no member exists with that id.
      */
-    public MemberCard loadMemberCard (int memberId)
+    public MemberCard loadMemberCard (final int memberId)
         throws PersistenceException
     {
-        MemberCardRecord mcr = load(
+        final MemberCardRecord mcr = load(
             MemberCardRecord.class, new FromOverride(MemberRecord.class),
             new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C),
             new Where(MemberRecord.MEMBER_ID_C, memberId));
@@ -342,7 +341,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads up member's names and profile photos by id.
      */
-    public List<MemberCardRecord> loadMemberCards (Set<Integer> memberIds)
+    public List<MemberCardRecord> loadMemberCards (final Set<Integer> memberIds)
         throws PersistenceException
     {
         if (memberIds.size() == 0) {
@@ -357,7 +356,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns ids for all members who's display name matches the supplied search string.
      */
-    public List<Integer> findMembersByDisplayName (String search, boolean exact, int limit)
+    public List<Integer> findMembersByDisplayName (String search, final boolean exact, final int limit)
         throws PersistenceException
     {
         search = search.toLowerCase();
@@ -368,14 +367,14 @@ public class MemberRepository extends DepotRepository
         } else {
             op = new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search);
         }
-        List<Integer> ids = Lists.newArrayList();
+        final List<Integer> ids = Lists.newArrayList();
 
         // TODO: turn this into a findAllKeys query
 //         for (Key<MemberRecord> key :
 //                  findAllKeys(MemberRecord.class, where, new Limit(0, limit))) {
 //             ids.add((Integer)key.condition.getValues().get(0));
 //         }
-        for (MemberRecord mrec : findAll(MemberRecord.class, new Where(op), new Limit(0, limit))) {
+        for (final MemberRecord mrec : findAll(MemberRecord.class, new Where(op), new Limit(0, limit))) {
             ids.add(mrec.memberId);
         }
 
@@ -385,13 +384,13 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns the members with the highest levels
      */
-    public List<Integer> getLeadingMembers (int limit)
+    public List<Integer> getLeadingMembers (final int limit)
         throws PersistenceException
     {
-        List<Integer> ids = Lists.newArrayList();
-        List<MemberRecord> mrecs = findAll(
+        final List<Integer> ids = Lists.newArrayList();
+        final List<MemberRecord> mrecs = findAll(
             MemberRecord.class, OrderBy.descending(MemberRecord.LEVEL_C), new Limit(0, limit));
-        for (MemberRecord mrec : mrecs) {
+        for (final MemberRecord mrec : mrecs) {
             ids.add(mrec.memberId);
         }
 
@@ -402,7 +401,7 @@ public class MemberRepository extends DepotRepository
      * Loads up the member associated with the supplied session token. Returns null if the session
      * has expired or is not valid.
      */
-    public MemberRecord loadMemberForSession (String sessionToken)
+    public MemberRecord loadMemberForSession (final String sessionToken)
         throws PersistenceException
     {
         SessionRecord session = load(SessionRecord.class, sessionToken);
@@ -419,13 +418,13 @@ public class MemberRepository extends DepotRepository
      * session is reused, its expiration date will be adjusted as if the session was newly created
      * as of now (using the supplied <code>persist</code> setting).
      */
-    public String startOrJoinSession (int memberId, int expireDays)
+    public String startOrJoinSession (final int memberId, final int expireDays)
         throws PersistenceException
     {
         // create a new session record for this member
         SessionRecord nsess = new SessionRecord();
-        Calendar cal = Calendar.getInstance();
-        long now = cal.getTimeInMillis();
+        final Calendar cal = Calendar.getInstance();
+        final long now = cal.getTimeInMillis();
         cal.add(Calendar.DATE, expireDays);
         nsess.expires = new Date(cal.getTimeInMillis());
         nsess.memberId = memberId;
@@ -433,9 +432,9 @@ public class MemberRepository extends DepotRepository
 
         try {
             insert(nsess);
-        } catch (DuplicateKeyException dke) {
+        } catch (final DuplicateKeyException dke) {
             // if that fails with a duplicate key, reuse the old record but adjust its expiration
-            SessionRecord esess = load(
+            final SessionRecord esess = load(
                 SessionRecord.class, new Where(SessionRecord.MEMBER_ID_C, memberId));
             esess.expires = nsess.expires;
             update(esess, SessionRecord.EXPIRES);
@@ -453,15 +452,15 @@ public class MemberRepository extends DepotRepository
      * @return the member associated with the session if it is valid and was refreshed, null if the
      * session has expired.
      */
-    public MemberRecord refreshSession (String token, int expireDays)
+    public MemberRecord refreshSession (final String token, final int expireDays)
         throws PersistenceException
     {
-        SessionRecord sess = load(SessionRecord.class, token);
+        final SessionRecord sess = load(SessionRecord.class, token);
         if (sess == null) {
             return null;
         }
 
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, expireDays);
         sess.expires = new Date(cal.getTimeInMillis());
         update(sess);
@@ -471,7 +470,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Clears out a session to member id mapping. This should be called when a user logs off.
      */
-    public void clearSession (String sessionToken)
+    public void clearSession (final String sessionToken)
         throws PersistenceException
     {
         delete(SessionRecord.class, sessionToken);
@@ -480,10 +479,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Clears out a session to member id mapping.
      */
-    public void clearSession (int memberId)
+    public void clearSession (final int memberId)
         throws PersistenceException
     {
-        SessionRecord record =
+        final SessionRecord record =
             load(SessionRecord.class, new Where(SessionRecord.MEMBER_ID_C, memberId));
         if (record != null) {
             delete(record);
@@ -495,13 +494,13 @@ public class MemberRepository extends DepotRepository
      * process. The {@link MemberRecord#created} field will be filled in by this method if it is
      * not already.
      */
-    public void insertMember (MemberRecord member)
+    public void insertMember (final MemberRecord member)
         throws PersistenceException
     {
         // flatten account name (email address) on insertion
         member.accountName = member.accountName.toLowerCase();
         if (member.created == null) {
-            long now = System.currentTimeMillis();
+            final long now = System.currentTimeMillis();
             member.created = new Date(now);
             member.lastSession = new Timestamp(now);
             member.lastHumanityAssessment = new Timestamp(now);
@@ -513,7 +512,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Configures a member's account name (email address).
      */
-    public void configureAccountName (int memberId, String accountName)
+    public void configureAccountName (final int memberId, final String accountName)
         throws PersistenceException
     {
         updatePartial(MemberRecord.class, memberId,
@@ -523,7 +522,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Configures a member's display name.
      */
-    public void configureDisplayName (int memberId, String name)
+    public void configureDisplayName (final int memberId, final String name)
         throws PersistenceException
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.NAME, name);
@@ -532,7 +531,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Configures a member's permanent name.
      */
-    public void configurePermaName (int memberId, String permaName)
+    public void configurePermaName (final int memberId, final String permaName)
         throws PersistenceException
     {
         // permaName will be a non-null lower-case string
@@ -542,7 +541,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Writes the supplied member's flags to the database.
      */
-    public void storeFlags (MemberRecord mrec)
+    public void storeFlags (final MemberRecord mrec)
         throws PersistenceException
     {
         updatePartial(MemberRecord.class, mrec.memberId, MemberRecord.FLAGS, mrec.flags);
@@ -551,7 +550,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Writes the supplied member's experiences to the database.
      */
-    public void storeExperiences (MemberRecord mrec)
+    public void storeExperiences (final MemberRecord mrec)
         throws PersistenceException
     {
         updatePartial(MemberRecord.class, mrec.memberId, MemberRecord.EXPERIENCES, mrec.experiences);
@@ -560,7 +559,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Configures a member's avatar.
      */
-    public void configureAvatarId (int memberId, int avatarId)
+    public void configureAvatarId (final int memberId, final int avatarId)
         throws PersistenceException
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.AVATAR_ID, avatarId);
@@ -569,7 +568,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Deletes the specified member from the repository.
      */
-    public void deleteMember (MemberRecord member)
+    public void deleteMember (final MemberRecord member)
         throws PersistenceException
     {
         delete(member);
@@ -596,7 +595,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Set the home scene id for the specified memberId.
      */
-    public void setHomeSceneId (int memberId, int homeSceneId)
+    public void setHomeSceneId (final int memberId, final int homeSceneId)
         throws PersistenceException
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.HOME_SCENE_ID, homeSceneId);
@@ -607,11 +606,11 @@ public class MemberRepository extends DepotRepository
      * our member management system. This is triggered by us receiving a member action indicating
      * that the member was deleted.
      */
-    public void disableMember (String accountName, String disabledName)
+    public void disableMember (final String accountName, final String disabledName)
         throws PersistenceException
     {
         // TODO: Cache Invalidation
-        int mods = updatePartial(
+        final int mods = updatePartial(
             MemberRecord.class, new Where(MemberRecord.ACCOUNT_NAME_C, accountName.toLowerCase()),
             null, MemberRecord.ACCOUNT_NAME, disabledName);
         switch (mods) {
@@ -641,15 +640,15 @@ public class MemberRepository extends DepotRepository
      * @param humanityReassessFreq the number of seconds between humanity reassessments or zero if
      * humanity assessment is disabled.
      */
-    public void noteSessionEnded (int memberId, int minutes, int humanityReassessFreq)
+    public void noteSessionEnded (final int memberId, final int minutes, final int humanityReassessFreq)
         throws PersistenceException
     {
-        long now = System.currentTimeMillis();
-        MemberRecord record = loadMember(memberId);
-        Timestamp nowStamp = new Timestamp(now);
+        final long now = System.currentTimeMillis();
+        final MemberRecord record = loadMember(memberId);
+        final Timestamp nowStamp = new Timestamp(now);
 
         // reassess their humanity if the time has come
-        int secsSinceLast = (int)((now - record.lastHumanityAssessment.getTime())/1000);
+        final int secsSinceLast = (int)((now - record.lastHumanityAssessment.getTime())/1000);
         if (humanityReassessFreq > 0 && humanityReassessFreq < secsSinceLast) {
             record.humanity = _flowRepo.assessHumanity(memberId, record.humanity, secsSinceLast);
             record.lastHumanityAssessment = nowStamp;
@@ -673,7 +672,7 @@ public class MemberRepository extends DepotRepository
     public List<NeighborFriendRecord> getNeighborhoodFriends (final int memberId)
         throws PersistenceException
     {
-        SQLOperator joinCondition =
+        final SQLOperator joinCondition =
             new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
                            new Equals(FriendRecord.INVITEE_ID_C, MemberRecord.MEMBER_ID_C)),
                    new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
@@ -694,7 +693,7 @@ public class MemberRepository extends DepotRepository
         if (memberIds.length == 0) {
             return Collections.emptyList();
         }
-        Comparable<?>[] idArr = IntListUtil.box(memberIds);
+        final Comparable<?>[] idArr = IntListUtil.box(memberIds);
         return findAll(
             NeighborFriendRecord.class,
             new FromOverride(MemberRecord.class),
@@ -704,7 +703,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Grants the specified number of invites to the given member.
      */
-    public void grantInvites (int memberId, int number)
+    public void grantInvites (final int memberId, final int number)
         throws PersistenceException
     {
         InviterRecord inviterRec = load(InviterRecord.class, memberId);
@@ -729,7 +728,7 @@ public class MemberRepository extends DepotRepository
      *
      * @return an array containing the member ids of all members that received invites.
      */
-    public int[] grantInvites (int number, Timestamp lastSession)
+    public int[] grantInvites (final int number, final Timestamp lastSession)
         throws PersistenceException
     {
         List<MemberRecord> activeUsers;
@@ -740,8 +739,8 @@ public class MemberRepository extends DepotRepository
             activeUsers = findAll(MemberRecord.class);
         }
 
-        IntSet ids = new ArrayIntSet();
-        for (MemberRecord memRec : activeUsers) {
+        final IntSet ids = new ArrayIntSet();
+        for (final MemberRecord memRec : activeUsers) {
             grantInvites(memRec.memberId, number);
             ids.add(memRec.memberId);
         }
@@ -751,20 +750,20 @@ public class MemberRepository extends DepotRepository
     /**
      * Get the number of invites this member has available to send out.
      */
-    public int getInvitesGranted (int memberId)
+    public int getInvitesGranted (final int memberId)
         throws PersistenceException
     {
-        InviterRecord inviter = load(InviterRecord.class, memberId);
+        final InviterRecord inviter = load(InviterRecord.class, memberId);
         return inviter != null ? inviter.invitesGranted : 0;
     }
 
     /**
      * get the total number of invites that this user has sent
      */
-    public int getInvitesSent (int memberId)
+    public int getInvitesSent (final int memberId)
         throws PersistenceException
     {
-        InviterRecord inviter = load(InviterRecord.class, memberId);
+        final InviterRecord inviter = load(InviterRecord.class, memberId);
         return inviter != null ? inviter.invitesSent : 0;
     }
 
@@ -788,7 +787,7 @@ public class MemberRepository extends DepotRepository
      * Add a new invitation. Also decrements the available invitation count for the inviterId and
      * increments the number of invites sent, iff the inviterId is non-zero.
      */
-    public void addInvite (String inviteeEmail, int inviterId, String inviteId)
+    public void addInvite (final String inviteeEmail, final int inviterId, final String inviteId)
         throws PersistenceException
     {
         insert(new InvitationRecord(inviteeEmail, inviterId, inviteId));
@@ -810,10 +809,10 @@ public class MemberRepository extends DepotRepository
      * Check if the invitation is available for use, or has been claimed already. Returns null if
      * it has already been claimed, an invite record if not.
      */
-    public InvitationRecord inviteAvailable (String inviteId)
+    public InvitationRecord inviteAvailable (final String inviteId)
         throws PersistenceException
     {
-        InvitationRecord rec = load(InvitationRecord.class,
+        final InvitationRecord rec = load(InvitationRecord.class,
                                     new Where(InvitationRecord.INVITE_ID_C, inviteId));
         return (rec == null || rec.inviteeId != 0) ? null : rec;
     }
@@ -821,10 +820,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Update the invitation indicated with the new memberId.
      */
-    public void linkInvite (String inviteId, MemberRecord member)
+    public void linkInvite (final String inviteId, final MemberRecord member)
         throws PersistenceException
     {
-        InvitationRecord invRec = load(InvitationRecord.class, inviteId);
+        final InvitationRecord invRec = load(InvitationRecord.class, inviteId);
         invRec.inviteeId = member.memberId;
         update(invRec, InvitationRecord.INVITEE_ID);
     }
@@ -833,7 +832,7 @@ public class MemberRepository extends DepotRepository
      * Get a list of the invites that this user has already sent out that have not yet been
      * accepted.
      */
-    public List<InvitationRecord> loadPendingInvites (int memberId)
+    public List<InvitationRecord> loadPendingInvites (final int memberId)
         throws PersistenceException
     {
         return findAll(
@@ -845,10 +844,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Return the InvitationRecord that corresponds to the given unique code.
      */
-    public InvitationRecord loadInvite (String inviteId, boolean markViewed)
+    public InvitationRecord loadInvite (final String inviteId, final boolean markViewed)
         throws PersistenceException
     {
-        InvitationRecord invRec = load(
+        final InvitationRecord invRec = load(
             InvitationRecord.class, new Where(InvitationRecord.INVITE_ID_C, inviteId));
         if (invRec != null && invRec.viewed == null) {
             invRec.viewed = new Timestamp((new java.util.Date()).getTime());
@@ -860,7 +859,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Return the InvitationRecord that corresponds to the given inviter
      */
-    public InvitationRecord loadInvite (String inviteeEmail, int inviterId)
+    public InvitationRecord loadInvite (final String inviteeEmail, final int inviterId)
         throws PersistenceException
     {
         // TODO: This does a row scan on email after using ixInviter. Should be OK, but let's check.
@@ -872,7 +871,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Delete the InvitationRecord that corresponds to the given unique code.
      */
-    public void deleteInvite (String inviteId)
+    public void deleteInvite (final String inviteId)
         throws PersistenceException
     {
         delete(InvitationRecord.class, inviteId);
@@ -881,7 +880,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Add an email address to the opt-out list.
      */
-    public void addOptOutEmail (String email)
+    public void addOptOutEmail (final String email)
         throws PersistenceException
     {
         insert(new OptOutRecord(email.toLowerCase()));
@@ -890,7 +889,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns true if the given email address is on the opt-out list
      */
-    public boolean hasOptedOut (String email)
+    public boolean hasOptedOut (final String email)
         throws PersistenceException
     {
         return load(OptOutRecord.class, email.toLowerCase()) != null;
@@ -900,10 +899,10 @@ public class MemberRepository extends DepotRepository
      * Adds the invitee's email address to the opt-out list, and sets this invitation's inviteeId
      * to -1, indicating that it is no longer available, and the invitee chose to opt-out.
      */
-    public void optOutInvite (String inviteId)
+    public void optOutInvite (final String inviteId)
         throws PersistenceException
     {
-        InvitationRecord invRec = loadInvite(inviteId, false);
+        final InvitationRecord invRec = loadInvite(inviteId, false);
         if (invRec != null) {
             invRec.inviteeId = -1;
             update(invRec, InvitationRecord.INVITEE_ID);
@@ -915,7 +914,7 @@ public class MemberRepository extends DepotRepository
      * Loads up a referral record by member record id.
      * Returns null if no record exists for that member.
      */
-    public ReferralRecord loadReferral (int memberId)
+    public ReferralRecord loadReferral (final int memberId)
         throws PersistenceException
     {
         return load(ReferralRecord.class, memberId);
@@ -924,10 +923,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Adds or updates the referral record for a member with the given id.
      */
-    public ReferralRecord setReferral (int memberId, ReferralInfo ref)
+    public ReferralRecord setReferral (final int memberId, final ReferralInfo ref)
         throws PersistenceException
     {
-        ReferralRecord newrec = ReferralRecord.fromInfo(memberId, ref);
+        final ReferralRecord newrec = ReferralRecord.fromInfo(memberId, ref);
         if (loadReferral(memberId) == null) {
             insert(newrec);
         } else {
@@ -940,7 +939,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Sets the reported level for the given member
      */
-    public void setUserLevel (int memberId, int level)
+    public void setUserLevel (final int memberId, final int level)
         throws PersistenceException
     {
         updatePartial(MemberRecord.class, memberId, MemberRecord.LEVEL, level);
@@ -949,20 +948,20 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads the names of the members invited by the specified member.
      */
-    public List<MemberName> loadMembersInvitedBy (int memberId)
+    public List<MemberName> loadMembersInvitedBy (final int memberId)
         throws PersistenceException
     {
-        Join join = new Join(MemberRecord.MEMBER_ID_C,
+        final Join join = new Join(MemberRecord.MEMBER_ID_C,
                              InviterRecord.MEMBER_ID_C).setType(Join.Type.LEFT_OUTER);
-        Where where = new Where(MemberRecord.INVITING_FRIEND_ID_C, memberId);
-        List<MemberName> names = Lists.newArrayList();
-        for (MemberNameRecord name : findAll(MemberNameRecord.class, join, where)) {
+        final Where where = new Where(MemberRecord.INVITING_FRIEND_ID_C, memberId);
+        final List<MemberName> names = Lists.newArrayList();
+        for (final MemberNameRecord name : findAll(MemberNameRecord.class, join, where)) {
             names.add(name.toMemberName());
         }
         return names;
     }
 
-    public List<MemberInviteStatusRecord> getMembersInvitedBy (int memberId)
+    public List<MemberInviteStatusRecord> getMembersInvitedBy (final int memberId)
         throws PersistenceException
     {
         return findAll(MemberInviteStatusRecord.class,
@@ -974,10 +973,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Determine what the friendship status is between one member and another.
      */
-    public boolean getFriendStatus (int firstId, int secondId)
+    public boolean getFriendStatus (final int firstId, final int secondId)
         throws PersistenceException
     {
-        List<FriendRecord> friends = findAll(
+        final List<FriendRecord> friends = findAll(
             FriendRecord.class,
             new Where(new And(new Or(new And(new Equals(FriendRecord.INVITER_ID_C, firstId),
                                              new Equals(FriendRecord.INVITEE_ID_C, secondId)),
@@ -989,14 +988,14 @@ public class MemberRepository extends DepotRepository
     /**
      * Loads the member ids of the specified member's friends.
      */
-    public IntSet loadFriendIds (int memberId)
+    public IntSet loadFriendIds (final int memberId)
         throws PersistenceException
     {
-        IntSet memIds = new ArrayIntSet();
-        SQLExpression condition =
+        final IntSet memIds = new ArrayIntSet();
+        final SQLExpression condition =
             new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
                    new Equals(FriendRecord.INVITEE_ID_C, memberId));
-        for (FriendRecord record : findAll(FriendRecord.class, new Where(condition))) {
+        for (final FriendRecord record : findAll(FriendRecord.class, new Where(condition))) {
             memIds.add(record.inviterId == memberId ? record.inviteeId : record.inviterId);
         }
         return memIds;
@@ -1011,12 +1010,12 @@ public class MemberRepository extends DepotRepository
      *
      * @param limit a limit on the number of friends to load or 0 for all of them.
      */
-    public List<FriendEntry> loadFriends (int memberId, int limit)
+    public List<FriendEntry> loadFriends (final int memberId, final int limit)
         throws PersistenceException
     {
-        List<QueryClause> clauses = Lists.newArrayList();
+        final List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(FriendRecord.class));
-        SQLExpression condition = new And(
+        final SQLExpression condition = new And(
             new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
                            new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITEE_ID_C)),
                    new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
@@ -1027,10 +1026,10 @@ public class MemberRepository extends DepotRepository
             clauses.add(new Limit(0, limit));
         }
         clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION_C));
-        List<MemberCardRecord> records = findAll(MemberCardRecord.class, clauses);
-        List<FriendEntry> list = Lists.newArrayList();
-        for (MemberCardRecord record : records) {
-            MemberCard card = record.toMemberCard();
+        final List<MemberCardRecord> records = findAll(MemberCardRecord.class, clauses);
+        final List<FriendEntry> list = Lists.newArrayList();
+        for (final MemberCardRecord record : records) {
+            final MemberCard card = record.toMemberCard();
             list.add(new FriendEntry(card.name, false, card.photo, card.headline));
         }
         return list;
@@ -1046,11 +1045,11 @@ public class MemberRepository extends DepotRepository
      * exists.
      * @exception DuplicateKeyException if the members are already friends.
      */
-    public MemberCard noteFriendship (int memberId,  int otherId)
+    public MemberCard noteFriendship (final int memberId,  final int otherId)
         throws PersistenceException
     {
         // first load the member record of the potential friend
-        MemberCard other = loadMemberCard(otherId);
+        final MemberCard other = loadMemberCard(otherId);
         if (other == null) {
             log.warning("Failed to establish friends: member no longer exists " +
                         "[missingId=" + otherId + ", reqId=" + memberId + "].");
@@ -1058,7 +1057,7 @@ public class MemberRepository extends DepotRepository
         }
 
         // see if there is already a connection, either way
-        List<FriendRecord> existing = Lists.newArrayList();
+        final List<FriendRecord> existing = Lists.newArrayList();
         existing.addAll(findAll(FriendRecord.class,
                                 new Where(FriendRecord.INVITER_ID_C, memberId,
                                           FriendRecord.INVITEE_ID_C, otherId)));
@@ -1075,7 +1074,7 @@ public class MemberRepository extends DepotRepository
             throw new DuplicateKeyException(memberId + " and " + otherId + " are already friends");
         }
 
-        FriendRecord rec = new FriendRecord();
+        final FriendRecord rec = new FriendRecord();
         rec.inviterId = memberId;
         rec.inviteeId = otherId;
         insert(rec);
@@ -1106,7 +1105,7 @@ public class MemberRepository extends DepotRepository
     public void deleteAllFriends (final int memberId)
         throws PersistenceException
     {
-        CacheInvalidator invalidator = new CacheInvalidator() {
+        final CacheInvalidator invalidator = new CacheInvalidator() {
             public void invalidate (PersistenceContext ctx) {
                 // remove the FriendsCache entry for the member
                 ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
@@ -1138,10 +1137,10 @@ public class MemberRepository extends DepotRepository
      * responsible for confirming the authenticity of the external id information) or 0 if no
      * account is associated with that external account.
      */
-    public int lookupExternalAccount (int partnerId, String externalId)
+    public int lookupExternalAccount (final int partnerId, final String externalId)
         throws PersistenceException
     {
-        ExternalMapRecord record =
+        final ExternalMapRecord record =
             load(ExternalMapRecord.class, ExternalMapRecord.getKey(partnerId, externalId));
         return (record == null) ? 0 : record.memberId;
     }
@@ -1149,10 +1148,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Notes that the specified Whirled account is associated with the specified external account.
      */
-    public void mapExternalAccount (int partnerId, String externalId, int memberId)
+    public void mapExternalAccount (final int partnerId, final String externalId, final int memberId)
         throws PersistenceException
     {
-        ExternalMapRecord record = new ExternalMapRecord();
+        final ExternalMapRecord record = new ExternalMapRecord();
         record.partnerId = partnerId;
         record.externalId = externalId;
         record.memberId = memberId;
@@ -1162,10 +1161,10 @@ public class MemberRepository extends DepotRepository
     /**
      * Creates a temp ban record for a member, or updates a pre-existing temp ban record.
      */
-    public void tempBanMember (int memberId, Timestamp expires, String warning)
+    public void tempBanMember (final int memberId, final Timestamp expires, final String warning)
         throws PersistenceException
     {
-        MemberWarningRecord record = new MemberWarningRecord();
+        final MemberWarningRecord record = new MemberWarningRecord();
         record.memberId = memberId;
         record.banExpires = expires;
         record.warning = warning;
@@ -1175,12 +1174,12 @@ public class MemberRepository extends DepotRepository
     /**
      * Updates the warning message for a member, or creates a new warning message if none exists.
      */
-    public void updateMemberWarning (int memberId, String warning)
+    public void updateMemberWarning (final int memberId, final String warning)
         throws PersistenceException
     {
         if (updatePartial(MemberWarningRecord.class, memberId,
                           MemberWarningRecord.WARNING, warning) == 0) {
-            MemberWarningRecord record = new MemberWarningRecord();
+            final MemberWarningRecord record = new MemberWarningRecord();
             record.memberId = memberId;
             record.warning = warning;
             insert(record);
@@ -1190,7 +1189,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Clears a warning message from a member (this includes any temp ban information).
      */
-    public void clearMemberWarning (int memberId)
+    public void clearMemberWarning (final int memberId)
         throws PersistenceException
     {
         delete(MemberWarningRecord.class, memberId);
@@ -1199,7 +1198,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns the MemberWarningRecord for the memberId, or null if none found.
      */
-    public MemberWarningRecord loadMemberWarningRecord (int memberId)
+    public MemberWarningRecord loadMemberWarningRecord (final int memberId)
         throws PersistenceException
     {
         return load(MemberWarningRecord.class, memberId);
@@ -1216,7 +1215,7 @@ public class MemberRepository extends DepotRepository
     }
 
     @Override // from DepotRepository
-    protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
+    protected void getManagedRecords (final Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(MemberRecord.class);
         classes.add(FriendRecord.class);
@@ -1229,7 +1228,7 @@ public class MemberRepository extends DepotRepository
         classes.add(ReferralRecord.class);
     }
 
-    @Inject protected FlowRepository _flowRepo;
+    @Inject protected UserActionRepository _flowRepo;
 
     protected static final int INVITE_ID_LENGTH = 10;
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";

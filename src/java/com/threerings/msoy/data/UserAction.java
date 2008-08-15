@@ -14,34 +14,34 @@ import com.threerings.util.ActionScript;
 @ActionScript(omit=true)
 public enum UserAction
 {
-    CREATED_PROFILE(1, 500),
-    UPDATED_PROFILE(2, 0),
-    CREATED_ACCOUNT(3, 1000),
+    CREATED_PROFILE(1),
+    UPDATED_PROFILE(2),
+    CREATED_ACCOUNT(3),
 
-    SENT_FRIEND_INVITE(10, 0),
-    ACCEPTED_FRIEND_INVITE(11, 0),
-    TRANSFER_FROM_GUEST(12, 0),
-    INVITED_FRIEND_JOINED(13, 1000),
+    SENT_FRIEND_INVITE(10),
+    ACCEPTED_FRIEND_INVITE(11),
+    TRANSFER_FROM_GUEST(12),
+    INVITED_FRIEND_JOINED(13),
 
-    PLAYED_GAME(20, 0),
-    COMPLETED_QUEST(21, 0),
+    PLAYED_GAME(20),
+    COMPLETED_QUEST(21),
 
-    CREATED_ITEM(30, 100),
-    BOUGHT_ITEM(31, 0),
-    LISTED_ITEM(32, 0),
-    RETURNED_ITEM(33, 0),
-    RECEIVED_PAYOUT(34, 0),
-    UPDATED_LISTING(35, 0),
-    UPDATED_PRICING(36, 0),
+    CREATED_ITEM(30),
+    BOUGHT_ITEM(31),
+    LISTED_ITEM(32),
+    RETURNED_ITEM(33),
+    RECEIVED_PAYOUT(34),
+    UPDATED_LISTING(35),
+    UPDATED_PRICING(36),
 
-    EARNED_BADGE(40, 0),
-
-    ;
+    EARNED_BADGE(40),
+    
+    BOUGHT_BARS(50);
 
     /**
      * Look up an {@link UserAction} by its numerical representation and return it.
      */
-    public static UserAction getActionByNumber (int num)
+    public static UserAction getActionByNumber (final int num)
     {
         return _reverse.get(num);
     }
@@ -54,27 +54,17 @@ public enum UserAction
         return _num;
     }
 
-    /**
-     * Returns the amount of flow granted when this action is performed.
-     */
-    public int getFlow ()
-    {
-        return _flow;
-    }
-
-    UserAction (int num, int flow)
+    UserAction (final int num)
     {
         _num = num;
-        _flow = flow;
     }
 
     protected final int _num;
-    protected final int _flow;
 
     protected static IntMap<UserAction> _reverse;
     static {
         _reverse = new HashIntMap<UserAction>();
-        for (UserAction type : UserAction.values()) {
+        for (final UserAction type : UserAction.values()) {
             _reverse.put(type.getNumber(), type);
         }
     }

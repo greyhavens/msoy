@@ -3,28 +3,27 @@
 
 package com.threerings.msoy.admin.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
-
+import com.threerings.msoy.admin.data.MsoyAdminCodes;
+import com.threerings.msoy.admin.gwt.ABTest;
+import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.MemberAdminInfo;
+import com.threerings.msoy.admin.gwt.MemberInviteResult;
+import com.threerings.msoy.admin.gwt.MemberInviteStatus;
+import com.threerings.msoy.admin.server.persist.ABTestRecord;
+import com.threerings.msoy.admin.server.persist.ABTestRepository;
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
-
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -34,20 +33,17 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-
 import com.threerings.msoy.mail.server.persist.MailRepository;
+import com.threerings.msoy.money.server.MemberMoney;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.server.MailLogic;
-
-import com.threerings.msoy.admin.data.MsoyAdminCodes;
-import com.threerings.msoy.admin.gwt.ABTest;
-import com.threerings.msoy.admin.gwt.AdminService;
-import com.threerings.msoy.admin.gwt.MemberAdminInfo;
-import com.threerings.msoy.admin.gwt.MemberInviteResult;
-import com.threerings.msoy.admin.gwt.MemberInviteStatus;
-import com.threerings.msoy.admin.server.persist.ABTestRecord;
-import com.threerings.msoy.admin.server.persist.ABTestRepository;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.web.data.ServiceCodes;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 /**
  * Provides the server implementation of {@link AdminService}.
@@ -56,18 +52,18 @@ public class AdminServlet extends MsoyServiceServlet
     implements AdminService
 {
     // from interface AdminService
-    public void grantInvitations (int numberInvitations, Date activeSince)
+    public void grantInvitations (final int numberInvitations, final Date activeSince)
         throws ServiceException
     {
-        MemberRecord memrec = requireAdmin();
+        final MemberRecord memrec = requireAdmin();
 
         try {
-            Timestamp since = activeSince != null ? new Timestamp(activeSince.getTime()) : null;
-            for (int memberId : _memberRepo.grantInvites(numberInvitations, since)) {
+            final Timestamp since = activeSince != null ? new Timestamp(activeSince.getTime()) : null;
+            for (final int memberId : _memberRepo.grantInvites(numberInvitations, since)) {
                 sendGotInvitesMail(memrec.memberId, memberId, numberInvitations);
             }
 
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("grantInvitations failed [num=" + numberInvitations +
                     ", activeSince=" + activeSince + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -75,16 +71,16 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public void grantInvitations (int numberInvitations, int memberId)
+    public void grantInvitations (final int numberInvitations, final int memberId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAdmin();
+        final MemberRecord memrec = requireAdmin();
 
         try {
             _memberRepo.grantInvites(memberId, numberInvitations);
             sendGotInvitesMail(memrec.memberId, memberId, numberInvitations);
 
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("grantInvitations failed [num=" + numberInvitations +
                 ", memberId=" + memberId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -92,28 +88,29 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public MemberAdminInfo getMemberInfo (int memberId)
+    public MemberAdminInfo getMemberInfo (final int memberId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        final MemberRecord memrec = requireAuthedUser();
         if (!memrec.isSupport()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
 
         try {
-            MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+            final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
             if (tgtrec == null) {
                 return null;
             }
 
-            MemberAdminInfo info = new MemberAdminInfo();
+            final MemberMoney money = _moneyLogic.getMoneyFor(memberId);
+            final MemberAdminInfo info = new MemberAdminInfo();
             info.name = tgtrec.getName();
             info.accountName = tgtrec.accountName;
             info.permaName = tgtrec.permaName;
             info.isSupport = tgtrec.isSupportOnly();
             info.isAdmin = tgtrec.isAdmin();
-            info.flow = tgtrec.flow;
-            info.accFlow = tgtrec.accFlow;
+            info.flow = money.getCoins();
+            info.accFlow = (int)money.getAccCoins();
             // info.gold = TODO: load gold
             info.sessions = tgtrec.sessions;
             info.sessionMinutes = tgtrec.sessionMinutes;
@@ -128,20 +125,20 @@ public class AdminServlet extends MsoyServiceServlet
 
             return info;
 
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("getMemberInfo failed [id=" + memberId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface AdminService
-    public MemberInviteResult getPlayerList (int inviterId)
+    public MemberInviteResult getPlayerList (final int inviterId)
         throws ServiceException
     {
         requireAdmin();
-        MemberInviteResult res = new MemberInviteResult();
+        final MemberInviteResult res = new MemberInviteResult();
         try {
-            MemberRecord memRec = inviterId == 0 ? null : _memberRepo.loadMember(inviterId);
+            final MemberRecord memRec = inviterId == 0 ? null : _memberRepo.loadMember(inviterId);
             if (memRec != null) {
                 res.name = memRec.permaName == null || memRec.permaName.equals("") ?
                     memRec.name : memRec.permaName;
@@ -149,13 +146,13 @@ public class AdminServlet extends MsoyServiceServlet
                 res.invitingFriendId = memRec.invitingFriendId;
             }
 
-            List<MemberInviteStatus> players = Lists.newArrayList();
-            for (MemberInviteStatusRecord rec : _memberRepo.getMembersInvitedBy(inviterId)) {
+            final List<MemberInviteStatus> players = Lists.newArrayList();
+            for (final MemberInviteStatusRecord rec : _memberRepo.getMembersInvitedBy(inviterId)) {
                 players.add(rec.toWebObject());
             }
             res.invitees = players;
 
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("getPlayerList failed [inviterId=" + inviterId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -164,10 +161,10 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public int[] spamPlayers (String subject, String body, int startId, int endId)
+    public int[] spamPlayers (final String subject, final String body, int startId, int endId)
         throws ServiceException
     {
-        MemberRecord memrec = requireAdmin();
+        final MemberRecord memrec = requireAdmin();
 
         log.info("Spamming the players [spammer=" + memrec.who() + ", subject=" + subject +
                  ", startId=" + startId + ", endId=" + endId + "].");
@@ -185,16 +182,16 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         // we'll track the number of sent, failed and opted out accounts
-        int[] results = new int[] { 0, 0, 0 };
+        final int[] results = new int[] { 0, 0, 0 };
 
         // loop through 100 members at a time and load up their record and send emails
-        String from = ServerConfig.getFromAddress();
+        final String from = ServerConfig.getFromAddress();
         int found;
         try {
             do {
-                IntSet memIds = new ArrayIntSet();
+                final IntSet memIds = new ArrayIntSet();
                 for (int ii = 0; ii < MEMBERS_PER_LOOP; ii++) {
-                    int memberId = ii + startId;
+                    final int memberId = ii + startId;
                     if (memberId > endId) {
                         break;
                     }
@@ -205,7 +202,7 @@ public class AdminServlet extends MsoyServiceServlet
                 }
 
                 found = 0;
-                for (MemberRecord mrec : _memberRepo.loadMembers(memIds)) {
+                for (final MemberRecord mrec : _memberRepo.loadMembers(memIds)) {
                     found++;
 
                     if (mrec.isSet(MemberRecord.Flag.NO_ANNOUNCE_EMAIL)) {
@@ -217,7 +214,7 @@ public class AdminServlet extends MsoyServiceServlet
                         MailUtil.deliverMail(
                             new String[] { mrec.accountName }, from, subject, body);
                         results[0]++;
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         results[1]++;
                         log.warning("Failed to spam member [subject=" + subject +
                                     ", email=" + mrec.accountName + ", error=" + e + "].");
@@ -230,7 +227,7 @@ public class AdminServlet extends MsoyServiceServlet
 
             return results;
 
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("spamPlayers failed [subject=" + subject +
                 ", startId=" + startId + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -238,13 +235,13 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
-    public void setIsSupport (int memberId, boolean isSupport)
+    public void setIsSupport (final int memberId, final boolean isSupport)
         throws ServiceException
     {
-        MemberRecord memrec = requireAdmin();
+        final MemberRecord memrec = requireAdmin();
 
         try {
-            MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+            final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
             if (tgtrec != null) {
                 // log this as a warning so that it shows up in the nightly filtered logs
                 log.warning("Configured support flag [setter=" + memrec.who() +
@@ -253,7 +250,7 @@ public class AdminServlet extends MsoyServiceServlet
                 _memberRepo.storeFlags(tgtrec);
             }
 
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("setIsSupport failed [id=" + memberId +
                 ", isSupport=" + isSupport + "]", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -267,20 +264,20 @@ public class AdminServlet extends MsoyServiceServlet
         List<ABTestRecord> records;
         try {
             records = _testRepo.loadTests();
-            List<ABTest> tests = Lists.newArrayList();
-            for (ABTestRecord record : records) {
-                ABTest test = record.toABTest();
+            final List<ABTest> tests = Lists.newArrayList();
+            for (final ABTestRecord record : records) {
+                final ABTest test = record.toABTest();
                 tests.add(test);
             }
             return tests;
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("getABTests failed", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface AdminService
-    public void createTest (ABTest test)
+    public void createTest (final ABTest test)
         throws ServiceException
     {
         try {
@@ -289,48 +286,49 @@ public class AdminServlet extends MsoyServiceServlet
                 throw new ServiceException(MsoyAdminCodes.E_AB_TEST_DUPLICATE_NAME);
             }
             _testRepo.insertABTest(test);
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("Failed to create test " + test + ".", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface AdminService
-    public void updateTest (ABTest test)
+    public void updateTest (final ABTest test)
         throws ServiceException
     {
         try {
             // make sure there isn't already a test with this name
-            ABTestRecord existingTest = _testRepo.loadTestByName(test.name);
+            final ABTestRecord existingTest = _testRepo.loadTestByName(test.name);
             if (existingTest != null && existingTest.abTestId != test.abTestId) {
                 throw new ServiceException(MsoyAdminCodes.E_AB_TEST_DUPLICATE_NAME);
             }
             _testRepo.updateABTest(test);
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("Failed to update test " + test + ".", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface AdminService
-    public List<ItemDetail> getFlaggedItems (int count)
+    public List<ItemDetail> getFlaggedItems (final int count)
         throws ServiceException
     {
-        MemberRecord mRec = requireAuthedUser();
+        final MemberRecord mRec = requireAuthedUser();
+
         if (!mRec.isSupport()) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
-        List<ItemDetail> items = Lists.newArrayList();
+        final List<ItemDetail> items = Lists.newArrayList();
         // it'd be nice to round-robin the item types or something, so the first items in the queue
         // aren't always from the same type... perhaps we'll just do something clever in the UI
         try {
-            for (byte type : _itemLogic.getRepositoryTypes()) {
-                ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
-                for (ItemRecord record : repo.loadFlaggedItems(count)) {
-                    Item item = record.toItem();
+            for (final byte type : _itemLogic.getRepositoryTypes()) {
+                final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
+                for (final ItemRecord record : repo.loadFlaggedItems(count)) {
+                    final Item item = record.toItem();
 
                     // get auxiliary info and construct an ItemDetail
-                    ItemDetail detail = new ItemDetail();
+                    final ItemDetail detail = new ItemDetail();
                     detail.item = item;
                     detail.creator = _memberRepo.loadMemberName(record.creatorId);
 
@@ -343,26 +341,26 @@ public class AdminServlet extends MsoyServiceServlet
             }
             return items;
 
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("Getting flagged items failed.", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
     // from interface AdminService
-    public Integer deleteItemAdmin (ItemIdent iident, String subject, String body)
+    public Integer deleteItemAdmin (final ItemIdent iident, final String subject, final String body)
         throws ServiceException
     {
-        MemberRecord admin = requireAuthedUser();
+        final MemberRecord admin = requireAuthedUser();
         if (!admin.isSupport()) {
             throw new ServiceException(ItemCodes.ACCESS_DENIED);
         }
 
-        byte type = iident.type;
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
+        final byte type = iident.type;
+        final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         try {
-            ItemRecord item = repo.loadOriginalItem(iident.itemId);
-            IntSet owners = new ArrayIntSet();
+            final ItemRecord item = repo.loadOriginalItem(iident.itemId);
+            final IntSet owners = new ArrayIntSet();
 
             int deletionCount = 0;
             owners.add(item.creatorId);
@@ -370,14 +368,14 @@ public class AdminServlet extends MsoyServiceServlet
             // we've loaded the original item, if it represents the original listing
             // or a prototype item, we want to squish the original catalog listing.
             if (item.catalogId != 0) {
-                CatalogRecord catrec = repo.loadListing(item.catalogId, false);
+                final CatalogRecord catrec = repo.loadListing(item.catalogId, false);
                 if (catrec != null && catrec.listedItemId == item.itemId) {
                     repo.removeListing(catrec);
                 }
             }
 
             // then delete any potential clones
-            for (CloneRecord record : repo.loadCloneRecords(item.itemId)) {
+            for (final CloneRecord record : repo.loadCloneRecords(item.itemId)) {
                 repo.deleteItem(record.itemId);
                 deletionCount ++;
                 owners.add(record.ownerId);
@@ -388,11 +386,11 @@ public class AdminServlet extends MsoyServiceServlet
             deletionCount ++;
 
             // notify the owners of the deletion
-            for (int ownerId : owners) {
+            for (final int ownerId : owners) {
                 if (ownerId == admin.memberId) {
                     continue; // admin deleting their own item? sure, whatever!
                 }
-                MemberRecord owner = _memberRepo.loadMember(ownerId);
+                final MemberRecord owner = _memberRepo.loadMember(ownerId);
                 if (owner != null) {
                     _mailLogic.startConversation(admin, owner, subject, body, null);
                 }
@@ -400,7 +398,7 @@ public class AdminServlet extends MsoyServiceServlet
 
             return Integer.valueOf(deletionCount);
 
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("Admin item delete failed [item=" + iident + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -409,18 +407,18 @@ public class AdminServlet extends MsoyServiceServlet
     protected MemberRecord requireAdmin ()
         throws ServiceException
     {
-        MemberRecord memrec = requireAuthedUser();
+        final MemberRecord memrec = requireAuthedUser();
         if (!memrec.isAdmin()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
         return memrec;
     }
 
-    protected void sendGotInvitesMail (int senderId, int recipientId, int number)
+    protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)
         throws PersistenceException
     {
-        String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
-        String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
+        final String subject = _serverMsgs.getBundle("server").get("m.got_invites_subject", number);
+        final String body = _serverMsgs.getBundle("server").get("m.got_invites_body", number);
         _mailRepo.startConversation(recipientId, senderId, subject, body, null);
     }
 
@@ -430,6 +428,7 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ABTestRepository _testRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
-
+    @Inject protected MoneyLogic _moneyLogic;
+    
     protected static final int MEMBERS_PER_LOOP = 100;
 }

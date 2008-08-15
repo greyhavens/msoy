@@ -18,11 +18,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.inject.Inject;
-
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.util.IntSet;
-
+import com.threerings.msoy.money.server.MemberMoney;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.data.MemberCard;
@@ -34,48 +34,48 @@ import com.threerings.msoy.web.data.WebCreds;
 public class MyStatsServlet extends HttpServlet
 {
     @Override // from HttpServlet
-    protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
+    protected void doGet (final HttpServletRequest req, final HttpServletResponse rsp)
         throws IOException
     {
         try {
             // pull out session token from the request header
-            String token = CookieUtil.getCookieValue(req, WebCreds.CREDS_COOKIE);
+            final String token = CookieUtil.getCookieValue(req, WebCreds.CREDS_COOKIE);
             if (token == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
 
             // make sure the user is authenticated, and pull out their record object
-            MemberRecord member = _mhelper.getAuthedUser(token);
-
+            final MemberRecord member = _mhelper.getAuthedUser(token);
+            final MemberMoney money = _moneyLogic.getMoneyFor(member.memberId);
             if (member == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;
             }
 
             // now get their friend ids
-            IntSet friendIds = _memberRepo.loadFriendIds(member.memberId);
-            List<MemberCard> friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
+            final IntSet friendIds = _memberRepo.loadFriendIds(member.memberId);
+            final List<MemberCard> friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
 
             // and print out the response
-            String results = makeResults(member, friends);
+            final String results = makeResults(member, friends, money);
             rsp.getOutputStream().println(results);
             StreamUtil.close(rsp.getOutputStream());
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.warning("Failed to gather user stats.", e);
             rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
     }
 
-    protected String makeResults (MemberRecord member, List<MemberCard> friends)
+    protected String makeResults (final MemberRecord member, final List<MemberCard> friends, final MemberMoney money)
         throws JSONException, UnsupportedEncodingException
     {
-        JSONObject result = new JSONObject();
+        final JSONObject result = new JSONObject();
 
         result.put("name", URLEncoder.encode(member.name, "UTF-8"));
-        result.put("coins", member.flow);
+        result.put("coins", money.getCoins());
         result.put("level", member.level);
         result.put("friendsOnline", friends.size());
 
@@ -85,4 +85,5 @@ public class MyStatsServlet extends HttpServlet
     // our dependencies
     @Inject protected MemberHelper _mhelper;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MoneyLogic _moneyLogic;
 }

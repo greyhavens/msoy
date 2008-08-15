@@ -3,45 +3,38 @@
 
 package com.threerings.msoy.avrg.server;
 
+import static com.threerings.msoy.Log.log;
+
 import com.google.inject.Inject;
-
 import com.samskivert.jdbc.WriteOnlyUnit;
-
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
-
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.server.PlaceManagerDelegate;
-import com.threerings.whirled.data.ScenePlace;
-
-import com.threerings.presents.util.PersistingUnit;
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
+import com.threerings.msoy.avrg.server.persist.QuestLogSummaryRecord;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.data.QuestState;
+import com.threerings.msoy.game.server.GameContent;
+import com.threerings.msoy.game.server.WorldServerClient;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
-
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameRepository;
-
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
-import com.threerings.msoy.avrg.server.persist.QuestLogSummaryRecord;
-
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.UserActionDetails;
-import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.data.QuestState;
-import com.threerings.msoy.game.server.GameContent;
-import com.threerings.msoy.game.server.WorldServerClient;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.presents.util.PersistingUnit;
+import com.threerings.whirled.data.ScenePlace;
 
 /**
  * Handles quest-related AVRG services, including awarding coins.
@@ -52,7 +45,7 @@ public class QuestDelegate extends PlaceManagerDelegate
     /**
      * Creates a Whirled game manager delegate with the supplied game content.
      */
-    public QuestDelegate (GameContent content)
+    public QuestDelegate (final GameContent content)
     {
         // keep our game content around for later
         _content = content;
@@ -60,7 +53,7 @@ public class QuestDelegate extends PlaceManagerDelegate
     }
 
     @Override
-    public void didStartup (PlaceObject plobj)
+    public void didStartup (final PlaceObject plobj)
     {
         super.didStartup(plobj);
     }
@@ -72,6 +65,7 @@ public class QuestDelegate extends PlaceManagerDelegate
 
         final int totalMins = Math.max(1, Math.round(getTotalTrackedSeconds() / 60f));
         _invoker.postUnit(new WriteOnlyUnit("shutdown") {
+            @Override
             public void invokePersist () throws Exception {
                 _repo.noteUnawardedTime(_gameId, totalMins);
             }
@@ -80,9 +74,9 @@ public class QuestDelegate extends PlaceManagerDelegate
     }
 
     @Override // from PlaceManagerDelegate
-    public void bodyEntered (int bodyOid)
+    public void bodyEntered (final int bodyOid)
     {
-        PlayerObject player = (PlayerObject) _omgr.getObject(bodyOid);
+        final PlayerObject player = (PlayerObject) _omgr.getObject(bodyOid);
         if (_players.containsKey(bodyOid)) {
             log.warning("Attempting to re-add existing player [gameId=" + _gameId + ", playerId=" +
                         player.getMemberId() + "]");
@@ -94,22 +88,22 @@ public class QuestDelegate extends PlaceManagerDelegate
     }
 
     @Override // from PlaceManagerDelegate
-    public void bodyLeft (int bodyOid)
+    public void bodyLeft (final int bodyOid)
     {
-        Player player = _players.remove(bodyOid);
+        final Player player = _players.remove(bodyOid);
         if (player == null) {
             log.warning("Eek, unregistered player vanished from OidList [gameId=" + _gameId +
                         "bodyOid=" + bodyOid + "]");
             return;
         }
 
-        int playTime = player.getPlayTime(now());
+        final int playTime = player.getPlayTime(now());
         _totalTrackedSeconds += playTime;
 
-        int memberId = player.playerObject.getMemberId();
+        final int memberId = player.playerObject.getMemberId();
 
         // TODO: Get this into EventLogDelegate, or write a AVRG-specific one?
-        String tracker = player.playerObject.referral.tracker;
+        final String tracker = player.playerObject.referral.tracker;
         _eventLog.avrgLeft(memberId, _gameId, playTime,
                            _plmgr.getPlaceObject().occupantInfo.size(),
                            tracker);
@@ -118,8 +112,8 @@ public class QuestDelegate extends PlaceManagerDelegate
     }
 
     // from AVRGameProvider
-    public void startQuest (ClientObject caller, final String questId, final String status,
-                            InvocationService.ConfirmListener listener)
+    public void startQuest (final ClientObject caller, final String questId, final String status,
+                            final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final PlayerObject player = (PlayerObject) caller;
@@ -136,12 +130,14 @@ public class QuestDelegate extends PlaceManagerDelegate
 
         final int sceneId = ScenePlace.getSceneId(player);
         _invoker.postUnit(new PersistingUnit("startQuest(" + questId + ")", listener) {
+            @Override
             public void invokePersistent () throws Exception {
                 if (!MemberName.isGuest(player.getMemberId())) {
                     _repo.setQuestState(_gameId, player.getMemberId(), questId,
                                         QuestState.STEP_FIRST, status, sceneId);
                 }
             }
+            @Override
             public void handleSuccess () {
                 player.addToQuestState(
                     new QuestState(questId, QuestState.STEP_FIRST, status, sceneId));
@@ -151,13 +147,13 @@ public class QuestDelegate extends PlaceManagerDelegate
     }
 
     // from AVRGameProvider
-    public void updateQuest (ClientObject caller, final String questId, final int step,
-                             final String status, InvocationService.ConfirmListener listener)
+    public void updateQuest (final ClientObject caller, final String questId, final int step,
+                             final String status, final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final PlayerObject player = (PlayerObject) caller;
 
-        QuestState oldState = player.questState.get(questId);
+        final QuestState oldState = player.questState.get(questId);
         if (oldState == null) {
             log.warning("Requested to update quest to which member was not subscribed " +
                         "[game=" + where() + ", quest=" + questId + ", who=" + player.who() + "].");
@@ -167,12 +163,14 @@ public class QuestDelegate extends PlaceManagerDelegate
         final int sceneId = ScenePlace.getSceneId(player);
 
         _invoker.postUnit(new PersistingUnit("updateQuest", listener) {
+            @Override
             public void invokePersistent () throws Exception {
                 if (!MemberName.isGuest(player.getMemberId())) {
                     _repo.setQuestState(_gameId, player.getMemberId(), questId, step,
                                         status, sceneId);
                 }
             }
+            @Override
             public void handleSuccess () {
                 player.updateQuestState(new QuestState(questId, step, status, sceneId));
                 reportRequestProcessed();
@@ -181,8 +179,8 @@ public class QuestDelegate extends PlaceManagerDelegate
     }
 
     // from AVRGameProvider
-    public void completeQuest (ClientObject caller, final String questId, final float payoutLevel,
-                               InvocationService.ConfirmListener listener)
+    public void completeQuest (final ClientObject caller, final String questId, final float payoutLevel,
+                               final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final PlayerObject player = (PlayerObject) caller;
@@ -208,7 +206,7 @@ public class QuestDelegate extends PlaceManagerDelegate
         final int recalcMins = RuntimeConfig.server.payoutFactorReassessment;
 
         // note how much player time has accumulated since our last payout
-        int playerSecs = getTotalTrackedSeconds();
+        final int playerSecs = getTotalTrackedSeconds();
         _totalTrackedSeconds -= playerSecs;
         final int playerMins = Math.round(playerSecs / 60f);
 
@@ -223,7 +221,7 @@ public class QuestDelegate extends PlaceManagerDelegate
         }
 
         // compute our quest payout; as a sanity check, cap it at one hour of payout
-        int rawPayout = Math.round(payoutFactor * payoutLevel);
+        final int rawPayout = Math.round(payoutFactor * payoutLevel);
         final int payout = Math.min(flowPerHour, rawPayout);
         if (payout != rawPayout) {
             log.warning("Capped AVRG payout at one hour [game=" + _gameId +
@@ -252,12 +250,12 @@ public class QuestDelegate extends PlaceManagerDelegate
         }
 
         _invoker.postUnit(new PersistingUnit("completeQuest", listener) {
+            @Override
             public void invokePersistent () throws Exception {
                 // award the flow for this quest
                 if (payout > 0) {
-                    _memberRepo.getFlowRepository().grantFlow(
-                        new UserActionDetails(player.getMemberId(), UserAction.COMPLETED_QUEST,
-                                              -1, Game.GAME, _gameId, questId), payout);
+                    _moneyLogic.awardCoins(player.getMemberId(), 0, 0, new ItemIdent(Game.GAME, _gameId), 
+                        payout, questId, UserAction.COMPLETED_QUEST);
                 }
 
                 // note that we played one game and awarded the specified flow
@@ -269,9 +267,9 @@ public class QuestDelegate extends PlaceManagerDelegate
 
                 // if this award consumes the remainder of our awardable flow, recalc our bits
                 if (newFlowToNextRecalc > 0) {
-                    QuestLogSummaryRecord record = _repo.summarizeQuestLogRecords(_gameId);
+                    final QuestLogSummaryRecord record = _repo.summarizeQuestLogRecords(_gameId);
                     if (record.payoutFactorTotal > 0) {
-                        float targetFlow = flowPerHour * record.playerMinsTotal / 60f;
+                        final float targetFlow = flowPerHour * record.playerMinsTotal / 60f;
                         _newFactor = Math.round(targetFlow / record.payoutFactorTotal);
 
                         _gameRepo.updatePayoutFactor(_gameId, _newFactor, newFlowToNextRecalc);
@@ -284,6 +282,7 @@ public class QuestDelegate extends PlaceManagerDelegate
                 }
             }
 
+            @Override
             public void handleSuccess () {
                 if (oldState != null) {
                     player.removeFromQuestState(questId);
@@ -309,13 +308,13 @@ public class QuestDelegate extends PlaceManagerDelegate
     }
 
     // from AVRGameProvider
-    public void cancelQuest (ClientObject caller, final String questId,
-                             InvocationService.ConfirmListener listener)
+    public void cancelQuest (final ClientObject caller, final String questId,
+                             final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final PlayerObject player = (PlayerObject) caller;
 
-        QuestState oldState = player.questState.get(questId);
+        final QuestState oldState = player.questState.get(questId);
         if (oldState == null) {
             log.warning("Member not subscribed to cancelled quest [game=" + where() +
                         ", quest=" + questId + ", who=" + player.who() + "].");
@@ -323,11 +322,13 @@ public class QuestDelegate extends PlaceManagerDelegate
         }
 
         _invoker.postUnit(new PersistingUnit("cancelQuest", listener) {
+            @Override
             public void invokePersistent () throws Exception {
                 if (!MemberName.isGuest(player.getMemberId())) {
                     _repo.deleteQuestState(player.getMemberId(), _gameId, questId);
                 }
             }
+            @Override
             public void handleSuccess () {
                 player.removeFromQuestState(questId);
                 reportRequestProcessed();
@@ -341,9 +342,9 @@ public class QuestDelegate extends PlaceManagerDelegate
     protected int getTotalTrackedSeconds ()
     {
         int total = _totalTrackedSeconds;
-        int now = now();
+        final int now = now();
 
-        for (Player player : _players.values()) {
+        for (final Player player : _players.values()) {
             total += player.getPlayTime(now);
         }
         return total;
@@ -363,13 +364,13 @@ public class QuestDelegate extends PlaceManagerDelegate
         public int beganStamp;
         public int secondsPlayed;
 
-        public Player (PlayerObject playerObject)
+        public Player (final PlayerObject playerObject)
         {
             this.playerObject = playerObject;
             this.beganStamp = now();
         }
 
-        public int getPlayTime (int now) {
+        public int getPlayTime (final int now) {
             int secondsOfPlay = secondsPlayed;
             if (beganStamp != 0) {
                 secondsOfPlay += (now - beganStamp);
@@ -377,7 +378,7 @@ public class QuestDelegate extends PlaceManagerDelegate
             return secondsOfPlay;
         }
 
-        public void stopTracking (int endStamp) {
+        public void stopTracking (final int endStamp) {
             if (beganStamp != 0) {
                 secondsPlayed += endStamp - beganStamp;
                 beganStamp = 0;
@@ -404,4 +405,5 @@ public class QuestDelegate extends PlaceManagerDelegate
     @Inject protected GameRepository _gameRepo;
     @Inject protected WorldServerClient _worldClient;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MoneyLogic _moneyLogic;
 }

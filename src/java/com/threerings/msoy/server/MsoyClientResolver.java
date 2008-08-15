@@ -3,55 +3,48 @@
 
 package com.threerings.msoy.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.util.List;
 
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
-
 import com.samskivert.util.ResultListener;
-
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DSet;
-
 import com.threerings.crowd.server.CrowdClientResolver;
-
-import com.threerings.stats.data.Stat;
-import com.threerings.stats.data.StatSet;
-import com.threerings.stats.server.persist.StatRepository;
-
-import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.mail.server.persist.MailRepository;
-import com.threerings.msoy.person.server.persist.ProfileRecord;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.web.data.MemberCard;
-
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.server.ItemManager;
-import com.threerings.msoy.item.server.persist.AvatarRecord;
-
 import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.ServerStatSet;
-import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
+import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
-
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
-// import com.threerings.msoy.data.all.SceneBookmarkEntry;
+import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.mail.server.persist.MailRepository;
+import com.threerings.msoy.money.server.MemberMoney;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.person.server.persist.ProfileRecord;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.ReferralRecord;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
+import com.threerings.stats.data.Stat;
+import com.threerings.stats.data.StatSet;
+import com.threerings.stats.server.persist.StatRepository;
 
 /**
  * Used to configure msoy-specific client object data.
@@ -62,17 +55,17 @@ public class MsoyClientResolver extends CrowdClientResolver
     public ClientObject createClientObject ()
     {
         // see if we have a member object forwarded from our peer
-        MemberObject memobj = _peerMan.getForwardedMemberObject(_username);
+        final MemberObject memobj = _peerMan.getForwardedMemberObject(_username);
         return (memobj != null) ? memobj : new MemberObject();
     }
 
     @Override // from ClientResolver
-    protected void resolveClientData (ClientObject clobj)
+    protected void resolveClientData (final ClientObject clobj)
         throws Exception
     {
         super.resolveClientData(clobj);
 
-        MemberObject userObj = (MemberObject) clobj;
+        final MemberObject userObj = (MemberObject) clobj;
         userObj.setAccessController(MsoyObjectAccess.USER);
 
         // if our member object was forwarded from another server, it will already be fully ready
@@ -84,7 +77,7 @@ public class MsoyClientResolver extends CrowdClientResolver
         // guests have MemberName as an auth username, members have Name
         if (_username instanceof MemberName) {
             // our auth username has our assigned name and member id, so use those
-            MemberName aname = (MemberName)_username;
+            final MemberName aname = (MemberName)_username;
             userObj.memberName = new VizMemberName(
                 aname.toString(), aname.getMemberId(), MemberCard.DEFAULT_PHOTO);
             userObj.stats = new StatSet();
@@ -106,18 +99,19 @@ public class MsoyClientResolver extends CrowdClientResolver
     /**
      * Resolve a msoy member. This is called on the invoker thread.
      */
-    protected void resolveMember (MemberObject userObj)
+    protected void resolveMember (final MemberObject userObj)
         throws Exception
     {
         // load up their member information using on their authentication (account) name
-        MemberRecord member = _memberRepo.loadMember(_username.toString());
-
+        final MemberRecord member = _memberRepo.loadMember(_username.toString());
+        final MemberMoney money = _moneyLogic.getMoneyFor(member.memberId);
+        
         // NOTE: we avoid using the dobject setters here because we know the object is not out in
         // the wild and there's no point in generating a crapload of events during user
         // initialization when we know that no one is listening
 
         // we need their profile photo to create the member name
-        ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
+        final ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
         userObj.memberName = new VizMemberName(
             member.name, member.memberId,
             (precord == null) ? MemberCard.DEFAULT_PHOTO : precord.getPhoto());
@@ -127,12 +121,12 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // configure various bits directly from their member record
         userObj.homeSceneId = member.homeSceneId;
-        userObj.flow = member.flow;
-        userObj.accFlow = member.accFlow;
+        userObj.flow = money.getCoins();
+        userObj.accFlow = (int)money.getAccCoins();
         userObj.level = member.level;
 
         // load up this member's persistent stats
-        List<Stat> stats = _statRepo.loadStats(member.memberId);
+        final List<Stat> stats = _statRepo.loadStats(member.memberId);
         userObj.stats = new ServerStatSet(stats.iterator(), _badgeMan, userObj);
 
         // and their badges
@@ -169,7 +163,7 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {
-            AvatarRecord avatar = _itemMan.getAvatarRepository().loadItem(member.avatarId);
+            final AvatarRecord avatar = _itemMan.getAvatarRepository().loadItem(member.avatarId);
             if (avatar != null) {
                 userObj.avatar = (Avatar)avatar.toItem();
             }
@@ -188,7 +182,7 @@ public class MsoyClientResolver extends CrowdClientResolver
     }
 
     @Override // from ClientResolver
-    protected void finishResolution (ClientObject clobj)
+    protected void finishResolution (final ClientObject clobj)
     {
         super.finishResolution(clobj);
         final MemberObject user = (MemberObject)clobj;
@@ -198,14 +192,14 @@ public class MsoyClientResolver extends CrowdClientResolver
             _itemMan.loadRecentlyTouched(
                 user.getMemberId(), Item.AVATAR, MemberObject.AVATAR_CACHE_SIZE,
                 new ResultListener<List<Item>>() {
-                public void requestCompleted (List<Item> items) {
-                    Avatar[] avatars = new Avatar[items.size()];
+                public void requestCompleted (final List<Item> items) {
+                    final Avatar[] avatars = new Avatar[items.size()];
                     for (int ii = 0; ii < avatars.length; ii++) {
                         avatars[ii] = (Avatar) items.get(ii);
                     }
                     user.setAvatarCache(new DSet<Avatar>(avatars));
                 }
-                public void requestFailed (Exception cause) {
+                public void requestFailed (final Exception cause) {
                     log.warning("Failed to load member's avatar cache [who=" + user.who() +
                                 ", error=" + cause + "].");
                     cause.printStackTrace();
@@ -223,5 +217,6 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Inject protected MailRepository _mailRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected StatRepository _statRepo;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected BadgeManager _badgeMan;
 }

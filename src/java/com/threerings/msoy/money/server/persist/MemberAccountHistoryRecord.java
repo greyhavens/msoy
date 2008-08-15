@@ -129,7 +129,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * @param itemType Type of the item.
      */
     public MemberAccountHistoryRecord (final int memberId, final Date timestamp, final MoneyType type, final double amount,
-        final boolean spent, final String description, final int itemId, final int itemType)
+        final boolean spent, final String description, final ItemIdent item)
     {
         this.memberId = memberId;
         this.timestamp = new Timestamp(timestamp.getTime());
@@ -137,8 +137,10 @@ public class MemberAccountHistoryRecord extends PersistentRecord
         this.amount = amount;
         this.spent = spent;
         this.description = description;
-        this.itemId = itemId;
-        this.itemType = itemType;
+        if (item != null) {
+            this.itemId = item.itemId;
+            this.itemType = item.type;
+        }
     }
     
     /**
@@ -192,6 +194,14 @@ public class MemberAccountHistoryRecord extends PersistentRecord
         return amount;
     }
 
+    /**
+     * The amount that was exchanged in the transaction.  This will be negative if spent, positive otherwise.
+     */
+    public double getSignedAmount ()
+    {
+        return spent ? -amount : amount;
+    }
+    
     /**
      * If true, this amount was deducted from the account.  Otherwise it was credited
      * to the account.

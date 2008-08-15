@@ -6,6 +6,7 @@ package com.threerings.msoy.money.server;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -82,11 +83,15 @@ public interface MoneyLogic
      *
      * @param memberId ID of the member making the purchase.
      * @param item Item to purchase.
+     * @param support If true, the member is an admin or support person.  They will always have enough
+     *      money to purchase the item, though it will drain the appropriate amount of money
+     *      until they have a balance of 0.
+     * @return Results of the operation..
      * @throws NotEnoughMoneyException The member making the purchase does not have enough bars in
      *      their account.
      * @throws NotSecuredException The member did not secure a price for the item.
      */
-    void buyItemWithBars (int memberId, ItemIdent item)
+    MoneyResult buyItemWithBars (int memberId, ItemIdent item, boolean support)
         throws NotEnoughMoneyException, NotSecuredException;
 
     /**
@@ -106,11 +111,15 @@ public interface MoneyLogic
      *
      * @param memberId ID of the member making the purchase.
      * @param item Item to purchase.
+     * @param support If true, the member is an admin or support person.  They will always have enough
+     *      money to purchase the item, though it will drain the appropriate amount of money
+     *      until they have a balance of 0.
+     * @return Results of the operation.
      * @throws NotEnoughMoneyException The member making the purchase does not have enough coins in
      *      their account.
      * @throws NotSecuredException The member did not secure a price for the item.
      */
-    void buyItemWithCoins (int memberId, ItemIdent item)
+    MoneyResult buyItemWithCoins (int memberId, ItemIdent item, boolean support)
         throws NotEnoughMoneyException, NotSecuredException;
 
     /**
@@ -119,8 +128,9 @@ public interface MoneyLogic
      *
      * @param memberId ID of the member receiving bars.
      * @param numBars Number of bars to add to their account.
+     * @return The money the member now has in their account.
      */
-    void buyBars (int memberId, int numBars);
+    MoneyResult buyBars (int memberId, int numBars);
 
     /**
      * Awards some number of coins to a member for some activity, such as playing a game.  This
@@ -131,9 +141,15 @@ public interface MoneyLogic
      * @param creatorId ID of the creator of the item that caused the coins to be awarded.
      * @param affiliateId ID of the affiliate associated with the transaction.  Zero if no
      *      affiliate.
+     * @param item Optional item that coins were awarded for (i.e. a game)
      * @param amount Number of coins to be awarded.
+     * @param description Description that will appear in the user's transaction history.
+     * @param userAction The user action that caused coins to be awarded.
+     * @return Map containing member ID to the money that member has in the account.  The recipient
+     *      of the coins, the creator, and the affiliate will all be included, if applicable.
      */
-    void awardCoins (int memberId, int creatorId, int affiliateId, int amount);
+    MoneyResult awardCoins (int memberId, int creatorId, int affiliateId, ItemIdent item, int amount, 
+        String description, UserAction userAction);
 
     /**
      * Retrieves the current account balance (coins, bars, and bling) for the given member.
@@ -197,4 +213,10 @@ public interface MoneyLogic
      * Retrieves the current configuration of the Money service.
      */
     MoneyConfiguration getMoneyConfiguration ();
+    
+    /**
+     * Initializes the money service by starting up required services, such as an
+     * expiration monitor and queue listeners.  This method is idempotent.
+     */
+    void init ();
 }

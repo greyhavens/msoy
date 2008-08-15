@@ -35,4 +35,6 @@ public interface MoneyRepository
     
     List<MemberAccountHistoryRecord> getHistory (int memberId, MoneyType type, 
         int start, int count, boolean descending);
+    
+    int deleteOldHistoryRecords (MoneyType type, long maxAge);
 }

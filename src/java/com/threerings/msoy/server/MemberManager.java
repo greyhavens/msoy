@@ -3,23 +3,57 @@
 
 package com.threerings.msoy.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.util.Arrays;
 import java.util.Map;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import com.samskivert.io.PersistenceException;
-
 import com.samskivert.jdbc.RepositoryUnit;
-
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
-import com.threerings.util.MessageBundle;
-
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.server.BodyManager;
+import com.threerings.crowd.server.PlaceManager;
+import com.threerings.crowd.server.PlaceRegistry;
+import com.threerings.msoy.badge.data.EarnedBadgeSet;
+import com.threerings.msoy.badge.data.InProgressBadgeSet;
+import com.threerings.msoy.badge.server.BadgeManager;
+import com.threerings.msoy.badge.server.ServerStatSet;
+import com.threerings.msoy.data.MemberLocation;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyBodyObject;
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.PlayerMetrics;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.notify.data.LevelUpNotification;
+import com.threerings.msoy.notify.server.NotificationManager;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.person.server.MailLogic;
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
+import com.threerings.msoy.profile.gwt.Profile;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.util.MailSender;
+import com.threerings.msoy.underwire.server.SupportLogic;
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -34,59 +68,8 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.util.PersistingUnit;
-
-import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.server.BodyManager;
-import com.threerings.crowd.server.PlaceManager;
-import com.threerings.crowd.server.PlaceRegistry;
-
 import com.threerings.stats.data.StatSet;
-
-import com.threerings.msoy.group.server.persist.GroupRecord;
-import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.person.server.MailLogic;
-import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
-
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.server.ItemManager;
-
-import com.threerings.msoy.badge.data.EarnedBadgeSet;
-import com.threerings.msoy.badge.data.InProgressBadgeSet;
-import com.threerings.msoy.badge.server.BadgeManager;
-import com.threerings.msoy.badge.server.ServerStatSet;
-import com.threerings.msoy.notify.data.LevelUpNotification;
-import com.threerings.msoy.notify.server.NotificationManager;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.profile.gwt.Profile;
-import com.threerings.msoy.underwire.server.SupportLogic;
-
-import com.threerings.msoy.data.MemberLocation;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyBodyObject;
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.PlayerMetrics;
-import com.threerings.msoy.data.UserActionDetails;
-
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.ReferralInfo;
-
-import com.threerings.msoy.server.persist.FlowRepository;
-import com.threerings.msoy.server.persist.MemberFlowRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.server.util.MailSender;
-
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.util.MessageBundle;
 
 /**
  * Manage msoy members.
@@ -95,7 +78,7 @@ import static com.threerings.msoy.Log.log;
 public class MemberManager
     implements MemberProvider
 {
-    @Inject public MemberManager (InvocationManager invmgr, MsoyPeerManager peerMan)
+    @Inject public MemberManager (final InvocationManager invmgr, final MsoyPeerManager peerMan)
     {
         invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.MEMBER_GROUP);
 
@@ -109,7 +92,7 @@ public class MemberManager
 
         // register a member forward participant that handles our transient bits
         peerMan.registerMemberForwarder(new MsoyPeerManager.MemberForwarder() {
-            public void packMember (MemberObject memobj, Map<String,Object> data) {
+            public void packMember (final MemberObject memobj, final Map<String,Object> data) {
                 // flush the transient bits in our metrics as we will snapshot and send this data
                 // before we depart our current room (which is when the are normally saved)
                 memobj.metrics.save(memobj);
@@ -122,13 +105,13 @@ public class MemberManager
                 data.put("MO.stats", memobj.stats);
             }
 
-            public void unpackMember (MemberObject memobj, Map<String,Object> data) {
+            public void unpackMember (final MemberObject memobj, final Map<String,Object> data) {
                 // grab and reinstate our bits
                 memobj.actorState = (String)data.get("MO.actorState");
                 memobj.metrics = (PlayerMetrics)data.get("MO.metrics");
                 memobj.badges = (EarnedBadgeSet)data.get("MO.badges");
                 memobj.inProgressBadges = (InProgressBadgeSet)data.get("MO.inProgressBadges");
-                StatSet stats = (StatSet)data.get("MO.stats");
+                final StatSet stats = (StatSet)data.get("MO.stats");
                 if (stats instanceof ServerStatSet) {
                     ((ServerStatSet)stats).init(_badgeMan, memobj);
                 }
@@ -144,8 +127,9 @@ public class MemberManager
     {
         _ppSnapshot = PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan);
         _ppInvalidator = new Interval(_omgr) {
+            @Override
             public void expired() {
-                PopularPlacesSnapshot newSnapshot =
+                final PopularPlacesSnapshot newSnapshot =
                     PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan);
                 synchronized(MemberManager.this) {
                     _ppSnapshot = newSnapshot;
@@ -168,9 +152,9 @@ public class MemberManager
     /**
      * Update the user's occupant info.
      */
-    public void updateOccupantInfo (MemberObject user)
+    public void updateOccupantInfo (final MemberObject user)
     {
-        PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
+        final PlaceManager pmgr = _placeReg.getPlaceManager(user.getPlaceOid());
         if (pmgr != null) {
             pmgr.updateOccupantInfo(user.createOccupantInfo(pmgr.getPlaceObject()));
         }
@@ -188,7 +172,7 @@ public class MemberManager
         //  add a listener for changes to accumulated flow so that the member's level can be
         // updated as necessary
         member.addListener(new AttributeChangeListener() {
-            public void attributeChanged (AttributeChangedEvent event) {
+            public void attributeChanged (final AttributeChangedEvent event) {
                 if (MemberObject.ACC_FLOW.equals(event.getName())) {
                     checkCurrentLevel(member);
                 }
@@ -203,16 +187,18 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void inviteToBeFriend (ClientObject caller, final int friendId,
-                                  InvocationService.ConfirmListener listener)
+    public void inviteToBeFriend (final ClientObject caller, final int friendId,
+                                  final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
         _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
+            @Override
             public void invokePersistent () throws Exception {
                 _mailLogic.sendFriendInvite(user.getMemberId(), friendId);
             }
+            @Override
             public void handleSuccess () {
                 ((InvocationService.ConfirmListener)_listener).requestProcessed();
             }
@@ -221,10 +207,10 @@ public class MemberManager
 
     // from interface MemberProvider
     public void bootFromPlace (
-        ClientObject caller, int booteeId, InvocationService.ConfirmListener listener)
+        final ClientObject caller, final int booteeId, final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject) caller;
+        final MemberObject user = (MemberObject) caller;
         if (user.location == null) {
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
 //            // TEST: let's pretend that we KNOW that they're in a game... just move them home
@@ -234,12 +220,12 @@ public class MemberManager
 //            return;
         }
 
-        PlaceManager pmgr = _placeReg.getPlaceManager(user.location.placeOid);
+        final PlaceManager pmgr = _placeReg.getPlaceManager(user.location.placeOid);
         if (!(pmgr instanceof BootablePlaceManager)) {
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
-        String response = ((BootablePlaceManager) pmgr).bootFromPlace(user, booteeId);
+        final String response = ((BootablePlaceManager) pmgr).bootFromPlace(user, booteeId);
         if (response == null) {
             listener.requestProcessed();
         } else {
@@ -248,14 +234,16 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getHomeId (ClientObject caller, final byte ownerType, final int ownerId,
-                           InvocationService.ResultListener listener)
+    public void getHomeId (final ClientObject caller, final byte ownerType, final int ownerId,
+                           final InvocationService.ResultListener listener)
         throws InvocationException
     {
         _invoker.postUnit(new PersistingUnit(listener) {
+            @Override
             public void invokePersistent () throws PersistenceException {
                 _homeId = _memberLogic.getHomeId(ownerType, ownerId);
             }
+            @Override
             public void handleSuccess () {
                 if (_homeId == null) {
                     handleFailure(new InvocationException("m.no_such_user"));
@@ -268,19 +256,19 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getCurrentMemberLocation (ClientObject caller, int memberId,
-                                          InvocationService.ResultListener listener)
+    public void getCurrentMemberLocation (final ClientObject caller, final int memberId,
+                                          final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject) caller;
+        final MemberObject user = (MemberObject) caller;
 
         // ensure that the other member is a full friend
-        FriendEntry entry = user.friends.get(memberId);
+        final FriendEntry entry = user.friends.get(memberId);
         if (null == entry) {
             throw new InvocationException("e.not_a_friend");
         }
 
-        MemberLocation memloc = _peerMan.getMemberLocation(memberId);
+        final MemberLocation memloc = _peerMan.getMemberLocation(memberId);
         if (memloc == null) {
             throw new InvocationException(MessageBundle.tcompose("e.not_online", entry.name));
         }
@@ -288,23 +276,23 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void updateAvailability (ClientObject caller, int availability)
+    public void updateAvailability (final ClientObject caller, final int availability)
     {
-        MemberObject user = (MemberObject) caller;
+        final MemberObject user = (MemberObject) caller;
         user.setAvailability(availability);
     }
 
     // from interface MemberProvider
-    public void inviteToFollow (ClientObject caller, int memberId,
-                                InvocationService.ConfirmListener listener)
+    public void inviteToFollow (final ClientObject caller, final int memberId,
+                                final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject) caller;
+        final MemberObject user = (MemberObject) caller;
 
         // if they want to clear their followers, do that
         if (memberId == 0) {
-            for (MemberName follower : user.followers) {
-                MemberObject fmo = _locator.lookupMember(follower.getMemberId());
+            for (final MemberName follower : user.followers) {
+                final MemberObject fmo = _locator.lookupMember(follower.getMemberId());
                 if (fmo != null) {
                     fmo.setFollowing(null);
                 }
@@ -315,7 +303,7 @@ public class MemberManager
         }
 
         // make sure the target member is online and in the same room as the requester
-        MemberObject target = _locator.lookupMember(memberId);
+        final MemberObject target = _locator.lookupMember(memberId);
         if (target == null || !ObjectUtil.equals(user.location, target.location)) {
             throw new InvocationException("m.follow_not_in_room");
         }
@@ -339,16 +327,16 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void followMember (ClientObject caller, int memberId,
-                              InvocationService.ConfirmListener listener)
+    public void followMember (final ClientObject caller, final int memberId,
+                              final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        MemberObject user = (MemberObject) caller;
+        final MemberObject user = (MemberObject) caller;
 
         // if the caller is requesting to clear their follow, do so
         if (memberId == 0) {
             if (user.following != null) {
-                MemberObject followee = _locator.lookupMember(user.following.getMemberId());
+                final MemberObject followee = _locator.lookupMember(user.following.getMemberId());
                 if (followee != null) {
                     followee.removeFromFollowers(user.getMemberId());
                 }
@@ -359,7 +347,7 @@ public class MemberManager
         }
 
         // otherwise they're accepting a follow request, make sure it's still valid
-        MemberObject target = _locator.lookupMember(memberId);
+        final MemberObject target = _locator.lookupMember(memberId);
         if (target == null || !target.followers.containsKey(user.getMemberId())) {
             throw new InvocationException("m.follow_invite_expired");
         }
@@ -370,7 +358,7 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void setAway (ClientObject caller, boolean away, String message)
+    public void setAway (final ClientObject caller, final boolean away, final String message)
         //throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -380,7 +368,7 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void setAvatar (ClientObject caller, int avatarItemId, final float newScale,
+    public void setAvatar (final ClientObject caller, final int avatarItemId, final float newScale,
                            final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
@@ -396,16 +384,16 @@ public class MemberManager
         // otherwise, make sure it exists and we own it
         final ItemIdent ident = new ItemIdent(Item.AVATAR, avatarItemId);
         _itemMan.getItem(ident, new ResultListener<Item>() {
-            public void requestCompleted (Item item) {
-                Avatar avatar = (Avatar) item;
+            public void requestCompleted (final Item item) {
+                final Avatar avatar = (Avatar) item;
                 if (user.getMemberId() != avatar.ownerId) { // ensure that they own it
-                    String errmsg = "Not user's avatar [ownerId=" + avatar.ownerId + "]";
+                    final String errmsg = "Not user's avatar [ownerId=" + avatar.ownerId + "]";
                     requestFailed(new Exception(errmsg));
                 } else {
                     finishSetAvatar(user, avatar, newScale, listener);
                 }
             }
-            public void requestFailed (Exception cause) {
+            public void requestFailed (final Exception cause) {
                 log.warning("Unable to setAvatar [for=" + user.getMemberId() +
                         ", avatar=" + ident + "].", cause);
                 listener.requestFailed(InvocationCodes.INTERNAL_ERROR);
@@ -414,8 +402,8 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void setDisplayName (ClientObject caller, final String name,
-                                InvocationService.InvocationListener listener)
+    public void setDisplayName (final ClientObject caller, final String name,
+                                final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject user = (MemberObject) caller;
@@ -423,11 +411,13 @@ public class MemberManager
 
         // TODO: verify entered string
 
-        String uname = "setDisplayName(" + user.who() + ", " + name + ")";
+        final String uname = "setDisplayName(" + user.who() + ", " + name + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
+            @Override
             public void invokePersistent () throws Exception {
                 _memberRepo.configureDisplayName(user.getMemberId(), name);
             }
+            @Override
             public void handleSuccess () {
                 user.updateDisplayName(name);
                 updateOccupantInfo(user);
@@ -436,15 +426,17 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getDisplayName (ClientObject caller, final int memberId,
-                                InvocationService.ResultListener listener)
+    public void getDisplayName (final ClientObject caller, final int memberId,
+                                final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        String uname = "getDisplayName(" + memberId + ")";
+        final String uname = "getDisplayName(" + memberId + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
+            @Override
             public void invokePersistent () throws Exception {
                 _displayName = String.valueOf(_memberRepo.loadMemberName(memberId));
             }
+            @Override
             public void handleSuccess () {
                 reportRequestProcessed(_displayName);
             }
@@ -453,14 +445,16 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getGroupName (ClientObject caller, final int groupId,
-                              InvocationService.ResultListener listener)
+    public void getGroupName (final ClientObject caller, final int groupId,
+                              final InvocationService.ResultListener listener)
     {
         _invoker.postUnit(new PersistingUnit("getGroupName(" + groupId + ")", listener) {
+            @Override
             public void invokePersistent () throws Exception {
-                GroupRecord rec = _groupRepo.loadGroup(groupId);
+                final GroupRecord rec = _groupRepo.loadGroup(groupId);
                 _groupName = (rec == null) ? "" : rec.name;
             }
+            @Override
             public void handleSuccess () {
                 reportRequestProcessed(_groupName);
             }
@@ -469,14 +463,15 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void acknowledgeWarning (ClientObject caller)
+    public void acknowledgeWarning (final ClientObject caller)
     {
         final MemberObject user = (MemberObject) caller;
         _invoker.postUnit(new Invoker.Unit("acknowledgeWarning") {
+            @Override
             public boolean invoke () {
                 try {
                     _memberRepo.clearMemberWarning(user.getMemberId());
-                } catch (PersistenceException pe) {
+                } catch (final PersistenceException pe) {
                     log.warning("Failed to clean member warning [for=" +
                         user.getMemberId() + "].", pe);
                 }
@@ -486,18 +481,19 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void setHomeSceneId (ClientObject caller, final int ownerType, final int ownerId,
-                                final int sceneId, InvocationService.ConfirmListener listener)
+    public void setHomeSceneId (final ClientObject caller, final int ownerType, final int ownerId,
+                                final int sceneId, final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
         ensureNotGuest(member);
 
-        String uname = "setHomeSceneId(" + member.getMemberId() + ")";
+        final String uname = "setHomeSceneId(" + member.getMemberId() + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
+            @Override
             public void invokePersistent () throws Exception {
-                int memberId = member.getMemberId();
-                SceneRecord scene = _sceneRepo.loadScene(sceneId);
+                final int memberId = member.getMemberId();
+                final SceneRecord scene = _sceneRepo.loadScene(sceneId);
                 if (scene.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                     if (scene.ownerId == memberId) {
                         _memberRepo.setHomeSceneId(memberId, sceneId);
@@ -516,6 +512,7 @@ public class MemberManager
                     throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
                 }
             }
+            @Override
             public void handleSuccess () {
                 if (ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
                     member.setHomeSceneId(sceneId);
@@ -526,15 +523,17 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getGroupHomeSceneId (ClientObject caller, final int groupId,
-                                     InvocationService.ResultListener listener)
+    public void getGroupHomeSceneId (final ClientObject caller, final int groupId,
+                                     final InvocationService.ResultListener listener)
         throws InvocationException
     {
-        String uname = "getHomeSceneId(" + groupId + ")";
+        final String uname = "getHomeSceneId(" + groupId + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
+            @Override
             public void invokePersistent () throws Exception {
                 _homeSceneId = _groupRepo.getHomeSceneId(groupId);
             }
+            @Override
             public void handleSuccess () {
                 reportRequestProcessed(_homeSceneId);
             }
@@ -543,25 +542,27 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void complainMember (ClientObject caller, int memberId, String complaint)
+    public void complainMember (final ClientObject caller, final int memberId, final String complaint)
     {
         _supportLogic.addComplaint((MemberObject)caller, memberId, complaint);
     }
 
     // from interface MemberProvider
-    public void updateStatus (ClientObject caller, String status,
-                              InvocationService.InvocationListener listener)
+    public void updateStatus (final ClientObject caller, final String status,
+                              final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         final MemberObject member = (MemberObject) caller;
         ensureNotGuest(member);
 
         final String commitStatus = StringUtil.truncate(status, Profile.MAX_STATUS_LENGTH);
-        String uname = "updateStatus(" + member.getMemberId() + ")";
+        final String uname = "updateStatus(" + member.getMemberId() + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
+            @Override
             public void invokePersistent () throws Exception {
                 _profileRepo.updateHeadline(member.getMemberId(), commitStatus);
             }
+            @Override
             public void handleSuccess () {
                 member.setHeadline(commitStatus);
                 MemberNodeActions.updateFriendEntries(member);
@@ -570,38 +571,40 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void trackReferralCreation (ClientObject caller, ReferralInfo info)
+    public void trackReferralCreation (final ClientObject caller, final ReferralInfo info)
     {
         _eventLog.referralCreated(info);
     }
 
     // from interface MemberProvider
     public void emailShare (
-        ClientObject caller, final int sceneId, final int gameId, final String[] emails,
+        final ClientObject caller, final int sceneId, final int gameId, final String[] emails,
         final String message, final InvocationService.ConfirmListener cl)
     {
         final MemberObject memObj = (MemberObject) caller;
 
         _invoker.postUnit(new RepositoryUnit("emailShare") {
+            @Override
             public void invokePersist () throws PersistenceException {
-                MemberRecord sender = _memberRepo.loadMember(memObj.getMemberId());
+                final MemberRecord sender = _memberRepo.loadMember(memObj.getMemberId());
 
                 // Send the email on the invoker thread... TODO?
-                String from = (sender == null) ?
+                final String from = (sender == null) ?
                     "no-reply@whirled.com" : sender.accountName;
-                String name = (sender == null) ? null : sender.name;
+                final String name = (sender == null) ? null : sender.name;
                 String url = ServerConfig.getServerURL();
                 if (sceneId != 0) {
                     url += "#world-s" + sceneId;
                 } else if (gameId != 0) {
                     url += "#world-game_g_" + gameId;
                 }
-                for (String recip : emails) {
+                for (final String recip : emails) {
                     MailSender.sendEmail(recip, from, "shareInvite", "name", name,
                                          "message", message, "link", url);
                 }
             }
 
+            @Override
             public void handleSuccess () {
                 cl.requestProcessed();
             }
@@ -610,13 +613,15 @@ public class MemberManager
 
     // from interface MemberProvider
     public void getABTestGroup (
-        ClientObject caller, final ReferralInfo info, final String testName,
-        final boolean logEvent, InvocationService.ResultListener listener)
+        final ClientObject caller, final ReferralInfo info, final String testName,
+        final boolean logEvent, final InvocationService.ResultListener listener)
     {
         _invoker.postUnit(new PersistingUnit(listener) {
+            @Override
             public void invokePersistent () throws PersistenceException {
                 _testGroup = new Integer(_memberLogic.getABTestGroup(testName, info, logEvent));
             }
+            @Override
             public void handleSuccess () {
                 ((InvocationService.ResultListener)_listener).requestProcessed(_testGroup);
             }
@@ -626,7 +631,7 @@ public class MemberManager
 
     // from interface MemberProvider
     public void trackClientAction (
-        ClientObject caller, ReferralInfo info, String actionName, String details)
+        final ClientObject caller, final ReferralInfo info, final String actionName, final String details)
     {
         if (info == null) {
             log.warning(
@@ -639,7 +644,7 @@ public class MemberManager
 
     // from interface MemberProvider
     public void trackTestAction (
-        ClientObject caller, ReferralInfo info, String actionName, String testName)
+        final ClientObject caller, final ReferralInfo info, final String actionName, String testName)
     {
         if (info == null) {
             log.warning(
@@ -657,75 +662,6 @@ public class MemberManager
     }
 
     /**
-     * Grants flow to the member identified in the supplied user action details.
-     *
-     * @see FlowRepository#grantFlow(UserActionDetails,int)
-     */
-    public void grantFlow (final UserActionDetails info, final int amount)
-    {
-        _invoker.postUnit(new RepositoryUnit("grantFlow") {
-            public void invokePersist () throws PersistenceException {
-                _flowRec = _memberRepo.getFlowRepository().grantFlow(info, amount);
-            }
-            public void handleSuccess () {
-                MemberNodeActions.flowUpdated(_flowRec);
-            }
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to grant flow [memberId=" + info.memberId +
-                        ", action=" + info.action + ", amount=" + amount + "]", pe);
-            }
-            protected MemberFlowRecord _flowRec;
-        });
-    }
-
-    /**
-     * Debit a member some flow, categorized and optionally metatagged with an action type and a
-     * detail String. The member's {@link MemberRecord} is updated, as is the {@link
-     * DailyFlowSpentRecord}. A {@link MemberActionLogRecord} is recorded for the supplied spend
-     * action. Finally, a line is written to the flow grant log.
-     */
-    public void spendFlow (final UserActionDetails info, final int amount)
-    {
-        _invoker.postUnit(new RepositoryUnit("spendFlow") {
-            public void invokePersist () throws PersistenceException {
-                _flowRec = _memberRepo.getFlowRepository().spendFlow(info, amount);
-            }
-            public void handleSuccess () {
-                MemberNodeActions.flowUpdated(_flowRec);
-            }
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to spend flow [amount=" + amount +
-                        ", info=" + info + "]", pe);
-            }
-            protected MemberFlowRecord _flowRec;
-        });
-    }
-
-    /**
-     * Register and log an action taken by a specific user for humanity assessment and conversion
-     * analysis purposes. Some actions grant flow as a result of being taken, this method handles
-     * that granting and updating the member's flow if they are online.
-     */
-    public void logUserAction (final UserActionDetails info)
-    {
-        _invoker.postUnit(new RepositoryUnit("takeAction") {
-            public void invokePersist () throws PersistenceException {
-                // record that that took the action
-                _flowRec = _memberRepo.getFlowRepository().logUserAction(info);
-            }
-            public void handleSuccess () {
-                if (_flowRec != null) {
-                    MemberNodeActions.flowUpdated(_flowRec);
-                }
-            }
-            public void handleFailure (Exception pe) {
-                log.warning("Unable to note user action [action=" + info + "].");
-            }
-            protected MemberFlowRecord _flowRec;
-        });
-    }
-
-    /**
      * Check if the member's accumulated flow level matches up with their current level, and update
      * their current level if necessary
      */
@@ -734,11 +670,11 @@ public class MemberManager
         int level = Arrays.binarySearch(_levelForFlow, member.accFlow);
         if (level < 0) {
             level = -1 * level - 1;
-            int length = _levelForFlow.length;
+            final int length = _levelForFlow.length;
             // if the _levelForFlow array isn't big enough, double its size and flesh out the new
             // half
             if (level == length) {
-                int[] temp = new int[length*2];
+                final int[] temp = new int[length*2];
                 for (int ii = 0; ii < length; ii++) {
                     temp[ii] = _levelForFlow[ii];
                 }
@@ -761,8 +697,9 @@ public class MemberManager
 
             final int newLevel = level;
             _invoker.postUnit(new RepositoryUnit("updateLevel") {
+                @Override
                 public void invokePersist () throws PersistenceException {
-                    int memberId = member.getMemberId();
+                    final int memberId = member.getMemberId();
                     // record the new level, and grant a new invite
                     _memberRepo.setUserLevel(memberId, newLevel);
                     _memberRepo.grantInvites(memberId, 1);
@@ -770,10 +707,12 @@ public class MemberManager
                     _feedRepo.publishMemberMessage(
                         memberId, FeedMessageType.FRIEND_GAINED_LEVEL, String.valueOf(newLevel));
                 }
+                @Override
                 public void handleSuccess () {
                     _notifyMan.notify(member, new LevelUpNotification(newLevel));
                 }
-                public void handleFailure (Exception pe) {
+                @Override
+                public void handleFailure (final Exception pe) {
                     log.warning("Unable to set user level [memberId=" +
                         member.getMemberId() + ", level=" + newLevel + "]");
                 }
@@ -786,11 +725,11 @@ public class MemberManager
      *
      * @return true if the player was found and booted successfully
      */
-    public boolean bootMember (int memberId)
+    public boolean bootMember (final int memberId)
     {
-        MemberObject mobj = _locator.lookupMember(memberId);
+        final MemberObject mobj = _locator.lookupMember(memberId);
         if (mobj != null) {
-            PresentsClient pclient = _clmgr.getClient(mobj.username);
+            final PresentsClient pclient = _clmgr.getClient(mobj.username);
             if (pclient != null) {
                 pclient.endSession();
                 return true;
@@ -802,7 +741,7 @@ public class MemberManager
     /**
      * Convenience method to ensure that the specified caller is not a guest.
      */
-    protected void ensureNotGuest (MemberObject caller)
+    protected void ensureNotGuest (final MemberObject caller)
         throws InvocationException
     {
         if (caller.isGuest()) {
@@ -820,6 +759,7 @@ public class MemberManager
         final InvocationService.ConfirmListener listener)
     {
         _invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
+            @Override
             public void invokePersist () throws PersistenceException {
                 _memberRepo.configureAvatarId(user.getMemberId(),
                     (avatar == null) ? 0 : avatar.itemId);
@@ -828,14 +768,16 @@ public class MemberManager
                 }
             }
 
+            @Override
             public void handleSuccess () {
-                Avatar prev = user.avatar;
+                final Avatar prev = user.avatar;
                 if (newScale != 0 && avatar != null) {
                     avatar.scale = newScale;
                 }
                 _itemMan.updateItemUsage(
                     user.getMemberId(), prev, avatar, new ResultListener.NOOP<Object>() {
-                    public void requestFailed (Exception cause) {
+                    @Override
+                    public void requestFailed (final Exception cause) {
                         log.warning("Unable to update usage from an avatar change.");
                     }
                 });
@@ -849,7 +791,7 @@ public class MemberManager
 
                     // NOTE: we are not updating the used/location fields of the cached avatars,
                     // I don't think it's necessary, but it'd be a simple matter here...
-                    long now = System.currentTimeMillis();
+                    final long now = System.currentTimeMillis();
                     if (prev != null) {
                         prev.lastTouched = now;
                         _itemMan.avatarUpdatedOnPeer(user, prev);
@@ -870,7 +812,8 @@ public class MemberManager
                 listener.requestProcessed();
             }
 
-            public void handleFailure (Exception pe) {
+            @Override
+            public void handleFailure (final Exception pe) {
                 log.warning("Unable to set avatar [user=" + user.which() +
                             ", avatar='" + avatar + "', " + "error=" + pe + "].");
                 log.warning(pe);
@@ -880,7 +823,7 @@ public class MemberManager
 
     }
 
-    protected void calculateLevelsForFlow (int fromIndex)
+    protected void calculateLevelsForFlow (final int fromIndex)
     {
         // This equation governs the total flow requirement for a given level (n):
         // flow(n) = flow(n-1) + ((n-1) * 17.8 - 49) * (3000 / 60)

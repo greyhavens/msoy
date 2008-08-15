@@ -109,7 +109,7 @@ public class MemberAccountRecord extends PersistentRecord
     }
     // AUTO-GENERATED: METHODS END
     
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
     
     /**
      * Creates a new blank record for the given member.  All account balances are set to 0.
@@ -155,13 +155,13 @@ public class MemberAccountRecord extends PersistentRecord
      * @param coins Number of coins to add.
      * @return Account history record for this transaction.
      */
-    public MemberAccountHistoryRecord awardCoins (final int coins)
+    public MemberAccountHistoryRecord awardCoins (final int coins, final ItemIdent item, final String description)
     {
         this.coins += coins;
         this.accCoins += coins;
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated, MoneyType.COINS,
-            coins, false, "Awarded " + coins + " coins.");
+            coins, false, description, item);
     }
     
     /**
@@ -172,17 +172,23 @@ public class MemberAccountRecord extends PersistentRecord
      * @param description Description that should be used in the history record.
      * @return Account history record for this transaction.
      */
-    public MemberAccountHistoryRecord buyItem (final int amount, final MoneyType type, final String description,
-        final ItemIdent item)
+    public MemberAccountHistoryRecord buyItem (int amount, final MoneyType type, final String description,
+        final ItemIdent item, final boolean support)
     {
         if (type == MoneyType.BARS) {
+            if (support) {
+                amount = Math.min(amount, this.bars);
+            }
             this.bars -= amount;
         } else {
+            if (support) {
+                amount = Math.min(amount, this.coins);
+            }
             this.coins -= amount;
         }
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated, type, amount, true, 
-            description, item.itemId, item.type);
+            description, item);
     }
     
     /**
@@ -207,10 +213,10 @@ public class MemberAccountRecord extends PersistentRecord
      * @return History record for the transaction.
      */
     public MemberAccountHistoryRecord creatorPayout (final int amount, final MoneyType listingType, 
-        final String description, final ItemIdent item)
+        final String description, final ItemIdent item, final double percentage)
     {
         // TODO: Determine percentage from administrator.
-        final double amountPaid = 0.3 * amount;
+        final double amountPaid = percentage * amount;
         final MoneyType paymentType;
         if (listingType == MoneyType.BARS) {
             this.bling += amountPaid;
@@ -223,7 +229,7 @@ public class MemberAccountRecord extends PersistentRecord
         }
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated, paymentType, amountPaid, false, 
-            description, item.itemId, item.type);
+            description, item);
     }
     
     public int getMemberId ()

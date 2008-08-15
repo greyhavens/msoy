@@ -3,50 +3,43 @@
 
 package com.threerings.msoy.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.util.Date;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
-import com.threerings.util.MessageBundle;
-import com.threerings.util.Name;
-
-import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.net.AuthResponse;
-import com.threerings.presents.net.AuthResponseData;
-import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.net.AuthingConnection;
-
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.badge.server.BadgeLogic;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-
+import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
-import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.persist.InvitationRecord;
-import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
-
 import com.threerings.msoy.web.data.BannedException;
 import com.threerings.msoy.web.data.ServiceException;
-
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.presents.net.AuthRequest;
+import com.threerings.presents.net.AuthResponse;
+import com.threerings.presents.net.AuthResponseData;
+import com.threerings.presents.server.Authenticator;
+import com.threerings.presents.server.net.AuthingConnection;
+import com.threerings.util.MessageBundle;
+import com.threerings.util.Name;
 
 /**
  * Handles authentication for the MetaSOY server. We rely on underlying authentication domain
@@ -171,7 +164,7 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Verifies that an ident is valid.
      */
-    public static boolean isValidIdent (String ident)
+    public static boolean isValidIdent (final String ident)
     {
         if (ident == null || ident.length() != 48) {
             return false;
@@ -182,7 +175,7 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Generates a guest name from the given member id.
      */
-    public static String generateGuestName (int memberId)
+    public static String generateGuestName (final int memberId)
     {
         return "Guest" + Math.abs(memberId);
     }
@@ -206,8 +199,8 @@ public class MsoyAuthenticator extends Authenticator
      * @return the newly created member record.
      */
     public MemberRecord createAccount (
-        String email, String password, String displayName, boolean ignoreRestrict,
-        InvitationRecord invite, ReferralInfo referral)
+        String email, final String password, final String displayName, boolean ignoreRestrict,
+        final InvitationRecord invite, final ReferralInfo referral)
         throws ServiceException
     {
         if (!RuntimeConfig.server.registrationEnabled && !ignoreRestrict) {
@@ -227,13 +220,13 @@ public class MsoyAuthenticator extends Authenticator
             domain.validateAccount(account);
 
             // create a new member record for the account
-            MemberRecord mrec = createMember(account, displayName, invite, referral);
+            final MemberRecord mrec = createMember(account, displayName, invite, referral);
             // clear out our account reference to let the finally block know that all went well and
             // we need not roll back the domain account creation
             account = null;
             return mrec;
 
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("Error creating member record", "for", email, pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
 
@@ -241,7 +234,7 @@ public class MsoyAuthenticator extends Authenticator
             if (account != null) {
                 try {
                     domain.uncreateAccount(email);
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     log.warning("Failed to rollback account creation", "email", email, e);
                 }
             }
@@ -252,15 +245,15 @@ public class MsoyAuthenticator extends Authenticator
      * Updates any of the supplied authentication information for the supplied account. Any of the
      * new values may be null to indicate that they are not to be updated.
      */
-    public void updateAccount (String email, String newAccountName, String newPermaName,
-                               String newPassword)
+    public void updateAccount (String email, final String newAccountName, final String newPermaName,
+                               final String newPassword)
         throws ServiceException
     {
         try {
             // make sure we're dealing with a lower cased email
             email = email.toLowerCase();
             getDomain(email).updateAccount(email, newAccountName, newPermaName, newPassword);
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("Error updating account [for=" + email +
                     ", nan=" + newAccountName + ", npn=" + newPermaName +
                     ", npass=" + newPassword + "].", pe);
@@ -289,7 +282,7 @@ public class MsoyAuthenticator extends Authenticator
      *
      * @return true if the code is valid, false otherwise.
      */
-    public boolean validatePasswordResetCode (String email, String code)
+    public boolean validatePasswordResetCode (String email, final String code)
         throws ServiceException, PersistenceException
     {
         // make sure we're dealing with a lower cased email
@@ -306,15 +299,15 @@ public class MsoyAuthenticator extends Authenticator
      *
      * @return the user's member record.
      */
-    public MemberRecord authenticateSession (String email, String password)
+    public MemberRecord authenticateSession (String email, final String password)
         throws ServiceException
     {
         try {
             // make sure we're dealing with a lower cased email
             email = email.toLowerCase();
             // validate their account credentials; make sure they're not banned
-            Domain domain = getDomain(email);
-            Account account = domain.authenticateAccount(email, password);
+            final Domain domain = getDomain(email);
+            final Account account = domain.authenticateAccount(email, password);
 
             // load up their member information to get their member id
             MemberRecord mrec = _memberRepo.loadMember(account.accountName);
@@ -334,7 +327,7 @@ public class MsoyAuthenticator extends Authenticator
 
             return mrec;
 
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("Error authenticating user [who=" + email + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
@@ -347,16 +340,16 @@ public class MsoyAuthenticator extends Authenticator
     }
 
     @Override // from Authenticator
-    protected void processAuthentication (AuthingConnection conn, AuthResponse rsp)
+    protected void processAuthentication (final AuthingConnection conn, final AuthResponse rsp)
         throws PersistenceException
     {
-        AuthRequest req = conn.getAuthRequest();
-        MsoyAuthResponseData rdata = (MsoyAuthResponseData) rsp.getData();
+        final AuthRequest req = conn.getAuthRequest();
+        final MsoyAuthResponseData rdata = (MsoyAuthResponseData) rsp.getData();
         MsoyCredentials creds = null;
 
         try {
             // make sure they've got the correct version
-            String cvers = req.getVersion(), svers = DeploymentConfig.version;
+            final String cvers = req.getVersion(), svers = DeploymentConfig.version;
             if (!svers.equals(cvers)) {
                 log.info("Refusing wrong version [creds=" + req.getCredentials() +
                          ", cvers=" + cvers + ", svers=" + svers + "].");
@@ -368,7 +361,7 @@ public class MsoyAuthenticator extends Authenticator
             // make sure they've sent valid credentials
             try {
                 creds = (MsoyCredentials) req.getCredentials();
-            } catch (ClassCastException cce) {
+            } catch (final ClassCastException cce) {
                 log.warning("Invalid creds " + req.getCredentials() + ".", cce);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
@@ -383,7 +376,7 @@ public class MsoyAuthenticator extends Authenticator
                                       MsoyCredentials.getGuestMemberId(creds.sessionToken));
 
                 } else {
-                    MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
+                    final MemberRecord member = _memberRepo.loadMemberForSession(creds.sessionToken);
                     if (member == null) {
                         throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
                     }
@@ -392,24 +385,24 @@ public class MsoyAuthenticator extends Authenticator
                 }
 
             } else if (creds.getUsername() != null) {
-                String aname = creds.getUsername().toString().toLowerCase();
+                final String aname = creds.getUsername().toString().toLowerCase();
                 rsp.authdata = authenticateMember(creds, rdata, null, aname, creds.getPassword());
 
             } else {
                 // if this is not just a "featured whirled" client; assign this guest a member id
                 // for the duration of their session
-                int memberId = creds.featuredPlaceView ? 0 : _peerMan.getNextGuestId();
+                final int memberId = creds.featuredPlaceView ? 0 : _peerMan.getNextGuestId();
                 authenticateGuest(conn, creds, rdata, memberId);
             }
 
-        } catch (ServiceException se) {
+        } catch (final ServiceException se) {
             rdata.code = se.getMessage();
             log.info("Rejecting authentication [creds=" + creds + ", code=" + rdata.code + "].");
         }
     }
 
-    protected void authenticateGuest (AuthingConnection conn, MsoyCredentials creds,
-                                      MsoyAuthResponseData rdata, int memberId)
+    protected void authenticateGuest (final AuthingConnection conn, final MsoyCredentials creds,
+                                      final MsoyAuthResponseData rdata, final int memberId)
         throws ServiceException, PersistenceException
     {
         if (!RuntimeConfig.server.nonAdminsAllowed) {
@@ -418,11 +411,11 @@ public class MsoyAuthenticator extends Authenticator
 
         // if they're a "featured whirled" client, create a unique name for them
         if (creds.featuredPlaceView) {
-            String name = conn.getInetAddress().getHostAddress() + ":" + System.currentTimeMillis();
+            final String name = conn.getInetAddress().getHostAddress() + ":" + System.currentTimeMillis();
             creds.setUsername(new LurkerName(name));
         } else {
             // if they supplied a name with their credentials, use that, otherwise generate one
-            String name = (creds.getUsername() == null) ?
+            final String name = (creds.getUsername() == null) ?
                 generateGuestName(memberId) : creds.getUsername().toString();
             creds.setUsername(new MemberName(name, memberId));
         }
@@ -431,17 +424,17 @@ public class MsoyAuthenticator extends Authenticator
         _eventLog.userLoggedIn(memberId, false, System.currentTimeMillis(), creds.sessionToken);
     }
 
-    protected Account authenticateMember (MsoyCredentials creds, MsoyAuthResponseData rdata,
-                                          MemberRecord member, String accountName, String password)
+    protected Account authenticateMember (final MsoyCredentials creds, final MsoyAuthResponseData rdata,
+                                          MemberRecord member, final String accountName, final String password)
         throws ServiceException, PersistenceException
     {
         // obtain the authentication domain appropriate to their account name
-        Domain domain = getDomain(accountName);
+        final Domain domain = getDomain(accountName);
 
         boolean newIdent = false;
         // see if we need to generate a new ident
         for (int ii = 0; ii < MAX_TRIES && StringUtil.isBlank(creds.ident); ii++) {
-            String ident = generateIdent(accountName, ii);
+            final String ident = generateIdent(accountName, ii);
             if (domain.isUniqueIdent(ident)) {
                 creds.ident = ident;
                 newIdent = true;
@@ -455,7 +448,7 @@ public class MsoyAuthenticator extends Authenticator
         }
 
         // load up and authenticate their domain account record
-        Account account = domain.authenticateAccount(accountName, password);
+        final Account account = domain.authenticateAccount(accountName, password);
 
         // we need to find out if this account has ever logged in so that we can decide how to
         // handle tainted idents; so we load up the member record for this account
@@ -512,7 +505,7 @@ public class MsoyAuthenticator extends Authenticator
      * could route all @yahoo.com addresses to a custom authenticator that talked to Yahoo!  to
      * authenticate user accounts.
      */
-    protected Domain getDomain (String accountName)
+    protected Domain getDomain (final String accountName)
         throws PersistenceException
     {
         // TODO: fancy things based on the user's email domain for our various exciting partners
@@ -523,7 +516,7 @@ public class MsoyAuthenticator extends Authenticator
      * Called to create a starting member record for a first-time logger in.
      */
     protected MemberRecord createMember (
-        Account account, String displayName, InvitationRecord invite, ReferralInfo referral)
+        final Account account, final String displayName, final InvitationRecord invite, final ReferralInfo referral)
         throws PersistenceException
     {
         // create their main member record
@@ -542,19 +535,14 @@ public class MsoyAuthenticator extends Authenticator
         mrec.setFlag(MemberRecord.Flag.ADMIN, account.tokens.isAdmin());
 
         // create a blank room for them, store it
-        String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
+        final String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
         mrec.homeSceneId = _sceneRepo.createBlankRoom(
             MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true, null);
         _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
         // emit a created_account action which will grant them some starting flow
-        MemberFlowRecord mfr = _memberRepo.getFlowRepository().logUserAction(
-            new UserActionDetails(mrec.memberId, UserAction.CREATED_ACCOUNT));
-
-        // apply that directly to the member record we're returning to the caller so that it has
-        // their accurate starting flow and gold values
-        mrec.flow = mfr.flow;
-        // mrec.gold = mfr.gold;
+        _moneyLogic.awardCoins(mrec.memberId, 0, 0, null, CoinAwards.CREATED_ACCOUNT, "", 
+            UserAction.CREATED_ACCOUNT).getNewMemberMoney();
 
         // if they gave us a valid referral info, store it; otherwise it'll be filled in later
         if (referral != null) {
@@ -572,19 +560,19 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Validates an account checking for possible temp bans or warning messages.
      */
-    protected void validateAccount (Account account, int memberId)
+    protected void validateAccount (final Account account, final int memberId)
         throws ServiceException, PersistenceException
     {
-        MemberWarningRecord record = _memberRepo.loadMemberWarningRecord(memberId);
+        final MemberWarningRecord record = _memberRepo.loadMemberWarningRecord(memberId);
         if (record == null) {
             return;
         }
 
         if (record.banExpires != null) {
             // figure out how many hours are left on the temp ban
-            Date now = new Date();
+            final Date now = new Date();
             if (now.before(record.banExpires)) {
-                int expires = (int)((record.banExpires.getTime() - now.getTime())/ONE_HOUR);
+                final int expires = (int)((record.banExpires.getTime() - now.getTime())/ONE_HOUR);
                 throw new BannedException(MsoyAuthCodes.TEMP_BANNED, record.warning, expires);
             }
         }
@@ -595,9 +583,9 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Generate a new unique ident for this flash client.
      */
-    protected static String generateIdent (String accountName, int offset)
+    protected static String generateIdent (final String accountName, final int offset)
     {
-        String seed = StringUtil.sha1hex(
+        final String seed = StringUtil.sha1hex(
                 Long.toHexString(System.currentTimeMillis() + offset*1000L) + accountName);
         return seed + generateIdentChecksum(seed);
     }
@@ -605,7 +593,7 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Generates a checksum for an ident.
      */
-    protected static String generateIdentChecksum (String seed)
+    protected static String generateIdentChecksum (final String seed)
     {
         return StringUtil.sha1hex(seed.substring(10, 20) + seed.substring(30, 40) +
             seed.substring(20, 30) + seed.substring(0, 10)).substring(0, 8);
@@ -618,6 +606,7 @@ public class MsoyAuthenticator extends Authenticator
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected BadgeLogic _badgeLogic;
 
     /** The number of times we'll try generate a unique ident before failing. */

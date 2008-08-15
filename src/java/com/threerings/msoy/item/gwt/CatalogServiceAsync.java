@@ -6,10 +6,8 @@ package com.threerings.msoy.item.gwt;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 /**
  * The asynchronous (client-side) version of {@link CatalogService}.
  */
@@ -58,11 +56,6 @@ public interface CatalogServiceAsync
      * Removes the specified catalog listing.
      */
     public void removeListing (byte itemType, int catalogId, AsyncCallback<Void> callback);
-
-    /**
-     * The asynchronous version of {@link CatalogService#returnItem}
-     */
-    void returnItem (ItemIdent item, AsyncCallback<int[]> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#getPopularTags}.

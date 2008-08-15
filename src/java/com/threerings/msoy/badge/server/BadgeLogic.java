@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.badge.server;
 
+import static com.threerings.msoy.badge.Log.log;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -13,27 +15,21 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
-
-import com.threerings.presents.annotation.BlockingThread;
-
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.UserActionDetails;
-import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.persist.FlowRepository;
-import com.threerings.msoy.server.persist.MemberFlowRecord;
-
-import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
-
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
-
-import static com.threerings.msoy.badge.Log.log;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.money.server.MemberMoney;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyNodeActions;
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.presents.annotation.BlockingThread;
 
 /**
  * Provides badge related services to servlets and other blocking thread entities.
@@ -46,7 +42,7 @@ public class BadgeLogic
      * a. calling into BadgeRepository to create and store the BadgeRecord
      * b. recording to the member's feed that they earned the stamp in question
      */
-    public void awardBadge (EarnedBadgeRecord brec, boolean dobjNeedsUpdate)
+    public void awardBadge (final EarnedBadgeRecord brec, final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         // TODO: remove this when passport goes live
@@ -55,8 +51,8 @@ public class BadgeLogic
         }
 
         // ensure this is a valid badge level
-        BadgeType type = BadgeType.getType(brec.badgeCode);
-        BadgeType.Level levelData = type.getLevel(brec.level);
+        final BadgeType type = BadgeType.getType(brec.badgeCode);
+        final BadgeType.Level levelData = type.getLevel(brec.level);
         if (levelData == null) {
             log.warning("Failed to award invalid badge level", "record", brec, "type", type);
             return;
@@ -67,8 +63,8 @@ public class BadgeLogic
         _feedRepo.publishMemberMessage(brec.memberId, FeedMessageType.FRIEND_WON_BADGE,
             "some data here");
 
-        UserActionDetails info = new UserActionDetails(brec.memberId, UserAction.EARNED_BADGE);
-        MemberFlowRecord mfrec = _flowRepo.grantFlow(info, levelData.coinValue);
+        final MemberMoney money = _moneyLogic.awardCoins(brec.memberId, 0, 0, null, levelData.coinValue, "", 
+            UserAction.EARNED_BADGE).getNewMemberMoney();
 
         if (dobjNeedsUpdate) {
             // if dobjNeedsUpdate is true, this function was called from a servlet, or other
@@ -76,7 +72,7 @@ public class BadgeLogic
             // the MemberObject initiated the badge award and does not to be updated (and also
             // will have taken care of creating new in-progress badges).
             MemberNodeActions.badgeAwarded(brec);
-            MemberNodeActions.flowUpdated(mfrec);
+            _moneyNodeActions.moneyUpdated(money);
             createNewInProgressBadges(brec.memberId, true);
         }
     }
@@ -86,7 +82,7 @@ public class BadgeLogic
      * a. calling into BadgeRepository to create and store the BadgeRecord
      * b. recording to the member's feed that they earned the stamp in question
      */
-    public void awardBadge (int memberId, EarnedBadge badge, boolean dobjNeedsUpdate)
+    public void awardBadge (final int memberId, final EarnedBadge badge, final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         awardBadge(new EarnedBadgeRecord(memberId, badge), dobjNeedsUpdate);
@@ -99,7 +95,7 @@ public class BadgeLogic
      * <b>NB:</b> this function makes a number of demands on the database and should be called
      * only when necessary.
      */
-    public List<InProgressBadge> createNewInProgressBadges (int memberId, boolean dobjNeedsUpdate)
+    public List<InProgressBadge> createNewInProgressBadges (final int memberId, final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         // TODO: remove this when passport goes live
@@ -108,16 +104,16 @@ public class BadgeLogic
         }
 
         // read this member's in-progress and earned badge records
-        Set<EarnedBadge> earnedBadges = Sets.newHashSet(
+        final Set<EarnedBadge> earnedBadges = Sets.newHashSet(
             Iterables.transform(_badgeRepo.loadEarnedBadges(memberId), EarnedBadgeRecord.TO_BADGE));
-        Set<InProgressBadge> inProgressBadges = Sets.newHashSet(
+        final Set<InProgressBadge> inProgressBadges = Sets.newHashSet(
             Iterables.transform(_badgeRepo.loadInProgressBadges(memberId),
                                 InProgressBadgeRecord.TO_BADGE));
 
         // discover any new in-progress badges
-        List<InProgressBadge> newInProgressBadges =
+        final List<InProgressBadge> newInProgressBadges =
             _badgeMan.getNewInProgressBadges(earnedBadges, inProgressBadges);
-        for (InProgressBadge badge : newInProgressBadges) {
+        for (final InProgressBadge badge : newInProgressBadges) {
             log.info("Created new InProgressBadge", "memberId", memberId,
                      "type", BadgeType.getType(badge.badgeCode));
             updateInProgressBadge(memberId, badge, dobjNeedsUpdate);
@@ -129,7 +125,7 @@ public class BadgeLogic
     /**
      * Creates or updates an InProgressBadge for the specified member.
      */
-    public void updateInProgressBadge (InProgressBadgeRecord brec, boolean dobjNeedsUpdate)
+    public void updateInProgressBadge (final InProgressBadgeRecord brec, final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         _badgeRepo.storeInProgressBadge(brec);
@@ -142,7 +138,7 @@ public class BadgeLogic
     /**
      * Creates or updates an InProgressBadge for the specified member.
      */
-    public void updateInProgressBadge (int memberId, InProgressBadge badge, boolean dobjNeedsUpdate)
+    public void updateInProgressBadge (final int memberId, final InProgressBadge badge, final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         updateInProgressBadge(new InProgressBadgeRecord(memberId, badge), dobjNeedsUpdate);
@@ -153,7 +149,7 @@ public class BadgeLogic
      * method also checks that the member has had their initial set of InProgressBadgeRecords
      * created, and creates them if they haven't.
      */
-    public List<InProgressBadge> getInProgressBadges (int memberId, boolean dobjNeedsUpdate)
+    public List<InProgressBadge> getInProgressBadges (final int memberId, final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         if (!DeploymentConfig.devDeployment) {
@@ -161,11 +157,11 @@ public class BadgeLogic
         }
 
         // Load up our badge records
-        List<InProgressBadgeRecord> badgeRecords = _badgeRepo.loadInProgressBadges(memberId);
+        final List<InProgressBadgeRecord> badgeRecords = _badgeRepo.loadInProgressBadges(memberId);
 
         // If we have no badge records, our initial batch of in-progress badges hasn't yet
         // been created, and we do that now. Otherwise, transform the records into badges.
-        Iterable<InProgressBadge> badges = (badgeRecords.isEmpty() ?
+        final Iterable<InProgressBadge> badges = (badgeRecords.isEmpty() ?
             createNewInProgressBadges(memberId, dobjNeedsUpdate) :
             Iterables.transform(badgeRecords, InProgressBadgeRecord.TO_BADGE));
 
@@ -185,7 +181,7 @@ public class BadgeLogic
      * @return a List of BadgeTypes. The list will have maxBadges entries, unless there aren't
      * enough badges left for the player to pursue.
      */
-    public List<InProgressBadge> getNextSuggestedBadges (int memberId, int maxBadges)
+    public List<InProgressBadge> getNextSuggestedBadges (final int memberId, final int maxBadges)
         throws PersistenceException
     {
         // Read in our in-progress badges and choose a number of them randomly
@@ -200,6 +196,7 @@ public class BadgeLogic
 
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected FeedRepository _feedRepo;
-    @Inject protected FlowRepository _flowRepo;
+    @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected MoneyNodeActions _moneyNodeActions;
     @Inject protected BadgeManager _badgeMan;
 }

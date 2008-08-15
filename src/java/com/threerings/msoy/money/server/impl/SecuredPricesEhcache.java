@@ -8,6 +8,7 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator;
 
+import com.google.inject.Singleton;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.NotSecuredException;
 
@@ -17,6 +18,7 @@ import com.threerings.msoy.money.server.NotSecuredException;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
+@Singleton
 public class SecuredPricesEhcache
     implements SecuredPricesCache
 {

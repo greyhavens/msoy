@@ -8,10 +8,8 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
-
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.web.data.ServiceException;
 
 /**
@@ -87,13 +85,6 @@ public interface CatalogService extends RemoteService
      * Removes the specified catalog listing.
      */
     public void removeListing (byte itemType, int catalogId)
-        throws ServiceException;
-
-    /**
-     * Executes an item return, potentially for a (potentially partial) refund.
-     * Returns a two-element array containing { flow refunded, gold refunded }.
-     */
-    public int[] returnItem (ItemIdent item)
         throws ServiceException;
 
     /**

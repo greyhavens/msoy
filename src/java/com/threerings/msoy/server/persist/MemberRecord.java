@@ -53,7 +53,7 @@ public class MemberRecord extends PersistentRecord
             return _bit;
         }
 
-        Flag (int bit) {
+        Flag (final int bit) {
             _bit = bit;
         }
 
@@ -80,7 +80,7 @@ public class MemberRecord extends PersistentRecord
             return _bit;
         }
 
-        Experience (int bit) {
+        Experience (final int bit) {
             _bit = bit;
         }
 
@@ -238,9 +238,11 @@ public class MemberRecord extends PersistentRecord
     public String permaName;
 
     /** The quantity of flow possessed by this member. */
+    @Deprecated
     public int flow;
 
     /** The total amount of flow ever accumulated by this member. */
+    @Deprecated
     public int accFlow;
 
     /** The home scene for this member. */
@@ -287,7 +289,7 @@ public class MemberRecord extends PersistentRecord
     }
 
     /** Constructs a blank member record for the supplied account. */
-    public MemberRecord (String accountName)
+    public MemberRecord (final String accountName)
     {
         this.accountName = accountName;
     }
@@ -295,9 +297,9 @@ public class MemberRecord extends PersistentRecord
     /**
      * Creates web credentials for this member record.
      */
-    public WebCreds toCreds (String authtok)
+    public WebCreds toCreds (final String authtok)
     {
-        WebCreds creds = new WebCreds();
+        final WebCreds creds = new WebCreds();
         creds.token = authtok;
         creds.accountName = accountName;
         creds.name = getName();
@@ -331,7 +333,7 @@ public class MemberRecord extends PersistentRecord
     /**
      * Tests whether a given flag is set on this member.
      */
-    public boolean isSet (Flag flag)
+    public boolean isSet (final Flag flag)
     {
         return (flags & flag.getBit()) != 0;
     }
@@ -339,7 +341,7 @@ public class MemberRecord extends PersistentRecord
     /**
      * Sets a given flag to on or off.
      */
-    public void setFlag (Flag flag, boolean value)
+    public void setFlag (final Flag flag, final boolean value)
     {
         flags = (value ? (flags | flag.getBit()) : (flags & ~flag.getBit()));
     }
@@ -347,7 +349,7 @@ public class MemberRecord extends PersistentRecord
     /**
      * Returns true if this member has had the specified experience.
      */
-    public boolean isSet (Experience experience)
+    public boolean isSet (final Experience experience)
     {
         return (experiences & experience.getBit()) != 0;
     }
@@ -355,7 +357,7 @@ public class MemberRecord extends PersistentRecord
     /**
      * Sets a given experience to on or off.
      */
-    public void setExperience (Experience exp, boolean value)
+    public void setExperience (final Experience exp, final boolean value)
     {
         experiences = (value ? (experiences | exp.getBit()) : (experiences & ~exp.getBit()));
     }
@@ -375,6 +377,7 @@ public class MemberRecord extends PersistentRecord
     }
 
     /** Generates a string representation of this instance. */
+    @Override
     public String toString ()
     {
         return StringUtil.fieldsToString(this);
@@ -385,7 +388,7 @@ public class MemberRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #MemberRecord}
      * with the supplied key values.
      */
-    public static Key<MemberRecord> getKey (int memberId)
+    public static Key<MemberRecord> getKey (final int memberId)
     {
         return new Key<MemberRecord>(
                 MemberRecord.class,

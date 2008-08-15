@@ -3,46 +3,37 @@
 
 package com.threerings.msoy.game.server;
 
+import static com.threerings.msoy.Log.log;
+
 import com.google.common.collect.Comparators;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
-
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
-
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.media.util.MathUtil;
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.parlor.rating.server.RatingDelegate;
+import com.threerings.parlor.rating.util.Percentiler;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
-
-import com.threerings.crowd.data.PlaceObject;
-
-import com.threerings.parlor.rating.server.RatingDelegate;
-import com.threerings.parlor.rating.util.Percentiler;
-
 import com.whirled.game.data.WhirledGameObject;
 import com.whirled.game.server.WhirledGameManager;
-
-import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.UserActionDetails;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.persist.MemberRepository;
-
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameRepository;
-
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.game.data.PlayerObject;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Handles Whirled game services like paying out coins.
@@ -52,15 +43,15 @@ public class AwardDelegate extends RatingDelegate
     /**
      * Creates a Whirled game manager delegate with the supplied game content.
      */
-    public AwardDelegate (GameContent content)
+    public AwardDelegate (final GameContent content)
     {
         // keep our game content around for later
         _content = content;
     }
 
     // from interface WhirledGameProvider
-    public void endGameWithScores (ClientObject caller, int[] playerOids, int[] scores,
-                                   int payoutType, InvocationService.InvocationListener listener)
+    public void endGameWithScores (final ClientObject caller, final int[] playerOids, final int[] scores,
+                                   final int payoutType, final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         verifyIsPlayerOrAgent(caller);
@@ -70,14 +61,14 @@ public class AwardDelegate extends RatingDelegate
 
         // convert the players into record indexed on player oid which will weed out duplicates and
         // avoid funny business
-        int now = now();
+        final int now = now();
         int highestScore = Integer.MIN_VALUE;
-        IntMap<Player> players = IntMaps.newHashIntMap();
+        final IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < playerOids.length; ii++) {
-            int availFlow = getAwardableFlow(now, playerOids[ii]);
+            final int availFlow = getAwardableFlow(now, playerOids[ii]);
             players.put(playerOids[ii], new Player(lookupName(playerOids[ii]), playerOids[ii],
                                                    scores[ii], availFlow));
-            int thisScore = scores[ii];
+            final int thisScore = scores[ii];
             highestScore = Math.max(highestScore, thisScore);
         }
 
@@ -95,15 +86,15 @@ public class AwardDelegate extends RatingDelegate
         updatePlayerStats(players.values(), highestScore);
 
         // record the scores of all players in the game
-        Percentiler tiler = getScoreDistribution();
-        for (Player player : players.values()) {
+        final Percentiler tiler = getScoreDistribution();
+        for (final Player player : players.values()) {
             // we want to avoid hackers or bugs totally freaking out the score distribution, so we
             // do some sanity checking of the score value before recording it
             tiler.recordValue(getCappedScore(tiler, player));
         }
 
         // convert scores to percentiles
-        for (Player player : players.values()) {
+        for (final Player player : players.values()) {
             player.percentile = getPercentile(tiler, player.score);
         }
 
@@ -112,21 +103,21 @@ public class AwardDelegate extends RatingDelegate
 
         // compute new ratings if appropriate
         if (shouldRateGame()) {
-            for (Rating rating : _ratings.values()) {
-                Player player = players.get(rating.playerOid);
+            for (final Rating rating : _ratings.values()) {
+                final Player player = players.get(rating.playerOid);
                 if (player != null) {
                     updateScoreBasedRating(player, rating);
                 }
             }
 
-            int[] nratings = new int[_playerIds.length];
+            final int[] nratings = new int[_playerIds.length];
             for (int ii = 0; ii < nratings.length; ii ++) {
                 nratings[ii] = computeRating(ii);
             }
 
             // and write them back to their rating records
             for (int ii = 0; ii < nratings.length; ii++) {
-                Rating rating = _ratings.get(_playerIds[ii]);
+                final Rating rating = _ratings.get(_playerIds[ii]);
                 if (rating != null && nratings[ii] > 0) {
                     rating.rating = nratings[ii];
                     rating.experience++;
@@ -140,21 +131,21 @@ public class AwardDelegate extends RatingDelegate
     }
 
     // from interface WhirledGameProvider
-    public void endGameWithWinners (ClientObject caller, int[] winnerOids, int[] loserOids,
-                                    int payoutType, InvocationService.InvocationListener listener)
+    public void endGameWithWinners (final ClientObject caller, final int[] winnerOids, final int[] loserOids,
+                                    final int payoutType, final InvocationService.InvocationListener listener)
         throws InvocationException
     {
         verifyIsPlayerOrAgent(caller);
         if (!_gobj.isInPlay()) {
             throw new InvocationException("e.game_already_ended");
         }
-        int now = now();
+        final int now = now();
 
         // convert the players into records indexed on player oid to weed out duplicates and avoid
         // any funny business
-        IntMap<Player> players = IntMaps.newHashIntMap();
+        final IntMap<Player> players = IntMaps.newHashIntMap();
         for (int ii = 0; ii < winnerOids.length; ii++) {
-            Player pl = new Player(lookupName(winnerOids[ii]), winnerOids[ii], 1,
+            final Player pl = new Player(lookupName(winnerOids[ii]), winnerOids[ii], 1,
                                    getAwardableFlow(now, winnerOids[ii]));
             // everyone gets ranked as a 50% performance in multiplayer and we award portions of
             // the losers' winnings to the winners
@@ -162,7 +153,7 @@ public class AwardDelegate extends RatingDelegate
             players.put(winnerOids[ii], pl);
         }
         for (int ii = 0; ii < loserOids.length; ii++) {
-            Player pl = new Player(lookupName(loserOids[ii]), loserOids[ii], 0,
+            final Player pl = new Player(lookupName(loserOids[ii]), loserOids[ii], 0,
                                    getAwardableFlow(now, loserOids[ii]));
             pl.percentile = 49;
             players.put(loserOids[ii], pl);
@@ -176,8 +167,8 @@ public class AwardDelegate extends RatingDelegate
 
         // tell the game manager about our winners which will be used to compute ratings, etc.
         if (_gmgr instanceof WhirledGameManager) {
-            ArrayIntSet fWinnerOids = new ArrayIntSet();
-            for (Player player : players.values()) {
+            final ArrayIntSet fWinnerOids = new ArrayIntSet();
+            for (final Player player : players.values()) {
                 if (player.score == 1) {
                     fWinnerOids.add(player.playerOid);
                 }
@@ -193,12 +184,12 @@ public class AwardDelegate extends RatingDelegate
     }
 
     @Override
-    public void didStartup (PlaceObject plobj)
+    public void didStartup (final PlaceObject plobj)
     {
         super.didStartup(plobj);
 
         // compute our flow per minute
-        float minuteRate = RuntimeConfig.server.hourlyGameFlowRate / 60f;
+        final float minuteRate = RuntimeConfig.server.hourlyGameFlowRate / 60f;
         _flowPerMinute = Math.round(minuteRate * _content.detail.getPayoutFactor());
     }
 
@@ -211,8 +202,8 @@ public class AwardDelegate extends RatingDelegate
         resetTracking();
 
         // pay out to all the players who have not yet been paid
-        int[] oids = _flowRecords.intKeySet().toIntArray();
-        for (int oid : oids) {
+        final int[] oids = _flowRecords.intKeySet().toIntArray();
+        for (final int oid : oids) {
             payoutPlayer(oid);
         }
 
@@ -229,9 +220,9 @@ public class AwardDelegate extends RatingDelegate
 
         // to avoid a single anomalous game freaking out out our distribution, cap game duration at
         // 120% of the current average which will allow many long games to bring up the average
-        int perPlayerDuration = _totalTrackedSeconds/_totalTrackedGames;
-        int avgDuration = Math.round(60 * getAverageGameDuration(perPlayerDuration));
-        int capDuration = 5 * avgDuration / 4;
+        final int perPlayerDuration = _totalTrackedSeconds/_totalTrackedGames;
+        final int avgDuration = Math.round(60 * getAverageGameDuration(perPlayerDuration));
+        final int capDuration = 5 * avgDuration / 4;
         if (perPlayerDuration > capDuration) {
             log.info("Capping player minutes at 120% of average", "game", where(),
                      "pgames", _totalTrackedGames, "average", avgDuration,
@@ -257,6 +248,7 @@ public class AwardDelegate extends RatingDelegate
         // record this gameplay for future game metrics tracking and blah blah
         final int gameId = _content.detail.gameId, playerMins = Math.max(totalMinutes, 1);
         _invoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
+            @Override
             public void invokePersist () throws Exception {
                 // note that this game was played
                 _gameRepo.noteGamePlayed(
@@ -267,6 +259,7 @@ public class AwardDelegate extends RatingDelegate
                         gameId, newFlowToNextRecalc, hourlyRate);
                 }
             }
+            @Override
             public void handleSuccess () {
                 // update the in-memory detail record if we changed things
                 if (_newData != null) {
@@ -280,15 +273,15 @@ public class AwardDelegate extends RatingDelegate
     }
 
     @Override // from PlaceManagerDelegate
-    public void bodyEntered (int bodyOid)
+    public void bodyEntered (final int bodyOid)
     {
         super.bodyEntered(bodyOid);
 
-        PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
+        final PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
 
         // potentially create a flow record for this occupant
         if (!_flowRecords.containsKey(bodyOid) && plobj != null) {
-            FlowRecord record = new FlowRecord(plobj.memberName, plobj.getHumanity());
+            final FlowRecord record = new FlowRecord(plobj.memberName, plobj.getHumanity());
             _flowRecords.put(bodyOid, record);
             // if we're currently tracking, note that they're "starting" immediately
             if (_tracking) {
@@ -298,7 +291,7 @@ public class AwardDelegate extends RatingDelegate
     }
 
     @Override // from PlaceManagerDelegate
-    public void bodyLeft (int bodyOid)
+    public void bodyLeft (final int bodyOid)
     {
         super.bodyLeft(bodyOid);
 
@@ -332,7 +325,7 @@ public class AwardDelegate extends RatingDelegate
     }
 
     @Override // from RatingDelegate
-    protected void updateRatingInMemory (int gameId, Rating rating)
+    protected void updateRatingInMemory (final int gameId, final Rating rating)
     {
         // we don't keep in-memory ratings for whirled
     }
@@ -340,15 +333,15 @@ public class AwardDelegate extends RatingDelegate
     /**
      * Called when a game ends to update various Passport-related stats.
      */
-    protected void updatePlayerStats (Iterable<Player> players, int winningScore)
+    protected void updatePlayerStats (final Iterable<Player> players, final int winningScore)
     {
         // we're currently not persisting any stats for in-development games
         if (Game.isDeveloperVersion(_content.detail.gameId)) {
             return;
         }
 
-        for (Player player : players) {
-            int memberId = player.getMemberId();
+        for (final Player player : players) {
+            final int memberId = player.getMemberId();
             if (MemberName.isGuest(memberId)) {
                 continue;
             }
@@ -378,21 +371,21 @@ public class AwardDelegate extends RatingDelegate
         }
     }
 
-    protected MemberName lookupName (int playerOid)
+    protected MemberName lookupName (final int playerOid)
     {
-        FlowRecord record = _flowRecords.get(playerOid);
+        final FlowRecord record = _flowRecords.get(playerOid);
         return (record == null) ? null : record.name;
     }
 
-    protected void updateScoreBasedRating (Player player, Rating rating)
+    protected void updateScoreBasedRating (final Player player, final Rating rating)
     {
         // map our percentile to a rating value (0 - 33 map to 1000 and we scale linearly up from
         // there to 3000)
-        int erat = Math.max((player.percentile * MAXIMUM_RATING) / 100, MINIMUM_RATING);
-        int orat = MathUtil.bound(MINIMUM_RATING, rating.rating, MAXIMUM_RATING);
+        final int erat = Math.max((player.percentile * MAXIMUM_RATING) / 100, MINIMUM_RATING);
+        final int orat = MathUtil.bound(MINIMUM_RATING, rating.rating, MAXIMUM_RATING);
 
         // compute the K value. Low exp players get to move more quickly.
-        int sessions = rating.experience;
+        final int sessions = rating.experience;
         float K;
         if (sessions < 20) {
             if (sessions < 10) {
@@ -406,10 +399,10 @@ public class AwardDelegate extends RatingDelegate
 
         // compute the delta rating as a percentage of the player's current rating (eg. they should
         // have been 12% better or worse)
-        float pctdiff = ((float)(erat - orat) / orat);
+        final float pctdiff = ((float)(erat - orat) / orat);
 
         // update the player's rating
-        int nrat = Math.round(orat + pctdiff * K);
+        final int nrat = Math.round(orat + pctdiff * K);
 
         // make sure the rating remains within a valid range
         rating.rating = MathUtil.bound(MINIMUM_RATING, nrat, MAXIMUM_RATING);
@@ -420,7 +413,7 @@ public class AwardDelegate extends RatingDelegate
                  "diff", pctdiff, "K", K, "nrat", nrat);
     }
 
-    protected void awardFlow (IntMap<Player> players, int payoutType)
+    protected void awardFlow (final IntMap<Player> players, final int payoutType)
     {
         if (players.size() == 0) { // sanity check
             return;
@@ -432,25 +425,25 @@ public class AwardDelegate extends RatingDelegate
             scaleAvailableFlowToPercentiles(players);
 
             // map the players by score
-            TreeMultimap<Integer,Player> rankings = Multimaps.newTreeMultimap();
-            for (Player player : players.values()) {
+            final TreeMultimap<Integer,Player> rankings = Multimaps.newTreeMultimap();
+            for (final Player player : players.values()) {
                 rankings.put(player.score, player);
             }
 
             // all the losers contribute their flow to a pool
-            int highestScore = rankings.keySet().last();
+            final int highestScore = rankings.keySet().last();
             int totalLoserFlow = 0;
-            for (Integer score : rankings.keySet()) {
+            for (final Integer score : rankings.keySet()) {
                 if (score != highestScore) {
-                    for (Player player : rankings.get(score)) {
+                    for (final Player player : rankings.get(score)) {
                         totalLoserFlow += player.availFlow;
                     }
                 }
             }
 
             // and the winners divide it up evenly
-            int winners = rankings.get(highestScore).size();
-            for (Player player : rankings.get(highestScore)) {
+            final int winners = rankings.get(highestScore).size();
+            for (final Player player : rankings.get(highestScore)) {
                 player.flowAward = player.availFlow +
                     (totalLoserFlow / winners); // we keep the roundoff
             }
@@ -463,14 +456,14 @@ public class AwardDelegate extends RatingDelegate
 
             // compute the average score
             int totalScores = 0;
-            for (Player player : players.values()) {
+            for (final Player player : players.values()) {
                 totalScores += player.score;
             }
-            float averageScore = totalScores / (float)players.size();
+            final float averageScore = totalScores / (float)players.size();
 
             // everyone below the average contributes 50% to the pool
             int totalLoserFlow = 0;
-            for (Player player : players.values()) {
+            for (final Player player : players.values()) {
                 if (player.score < averageScore) {
                     player.flowAward = player.availFlow / 2;
                     totalLoserFlow += (player.availFlow - player.flowAward);
@@ -479,14 +472,14 @@ public class AwardDelegate extends RatingDelegate
 
             // everyone at or above the average divides up the pool proportionally
             int totalAboveAverageScores = 0;
-            for (Player player : players.values()) {
+            for (final Player player : players.values()) {
                 if (player.score >= averageScore) {
                     totalAboveAverageScores += Math.round(player.score - averageScore);
                 }
             }
-            for (Player player : players.values()) {
+            for (final Player player : players.values()) {
                 if (player.score >= averageScore) {
-                    int share = Math.round(player.score - averageScore);
+                    final int share = Math.round(player.score - averageScore);
                     if (totalAboveAverageScores > 0) {
                         player.flowAward = player.availFlow +
                             (totalLoserFlow * share / totalAboveAverageScores);
@@ -499,7 +492,7 @@ public class AwardDelegate extends RatingDelegate
         default:
         case WhirledGameObject.TO_EACH_THEIR_OWN:
             scaleAvailableFlowToPercentiles(players);
-            for (Player player : players.values()) {
+            for (final Player player : players.values()) {
                 player.flowAward = player.availFlow;
             }
             break;
@@ -507,11 +500,11 @@ public class AwardDelegate extends RatingDelegate
         case WhirledGameObject.PROPORTIONAL: {
             int totalFlow = 0;
             int totalScore = 0;
-            for (Player player : players.values()) {
+            for (final Player player : players.values()) {
                 totalScore += player.score;
                 totalFlow += player.availFlow;
             }
-            for (Player player : players.values()) {
+            for (final Player player : players.values()) {
                 player.flowAward = (int)Math.floor(((float)totalFlow) * player.score / totalScore);
             }
             break;
@@ -521,9 +514,9 @@ public class AwardDelegate extends RatingDelegate
         log.info("Awarding flow", "game", where(), "type", payoutType, "to", players.values());
 
         // finally, award the flow and report it to the player
-        boolean actuallyAward = !_content.game.isDeveloperVersion();
-        for (Player player : players.values()) {
-            FlowRecord record = _flowRecords.get(player.playerOid);
+        final boolean actuallyAward = !_content.game.isDeveloperVersion();
+        for (final Player player : players.values()) {
+            final FlowRecord record = _flowRecords.get(player.playerOid);
             if (record == null) {
                 continue;
             }
@@ -534,9 +527,9 @@ public class AwardDelegate extends RatingDelegate
             }
 
             // report to the game that this player earned some flow
-            DObject user = _omgr.getObject(player.playerOid);
+            final DObject user = _omgr.getObject(player.playerOid);
             if (user != null) {
-                boolean hasCookie = (_plmgr instanceof MsoyGameManager) &&
+                final boolean hasCookie = (_plmgr instanceof MsoyGameManager) &&
                     ((WhirledGameObject)_plmgr.getPlaceObject()).userCookies.containsKey(
                     user.getOid());
                 user.postMessage(WhirledGameObject.COINS_AWARDED_MESSAGE,
@@ -553,9 +546,9 @@ public class AwardDelegate extends RatingDelegate
     /**
      * Scale each player's flow by their percentile performance.
      */
-    protected void scaleAvailableFlowToPercentiles (IntMap<Player> players)
+    protected void scaleAvailableFlowToPercentiles (final IntMap<Player> players)
     {
-        for (Player player : players.values()) {
+        for (final Player player : players.values()) {
             player.availFlow = (int)Math.ceil(player.availFlow * (player.percentile / 99f));
         }
     }
@@ -563,9 +556,9 @@ public class AwardDelegate extends RatingDelegate
     /**
      * Returns the average duration for this game in fractional minutes.
      */
-    protected float getAverageGameDuration (int playerSeconds)
+    protected float getAverageGameDuration (final int playerSeconds)
     {
-        int avgSeconds = isMultiplayer() ?
+        final int avgSeconds = isMultiplayer() ?
             _content.detail.avgMultiDuration : _content.detail.avgSingleDuration;
         // if we have average duration data for this game, use it
         if (avgSeconds > 0) {
@@ -584,21 +577,21 @@ public class AwardDelegate extends RatingDelegate
     protected Percentiler getScoreDistribution ()
     {
         // we want the "rating" game id so we use getGameId()
-        Percentiler tiler = _gameReg.getScoreDistribution(getGameId(), isMultiplayer());
+        final Percentiler tiler = _gameReg.getScoreDistribution(getGameId(), isMultiplayer());
         // if for whatever reason we don't have a score distribution, return a blank one which will
         // result in the default percentile being used
         return (tiler == null) ? new Percentiler() : tiler;
     }
 
-    protected int getPercentile (Percentiler tiler, int score)
+    protected int getPercentile (final Percentiler tiler, final int score)
     {
         return (tiler.getRecordedCount() < MIN_VALID_SCORES) ?
             DEFAULT_PERCENTILE : tiler.getPercentile(score);
     }
 
-    protected int getCappedScore (Percentiler tiler, Player player)
+    protected int getCappedScore (final Percentiler tiler, final Player player)
     {
-        int range = tiler.getMaxScore() - tiler.getMinScore();
+        final int range = tiler.getMaxScore() - tiler.getMinScore();
         if (tiler.getRecordedCount() < MIN_VALID_SCORES) {
             return player.score;
 
@@ -625,8 +618,8 @@ public class AwardDelegate extends RatingDelegate
         _tracking = true;
 
         // note the time at which we started for flow calculations
-        int startStamp = now();
-        for (FlowRecord record : _flowRecords.values()) {
+        final int startStamp = now();
+        for (final FlowRecord record : _flowRecords.values()) {
             record.beganStamp = startStamp;
         }
     }
@@ -639,8 +632,8 @@ public class AwardDelegate extends RatingDelegate
         _tracking = false;
 
         // note all remaining player's seconds played
-        int endStamp = now();
-        for (FlowRecord record : _flowRecords.values()) {
+        final int endStamp = now();
+        for (final FlowRecord record : _flowRecords.values()) {
             record.stopTracking(endStamp);
         }
     }
@@ -651,20 +644,20 @@ public class AwardDelegate extends RatingDelegate
      */
     protected void resetTracking ()
     {
-        for (FlowRecord record : _flowRecords.values()) {
+        for (final FlowRecord record : _flowRecords.values()) {
             record.resetSecondsPlayed();
         }
     }
 
-    protected int getAwardableFlow (int now, int playerOid)
+    protected int getAwardableFlow (final int now, final int playerOid)
     {
-        FlowRecord record = _flowRecords.get(playerOid);
+        final FlowRecord record = _flowRecords.get(playerOid);
         if (record == null) {
             return 0;
         }
-        int playerSecs = record.getPlayTime(now);
-        float avgMins = getAverageGameDuration(playerSecs);
-        float playerMins = playerSecs/60f;
+        final int playerSecs = record.getPlayTime(now);
+        final float avgMins = getAverageGameDuration(playerSecs);
+        final float playerMins = playerSecs/60f;
 
         // a player within 80% of the average time will receive a payout based on the average time
         // to accomodate games where faster performance is desirable; however, below 80% we scale
@@ -689,7 +682,7 @@ public class AwardDelegate extends RatingDelegate
         return Math.round(record.humanity * _flowPerMinute * awardMins);
     }
 
-    protected void payoutPlayer (int oid)
+    protected void payoutPlayer (final int oid)
     {
         // remove their flow record and grant them the flow
         final FlowRecord record = _flowRecords.remove(oid);
@@ -732,17 +725,15 @@ public class AwardDelegate extends RatingDelegate
         // actually grant their flow award; we don't need to update their in-memory flow value
         // because we've been doing that all along
         _invoker.postUnit(new Invoker.Unit("grantFlow") {
+            @Override
             public boolean invoke () {
-                UserActionDetails action = new UserActionDetails(
-                        record.memberId, UserAction.PLAYED_GAME, UserActionDetails.INVALID_ID,
-                        _content.game.getType(), _content.game.itemId, details);
                 try {
-                    _memberRepo.getFlowRepository().grantFlow(action, record.awarded);
-                    _gameReg.gamePayout(action, _content.game, record.awarded,
+                    _moneyLogic.awardCoins(record.memberId, _content.game.creatorId, 0, _content.game.getIdent(), 
+                        record.awarded, details, UserAction.PLAYED_GAME);
+                    _gameReg.gamePayout(record.memberId, _content.game, record.awarded,
                                         record.totalSecondsPlayed);
-                } catch (PersistenceException pe) {
-                    log.warning("Failed to grant flow", "amount", record.awarded,
-                                "action", action, pe);
+                } catch (final Exception e) {
+                    log.warning("Failed to grant flow", "amount", record.awarded, e);
                 }
                 return false;
             }
@@ -790,13 +781,13 @@ public class AwardDelegate extends RatingDelegate
         public int played;
         public int awarded;
 
-        public FlowRecord (MemberName name, float humanity) {
+        public FlowRecord (final MemberName name, final float humanity) {
             this.humanity = humanity;
             this.memberId = name.getMemberId();
             this.name = name;
         }
 
-        public int getPlayTime (int now) {
+        public int getPlayTime (final int now) {
             int secondsOfPlay = secondsPlayed;
             if (beganStamp != 0) {
                 secondsOfPlay += (now - beganStamp);
@@ -804,7 +795,7 @@ public class AwardDelegate extends RatingDelegate
             return secondsOfPlay;
         }
 
-        public void stopTracking (int endStamp) {
+        public void stopTracking (final int endStamp) {
             if (beganStamp != 0) {
                 secondsPlayed += endStamp - beganStamp;
                 beganStamp = 0;
@@ -830,7 +821,7 @@ public class AwardDelegate extends RatingDelegate
         public int percentile;
         public int flowAward;
 
-        public Player (MemberName name, int playerOid, int score, int availFlow) {
+        public Player (final MemberName name, final int playerOid, final int score, final int availFlow) {
             this.name = name;
             this.playerOid = playerOid;
             this.score = score;
@@ -841,10 +832,11 @@ public class AwardDelegate extends RatingDelegate
             return (name == null) ? 0 : name.getMemberId();
         }
 
-        public int compareTo (Player other) {
+        public int compareTo (final Player other) {
             return Comparators.compare(playerOid, other.playerOid);
         }
 
+        @Override
         public String toString () {
             return StringUtil.fieldsToString(this);
         }
@@ -893,4 +885,5 @@ public class AwardDelegate extends RatingDelegate
     @Inject protected WorldServerClient _worldClient;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected GameRepository _gameRepo;
+    @Inject protected MoneyLogic _moneyLogic;
 }

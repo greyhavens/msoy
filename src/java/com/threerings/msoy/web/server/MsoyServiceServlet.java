@@ -10,22 +10,14 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.UnexpectedException;
 import com.google.inject.Inject;
-
-import com.samskivert.io.PersistenceException;
 import com.samskivert.servlet.util.CookieUtil;
-
-import com.threerings.presents.dobj.RootDObjectManager;
-
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.data.UserActionDetails;
-import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.persist.MemberFlowRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
-
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
+import com.threerings.presents.dobj.RootDObjectManager;
 
 import static com.threerings.msoy.Log.log;
 
@@ -34,19 +26,6 @@ import static com.threerings.msoy.Log.log;
  */
 public class MsoyServiceServlet extends RemoteServiceServlet
 {
-    /**
-     * A convenience method to record that a user took an action, and potentially award them flow
-     * for doing so.
-     */
-    protected void logUserAction (UserActionDetails info)
-        throws PersistenceException
-    {
-        MemberFlowRecord flowRec = _memberRepo.getFlowRepository().logUserAction(info);
-        if (flowRec != null) {
-            MemberNodeActions.flowUpdated(flowRec);
-        }
-    }
-
     /**
      * Returns the member record for the member making this service request, or null if their
      * session has expired, or they are not authenticated.
@@ -66,7 +45,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     protected MemberRecord requireAuthedUser ()
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser();
+        final MemberRecord mrec = getAuthedUser();
         if (mrec == null) {
             throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
         }
@@ -76,7 +55,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     /**
      * Posts a runnable to be executed on the dobjmgr thread and returns immediately.
      */
-    protected void postDObjectAction (Runnable runnable)
+    protected void postDObjectAction (final Runnable runnable)
     {
         _omgr.postRunnable(runnable);
     }
@@ -84,7 +63,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     /**
      * Posts a runnable to be executed on the dobjmgr thread and blocks waiting for the result.
      */
-    protected <T> T runDObjectAction (String name, final DOAction<T> action)
+    protected <T> T runDObjectAction (final String name, final DOAction<T> action)
         throws ServiceException
     {
         final ServletWaiter<T> waiter = new ServletWaiter<T>(name);
@@ -92,7 +71,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
             public void run () {
                 try {
                     waiter.postSuccess(action.run());
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     waiter.postFailure(e);
                 }
             }
@@ -128,7 +107,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     /**
      * Returns null if mrec is null {@link MemberRecord#who} otherwise.
      */
-    protected static String who (MemberRecord mrec)
+    protected static String who (final MemberRecord mrec)
     {
         return (mrec == null) ? null : mrec.who();
     }
