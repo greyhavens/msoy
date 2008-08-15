@@ -81,7 +81,8 @@ public class MemberRepository extends DepotRepository
                 _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviterId);
                 _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviteeId);
             }
-            public void entryCached (final CacheKey key, final FriendRecord newEntry, final FriendRecord oldEntry) {
+            public void entryCached (final CacheKey key, final FriendRecord newEntry,
+                                     final FriendRecord oldEntry) {
                 // nothing to do here
             }
             @Override
@@ -95,7 +96,8 @@ public class MemberRepository extends DepotRepository
             public void entryInvalidated (final CacheKey key, final MemberRecord member) {
                 _ctx.cacheInvalidate(MemberNameRecord.getKey(member.memberId));
             }
-            public void entryCached (final CacheKey key, final MemberRecord newEntry, final MemberRecord oldEntry) {
+            public void entryCached (final CacheKey key, final MemberRecord newEntry,
+                                     final MemberRecord oldEntry) {
             }
             @Override
             public String toString () {
@@ -176,7 +178,8 @@ public class MemberRepository extends DepotRepository
      * Extracts the set of member id from the supplied collection of records using the supplied
      * <code>getId</code> function and loads up the associated names.
      */
-    public <C> IntMap<MemberName> loadMemberNames (final Iterable<C> records, final Function<C,Integer> getId)
+    public <C> IntMap<MemberName> loadMemberNames (
+        final Iterable<C> records, final Function<C,Integer> getId)
         throws PersistenceException
     {
         final Set<Integer> memberIds = new ArrayIntSet();
@@ -248,7 +251,8 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns ids for all members who's display name matches the supplied search string.
      */
-    public List<Integer> findMembersByDisplayName (String search, final boolean exact, final int limit)
+    public List<Integer> findMembersByDisplayName (
+        String search, final boolean exact, final int limit)
         throws PersistenceException
     {
         search = search.toLowerCase();
@@ -266,7 +270,7 @@ public class MemberRepository extends DepotRepository
 //                  findAllKeys(MemberRecord.class, where, new Limit(0, limit))) {
 //             ids.add((Integer)key.condition.getValues().get(0));
 //         }
-        for (final MemberRecord mrec : findAll(MemberRecord.class, new Where(op), new Limit(0, limit))) {
+        for (MemberRecord mrec : findAll(MemberRecord.class, new Where(op), new Limit(0, limit))) {
             ids.add(mrec.memberId);
         }
 
@@ -532,7 +536,8 @@ public class MemberRepository extends DepotRepository
      * @param humanityReassessFreq the number of seconds between humanity reassessments or zero if
      * humanity assessment is disabled.
      */
-    public void noteSessionEnded (final int memberId, final int minutes, final int humanityReassessFreq)
+    public void noteSessionEnded (final int memberId, final int minutes,
+                                  final int humanityReassessFreq)
         throws PersistenceException
     {
         final long now = System.currentTimeMillis();
