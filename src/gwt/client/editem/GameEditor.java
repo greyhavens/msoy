@@ -131,8 +131,8 @@ public class GameEditor extends ItemEditor
     protected void addExtras ()
     {
         _genre = new ListBox();
-        for (int ii = 0; ii < Game.GENRES.length; ii++) {
-            _genre.addItem(_dmsgs.getString("genre" + Game.GENRES[ii]));
+        for (byte genre : Game.GENRES) {
+            _genre.addItem(_dmsgs.getString("genre" + genre));
         }
         addRow(_emsgs.gameGenre(), _genre);
 
@@ -161,7 +161,9 @@ public class GameEditor extends ItemEditor
         addSpacer();
         addRow(_emsgs.gameLabel(), createMainUploader(TYPE_CODE, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                // TODO: validate media type
+                if (!isValidGameMedia(desc)) {
+                    return _emsgs.errGameNotFlash();
+                }
                 _game.gameMedia = desc;
                 return null;
             }
@@ -300,6 +302,13 @@ public class GameEditor extends ItemEditor
             parent.removeChild(parent.getFirstChild());
         }
         parent.appendChild(child);
+    }
+
+    /** Is the specified MediaDesc a valid game media? */
+    protected boolean isValidGameMedia (MediaDesc desc)
+    {
+        // game media must be swfs. maybe we'll want remixable in the future?
+        return desc.isSWF();
     }
 
     protected Game _game;

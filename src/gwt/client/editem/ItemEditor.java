@@ -264,7 +264,7 @@ public abstract class ItemEditor extends FlexTable
         addRow(_emsgs.editorFurniTab(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!isValidPrimaryMedia(desc)) {
-                    return _emsgs.errFurniNotFlash();
+                    return invalidPrimaryMediaMessage();
                 }
                 _item.furniMedia = desc;
                 return null;
@@ -291,11 +291,11 @@ public abstract class ItemEditor extends FlexTable
      */
     protected boolean isValidPrimaryMedia (MediaDesc desc)
     {
-        if (_type == Item.AVATAR || _type == Item.PET) {
-            // avatars and pets must be swfs or remixable
+        if (_type == Item.AVATAR || _type == Item.PET || _type == Item.TOY) {
+            // these must be swfs or remixable
             return desc.isSWF() || desc.isRemixable();
 
-        } else if (_type == Item.FURNITURE || _type == Item.TOY || _type == Item.DECOR) {
+        } else if (_type == Item.FURNITURE || _type == Item.DECOR) {
             // these can be swfs, images, or remixable
             return desc.hasFlashVisual() || desc.isRemixable();
 
@@ -303,6 +303,14 @@ public abstract class ItemEditor extends FlexTable
             // other types are not yet remixable
             return desc.hasFlashVisual();
         }
+    }
+
+    /**
+     * String returned if the primary media is invalid. Subclasses should override as appropriate.
+     */
+    protected String invalidPrimaryMediaMessage ()
+    {
+        return _emsgs.errFurniNotFlash();
     }
 
     protected void safeSetText (TextBoxBase box, String value)

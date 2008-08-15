@@ -24,5 +24,11 @@ public class ToyEditor extends ItemEditor
         return new Toy();
     }
 
+    @Override // from ItemEditor
+    protected String invalidPrimaryMediaMessage ()
+    {
+        return _emsgs.errToyNotFlash();
+    }
+
     protected Toy _toy;
 }
