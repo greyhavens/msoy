@@ -3,13 +3,16 @@
 
 package client.me;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 
@@ -75,7 +78,12 @@ public class PassportPanel extends VerticalPanel
             Label label = MsoyUI.createLabel(_msgs.passportNextBar(), "NextHeaderText");
             headerContent.add(label);
             headerContent.setCellWidth(label, "100%");
-            headerContent.add(MsoyUI.createImage("/images/me/passport_shuffle.png", null));
+            headerContent.add(MsoyUI.createActionImage(
+                "/images/me/passport_shuffle.png", new ClickListener () {
+                    public void onClick (Widget sender) {
+                        shuffle();
+                    }
+                }));
             nextHeader.add(headerContent);
             nextHeader.setCellWidth(headerContent, "100%");
             nextHeader.add(MsoyUI.createImage("/images/me/passport_header_right.png", null));
@@ -96,11 +104,14 @@ public class PassportPanel extends VerticalPanel
         protected void shuffle ()
         {
             _badgePanel.clear();
-            CMe.log("_badges size [" + _badges.size() + "]");
-            // the GWT people didn't both to implement shuffle ><  This will have to be different
-            //Collections.shuffle(_badges);
+            // I would use Collections.shuffle(), but it isn't implemented in GWT's JRE emulation.
+            ArrayList<Integer> indexesUnused = new ArrayList<Integer>();
+            for (int ii = 0; ii < _badges.size(); ii++) {
+                indexesUnused.add(ii);
+            }
             for (int ii = 0, max = Math.min(MAX_NEXT_BADGES, _badges.size()); ii < max; ii++) {
-                _badgePanel.add(new BadgeDisplay(_badges.get(ii)));
+                _badgePanel.add(new BadgeDisplay(_badges.get(
+                    indexesUnused.remove((int)(Math.random() * indexesUnused.size())))));
             }
         }
 
