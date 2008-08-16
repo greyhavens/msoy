@@ -19,14 +19,12 @@ import com.threerings.msoy.money.server.MemberMoney;
 import com.threerings.msoy.money.server.MoneyType;
 
 /**
- * Domain model for the current status of a member's account, including the amount of
- * each money type currently in their account.
+ * Domain model for the current status of a member's account, including the amount of each money
+ * type currently in their account.
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-@Entity(indices={
-    @Index(name="ixVersion", fields={ MemberAccountRecord.VERSION_ID })
-})
+@Entity(indices = { @Index(name = "ixVersion", fields = { MemberAccountRecord.VERSION_ID }) })
 @NotThreadSafe
 public class MemberAccountRecord extends PersistentRecord
 {
@@ -35,84 +33,80 @@ public class MemberAccountRecord extends PersistentRecord
     public static final String MEMBER_ID = "memberId";
 
     /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(MemberAccountRecord.class, MEMBER_ID);
+    public static final ColumnExp MEMBER_ID_C = new ColumnExp(MemberAccountRecord.class,
+        MEMBER_ID);
 
     /** The column identifier for the {@link #coins} field. */
     public static final String COINS = "coins";
 
     /** The qualified column identifier for the {@link #coins} field. */
-    public static final ColumnExp COINS_C =
-        new ColumnExp(MemberAccountRecord.class, COINS);
+    public static final ColumnExp COINS_C = new ColumnExp(MemberAccountRecord.class, COINS);
 
     /** The column identifier for the {@link #bars} field. */
     public static final String BARS = "bars";
 
     /** The qualified column identifier for the {@link #bars} field. */
-    public static final ColumnExp BARS_C =
-        new ColumnExp(MemberAccountRecord.class, BARS);
+    public static final ColumnExp BARS_C = new ColumnExp(MemberAccountRecord.class, BARS);
 
     /** The column identifier for the {@link #bling} field. */
     public static final String BLING = "bling";
 
     /** The qualified column identifier for the {@link #bling} field. */
-    public static final ColumnExp BLING_C =
-        new ColumnExp(MemberAccountRecord.class, BLING);
+    public static final ColumnExp BLING_C = new ColumnExp(MemberAccountRecord.class, BLING);
 
     /** The column identifier for the {@link #dateLastUpdated} field. */
     public static final String DATE_LAST_UPDATED = "dateLastUpdated";
 
     /** The qualified column identifier for the {@link #dateLastUpdated} field. */
-    public static final ColumnExp DATE_LAST_UPDATED_C =
-        new ColumnExp(MemberAccountRecord.class, DATE_LAST_UPDATED);
+    public static final ColumnExp DATE_LAST_UPDATED_C = new ColumnExp(MemberAccountRecord.class,
+        DATE_LAST_UPDATED);
 
     /** The column identifier for the {@link #versionId} field. */
     public static final String VERSION_ID = "versionId";
 
     /** The qualified column identifier for the {@link #versionId} field. */
-    public static final ColumnExp VERSION_ID_C =
-        new ColumnExp(MemberAccountRecord.class, VERSION_ID);
+    public static final ColumnExp VERSION_ID_C = new ColumnExp(MemberAccountRecord.class,
+        VERSION_ID);
 
     /** The column identifier for the {@link #accCoins} field. */
     public static final String ACC_COINS = "accCoins";
 
     /** The qualified column identifier for the {@link #accCoins} field. */
-    public static final ColumnExp ACC_COINS_C =
-        new ColumnExp(MemberAccountRecord.class, ACC_COINS);
+    public static final ColumnExp ACC_COINS_C = new ColumnExp(MemberAccountRecord.class,
+        ACC_COINS);
 
     /** The column identifier for the {@link #accBars} field. */
     public static final String ACC_BARS = "accBars";
 
     /** The qualified column identifier for the {@link #accBars} field. */
-    public static final ColumnExp ACC_BARS_C =
-        new ColumnExp(MemberAccountRecord.class, ACC_BARS);
+    public static final ColumnExp ACC_BARS_C = new ColumnExp(MemberAccountRecord.class, ACC_BARS);
 
     /** The column identifier for the {@link #accBling} field. */
     public static final String ACC_BLING = "accBling";
 
     /** The qualified column identifier for the {@link #accBling} field. */
-    public static final ColumnExp ACC_BLING_C =
-        new ColumnExp(MemberAccountRecord.class, ACC_BLING);
+    public static final ColumnExp ACC_BLING_C = new ColumnExp(MemberAccountRecord.class,
+        ACC_BLING);
+
     // AUTO-GENERATED: FIELDS END
-    
+
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #MemberAccountRecord}
-     * with the supplied key values.
+     * Create and return a primary {@link Key} to identify a {@link #MemberAccountRecord} with the
+     * supplied key values.
      */
-    public static Key<MemberAccountRecord> getKey (int memberId)
+    public static Key<MemberAccountRecord> getKey (final int memberId)
     {
-        return new Key<MemberAccountRecord>(
-                MemberAccountRecord.class,
-                new String[] { MEMBER_ID },
-                new Comparable[] { memberId });
+        return new Key<MemberAccountRecord>(MemberAccountRecord.class,
+            new String[] { MEMBER_ID }, new Comparable[] { memberId });
     }
+
     // AUTO-GENERATED: METHODS END
-    
+
     public static final int SCHEMA_VERSION = 3;
-    
+
     /**
-     * Creates a new blank record for the given member.  All account balances are set to 0.
+     * Creates a new blank record for the given member. All account balances are set to 0.
      * 
      * @param memberId ID of the member to create the record for.
      */
@@ -128,12 +122,11 @@ public class MemberAccountRecord extends PersistentRecord
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         this.versionId = 0;
     }
-    
-    /** For depot's eyes only.  Not part of the API. */
+
+    /** For depot's eyes only. Not part of the API. */
     public MemberAccountRecord ()
-    {
-    }
-    
+    {}
+
     /**
      * Adds the given number of bars to the member's account.
      * 
@@ -145,25 +138,26 @@ public class MemberAccountRecord extends PersistentRecord
         this.bars += bars;
         this.accBars += bars;
         this.dateLastUpdated = new Timestamp(new Date().getTime());
-        return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated, MoneyType.BARS,
-            bars, false, "Purchased " + bars + " bars.");
+        return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated,
+            MoneyType.BARS, bars, false, "Purchased " + bars + " bars.");
     }
-    
+
     /**
      * Adds the given number of coins to the member's account.
      * 
      * @param coins Number of coins to add.
      * @return Account history record for this transaction.
      */
-    public MemberAccountHistoryRecord awardCoins (final int coins, final ItemIdent item, final String description)
+    public MemberAccountHistoryRecord awardCoins (final int coins, final ItemIdent item,
+        final String description)
     {
         this.coins += coins;
         this.accCoins += coins;
         this.dateLastUpdated = new Timestamp(new Date().getTime());
-        return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated, MoneyType.COINS,
-            coins, false, description, item);
+        return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated,
+            MoneyType.COINS, coins, false, description, item);
     }
-    
+
     /**
      * Purchases an item, deducting the appropriate amount of money from this account.
      * 
@@ -172,8 +166,8 @@ public class MemberAccountRecord extends PersistentRecord
      * @param description Description that should be used in the history record.
      * @return Account history record for this transaction.
      */
-    public MemberAccountHistoryRecord buyItem (int amount, final MoneyType type, final String description,
-        final ItemIdent item, final boolean support)
+    public MemberAccountHistoryRecord buyItem (int amount, final MoneyType type,
+        final String description, final ItemIdent item, final boolean support)
     {
         if (type == MoneyType.BARS) {
             if (support) {
@@ -187,10 +181,10 @@ public class MemberAccountRecord extends PersistentRecord
             this.coins -= amount;
         }
         this.dateLastUpdated = new Timestamp(new Date().getTime());
-        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, type, amount, true, 
+        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, type, amount, true,
             description, item);
     }
-    
+
     /**
      * Returns true if the account can afford spending the amount of currency indicated.
      * 
@@ -202,7 +196,7 @@ public class MemberAccountRecord extends PersistentRecord
     {
         return type == MoneyType.BARS ? (bars >= amount) : (coins >= amount);
     }
-    
+
     /**
      * Pays the creator of an item purchased a certain percentage of the amount for the item.
      * 
@@ -212,8 +206,9 @@ public class MemberAccountRecord extends PersistentRecord
      * @param item Item that was purchased.
      * @return History record for the transaction.
      */
-    public MemberAccountHistoryRecord creatorPayout (final int amount, final MoneyType listingType, 
-        final String description, final ItemIdent item, final double percentage)
+    public MemberAccountHistoryRecord creatorPayout (final int amount,
+        final MoneyType listingType, final String description, final ItemIdent item,
+        final double percentage)
     {
         // TODO: Determine percentage from administrator.
         final double amountPaid = percentage * amount;
@@ -228,10 +223,10 @@ public class MemberAccountRecord extends PersistentRecord
             paymentType = MoneyType.COINS;
         }
         this.dateLastUpdated = new Timestamp(new Date().getTime());
-        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, paymentType, amountPaid, false, 
-            description, item);
+        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, paymentType, amountPaid,
+            false, description, item);
     }
-    
+
     public int getMemberId ()
     {
         return memberId;
@@ -276,7 +271,7 @@ public class MemberAccountRecord extends PersistentRecord
     {
         return accBling;
     }
-    
+
     /**
      * Creates a {@link MemberMoney} object from this record.
      */
@@ -284,36 +279,47 @@ public class MemberAccountRecord extends PersistentRecord
     {
         return new MemberMoney(memberId, coins, bars, bling, accCoins, accBars, accBling);
     }
-    
-    /** ID of the member this account record is for.  Note: this is not part of the API, do not use it. */
+
+    /**
+     * ID of the member this account record is for. Note: this is not part of the API, do not use
+     * it.
+     */
     @Id
     public int memberId;
-    
-    /** Coins currently in the account.  Note: this is not part of the API, do not use it. */
+
+    /** Coins currently in the account. Note: this is not part of the API, do not use it. */
     public int coins;
-    
-    /** Bars currently in the account.  Note: this is not part of the API, do not use it. */
+
+    /** Bars currently in the account. Note: this is not part of the API, do not use it. */
     public int bars;
-    
-    /** Bling currently in the account.  Note: this is not part of the API, do not use it. */
+
+    /** Bling currently in the account. Note: this is not part of the API, do not use it. */
     public double bling;
-    
-    /** Date last updated.  Note: this is not part of the API, do not use it.  Also, why does depot force 
-     * this dependency on java.sql in the entity object?  :-( */
+
+    /**
+     * Date last updated. Note: this is not part of the API, do not use it. Also, why does depot
+     * force this dependency on java.sql in the entity object? :-(
+     */
     public Timestamp dateLastUpdated;
-    
-    /** ID of the version of this account.  Note: this is not part of the API, do not use it. */
+
+    /** ID of the version of this account. Note: this is not part of the API, do not use it. */
     public long versionId;
-    
-    /** Cumulative count of coins this member has ever received.  Note: this is not part of the API, do
-     * not use it. */
+
+    /**
+     * Cumulative count of coins this member has ever received. Note: this is not part of the API,
+     * do not use it.
+     */
     public long accCoins;
-    
-    /** Cumulative count of bars this member has ever received.  Note: this is not part of the API, do
-     * not use it. */
+
+    /**
+     * Cumulative count of bars this member has ever received. Note: this is not part of the API,
+     * do not use it.
+     */
     public long accBars;
-    
-    /** Cumulative count of bling this member has ever received.  Note: this is not part of the API, do
-     * not use it. */
+
+    /**
+     * Cumulative count of bling this member has ever received. Note: this is not part of the API,
+     * do not use it.
+     */
     public double accBling;
 }

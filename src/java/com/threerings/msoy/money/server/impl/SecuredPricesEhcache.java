@@ -13,8 +13,8 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.NotSecuredException;
 
 /**
- * Implementation of {@link SecuredPricesCache} that uses ehcache to store the secured prices
- * in memory distributedly.
+ * Implementation of {@link SecuredPricesCache} that uses ehcache to store the secured prices in
+ * memory distributedly.
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
@@ -23,18 +23,18 @@ public class SecuredPricesEhcache
     implements SecuredPricesCache
 {
     /**
-     * Creates a cache with the given maximum number of secured prices, whose entries will
-     * expire after some amount of time.
+     * Creates a cache with the given maximum number of secured prices, whose entries will expire
+     * after some amount of time.
      * 
      * @param maxElements Maximum number of secured prices that can be stored in memory.
-     * @param expireSeconds Number of seconds until a secured price will be purged from the
-     *      cache.
+     * @param expireSeconds Number of seconds until a secured price will be purged from the cache.
      */
     public SecuredPricesEhcache (final int maxElements, final int expireSeconds)
     {
         if (CacheManager.getInstance().getCache(CACHE_NAME) == null) {
-            this._cache = new Cache(CACHE_NAME, maxElements, false, false, expireSeconds, expireSeconds);
-            
+            this._cache = new Cache(CACHE_NAME, maxElements, false, false, expireSeconds,
+                expireSeconds);
+
             // If we're running ehcache distributedly, then add an event listener to
             // send out updates.
             if (CacheManager.getInstance().getCacheManagerPeerProvider() != null) {
@@ -47,7 +47,7 @@ public class SecuredPricesEhcache
             this._cache.removeAll();
         }
     }
-    
+
     public SecuredPrices getSecuredPrice (final int memberId, final ItemIdent item)
         throws NotSecuredException
     {
@@ -62,7 +62,7 @@ public class SecuredPricesEhcache
     {
         _cache.put(new Element(new PriceKey(memberId, item), prices));
     }
-    
+
     public void removeSecuredPrice (final int memberId, final ItemIdent item)
     {
         _cache.remove(new PriceKey(memberId, item));

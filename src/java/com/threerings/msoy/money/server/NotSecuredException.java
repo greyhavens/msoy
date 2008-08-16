@@ -14,18 +14,20 @@ public class NotSecuredException extends MoneyException
 {
     public NotSecuredException (final int memberId, final ItemIdent item)
     {
-        super("The price of the item " + item + " was not secured previously by member " + memberId);
+        super("The price of the item " + item + " was not secured previously by member "
+            + memberId);
         this._memberId = memberId;
         this._item = item;
     }
-    
+
     public NotSecuredException (final int memberId, final ItemIdent item, final Throwable cause)
     {
-        super("The price of the item " + item + " was not secured previously by member " + memberId, cause);
+        super("The price of the item " + item + " was not secured previously by member "
+            + memberId, cause);
         this._memberId = memberId;
         this._item = item;
     }
-    
+
     public int getMemberId ()
     {
         return _memberId;
@@ -35,7 +37,7 @@ public class NotSecuredException extends MoneyException
     {
         return _item;
     }
-    
+
     private final int _memberId;
     private final ItemIdent _item;
 }

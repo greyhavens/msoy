@@ -199,7 +199,7 @@ public class MoneyTest
         final long startTime = System.currentTimeMillis() / 1000;
         final MemberMoney oldMoney = _service.getMoneyFor(1);
         final ItemIdent item = new ItemIdent(Item.GAME, 1);
-        final MoneyResult result = _service.awardCoins(1, 2, 3, item, 150, 
+        final MoneyResult result = _service.awardCoins(1, 2, 3, item, 150,
             "150 coins awarded.  Thanks for playing!", UserAction.PLAYED_GAME);
         final long endTime = System.currentTimeMillis() / 1000;
         

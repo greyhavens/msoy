@@ -5,6 +5,7 @@ package com.threerings.msoy.money.server.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
@@ -45,7 +46,8 @@ public class MoneyLogicImpl
 {
     @Inject
     public MoneyLogicImpl(final MoneyRepository repo, final SecuredPricesCache securedPricesCache, 
-        final MoneyHistoryExpirer expirer, final UserActionRepository userActionRepo, final MsoyEventLogger eventLog)
+        final MoneyHistoryExpirer expirer, final UserActionRepository userActionRepo, 
+        final MsoyEventLogger eventLog)
     {
         this._repo = repo;
         this._securedPricesCache = securedPricesCache;
@@ -56,7 +58,8 @@ public class MoneyLogicImpl
     
     @Retry(exception=StaleDataException.class)
     public MoneyResult awardCoins (final int memberId, final int creatorId, final int affiliateId, 
-        final ItemIdent item, final int amount, final String description, final UserAction userAction)
+        final ItemIdent item, final int amount, final String description, final 
+        UserAction userAction)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot award coins to guests.");
         Preconditions.checkArgument(amount > 0, "amount is invalid: %d", amount);
@@ -75,7 +78,8 @@ public class MoneyLogicImpl
         
         logUserAction(memberId, UserActionDetails.INVALID_ID, userAction, item, description);
         
-        return new MoneyResult(account.getMemberMoney(), null, null, history.createMoneyHistory(), null, null);
+        return new MoneyResult(account.getMemberMoney(), null, null, history.createMoneyHistory(), 
+            null, null);
     }
 
     @Retry(exception=StaleDataException.class)
@@ -92,20 +96,24 @@ public class MoneyLogicImpl
         _repo.saveAccount(account);
         _repo.addHistory(history);
         
-        logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS, null, history.getDescription());
+        logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS, null, 
+            history.getDescription());
         
-        return new MoneyResult(account.getMemberMoney(), null, null, history.createMoneyHistory(), null, null);
+        return new MoneyResult(account.getMemberMoney(), null, null, history.createMoneyHistory(), 
+            null, null);
     }
 
     @Retry(exception=StaleDataException.class)
-    public MoneyResult buyItemWithBars (final int memberId, final ItemIdent item, final boolean support)
+    public MoneyResult buyItemWithBars (final int memberId, final ItemIdent item, 
+        final boolean support)
         throws NotEnoughMoneyException, NotSecuredException
     {
         return buyItem(memberId, item, MoneyType.BARS, support);
     }
 
     @Retry(exception=StaleDataException.class)
-    public MoneyResult buyItemWithCoins (final int memberId, final ItemIdent item, final boolean support)
+    public MoneyResult buyItemWithCoins (final int memberId, final ItemIdent item, 
+        final boolean support)
         throws NotEnoughMoneyException, NotSecuredException
     {
         return buyItem(memberId, item, MoneyType.COINS, support);
@@ -133,12 +141,15 @@ public class MoneyLogicImpl
     public List<MoneyHistory> getLog (final int memberId, final MoneyType type, final int start, 
         final int count, final boolean descending)
     {
-        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot retrieve money log for guests.");
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), 
+            "Cannot retrieve money log for guests.");
         Preconditions.checkArgument(start >= 0, "start is invalid: %d", start);
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
         
         final List<MoneyHistory> log = new ArrayList<MoneyHistory>();
-        for (final MemberAccountHistoryRecord record : _repo.getHistory(memberId, type, start, count, descending)) {
+        final Collection<MemberAccountHistoryRecord> records = 
+            _repo.getHistory(memberId, type, start, count, descending);
+        for (final MemberAccountHistoryRecord record : records) {
             log.add(record.createMoneyHistory());
         }
         return log;
@@ -152,7 +163,8 @@ public class MoneyLogicImpl
 
     public MemberMoney getMoneyFor (final int memberId)
     {
-        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot retrieve money info for guests.");
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), 
+            "Cannot retrieve money info for guests.");
 
         final MemberAccountRecord account = _repo.getAccountById(memberId);
         return account != null ? account.getMemberMoney() : new MemberMoney(memberId); 
@@ -163,13 +175,13 @@ public class MoneyLogicImpl
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Creators cannot be guests.");
-        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0), "item is invalid: %s", 
-            item.toString());
+        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0), 
+            "item is invalid: %s", item.toString());
         Preconditions.checkArgument(numBars > 0, "bars is invalid: %d", numBars);
         
         // TODO: Use exchange rate to calculate coins.
-        _securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.BARS, 0, numBars, 
-            creatorId, affiliateId, description));
+        _securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.BARS, 0, 
+            numBars, creatorId, affiliateId, description));
         return 0;
     }
 
@@ -178,13 +190,13 @@ public class MoneyLogicImpl
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Creators cannot be guests.");
-        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0), "item is invalid: %s", 
-            item.toString());
+        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0), 
+            "item is invalid: %s", item.toString());
         Preconditions.checkArgument(numCoins > 0, "numCoins is invalid: %d", numCoins);
         
         // TODO: Use exchange rate to calculate bars.
-        _securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.COINS, numCoins, 0, 
-            creatorId, affiliateId, description));
+        _securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.COINS, numCoins, 
+            0, creatorId, affiliateId, description));
         return 0;
     }
 
@@ -199,15 +211,16 @@ public class MoneyLogicImpl
         _expirer.start();
     }
     
-    private MoneyResult buyItem (final int memberId, final ItemIdent item, final MoneyType purchaseType,
-        final boolean support)
+    private MoneyResult buyItem (final int memberId, final ItemIdent item, 
+        final MoneyType purchaseType, final boolean support)
         throws NotEnoughMoneyException, NotSecuredException
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy items.");
-        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0), "item is invalid: %s", 
-            item.toString());
-        Preconditions.checkArgument(purchaseType == MoneyType.BARS || purchaseType == MoneyType.COINS, 
-            "purchaseType is invalid: %s", purchaseType.toString());
+        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0), 
+            "item is invalid: %s", item.toString());
+        Preconditions.checkArgument(purchaseType == MoneyType.BARS || 
+            purchaseType == MoneyType.COINS, "purchaseType is invalid: %s", 
+            purchaseType.toString());
         
         // Get the secured prices for the item.
         final SecuredPrices prices = _securedPricesCache.getSecuredPrice(memberId, item);
@@ -227,8 +240,8 @@ public class MoneyLogicImpl
         // Get buyer account and make sure they can afford the item.
         final MemberAccountRecord account = _repo.getAccountById(memberId);
         if (account == null || (!support && !account.canAfford(amount, purchaseType))) {
-            final int available = (account == null ? 0 : (purchaseType == MoneyType.BARS ? account.getBars() : 
-                account.getCoins()));
+            final int available = (account == null ? 0 : (purchaseType == MoneyType.BARS ? 
+                account.getBars() : account.getCoins()));
             throw new NotEnoughMoneyException(available, amount, purchaseType, memberId);
         }
         
@@ -244,7 +257,8 @@ public class MoneyLogicImpl
         }
         
         // Update the member account
-        final MemberAccountHistoryRecord history = account.buyItem(amount, purchaseType, prices.getDescription(), item, support); 
+        final MemberAccountHistoryRecord history = account.buyItem(amount, purchaseType, 
+            prices.getDescription(), item, support); 
         _repo.addHistory(history);
         _repo.saveAccount(account);
         UserActionDetails info = logUserAction(memberId, UserActionDetails.INVALID_ID, 
@@ -254,11 +268,12 @@ public class MoneyLogicImpl
         // Update the creator account, if they get a payment.
         MemberAccountHistoryRecord creatorHistory = history;
         if (payCreator) {
-            creatorHistory = creator.creatorPayout((int)history.getAmount(), prices.getListedType(), "Item purchased: " + 
-                prices.getDescription(), item, 0.3);
+            creatorHistory = creator.creatorPayout((int)history.getAmount(), prices.getListedType(), 
+                "Item purchased: " + prices.getDescription(), item, 0.3);
             _repo.addHistory(creatorHistory);
             _repo.saveAccount(creator);
-            info = logUserAction(prices.getCreatorId(), memberId, UserAction.RECEIVED_PAYOUT, item, prices.getDescription());
+            info = logUserAction(prices.getCreatorId(), memberId, UserAction.RECEIVED_PAYOUT, item, 
+                prices.getDescription());
             logInPanopticon(info, purchaseType, history.getSignedAmount(), account);
         }
         
@@ -267,12 +282,13 @@ public class MoneyLogicImpl
         // The item no longer needs to be in the cache.
         _securedPricesCache.removeSecuredPrice(memberId, item);
         
-        return new MoneyResult(account.getMemberMoney(), payCreator ? creator.getMemberMoney() : null, null,
-            history.createMoneyHistory(), payCreator ? creatorHistory.createMoneyHistory() : null, null);
+        return new MoneyResult(account.getMemberMoney(), payCreator ? creator.getMemberMoney() : 
+            null, null, history.createMoneyHistory(), payCreator ? 
+            creatorHistory.createMoneyHistory() : null, null);
     }
     
-    private void logInPanopticon (final UserActionDetails info, final MoneyType type, final double delta, 
-        final MemberAccountRecord account)
+    private void logInPanopticon (final UserActionDetails info, final MoneyType type, 
+        final double delta, final MemberAccountRecord account)
     {
         if (type == MoneyType.COINS) {
             _eventLog.flowTransaction(info, (int)delta, account.getCoins());
@@ -283,8 +299,8 @@ public class MoneyLogicImpl
         }
     }
     
-    private UserActionDetails logUserAction (final int memberId, final int otherMemberId, final UserAction userAction, 
-        final ItemIdent item, final String description)
+    private UserActionDetails logUserAction (final int memberId, final int otherMemberId, 
+        final UserAction userAction, final ItemIdent item, final String description)
     {
         try {
             final UserActionDetails details = item == null ?

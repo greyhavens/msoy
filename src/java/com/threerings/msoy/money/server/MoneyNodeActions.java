@@ -16,26 +16,28 @@ public class MoneyNodeActions
         this._peerMan = peerMan;
     }
 
-
     /**
      * Dispatches a notification that a member's money count has changed to whichever server they
      * are logged into.
      */
     public void moneyUpdated (final MemberMoney money)
     {
-        _peerMan.invokeNodeAction(new MoneyUpdated(money.getMemberId(), money.getCoins(), (int)money.getAccCoins()));
+        _peerMan.invokeNodeAction(new MoneyUpdated(money.getMemberId(), money.getCoins(),
+            (int)money.getAccCoins()));
     }
-    
+
     private static class MoneyUpdated extends MemberNodeAction
     {
-        public MoneyUpdated (final int memberId, final int coins, final int accCoins) {
+        public MoneyUpdated (final int memberId, final int coins, final int accCoins)
+        {
             super(memberId);
             _coins = coins;
             _accCoins = accCoins;
         }
 
         @Override
-        protected void execute (final MemberObject memobj) {
+        protected void execute (final MemberObject memobj)
+        {
             memobj.startTransaction();
             try {
                 memobj.setFlow(_coins);

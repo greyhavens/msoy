@@ -27,11 +27,11 @@ public final class MoneyModule extends AbstractModule
     {
         bind(MoneyRepository.class).to(DepotMoneyRepository.class);
         bind(MoneyLogic.class).to(MoneyLogicImpl.class);
-        bind(SecuredPricesCache.class).toInstance(new SecuredPricesEhcache(SECURED_PRICES_MAX_ELEMENTS,
-            SECURED_PRICES_MAX_DURATION));
+        bind(SecuredPricesCache.class).toInstance(
+            new SecuredPricesEhcache(SECURED_PRICES_MAX_ELEMENTS, SECURED_PRICES_MAX_DURATION));
         bindInterceptor(any(), annotatedWith(Retry.class), new RetryInterceptor());
     }
-    
+
     private static final int SECURED_PRICES_MAX_ELEMENTS = 100000;
     private static final int SECURED_PRICES_MAX_DURATION = 600;
 }

@@ -5,16 +5,17 @@ package com.threerings.msoy.money.server;
 
 /**
  * Occurs when a member attempts to use some amount of money they do not have.
- *
+ * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class NotEnoughMoneyException extends MoneyException
 {
     public NotEnoughMoneyException (final double moneyAvailable, final double moneyRequested,
-        final MoneyType type, final int memberId)
+            final MoneyType type, final int memberId)
     {
-        super("An attempt to secure " + moneyRequested + " currency of type " + type + " from member ID " +
-            memberId + " failed because only " + moneyAvailable + " is available.");
+        super("An attempt to secure " + moneyRequested + " currency of type " + type
+            + " from member ID " + memberId + " failed because only " + moneyAvailable
+            + " is available.");
         this._moneyAvailable = moneyAvailable;
         this._moneyRequested = moneyRequested;
         this._type = type;
@@ -22,10 +23,11 @@ public class NotEnoughMoneyException extends MoneyException
     }
 
     public NotEnoughMoneyException (final double moneyAvailable, final double moneyRequested,
-        final MoneyType type, final int memberId, final Throwable cause)
+            final MoneyType type, final int memberId, final Throwable cause)
     {
-        super("An attempt to secure " + moneyRequested + " currency of type " + type + " from member ID " +
-            memberId + " failed because only " + moneyAvailable + " is available.", cause);
+        super("An attempt to secure " + moneyRequested + " currency of type " + type
+            + " from member ID " + memberId + " failed because only " + moneyAvailable
+            + " is available.", cause);
         this._moneyAvailable = moneyAvailable;
         this._moneyRequested = moneyRequested;
         this._type = type;

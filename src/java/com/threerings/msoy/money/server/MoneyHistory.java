@@ -11,14 +11,15 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Contains the history of a single transaction involving coins, bars, or bling.
- *
+ * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
 @Immutable
 public class MoneyHistory
 {
-    public MoneyHistory (final int memberId, final Date timestamp, final MoneyType type, final double amount,
-        final boolean spent, final String description, final ItemIdent item)
+    public MoneyHistory (final int memberId, final Date timestamp, final MoneyType type,
+            final double amount, final boolean spent, final String description,
+            final ItemIdent item)
     {
         this._memberId = memberId;
         this._timestamp = timestamp;
@@ -54,8 +55,8 @@ public class MoneyHistory
     }
 
     /**
-     * If true, this amount was deducted from the account.  Otherwise it was credited
-     * to the account.
+     * If true, this amount was deducted from the account. Otherwise it was credited to the
+     * account.
      */
     public boolean isSpent ()
     {

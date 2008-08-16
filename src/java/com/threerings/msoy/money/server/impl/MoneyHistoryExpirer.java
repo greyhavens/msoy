@@ -40,7 +40,8 @@ public class MoneyHistoryExpirer implements Shutdowner
         this(repo, sm, Executors.newSingleThreadScheduledExecutor());
     }
     
-    public MoneyHistoryExpirer (final MoneyRepository repo, final ShutdownManager sm, final ScheduledExecutorService service)
+    public MoneyHistoryExpirer (final MoneyRepository repo, final ShutdownManager sm, 
+        final ScheduledExecutorService service)
     {
         this._repo = repo;
         this._service = service;
@@ -60,7 +61,8 @@ public class MoneyHistoryExpirer implements Shutdowner
                 public void run () {
                     final int count = _repo.deleteOldHistoryRecords(MoneyType.COINS, _maxAge);
                     if (count > 0) {
-                        logger.info("Removed " + count + " old member account history records for coins.");
+                        logger.info("Removed " + count + 
+                            " old member account history records for coins.");
                     }
                 }
             }, 0, _period, TimeUnit.MILLISECONDS);
@@ -87,8 +89,8 @@ public class MoneyHistoryExpirer implements Shutdowner
     }
 
     /**
-     * The maximum age in milliseconds for coins history records until they are expired.  The expirer must be
-     * restarted for this to have an effect.
+     * The maximum age in milliseconds for coins history records until they are expired.  The 
+     * expirer must be restarted for this to have an effect.
      */
     public void setMaxAge (final long maxAge)
     {
@@ -104,8 +106,8 @@ public class MoneyHistoryExpirer implements Shutdowner
     }
 
     /**
-     * Number of milliseconds between expiration task calls.  The expirer must be restarted for this to have
-     * an effect.
+     * Number of milliseconds between expiration task calls.  The expirer must be restarted for 
+     * this to have an effect.
      */
     public void setPeriod (final long period)
     {
