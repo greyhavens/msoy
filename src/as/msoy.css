@@ -493,7 +493,7 @@ TabNavigator, TabBar {
 }
 
 .controlBar {
-  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
+  backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/bg.png");
   backgroundSize: "100%";
   horizontalGap: 10;
   verticalAlign: "bottom";
