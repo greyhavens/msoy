@@ -307,6 +307,7 @@ public class FloatingPanel extends TitleWindow
         super.createChildren();
 
         var closeBtn :UIComponent = mx_internal::closeButton;
+        closeBtn.buttonMode = true;
         closeBtn.explicitWidth = 13;
         closeBtn.explicitHeight = 14;
     }
