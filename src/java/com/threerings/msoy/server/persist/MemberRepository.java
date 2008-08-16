@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.server.persist;
 
-import static com.threerings.msoy.Log.log;
-
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.Date;
@@ -23,6 +21,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.DuplicateKeyException;
@@ -54,19 +53,25 @@ import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.operator.Logic.Or;
+
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
+
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.presents.annotation.BlockingThread;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manages persistent information stored on a per-member basis.
