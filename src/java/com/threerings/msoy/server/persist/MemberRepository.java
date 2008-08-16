@@ -362,7 +362,8 @@ public class MemberRepository extends DepotRepository
 //                  findAllKeys(MemberRecord.class, where, new Limit(0, limit))) {
 //             ids.add((Integer)key.condition.getValues().get(0));
 //         }
-        for (final MemberRecord mrec : findAll(MemberRecord.class, new Where(op), new Limit(0, limit))) {
+        for (final MemberRecord mrec :
+                 findAll(MemberRecord.class, new Where(op), new Limit(0, limit))) {
             ids.add(mrec.memberId);
         }
 
