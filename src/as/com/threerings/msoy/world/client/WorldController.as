@@ -1173,7 +1173,7 @@ public class WorldController extends MsoyController
                 fullURL += "#world-s" + sceneId + "_" + page + "-" + args;
             }
             log.info("Showing external URL " + fullURL);
-            return super.showExternalURL(fullURL, true);
+            return super.showExternalURL(fullURL, false);
         }
     }
 
