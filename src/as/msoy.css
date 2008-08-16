@@ -491,7 +491,8 @@ TabNavigator, TabBar {
 .controlBar {
   backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/footer_tile.png");
   backgroundSize: "100%";
-  horizontalGap: 2;
+  horizontalGap: 10;
+  verticalAlign: "bottom";
 }
 
 .controlBarButtonSend {
@@ -501,32 +502,34 @@ TabNavigator, TabBar {
 }
 
 .controlBarButtonChat {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_chat.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_chat_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_chat_down.png");
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/chatoptions.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/chatoptions_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/chatoptions_down.png");
+  /** UNUSED downSkin: Embed(source="../../rsrc/media/skins/controlbar/chatoptions_disabled.png"); */
 }
 
 .controlBarButtonEdit {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit_disabled.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit_down.png");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit_down.png");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/controlbar/button_edit_down.png");
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom_disabled.png");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom.png");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom_over.png");
+  selectedDownSkin: Embed(source="../../rsrc/media/skins/controlbar/editroom_down.png");
 }
 
 .controlBarButtonVolume {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_volume_down.png");
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/volume.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_down.png");
+  /** UNUSED downSkin: Embed(source="../../rsrc/media/skins/controlbar/volume_disabled.png"); */
 }
 
 .controlBarButtonZoom {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_zoom.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_zoom_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_zoom_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_zoom_disabled.png");
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_disabled.png");
 }
 
 .controlBarButtonScale {
@@ -537,31 +540,28 @@ TabNavigator, TabBar {
 }
 
 .controlBarButtonScores {
-  /* other states TODO */
-  upSkin: ClassReference(null);
-  overSkin: ClassReference(null);
-  downSkin: ClassReference(null);
-  disabledSkin: ClassReference(null);
-  skin: Embed(source="../../rsrc/media/skins/controlbar/scores.png");
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/score.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/score_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/score_down.png");
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/score_disabled.png"); */
 }
 
 .controlBarHoverZone {
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/hoverzone.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/clickable.png");
 }
 
 .controlBarButtonSnapshot {
-  /* other states TODO */
-  upSkin: ClassReference(null);
-  overSkin: ClassReference(null);
-  downSkin: ClassReference(null);
-  disabledSkin: ClassReference(null);
-  skin: Embed(source="../../rsrc/media/skins/controlbar/snapshot.png");
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/snapshot.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/snapshot_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/snapshot_down.png");
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/snapshot_disabled.png"); */
 }
 
 .controlBarFriendButton {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_up.png");
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/friends.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_down.png");
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_disabled.png"); */
 }
 
 .roomEditPanel {
