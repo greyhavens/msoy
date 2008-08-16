@@ -226,7 +226,7 @@ public class MoneyLogicImpl
         
         // Get buyer account and make sure they can afford the item.
         final MemberAccountRecord account = _repo.getAccountById(memberId);
-        if (!support && (account == null || !account.canAfford(amount, purchaseType))) {
+        if (account == null || (!support && !account.canAfford(amount, purchaseType))) {
             final int available = (account == null ? 0 : (purchaseType == MoneyType.BARS ? account.getBars() : 
                 account.getCoins()));
             throw new NotEnoughMoneyException(available, amount, purchaseType, memberId);

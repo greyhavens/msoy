@@ -4,29 +4,17 @@
 package com.threerings.msoy.money.server.persist;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import net.jcip.annotations.NotThreadSafe;
 
-import org.apache.log4j.Logger;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.DatabaseLiaison;
-import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Limit;
@@ -58,60 +46,6 @@ public final class DepotMoneyRepository extends DepotRepository
     public DepotMoneyRepository (final PersistenceContext ctx)
     {
         super(ctx);
-        
-        // 08-11-2008: This will copy the flow from member records into the member account
-        // records.  From this point on, the member account records are considered canonical.
-        ctx.registerMigration(MemberAccountRecord.class, new EntityMigration(3) {
-            @Override
-            public int invoke (final Connection conn, final DatabaseLiaison liaison)
-                throws SQLException
-            {
-                Statement stmt = null;
-                PreparedStatement insertStmt = null;
-                try {
-                    stmt = conn.createStatement();
-                    final ResultSet rs = stmt.executeQuery("select " + liaison.columnSQL("memberId") + ", " + 
-                        liaison.columnSQL("flow") + ", " + liaison.columnSQL("accFlow") + 
-                        " from " + liaison.tableSQL("MemberRecord"));
-                    
-                    insertStmt = conn.prepareStatement("insert into " + 
-                        liaison.tableSQL("MemberAccountRecord") +
-                    	"(" + liaison.columnSQL("memberId") + ", " + liaison.columnSQL("coins") + ", " + 
-                    	liaison.columnSQL("bars") + ", " + liaison.columnSQL("bling") + ", " + 
-                    	liaison.columnSQL("dateLastUpdated") + ", " + liaison.columnSQL("versionId") + ", " + 
-                    	liaison.columnSQL("accCoins") + ", " + liaison.columnSQL("accBars") + ", " + 
-                    	liaison.columnSQL("accBling") + ") " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                    final List<Integer> memberIdList = new ArrayList<Integer>();
-                    while (rs.next()) {
-                        memberIdList.add(rs.getInt(1));
-                        insertStmt.setInt(1, rs.getInt(1));
-                        insertStmt.setInt(2, rs.getInt(2));
-                        insertStmt.setInt(3, 0);
-                        insertStmt.setDouble(4, 0.0);
-                        insertStmt.setTimestamp(5, new Timestamp(new Date().getTime()));
-                        insertStmt.setInt(6, 1);
-                        insertStmt.setInt(7, rs.getInt(3));
-                        insertStmt.setInt(8, 0);
-                        insertStmt.setDouble(9, 0.0);
-                        insertStmt.addBatch();
-                    }
-                    final int[] res = insertStmt.executeBatch();
-                    int total = 0;
-                    for (int i = 0; i < res.length; i++) {
-                        if (res[i] >= 0) {
-                            total += res[i];
-                        } else {
-                            logger.warn("Insert for member " + memberIdList.get(i) + 
-                                " in the money repository migration failed with code: " + res[i]);
-                        }
-                    }
-                    return total;
-                } finally {
-                    JDBCUtil.close(stmt);
-                    JDBCUtil.close(insertStmt);
-                }
-            }
-        });
     }
     
     public void addHistory (final MemberAccountHistoryRecord history)
@@ -216,6 +150,4 @@ public final class DepotMoneyRepository extends DepotRepository
         classes.add(MemberAccountRecord.class);
         classes.add(MemberAccountHistoryRecord.class);
     }
-
-    private static final Logger logger = Logger.getLogger(DepotMoneyRepository.class);
 }

@@ -6,8 +6,14 @@ package com.threerings.msoy.server.persist;
 import static com.threerings.msoy.Log.log;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -17,19 +23,14 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import com.samskivert.io.PersistenceException;
-import com.samskivert.util.ArrayIntSet;
-import com.samskivert.util.IntListUtil;
-import com.samskivert.util.IntMap;
-import com.samskivert.util.IntMaps;
-import com.samskivert.util.IntSet;
-import com.samskivert.util.StringUtil;
-
+import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.DuplicateKeyException;
+import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -53,7 +54,12 @@ import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.operator.Logic.Or;
-
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntListUtil;
+import com.samskivert.util.IntMap;
+import com.samskivert.util.IntMaps;
+import com.samskivert.util.IntSet;
+import com.samskivert.util.StringUtil;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
@@ -102,6 +108,92 @@ public class MemberRepository extends DepotRepository
             @Override
             public String toString () {
                 return "MemberRecord -> MemberNameRecord";
+            }
+        });
+        
+        // 08-11-2008: This will copy the flow from member records into the member account
+        // records.  From this point on, the member account records are considered canonical.
+        ctx.registerMigration(MemberRecord.class, new EntityMigration(22) {
+            @Override
+            public int invoke (final Connection conn, final DatabaseLiaison liaison)
+                throws SQLException
+            {
+                Statement stmt = null;
+                PreparedStatement insertStmt = null, updateStmt = null, checkStmt = null;
+                try {
+                    stmt = conn.createStatement();
+                    final ResultSet rs = stmt.executeQuery("select " + liaison.columnSQL("memberId") + ", " + 
+                        liaison.columnSQL("flow") + ", " + liaison.columnSQL("accFlow") + 
+                        " from " + liaison.tableSQL("MemberRecord"));
+                    
+                    insertStmt = conn.prepareStatement("insert into " + 
+                        liaison.tableSQL("MemberAccountRecord") +
+                        "(" + liaison.columnSQL("memberId") + ", " + liaison.columnSQL("coins") + ", " + 
+                        liaison.columnSQL("bars") + ", " + liaison.columnSQL("bling") + ", " + 
+                        liaison.columnSQL("dateLastUpdated") + ", " + liaison.columnSQL("versionId") + ", " + 
+                        liaison.columnSQL("accCoins") + ", " + liaison.columnSQL("accBars") + ", " + 
+                        liaison.columnSQL("accBling") + ") " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    updateStmt = conn.prepareStatement("update " +
+                        liaison.tableSQL("MemberAccountRecord") +
+                        " set " + liaison.columnSQL("coins") + " = " + liaison.columnSQL("coins") + " + ?, " +
+                        liaison.columnSQL("accCoins") + " = " + liaison.columnSQL("accCoins") + " + ? " +
+                        "where " + liaison.columnSQL("memberId") + " = ?");
+                    checkStmt = conn.prepareStatement("select count(*) from " +
+                        liaison.tableSQL("MemberAccountRecord") +
+                        " where " + liaison.columnSQL("memberId") + " = ?");
+                    final List<Integer> memberIdInsertList = new ArrayList<Integer>();
+                    final List<Integer> memberIdUpdateList = new ArrayList<Integer>();
+                    while (rs.next()) {
+                        final int memberId = rs.getInt(1);
+                        checkStmt.setInt(1, memberId);
+                        final ResultSet rs2 = checkStmt.executeQuery();
+                        rs2.next();
+                        if (rs2.getInt(1) > 0) {
+                            memberIdUpdateList.add(memberId);
+                            updateStmt.setInt(1, rs.getInt(2));
+                            updateStmt.setInt(2, rs.getInt(3));
+                            updateStmt.setInt(3, memberId);
+                            updateStmt.addBatch();
+                        } else {
+                            memberIdInsertList.add(memberId);
+                            insertStmt.setInt(1, memberId);
+                            insertStmt.setInt(2, rs.getInt(2));
+                            insertStmt.setInt(3, 0);
+                            insertStmt.setDouble(4, 0.0);
+                            insertStmt.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+                            insertStmt.setInt(6, 1);
+                            insertStmt.setInt(7, rs.getInt(3));
+                            insertStmt.setInt(8, 0);
+                            insertStmt.setDouble(9, 0.0);
+                            insertStmt.addBatch();
+                        }
+                    }
+                    int[] res = insertStmt.executeBatch();
+                    int total = 0;
+                    for (int i = 0; i < res.length; i++) {
+                        if (res[i] >= 0) {
+                            total += res[i];
+                        } else {
+                            log.warning("Insert for member " + memberIdInsertList.get(i) + 
+                                " in the money repository migration failed with code: " + res[i]);
+                        }
+                    }
+                    res = updateStmt.executeBatch();
+                    for (int i = 0; i < res.length; i++) {
+                        if (res[i] >= 0) {
+                            total += res[i];
+                        } else {
+                            log.warning("Update for member " + memberIdUpdateList.get(i) + 
+                                " in the money repository migration failed with code: " + res[i]);
+                        }
+                    }
+                    return total;
+                } finally {
+                    JDBCUtil.close(stmt);
+                    JDBCUtil.close(insertStmt);
+                    JDBCUtil.close(updateStmt);
+                    JDBCUtil.close(checkStmt);
+                }
             }
         });
     }
@@ -270,7 +362,7 @@ public class MemberRepository extends DepotRepository
 //                  findAllKeys(MemberRecord.class, where, new Limit(0, limit))) {
 //             ids.add((Integer)key.condition.getValues().get(0));
 //         }
-        for (MemberRecord mrec : findAll(MemberRecord.class, new Where(op), new Limit(0, limit))) {
+        for (final MemberRecord mrec : findAll(MemberRecord.class, new Where(op), new Limit(0, limit))) {
             ids.add(mrec.memberId);
         }
 
@@ -1114,12 +1206,12 @@ public class MemberRepository extends DepotRepository
      * migration executes without failure, but we return the number anyway so that you can be
      * excited about how large it is).
      */
-    public int runMemberMigration (Function<MemberRecord, Void> migration)
+    public int runMemberMigration (final Function<MemberRecord, Void> migration)
         throws PersistenceException
     {
         // TODO: break this up into chunks when our member base is larger
         int migrated = 0;
-        for (MemberRecord mrec : findAll(MemberRecord.class)) {
+        for (final MemberRecord mrec : findAll(MemberRecord.class)) {
             migration.apply(mrec);
             migrated++;
         }
