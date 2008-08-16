@@ -14,8 +14,8 @@ import com.threerings.msoy.data.all.StaticMediaDesc;
 public class DefaultItemMediaDesc extends StaticMediaDesc
 {
     public function DefaultItemMediaDesc (
-        mimeType :int = 0, itemType :int = ItemTypes.NOT_A_TYPE, mediaType :String = null,
-        constraint :int = NOT_CONSTRAINED)
+        mimeType :int = 0, itemType :int = 0 /* ItemTypes.NOT_A_TYPE - WTFF Mr. Compiler? */,
+        mediaType :String = null, constraint :int = NOT_CONSTRAINED)
     {
         super(mimeType, itemType == ItemTypes.NOT_A_TYPE ? null : Item.getTypeName(itemType),
               mediaType, constraint);
