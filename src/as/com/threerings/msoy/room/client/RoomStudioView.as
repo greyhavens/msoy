@@ -193,8 +193,11 @@ public class RoomStudioView extends RoomView
         _testingSprite = _avatar;
 
         addTalkControl();
-        var bar :ControlBar = _ctx.getTopPanel().getControlBar();
-        bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.idle"), emulateIdle));
+        var idle :CommandButton = new CommandButton(null, emulateIdle);
+        idle.styleName = "controlBarIdleButton";
+        idle.toolTip = Msgs.GENERAL.get("i.idle")
+        const bar :ControlBar = _ctx.getTopPanel().getControlBar();
+        bar.addCustomComponent(idle);
 
         _saveScaling = ("true" == String(params["scaling"]));
         createSpriteScaleControls();
@@ -264,22 +267,27 @@ public class RoomStudioView extends RoomView
 
     protected function addTalkControl () :void
     {
-        var bar :ControlBar = _ctx.getTopPanel().getControlBar();
-        bar.addCustomComponent(new CommandButton(Msgs.GENERAL.get("b.talk"), emulateChat));
+        var talk :CommandButton = new CommandButton(null, emulateChat);
+        talk.toolTip = Msgs.GENERAL.get("i.talk");
+        talk.styleName = "controlBarTalkButton";
+
+        const bar :ControlBar = _ctx.getTopPanel().getControlBar();
+        bar.addCustomComponent(talk);
     }
 
     protected function createSpriteScaleControls () :void
     {
-        _scaleButton = new CommandButton("", showSpriteScaler);
-        _scaleButton.styleName = "controlBarButtonScale";
+        _scaleButton = new CommandButton(null, showSpriteScaler);
+        _scaleButton.styleName = "controlBarScaleButton";
         _scaleButton.toolTip = Msgs.GENERAL.get("i.spriteScale");
         _scaleButton.enabled = false;
-        _scaleReset = new CommandButton(Msgs.GENERAL.get("b.resetScale"), updateSpriteScale, 1);
+        _scaleReset = new CommandButton(null, updateSpriteScale, 1);
+        _scaleReset.styleName = "controlBarResetButton";
+        _scaleReset.toolTip = Msgs.GENERAL.get("i.resetScale");
 
-        var bar :ControlBar = _ctx.getTopPanel().getControlBar();
-
-        bar.addCustomComponent(_scaleButton);
-        bar.addCustomComponent(_scaleReset);
+        const bar :ControlBar = _ctx.getTopPanel().getControlBar();
+        bar.addCustomComponent(_scaleButton, ControlBar.BUTTON_PRIORITY + 2);
+        bar.addCustomComponent(_scaleReset, ControlBar.BUTTON_PRIORITY + 2);
     }
 
     protected function showSpriteScaler () :void

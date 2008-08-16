@@ -536,13 +536,6 @@ TabNavigator, TabBar {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_disabled.png");
 }
 
-.controlBarButtonScale {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/button_scale.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/button_scale.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/button_scale.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/button_scale.png");
-}
-
 .controlBarButtonScores {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/score.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/score_over.png");
@@ -566,6 +559,37 @@ TabNavigator, TabBar {
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_down.png");
   /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/friends_disabled.png"); */
+}
+
+.controlBarTalkButton {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/talk.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/talk_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/talk_down.png");
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/talk_disabled.png"); */
+}
+
+.controlBarIdleButton {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/idle.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/idle_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/idle_down.png");
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/idle_disabled.png"); */
+}
+
+.controlBarScaleButton {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/scale.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/scale_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/scale_down.png");
+  /* The disabled state is used briefly while the sprite is loading, I refuse to link in
+     another graphic just for that. */
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/scale.png");
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/scale_disabled.png"); */
+}
+
+.controlBarResetButton {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/reset.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/reset_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/reset_down.png");
+  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/reset_disabled.png");
 }
 
 .roomEditPanel {
@@ -906,7 +930,6 @@ BasePanel {
 
 .chatInput {
     color: #000000;
-    /*themeColor: #54a9da; */
     themeColor: #3db8eb;
     fontFamily: "Arial";
     fontSize: 12;
