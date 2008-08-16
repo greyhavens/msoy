@@ -239,35 +239,39 @@ HSlider {
 
 Button {
   paddingBottom: 3;
+  /*
   fillAlphas: 1, 1, 1, 1;
   fillColors: #d5dcdf, #9ba8b0, #9ba8b0, #d5dcdf;
-  disabledSkin: Embed(source="../../rsrc/media/skins/button/disabled.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-  downSkin: Embed(source="../../rsrc/media/skins/button/selectedDown.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-  overSkin: Embed(source="../../rsrc/media/skins/button/up.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-          /*
-  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/disabled.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/selectedDown.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/selectedUp.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/selectedUp.png",
-          scaleGridTop="1", scaleGridBottom="19",
-          scaleGridLeft="2", scaleGridRight="19");
-          */
+  */
+  color: white;
+  textRollOverColor: white;
+  textSelectedColor: white;
   upSkin: Embed(source="../../rsrc/media/skins/button/up.png",
           scaleGridTop="1", scaleGridBottom="19",
           scaleGridLeft="2", scaleGridRight="19");
-  color: black;
+  overSkin: Embed(source="../../rsrc/media/skins/button/over.png",
+          scaleGridTop="1", scaleGridBottom="19",
+          scaleGridLeft="2", scaleGridRight="19");
+  downSkin: Embed(source="../../rsrc/media/skins/button/down.png",
+          scaleGridTop="1", scaleGridBottom="19",
+          scaleGridLeft="2", scaleGridRight="19");
+  disabledSkin: Embed(source="../../rsrc/media/skins/button/disabled.png",
+          scaleGridTop="1", scaleGridBottom="19",
+          scaleGridLeft="2", scaleGridRight="19");
+          /*
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/button/up.png",
+          scaleGridTop="1", scaleGridBottom="19",
+          scaleGridLeft="2", scaleGridRight="19");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/button/over.png",
+          scaleGridTop="1", scaleGridBottom="19",
+          scaleGridLeft="2", scaleGridRight="19");
+  selectedDownSkin: Embed(source="../../rsrc/media/skins/button/down.png",
+          scaleGridTop="1", scaleGridBottom="19",
+          scaleGridLeft="2", scaleGridRight="19");
+  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/disabled.png",
+          scaleGridTop="1", scaleGridBottom="19",
+          scaleGridLeft="2", scaleGridRight="19");
+          */
 }
 
 ColorPicker {
