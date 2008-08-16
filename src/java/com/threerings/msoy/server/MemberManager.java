@@ -686,12 +686,10 @@ public class MemberManager
         final boolean logEvent, final InvocationService.ResultListener listener)
     {
         _invoker.postUnit(new PersistingUnit(listener) {
-            @Override
-            public void invokePersistent () throws PersistenceException {
+            @Override public void invokePersistent () throws PersistenceException {
                 _testGroup = new Integer(_memberLogic.getABTestGroup(testName, info, logEvent));
             }
-            @Override
-            public void handleSuccess () {
+            @Override public void handleSuccess () {
                 ((InvocationService.ResultListener)_listener).requestProcessed(_testGroup);
             }
             protected Integer _testGroup;
@@ -699,35 +697,42 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void trackClientAction (
-        final ClientObject caller, final ReferralInfo info, final String actionName, final String details)
+    public void trackClientAction (final ClientObject caller, final ReferralInfo info,
+                                   final String actionName, final String details)
     {
         if (info == null) {
-            log.warning(
-                "Failed to log client action with null referral", "actionName", actionName);
+            log.warning("Failed to log client action with null referral", "caller", caller.who(),
+                        "actionName", actionName);
             return;
         }
-
         _eventLog.clientAction(info.tracker, actionName, details);
     }
 
     // from interface MemberProvider
-    public void trackTestAction (
-        final ClientObject caller, final ReferralInfo info, final String actionName, String testName)
+    public void trackTestAction (final ClientObject caller, final ReferralInfo info,
+                                 final String actionName, final String testName)
     {
         if (info == null) {
-            log.warning(
-                "Failed to log test action with null referral", "actionName", actionName);
+            log.warning("Failed to log test action with null referral", "caller", caller.who(),
+                        "actionName", actionName);
             return;
         }
-        int abTestGroup = -1;
-        if (testName != null) {
-            // grab the group without logging a tracking event about it
-            abTestGroup = _memberLogic.getABTestGroup(testName, info, false);
-        } else {
-            testName = "";
-        }
-        _eventLog.testAction(info.tracker, actionName, testName, abTestGroup);
+
+        _invoker.postUnit(new Invoker.Unit("getABTestGroup") {
+            public boolean invoke () {
+                int abTestGroup = -1;
+                String actualTestName;
+                if (testName != null) {
+                    // grab the group without logging a tracking event about it
+                    abTestGroup = _memberLogic.getABTestGroup(testName, info, false);
+                    actualTestName = testName;
+                } else {
+                    actualTestName = "";
+                }
+                _eventLog.testAction(info.tracker, actionName, actualTestName, abTestGroup);
+                return false;
+            }
+        });
     }
 
     /**
