@@ -30,6 +30,8 @@ public class ChatPrefsDialog extends FloatingPanel
     public function ChatPrefsDialog (ctx :MsoyContext)
     {
         super(ctx, Msgs.GENERAL.get("t.chat_prefs"));
+        styleName = "sexyWindow";
+        showCloseButton = true;
         open(true);
 
         // listen for preferences changes that happen without us..
@@ -94,11 +96,13 @@ public class ChatPrefsDialog extends FloatingPanel
 
         var bbox :VBox = new VBox();
         _upFont = new CommandButton(null, adjustFont, +1);
-        _upFont.styleName = "plusButton";
-        //_upFont.label = "+";
         _downFont = new CommandButton(null, adjustFont, -1);
+//        _upFont.setStyle("fontSize", 13);
+//        _downFont.setStyle("fontSize", 13);
+//        _upFont.width = 35;
+//        _downFont.width = 35;
+        _upFont.styleName = "plusButton";
         _downFont.styleName = "minusButton";
-        //_downFont.label = "-";
         bbox.addChild(_upFont);
         bbox.addChild(_downFont);
 
@@ -171,7 +175,7 @@ class FontTestArea extends TextArea
         setStyle("fontWeight", tf.bold ? "bold" : "normal");
         setStyle("textAlign", tf.align);
         setStyle("fontStyle", tf.italic ? "italic" : "normal");
-        setStyle("color", tf.color);
+        setStyle("color", 0xFFFFFF);
         setStyle("fontFamily", tf.font);
     }
 }
