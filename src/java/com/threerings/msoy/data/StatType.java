@@ -35,7 +35,6 @@ public enum StatType implements Stat.Type
     // creation stats
     COINS_EARNED_SELLING(new IntStat(), true),
     SOLID_4_STAR_RATINGS(new IntSetStat(), true),
-    // these three are special, and are modified in a custom way.
     AVATARS_CREATED(new IntStat(), true),
     FURNITURE_CREATED(new IntStat(), true),
     BACKDROPS_CREATED(new IntStat(), true),
@@ -46,6 +45,11 @@ public enum StatType implements Stat.Type
     ITEMS_PURCHASED(new IntStat(), true),
 
     UNUSED(new IntStat());
+
+    /** Constants to indicate levels of creatorship */
+    public static final int ITEM_UPLOADED = 1;
+    public static final int ITEM_LISTED = 2;
+    public static final int ITEM_SOLD = 3;
 
     /** Returns the translation key used by this stat. */
     public String key ()

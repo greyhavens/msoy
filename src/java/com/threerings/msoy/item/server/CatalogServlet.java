@@ -3,18 +3,18 @@
 
 package com.threerings.msoy.item.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
+
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
@@ -47,6 +47,8 @@ import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link CatalogService}.
@@ -92,7 +94,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public CatalogResult loadCatalog (final CatalogQuery query, final int offset, final int rows, final boolean includeCount)
+    public CatalogResult loadCatalog (final CatalogQuery query, final int offset, final int rows,
+        final boolean includeCount)
         throws ServiceException
     {
         final MemberRecord mrec = getAuthedUser();
@@ -137,7 +140,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public Item purchaseItem (final byte itemType, final int catalogId, final int authedFlowCost, final int authedGoldCost)
+    public Item purchaseItem (final byte itemType, final int catalogId, final int authedFlowCost,
+        final int authedGoldCost)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -165,17 +169,17 @@ public class CatalogServlet extends MsoyServiceServlet
             // Update money as appropriate.
             MoneyResult result;
             try {
-                result = _moneyLogic.buyItemWithCoins(mrec.memberId, 
+                result = _moneyLogic.buyItemWithCoins(mrec.memberId,
                     new ItemIdent(itemType, listing.item.itemId), mrec.isSupport());
             } catch (final NotEnoughMoneyException neme) {
                 throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
             } catch (final NotSecuredException nse) {
                 throw new CostUpdatedException(listing.flowCost, listing.goldCost);
             }
-            
+
             // create the clone row in the database
-            final ItemRecord newClone = repo.insertClone(
-                listing.item, mrec.memberId, (int)result.getMemberTransaction().getAmount(), listing.goldCost);
+            final ItemRecord newClone = repo.insertClone(listing.item, mrec.memberId,
+                (int)result.getMemberTransaction().getAmount(),  listing.goldCost);
 
             // note the new purchase for the item
             repo.nudgeListing(catalogId, true);
@@ -183,8 +187,24 @@ public class CatalogServlet extends MsoyServiceServlet
             _moneyNodeActions.moneyUpdated(result.getNewMemberMoney());
             if (result.getNewCreatorMoney() != null) {
                 _moneyNodeActions.moneyUpdated(result.getNewCreatorMoney());
-                _statLogic.incrementStat(
-                    listing.item.creatorId, StatType.COINS_EARNED_SELLING, (int)result.getCreatorTransaction().getAmount());
+
+                int creatorId = listing.item.creatorId;
+                if (mrec.memberId != creatorId) {
+                    _statLogic.incrementStat(creatorId, StatType.COINS_EARNED_SELLING,
+                        (int)result.getCreatorTransaction().getAmount());
+
+                    // Some items have a stat that may need updating
+                    if (itemType == Item.AVATAR) {
+                        _statLogic.ensureIntStatMinimum(
+                            creatorId, StatType.AVATARS_CREATED, StatType.ITEM_SOLD);
+                    } else if (itemType == Item.FURNITURE) {
+                        _statLogic.ensureIntStatMinimum(
+                            creatorId, StatType.FURNITURE_CREATED, StatType.ITEM_SOLD);
+                    } else if (itemType == Item.DECOR) {
+                        _statLogic.ensureIntStatMinimum(
+                            creatorId, StatType.BACKDROPS_CREATED, StatType.ITEM_SOLD);
+                    }
+                }
             }
 
             // update their runtime inventory as appropriate
@@ -209,8 +229,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public int listItem (final ItemIdent item, final String descrip, final int pricing, int salesTarget,
-                         final int flowCost, final int goldCost)
+    public int listItem (final ItemIdent item, final String descrip, final int pricing,
+        int salesTarget, final int flowCost, final int goldCost)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -291,6 +311,19 @@ public class CatalogServlet extends MsoyServiceServlet
                     "\t" + MediaDesc.mdToString(listItem.getThumbMediaDesc()));
             }
 
+            // some items are related to a stat that may need updating.  Use originalItem.creatorId
+            // so that agents and admins don't get credit for listing someone elses stuff.
+            if (item.type == Item.AVATAR) {
+                _statLogic.ensureIntStatMinimum(
+                    originalItem.creatorId, StatType.AVATARS_CREATED, StatType.ITEM_LISTED);
+            } else if (item.type == Item.FURNITURE) {
+                _statLogic.ensureIntStatMinimum(
+                    originalItem.creatorId, StatType.FURNITURE_CREATED, StatType.ITEM_LISTED);
+            } else if (item.type == Item.DECOR) {
+                _statLogic.ensureIntStatMinimum(
+                    originalItem.creatorId, StatType.BACKDROPS_CREATED, StatType.ITEM_LISTED);
+            }
+
             return record.catalogId;
 
         } catch (final PersistenceException pe) {
@@ -326,13 +359,13 @@ public class CatalogServlet extends MsoyServiceServlet
                     throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
                 }
             }
-            
+
             // Secure the current price of the item for this member.
             if (mrec != null) {
-                _moneyLogic.secureCoinPrice(mrec.memberId, record.item.creatorId, 0, new ItemIdent(itemType, record.item.itemId), 
-                    record.flowCost, record.item.name);
+                _moneyLogic.secureCoinPrice(mrec.memberId, record.item.creatorId, 0,
+                    new ItemIdent(itemType, record.item.itemId), record.flowCost, record.item.name);
             }
-            
+
             // finally convert the listing to a runtime record
             final CatalogListing clrec = record.toListing();
             clrec.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
@@ -413,8 +446,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public void updatePricing (final byte itemType, final int catalogId, final int pricing, int salesTarget,
-                               final int flowCost, final int goldCost)
+    public void updatePricing (final byte itemType, final int catalogId, final int pricing,
+        int salesTarget, final int flowCost, final int goldCost)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -513,8 +546,8 @@ public class CatalogServlet extends MsoyServiceServlet
     {
         final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         final List<ListingCard> cards = Lists.newArrayList();
-        for (final CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING, showMature(mrec),
-                null, 0, 0, null, 0, ShopData.TOP_ITEM_COUNT)) {
+        for (final CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING,
+            showMature(mrec), null, 0, 0, null, 0, ShopData.TOP_ITEM_COUNT)) {
             cards.add(crec.toListingCard());
         }
         return cards.toArray(new ListingCard[cards.size()]);
@@ -538,7 +571,8 @@ public class CatalogServlet extends MsoyServiceServlet
     /**
      * Ensures that the specified user or a support user is taking the requested action.
      */
-    protected void requireIsUser (final MemberRecord mrec, final int targetId, final String action, final ItemRecord item)
+    protected void requireIsUser (final MemberRecord mrec, final int targetId, final String action,
+        final ItemRecord item)
         throws ServiceException
     {
         if (mrec == null || (mrec.memberId != targetId && !mrec.isSupport())) {

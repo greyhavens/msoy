@@ -14,8 +14,10 @@ import com.google.inject.Inject;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
+import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 
@@ -31,11 +33,14 @@ import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
+import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
@@ -67,6 +72,19 @@ public class StuffServlet extends MsoyServiceServlet
         if (item instanceof Game && ((Game)item).groupId == Game.NO_GROUP) {
             createGameGroup((Game)item);
         }
+
+        // Some items have a stat that may need updating
+        if (item instanceof Avatar) {
+            _statLogic.ensureIntStatMinimum(
+                memrec.memberId, StatType.AVATARS_CREATED, StatType.ITEM_UPLOADED);
+        } else if (item instanceof Furniture) {
+            _statLogic.ensureIntStatMinimum(
+                memrec.memberId, StatType.FURNITURE_CREATED, StatType.ITEM_UPLOADED);
+        } else if (item instanceof Decor) {
+            _statLogic.ensureIntStatMinimum(
+                memrec.memberId, StatType.BACKDROPS_CREATED, StatType.ITEM_UPLOADED);
+        }
+
         return item;
     }
 
@@ -454,4 +472,5 @@ public class StuffServlet extends MsoyServiceServlet
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected StatLogic _statLogic;
 }

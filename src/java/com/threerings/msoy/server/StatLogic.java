@@ -16,6 +16,7 @@ import com.threerings.stats.data.IntSetStat;
 import com.threerings.stats.data.IntSetStatAdder;
 import com.threerings.stats.data.IntStat;
 import com.threerings.stats.data.IntStatIncrementer;
+import com.threerings.stats.data.IntStatMinimumer;
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatModifier;
 import com.threerings.stats.data.StatSet;
@@ -58,6 +59,17 @@ public class StatLogic
     public void addToSetStat (int memberId, Stat.Type type, int value)
     {
         updateStat(memberId, new IntSetStatAdder(type, value));
+    }
+
+    /**
+     * Ensures that an IntStat contains a value at least as high as the one specified
+     *
+     * @exception ClassCastException thrown if the registered type of the specified stat is not a
+     * {@link IntStat}
+     */
+    public void ensureIntStatMinimum (int memberId, Stat.Type type, int minimum)
+    {
+        updateStat(memberId, new IntStatMinimumer(type, minimum));
     }
 
     /**
