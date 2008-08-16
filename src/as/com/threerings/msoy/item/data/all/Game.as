@@ -41,6 +41,9 @@ public class Game extends Item
      *  script library) to be run in a bureau whenever the game launches. */
     public var serverMedia :MediaDesc;
 
+    /** Optional group associated with this game; values < 0 mean no group */
+    public var groupId :int;
+
     override public function getType () :int
     {
         return GAME;
@@ -65,6 +68,7 @@ public class Game extends Item
         gameId = ins.readInt();
         shotMedia = (ins.readObject() as MediaDesc);
         serverMedia = (ins.readObject() as MediaDesc);
+        groupId = (ins.readInt());
     }
 
     // from interface Streamable
@@ -77,6 +81,7 @@ public class Game extends Item
         out.writeInt(gameId);
         out.writeObject(shotMedia);
         out.writeObject(serverMedia);
+        out.writeInt(groupId);
     }
 }
 }
