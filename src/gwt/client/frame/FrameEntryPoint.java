@@ -416,7 +416,7 @@ public class FrameEntryPoint
                     // if we have sNN-extra-args we want the close button to use just "sNN"
                     displayWorldClient(
                         "sceneId=" + sceneId + "&page=" + Args.compose(args.splice(1)),
-                        Pages.WORLD + "-s" + sceneId);
+                        Pages.WORLD.getPath() + "-s" + sceneId);
                 }
 
             } else if (action.equals("game")) {
