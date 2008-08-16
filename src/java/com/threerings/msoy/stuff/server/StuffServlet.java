@@ -64,7 +64,7 @@ public class StuffServlet extends MsoyServiceServlet
         item = _itemLogic.createItem(memrec, item, parent);
 
         // if the item is a game, create a group for it if it doesn't have one
-        if (item instanceof Game && ((Game)item).groupId < 0) {
+        if (item instanceof Game && ((Game)item).groupId == Game.NO_GROUP) {
             createGameGroup((Game)item);
         }
         return item;
@@ -116,7 +116,7 @@ public class StuffServlet extends MsoyServiceServlet
         }
 
         // if the item is a game, create a group for it if it doesn't have one
-        if (item instanceof Game && ((Game)item).groupId < 0) {
+        if (item instanceof Game && ((Game)item).groupId == Game.NO_GROUP) {
             createGameGroup((Game)item);
         }
     }

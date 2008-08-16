@@ -55,6 +55,9 @@ public class Game extends Item
     /** We reserve a very unlikely gameId for the tutorial. */
     public static final int TUTORIAL_GAME_ID = Integer.MAX_VALUE;
 
+    /** Value of groupId when there is no associated group */
+    public static final int NO_GROUP = 0;
+
     /** This game's genre. */
     public byte genre;
 
@@ -79,7 +82,7 @@ public class Game extends Item
      */
     public MediaDesc serverMedia;
 
-    /** Optional group associated with this game; values < 0 mean no group */
+    /** Optional group associated with this game; 0 means no group */
     public int groupId;
 
     /**

@@ -212,8 +212,8 @@ public class GameRecord extends ItemRecord
     /** The MIME type of the {@link #serverMediaHash} media. */
     public byte serverMimeType;
 
-    /** Optional group associated with this game; values < 0 mean no group */
-    @Column(defaultValue="-1")
+    /** Group associated with this game, required */
+    @Column(defaultValue="1")
     public int groupId;
 
     /**

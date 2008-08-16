@@ -241,7 +241,7 @@ public class GameEditor extends ItemEditor
             CShell.getMemberId(), false, new MsoyCallback<List<GroupMembership>>() {
                 public void onSuccess (List<GroupMembership> whirleds) {
                     // populate the whirleds dropdown
-                    _whirled.addItem(_emsgs.gameWhirledSelectNew(), -1+"");
+                    _whirled.addItem(_emsgs.gameWhirledSelectNew(), Game.NO_GROUP+"");
                     for (GroupMembership whirled : whirleds) {
                         if (whirled.rank >= GroupMembership.RANK_MANAGER) {
                             _whirled.addItem(
