@@ -81,7 +81,7 @@ public class GroupServlet extends MsoyServiceServlet
             for (PopularPlacesSnapshot.Place card : pps.getTopWhirleds()) {
                 GroupRecord group = _groupRepo.loadGroup(card.placeId);
                 if (group != null) {
-                    GroupCard gcard = group.toGroupCard();
+                    GroupCard gcard = group.toGroupCard(_sceneRepo);
                     gcard.population = card.population;
                     popWhirleds.add(gcard);
                     if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
@@ -93,7 +93,7 @@ public class GroupServlet extends MsoyServiceServlet
             if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
                 int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
                 for (GroupRecord group : _groupRepo.getGroupsList(0, count)) {
-                    popWhirleds.add(group.toGroupCard());
+                    popWhirleds.add(group.toGroupCard(_sceneRepo));
                 }
             }
             data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
@@ -121,7 +121,7 @@ public class GroupServlet extends MsoyServiceServlet
         try {
             List<GroupCard> groups = Lists.newArrayList();
             for (GroupRecord gRec : _groupRepo.getGroupsList(0, Integer.MAX_VALUE)) {
-                groups.add(gRec.toGroupCard());
+                groups.add(gRec.toGroupCard(_sceneRepo));
             }
 
             // fill in the current population of these groups
@@ -294,7 +294,7 @@ public class GroupServlet extends MsoyServiceServlet
         try {
             List<GroupCard> groups = Lists.newArrayList();
             for (GroupRecord grec : _groupRepo.searchGroups(searchString)) {
-                groups.add(grec.toGroupCard());
+                groups.add(grec.toGroupCard(_sceneRepo));
             }
             return fillInPopulation(groups);
 
@@ -311,7 +311,7 @@ public class GroupServlet extends MsoyServiceServlet
         try {
             List<GroupCard> groups = Lists.newArrayList();
             for (GroupRecord grec : _groupRepo.searchForTag(tag)) {
-                groups.add(grec.toGroupCard());
+                groups.add(grec.toGroupCard(_sceneRepo));
             }
             return fillInPopulation(groups);
 

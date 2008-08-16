@@ -409,7 +409,7 @@ public class MsoySceneRepository extends DepotRepository
             SceneRecord.CANONICAL_IMAGE_HASH, canonicalHash,
             SceneRecord.CANONICAL_IMAGE_TYPE, canonicalType,
             SceneRecord.THUMBNAIL_HASH, thumbnailHash,
-            SceneRecord.THUMBNAIL_TYPE, thumbnailType);
+            SceneRecord.THUMBNAIL_TYPE, thumbnailType);        
     }
 
     /**

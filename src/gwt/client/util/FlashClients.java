@@ -275,8 +275,8 @@ public class FlashClients
     protected static final int BLACKBAR_HEIGHT = 20;
 
     protected static final String HOOD_SKIN_URL = "/media/static/hood_pastoral.swf";
-    protected static final int FEATURED_PLACE_WIDTH = 380;
-    protected static final int FEATURED_PLACE_HEIGHT = 167;
+    protected static final int FEATURED_PLACE_WIDTH = 350;
+    protected static final int FEATURED_PLACE_HEIGHT = 200;
 
     protected static final int MIN_INSTALLER_WIDTH = 310;
     protected static final int MIN_INSTALLER_HEIGHT = 137;

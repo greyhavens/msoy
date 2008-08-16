@@ -4,8 +4,10 @@
 package client.whirleds;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -108,16 +110,24 @@ public class FeaturedWhirledPanel extends FlowPanel
                 public void onClick (Widget sender) {
                     _flashPanel.remove(_flashPanel.getWidget());
                     // after the placeholder is removed, do not readd it
-                    _showPlaceholder = false;
+                    // _showPlaceholder = false;
                     FeaturedPlaceUtil.displayFeaturedPlace(group.homeSceneId, _flashPanel);
                 }
             };
-            final Image clickToPlayImage = MsoyUI.createActionImage(
+            
+            if (group.canonicalImage != null) {
+                // display the scene image here...
+                final Widget canonicalImageWidget = makeCanonicalImageWidget(group, onClick);
+                _flashPanel.add(canonicalImageWidget);
+            } else {
+                final Image clickToPlayImage = MsoyUI.createActionImage(
                     "/images/landing/whirled_click_here.jpg", "", onClick);
-            _flashPanel.add(clickToPlayImage);
+                _flashPanel.add(clickToPlayImage);
+            }
         }
 
         Widget link = Link.groupView(group.name.toString(), group.name.getGroupId());
+        link.addStyleName("FeaturedWhirledName");
         _info.setWidget(0, 1, link, 1, "Name");
         if (group.population > 0) {
             Label onlineCount = new Label(_msgs.featuredOnline(""+group.population));
@@ -130,7 +140,49 @@ public class FeaturedWhirledPanel extends FlowPanel
         }
         _info.setText(2, 0, group.blurb, 3, "Blurb");
     }
+    
+    public static class CanonicalImageWidget extends Composite
+    {
+        public CanonicalImageWidget (GroupCard group, ClickListener onClick) {
+            AbsolutePanel panel = new AbsolutePanel();
+            panel.add(MediaUtil.createMediaView(group.canonicalImage,
+                MediaDesc.CANONICAL_IMAGE_SIZE, onClick), 0, 0);
+            panel.add(MsoyUI.createImage("/images/landing/live_view_overlay.png", ""), 0, 0);
+            initWidget(panel);
+        }
+    }
+    
+    protected Widget makeSimpleCanonicalImage (GroupCard group, ClickListener onClick) {
+        return MediaUtil.createMediaView(group.canonicalImage, MediaDesc.CANONICAL_IMAGE_SIZE,
+            onClick);
+    }
+    
+    protected Widget makeCanonicalImageWidget (GroupCard group, ClickListener onClick) {
+        FlowPanel panel = new FlowPanel();
+        Widget image = MediaUtil.createMediaView(group.canonicalImage,
+            MediaDesc.CANONICAL_IMAGE_SIZE,
+            onClick);
+        
+        panel.add(image);
+        
+        Image overlay = MsoyUI.createImage("/images/landing/click_overlay.png", null);
+        overlay.addStyleName("LiveViewOverlay");
+//        
+// // Try to position the click for live view overlay at the center bottom of the snapshot
+// int imageWidth = MediaDesc.DIMENSIONS[MediaDesc.CANONICAL_IMAGE_SIZE * 2];
+// int imageHeight = MediaDesc.DIMENSIONS[MediaDesc.CANONICAL_IMAGE_SIZE * 2 + 1];
+//        
+// int hpos = (imageWidth / 2) - (overlay.getWidth() / 2);
+// int vpos = imageHeight - overlay.getHeight();
+        
+        panel.add(overlay);
+        return panel;
+    }
 
+    protected static native void wAlert (String message) /*-{
+             alert("WALERT: "+message);
+          }-*/;
+    
     /**
      * A widget containing a the group icon and name.
      */

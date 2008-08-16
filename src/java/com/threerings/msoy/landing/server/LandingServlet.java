@@ -27,6 +27,7 @@ import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 
@@ -62,7 +63,7 @@ public class LandingServlet extends MsoyServiceServlet
             for (PopularPlacesSnapshot.Place card : pps.getTopWhirleds()) {
                 GroupRecord group = _groupRepo.loadGroup(card.placeId);
                 if (group != null) {
-                    GroupCard gcard = group.toGroupCard();
+                    GroupCard gcard = group.toGroupCard(_sceneRepo);
                     gcard.population = card.population;
                     popWhirleds.add(gcard);
                     if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
@@ -74,7 +75,7 @@ public class LandingServlet extends MsoyServiceServlet
             if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
                 int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
                 for (GroupRecord group : _groupRepo.getGroupsList(0, count)) {
-                    popWhirleds.add(group.toGroupCard());
+                    popWhirleds.add(group.toGroupCard(_sceneRepo));
                 }
             }
             data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
@@ -107,6 +108,7 @@ public class LandingServlet extends MsoyServiceServlet
     @Inject protected GameLogic _gameLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
 
     /** Contains a cached copy of our WhatIsWhirled data. */
     protected ExpiringReference<LandingData> _landingData;

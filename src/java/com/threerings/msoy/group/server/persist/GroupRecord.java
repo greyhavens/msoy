@@ -29,6 +29,8 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupExtras;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
 
 /**
  * Contains the details of a group.
@@ -312,8 +314,10 @@ public class GroupRecord extends PersistentRecord
 
     /**
      * Creates a card record for this group.
+     * @throws PersistenceException
      */
-    public GroupCard toGroupCard ()
+    public GroupCard toGroupCard (MsoySceneRepository sceneRepo)
+        throws PersistenceException
     {
         GroupCard card = new GroupCard();
         card.name = toGroupName();
@@ -322,6 +326,11 @@ public class GroupRecord extends PersistentRecord
         }
         card.blurb = blurb;
         card.homeSceneId = homeSceneId;
+        SceneRecord scene = sceneRepo.loadScene(homeSceneId);
+        if (scene.canonicalImageHash != null) {
+            card.canonicalImage = new MediaDesc(scene.canonicalImageHash,
+                scene.canonicalImageType, MediaDesc.NOT_CONSTRAINED);
+        }
         return card;
     }
 

@@ -78,6 +78,9 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The "thumbnail" size for canonical snapshots. */
     public static final int SNAPSHOT_THUMB_SIZE = 4;
 
+    /** The size for canonical images. */
+    public static final int CANONICAL_IMAGE_SIZE = 5;
+    
     /** The thumbnail image width.  */
     public static final int THUMBNAIL_WIDTH = 80;
 
@@ -91,6 +94,7 @@ public class MediaDesc implements Streamable, IsSerializable
         THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, // thumbnail size
         THUMBNAIL_WIDTH*4, THUMBNAIL_HEIGHT*4, // preview size
         175, 100, // snapshot thumb size
+        350, 200, // canonical image size
     };
 
     /** A constant used to indicate that an image does not exceed half thumbnail size in either

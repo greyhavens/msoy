@@ -12,7 +12,7 @@
 .LandingPanel {
   background: #63ABD3 url(/images/landing/bg_gradient.jpg) repeat-x top center;
   width: 100%;
-  height: 1002px;
+  height: 1044px;
   position: absolute;
   top: 0;
   left: 0;
@@ -24,13 +24,13 @@
 .LandingBackground {
   background: transparent url(/images/landing/splash_right.png) no-repeat top center;
   width: 100%;
-  height: 1002px;
+  height: 1044px;
 }
 
 /* Centered in the middle of the page */
 .LandingContent {
   width: 800px;
-  height: 1002px;
+  height: 1044px;
   margin: auto;
 }
 
@@ -100,7 +100,7 @@
 }
 
 .LandingPanel .Background {
-  height: 675px;
+  height: 717px;
 }
 
 .LandingPanel .Background .LeftBorder {
@@ -263,7 +263,7 @@
 .LandingPanel .AvatarPanel {
   background: url(/images/landing/top_avatars_bg.png) no-repeat top center;
   width: 213px;
-  height: 334px;
+  height: 376px;
   padding-top: 40px;
 }
 
@@ -299,13 +299,13 @@
 .LandingPanel .FeaturedWhirled {
   background: url(/images/landing/featured_whirled_bg.png) no-repeat top center;
   width: 448px;
-  height: 334px;
+  height: 376px;
 }
 
 .LandingPanel .FeaturedWhirled .Flash {
   position: absolute;
-  top: 45px;
-  left: 35px;
+  top: 46px;
+  left: 52px;
 }
 
 .LandingPanel .FeaturedWhirled .Flash img {
@@ -358,20 +358,20 @@
 
 .LandingPanel .FeaturedWhirled button.PrevButton {
   position: absolute;
-  top: 285px;
+  top: 321px;
   left: 10px;
 }
 
 .LandingPanel .FeaturedWhirled button.NextButton {
   position: absolute;
-  top: 285px;
+  top: 321px;
   left: 385px;
 }
 
 .LandingPanel .FeaturedWhirled .Icons {
   position: absolute;
   left: 80px;
-  top: 270px;
+  top: 306px;
 }
 
 .LandingPanel .FeaturedWhirled .Icons .Icon {
@@ -509,4 +509,9 @@
   color: #12718f;
   background: none;
   padding: 0;
+}
+
+.FeaturedWhirledName {
+	position: relative;
+	top: 1;
 }

@@ -112,6 +112,7 @@ public class UploadUtil
      * Container class for information about the canonical snapshot images - both standard size
      * and minimized.
      */
+    
     public static class CanonicalSnapshotInfo
     {
         public final SnapshotInfo canonical;
@@ -211,7 +212,7 @@ public class UploadUtil
          */
         public String hexHash () {
             if (_hex == null) {
-                _hex = StringUtil.hexlate(_digest.digest());
+                _hex = StringUtil.hexlate(binaryHash());
             }
             return _hex;
         }
@@ -220,12 +221,17 @@ public class UploadUtil
          * Return the raw bytes of the hash.
          */
         public byte[] binaryHash () {
-            return _digest.digest();
+            if (_binary == null) {
+                _binary = _digest.digest();
+                _digest = null;
+            }
+            return _binary;
         }
 
         protected ByteArrayOutputStream _bout;
-        protected String _hex;
         protected MessageDigest _digest;
+        protected byte[] _binary;
+        protected String _hex;
     }
 
     /**
@@ -382,8 +388,6 @@ public class UploadUtil
     public static CanonicalSnapshotInfo publishSnapshot (SnapshotUploadFile uploadFile)
         throws IOException
     {
-        log.warning("publish snapshot called");
-
         // publish the regular sized image
         SnapshotInfo canonicalInfo = publishCanonicalImage(uploadFile);
 
@@ -405,6 +409,7 @@ public class UploadUtil
 
         publishStreamAsHash(digester.getInputStream(), digester.hexHash(),
             uploadFile.getMimeType());
+
         return new SnapshotInfo(digester.binaryHash(), uploadFile.getMimeType());
     }
 

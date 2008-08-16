@@ -411,7 +411,7 @@ public class GroupRepository extends DepotRepository
         List<GroupCard> groups = Lists.newArrayList();
         for (GroupRecord group : loadGroups(rmap.keySet())) {
             if (group.policy != Group.POLICY_EXCLUSIVE || includeExclusive) {
-                groups.add(group.toGroupCard());
+                groups.add(group.toGroupCard(_sceneRepo));
             }
         }
         return groups;

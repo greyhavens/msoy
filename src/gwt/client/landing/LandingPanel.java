@@ -119,7 +119,7 @@ public class LandingPanel extends SimplePanel
         content.add(_featuredWhirled, 290, 618);
 
         // copyright, about, terms & conditions, help
-        content.add(new LandingCopyright(), 48, 970);
+        content.add(new LandingCopyright(), 48, 1012);
 
         // collect the data for this page
         _landingsvc.getLandingData(new MsoyCallback<LandingData>() {

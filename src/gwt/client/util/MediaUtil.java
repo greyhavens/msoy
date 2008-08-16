@@ -96,7 +96,7 @@ public class MediaUtil
 
         return view;
     }
-
+    
     // TODO: create a proper default image for media we don't know how to display
     protected static final MediaDesc UNKNOWN_DESC = new StaticMediaDesc(
         MediaDesc.IMAGE_PNG, "document", "thumb", MediaDesc.HALF_VERTICALLY_CONSTRAINED);
