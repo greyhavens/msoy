@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.avrg.data {
 
+import com.threerings.io.ObjectInputStream;
+import com.threerings.io.ObjectOutputStream;
 import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.data.PlaceConfig;
 import com.whirled.game.data.GameDefinition;
@@ -48,6 +50,24 @@ public class AVRGameConfig extends PlaceConfig
     public function getGameId () :int
     {
         return _gameId;
+    }
+
+    // from interface Streamable
+    override public function readObject (ins :ObjectInputStream) :void
+    {
+        super.readObject(ins);
+        name = ins.readField(String) as String;
+        _gameId = ins.readInt();
+        _gameDef = ins.readObject() as GameDefinition;
+    }
+
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        out.writeField(name);
+        out.writeInt(_gameId);
+        out.writeObject(_gameDef);
     }
 
     /** Our game's unique id. */
