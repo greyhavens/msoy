@@ -63,8 +63,8 @@ public class BadgeLogic
         _feedRepo.publishMemberMessage(brec.memberId, FeedMessageType.FRIEND_WON_BADGE,
             "some data here");
 
-        final MemberMoney money = _moneyLogic.awardCoins(brec.memberId, 0, 0, null, levelData.coinValue, "", 
-            UserAction.EARNED_BADGE).getNewMemberMoney();
+        final MemberMoney money = _moneyLogic.awardCoins(brec.memberId, 0, 0, null,
+            levelData.coinValue, "", UserAction.EARNED_BADGE).getNewMemberMoney();
 
         if (dobjNeedsUpdate) {
             // if dobjNeedsUpdate is true, this function was called from a servlet, or other
@@ -82,7 +82,8 @@ public class BadgeLogic
      * a. calling into BadgeRepository to create and store the BadgeRecord
      * b. recording to the member's feed that they earned the stamp in question
      */
-    public void awardBadge (final int memberId, final EarnedBadge badge, final boolean dobjNeedsUpdate)
+    public void awardBadge (final int memberId, final EarnedBadge badge,
+        final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         awardBadge(new EarnedBadgeRecord(memberId, badge), dobjNeedsUpdate);
@@ -95,7 +96,8 @@ public class BadgeLogic
      * <b>NB:</b> this function makes a number of demands on the database and should be called
      * only when necessary.
      */
-    public List<InProgressBadge> createNewInProgressBadges (final int memberId, final boolean dobjNeedsUpdate)
+    public List<InProgressBadge> createNewInProgressBadges (final int memberId,
+        final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         // TODO: remove this when passport goes live
@@ -125,7 +127,8 @@ public class BadgeLogic
     /**
      * Creates or updates an InProgressBadge for the specified member.
      */
-    public void updateInProgressBadge (final InProgressBadgeRecord brec, final boolean dobjNeedsUpdate)
+    public void updateInProgressBadge (final InProgressBadgeRecord brec,
+        final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         _badgeRepo.storeInProgressBadge(brec);
@@ -138,7 +141,8 @@ public class BadgeLogic
     /**
      * Creates or updates an InProgressBadge for the specified member.
      */
-    public void updateInProgressBadge (final int memberId, final InProgressBadge badge, final boolean dobjNeedsUpdate)
+    public void updateInProgressBadge (final int memberId, final InProgressBadge badge,
+        final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         updateInProgressBadge(new InProgressBadgeRecord(memberId, badge), dobjNeedsUpdate);
@@ -149,7 +153,8 @@ public class BadgeLogic
      * method also checks that the member has had their initial set of InProgressBadgeRecords
      * created, and creates them if they haven't.
      */
-    public List<InProgressBadge> getInProgressBadges (final int memberId, final boolean dobjNeedsUpdate)
+    public List<InProgressBadge> getInProgressBadges (final int memberId,
+        final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         if (!DeploymentConfig.devDeployment) {
@@ -159,9 +164,10 @@ public class BadgeLogic
         // Load up our badge records
         final List<InProgressBadgeRecord> badgeRecords = _badgeRepo.loadInProgressBadges(memberId);
 
-        // If we have no badge records, our initial batch of in-progress badges hasn't yet
-        // been created, and we do that now. Otherwise, transform the records into badges.
-        final Iterable<InProgressBadge> badges = (badgeRecords.isEmpty() ?
+        // fake up an instance of our hidden test badge, if it's not in the list of in-progress
+        // badges, we need to create our initial batch.
+        InProgressBadge testBadge = new InProgressBadge(BadgeType.HIDDEN.getCode(), 0, null, 0, 0);
+        final Iterable<InProgressBadge> badges = (!badgeRecords.contains(testBadge) ?
             createNewInProgressBadges(memberId, dobjNeedsUpdate) :
             Iterables.transform(badgeRecords, InProgressBadgeRecord.TO_BADGE));
 
