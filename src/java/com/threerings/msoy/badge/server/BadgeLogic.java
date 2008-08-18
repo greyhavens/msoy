@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.badge.server;
 
-import static com.threerings.msoy.badge.Log.log;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -12,24 +10,34 @@ import java.util.Set;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
+
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
+
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
+
 import com.threerings.msoy.money.server.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
+
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
+
 import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.presents.annotation.BlockingThread;
+
+import static com.threerings.msoy.badge.Log.log;
 
 /**
  * Provides badge related services to servlets and other blocking thread entities.
@@ -160,15 +168,10 @@ public class BadgeLogic
             return Collections.emptyList();
         }
 
-        // Load up our badge records
-        List<InProgressBadgeRecord> badgeRecords = _badgeRepo.loadInProgressBadges(memberId);
-
-        Iterable<InProgressBadge> badges =
-            Iterables.transform(badgeRecords, InProgressBadgeRecord.TO_BADGE);
-        // fake up an instance of our hidden test badge, if it's not in the list of in-progress
-        // badges, we need to create our initial batch.
-        InProgressBadge testBadge = new InProgressBadge(BadgeType.HIDDEN.getCode(), 0, null, 0, 0);
-        if (!badgeRecords.contains(testBadge)) {
+        // Load up our in progress badges, and check to see if the initial set has been created
+        Iterable<InProgressBadge> badges = Iterables.transform(
+            _badgeRepo.loadInProgressBadges(memberId), InProgressBadgeRecord.TO_BADGE);
+        if (!Iterables.any(badges, BadgeType.IS_HIDDEN_BADGETYPE)) {
             badges = Iterables.concat(badges, createNewInProgressBadges(memberId, dobjNeedsUpdate));
         }
 

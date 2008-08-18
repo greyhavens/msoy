@@ -330,16 +330,22 @@ public enum BadgeType
         }
     };
 
-    // This can't be in InProgressBadge, because InProgressBadge is visible to GWT, and BadgeType
-    // is incompatible with GWT.
-    public static Predicate<Badge> IS_VISIBLE_BADGE = new Predicate<Badge>() {
+    /** Predicate that will return true for any badge whose type is !isHidden() */
+    public static final Predicate<Badge> IS_VISIBLE_BADGE = new Predicate<Badge>() {
         public boolean apply (Badge badge) {
             return !(getType(badge.badgeCode).isHidden());
         }
     };
 
+    /** Predicate that will return true only if the given badge is of the HIDDEN type. */
+    public static final Predicate<Badge> IS_HIDDEN_BADGETYPE = new Predicate<Badge>() {
+        public boolean apply (Badge badge) {
+            return badge.badgeCode == HIDDEN.getCode();
+        }
+    };
+
     /** Function to get the badgeCode out of a Badge */
-    public static Function<Badge, Integer> BADGE_TO_CODE = new Function<Badge, Integer>() {
+    public static final Function<Badge, Integer> BADGE_TO_CODE = new Function<Badge, Integer>() {
         public Integer apply (Badge badge) {
             return badge.badgeCode;
         }
