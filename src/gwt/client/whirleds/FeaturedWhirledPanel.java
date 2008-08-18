@@ -5,7 +5,6 @@ package client.whirleds;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -13,8 +12,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -40,35 +37,23 @@ public class FeaturedWhirledPanel extends FlowPanel
         setStyleName("FeaturedWhirled");
         _showPlaceholder = showPlaceholder;
         add(MsoyUI.createLabel(_msgs.featuredTitle(), "Title"));
-        add(_flashPanel = new SimplePanel());
-        _flashPanel.addStyleName("Flash");
+        add(_flashPanel = MsoyUI.createSimplePanel("Flash", null));
+        add(_infoPanel = new FlowPanel());
 
-        add(_info = new SmartTable("pagedGrid", 0, 5)); // hijack PagedGrid styles
-        _info.setWidth("400px");
+        // prev & next buttons are re-positioned in the css
+        add(MsoyUI.createPrevNextButtons(
+            new ClickListener() {
+                public void onClick (Widget sender) {
+                    showWhirled((_selidx+_whirleds.length-1) % _whirleds.length);
+                }
+            },
+            new ClickListener() {
+                public void onClick (Widget sender) {
+                    showWhirled((_selidx+1) % _whirleds.length);
+                }
+            }));
 
-        Button prev = new Button(_cmsgs.prev());
-        prev.setStyleName("Button");
-        prev.addStyleName("PrevButton");
-        prev.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                showWhirled((_selidx+_whirleds.length-1) % _whirleds.length);
-            }
-        });
-        _info.setWidget(0, 0, prev);
-        _info.getFlexCellFormatter().setRowSpan(0, 0, 2);
-
-        Button next = new Button(_cmsgs.next());
-        next.setStyleName("Button");
-        next.addStyleName("NextButton");
-        next.addClickListener(new ClickListener() {
-            public void onClick (Widget sender) {
-                showWhirled((_selidx+1) % _whirleds.length);
-            }
-        });
-        _info.setWidget(0, 2, next);
-        _info.getFlexCellFormatter().setRowSpan(0, 2, 2);
-
-        // optional list of icons
+        // optional list of icons of other whirleds
         if (showThumbnails) {
             add(_iconsPanel = new FlowPanel());
             _iconsPanel.setStyleName("Icons");
@@ -114,7 +99,7 @@ public class FeaturedWhirledPanel extends FlowPanel
                     FeaturedPlaceUtil.displayFeaturedPlace(group.homeSceneId, _flashPanel);
                 }
             };
-            
+
             if (group.canonicalImage != null) {
                 // display the scene image here...
                 final Widget canonicalImageWidget = makeCanonicalImageWidget(group, onClick);
@@ -126,21 +111,20 @@ public class FeaturedWhirledPanel extends FlowPanel
             }
         }
 
-        Widget link = Link.groupView(group.name.toString(), group.name.getGroupId());
-        link.addStyleName("FeaturedWhirledName");
-        _info.setWidget(0, 1, link, 1, "Name");
+        _infoPanel.clear();
+        Widget nameLink = Link.groupView(group.name.toString(), group.name.getGroupId());
+        nameLink.setStyleName("FeaturedWhirledName");
+        _infoPanel.add(nameLink);
         if (group.population > 0) {
             Label onlineCount = new Label(_msgs.featuredOnline(""+group.population));
             SimplePanel onlineBox = new SimplePanel();
             onlineBox.setStyleName("OnlineBox");
             onlineBox.add(onlineCount);
-            _info.setWidget(1, 0, onlineBox, 1, "Online");
-        } else {
-            _info.setHTML(1, 0, "&nbsp;");
+            _infoPanel.add(onlineBox);
         }
-        _info.setText(2, 0, group.blurb, 3, "Blurb");
+        _infoPanel.add(MsoyUI.createHTML(group.blurb, "Blurb"));
     }
-    
+
     public static class CanonicalImageWidget extends Composite
     {
         public CanonicalImageWidget (GroupCard group, ClickListener onClick) {
@@ -151,38 +135,27 @@ public class FeaturedWhirledPanel extends FlowPanel
             initWidget(panel);
         }
     }
-    
+
     protected Widget makeSimpleCanonicalImage (GroupCard group, ClickListener onClick) {
         return MediaUtil.createMediaView(group.canonicalImage, MediaDesc.CANONICAL_IMAGE_SIZE,
             onClick);
     }
-    
+
     protected Widget makeCanonicalImageWidget (GroupCard group, ClickListener onClick) {
         FlowPanel panel = new FlowPanel();
         Widget image = MediaUtil.createMediaView(group.canonicalImage,
             MediaDesc.CANONICAL_IMAGE_SIZE,
             onClick);
-        
+
         panel.add(image);
-        
+
         Image overlay = MsoyUI.createImage("/images/landing/click_overlay.png", null);
         overlay.addStyleName("LiveViewOverlay");
-//        
-// // Try to position the click for live view overlay at the center bottom of the snapshot
-// int imageWidth = MediaDesc.DIMENSIONS[MediaDesc.CANONICAL_IMAGE_SIZE * 2];
-// int imageHeight = MediaDesc.DIMENSIONS[MediaDesc.CANONICAL_IMAGE_SIZE * 2 + 1];
-//        
-// int hpos = (imageWidth / 2) - (overlay.getWidth() / 2);
-// int vpos = imageHeight - overlay.getHeight();
-        
+
         panel.add(overlay);
         return panel;
     }
 
-    protected static native void wAlert (String message) /*-{
-             alert("WALERT: "+message);
-          }-*/;
-    
     /**
      * A widget containing a the group icon and name.
      */
@@ -209,11 +182,9 @@ public class FeaturedWhirledPanel extends FlowPanel
 
     protected boolean _showPlaceholder;
     protected FlowPanel _iconsPanel;
-
     protected GroupCard[] _whirleds;
     protected int _selidx;
-
-    protected SmartTable _info;
+    protected FlowPanel _infoPanel;
     protected SimplePanel _flashPanel;
 
     protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);

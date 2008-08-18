@@ -23,8 +23,7 @@
 
   <public path="public/landing"/>
   <stylesheet src="/css/account.css"/> <!-- sigh -->
-  <stylesheet src="/css/games.css"/>
-  <stylesheet src="/css/whirleds.css"/> <!-- end sigh -->
+  <stylesheet src="/css/games.css"/><!-- end sigh -->
   <stylesheet src="/css/landing.css"/>
 
   <entry-point class="client.landing.LandingPage"/>

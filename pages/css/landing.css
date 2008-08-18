@@ -302,6 +302,11 @@
   height: 376px;
 }
 
+/* hide "Featured Whirled" title */
+.LandingPanel .FeaturedWhirled .Title {
+  display: none;
+}
+
 .LandingPanel .FeaturedWhirled .Flash {
   position: absolute;
   top: 46px;
@@ -312,9 +317,15 @@
   margin: 0;
 }
 
-.LandingPanel .FeaturedWhirled td.Name div.gwt-Hyperlink {
+.LandingPanel .FeaturedWhirled .LiveViewOverlay {
   position: absolute;
-  top: 220px;
+  top: 180px;
+  left: 110px;
+}
+
+.LandingPanel .FeaturedWhirled .FeaturedWhirledName {
+  position: absolute;
+  top: 255px;
   left: 75px;
   width: 300px;
   text-align: center;
@@ -322,19 +333,9 @@
   font-weight: bold;
   font-size: 16px;
 }
-.LandingPanel .FeaturedWhirled td.Name a {
+
+.LandingPanel .FeaturedWhirled .FeaturedWhirledName a {
   color: #FFFFFF;
-}
-
-/* hide "Featured Whirled" title */
-.LandingPanel .FeaturedWhirled div.Title {
-  display: none;
-}
-
-/* width is hard coded to 400 in a style attribute
-   only td.Online will be inline and visible */
-.LandingPanel .FeaturedWhirled table.pagedGrid {
-  border-spacing: 0;
 }
 
 .LandingPanel .FeaturedWhirled .OnlineBox {
@@ -347,22 +348,22 @@
   text-align: center;
   position: absolute;
   width: 300px;
-  top: 240px;
+  top: 275px;
   left: 75px;
 }
 
 /* hide group description */
-.LandingPanel .FeaturedWhirled td.Blurb {
+.LandingPanel .FeaturedWhirled .Blurb {
   display: none;
 }
 
-.LandingPanel .FeaturedWhirled button.PrevButton {
+.LandingPanel .FeaturedWhirled .PrevButton {
   position: absolute;
   top: 321px;
   left: 10px;
 }
 
-.LandingPanel .FeaturedWhirled button.NextButton {
+.LandingPanel .FeaturedWhirled .NextButton {
   position: absolute;
   top: 321px;
   left: 385px;
@@ -391,6 +392,10 @@
 .LandingPanel .FeaturedWhirled .Icons .IconBox {
   height: 37px;
 }
+
+/* ------------------------------------
+   LANDING COPYRIGHT
+-------------------------------------*/
 
 .LandingPanel .LandingCopyright {
   width: 708px;
@@ -509,9 +514,4 @@
   color: #12718f;
   background: none;
   padding: 0;
-}
-
-.FeaturedWhirledName {
-	position: relative;
-	top: 1;
 }
