@@ -112,11 +112,8 @@ public class MsoyGamePanel extends WhirledGamePanel
         mctx.getMsoyController().addGoMenuProvider(populateGoMenu);
         bar.setInGame(true);
 
-        var spinner :PlaceLoadingDisplay = new PlaceLoadingDisplay(
-            mctx.getTopPanel().getPlaceContainer());
-        spinner.watchLoader(
-            Loader(_gameView.getMediaContainer().getMedia()).contentLoaderInfo,
-            _gameView.getMediaContainer(), true);
+        _spinner = new PlaceLoadingDisplay(
+            _gctx.getMsoyContext().getTopPanel().getPlaceContainer());
 
         // if we're embedded and too small to display chat in a sidebar,
         // we go into "gamestub" mode and do an overlay instead.
@@ -195,6 +192,16 @@ public class MsoyGamePanel extends WhirledGamePanel
     }
 
     // from WhirledGamePanel
+    override protected function initiateLoading () :void
+    {
+        super.initiateLoading();
+        _spinner.watchLoader(
+            Loader(_gameView.getMediaContainer().getMedia()).contentLoaderInfo,
+            _gameView.getMediaContainer(), true);
+
+    }
+
+    // from WhirledGamePanel
     override protected function createPlayerList () :GamePlayerList
     {
         return new MsoyGamePlayerList(
@@ -258,6 +265,9 @@ public class MsoyGamePanel extends WhirledGamePanel
 
     /** convenience reference to our game context */
     protected var _gctx :GameContext;
+
+    /** The loading display. */
+    protected var _spinner :PlaceLoadingDisplay;
 
     protected var _showPlayers :CommandButton;
 
