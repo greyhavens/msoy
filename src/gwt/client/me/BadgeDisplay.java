@@ -22,6 +22,7 @@ class BadgeDisplay extends VerticalPanel
 {
     public BadgeDisplay (Badge badge)
     {
+        setStyleName("badgeDisplay");
         buildBasics(badge);
 
         if (badge instanceof EarnedBadge) {
@@ -45,7 +46,7 @@ class BadgeDisplay extends VerticalPanel
             // displaying the hex code is the failure case - make sure to test all new badges
             // before letting them out to production.
         }
-        _nameColumn.add(MsoyUI.createLabel(badgeName, null));
+        _nameColumn.add(MsoyUI.createLabel(badgeName, "StampName"));
 
         String badgeDesc = null;
         try {
@@ -65,7 +66,7 @@ class BadgeDisplay extends VerticalPanel
                 badgeDesc = "MISSING DESCRIPTION [" + hexCode + "]";
             }
         }
-        add(MsoyUI.createLabel(badgeDesc, null));
+        add(MsoyUI.createLabel(badgeDesc, "StampDescription"));
     }
 
     protected void addEarnedBits (EarnedBadge badge)

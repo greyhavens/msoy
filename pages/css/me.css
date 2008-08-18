@@ -251,3 +251,20 @@
 .passport .headerBox .Contents .tongueBox {
   padding-top: 10px;
 }
+
+/* ------------------------------------
+   BADGE DISPLAYS ANYWHERE
+-------------------------------------*/
+.badgeDisplay {
+  width: 155px;
+  height: 142px;
+  display: inline;
+}
+
+.badgeDisplay .StampName {
+}
+
+.badgeDisplay .StampDescription {
+  color: #4a7595;
+  font-size: 12px;
+}
