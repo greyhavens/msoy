@@ -21,7 +21,6 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.MessageEvent;
@@ -169,10 +168,7 @@ public class AVRGameManager extends PlaceManager
                             target = (ClientObject)_omgr.getObject(_gameAgentObj.clientOid);
                         }
                     } else {
-                        DObject player = _omgr.getObject(id);
-                        if (player instanceof ClientObject && isPlayer((ClientObject)player)) {
-                            target = (ClientObject)player;
-                        }
+                        target = _locator.lookupPlayer(id);
                     }
                     if (target == null) {
                         throw new InvocationException("m.player_not_around");
@@ -183,6 +179,11 @@ public class AVRGameManager extends PlaceManager
                 @Override protected void validateSender (ClientObject caller)
                     throws InvocationException {
                     validateUser(caller);
+                }
+
+                @Override protected int resolvePlayerId (ClientObject caller)
+                {
+                    return ((PlayerObject)caller).getMemberId();
                 }
             })));
         
@@ -261,26 +262,6 @@ public class AVRGameManager extends PlaceManager
         }
         
         roomSubscriptionComplete(sceneId);
-    }
-
-    // from AVRGameProvider
-    public void sendMessage (ClientObject caller, String msg, Object data, int playerId,
-                             InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        if (playerId == 0) {
-            // send to everyone
-            _gameObj.postMessage(AVRGameObject.USER_MESSAGE, msg, data);
-            return;
-        }
-
-        // send to a specific player
-        PlayerObject player = _locator.lookupPlayer(playerId);
-        if (player != null) {
-            player.postMessage(
-                AVRGameObject.USER_MESSAGE + ":" + _gameObj.getOid(),
-                new Object[] { msg, data });
-        }
     }
 
     // from AVRGameProvider

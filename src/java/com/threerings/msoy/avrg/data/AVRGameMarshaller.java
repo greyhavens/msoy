@@ -55,21 +55,8 @@ public class AVRGameMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #sendMessage} requests. */
-    public static final int SEND_MESSAGE = 4;
-
-    // from interface AVRGameService
-    public void sendMessage (Client arg1, String arg2, Object arg3, int arg4, InvocationService.InvocationListener arg5)
-    {
-        ListenerMarshaller listener5 = new ListenerMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, SEND_MESSAGE, new Object[] {
-            arg2, arg3, Integer.valueOf(arg4), listener5
-        });
-    }
-
     /** The method id used to dispatch {@link #setTicker} requests. */
-    public static final int SET_TICKER = 5;
+    public static final int SET_TICKER = 4;
 
     // from interface AVRGameService
     public void setTicker (Client arg1, String arg2, int arg3, InvocationService.InvocationListener arg4)
@@ -82,7 +69,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #startQuest} requests. */
-    public static final int START_QUEST = 6;
+    public static final int START_QUEST = 5;
 
     // from interface AVRGameService
     public void startQuest (Client arg1, String arg2, String arg3, InvocationService.ConfirmListener arg4)
@@ -95,7 +82,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #updateQuest} requests. */
-    public static final int UPDATE_QUEST = 7;
+    public static final int UPDATE_QUEST = 6;
 
     // from interface AVRGameService
     public void updateQuest (Client arg1, String arg2, int arg3, String arg4, InvocationService.ConfirmListener arg5)

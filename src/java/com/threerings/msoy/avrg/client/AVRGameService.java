@@ -11,9 +11,6 @@ import com.threerings.presents.client.InvocationService;
  */
 public interface AVRGameService extends InvocationService
 {
-    public void sendMessage (
-        Client client, String msg, Object data, int playerId, InvocationListener listener);
-
     public void startQuest (
         Client client, String questId, String status, ConfirmListener listener);
 

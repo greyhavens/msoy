@@ -53,12 +53,6 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
             );
             return;
 
-        case AVRGameMarshaller.SEND_MESSAGE:
-            ((AVRGameProvider)provider).sendMessage(
-                source, (String)args[0], args[1], ((Integer)args[2]).intValue(), (InvocationService.InvocationListener)args[3]
-            );
-            return;
-
         case AVRGameMarshaller.SET_TICKER:
             ((AVRGameProvider)provider).setTicker(
                 source, (String)args[0], ((Integer)args[1]).intValue(), (InvocationService.InvocationListener)args[2]
