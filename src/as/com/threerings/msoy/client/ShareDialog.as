@@ -14,6 +14,7 @@ import mx.containers.VBox;
 import mx.containers.TitleWindow;
 
 import mx.controls.RadioButton;
+import mx.controls.RadioButtonGroup;
 import mx.controls.Label;
 import mx.controls.TextArea;
 import mx.controls.TextInput;
@@ -166,7 +167,7 @@ public class ShareDialog extends FloatingPanel
         return box;
     }
 
-    protected function createSizeControl (code :TextInput, size :int) :VBox
+    protected function createSizeControl (size :int) :VBox
     {
         var box :VBox = new VBox();
         box.setStyle("horizontalAlign", "center");
@@ -174,15 +175,9 @@ public class ShareDialog extends FloatingPanel
         box.percentWidth = 100;
 
         var button :RadioButton = new RadioButton();
-        button.groupName = "embedSize";
-        //button.styleName = "embedSize" + size;
+        button.group = _sizeGroup;
+        button.value = size;
         button.labelPlacement = "top";
-
-        button.addEventListener(FlexEvent.VALUE_COMMIT, function (... ignored) :void {
-            if (button.selected) {
-                code.text = getEmbedCode(size);
-            }
-        });
 
         var label :Label = FlexUtil.createLabel(Msgs.GENERAL.get("l.embed_size" + size));
         label.setStyle("fontWeight", "bold");
@@ -221,17 +216,21 @@ public class ShareDialog extends FloatingPanel
         const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
         if (sceneAndGame[0] != 0) {
             for (var i:int=0; i<EMBED_SIZES.length; ++i) {
-                checks.addChild(createSizeControl(code, i));
+                checks.addChild(createSizeControl(i));
             }
 
         } else {
             // Games don't have all the options
             for (var j:int=2; j<EMBED_SIZES.length; ++j) {
-                checks.addChild(createSizeControl(code, j));
+                checks.addChild(createSizeControl(j));
             }
         }
 
         box.addChild(checks);
+
+        _sizeGroup.addEventListener(FlexEvent.VALUE_COMMIT, function (... ignored) :void {
+            code.text = getEmbedCode(_sizeGroup.selectedValue as int);
+        });
 
         var info :Label = FlexUtil.createLabel(Msgs.GENERAL.get("l.embed_instruction"));
         info.width = 300;
@@ -251,5 +250,6 @@ public class ShareDialog extends FloatingPanel
     protected static const DEFAULT_SIZE :int = 3;
 
     protected var _memObj :MemberObject;
+    protected var _sizeGroup :RadioButtonGroup = new RadioButtonGroup();
 }
 }
