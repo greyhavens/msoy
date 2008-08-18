@@ -100,16 +100,6 @@ public class HeaderBar extends HBox
         }
     }
 
-    /**
-     * Shows or clears the instructions link. Passing null for the onClick function will clear the 
-     * link.
-     */
-    public function setInstructionsLink (onClick :Function , arg :Object = null) :void
-    {
-        _instructionsLink.setCallback(onClick, arg);
-        setCompVisible(_instructionsLink, (onClick != null));
-    }
-
     public function miniChanged () :void
     {
         if (_ctx.getTopPanel().isMinimized()) {
@@ -199,12 +189,6 @@ public class HeaderBar extends HBox
         controlBox.percentHeight = 100;
         addChild(controlBox);
 
-        _instructionsLink = new CommandLinkButton(Msgs.GENERAL.get("b.instructions"));
-        _instructionsLink.styleName = "headerLink";
-        controlBox.addChild(_instructionsLink);
-        setInstructionsLink(null);
-        _extras.push(_instructionsLink);
-
         _spacer = new Spacer(this);
         addChild(_spacer);
 
@@ -249,8 +233,6 @@ public class HeaderBar extends HBox
     protected var _loc :Label;
     protected var _owner :HBox;
     protected var _spacer :HBox;
-
-    protected var _instructionsLink :CommandLinkButton;
 
     protected var _visibles :Dictionary = new Dictionary(true);
 

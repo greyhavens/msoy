@@ -532,6 +532,15 @@ TabNavigator, TabBar {
   /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_disabled.png"); */
 }
 
+.controlBarButtonInstructions {
+/*
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/comment.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_down.png");
+  */
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_disabled.png"); */
+}
+
 .controlBarButtonShare {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/share.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/share_over.png");

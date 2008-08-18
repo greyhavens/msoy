@@ -74,10 +74,10 @@ public class ControlBar extends HBox
 
     /** Different groups of UI elements. */
     public static const UI_ALL :String = "All UI Elements"; // created automatically
-    public static const UI_BASE :String = "Base UI";
+    public static const UI_BASE :String = "Base UI"; // when in neither a game nor a room
     public static const UI_ROOM :String = "Room UI";
     public static const UI_GAME :String = "Game UI";
-    public static const UI_MINI :String = "Mini UI";
+    public static const UI_MINI :String = "Mini UI"; // when GWT is up (TODO: remove, auto-adjust)
     public static const UI_VIEWER :String = "Room Entity Viewer UI";
 
     public static const ALL_UI_GROUPS :Array = [
@@ -244,6 +244,10 @@ public class ControlBar extends HBox
         }));
         _shareBtn.styleName = "controlBarButtonShare";
         _shareBtn.toolTip = Msgs.GENERAL.get("i.share");
+
+        _instructBtn = new CommandButton(null, MsoyController.VIEW_GAME_INSTRUCTIONS);
+        _instructBtn.styleName = "controlBarButtonInstructions";
+        _instructBtn.toolTip = Msgs.GENERAL.get("i.instructions");
     }
 
     /**
@@ -309,6 +313,7 @@ public class ControlBar extends HBox
                 BUTTON_PRIORITY + 1);
         }
 
+        addGroupChild(_instructBtn, [ UI_GAME ]);
         addGroupChild(_shareBtn, [ UI_BASE, UI_ROOM, UI_GAME ]);
         addGroupChild(_commentBtn, [ UI_ROOM, UI_GAME ]);
 
@@ -417,6 +422,9 @@ public class ControlBar extends HBox
 
     /** Handles full screening. */
     protected var _fullBtn :CommandButton;
+
+    /** Handles viewing game instructions. */
+    protected var _instructBtn :CommandButton;
 
     /** Handles commenting on the current scene or game. */
     protected var _commentBtn :CommandButton;

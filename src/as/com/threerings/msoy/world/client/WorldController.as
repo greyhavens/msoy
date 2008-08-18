@@ -550,8 +550,9 @@ public class WorldController extends MsoyController
     /**
      * Handles the VIEW_GAME_INSTRUCTIONS command.
      */
-    public function handleViewGameInstructions (gameId :int) :void
+    public function handleViewGameInstructions () :void
     {
+        const gameId :int = getCurrentGameId();
         displayPage("games", "d_" + gameId + "_i");
     }
 
@@ -1245,7 +1246,6 @@ public class WorldController extends MsoyController
                 } else {
                     headerBar.setOwnerLink("");
                 }
-                headerBar.setInstructionsLink(null);
             }
 
             addRecentScene(scene);
@@ -1258,7 +1258,6 @@ public class WorldController extends MsoyController
             _wctx.getMsoyClient().setWindowTitle(cfg.name);
             headerBar.setLocationName(cfg.name);
             headerBar.setOwnerLink("");
-            headerBar.setInstructionsLink(handleViewGameInstructions, cfg.getGameId());
         }
     }
 
