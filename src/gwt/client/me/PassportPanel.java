@@ -9,6 +9,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -28,7 +29,7 @@ import client.ui.TongueBox;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
-public class PassportPanel extends VerticalPanel
+public class PassportPanel extends FlowPanel
 {
     public PassportPanel ()
     {
