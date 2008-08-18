@@ -45,7 +45,7 @@ public class ThaneAVRGameController
         _gameAgentObj = gameAgentObj;
 
         // create the backend
-        _backend = new ThaneAVRGameBackend();
+        _backend = new ThaneAVRGameBackend(ctx, gameObj);
 
         // set up existing player locations
         if (_gameObj.playerLocs.size () > 0) {
