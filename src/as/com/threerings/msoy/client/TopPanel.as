@@ -76,6 +76,9 @@ public class TopPanel extends Canvas
         _placeBox.includeInLayout = false;
         addChild(_placeBox);
 
+        // save the control bar, even if we don't add it (due to being a featured place)
+        _controlBar = controlBar;
+        _controlBar.init(this);
         if (!UberClient.isFeaturedPlaceView()) {
             // only create and display an overlay for real clients
             if (UberClient.isRegularClient()) {
@@ -84,8 +87,6 @@ public class TopPanel extends Canvas
             }
 
             // set up the control bar
-            _controlBar = controlBar;
-            _controlBar.init(this);
             _controlBar.includeInLayout = false;
             _controlBar.setStyle("bottom", 0);
             _controlBar.setStyle("left", 0);
