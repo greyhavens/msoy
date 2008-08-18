@@ -142,8 +142,12 @@ public class AVRGameController extends PlaceController
         _backend = new AVRGameBackend(_wctx, _gctx, this, _gameObj);
 
         var panel :AVRGamePanel = (getPlaceView() as AVRGamePanel);
-        _wctx.getWorldController().setAVRGamePanel(panel);
         panel.backendIsReady();
+    }
+
+    override protected function setPlaceView () :void
+    {
+        _wctx.getWorldController().setAVRGamePanel(getPlaceView() as AVRGamePanel);
     }
 
     protected function miniWillChange (mini :Boolean) :void
