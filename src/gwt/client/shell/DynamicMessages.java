@@ -200,4 +200,9 @@ public interface DynamicMessages extends ConstantsWithLookup
     String badgeDesc0_6e67007d ();
     String badgeDesc1_6e67007d ();
     String badgeDesc2_6e67007d ();
+
+    String passportCategory_social ();
+    String passportCategory_game ();
+    String passportCategory_shopping ();
+    String passportCategory_creation ();
 }

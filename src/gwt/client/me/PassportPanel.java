@@ -15,7 +15,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
+import com.threerings.msoy.badge.gwt.StampCategory;
 
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
@@ -48,18 +50,17 @@ public class PassportPanel extends FlowPanel
         HeaderBox contents = new HeaderBox(null, _msgs.passportStampsTitle(data.stampOwner));
         contents.makeRoundBottom();
         add(contents);
-        contents.add(new TongueBox(
-            MsoyUI.createImage("/images/me/icon_social.png", null),
-            _msgs.passportSocialTitle(), null));
-        contents.add(new TongueBox(
-            MsoyUI.createImage("/images/me/icon_games.png", null),
-            _msgs.passportGamesTitle(), null));
-        contents.add(new TongueBox(
-            MsoyUI.createImage("/images/me/icon_shop.png", null),
-            _msgs.passportShoppingTitle(), null));
-        contents.add(new TongueBox(
-            MsoyUI.createImage("/images/me/icon_create.png", null),
-            _msgs.passportCreationTitle(), null));
+        for (StampCategory category : StampCategory.values()) {
+            String catNameLower = category.toString().toLowerCase();
+            FlowPanel stamps = new FlowPanel();
+            contents.add(new TongueBox(
+                MsoyUI.createImage("/images/me/icon_" + catNameLower + ".png", null),
+                _dmsgs.getString("passportCategory_" + catNameLower), stamps));
+
+            for (Badge badge : data.stamps.get(category)) {
+                stamps.add(new BadgeDisplay(badge));
+            }
+        }
    }
 
     protected static class NextPanel extends VerticalPanel
