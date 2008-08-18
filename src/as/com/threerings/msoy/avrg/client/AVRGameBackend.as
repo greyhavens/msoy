@@ -7,6 +7,7 @@ import flash.display.DisplayObject;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import com.threerings.io.TypedArray;
 import com.threerings.util.Integer;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
@@ -521,8 +522,8 @@ public class AVRGameBackend extends ControlBackend
     protected function agent_sendMessage_v1 (name :String, value :Object) :void
     {
         var encoded :Object = ObjectMarshaller.encode(value, false);
-        _gameObj.avrgService.sendMessage(_gctx.getClient(), name, encoded, SERVER_AGENT_ID,
-                                         loggingConfirmListener("sendMessage"));
+        _gameObj.messageService.sendPrivateMessage(
+            _gctx.getClient(), name, encoded, TO_AGENT, loggingConfirmListener("sendMessage"));
     }
 
     // TODO: MobControl
@@ -828,5 +829,8 @@ public class AVRGameBackend extends ControlBackend
                 playerLeft(info.username);
             }
         });
+
+    protected static const TO_AGENT :TypedArray = TypedArray.create(int);
+    TO_AGENT.push(SERVER_AGENT_ID);
 }
 }

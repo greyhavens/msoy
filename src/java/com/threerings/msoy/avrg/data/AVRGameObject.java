@@ -16,6 +16,7 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.data.WhirledGameMessageMarshaller;
 import com.whirled.game.server.PropertySpaceHelper;
 
 /**
@@ -39,6 +40,9 @@ public class AVRGameObject extends PlaceObject
 
     /** The field name of the <code>avrgService</code> field. */
     public static final String AVRG_SERVICE = "avrgService";
+
+    /** The field name of the <code>messageService</code> field. */
+    public static final String MESSAGE_SERVICE = "messageService";
     // AUTO-GENERATED: FIELDS END
 
     /**
@@ -50,6 +54,9 @@ public class AVRGameObject extends PlaceObject
 
     /** Used to communicate with the AVRGameManager. */
     public AVRGameMarshaller avrgService;
+    
+    /** Used to send messages. */
+    public WhirledGameMessageMarshaller messageService;
 
     // from PropertySpaceObject
     public Map<String, Object> getUserProps ()
@@ -125,6 +132,22 @@ public class AVRGameObject extends PlaceObject
         requestAttributeChange(
             AVRG_SERVICE, value, ovalue);
         this.avrgService = value;
+    }
+
+    /**
+     * Requests that the <code>messageService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setMessageService (WhirledGameMessageMarshaller value)
+    {
+        WhirledGameMessageMarshaller ovalue = this.messageService;
+        requestAttributeChange(
+            MESSAGE_SERVICE, value, ovalue);
+        this.messageService = value;
     }
     // AUTO-GENERATED: METHODS END
 

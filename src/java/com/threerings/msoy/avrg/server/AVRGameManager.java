@@ -21,6 +21,7 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.MessageEvent;
@@ -53,6 +54,8 @@ import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.server.WhirledGameManager;
+import com.whirled.game.server.WhirledGameMessageDispatcher;
+import com.whirled.game.server.WhirledGameMessageHandler;
 
 import static com.threerings.msoy.Log.log;
 
@@ -63,6 +66,9 @@ import static com.threerings.msoy.Log.log;
 public class AVRGameManager extends PlaceManager
     implements AVRGameProvider, PlayManager
 {
+    /** The magic player id constant for the server agent used when sending private messages. */
+    public static final int SERVER_AGENT = Integer.MIN_VALUE;
+
     /** Observes our shutdown function call. */
     public interface LifecycleObserver
     {
@@ -153,6 +159,32 @@ public class AVRGameManager extends PlaceManager
 
         _gameObj = (AVRGameObject)_plobj;
         _gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
+        _gameObj.setMessageService(_invmgr.registerDispatcher(new WhirledGameMessageDispatcher(
+            new WhirledGameMessageHandler(_gameObj, this) {
+                @Override protected ClientObject getAudienceMember (int id)
+                    throws InvocationException {
+                    ClientObject target = null;
+                    if (id == SERVER_AGENT) {
+                        if (_gameAgentObj != null && _gameAgentObj.clientOid != 0) {
+                            target = (ClientObject)_omgr.getObject(_gameAgentObj.clientOid);
+                        }
+                    } else {
+                        DObject player = _omgr.getObject(id);
+                        if (player instanceof ClientObject && isPlayer((ClientObject)player)) {
+                            target = (ClientObject)player;
+                        }
+                    }
+                    if (target == null) {
+                        throw new InvocationException("m.player_not_around");
+                    }
+                    return target;
+                }
+
+                @Override protected void validateSender (ClientObject caller)
+                    throws InvocationException {
+                    validateUser(caller);
+                }
+            })));
         
         _sceneCheck = new Interval(_omgr) {
             public void expired () {
@@ -343,6 +375,9 @@ public class AVRGameManager extends PlaceManager
             _lifecycleObserver.avrGameDidShutdown(this);
         }
         
+        _invmgr.clearDispatcher(_gameObj.avrgService);
+        _invmgr.clearDispatcher(_gameObj.messageService);
+        
         _sceneCheck.cancel();
     }
 
@@ -500,6 +535,17 @@ public class AVRGameManager extends PlaceManager
         }
     }
 
+    /**
+     * Throws an InvocationException if the caller is not allowed.
+     */
+    protected void validateUser (ClientObject caller)
+        throws InvocationException
+    {
+        if (!isPlayer(caller) && !isAgent(caller)) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+    }
+    
     /**
      * A timer that fires message events to an AVRG. This is a precise copy of the same class
      * in WhirledGameManager. Perhaps one day we can avoid this duplication.

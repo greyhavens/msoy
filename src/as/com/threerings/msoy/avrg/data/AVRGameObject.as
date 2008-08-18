@@ -19,7 +19,7 @@ import com.threerings.msoy.avrg.data.PlayerLocation;
 
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.PropertySpaceObject;
-import com.whirled.game.data.WhirledGameObject;
+import com.whirled.game.data.WhirledGameMessageMarshaller;
 
 /**
  * Holds game state for an AVRGame.
@@ -56,12 +56,14 @@ public class AVRGameObject extends PlaceObject
     /** Used to communicate with the AVRGameManager. */
     public var avrgService :AVRGameMarshaller;
 
+    /** Used to send messages. */
+    public var messageService :WhirledGameMessageMarshaller;
+
      // from PropertySpaceObject
     public function getUserProps () :Object
     {
         return _props;
     }
-
    
     override public function readObject (ins :ObjectInputStream) :void
     {
@@ -81,6 +83,7 @@ public class AVRGameObject extends PlaceObject
     {
         playerLocs = (ins.readObject() as DSet);
         avrgService = (ins.readObject() as AVRGameMarshaller);
+        messageService = (ins.readObject() as WhirledGameMessageMarshaller);
     }
 
     /** The raw properties set by the game. */
