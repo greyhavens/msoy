@@ -608,8 +608,8 @@ public class GameGameRegistry
                 boolean gameCreated;
                 switch (mode) {
                 case LobbyCodes.PLAY_NOW_IF_SINGLE:
-                    final MsoyMatchConfig match = (MsoyMatchConfig) mgr.getLobbyObject().gameDef.match;
-                    if (match.getMatchType() != GameConfig.PARTY && match.getMaximumPlayers() > 1) {
+                    MsoyMatchConfig match = (MsoyMatchConfig) mgr.getLobbyObject().gameDef.match;
+                    if (match.getMatchType() == GameConfig.PARTY || match.getMaximumPlayers() > 1) {
                         gameCreated = false;
                         break;
                     }
