@@ -198,31 +198,19 @@ ComboBox {
   selectedUpIcon: ClassReference(null);
   selectedOverIcon: ClassReference(null);
   selectedDownIcon: ClassReference(null);
-}
-
-CheckBox {
-  upIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox.png");
-  overIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
-  downIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
-  selectedUpIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
-  selectedOverIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
-  selectedDownIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
-  color: white;
-  textRollOverColor: white;
-  textSelectedColor: white;
+  color: black;
+  textRollOverColor: black;
+  textSelectedColor: black;
 }
 
 /** TODO: Get actual radio button art (Circles instead of squares) */
-RadioButton {
+CheckBox, RadioButton {
   upIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox.png");
   overIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
   downIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
   selectedUpIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
   selectedOverIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_selected.png");
   selectedDownIcon: Embed(source="../../rsrc/media/skins/checkbox/checkbox_over.png");
-  color: white;
-  textRollOverColor: white;
-  textSelectedColor: white;
 }
 
 HSlider {

@@ -9,3 +9,21 @@
   disabledColor: #CCCCCC;
   fontSize: 12;
 }
+
+/** Hack: Copied from oldCheckBox instead of setting styleNames everywhere */
+CheckBox, RadioButton {
+    borderColor: #403424;
+    highlightAlphas: 0, 0;
+    fillAlphas: 0, 0, 0.75, 0.65;
+    fillColors: #403424, #403424, #ffffff, #eeeeee;
+
+    upIcon: ClassReference(null);
+    downIcon: ClassReference(null);
+    overIcon: ClassReference(null);
+    selectedUpIcon: ClassReference(null);
+    selectedOverIcon: ClassReference(null);
+    selectedDownIcon: ClassReference(null);
+    color: black;
+    textRollOverColor: black;
+    textSelectedColor: black;
+}
