@@ -47,14 +47,18 @@ public class PassportPanel extends VerticalPanel
         HeaderBox contents = new HeaderBox(null, _msgs.passportStampsTitle(data.stampOwner));
         contents.makeRoundBottom();
         add(contents);
-        contents.add(
-            new TongueBox(MsoyUI.createImage("/images/me/icon_social.png", null), "Mingle", null));
-        contents.add(
-            new TongueBox(MsoyUI.createImage("/images/me/icon_games.png", null), "Play", null));
-        contents.add(
-            new TongueBox(MsoyUI.createImage("/images/me/icon_shop.png", null), "Shop", null));
-        contents.add(
-            new TongueBox(MsoyUI.createImage("/images/me/icon_create.png", null), "Create", null));
+        contents.add(new TongueBox(
+            MsoyUI.createImage("/images/me/icon_social.png", null),
+            _msgs.passportSocialTitle(), null));
+        contents.add(new TongueBox(
+            MsoyUI.createImage("/images/me/icon_games.png", null),
+            _msgs.passportGamesTitle(), null));
+        contents.add(new TongueBox(
+            MsoyUI.createImage("/images/me/icon_shop.png", null),
+            _msgs.passportShoppingTitle(), null));
+        contents.add(new TongueBox(
+            MsoyUI.createImage("/images/me/icon_create.png", null),
+            _msgs.passportCreationTitle(), null));
    }
 
     protected static class NextPanel extends VerticalPanel
