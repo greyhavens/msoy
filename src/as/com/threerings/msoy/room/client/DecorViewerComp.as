@@ -150,8 +150,10 @@ public class DecorViewerComp extends Canvas
         
         _horizonMode = new CommandCheckBox(Msgs.EDITING.get("b.move_horizon"),
             horizonModeSelectionHandler);
+        _horizonMode.styleName = "oldCheckBox";
         _offsetMode = new CommandCheckBox(Msgs.EDITING.get("b.move_offset"),
             offsetModeSelectionHandler);
+        _offsetMode.styleName = "oldCheckBox";
 
         GridUtil.addRow(mouseopts, Msgs.EDITING.get("l.move_selection"),
                         _horizonMode, _offsetMode);
@@ -181,6 +183,7 @@ public class DecorViewerComp extends Canvas
 
         _hideWallsBox = new CommandCheckBox(Msgs.EDITING.get("l.hide_walls"),
             regularOptionsChanged);
+        _hideWallsBox.styleName = "oldCheckBox";
             
         GridUtil.addRow(standard, Msgs.EDITING.get("l.scene_type"), _types,
                         Msgs.EDITING.get("l.scene_depth"), _depthSlider, _hideWallsBox);
