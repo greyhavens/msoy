@@ -39,6 +39,41 @@
   height: 200px;
 }
 
+.LandingPanel .LandingTagline {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  color: #FFFFFF;
+}
+
+.LandingPanel .Background {
+  height: 717px;
+}
+
+.LandingPanel .Background .LeftBorder {
+  background: url(/images/landing/stripe_tile.png) repeat-y top right;
+  width: 57px;
+  float: left;
+  height: 100%;
+}
+
+.LandingPanel .Background .Center {
+  background: #C7E4F6 url(/images/landing/overlay_gradient.jpg) repeat-x top center;
+  width: 690px;
+  float: left;
+  height: 100%;
+}
+.LandingPanel .Background .RightBorder {
+  background: url(/images/landing/stripe_tile.png) repeat-y top left;
+  width: 53px;
+  float: left;
+  height: 100%;
+}
+
+
+/* ------------------------------------
+   LANDING PAGE - LOGON PANEL
+-------------------------------------*/
+
 .LandingPanel .logonPanel {
   background: url(/images/landing/login_bg.png) no-repeat top center;
   width: 170px;
@@ -57,10 +92,6 @@
 .LandingPanel .logonPanel .gwt-PasswordTextBox {
   width: 91px;
   margin-top: -5px;
-}
-
-.LandingPanel .logonPanel .rightLabel {
-  display: none;
 }
 
 .LandingPanel .logonPanel .tipLabel {
@@ -91,36 +122,6 @@
   height: 67px;
   border: none;
   cursor: pointer;
-}
-
-.LandingPanel .LandingTagline {
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
-  font-size: 18px;
-  color: #FFFFFF;
-}
-
-.LandingPanel .Background {
-  height: 717px;
-}
-
-.LandingPanel .Background .LeftBorder {
-  background: url(/images/landing/stripe_tile.png) repeat-y top right;
-  width: 57px;
-  float: left;
-  height: 100%;
-}
-
-.LandingPanel .Background .Center {
-  background: #C7E4F6 url(/images/landing/overlay_gradient.jpg) repeat-x top center;
-  width: 690px;
-  float: left;
-  height: 100%;
-}
-.LandingPanel .Background .RightBorder {
-  background: url(/images/landing/stripe_tile.png) repeat-y top left;
-  width: 53px;
-  float: left;
-  height: 100%;
 }
 
 /* ------------------------------------

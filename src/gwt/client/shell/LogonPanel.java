@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FocusListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
@@ -42,6 +43,13 @@ public class LogonPanel extends SmartTable
     {
         this(headerMode, new Button(_cmsgs.logonLogon()));
     }
+    /**
+     * Creates a logon panel with an external submit button and labels
+     */
+    public LogonPanel (boolean headerMode, ButtonBase logon)
+    {
+        this(headerMode, true, new Button(_cmsgs.logonLogon()));
+    }
 
     /**
      * Creates a logon panel with an external submit button.
@@ -49,13 +57,29 @@ public class LogonPanel extends SmartTable
      * @param headerMode changes the location of the form elements.
      * @param logon the button to use for form submit.
      */
-    public LogonPanel (boolean headerMode, ButtonBase logon)
+    public LogonPanel (boolean headerMode, boolean displayLabels, ButtonBase logon)
     {
         super("logonPanel", 0, 2);
 
         // create the widgets we'll use in our layout
         _email = new TextBox();
-        _email.setText(CookieUtil.get("who"));
+        if (!displayLabels) {
+            String defaultText =
+                CookieUtil.get("who") != null ? CookieUtil.get("who") : _cmsgs.logonEmailDefault();
+            _email.setText(defaultText);
+            _email.addFocusListener(new FocusListener() {
+                public void onFocus (Widget sender) {
+                    if (_email.getText().equals(_cmsgs.logonEmailDefault())) {
+                        _email.setText("");
+                    }
+                }
+                public void onLostFocus (Widget sender) {
+                    if (_email.getText().equals("")) {
+                        _email.setText(_cmsgs.logonEmailDefault());
+                    }
+                }
+            });
+        }
         _email.addKeyboardListener(new EnterClickAdapter(new ClickListener() {
             public void onClick (Widget sender) {
                 _password.setFocus(true);
@@ -84,18 +108,26 @@ public class LogonPanel extends SmartTable
 
         // now stick them in the right places
         if (headerMode) {
-            setText(0, 0, _cmsgs.logonEmail(), 1, "rightLabel");
+            if (displayLabels) {
+                setText(0, 0, _cmsgs.logonEmail(), 1, "rightLabel");
+            }
             setWidget(0, 1, _email);
             setWidget(0, 3, forgot);
-            setText(1, 0, _cmsgs.logonPassword(), 1, "rightLabel");
+            if (displayLabels) {
+                setText(1, 0, _cmsgs.logonPassword(), 1, "rightLabel");
+            }
             setWidget(1, 1, _password);
             setWidget(1, 3, logon);
 
         } else {
             int row = 0;
-            setText(row++, 0, _cmsgs.logonEmail());
+            if (displayLabels) {
+                setText(row++, 0, _cmsgs.logonEmail());
+            }
             setWidget(row++, 0, _email);
-            setText(row++, 0, _cmsgs.logonPassword());
+            if (displayLabels) {
+                setText(row++, 0, _cmsgs.logonPassword());
+            }
             setWidget(row, 0, _password);
             setWidget(row, 1, WidgetUtil.makeShim(3, 3));
             setWidget(row++, 2, forgot);
