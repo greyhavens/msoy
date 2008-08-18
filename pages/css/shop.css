@@ -208,3 +208,8 @@
 .listingDetailPanel .messagePanel .Scroller {
   width: 555px;
 }
+
+.itemGridPanel .Contents {
+  margin: 10px;
+  width: 650px;
+}

@@ -45,6 +45,8 @@ public class ItemGridPanel extends SimplePanel
         _parentPage = parentPage;
         _itemGrid = itemGrid;
         _model = model;
+
+        addStyleName("itemGridPanel");
     }
 
     public void setPrefixArgs (String[] prefixArgs)

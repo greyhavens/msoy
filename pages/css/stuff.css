@@ -1,4 +1,4 @@
-/** 
+/**
  * $Id$
  *
  * CSS styles for the Inventory interfaces.
@@ -118,4 +118,9 @@
 
 .doListItem .Status {
   padding-top: 5px;
+}
+
+.itemGridPanel .Contents {
+  margin: 10px;
+  width: 650px;
 }
