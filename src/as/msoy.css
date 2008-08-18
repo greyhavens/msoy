@@ -533,12 +533,10 @@ TabNavigator, TabBar {
 }
 
 .controlBarButtonInstructions {
-/*
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/comment.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_down.png");
-  */
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_disabled.png"); */
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/instructions_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/instructions_down.png");
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/instructions_disabled.png"); */
 }
 
 .controlBarButtonShare {
