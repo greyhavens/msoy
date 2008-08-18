@@ -68,6 +68,7 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 
+import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.data.MemberCard;
 
@@ -115,90 +116,93 @@ public class MemberRepository extends DepotRepository
                 return "MemberRecord -> MemberNameRecord";
             }
         });
-        
+
         // 08-11-2008: This will copy the flow from member records into the member account
         // records.  From this point on, the member account records are considered canonical.
+        try {
+            ctx.getMarshaller(MemberAccountRecord.class);
+        } catch (PersistenceException pe) {
+            throw new RuntimeException("Unable to create neeed MemberAccountRecord", pe);
+        }
         ctx.registerMigration(MemberRecord.class, new EntityMigration(22) {
-            @Override
-            public int invoke (final Connection conn, final DatabaseLiaison liaison)
+            @Override public int invoke (final Connection conn, final DatabaseLiaison dbl)
                 throws SQLException
             {
-                Statement stmt = null;
-                PreparedStatement insertStmt = null, updateStmt = null, checkStmt = null;
-                try {
-                    stmt = conn.createStatement();
-                    final ResultSet rs = stmt.executeQuery("select " + liaison.columnSQL("memberId") + ", " + 
-                        liaison.columnSQL("flow") + ", " + liaison.columnSQL("accFlow") + 
-                        " from " + liaison.tableSQL("MemberRecord"));
-                    
-                    insertStmt = conn.prepareStatement("insert into " + 
-                        liaison.tableSQL("MemberAccountRecord") +
-                        "(" + liaison.columnSQL("memberId") + ", " + liaison.columnSQL("coins") + ", " + 
-                        liaison.columnSQL("bars") + ", " + liaison.columnSQL("bling") + ", " + 
-                        liaison.columnSQL("dateLastUpdated") + ", " + liaison.columnSQL("versionId") + ", " + 
-                        liaison.columnSQL("accCoins") + ", " + liaison.columnSQL("accBars") + ", " + 
-                        liaison.columnSQL("accBling") + ") " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                    updateStmt = conn.prepareStatement("update " +
-                        liaison.tableSQL("MemberAccountRecord") +
-                        " set " + liaison.columnSQL("coins") + " = " + liaison.columnSQL("coins") + " + ?, " +
-                        liaison.columnSQL("accCoins") + " = " + liaison.columnSQL("accCoins") + " + ? " +
-                        "where " + liaison.columnSQL("memberId") + " = ?");
-                    checkStmt = conn.prepareStatement("select count(*) from " +
-                        liaison.tableSQL("MemberAccountRecord") +
-                        " where " + liaison.columnSQL("memberId") + " = ?");
-                    final List<Integer> memberIdInsertList = new ArrayList<Integer>();
-                    final List<Integer> memberIdUpdateList = new ArrayList<Integer>();
-                    while (rs.next()) {
-                        final int memberId = rs.getInt(1);
-                        checkStmt.setInt(1, memberId);
-                        final ResultSet rs2 = checkStmt.executeQuery();
-                        rs2.next();
-                        if (rs2.getInt(1) > 0) {
-                            memberIdUpdateList.add(memberId);
-                            updateStmt.setInt(1, rs.getInt(2));
-                            updateStmt.setInt(2, rs.getInt(3));
-                            updateStmt.setInt(3, memberId);
-                            updateStmt.addBatch();
-                        } else {
-                            memberIdInsertList.add(memberId);
-                            insertStmt.setInt(1, memberId);
-                            insertStmt.setInt(2, rs.getInt(2));
-                            insertStmt.setInt(3, 0);
-                            insertStmt.setDouble(4, 0.0);
-                            insertStmt.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
-                            insertStmt.setInt(6, 1);
-                            insertStmt.setInt(7, rs.getInt(3));
-                            insertStmt.setInt(8, 0);
-                            insertStmt.setDouble(9, 0.0);
-                            insertStmt.addBatch();
-                        }
+                PreparedStatement insertStmt = conn.prepareStatement(
+                    "insert into " + dbl.tableSQL("MemberAccountRecord") +
+                    "(" + dbl.columnSQL("memberId") + ", " + dbl.columnSQL("coins") + ", " +
+                    dbl.columnSQL("bars") + ", " + dbl.columnSQL("bling") + ", " +
+                    dbl.columnSQL("dateLastUpdated") + ", " + dbl.columnSQL("versionId") + ", " +
+                    dbl.columnSQL("accCoins") + ", " + dbl.columnSQL("accBars") + ", " +
+                    dbl.columnSQL("accBling") + ") " + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                PreparedStatement updateStmt = conn.prepareStatement(
+                    "update " +
+                    dbl.tableSQL("MemberAccountRecord") +
+                    " set " + dbl.columnSQL("coins") + " = " + dbl.columnSQL("coins") + " + ?, " +
+                    dbl.columnSQL("accCoins") + " = " + dbl.columnSQL("accCoins") + " + ? " +
+                    "where " + dbl.columnSQL("memberId") + " = ?");
+                PreparedStatement checkStmt = conn.prepareStatement(
+                    "select count(*) from " + dbl.tableSQL("MemberAccountRecord") +
+                    " where " + dbl.columnSQL("memberId") + " = ?");
+
+                Statement stmt = conn.createStatement();
+                final ResultSet rs = stmt.executeQuery(
+                    "select " + dbl.columnSQL("memberId") + ", " + dbl.columnSQL("flow") + ", " +
+                    dbl.columnSQL("accFlow") + " from " + dbl.tableSQL("MemberRecord"));
+
+                final List<Integer> memberIdInsertList = new ArrayList<Integer>();
+                final List<Integer> memberIdUpdateList = new ArrayList<Integer>();
+                while (rs.next()) {
+                    final int memberId = rs.getInt(1);
+                    checkStmt.setInt(1, memberId);
+                    final ResultSet rs2 = checkStmt.executeQuery();
+                    rs2.next();
+                    if (rs2.getInt(1) > 0) {
+                        memberIdUpdateList.add(memberId);
+                        updateStmt.setInt(1, rs.getInt(2));
+                        updateStmt.setInt(2, rs.getInt(3));
+                        updateStmt.setInt(3, memberId);
+                        updateStmt.addBatch();
+                    } else {
+                        memberIdInsertList.add(memberId);
+                        insertStmt.setInt(1, memberId);
+                        insertStmt.setInt(2, rs.getInt(2));
+                        insertStmt.setInt(3, 0);
+                        insertStmt.setDouble(4, 0.0);
+                        insertStmt.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+                        insertStmt.setInt(6, 1);
+                        insertStmt.setInt(7, rs.getInt(3));
+                        insertStmt.setInt(8, 0);
+                        insertStmt.setDouble(9, 0.0);
+                        insertStmt.addBatch();
                     }
-                    int[] res = insertStmt.executeBatch();
-                    int total = 0;
-                    for (int i = 0; i < res.length; i++) {
-                        if (res[i] >= 0) {
-                            total += res[i];
-                        } else {
-                            log.warning("Insert for member " + memberIdInsertList.get(i) + 
-                                " in the money repository migration failed with code: " + res[i]);
-                        }
-                    }
-                    res = updateStmt.executeBatch();
-                    for (int i = 0; i < res.length; i++) {
-                        if (res[i] >= 0) {
-                            total += res[i];
-                        } else {
-                            log.warning("Update for member " + memberIdUpdateList.get(i) + 
-                                " in the money repository migration failed with code: " + res[i]);
-                        }
-                    }
-                    return total;
-                } finally {
-                    JDBCUtil.close(stmt);
-                    JDBCUtil.close(insertStmt);
-                    JDBCUtil.close(updateStmt);
-                    JDBCUtil.close(checkStmt);
                 }
+                int[] res = insertStmt.executeBatch();
+                int total = 0;
+                for (int i = 0; i < res.length; i++) {
+                    if (res[i] >= 0) {
+                        total += res[i];
+                    } else {
+                        log.warning("Insert for member " + memberIdInsertList.get(i) +
+                                    " in the money repository migration failed with code: " +
+                                    res[i]);
+                    }
+                }
+                res = updateStmt.executeBatch();
+                for (int i = 0; i < res.length; i++) {
+                    if (res[i] >= 0) {
+                        total += res[i];
+                    } else {
+                        log.warning("Update for member " + memberIdUpdateList.get(i) +
+                                    " in the money repository migration failed with code: " +
+                                    res[i]);
+                    }
+                }
+                JDBCUtil.close(stmt);
+                JDBCUtil.close(insertStmt);
+                JDBCUtil.close(updateStmt);
+                JDBCUtil.close(checkStmt);
+                return total;
             }
         });
     }
