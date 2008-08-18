@@ -115,6 +115,9 @@ public class MsoyController extends Controller
     /** Command to display the full Whirled (used in the embedded client). */
     public static const VIEW_FULL_VERSION :String = "ViewFullVersion";
 
+    /** Command to display the comment page for the current scene or game. */
+    public static const VIEW_COMMENT_PAGE :String = "ViewCommentPage";
+
     /** Command to go to a running game (gameId + placeOid). */
     public static const GO_GAME :String = "GoGame";
 

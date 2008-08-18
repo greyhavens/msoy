@@ -524,6 +524,20 @@ TabNavigator, TabBar {
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_disabled.png");
 }
 
+.controlBarButtonComment {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/comment.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_down.png");
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/comment_disabled.png"); */
+}
+
+.controlBarButtonShare {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/share.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/share_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/share_down.png");
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/share_disabled.png"); */
+}
+
 .controlBarButtonScores {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/score.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/score_over.png");
@@ -982,18 +996,8 @@ BasePanel {
   horizontalGap: 0px;
 }
 
-.headerLink, .headerCommentLink, .headerShareLink {
+.headerLink {
   fontSize: 10px;
-}
-
-.headerCommentLink {
-  icon: Embed(source="../../rsrc/media/skins/headerbar/comment.png");
-  textDecoration: "underline";
-}
-
-.headerShareLink {
-  icon: Embed(source="../../rsrc/media/skins/headerbar/share.png");
-  textDecoration: "underline";
 }
 
 .editButton {

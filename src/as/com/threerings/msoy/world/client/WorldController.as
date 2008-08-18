@@ -459,6 +459,25 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the VIEW_COMMENT_PAGE command.
+     */
+    public function handleViewCommentPage () :void
+    {
+        const sceneId :int = getCurrentSceneId();
+        if (sceneId != 0) {
+            handleViewRoom(sceneId);
+            return;
+        }
+        const gameId :int = getCurrentGameId();
+        if (gameId != 0) {
+            handleViewGameComments(gameId);
+            return;
+        }
+
+        log.warning("Unable to comment.");
+    }
+
+    /**
      * Handles the VIEW_FULL_VERSION command, used in embedded clients.
      */
     public function handleViewFullVersion () :void
@@ -1226,9 +1245,6 @@ public class WorldController extends MsoyController
                 } else {
                     headerBar.setOwnerLink("");
                 }
-                if (!_wctx.getMsoyClient().isEmbedded()) {
-                    headerBar.setCommentLink(handleViewRoom, model.sceneId);
-                }
                 headerBar.setInstructionsLink(null);
             }
 
@@ -1242,7 +1258,6 @@ public class WorldController extends MsoyController
             _wctx.getMsoyClient().setWindowTitle(cfg.name);
             headerBar.setLocationName(cfg.name);
             headerBar.setOwnerLink("");
-            headerBar.setCommentLink(handleViewGameComments, cfg.getGameId());
             headerBar.setInstructionsLink(handleViewGameInstructions, cfg.getGameId());
         }
     }

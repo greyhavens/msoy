@@ -42,6 +42,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.SkinnableImage;
 
 import com.threerings.msoy.world.client.WorldController;
@@ -233,6 +234,16 @@ public class ControlBar extends HBox
         _fullBtn.styleName = "controlBarButtonFull";
         _fullBtn.toolTip = Msgs.GENERAL.get("i.full") + " TODO: admin only for testing";
         _fullBtn.setCallback(handleFullScreen);
+
+        _commentBtn = new CommandButton(null, MsoyController.VIEW_COMMENT_PAGE);
+        _commentBtn.styleName = "controlBarButtonComment";
+        _commentBtn.toolTip = Msgs.GENERAL.get("i.comment");
+
+        _shareBtn = new CommandButton(null, FloatingPanel.createPopper(function () :ShareDialog {
+            return new ShareDialog(_ctx);
+        }));
+        _shareBtn.styleName = "controlBarButtonShare";
+        _shareBtn.toolTip = Msgs.GENERAL.get("i.share");
     }
 
     /**
@@ -297,6 +308,9 @@ public class ControlBar extends HBox
             addGroupChild(_fullBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
                 BUTTON_PRIORITY + 1);
         }
+
+        addGroupChild(_shareBtn, [ UI_BASE, UI_ROOM, UI_GAME ]);
+        addGroupChild(_commentBtn, [ UI_ROOM, UI_GAME ]);
 
         //addGroupChild(_partyBtn, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
     }
@@ -403,6 +417,12 @@ public class ControlBar extends HBox
 
     /** Handles full screening. */
     protected var _fullBtn :CommandButton;
+
+    /** Handles commenting on the current scene or game. */
+    protected var _commentBtn :CommandButton;
+
+    /** Handles bringing up a share dialog. */
+    protected var _shareBtn :CommandButton;
 
     /** A spacer to bump the UI bits over to the right if needed */
     protected var _leftSpacer :Spacer;

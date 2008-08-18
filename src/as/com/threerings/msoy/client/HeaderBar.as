@@ -110,15 +110,6 @@ public class HeaderBar extends HBox
         setCompVisible(_instructionsLink, (onClick != null));
     }
 
-    /**
-     * Shows or clears the comment link. Passing null for the onClick function will clear the link.
-     */
-    public function setCommentLink (onClick :Function, arg :Object = null) :void
-    {
-        _commentLink.setCallback(onClick, arg);
-        setCompVisible(_commentLink, (onClick != null));
-    }
-
     public function miniChanged () :void
     {
         if (_ctx.getTopPanel().isMinimized()) {
@@ -214,20 +205,6 @@ public class HeaderBar extends HBox
         setInstructionsLink(null);
         _extras.push(_instructionsLink);
 
-        _commentLink = new CommandLinkButton(Msgs.GENERAL.get("b.comment"));
-        _commentLink.styleName = "headerCommentLink";
-        controlBox.addChild(_commentLink);
-        setCommentLink(null);
-        _extras.push(_commentLink);
-
-        var shareLink :CommandLinkButton = new CommandLinkButton(Msgs.GENERAL.get("b.share"),
-            FloatingPanel.createPopper(function () :ShareDialog {
-                return new ShareDialog(_ctx);
-            }));
-        shareLink.styleName = "headerShareLink";
-        controlBox.addChild(shareLink);
-        _extras.push(shareLink);
-
         _spacer = new Spacer(this);
         addChild(_spacer);
 
@@ -274,8 +251,6 @@ public class HeaderBar extends HBox
     protected var _spacer :HBox;
 
     protected var _instructionsLink :CommandLinkButton;
-
-    protected var _commentLink :CommandLinkButton;
 
     protected var _visibles :Dictionary = new Dictionary(true);
 
