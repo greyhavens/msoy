@@ -654,3 +654,16 @@
   height: 30px;
   padding-right: 5px;
 }
+
+/* ------------------------------------
+   DISCUSSION THREADS - MESSAGES PANEL
+-------------------------------------*/
+
+.messagePanel .ToolBar {
+  float: right;
+}
+
+.messagePanel .ActionButtons {
+  float: right;
+  width: 75px;
+}

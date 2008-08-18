@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
@@ -210,6 +211,35 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         {
             _message = message;
             super.setMessage(message);
+            FlowPanel messageFooter = MsoyUI.createFlowPanel("MessageFooter");
+
+            FlowPanel actionButtons = MsoyUI.createFlowPanel("ActionButtons");
+            messageFooter.add(actionButtons);
+            if (_postReply.isEnabled()) {
+                actionButtons.add(makeInfoImage(
+                    _images.reply_post_quote(), _mmsgs.inlineQReply(), new ClickListener() {
+                        public void onClick (Widget sender) {
+                            _parent.postReply(_message, true);
+                        }
+                    }));
+                actionButtons.add(makeInfoImage(
+                    _images.reply_post(), _mmsgs.inlineReply(), new ClickListener() {
+                        public void onClick (Widget sender) {
+                            _parent.postReply(_message, false);
+                        }
+                    }));
+            }
+            // this my have already been done in SimpleMessagePanel; if so overwrite it
+            if (!_message.lastEdited.equals(_message.created)) {
+                messageFooter.add(new Label(
+                    _mmsgs.msgPostEditedOn(MsoyUI.formatDateTime(_message.lastEdited))));
+            }
+            getFlexCellFormatter().setRowSpan(0, 0, 3); // extend the photo cell
+            setWidget(2, 0, messageFooter);
+            getFlexCellFormatter().setStyleName(2, 0, "Posted");
+            getFlexCellFormatter().addStyleName(2, 0, "LeftPad");
+            getFlexCellFormatter().addStyleName(2, 0, "RightPad");
+            getFlexCellFormatter().addStyleName(2, 0, "BottomPad");
         }
 
         @Override // from MessagePanel
@@ -219,27 +249,16 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
             if (!CShell.isGuest() && CShell.getMemberId() != _message.poster.name.getMemberId()) {
                 String args = Args.compose("w", "m", ""+_message.poster.name.getMemberId());
-                info.add(makeInfoLabel(_mmsgs.inlineMail(),
-                                       Link.createListener(Pages.MAIL, args)));
+                info.add(makeInfoImage(
+                    _images.sendmail(), _mmsgs.inlineMail(),
+                    Link.createListener(Pages.MAIL, args)));
             }
 
-            if (_postReply.isEnabled()) {
-                info.add(makeInfoImage(_images.reply_post(),
-                                                _mmsgs.inlineReply(), new ClickListener() {
-                    public void onClick (Widget sender) {
-                        _parent.postReply(_message, false);
-                    }
-                }));
-                info.add(makeInfoImage(_images.reply_post_quote(),
-                                                _mmsgs.inlineQReply(), new ClickListener() {
-                    public void onClick (Widget sender) {
-                        _parent.postReply(_message, true);
-                    }
-                }));
-            }
+            FlowPanel toolBar = MsoyUI.createFlowPanel("ToolBar");
+            info.insert(toolBar, 0);
 
             if (CShell.getMemberId() == _message.poster.name.getMemberId()) {
-                info.add(makeInfoImage(_images.edit_post(),
+                toolBar.add(makeInfoImage(_images.edit_post(),
                                                 _mmsgs.inlineEdit(), new ClickListener() {
                     public void onClick (Widget sender) {
                         _parent.editPost(_message, new MsoyCallback<ForumMessage>() {
@@ -252,7 +271,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             }
 
             if (!CShell.isGuest() && CShell.getMemberId() != _message.poster.name.getMemberId()) {
-                info.add(makeInfoImage(_images.complain_post(), _mmsgs.inlineComplain(),
+                toolBar.add(makeInfoImage(_images.complain_post(), _mmsgs.inlineComplain(),
                     new ClickListener() {
                         public void onClick (Widget sender) {
                             new ForumMessageComplainPopup(_message).show();
@@ -262,7 +281,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
 
             // TODO: if whirled manager, also allow forum moderation
             if (CShell.getMemberId() == _message.poster.name.getMemberId() || CShell.isSupport()) {
-                info.add(makeInfoImage(_images.delete_post(),
+                toolBar.add(makeInfoImage(_images.delete_post(),
                                                 _mmsgs.inlineDelete(),
                                                 new PromptPopup(_mmsgs.confirmDelete(),
                                                                 deletePost(_message))));
@@ -271,7 +290,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             if (_message.issueId > 0) {
                 ClickListener viewClick = Link.createListener(
                     Pages.WHIRLEDS, Args.compose("i", _message.issueId));
-                info.add(makeInfoImage(_images.view_issue(),
+                toolBar.add(makeInfoImage(_images.view_issue(),
                                                 _mmsgs.inlineIssue(), viewClick));
 
             } else if (CShell.isSupport()) {
@@ -280,9 +299,9 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                         _parent.newIssue(_message);
                     }
                 };
-                info.add(makeInfoImage(_images.new_issue(),
+                toolBar.add(makeInfoImage(_images.new_issue(),
                                                 _mmsgs.inlineNewIssue(), newClick));
-                info.add(makeInfoImage(_images.assign_issue(), _mmsgs.inlineAssignIssue(),
+                toolBar.add(makeInfoImage(_images.assign_issue(), _mmsgs.inlineAssignIssue(),
                                        Link.createListener(
                                            Pages.WHIRLEDS, Args.compose(
                                                "assign", ""+_message.messageId, ""+_page))));

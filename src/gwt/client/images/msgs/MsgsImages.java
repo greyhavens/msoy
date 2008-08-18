@@ -37,4 +37,7 @@ public interface MsgsImages extends ImageBundle
 
     @Resource("complain_post.png")
     AbstractImagePrototype complain_post ();
+
+    @Resource("sendmail.png")
+    AbstractImagePrototype sendmail ();
 }

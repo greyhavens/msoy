@@ -35,17 +35,6 @@ public class WhirledDiscussionsPanel extends FlowPanel
     {
         setStyleName("WhirledDiscussionPanel");
         _detail = detail;
-//    }
-//
-//    @Override // from UIObject
-//    public void setVisible (boolean visible)
-//    {
-//
-//        super.setVisible(visible);
-//        if (!visible || _loaded || _detail == null) {
-//            return;
-//        }
-//        _loaded = true;
 
         FlowPanel rss = new FlowPanel();
         rss.setStyleName("RSS");
@@ -133,9 +122,6 @@ public class WhirledDiscussionsPanel extends FlowPanel
             add(replies);
         }
     }
-
-//    /** Remembers once data is loaded for the first time to prevent reloading */
-//    protected boolean _loaded = false;
 
     /** Infoes about the group we're in for constructing links etc */
     protected GroupDetail _detail;
