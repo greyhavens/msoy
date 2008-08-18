@@ -198,6 +198,9 @@ public class MemberRepository extends DepotRepository
                                     res[i]);
                     }
                 }
+
+                // normally these would be done in a finally block, but if this fails the whole
+                // server is shutting down, so let's save ourselves one level of indentation
                 JDBCUtil.close(stmt);
                 JDBCUtil.close(insertStmt);
                 JDBCUtil.close(updateStmt);
