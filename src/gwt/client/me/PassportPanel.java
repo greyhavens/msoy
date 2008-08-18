@@ -24,6 +24,7 @@ import client.shell.DynamicMessages;
 import client.ui.HeaderBox;
 import client.ui.Marquee;
 import client.ui.MsoyUI;
+import client.ui.TongueBox;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -46,6 +47,14 @@ public class PassportPanel extends VerticalPanel
         HeaderBox contents = new HeaderBox(null, _msgs.passportStampsTitle(data.stampOwner));
         contents.makeRoundBottom();
         add(contents);
+        contents.add(
+            new TongueBox(MsoyUI.createImage("/images/me/icon_social.png", null), "Mingle", null));
+        contents.add(
+            new TongueBox(MsoyUI.createImage("/images/me/icon_games.png", null), "Play", null));
+        contents.add(
+            new TongueBox(MsoyUI.createImage("/images/me/icon_shop.png", null), "Shop", null));
+        contents.add(
+            new TongueBox(MsoyUI.createImage("/images/me/icon_create.png", null), "Create", null));
    }
 
     protected static class NextPanel extends VerticalPanel

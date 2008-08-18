@@ -347,13 +347,20 @@ img, embed, applet, object {
 
 .tongueBox .Header .Base {
   background: url(/images/ui/tongue_base.png) #49A1E7 no-repeat left;
+  padding-left: 10px;
+  height: 28px;
+}
+
+.tongueBox .Header .Base, .tongueBox .Header .Base .BaseContents .BaseText {
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 16px;
   font-weight: bold;
   white-space: nowrap;
   color: white;
+}
+
+.tongueBox .Header .Base .BaseContents .BaseText {
   padding-left: 10px;
-  height: 28px;
 }
 
 .tongueBox .Header .Line {

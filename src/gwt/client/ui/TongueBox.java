@@ -47,10 +47,36 @@ public class TongueBox extends SmartTable
         }
     }
 
+    public TongueBox (Image icon, String title, Widget content)
+    {
+        this(); // not sure if zero argument constructor is automatically called
+        if (title != null || icon != null) {
+            setHeader(title, icon);
+        }
+        if (content != null) {
+            setContent(content);
+        }
+    }
+
     public void setHeader (String title)
     {
+        setHeader(title, null);
+    }
+
+    public void setHeader (String title, Image icon)
+    {
         SmartTable header = new SmartTable("Header", 0, 0);
-        header.setText(0, 0, title, 1, "Base");
+        if (title != null && icon == null) {
+            header.setText(0, 0, title, 1, "Base");
+        } else if (title == null && icon != null) {
+            header.setWidget(0, 0, icon, 1, "Base");
+        } else {
+            SmartTable base = new SmartTable("BaseContents", 0, 0);
+            base.setWidget(0, 0, icon);
+            base.setText(0, 1, title, 1, "BaseText");
+            header.setWidget(0, 0, base, 1, "Base");
+        }
+
         Image line = new Image("/images/ui/grey_line.png");
         line.setWidth("100%");
         line.setHeight("1px");

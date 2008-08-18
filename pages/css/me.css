@@ -243,7 +243,10 @@
   padding-top: 10px;
 }
 
-.passport .Contents {
+.passport .headerBox .Contents {
   width: 100%;
-  min-height: 50px;
+}
+
+.passport .headerBox .Contents .tongueBox {
+  padding-top: 10px;
 }
