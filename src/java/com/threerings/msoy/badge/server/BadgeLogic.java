@@ -153,8 +153,7 @@ public class BadgeLogic
      * method also checks that the member has had their initial set of InProgressBadgeRecords
      * created, and creates them if they haven't.
      */
-    public List<InProgressBadge> getInProgressBadges (final int memberId,
-        final boolean dobjNeedsUpdate)
+    public List<InProgressBadge> getInProgressBadges (int memberId, boolean dobjNeedsUpdate)
         throws PersistenceException
     {
         if (!DeploymentConfig.devDeployment) {
@@ -162,14 +161,16 @@ public class BadgeLogic
         }
 
         // Load up our badge records
-        final List<InProgressBadgeRecord> badgeRecords = _badgeRepo.loadInProgressBadges(memberId);
+        List<InProgressBadgeRecord> badgeRecords = _badgeRepo.loadInProgressBadges(memberId);
 
+        Iterable<InProgressBadge> badges =
+            Iterables.transform(badgeRecords, InProgressBadgeRecord.TO_BADGE);
         // fake up an instance of our hidden test badge, if it's not in the list of in-progress
         // badges, we need to create our initial batch.
         InProgressBadge testBadge = new InProgressBadge(BadgeType.HIDDEN.getCode(), 0, null, 0, 0);
-        final Iterable<InProgressBadge> badges = (!badgeRecords.contains(testBadge) ?
-            createNewInProgressBadges(memberId, dobjNeedsUpdate) :
-            Iterables.transform(badgeRecords, InProgressBadgeRecord.TO_BADGE));
+        if (!badgeRecords.contains(testBadge)) {
+            badges = Iterables.concat(badges, createNewInProgressBadges(memberId, dobjNeedsUpdate));
+        }
 
         // Return the badges we just loaded or created, minus the "HIDDEN" marker badge.
         return Lists.newArrayList(Iterables.filter(badges, BadgeType.IS_VISIBLE_BADGE));
