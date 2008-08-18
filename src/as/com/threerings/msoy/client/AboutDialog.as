@@ -17,6 +17,8 @@ public class AboutDialog extends FloatingPanel
     public function AboutDialog (ctx :MsoyContext)
     {
         super(ctx, Msgs.GENERAL.get("t.about"));
+        showCloseButton = true;
+        styleName = "sexyWindow";
         open(false);
     }
 
