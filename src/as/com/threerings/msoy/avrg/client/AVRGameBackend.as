@@ -20,6 +20,7 @@ import com.threerings.util.StringUtil;
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.PropertySetEvent;
 import com.whirled.game.data.PropertySetListener;
+import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.InvocationAdapter;
@@ -748,11 +749,16 @@ public class AVRGameBackend extends ControlBackend
     protected var _roomObj :RoomObject;
 
     protected var _playerListener :MessageAdapter = new MessageAdapter(
-        // TODO: Listen for and turn USER_MESSAGES into messageReceived() calls
         function (event :MessageEvent) :void {
             var name :String = event.getName();
             if (name == AVRGameObject.COINS_AWARDED_MESSAGE) {
                 callUserCode("coinsAwarded_v1", int(event.getArgs()[0]));
+            } else if (WhirledPlayerObject.isFromGame(name, _gameObj.getOid())) {
+                var args :Array = event.getArgs();
+                var mname :String = (args[0] as String);
+                var data :Object = ObjectMarshaller.decode(args[1]);
+                var senderId :int = (args[2] as int);
+                callUserCode("game_messageReceived_v1", mname, data, senderId);
             }
     });
 
