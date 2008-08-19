@@ -179,7 +179,7 @@ public class GameRecord extends ItemRecord
         new ColumnExp(GameRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 15;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 16;
 
     /** This game's genre. */
     public byte genre;
@@ -213,7 +213,6 @@ public class GameRecord extends ItemRecord
     public byte serverMimeType;
 
     /** Group associated with this game, required */
-    @Column(defaultValue="1")
     public int groupId;
 
     /**
