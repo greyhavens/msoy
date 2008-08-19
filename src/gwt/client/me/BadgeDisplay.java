@@ -8,7 +8,9 @@ import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import com.threerings.msoy.badge.data.all.Badge;
@@ -89,8 +91,87 @@ class BadgeDisplay extends VerticalPanel
     {
         public ProgressBar (float progress)
         {
-            // TEMP
-            add(MsoyUI.createLabel("progress: " + progress, null));
+            setStyleName("ProgressBar");
+            setHeight(PROGRESS_HEIGHT + "px");
+
+            if (progress <= 0) {
+                addCap(Section.LEFT, Type.EMPTY);
+                addFill(Type.EMPTY, PROGRESS_WIDTH - END_CAP_WIDTH * 2);
+                addCap(Section.RIGHT, Type.EMPTY);
+                return;
+            }
+
+            addCap(Section.LEFT, Type.FULL);
+            int fullWidth = Math.max(0, (int)(PROGRESS_WIDTH * (progress - END_CAP_PROGRESS * 2)));
+            if (fullWidth > 0) {
+                addFill(Type.FULL, fullWidth);
+            }
+            transitionToEnd(PROGRESS_WIDTH - fullWidth);
+        }
+
+        protected void addCap (Section section, Type type)
+        {
+            add(MsoyUI.createImage(section.getPath(type), null));
+        }
+
+        protected void addFill (Type type, int width)
+        {
+            SimplePanel fillPanel = new SimplePanel();
+            fillPanel.setStyleName("Fill");
+            fillPanel.setHeight(PROGRESS_HEIGHT + "px");
+            fillPanel.setWidth(width + "px");
+            DOM.setStyleAttribute(fillPanel.getElement(),
+                "backgroundImage", "url(" + Section.FILL.getPath(type) + ")");
+            add(fillPanel);
+        }
+
+        protected void transitionToEnd(int remainingWidth)
+        {
+            // if we only have room for one cap, add it and be done
+            if (remainingWidth <= END_CAP_WIDTH) {
+                addCap(Section.RIGHT, Type.FULL);
+                return;
+            }
+
+            add(MsoyUI.createImage(Type.TRANSITION.getBasePath(), null));
+            // if we've only got room for two caps, add the second and be done.
+            if (remainingWidth <= END_CAP_WIDTH * 2) {
+                addCap(Section.RIGHT, Type.EMPTY);
+                return;
+            }
+
+            addFill(Type.EMPTY, remainingWidth - END_CAP_WIDTH * 2);
+            addCap(Section.RIGHT, Type.EMPTY);
+        }
+
+        protected static enum Section {
+            LEFT("left.png"), FILL("tile.png"), RIGHT("right.png");
+
+            public String getPath (Type type) {
+                return type.getBasePath() + _path;
+            }
+
+            Section (String path) {
+                _path = path;
+            }
+
+            protected String _path;
+        }
+
+        protected static enum Type {
+            EMPTY("empty_"), TRANSITION("transition.png"), FULL("");
+
+            public String getBasePath () {
+                return BASE_PATH + _path;
+            }
+
+            Type (String path) {
+                _path = path;
+            }
+
+            protected String _path;
+
+            protected static final String BASE_PATH = "/images/me/passport_progress_";
         }
     }
 
@@ -98,4 +179,9 @@ class BadgeDisplay extends VerticalPanel
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+
+    protected static final int PROGRESS_WIDTH = 90;
+    protected static final int END_CAP_WIDTH = 9;
+    protected static final int PROGRESS_HEIGHT = 17;
+    protected static final float END_CAP_PROGRESS = END_CAP_WIDTH / (float)PROGRESS_WIDTH;
 }

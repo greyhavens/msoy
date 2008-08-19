@@ -268,3 +268,7 @@
   color: #4a7595;
   font-size: 12px;
 }
+
+.badgeDisplay .ProgressBar .Fill {
+  background-repeat: repeat;
+}
