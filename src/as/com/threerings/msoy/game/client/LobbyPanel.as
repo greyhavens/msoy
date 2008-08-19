@@ -14,7 +14,9 @@ import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.core.UIComponent;
 import mx.controls.Label;
+import mx.controls.Spacer;
 import mx.controls.Text;
+import mx.controls.TextInput;
 
 import com.threerings.util.Log;
 
@@ -35,9 +37,11 @@ import com.threerings.parlor.data.TableConfig;
 import com.whirled.game.client.WhirledGameConfigurator;
 import com.threerings.io.TypedArray;
 
+import com.threerings.msoy.ui.CopyableText;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -283,7 +287,33 @@ public class LobbyPanel extends FloatingPanel
     {
         if (_miniTable != null) { // sanity check
             this.title = Msgs.GAME.get("t.mini_table", getGame().name);
-            setContents(_miniTable);
+
+            var content :VBox = new VBox();
+            var extras :VBox = new VBox();
+
+            extras.styleName = "configBox";
+            extras.percentWidth = 100;
+            extras.addChild(FlexUtil.createLabel(Msgs.GAME.get("l.invite_link")));
+
+            // Put a copyable textbox, properly sized, aligned to the right
+            var copy :HBox = new HBox();
+            copy.percentWidth = 100;
+
+            var input :TextInput = new TextInput();
+            input.styleName = "sexyTextInput";
+            input.text = DeploymentConfig.serverURL + "#world-game_l_" + getGame().gameId;
+
+            var spacer :Spacer = new Spacer();
+            spacer.percentWidth = 100;
+
+            copy.addChild(spacer);
+            copy.addChild(new CopyableText(input));
+            input.percentWidth = NaN; // Don't go 100% on this one
+            extras.addChild(copy);
+
+            content.addChild(_miniTable);
+            content.addChild(extras);
+            setContents(content);
         }
     }
 
