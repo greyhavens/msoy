@@ -9,7 +9,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.Button;
+
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -19,8 +19,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
-import com.threerings.msoy.game.gwt.GameInfo;
+
 import com.threerings.msoy.item.data.all.Game;
+
+import com.threerings.msoy.game.gwt.GameInfo;
 
 import client.shell.Args;
 import client.shell.DynamicMessages;
@@ -76,8 +78,6 @@ public class GameHeaderPanel extends FlowPanel
         };
         searchBox.addKeyboardListener(new EnterClickAdapter(searchListener));
         search.add(searchBox);
-        Button searchGo = new Button("", searchListener);
-        searchGo.setStyleName("GoButton");
         search.add(MsoyUI.createImageButton("GoButton", searchListener));
     }
 
