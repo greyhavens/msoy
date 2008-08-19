@@ -177,7 +177,7 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Creators cannot be guests.");
         Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0),
             "item is invalid: %s", item.toString());
-        Preconditions.checkArgument(numBars > 0, "bars is invalid: %d", numBars);
+        Preconditions.checkArgument(numBars >= 0, "bars is invalid: %d", numBars);
 
         // TODO: Use exchange rate to calculate coins.
         _securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.BARS, 0,
@@ -192,7 +192,7 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Creators cannot be guests.");
         Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0),
             "item is invalid: %s", item.toString());
-        Preconditions.checkArgument(numCoins > 0, "numCoins is invalid: %d", numCoins);
+        Preconditions.checkArgument(numCoins >= 0, "numCoins is invalid: %d", numCoins);
 
         // TODO: Use exchange rate to calculate bars.
         _securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.COINS, numCoins,
