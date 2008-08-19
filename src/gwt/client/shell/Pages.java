@@ -11,7 +11,8 @@ public enum Pages
     ACCOUNT(Frame.Tabs.ME),
     ADMINZ(Frame.Tabs.ME),
     CREATE(null), // TODO: Frame.Tabs.CREATE
-    GAMES(Frame.Tabs.GAMES), 
+    FAVORITES(Frame.Tabs.SHOP),
+    GAMES(Frame.Tabs.GAMES),
     HELP(Frame.Tabs.HELP),
     LANDING(null),
     MAIL(Frame.Tabs.ME),
@@ -28,7 +29,7 @@ public enum Pages
     public String getPath () {
         return toString().toLowerCase();
     }
-    
+
     public Frame.Tabs getTab () {
         return _tab;
     }

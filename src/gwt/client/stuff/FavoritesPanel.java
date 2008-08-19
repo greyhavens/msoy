@@ -61,10 +61,10 @@ public class FavoritesPanel extends SimplePanel
             // if the member Id has changed, then we have some reloading to do
             setMemberId(memberId);
 
-        } else if (_favoritesPanel != null) {
+        } else if (_favoritesGridPanel != null) {
             // otherwise just update the current contents
-            _favoritesPanel.setPrefixArgs(_prefixArgs);
-            _favoritesPanel.onHistoryChanged(allPageArgs);
+            _favoritesGridPanel.setPrefixArgs(_prefixArgs);
+            _favoritesGridPanel.onHistoryChanged(allPageArgs);
         }
     }
 
@@ -86,14 +86,16 @@ public class FavoritesPanel extends SimplePanel
      */
     public void setItemType (byte itemType)
     {
-        _itemType = itemType;
-        // TODO store the item type in a single location. For example, have the favorites grid pull
-        // the current type from the model.
-        if (_favoriteModel != null) {
-            _favoriteModel.setItemType(itemType);
-        }
-        if (_favorites != null) {
-            _favorites.setItemType(itemType);
+        if (itemType != _itemType) {
+            _itemType = itemType;
+            // TODO store the item type in a single location. For example, have the favorites grid
+            // pull the current type from the model.
+            if (_favoriteModel != null) {
+                _favoriteModel.setItemType(itemType);
+            }
+            if (_favorites != null) {
+                _favorites.setItemType(itemType);
+            }
         }
     }
 
@@ -110,19 +112,19 @@ public class FavoritesPanel extends SimplePanel
         _favorites.setDisplayNavigation(_displayNavigation);
         _favorites.setModel(_favoriteModel, 0);
 
-        _favoritesPanel = new ItemGridPanel(_parentPage, _favorites, _favoriteModel);
-        _favoritesPanel.setPrefixArgs(_prefixArgs);
+        _favoritesGridPanel = new ItemGridPanel(_parentPage, _favorites, _favoriteModel);
+        _favoritesGridPanel.setPrefixArgs(_prefixArgs);
         if (_lastArgs != null) {
-            _favoritesPanel.onHistoryChanged(_lastArgs);
+            _favoritesGridPanel.onHistoryChanged(_lastArgs);
         }
-        setWidget(_favoritesPanel);
+        setWidget(_favoritesGridPanel);
     }
 
     protected ItemListDataModel _favoriteModel;
 
     protected ItemGrid _favorites;
 
-    protected ItemGridPanel _favoritesPanel;
+    protected ItemGridPanel _favoritesGridPanel;
 
     /**
      * The most recent args passed to onHistoryChanged(). This is used in the case that the

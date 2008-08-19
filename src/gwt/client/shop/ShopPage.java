@@ -14,7 +14,6 @@ import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.Pages;
-import client.stuff.FavoritesPanel;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -42,13 +41,14 @@ public class ShopPage extends Page
         } else if (action.equals(FAVORITES)) {
             // get the member id from args, if no member id, use the current user
             int memberId = args.get(1, CShop.getMemberId());
-            String[] prefixArgs = new String[]{FAVORITES, String.valueOf(memberId)};
-            // TODO get member's name (passed from the profile page?) from id and display is in the
-            // title
+            byte itemType = (byte) args.get(2, (int) Item.NOT_A_TYPE);
+            String[] prefixArgs = new String[] { FAVORITES, String.valueOf(memberId) };
+            // TODO get member's name (passed from the profile page? loaded from service?) from id
+            // and display it in the page title
             String title = (memberId == CShop.getMemberId()) ? CShop.msgs.myFavoritesTitle()
                 : CShop.msgs.favoritesTitle();
             setContent(title, _favorites);
-            _favorites.update(memberId, prefixArgs, args);
+            _favorites.update(memberId, itemType, prefixArgs, args);
         } else {
             byte type = (byte)args.get(0, Item.NOT_A_TYPE);
             if (type == Item.NOT_A_TYPE) {
@@ -82,12 +82,12 @@ public class ShopPage extends Page
     {
         super.onPageLoad();
 
-        _favorites = new FavoritesPanel(Pages.SHOP, 3, 5, true);
+        _favorites = new FavesPanel();
     }
 
     protected CatalogModels _models = new CatalogModels();
     protected CatalogPanel _catalog = new CatalogPanel(_models);
-    protected FavoritesPanel _favorites;
+    protected FavesPanel _favorites;
 
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
