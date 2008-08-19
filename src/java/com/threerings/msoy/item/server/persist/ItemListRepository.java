@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -103,10 +104,12 @@ public class ItemListRepository extends DepotRepository
         if (listType == Item.NOT_A_TYPE) {
             where = new Where(ItemListElementRecord.LIST_ID_C, listId);
         } else {
-            where = new Where(ItemListElementRecord.LIST_ID_C, listId, ItemListElementRecord.TYPE_C, listType);
+            where = new Where(ItemListElementRecord.LIST_ID_C, listId,
+                              ItemListElementRecord.TYPE_C, listType);
         }
 
-        CountRecord size = load(CountRecord.class, new FromOverride(ItemListElementRecord.class), where);
+        CountRecord size = load(CountRecord.class,
+                                new FromOverride(ItemListElementRecord.class), where);
         return size.count;
     }
 
@@ -125,7 +128,8 @@ public class ItemListRepository extends DepotRepository
     public List<ItemListInfoRecord> loadInfos (int memberId)
         throws PersistenceException
     {
-        return findAll(ItemListInfoRecord.class, new Where(ItemListInfoRecord.MEMBER_ID_C, memberId));
+        return findAll(ItemListInfoRecord.class,
+                       new Where(ItemListInfoRecord.MEMBER_ID_C, memberId));
     }
 
     /**
@@ -149,8 +153,8 @@ public class ItemListRepository extends DepotRepository
         List<ItemListElementRecord> list = findAll(ItemListElementRecord.class,
             new Where(ItemListElementRecord.LIST_ID_C, listId),
             OrderBy.ascending(ItemListElementRecord.SEQUENCE_C));
-
-        return toItemIdents(list);
+        return Lists.transform(list, ItemListElementRecord.TO_IDENT).toArray(
+            new ItemIdent[list.size()]);
     }
 
     /**
@@ -164,7 +168,7 @@ public class ItemListRepository extends DepotRepository
         throws PersistenceException
     {
         Where where;
-        if(query.itemType == Item.NOT_A_TYPE) {
+        if (query.itemType == Item.NOT_A_TYPE) {
             where = new Where(ItemListElementRecord.LIST_ID_C, query.listId);
         } else {
             where = new Where(ItemListElementRecord.LIST_ID_C, query.listId,
@@ -172,7 +176,7 @@ public class ItemListRepository extends DepotRepository
         }
 
         OrderBy orderBy;
-        if(query.descending) {
+        if (query.descending) {
             orderBy = OrderBy.descending(ItemListElementRecord.SEQUENCE_C);
         } else {
             orderBy = OrderBy.ascending(ItemListElementRecord.SEQUENCE_C);
@@ -186,7 +190,8 @@ public class ItemListRepository extends DepotRepository
             results = findAll(ItemListElementRecord.class, where, orderBy);
         }
 
-        return toItemIdents(results);
+        return Lists.transform(results, ItemListElementRecord.TO_IDENT).toArray(
+            new ItemIdent[results.size()]);
     }
 
     /**
@@ -259,60 +264,59 @@ public class ItemListRepository extends DepotRepository
      * @param listId identifies the list.
      * @param item identifies the item to move.
      * @param toIndex the location to which to move the item.
-     * @throws PersistenceException if the item is not already an element of these list, or if
-     *    any other database nastiness occurs.
+     * @throws PersistenceException if the item is not already an element of these list, or if any
+     *    other database nastiness occurs.
      */
     public void moveItem (int listId, ItemIdent item, short toIndex)
         throws PersistenceException
     {
         // get the item's current location in the list
         ItemListElementRecord record = loadElement(listId, item);
-
-        if(record == null) {
-            throw new PersistenceException("Could not move item ["+item+
-                "] it is not an element of list ["+listId+"]");
+        if (record == null) {
+            throw new PersistenceException(
+                "Could not move item [" + item + "]. It is not an element of list [" + listId + "]");
         }
 
-        short currentIndex = record.sequence;
-
         // check whether the item is already in the right place
+        short currentIndex = record.sequence;
         if (currentIndex != toIndex) {
-
-            // shift all of the records between the current position and
-            // the new location
+            // shift all of the records between the current position and the new location
             shiftItems(listId, currentIndex, toIndex);
 
             // move the record
             record.sequence = toIndex;
             update(record);
-
         }
     }
 
     /**
      * Checks to see if the given list contains the given item.
      */
-    public boolean contains(int listId, ItemIdent item)
+    public boolean contains (int listId, ItemIdent item)
         throws PersistenceException
     {
         return loadElement(listId, item) != null;
     }
 
     /**
-     * Shifts the location of all items in the list from the given index (inclusive) to the end
-     * of the list over one space to the right.
+     * Shifts the location of all items in the list from the given index (inclusive) to the end of
+     * the list over one space to the right.
      *
      * @param listId identifies the list.
      * @param fromIndex shift everything from this location on to the right.
      */
-    protected void shiftItemsRight(int listId, final short fromIndex)
+    protected void shiftItemsRight (int listId, final short fromIndex)
         throws PersistenceException
     {
-        Conditionals.GreaterThanEquals after = new Conditionals.GreaterThanEquals(ItemListElementRecord.SEQUENCE_C, fromIndex);
+        Conditionals.GreaterThanEquals after =
+            new Conditionals.GreaterThanEquals(ItemListElementRecord.SEQUENCE_C, fromIndex);
         Map<String, SQLExpression> shift = new HashMap<String, SQLExpression>();
-        shift.put(ItemListElementRecord.SEQUENCE, new Arithmetic.Add(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
+        shift.put(ItemListElementRecord.SEQUENCE,
+                  new Arithmetic.Add(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
 
-        CacheInvalidator invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(ItemListElementRecord.class) {
+        CacheInvalidator invalidator =
+            new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
+                ItemListElementRecord.class) {
             public boolean testForEviction (Serializable key, ItemListElementRecord record) {
                 return (record != null) && record.sequence >= fromIndex;
             }
@@ -324,17 +328,20 @@ public class ItemListRepository extends DepotRepository
     /**
      * Shifts all of the items that come after the given index to the left.
      *
-     * @param listId identifies the list.
      * @param fromIndex the starting point from which to shift.
      */
-    protected void shiftItemsLeft(int listId, final short fromIndex)
+    protected void shiftItemsLeft (int listId, final short fromIndex)
         throws PersistenceException
     {
-        Conditionals.GreaterThan after = new Conditionals.GreaterThan(ItemListElementRecord.SEQUENCE_C, fromIndex);
+        Conditionals.GreaterThan after =
+            new Conditionals.GreaterThan(ItemListElementRecord.SEQUENCE_C, fromIndex);
         Map<String, SQLExpression> shift = new HashMap<String, SQLExpression>();
-        shift.put(ItemListElementRecord.SEQUENCE, new Arithmetic.Sub(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
+        shift.put(ItemListElementRecord.SEQUENCE,
+                  new Arithmetic.Sub(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
 
-        CacheInvalidator invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(ItemListElementRecord.class) {
+        CacheInvalidator invalidator =
+            new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
+                ItemListElementRecord.class) {
             public boolean testForEviction (Serializable key, ItemListElementRecord record) {
                 return (record != null) && record.sequence > fromIndex;
             }
@@ -344,14 +351,13 @@ public class ItemListRepository extends DepotRepository
     }
 
     /**
-     * This is used when moving a list element to shift any affected items
-     * between the items old location and its new location.
+     * This is used when moving a list element to shift any affected items between the items old
+     * location and its new location.
      *
-     * @param listId identifies the list.
      * @param fromIndex the item's old location in the list.
      * @param toIndex the item's new location in the list.
      */
-    protected void shiftItems(int listId, final short fromIndex, final short toIndex)
+    protected void shiftItems (int listId, final short fromIndex, final short toIndex)
         throws PersistenceException
     {
         CacheInvalidator invalidator;
@@ -359,35 +365,42 @@ public class ItemListRepository extends DepotRepository
         Map<String, SQLExpression> shift = new HashMap<String, SQLExpression>();
 
         if (fromIndex < toIndex) {
-
             // shift all affected items to the left
-            Conditionals.GreaterThan min = new Conditionals.GreaterThan(ItemListElementRecord.SEQUENCE_C, fromIndex);
-            Conditionals.LessThanEquals max = new Conditionals.LessThanEquals(ItemListElementRecord.SEQUENCE_C, toIndex);
+            Conditionals.GreaterThan min =
+                new Conditionals.GreaterThan(ItemListElementRecord.SEQUENCE_C, fromIndex);
+            Conditionals.LessThanEquals max =
+                new Conditionals.LessThanEquals(ItemListElementRecord.SEQUENCE_C, toIndex);
             range = new Logic.And(min, max);
 
-            shift.put(ItemListElementRecord.SEQUENCE, new Arithmetic.Sub(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
+            shift.put(ItemListElementRecord.SEQUENCE,
+                      new Arithmetic.Sub(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
 
-            invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(ItemListElementRecord.class) {
+            invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
+                ItemListElementRecord.class) {
                 public boolean testForEviction (Serializable key, ItemListElementRecord record) {
-                    return (record != null) && record.sequence > fromIndex && record.sequence <= toIndex;
+                    return (record != null) && record.sequence > fromIndex &&
+                        record.sequence <= toIndex;
                 }
             };
 
         } else {
-
             // shift affected items to the right (increment by one)
-            Conditionals.GreaterThanEquals min = new Conditionals.GreaterThanEquals(ItemListElementRecord.SEQUENCE_C, toIndex);
-            Conditionals.LessThan max = new Conditionals.LessThan(ItemListElementRecord.SEQUENCE_C, fromIndex);
+            Conditionals.GreaterThanEquals min =
+                new Conditionals.GreaterThanEquals(ItemListElementRecord.SEQUENCE_C, toIndex);
+            Conditionals.LessThan max =
+                new Conditionals.LessThan(ItemListElementRecord.SEQUENCE_C, fromIndex);
             range = new Logic.And(min, max);
 
-            shift.put(ItemListElementRecord.SEQUENCE, new Arithmetic.Add(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
+            shift.put(ItemListElementRecord.SEQUENCE,
+                      new Arithmetic.Add(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
 
-            invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(ItemListElementRecord.class) {
+            invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
+                ItemListElementRecord.class) {
                 public boolean testForEviction (Serializable key, ItemListElementRecord record) {
-                    return (record != null) && record.sequence >= toIndex && record.sequence < fromIndex;
+                    return (record != null) && record.sequence >= toIndex &&
+                        record.sequence < fromIndex;
                 }
             };
-
         }
 
         // update all of the affected items
@@ -411,19 +424,4 @@ public class ItemListRepository extends DepotRepository
         classes.add(ItemListElementRecord.class);
         classes.add(ItemListInfoRecord.class);
     }
-
-    /**
-     * Utility method to convert a list of records into ItemIdents.
-     */
-    protected static ItemIdent[] toItemIdents (List<ItemListElementRecord> list)
-    {
-        int size = list.size();
-        ItemIdent[] idents = new ItemIdent[size];
-        for (int ii = 0; ii < size; ii++) {
-            idents[ii] = list.get(ii).toItemIdent();
-        }
-
-        return idents;
-    }
-
 }

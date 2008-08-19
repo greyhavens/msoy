@@ -3,25 +3,24 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.google.common.base.Function;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
-import com.threerings.io.Streamable;
-
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Represents an element of a list of items.
- * 
+ *
  * @author mjensen
  */
 @Entity
 public class ItemListElementRecord extends PersistentRecord
-    implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #listId} field. */
@@ -52,10 +51,18 @@ public class ItemListElementRecord extends PersistentRecord
     public static final ColumnExp SEQUENCE_C =
         new ColumnExp(ItemListElementRecord.class, SEQUENCE);
     // AUTO-GENERATED: FIELDS END
- 
+
     /** The schema version of this record. */
     public static final int SCHEMA_VERSION = 2;
-    
+
+    /** Transforms a persistent record to an {@link ItemIdent}. */
+    public static Function<ItemListElementRecord, ItemIdent> TO_IDENT =
+        new Function<ItemListElementRecord, ItemIdent>() {
+        public ItemIdent apply (ItemListElementRecord record) {
+            return record.toItemIdent();
+        }
+    };
+
     /** The identifier for this list to which we belong. */
     @Id
     public int listId;
