@@ -5,6 +5,8 @@ package client.ui;
 
 import java.util.Date;
 
+import org.gwtwidgets.client.util.SimpleDateFormat;
+
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.History;
@@ -22,8 +24,6 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.WidgetUtil;

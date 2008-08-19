@@ -9,6 +9,7 @@ import java.util.MissingResourceException;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -17,8 +18,12 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 
+import com.threerings.msoy.item.data.all.Item;
+
 import client.shell.DynamicMessages;
+import client.shell.Pages;
 import client.ui.MsoyUI;
+import client.util.Link;
 
 class BadgeDisplay extends VerticalPanel
 {
@@ -84,7 +89,56 @@ class BadgeDisplay extends VerticalPanel
     protected void addInProgressBits (InProgressBadge badge)
     {
         _nameColumn.add(MsoyUI.createLabel("" + badge.coinReward, null));
-        add(new ProgressBar(badge.progress));
+        HorizontalPanel progressRow = new HorizontalPanel();
+        progressRow.add(new ProgressBar(badge.progress));
+        ClickListener goListener = getGoListener(badge);
+        if (goListener != null) {
+            progressRow.add(MsoyUI.createImageButton("GoButton", goListener));
+        }
+        add(progressRow);
+    }
+
+    protected ClickListener getGoListener (Badge badge)
+    {
+        // TODO: this method of determining where to go for each badge is disappointing... this
+        // is the only piece of badge UI code that needs changing when a new badge is added.
+        // It would be great if this were done more dynamically...
+
+        switch (badge.badgeCode) {
+        // friendly
+        case -990018741: return Link.createListener(Pages.WHIRLEDS, "");
+        // magnet
+        case -94886133: return Link.createListener(Pages.PEOPLE, "invites");
+        // fixture
+        case 983613172: return Link.createListener(Pages.WHIRLEDS, "");
+
+        // gamer
+        case 2138102039: // same as below
+        // contender
+        case -425662117: // same as below
+        // collector
+        case -1978012765: return Link.createListener(Pages.GAMES, "");
+
+        // character designer
+        case 1852244093: return Link.createListener(Pages.STUFF, "" + Item.AVATAR);
+        // furniture builder
+        case -255838771: return Link.createListener(Pages.STUFF, "" + Item.FURNITURE);
+        // landscape painter
+        case 292647383: return Link.createListener(Pages.STUFF, "" + Item.DECOR);
+        // professional
+        case 646396602: // same as below
+        // artisan
+        case 52819145: return null; // for now, don't display the go button.
+
+        // judge
+        case -424738396: // same as below
+        // outspoken
+        case 1017487473: // same as belw
+        // shopper
+        case 421773639: return Link.createListener(Pages.SHOP, "");
+        }
+
+        return null;
     }
 
     protected static class ProgressBar extends HorizontalPanel
