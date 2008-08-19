@@ -46,14 +46,6 @@ public class ProfilePanel extends VerticalPanel
                 add(_blurbs[ii]);
             }
         }
-
-        // TODO hiding favorites blurb for now
-        if (CPeople.isAdmin()) {
-            FavoritesBlurb blurb = new FavoritesBlurb();
-            blurb.init(pdata);
-            add(blurb);
-        }
-
     }
 
     /** The id of the member who's profile we're displaying. */
@@ -62,7 +54,7 @@ public class ProfilePanel extends VerticalPanel
     /** The blurbs we'll display on our profile. */
     protected Blurb[] _blurbs = {
         new ProfileBlurb(), new InterestsBlurb(), new FriendsBlurb(),
-        new TrophiesBlurb(), new RatingsBlurb(), new GroupsBlurb(), // TODO new FavoritesBlurb(),
+        new TrophiesBlurb(), new RatingsBlurb(), new GroupsBlurb(), new FavoritesBlurb(),
         new FeedBlurb(), new CommentsBlurb()
     };
 
