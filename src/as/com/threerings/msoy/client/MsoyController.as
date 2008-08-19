@@ -130,6 +130,20 @@ public class MsoyController extends Controller
     /** Command to share the current scene with email contacts. */
     public static const EMAIL_SHARE :String = "EmailShare";
 
+    // NOTE:
+    // Any commands defined in this class should be handled in this class.
+    // Currently, this is not the case. Some commands are here without even an abstract or
+    // empty method to handle them. Traditionally this would be bad, but since we currently
+    // only have one subclass implementation, we're just going to take a shortcut and say
+    // that any command defined but not handled here is "abstract". The command dispatch
+    // system will log an error whenever a command is unhandled, so it should not be too hard
+    // for someone to track down the issue. However, once we have subclasses other than
+    // WorldController, we will want to ensure that only commands that are global are here
+    // and probably also that we at least define an abstract (as best we can in actionscript)
+    // method to handle the command, so that it's easier for people to see what they need
+    // to implement in the subclasses.
+    //
+
     /**
      * Creates and initializes the controller.
      */
