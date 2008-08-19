@@ -43,8 +43,7 @@ public class MediaUtil
      * must be in the same ratio as the ratio between {@link MediaDesc#THUMBNAIL_WIDTH} and {@link
      * MediaDesc#THUMBNAIL_HEIGHT}.
      */
-    public static Widget createMediaView (
-        MediaDesc desc, int width, int height, ClickListener click)
+    public static Widget createMediaView (MediaDesc desc, int width, int height, ClickListener click)
     {
         String path = desc.getMediaPath();
         Widget view;
@@ -96,7 +95,7 @@ public class MediaUtil
 
         return view;
     }
-    
+
     // TODO: create a proper default image for media we don't know how to display
     protected static final MediaDesc UNKNOWN_DESC = new StaticMediaDesc(
         MediaDesc.IMAGE_PNG, "document", "thumb", MediaDesc.HALF_VERTICALLY_CONSTRAINED);
