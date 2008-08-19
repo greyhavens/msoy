@@ -235,7 +235,6 @@
 
 .passport .NextPanel .NextBadgesPanel .BadgeDivider {
   padding-top: 5px;
-  padding-right: 10px;
 }
 
 .passport .headerBox {
@@ -256,25 +255,68 @@
    BADGE DISPLAYS ANYWHERE
 -------------------------------------*/
 .badgeDisplay {
-  width: 137px;
-  height: 142px;
+  position: relative;
+  width: 156px;
+  height: 141px;
+}
+
+.badgeDisplay .StampImage {
+  position: absolute;
+  left: 7px;
+  top: 7px;
+  margin-left: 0;
 }
 
 .badgeDisplay .StampName {
+  position: absolute;
+  left: 90px;
+  top: 20px;
   width: 57px;
   color: #1c4c74;
   font-weight: bold;
   font-size: 12px;
+  text-align: left;
+  line-height: 12px;
 }
 
-.badgeDisplay .StampDescription {
-  width: 137px;
-  color: #4a7595;
+.badgeDisplay .CoinReward {
+  position: absolute;
+  left: 90px;
+  top: 45px;
   font-size: 12px;
 }
 
-.badgeDisplay .ProgressBar {
+.badgeDisplay .CoinReward img {
   float: left;
+  padding-top: 3px;
+}
+
+.badgeDisplay .CoinReward div {
+  float: left;
+  padding-left: 3px;
+}
+
+.badgeDisplay .StampDescription {
+  position: absolute;
+  top: 70px;
+  left: 7px;
+  width: 142px;
+  height: 43px;
+  color: #4a7595;
+  font-size: 12px;
+  text-align: center;
+}
+
+.badgeDisplay .WhenEarned, .badgeDisplay .ProgressBar {
+  position: absolute;
+  top: 118px;
+  left: 7px;
+}
+
+.badgeDisplay .WhenEarned {
+  width: 142px;
+  font-size: 12px;
+  text-align: center;
 }
 
 .badgeDisplay .ProgressBar .Fill {
@@ -282,13 +324,14 @@
 }
 
 .badgeDisplay .GoButton {
-  float: right;
+  position: absolute;
+  top: 118px;
+  right: 7px;
 }
 
 .BoxedBadge {
   border-color: #d6e8f6;
   border-style: solid;
   border-width: 1px;
-  border-collapse: collapse;
   float: left;
 }

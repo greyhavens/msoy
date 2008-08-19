@@ -15,8 +15,6 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.gwt.ui.SmartTable;
-
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
@@ -28,25 +26,23 @@ import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
 
-class BadgeDisplay extends SmartTable
+class BadgeDisplay extends FlowPanel
 {
     public BadgeDisplay (Badge badge)
     {
         setStyleName("badgeDisplay");
 
         buildBasics(badge);
-
         if (badge instanceof EarnedBadge) {
-            addEarnedBits((EarnedBadge) badge);
+            addEarnedBits((EarnedBadge)badge);
         } else if (badge instanceof InProgressBadge) {
-            addInProgressBits((InProgressBadge) badge);
+            addInProgressBits((InProgressBadge)badge);
         }
     }
 
     protected void buildBasics (Badge badge)
     {
-        setWidget(0, 0, MsoyUI.createImage(badge.imageUrl(), null));
-        getFlexCellFormatter().setRowSpan(0, 0, 2);
+        add(MsoyUI.createImage(badge.imageUrl(), "StampImage"));
 
         String hexCode = Integer.toHexString(badge.badgeCode);
         String badgeName = hexCode;
@@ -56,7 +52,7 @@ class BadgeDisplay extends SmartTable
             // displaying the hex code is the failure case - make sure to test all new badges
             // before letting them out to production.
         }
-        setText(0, 1, badgeName, 1, "StampName");
+        add(MsoyUI.createLabel(badgeName, "StampName"));
 
         String badgeDesc = null;
         try {
@@ -76,25 +72,29 @@ class BadgeDisplay extends SmartTable
                 badgeDesc = "MISSING DESCRIPTION [" + hexCode + "]";
             }
         }
-        setText(2, 0, badgeDesc, 2, "StampDescription");
+        add(MsoyUI.createLabel(badgeDesc, "StampDescription"));
     }
 
     protected void addEarnedBits (EarnedBadge badge)
     {
-        if (badge.whenEarned == null) {
-            return;
-        }
-
         Date earnedDate = new Date(badge.whenEarned);
-        setText(3, 0, _msgs.passportFinishedSeries(MsoyUI.formatDate(earnedDate)), 2, null);
+        String whenEarned = _msgs.passportFinishedSeries(MsoyUI.formatDate(earnedDate));
+        add(MsoyUI.createLabel(whenEarned, "WhenEarned"));
     }
 
     protected void addInProgressBits (InProgressBadge badge)
     {
-        // TODO: display the little coin image too
-        setText(1, 0, "" + badge.coinReward);
+        FlowPanel coinReward = MsoyUI.createFlowPanel("CoinReward");
+        coinReward.add(MsoyUI.createImage("/images/ui/coins.png", null));
+        coinReward.add(MsoyUI.createLabel("" + badge.coinReward, null));
+        add(coinReward);
 
-        setWidget(3, 0, new ProgressRow(badge, getGoListener(badge)), 2, null);
+        add(new ProgressBar(badge.progress));
+
+        ClickListener goListener = getGoListener(badge);
+        if (goListener != null) {
+            add(MsoyUI.createImageButton("GoButton", goListener));
+        }
     }
 
     protected ClickListener getGoListener (Badge badge)
@@ -140,17 +140,10 @@ class BadgeDisplay extends SmartTable
         return null;
     }
 
-    protected static class ProgressRow extends FlowPanel
+    protected static class CoinReward extends FlowPanel
     {
-        public ProgressRow (InProgressBadge badge, ClickListener goListener)
+        public CoinReward (int coinReward)
         {
-            // TODO: add yet more info to InProgressBadge to tell the client not to display a
-            // progress meter for some first-level badges.
-            add(new ProgressBar(badge.progress));
-
-            if (goListener != null) {
-                add(MsoyUI.createImageButton("GoButton", goListener));
-            }
         }
     }
 
