@@ -174,7 +174,7 @@ public class MoneyLogicImpl
         final ItemIdent item, final int numBars, final String description)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
-        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Creators cannot be guests.");
+        Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Creators cannot be guests.");
         Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0), 
             "item is invalid: %s", item.toString());
         Preconditions.checkArgument(numBars > 0, "bars is invalid: %d", numBars);
@@ -189,7 +189,7 @@ public class MoneyLogicImpl
         final ItemIdent item, final int numCoins, final String description)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
-        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Creators cannot be guests.");
+        Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Creators cannot be guests.");
         Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0), 
             "item is invalid: %s", item.toString());
         Preconditions.checkArgument(numCoins > 0, "numCoins is invalid: %d", numCoins);
