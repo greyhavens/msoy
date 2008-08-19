@@ -73,7 +73,10 @@ public class SnapshotPanel extends FloatingPanel
      */
     public function get shouldSaveSceneThumbnail () :Boolean
     {
-        return _useAsSceneThumbnail.selected;
+        if (_useAsSceneThumbnail != null) {
+            return _useAsSceneThumbnail.selected;
+        }
+        return false;
     }
 
     /**
