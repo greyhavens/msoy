@@ -87,16 +87,6 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The thumbnail image height.  */
     public static final int THUMBNAIL_HEIGHT = 60;
 
-    /** Defines the dimensions of our various image sizes. */
-    public static final int[] DIMENSIONS = {
-        THUMBNAIL_WIDTH/4, THUMBNAIL_HEIGHT/4, // quarter thumbnail size
-        THUMBNAIL_WIDTH/2, THUMBNAIL_HEIGHT/2, // half thumbnail size
-        THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, // thumbnail size
-        THUMBNAIL_WIDTH*4, THUMBNAIL_HEIGHT*4, // preview size
-        175, 100, // snapshot thumb size
-        350, 200, // canonical image size
-    };
-
     /** A constant used to indicate that an image does not exceed half thumbnail size in either
      * dimension. */
     public static final byte NOT_CONSTRAINED = 0;
@@ -685,4 +675,14 @@ public class MediaDesc implements Streamable, IsSerializable
 
     /** Hexidecimal digits. */
     protected static final String HEX = "0123456789abcdef";
+
+    /** Defines the dimensions of our various image sizes. */
+    protected static final int[] DIMENSIONS = {
+        THUMBNAIL_WIDTH/4, THUMBNAIL_HEIGHT/4, // quarter thumbnail size
+        THUMBNAIL_WIDTH/2, THUMBNAIL_HEIGHT/2, // half thumbnail size
+        THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, // thumbnail size
+        THUMBNAIL_WIDTH*4, THUMBNAIL_HEIGHT*4, // preview size
+        175, 100, // snapshot thumb size
+        350, 200, // canonical image size
+    };
 }
