@@ -269,6 +269,10 @@ public class FrameEntryPoint
         WorldClient.clientWillClose();
         _closeToken = null;
 
+        if (_bar != null) {
+            _bar.setCloseVisible(false);
+        }
+
         if (_client != null) {
             RootPanel.get(PAGE).remove(_client);
             _client = null;
@@ -276,16 +280,12 @@ public class FrameEntryPoint
                 _content.setWidth(CONTENT_WIDTH + "px");
                 _content.setVisible(true);
             }
-        }
 
-        if (_bar != null) {
-            _bar.setCloseVisible(false);
-        }
-
-        // if we're on a "world" page, go to a landing page
-        if (_currentToken != null && _currentToken.startsWith(Pages.WORLD.getPath())) {
-            // if we were in a game, go to the games page, otherwise go to me
-            Link.go(_currentToken.indexOf("game") == -1 ? Pages.ME : Pages.GAMES, "");
+            // if we're on a "world" page, go to a landing page
+            if (_currentToken != null && _currentToken.startsWith(Pages.WORLD.getPath())) {
+                // if we were in a game, go to the games page, otherwise go to me
+                Link.go(_currentToken.indexOf("game") == -1 ? Pages.ME : Pages.GAMES, "");
+            }
         }
     }
 
