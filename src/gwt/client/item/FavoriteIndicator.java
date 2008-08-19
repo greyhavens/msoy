@@ -33,17 +33,16 @@ public class FavoriteIndicator extends VerticalPanel
         setHorizontalAlignment(ALIGN_CENTER);
         setVerticalAlignment(ALIGN_TOP);
 
+        Label label = new Label(_imsgs.favorite());
+        label.setStyleName(STYLE_FAVORITE_TEXT);
+        add(label);
+
         ToggleButton favoriteToggle = new ToggleButton(ADD_FAVORITE_IMAGE, FAVORITE_IMAGE);
         favoriteToggle.setStyleName(STYLE_FAVORITE_TOGGLE);
         favoriteToggle.addStyleName("actionLabel");
         favoriteToggle.setDown(memberItemInfo.favorite);
         favoriteToggle.addClickListener(new FavoriteClickListener());
         add(favoriteToggle);
-
-        // add label below the toggle button
-        Label label = new Label(_imsgs.favorite());
-        label.setStyleName(STYLE_FAVORITE_TEXT);
-        add(label);
     }
 
     protected class FavoriteClickListener implements ClickListener
