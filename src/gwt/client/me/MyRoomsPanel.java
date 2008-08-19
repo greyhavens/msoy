@@ -62,8 +62,6 @@ public class MyRoomsPanel extends VerticalPanel
             super("Room", 0, 2);
             ClickListener onClick = Link.createListener(Pages.WORLD, "s"+room.sceneId);
             Widget sceneImage = makeThumbnailWidget(room, onClick);
-// SceneThumbnail sceneImage = new SceneThumbnail(room.sceneId, true);
-// sceneImage.addClickListener(onClick);
             setWidget(0, 0, sceneImage);
             getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
             setWidget(1, 0, MsoyUI.createActionLabel(room.name, onClick));
