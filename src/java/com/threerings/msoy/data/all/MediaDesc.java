@@ -80,7 +80,7 @@ public class MediaDesc implements Streamable, IsSerializable
 
     /** The size for canonical images. */
     public static final int CANONICAL_IMAGE_SIZE = 5;
-    
+
     /** The thumbnail image width.  */
     public static final int THUMBNAIL_WIDTH = 80;
 
@@ -125,6 +125,22 @@ public class MediaDesc implements Streamable, IsSerializable
 
     /** The size constraint on this media, if any. See {@link #computeConstraint}. */
     public byte constraint;
+
+    /**
+     * @return the pixel width of any MediaDesc that's displayed at the given size.
+     */
+    public static int getWidth (int size)
+    {
+        return DIMENSIONS[2 * size];
+    }
+
+    /**
+     * @return the pixel height of any MediaDesc that's displayed at the given size.
+     */
+    public static int getHeight (int size)
+    {
+        return DIMENSIONS[(2 * size) + 1];
+    }
 
     /**
      * Get the path of the URL for the media specified.
@@ -388,8 +404,8 @@ public class MediaDesc implements Streamable, IsSerializable
      */
     public static byte computeConstraint (int size, int actualWidth, int actualHeight)
     {
-        float wfactor = (float)DIMENSIONS[2*size] / actualWidth;
-        float hfactor = (float)DIMENSIONS[2*size+1] / actualHeight;
+        float wfactor = (float)getWidth(size) / actualWidth;
+        float hfactor = (float)getHeight(size) / actualHeight;
         if (wfactor > 1 && hfactor > 1) {
             // if we're computing the size of a thumbnail image, see if it is constrained at half
             // size or still unconstrained

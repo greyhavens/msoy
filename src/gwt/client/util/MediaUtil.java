@@ -34,8 +34,7 @@ public class MediaUtil
      */
     public static Widget createMediaView (MediaDesc desc, int size, ClickListener click)
     {
-        return createMediaView(
-            desc, MediaDesc.DIMENSIONS[2*size], MediaDesc.DIMENSIONS[2*size+1], click);
+        return createMediaView(desc, MediaDesc.getWidth(size), MediaDesc.getHeight(size), click);
     }
 
     /**

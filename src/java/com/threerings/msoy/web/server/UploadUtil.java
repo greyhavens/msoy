@@ -112,7 +112,7 @@ public class UploadUtil
      * Container class for information about the canonical snapshot images - both standard size
      * and minimized.
      */
-    
+
     public static class CanonicalSnapshotInfo
     {
         public final SnapshotInfo canonical;
@@ -458,8 +458,7 @@ public class UploadUtil
      */
     public static Rectangle thumbnailDimensions (int thumbSize)
     {
-        return new Rectangle(MediaDesc.DIMENSIONS[thumbSize * 2],
-            MediaDesc.DIMENSIONS[thumbSize * 2 + 1]);
+        return new Rectangle(MediaDesc.getWidth(thumbSize), MediaDesc.getHeight(thumbSize));
     }
 
     /**
