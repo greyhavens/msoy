@@ -169,11 +169,15 @@ class BadgeDisplay extends SmartTable
             }
 
             addCap(Section.LEFT, Type.FULL);
-            int fullWidth = Math.max(0, (int)(PROGRESS_WIDTH * (progress - END_CAP_PROGRESS * 2)));
+            int fullWidth = PROGRESS_WIDTH - END_CAP_WIDTH * 2;
+            // if our progress isn't 100%, make sure there is enough room left over for the
+            // transition cap so that it doesn't look like you're done until you actually are.
+            fullWidth = progress == 1 ? fullWidth :
+                Math.min(fullWidth - END_CAP_WIDTH, Math.max(0, (int)(progress * fullWidth)));
             if (fullWidth > 0) {
                 addFill(Type.FULL, fullWidth);
             }
-            transitionToEnd(PROGRESS_WIDTH - fullWidth);
+            transitionToEnd(PROGRESS_WIDTH - END_CAP_WIDTH - fullWidth);
         }
 
         protected void addCap (Section section, Type type)
@@ -250,5 +254,4 @@ class BadgeDisplay extends SmartTable
     protected static final int PROGRESS_WIDTH = 90;
     protected static final int END_CAP_WIDTH = 9;
     protected static final int PROGRESS_HEIGHT = 17;
-    protected static final float END_CAP_PROGRESS = END_CAP_WIDTH / (float)PROGRESS_WIDTH;
 }
