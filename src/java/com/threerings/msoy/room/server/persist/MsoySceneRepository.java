@@ -386,7 +386,7 @@ public class MsoySceneRepository extends DepotRepository
             // for game groups, point the appropriate furni to the right game
             if (stock == SceneRecord.Stock.GAME_GROUP_HALL &&
                 (furni.actionType == FurniData.ACTION_LOBBY_GAME)) {
-                final String gameAction = game.gameId + ":" + game.name;
+                final String gameAction = Math.abs(game.gameId) + ":" + game.name;
                 furni.actionData = gameAction;
             }
 
@@ -431,7 +431,7 @@ public class MsoySceneRepository extends DepotRepository
             SceneRecord.CANONICAL_IMAGE_HASH, canonicalHash,
             SceneRecord.CANONICAL_IMAGE_TYPE, canonicalType,
             SceneRecord.THUMBNAIL_HASH, thumbnailHash,
-            SceneRecord.THUMBNAIL_TYPE, thumbnailType);        
+            SceneRecord.THUMBNAIL_TYPE, thumbnailType);
     }
 
     /**

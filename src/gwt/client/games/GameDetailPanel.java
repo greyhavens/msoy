@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
@@ -60,6 +61,12 @@ public class GameDetailPanel extends SmartTable
 
     public void setGameDetail (int gameId, GameDetail detail)
     {
+        // if we are referencing the listed item but it does not exist, switch to the development
+        // (source) item which always exists, and which has a negative id.
+        if (!Game.isDeveloperVersion(gameId) && detail.listedItem == null) {
+            gameId = gameId * -1;
+        }
+
         // Note: the gameId may be the negative original gameId, but GameDetail's id is never
         // negative to match
         _gameId = gameId;
@@ -117,8 +124,8 @@ public class GameDetailPanel extends SmartTable
                new TopRankingPanel(detail.gameId, false));
 
         // if we're the owner of the game or an admin, add the metrics tab
-        if ((detail.sourceItem != null && detail.sourceItem.ownerId == CShell.getMemberId()) ||
-            CShell.isAdmin()) {
+        if (detail.listedItem != null && ((detail.sourceItem != null
+                && detail.sourceItem.ownerId == CShell.getMemberId()) || CShell.isAdmin())) {
             addTab(GameDetails.METRICS, _msgs.tabMetrics(), new GameMetricsPanel(detail));
             addTab(GameDetails.LOGS, _msgs.tabLogs(), new GameLogsPanel(gameId));
         }
