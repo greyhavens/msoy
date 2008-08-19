@@ -159,7 +159,7 @@ public class AVRGameManager extends PlaceManager
         _gameObj = (AVRGameObject)_plobj;
         _gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
         _gameObj.setMessageService(_invmgr.registerDispatcher(new WhirledGameMessageDispatcher(
-            new WhirledGameMessageHandler(_gameObj, this) {
+            new WhirledGameMessageHandler(_gameObj) {
                 @Override protected ClientObject getAudienceMember (int id)
                     throws InvocationException {
                     ClientObject target = null;
@@ -181,8 +181,11 @@ public class AVRGameManager extends PlaceManager
                     validateUser(caller);
                 }
 
-                @Override protected int resolvePlayerId (ClientObject caller)
-                {
+                @Override protected boolean isAgent (ClientObject caller) {
+                    return AVRGameManager.this.isAgent(caller);
+                }
+
+                @Override protected int resolvePlayerId (ClientObject caller) {
                     return ((PlayerObject)caller).getMemberId();
                 }
             })));
