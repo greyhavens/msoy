@@ -431,8 +431,8 @@ public class StuffServlet extends MsoyServiceServlet
         try {
             return _itemLogic.getSize(query.listId, query.itemType);
         } catch (PersistenceException pex) {
-            log.warning("Could not get size of item list.", "listId", query.listId, "itemType",
-                query.itemType, pex);
+            log.warning("Could not get size of item list", "listId", query.listId,
+                        "itemType", query.itemType, pex);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -440,19 +440,18 @@ public class StuffServlet extends MsoyServiceServlet
     // from interface StuffService
     public ItemListResult loadItemList (ItemListQuery query) throws ServiceException
     {
-        ItemListResult result = new ItemListResult();
-
         try {
+            ItemListResult result = new ItemListResult();
             result.items = _itemLogic.loadItemList(query);
             if (query.needsCount) {
                 result.totalCount = getSize(query);
             }
+            return result;
+
         } catch (PersistenceException pex) {
             log.warning("Could not load item list.", "query", query, pex);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-
-        return result;
     }
 
     // from interface StuffService
