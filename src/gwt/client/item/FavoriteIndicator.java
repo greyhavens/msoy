@@ -22,7 +22,7 @@ import client.util.ServiceUtil;
 
 public class FavoriteIndicator extends FlowPanel
 {
-    public FavoriteIndicator(Item item, MemberItemInfo memberItemInfo)
+    public FavoriteIndicator (Item item, MemberItemInfo memberItemInfo)
     {
         setStyleName("favorite");
         _item = item;
