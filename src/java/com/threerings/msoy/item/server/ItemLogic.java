@@ -25,8 +25,9 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.dobj.RootDObjectManager;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
@@ -465,7 +466,8 @@ public class ItemLogic
     }
 
     /**
-     * Loads up info on the specified member's favorite items list.
+     * Loads up info on the specified member's favorite items list. If the list does not yet exist,
+     * it will be created.
      */
     public ItemListInfo getFavoriteListInfo (int memberId)
         throws PersistenceException
@@ -478,7 +480,8 @@ public class ItemLogic
         if (favoriteLists.isEmpty()) {
             // create the favorites list for this user
             favorites = createItemList(
-                memberId, ItemListInfo.FAVORITES, ItemListInfo.FAVORITES_NAME);
+                memberId, ItemListInfo.FAVORITES,
+                _serverMsgs.getBundle("server").get("m.favorites_list_name"));
         } else {
             // there should never be more than one FAVORITES list per member
             if (favoriteLists.size() > 1) {
@@ -645,6 +648,7 @@ public class ItemLogic
     @Inject protected ItemManager _itemMan;
     @Inject protected ItemListRepository _listRepo;
     @Inject protected RootDObjectManager _omgr;
+    @Inject protected ServerMessages _serverMsgs;
 
     // our myriad item repositories
     @Inject protected AudioRepository _audioRepo;

@@ -25,12 +25,6 @@ public class ItemListInfo
     public static final byte VIDEO_PLAYLIST = 2;
     public static final byte CATALOG_BUNDLE = 3;
 
-    /**
-     * A name for the special favorites list.
-     * TODO how will the i18n work here?
-     */
-    public static final String FAVORITES_NAME = "m.favorites";
-
     /** The unique identifier for this list. */
     public int listId;
 
