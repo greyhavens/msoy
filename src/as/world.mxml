@@ -17,6 +17,7 @@
     [ResourceBundle("notify")]
     [ResourceBundle("prefs")]
     [ResourceBundle("world")]
+    [ResourceBundle("passport")]
 </mx:Metadata>
 <mx:Script>
     <![CDATA[
