@@ -409,10 +409,9 @@ public class ItemServlet extends MsoyServiceServlet
         MemberRecord member = requireAuthedUser();
 
         try {
-            if(favorite) {
+            if (favorite) {
                 _itemLogic.addFavorite(member.memberId, item);
-            }
-            else {
+            } else {
                 _itemLogic.removeFavorite(member.memberId, item);
             }
         } catch(PersistenceException pex) {
