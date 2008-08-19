@@ -283,8 +283,8 @@ public class FrameEntryPoint
 
             // if we're on a "world" page, go to a landing page
             if (_currentToken != null && _currentToken.startsWith(Pages.WORLD.getPath())) {
-                // if we were in a game, go to the games page, otherwise go to me
-                Link.go(_currentToken.indexOf("game") == -1 ? Pages.ME : Pages.GAMES, "");
+                // if we were in a game, go to the games page, otherwise go to the landing
+                Link.go(_currentToken.indexOf("game") == -1 ? getLandingPage() : Pages.GAMES, "");
             }
         }
     }
