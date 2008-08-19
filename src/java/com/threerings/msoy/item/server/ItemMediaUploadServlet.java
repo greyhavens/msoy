@@ -161,7 +161,7 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
         throws AccessDeniedException
     {
         try {
-            String token = CookieUtil.getCookieValue(ctx.req, WebCreds.CREDS_COOKIE);
+            String token = CookieUtil.getCookieValue(ctx.req, WebCreds.credsCookie());
             if (_mhelper.getAuthedUser(token) == null) {
                 throw new AccessDeniedException("Must be logged in to upload item media.");
             }

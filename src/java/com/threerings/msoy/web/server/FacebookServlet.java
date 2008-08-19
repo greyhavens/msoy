@@ -69,7 +69,7 @@ public class FacebookServlet extends HttpServlet
         Tuple<Integer,String> creds = processAuth(req, rsp);
         if (creds == null) {
             log.info("Admitting guest user.");
-            for (String name : new String[] { WebCreds.CREDS_COOKIE, "fbid" }) {
+            for (String name : new String[] { WebCreds.credsCookie(), "fbid" }) {
                 Cookie cookie = new Cookie(name, "x");
                 cookie.setPath("/");
                 cookie.setMaxAge(0);
@@ -79,7 +79,7 @@ public class FacebookServlet extends HttpServlet
 
         } else {
             log.info("Admitting authenticated user " + creds + ".");
-            Cookie cookie = new Cookie(WebCreds.CREDS_COOKIE, creds.right);
+            Cookie cookie = new Cookie(WebCreds.credsCookie(), creds.right);
             cookie.setPath("/");
             cookie.setMaxAge(-1);
             rsp.addCookie(cookie);
@@ -116,7 +116,7 @@ public class FacebookServlet extends HttpServlet
         }
 
         // if they are an app user and they already have a Whirled session cookie, send them along
-        String sessionCreds = CookieUtil.getCookieValue(req, WebCreds.CREDS_COOKIE);
+        String sessionCreds = CookieUtil.getCookieValue(req, WebCreds.credsCookie());
         int sessionUserId = 0;
         try {
             sessionUserId = Integer.parseInt(CookieUtil.getCookieValue(req, "fbid"));

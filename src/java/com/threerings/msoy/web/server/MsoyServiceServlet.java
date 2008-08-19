@@ -34,7 +34,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         throws ServiceException
     {
         return _mhelper.getAuthedUser(
-            CookieUtil.getCookieValue(getThreadLocalRequest(), WebCreds.CREDS_COOKIE));
+            CookieUtil.getCookieValue(getThreadLocalRequest(), WebCreds.credsCookie()));
     }
 
     /**

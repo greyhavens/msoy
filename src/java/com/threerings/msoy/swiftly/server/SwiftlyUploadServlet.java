@@ -41,7 +41,7 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         final UploadFile uploadFile = new FileItemUploadFile(ctx.file);
 
         // pull the session token from the request header
-        String token = CookieUtil.getCookieValue(ctx.req, WebCreds.CREDS_COOKIE);
+        String token = CookieUtil.getCookieValue(ctx.req, WebCreds.credsCookie());
         if (token == null) {
             throw new AccessDeniedException("Must be logged in to upload item data.");
         }

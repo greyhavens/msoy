@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 
 /**
@@ -16,9 +17,6 @@ import com.threerings.msoy.data.all.MemberName;
  */
 public class WebCreds implements IsSerializable
 {
-    /** The name of the cookie in which we store our session credentials. */
-    public static final String CREDS_COOKIE = "creds";
-
     /** Our session token. */
     public String token;
 
@@ -36,6 +34,12 @@ public class WebCreds implements IsSerializable
 
     /** Indicates that the authenticated user has admin privileges. */
     public boolean isAdmin;
+
+    /** Returns the name of the creds cookie for use by this deployment. */
+    public static String credsCookie ()
+    {
+        return DeploymentConfig.devDeployment ? "devcreds" : "creds";
+    }
 
     /**
      * Creates and initializes an instance from supplied {@link #flatten}ed string.

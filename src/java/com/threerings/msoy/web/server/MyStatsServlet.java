@@ -39,7 +39,7 @@ public class MyStatsServlet extends HttpServlet
     {
         try {
             // pull out session token from the request header
-            final String token = CookieUtil.getCookieValue(req, WebCreds.CREDS_COOKIE);
+            final String token = CookieUtil.getCookieValue(req, WebCreds.credsCookie());
             if (token == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;

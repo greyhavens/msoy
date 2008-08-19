@@ -40,7 +40,7 @@ public class GameTraceLogServlet extends HttpServlet
     {
         try {
             // pull out session token from the request header
-            String token = CookieUtil.getCookieValue(req, WebCreds.CREDS_COOKIE);
+            String token = CookieUtil.getCookieValue(req, WebCreds.credsCookie());
             if (token == null) {
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 return;

@@ -61,7 +61,7 @@ public class Session
     public static void validate ()
     {
         // if we have no creds token, we are definitely not logged in
-        String token = CookieUtil.get(WebCreds.CREDS_COOKIE);
+        String token = CookieUtil.get(WebCreds.credsCookie());
         if (token == null) {
             // defer execution of didLogoff so that the caller sees the same behavior in both
             // situations: immediate return of this method and a call to didLogon or didLogoff at
@@ -97,7 +97,7 @@ public class Session
     public static void didLogon (SessionData data)
     {
         // store our session information in a cookie
-        CookieUtil.set("/", SESSION_DAYS, WebCreds.CREDS_COOKIE, data.creds.token);
+        CookieUtil.set("/", SESSION_DAYS, WebCreds.credsCookie(), data.creds.token);
 
         // fill in our global creds info
         CShell.creds = data.creds;
@@ -119,7 +119,7 @@ public class Session
     public static void didLogoff ()
     {
         // clear out our credentials cookie
-        CookieUtil.clear("/", WebCreds.CREDS_COOKIE);
+        CookieUtil.clear("/", WebCreds.credsCookie());
 
         // clear out our global creds info
         CShell.creds = null;

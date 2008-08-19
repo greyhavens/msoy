@@ -28,7 +28,7 @@ public abstract class AbstractSnapshotUploadServlet extends ItemMediaUploadServl
         }
 
         // pull out session token from the request header
-        String token = CookieUtil.getCookieValue(ctx.req, WebCreds.CREDS_COOKIE);
+        String token = CookieUtil.getCookieValue(ctx.req, WebCreds.credsCookie());
         if (token == null) {
             throw new AccessDeniedException("Must be logged in to upload screenshots.");
         }
