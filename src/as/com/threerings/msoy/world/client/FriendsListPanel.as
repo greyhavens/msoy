@@ -25,7 +25,6 @@ import mx.controls.Label;
 import mx.controls.List;
 import mx.controls.TextInput;
 
-import mx.core.ClassFactory;
 import mx.core.ScrollPolicy;
 
 import mx.events.FlexEvent;

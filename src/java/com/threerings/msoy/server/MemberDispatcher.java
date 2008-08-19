@@ -114,6 +114,12 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
+        case MemberMarshaller.LOAD_ALL_BADGES:
+            ((MemberProvider)provider).loadAllBadges(
+                source, (InvocationService.ResultListener)args[0]
+            );
+            return;
+
         case MemberMarshaller.SET_AVATAR:
             ((MemberProvider)provider).setAvatar(
                 source, ((Integer)args[0]).intValue(), ((Float)args[1]).floatValue(), (InvocationService.ConfirmListener)args[2]

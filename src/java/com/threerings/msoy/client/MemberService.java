@@ -133,4 +133,10 @@ public interface MemberService extends InvocationService
      * is supplied, the visitor's a/b test group will also be tracked.
      */
     void trackTestAction (Client client, ReferralInfo info, String actionName, String testName);
+
+    /**
+     * Requests that the server enumerate and send to the client all EarnedBadges possible, for
+     * testing.  This is only used on dev deployments.
+     */
+    void loadAllBadges (Client client, ResultListener listener);
 }

@@ -8,6 +8,7 @@ import static com.threerings.msoy.Log.log;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import com.google.inject.Inject;
@@ -21,6 +22,7 @@ import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.StringUtil;
 
+import com.google.common.collect.Lists;
 import com.threerings.underwire.server.persist.EventRecord;
 import com.threerings.underwire.web.data.Event;
 import com.threerings.util.MessageBundle;
@@ -67,8 +69,10 @@ import com.threerings.msoy.server.util.MailSender;
 
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.ServerStatSet;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -733,6 +737,27 @@ public class MemberManager
                 return false;
             }
         });
+    }
+
+    // from interface MemberProvider
+    public void loadAllBadges(ClientObject caller, InvocationService.ResultListener listener)
+        throws InvocationException
+    {
+        long now = System.currentTimeMillis();
+        List<EarnedBadge> badges = Lists.newArrayList();
+        for (BadgeType type : BadgeType.values()) {
+            if (type.isHidden()) {
+                continue;
+            }
+
+            int code = type.getCode();
+            for (int ii = 0; ii < type.getNumLevels(); ii++) {
+                String levelUnits = type.getLevelUnits(ii);
+                badges.add(new EarnedBadge(code, ii, levelUnits, now));
+            }
+        }
+
+        listener.requestProcessed(badges.toArray(new EarnedBadge[badges.size()]));
     }
 
     /**

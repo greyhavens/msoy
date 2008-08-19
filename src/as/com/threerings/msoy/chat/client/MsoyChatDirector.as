@@ -36,6 +36,7 @@ import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.whirled.data.Scene;
 
 import com.threerings.msoy.client.ControlBar;
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.MsoyController;
@@ -75,6 +76,9 @@ public class MsoyChatDirector extends ChatDirector
         var msg :MessageBundle = _msgmgr.getBundle(_bundle);
         registerCommandHandler(msg, "away", new AwayHandler(true));
         registerCommandHandler(msg, "back", new AwayHandler(false));
+        if (DeploymentConfig.devDeployment) {
+            registerCommandHandler(msg, "badges", new BadgesHandler());
+        }
 
         addChatDisplay(_chatHistory = new HistoryList());
     }
