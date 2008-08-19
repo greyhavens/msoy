@@ -240,14 +240,7 @@ public class GameEditor extends ItemEditor
         _groupsvc.getMembershipGroups(
             CShell.getMemberId(), false, new MsoyCallback<List<GroupMembership>>() {
                 public void onSuccess (List<GroupMembership> whirleds) {
-                    // populate the whirleds dropdown
-                    _whirled.addItem(_emsgs.gameWhirledSelectNew(), Game.NO_GROUP+"");
-                    for (GroupMembership whirled : whirleds) {
-                        if (whirled.rank >= GroupMembership.RANK_MANAGER) {
-                            _whirled.addItem(
-                                whirled.group.toString(), whirled.group.getGroupId()+"");
-                        }
-                    }
+                    _managerWhirledsList = whirleds;
                     setWhirled();
                 }
         });
@@ -259,9 +252,20 @@ public class GameEditor extends ItemEditor
      */
     protected void setWhirled ()
     {
-        if (_whirled == null || _whirled.getItemCount() == 0
-            || _game == null || _game.itemId == 0) {
+        if (_managerWhirledsList == null || _game == null || _game.itemId == 0) {
             return;
+        }
+
+        // add "NONE - create a new whirled" only if the game doesn't have one
+        if (_game.groupId <= 0) {
+            _whirled.addItem(_emsgs.gameWhirledSelectNew(), Game.NO_GROUP+"");
+        }
+
+        for (GroupMembership whirled : _managerWhirledsList) {
+            if (whirled.rank >= GroupMembership.RANK_MANAGER) {
+                _whirled.addItem(
+                    whirled.group.toString(), whirled.group.getGroupId()+"");
+            }
         }
 
         for (int ii = 0; ii < _whirled.getItemCount(); ii++) {
@@ -374,6 +378,7 @@ public class GameEditor extends ItemEditor
     protected CheckBox _avrg;
     protected TextArea _extras;
     protected ListBox _whirled;
+    protected List<GroupMembership> _managerWhirledsList;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
