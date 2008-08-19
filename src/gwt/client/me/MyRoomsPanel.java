@@ -26,7 +26,6 @@ import client.ui.TongueBox;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
-import client.util.SceneThumbnail;
 import client.util.ServiceUtil;
 
 /**
@@ -69,7 +68,7 @@ public class MyRoomsPanel extends VerticalPanel
             getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
             setWidget(1, 0, MsoyUI.createActionLabel(room.name, onClick));
         }
-        
+
         protected Widget makeThumbnailWidget (RoomInfo room, ClickListener onClick) {
             if (room.canonicalThumbnail != null) {
                 return MediaUtil.createMediaView(room.canonicalThumbnail,
@@ -80,12 +79,12 @@ public class MyRoomsPanel extends VerticalPanel
                 image.setUrl(DEFAULT_HALFSIZE);
                 return image;
             }
-        }        
+        }
     }
-    
+
     protected static final String DEFAULT_HALFSIZE = DeploymentConfig.staticMediaURL
         + "snapshot/default_t.jpg";
-    
+
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
     protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
         ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);

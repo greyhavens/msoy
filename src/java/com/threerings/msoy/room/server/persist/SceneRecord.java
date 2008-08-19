@@ -25,8 +25,6 @@ import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.gwt.RoomInfo;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Contains metadata for a scene in the Whirled.
  */
@@ -222,7 +220,7 @@ public class SceneRecord extends PersistentRecord
      * {@link RoomInfo#owner} and {@link RoomInfof#decor} fields must be filled in manually if
      * they are needed.
      */
-    public static final Function<SceneRecord, RoomInfo> TO_ROOM_INFO_WITH_THUMB = 
+    public static final Function<SceneRecord, RoomInfo> TO_ROOM_INFO_WITH_THUMB =
         new Function<SceneRecord, RoomInfo>() {
         public RoomInfo apply (SceneRecord record) {
             RoomInfo info = new RoomInfo();
@@ -235,7 +233,7 @@ public class SceneRecord extends PersistentRecord
             return info;
         }
     };
-    
+
     /** The unique identifier for this scene. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=6)
     public int sceneId; // initialValue=6 accounts for stock scenes
