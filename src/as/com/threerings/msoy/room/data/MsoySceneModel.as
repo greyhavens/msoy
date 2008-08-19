@@ -7,6 +7,7 @@ import com.threerings.util.ArrayIterator;
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
+import com.threerings.util.Name;
 import com.threerings.util.Short;
 
 import com.threerings.io.ObjectInputStream;
@@ -49,6 +50,9 @@ public class MsoySceneModel extends SceneModel
 
     /** The id of the owner of this scene, interpreted using ownerType. */
     public var ownerId :int;
+
+    /** The name of the owner, either a MemberName or the group's name. */
+    public var ownerName :Name;
 
     /** The furniture in the scene. */
     public var furnis :TypedArray /* of FurniData */;
@@ -196,9 +200,10 @@ public class MsoySceneModel extends SceneModel
         model.accessControl = accessControl;
         model.ownerType = ownerType;
         model.ownerId = ownerId;
+        model.ownerName = ownerName;
         model.furnis = (furnis.clone() as TypedArray);
         model.entrance = (entrance.clone() as MsoyLocation);
-        model.decor = decor; // note: decor is a read-only structure, so just copy the reference
+        model.decor = decor;
         model.audioData = (audioData == null) ? null : (audioData.clone() as AudioData);
         return model;
     }
@@ -211,6 +216,7 @@ public class MsoySceneModel extends SceneModel
         out.writeByte(accessControl);
         out.writeByte(ownerType);
         out.writeInt(ownerId);
+        out.writeObject(ownerName);
         out.writeObject(furnis);
         out.writeObject(entrance);
         out.writeObject(decor);
@@ -225,6 +231,7 @@ public class MsoySceneModel extends SceneModel
         accessControl = ins.readByte();
         ownerType = ins.readByte();
         ownerId = ins.readInt();
+        ownerName = (ins.readObject() as Name);
         furnis = (ins.readObject() as TypedArray);
         entrance = (ins.readObject() as MsoyLocation);
         decor = (ins.readObject() as Decor);

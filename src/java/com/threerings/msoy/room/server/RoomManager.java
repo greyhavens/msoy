@@ -810,16 +810,16 @@ public class RoomManager extends SpotSceneManager
         DObject body = _omgr.getObject(bodyOid);
         if (body instanceof MemberObject) {
             MemberObject member = (MemberObject) body;
-            member.metrics.room.save(member);
-
-            // get the last known occupancy length - this might have been measured above,
-            // or by the peer serialization code if we're moving across servers
-            int secondsInRoom = member.metrics.room.getLastOccupancyLength();
-            MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
-            boolean isWhirled = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
-
-            // if this is not a transient viewer, log it!
             if (! member.memberName.isViewer()) {
+                member.metrics.room.save(member);
+
+                // get the last known occupancy length - this might have been measured above,
+                // or by the peer serialization code if we're moving across servers
+                int secondsInRoom = member.metrics.room.getLastOccupancyLength();
+                MsoySceneModel model = (MsoySceneModel) getScene().getSceneModel();
+                boolean isWhirled = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
+
+                // log it!
                 _eventLog.roomLeft(
                     member.getMemberId(), model.sceneId, isWhirled,
                     secondsInRoom, _roomObj.occupants.size(), member.referral.tracker);

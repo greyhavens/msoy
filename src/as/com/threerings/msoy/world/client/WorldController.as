@@ -1222,27 +1222,11 @@ public class WorldController extends MsoyController
             // update the owner link
             var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;
             if (model != null) {
-                var svc :MemberService =
-                    _wctx.getClient().requireService(MemberService) as MemberService;
-                if (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) {
-                    svc.getDisplayName(_wctx.getClient(), model.ownerId, new ResultWrapper(
-                        function (cause :String) :void {
-                            log.debug("failed to retrieve member owner name: " + cause);
-                            headerBar.setOwnerLink("");
-                        },
-                        function (res :Object) :void {
-                            headerBar.setOwnerLink(res as String, handleViewMember, model.ownerId);
-                        }));
-                } else if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
-                    svc.getGroupName(_wctx.getClient(), model.ownerId, new ResultWrapper(
-                        function (cause :String) :void {
-                            log.debug("failed to retrieve group owner name: " + cause);
-                            headerBar.setOwnerLink("");
-                        },
-                        function (res :Object) :void {
-                            headerBar.setOwnerLink(res as String, handleViewGroup, model.ownerId);
-                        }));
-
+                if (model.ownerName != null) {
+                    headerBar.setOwnerLink(model.ownerName.toString(),
+                        (model.ownerType == MsoySceneModel.OWNER_TYPE_MEMBER) ? handleViewMember
+                                                                              : handleViewGroup,
+                        model.ownerId);
                 } else {
                     headerBar.setOwnerLink("");
                 }

@@ -9,6 +9,8 @@ import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.ListUtil;
 
+import com.threerings.util.Name;
+
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.spot.data.Portal;
 
@@ -49,6 +51,9 @@ public class MsoySceneModel extends SceneModel
 
     /** The id of the owner of this scene, interpreted using ownerType. */
     public int ownerId;
+
+    /** The name of the owner, either a MemberName or the group's name. */
+    public Name ownerName;
 
     /** The furniture in the scene. */
     public FurniData[] furnis = new FurniData[0];
@@ -220,7 +225,7 @@ public class MsoySceneModel extends SceneModel
         MsoySceneModel model = (MsoySceneModel) super.clone();
         model.furnis = furnis.clone();
         model.entrance = (MsoyLocation) entrance.clone();
-        model.decor = decor; // note: decor is a read-only structure, so just copy the reference
+        // decor and ownerName are ok to just copy by reference
         model.audioData = (audioData == null) ? null : (AudioData) audioData.clone();
         model.invalidatePortalInfo();
         return model;

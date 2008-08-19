@@ -27,6 +27,8 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.util.Name;
+
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.persist.SceneRepository;
@@ -35,11 +37,15 @@ import com.threerings.whirled.util.UpdateList;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.persist.CountRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
+
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate;
@@ -175,6 +181,22 @@ public class MsoySceneRepository extends DepotRepository
             throw new NoSuchSceneException(sceneId);
         }
         MsoySceneModel model = scene.toSceneModel();
+
+        // populate the name of the owner
+        switch (model.ownerType) {
+        case MsoySceneModel.OWNER_TYPE_MEMBER:
+            model.ownerName = _memberRepo.loadMemberName(model.ownerId);
+            break;
+
+        case MsoySceneModel.OWNER_TYPE_GROUP:
+            GroupRecord grec = _groupRepo.loadGroup(model.ownerId);
+            model.ownerName = new Name((grec == null) ? "" : grec.name);
+            break;
+
+        default:
+            log.warning("Unable to populate owner name, unknown ownership type", new Exception());
+            break;
+        }
 
         // load up all of our furni data
         List<FurniData> flist = Lists.newArrayList();
@@ -469,4 +491,10 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Internal reference to the decor repository, used to load up decor for each scene. */
     @Inject protected DecorRepository _decorRepo;
+
+    /** Used to look up a group's name. */
+    @Inject protected GroupRepository _groupRepo;
+
+    /** Used to look up a member's name. */
+    @Inject protected MemberRepository _memberRepo;
 }
