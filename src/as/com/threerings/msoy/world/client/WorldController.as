@@ -611,7 +611,7 @@ public class WorldController extends MsoyController
     /**
      * Handles the GO_MEMBER_HOME command.
      */
-    public function handleGoMemberHome (memberId :int, direct :Boolean = false) :void
+    public function handleGoMemberHome (memberId :int) :void
     {
         _wctx.getWorldDirector().goToMemberHome(memberId);
     }
@@ -660,7 +660,7 @@ public class WorldController extends MsoyController
     /**
      * Handles the GO_GROUP_HOME command.
      */
-    public function handleGoGroupHome (groupId :int, direct :Boolean = false) :void
+    public function handleGoGroupHome (groupId :int) :void
     {
         _wctx.getWorldDirector().goToGroupHome(groupId);
     }
@@ -860,11 +860,11 @@ public class WorldController extends MsoyController
         // first, see if we should hit a specific scene
         if (null != params["memberHome"]) {
             _oldCrustyShit = false;
-            handleGoMemberHome(int(params["memberHome"]), true);
+            handleGoMemberHome(int(params["memberHome"]));
 
         } else if (null != params["groupHome"]) {
             _oldCrustyShit = false;
-            handleGoGroupHome(int(params["groupHome"]), true);
+            handleGoGroupHome(int(params["groupHome"]));
 
         } else if (null != params["memberScene"]) {
             _oldCrustyShit = false;
