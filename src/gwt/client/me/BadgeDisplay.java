@@ -140,13 +140,6 @@ class BadgeDisplay extends FlowPanel
         return null;
     }
 
-    protected static class CoinReward extends FlowPanel
-    {
-        public CoinReward (int coinReward)
-        {
-        }
-    }
-
     protected static class ProgressBar extends HorizontalPanel
     {
         public ProgressBar (float progress)
