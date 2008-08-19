@@ -211,24 +211,8 @@ public class SceneRecord extends PersistentRecord
             RoomInfo info = new RoomInfo();
             info.sceneId = record.sceneId;
             info.name = record.name;
-            return info;
-        }
-    };
-
-    /**
-     * Converts this scene record in to a partially initialized room info record. The
-     * {@link RoomInfo#owner} and {@link RoomInfof#decor} fields must be filled in manually if
-     * they are needed.
-     */
-    public static final Function<SceneRecord, RoomInfo> TO_ROOM_INFO_WITH_THUMB =
-        new Function<SceneRecord, RoomInfo>() {
-        public RoomInfo apply (SceneRecord record) {
-            RoomInfo info = new RoomInfo();
-            info.sceneId = record.sceneId;
-            info.name = record.name;
             if (record.thumbnailHash != null) {
-                info.canonicalThumbnail = new MediaDesc(record.thumbnailHash,
-                    record.thumbnailType);
+                info.canonicalThumbnail = new MediaDesc(record.thumbnailHash, record.thumbnailType);
             }
             return info;
         }

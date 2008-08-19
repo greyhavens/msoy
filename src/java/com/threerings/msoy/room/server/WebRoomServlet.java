@@ -69,8 +69,7 @@ public class WebRoomServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser();
         try {
             List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(mrec.memberId);
-            return Lists.newArrayList(Iterables.transform(rooms,
-                SceneRecord.TO_ROOM_INFO_WITH_THUMB));
+            return Lists.newArrayList(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
         } catch (PersistenceException pe) {
             log.warning("Load rooms failed", "memberId", mrec.memberId, pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
