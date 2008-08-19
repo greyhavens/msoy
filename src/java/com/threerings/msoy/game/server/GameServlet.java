@@ -102,9 +102,6 @@ public class GameServlet extends MsoyServiceServlet
                     creatorId = item.creatorId;
                 }
             }
-            if (creatorId != 0) {
-                detail.creator = _memberRepo.loadMemberName(creatorId);
-            }
             detail.instructions = _gameRepo.loadInstructions(gdr.gameId);
 
             if (gdr.listedItemId != 0) {
@@ -119,6 +116,10 @@ public class GameServlet extends MsoyServiceServlet
                             _itemLogic.isFavorite(mrec.memberId, detail.listedItem);
                     }
                 }
+            }
+
+            if (creatorId != 0) {
+                detail.creator = _memberRepo.loadMemberName(creatorId);
             }
 
             PopularPlacesSnapshot.Place game = _memberMan.getPPSnapshot().getGame(gameId);
