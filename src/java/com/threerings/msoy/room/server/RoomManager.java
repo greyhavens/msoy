@@ -103,7 +103,11 @@ import com.threerings.msoy.room.server.persist.RoomPropertyRecord;
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.data.PropertySetEvent;
 import com.whirled.game.data.PropertySpaceObject.ArrayRangeException;
+import com.whirled.game.server.PropertySpaceDispatcher;
+import com.whirled.game.server.PropertySpaceHandler;
 import com.whirled.game.server.PropertySpaceHelper;
+import com.whirled.game.server.WhirledGameMessageDispatcher;
+import com.whirled.game.server.WhirledGameMessageHandler;
 
 import static com.threerings.msoy.Log.log;
 
@@ -887,6 +891,46 @@ public class RoomManager extends SpotSceneManager
             return;
         }
 
+        final RoomPropertiesObject props = new RoomPropertiesObject();
+        final PropertySpaceHandler propertyService = new PropertySpaceHandler(props) {
+            @Override protected void validateUser (ClientObject caller)
+                throws InvocationException {
+                if (!WindowClientObject.isForGame(caller, gameId)) {
+                    throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+                }
+            }};
+        final WhirledGameMessageHandler messageService =  new WhirledGameMessageHandler(props) {
+            @Override protected ClientObject getAudienceMember (int id)
+                throws InvocationException {
+                // We don't support private messages in rooms (the client should use
+                // AVRGameObject.messageService instead)
+                throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+            }
+
+            @Override protected boolean isAgent (ClientObject caller) {
+                return WindowClientObject.isForGame(caller, gameId);
+            }
+
+            @Override protected void validateSender (ClientObject caller)
+                throws InvocationException {
+                // Allow agents and players
+                if (caller instanceof WindowClientObject) {
+                    if (isAgent(caller)) {
+                        return;
+                    }
+                } else if (caller instanceof MemberObject) {
+                    if (((MemberObject)caller).game.gameId == gameId) {
+                        return;
+                    }
+                }
+                throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+            }
+
+            @Override protected int resolvePlayerId (ClientObject caller) {
+                // Always use member id for avrgs
+                return ((MemberObject)caller).getMemberId();
+            }};
+        
         _pendingGameIds.add(gameId);
         _invoker.postUnit(new Invoker.Unit("load props") {
             public boolean invoke () {
@@ -909,12 +953,17 @@ public class RoomManager extends SpotSceneManager
                 }
 
                 // Create the dobj
-                RoomPropertiesObject props = new RoomPropertiesObject();
                 _omgr.registerObject(props);
 
                 // Populate
                 PropertySpaceHelper.initWithStateFromStore(props, propsMap);
 
+                // Set members
+                props.setPropertiesService(
+                    _invmgr.registerDispatcher(new PropertySpaceDispatcher(propertyService)));
+                props.setMessageService(
+                    _invmgr.registerDispatcher(new WhirledGameMessageDispatcher(messageService)));
+                
                 // Add to room
                 RoomPropertiesEntry entry = new RoomPropertiesEntry();
                 entry.ownerId = gameId;
@@ -945,14 +994,15 @@ public class RoomManager extends SpotSceneManager
         final int sceneId = _scene.getId();
         _invoker.postUnit(new WriteOnlyUnit("save room props") {
             public void invokePersist()
-                throws PersistenceException
-            {
+                throws PersistenceException {
                 for (Map.Entry<String, byte[]> entry : encodedMap.entrySet()) {
                     _sceneRepo.storeProperty(new RoomPropertyRecord(
                         ownerId, sceneId, entry.getKey(), entry.getValue()));
                 }
-            }
-        });
+            }});
+        
+        _invmgr.clearDispatcher(properties.propertiesService);
+        _invmgr.clearDispatcher(properties.messageService);
     }
 
     @Override // documentation inherited
@@ -1220,7 +1270,7 @@ public class RoomManager extends SpotSceneManager
             protected Collection<MemoryRecord> _mems;
         });
     }
-
+    
     /** Listens to the room. */
     protected class RoomListener
         implements SetListener<OccupantInfo>
@@ -1296,7 +1346,7 @@ public class RoomManager extends SpotSceneManager
             return diff;
         }
     } // End: static class Controller
-
+    
     /** The room object. */
     protected RoomObject _roomObj;
 
