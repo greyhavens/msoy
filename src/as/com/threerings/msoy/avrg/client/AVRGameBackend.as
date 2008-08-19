@@ -83,6 +83,7 @@ public class AVRGameBackend extends ControlBackend
         _wctx = wctx;
         _gctx = gctx;
         _ctrl = ctrl;
+        _this = this;
         _playerObj = _gctx.getPlayerObject();
         _playerObj.addListener(this); // for PropertySetListener
 
@@ -748,6 +749,9 @@ public class AVRGameBackend extends ControlBackend
     protected var _playerObj :PlayerObject;
     protected var _roomObj :RoomObject;
 
+    // For access to "this" within observers and listeners
+    protected var _this :AVRGameBackend;
+
     protected var _playerListener :MessageAdapter = new MessageAdapter(
         function (event :MessageEvent) :void {
             var name :String = event.getName();
@@ -791,13 +795,13 @@ public class AVRGameBackend extends ControlBackend
         null, function (place :PlaceObject) :void {
             if (_roomObj != null) {
                 _roomObj.removeListener(_movementListener);
-                _roomObj.removeListener(this);
+                _roomObj.removeListener(_this);
                 callUserCode("leftRoom_v1");
             }
             _roomObj = (place as RoomObject);
             if (_roomObj != null) {
                 _roomObj.addListener(_movementListener);
-                _roomObj.addListener(this); // for PropertySetListener
+                _roomObj.addListener(_this); // for PropertySetListener
 
                 // TODO: this is where we may need to get clever and hold off on the
                 // TODO: dispatch until a number of conditions are true.
