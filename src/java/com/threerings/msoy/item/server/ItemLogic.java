@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -317,17 +318,19 @@ public class ItemLogic
         }
     }
 
+    /**
+     * Loads up the item lists for the specified member.
+     */
     public List<ItemListInfo> getItemLists (int memberId)
         throws PersistenceException
     {
-        if (_omgr.isDispatchThread()) {
-            throw new IllegalStateException("Must be called from the invoker");
-        }
-
-        // load up the user's lists
-        return convertRecords(_listRepo.loadInfos(memberId));
+        return Lists.newArrayList(
+            Iterables.transform(_listRepo.loadInfos(memberId), ItemListInfoRecord.TO_INFO));
     }
 
+    /**
+     * Creates an item list for the specified member.
+     */
     public ItemListInfo createItemList (int memberId, byte listType, String name)
         throws PersistenceException
     {
@@ -461,19 +464,23 @@ public class ItemLogic
         return _listRepo.contains(favoriteList.listId, item);
     }
 
+    /**
+     * Loads up info on the specified member's favorite items list.
+     */
     public ItemListInfo getFavoriteListInfo (int memberId)
         throws PersistenceException
     {
-        List<ItemListInfoRecord> favoriteRecords = _listRepo.loadInfos(memberId, ItemListInfo.FAVORITES);
-        List<ItemListInfo> favoriteLists = convertRecords(favoriteRecords);
+        List<ItemListInfo> favoriteLists = Lists.newArrayList(
+            Iterables.transform(_listRepo.loadInfos(memberId, ItemListInfo.FAVORITES),
+                                ItemListInfoRecord.TO_INFO));
 
         ItemListInfo favorites;
-
         if (favoriteLists.isEmpty()) {
             // create the favorites list for this user
-            favorites = createItemList(memberId, ItemListInfo.FAVORITES, ItemListInfo.FAVORITES_NAME);
+            favorites = createItemList(
+                memberId, ItemListInfo.FAVORITES, ItemListInfo.FAVORITES_NAME);
         } else {
-            // There should never be more than one FAVORITES list per member
+            // there should never be more than one FAVORITES list per member
             if (favoriteLists.size() > 1) {
                 log.warning("More than one favorites list found for member.", "memberId", memberId);
             }
@@ -608,19 +615,6 @@ public class ItemLogic
         /** A mapping of item type to LookupType record of repo / ids. */
         protected HashMap<Byte, LookupType> _byType = new HashMap<Byte, LookupType>();
     } /* End: class LookupList. */
-
-    /**
-     * Utility for converting a list of records into their counterparts.
-     */
-    protected static List<ItemListInfo> convertRecords(List<ItemListInfoRecord> records)
-    {
-        int nn = records.size();
-        List<ItemListInfo> list = Lists.newArrayListWithExpectedSize(nn);
-        for (int ii = 0; ii < nn; ii++) {
-            list.add(records.get(ii).toItemListInfo());
-        }
-        return list;
-    }
 
     @SuppressWarnings("unchecked")
     protected void registerRepository (byte itemType, ItemRepository repo)

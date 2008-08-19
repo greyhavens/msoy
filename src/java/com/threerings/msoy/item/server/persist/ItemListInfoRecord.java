@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import com.threerings.io.Streamable;
+import com.google.common.base.Function;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -24,7 +24,6 @@ import com.threerings.msoy.item.data.all.ItemListInfo;
 @Entity(indices={ @Index(name="ixMember", fields={"memberId"}) })
 @TableGenerator(name="listId", pkColumnValue="ITEM_LIST_INFO")
 public class ItemListInfoRecord extends PersistentRecord
-    implements Streamable
 {
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #listId} field. */
@@ -58,6 +57,14 @@ public class ItemListInfoRecord extends PersistentRecord
 
     /** Our depot schema version. */
     public static final int SCHEMA_VERSION = 4;
+
+    /** Transforms a persistent record to a runtime record. */
+    public static Function<ItemListInfoRecord, ItemListInfo> TO_INFO =
+        new Function<ItemListInfoRecord, ItemListInfo>() {
+        public ItemListInfo apply (ItemListInfoRecord record) {
+            return record.toItemListInfo();
+        }
+    };
 
     @Id @GeneratedValue(generator="listId", strategy=GenerationType.TABLE, allocationSize=1)
     public int listId;
