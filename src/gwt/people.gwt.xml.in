@@ -27,6 +27,7 @@
   <source path="client/stuff"/>
 
   <public path="public/people"/>
+  <stylesheet src="/css/person.css"/>
   <stylesheet src="/css/games.css"/> <!-- TODO: not sure I like this -->
   <stylesheet src="/css/mail.css"/> <!-- this either -->
   <stylesheet src="/css/people.css"/>
