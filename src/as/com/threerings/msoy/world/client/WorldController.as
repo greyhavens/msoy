@@ -80,9 +80,6 @@ import com.threerings.msoy.room.data.MsoySceneModel;
  */
 public class WorldController extends MsoyController
 {
-//    /** Command to display the recent scenes list. */
-//    public static const POP_ROOMS_MENU :String = "PopRoomsMenu";
-
     /** Command to display the chat channel menu. */
     public static const POP_CHANNEL_MENU :String = "PopChannelMenu";
 
@@ -322,71 +319,6 @@ public class WorldController extends MsoyController
         menu.setBounds(_wctx.getTopPanel().getMainAreaBounds());
         menu.popUpAt(r.left, r.top, true);
     }
-
-//    /**
-//     * Handles the POP_ROOMS_MENU command.
-//     */
-//    public function handlePopRoomsMenu (trigger :Button) :void
-//    {
-//        var scene :Scene = _wctx.getSceneDirector().getScene();
-//        var currentSceneId :int = (scene == null) ? -1 : scene.getId();
-//        if (!(_wctx.getLocationDirector().getPlaceObject() is SceneObject)) {
-//            currentSceneId = -1;
-//        }
-//
-//        var memberObj :MemberObject = _wctx.getMemberObject();
-//
-//        var friends :Array = memberObj.getSortedEstablishedFriends();
-//        friends = friends.map(function (fe :FriendEntry, index :int, array :Array) :Object {
-//            return { label: fe.name.toString(), command: GO_MEMBER_HOME, arg: fe.getMemberId()
-//            };
-//        });
-//
-//        var recent :Array = memberObj.recentScenes.toArray();
-//        recent.sort(function (sb1 :SceneBookmarkEntry, sb2 :SceneBookmarkEntry) :int {
-//            return int(sb1.lastVisit - sb2.lastVisit);
-//        });
-//
-//        var owned :Array = memberObj.ownedScenes.toArray();
-//        // TODO: sort owned?
-//
-//        var bookmarkMapper :Function = function (
-//            sb :SceneBookmarkEntry, index :int, array :Array) :Object {
-//                return {
-//                    label: sb.toString(),
-//                    enabled: (sb.sceneId != currentSceneId),
-//                    command: GO_SCENE,
-//                    arg: sb.sceneId
-//                };
-//            };
-//
-//        recent = recent.map(bookmarkMapper);
-//        owned = owned.map(bookmarkMapper);
-//
-//        var menuData :Array = [];
-//
-//        // add the friends if present
-//        if (friends.length > 0) {
-//            menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
-//        }
-//        // add owned scenes, if any
-//        if (owned.length > 0) {
-//            menuData.push({ label: Msgs.GENERAL.get("l.owned_scenes"), children: owned});
-//        }
-//        // always add recent scenes
-//        menuData.push({ label: Msgs.GENERAL.get("l.recent_scenes"), children: recent });
-//
-//        if (!memberObj.isGuest()) {
-//            menuData.push(
-//                { type: "separator" },
-//                { label: Msgs.GENERAL.get("l.go_home"),
-//                  enabled: (memberObj.getHomeSceneId() != currentSceneId),
-//                  command :GO_SCENE, arg: memberObj.getHomeSceneId()
-//                });
-//        }
-//
-//        CommandMenu.createMenu(menuData, _topPanel).popUp(trigger, true);
-//    }
 
     /**
      * Handles the VIEW_COMMENTED_ITEM command.
@@ -1285,11 +1217,24 @@ public class WorldController extends MsoyController
         }
         menuData.push({ label: Msgs.WORLD.get("l.recent_scenes"), children: sceneSubmenu });
 
-        const ourHomeId :int = _wctx.getMemberObject().homeSceneId;
+        const me :MemberObject = _wctx.getMemberObject();
+        const ourHomeId :int = me.homeSceneId;
         if (ourHomeId != 0) {
-            menuData.push({ label: Msgs.WORLD.get("b.go_home"), command: GO_SCENE, arg: ourHomeId,
+            menuData.push({ label: Msgs.GENERAL.get("b.go_home"), command: GO_SCENE, arg: ourHomeId,
                 enabled: (ourHomeId != curSceneId) });
         }
+
+        var friends :Array = new Array();
+        for each (var fe :FriendEntry in me.getSortedEstablishedFriends()) {
+            if (fe.online) {
+                friends.push({ label: fe.name.toString(),
+                    command: VISIT_MEMBER, arg: fe.name.getMemberId() });
+            }
+        }
+        if (friends.length == 0) {
+            friends.push({ label: Msgs.GENERAL.get("m.no_friends"), enabled: false });
+        }
+        menuData.push({ label: Msgs.GENERAL.get("l.visit_friends"), children: friends });
     }
 
     /** Giver of life, context. */
