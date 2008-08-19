@@ -90,8 +90,8 @@ public class TitleBar extends SmartTable
             break;
 
         case SHOP:
-            subnavi.addLink(null, "My Favorites", Pages.SHOP, "f");
             subnavi.addLink(null, "Shop", Pages.SHOP, "");
+            subnavi.addLink(null, "My Favorites", Pages.SHOP, "f");
             break;
 
         case HELP:
