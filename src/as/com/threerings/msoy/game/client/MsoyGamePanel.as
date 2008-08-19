@@ -142,6 +142,7 @@ public class MsoyGamePanel extends WhirledGamePanel
             bar.addCustomComponent(_showPlayers);
 
             var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
+            overlay.setSuppressSidebar(true);
             overlay.setLocalType(null);
             gameChatDir.addChatDisplay(overlay);
             bar.setChatDirector(gameChatDir);
@@ -167,6 +168,7 @@ public class MsoyGamePanel extends WhirledGamePanel
             _showPlayers.parent.removeChild(_showPlayers);
 
             var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
+            overlay.setSuppressSidebar(false);
             _gctx.getChatDirector().removeChatDisplay(overlay);
             bar.setChatDirector(mctx.getMsoyChatDirector());
             mctx.getTopPanel().getHeaderBar().getChatTabs().locationName = null;

@@ -85,8 +85,8 @@ public class MsoyController extends Controller
     /** Command to issue to toggle the chat display. */
     public static const TOGGLE_CHAT_HIDE :String = "ToggleChatHide";
 
-    /** Command to issue to toggle the chat display sliding to the side. */
-    public static const TOGGLE_CHAT_SLIDE :String = "ToggleChatSlide";
+    /** Command to issue to toggle the chat being in a sidebar. */
+    public static const TOGGLE_CHAT_SIDEBAR :String = "ToggleChatSidebar";
 
     /** Command to toggle the channel occupant list display */
     public static const TOGGLE_OCC_LIST :String = "ToggleOccList";
@@ -324,11 +324,11 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handles the TOGGLE_CHAT_SLIDE command.
+     * Handles the TOGGLE_CHAT_SIDEBAR command.
      */
-    public function handleToggleChatSlide () :void
+    public function handleToggleChatSidebar () :void
     {
-        Prefs.setSlidingChatHistory(!Prefs.getSlidingChatHistory());
+        Prefs.setSidebarChat(!Prefs.getSidebarChat());
     }
 
     /**

@@ -226,35 +226,35 @@ public class WorldControlBar extends ControlBar
         });
     }
 
-    protected function maybeDisplayChatTip () :void
-    {
-        // if we've already shown the tip, have no chat control or they have been a member for a
-        // while, don't show the chat tip
-        var mobj :MemberObject = _wctx.getMemberObject();
-        if (_chatTip != null || _chatControl == null || mobj.level >= CHAT_TIP_GRADUATE_LEVEL ||
-            Prefs.getSlidingChatHistory()) {
-            return;
-        }
-
-        // create, position and add our chat tip sprite
-        _chatTip = (new CHAT_TIP() as DisplayObject);
-        _chatTip.x = 5;
-        _chatTip.y = _ctx.getTopPanel().getPlaceContainer().height - _chatTip.height - 5;
-        fadeIn(_chatTip);
-        _ctx.getTopPanel().getPlaceContainer().addOverlay(_chatTip, PlaceBox.LAYER_TRANSIENT);
-
-        // when they click or type in the chat entry, we want to remove the sprite
-        var onAction :Function = function (... ignored) :void {
-            _chatControl.chatInput.removeEventListener(KeyboardEvent.KEY_DOWN, onAction);
-            _chatControl.chatInput.removeEventListener(MouseEvent.MOUSE_DOWN, onAction);
-            fadeOutAndRemove(_chatTip);
-        };
-        _chatControl.chatInput.addEventListener(KeyboardEvent.KEY_DOWN, onAction);
-        _chatControl.chatInput.addEventListener(MouseEvent.MOUSE_DOWN, onAction);
-
-        // or clear it out if they haven't already after ten seconds
-        new Timer(10000, 1).addEventListener(TimerEvent.TIMER, onAction);
-    }
+//    protected function maybeDisplayChatTip () :void
+//    {
+//        // if we've already shown the tip, have no chat control or they have been a member for a
+//        // while, don't show the chat tip
+//        var mobj :MemberObject = _wctx.getMemberObject();
+//        if (_chatTip != null || _chatControl == null || mobj.level >= CHAT_TIP_GRADUATE_LEVEL ||
+//            Prefs.getSlidingChatHistory()) {
+//            return;
+//        }
+//
+//        // create, position and add our chat tip sprite
+//        _chatTip = (new CHAT_TIP() as DisplayObject);
+//        _chatTip.x = 5;
+//        _chatTip.y = _ctx.getTopPanel().getPlaceContainer().height - _chatTip.height - 5;
+//        fadeIn(_chatTip);
+//        _ctx.getTopPanel().getPlaceContainer().addOverlay(_chatTip, PlaceBox.LAYER_TRANSIENT);
+//
+//        // when they click or type in the chat entry, we want to remove the sprite
+//        var onAction :Function = function (... ignored) :void {
+//            _chatControl.chatInput.removeEventListener(KeyboardEvent.KEY_DOWN, onAction);
+//            _chatControl.chatInput.removeEventListener(MouseEvent.MOUSE_DOWN, onAction);
+//            fadeOutAndRemove(_chatTip);
+//        };
+//        _chatControl.chatInput.addEventListener(KeyboardEvent.KEY_DOWN, onAction);
+//        _chatControl.chatInput.addEventListener(MouseEvent.MOUSE_DOWN, onAction);
+//
+//        // or clear it out if they haven't already after ten seconds
+//        new Timer(10000, 1).addEventListener(TimerEvent.TIMER, onAction);
+//    }
 
     protected function maybeDisplayAvatarIntro () :void
     {
@@ -366,8 +366,8 @@ public class WorldControlBar extends ControlBar
 
     protected var _partyBtn :CommandButton;
 
-    /** A tip shown when we first enter a room. */
-    protected var _chatTip :DisplayObject;
+//    /** A tip shown when we first enter a room. */
+//    protected var _chatTip :DisplayObject;
 
     /** An introduction to avatars shown to brand new players. */
     protected var _avatarIntro :DisplayObjectContainer;
@@ -378,8 +378,8 @@ public class WorldControlBar extends ControlBar
     /** We stop showing the "type here to chat" tip after the user reaches level 5. */
     protected static const CHAT_TIP_GRADUATE_LEVEL :int = 5;
 
-    [Embed(source="../../../../../../../rsrc/media/chat_tip.swf")]
-    protected static const CHAT_TIP :Class;
+//    [Embed(source="../../../../../../../rsrc/media/chat_tip.swf")]
+//    protected static const CHAT_TIP :Class;
 
     [Embed(source="../../../../../../../rsrc/media/avatar_intro.swf",
            mimeType="application/octet-stream")]

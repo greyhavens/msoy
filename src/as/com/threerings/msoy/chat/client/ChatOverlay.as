@@ -127,6 +127,15 @@ public class ChatOverlay
             handlePrefsUpdated, false, 0, true);
     }
 
+    /**
+     * Sets whether or not we're suppressing the any normal desire to jump to sidebar mode.
+     */
+    public function setSuppressSidebar (suppress :Boolean) :void
+    {
+        _suppressSidebar = suppress;
+        putInSidebar(shouldUseSidebar());
+    }
+
     // from ChatDisplay
     public function clear () :void
     {
@@ -186,11 +195,11 @@ public class ChatOverlay
                 _target.addChild(_historyBar);
             }
 
-            setHistorySliding(Prefs.getSlidingChatHistory());
+            putInSidebar(shouldUseSidebar());
             setOccupantListShowing(Prefs.getShowingOccupantList());
 
         } else {
-            setHistorySliding(false);
+            putInSidebar(false);
             setOccupantListShowing(false);
 
             if (_target.containsOverlay(_historyOverlay)) {
@@ -353,6 +362,14 @@ public class ChatOverlay
         return PAD;
     }
 
+    /**
+     * Should we put the chat in a sidebar?
+     */
+    protected function shouldUseSidebar () :Boolean
+    {
+        return !_suppressSidebar && Prefs.getSidebarChat();
+    }
+
     protected function createFilteredMessages () :void
     {
         var history :HistoryList = _ctx.getMsoyChatDirector().getHistoryList();
@@ -465,11 +482,11 @@ public class ChatOverlay
     {
         switch (event.name) {
         case Prefs.CHAT_HISTORY:
-            setHistoryEnabled(Boolean(event.value) || Prefs.getSlidingChatHistory());
+            setHistoryEnabled(Boolean(event.value) || Prefs.getSidebarChat());
             break;
 
-        case Prefs.CHAT_SLIDING:
-            setHistorySliding(Boolean(event.value));
+        case Prefs.CHAT_SIDEBAR:
+            putInSidebar(shouldUseSidebar());
             break;
 
         case Prefs.OCCUPANT_LIST:
@@ -510,24 +527,24 @@ public class ChatOverlay
         }
     }
 
-    protected function setHistorySliding (sliding :Boolean) :void
+    protected function putInSidebar (sidebar :Boolean) :void
     {
         if (!(_target is PlaceBox)) {
             return; // never slide on a non-PlaceBox
         }
 
-        if (sliding == (_chatContainer != null)) {
+        if (sidebar == (_chatContainer != null)) {
             return; // no change
         }
 
         // ensure the history bar has been set
         layout(false);
 
-        if (sliding) {
+        if (sidebar) {
             _target.removeOverlay(_historyOverlay);
             _target.removeChild(_historyBar);
-            _ctx.getTopPanel().slideInChat(
-                _chatContainer = new ChatContainer(_historyBar, _historyOverlay), _targetBounds);
+            _ctx.getTopPanel().setRightPanel(
+                _chatContainer = new ChatContainer(_historyBar, _historyOverlay));
             if (_occupantList != null && _target.containsOverlay(_occupantList)) {
                 _target.removeOverlay(_occupantList);
                 _chatContainer.displayOccupantList(_occupantList);
@@ -540,7 +557,7 @@ public class ChatOverlay
             for each (glyph in _showingHistory) {
                 glyph.setClickable(false);
             }
-            _ctx.getTopPanel().slideOutChat();
+            _ctx.getTopPanel().clearRightPanel(_chatContainer);
             if (_chatContainer.containsOccupantList()) {
                 _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
             }
@@ -623,8 +640,7 @@ public class ChatOverlay
 
         _historyExtent = (_targetBounds.height - PAD) / SUBTITLE_HEIGHT_GUESS;
 
-        if (Prefs.getShowingChatHistory() || Prefs.getSlidingChatHistory() || 
-            !(_target is PlaceBox)) {
+        if (Prefs.getShowingChatHistory() || Prefs.getSidebarChat() || !(_target is PlaceBox)) {
             if (_historyBar == null) {
                 _historyBar = new VScrollBar();
                 _historyBar.addEventListener(FlexEvent.UPDATE_COMPLETE, configureHistoryBarSize);
@@ -1268,12 +1284,18 @@ public class ChatOverlay
     protected static const LOCALTYPE_EXPIRE_TIME :Number = 60;
 
     protected var _ctx :MsoyContext;
+
+    /** Contains chat when we're in sidebar mode. */
     protected var _chatContainer :ChatContainer;
+
     protected var _includeOccList :Boolean;
     protected var _localtype :String;
     protected var _localtypeDisplayTimes :HashMap = new HashMap();
     protected var _closedTabs :ExpiringSet;
     protected var _filteredMessages :Array = [];
+
+    /** If true, the sidebar is being suppressed and we shouldn't show it. */
+    protected var _suppressSidebar :Boolean;
 
     /** Used to translate messages. */
     protected var _msgMan :MessageManager;
@@ -1348,15 +1370,20 @@ import com.whirled.ui.PlayerList;
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.PlaceLayer;
+import com.threerings.msoy.client.TopPanel;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
 
+/**
+ * Used when we put chat into sidebar mode.
+ */
 class ChatContainer extends Container
 {
     public function ChatContainer (scrollBar :ScrollBar, chat :Sprite) 
     {
         styleName = "chatContainer";
         autoLayout = false;
+        width = TopPanel.RIGHT_SIDEBAR_WIDTH;
         horizontalScrollPolicy = ScrollPolicy.OFF
         addChild(scrollBar);
         addChild(new FlexWrapper(chat));

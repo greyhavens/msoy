@@ -236,12 +236,12 @@ public class WorldController extends MsoyController
         menuData.push({ type: "separator" });
 
         if (!(_wctx.getTopPanel().getPlaceView() is MsoyGamePanel)) {
-            if (!Prefs.getSlidingChatHistory()) {
+            if (!Prefs.getSidebarChat()) {
                 menuData.push({ command: TOGGLE_CHAT_HIDE, label: Msgs.GENERAL.get(
                         Prefs.getShowingChatHistory() ? "b.hide_chat" : "b.show_chat") });
             }
-            menuData.push({ command: TOGGLE_CHAT_SLIDE, label: Msgs.GENERAL.get(
-                    Prefs.getSlidingChatHistory() ? "b.overlay_chat" : "b.slide_chat") });
+            menuData.push({ command: TOGGLE_CHAT_SIDEBAR, label: Msgs.GENERAL.get(
+                    Prefs.getSidebarChat() ? "b.overlay_chat" : "b.sidebar_chat") });
             menuData.push({ command: TOGGLE_OCC_LIST, label: Msgs.GENERAL.get(
                     Prefs.getShowingOccupantList() ? "b.hide_occ_list" : "b.show_occ_list") });
             menuData.push({ type: "separator" });

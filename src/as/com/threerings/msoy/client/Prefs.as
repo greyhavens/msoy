@@ -36,7 +36,7 @@ public class Prefs
     public static const CHAT_DECAY :String = "chatDecay";
     public static const CHAT_FILTER :String = "chatFilter";
     public static const CHAT_HISTORY :String = "chatHistory";
-    public static const CHAT_SLIDING :String = "chatSliding";
+    public static const CHAT_SIDEBAR :String = "chatSliding"; // legacy name
     public static const OCCUPANT_LIST :String = "occupantList";
     public static const LOG_TO_CHAT :String = "logToChat";
     public static const BLEEPED_MEDIA :String = "bleepedMedia";
@@ -196,16 +196,16 @@ public class Prefs
     }
 
     /** 
-     * Returns whether the chat history is slid to the side or not.
+     * Returns whether chat is in sidebar mode.
      */
-    public static function getSlidingChatHistory () :Boolean
+    public static function getSidebarChat () :Boolean
     {
-        return (config.getValue(CHAT_SLIDING, false) as Boolean);
+        return (config.getValue(CHAT_SIDEBAR, false) as Boolean);
     }
 
-    public static function setSlidingChatHistory (sliding :Boolean) :void
+    public static function setSidebarChat (sidebar :Boolean) :void
     {
-        config.setValue(CHAT_SLIDING, sliding);
+        config.setValue(CHAT_SIDEBAR, sidebar);
     }
 
     /** 
