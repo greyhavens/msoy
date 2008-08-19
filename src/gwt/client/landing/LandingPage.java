@@ -38,10 +38,6 @@ public class LandingPage extends Page
         if (action.equals("creators")) {
             runABTests();
 
-        // registration form ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
-        } else if (action.equals("creatorssignuptest")) {
-            setContent(_msgs.titleCreators(), new CreatorsSignupPanel());
-
         // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
         } else if (action.equals("creatorsinfotest")) {
             setContent(_msgs.titleCreators(), new CreatorsPanel());
@@ -74,60 +70,21 @@ public class LandingPage extends Page
      */
     protected void runABTests ()
     {
-        // the old July test (soon to be removed)
-        // TODO: replace with
-        //    runAugustTest();
-        //
         _membersvc.getABTestGroup(
-            TrackingCookie.get(), "jul08CreatorsLanding", true, new MsoyCallback<Integer>() {
+            TrackingCookie.get(), "aug08CreatorsLanding2", true, new MsoyCallback<Integer>() {
                 public void onSuccess (Integer group) {
-                    // CShell.log("jul08 - group " + group);
-                    switch (group) {
-                        case -1:
-                            // if the test is not running, fall over to the next one
-                            runAugustTest();
-                            break;
-                        case 1:
-                            setContent(_msgs.titleCreators(), new CreatorsSignupPanel());
-                            break;
-                        case 2:
-                            setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
-                            break;
-                        case 3:
-                            Link.go(Pages.ME, "");
-                            break;
-                        default:
-                            // group 4 redirect to the info page
-                            setContent(_msgs.titleCreators(), new CreatorsPanel());
-                    }
-                }});
-    }
-
-    protected void runAugustTest ()
-    {
-        // the new August test
-        _membersvc.getABTestGroup(
-            TrackingCookie.get(), "aug08CreatorsLanding", true, new MsoyCallback<Integer>() {
-                public void onSuccess (Integer group) {
-                    // CShell.log("aug08 - group " + group);
                     switch (group) {
                     case 1:
-                        setContent(_msgs.titleCreators(), new CreatorsSignupPanel());
-                        break;
-                    case 2:
                         setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
                         break;
-                    case 3:
-                        Link.go(Pages.ME, "");
-                        break;
-                    case 4:
+                    case 2:
                         redirectToPopularWhirled();
                         break;
-                    case 5:
+                    case 3:
                         redirectToStoryRooms();
                         break;
                     default:
-                        // group 6, and if test is not running visitors see info page
+                        // group 4, and if test is not running visitors see info page
                         setContent(_msgs.titleCreators(), new CreatorsPanel());
                     }
                 }});
@@ -137,7 +94,7 @@ public class LandingPage extends Page
      * Redirects the viewer to a popular Whirled, or to Brave New Whirled if
      * a suitable whirled is not available.
      *
-     * Part of the aug08CreatorsLanding A/B test. See JIRA WRLD-251.
+     * Part of the aug08CreatorsLanding2 A/B test. See JIRA WRLD-251.
      *
      * TODO: remove me after the test has ended.
      */
@@ -166,7 +123,7 @@ public class LandingPage extends Page
     /**
      * Redirects the viewer to a set of story rooms designed specifically for this test.
      *
-     * Part of the aug08CreatorsLanding A/B test. See JIRA WRLD-251.
+     * Part of the aug08CreatorsLanding2 A/B test. See JIRA WRLD-251.
      *
      * TODO: remove me after the test has ended.
      */
