@@ -111,7 +111,6 @@ public class PassportPanel extends FlowPanel
             _badgePanel = new HorizontalPanel();
             _badgePanel.setStyleName("NextBadgesPanel");
             nextBadges.add(_badgePanel);
-            nextBadges.setCellWidth(_badgePanel, "100%");
             nextBadges.add(MsoyUI.createImage("/images/me/passport_box_right.png", null));
             add(nextBadges);
         }

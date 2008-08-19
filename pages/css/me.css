@@ -230,12 +230,7 @@
 .passport .NextPanel .NextBadgesPanel {
   background-image: url(/images/me/passport_box_tile.png);
   height: 144px;
-  width: 100%;
-}
-
-.passport .NextPanel .NextHeader, .passport .NextPanel .NextBadges {
-  padding-right: 3px;
-  padding-left: 3px;
+  width: 652px;
 }
 
 .passport .headerBox {
@@ -256,15 +251,20 @@
    BADGE DISPLAYS ANYWHERE
 -------------------------------------*/
 .badgeDisplay {
-  width: 155px;
+  width: 137px;
   height: 142px;
   display: inline;
 }
 
 .badgeDisplay .StampName {
+  width: 57px;
+  color: #1c4c74;
+  font-weight: bold;
+  font-size: 12px;
 }
 
 .badgeDisplay .StampDescription {
+  width: 137px;
   color: #4a7595;
   font-size: 12px;
 }
