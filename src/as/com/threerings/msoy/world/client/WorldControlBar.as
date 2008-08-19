@@ -179,10 +179,7 @@ public class WorldControlBar extends ControlBar
         addGroupChild(_hotZoneBtn, [ UI_ROOM ]);
         addGroupChild(_zoomBtn, [ UI_ROOM, UI_VIEWER ]);
 
-        // TODO: snapshots are not functional; revisit
-        if (_ctx.getTokens().isSupport()) {
-            addGroupChild(_snapBtn, [ UI_ROOM ]);
-        }
+        addGroupChild(_snapBtn, [ UI_ROOM ]);
         addGroupChild(_roomeditBtn, [ UI_ROOM ]);
 
         // TODO: notifications are global, yes? They should be in ControlBar
