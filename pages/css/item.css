@@ -25,12 +25,13 @@
   font-weight: bold;
 }
 
-.favoriteText {
+.favorite {
   font-size: 12px;
   font-weight: bold;
+  text-align: center;
 }
 
-.favoriteToggle .gwt-ToggleButton-down {
+.favorite .gwt-ToggleButton {
   background: #FFFFFF
 }
 
