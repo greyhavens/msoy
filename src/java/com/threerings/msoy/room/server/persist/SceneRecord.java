@@ -17,12 +17,15 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 
 import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.gwt.RoomInfo;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Contains metadata for a scene in the Whirled.
@@ -199,9 +202,11 @@ public class SceneRecord extends PersistentRecord
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 3;
 
-    /** Converts this scene record in to a partially initialized room info record. The {@link
-     * RoomInfo#owner} and {@link RoomInfof#decor} fields must be filled in manually if they are
-     * needed. */
+    /**
+     * Converts this scene record in to a partially initialized room info record. The
+     * {@link RoomInfo#owner}, {@link RoomInfof#decor}, {@link RoomInfo#canonicalThumbnail} fields
+     * must be filled in manually if they are needed.
+     */
     public static final Function<SceneRecord,RoomInfo> TO_ROOM_INFO =
         new Function<SceneRecord,RoomInfo>() {
         public RoomInfo apply (SceneRecord record) {
@@ -212,6 +217,25 @@ public class SceneRecord extends PersistentRecord
         }
     };
 
+    /**
+     * Converts this scene record in to a partially initialized room info record. The
+     * {@link RoomInfo#owner} and {@link RoomInfof#decor} fields must be filled in manually if
+     * they are needed.
+     */
+    public static final Function<SceneRecord, RoomInfo> TO_ROOM_INFO_WITH_THUMB = 
+        new Function<SceneRecord, RoomInfo>() {
+        public RoomInfo apply (SceneRecord record) {
+            RoomInfo info = new RoomInfo();
+            info.sceneId = record.sceneId;
+            info.name = record.name;
+            if (record.thumbnailHash != null) {
+                info.canonicalThumbnail = new MediaDesc(record.thumbnailHash,
+                    record.thumbnailType);
+            }
+            return info;
+        }
+    };
+    
     /** The unique identifier for this scene. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY, initialValue=6)
     public int sceneId; // initialValue=6 accounts for stock scenes

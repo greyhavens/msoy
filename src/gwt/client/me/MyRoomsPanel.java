@@ -8,10 +8,14 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
@@ -20,6 +24,7 @@ import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
 import client.util.Link;
+import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.SceneThumbnail;
 import client.util.ServiceUtil;
@@ -57,14 +62,30 @@ public class MyRoomsPanel extends VerticalPanel
         {
             super("Room", 0, 2);
             ClickListener onClick = Link.createListener(Pages.WORLD, "s"+room.sceneId);
-            SceneThumbnail sceneImage = new SceneThumbnail(room.sceneId, true);
-            sceneImage.addClickListener(onClick);
+            Widget sceneImage = makeThumbnailWidget(room, onClick);
+// SceneThumbnail sceneImage = new SceneThumbnail(room.sceneId, true);
+// sceneImage.addClickListener(onClick);
             setWidget(0, 0, sceneImage);
             getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
             setWidget(1, 0, MsoyUI.createActionLabel(room.name, onClick));
         }
+        
+        protected Widget makeThumbnailWidget (RoomInfo room, ClickListener onClick) {
+            if (room.canonicalThumbnail != null) {
+                return MediaUtil.createMediaView(room.canonicalThumbnail,
+                    MediaDesc.CANONICAL_IMAGE_SIZE, onClick);
+            } else {
+                Image image = new Image();
+                image.addClickListener(onClick);
+                image.setUrl(DEFAULT_HALFSIZE);
+                return image;
+            }
+        }        
     }
-
+    
+    protected static final String DEFAULT_HALFSIZE = DeploymentConfig.staticMediaURL
+        + "snapshot/default_t.jpg";
+    
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
     protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
         ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);

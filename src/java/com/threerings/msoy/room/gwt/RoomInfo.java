@@ -26,4 +26,7 @@ public class RoomInfo
 
     /** The room's decor thumbnail image. */
     public MediaDesc decor;
+
+    /** The room's canonical thumbnail. */
+    public MediaDesc canonicalThumbnail;
 }
