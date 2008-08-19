@@ -80,7 +80,8 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
         if (_pageOffset == start && _pageCount == count) {
             callback.onSuccess(_pageItems);
         } else {
-            callFetchService(_pageOffset = start, _pageCount = count, _count < 0, new ResultCallback(callback));
+            callFetchService(_pageOffset = start, _pageCount = count, _count < 0,
+                             new ResultCallback(callback));
         }
     }
 
@@ -126,7 +127,8 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
     }
 
     /** Calls the service to obtain data, should pass this as the callback. */
-    protected abstract void callFetchService (int start, int count, boolean needCount, AsyncCallback<R> callback);
+    protected abstract void callFetchService (
+        int start, int count, boolean needCount, AsyncCallback<R> callback);
 
     /** Returns the count from the service result. */
     protected abstract int getCount (R result);
