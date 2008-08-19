@@ -1296,6 +1296,12 @@ public class WorldController extends MsoyController
             sceneSubmenu.push({ label: Msgs.GENERAL.get("m.none"), enabled: false });
         }
         menuData.push({ label: Msgs.WORLD.get("l.recent_scenes"), children: sceneSubmenu });
+
+        const ourHomeId :int = _wctx.getMemberObject().homeSceneId;
+        if (ourHomeId != 0) {
+            menuData.push({ label: Msgs.WORLD.get("b.go_home"), command: GO_SCENE, arg: ourHomeId,
+                enabled: (ourHomeId != curSceneId) });
+        }
     }
 
     /** Giver of life, context. */
