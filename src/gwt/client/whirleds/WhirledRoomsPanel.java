@@ -3,6 +3,8 @@
 
 package client.whirleds;
 
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -19,7 +21,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
@@ -29,6 +30,7 @@ import client.ui.MsoyUI;
 import client.ui.ThumbBox;
 import client.ui.TongueBox;
 import client.util.Link;
+import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -51,13 +53,12 @@ public class WhirledRoomsPanel extends VerticalPanel
 
     protected void init (WebRoomService.RoomsResult rooms)
     {
-        _roomsResult = rooms;
+        _myRooms = rooms.callerRooms;
         add(new TongueBox(null, _msgs.detailRoomsDetail(_detail.group.name), false));
         _roomsGrid = new SmartTable(0, 0);
         for (int ii = 0; ii < rooms.groupRooms.size(); ii++) {
             int row = ii / ROOM_COLUMNS, col = ii % ROOM_COLUMNS;
-            _roomsGrid.setWidget(row, col,
-                new RoomWidget(rooms.groupRooms.get(ii)));
+            _roomsGrid.setWidget(row, col, new RoomWidget(rooms.groupRooms.get(ii)));
         }
         add(new TongueBox(_msgs.detailRoomsTitle(_detail.group.name), _roomsGrid));
 
@@ -67,7 +68,7 @@ public class WhirledRoomsPanel extends VerticalPanel
         transferPanel.add(transferForm);
         transferForm.setSpacing(10);
         transferForm.add(_roomsListBox = new ListBox());
-        for (RoomInfo callerRoom : _roomsResult.callerRooms) {
+        for (RoomInfo callerRoom : _myRooms) {
             _roomsListBox.addItem(callerRoom.name);
         }
         Button transferButton = new Button(_msgs.detailTransferRoom(_detail.group.name),
@@ -86,7 +87,7 @@ public class WhirledRoomsPanel extends VerticalPanel
         if (index < 0) {
             return;
         }
-        RoomInfo room = _roomsResult.callerRooms.get(index);
+        RoomInfo room = _myRooms.get(index);
         _groupsvc.transferRoom(_detail.group.groupId, room.sceneId, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 moveSceneToGrid(index);
@@ -98,7 +99,7 @@ public class WhirledRoomsPanel extends VerticalPanel
     {
         // TODO if we leave this tab and come back to it, this data should be refreshed from the
         // server
-        RoomInfo room = _roomsResult.callerRooms.remove(index);
+        RoomInfo room = _myRooms.remove(index);
         _roomsListBox.removeItem(index);
         int row = _roomsGrid.getRowCount() - 1;
         int col = _roomsGrid.getCellCount(row);
@@ -117,16 +118,15 @@ public class WhirledRoomsPanel extends VerticalPanel
         {
             super("Room", 0, 2);
             ClickListener onClick = Link.createListener(Pages.WORLD, "s"+room.sceneId);
-            MediaDesc decor = (room.decor != null) ? room.decor :
-                Item.getDefaultThumbnailMediaFor(Item.DECOR);
-            setWidget(0, 0, new ThumbBox(decor, onClick));
+            setWidget(0, 0, MediaUtil.createSceneThumbView(room.canonicalThumbnail, onClick));
             getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
             setWidget(1, 0, MsoyUI.createActionLabel(room.name, onClick));
+            getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
         }
     }
 
     protected GroupDetail _detail;
-    protected WebRoomService.RoomsResult _roomsResult;
+    protected List<RoomInfo> _myRooms;
     protected ListBox _roomsListBox;
     protected SmartTable _roomsGrid;
 
@@ -136,5 +136,5 @@ public class WhirledRoomsPanel extends VerticalPanel
     protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
         ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
 
-    protected static final int ROOM_COLUMNS = 6;
+    protected static final int ROOM_COLUMNS = 2;
 }
