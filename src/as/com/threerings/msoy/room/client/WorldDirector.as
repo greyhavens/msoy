@@ -120,7 +120,7 @@ public class WorldDirector extends BasicDirector
     }
 
     /**
-     * Called by {@link #handleGoMemberLocation}.
+     * Called by {@link #goToMemberLocation}.
      */
     protected function finishGoToMemberLocation (location :MemberLocation) :void
     {
