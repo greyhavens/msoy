@@ -112,12 +112,9 @@ public class GameServlet extends MsoyServiceServlet
                 if (item != null) {
                     detail.listedItem = (Game)item.toItem();
                     creatorId = item.creatorId;
-                }
-                if (mrec != null) {
-                    detail.memberItemInfo.memberRating =
-                        _gameRepo.getRating(item.itemId, mrec.memberId);
-                    //set whether the game is one of the member's favorites
-                    if(detail.listedItem != null) {
+                    if (mrec != null) {
+                        detail.memberItemInfo.memberRating =
+                            _gameRepo.getRating(item.itemId, mrec.memberId);
                         detail.memberItemInfo.favorite =
                             _itemLogic.isFavorite(mrec.memberId, detail.listedItem);
                     }
