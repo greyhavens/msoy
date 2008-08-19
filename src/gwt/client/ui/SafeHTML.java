@@ -23,6 +23,9 @@ public class SafeHTML extends HTML
         NodeList<Element> anchors = element.getElementsByTagName("a");
         for (int ii = 0; ii < anchors.getLength(); ii++) {
             Element anchor = anchors.getItem(ii);
+            if (anchor.getAttribute("href") == null) {
+                continue;
+            }
             anchor.setAttribute("href", fixLink(anchor.getAttribute("href")));
             if (isWhirledLink(anchor.getAttribute("href"))) {
                 anchor.setAttribute("target", "_top");
