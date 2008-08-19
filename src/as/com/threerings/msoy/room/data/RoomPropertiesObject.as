@@ -3,7 +3,9 @@ package com.threerings.msoy.room.data {
 import com.threerings.io.ObjectInputStream;
 import com.threerings.presents.dobj.DObject;
 import com.whirled.game.client.PropertySpaceHelper;
+import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
+import com.whirled.game.data.WhirledGameMessageMarshaller;
 
 /**
  * Provides a property space for a room.
@@ -11,6 +13,13 @@ import com.whirled.game.data.PropertySpaceObject;
 public class RoomPropertiesObject extends DObject
     implements PropertySpaceObject
 {
+    /** Service for setting the properties. */
+    public var propertiesService :PropertySpaceMarshaller;
+    
+    /** Service for sending messages to the room occupants (that are also playing the game that 
+     * these properties belong to). */
+    public var messageService :WhirledGameMessageMarshaller;
+    
     // from PropertySpaceObject
     public function getUserProps () :Object
     {
@@ -21,6 +30,8 @@ public class RoomPropertiesObject extends DObject
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
+        propertiesService = (ins.readObject() as PropertySpaceMarshaller);
+        messageService = (ins.readObject() as WhirledGameMessageMarshaller);
         PropertySpaceHelper.readProperties(this, ins);
     }
 
