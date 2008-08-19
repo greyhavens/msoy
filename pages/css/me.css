@@ -233,6 +233,11 @@
   width: 652px;
 }
 
+.passport .NextPanel .NextBadgesPanel .BadgeDivider {
+  padding-top: 5px;
+  padding-right: 10px;
+}
+
 .passport .headerBox {
   width: 673px;
   padding-left: 5px;
@@ -253,7 +258,6 @@
 .badgeDisplay {
   width: 137px;
   height: 142px;
-  display: inline;
 }
 
 .badgeDisplay .StampName {
@@ -269,17 +273,19 @@
   font-size: 12px;
 }
 
+.badgeDisplay .ProgressBar {
+  float: left;
+}
+
 .badgeDisplay .ProgressBar .Fill {
   background-repeat: repeat;
 }
 
-.badgeDisplay .GoButton, .badgeDisplay .GoButton-hovering, .badgeDisplay .GoButton-down {
+.badgeDisplay .GoButton {
   width: 40px;
   height: 17px;
-}
-
-.badgeDisplay .GoButton {
   background-image: url(/images/me/go_up.png);
+  float: right;
 }
 
 .badgeDisplay .GoButton-hovering {
@@ -288,4 +294,12 @@
 
 .badgeDisplay .GoButton-down {
   background-image: url(/images/me/go_down.png);
+}
+
+.BoxedBadge {
+  border-color: #d6e8f6;
+  border-style: solid;
+  border-width: 1px;
+  border-collapse: collapse;
+  float: left;
 }

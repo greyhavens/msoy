@@ -58,7 +58,7 @@ public class PassportPanel extends FlowPanel
                 _dmsgs.getString("passportCategory_" + catNameLower), stamps));
 
             for (Badge badge : data.stamps.get(category)) {
-                stamps.add(new BadgeDisplay(badge));
+                stamps.add(MsoyUI.createSimplePanel("BoxedBadge", new BadgeDisplay(badge)));
             }
         }
    }
@@ -126,6 +126,10 @@ public class PassportPanel extends FlowPanel
             for (int ii = 0, max = Math.min(MAX_NEXT_BADGES, _badges.size()); ii < max; ii++) {
                 _badgePanel.add(new BadgeDisplay(_badges.get(
                     indexesUnused.remove((int)(Math.random() * indexesUnused.size())))));
+                if (ii < max - 1) {
+                    _badgePanel.add(
+                        MsoyUI.createImage("/images/me/passport_box_divider.png", "BadgeDivider"));
+                }
             }
         }
 

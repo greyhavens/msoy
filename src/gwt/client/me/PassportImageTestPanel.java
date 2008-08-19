@@ -15,6 +15,7 @@ import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 
+import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -38,7 +39,7 @@ public class PassportImageTestPanel extends PagedGrid<Badge>
     @Override
     protected Widget createWidget(Badge badge)
     {
-        return new BadgeDisplay(badge);
+        return MsoyUI.createSimplePanel("BoxedBadge", new BadgeDisplay(badge));
     }
 
     @Override
