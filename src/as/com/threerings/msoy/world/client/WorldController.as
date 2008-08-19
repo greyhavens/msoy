@@ -95,9 +95,6 @@ public class WorldController extends MsoyController
     /** Command to go to a member's home scene. */
     public static const GO_MEMBER_HOME :String = "GoMemberHome";
 
-    /** Command to go to a group's home scene. */
-    public static const GO_GROUP_HOME :String = "GoGroupHome";
-
     /** Command to join a member's current game. */
     public static const JOIN_PLAYER_GAME :String = "JoinPlayerGame";
 

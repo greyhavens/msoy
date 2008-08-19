@@ -124,6 +124,9 @@ public class MsoyController extends Controller
     /** Command to go to a running game (gameId + placeOid). */
     public static const GO_GAME :String = "GoGame";
 
+    /** Command to go to a group's home scene. */
+    public static const GO_GROUP_HOME :String = "GoGroupHome";
+
     /** Command to share the current scene with email contacts. */
     public static const EMAIL_SHARE :String = "EmailShare";
 
