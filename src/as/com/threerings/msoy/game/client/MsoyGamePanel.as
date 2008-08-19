@@ -149,7 +149,7 @@ public class MsoyGamePanel extends WhirledGamePanel
 
         } else {
             // put game chat in the sidebar
-            mctx.getTopPanel().setRightPanel(new GameChatContainer(mctx, gameChatDir, _playerList));
+            mctx.getTopPanel().setLeftPanel(new GameChatContainer(mctx, gameChatDir, _playerList));
         }
     }
 
@@ -175,10 +175,10 @@ public class MsoyGamePanel extends WhirledGamePanel
 
         } else {
             var gameChat :GameChatContainer =
-                mctx.getTopPanel().getRightPanel() as GameChatContainer;
+                mctx.getTopPanel().getLeftPanel() as GameChatContainer;
             if (gameChat != null) {
                 gameChat.shutdown();
-                mctx.getTopPanel().clearRightPanel();
+                mctx.getTopPanel().clearLeftPanel();
             }
         }
 

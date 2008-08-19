@@ -543,7 +543,7 @@ public class ChatOverlay
         if (sidebar) {
             _target.removeOverlay(_historyOverlay);
             _target.removeChild(_historyBar);
-            _ctx.getTopPanel().setRightPanel(
+            _ctx.getTopPanel().setLeftPanel(
                 _chatContainer = new ChatContainer(_historyBar, _historyOverlay));
             if (_occupantList != null && _target.containsOverlay(_occupantList)) {
                 _target.removeOverlay(_occupantList);
@@ -557,7 +557,7 @@ public class ChatOverlay
             for each (glyph in _showingHistory) {
                 glyph.setClickable(false);
             }
-            _ctx.getTopPanel().clearRightPanel(_chatContainer);
+            _ctx.getTopPanel().clearLeftPanel(_chatContainer);
             if (_chatContainer.containsOccupantList()) {
                 _target.addOverlay(_occupantList, PlaceBox.LAYER_CHAT_LIST);
             }
@@ -575,7 +575,7 @@ public class ChatOverlay
     {
         // if we need to ship it off to a game chat container, do that.
         if (!_includeOccList) {
-            var rightPanel :UIComponent = _ctx.getTopPanel().getRightPanel();
+            var rightPanel :UIComponent = _ctx.getTopPanel().getLeftPanel();
             if (rightPanel is GameChatContainer) {
                 if (_occupantList != null) {
                     _occupantList.scrollBarOnLeft = (_scrollBarSide == SCROLL_BAR_LEFT);
