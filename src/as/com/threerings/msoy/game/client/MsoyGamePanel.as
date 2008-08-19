@@ -103,6 +103,9 @@ public class MsoyGamePanel extends WhirledGamePanel
     // from WhirledGamePanel
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
+        _spinner = new PlaceLoadingDisplay(
+            _gctx.getMsoyContext().getTopPanel().getPlaceContainer());
+
         super.willEnterPlace(plobj);
 
         const mctx :MsoyContext = _gctx.getMsoyContext();
@@ -111,9 +114,6 @@ public class MsoyGamePanel extends WhirledGamePanel
 
         mctx.getMsoyController().addGoMenuProvider(populateGoMenu);
         bar.setInGame(true);
-
-        _spinner = new PlaceLoadingDisplay(
-            _gctx.getMsoyContext().getTopPanel().getPlaceContainer());
 
         // if we're embedded and too small to display chat in a sidebar,
         // we go into "gamestub" mode and do an overlay instead.
@@ -191,6 +191,8 @@ public class MsoyGamePanel extends WhirledGamePanel
                 _rematch.parent.removeChild(_rematch);
             }
         }
+
+        // TODO: shutdown _spinner?
     }
 
     // from WhirledGamePanel
