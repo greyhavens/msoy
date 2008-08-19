@@ -36,6 +36,8 @@ import com.threerings.msoy.client.TopPanel;
 
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
+import com.threerings.msoy.item.data.all.Game;
+
 public class MsoyGamePanel extends WhirledGamePanel
     implements MsoyPlaceView
 {
@@ -224,12 +226,17 @@ public class MsoyGamePanel extends WhirledGamePanel
      */
     protected function populateGoMenu (menuData :Array) :void
     {
+        const cfg :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
+
         menuData.push({ type: "separator" });
         menuData.push({ label: Msgs.GAME.get("b.allGames"), command: MsoyController.VIEW_GAMES });
         menuData.push({ label: Msgs.GAME.get("b.backToLobby"),
             callback: _gctx.backToWhirled, arg: true });
 //        menuData.push({ label: Msgs.GAME.get("b.shop") /* TODO */ });
-//        menuData.push({ label: Msgs.GAME.get("b.gameWhirled") /* TODO */ });
+        if (cfg.groupId != Game.NO_GROUP) {
+            menuData.push({ label: Msgs.GAME.get("b.gameWhirled"),
+                command: MsoyController.GO_GROUP_HOME, arg: cfg.groupId });
+        }
         menuData.push({ type: "separator" });
     }
 

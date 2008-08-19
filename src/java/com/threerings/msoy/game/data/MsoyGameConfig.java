@@ -20,6 +20,9 @@ public class MsoyGameConfig extends ToyBoxGameConfig
     /** The game's thumbnail media. */
     public MediaDesc thumbnail;
 
+    /** The game's groupId, or 0 for none. */
+    public int groupId;
+
     /**
      * Configures this config with information from the supplied {@link Game} item.
      */
@@ -27,6 +30,7 @@ public class MsoyGameConfig extends ToyBoxGameConfig
     {
         this.name = game.name;
         this.thumbnail = game.getThumbnailMedia();
+        this.groupId = game.groupId;
         _gameId = game.gameId;
         _gameDef = gameDef;
     }

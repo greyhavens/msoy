@@ -27,6 +27,9 @@ public class MsoyGameConfig extends WhirledGameConfig
     /** The game's thumbnail media. */
     public var thumbnail :MediaDesc;
 
+    /** The game's groupId, or 0 for none. */
+    public var groupId :int;
+
     public function MsoyGameConfig ()
     {
         // used for unserialization
@@ -39,6 +42,7 @@ public class MsoyGameConfig extends WhirledGameConfig
     {
         this.name = game.name;
         this.thumbnail = game.getThumbnailMedia();
+        this.groupId = game.groupId;
         _gameId = game.gameId;
         _gameDef = gameDef;
     }
@@ -49,6 +53,7 @@ public class MsoyGameConfig extends WhirledGameConfig
         super.readObject(ins);
         name = (ins.readField(String) as String);
         thumbnail = (ins.readObject() as MediaDesc)
+        groupId = ins.readInt();
     }
 
     // from interface Streamable
@@ -57,6 +62,7 @@ public class MsoyGameConfig extends WhirledGameConfig
         super.writeObject(out);
         out.writeField(name);
         out.writeObject(thumbnail);
+        out.writeInt(groupId);
     }
 
     // from BaseGameConfig
