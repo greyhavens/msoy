@@ -212,7 +212,7 @@ public class SceneRecord extends PersistentRecord
             info.sceneId = record.sceneId;
             info.name = record.name;
             if (record.thumbnailHash != null) {
-                info.canonicalThumbnail = new MediaDesc(record.thumbnailHash, record.thumbnailType);
+                info.thumbnail = new MediaDesc(record.thumbnailHash, record.thumbnailType);
             }
             return info;
         }

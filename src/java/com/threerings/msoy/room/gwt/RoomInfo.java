@@ -24,6 +24,6 @@ public class RoomInfo
     /** The owner of this room (either a MemberName or a GroupName). */
     public Name owner;
 
-    /** The room's canonical thumbnail. */
-    public MediaDesc canonicalThumbnail;
+    /** The room's canonical thumbnail snapshot. */
+    public MediaDesc thumbnail;
 }

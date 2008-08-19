@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.group.gwt.GroupDetail;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
@@ -27,7 +26,6 @@ import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 
 import client.shell.Pages;
 import client.ui.MsoyUI;
-import client.ui.ThumbBox;
 import client.ui.TongueBox;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -118,7 +116,7 @@ public class WhirledRoomsPanel extends VerticalPanel
         {
             super("Room", 0, 2);
             ClickListener onClick = Link.createListener(Pages.WORLD, "s"+room.sceneId);
-            setWidget(0, 0, MediaUtil.createSceneThumbView(room.canonicalThumbnail, onClick));
+            setWidget(0, 0, MediaUtil.createSceneThumbView(room.thumbnail, onClick));
             getFlexCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
             setWidget(1, 0, MsoyUI.createActionLabel(room.name, onClick));
             getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
