@@ -1,4 +1,4 @@
-/** 
+/**
  * $Id$
  *
  * CSS styles for the Game interfaces.
@@ -398,7 +398,7 @@
   clear: both;
 }
 
-.arcade .BrowseGenres div:hover.ViewAllGames, 
+.arcade .BrowseGenres div:hover.ViewAllGames,
 .arcade .BrowseGenres div:active.ViewAllGames  {
   text-decoration: underline;
 }
@@ -798,11 +798,6 @@
   position: absolute;
   bottom: 1px;
   left: 160px;
-  width: 32px;
-  height: 17px;
-  background: url(/images/game/go_button.png) no-repeat top center;
-  border: none;
-  cursor: pointer;
 }
 
 .gameHeaderPanel .GenreLinks {

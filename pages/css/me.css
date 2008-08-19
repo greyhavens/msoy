@@ -282,18 +282,7 @@
 }
 
 .badgeDisplay .GoButton {
-  width: 40px;
-  height: 17px;
-  background-image: url(/images/me/go_up.png);
   float: right;
-}
-
-.badgeDisplay .GoButton-hovering {
-  background-image: url(/images/me/go_over.png);
-}
-
-.badgeDisplay .GoButton-down {
-  background-image: url(/images/me/go_down.png);
 }
 
 .BoxedBadge {

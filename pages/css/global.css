@@ -47,3 +47,18 @@ blockquote {
   margin-top: 5px;
   margin-bottom: 10px;
 }
+
+.GoButton {
+  width: 40px;
+  height: 17px;
+  background-image: url(/images/ui/go_up.png);
+}
+
+.GoButton-hovering {
+  background-image: url(/images/ui/go_over.png);
+}
+
+.GoButton-down {
+  background-image: url(/images/ui/go_down.png);
+}
+

@@ -78,7 +78,7 @@ public class GameHeaderPanel extends FlowPanel
         search.add(searchBox);
         Button searchGo = new Button("", searchListener);
         searchGo.setStyleName("GoButton");
-        search.add(searchGo);
+        search.add(MsoyUI.createImageButton("GoButton", searchListener));
     }
 
     /**
