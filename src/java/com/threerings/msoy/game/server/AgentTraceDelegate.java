@@ -44,6 +44,18 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
         }
     }
 
+    /**
+     * Called by {@link AVRGameManager} when it receives a batch of trace requests.
+     */
+    public void recordAgentTrace (String[] traces)
+    {
+        if (_tracing) {
+            for (String trace : traces) {
+                recordAgentTrace(trace);
+            }
+        }
+    }
+
     @Override
     public void didShutdown ()
     {

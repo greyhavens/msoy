@@ -138,9 +138,9 @@ public class AVRGameManager extends PlaceManager
      * Called privately by the ThaneAVRGameController when anything in the agent's code domain
      * causes a line of debug or error tracing.
      */
-    public void agentTrace (ClientObject caller, String trace)
+    public void agentTrace (ClientObject caller, String[] traces)
     {
-        _traceDelegate.recordAgentTrace(trace);
+        _traceDelegate.recordAgentTrace(traces);
     }
 
     @Override

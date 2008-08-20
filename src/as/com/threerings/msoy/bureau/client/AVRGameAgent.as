@@ -5,9 +5,12 @@
 
 package com.threerings.msoy.bureau.client {
 
+import flash.events.TimerEvent;
+import flash.utils.Timer;
 import com.threerings.bureau.Log;
 import com.threerings.bureau.client.Agent;
 import com.threerings.crowd.data.ManagerCaller;
+import com.threerings.io.TypedArray;
 import com.threerings.msoy.avrg.client.ThaneAVRGameController;
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.avrg.data.AVRGameObject;
@@ -18,7 +21,6 @@ import com.threerings.presents.dobj.SubscriberAdapter;
 import com.threerings.presents.util.SafeSubscriber;
 import com.threerings.util.StringUtil;
 import com.whirled.bureau.client.UserCode;
-import com.threerings.util.MethodQueue;
 
 /** The container for a user's avr game control code. */
 public class AVRGameAgent extends Agent
@@ -26,17 +28,14 @@ public class AVRGameAgent extends Agent
     public function AVRGameAgent (ctx :MsoyBureauContext)
     {
         _ctx = ctx;
+
+        _traceTimer.addEventListener(TimerEvent.TIMER, handleTimer);
     }
 
     // from Agent
     public override function start () :void
     {
         Log.info("Starting agent " + _agentObj);
-
-        // TODO: remove
-        MethodQueue.callLater(function () :void {
-            trace("Successful MethodQueue call");
-        });
 
         // subscribe to the game object
         var delegator :Subscriber = 
@@ -60,6 +59,11 @@ public class AVRGameAgent extends Agent
         _subscriber = null;
         _gameObj = null;
         _agentObj = null;
+
+        handleTimer(null);
+        _traceTimer.stop();
+        _traceTimer.removeEventListener(TimerEvent.TIMER, handleTimer);
+        _traceTimer = null;
 
         if (_controller != null) {
             _controller.shutdown();
@@ -143,7 +147,19 @@ public class AVRGameAgent extends Agent
      */
     protected function relayTrace (trace :String) :void
     {
-        _gameObj.manager.invoke("agentTrace", trace);
+        _traceOutput.push(trace);
+        _traceTimer.start();
+    }
+
+    protected function handleTimer (event :TimerEvent) :void
+    {
+        if (_traceOutput.length == 0) {
+            _traceTimer.stop();
+
+        } else {
+            _gameObj.manager.invoke("agentTrace", _traceOutput);
+            _traceOutput.length = 0;
+        }
     }
 
     /**
@@ -159,6 +175,8 @@ public class AVRGameAgent extends Agent
     protected var _gameObj :AVRGameObject;
     protected var _userCode :UserCode;
     protected var _controller :ThaneAVRGameController;
+    protected var _traceOutput :TypedArray = TypedArray.create(String);
+    protected var _traceTimer :Timer = new Timer(1000);
 }
 
 }
