@@ -275,16 +275,30 @@ public enum BadgeType
     },
 
     // shopping badges
-    SHOPPER(StampCategory.SHOPPING, StatType.ITEMS_PURCHASED, new Level[] {
+    SHOPPER(StampCategory.SHOPPING, StatType.COINS_SPENT, new Level[] {
         new Level(1, 1000),
-        new Level(3, 2000),
-        new Level(10, 3000),
-        new Level(50, 4000),
-        new Level(250, 5000),
-        new Level(1000, 6000),
+        new Level(5000, 2000),
+        new Level(15000, 3000),
+        new Level(50000, 4000),
+        new Level(100000, 5000),
+        new Level(200000, 6000),
         }) {
+        @Override public String getLevelUnits (int levelNumber) {
+            if (levelNumber < 1) {
+                return super.getLevelUnits(levelNumber);
+            }
+
+            Level level = getLevel(levelNumber);
+            if (level == null) {
+                return null;
+            }
+
+            // these get big, so lets abbreviate them.
+            return (level.requiredUnits / 1000) + "k";
+        }
+
         @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.ITEMS_PURCHASED);
+            return stats.getIntStat(StatType.COINS_SPENT);
         }
     },
 

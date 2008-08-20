@@ -42,7 +42,7 @@ public enum StatType implements Stat.Type
     // shopping stats
     ITEMS_RATED(new IntStat(), true),
     ITEM_COMMENTS(new IntStat(), true),
-    ITEMS_PURCHASED(new IntStat(), true),
+    COINS_SPENT(new IntStat(), true),
 
     UNUSED(new IntStat());
 

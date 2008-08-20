@@ -220,12 +220,10 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // update their stat set, if they aren't buying something from themselves.
             MoneyHistory transaction = result.getMemberTransaction();
-            // if they paid with bars, or they paid with enough coins, the transaction is valid
-            boolean validTransactionForStat = transaction.getType() == MoneyType.BARS ||
-                 (transaction.getType() == MoneyType.COINS &&
-                 transaction.getAmount() >= StatType.ITEMS_PURCHASED_MIN_VALUE);
-            if (mrec.memberId != listing.item.creatorId && validTransactionForStat) {
-                _statLogic.incrementStat(mrec.memberId, StatType.ITEMS_PURCHASED, 1);
+            if (mrec.memberId != listing.item.creatorId &&
+                transaction.getType() == MoneyType.COINS) {
+                _statLogic.incrementStat(
+                    mrec.memberId, StatType.COINS_SPENT, (int)transaction.getAmount());
             }
 
             return nitem;
