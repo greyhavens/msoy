@@ -152,6 +152,13 @@ public interface DynamicMessages extends ConstantsWithLookup
     String interest7 ();
     String interest8 ();
 
+    String badgelevel_0 ();
+    String badgelevel_1 ();
+    String badgelevel_2 ();
+    String badgelevel_3 ();
+    String badgelevel_4 ();
+    String badgelevel_5 ();
+
     String badge_3aa0bef4 ();
     String badge_c4fd834b ();
     String badge_3ca5a071 ();

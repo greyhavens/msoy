@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.DateTimeFormat;
@@ -292,12 +293,25 @@ public class FeedPanel extends TongueBox
                 return message.data[0];
 
             case 105: // FRIEND_WON_BADGE
+                // discover the full name for this badge (e.g. "Journeyman Gamer")
+                String badgeName;
                 int badgeCode = Integer.parseInt(message.data[0]);
+                try {
+                    String badgeHexCode = Integer.toHexString(badgeCode);
+                    badgeName = _dmsgs.getString("badge_" + badgeHexCode);
+                } catch (MissingResourceException e) {
+                    badgeName = "MISSING NAME (code=" + badgeCode + ")";
+                }
+
+                String badgeLevelName;
                 int badgeLevel = Integer.parseInt(message.data[1]);
-                String badgeHexCode = Integer.toHexString(badgeCode);
-                String badgeName = _dmsgs.getString("badge_" + badgeHexCode) + " ("
-                    + (badgeLevel + 1) + ")";
-                return Link.createHtml(badgeName, Pages.ME, "passport");
+                try {
+                    badgeLevelName = _dmsgs.getString("badgelevel_" + badgeLevel);
+                } catch (MissingResourceException e) {
+                    badgeLevelName = "MISSING LEVEL NAME (level=" + badgeLevel + ")";
+                }
+
+                return Link.createHtml(badgeLevelName + " " + badgeName, Pages.ME, "passport");
             }
 
             return null;
