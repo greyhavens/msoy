@@ -88,7 +88,7 @@ public class Snapshot
         var allSuccess:Boolean = true;
         
         for (var ii :int = 0; ii < _view.numChildren; ii++) {
-            const child :DisplayObject = _view.getChildAt(ii);
+            var child :DisplayObject = _view.getChildAt(ii);
             if (!includeOccupants && (child is OccupantSprite)) {
                 continue; // skip it!
             }
