@@ -156,20 +156,6 @@ public class EditAccountPanel extends SmartTable
         setWidget(row++, 2, _uppass);
         _uppass.setEnabled(false);
 
-        // TEMP: toggle client height
-        setText(row++, 0, "Toggle Client Height", 3, "Header");
-
-        setText(row, 0, "You can toggle the client between the standard height or the " +
-                "full height of our browser. Note: this feature is experimental and you " +
-                "may experience slowness if you use the client in full-height mode. " +
-                "This is also not currently saved across sessions.", 2, "Tip");
-        setWidget(row++, 1, new Button("Toggle", new ClickListener() {
-            public void onClick (Widget widget) {
-                FlashClients.toggleClientHeight();
-            }
-        }));
-        // END TEMP
-
         setWidget(row++, 0, _status = new Label(_msgs.editTip()), 3, "Status");
     }
 
