@@ -1057,7 +1057,7 @@
   </target>
 
   <!-- prepares and builds the msoy package(s) -->
-  <target name="package" depends="assignversion,gclient,distall,prepare-package">
+  <target name="package" depends="assignversion,distall,prepare-package">
 
     <!-- define the root of our packages on the target machine -->
     <property name="app.prefix" value="${ooo.prefix}/${app.name}"/>
