@@ -421,29 +421,23 @@
     </copy>
   </target>
 
-  <!-- a depend used by the 'package' target to activate the full GWT client build -->
-  <target name="fullgclient">
-    <property name="gwtc.full" value="true"/>
-  </target>
-
   <!-- builds our numerous GWT web clients -->
-  <property name="gwtc.style" value="OBF"/>
   <property name="pages" value="${gpages.list}"/>
   <target name="gclient" depends="jprepare,gmsgs"
           description="Rebuilds the GWT client (but only for Mozilla).">
     <mkdir dir="${gwtout.dir}"/>
-    <property name="gwt_build_threads" value="1"/> <!-- override in build_settings.properties -->
     <for list="${pages}" param="page" parallel="true" threadCount="${gwt_build_threads}"><sequential>
       <delete dir="${gwtout.dir}/@{page}"/>
       <mkdir dir="${gwtout.dir}/@{page}"/>
-      <if><isset property="gwtc.full"/><then>
-          <copy file="${gsrc.dir}/@{page}.gwt.xml.in"
-                tofile="${gsrc.dir}/@{page}.gwt.xml" overwrite="true"/>
-        </then><else>
-          <echo>Doing Gecko-only compile...</echo>
+      <if><isset property="gwt_user_agent"/><then>
+          <echo>Building GWT clients for: ${gwt_user_agent}...</echo>
           <exec executable="bin/quickify" failonerror="true">
             <arg value="${gsrc.dir}/@{page}.gwt.xml"/>
+            <arg value="${gwt_user_agent}"/>
           </exec>
+        </then><else>
+          <copy file="${gsrc.dir}/@{page}.gwt.xml.in"
+                tofile="${gsrc.dir}/@{page}.gwt.xml" overwrite="true"/>
       </else></if>
       <java fork="true" maxmemory="1024M" failonerror="false" resultproperty="gwt.result"
             classname="com.google.gwt.dev.GWTCompiler">
@@ -457,7 +451,7 @@
           <pathelement location="${src.dir}"/>
           <pathelement location="${gsrc.dir}"/>
         </classpath>
-        <arg value="-style"/><arg value="${gwtc.style}"/>
+        <arg value="-style"/><arg value="${gwt_style}"/>
         <arg value="-out"/>
         <arg value="${gwtout.dir}"/>
         <arg value="@{page}"/>
@@ -1063,7 +1057,7 @@
   </target>
 
   <!-- prepares and builds the msoy package(s) -->
-  <target name="package" depends="assignversion,fullgclient,distall,prepare-package">
+  <target name="package" depends="assignversion,gclient,distall,prepare-package">
 
     <!-- define the root of our packages on the target machine -->
     <property name="app.prefix" value="${ooo.prefix}/${app.name}"/>
