@@ -604,7 +604,8 @@ TabNavigator, TabBar {
 .tickButton {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/tick.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/tick_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/tick_disabled.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/tick_down.png");
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/tick_disabled.png"); */
 }
 
 .roomEditPanel {
