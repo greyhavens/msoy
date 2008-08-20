@@ -19,9 +19,9 @@ public class EarnedBadge extends Badge
     }
 
     /** Constructs a new EarnedBadge with the specified type. */
-    public EarnedBadge (int badgeCode, int level, String levelUnits, long whenEarned)
+    public EarnedBadge (int badgeCode, int level, String levelUnits, int coinValue, long whenEarned)
     {
-        super(badgeCode, level, levelUnits);
+        super(badgeCode, level, levelUnits, coinValue);
         this.whenEarned = whenEarned;
     }
 

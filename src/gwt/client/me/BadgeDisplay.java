@@ -86,7 +86,7 @@ class BadgeDisplay extends FlowPanel
     {
         FlowPanel coinReward = MsoyUI.createFlowPanel("CoinReward");
         coinReward.add(MsoyUI.createImage("/images/ui/coins.png", null));
-        coinReward.add(MsoyUI.createLabel("" + badge.coinReward, null));
+        coinReward.add(MsoyUI.createLabel("" + badge.coinValue, null));
         add(coinReward);
 
         if (badge.progress >= 0) {

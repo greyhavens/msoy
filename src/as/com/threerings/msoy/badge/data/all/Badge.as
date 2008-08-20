@@ -18,6 +18,9 @@ public /* abstract */ class Badge extends SimpleStreamableObject
      * badge level. */
     public var levelUnits :String;
 
+    /** The reward the player will receive for completing the current level. */
+    public var coinValue :int;
+
     // from DSet_Entry
     public function getKey () :Object
     {
@@ -47,6 +50,7 @@ public /* abstract */ class Badge extends SimpleStreamableObject
         badgeCode = ins.readInt();
         level = ins.readInt();
         levelUnits = ins.readField(String) as String;
+        coinValue = ins.readInt();
     }
 
     // from interface Streamable
@@ -56,6 +60,7 @@ public /* abstract */ class Badge extends SimpleStreamableObject
         out.writeInt(badgeCode);
         out.writeInt(level);
         out.writeField(levelUnits);
+        out.writeInt(coinValue);
     }
 
     protected static const BADGE_IMAGE_DIR :String = "badge/";

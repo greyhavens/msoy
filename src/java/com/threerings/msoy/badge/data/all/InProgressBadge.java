@@ -11,21 +11,17 @@ public class InProgressBadge extends Badge
      * progress is not appropriate for this level of this badge, and should not be displayed */
     public float progress;
 
-    /** The number of coins that will be given for the successful completion of this badge. */
-    public int coinReward;
-
     /** Constructs a new empty EarnedBadge. */
     public InProgressBadge ()
     {
     }
 
     public InProgressBadge (int badgeCode, int nextLevel, String levelUnits, float progress,
-        int coinReward)
+        int coinValue)
     {
-        super(badgeCode, nextLevel, levelUnits);
+        super(badgeCode, nextLevel, levelUnits, coinValue);
 
         this.progress = progress;
-        this.coinReward = coinReward;
     }
 
     @Override // from Badge

@@ -4,10 +4,8 @@
 package com.threerings.msoy.badge.server;
 
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -21,7 +19,6 @@ import com.threerings.toybox.Log;
 
 import com.threerings.msoy.badge.data.BadgeProgress;
 import com.threerings.msoy.badge.data.BadgeType;
-import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
@@ -40,8 +37,10 @@ public class BadgeManager
     {
         if (!user.badges.containsBadge(badgeType)) {
             List<EarnedBadge> badgeList = Lists.newArrayList();
-            badgeList.add(new EarnedBadge(badgeType.getCode(), level,
-                badgeType.getLevelUnits(level),  System.currentTimeMillis()));
+            long now = System.currentTimeMillis();
+            String levelUnits = badgeType.getLevelUnits(level);
+            int coinValue = badgeType.getCoinValue(level);
+            badgeList.add(new EarnedBadge(badgeType.getCode(), level, levelUnits, coinValue, now));
             awardBadges(user, badgeList);
         }
     }

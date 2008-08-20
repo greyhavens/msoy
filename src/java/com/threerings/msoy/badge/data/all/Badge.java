@@ -20,6 +20,9 @@ public abstract class Badge
      * "10k", and is used in a translation message on the client. May be null if not applicable. */
     public String levelUnits;
 
+    /** The number of coins that will be given for the successful completion of this badge. */
+    public int coinValue;
+
     public Badge ()
     {
         // for deserialization
@@ -28,11 +31,12 @@ public abstract class Badge
     /**
      * Creates a new badge, and automatically fills in the badge imageUrl from the BadgeType Enum.
      */
-    public Badge (int badgeCode, int level, String levelUnits)
+    public Badge (int badgeCode, int level, String levelUnits, int coinValue)
     {
         this.badgeCode = badgeCode;
         this.level = level;
         this.levelUnits = levelUnits;
+        this.coinValue = coinValue;
     }
 
     /**

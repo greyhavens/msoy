@@ -33,7 +33,7 @@ public class BadgeUtil
         for (BadgeType badgeType : BadgeType.values()) {
             // create a dummy badge to check if this type is already in the set of existing badges
             // All badges check equality and hash purely based on their badge code.
-            Badge dummyBadge = new Badge(badgeType.getCode(), 0, null) {
+            Badge dummyBadge = new Badge(badgeType.getCode(), 0, null, 0) {
                 @Override public String imageUrl () { return ""; }
             };
 

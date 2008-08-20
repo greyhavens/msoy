@@ -177,10 +177,11 @@ public class MeServlet extends MsoyServiceServlet
             int code = type.getCode();
             for (int ii = 0; ii < type.getNumLevels(); ii++) {
                 String levelUnits = type.getLevelUnits(ii);
+                int coinValue = type.getCoinValue(ii);
                 badges.add(new InProgressBadge(code, ii, levelUnits,
                     // range through progresses from 0 - 100% inclusive, in 10% increments
                     (progress = (progress + 1) % 11)/(float)10, type.getLevel(ii).coinValue));
-                badges.add(new EarnedBadge(code, ii, levelUnits, now));
+                badges.add(new EarnedBadge(code, ii, levelUnits, coinValue, now));
             }
         }
         return badges;

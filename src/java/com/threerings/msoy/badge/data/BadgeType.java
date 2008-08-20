@@ -431,10 +431,24 @@ public enum BadgeType
         return (level >= 0 && level < _levels.length ? _levels[level] : null);
     }
 
+    /**
+     * Convenience method to get the requiredUnits for the given level number.  This function 
+     * will return null if the level is not found.
+     */
     public String getLevelUnits (int levelNumber)
     {
         Level level = getLevel(levelNumber);
         return level == null ? null : "" + level.requiredUnits;
+    }
+    
+    /**
+     * Conveninence method to get the coin reward for the given level number.  This function
+     * will return 0 if the level is not found.
+     */
+    public int getCoinValue (int levelNumber)
+    {
+    	Level level = getLevel(levelNumber);
+    	return level == null ? 0 : level.coinValue;
     }
 
     /**
