@@ -123,7 +123,7 @@ public class BadgeLogic
 
         // discover any new in-progress badges
         final List<InProgressBadge> newInProgressBadges =
-            _badgeMan.getNewInProgressBadges(earnedBadges, inProgressBadges);
+            BadgeUtil.getNewInProgressBadges(earnedBadges, inProgressBadges);
         for (final InProgressBadge badge : newInProgressBadges) {
             log.info("Created new InProgressBadge", "memberId", memberId,
                      "type", BadgeType.getType(badge.badgeCode));
@@ -209,5 +209,4 @@ public class BadgeLogic
     @Inject protected FeedRepository _feedRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MoneyNodeActions _moneyNodeActions;
-    @Inject protected BadgeManager _badgeMan;
 }
