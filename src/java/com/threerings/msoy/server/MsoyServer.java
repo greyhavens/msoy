@@ -15,17 +15,42 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
+
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.servlet.user.UserRepository;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
+
+import com.threerings.util.Name;
+
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.net.AuthRequest;
+import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.presents.server.Authenticator;
+import com.threerings.presents.server.ClientFactory;
+import com.threerings.presents.server.ClientResolver;
+import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.PresentsServer;
+import com.threerings.presents.server.ShutdownManager;
+
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
+
 import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceRegistry;
+
+import com.threerings.parlor.game.server.GameManager;
+
+import com.threerings.whirled.server.SceneRegistry;
+import com.threerings.whirled.server.persist.SceneRepository;
+import com.threerings.whirled.util.SceneFactory;
+
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.bureau.server.WindowAuthenticator;
 import com.threerings.msoy.bureau.server.WindowClientFactory;
@@ -47,23 +72,12 @@ import com.threerings.msoy.server.persist.OOODatabase;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.server.WorldWatcherManager;
-import com.threerings.parlor.game.server.GameManager;
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.peer.server.PeerManager;
-import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.ClientFactory;
-import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.PresentsClient;
-import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.PresentsServer;
-import com.threerings.presents.server.ShutdownManager;
-import com.threerings.util.Name;
-import com.threerings.whirled.server.SceneRegistry;
-import com.threerings.whirled.server.persist.SceneRepository;
-import com.threerings.whirled.util.SceneFactory;
+
+// TEMP
+import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.TransitionRepository;
+import com.threerings.msoy.badge.server.persist.BadgeRepository;
+// END TEMP
 
 /**
  * Brings together all of the services needed by the World server.
@@ -325,6 +339,15 @@ public class MsoyServer extends MsoyBaseServer
             _userCtx.initializeManagedRecords(true);
         }
 
+        // TEMP (2008-08-20)
+        _transitRepo.transition(
+            MsoyServer.class, "init_stats_2008_08", new TransitionRepository.Transition() {
+            public void run () throws PersistenceException {
+                _badgeRepo.migrateStats();
+            }
+        });
+        // END TEMP
+
         log.info("Msoy server initialized.");
     }
 
@@ -413,6 +436,11 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides database access to the user databases. TODO: This should probably be removed. */
     @Inject protected @OOODatabase PersistenceContext _userCtx;
+
+    // TEMP
+    @Inject protected BadgeRepository _badgeRepo;
+    @Inject protected TransitionRepository _transitRepo;
+    // END TEMP
 
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;

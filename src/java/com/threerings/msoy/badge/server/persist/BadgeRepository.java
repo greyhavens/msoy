@@ -10,13 +10,32 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
+
+// TEMP
+import com.samskivert.jdbc.depot.CacheInvalidator;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
+import com.samskivert.util.CountHashMap;
+
+import com.threerings.stats.data.IntStatIncrementer;
+import com.threerings.stats.data.Stat;
+import com.threerings.stats.server.persist.StatRecord;
+import com.threerings.stats.server.persist.StatRepository;
+
+import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.game.server.persist.TrophyRecord;
+import com.threerings.msoy.server.persist.FriendRecord;
+import com.threerings.msoy.server.persist.InvitationRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+
+import static com.threerings.msoy.badge.Log.log;
+// END TEMP
 
 @Singleton @BlockingThread
 public class BadgeRepository extends DepotRepository
@@ -30,7 +49,66 @@ public class BadgeRepository extends DepotRepository
     public void migrateStats ()
         throws PersistenceException
     {
+        log.info("Populating initial stat records. Please hold...");
 
+        // first, we want to drop all stats from the stat table
+        deleteAll(StatRecord.class, new Where(new LiteralExp("1 = 1")), new CacheInvalidator() {
+            public void invalidate (PersistenceContext ctx) { /* NOOP! */ }
+        });
+
+        // count up how many friends everyone has
+        final CountHashMap<Integer> friends = new CountHashMap<Integer>();
+        for (FriendRecord frec : findAll(FriendRecord.class)) {
+            friends.incrementCount(frec.inviterId, 1);
+            friends.incrementCount(frec.inviteeId, 1);
+        }
+
+        // count up how many accepted invitations everyone has
+        final CountHashMap<Integer> invites = new CountHashMap<Integer>();
+        for (InvitationRecord irec : findAll(InvitationRecord.class)) {
+            if (irec.inviterId != 0 && irec.inviteeId != 0) {
+                invites.incrementCount(irec.inviterId, 1);
+            }
+        }
+
+        // count up how many trophies everyone has earned
+        final CountHashMap<Integer> trophies = new CountHashMap<Integer>();
+        for (TrophyRecord trec : findAll(TrophyRecord.class)) {
+            trophies.incrementCount(trec.memberId, 1);
+        }
+
+        // now we want to do a bunch of per-user stuff
+        final int[] created = new int[4];
+        _memberRepo.runMemberMigration(new MemberRepository.MemberMigration() {
+            public void apply (MemberRecord record) throws PersistenceException {
+                // write out stats for the data we collected previously
+                Stat.Type[] stats = new Stat.Type[] {
+                    StatType.FRIENDS_MADE, StatType.INVITES_ACCEPTED, StatType.TROPHIES_EARNED
+                };
+                int[] values = new int[] {
+                    friends.getCount(record.memberId), invites.getCount(record.memberId),
+                    trophies.getCount(record.memberId)
+                };
+                for (int ii = 0; ii < stats.length; ii++) {
+                    if (values[ii] > 0) {
+                        _statRepo.updateStat(
+                            record.memberId, new IntStatIncrementer(stats[ii], values[ii]));
+                    }
+                    created[ii]++;
+                }
+
+                // write out a stat for minutes online
+                if (record.sessionMinutes > 0) {
+                    _statRepo.updateStat(
+                        record.memberId, new IntStatIncrementer(
+                            StatType.MINUTES_ACTIVE, record.sessionMinutes));
+                    created[values.length]++;
+                }
+            }
+        });
+
+        log.info("Populated initial stat information", "friends", created[0], "invites", created[1],
+                 "trophies", created[2], "minutes", created[3]);
     }
     // END TEMP
 
@@ -108,5 +186,8 @@ public class BadgeRepository extends DepotRepository
         classes.add(InProgressBadgeRecord.class);
     }
 
-    @Inject protected TransitionRepository _transRepo;
+    // TEMP
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected StatRepository _statRepo;
+    // END TEMP
 }

@@ -83,6 +83,11 @@ public class MemberRepository extends DepotRepository
     /** The cache identifier for the friends-of-a-member collection query. */
     public static final String FRIENDS_CACHE_ID = "FriendsCache";
 
+    /** Used by {@link #runMemberMigration}. */
+    public static interface MemberMigration {
+        public void apply (MemberRecord record) throws PersistenceException;
+    };
+
     @Inject public MemberRepository (final PersistenceContext ctx)
     {
         super(ctx);
@@ -1219,7 +1224,7 @@ public class MemberRepository extends DepotRepository
      * migration executes without failure, but we return the number anyway so that you can be
      * excited about how large it is).
      */
-    public int runMemberMigration (final Function<MemberRecord, Void> migration)
+    public int runMemberMigration (final MemberMigration migration)
         throws PersistenceException
     {
         // TODO: break this up into chunks when our member base is larger
