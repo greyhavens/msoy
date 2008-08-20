@@ -66,7 +66,7 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService.setFavorite}.
      */
-    void setFavorite (ItemIdent item, boolean favorite, AsyncCallback<Void> callback);
+    void setFavorite (int catalogId, byte itemType, boolean favorite, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#loadPhotos}.

@@ -63,9 +63,12 @@ public abstract class CatalogRecord extends PersistentRecord
 
     /** The column identifier for the {@link #returns} field. */
     public static final String RETURNS = "returns";
+
+    /** The column identifier for the {@link #favoriteCount} field. */
+    public static final String FAVORITE_COUNT = "favoriteCount";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 8;
+    public static final int SCHEMA_VERSION = 9;
 
     /** A unique id assigned to this catalog listing. */
     @Id
@@ -99,6 +102,9 @@ public abstract class CatalogRecord extends PersistentRecord
     /** The number of times this item has been returned. */
     public int returns;
 
+    /** The number of people who consider the listed item a favorite. */
+    public int favoriteCount;
+
     /** A reference to the listed item. This value is not persisted. */
     @Transient
     public ItemRecord item;
@@ -122,6 +128,7 @@ public abstract class CatalogRecord extends PersistentRecord
         listing.salesTarget = salesTarget;
         listing.purchases = purchases;
         listing.returns = returns;
+        listing.favoriteCount = favoriteCount;
         return listing;
     }
 

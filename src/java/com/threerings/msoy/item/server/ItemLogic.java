@@ -39,6 +39,7 @@ import com.threerings.msoy.item.gwt.ListingCard;
 
 import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
@@ -344,10 +345,7 @@ public class ItemLogic
     }
 
     /**
-     * Deletes a list and removes all
-     *
-     * @param listId
-     * @throws PersistenceException
+     * Deletes a list and removes all list elements.
      */
     public void deleteList (int listId)
         throws PersistenceException
@@ -378,6 +376,31 @@ public class ItemLogic
     {
         ItemListInfo favoriteList = getFavoriteListInfo(memberId);
         _listRepo.addItem(favoriteList.listId, item);
+    }
+
+    public void incrementFavoriteCount (CatalogRecord record, byte itemType)
+        throws ServiceException
+    {
+        incrementFavoriteCount(record, itemType, 1);
+    }
+
+    public void decrementFavoriteCount (CatalogRecord record, byte itemType)
+        throws ServiceException
+    {
+        incrementFavoriteCount(record, itemType, -1);
+    }
+
+    protected void incrementFavoriteCount (CatalogRecord record, byte itemType, int increment)
+        throws ServiceException
+    {
+        ItemRepository<ItemRecord> repo = getRepository(itemType);
+        try {
+            repo.incrementFavoriteCount(record, increment);
+        } catch (PersistenceException pex) {
+            log.warning("Could not increment favorite count.", "catalogId", record.catalogId,
+                "increment", increment, pex);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
     }
 
     public int getSize (int listId)
@@ -450,15 +473,21 @@ public class ItemLogic
      * Check to see if the member's favorite list contains the given item.
      */
     public boolean isFavorite(int memberId, Item item)
-        throws PersistenceException
+        throws PersistenceException, ServiceException
     {
-        return isFavorite(memberId, item.getIdent());
+        byte itemType = item.getType();
+        CatalogRecord record = getRepository(itemType).loadListing(item.catalogId, false);
+        if (record == null) {
+            return false;
+        }
+
+        return isFavorite(memberId, new ItemIdent(itemType, record.listedItemId));
     }
 
     /**
      * Check to see if the member's favorite list contains the given item.
      */
-    public boolean isFavorite(int memberId, ItemIdent item)
+    protected boolean isFavorite(int memberId, ItemIdent item)
         throws PersistenceException
     {
         ItemListInfo favoriteList = getFavoriteListInfo(memberId);

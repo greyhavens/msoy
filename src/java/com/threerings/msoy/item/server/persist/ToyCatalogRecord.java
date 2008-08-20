@@ -51,6 +51,10 @@ public class ToyCatalogRecord extends CatalogRecord
     /** The qualified column identifier for the {@link #returns} field. */
     public static final ColumnExp RETURNS_C =
         new ColumnExp(ToyCatalogRecord.class, RETURNS);
+
+    /** The qualified column identifier for the {@link #favoriteCount} field. */
+    public static final ColumnExp FAVORITE_COUNT_C =
+        new ColumnExp(ToyCatalogRecord.class, FAVORITE_COUNT);
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START

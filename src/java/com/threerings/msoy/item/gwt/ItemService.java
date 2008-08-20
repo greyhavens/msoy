@@ -79,9 +79,9 @@ public interface ItemService extends RemoteService
         throws ServiceException;
 
     /**
-     * Flags an item as the current member's favorite or not.
+     * Flags a item from the catalog as the current member's favorite (or not).
      */
-    void setFavorite (ItemIdent item, boolean favorite)
+    void setFavorite (int catalogId, byte itemType, boolean favorite)
         throws ServiceException;
 
     /**

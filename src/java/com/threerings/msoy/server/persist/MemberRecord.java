@@ -388,7 +388,7 @@ public class MemberRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #MemberRecord}
      * with the supplied key values.
      */
-    public static Key<MemberRecord> getKey (final int memberId)
+    public static Key<MemberRecord> getKey (int memberId)
     {
         return new Key<MemberRecord>(
                 MemberRecord.class,

@@ -926,6 +926,18 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
     }
 
+    public void incrementFavoriteCount (CatalogRecord record, int increment)
+        throws PersistenceException
+    {
+        // TODO increment the column value in the database in case the give record has a stale count
+        int modifiedRows = updatePartial(getCatalogClass(), record.catalogId,
+            CatalogRecord.FAVORITE_COUNT, record.favoriteCount + increment);
+        if (modifiedRows == 0) {
+            log.warning("Could not update favorite count on catalog record.", "catalogId",
+                record.catalogId, "increment", increment);
+        }
+    }
+
     /**
      * Notes that the specified original item is now associated with the specified catalog listed
      * item (which may be zero to clear out a listing link).

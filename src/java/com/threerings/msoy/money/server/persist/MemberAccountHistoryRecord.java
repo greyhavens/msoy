@@ -38,62 +38,64 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     public static final String ID = "id";
 
     /** The qualified column identifier for the {@link #id} field. */
-    public static final ColumnExp ID_C = new ColumnExp(MemberAccountHistoryRecord.class, ID);
+    public static final ColumnExp ID_C =
+        new ColumnExp(MemberAccountHistoryRecord.class, ID);
 
     /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
 
     /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C = new ColumnExp(MemberAccountHistoryRecord.class,
-        MEMBER_ID);
+    public static final ColumnExp MEMBER_ID_C =
+        new ColumnExp(MemberAccountHistoryRecord.class, MEMBER_ID);
 
     /** The column identifier for the {@link #timestamp} field. */
     public static final String TIMESTAMP = "timestamp";
 
     /** The qualified column identifier for the {@link #timestamp} field. */
-    public static final ColumnExp TIMESTAMP_C = new ColumnExp(MemberAccountHistoryRecord.class,
-        TIMESTAMP);
+    public static final ColumnExp TIMESTAMP_C =
+        new ColumnExp(MemberAccountHistoryRecord.class, TIMESTAMP);
 
     /** The column identifier for the {@link #type} field. */
     public static final String TYPE = "type";
 
     /** The qualified column identifier for the {@link #type} field. */
-    public static final ColumnExp TYPE_C = new ColumnExp(MemberAccountHistoryRecord.class, TYPE);
+    public static final ColumnExp TYPE_C =
+        new ColumnExp(MemberAccountHistoryRecord.class, TYPE);
 
     /** The column identifier for the {@link #amount} field. */
     public static final String AMOUNT = "amount";
 
     /** The qualified column identifier for the {@link #amount} field. */
-    public static final ColumnExp AMOUNT_C = new ColumnExp(MemberAccountHistoryRecord.class,
-        AMOUNT);
+    public static final ColumnExp AMOUNT_C =
+        new ColumnExp(MemberAccountHistoryRecord.class, AMOUNT);
 
     /** The column identifier for the {@link #spent} field. */
     public static final String SPENT = "spent";
 
     /** The qualified column identifier for the {@link #spent} field. */
-    public static final ColumnExp SPENT_C = new ColumnExp(MemberAccountHistoryRecord.class, SPENT);
+    public static final ColumnExp SPENT_C =
+        new ColumnExp(MemberAccountHistoryRecord.class, SPENT);
 
     /** The column identifier for the {@link #description} field. */
     public static final String DESCRIPTION = "description";
 
     /** The qualified column identifier for the {@link #description} field. */
-    public static final ColumnExp DESCRIPTION_C = new ColumnExp(MemberAccountHistoryRecord.class,
-        DESCRIPTION);
+    public static final ColumnExp DESCRIPTION_C =
+        new ColumnExp(MemberAccountHistoryRecord.class, DESCRIPTION);
 
     /** The column identifier for the {@link #itemId} field. */
     public static final String ITEM_ID = "itemId";
 
     /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C = new ColumnExp(MemberAccountHistoryRecord.class,
-        ITEM_ID);
+    public static final ColumnExp ITEM_ID_C =
+        new ColumnExp(MemberAccountHistoryRecord.class, ITEM_ID);
 
     /** The column identifier for the {@link #itemType} field. */
     public static final String ITEM_TYPE = "itemType";
 
     /** The qualified column identifier for the {@link #itemType} field. */
-    public static final ColumnExp ITEM_TYPE_C = new ColumnExp(MemberAccountHistoryRecord.class,
-        ITEM_TYPE);
-
+    public static final ColumnExp ITEM_TYPE_C =
+        new ColumnExp(MemberAccountHistoryRecord.class, ITEM_TYPE);
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START
@@ -101,12 +103,13 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #MemberAccountHistoryRecord}
      * with the supplied key values.
      */
-    public static Key<MemberAccountHistoryRecord> getKey (final int id)
+    public static Key<MemberAccountHistoryRecord> getKey (int id)
     {
-        return new Key<MemberAccountHistoryRecord>(MemberAccountHistoryRecord.class,
-            new String[] { ID }, new Comparable[] { id });
+        return new Key<MemberAccountHistoryRecord>(
+                MemberAccountHistoryRecord.class,
+                new String[] { ID },
+                new Comparable[] { id });
     }
-
     // AUTO-GENERATED: METHODS END
 
     public static final int SCHEMA_VERSION = 2;

@@ -30,6 +30,7 @@ import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
+import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRecord;
@@ -403,19 +404,31 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from ItemService interface
-    public void setFavorite (ItemIdent item, boolean favorite)
+    public void setFavorite (int catalogId, byte itemType, boolean favorite)
         throws ServiceException
     {
         MemberRecord member = requireAuthedUser();
 
+        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
         try {
-            if (favorite) {
-                _itemLogic.addFavorite(member.memberId, item);
+            // load up the catalog record
+            CatalogRecord record = repo.loadListing(catalogId, false);
+
+            if (record == null) {
+                log.warning("Could not set favorite. Could not find catalog record.", "catalogId",
+                    catalogId, "itemType", itemType);
             } else {
-                _itemLogic.removeFavorite(member.memberId, item);
+                ItemIdent ident = new ItemIdent(itemType, record.listedItemId);
+                if (favorite) {
+                    _itemLogic.addFavorite(member.memberId, ident);
+                    _itemLogic.incrementFavoriteCount(record, itemType);
+                } else {
+                    _itemLogic.removeFavorite(member.memberId, ident);
+                    _itemLogic.decrementFavoriteCount(record, itemType);
+                }
             }
-        } catch(PersistenceException pex) {
-            log.warning("Could not set favorite.", "member", member.memberId, "item", item, pex);
+        } catch (PersistenceException pex) {
+            log.warning("Could not set favorite.", "catalogId", catalogId, "itemType", itemType, pex);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }

@@ -33,74 +33,78 @@ public class MemberAccountRecord extends PersistentRecord
     public static final String MEMBER_ID = "memberId";
 
     /** The qualified column identifier for the {@link #memberId} field. */
-    public static final ColumnExp MEMBER_ID_C = new ColumnExp(MemberAccountRecord.class,
-        MEMBER_ID);
+    public static final ColumnExp MEMBER_ID_C =
+        new ColumnExp(MemberAccountRecord.class, MEMBER_ID);
 
     /** The column identifier for the {@link #coins} field. */
     public static final String COINS = "coins";
 
     /** The qualified column identifier for the {@link #coins} field. */
-    public static final ColumnExp COINS_C = new ColumnExp(MemberAccountRecord.class, COINS);
+    public static final ColumnExp COINS_C =
+        new ColumnExp(MemberAccountRecord.class, COINS);
 
     /** The column identifier for the {@link #bars} field. */
     public static final String BARS = "bars";
 
     /** The qualified column identifier for the {@link #bars} field. */
-    public static final ColumnExp BARS_C = new ColumnExp(MemberAccountRecord.class, BARS);
+    public static final ColumnExp BARS_C =
+        new ColumnExp(MemberAccountRecord.class, BARS);
 
     /** The column identifier for the {@link #bling} field. */
     public static final String BLING = "bling";
 
     /** The qualified column identifier for the {@link #bling} field. */
-    public static final ColumnExp BLING_C = new ColumnExp(MemberAccountRecord.class, BLING);
+    public static final ColumnExp BLING_C =
+        new ColumnExp(MemberAccountRecord.class, BLING);
 
     /** The column identifier for the {@link #dateLastUpdated} field. */
     public static final String DATE_LAST_UPDATED = "dateLastUpdated";
 
     /** The qualified column identifier for the {@link #dateLastUpdated} field. */
-    public static final ColumnExp DATE_LAST_UPDATED_C = new ColumnExp(MemberAccountRecord.class,
-        DATE_LAST_UPDATED);
+    public static final ColumnExp DATE_LAST_UPDATED_C =
+        new ColumnExp(MemberAccountRecord.class, DATE_LAST_UPDATED);
 
     /** The column identifier for the {@link #versionId} field. */
     public static final String VERSION_ID = "versionId";
 
     /** The qualified column identifier for the {@link #versionId} field. */
-    public static final ColumnExp VERSION_ID_C = new ColumnExp(MemberAccountRecord.class,
-        VERSION_ID);
+    public static final ColumnExp VERSION_ID_C =
+        new ColumnExp(MemberAccountRecord.class, VERSION_ID);
 
     /** The column identifier for the {@link #accCoins} field. */
     public static final String ACC_COINS = "accCoins";
 
     /** The qualified column identifier for the {@link #accCoins} field. */
-    public static final ColumnExp ACC_COINS_C = new ColumnExp(MemberAccountRecord.class,
-        ACC_COINS);
+    public static final ColumnExp ACC_COINS_C =
+        new ColumnExp(MemberAccountRecord.class, ACC_COINS);
 
     /** The column identifier for the {@link #accBars} field. */
     public static final String ACC_BARS = "accBars";
 
     /** The qualified column identifier for the {@link #accBars} field. */
-    public static final ColumnExp ACC_BARS_C = new ColumnExp(MemberAccountRecord.class, ACC_BARS);
+    public static final ColumnExp ACC_BARS_C =
+        new ColumnExp(MemberAccountRecord.class, ACC_BARS);
 
     /** The column identifier for the {@link #accBling} field. */
     public static final String ACC_BLING = "accBling";
 
     /** The qualified column identifier for the {@link #accBling} field. */
-    public static final ColumnExp ACC_BLING_C = new ColumnExp(MemberAccountRecord.class,
-        ACC_BLING);
-
+    public static final ColumnExp ACC_BLING_C =
+        new ColumnExp(MemberAccountRecord.class, ACC_BLING);
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #MemberAccountRecord} with the
-     * supplied key values.
+     * Create and return a primary {@link Key} to identify a {@link #MemberAccountRecord}
+     * with the supplied key values.
      */
-    public static Key<MemberAccountRecord> getKey (final int memberId)
+    public static Key<MemberAccountRecord> getKey (int memberId)
     {
-        return new Key<MemberAccountRecord>(MemberAccountRecord.class,
-            new String[] { MEMBER_ID }, new Comparable[] { memberId });
+        return new Key<MemberAccountRecord>(
+                MemberAccountRecord.class,
+                new String[] { MEMBER_ID },
+                new Comparable[] { memberId });
     }
-
     // AUTO-GENERATED: METHODS END
 
     public static final int SCHEMA_VERSION = 3;

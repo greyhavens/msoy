@@ -69,6 +69,9 @@ public class CatalogListing
     /** The number of returns of this item. */
     public int returns;
 
+    /** The number of people who consider this item a favorite. */
+    public int favoriteCount;
+
     /** The amount by which we increase the price at each escalation. */
     protected static final float ESCALATION_FACTOR = 0.25f;
 }
