@@ -16,6 +16,7 @@ import mx.core.UIComponent;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
+import mx.controls.Image;
 import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
@@ -33,9 +34,15 @@ import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
+import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.client.ClientAdapter;
+
+import com.threerings.presents.dobj.AttributeChangeAdapter;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+
 import com.threerings.msoy.ui.FloatingPanel;
 
-import com.threerings.msoy.client.MsoyClient;
+import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
 
@@ -115,37 +122,6 @@ public class HeaderBar extends HBox
         }
     }
 
-    /**
-     * Grab the tabs and the associated trimmings in the container that contains them, so they
-     * can be moved somewhere else.
-     */
-    public function removeTabsContainer () :UIComponent
-    {
-        if (_tabsContainer.parent == this) {
-            removeChild(_tabsContainer);
-        }
-        FlexUtil.setVisible(_loc, true);
-        _loc.validateNow();
-        // allow text to center under the whirled logo if its not too long.
-        _loc.width = Math.max(WHIRLED_LOGO_WIDTH, _loc.textWidth + TextFieldUtil.WIDTH_PAD);
-        stretchSpacer(false);
-        //FlexUtil.setVisible(_goBtn, false);
-        return _tabsContainer;
-    }
-
-    public function replaceTabsContainer () :void
-    {
-        if (_tabsContainer.parent != null) {
-            _tabsContainer.parent.removeChild(_tabsContainer);
-        }
-        _tabs.locationName = null;
-        if (_loc.parent == this) {
-            FlexUtil.setVisible(_loc, false);
-        }
-        //FlexUtil.setVisible(_goBtn, true);
-        addChildAt(_tabsContainer, 1);
-    }
-
     public function stretchSpacer (stretch :Boolean) :void
     {
         var mini :Boolean = _ctx.getTopPanel().isMinimized();
@@ -217,11 +193,54 @@ public class HeaderBar extends HBox
     {
         const embedded :Boolean = event.value as Boolean;
         setCompVisible(_closeBox, !embedded);
+
+        // add a coins display
+        if (embedded) {
+            addChild(FlexUtil.createSpacer(50));
+            const coinIcon :Image = new Image();
+            coinIcon.source = DeploymentConfig.serverURL + "images/ui/coins.png";
+            const hb :HBox = new HBox();
+            hb.setStyle("verticalAlign", "middle");
+            hb.percentHeight = 100;
+            hb.addChild(coinIcon);
+            addChild(hb);
+            _coinLabel = new Label();
+            _coinLabel.styleName = "coinLabel";
+            addChild(_coinLabel);
+
+            // set up a listener to hear about userobject changes
+            _ctx.getClient().addClientObserver(
+                new ClientAdapter(null, clientDidChange, clientDidChange));
+            clientDidChange();
+        }
     }
 
     protected function setCompVisible (comp :UIComponent, visible :Boolean) :void
     {
         _visibles[comp] = FlexUtil.setVisible(comp, visible);
+    }
+
+    /**
+     * Only used in an embedded client.
+     * Called when the client object is set up or changes.
+     */
+    protected function clientDidChange (... ignored) :void
+    {
+        const cliObj :MemberObject = _ctx.getClient().getClientObject() as MemberObject;
+        if (cliObj != null) {
+            cliObj.addListener(new AttributeChangeAdapter(clientAttrChanged));
+            _coinLabel.text = String(cliObj.flow);
+        }
+    }
+
+    /**
+     * Only used in an embedded client.
+     */
+    protected function clientAttrChanged (event :AttributeChangedEvent) :void
+    {
+        if (event.getName() == MemberObject.FLOW) {
+            _coinLabel.text = String(event.getValue());
+        }
     }
 
     private static const log :Log = Log.getLog(HeaderBar);
@@ -247,6 +266,9 @@ public class HeaderBar extends HBox
 
     /** The go button. */
     protected var _goBtn :CommandButton;
+
+    /** The coins label, used only when embedded. */
+    protected var _coinLabel :Label;
 }
 }
 

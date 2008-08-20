@@ -34,7 +34,6 @@ import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.crowd.chat.client.ChatDirector;

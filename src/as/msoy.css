@@ -480,6 +480,12 @@ TabNavigator, TabBar {
   paddingRight: 0;
 }
 
+.coinLabel {
+  color: white;
+  fontSize: 10;
+  fontWeight: "bold";
+}
+
 .controlBar {
   backgroundImage: Embed(source="../../rsrc/media/skins/controlbar/bg.png");
   backgroundSize: "100%";
@@ -1380,11 +1386,6 @@ GameOverPanel {
 .gameOverMessage {
   fontSize: 12;
   color: #519cdd;
-}
-
-.coinsGameOverPanel {
-  headerHeight: 46;
-  titleBackgroundSkin: Embed(source="../../rsrc/media/skins/game/coins_gameover_title.png");
 }
 
 .friendsListPanel {
