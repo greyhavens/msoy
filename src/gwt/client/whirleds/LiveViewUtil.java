@@ -39,12 +39,12 @@ public class LiveViewUtil
         Widget image = MediaUtil.createMediaView(data.getCanonicalImage(),
             MediaDesc.CANONICAL_IMAGE_SIZE,
             onClick);
-    
+
         panel.add(image);
-    
-        Image overlay = MsoyUI.createImage("/images/landing/click_overlay.png", null);
+
+        Image overlay = MsoyUI.createActionImage("/images/landing/click_overlay.png", onClick);
         overlay.addStyleName("LiveViewOverlay");
-    
+
         panel.add(overlay);
         return panel;
     }
