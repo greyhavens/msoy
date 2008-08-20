@@ -26,6 +26,8 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
@@ -455,6 +457,46 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
+
+    protected int getSize (ItemListQuery query) throws ServiceException
+    {
+        try {
+            return _itemLogic.getSize(query.listId, query.itemType);
+        } catch (PersistenceException pex) {
+            log.warning("Could not get size of item list", "listId", query.listId,
+                        "itemType", query.itemType, pex);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface ItemService
+    public ItemListResult loadItemList (ItemListQuery query) throws ServiceException
+    {
+        try {
+            ItemListResult result = new ItemListResult();
+            result.items = _itemLogic.loadItemList(query);
+            if (query.needsCount) {
+                result.totalCount = getSize(query);
+            }
+            return result;
+
+        } catch (PersistenceException pex) {
+            log.warning("Could not load item list.", "query", query, pex);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
+    // from interface ItemService
+    public ItemListInfo getFavoriteListInfo (int memberId) throws ServiceException
+    {
+        try {
+            return _itemLogic.getFavoriteListInfo (memberId);
+        } catch (PersistenceException pex) {
+            log.warning("Could not get favorite list info.", "memberId", memberId, pex);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
 
     // our dependencies
     @Inject protected ItemLogic _itemLogic;

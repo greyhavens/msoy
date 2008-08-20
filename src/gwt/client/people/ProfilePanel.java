@@ -8,6 +8,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
@@ -46,6 +47,12 @@ public class ProfilePanel extends VerticalPanel
                 add(_blurbs[ii]);
             }
         }
+
+        // TODO hiding favorites functionality
+        if (DeploymentConfig.devDeployment) {
+            add(new FavoritesBlurb());
+        }
+
     }
 
     /** The id of the member who's profile we're displaying. */

@@ -3,9 +3,9 @@
 
 package client.shop;
 
+import client.item.FavoritesPanel;
 import client.shell.Args;
 import client.shell.Pages;
-import client.stuff.FavoritesPanel;
 
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;

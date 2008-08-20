@@ -5,9 +5,13 @@ package com.threerings.msoy.item.gwt;
 
 import java.util.List;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.web.data.ServiceException;
 
@@ -18,6 +22,16 @@ import com.threerings.msoy.web.data.TagHistory;
  */
 public interface ItemService extends RemoteService
 {
+    /** Provides results from {@link #loadItemList}. */
+    public static class ItemListResult implements IsSerializable
+    {
+        /** The total number of items that would be returned for a query with no limit. */
+        public int totalCount;
+
+        /** The item results. */
+        public List<Item> items;
+    }
+
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/itemsvc";
 
@@ -83,6 +97,16 @@ public interface ItemService extends RemoteService
      */
     void setFavorite (int catalogId, byte itemType, boolean favorite)
         throws ServiceException;
+
+    /**
+     * Loads items from a list that match the given criteria.
+     */
+    ItemListResult loadItemList (ItemListQuery query) throws ServiceException;
+
+    /**
+     * Gets the favorite list info for the given member.
+     */
+    ItemListInfo getFavoriteListInfo (int memberId) throws ServiceException;
 
     /**
      * Loads up all of this member's photo inventory. This exists separate from

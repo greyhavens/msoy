@@ -14,7 +14,6 @@
   <source path="client/comment"/>
   <source path="client/editem"/>
   <source path="client/remix"/>
-  <source path="client/stuff"/>
 
   <public path="public/shop"/>
   <stylesheet src="/css/shop.css"/>

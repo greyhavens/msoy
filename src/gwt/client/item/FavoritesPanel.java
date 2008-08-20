@@ -1,9 +1,8 @@
 //
 // $Id$
 
-package client.stuff;
+package client.item;
 
-import client.item.ItemBox;
 import client.shell.Args;
 import client.shell.Pages;
 import client.util.MsoyCallback;
@@ -12,12 +11,11 @@ import client.util.ServiceUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemListInfo;
-import com.threerings.msoy.stuff.gwt.StuffService;
-import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
+import com.threerings.msoy.item.gwt.ItemService;
+import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
 /**
  * A panel used to display a grid of favorite items for a member.
@@ -84,16 +82,9 @@ public class FavoritesPanel extends SimplePanel
      */
     public void setItemType (byte itemType)
     {
-        if (itemType != _itemType) {
-            _itemType = itemType;
-            // TODO store the item type in a single location. For example, have the favorites grid
-            // pull the current type from the model.
-            if (_favoriteModel != null) {
-                _favoriteModel.setItemType(itemType);
-            }
-            if (_favorites != null) {
-                _favorites.setItemType(itemType);
-            }
+        _itemType = itemType;
+        if (_favoriteModel != null) {
+            _favoriteModel.setItemType(itemType);
         }
     }
 
@@ -103,7 +94,7 @@ public class FavoritesPanel extends SimplePanel
         _prefixArgs[_prefixArgs.length-1] = String.valueOf(memberId);
 
         _memberId = memberId;
-        _stuffsvc.getFavoriteListInfo(_memberId, new MsoyCallback<ItemListInfo>() {
+        _itemsvc.getFavoriteListInfo(_memberId, new MsoyCallback<ItemListInfo>() {
             public void onSuccess (ItemListInfo favoriteListInfo) {
                 setListId(favoriteListInfo.listId);
             }
@@ -118,21 +109,22 @@ public class FavoritesPanel extends SimplePanel
         // order favorites starting with the most recently favorited items
         _favoriteModel.setDescending(true);
 
-        _favorites = new ItemGrid(_parentPage, _itemType, _rows, _cols) {
+        _favorites = new ItemGrid(_parentPage, _rows, _cols) {
             @Override
             protected String getEmptyMessage (){
-                return CStuff.msgs.noFavorites();
+                return _imsgs.noFavorites();
             }
 
             @Override
             public String getTitle () {
-                return CStuff.msgs.favorites();
+                return _imsgs.favorites();
             }
 
             @Override
             protected Widget createWidget (Item item)
             {
-                String args = Args.compose("l"/*TODO ShopPage.LOAD_LISTING*/, String.valueOf(item.getType()),
+                // When this box is clicked, show the item listing in the shop
+                String args = Args.compose("l", String.valueOf(item.getType()),
                     String.valueOf(item.catalogId));
                 return new ItemBox(item.getThumbnailMedia(), item.name, Pages.SHOP, args, false);
             }
@@ -149,12 +141,10 @@ public class FavoritesPanel extends SimplePanel
     protected void displayGrid (Args args)
     {
         _favorites.setPrefixArgs(_prefixArgs);
-        byte itemType = (byte) getArg(args, 0, _favoriteModel.getDefaultItemType());
+        byte itemType = (byte) getArg(args, 0, _favoriteModel.getItemType());
         int page = getArg(args, 1, 0);
-        DataModel<Item> gridModel = _favoriteModel.getGridModel(itemType);
-        if (gridModel != null) {
-            _favorites.setModel(gridModel, page);
-        }
+        _favoriteModel.setItemType(itemType);
+        _favorites.setModel(_favoriteModel, page);
         setWidget(_favorites);
     }
 
@@ -204,6 +194,8 @@ public class FavoritesPanel extends SimplePanel
      */
     protected int _memberId;
 
-    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync) ServiceUtil.bind(GWT
-        .create(StuffService.class), StuffService.ENTRY_POINT);
+    protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
+
+    protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
+        ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);
 }

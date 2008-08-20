@@ -10,7 +10,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.web.data.TagHistory;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.ItemListQuery;
 import com.threerings.msoy.item.data.all.Photo;
+import com.threerings.msoy.item.gwt.ItemService.ItemListResult;
 
 /**
  * The asynchronous (client-side) version of {@link ItemService}.
@@ -72,4 +75,14 @@ public interface ItemServiceAsync
      * The asynchronous version of {@link ItemService#loadPhotos}.
      */
     void loadPhotos (AsyncCallback<List<Photo>> callback);
+
+    /**
+     * Loads items from a list that match the given criteria.
+     */
+    void loadItemList (ItemListQuery query, AsyncCallback<ItemListResult> callback);
+
+    /**
+     * The asynchronous version of {@link ItemService#getFavoriteListInfo}.
+     */
+    void getFavoriteListInfo (int memberId, AsyncCallback<ItemListInfo> callback);
 }

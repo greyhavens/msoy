@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.stuff;
+package client.item;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +14,7 @@ import client.util.Link;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.data.all.Item;
 
 /**
@@ -23,11 +24,10 @@ import com.threerings.msoy.item.data.all.Item;
  */
 public abstract class ItemGrid extends PagedGrid<Item>
 {
-    public ItemGrid (Pages parentPage, byte itemType, int rows, int columns)
+    public ItemGrid (Pages parentPage, int rows, int columns)
     {
         super(rows, columns);
         _parentPage = parentPage;
-        _itemType = itemType;
 
         addStyleName("Contents");
     }
@@ -42,11 +42,24 @@ public abstract class ItemGrid extends PagedGrid<Item>
     }
 
     /**
-     * Sets the item type currently being displayed in this grid.
+     * Gets the item type being displayed in this grid.
      */
-    public void setItemType (byte itemType)
+    public byte getItemType ()
     {
-        _itemType = itemType;
+        if (_listDataModel != null) {
+            return _listDataModel.getItemType();
+        }
+
+        return Item.NOT_A_TYPE;
+    }
+
+    public void setModel (DataModel<Item> model, int page)
+    {
+        super.setModel(model, page);
+
+        if (model instanceof ItemListDataModel) {
+            _listDataModel = (ItemListDataModel) model;
+        }
     }
 
     /**
@@ -61,7 +74,7 @@ public abstract class ItemGrid extends PagedGrid<Item>
                 args.add(arg);
             }
         }
-        args.add(String.valueOf(_itemType));
+        args.add(String.valueOf(getItemType()));
         args.add(String.valueOf(page));
 
         Link.go(_parentPage, Args.compose(args));
@@ -94,13 +107,13 @@ public abstract class ItemGrid extends PagedGrid<Item>
      */
     protected abstract String getEmptyMessage ();
 
-    protected byte _itemType = Item.NOT_A_TYPE;
-
     protected Pages _parentPage;
 
     protected String[] _prefixArgs;
 
     protected boolean _displayNavigation = true;
+
+    protected ItemListDataModel _listDataModel;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

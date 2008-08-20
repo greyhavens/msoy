@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.MemberItemInfo;
 import com.threerings.msoy.item.data.all.Item;
@@ -81,7 +82,7 @@ public class ItemRating extends FlexTable
                 setWidget(1, 2, _playerStars);
                 getFlexCellFormatter().setColSpan(1, 2, 2);
                 // TODO hiding favorites feature
-                if (CShell.isAdmin() && item.catalogId != 0) {
+                if (DeploymentConfig.devDeployment && item.catalogId != 0) {
                     setWidget(0, 4, favoriteIndicator);
                     getFlexCellFormatter().setRowSpan(0, 4, 2);
                 }
@@ -99,7 +100,7 @@ public class ItemRating extends FlexTable
                 setWidget(3, 1, nbsp);
                 getFlexCellFormatter().setColSpan(3, 0, 2);
                 // TODO hiding favorites feature
-                if (CShell.isAdmin() && item.catalogId != 0) {
+                if (DeploymentConfig.devDeployment && item.catalogId != 0) {
                     setWidget(4, 0, favoriteIndicator);
                 }
             }

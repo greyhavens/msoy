@@ -3,9 +3,9 @@
 
 package client.people;
 
+import client.item.FavoritesPanel;
 import client.shell.Args;
 import client.shell.Pages;
-import client.stuff.FavoritesPanel;
 
 import com.threerings.msoy.profile.gwt.ProfileService;
 

@@ -90,7 +90,9 @@ public class TitleBar extends SmartTable
         case SHOP:
             subnavi.addLink(null, "Shop", Pages.SHOP, "");
             // TODO hiding favorites feature
-            // subnavi.addLink(null, "My Favorites", Pages.SHOP, "f");
+            if (DeploymentConfig.devDeployment) {
+                subnavi.addLink(null, "My Favorites", Pages.SHOP, "f");
+            }
             break;
 
         case HELP:
