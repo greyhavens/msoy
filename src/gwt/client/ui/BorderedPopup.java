@@ -33,6 +33,9 @@ public class BorderedPopup extends PopupPanel
                 onClosed(autoClosed);
             }
         });
+
+        // start out with animation enabled for our first pop
+        setAnimationEnabled(true);
     }
 
     @Override // from SimplePanel
@@ -50,6 +53,9 @@ public class BorderedPopup extends PopupPanel
         } else {
             super.show();
         }
+
+        // then turn it off because otherwise dragging re-triggers the animation
+        setAnimationEnabled(false);
     }
 
     @Override // from PopupPanel

@@ -236,53 +236,6 @@ img, embed, applet, object {
   margin-bottom: 5px;
 }
 
-.pageDialog {
-  margin: 0px 0px 5px 0px;
-  width: 100%;
-  border-bottom: 2px solid #3F8EBA;
-  background-color: #FFFFFF;
-}
-
-.pageDialog .DialogTitle {
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-  background: #3F8EBA;
-  color: #FFFFFF;
-}
-
-.pageDialog .Close {
-  background: #3F8EBA;
-}
-
-.pageDialog .Close {
-  width: 13px;
-  padding: 3px 3px 0px 0px;
-  vertical-align: top;
-}
-
-.pageDialog .Close .CloseBox {
-  background-image: url(/images/ui/close.png);
-  width: 13px;
-  height: 13px;
-}
-
-/** container for a pageDialog that is floating instead of embedded */
-.floatingDialogBox {
-  position: absolute;
-  z-index: 10;
-  top: 320px;
-  left: 0;
-  width: 100%;
-}
-
-.floatingDialogBox .pageDialog {
-  background-color: #FFFFFF;
-  border: 3px solid #3F8EBA;
-  width: 600px;
-  margin: auto;
-}
-
 /** Box with rounded header */
 .headerBox .Corner {
   width: 10px;

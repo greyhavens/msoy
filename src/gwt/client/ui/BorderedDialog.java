@@ -51,19 +51,19 @@ public abstract class BorderedDialog extends BorderedPopup
         setWidget(_main);
     }
 
-    protected void setHeaderTitle (String text)
+    public void setHeaderTitle (String text)
     {
         Label label = MsoyUI.createLabel(text, "HeaderTitle");
         label.addMouseListener(createDragListener());
         _main.setWidget(0, 0, label);
     }
 
-    protected void setContents (Widget contents)
+    public void setContents (Widget contents)
     {
         _main.setWidget(1, 0, contents, _main.getCellCount(0), null);
     }
 
-    protected void addButton (Button button)
+    public void addButton (Button button)
     {
         if (_buttons == null) {
             _buttons = new HorizontalPanel();

@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -45,6 +46,7 @@ import client.shell.Pages;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
+import client.ui.BorderedDialog;
 import client.util.ArrayUtil;
 import client.util.FlashClients;
 import client.util.FlashVersion;
@@ -109,9 +111,6 @@ public class FrameEntryPoint
         });
         _header.setVisible(false);
         RootPanel.get(PAGE).add(_header);
-
-//         _dialog = new Dialog();
-//         _popup = new PopupDialog();
 
         // clear out the loading HTML so we can display a browser warning or load Whirled
         DOM.setInnerHTML(RootPanel.get(LOADING).getElement(), "");
@@ -322,15 +321,22 @@ public class FrameEntryPoint
         // remove any existing content
         clearDialog();
 
-        // update the dialog content and add it
-//         _dialog.update(title, dialog);
-//         RootPanel.get(HEADER).add(_dialog); // TODO: animate this sliding down
+        _dialog = new BorderedDialog(false, false, false) {
+            protected void onClosed (boolean autoClosed) {
+                _dialog = null;
+            }
+        };
+        _dialog.setHeaderTitle(title);
+        _dialog.setContents(dialog);
+        _dialog.show();
     }
 
     // from interface Frame
     public void clearDialog ()
     {
-//         RootPanel.get(HEADER).remove(_dialog);
+        if (_dialog != null) {
+            _dialog.hide();
+        }
     }
 
     // from interface Frame
@@ -856,6 +862,7 @@ public class FrameEntryPoint
     protected TitleBar _bar;
     protected Frame _iframe;
     protected Panel _client;
+    protected BorderedDialog _dialog;
 
     /** If the user arrived via an invitation, we'll store that here during their session. */
     protected Invitation _activeInvite;

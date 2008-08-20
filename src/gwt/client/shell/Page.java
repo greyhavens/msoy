@@ -26,6 +26,7 @@ import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.ui.BorderedDialog;
 import client.ui.MsoyUI;
 import client.util.ArrayUtil;
 import client.util.Link;
@@ -317,59 +318,6 @@ public abstract class Page
         $wnd.top.triggerFlashEvent(name, args);
     }-*/;
 
-    protected class Dialog extends SimplePanel
-    {
-        public Dialog () {
-            init(new ClickListener() {
-                public void onClick (Widget sender) {
-                    CShell.frame.clearDialog();
-                }
-            });
-        }
-
-        public Dialog (ClickListener closeListener) {
-            init(closeListener);
-        }
-
-        protected void init(ClickListener closeListener) {
-            setWidget(_innerTable = new SmartTable("pageDialog", 0, 0));
-
-            _innerTable.setWidget(0, 1, MsoyUI.createCloseButton(closeListener), 1, "Close");
-            _innerTable.getFlexCellFormatter().setHorizontalAlignment(
-                1, 0, HasAlignment.ALIGN_CENTER);
-            _innerTable.setWidget(2, 0, WidgetUtil.makeShim(5, 5), 2, null);
-        }
-
-        public void update(String title, Widget content) {
-            _innerTable.setText(0, 0, title, 1, "DialogTitle");
-            _innerTable.setWidget(1, 0, content, 2, null);
-        }
-
-        protected SmartTable _innerTable;
-    }
-
-    protected class PopupDialog extends PopupPanel
-    {
-        public PopupDialog () {
-            super(false);
-            setAnimationEnabled(true);
-            setStyleName("floatingDialogBox");
-
-            _innerDialog = new Dialog(new ClickListener() {
-                public void onClick (Widget sender) {
-                    setVisible(false);
-                }
-            });
-            setWidget(_innerDialog);
-        }
-
-        public void update (String title, Widget content) {
-            _innerDialog.update(title, content);
-        }
-
-        protected Dialog _innerDialog;
-    }
-
     protected abstract class PageFrame implements Frame
     {
         public void navigateTo (String token) {
@@ -394,22 +342,24 @@ public abstract class Page
         }
         public void showDialog (String title, Widget dialog) {
             clearDialog();
-            _popup = new PopupDialog();
-            _popup.setVisible(false);
-            _popup.update(title, dialog);
-            _popup.setVisible(true);
-            _popup.center();
+            _dialog = new BorderedDialog(false, false, false) {
+                protected void onClosed (boolean autoClosed) {
+                    _dialog = null;
+                }
+            };
+            _dialog.setHeaderTitle(title);
+            _dialog.setContents(dialog);
+            _dialog.show();
         }
         public void clearDialog () {
-            if (_popup != null) {
-                _popup.hide();
-                _popup = null;
+            if (_dialog != null) {
+                _dialog.hide();
             }
         }
     }
 
     protected Widget _content;
-    protected PopupDialog _popup;
+    protected BorderedDialog _dialog;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
