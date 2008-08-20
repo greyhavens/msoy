@@ -46,10 +46,7 @@ public class SceneRecord extends PersistentRecord
         FIRST_GROUP_HALL(4, "Group's First Hall"),
 
         /** The scene we clone when someone purchases an additional room for their group. */
-        EXTRA_GROUP_HALL(5, "Group's Extra Hall"),
-
-        /** The scene we clone when someone auto-creates a whirled for their game. */
-        GAME_GROUP_HALL(6, "Game Group's First Hall");
+        EXTRA_GROUP_HALL(5, "Group's Extra Hall");
 
         public int getSceneId () {
             return _sceneId;

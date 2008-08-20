@@ -323,12 +323,11 @@ public class MsoySceneRepository extends DepotRepository
      * @param ownerType may be an individual member or a group.
      * @param portalAction to where to link the new room's door.
      * @param firstTime whether this the first room this owner has created.
-     * @param game the game to which to link for game group halls, or null.
      *
      * @return the scene id of the newly created room.
      */
     public int createBlankRoom (byte ownerType, int ownerId, String roomName, String portalAction,
-                                boolean firstTime, Game game)
+                                boolean firstTime)
         throws PersistenceException
     {
         // determine the scene id to clone
@@ -339,9 +338,8 @@ public class MsoySceneRepository extends DepotRepository
                 SceneRecord.Stock.EXTRA_MEMBER_ROOM;
             break;
         case MsoySceneModel.OWNER_TYPE_GROUP:
-            stock = (game != null) ? SceneRecord.Stock.GAME_GROUP_HALL :
-                (firstTime ? SceneRecord.Stock.FIRST_GROUP_HALL :
-                 SceneRecord.Stock.EXTRA_GROUP_HALL);
+            stock = firstTime ? SceneRecord.Stock.FIRST_GROUP_HALL :
+                 SceneRecord.Stock.EXTRA_GROUP_HALL;
             break;
         }
 
@@ -382,14 +380,6 @@ public class MsoySceneRepository extends DepotRepository
                     SceneRecord.Stock.PUBLIC_ROOM.getSceneId() + ":")) {
                 furni.actionData = portalAction;
             }
-
-            // for game groups, point the appropriate furni to the right game
-            if (stock == SceneRecord.Stock.GAME_GROUP_HALL &&
-                (furni.actionType == FurniData.ACTION_LOBBY_GAME)) {
-                final String gameAction = Math.abs(game.gameId) + ":" + game.name;
-                furni.actionData = gameAction;
-            }
-
             insert(furni);
         }
 

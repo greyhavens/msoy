@@ -85,6 +85,9 @@ public class Group
     /** A snapshot of the number of members in this group. */
     public int memberCount;
 
+    /** The id of the game associated with this whirled, or 0 if there is none */
+    public int gameId;
+
     /**
      * Creates a default logo for use with groups that have no logo.
      */
@@ -203,42 +206,5 @@ public class Group
         } else {
             return nameComparison;
         }
-    }
-
-    /**
-     * Create a new group for a given game using default values
-     */
-    public static Group fromGame (Game game)
-    {
-        Group group = new Group();
-
-        // Deal with name issues as best we can
-        String name = game.name + " Whirled";
-        if (!Character.isLetter(name.charAt(0)) || Character.isDigit(name.charAt(0))) {
-            name = "The " + name;
-        }
-
-        // truncate to the last space in the name
-        if (name.length() > GroupName.LENGTH_MAX) {
-            for (int ii = GroupName.LENGTH_MAX; ii >= 0; ii--) {
-                char c = name.charAt(ii);
-                if (c == ' ') {
-                    name = name.substring(0, ii+1);
-                    break;
-                }
-            }
-            if (name.length() > GroupName.LENGTH_MAX) {
-                name = name.substring(0, GroupName.LENGTH_MAX - 1);
-            }
-        }
-        group.name = name;
-
-        group.blurb = "A place to discuss the game " + game.name;
-        // may be the default game icon
-        group.logo = game.getThumbnailMedia();
-        group.policy = Group.POLICY_PUBLIC;
-        group.forumPerms = Group.makePerms(Group.PERM_ALL, Group.PERM_ALL);
-
-        return group;
     }
 }

@@ -5,6 +5,11 @@ package client.editem;
 
 import java.util.List;
 
+import client.shell.CShell;
+import client.shell.DynamicMessages;
+import client.util.MsoyCallback;
+import client.util.ServiceUtil;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ListBox;
@@ -16,19 +21,13 @@ import com.google.gwt.xml.client.Element;
 import com.google.gwt.xml.client.Node;
 import com.google.gwt.xml.client.NodeList;
 import com.google.gwt.xml.client.XMLParser;
-
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupService;
 import com.threerings.msoy.group.gwt.GroupServiceAsync;
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Game;
-
-import client.shell.CShell;
-import client.shell.DynamicMessages;
-import client.util.MsoyCallback;
-import client.util.ServiceUtil;
+import com.threerings.msoy.item.data.all.Item;
 
 /**
  * A class for creating and editing {@link Game} digital items.
@@ -49,6 +48,14 @@ public class GameEditor extends ItemEditor
         setUploaderMedia(Item.AUX_MEDIA, _game.shotMedia);
         setUploaderMedia(Game.SERVER_CODE_MEDIA, _game.serverMedia);
 
+        // fetch the list of whirleds this player is a manager of which don't have a game
+        _groupsvc.getGameGroups(_game.gameId, new MsoyCallback<List<GroupMembership>>() {
+            public void onSuccess (List<GroupMembership> whirleds)
+            {
+                setWhirleds(whirleds);
+            }
+        });
+
         // if we have no game configuration, leave everything as default
         if (_game.config == null || _game.config.length() == 0) {
             return;
@@ -61,9 +68,6 @@ public class GameEditor extends ItemEditor
                 break;
             }
         }
-
-        // select our whirled if the dropdown has been populated.
-        setWhirled();
 
         // read our configuration information out of the game's XML config data
         Document xml;
@@ -148,6 +152,7 @@ public class GameEditor extends ItemEditor
 
         // seated continuous games are disabled for
         addRow(_emsgs.gameGameType(), bind(_matchType = new ListBox(), new Binder() {
+            @Override
             public void valueChanged () {
                 // TODO: disable or hide min/max players and watchable if this is a party game
             }
@@ -235,44 +240,22 @@ public class GameEditor extends ItemEditor
             _serverClass = new TextBox(),
             _emsgs.gameServerClassTip());
         _serverClass.setVisibleLength(40);
-
-        // fetch the list of whirleds this player is a manager of
-        _groupsvc.getMembershipGroups(
-            CShell.getMemberId(), false, new MsoyCallback<List<GroupMembership>>() {
-                public void onSuccess (List<GroupMembership> whirleds) {
-                    _managerWhirledsList = whirleds;
-                    setWhirled();
-                }
-        });
     }
 
     /**
-     * If the whirled dropdown is populated and the game exists, select the correct whirled,
-     * otherwise wait to be called again once all data is in place.
+     * Populate the list of eligible whirleds and select the correct one for this game.
      */
-    protected void setWhirled ()
+    protected void setWhirleds (List<GroupMembership> whirleds)
     {
-        if (_managerWhirledsList == null || _game == null) {
-            return;
-        }
-
-        // add "NONE - create a new whirled" only if the game doesn't have one
-        if (_game.groupId <= 0) {
-            _whirled.addItem(_emsgs.gameWhirledSelectNew(), Game.NO_GROUP+"");
-        }
-
-        for (GroupMembership whirled : _managerWhirledsList) {
-            if (whirled.rank >= GroupMembership.RANK_MANAGER) {
-                _whirled.addItem(
-                    whirled.group.toString(), whirled.group.getGroupId()+"");
-            }
+        _whirled.addItem(_emsgs.gameWhirledNone(), Game.NO_GROUP+"");
+        for (GroupMembership whirled : whirleds) {
+            _whirled.addItem(whirled.group.toString(), whirled.group.getGroupId()+"");
         }
 
         // default to the first item if creating a new whirled
         if (_game.itemId == 0) {
             return;
         }
-
         for (int ii = 0; ii < _whirled.getItemCount(); ii++) {
             if (_whirled.getValue(ii).equals(_game.groupId+"")) {
                 _whirled.setSelectedIndex(ii);
@@ -383,7 +366,6 @@ public class GameEditor extends ItemEditor
     protected CheckBox _avrg;
     protected TextArea _extras;
     protected ListBox _whirled;
-    protected List<GroupMembership> _managerWhirledsList;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);

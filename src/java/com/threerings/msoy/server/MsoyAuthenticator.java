@@ -537,11 +537,11 @@ public class MsoyAuthenticator extends Authenticator
         // create a blank room for them, store it
         final String name = _serverMsgs.getBundle("server").get("m.new_room_name", mrec.name);
         mrec.homeSceneId = _sceneRepo.createBlankRoom(
-            MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true, null);
+            MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true);
         _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
         // emit a created_account action which will grant them some starting flow
-        _moneyLogic.awardCoins(mrec.memberId, 0, 0, null, CoinAwards.CREATED_ACCOUNT, "", 
+        _moneyLogic.awardCoins(mrec.memberId, 0, 0, null, CoinAwards.CREATED_ACCOUNT, "",
             UserAction.CREATED_ACCOUNT).getNewMemberMoney();
 
         // if they gave us a valid referral info, store it; otherwise it'll be filled in later

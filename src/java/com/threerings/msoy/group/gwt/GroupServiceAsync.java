@@ -112,4 +112,9 @@ public interface GroupServiceAsync
      * The asynchronous version of {@link GroupService#getMyGroups}
      */
     void getMyGroups (byte sortMethod, AsyncCallback<List<MyGroupCard>> callback);
+
+    /**
+     * The asynchronous version of {@link GroupService#getGameGroups}
+     */
+    void getGameGroups (int gameId, AsyncCallback<List<GroupMembership>> callback);
 }

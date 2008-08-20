@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.group.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -15,29 +17,15 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Tuple;
-
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.PopularPlacesSnapshot;
-import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.TagHistoryRecord;
-import com.threerings.msoy.server.persist.TagNameRecord;
-import com.threerings.msoy.server.persist.TagPopularityRecord;
-import com.threerings.msoy.server.persist.TagRepository;
-
 import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
-
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GalaxyData;
@@ -50,17 +38,24 @@ import com.threerings.msoy.group.gwt.MyGroupCard;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
+import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.PopularPlacesSnapshot;
+import com.threerings.msoy.server.persist.MemberCardRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
+import com.threerings.msoy.server.persist.TagPopularityRecord;
+import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
-
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link GroupService}.
@@ -703,6 +698,41 @@ public class GroupServlet extends MsoyServiceServlet
             return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
         }
     };
+
+    // from interface GroupService
+    public List<GroupMembership> getGameGroups (final int gameId)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        final int memberId = mrec.memberId;
+
+        try {
+            MemberRecord mRec = _memberRepo.loadMember(memberId);
+            if (mRec == null) {
+                log.warning("Requested group membership for unknown member [id=" + memberId + "].");
+                return Collections.emptyList();
+            }
+
+            return _groupRepo.resolveGroupMemberships(
+                memberId, new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
+                    public boolean apply (Tuple<GroupRecord,GroupMembershipRecord> info) {
+                        // only groups the member manages
+                        if (info.right.rank < GroupMembership.RANK_MANAGER) {
+                            return false;
+                        }
+                        // exclude groups connected to other games
+                        if (info.left.gameId > 0 && info.left.gameId != gameId) {
+                            return false;
+                        }
+                        return true;
+                    }
+                });
+
+        } catch (PersistenceException pe) {
+            log.warning("getGameGroups failed [id=" + memberId + "]", pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
 
     protected List<GroupCard> fillInPopulation (List<GroupCard> groups)
     {

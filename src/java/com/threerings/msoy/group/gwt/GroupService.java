@@ -162,4 +162,11 @@ public interface GroupService extends RemoteService
     List<MyGroupCard> getMyGroups (byte sortMethod)
         throws ServiceException;
 
+    /**
+     * Fetch a list of {@link GroupMembership} records, one for each group of which the caller
+     * is a manager, and which are tied to the given gameId or to no gameId.
+     */
+    List<GroupMembership> getGameGroups (int gameId)
+        throws ServiceException;
+
 }

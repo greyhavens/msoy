@@ -3,56 +3,41 @@
 
 package com.threerings.msoy.stuff.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
-
 import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.TagNameRecord;
-
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
-
-import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.data.all.GroupMembership;
-import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.server.GroupLogic;
-import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
-import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.Furniture;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.CloneRecord;
-import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
-
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.stuff.gwt.StuffService;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.msoy.web.data.ServiceCodes;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 /**
  * Provides the server implementation of {@link StuffService}.
@@ -66,11 +51,6 @@ public class StuffServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser();
         item = _itemLogic.createItem(memrec, item, parent);
-
-        // if the item is a game, create a group for it if it doesn't have one
-        if (item instanceof Game && ((Game)item).groupId == Game.NO_GROUP) {
-            createGameGroup((Game)item);
-        }
 
         // Some items have a stat that may need updating
         if (item instanceof Avatar) {
@@ -131,78 +111,6 @@ public class StuffServlet extends MsoyServiceServlet
             log.warning("Failed to update item " + item + ".", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-
-        // if the item is a game, create a group for it if it doesn't have one
-        if (item instanceof Game && ((Game)item).groupId == Game.NO_GROUP) {
-            createGameGroup((Game)item);
-        }
-    }
-
-    /**
-     * Create a new group for the given game and connect it.
-     */
-    protected void createGameGroup (Game game)
-        throws ServiceException
-    {
-        // if game was just created the gameId may be blank; fetch it from the repo
-        if (game.gameId == 0) {
-            ItemRepository<ItemRecord> repo = _itemLogic.getRepository(game.getType());
-            try {
-                GameRecord gameRecord = (GameRecord) repo.loadItem(game.itemId);
-                game.gameId = gameRecord.gameId;
-            } catch (PersistenceException pe) {
-                log.warning("Failed to fetch gameId for new game " + game + ".", pe);
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-        }
-
-        Group group = Group.fromGame(game);
-        MemberRecord mrec = requireAuthedUser();
-
-        // check for an existing group with the same (unique) name.
-        try {
-            GroupRecord existingGroupRecord = _groupRepo.loadGroupByName(group.name);
-            for (int i = 1; i < 100; i++) {
-                if (existingGroupRecord == null) {
-                    break;
-                }
-                // if player is a manager of the existing group, use that instead
-                GroupMembershipRecord membership =
-                    _groupRepo.getMembership(existingGroupRecord.groupId, mrec.memberId);
-                if (membership != null && membership.rank >= GroupMembership.RANK_MANAGER) {
-                    game.groupId = existingGroupRecord.groupId;
-                    updateItem(game);
-                    return;
-                }
-                // on the 10th+ try, give up and generate a random whirled name
-                if (i >= 9) {
-                    if (group.name.length() >= GroupName.LENGTH_MAX - 6) {
-                        group.name = group.name.substring(0, GroupName.LENGTH_MAX - 7);
-                    }
-                    Random rand = new Random();
-                    group.name = group.name + " " + rand.nextInt(99999);
-                }
-                else {
-                    // not a manager of the existing group; change the name and search again
-                    if (i > 1 || group.name.length() >= GroupName.LENGTH_MAX - 1) {
-                        group.name = group.name.substring(0, group.name.length() - 2);
-                    }
-                    group.name = group.name.concat(" " + (i+1));
-                }
-                existingGroupRecord = _groupRepo.loadGroupByName(group.name);
-            }
-        } catch (PersistenceException pe) {
-            log.warning("Failed to create group for game " + game + ".", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
-        // create a new group
-        GroupExtras extras = GroupExtras.fromGame(game);
-        group = _groupLogic.createGroup(requireAuthedUser(), group, extras);
-
-        // update the game record again with the new groupId
-        game.groupId = group.groupId;
-        updateItem(game);
     }
 
     // from interface StuffService
@@ -334,7 +242,7 @@ public class StuffServlet extends MsoyServiceServlet
                 _memberRepo.loadMemberName(record.creatorId); // normal lookup
             if (mrec != null) {
                 detail.memberItemInfo.memberRating = repo.getRating(iident.itemId, mrec.memberId);
-                detail.memberItemInfo.favorite = _itemLogic.isFavorite(mrec.memberId, detail.item);
+                detail.memberItemInfo.favorite = _itemLogic.isFavorite(mrec.memberId, iident);
             }
             switch (detail.item.used) {
             case Item.USED_AS_FURNITURE:

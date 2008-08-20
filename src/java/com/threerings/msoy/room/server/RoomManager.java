@@ -479,7 +479,7 @@ public class RoomManager extends SpotSceneManager
         _invoker.postUnit(new RepositoryUnit("purchaseRoom") {
             public void invokePersist () throws PersistenceException {
                 _newRoomId = _sceneRepo.createBlankRoom(
-                    ownerType, ownerId, roomName, portalAction, false, null);
+                    ownerType, ownerId, roomName, portalAction, false);
             }
             public void handleSuccess () {
 //                user.addToOwnedScenes(new SceneBookmarkEntry(_newRoomId, roomName, 0));
@@ -930,7 +930,7 @@ public class RoomManager extends SpotSceneManager
                 // Always use member id for avrgs
                 return ((MemberObject)caller).getMemberId();
             }};
-        
+
         _pendingGameIds.add(gameId);
         _invoker.postUnit(new Invoker.Unit("load props") {
             public boolean invoke () {
@@ -963,7 +963,7 @@ public class RoomManager extends SpotSceneManager
                     _invmgr.registerDispatcher(new PropertySpaceDispatcher(propertyService)));
                 props.setMessageService(
                     _invmgr.registerDispatcher(new WhirledGameMessageDispatcher(messageService)));
-                
+
                 // Add to room
                 RoomPropertiesEntry entry = new RoomPropertiesEntry();
                 entry.ownerId = gameId;
@@ -1000,7 +1000,7 @@ public class RoomManager extends SpotSceneManager
                         ownerId, sceneId, entry.getKey(), entry.getValue()));
                 }
             }});
-        
+
         _invmgr.clearDispatcher(properties.propertiesService);
         _invmgr.clearDispatcher(properties.messageService);
     }
@@ -1270,7 +1270,7 @@ public class RoomManager extends SpotSceneManager
             protected Collection<MemoryRecord> _mems;
         });
     }
-    
+
     /** Listens to the room. */
     protected class RoomListener
         implements SetListener<OccupantInfo>
@@ -1346,7 +1346,7 @@ public class RoomManager extends SpotSceneManager
             return diff;
         }
     } // End: static class Controller
-    
+
     /** The room object. */
     protected RoomObject _roomObj;
 

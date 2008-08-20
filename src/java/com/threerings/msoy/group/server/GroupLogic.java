@@ -68,7 +68,7 @@ public class GroupLogic
             grec.creatorId = mrec.memberId;
 
             // create the group and then add the creator to it
-            _groupRepo.createGroup(grec, extras.game);
+            _groupRepo.createGroup(grec);
             _groupRepo.joinGroup(grec.groupId, grec.creatorId, GroupMembership.RANK_MANAGER);
 
             // if the creator is online, update their runtime data

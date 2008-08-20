@@ -184,6 +184,13 @@ public class GroupRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #catalogTag} field. */
     public static final ColumnExp CATALOG_TAG_C =
         new ColumnExp(GroupRecord.class, CATALOG_TAG);
+
+    /** The column identifier for the {@link #gameId} field. */
+    public static final String GAME_ID = "gameId";
+
+    /** The qualified column identifier for the {@link #gameId} field. */
+    public static final ColumnExp GAME_ID_C =
+        new ColumnExp(GroupRecord.class, GAME_ID);
     // AUTO-GENERATED: FIELDS END
 
     /** The identifier for the full text search index on Name, Blurb, Charter */
@@ -191,7 +198,7 @@ public class GroupRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 18;
+    public static final int SCHEMA_VERSION = 19;
 
     /** The unique id of this group. */
     @Id
@@ -261,6 +268,9 @@ public class GroupRecord extends PersistentRecord
     /** The catalog tag to use with the browse by tag function. */
     @Column(nullable=true)
     public String catalogTag;
+
+    /** The id of the game associated with this whirled, or 0 if there is none */
+    public int gameId;
 
     /**
      * Creates a web-safe version of this group.
