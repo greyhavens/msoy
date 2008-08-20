@@ -85,7 +85,7 @@ public class MeServlet extends MsoyServiceServlet
             return data;
 
         } catch (PersistenceException pe) {
-            log.warning("getMyWhirled failed", "memberId", mrec.memberId, "exception", pe);
+            log.warning("getMyWhirled failed", "memberId", mrec.memberId, pe);
             throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
         }
     }
