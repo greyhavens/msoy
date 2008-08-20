@@ -282,13 +282,13 @@
 .badgeDisplay .CoinReward {
   position: absolute;
   left: 90px;
-  top: 45px;
+  top: 48px;
   font-size: 12px;
 }
 
 .badgeDisplay .CoinReward img {
   float: left;
-  padding-top: 3px;
+  padding-top: 1px;
 }
 
 .badgeDisplay .CoinReward div {
