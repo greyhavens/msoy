@@ -429,8 +429,9 @@ public class ItemServlet extends MsoyServiceServlet
                     _itemLogic.decrementFavoriteCount(record, itemType);
                 }
             }
+
         } catch (PersistenceException pex) {
-            log.warning("Could not set favorite.", "catalogId", catalogId, "itemType", itemType, pex);
+            log.warning("Could not set favorite.", "catalogId", catalogId, "type", itemType, pex);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -458,17 +459,6 @@ public class ItemServlet extends MsoyServiceServlet
         }
     }
 
-    protected int getSize (ItemListQuery query) throws ServiceException
-    {
-        try {
-            return _itemLogic.getSize(query.listId, query.itemType);
-        } catch (PersistenceException pex) {
-            log.warning("Could not get size of item list", "listId", query.listId,
-                        "itemType", query.itemType, pex);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-    }
-
     // from interface ItemService
     public ItemListResult loadItemList (ItemListQuery query) throws ServiceException
     {
@@ -476,7 +466,7 @@ public class ItemServlet extends MsoyServiceServlet
             ItemListResult result = new ItemListResult();
             result.items = _itemLogic.loadItemList(query);
             if (query.needsCount) {
-                result.totalCount = getSize(query);
+                result.totalCount = _itemLogic.getItemListSize(query.listId, query.itemType);
             }
             return result;
 
@@ -496,7 +486,6 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
-
 
     // our dependencies
     @Inject protected ItemLogic _itemLogic;

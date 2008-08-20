@@ -403,13 +403,13 @@ public class ItemLogic
         }
     }
 
-    public int getSize (int listId)
+    public int getItemListSize (int listId)
         throws PersistenceException
     {
         return _listRepo.getSize(listId);
     }
 
-    public int getSize (int listId, byte itemType)
+    public int getItemListSize (int listId, byte itemType)
         throws PersistenceException
     {
         return _listRepo.getSize(listId, itemType);
