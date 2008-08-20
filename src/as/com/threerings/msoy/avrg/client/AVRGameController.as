@@ -6,8 +6,12 @@ package com.threerings.msoy.avrg.client {
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
+import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
+import com.threerings.presents.dobj.SetAdapter;
+import com.threerings.presents.util.SafeObjectManager;
 
+import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceConfig;
@@ -18,6 +22,9 @@ import com.threerings.msoy.client.MsoyClient;
 
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.room.client.RoomObjectView;
+import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.RoomPropertiesEntry;
+import com.threerings.msoy.room.data.RoomPropertiesObject;
 import com.threerings.msoy.game.client.GameContext;
 
 import com.threerings.msoy.avrg.data.AVRGameConfig;
@@ -77,6 +84,11 @@ public class AVRGameController extends PlaceController
         _backend.shutdown();
 
         _gameObj = null;
+
+        _wctx.getLocationDirector().removeLocationObserver(_roomObserver);
+
+        _worldObjectMgr.unsubscribeAll();
+        _worldObjectMgr = null;
 
         super.didLeavePlace(plobj);
     }
@@ -143,6 +155,13 @@ public class AVRGameController extends PlaceController
 
         var panel :AVRGamePanel = (getPlaceView() as AVRGamePanel);
         panel.backendIsReady();
+
+        _worldObjectMgr = new SafeObjectManager(_wctx.getClient().getDObjectManager(), log);
+
+        // sign up for room objects
+        _wctx.getLocationDirector().addLocationObserver(_roomObserver);
+
+        updateRoom(_wctx.getLocationDirector().getPlaceObject() as RoomObject);
     }
 
     override protected function setPlaceView () :void
@@ -165,10 +184,76 @@ public class AVRGameController extends PlaceController
         }
     }
 
+    /**
+     * Called when the user's room changes.
+     */
+    protected function updateRoom (roomObject :RoomObject) :void
+    {
+        // establish a subscription to the properties of the room
+        var gameId :int = getGameId();
+
+        var entry :RoomPropertiesEntry = null;
+        if (roomObject != null) {
+            entry = roomObject.propertySpaces.get(gameId) as RoomPropertiesEntry;
+        }
+
+        if (entry != null) {
+            setRoomPropsOid(entry.propsOid);
+
+        } else if (roomObject != null) {
+            setRoomPropsOid(0);
+            var setListener :SetAdapter;
+            setListener = new SetAdapter(function (event :EntryAddedEvent) :void {
+                entry = event.getEntry() as RoomPropertiesEntry;
+                if (entry.ownerId == gameId) {
+                    setRoomPropsOid(entry.propsOid);
+                    roomObject.removeListener(setListener);
+                }
+            });
+            roomObject.addListener(setListener);
+        } else {
+            setRoomPropsOid(0);
+        }
+    }
+
+    /**
+     * Subscribe to properties and relinquish the old subscription if any.
+     */
+    protected function setRoomPropsOid (propsOid :int) :void
+    {
+        if (_roomPropsOid != 0) {
+            _worldObjectMgr.unsubscribe(_roomPropsOid);
+        }
+
+        _roomPropsOid = propsOid;
+
+        if (_roomPropsOid != 0) {
+            // TODO: do we need to pass response functions and inform the backend when the properties
+            // become available?
+            _worldObjectMgr.subscribe(_roomPropsOid);
+        }
+    }
+
+    /**
+     * Retrieve the room properties for our current rooom. Returns null if they are not yet 
+     * available.
+     */
+    protected function getRoomProperties () :RoomPropertiesObject
+    {
+        if (_roomPropsOid == 0) {
+            return null;
+        }
+        return _worldObjectMgr.getObj(_roomPropsOid) as RoomPropertiesObject;
+    }
+
     protected var _wctx :WorldContext;
     protected var _gctx :GameContext;
 
     protected var _gameObj :AVRGameObject;
     protected var _backend :AVRGameBackend;
+
+    protected var _worldObjectMgr :SafeObjectManager;
+    protected var _roomPropsOid :int;
+    protected var _roomObserver :LocationAdapter = new LocationAdapter(null, updateRoom);
 }
 }
