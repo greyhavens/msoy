@@ -30,15 +30,15 @@ public class Snapshot
     /**
      * Create a 'Snapshot' of the provided view.  With a frame of the provided size.
      */
-    public function Snapshot (view :RoomView, width :int, height :int)
+    public function Snapshot (view :RoomView, framer :Framer, width :int, height :int)
     {
         _view = view;
                 
         _frame = new Rectangle(0, 0, width, height);
-        _framer = new Framer(view.getScrollBounds(), _frame);
-        bitmap = new BitmapData(width, height);  
+        _framer = framer;
+        bitmap = new BitmapData(width, height);
     }
-    
+
     /**
      * Update the snapshot.
      */

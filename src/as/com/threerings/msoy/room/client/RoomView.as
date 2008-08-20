@@ -435,6 +435,11 @@ public class RoomView extends Sprite
         _backdrop.update(scene.getDecor());
         relayout();
     }
+    
+    public function getScene () :MsoyScene
+    {
+        return _scene;
+    }
 
     /**
      * Updates the layout object, creating a new one if necessary.

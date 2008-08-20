@@ -35,11 +35,13 @@ import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.room.client.RoomView;
+import com.threerings.msoy.room.data.MsoyScene;
 
 public class SnapshotPanel extends FloatingPanel
 {
     public static const SCENE_THUMBNAIL_WIDTH :int = 350;
     public static const SCENE_THUMBNAIL_HEIGHT :int = 200;
+    protected static const NOOP_FRAMER:Framer = new NoopFramer();
 
     public var galleryImage :Snapshot;
     public var sceneThumbnail :Snapshot;
@@ -57,13 +59,20 @@ public class SnapshotPanel extends FloatingPanel
         // if the user is permitted to manage the room then enable the taking of canonical snapshots
         _sceneThumbnailPermitted = _view.getRoomController().canManageRoom();
 
-        Log.getLog(this).debug("_sceneThumbnailPermitted = "+_sceneThumbnailPermitted);        
-
-        sceneThumbnail = new Snapshot(_view, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
+        Log.getLog(this).debug("_sceneThumbnailPermitted = " + _sceneThumbnailPermitted);
+        
+        // for the canonical image, we create a new framer that centers the image within the frame, 
+        // introducing black bars if necessary.
+        const frame:Rectangle = new Rectangle(0, 0, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
+        const framer:Framer = new CanonicalFramer(_view.getScrollBounds(), frame, 
+            _view.getScrollOffset());
+        
+        sceneThumbnail = new Snapshot(_view, framer, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
         sceneThumbnail.updateSnapshot();
 
         // TODO: we want the room bounds, not the room *view* bounds....
-        galleryImage = new Snapshot(_view, _view.width, _view.height);
+        const scene:MsoyScene = _view.getScene();
+        galleryImage = new Snapshot(_view, NOOP_FRAMER, scene.getWidth(), scene.getHeight());
         galleryImage.updateSnapshot();
         open();
     }
@@ -273,6 +282,6 @@ public class SnapshotPanel extends FloatingPanel
     protected var _snapPanel :Container;
     protected var _progressPanel :Container;
     protected var _cancelUploadButton :CommandButton;
-    protected var _progressLabel :Label;
+    protected var _progressLabel :Label;    
 }
 }
