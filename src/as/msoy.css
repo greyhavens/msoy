@@ -601,11 +601,10 @@ TabNavigator, TabBar {
   /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/scale_disabled.png"); */
 }
 
-.controlBarResetButton {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/reset.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/reset_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/reset_down.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/reset_disabled.png");
+.tickButton {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/tick.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/tick_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/tick_disabled.png");
 }
 
 .roomEditPanel {

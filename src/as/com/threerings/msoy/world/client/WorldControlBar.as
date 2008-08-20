@@ -325,7 +325,7 @@ public class WorldControlBar extends ControlBar
      */
     protected function handlePopZoom () :void
     {   
-        SliderPopup.toggle(_zoomBtn, getZoom(), setZoom);
+        SliderPopup.toggle(_zoomBtn, getZoom(), setZoom, { tickValues: [ 0, 1 ] });
     }       
 
     protected function getZoom () :Number

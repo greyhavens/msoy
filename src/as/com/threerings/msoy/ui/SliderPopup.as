@@ -15,6 +15,10 @@ import mx.events.SliderEvent;
 
 import com.threerings.util.Util;
 
+import com.threerings.flex.CommandButton;
+
+import com.threerings.msoy.client.Msgs;
+
 /** Background skin to be loaded from the style sheet. */
 [Style(name="backgroundSkin", type="Class", inherit="no")]
 
@@ -59,7 +63,7 @@ public class SliderPopup extends Canvas
         // Initialize the window
         var r : Rectangle = _trigger.getBounds(trigger.stage);
         width = 29;
-        height = 100;
+        height = 120;
         x = r.x - 1;
         y = r.y - height;
         verticalScrollPolicy = horizontalScrollPolicy = ScrollPolicy.OFF;
@@ -81,6 +85,13 @@ public class SliderPopup extends Canvas
         addEventListener(MouseEvent.ROLL_OUT, mouseOutHandler, false, 0, true);
         addEventListener(MouseEvent.ROLL_OVER, mouseOverHandler, false, 0, true);
         _slider.addEventListener(SliderEvent.THUMB_RELEASE, thumbReleaseHandler, false, 0, true);
+
+        var but :CommandButton = new CommandButton(null, resetTick);
+        but.styleName = "tickButton";
+        but.toolTip = Msgs.GENERAL.get("i.tickButton");
+        but.x = 4;
+        but.y = 90;
+        addChild(but);
 
         visible = false;
         owner.addChild(this);
@@ -112,6 +123,36 @@ public class SliderPopup extends Canvas
         owner.removeChild(this);
         if (this == _currentInstance) {
             _currentInstance = null;
+        }
+    }
+
+    /**
+     * Set the slider value to the closest tickValue, or the next higher if already on one.
+     */
+    protected function resetTick () :void
+    {
+        const value :Number = _slider.value;
+        const ticks :Array = _slider.tickValues;
+        if (ticks == null) {
+            return;
+        }
+        const dex :int = ticks.indexOf(value);
+        if (dex != -1) {
+            // we're at a tick, jump to the next tick
+            _slider.value = Number(ticks[(dex + 1) % ticks.length]);
+
+        } else {
+            // jump to the closest tick
+            var closeValue :Number = value;
+            var closeness :Number = Number.MAX_VALUE;
+            for each (var tickVal :Number in ticks) {
+                const diff :Number = Math.abs(tickVal - value);
+                if (diff < closeness) {
+                    closeness = diff;
+                    closeValue = tickVal;
+                }
+            }
+            _slider.value = closeValue;
         }
     }
 

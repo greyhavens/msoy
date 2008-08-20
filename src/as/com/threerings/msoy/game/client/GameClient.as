@@ -77,6 +77,8 @@ public class GameClient extends MsoyClient
 }
 }
 
+import com.threerings.util.Log;
+
 import com.threerings.parlor.client.ParlorDirector;
 
 import com.threerings.msoy.client.MsoyContext;

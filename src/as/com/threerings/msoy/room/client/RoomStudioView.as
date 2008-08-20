@@ -281,13 +281,9 @@ public class RoomStudioView extends RoomView
         _scaleButton.styleName = "controlBarScaleButton";
         _scaleButton.toolTip = Msgs.GENERAL.get("i.spriteScale");
         _scaleButton.enabled = false;
-        _scaleReset = new CommandButton(null, updateSpriteScale, 1);
-        _scaleReset.styleName = "controlBarResetButton";
-        _scaleReset.toolTip = Msgs.GENERAL.get("i.resetScale");
 
-        const bar :ControlBar = _ctx.getTopPanel().getControlBar();
-        bar.addCustomComponent(_scaleButton, ControlBar.BUTTON_PRIORITY + 2);
-        bar.addCustomComponent(_scaleReset, ControlBar.BUTTON_PRIORITY + 2);
+        _ctx.getTopPanel().getControlBar().addCustomComponent(
+            _scaleButton, ControlBar.BUTTON_PRIORITY + 2);
     }
 
     protected function showSpriteScaler () :void
@@ -314,8 +310,6 @@ public class RoomStudioView extends RoomView
      */
     protected function updateSpriteScale (newScale :Number) :void
     {
-        _scaleReset.enabled = (newScale != 1);
-
         setSpriteScale(newScale);
 
         if (_saveScaling && ExternalInterface.available) {
@@ -380,7 +374,6 @@ public class RoomStudioView extends RoomView
 
         // enable everything
         _scaleButton.enabled = true;
-        _scaleReset.enabled = (1 != getSpriteScale());
     }
 
     protected function getScaleFromParams (params :Object) :Number
@@ -399,7 +392,6 @@ public class RoomStudioView extends RoomView
 
     /** Used for sizing our own avatar. */
     protected var _scaleButton :CommandButton;
-    protected var _scaleReset :CommandButton;
     protected var _saveScaling :Boolean;
 
     protected var _scaleProperties :Object = { tickValues: [ 1 ] };
