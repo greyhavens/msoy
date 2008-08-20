@@ -98,8 +98,8 @@ public class StatLogic
                 @Override protected Stat getStat (Stat.Type type) {
                     Stat stat = super.getStat(type);
                     if (stat == null) {
-                        log.warning("BadgeType tried to access a non-existent Stat",
-                            "Stat.Type", type, "Existing StatType", statType);
+                        log.warning("BadgeType tried to access a non-existent Stat", "type", type,
+                                    "etype", statType);
                     }
                     return stat;
                 }
@@ -124,8 +124,7 @@ public class StatLogic
             try {
                 earnedBadge = _badgeRepo.loadEarnedBadge(memberId, badgeType.getCode());
             } catch (PersistenceException pe) {
-                log.warning("loadEarnedBadge failed", "memberId", memberId, "BadgeType", badgeType,
-                    pe);
+                log.warning("loadEarnedBadge failed", "for", memberId, "type", badgeType, pe);
                 return;
             }
 
@@ -142,8 +141,7 @@ public class StatLogic
                 try {
                     _badgeLogic.awardBadge(earnedBadge, true);
                 } catch (PersistenceException pe) {
-                    log.warning("awardBadge failed", "BadgeType", badgeType,  "EarnedBadgeRecord",
-                        earnedBadge, pe);
+                    log.warning("awardBadge failed", "type", badgeType,  "badge", earnedBadge, pe);
                     return;
                 }
             }
@@ -156,8 +154,7 @@ public class StatLogic
             try {
                 _badgeRepo.deleteInProgressBadge(memberId, badgeType.getCode());
             } catch (PersistenceException pe) {
-                log.warning("deleteInProgressBadge failed", "memberId", memberId, "BadgeType",
-                    badgeType, pe);
+                log.warning("deleteInProgressBadge failed", "for", memberId, "type", badgeType, pe);
             }
 
         } else {
@@ -166,8 +163,7 @@ public class StatLogic
             try {
                 inProgressBadge = _badgeRepo.loadInProgressBadge(memberId, badgeType.getCode());
             } catch (PersistenceException pe) {
-                log.warning("loadInProgressBadge failed", "memberId", memberId, "BadgeType",
-                    badgeType, pe);
+                log.warning("loadInProgressBadge failed", "for", memberId, "type", badgeType, pe);
                 return;
             }
 
@@ -191,8 +187,8 @@ public class StatLogic
                 try {
                     _badgeLogic.updateInProgressBadge(inProgressBadge, true);
                 } catch (PersistenceException pe) {
-                    log.warning("updateInProgressBadge failed", "BadgeType", badgeType,
-                        "InProgressBadgeRecord", inProgressBadge, pe);
+                    log.warning("updateInProgressBadge failed", "type", badgeType,
+                                "badge", inProgressBadge, pe);
                     return;
                 }
             }
