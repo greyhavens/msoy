@@ -102,15 +102,11 @@ public class ControlBar extends HBox
         height = HEIGHT;
         percentWidth = 100;
 
-        var fn :Function = function (event :ClientEvent) :void {
-            checkControls();
-            updateUI();
-        };
-        _ctx.getClient().addClientObserver(new ClientAdapter(fn, fn, null, null, null, null, fn));
+        _ctx.getClient().addClientObserver(
+            new ClientAdapter(checkControls, checkControls, null, null, null, null, checkControls));
 
         createControls();
         checkControls();
-        updateUI();
     }
 
     /**
@@ -217,10 +213,10 @@ public class ControlBar extends HBox
         _leftSpacer = new Spacer();
         _leftSpacer.percentWidth = 100;
 
-        _chatBtn = new CommandButton();
-        _chatBtn.toolTip = Msgs.GENERAL.get("i.channel");
-        _chatBtn.setCommand(WorldController.POP_CHANNEL_MENU, _chatBtn);
-        _chatBtn.styleName = "controlBarButtonChat";
+        _chatOptsBtn = new CommandButton();
+        _chatOptsBtn.toolTip = Msgs.GENERAL.get("i.channel");
+        _chatOptsBtn.setCommand(WorldController.POP_CHANNEL_MENU, _chatOptsBtn);
+        _chatOptsBtn.styleName = "controlBarButtonChat";
 
         _volBtn = new CommandButton();
         _volBtn.toolTip = Msgs.GENERAL.get("i.volume");
@@ -252,12 +248,12 @@ public class ControlBar extends HBox
     /**
      * Checks to see which controls the client should see.
      */
-    protected function checkControls () :Boolean
+    protected function checkControls (... ignored) :void
     {
         const memName :MemberName = _ctx.getMyName();
         const isMember :Boolean = (memName != null) && !memName.isGuest();
         if (numChildren > 0 && (isMember == _isMember)) {
-            return false;
+            return;
         }
 
         // remember how things are set for now
@@ -266,7 +262,7 @@ public class ControlBar extends HBox
 
         // and add our various control buttons
         setupControls();
-        return true;
+        updateUI();
     }
 
 //    protected function handleJoinLeaveParty (state :Boolean) :void
@@ -301,8 +297,9 @@ public class ControlBar extends HBox
     protected function addControlButtons () :void
     {
         // add our standard control bar features
-        addGroupChild(_chatBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
-        _chatControl = new ChatControl(_ctx, null, this.height);
+        addGroupChild(_chatOptsBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
+        _chatControl = new ChatControl(_ctx, null);
+        _chatControl.chatInput.height = HEIGHT - 8;
         _chatControl.sendButton.styleName = "controlBarButtonSend";
         addGroupChild(_chatControl, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
         addGroupChild(_volBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
@@ -414,7 +411,7 @@ public class ControlBar extends HBox
     protected var _chatControl :ChatControl;
 
     /** The chat preferences button. */
-    protected var _chatBtn :CommandButton;
+    protected var _chatOptsBtn :CommandButton;
 
     /** Handles volume adjustment. */
     protected var _volBtn :CommandButton;

@@ -476,7 +476,7 @@ TabNavigator, TabBar {
   borderStyle: "none";
   paddingBottom: 0;
   paddingTop: 0;
-  paddingLeft: 0;
+  paddingLeft: 8;
   paddingRight: 0;
 }
 
@@ -936,19 +936,20 @@ BasePanel {
 }
 
 .chatControl {  
-  paddingLeft: 4;
+  paddingLeft: 0;
   paddingRight: 4;
   paddingTop: 0;
-  paddingBottom: 1;
-  verticalAlign: "bottom";
+  paddingBottom: 2;
+  verticalAlign: "center";
   backgroundAlpha: 0;
 }
 
 .chatInput {
-    color: #000000;
-    themeColor: #3db8eb;
-    fontFamily: "Arial";
-    fontSize: 12;
+  color: #000000;
+  themeColor: #3db8eb;
+  fontFamily: "Arial";
+  fontSize: 12;
+  borderStyle: "none";
 }
 
 .chatTargetButton {
