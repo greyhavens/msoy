@@ -3,6 +3,7 @@
 
 package client.stuff;
 
+import client.item.ItemBox;
 import client.shell.Args;
 import client.shell.Pages;
 import client.util.MsoyCallback;
@@ -10,6 +11,8 @@ import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
+import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemListInfo;
@@ -33,6 +36,11 @@ public class FavoritesPanel extends SimplePanel
      */
     public static final int DEFAULT_COLUMNS = 5;
 
+    /**
+     * An empty array used in the case that the are no prefix args required.
+     */
+    public static final String[] NO_PREFIX_ARGS = new String[0];
+
     public FavoritesPanel (Pages parentPage)
     {
         this(parentPage, DEFAULT_ROWS, DEFAULT_COLUMNS);
@@ -49,6 +57,8 @@ public class FavoritesPanel extends SimplePanel
         _rows = rows;
         _cols = cols;
         _displayNavigation = displayNavigation;
+
+        addStyleName("favoritesPanel");
     }
 
     /**
@@ -63,25 +73,10 @@ public class FavoritesPanel extends SimplePanel
         if (memberId != _memberId && !MemberName.isGuest(memberId)) {
             // if the member Id has changed, then we have some reloading to do
             setMemberId(memberId);
-
-        } else if (_favoritesGridPanel != null) {
-            // otherwise just update the current contents
-            _favoritesGridPanel.setPrefixArgs(_prefixArgs);
-            _favoritesGridPanel.onHistoryChanged(allPageArgs);
+        } else if (_favorites != null) {
+            // otherwise just update and display the grid
+            displayGrid(allPageArgs);
         }
-    }
-
-    protected void setMemberId (int memberId)
-    {
-        // update the prefix args to contain the correct memberId
-        _prefixArgs[_prefixArgs.length-1] = String.valueOf(memberId);
-
-        _memberId = memberId;
-        _stuffsvc.getFavoriteListInfo(_memberId, new MsoyCallback<ItemListInfo>() {
-            public void onSuccess (ItemListInfo favoriteListInfo) {
-                setListId(favoriteListInfo.listId);
-            }
-        });
     }
 
     /**
@@ -102,6 +97,19 @@ public class FavoritesPanel extends SimplePanel
         }
     }
 
+    protected void setMemberId (int memberId)
+    {
+        // update the prefix args to contain the correct memberId
+        _prefixArgs[_prefixArgs.length-1] = String.valueOf(memberId);
+
+        _memberId = memberId;
+        _stuffsvc.getFavoriteListInfo(_memberId, new MsoyCallback<ItemListInfo>() {
+            public void onSuccess (ItemListInfo favoriteListInfo) {
+                setListId(favoriteListInfo.listId);
+            }
+        });
+    }
+
     protected void setListId (int listId)
     {
         // create the favorites model
@@ -110,30 +118,70 @@ public class FavoritesPanel extends SimplePanel
         // order favorites starting with the most recently favorited items
         _favoriteModel.setDescending(true);
 
-        _favorites = new ItemGrid(_parentPage, _itemType, _rows, _cols, CStuff.msgs
-            .favorites(), CStuff.msgs.noFavorites());
+        _favorites = new ItemGrid(_parentPage, _itemType, _rows, _cols) {
+            @Override
+            protected String getEmptyMessage (){
+                return CStuff.msgs.noFavorites();
+            }
+
+            @Override
+            public String getTitle () {
+                return CStuff.msgs.favorites();
+            }
+
+            @Override
+            protected Widget createWidget (Item item)
+            {
+                String args = Args.compose("l"/*TODO ShopPage.LOAD_LISTING*/, String.valueOf(item.getType()),
+                    String.valueOf(item.catalogId));
+                return new ItemBox(item.getThumbnailMedia(), item.name, Pages.SHOP, args, false);
+            }
+        };
         _favorites.setDisplayNavigation(_displayNavigation);
         _favorites.setModel(_favoriteModel, 0);
 
-        _favoritesGridPanel = new ItemGridPanel(_parentPage, _favorites, _favoriteModel);
-        _favoritesGridPanel.setPrefixArgs(_prefixArgs);
+        // if update has already been called, then display the grid
         if (_lastArgs != null) {
-            _favoritesGridPanel.onHistoryChanged(_lastArgs);
+            displayGrid(_lastArgs);
         }
-        setWidget(_favoritesGridPanel);
+    }
+
+    protected void displayGrid (Args args)
+    {
+        _favorites.setPrefixArgs(_prefixArgs);
+        byte itemType = (byte) getArg(args, 0, _favoriteModel.getDefaultItemType());
+        int page = getArg(args, 1, 0);
+        DataModel<Item> gridModel = _favoriteModel.getGridModel(itemType);
+        if (gridModel != null) {
+            _favorites.setModel(gridModel, page);
+        }
+        setWidget(_favorites);
+    }
+
+    protected int getArg (Args args, int index, int defaultValue)
+    {
+        return args.get(getArgIndex(index), defaultValue);
+    }
+
+    /**
+     * Gets an argument index relative to the _prefixArgs.
+     */
+    protected int getArgIndex (int index)
+    {
+        return index + _prefixArgs.length;
     }
 
     protected ItemListDataModel _favoriteModel;
 
     protected ItemGrid _favorites;
 
-    protected ItemGridPanel _favoritesGridPanel;
-
     /**
      * The most recent args passed to onHistoryChanged(). This is used in the case that the
      * _favoritesPanel was not yet initialized when onHistoryChanged() is first called.
      */
     protected Args _lastArgs;
+
+    protected String[] _prefixArgs = NO_PREFIX_ARGS;
 
     /**
      * The parent page on which this panel lives.
@@ -148,8 +196,6 @@ public class FavoritesPanel extends SimplePanel
      * Whether or not to display the grid paging controls.
      */
     protected boolean _displayNavigation;
-
-    protected String[] _prefixArgs = ItemGridPanel.NO_PREFIX_ARGS;;
 
     protected byte _itemType = Item.NOT_A_TYPE;
 

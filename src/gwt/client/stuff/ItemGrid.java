@@ -13,7 +13,6 @@ import client.util.Link;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.msoy.item.data.all.Item;
 
@@ -22,15 +21,13 @@ import com.threerings.msoy.item.data.all.Item;
  *
  * @author mjensen
  */
-public class ItemGrid extends PagedGrid<Item>
+public abstract class ItemGrid extends PagedGrid<Item>
 {
-    public ItemGrid (Pages parentPage, byte itemType, int rows, int columns, String title, String emptyMessage)
+    public ItemGrid (Pages parentPage, byte itemType, int rows, int columns)
     {
         super(rows, columns);
         _parentPage = parentPage;
         _itemType = itemType;
-        _emptyMessage = emptyMessage;
-        _title = title;
 
         addStyleName("Contents");
     }
@@ -44,42 +41,30 @@ public class ItemGrid extends PagedGrid<Item>
         _prefixArgs = prefixArgs;
     }
 
+    /**
+     * Sets the item type currently being displayed in this grid.
+     */
     public void setItemType (byte itemType)
     {
         _itemType = itemType;
     }
 
+    /**
+     * Updates the arguments passed to the parent page so that the given grid page is displayed.
+     */
     protected void displayPageFromClick (int page)
     {
         // route our page navigation through the URL
         List<String> args = new ArrayList<String>();
-
         if (_prefixArgs != null) {
             for (String arg : _prefixArgs) {
                 args.add(arg);
             }
         }
-
         args.add(String.valueOf(_itemType));
         args.add(String.valueOf(page));
 
         Link.go(_parentPage, Args.compose(args));
-    }
-
-    protected Widget createWidget (Item item)
-    {
-        return new ItemEntry(item);
-    }
-
-    protected String getEmptyMessage ()
-    {
-        return _emptyMessage;
-    }
-
-    @Override
-    protected boolean displayNavi (int itemCount)
-    {
-        return _displayNavigation;
     }
 
     public void setDisplayNavigation (boolean displayControls)
@@ -87,21 +72,33 @@ public class ItemGrid extends PagedGrid<Item>
         _displayNavigation = displayControls;
     }
 
+    /**
+     * Gets the custom title to display for this grid.
+     */
+    public abstract String getTitle ();
+
+    @Override
+    protected boolean displayNavi (int itemCount)
+    {
+        return _displayNavigation;
+    }
+
     protected void addCustomControls (FlexTable controls)
     {
-        controls.setText(0, 0, _title);
+        controls.setText(0, 0, getTitle());
         controls.getFlexCellFormatter().setStyleName(0, 0, "Show");
     }
+
+    /**
+     * Returns the message to display when the grid is empty.
+     */
+    protected abstract String getEmptyMessage ();
 
     protected byte _itemType = Item.NOT_A_TYPE;
 
     protected Pages _parentPage;
 
     protected String[] _prefixArgs;
-
-    protected String _title;
-
-    protected String _emptyMessage;
 
     protected boolean _displayNavigation = true;
 

@@ -214,17 +214,17 @@
   width: 555px;
 }
 
-.itemGridPanel .Contents {
+.favoritesPanel .Contents {
   margin: 10px;
   width: 555px;
   background: #FFFFFF;
 }
 
-.itemGridPanel .pagedGrid .Header .TopLeft {
+.favoritesPanel .pagedGrid .Header .TopLeft {
   background: #1D5884 url(/images/ui/grid_header_left.png) no-repeat left;
 }
 
-.itemGridPanel .pagedGrid .Header .TopRight {
+.favoritesPanel .pagedGrid .Header .TopRight {
   background: #1D5884 url(/images/ui/grid_header_right.png) no-repeat right;
 }
 
