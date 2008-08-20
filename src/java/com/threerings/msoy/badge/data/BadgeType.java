@@ -208,6 +208,7 @@ public enum BadgeType
         }
     },
 
+    // now Merchant in the UI
     PROFESSIONAL(StampCategory.CREATION, StatType.COINS_EARNED_SELLING, new Level[] {
         new Level(10000, 1000),
         new Level(100000, 2000),
@@ -432,7 +433,7 @@ public enum BadgeType
     }
 
     /**
-     * Convenience method to get the requiredUnits for the given level number.  This function 
+     * Convenience method to get the requiredUnits for the given level number.  This function
      * will return null if the level is not found.
      */
     public String getLevelUnits (int levelNumber)
@@ -440,15 +441,15 @@ public enum BadgeType
         Level level = getLevel(levelNumber);
         return level == null ? null : "" + level.requiredUnits;
     }
-    
+
     /**
      * Conveninence method to get the coin reward for the given level number.  This function
      * will return 0 if the level is not found.
      */
     public int getCoinValue (int levelNumber)
     {
-    	Level level = getLevel(levelNumber);
-    	return level == null ? 0 : level.coinValue;
+        Level level = getLevel(levelNumber);
+        return level == null ? 0 : level.coinValue;
     }
 
     /**

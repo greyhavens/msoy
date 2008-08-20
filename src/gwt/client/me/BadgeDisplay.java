@@ -127,7 +127,7 @@ class BadgeDisplay extends FlowPanel
         case -255838771: return Link.createListener(Pages.STUFF, "" + Item.FURNITURE);
         // landscape painter
         case 292647383: return Link.createListener(Pages.STUFF, "" + Item.DECOR);
-        // professional
+        // professional (merchant)
         case 646396602: return Link.createListener(Pages.SHOP, "");
         // artisan
         case 52819145: return Link.createListener(Pages.SHOP, "");
