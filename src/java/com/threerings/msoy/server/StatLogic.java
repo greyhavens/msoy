@@ -29,8 +29,6 @@ import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.all.DeploymentConfig;
-
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -78,18 +76,12 @@ public class StatLogic
      */
     public void updateStat (int memberId, StatModifier<? extends Stat> modifier)
     {
-        if (!DeploymentConfig.devDeployment) {
-            return; // TODO remove this when the Passport system goes live
-        }
-
         Stat updatedStat = null;
         try {
             // first update the stat in the database
             updatedStat = _statRepo.updateStat(memberId, modifier);
             if (updatedStat != null) {
                 MemberNodeActions.statUpdated(memberId, modifier);
-                log.info("updateStat succeeded", "memberId", memberId,
-                    "statType", modifier.getType().name());
             }
         } catch (PersistenceException pe) {
             log.warning("updateStat failed", "memberId", memberId, "type", modifier.getType(), pe);
@@ -132,7 +124,8 @@ public class StatLogic
             try {
                 earnedBadge = _badgeRepo.loadEarnedBadge(memberId, badgeType.getCode());
             } catch (PersistenceException pe) {
-                log.warning("loadEarnedBadge failed", "memberId", memberId, "BadgeType", badgeType);
+                log.warning("loadEarnedBadge failed", "memberId", memberId, "BadgeType", badgeType,
+                    pe);
                 return;
             }
 
@@ -148,11 +141,9 @@ public class StatLogic
                 earnedBadge.whenEarned = new Timestamp(System.currentTimeMillis());
                 try {
                     _badgeLogic.awardBadge(earnedBadge, true);
-                    log.info("awardBadge succeeded", "BadgeType", badgeType, "EarnedBadgeRecord",
-                        earnedBadge);
                 } catch (PersistenceException pe) {
                     log.warning("awardBadge failed", "BadgeType", badgeType,  "EarnedBadgeRecord",
-                        earnedBadge);
+                        earnedBadge, pe);
                     return;
                 }
             }
@@ -164,11 +155,9 @@ public class StatLogic
             // InProgressBadgeRecords when badges are awarded.
             try {
                 _badgeRepo.deleteInProgressBadge(memberId, badgeType.getCode());
-                log.info("deleteInProgressBadge succeeded", "memberId", memberId, "BadgeType",
-                    badgeType);
             } catch (PersistenceException pe) {
                 log.warning("deleteInProgressBadge failed", "memberId", memberId, "BadgeType",
-                    badgeType);
+                    badgeType, pe);
             }
 
         } else {
@@ -178,7 +167,7 @@ public class StatLogic
                 inProgressBadge = _badgeRepo.loadInProgressBadge(memberId, badgeType.getCode());
             } catch (PersistenceException pe) {
                 log.warning("loadInProgressBadge failed", "memberId", memberId, "BadgeType",
-                    badgeType);
+                    badgeType, pe);
                 return;
             }
 
@@ -201,11 +190,9 @@ public class StatLogic
                 inProgressBadge.progress = quantizedProgress;
                 try {
                     _badgeLogic.updateInProgressBadge(inProgressBadge, true);
-                    log.info("updateInProgressBadge succeeded", "BadgeType", badgeType,
-                        "InProgressBadgeRecord", inProgressBadge);
                 } catch (PersistenceException pe) {
                     log.warning("updateInProgressBadge failed", "BadgeType", badgeType,
-                        "InProgressBadgeRecord", inProgressBadge);
+                        "InProgressBadgeRecord", inProgressBadge, pe);
                     return;
                 }
             }

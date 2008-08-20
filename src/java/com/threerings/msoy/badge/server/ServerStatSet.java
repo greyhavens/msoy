@@ -6,7 +6,6 @@ package com.threerings.msoy.badge.server;
 import java.util.Iterator;
 
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.stats.data.Stat;
 import com.threerings.stats.data.StatSet;
 
@@ -38,11 +37,6 @@ public class ServerStatSet extends StatSet
     @Override // from StatSet
     protected void addStat (Stat stat, boolean syncingWithRepo)
     {
-        // TODO - remove this when Passport goes live
-        if (!DeploymentConfig.devDeployment) {
-            return;
-        }
-
         super.addStat(stat, syncingWithRepo);
         if (!syncingWithRepo) {
             _badgeMan.updateBadges(_memObj);
@@ -52,11 +46,6 @@ public class ServerStatSet extends StatSet
     @Override // from StatSet
     protected void updateStat (Stat stat, boolean syncingWithRepo)
     {
-        // TODO - remove this when Passport goes live
-        if (!DeploymentConfig.devDeployment) {
-            return;
-        }
-
         super.updateStat(stat, syncingWithRepo);
         if (!syncingWithRepo) {
             _badgeMan.updateBadges(_memObj);

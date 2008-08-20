@@ -47,9 +47,7 @@ public class TitleBar extends SmartTable
                 subnavi.addLink(null, "Me", Pages.ME, "");
                 subnavi.addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD,
                                      "m" + memberId);
-                if (DeploymentConfig.devDeployment) {
-                    subnavi.addLink(null, "Passport", Pages.ME, "passport");
-                }
+                subnavi.addLink(null, "Passport", Pages.ME, "passport");
                 subnavi.addLink(null, "Rooms", Pages.ME, "rooms");
                 subnavi.addLink(null, "Profile", Pages.PEOPLE, "" + memberId);
                 subnavi.addLink(null, "Mail", Pages.MAIL, "");

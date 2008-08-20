@@ -26,8 +26,6 @@ import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.DeploymentConfig;
-
 import com.threerings.msoy.money.server.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
@@ -53,11 +51,6 @@ public class BadgeLogic
     public void awardBadge (final EarnedBadgeRecord brec, final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
-        // TODO: remove this when passport goes live
-        if (!DeploymentConfig.devDeployment) {
-            return;
-        }
-
         // ensure this is a valid badge level
         final BadgeType type = BadgeType.getType(brec.badgeCode);
         final BadgeType.Level levelData = type.getLevel(brec.level);
@@ -109,11 +102,6 @@ public class BadgeLogic
         final boolean dobjNeedsUpdate)
         throws PersistenceException
     {
-        // TODO: remove this when passport goes live
-        if (!DeploymentConfig.devDeployment) {
-            return Collections.emptyList();
-        }
-
         // read this member's in-progress and earned badge records
         final Set<EarnedBadge> earnedBadges = Sets.newHashSet(
             Iterables.transform(_badgeRepo.loadEarnedBadges(memberId), EarnedBadgeRecord.TO_BADGE));
@@ -125,8 +113,8 @@ public class BadgeLogic
         final List<InProgressBadge> newInProgressBadges =
             BadgeUtil.getNewInProgressBadges(earnedBadges, inProgressBadges);
         for (final InProgressBadge badge : newInProgressBadges) {
-            log.info("Created new InProgressBadge", "memberId", memberId,
-                     "type", BadgeType.getType(badge.badgeCode));
+            //log.info("Created new InProgressBadge", "memberId", memberId,
+            //         "type", BadgeType.getType(badge.badgeCode));
             updateInProgressBadge(memberId, badge, dobjNeedsUpdate);
         }
 
@@ -165,10 +153,6 @@ public class BadgeLogic
     public List<InProgressBadge> getInProgressBadges (int memberId, boolean dobjNeedsUpdate)
         throws PersistenceException
     {
-        if (!DeploymentConfig.devDeployment) {
-            return Collections.emptyList();
-        }
-
         // Load up our in progress badges, and check to see if the initial set has been created
         Iterable<InProgressBadge> badges = Iterables.transform(
             _badgeRepo.loadInProgressBadges(memberId), InProgressBadgeRecord.TO_BADGE);
