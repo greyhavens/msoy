@@ -33,9 +33,12 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
+
+import com.threerings.msoy.money.server.MoneyHistory;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
 import com.threerings.msoy.money.server.MoneyResult;
+import com.threerings.msoy.money.server.MoneyType;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 import com.threerings.msoy.money.server.NotSecuredException;
 import com.threerings.msoy.person.server.persist.FeedRepository;
@@ -216,7 +219,12 @@ public class CatalogServlet extends MsoyServiceServlet
             });
 
             // update their stat set, if they aren't buying something from themselves.
-            if (mrec.memberId != listing.item.creatorId) {
+            MoneyHistory transaction = result.getMemberTransaction();
+            // if they paid with bars, or they paid with enough coins, the transaction is valid
+            boolean validTransactionForStat = transaction.getType() == MoneyType.BARS ||
+                 (transaction.getType() == MoneyType.COINS &&
+                 transaction.getAmount() >= StatType.ITEMS_PURCHASED_MIN_VALUE);
+            if (mrec.memberId != listing.item.creatorId && validTransactionForStat) {
                 _statLogic.incrementStat(mrec.memberId, StatType.ITEMS_PURCHASED, 1);
             }
 

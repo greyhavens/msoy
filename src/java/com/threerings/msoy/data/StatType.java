@@ -51,6 +51,10 @@ public enum StatType implements Stat.Type
     public static final int ITEM_LISTED = 2;
     public static final int ITEM_SOLD = 3;
 
+    /** Constant to indicate that lowest value something can be purchased for to qualify the event
+     * for the ITEMS_PURCHASED stat. */
+    public static final int ITEMS_PURCHASED_MIN_VALUE = 1; // in coins
+
     /** Returns the translation key used by this stat. */
     public String key ()
     {
