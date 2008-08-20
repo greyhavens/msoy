@@ -813,7 +813,10 @@ public class RoomObjectView extends RoomView
 }
 }
 
+import flash.display.BitmapData;
 import flash.display.Shape;
+
+import flash.geom.Matrix;
 
 import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.data.MsoyLocation;
@@ -847,6 +850,12 @@ internal class BackdropOverlay extends Shape
     public function isImportant () :Boolean
     {
         return false;
+    }
+
+    // documentation inherited from interface RoomElement
+    public function snapshot (bitmapData :BitmapData, matrix :Matrix) :Boolean
+    {
+        return true; // we do nothing, innocuously
     }
 
     // documentation inherited from interface RoomElement

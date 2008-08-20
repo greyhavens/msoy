@@ -87,7 +87,6 @@ import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.room.client.editor.DoorTargetEditController;
 import com.threerings.msoy.room.client.editor.ItemUsedDialog;
 import com.threerings.msoy.room.client.editor.RoomEditorController;
-import com.threerings.msoy.room.client.snapshot.SnapshotController;
 import com.threerings.msoy.room.client.updates.FurniUpdateAction;
 import com.threerings.msoy.room.client.updates.SceneUpdateAction;
 import com.threerings.msoy.room.client.updates.UpdateAction;

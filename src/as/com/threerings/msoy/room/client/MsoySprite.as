@@ -100,11 +100,7 @@ public class MsoySprite extends DataPackMediaContainer
         // nada
     }
 
-    /**
-     * Snapshot this sprite into the specified BitmapData.
-     *
-     * @return true on success.
-     */
+    // from RoomElement
     public function snapshot (bitmapData :BitmapData, matrix :Matrix) :Boolean
     {
         if (_media is Loader) {

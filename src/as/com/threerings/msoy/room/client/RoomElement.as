@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.room.client {
 
+import flash.display.BitmapData;
+
+import flash.geom.Matrix;
+
 import com.threerings.msoy.room.data.MsoyLocation;
 
 /**
@@ -41,6 +45,13 @@ public interface RoomElement
      * that have the exact same layer and z position?
      */
     function isImportant () :Boolean;
+
+    /**
+     * Snapshot this sprite into the specified BitmapData.
+     *
+     * @return true on success.
+     */
+    function snapshot (bitmapData :BitmapData, matrix :Matrix) :Boolean;
 
     /**
      * Set the screen location of the object, based on its location in the scene.

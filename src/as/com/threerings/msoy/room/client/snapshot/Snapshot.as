@@ -15,10 +15,12 @@ import com.threerings.flash.BackgroundJPGEncoder;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.client.LayeredContainer;
-import com.threerings.msoy.room.client.RoomView;
+
+import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.room.client.OccupantSprite;
+import com.threerings.msoy.room.client.RoomElement;
+import com.threerings.msoy.room.client.RoomView;
 
 /**
  * Represents a particular snapshot
@@ -86,17 +88,16 @@ public class Snapshot
         var allSuccess:Boolean = true;
         
         for (var ii :int = 0; ii < _view.numChildren; ii++) {
-            var child :DisplayObject = _view.getChildAt(ii);
-
+            const child :DisplayObject = _view.getChildAt(ii);
+            if (!includeOccupants && (child is OccupantSprite)) {
+                continue; // skip it!
+            }
+            
             var matrix :Matrix = child.transform.matrix; // makes a clone...
             _framer.applyTo(matrix); // apply the framing transformation to the matrix
 
-            if (child is MsoySprite) {
-                if (!includeOccupants && (child is OccupantSprite)) {
-                    continue; // skip occupants
-                }
-
-                var success :Boolean = MsoySprite(child).snapshot(bitmap, matrix);
+            if (child is RoomElement) {
+                var success :Boolean = RoomElement(child).snapshot(bitmap, matrix);
                 allSuccess &&= success;
 
             } else {

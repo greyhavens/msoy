@@ -954,8 +954,11 @@ public class RoomController extends SceneController
 }
 }
 
+import flash.display.BitmapData;
 import flash.display.DisplayObject;
 import flash.display.Sprite;
+
+import flash.geom.Matrix;
 
 import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.data.MsoyLocation;
@@ -988,6 +991,12 @@ class WalkTarget extends Sprite
     public function isImportant () :Boolean
     {
         return false;
+    }
+
+    // from RoomElement
+    public function snapshot (bitmapData :BitmapData, matrix :Matrix) :Boolean
+    {
+        return true; // we do nothing, innocuously
     }
 
     // from RoomElement
