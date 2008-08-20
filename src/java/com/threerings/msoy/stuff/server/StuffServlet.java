@@ -6,6 +6,7 @@ package com.threerings.msoy.stuff.server;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -163,25 +164,33 @@ public class StuffServlet extends MsoyServiceServlet
         // check for an existing group with the same (unique) name.
         try {
             GroupRecord existingGroupRecord = _groupRepo.loadGroupByName(group.name);
-            for (int i = 1; i < 10; i++) {
+            for (int i = 1; i < 100; i++) {
                 if (existingGroupRecord == null) {
                     break;
                 }
                 // if player is a manager of the existing group, use that instead
                 GroupMembershipRecord membership =
                     _groupRepo.getMembership(existingGroupRecord.groupId, mrec.memberId);
-                // on the 9th try, give up and use the group anyway
-                if (i == 9 ||
-                    (membership != null && membership.rank >= GroupMembership.RANK_MANAGER)) {
+                if (membership != null && membership.rank >= GroupMembership.RANK_MANAGER) {
                     game.groupId = existingGroupRecord.groupId;
                     updateItem(game);
                     return;
                 }
-                // not a manager of the existing group; change the name and search again
-                if (i > 1 || group.name.length() >= GroupName.LENGTH_MAX - 1) {
-                    group.name = group.name.substring(0, group.name.length() - 2);
+                // on the 10th+ try, give up and generate a random whirled name
+                if (i >= 9) {
+                    if (group.name.length() >= GroupName.LENGTH_MAX - 6) {
+                        group.name = group.name.substring(0, GroupName.LENGTH_MAX - 7);
+                    }
+                    Random rand = new Random();
+                    group.name = group.name + " " + rand.nextInt(99999);
                 }
-                group.name = group.name.concat(" " + (i+1));
+                else {
+                    // not a manager of the existing group; change the name and search again
+                    if (i > 1 || group.name.length() >= GroupName.LENGTH_MAX - 1) {
+                        group.name = group.name.substring(0, group.name.length() - 2);
+                    }
+                    group.name = group.name.concat(" " + (i+1));
+                }
                 existingGroupRecord = _groupRepo.loadGroupByName(group.name);
             }
         } catch (PersistenceException pe) {

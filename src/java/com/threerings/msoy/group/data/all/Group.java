@@ -213,11 +213,22 @@ public class Group
 
         // Deal with name issues as best we can
         String name = game.name + " Whirled";
-        if (name.length() > GroupName.LENGTH_MAX) {
-            name = name.substring(0, GroupName.LENGTH_MAX - 1);
-        }
         if (!Character.isLetter(name.charAt(0)) || Character.isDigit(name.charAt(0))) {
             name = "The " + name;
+        }
+
+        // truncate to the last space in the name
+        if (name.length() > GroupName.LENGTH_MAX) {
+            for (int ii = GroupName.LENGTH_MAX; ii >= 0; ii--) {
+                char c = name.charAt(ii);
+                if (c == ' ') {
+                    name = name.substring(0, ii+1);
+                    break;
+                }
+            }
+            if (name.length() > GroupName.LENGTH_MAX) {
+                name = name.substring(0, GroupName.LENGTH_MAX - 1);
+            }
         }
         group.name = name;
 
