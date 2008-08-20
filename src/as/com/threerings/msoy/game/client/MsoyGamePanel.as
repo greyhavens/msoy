@@ -192,15 +192,7 @@ public class MsoyGamePanel extends WhirledGamePanel
             }
         }
 
-        if (USE_GAMEOVER_POPUP) {
-            if (_gameOverPanel != null) {
-                _gameOverPanel.close();
-            }
-        } else {
-            if (_rematch.parent != null) {
-                _rematch.parent.removeChild(_rematch);
-            }
-        }
+        displayGameOver(false); // shut down any gameover display
 
         // TODO: shutdown _spinner?
     }
