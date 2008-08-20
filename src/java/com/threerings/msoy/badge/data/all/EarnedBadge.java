@@ -30,10 +30,15 @@ public class EarnedBadge extends Badge
         return "badgeCode=" + badgeCode + " level=" + level + " whenEarned=" + whenEarned;
     }
 
-    @Override // from Badge
-    public String imageUrl ()
+    public static String getImageUrl (int badgeCode, int level)
     {
         return DeploymentConfig.staticMediaURL + BADGE_IMAGE_DIR + Integer.toHexString(badgeCode) +
             "_" + level + "f" + BADGE_IMAGE_TYPE;
+    }
+
+    @Override // from Badge
+    public String imageUrl ()
+    {
+        return getImageUrl(badgeCode, level);
     }
 }

@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.FeedMessage;
@@ -90,6 +91,7 @@ public class FeedPanel extends TongueBox
         case 100: // FRIEND_ADDED_FRIEND
         case 102: // FRIEND_WON_TROPHY
         case 103: // FRIEND_LISTED_ITEM
+        case 105: // FRIEND_WON_BADGE
             return new MessageKey(message.type, ((FriendFeedMessage)message).friend.getMemberId());
 
         case 101: // FRIEND_UPDATED_ROOM
@@ -109,6 +111,8 @@ public class FeedPanel extends TongueBox
             return new MessageKey(message.type, message.data[1]);
         case 102: // FRIEND_WON_TROPHY
             return new MessageKey(message.type, message.data[1].concat(message.data[0]).hashCode());
+        case 105: // FRIEND_WON_BADGE
+            return new MessageKey(message.type, message.data[0].concat(message.data[1]).hashCode());
         }
         return null;
     }
@@ -286,6 +290,14 @@ public class FeedPanel extends TongueBox
 
             case 104: // FRIEND_GAINED_LEVEL
                 return message.data[0];
+
+            case 105: // FRIEND_WON_BADGE
+                int badgeCode = Integer.parseInt(message.data[0]);
+                int badgeLevel = Integer.parseInt(message.data[1]);
+                String badgeHexCode = Integer.toHexString(badgeCode);
+                String badgeName = _dmsgs.getString("badge_" + badgeHexCode) + " ("
+                    + (badgeLevel + 1) + ")";
+                return Link.createHtml(badgeName, Pages.ME, "passport");
             }
 
             return null;
@@ -327,7 +339,21 @@ public class FeedPanel extends TongueBox
                     }
                 };
                 return MediaUtil.createMediaView(media, MediaDesc.HALF_THUMBNAIL_SIZE, clicker);
+
+            case 105: // FRIEND_WON_BADGE
+                int badgeCode = Integer.parseInt(message.data[0]);
+                int level = Integer.parseInt(message.data[1]);
+                Image image = new Image(EarnedBadge.getImageUrl(badgeCode, level));
+                image.setWidth(MediaDesc.getWidth(MediaDesc.HALF_THUMBNAIL_SIZE) + "px");
+                image.setHeight(MediaDesc.getHeight(MediaDesc.HALF_THUMBNAIL_SIZE) + "px");
+                image.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        Link.go(Pages.ME, "passport");
+                    }
+                });
+                return image;
             }
+
             return null;
         }
 
@@ -357,6 +383,11 @@ public class FeedPanel extends TongueBox
 
             case 104: // FRIEND_GAINED_LEVEL
                 add(new IconWidget("friend_gained_level", _pmsgs.friendGainedLevel(
+                                friendLink, buildString(message))));
+                break;
+
+            case 105: // FRIEND_WON_BADGE
+                add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonBadge(
                                 friendLink, buildString(message))));
                 break;
             }
@@ -409,7 +440,7 @@ public class FeedPanel extends TongueBox
         }
 
         /**
-         * Helpfer function with creates an array of media widgets from feed messages.
+         * Helper function which creates an array of media widgets from feed messages.
          */
         protected Widget[] buildMediaArray (List<FriendFeedMessage> list)
         {
@@ -457,6 +488,11 @@ public class FeedPanel extends TongueBox
                 add(new IconWidget("friend_gained_level",
                             _pmsgs.friendsGainedLevel(friendLinkCombine(list))));
                 break;
+
+            case 105: // FRIEND_WON_BADGE
+                add(new ThumbnailWidget(buildMediaArray(list), _pmsgs.friendWonBadges(
+                                friendLink, standardCombine(list))));
+                break;
             }
         }
 
@@ -472,6 +508,11 @@ public class FeedPanel extends TongueBox
 
             case 102: // FRIEND_WON_TROPHY
                 add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonTrophy(
+                                friendLinks, buildString(message))));
+                break;
+
+            case 105: // FRIEND_WON_BADGE
+                add(new ThumbnailWidget(buildMedia(message), _pmsgs.friendWonBadge(
                                 friendLinks, buildString(message))));
                 break;
             }

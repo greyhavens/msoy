@@ -68,8 +68,9 @@ public class BadgeLogic
 
         _badgeRepo.storeBadge(brec);
 
+        // publish a member message with {badgeCode, level} as the data
         _feedRepo.publishMemberMessage(brec.memberId, FeedMessageType.FRIEND_WON_BADGE,
-            "some data here");
+            brec.badgeCode + "\t" + brec.level);
 
         final MemberMoney money = _moneyLogic.awardCoins(brec.memberId, 0, 0, null,
             levelData.coinValue, "", UserAction.EARNED_BADGE).getNewMemberMoney();
