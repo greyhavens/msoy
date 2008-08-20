@@ -6,7 +6,9 @@ package client.account;
 import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -123,9 +125,11 @@ public class CreateAccountPanel extends FlowPanel
     protected void onLoad ()
     {
         super.onLoad();
-        if (_email != null) {
-            _email.setFocus(true);
-        }
+        DeferredCommand.addCommand(new Command() {
+            public void execute () {
+                _email.setFocus(true);
+            }
+        });
         RecaptchaUtil.init("recaptchaDiv");
     }
 
