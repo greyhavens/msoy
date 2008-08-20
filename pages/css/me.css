@@ -313,6 +313,12 @@
   left: 7px;
 }
 
+.badgeDisplay .ProgressLabel {
+  position: absolute;
+  top: 118px;
+  left: 31px;
+}
+
 .badgeDisplay .WhenEarned {
   width: 142px;
   font-size: 12px;
