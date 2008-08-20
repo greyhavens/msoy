@@ -78,7 +78,7 @@ public class BadgeRepository extends DepotRepository
         }
 
         // now we want to do a bunch of per-user stuff
-        final int[] created = new int[4];
+        final int[] created = new int[3];
         _memberRepo.runMemberMigration(new MemberRepository.MemberMigration() {
             public void apply (MemberRecord record) throws PersistenceException {
                 // write out stats for the data we collected previously
@@ -96,19 +96,11 @@ public class BadgeRepository extends DepotRepository
                     }
                     created[ii]++;
                 }
-
-                // write out a stat for minutes online
-                if (record.sessionMinutes > 0) {
-                    _statRepo.updateStat(
-                        record.memberId, new IntStatIncrementer(
-                            StatType.MINUTES_ACTIVE, record.sessionMinutes));
-                    created[values.length]++;
-                }
             }
         });
 
         log.info("Populated initial stat information", "friends", created[0], "invites", created[1],
-                 "trophies", created[2], "minutes", created[3]);
+                 "trophies", created[2]);
     }
     // END TEMP
 
