@@ -7,7 +7,8 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 
 public class InProgressBadge extends Badge
 {
-    /** The progress that has been made on the badge, in [0, 1) */
+    /** The progress that has been made on the badge, in [0, 1).  A progress of -1 indicates that
+     * progress is not appropriate for this level of this badge, and should not be displayed */
     public float progress;
 
     /** The number of coins that will be given for the successful completion of this badge. */

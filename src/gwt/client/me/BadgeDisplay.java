@@ -89,8 +89,10 @@ class BadgeDisplay extends FlowPanel
         coinReward.add(MsoyUI.createLabel("" + badge.coinReward, null));
         add(coinReward);
 
-        add(new ProgressBar(badge.progress));
-        add(MsoyUI.createImage("/images/me/passport_progress.png", "ProgressLabel"));
+        if (badge.progress >= 0) {
+            add(new ProgressBar(badge.progress));
+            add(MsoyUI.createImage("/images/me/passport_progress.png", "ProgressLabel"));
+        }
 
         ClickListener goListener = getGoListener(badge);
         if (goListener != null) {

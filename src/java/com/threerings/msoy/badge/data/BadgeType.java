@@ -86,18 +86,23 @@ public enum BadgeType
         new Level(200 * 60, 5000),
         new Level(500 * 60, 6000)
         }) {
+        @Override public String getLevelUnits (int levelNumber) {
+            Level level = getLevel(levelNumber);
+            // the real unit is minutes, but we tell the player hours
+            return level == null ? null : "" + (level.requiredUnits / 60);
+        }
+
+        @Override public boolean progressValid (int levelNumber) {
+            // always show progress
+            return true;
+        }
+
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.MINUTES_ACTIVE);
         }
 
         @Override protected Collection<BadgeType> getUnlockRequirements () {
             return Collections.singleton(FRIENDLY);
-        }
-
-        @Override public String getLevelUnits (int levelNumber) {
-            Level level = getLevel(levelNumber);
-            // the real unit is minutes, but we tell the player hours
-            return level == null ? null : "" + (level.requiredUnits / 60);
         }
     },
 
@@ -155,6 +160,11 @@ public enum BadgeType
         new Level(2, 2000),
         new Level(3, 5000)
         }) {
+        @Override public boolean progressValid (int levelUnits) {
+            // never show a progress meter
+            return false;
+        }
+
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.AVATARS_CREATED);
         }
@@ -169,6 +179,11 @@ public enum BadgeType
         new Level(2, 2000),
         new Level(3, 5000)
         }) {
+        @Override public boolean progressValid (int levelUnits) {
+            // never show a progress meter
+            return false;
+        }
+
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.FURNITURE_CREATED);
         }
@@ -179,6 +194,11 @@ public enum BadgeType
         new Level(2, 2000),
         new Level(3, 5000)
         }) {
+        @Override public boolean progressValid (int levelUnits) {
+            // never show a progress meter
+            return false;
+        }
+
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.BACKDROPS_CREATED);
         }
@@ -196,10 +216,6 @@ public enum BadgeType
         new Level(2000000, 5000),
         new Level(5000000, 6000)
         }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.COINS_EARNED_SELLING);
-        }
-
         // PROFESSIONAL is unlocked once you have at least one other CREATION badge
         @Override public boolean isUnlocked (Collection<EarnedBadge> badges) {
             return Iterables.any(badges, new Predicate<EarnedBadge>() {
@@ -224,6 +240,15 @@ public enum BadgeType
                 return "" + level.requiredUnits;
             }
         }
+
+        @Override public boolean progressValid (int levelUnits) {
+            // always show a progress meter
+            return true;
+        }
+
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getIntStat(StatType.COINS_EARNED_SELLING);
+        }
     },
 
     ARTISAN(StampCategory.CREATION, StatType.SOLID_4_STAR_RATINGS, new Level[] {
@@ -234,10 +259,6 @@ public enum BadgeType
         new Level(20, 5000),
         new Level(25, 6000)
         }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getSetStatSize(StatType.SOLID_4_STAR_RATINGS);
-        }
-
         // ARTISAN is unlocked once you have at least one other CREATION badge
         @Override public boolean isUnlocked (Collection<EarnedBadge> badges) {
             return Iterables.any(badges, new Predicate<EarnedBadge>() {
@@ -245,6 +266,10 @@ public enum BadgeType
                     return getType(badge.badgeCode).getCategory() == StampCategory.CREATION;
                 }
             });
+        }
+
+        @Override protected int getAcquiredUnits (StatSet stats) {
+            return stats.getSetStatSize(StatType.SOLID_4_STAR_RATINGS);
         }
     },
 
@@ -410,6 +435,16 @@ public enum BadgeType
     {
         Level level = getLevel(levelNumber);
         return level == null ? null : "" + level.requiredUnits;
+    }
+
+    /**
+     * Returns true if progress is a valid metric for this level of this badge.
+     */
+    public boolean progressValid (int levelNumber)
+    {
+        // most badges don't want to show a progress meter for the first level, but do for the
+        // rest so let's make that the default
+        return levelNumber != 0;
     }
 
     /**
