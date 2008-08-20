@@ -346,11 +346,7 @@ public class FeedPanel extends TongueBox
                 Image image = new Image(EarnedBadge.getImageUrl(badgeCode, level));
                 image.setWidth(MediaDesc.getWidth(MediaDesc.HALF_THUMBNAIL_SIZE) + "px");
                 image.setHeight(MediaDesc.getHeight(MediaDesc.HALF_THUMBNAIL_SIZE) + "px");
-                image.addClickListener(new ClickListener() {
-                    public void onClick (Widget sender) {
-                        Link.go(Pages.ME, "passport");
-                    }
-                });
+                image.addClickListener(Link.createListener(Pages.ME, "passport"));
                 return image;
             }
 
