@@ -138,9 +138,15 @@ public class AwardPanel
 
         // add ourselves to the stage now so that the logic that checks if it's used will
         // be able to detect its state properly
-        _panel.x = 250;
-        _panel.y = -_panel.height;
         var container :PlaceBox = _wctx.getTopPanel().getPlaceContainer();
+        if (container.width < _panel.width * 0.9) {
+            // if the place box is too small to show at least 90% of the award panel, don't
+            // show it all.  Also, none of the other pending awards will get shown, so we
+            // can clear them out too.
+            _pendingAwards = [];
+        }
+        _panel.x = (container.width - _panel.width) / 2;
+        _panel.y = -_panel.height;
         container.addOverlay(_panel, PlaceBox.LAYER_TRANSIENT);
 
         // wait for the award image to load
