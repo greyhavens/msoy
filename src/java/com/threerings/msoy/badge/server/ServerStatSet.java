@@ -36,27 +36,31 @@ public class ServerStatSet extends StatSet
     }
 
     @Override // from StatSet
-    protected void addStat (Stat stat)
+    protected void addStat (Stat stat, boolean syncingWithRepo)
     {
         // TODO - remove this when Passport goes live
         if (!DeploymentConfig.devDeployment) {
             return;
         }
 
-        super.addStat(stat);
-        _badgeMan.updateBadges(_memObj);
+        super.addStat(stat, syncingWithRepo);
+        if (!syncingWithRepo) {
+            _badgeMan.updateBadges(_memObj);
+        }
     }
 
     @Override // from StatSet
-    protected void updateStat (Stat stat)
+    protected void updateStat (Stat stat, boolean syncingWithRepo)
     {
         // TODO - remove this when Passport goes live
         if (!DeploymentConfig.devDeployment) {
             return;
         }
 
-        super.updateStat(stat);
-        _badgeMan.updateBadges(_memObj);
+        super.updateStat(stat, syncingWithRepo);
+        if (!syncingWithRepo) {
+            _badgeMan.updateBadges(_memObj);
+        }
     }
 
     protected transient BadgeManager _badgeMan;
