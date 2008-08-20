@@ -252,7 +252,7 @@ public class GameEditor extends ItemEditor
      */
     protected void setWhirled ()
     {
-        if (_managerWhirledsList == null || _game == null || _game.itemId == 0) {
+        if (_managerWhirledsList == null || _game == null) {
             return;
         }
 
@@ -266,6 +266,11 @@ public class GameEditor extends ItemEditor
                 _whirled.addItem(
                     whirled.group.toString(), whirled.group.getGroupId()+"");
             }
+        }
+
+        // default to the first item if creating a new whirled
+        if (_game.itemId == 0) {
+            return;
         }
 
         for (int ii = 0; ii < _whirled.getItemCount(); ii++) {
