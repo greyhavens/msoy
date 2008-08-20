@@ -27,6 +27,7 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.group.data.all.Group;
+import com.threerings.msoy.group.gwt.CanonicalImageData;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
@@ -293,14 +294,17 @@ public class GroupRecord extends PersistentRecord
 
     /**
      * Creates a web-safe version of the extras in this group.
+     * @throws PersistenceException
      */
-    public GroupExtras toExtrasObject ()
+    public GroupExtras toExtrasObject (MsoySceneRepository sceneRepo)
+        throws PersistenceException
     {
         GroupExtras extras = new GroupExtras();
         extras.charter = charter;
         extras.homepageUrl = homepageUrl;
         extras.catalogItemType = catalogItemType;
         extras.catalogTag = catalogTag;
+        populateCanonicalImage(sceneRepo, extras);
         return extras;
     }
 
@@ -326,12 +330,17 @@ public class GroupRecord extends PersistentRecord
         }
         card.blurb = blurb;
         card.homeSceneId = homeSceneId;
+        populateCanonicalImage(sceneRepo, card);
+        return card;
+    }
+
+    private void populateCanonicalImage (MsoySceneRepository sceneRepo, CanonicalImageData data)
+        throws PersistenceException {
         SceneRecord scene = sceneRepo.loadScene(homeSceneId);
         if (scene.canonicalImageHash != null) {
-            card.canonicalImage = new MediaDesc(scene.canonicalImageHash,
-                scene.canonicalImageType, MediaDesc.NOT_CONSTRAINED);
+            data.setCanonicalImage(new MediaDesc(scene.canonicalImageHash,
+                scene.canonicalImageType, MediaDesc.NOT_CONSTRAINED));
         }
-        return card;
     }
 
     /**

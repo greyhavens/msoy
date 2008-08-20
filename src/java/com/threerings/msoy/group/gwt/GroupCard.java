@@ -13,7 +13,7 @@ import com.threerings.msoy.group.data.all.Group;
  * Contains a group's name, logo and home scene.
  */
 public class GroupCard
-    implements IsSerializable
+    implements IsSerializable, CanonicalImageData
 {
     /** The group's name. */
     public GroupName name;
@@ -32,4 +32,14 @@ public class GroupCard
     
     /** The number of people online in this group's scenes (as of the last snapshot). */
     public int population;
+
+    /** The canonical image from the group's home scene. */
+    public MediaDesc getCanonicalImage () {
+        return canonicalImage;
+    }
+
+    /** Set the canonical image for this group **/
+    public void setCanonicalImage (MediaDesc mediaDesc) {
+        canonicalImage = mediaDesc;
+    }
 }

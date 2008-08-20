@@ -48,6 +48,6 @@ public class GroupDetail
 
     /** The top {@link NUM_TOP_MEMBERS} members of this group, ordered by rank */
     public List<GroupMemberCard> topMembers;
-
+    
     public static int NUM_TOP_MEMBERS = 10;
 }

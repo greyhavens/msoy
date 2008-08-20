@@ -8,7 +8,6 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -100,15 +99,7 @@ public class FeaturedWhirledPanel extends FlowPanel
                 }
             };
 
-            if (group.canonicalImage != null) {
-                // display the scene image here...
-                final Widget canonicalImageWidget = makeCanonicalImageWidget(group, onClick);
-                _flashPanel.add(canonicalImageWidget);
-            } else {
-                final Image clickToPlayImage = MsoyUI.createActionImage(
-                    "/images/landing/whirled_click_here.jpg", "", onClick);
-                _flashPanel.add(clickToPlayImage);
-            }
+            _flashPanel.add(LiveViewUtil.makeLiveViewWidget(group, onClick));
         }
 
         _infoPanel.clear();
@@ -123,37 +114,6 @@ public class FeaturedWhirledPanel extends FlowPanel
             _infoPanel.add(onlineBox);
         }
         _infoPanel.add(MsoyUI.createHTML(group.blurb, "Blurb"));
-    }
-
-    public static class CanonicalImageWidget extends Composite
-    {
-        public CanonicalImageWidget (GroupCard group, ClickListener onClick) {
-            AbsolutePanel panel = new AbsolutePanel();
-            panel.add(MediaUtil.createMediaView(group.canonicalImage,
-                MediaDesc.CANONICAL_IMAGE_SIZE, onClick), 0, 0);
-            panel.add(MsoyUI.createImage("/images/landing/live_view_overlay.png", ""), 0, 0);
-            initWidget(panel);
-        }
-    }
-
-    protected Widget makeSimpleCanonicalImage (GroupCard group, ClickListener onClick) {
-        return MediaUtil.createMediaView(group.canonicalImage, MediaDesc.CANONICAL_IMAGE_SIZE,
-            onClick);
-    }
-
-    protected Widget makeCanonicalImageWidget (GroupCard group, ClickListener onClick) {
-        FlowPanel panel = new FlowPanel();
-        Widget image = MediaUtil.createMediaView(group.canonicalImage,
-            MediaDesc.CANONICAL_IMAGE_SIZE,
-            onClick);
-
-        panel.add(image);
-
-        Image overlay = MsoyUI.createImage("/images/landing/click_overlay.png", null);
-        overlay.addStyleName("LiveViewOverlay");
-
-        panel.add(overlay);
-        return panel;
     }
 
     /**

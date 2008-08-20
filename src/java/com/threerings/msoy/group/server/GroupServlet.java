@@ -161,7 +161,7 @@ public class GroupServlet extends MsoyServiceServlet
             // set up the detail
             GroupDetail detail = new GroupDetail();
             detail.group = grec.toGroupObject();
-            detail.extras = grec.toExtrasObject();
+            detail.extras = grec.toExtrasObject(_sceneRepo);
             detail.creator = _memberRepo.loadMemberName(grec.creatorId);
             detail.memberCount = _groupRepo.countMembers(grec.groupId);
 
