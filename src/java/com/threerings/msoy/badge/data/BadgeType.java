@@ -31,12 +31,12 @@ public enum BadgeType
 {
     // social badges
     FRIENDLY(StampCategory.SOCIAL, StatType.FRIENDS_MADE, new Level[] {
-        new Level(1, 1000),
-        new Level(5, 2000),
-        new Level(15, 3000),
-        new Level(50, 4000),
-        new Level(150, 5000),
-        new Level(500, 6000)
+        new Level(1, 250),
+        new Level(5, 500),
+        new Level(15, 1000),
+        new Level(50, 1500),
+        new Level(150, 2000),
+        new Level(500, 10000)
         }) {
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.FRIENDS_MADE);
@@ -62,12 +62,12 @@ public enum BadgeType
 //    },
 
     MAGNET(StampCategory.SOCIAL, StatType.INVITES_ACCEPTED, new Level[] {
-        new Level(1, 1000),
-        new Level(5, 2000),
+        new Level(1, 500),
+        new Level(5, 1000),
         new Level(10, 3000),
         new Level(20, 4000),
         new Level(50, 5000),
-        new Level(100, 6000)
+        new Level(100, 10000)
         }) {
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.INVITES_ACCEPTED);
@@ -79,12 +79,12 @@ public enum BadgeType
     },
 
     FIXTURE(StampCategory.SOCIAL, StatType.MINUTES_ACTIVE, new Level[] {
-        new Level(3 * 60, 1000),
-        new Level(24 * 60, 2000),
-        new Level(48 * 60, 3000),
+        new Level(3 * 60, 250),
+        new Level(24 * 60, 1000),
+        new Level(48 * 60, 1500),
         new Level(96 * 60, 4000),
         new Level(200 * 60, 5000),
-        new Level(500 * 60, 6000)
+        new Level(500 * 60, 10000)
         }) {
         @Override public String getLevelUnits (int levelNumber) {
             Level level = getLevel(levelNumber);
@@ -108,12 +108,12 @@ public enum BadgeType
 
     // game badges
     GAMER(StampCategory.GAME, StatType.GAME_SESSIONS, new Level[] {
-        new Level(1, 1000),
-        new Level(5, 2000),
-        new Level(25, 3000),
-        new Level(100, 4000),
-        new Level(500, 5000),
-        new Level(2000, 6000)
+        new Level(1, 250),
+        new Level(5, 500),
+        new Level(25, 1000),
+        new Level(100, 2000),
+        new Level(500, 3000),
+        new Level(2000, 10000)
         }) {
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.GAME_SESSIONS);
@@ -121,12 +121,12 @@ public enum BadgeType
     },
 
     CONTENDER(StampCategory.GAME, StatType.MP_GAMES_WON, new Level[] {
-        new Level(1, 1000),
-        new Level(5, 2000),
-        new Level(10, 3000),
-        new Level(25, 4000),
-        new Level(50, 5000),
-        new Level(100, 6000)
+        new Level(1, 250),
+        new Level(5, 500),
+        new Level(10, 1000),
+        new Level(25, 2000),
+        new Level(50, 3000),
+        new Level(100, 10000)
         }) {
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.MP_GAMES_WON);
@@ -138,12 +138,12 @@ public enum BadgeType
     },
 
     COLLECTOR(StampCategory.GAME, StatType.TROPHIES_EARNED, new Level[] {
-        new Level(1, 1000),
-        new Level(5, 2000),
-        new Level(10, 3000),
-        new Level(25, 4000),
-        new Level(50, 5000),
-        new Level(100, 6000)
+        new Level(1, 250),
+        new Level(5, 500),
+        new Level(10, 1000),
+        new Level(25, 2000),
+        new Level(50, 3000),
+        new Level(100, 10000)
         }) {
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.TROPHIES_EARNED);
@@ -156,9 +156,9 @@ public enum BadgeType
 
     // creation badges
     CHARACTER_DESIGNER(StampCategory.CREATION, StatType.AVATARS_CREATED, new Level[] {
-        new Level(1, 1000),
-        new Level(2, 2000),
-        new Level(3, 5000)
+        new Level(1, 250),
+        new Level(2, 1000),
+        new Level(3, 2000)
         }) {
         @Override public boolean progressValid (int levelUnits) {
             // never show a progress meter
@@ -175,9 +175,9 @@ public enum BadgeType
     },
 
     FURNITURE_BUILDER(StampCategory.CREATION, StatType.FURNITURE_CREATED, new Level[] {
-        new Level(1, 1000),
-        new Level(2, 2000),
-        new Level(3, 5000)
+        new Level(1, 250),
+        new Level(2, 500),
+        new Level(3, 1000)
         }) {
         @Override public boolean progressValid (int levelUnits) {
             // never show a progress meter
@@ -190,9 +190,9 @@ public enum BadgeType
     },
 
     LANDSCAPE_PAINTER(StampCategory.CREATION, StatType.BACKDROPS_CREATED, new Level[] {
-        new Level(1, 1000),
-        new Level(2, 2000),
-        new Level(3, 5000)
+        new Level(1, 250),
+        new Level(2, 400),
+        new Level(3, 800)
         }) {
         @Override public boolean progressValid (int levelUnits) {
             // never show a progress meter
@@ -215,7 +215,7 @@ public enum BadgeType
         new Level(500000, 3000),
         new Level(1000000, 4000),
         new Level(2000000, 5000),
-        new Level(5000000, 6000)
+        new Level(5000000, 10000)
         }) {
         // PROFESSIONAL is unlocked once you have at least one other CREATION badge
         @Override public boolean isUnlocked (Collection<EarnedBadge> badges) {
@@ -258,7 +258,7 @@ public enum BadgeType
         new Level(10, 3000),
         new Level(15, 4000),
         new Level(20, 5000),
-        new Level(25, 6000)
+        new Level(25, 10000)
         }) {
         // ARTISAN is unlocked once you have at least one other CREATION badge
         @Override public boolean isUnlocked (Collection<EarnedBadge> badges) {
@@ -276,12 +276,12 @@ public enum BadgeType
 
     // shopping badges
     SHOPPER(StampCategory.SHOPPING, StatType.COINS_SPENT, new Level[] {
-        new Level(1, 1000),
-        new Level(5000, 2000),
-        new Level(15000, 3000),
-        new Level(50000, 4000),
-        new Level(100000, 5000),
-        new Level(200000, 6000),
+        new Level(1, 250),
+        new Level(5000, 500),
+        new Level(15000, 1000),
+        new Level(50000, 2000),
+        new Level(100000, 3000),
+        new Level(200000, 10000),
         }) {
         @Override public String getLevelUnits (int levelNumber) {
             if (levelNumber < 1) {
@@ -303,12 +303,12 @@ public enum BadgeType
     },
 
     JUDGE(StampCategory.SHOPPING, StatType.ITEMS_RATED, new Level[] {
-        new Level(1, 1000),
-        new Level(5, 2000),
+        new Level(1, 100),
+        new Level(5, 200),
         new Level(25, 3000),
         new Level(100, 4000),
         new Level(500, 5000),
-        new Level(2000, 6000)
+        new Level(2000, 10000)
         }) {
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.ITEMS_RATED);
@@ -320,12 +320,12 @@ public enum BadgeType
     },
 
     OUTSPOKEN(StampCategory.SHOPPING, StatType.ITEM_COMMENTS, new Level[] {
-        new Level(1, 1000),
-        new Level(5, 2000),
-        new Level(25, 3000),
+        new Level(1, 250),
+        new Level(5, 500),
+        new Level(25, 1000),
         new Level(100, 4000),
         new Level(500, 5000),
-        new Level(2000, 6000)
+        new Level(2000, 10000)
         }) {
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.ITEM_COMMENTS);
