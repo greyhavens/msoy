@@ -343,3 +343,8 @@
   margin-left: 3px;
   margin-top: 3px;
 }
+
+.badgeDisplay a.external {
+  padding-right: 11px;
+  color: #4a7595;
+}

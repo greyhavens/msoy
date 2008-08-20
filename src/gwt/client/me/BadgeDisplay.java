@@ -72,7 +72,7 @@ class BadgeDisplay extends FlowPanel
                 badgeDesc = "MISSING DESCRIPTION [" + hexCode + "]";
             }
         }
-        add(MsoyUI.createLabel(badgeDesc, "StampDescription"));
+        add(MsoyUI.createHTML(badgeDesc, "StampDescription"));
     }
 
     protected void addEarnedBits (EarnedBadge badge)
