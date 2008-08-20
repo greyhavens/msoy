@@ -54,7 +54,7 @@ public class EmbedHeader extends Canvas
         box.horizontalScrollPolicy = ScrollPolicy.OFF;
         box.setStyle("horizontalAlign", "right");
         box.setStyle("verticalAlign", "top");
-        box.setStyle("horizontalGap", 4);
+        box.setStyle("horizontalGap", 0);
         box.setStyle("right", 0);
         box.setStyle("top", 0);
         addChild(box);
