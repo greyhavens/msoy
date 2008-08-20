@@ -6,7 +6,6 @@ package com.threerings.msoy.server;
 import com.google.inject.Inject;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
-import com.threerings.msoy.badge.server.BadgeManager;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 import com.threerings.msoy.chat.server.ChatChannelManager;
@@ -373,8 +372,6 @@ public class MemberNodeActions
         }
 
         protected StatModifier<T> _modifier;
-
-        @Inject protected transient BadgeManager _badgeMan;
     }
 
     protected static class FriendEntryUpdate extends PeerManager.NodeAction
