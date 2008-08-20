@@ -26,6 +26,12 @@ public class RoomPropertiesObject extends DObject
         return _props;
     }
 
+    // from PropertySpaceObject
+    public function getPropService () :PropertySpaceMarshaller
+    {
+        return propertiesService;
+    }
+
     /** @inheritDocs */
     override public function readObject (ins :ObjectInputStream) :void
     {

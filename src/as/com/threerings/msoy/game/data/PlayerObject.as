@@ -12,6 +12,7 @@ import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.GameData;
+import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameObject;
 import com.whirled.game.data.WhirledPlayerObject;
@@ -145,6 +146,13 @@ public class PlayerObject extends WhirledPlayerObject
     public function getUserProps () :Object
     {
         return _props;
+    }
+
+    // from PropertySpaceObject
+    public function getPropService () :PropertySpaceMarshaller
+    {
+        // TODO
+        return null;
     }
 
     // from BodyObject
