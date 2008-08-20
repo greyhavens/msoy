@@ -1,5 +1,5 @@
 //
-// $Id: Marquee.java 8844 2008-04-15 17:05:43Z nathan $
+// $Id$
 
 package client.help;
 

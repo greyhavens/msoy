@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.swiftly.client.model;
 
 import com.threerings.msoy.swiftly.client.TranslationMessage;

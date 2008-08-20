@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.bureau.client;
 
 import com.google.common.collect.Maps;

@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.room.server.persist;
 
 import com.samskivert.jdbc.depot.Key;

@@ -1,5 +1,5 @@
 //
-// $Id: WhirledMembersPanel.java 9296 2008-05-28 14:51:30Z mdb $
+// $Id$
 
 package client.whirleds;
 

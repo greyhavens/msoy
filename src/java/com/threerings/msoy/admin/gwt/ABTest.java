@@ -1,5 +1,5 @@
 //
-// $Id: Audio.java 9514 2008-06-19 23:06:16Z nathan $
+// $Id$
 
 package com.threerings.msoy.admin.gwt;
 

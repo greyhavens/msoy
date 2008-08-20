@@ -1,5 +1,5 @@
 //
-// $Id: GameLogs.java 8844 2008-04-15 17:05:43Z nathan $
+// $Id$
 
 package com.threerings.msoy.game.gwt;
 

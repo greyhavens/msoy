@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.data.all;
 
 import com.threerings.presents.dobj.DSet;

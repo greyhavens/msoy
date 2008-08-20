@@ -1,5 +1,5 @@
 //
-// $Id: AwardDelegate.java 9976 2008-07-23 16:14:05Z mdb $
+// $Id$
 
 package com.threerings.msoy.avrg.server;
 

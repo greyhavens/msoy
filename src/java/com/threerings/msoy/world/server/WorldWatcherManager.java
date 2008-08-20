@@ -1,5 +1,5 @@
 //
-// $Id: PetManager.java 9626 2008-06-29 14:08:13Z mdb $
+// $Id$
 
 package com.threerings.msoy.world.server;
 

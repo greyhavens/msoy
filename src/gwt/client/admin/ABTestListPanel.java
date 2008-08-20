@@ -1,5 +1,5 @@
 //
-// $Id: IssueInvitesDialog.java 9643 2008-06-30 21:36:32Z nathan $
+// $Id$
 
 package client.admin;
 

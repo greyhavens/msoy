@@ -1,5 +1,5 @@
 //
-// $Id: MyStatsServlet.java 9295 2008-05-28 14:47:15Z mdb $
+// $Id$
 
 package com.threerings.msoy.game.server;
 

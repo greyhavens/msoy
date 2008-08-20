@@ -1,5 +1,5 @@
 //
-// $Id: GroupServlet.java 10518 2008-08-07 22:29:12Z mdb $
+// $Id$
 
 package com.threerings.msoy.group.server;
 

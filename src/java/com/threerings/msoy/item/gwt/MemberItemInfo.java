@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.item.gwt;
 
 import com.google.gwt.user.client.rpc.IsSerializable;

@@ -1,5 +1,5 @@
 //
-// $Id: AVRGameConfig.java 9198 2008-05-16 19:21:43Z jamie $
+// $Id$
 
 package com.threerings.msoy.avrg.data;
 

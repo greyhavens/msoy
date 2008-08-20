@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.chat.server;
 
 import com.google.inject.Inject;

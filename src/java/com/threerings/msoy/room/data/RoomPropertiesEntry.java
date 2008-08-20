@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.room.data;
 
 import com.threerings.presents.dobj.DSet;

@@ -1,5 +1,6 @@
 //
 // $Id$
+
 package com.threerings.msoy.swiftly.server;
 
 import static com.threerings.msoy.Log.log;

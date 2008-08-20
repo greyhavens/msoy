@@ -1,5 +1,5 @@
 //
-// $Id: PopupMenu.java 9948 2008-07-22 17:43:35Z mdb $
+// $Id$
 
 package client.util;
 

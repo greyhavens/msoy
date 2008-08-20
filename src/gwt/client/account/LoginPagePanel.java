@@ -1,5 +1,5 @@
 //
-// $Id: CreateAccountPanel.java 9950 2008-07-22 18:32:35Z mdb $
+// $Id$
 
 package client.account;
 

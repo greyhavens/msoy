@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.swiftly.server.storage;
 
 import java.io.File;

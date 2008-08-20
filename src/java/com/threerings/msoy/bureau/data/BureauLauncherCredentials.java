@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.bureau.data;
 
 import com.samskivert.util.StringUtil;

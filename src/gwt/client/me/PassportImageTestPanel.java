@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.me;
 
 import java.util.List;

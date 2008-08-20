@@ -1,5 +1,5 @@
 //
-// $Id: GameGenrePanel.java 9605 2008-06-27 21:08:39Z sarah $
+// $Id$
 
 package client.games;
 

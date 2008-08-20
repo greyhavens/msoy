@@ -1,5 +1,5 @@
 //
-// $Id: GameRepository.java 9605 2008-06-27 21:08:39Z sarah $
+// $Id$
 
 package com.threerings.msoy.admin.server.persist;
 

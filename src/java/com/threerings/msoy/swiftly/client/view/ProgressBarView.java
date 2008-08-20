@@ -1,5 +1,6 @@
 //
 // $Id$
+
 package com.threerings.msoy.swiftly.client.view;
 
 import java.awt.Dimension;

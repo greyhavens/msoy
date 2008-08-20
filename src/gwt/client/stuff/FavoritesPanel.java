@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.stuff;
 
 import client.shell.Args;
