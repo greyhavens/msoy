@@ -22,9 +22,9 @@ public class CanonicalFramer implements Framer {
         // at this point the results can't change after construction, so we calculate immediately.
         calculate();
     }
-    
+
     /**
-     * Apply the transformation calculated by this framer to the matrix provided.
+     * @inheritDoc
      */
     public function applyTo (matrix :Matrix) :void 
     {

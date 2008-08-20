@@ -9,7 +9,10 @@ import flash.geom.Rectangle
  */ 
 public interface Framer {
  
+    /**
+     * Apply the transformation calculated by this framer to the matrix provided.  The matrix is 
+     * mutated by this operation.
+     */
     function applyTo (matrix :Matrix) :void;
-
 }
 }
