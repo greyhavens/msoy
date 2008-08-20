@@ -51,6 +51,14 @@ public class MsoyGamePanel extends WhirledGamePanel
     {
         super(gctx, ctrl);
         _gctx = gctx;
+
+        const cfg :MsoyGameConfig = ctrl.getPlaceConfig() as MsoyGameConfig;
+        if (cfg.groupId != Game.NO_GROUP) {
+            _goBtn = new CommandButton(Msgs.GAME.get("b.gameWhirled"),
+                MsoyController.GO_GROUP_HOME, cfg.groupId);
+        } else {
+            _goBtn = new CommandButton(Msgs.GENERAL.get("b.back"), MsoyController.MOVE_BACK);
+        }
     }
 
     // from MsoyPlaceView
@@ -259,10 +267,13 @@ public class MsoyGamePanel extends WhirledGamePanel
                 return;
             }
             if (gameOver) {
-                _gctx.getMsoyContext().getTopPanel().getControlBar().addCustomComponent(_rematch);
+                const bar :ControlBar = _gctx.getMsoyContext().getTopPanel().getControlBar();
+                bar.addCustomComponent(_rematch);
+                bar.addCustomComponent(_goBtn);
 
             } else {
                 _rematch.parent.removeChild(_rematch);
+                _goBtn.parent.removeChild(_goBtn);
             }
         }
     }
@@ -270,7 +281,7 @@ public class MsoyGamePanel extends WhirledGamePanel
     protected function createGameOverPanel () :void
     {
         if (_gameOverPanel == null) {
-            _gameOverPanel = new GameOverPanel(_gctx, _rematch);
+            _gameOverPanel = new GameOverPanel(_gctx, _rematch, _goBtn);
         }
     }
 
@@ -281,6 +292,8 @@ public class MsoyGamePanel extends WhirledGamePanel
     protected var _spinner :PlaceLoadingDisplay;
 
     protected var _showPlayers :CommandButton;
+
+    protected var _goBtn :CommandButton;
 
     /** The game over panel, or null if not being shown. */
     protected var _gameOverPanel :GameOverPanel;

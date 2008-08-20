@@ -26,11 +26,12 @@ import com.threerings.msoy.ui.FloatingPanel;
  */
 public class GameOverPanel extends FloatingPanel
 {
-    public function GameOverPanel (gctx :GameContext, rematch :UIComponent)
+    public function GameOverPanel (gctx :GameContext, rematch :UIComponent, goBtn :UIComponent)
     {
         super(gctx.getMsoyContext(), Msgs.GAME.get("t.gameOver"));
         _gctx = gctx;
         _rematch = rematch;
+        _goBtn = goBtn;
 
         // TODO
         styleName = "sexyWindow";
@@ -82,17 +83,15 @@ public class GameOverPanel extends FloatingPanel
             Msgs.GAME.get("b.allGames"), MsoyController.VIEW_GAMES);
         const lobbyBtn :CommandButton = new CommandButton(
             Msgs.GAME.get("b.backToLobby"), _gctx.backToWhirled, true);
-//        const whirledBtn :CommandButton = new CommandButton(
-//            Msgs.GAME.get("b.gameWhirled"), /* TODO */);
 
         _rematch.styleName = "blueButton";
         allGamesBtn.styleName = "blueButton";
         lobbyBtn.styleName = "blueButton";
-//        whirledBtn.styleName = "blueButton";
+        _goBtn.styleName = "blueButton";
 
         var grid :Grid = new Grid();
         GridUtil.addRow(grid, _rematch, allGamesBtn);
-        GridUtil.addRow(grid, lobbyBtn /*, whirledBtn */);
+        GridUtil.addRow(grid, lobbyBtn, _goBtn);
         addChild(grid);
     }
 
@@ -101,6 +100,8 @@ public class GameOverPanel extends FloatingPanel
 
     /** The rematch thing. */
     protected var _rematch :UIComponent;
+
+    protected var _goBtn :UIComponent;
 
     /** An area where custom messages may be added after the dialog is up. */
     protected var _topArea :VBox = new VBox();
