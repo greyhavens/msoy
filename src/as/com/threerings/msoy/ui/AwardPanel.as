@@ -144,6 +144,7 @@ public class AwardPanel
             // show it all.  Also, none of the other pending awards will get shown, so we
             // can clear them out too.
             _pendingAwards = [];
+            return;
         }
         _panel.x = (container.width - _panel.width) / 2;
         _panel.y = -_panel.height;
