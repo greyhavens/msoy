@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.stuff;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;

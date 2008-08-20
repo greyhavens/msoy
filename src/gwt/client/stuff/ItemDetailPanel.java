@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.gwt.util.DataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
@@ -48,10 +47,10 @@ import client.util.events.ItemUsageListener;
 public class ItemDetailPanel extends BaseItemDetailPanel
     implements ItemUsageListener, DoListItemPopup.ListedListener
 {
-    public ItemDetailPanel (ItemDataModel listener, ItemDetail detail)
+    public ItemDetailPanel (ItemDataModel model, ItemDetail detail)
     {
         super(detail);
-        _listener = listener;
+        _model = model;
 
 // TODO
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);
@@ -60,15 +59,17 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (_item.ownerId == CShell.getMemberId() || CShell.isSupport()) {
             addOwnerButtons();
         }
-    }
 
-    /**
-     * Adds a tab for an item subtype.
-     */
-    public void addSubTypeModel (SubItem subtype, DataModel<Item> subTypeModel)
-    {
-        addTabBelow(_dmsgs.getString("pItemType" + subtype.getType()),
-            new SubItemPanel(subTypeModel, subtype.getType(), _item), false);
+        // if this item supports sub-items, add a tab for those item types
+        SubItem[] types = _item.getSubTypes();
+        for (int ii = 0; ii < types.length; ii++) {
+            // if this is not an original item, only show salable subtypes
+            if (_item.sourceId != 0 && !types[ii].isSalable()) {
+                continue;
+            }
+            addTabBelow(_dmsgs.getString("pItemType" + types[ii].getType()),
+                        new SubItemPanel(_model, types[ii].getType(), _item), false);
+        }
     }
 
     // from DoListItemPopup.ListedListener
@@ -239,7 +240,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             PushButton rename = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRename(),
                 null);
             buttons.add(rename);
-            new RenameHandler(rename, _item, _listener);
+            new RenameHandler(rename, _item, _model);
         }
 
         // if remixable, add a button for that.
@@ -297,7 +298,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             }
             public boolean gotResult (Void result) {
                 // remove the item from our data model
-                _listener.itemDeleted(_item);
+                _model.itemDeleted(_item);
 
                 MsoyUI.info(CStuff.msgs.msgItemDeleted());
                 History.back(); // back up to the page that contained the item
@@ -317,7 +318,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 return true;
             }
             public boolean gotResult (Item item) {
-                _listener.itemUpdated(item);
+                _model.itemUpdated(item);
                 _item = item;
                 _detail.item = item;
 
@@ -329,7 +330,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         };
     }
 
-    protected ItemDataModel _listener;
+    protected ItemDataModel _model;
     protected Label _listTip;
     protected PushButton _deleteBtn;
     protected PushButton _listBtn;

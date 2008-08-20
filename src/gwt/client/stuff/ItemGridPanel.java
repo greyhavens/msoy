@@ -9,8 +9,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.SubItem;
-import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.stuff.gwt.StuffService;
 
 import client.editem.EditorHost;
@@ -158,7 +156,7 @@ public class ItemGridPanel extends SimplePanel
                     if (result.detail != null) {
                         _model.itemUpdated(result.detail.item); // is this call necessary?
                         // setContent(getTitle(ident.type), createItemDetailPanel(result.detail));
-                        setContent(createItemDetailPanel(result.detail));
+                        setContent(new ItemDetailPanel(_model, result.detail));
                     } else {
                         // We didn't have access to that specific item, but have been given
                         // the catalog id for the prototype.
@@ -213,18 +211,6 @@ public class ItemGridPanel extends SimplePanel
         return remixer;
     }
 
-    protected ItemDetailPanel createItemDetailPanel (ItemDetail itemDetail)
-    {
-        final ItemDetailPanel panel = new ItemDetailPanel(_model, itemDetail);
-
-        // load any subitems
-        if (itemDetail.item.getSubTypes().length > 0) {
-            setSubTypeModels(itemDetail, panel);
-        }
-
-        return panel;
-    }
-
     protected EditorHost createEditorHost ()
     {
         return new EditorHost() {
@@ -238,23 +224,6 @@ public class ItemGridPanel extends SimplePanel
                 }
             }
         };
-    }
-
-    protected void setSubTypeModels (ItemDetail itemDetail, final ItemDetailPanel panel)
-    {
-        boolean isSourceItem = itemDetail.item.sourceId == 0;
-
-        for (final SubItem subType : itemDetail.item.getSubTypes()) {
-            // if this is not an original item, only show salable subtypes
-            if (isSourceItem || subType.isSalable()) {
-                _model.loadModel(subType.getType(), itemDetail.item.getSuiteId(),
-                    new MsoyCallback<DataModel<Item>>() {
-                        public void onSuccess (DataModel<Item> subTypeModel) {
-                            panel.addSubTypeModel(subType, subTypeModel);
-                        }
-                });
-            }
-        }
     }
 
     /**

@@ -8,10 +8,8 @@ import java.util.HashMap;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 
-import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
@@ -75,7 +73,7 @@ public class StuffPage extends Page
                 if (item != null) {
                     _detail.item = item;
                 }
-                setContent(title, createItemDetailPanel(_models, _detail));
+                setContent(title, new ItemDetailPanel(_models, _detail));
 
             } else {
                 _stuffsvc.loadItemDetail(ident, new MsoyCallback<StuffService.DetailOrIdent>() {
@@ -83,7 +81,7 @@ public class StuffPage extends Page
                         if (result.detail != null) {
                             _detail = result.detail;
                             _models.itemUpdated(_detail.item);
-                            setContent(title, createItemDetailPanel(_models, _detail));
+                            setContent(title, new ItemDetailPanel(_models, _detail));
                         } else {
                             // We didn't have access to that specific item, but have been given
                             // the catalog id for the prototype.
@@ -178,35 +176,6 @@ public class StuffPage extends Page
             _itemPanels.put(itemType, panel = new ItemPanel(_models, itemType));
         }
         return panel;
-    }
-
-    protected ItemDetailPanel createItemDetailPanel (ItemDataModel listener, ItemDetail itemDetail)
-    {
-        final ItemDetailPanel panel = new ItemDetailPanel(listener, itemDetail);
-
-        // load any subitems
-        if (itemDetail.item.getSubTypes().length > 0) {
-            setSubTypeModels(itemDetail, panel);
-        }
-
-        return panel;
-    }
-
-    protected void setSubTypeModels (ItemDetail itemDetail, final ItemDetailPanel panel)
-    {
-        boolean isSourceItem = itemDetail.item.sourceId == 0;
-
-        for (final SubItem subType : itemDetail.item.getSubTypes()) {
-            // if this is not an original item, only show salable subtypes
-            if (isSourceItem || subType.isSalable()) {
-                _models.loadModel(subType.getType(), itemDetail.item.getSuiteId(),
-                    new MsoyCallback<DataModel<Item>>() {
-                        public void onSuccess (DataModel<Item> subTypeModel) {
-                            panel.addSubTypeModel(subType, subTypeModel);
-                        }
-                });
-            }
-        }
     }
 
     protected InventoryModels _models = new InventoryModels();
