@@ -1,11 +1,16 @@
+//
+// $Id$
+
 package client.stuff;
 
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
@@ -128,7 +133,8 @@ public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResu
      * Used to load subtypes for
      */
     // from ItemDataModel
-    public void loadModel (byte itemType, int suiteId, final AsyncCallback<DataModel<Item>> resultCallback)
+    public void loadModel (byte itemType, int suiteId,
+                           final AsyncCallback<DataModel<Item>> resultCallback)
     {
         _stuffsvc.loadInventory(itemType, suiteId, new AsyncCallback<List<Item>>() {
             public void onSuccess (List<Item> result) {
@@ -155,7 +161,8 @@ public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResu
      * Sends an item list query to the service using the given callback to collect the results.
      */
     @Override // from ServiceBackedDataModel
-    protected void callFetchService (int start, int count, boolean needsCount, AsyncCallback<ItemListResult> callback)
+        protected void callFetchService (int start, int count, boolean needsCount,
+                                         AsyncCallback<ItemListResult> callback)
     {
         if (!_initialized) {
             return;
@@ -190,9 +197,8 @@ public class ItemListDataModel extends ServiceBackedDataModel<Item, ItemListResu
     }
 
     protected ItemListQuery _query;
-
     protected boolean _initialized;
 
-    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync) ServiceUtil.bind(GWT
-        .create(StuffService.class), StuffService.ENTRY_POINT);
+    protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
+        ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
 }
