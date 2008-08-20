@@ -29,31 +29,6 @@ import com.threerings.msoy.data.StatType;
 /** Defines the various badge types. */
 public enum BadgeType
 {
-    /* TODO - remove these testing badges
-    SERVLET_BADGE(StampCategory.SOCIAL, StatType.ITEM_COMMENTS, new Level[] {
-        new Level(1, 1000),
-        new Level(3, 1000),
-        new Level(5, 1000),
-    }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getIntStat(StatType.ITEM_COMMENTS);
-        }
-    },
-
-    DOBJ_BADGE(StampCategory.SOCIAL, StatType.WHIRLEDS_VISITED, new Level[] {
-        new Level(1, 1000),
-        new Level(3, 1000),
-        new Level(5, 1000),
-    }) {
-        @Override protected int getAcquiredUnits (StatSet stats) {
-            return stats.getSetStatSize(StatType.WHIRLEDS_VISITED);
-        }
-
-        @Override protected Collection<BadgeType> getUnlockRequirements () {
-            return Collections.singleton(SERVLET_BADGE);
-        }
-    },*/
-
     // social badges
     FRIENDLY(StampCategory.SOCIAL, StatType.FRIENDS_MADE, new Level[] {
         new Level(1, 1000),
