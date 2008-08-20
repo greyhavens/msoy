@@ -58,25 +58,6 @@ public class BorderedPopup extends PopupPanel
         setAnimationEnabled(false);
     }
 
-    @Override // from PopupPanel
-    public void center ()
-    {
-        boolean initiallyShowing = (getParent() != null); // can't access super.showing, yay!
-        if (!initiallyShowing) {
-            setVisible(false);
-            show();
-        }
-
-        // center in our frame width rather than the browser width
-        int left = (Frame.CONTENT_WIDTH - getOffsetWidth()) / 2;
-        int top = (Window.getClientHeight() - getOffsetHeight()) / 2;
-        setPopupPosition(Window.getScrollLeft() + left, Window.getScrollTop() + top);
-
-        if (!initiallyShowing) {
-            setVisible(true);
-        }
-    }
-
     /**
      * Called when this popup is dismissed.
      */
