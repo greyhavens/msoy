@@ -30,11 +30,14 @@ import com.threerings.flash.TextFieldUtil;
 // armorgames: dunno, submissions are reviewed, 1000 wide x 700 tall
 // was submit-able
 
-[SWF(width="700", height="700")]
+[SWF(width="700", height="575")]
 public class GameStub extends Sprite
 {
     /** The id of the game we'd like to load. */
     public static const GAME_ID :int = 12;
+
+    /** The affiliate we're building this for. */
+    public static const AFFILIATE :String = "kongregate";
 
     public function GameStub ()
     {
@@ -131,6 +134,7 @@ public class GameStub extends Sprite
     protected static const URL :String =
         "http://tasman.sea.earth.threerings.net:8080/gamestubsvc" +
         "?gameId=" + GAME_ID +
+        "&aff=" + AFFILIATE +
         "&v=" + STUB_VERSION;
 }
 }
