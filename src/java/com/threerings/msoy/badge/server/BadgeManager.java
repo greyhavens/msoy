@@ -68,10 +68,11 @@ public class BadgeManager
             BadgeProgress progress = badgeType.getProgress(user.stats);
             if (progress.highestLevel >= 0) {
                 EarnedBadge earnedBadge = user.badges.getBadge(badgeType);
-                if (earnedBadge == null || earnedBadge.level < progress.highestLevel) {
-                    EarnedBadge newBadge =  new EarnedBadge(badgeType.getCode(),
-                        progress.highestLevel, badgeType.getLevelUnits(progress.highestLevel),
-                        badgeType.getCoinValue(progress.highestLevel), whenEarned);
+                int currentLevel = earnedBadge == null ? -1 : earnedBadge.level;
+                for (int level = currentLevel + 1; level <= progress.highestLevel; level++) {
+                    // award an EarnedBadge for each level that was earned in this update.
+                    EarnedBadge newBadge = new EarnedBadge(badgeType.getCode(), level,
+                        badgeType.getLevelUnits(level), badgeType.getCoinValue(level), whenEarned);
 
                     if (newBadges == null) {
                         newBadges = Lists.newArrayList();
