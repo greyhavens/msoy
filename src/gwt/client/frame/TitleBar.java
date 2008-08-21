@@ -16,8 +16,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Frame;
