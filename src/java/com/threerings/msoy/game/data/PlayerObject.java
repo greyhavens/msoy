@@ -15,6 +15,7 @@ import com.threerings.util.Name;
 import com.threerings.crowd.data.TokenRing;
 
 import com.whirled.game.data.GameData;
+import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledPlayerObject;
 import com.whirled.game.server.PropertySpaceHelper;
@@ -57,6 +58,9 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** The field name of the <code>referral</code> field. */
     public static final String REFERRAL = "referral";
+
+    /** The field name of the <code>propertyService</code> field. */
+    public static final String PROPERTY_SERVICE = "propertyService";
     // AUTO-GENERATED: FIELDS END
 
     /** The name and id information for this user. */
@@ -82,6 +86,9 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** Player's referral information. */
     public ReferralInfo referral;
+    
+    /** Service for setting player properties. */
+    public PropertySpaceMarshaller propertyService;
 
     /**
      * Return true if this user is a guest.
@@ -367,6 +374,22 @@ public class PlayerObject extends WhirledPlayerObject
         requestAttributeChange(
             REFERRAL, value, ovalue);
         this.referral = value;
+    }
+
+    /**
+     * Requests that the <code>propertyService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setPropertyService (PropertySpaceMarshaller value)
+    {
+        PropertySpaceMarshaller ovalue = this.propertyService;
+        requestAttributeChange(
+            PROPERTY_SERVICE, value, ovalue);
+        this.propertyService = value;
     }
     // AUTO-GENERATED: METHODS END
 

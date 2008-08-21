@@ -76,6 +76,9 @@ public class PlayerObject extends WhirledPlayerObject
     /** Player's referral information. */
     public var referral :ReferralInfo;
 
+    /** Service for setting properties. */
+    public var propertyService :PropertySpaceMarshaller;
+
     // from BodyObject
     override public function getTokens () :TokenRing
     {
@@ -151,8 +154,7 @@ public class PlayerObject extends WhirledPlayerObject
     // from PropertySpaceObject
     public function getPropService () :PropertySpaceMarshaller
     {
-        // TODO
-        return null;
+        return propertyService;
     }
 
     // from BodyObject
@@ -179,6 +181,7 @@ public class PlayerObject extends WhirledPlayerObject
         questState = (ins.readObject() as DSet);
         gameContent = (ins.readObject() as DSet);
         referral = (ins.readObject() as ReferralInfo);
+        propertyService = (ins.readObject() as PropertySpaceMarshaller);
     }
 
     /** The raw properties set by the game. */
