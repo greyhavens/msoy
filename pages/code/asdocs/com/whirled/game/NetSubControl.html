@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="NetSubControl,com.whirled.game.NetSubControl,TO_ALL,TO_SERVER_AGENT,getPropertyNames,sendMessage,sendMessageToAgent,setAt,setIn,testAndSet,get,set" name="keywords">
+<meta content="NetSubControl,com.whirled.game.NetSubControl,TO_ALL,TO_SERVER_AGENT,_agentMsgCtrl,_playerCtrls,_playersMsgCtrl,agent,players,getPlayer,getPropertyNames,sendMessage,setAt,setIn,testAndSet,get,set" name="keywords">
 <title>com.whirled.game.NetSubControl</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/game/NetSubControl.html&amp;com/whirled/game/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;NetSubControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;NetSubControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class NetSubControl"); titleBar_setSubNav(true,false,false,false,true,false,true,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class NetSubControl"); titleBar_setSubNav(true,true,false,false,true,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -40,6 +40,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr>
 <td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">NetSubControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> <a href="../AbstractSubControl.html">AbstractSubControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> <a href="../AbstractControl.html">AbstractControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
 </tr>
+<tr>
+<td class="classHeaderTableLabel">Implements</td><td><a href="../net/PropertySubControl.html">PropertySubControl</a></td>
+</tr>
 </table>
 <p></p>
  Provides access to 'net' game services. Do not instantiate this class yourself,
@@ -51,6 +54,50 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
  <p></p>
 <br>
 <hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#agent">agent</a> : <a href="../net/MessageSubControl.html">MessageSubControl</a>
+<div class="summaryTableDescription">[read-only]
+     Provides a control with which to send messages to the server agent.</div>
+</td><td class="summaryTableOwnerCol">NetSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#players">players</a> : <a href="../net/MessageSubControl.html">MessageSubControl</a>
+<div class="summaryTableDescription">[read-only]
+     Provides a control with which to send messages to all the players of this game.</div>
+</td><td class="summaryTableOwnerCol">NetSubControl</td>
+</tr>
+</table>
+</div>
+<a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_agentMsgCtrl">_agentMsgCtrl</a> : <a href="../net/MessageSubControl.html">MessageSubControl</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NetSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_playerCtrls">_playerCtrls</a> : Dictionary<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NetSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_playersMsgCtrl">_playersMsgCtrl</a> : <a href="../net/MessageSubControl.html">MessageSubControl</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NetSubControl</td>
+</tr>
+</table>
 </div>
 <a name="methodSummary"></a>
 <div class="summarySection">
@@ -89,15 +136,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#get()">get</a>(propName:String):Object</div>
+<div class="summaryTableDescription"> </div>
+</td><td class="summaryTableOwnerCol">NetSubControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getPlayer()">getPlayer</a>(playerId:int):<a href="../net/MessageSubControl.html">MessageSubControl</a>
+</div>
 <div class="summaryTableDescription">
-     Get a property value.</div>
+     Provides a per-player way to send messages to a specific player.</div>
 </td><td class="summaryTableOwnerCol">NetSubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#getPropertyNames()">getPropertyNames</a>(prefix:String = ""):Array</div>
-<div class="summaryTableDescription">
+<div class="summaryTableDescription"> 
      Get the names of all currently-set properties that begin with the specified prefix.</div>
 </td><td class="summaryTableOwnerCol">NetSubControl</td>
 </tr>
@@ -131,24 +186,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#sendMessageToAgent()">sendMessageToAgent</a>(messageName:String, value:Object):void</div>
-<div class="summaryTableDescription">
-     Send a message privately to the game's server agent, if there is one.</div>
-</td><td class="summaryTableOwnerCol">NetSubControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="#set()">set</a>(propName:String, value:Object, immediate:Boolean = false):void</div>
-<div class="summaryTableDescription">
-     Set a property value to be distributed to the other clients in this game.</div>
+<div class="summaryTableDescription"> </div>
 </td><td class="summaryTableOwnerCol">NetSubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#setAt()">setAt</a>(propName:String, index:int, value:Object, immediate:Boolean = false):void</div>
-<div class="summaryTableDescription">
+<div class="summaryTableDescription"> 
      Update one element of an Array.<br/>
      <b>Note</b>: Unlike setIn(), this update will fail silently if the index is out of
      bounds or if there is no array currently set at the specified property name.</div>
@@ -158,7 +204,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#setIn()">setIn</a>(propName:String, key:int, value:Object, immediate:Boolean = false):void</div>
-<div class="summaryTableDescription">
+<div class="summaryTableDescription"> 
      Update one element of a Dictionary.<br/>
      <b>Note</b>: Unlike setAt(), this will always work.</div>
 </td><td class="summaryTableOwnerCol">NetSubControl</td>
@@ -248,6 +294,75 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 showHideInherited();
 --></script>
 <div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="agent"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">agent</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>agent:<a href="../net/MessageSubControl.html">MessageSubControl</a></code>&nbsp;&nbsp;[read-only]<p>
+     Provides a control with which to send messages to the server agent.
+     </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get agent():<a href="../net/MessageSubControl.html">MessageSubControl</a></code>
+<br>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/NetSubControl.html#sendMessage" target="">sendMessage</a>
+</div>
+</div>
+<a name="_agentMsgCtrl"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_agentMsgCtrl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _agentMsgCtrl:<a href="../net/MessageSubControl.html">MessageSubControl</a></code>
+</div>
+<a name="_playerCtrls"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_playerCtrls</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _playerCtrls:Dictionary</code>
+</div>
+<a name="players"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">players</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>players:<a href="../net/MessageSubControl.html">MessageSubControl</a></code>&nbsp;&nbsp;[read-only]<p>
+     Provides a control with which to send messages to all the players of this game.
+     </p><span class="label">Implementation</span>
+<br>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get players():<a href="../net/MessageSubControl.html">MessageSubControl</a></code>
+<br>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/NetSubControl.html#sendMessage" target="">sendMessage</a>
+</div>
+</div>
+<a name="_playersMsgCtrl"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_playersMsgCtrl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _playersMsgCtrl:<a href="../net/MessageSubControl.html">MessageSubControl</a></code>
+</div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
 <a name="get()"></a>
@@ -257,24 +372,48 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function get(propName:String):Object</code><p>
-     Get a property value. Calling this method results in no network traffic, it just
-     examines values that have already arrived over the network to this client.
-          </p><span class="label">Parameters</span>
+<code>public function get(propName:String):Object</code><p> </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">propName</span>:String</code> &mdash; the name of the property to retrieve.
-     </td>
+<td width="20px"></td><td><code><span class="label">propName</span>:String</code></td>
 </tr>
 </table>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Object</code> &mdash; the property value, or null if there is no property with that name.
-     </td>
+<td width="20"></td><td><code>Object</code></td>
 </tr>
 </table>
+</div>
+<a name="getPlayer()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getPlayer</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getPlayer(playerId:int):<a href="../net/MessageSubControl.html">MessageSubControl</a></code><p>
+     Provides a per-player way to send messages to a specific player.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../net/MessageSubControl.html">MessageSubControl</a></code></td>
+</tr>
+</table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../game/NetSubControl.html#sendMessage" target="">sendMessage</a>
+</div>
 </div>
 <a name="getPropertyNames()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -283,7 +422,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getPropertyNames(prefix:String = ""):Array</code><p>
+<code>public function getPropertyNames(prefix:String = ""):Array</code><p> 
      Get the names of all currently-set properties that begin with the specified prefix.
      Calling this method results in no network traffic.
      </p><span class="label">Parameters</span>
@@ -343,39 +482,6 @@ showHideInherited();
 <a href="../game/NetSubControl.html#TO_SERVER_AGENT" target="">TO_SERVER_AGENT</a>
 </div>
 </div>
-<a name="sendMessageToAgent()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">sendMessageToAgent</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function sendMessageToAgent(messageName:String, value:Object):void</code><p>
-     Send a message privately to the game's server agent, if there is one. This is a shortcut 
-     for calling <code>sendMessage</code> with playerId set to <code>TO_SERVER_AGENT</code>.
-          </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">messageName</span>:String</code> &mdash; The message to send.
-     </td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">value</span>:Object</code> &mdash; The value to attach to the message.
-     </td>
-</tr>
-</table>
-<p>
-<span class="label">See also</span>
-</p>
-<div class="seeAlso">
-<a href="../game/NetSubControl.html#sendMessage()" target="">sendMessage()</a>
-<br>
-<a href="../game/NetSubControl.html#TO_SERVER_AGENT" target="">TO_SERVER_AGENT</a>
-</div>
-</div>
 <a name="set()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -383,72 +489,24 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function set(propName:String, value:Object, immediate:Boolean = false):void</code><p>
-     Set a property value to be distributed to the other clients in this game.
-     Property values can be any of the primitive types: int, uint, Number, Boolean, String,
-     ByteArray; or you may set Arrays, Dictionarys, or plain old Objects, as long as
-     the values within them are primitive types or other Arrays, Dictionarys and Objects.
-          </p><p>You may not set your own classes as properties. However, you can serialize your data
-     into a ByteArray and set that.</p>
-     
-     <p><b>Note</b>: top-level Dictionarys must have int keys, the intention is to use
-     occupantIds as keys.</p>
-          <p>Note that if you set the value as an Array or Dictionary, the value is serialized
-     slightly differently in order to enable updating individual elements efficiently.
-     The individual elements will be serialized separately. You may update the elements
-     individually by using either setAt (for Arrays) or setIn (for Dictionarys). The
-     effect of serializing elements individually is that references to the same object will
-     not be reconstructed off the network as references to the same object. See the example
-     below.</p>
-          <span class="label">Parameters</span>
+<code>public function set(propName:String, value:Object, immediate:Boolean = false):void</code><p> </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">propName</span>:String</code> &mdash; the name of the property to set.
-     </td>
+<td width="20px"></td><td><code><span class="label">propName</span>:String</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">value</span>:Object</code> &mdash; the value to set. Passing null clears the property.
-     </td>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">immediate</span>:Boolean</code> (default = <code>false</code>)<code></code> &mdash; if true, the value is updated immediately in the local object. Otherwise
-     any old value will remain in effect until the PropertyChangedEvent arrives after
-     a round-trip to the server.
-     
-     </td>
+<td width="20px"></td><td><code><span class="label">immediate</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
 </tr>
 </table>
-<p>
-<span class="label">See also</span>
-</p>
-<div class="seeAlso">Array<br>flash.utils.Dictionary<br>
-<a href="../game/NetSubControl.html#setAt()" target="">setAt()</a>
-<br>
-<a href="../game/NetSubControl.html#setIn()" target="">setIn()</a>
-</div>
-<br>
-<span class="label">Example</span>
-<br>     <div class='listing'><pre>
-     // demonstrates expert-level difference between setting values in an array and an object.
-     var o :Object = { blue: true };
-     var objTest :Object = { 0: o, 1: o};
-     var arrayTest :Array = [ o, o ];
-     _ctrl.net.set("object", objTest);
-     _ctrl.net.set("array", arrayTest);
-     
-     // Later, when reading those values back out:
-     var obj :Object = _ctrl.net.get("object");
-     var array :Array = _ctrl.net.get("array") as Array;
-     trace("array: " + (array[0] == array[1])); // traces false
-     trace("object: " + (obj[0] == obj[1])); // traces true
-     </pre></div>
-               <p></p>
 </div>
 <a name="setAt()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -457,7 +515,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setAt(propName:String, index:int, value:Object, immediate:Boolean = false):void</code><p>
+<code>public function setAt(propName:String, index:int, value:Object, immediate:Boolean = false):void</code><p> 
      Update one element of an Array.<br/>
      <b>Note</b>: Unlike setIn(), this update will fail silently if the index is out of
      bounds or if there is no array currently set at the specified property name.
@@ -495,12 +553,6 @@ showHideInherited();
           </td>
 </tr>
 </table>
-<p>
-<span class="label">See also</span>
-</p>
-<div class="seeAlso">
-<a href="../game/NetSubControl.html#set()" target="">set()</a>
-</div>
 </div>
 <a name="setIn()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -509,7 +561,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setIn(propName:String, key:int, value:Object, immediate:Boolean = false):void</code><p>
+<code>public function setIn(propName:String, key:int, value:Object, immediate:Boolean = false):void</code><p> 
      Update one element of a Dictionary.<br/>
      <b>Note</b>: Unlike setAt(), this will always work. No key is out of range, and if
      this is called on a property that doesn't currently contain a Dictionary, one will
@@ -588,9 +640,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<span class="label">Event object type: </span><a href="../game/ElementChangedEvent.html"><code>com.whirled.game.ElementChangedEvent</code></a>
+<span class="label">Event object type: </span><a href="../net/ElementChangedEvent.html"><code>com.whirled.net.ElementChangedEvent</code></a>
 <br>
-<span class="label">ElementChangedEvent.type property = </span><a href="../game/ElementChangedEvent.html#ELEMENT_CHANGED"><code>com.whirled.game.ElementChangedEvent.ELEMENT_CHANGED</code></a>
+<span class="label">ElementChangedEvent.type property = </span><a href="../net/ElementChangedEvent.html#ELEMENT_CHANGED"><code>com.whirled.net.ElementChangedEvent.ELEMENT_CHANGED</code></a>
 <br><p>
  Dispatched when an element inside a property has changed in the shared game state.
  This event is a result of calling setIn() or setAt().
@@ -604,9 +656,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<span class="label">Event object type: </span><a href="../game/MessageReceivedEvent.html"><code>com.whirled.game.MessageReceivedEvent</code></a>
+<span class="label">Event object type: </span><a href="../net/MessageReceivedEvent.html"><code>com.whirled.net.MessageReceivedEvent</code></a>
 <br>
-<span class="label">MessageReceivedEvent.type property = </span><a href="../game/MessageReceivedEvent.html#MESSAGE_RECEIVED"><code>com.whirled.game.MessageReceivedEvent.MESSAGE_RECEIVED</code></a>
+<span class="label">MessageReceivedEvent.type property = </span><a href="../net/MessageReceivedEvent.html#MESSAGE_RECEIVED"><code>com.whirled.net.MessageReceivedEvent.MESSAGE_RECEIVED</code></a>
 <br><p>
  Dispatched when a message arrives with information that is not part of the shared game state.
   </p><p>
@@ -619,9 +671,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<span class="label">Event object type: </span><a href="../game/PropertyChangedEvent.html"><code>com.whirled.game.PropertyChangedEvent</code></a>
+<span class="label">Event object type: </span><a href="../net/PropertyChangedEvent.html"><code>com.whirled.net.PropertyChangedEvent</code></a>
 <br>
-<span class="label">PropertyChangedEvent.type property = </span><a href="../game/PropertyChangedEvent.html#PROPERTY_CHANGED"><code>com.whirled.game.PropertyChangedEvent.PROPERTY_CHANGED</code></a>
+<span class="label">PropertyChangedEvent.type property = </span><a href="../net/PropertyChangedEvent.html#PROPERTY_CHANGED"><code>com.whirled.net.PropertyChangedEvent.PROPERTY_CHANGED</code></a>
 <br><p>
  Dispatched when a property has changed in the shared game state. This event is a result
  of calling set() or testAndSet().

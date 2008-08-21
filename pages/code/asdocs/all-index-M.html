@@ -53,6 +53,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("MÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/NetConstants.html#makePersistent()">makePersistent</a>(name) &mdash; Static method in class com.whirled.net.<a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/NetConstants.html">NetConstants</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Transform a name to a persistent name.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/MapProxyObject.html#_map">_map</a> &mdash; Property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/MapProxyObject.html">MapProxyObject</a></td>
 </tr>
 <tr>
@@ -193,40 +200,46 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("MÂ
  Dispatched when any instance sends a message to all instances.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/StateSubControl.html#event:messageReceived">messageReceived</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/StateSubControl.html">StateSubControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
- Dispatched when a message has been received.</td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ControlEvent.html#MESSAGE_RECEIVED">MESSAGE_RECEIVED</a> &mdash; Constant static property in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ControlEvent.html">ControlEvent</a></td>
 </tr>
 <tr>
 <td width="20"></td><td> An event type dispatched when a message is received.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html#MESSAGE_RECEIVED">MESSAGE_RECEIVED</a> &mdash; Constant static property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html">AVRGameControlEvent</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> An event type dispatched when a message is received.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/MessageReceivedEvent.html#MESSAGE_RECEIVED">MESSAGE_RECEIVED</a> &mdash; Constant static property in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/MessageReceivedEvent.html">MessageReceivedEvent</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/MessageReceivedEvent.html#MESSAGE_RECEIVED">MESSAGE_RECEIVED</a> &mdash; Constant static property in class com.whirled.net.<a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/MessageReceivedEvent.html">MessageReceivedEvent</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      The type of all MessageReceivedEvents.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/MessageReceivedEvent.html">MessageReceivedEvent</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/package-detail.html">com.whirled.game</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/MessageReceivedEvent.html">MessageReceivedEvent</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/package-detail.html">com.whirled.net</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
  Dispatched on the 'net' subcontrol when a message is sent by any client.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/MessageReceivedEvent.html#MessageReceivedEvent()">MessageReceivedEvent</a>(messageName, value, senderId) &mdash; Constructor in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/MessageReceivedEvent.html">MessageReceivedEvent</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/MessageReceivedEvent.html#MessageReceivedEvent()">MessageReceivedEvent</a>(targetId, messageName, value, senderId) &mdash; Constructor in class com.whirled.net.<a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/MessageReceivedEvent.html">MessageReceivedEvent</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/MessageSubControl.html"><i>MessageSubControl</i></a> &mdash; Interface in package <a onclick="javascript:loadClassListFrame('com/whirled/net/class-list.html');" href="com/whirled/net/package-detail.html">com.whirled.net</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+ Provides message passing functionality to a set of listener(s), e.g.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/net/impl/class-list.html');" href="com/whirled/net/impl/MessageSubControlAdapter.html">MessageSubControlAdapter</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/net/impl/class-list.html');" href="com/whirled/net/impl/package-detail.html">com.whirled.net.impl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/net/impl/class-list.html');" href="com/whirled/net/impl/MessageSubControlAdapter.html#MessageSubControlAdapter()">MessageSubControlAdapter</a>(ctrl:<a href="com/whirled/AbstractControl.html" onclick="javascript:loadClassListFrame('com/whirled./class-list.html');">com.whirled:AbstractControl</a>, sendMessage) &mdash; Constructor in class com.whirled.net.impl.<a onclick="javascript:loadClassListFrame('com/whirled/net/impl/class-list.html');" href="com/whirled/net/impl/MessageSubControlAdapter.html">MessageSubControlAdapter</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -276,25 +289,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("MÂ
 <td width="20"></td><td> The minimum possible short value.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/MobControl.html">MobControl</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
- Defines actions, accessors and callbacks available to all MOBs.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/MobControl.html#MobControl()">MobControl</a>(ctrl:<a href="com/whirled/avrg/AVRGameControl.html" onclick="javascript:loadClassListFrame('com/whirled/avrg./class-list.html');">com.whirled.avrg:AVRGameControl</a>, id) &mdash; Constructor in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/MobControl.html">MobControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControl.html#mobSpriteExporter">mobSpriteExporter</a> &mdash; Property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControl.html">AVRGameControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
-</tr>
-<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/DateUtil.html#_months">_months</a> &mdash; Static property in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/DateUtil.html">DateUtil</a></td>
 </tr>
 <tr>
@@ -317,12 +311,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("MÂ
 </tr>
 <tr>
 <td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameAvatar.html#moveSpeed">moveSpeed</a> &mdash; Property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameAvatar.html">AVRGameAvatar</a></td>
-</tr>
-<tr>
-<td width="20"></td><td> The avatar's move speed, in pixels per second.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/NetSubControl.html#event:MsgReceived">MsgReceived</a> &mdash; Event in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/NetSubControl.html">NetSubControl</a></td>

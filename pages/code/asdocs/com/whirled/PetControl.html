@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../print.css" type="text/css" media="print">
-<meta content="PetControl,com.whirled.PetControl,sendChatMessage" name="keywords">
+<meta content="PetControl,com.whirled.PetControl,sendChat" name="keywords">
 <title>com.whirled.PetControl</title>
 </head>
 <body>
@@ -170,6 +170,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#getMemory()">getMemory</a>(key:String, defval:Object = null):Object</div>
+<div class="summaryTableDescription">
+     Returns the value associated with the supplied key in this item's memory.</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#getMicrophone()">getMicrophone</a>(index:int = 0):Microphone</div>
 <div class="summaryTableDescription">
      Access the local user's camera.</div>
@@ -205,22 +213,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="EntityControl.html#getRoomBounds()">getRoomBounds</a>():Array</div>
 <div class="summaryTableDescription">
      Get the room's bounds in pixels.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#getRoomProperties()">getRoomProperties</a>():Object</div>
-<div class="summaryTableDescription">
-     Return an associative hash of all the room properties.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#getRoomProperty()">getRoomProperty</a>(key:String, defval:Object = null):Object</div>
-<div class="summaryTableDescription">
-     Returns the value associated with the supplied key in thie room's shared property space.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -269,14 +261,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#lookupMemory()">lookupMemory</a>(key:String, defval:Object = null):Object</div>
-<div class="summaryTableDescription">
-     Returns the value associated with the supplied key in this item's memory.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#registerPropertyProvider()">registerPropertyProvider</a>(func:Function):void</div>
 <div class="summaryTableDescription">
      Registers a function that provides custom entity properties.</div>
@@ -301,7 +285,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#sendChatMessage()">sendChatMessage</a>(msg:String):void</div>
+<a class="signatureLink" href="#sendChat()">sendChat</a>(msg:String):void</div>
 <div class="summaryTableDescription">
      Send a chat message to the entire room.</div>
 </td><td class="summaryTableOwnerCol">PetControl</td>
@@ -343,6 +327,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#setMemory()">setMemory</a>(key:String, value:Object):Boolean</div>
+<div class="summaryTableDescription">
+     Requests that this item's memory be updated with the supplied key/value pair.</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="ActorControl.html#setMoveSpeed()">setMoveSpeed</a>(pixelsPerSecond:Number):void</div>
 <div class="summaryTableDescription">
      Set this actor's movement speed, in pixels per second.</div>
@@ -363,15 +355,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Requests that our location be updated.</div>
 </td><td class="summaryTableOwnerCol"><a href="ActorControl.html">ActorControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#setRoomProperty()">setRoomProperty</a>(key:String, value:Object):Boolean</div>
-<div class="summaryTableDescription">
-     Requests that the room's shared property space be updated with the supplied key/value
-     pair.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -403,14 +386,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="EntityControl.html#triggerAction()">triggerAction</a>(name:String, arg:Object = null):void</div>
 <div class="summaryTableDescription">
      Triggers an action on this scene object.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#updateMemory()">updateMemory</a>(key:String, value:Object):Boolean</div>
-<div class="summaryTableDescription">
-     Requests that this item's memory be updated with the supplied key/value pair.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 </table>
@@ -634,17 +609,17 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="sendChatMessage()"></a>
+<a name="sendChat()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">sendChatMessage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">sendChat</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function sendChatMessage(msg:String):void</code><p>
+<code>public function sendChat(msg:String):void</code><p>
      Send a chat message to the entire room. The chat message will be treated as if it
-     were typed in at the chat message box - it will be filtered, and any action commands
-     (e.g. /emote) will be handled appropriately.
+     was typed in at the chat message box - it will be filtered.
+     TODO: Any action commands (e.g. /emote) should be handled appropriately.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>

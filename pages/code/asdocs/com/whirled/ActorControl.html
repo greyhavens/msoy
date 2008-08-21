@@ -174,6 +174,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#getMemory()">getMemory</a>(key:String, defval:Object = null):Object</div>
+<div class="summaryTableDescription">
+     Returns the value associated with the supplied key in this item's memory.</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="EntityControl.html#getMicrophone()">getMicrophone</a>(index:int = 0):Microphone</div>
 <div class="summaryTableDescription">
      Access the local user's camera.</div>
@@ -209,22 +217,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="EntityControl.html#getRoomBounds()">getRoomBounds</a>():Array</div>
 <div class="summaryTableDescription">
      Get the room's bounds in pixels.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#getRoomProperties()">getRoomProperties</a>():Object</div>
-<div class="summaryTableDescription">
-     Return an associative hash of all the room properties.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#getRoomProperty()">getRoomProperty</a>(key:String, defval:Object = null):Object</div>
-<div class="summaryTableDescription">
-     Returns the value associated with the supplied key in thie room's shared property space.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="">
@@ -269,14 +261,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Returns whether the mobile is currently moving between locations in the scene.</div>
 </td><td class="summaryTableOwnerCol">ActorControl</td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#lookupMemory()">lookupMemory</a>(key:String, defval:Object = null):Object</div>
-<div class="summaryTableDescription">
-     Returns the value associated with the supplied key in this item's memory.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -336,6 +320,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      Requests that our location be updated.</div>
 </td><td class="summaryTableOwnerCol">ActorControl</td>
 </tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="EntityControl.html#setMemory()">setMemory</a>(key:String, value:Object):Boolean</div>
+<div class="summaryTableDescription">
+     Requests that this item's memory be updated with the supplied key/value pair.</div>
+</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
+</tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -359,15 +351,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Requests that our location be updated.</div>
 </td><td class="summaryTableOwnerCol">ActorControl</td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#setRoomProperty()">setRoomProperty</a>(key:String, value:Object):Boolean</div>
-<div class="summaryTableDescription">
-     Requests that the room's shared property space be updated with the supplied key/value
-     pair.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -399,14 +382,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="EntityControl.html#triggerAction()">triggerAction</a>(name:String, arg:Object = null):void</div>
 <div class="summaryTableDescription">
      Triggers an action on this scene object.</div>
-</td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
-</tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#updateMemory()">updateMemory</a>(key:String, value:Object):Boolean</div>
-<div class="summaryTableDescription">
-     Requests that this item's memory be updated with the supplied key/value pair.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>
 </tr>
 </table>
