@@ -48,6 +48,7 @@ import com.threerings.msoy.world.client.WorldControlBar;
 
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 
+import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.FollowInviteNotification;
@@ -75,6 +76,7 @@ public class NotificationDirector extends BasicDirector
 
         // ensure that the compiler includes these necessary symbols
         var c :Class;
+        c = BadgeEarnedNotification;
         c = EntityCommentedNotification;
         c = LevelUpNotification;
         c = ReleaseNotesNotification;
@@ -170,11 +172,6 @@ public class NotificationDirector extends BasicDirector
             if (notification != null) {
                 addNotification(notification);
             }
-
-        } else if (name == MemberObject.BADGE_AWARDED) {
-            // TODO: create badge awarded notifications and dispatch through the NOTIFICATION 
-            // mechanism above.
-            displayAward(event.getArgs()[0] as EarnedBadge);
         }
     }
 

@@ -100,10 +100,6 @@ public class MemberObject extends MsoyBodyObject
      * Format: [ Notification ]. */
     public static const NOTIFICATION :String = "notification";
 
-    /** A message sent by the server to indicate that a badge was awarded.
-     * Format: [ EarnedBadge ]. */
-    public static const BADGE_AWARDED :String = "badgeAwarded";
-
     /** An <code>availability</code> status. */
     public static const AVAILABLE :int = 0;
 

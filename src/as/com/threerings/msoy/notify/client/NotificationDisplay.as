@@ -69,6 +69,18 @@ public class NotificationDisplay extends HBox
 
     public function displayNotification (notification :Notification) :void
     {
+        // TODO: this is here to allow BadgeEarnedNotification to forgo normal notification 
+        // display.  It would be great if we required it to display something, and then clicking
+        // on the announcement caused it to show the fancy display again.
+        if (notification.getAnnouncement() == null) {
+            // again, this is temporary.  We should always have the notification put something in 
+            // the history, and probably defer this custom display until the notification's 
+            // priority has decreed that it get shown in the history display.  Also, all 
+            // notifications should be allowed to do custom shit, so this is doubly weird.
+            displayCustomNotification(notification);
+            return;
+        }
+
         _pendingNotifications.push(notification);
         checkPendingNotifications();
 
@@ -145,7 +157,11 @@ public class NotificationDisplay extends HBox
     protected function displayCustomNotification (notification :Notification) :void
     {
         var clazz :String = notification.getDisplayClass();
-        var thing :Object = ClassUtil.newInstance(clazz);
+        if (clazz == null) {
+            return;
+        }
+
+        var thing :Object = new (ClassUtil.getClassByName(clazz))();
         thing.init(_ctx, notification);
     }
 
@@ -249,6 +265,10 @@ public class NotificationDisplay extends HBox
     {
         var notifications :Array = [];
         for each (var notification :Notification in notifs) {
+            // TODO: temporary work-around, as noted in displayNotification
+            if (notification.getAnnouncement() == null) {
+                continue;
+            }
             notifications.push(createDisplay(notification, true));
         }
         return notifications;

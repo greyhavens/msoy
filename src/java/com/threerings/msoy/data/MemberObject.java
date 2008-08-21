@@ -29,6 +29,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 
+import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
@@ -118,12 +119,6 @@ public class MemberObject extends MsoyBodyObject
     /** A message sent by the server to denote a notification to be displayed.
      * Format: [ Notification ]. */
     public static final String NOTIFICATION = "notification";
-
-    /**
-     * A message sent by the server to indicate that a badge was awarded.
-     * Format: [ EarnedBadge ]
-     */
-    public static final String BADGE_AWARDED = "badgeAwarded";
 
     /** The ideal size of the avatar cache. */
     public static final int AVATAR_CACHE_SIZE = 5;
@@ -238,7 +233,7 @@ public class MemberObject extends MsoyBodyObject
     {
         boolean added = badges.addOrUpdateBadge(badge);
         if (added) {
-            this.postMessage(BADGE_AWARDED, badge);
+            this.postMessage(NOTIFICATION, new BadgeEarnedNotification(badge));
             log.info("BadgeAwarded message sent", "badge", badge);
         }
 
