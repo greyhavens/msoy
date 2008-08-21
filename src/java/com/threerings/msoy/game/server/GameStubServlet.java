@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.samskivert.io.StreamUtil;
+import com.samskivert.util.StringUtil;
+
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import static com.threerings.msoy.Log.log;
@@ -33,14 +35,23 @@ public class GameStubServlet extends HttpServlet
             return;
         }
 
+        String affiliate = StringUtil.deNull(req.getParameter("aff"));
+
         String response;
 //        if (needToSendError) {
 //            response = "<error>" + someErrorMessage + "</error>";
 //
 //        } else {
+        String SEP = "&amp;";
             response = "<url>http://" + req.getServerName() + ":" + req.getServerPort() +
                 "/clients/" + DeploymentConfig.version + "/world-client.swf</url>" +
-                "<params>guest=t&amp;gameLobby=" + gameId + "</params>";
+                "<params>" +
+                    //"guest=t" + SEP +
+                    "aff=" + affiliate + SEP +
+                    "vec=games" + SEP +
+                    "cre=" + gameId + SEP +
+                    "gameLobby=" + gameId +
+                "</params>";
 //        }
 
         sendResponse(rsp, "<r>" + response + "</r>");
