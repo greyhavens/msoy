@@ -50,7 +50,9 @@ public class ProfilePanel extends VerticalPanel
 
         // TODO hiding favorites functionality
         if (DeploymentConfig.devDeployment) {
-            add(new FavoritesBlurb());
+            FavoritesBlurb blurb = new FavoritesBlurb();
+            blurb.init(pdata);
+            add(blurb);
         }
 
     }
