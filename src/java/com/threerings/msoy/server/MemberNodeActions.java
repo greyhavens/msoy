@@ -146,14 +146,14 @@ public class MemberNodeActions
     /**
      * Update a member's StatSet.
      */
-    public static <T extends Stat> void statUpdated (final int memberId, final StatModifier<T> modifier)
+    public static <T extends Stat> void statUpdated (int memberId, StatModifier<T> modifier)
     {
         _peerMan.invokeNodeAction(new StatUpdated<T>(memberId, modifier));
     }
 
     protected static class InfoChanged extends MemberNodeAction
     {
-        public InfoChanged (final int memberId, final String displayName, final MediaDesc photo, final String status) {
+        public InfoChanged (int memberId, String displayName, MediaDesc photo, String status) {
             super(memberId);
             _displayName = displayName;
             _photo = photo;
@@ -376,8 +376,8 @@ public class MemberNodeActions
 
     protected static class FriendEntryUpdate extends PeerManager.NodeAction
     {
-        public FriendEntryUpdate (final int[] friends, final int memberId, final String displayName, final MediaDesc photo,
-                                  final String status) {
+        public FriendEntryUpdate (int[] friends, int memberId, String displayName, MediaDesc photo,
+                                  String status) {
             _friends = friends;
             _memberId = memberId;
             _displayName = displayName;
