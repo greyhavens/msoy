@@ -288,6 +288,7 @@ public class GroupRecord extends PersistentRecord
         group.policy = policy;
         group.forumPerms = forumPerms;
         group.memberCount = memberCount;
+        group.gameId = gameId;
         return group;
     }
 

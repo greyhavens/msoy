@@ -161,7 +161,8 @@ public class WhirledDetailPanel extends FlowPanel
         actions.setStyleName("Actions");
         mainDetails.add(actions);
 
-        if (_detail.group.gameId > 0) {
+        // link to the game for this group
+        if (_detail.group.gameId != 0) {
             actions.add(MsoyUI.createActionLabel(_msgs.detailPlayGame(), Link.createListener(
                 Pages.GAMES, Args.compose("d", "" + _detail.group.gameId))));
         }

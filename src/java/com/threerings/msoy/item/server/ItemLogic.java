@@ -29,6 +29,10 @@ import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -264,10 +268,15 @@ public class ItemLogic
     public void validateItem (MemberRecord memrec, ItemRecord orecord, ItemRecord nrecord)
         throws ServiceException, PersistenceException
     {
+        // member must be a manager of any group they assign to a game
         if (nrecord instanceof GameRecord) {
             GameRecord grec = (GameRecord)nrecord;
             if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
-                // TODO: is memrec.memberId a manager of grec.groupId? throw ACCESS_DENIED if not
+                GroupMembershipRecord membership = _groupRepo.getMembership(grec.groupId,
+                    memrec.memberId);
+                if (membership == null || membership.rank < GroupMembership.RANK_MANAGER) {
+                    throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+                }
             }
         }
     }
@@ -279,6 +288,7 @@ public class ItemLogic
      * @param nrecord the newly created or updated item.
      */
     public void itemUpdated (ItemRecord orecord, final ItemRecord nrecord)
+        throws PersistenceException
     {
         // let the item manager know that we've created or updated this item
         final boolean justCreated = (orecord == null);
@@ -296,7 +306,15 @@ public class ItemLogic
         if (nrecord instanceof GameRecord) {
             GameRecord grec = (GameRecord)nrecord;
             if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
-                // TODO: load up the GroupRecord for groupId and set our gameId as its game
+                if (grec.gameId == 0) {
+                    // fetch the gameId for the newly created game
+                    GameRecord gameRecord = _gameRepo.loadItem(grec.itemId);
+                    grec.gameId = gameRecord.gameId;
+                }
+                if (orecord != null) {
+                    _groupRepo.updateGroup(((GameRecord)orecord).groupId, GroupRecord.GAME_ID, 0);
+                }
+                _groupRepo.updateGroup(grec.groupId, GroupRecord.GAME_ID, Math.abs(grec.gameId));
             }
         }
     }
@@ -743,4 +761,6 @@ public class ItemLogic
     @Inject protected TrophySourceRepository _tsourceRepo;
     @Inject protected PrizeRepository _prizeRepo;
     @Inject protected PropRepository _propRepo;
+    @Inject
+    protected GroupRepository _groupRepo;
 }

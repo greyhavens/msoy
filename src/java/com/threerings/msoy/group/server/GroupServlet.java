@@ -726,7 +726,8 @@ public class GroupServlet extends MsoyServiceServlet
                             return false;
                         }
                         // exclude groups connected to other games
-                        if (info.left.gameId > 0 && info.left.gameId != gameId) {
+                        if (info.left.gameId != 0
+                            && Math.abs(info.left.gameId) != Math.abs(gameId)) {
                             return false;
                         }
                         return true;
