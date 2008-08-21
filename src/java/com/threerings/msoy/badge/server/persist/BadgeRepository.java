@@ -34,7 +34,7 @@ import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
-import static com.threerings.msoy.badge.Log.log;
+import static com.threerings.msoy.Log.log;
 // END TEMP
 
 @Singleton @BlockingThread

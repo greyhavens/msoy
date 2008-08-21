@@ -4,26 +4,32 @@
 package com.threerings.msoy.server;
 
 import com.google.inject.Inject;
+
+import com.threerings.presents.peer.data.NodeObject;
+import com.threerings.presents.peer.server.PeerManager;
+
+import com.threerings.stats.data.Stat;
+import com.threerings.stats.data.StatModifier;
+
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.peer.data.MsoyNodeObject;
+import com.threerings.msoy.peer.server.MemberNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 import com.threerings.msoy.chat.server.ChatChannelManager;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.server.NotificationManager;
-import com.threerings.msoy.peer.data.MsoyNodeObject;
-import com.threerings.msoy.peer.server.MemberNodeAction;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.presents.peer.data.NodeObject;
-import com.threerings.presents.peer.server.PeerManager;
-import com.threerings.stats.data.Stat;
-import com.threerings.stats.data.StatModifier;
 
 /**
  * Contains various member node actions.
@@ -333,10 +339,14 @@ public class MemberNodeActions
 
         @Override
         protected void execute (final MemberObject memobj) {
-            memobj.badgeAwarded(_badge);
+            if (memobj.badgeAwarded(_badge)) {
+                _notifyMan.notify(memobj, new BadgeEarnedNotification(_badge));
+            }
         }
 
         protected EarnedBadge _badge;
+
+        @Inject protected NotificationManager _notifyMan;
     }
 
     protected static class InProgressBadgeUpdated extends MemberNodeAction

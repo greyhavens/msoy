@@ -11,7 +11,6 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
 
-import com.google.common.collect.Lists;
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -228,9 +227,9 @@ public class MemberObject extends MsoyBodyObject
     /** The set of badges that this player is working towards. */
     public transient InProgressBadgeSet inProgressBadges;
 
-    /** A list of notifications that will be dispatched when the client's NotificationDirector
-     * asks for them */
-    public transient List<Notification> deferredNotifications = Lists.newArrayList();
+    /** A list of notifications that will be dispatched when the client's NotificationDirector asks
+     * for them. Will be null once the deferred notifications have been dispatched. */
+    public transient List<Notification> deferredNotifications;
 
     /**
      * Adds an EarnedBadge to the member's BadgeSet (or updates the existing badge if the badge
@@ -241,9 +240,6 @@ public class MemberObject extends MsoyBodyObject
     public boolean badgeAwarded (EarnedBadge badge)
     {
         boolean added = badges.addOrUpdateBadge(badge);
-        if (added) {
-            this.postMessage(NOTIFICATION, new BadgeEarnedNotification(badge));
-        }
 
         // remove this badge's associated InProgressBadge if the badge's highest level has
         // been reached

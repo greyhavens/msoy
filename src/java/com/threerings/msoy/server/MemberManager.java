@@ -82,7 +82,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.data.LevelUpNotification;
-import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
@@ -99,11 +98,16 @@ import com.threerings.msoy.underwire.server.SupportLogic;
  */
 @Singleton @EventThread
 public class MemberManager
-    implements MemberProvider
+    implements MemberLocator.Observer, MemberProvider
 {
-    @Inject public MemberManager (final InvocationManager invmgr, final MsoyPeerManager peerMan)
+    @Inject public MemberManager (
+        InvocationManager invmgr, MsoyPeerManager peerMan, MemberLocator locator)
     {
+        // register our bootstrap invocation service
         invmgr.registerDispatcher(new MemberDispatcher(this), MsoyCodes.MEMBER_GROUP);
+
+        // register to hear when members logon and off
+        locator.addObserver(this);
 
         // intialize our internal array of memoized flow values per level.  Start with 256
         // calculated levels
@@ -183,9 +187,7 @@ public class MemberManager
         }
     }
 
-    /**
-     * Called when a member logs onto this server.
-     */
+    // from interface MemberLocator.MemberObserver
     public void memberLoggedOn (final MemberObject member)
     {
         if (member.isGuest()) {
@@ -206,7 +208,13 @@ public class MemberManager
         checkCurrentLevel(member);
 
         // update badges
-        _badgeMan.updateBadges(member, true);
+        _badgeMan.updateBadges(member);
+    }
+
+    // from interface MemberLocator.MemberObserver
+    public void memberLoggedOff (final MemberObject member)
+    {
+        // nada
     }
 
     // from interface MemberProvider
@@ -765,13 +773,7 @@ public class MemberManager
     // from interface MemberProvider
     public void dispatchDeferredNotifications (ClientObject caller)
     {
-        MemberObject member = (MemberObject)caller;
-        member.startTransaction();
-        for (Notification notification : member.deferredNotifications) {
-            _notifyMan.notify(member, notification);
-        }
-        member.commitTransaction();
-        member.deferredNotifications.clear();
+        _notifyMan.dispatchDeferredNotifications((MemberObject)caller);
     }
 
     /**

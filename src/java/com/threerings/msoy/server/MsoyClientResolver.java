@@ -8,9 +8,33 @@ import static com.threerings.msoy.Log.log;
 import java.util.List;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
+
 import com.samskivert.util.ResultListener;
+
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.dobj.DSet;
+
 import com.threerings.crowd.server.CrowdClientResolver;
+
+import com.threerings.stats.data.Stat;
+import com.threerings.stats.data.StatSet;
+import com.threerings.stats.server.persist.StatRepository;
+
+import com.threerings.msoy.data.LurkerName;
+import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.VizMemberName;
+import com.threerings.msoy.data.all.FriendEntry;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.persist.ReferralRecord;
+
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.web.data.MemberCard;
+
 import com.threerings.msoy.badge.data.EarnedBadgeSet;
 import com.threerings.msoy.badge.data.InProgressBadgeSet;
 import com.threerings.msoy.badge.server.BadgeManager;
@@ -18,12 +42,6 @@ import com.threerings.msoy.badge.server.ServerStatSet;
 import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
-import com.threerings.msoy.data.LurkerName;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.VizMemberName;
-import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.all.Avatar;
@@ -33,18 +51,8 @@ import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.server.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.msoy.server.persist.ReferralRecord;
-import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DSet;
-import com.threerings.stats.data.Stat;
-import com.threerings.stats.data.StatSet;
-import com.threerings.stats.server.persist.StatRepository;
 
 /**
  * Used to configure msoy-specific client object data.
@@ -67,6 +75,13 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         final MemberObject userObj = (MemberObject) clobj;
         userObj.setAccessController(MsoyObjectAccess.USER);
+
+        // create a deferred notifications array so that we can track any notifications dispatched
+        // to this client until they're ready to read them; we'd have NotificationManager do this
+        // in a MemberLocator.Observer but we need to be sure this is filled in before any other
+        // MemberLocator.Observers are notified because that's precisely when early notifications
+        // are likely to be generated
+        userObj.deferredNotifications = Lists.newArrayList();
 
         // if our member object was forwarded from another server, it will already be fully ready
         // to go so we can avoid the expensive resolution process

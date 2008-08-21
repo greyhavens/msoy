@@ -35,7 +35,7 @@ import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.server.MemberNodeActions;
 
-import static com.threerings.msoy.badge.Log.log;
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides badge related services to servlets and other blocking thread entities.

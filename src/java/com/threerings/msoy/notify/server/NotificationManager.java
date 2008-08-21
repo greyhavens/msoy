@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.notify.server;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
 import com.google.inject.Singleton;
 
 import com.threerings.presents.annotation.EventThread;
@@ -22,9 +25,35 @@ import com.threerings.msoy.notify.data.GameInviteNotification;
 @Singleton @EventThread
 public class NotificationManager
 {
+    /**
+     * Sends a notification to the specified member.
+     */
     public void notify (MemberObject target, Notification note)
     {
-        target.postMessage(MemberObject.NOTIFICATION, note);
+        // if they have not yet reported in with a call to dispatchDeferredNotifications then we
+        // need to queue this notification up rather than dispatch it directly
+        if (target.deferredNotifications != null) {
+            target.deferredNotifications.add(note);
+        } else {
+            target.postMessage(MemberObject.NOTIFICATION, note);
+        }
+    }
+
+    /**
+     * Dispatches a batch of notifications all at once.
+     */
+    public void notify (MemberObject target, List<Notification> notes)
+    {
+        if (target.deferredNotifications != null) {
+            target.deferredNotifications.addAll(notes);
+        } else {
+            target.startTransaction();
+            for (Notification note : notes) {
+                target.postMessage(MemberObject.NOTIFICATION, note);
+            }
+            target.commitTransaction();
+            target.deferredNotifications = null;
+        }
     }
 
     /**
@@ -67,5 +96,16 @@ public class NotificationManager
         if (target.isAvailableTo(inviterId)) {
             notify(target, new FollowInviteNotification(inviter, inviterId));
         }
+    }
+
+    /**
+     * Dispatches any deferred notifications for the specified member and marks them as ready to
+     * receive notifications in real time.
+     */
+    public void dispatchDeferredNotifications (MemberObject memobj)
+    {
+        List<Notification> notes = memobj.deferredNotifications;
+        memobj.deferredNotifications = null;
+        notify(memobj, notes);
     }
 }

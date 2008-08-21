@@ -15,15 +15,20 @@ import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.toybox.Log;
+
+import com.threerings.msoy.data.MemberObject;
+
+import com.threerings.msoy.notify.data.BadgeEarnedNotification;
+import com.threerings.msoy.notify.data.Notification;
+import com.threerings.msoy.notify.server.NotificationManager;
 
 import com.threerings.msoy.badge.data.BadgeProgress;
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
-import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.notify.data.BadgeEarnedNotification;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Handles badge related services for the world server.
@@ -49,11 +54,8 @@ public class BadgeManager
     /**
      * For each Badge type, awards the Badge to the user if the Badge's award conditions
      * have been met.
-     *
-     * @param storeNew If new badge dispatches are likely to be missed by a connecting client,
-     *                 this will store notifications in the MemberObject, to be dispatched later.
      */
-    public void updateBadges (MemberObject user, boolean storeNew)
+    public void updateBadges (MemberObject user)
     {
         // guests are not awarded badges
         if (user.isGuest()) {
@@ -107,11 +109,6 @@ public class BadgeManager
 
         if (newBadges != null) {
             awardBadges(user, newBadges);
-            if (storeNew) {
-                for (EarnedBadge badge : newBadges) {
-                    user.deferredNotifications.add(new BadgeEarnedNotification(badge));
-                }
-            }
         }
 
         if (inProgressBadges != null) {
@@ -123,19 +120,23 @@ public class BadgeManager
     {
         // award coins and add the badges to the user's badge set
         int coinValue = 0;
+        List<Notification> notes = Lists.newArrayList();
         for (EarnedBadge badge : badges) {
             BadgeType type = BadgeType.getType(badge.badgeCode);
             BadgeType.Level level = type.getLevel(badge.level);
             if (level == null) {
-                Log.log.warning("Failed to award invalid badge level",
-                    "memberId", user.getMemberId(), "BadgeType", type, "level", level);
-            } else {
-                user.badgeAwarded(badge);
+                log.warning("Failed to award invalid badge level", "to", user.getMemberId(),
+                            "type", type, "level", level);
+            } else if (user.badgeAwarded(badge)) {
+                notes.add(new BadgeEarnedNotification(badge));
                 coinValue += coinValue;
             }
         }
         user.setFlow(user.flow + coinValue);
         user.setAccFlow(user.accFlow + coinValue);
+
+        // dispatch any badge awarded notifications
+        _notifyMan.notify(user, notes);
 
         // create any in-progress badges that have been newly unlocked
         final List<InProgressBadge> newInProgressBadges = BadgeUtil.getNewInProgressBadges(
@@ -217,6 +218,7 @@ public class BadgeManager
         });
     }
 
+    @Inject protected NotificationManager _notifyMan;
     @Inject protected BadgeLogic _badgeLogic;
     @Inject protected @MainInvoker Invoker _invoker;
 }
