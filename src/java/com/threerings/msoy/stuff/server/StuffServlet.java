@@ -50,21 +50,28 @@ public class StuffServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        item = _itemLogic.createItem(memrec, item, parent);
 
-        // Some items have a stat that may need updating
-        if (item instanceof Avatar) {
-            _statLogic.ensureIntStatMinimum(
-                memrec.memberId, StatType.AVATARS_CREATED, StatType.ITEM_UPLOADED);
-        } else if (item instanceof Furniture) {
-            _statLogic.ensureIntStatMinimum(
-                memrec.memberId, StatType.FURNITURE_CREATED, StatType.ITEM_UPLOADED);
-        } else if (item instanceof Decor) {
-            _statLogic.ensureIntStatMinimum(
-                memrec.memberId, StatType.BACKDROPS_CREATED, StatType.ITEM_UPLOADED);
+        try {
+            item = _itemLogic.createItem(memrec, item, parent);
+
+            // Some items have a stat that may need updating
+            if (item instanceof Avatar) {
+                _statLogic.ensureIntStatMinimum(
+                    memrec.memberId, StatType.AVATARS_CREATED, StatType.ITEM_UPLOADED);
+            } else if (item instanceof Furniture) {
+                _statLogic.ensureIntStatMinimum(
+                    memrec.memberId, StatType.FURNITURE_CREATED, StatType.ITEM_UPLOADED);
+            } else if (item instanceof Decor) {
+                _statLogic.ensureIntStatMinimum(
+                    memrec.memberId, StatType.BACKDROPS_CREATED, StatType.ITEM_UPLOADED);
+            }
+
+            return item;
+
+        } catch (PersistenceException pe) {
+            log.warning("Failed to create item", "for", memrec.who(), "item", item, pe);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
-
-        return item;
     }
 
     // from interface StuffService
@@ -83,7 +90,7 @@ public class StuffServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.getType());
         try {
             // load up the old version of the item
-            final ItemRecord record = repo.loadItem(item.itemId);
+            ItemRecord record = repo.loadItem(item.itemId);
             if (record == null) {
                 throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
             }
@@ -94,18 +101,20 @@ public class StuffServlet extends MsoyServiceServlet
                 throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
             }
 
+            // make a copy of this for later
+            ItemRecord oldrec = (ItemRecord)record.clone();
+
             // update it with data from the supplied runtime record
             record.fromItem(item);
+
+            // make sure these modifications are copacetic
+            _itemLogic.validateItem(memrec, oldrec, record);
 
             // write it back to the database
             repo.updateOriginalItem(record);
 
-            // let the item manager know that we've updated this item
-            postDObjectAction(new Runnable() {
-                public void run () {
-                    _itemMan.itemUpdated(record);
-                }
-            });
+            // note that we've update our bits
+            _itemLogic.itemUpdated(oldrec, record);
 
         } catch (PersistenceException pe) {
             log.warning("Failed to update item " + item + ".", pe);

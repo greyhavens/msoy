@@ -44,6 +44,7 @@ import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
+import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemListInfoRecord;
 import com.threerings.msoy.item.server.persist.ItemListRepository;
@@ -178,14 +179,20 @@ public class ItemLogic
             throws PersistenceException;
     }
 
+    /**
+     * Creates a new item and inserts it into the appropriate repository.
+     */
     public Item createItem (MemberRecord memrec, Item item)
-        throws ServiceException
+        throws ServiceException, PersistenceException
     {
         return createItem(memrec, item, null);
     }
 
+    /**
+     * Creates a new item and inserts it into the appropriate repository.
+     */
     public Item createItem (MemberRecord memrec, Item item, ItemIdent parent)
-        throws ServiceException
+        throws ServiceException, PersistenceException
     {
         // validate the item
         if (!item.isConsistent()) {
@@ -233,24 +240,65 @@ public class ItemLogic
             ((SubItemRecord)record).initFromParent(prec);
         }
 
-        // TODO: validate anything else?
+        // validate any item specific stuff
+        validateItem(memrec, null, record);
 
         // write the item to the database
-        try {
-            repo.insertOriginalItem(record, false);
-        } catch (PersistenceException pe) {
-            log.warning("Failed to create item " + item + ".", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        repo.insertOriginalItem(record, false);
 
-        // let the item manager know that we've created this item
+        // now do any post update stuff
+        itemUpdated(null, record);
+
+        return record.toItem();
+    }
+
+    /**
+     * Ensures that the values specified in this item record are valid.
+     *
+     * @param memrec the member that is doing the updating or creating.
+     * @param orecord the unmodified record in the case of an update, null in the case of a create.
+     * @param nrecord the newly created or updated item.
+     *
+     * @exception ServiceException thrown if illegal or invalid data was detected in the item.
+     */
+    public void validateItem (MemberRecord memrec, ItemRecord orecord, ItemRecord nrecord)
+        throws ServiceException
+    {
+        if (nrecord instanceof GameRecord) {
+            GameRecord grec = (GameRecord)nrecord;
+            if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
+                // TODO: is memrec.memberId a manager of grec.groupId? throw ACCESS_DENIED if not
+            }
+        }
+    }
+
+    /**
+     * Called after an item is created or updated. Performs any post create/update actions needed.
+     *
+     * @param orecord the unmodified record in the case of an update, null in the case of a create.
+     * @param nrecord the newly created or updated item.
+     */
+    public void itemUpdated (ItemRecord orecord, final ItemRecord nrecord)
+    {
+        // let the item manager know that we've created or updated this item
+        final boolean justCreated = (orecord == null);
         _omgr.postRunnable(new Runnable() {
             public void run () {
-                _itemMan.itemCreated(record);
+                if (justCreated) {
+                    _itemMan.itemCreated(nrecord);
+                } else {
+                    _itemMan.itemUpdated(nrecord);
+                }
             }
         });
 
-        return record.toItem();
+        // update our game <-> group binding if necessary
+        if (nrecord instanceof GameRecord) {
+            GameRecord grec = (GameRecord)nrecord;
+            if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
+                // TODO: load up the GroupRecord for groupId and set our gameId as its game
+            }
+        }
     }
 
     /**
