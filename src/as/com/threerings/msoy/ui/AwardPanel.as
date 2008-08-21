@@ -55,7 +55,7 @@ public class AwardPanel
      */
     public function displayAward (award :Object) :void
     {
-        _pendingAwards.push(award);
+        _pendingAwards.unshift(award);
         checkPendingAwards();
     }
 

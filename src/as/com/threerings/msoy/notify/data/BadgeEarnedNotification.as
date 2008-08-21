@@ -43,6 +43,12 @@ public class BadgeEarnedNotification extends Notification
         return "com.threerings.msoy.badge.ui.BadgeNotificationDisplay";
     }
 
+    // from Object
+    override public function toString () :String
+    {
+        return "BadgeEarnedNotification [" + _badge + "]";
+    }
+
     override public function readObject (ins :ObjectInputStream) :void
     {
         super.readObject(ins);
