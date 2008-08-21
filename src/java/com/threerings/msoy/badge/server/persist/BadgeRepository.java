@@ -51,10 +51,13 @@ public class BadgeRepository extends DepotRepository
     {
         log.info("Populating initial stat records. Please hold...");
 
-        // first, we want to drop all stats from the stat table
-        deleteAll(StatRecord.class, new Where(new LiteralExp("1 = 1")), new CacheInvalidator() {
+        // first, we want to drop all stats and badges
+        CacheInvalidator NOOP = new CacheInvalidator() {
             public void invalidate (PersistenceContext ctx) { /* NOOP! */ }
-        });
+        };
+        deleteAll(StatRecord.class, new Where(new LiteralExp("1 = 1")), NOOP);
+        deleteAll(EarnedBadgeRecord.class, new Where(new LiteralExp("1 = 1")), NOOP);
+        deleteAll(InProgressBadgeRecord.class, new Where(new LiteralExp("1 = 1")), NOOP);
 
         // count up how many friends everyone has
         final CountHashMap<Integer> friends = new CountHashMap<Integer>();
