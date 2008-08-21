@@ -52,6 +52,8 @@ import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.server.PropertySpaceDispatcher;
+import com.whirled.game.server.PropertySpaceHandler;
 import com.whirled.game.server.WhirledGameManager;
 import com.whirled.game.server.WhirledGameMessageDispatcher;
 import com.whirled.game.server.WhirledGameMessageHandler;
@@ -152,6 +154,8 @@ public class AVRGameManager extends PlaceManager
     @Override
     protected void didStartup ()
     {
+        super.didStartup();
+
         AVRGameConfig cfg = (AVRGameConfig)_config;
 
         _gameId = cfg.getGameId();
@@ -187,6 +191,15 @@ public class AVRGameManager extends PlaceManager
 
                 @Override protected int resolvePlayerId (ClientObject caller) {
                     return ((PlayerObject)caller).getMemberId();
+                }
+            })));
+        _gameObj.setPropertiesService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(
+            new PropertySpaceHandler(_gameObj) {
+                @Override protected void validateUser (ClientObject caller)
+                    throws InvocationException {
+                    if (!isAgent(caller)) {
+                        throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+                    }
                 }
             })));
         
@@ -361,8 +374,11 @@ public class AVRGameManager extends PlaceManager
         
         _invmgr.clearDispatcher(_gameObj.avrgService);
         _invmgr.clearDispatcher(_gameObj.messageService);
+        _invmgr.clearDispatcher(_gameObj.propertiesService);
         
         _sceneCheck.cancel();
+
+        super.didShutdown();
     }
 
     @Override
