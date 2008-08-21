@@ -22,11 +22,6 @@ import com.whirled.game.data.PropertySetEvent;
 import com.whirled.game.data.PropertySetListener;
 import com.whirled.game.data.WhirledPlayerObject;
 
-import com.threerings.presents.client.ConfirmAdapter;
-import com.threerings.presents.client.InvocationAdapter;
-import com.threerings.presents.client.InvocationService_ConfirmListener;
-import com.threerings.presents.client.InvocationService_InvocationListener;
-
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
@@ -306,7 +301,7 @@ public class AVRGameBackend extends ControlBackend
             if (sprite == null) {
                 _roomObj.roomService.spawnMob(
                     _wctx.getClient(), _ctrl.getGameId(), mobId, mobName,
-                    loggingInvocationListener("spawnMob"));
+                    BackendUtils.loggingInvocationListener("spawnMob"));
                 return true;
             }
         }
@@ -322,7 +317,7 @@ public class AVRGameBackend extends ControlBackend
             if (sprite != null) {
                 _roomObj.roomService.despawnMob(
                     _wctx.getClient(), _ctrl.getGameId(), mobId,
-                    loggingInvocationListener("despawnMob"));
+                    BackendUtils.loggingInvocationListener("despawnMob"));
                 return true;
             }
         }
@@ -342,24 +337,9 @@ public class AVRGameBackend extends ControlBackend
         if (!isPlaying()) {
             return;
         }
-        validatePropertyChange(propName, value, isArray, int(key));
 
-        var encoded :Object = PropertySpaceHelper.encodeProperty(value, (key == null));
-        var ikey :Integer = (key == null) ? null : new Integer(int(key));
-//        _gameObj.avrGameService.setProperty(
-//            _ctx.getClient(), propName, encoded, ikey, isArray,
-//            false, null, loggingConfirmListener("setProperty"));
-        if (immediate) {
-            // we re-decode so that it looks like it came off the net
-            // TODO: fix broken behaviour
-            try {
-                PropertySpaceHelper.applyPropertySet(
-                    _playerObj, propName, PropertySpaceHelper.decodeProperty(encoded),
-                    key, isArray);
-            } catch (re :RangeError) {
-                trace("Error setting property (immediate): " + re);
-            }
-        }
+        BackendUtils.encodeAndSet(
+            _gctx.getClient(), _playerObj, propName, value, key, isArray, immediate);
     }
 
     // PlayerSubControl
@@ -393,7 +373,7 @@ public class AVRGameBackend extends ControlBackend
         }
 
         _gameObj.avrgService.completeQuest(
-            _gctx.getClient(), taskId, payout, loggingConfirmListener("completeTask"));
+            _gctx.getClient(), taskId, payout, BackendUtils.loggingConfirmListener("completeTask"));
         return true;
     }
 
@@ -525,7 +505,8 @@ public class AVRGameBackend extends ControlBackend
     {
         var encoded :Object = ObjectMarshaller.encode(value, false);
         _gameObj.messageService.sendPrivateMessage(
-            _gctx.getClient(), name, encoded, TO_AGENT, loggingConfirmListener("sendMessage"));
+            _gctx.getClient(), name, encoded, TO_AGENT, 
+            BackendUtils.loggingConfirmListener("sendMessage"));
     }
 
     // TODO: MobControl
@@ -622,49 +603,6 @@ public class AVRGameBackend extends ControlBackend
         (_wctx as CrowdContext).getChatDirector().displayInfo(bundle, msg, localType);
     }
 
-    /**
-     * Verify that the property name / value are valid.
-     * TODO: candidate for code sharing with BaseGameBackend?
-     */
-    protected function validatePropertyChange (
-        propName :String, value :Object, array :Boolean, index :int) :void
-    {
-        validateName(propName);
-
-        if (array) {
-            if (index < 0) {
-                throw new ArgumentError("Bogus array index specified.");
-            }
-            // TODO: fixy
-//            if (!(_gameData[propName] is Array)) {
-//                throw new ArgumentError("Property " + propName + " is not an Array.");
-//            }
-        }
-
-        // validate the value too
-        validateValue(value);
-    }
-
-    /**
-     * Verify that the specified name is valid.
-     * TODO: candidate for code sharing with BaseGameBackend?
-     */
-    protected function validateName (name :String) :void
-    {
-        if (name == null) {
-            throw new ArgumentError("Property, message, and collection names must not be null.");
-        }
-    }
-
-    /**
-     * Verify that the value is legal to be streamed to other clients.
-     * TODO: candidate for code sharing with BaseGameBackend?
-     */
-    protected function validateValue (value :Object) :void
-    {
-        ObjectMarshaller.validateValue(value);
-    }
-
     // internal utility method
     protected function getRoomId () :int
     {
@@ -722,23 +660,6 @@ public class AVRGameBackend extends ControlBackend
         if (StringUtil.isBlank(msg)) {
             throw new ArgumentError("Empty chat may not be displayed.");
         }
-    }
-
-    // internal utility method
-    protected function loggingConfirmListener (svc :String, processed :Function = null)
-        :InvocationService_ConfirmListener
-    {
-        return new ConfirmAdapter(function (cause :String) :void {
-            log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
-        }, processed);
-    }
-
-    // internal utility method
-    protected function loggingInvocationListener (svc :String) :InvocationService_InvocationListener
-    {
-        return new InvocationAdapter(function (cause :String) :void {
-            log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
-        });
     }
 
     protected var _wctx :WorldContext;

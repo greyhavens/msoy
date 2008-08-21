@@ -61,6 +61,8 @@ public class ThaneAVRGameBackend
         var ourProps :Object = new Object();
         populateProperties(ourProps);
         props.hostProps = ourProps;
+
+        BackendUtils.initPropertyChangeDispatch(_gameObj, _userFuncs, "game_propertyWasSet_v1");
     }
 
     protected function populateProperties (o :Object) :void
@@ -114,13 +116,20 @@ public class ThaneAVRGameBackend
     // -------------------- .game.props --------------------
     protected function game_getGameData_v1 (targetId :int) :Object
     {
-        return {};
+        if (targetId != 0) {
+            throw new Error("Internal error: unexpected target id");
+        }
+        return _gameObj.getUserProps();
     }
 
     protected function game_setProperty_v1 (
-        targetId :int, name :String, value :Object, key :int, isArray :Boolean, 
+        targetId :int, name :String, value :Object, key :Object, isArray :Boolean, 
         immediate :Boolean) :void
     {
+        if (targetId != 0) {
+            throw new Error("Internal error: unexpected target id");
+        }
+        BackendUtils.encodeAndSet(_ctx.getClient(), _gameObj, name, value, key, isArray, immediate);
     }
     
     // -------------------- .getRoom() --------------------
@@ -171,7 +180,7 @@ public class ThaneAVRGameBackend
     }
 
     protected function room_setProperty_v1 (
-        roomId :int, name :String, value :Object, key :int, isArray :Boolean, 
+        roomId :int, name :String, value :Object, key :Object, isArray :Boolean, 
         immediate :Boolean) :void
     {
     }
@@ -234,7 +243,7 @@ public class ThaneAVRGameBackend
     }
 
     protected function player_setProperty_v1 (
-        playerId :int, name :String, value :Object, key :int, isArray :Boolean, 
+        playerId :int, name :String, value :Object, key :Object, isArray :Boolean, 
         immediate :Boolean) :void
     {
     }
