@@ -572,9 +572,10 @@ public class AVRGameBackend extends ControlBackend
         } else {
             return;
         }
-        
-        callUserCode(target + "_propertyWasSet_v1", _wctx.getMemberObject().getMemberId(),
-                     event.getName(), event.getValue(), event.getOldValue(), keyObj);
+
+        callUserCode(
+            target + "_propertyWasSet_v1", event.getName(), event.getValue(),
+            event.getOldValue(), keyObj);
     }
 
     // internal callback
