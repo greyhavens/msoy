@@ -86,12 +86,14 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         String path = req.getServletPath();
         if (e instanceof org.mortbay.jetty.EofException) {
             log.info("Servlet response stream unexpectedly closed", "servlet", path);
+            return; // no need to write a 500 response, they closed us
         } else if (e instanceof IllegalStateException && "STREAM".equals(e.getMessage())) {
             log.info("Servlet response stream unavailable", "servlet", path);
-        } else {
-            log.warning("Servlet service failure", "servlet", path,
-                        (e instanceof UnexpectedException) ? e.getCause() : e);
+            return; // no need to write a 500 response, our output stream is hosed
         }
+
+        log.warning("Servlet service failure", "servlet", path,
+                    (e instanceof UnexpectedException) ? e.getCause() : e);
 
         // send a generic failure message with 500 status
         try {
