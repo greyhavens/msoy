@@ -71,15 +71,15 @@ public class WhatsNextPanel extends TongueBox
         badges.setText(0, 0, _msgs.nextBadgesTitle(), 3, "NextTitle");
 
         for (int row = 0; row < 2; row++) {
-            if (data.badges.size() > row) {
-                badges.setWidget(row + 1, 0, new BadgeDisplay(data.badges.get(row)));
+            if (data.badges.size() > row * 2) {
+                badges.setWidget(row + 1, 0, new BadgeDisplay(data.badges.get(row * 2)));
             } else {
                 badges.setWidget(row + 1, 0, MsoyUI.createFlowPanel("Spacer"));
             }
             badges.setWidget(row + 1, 1, MsoyUI.createSimplePanel("Divider",
                 MsoyUI.createImage("/images/me/passport_box_divider.png", null)));
-            if (data.badges.size() > row + 1) {
-                badges.setWidget(row + 1, 2, new BadgeDisplay(data.badges.get(row + 1)));
+            if (data.badges.size() > row * 2 + 1) {
+                badges.setWidget(row + 1, 2, new BadgeDisplay(data.badges.get(row * 2 + 1)));
             } else {
                 badges.setWidget(row + 1, 2, MsoyUI.createFlowPanel("Spacer"));
             }

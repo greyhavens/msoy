@@ -188,7 +188,7 @@ public class BadgeLogic
             // Java.util.List.subList() returns a list that cannot be sent to GWT.
             for (InProgressBadge badge : allBadges) {
                 randomSelection.add(badge);
-                if (randomSelection.size() >= maxBadges - 1) {
+                if (randomSelection.size() >= maxBadges) {
                     break;
                 }
             }
