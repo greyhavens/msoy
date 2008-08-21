@@ -17,7 +17,7 @@
 }
 
 .whirledDetail .MainDetails {
-  height: 250px;
+  height: 280px;
   width: 100%;
 }
 
@@ -102,20 +102,26 @@
   position: absolute;
   top: 0px;
   left: 275px;
-  width: 360px;
-  min-height: 250px;
+  width: 400px;
+  min-height: 242px;
   background: transparent url(/images/group/screenshot_bg.png) top center no-repeat;
   text-align: center;
 }
 
 .whirledDetail .MainDetails .ScreenshotBox .Screenshot {
-  margin-top: 10px;
+  margin-top: 12px;
   margin-bottom: 15px;
 }
 
 /* adjust the flash box */
 .whirledDetail .MainDetails .ScreenshotBox .Screenshot .gwt-HTML {
   margin-left: 15px;
+}
+
+.whirledDetail .MainDetails .ScreenshotBox .LiveViewOverlay {
+  position: absolute;
+  left: 150px;
+  top: 192px;
 }
 
 .whirledDetail .MainDetails .ScreenshotBox .Online {
@@ -196,6 +202,7 @@
 .whirledDetail .TopMembersPanel .Content,
 .whirledDetail .TopMembersPanel .Content a {
   color: #174c74;
+  font-size: 12px;
 }
 
 .whirledDetail .TopMembersPanel .SeeAll {
@@ -212,6 +219,7 @@
 .whirledDetail .TopMembersPanel .Manager {
   padding-top: 5px;
   font-weight: bold;
+  font-size: 12px;
 }
 
 /* ------------------------------------
@@ -226,7 +234,7 @@
 .whirledDetail .WhirledDiscussionPanel .RSS {
   position: absolute;
   left: 350px;
-  top: 290px;
+  top: 315px;
   width: 180px;
   text-align: right;
 }

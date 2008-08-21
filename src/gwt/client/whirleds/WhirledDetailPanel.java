@@ -161,6 +161,11 @@ public class WhirledDetailPanel extends FlowPanel
         actions.setStyleName("Actions");
         mainDetails.add(actions);
 
+        if (_detail.group.gameId > 0) {
+            actions.add(MsoyUI.createActionLabel(_msgs.detailPlayGame(), Link.createListener(
+                Pages.GAMES, Args.compose("d", "" + _detail.group.gameId))));
+        }
+
         // join this whirled
         if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
             if (Group.canJoin(_group.policy) && !CShell.isGuest()) {
