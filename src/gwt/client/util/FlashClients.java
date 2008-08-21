@@ -169,6 +169,13 @@ public class FlashClients
     }
 
     /**
+     * Returns the element that represents the Flash client.
+     */
+    public static native Element findClient () /*-{
+        return $wnd.top.document.getElementById("asclient");
+    }-*/;
+
+    /**
      * Checks if we have a specilized flash object to show, and if so, adds it to the container
      * and returns false, otherwise returns true.
      */
@@ -189,13 +196,6 @@ public class FlashClients
     {
         return _clientFullHeight ? "100%" : (""+Frame.CLIENT_HEIGHT);
     }
-
-    /**
-     * Returns the element that represents the Flash client.
-     */
-    protected static native Element findClient () /*-{
-        return $wnd.top.document.getElementById("asclient");
-    }-*/;
 
     /**
      * TEMP: Changes the height of the client already embedded in the page.

@@ -6,6 +6,7 @@ package client.item;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -36,6 +37,7 @@ import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.ui.RoundBox;
 import client.ui.StyledTabPanel;
+import client.util.FlashClients;
 import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -209,7 +211,10 @@ public abstract class BaseItemDetailPanel extends SmartTable
             _scaleUpdated = true;
 
             // try immediately updating in the whirled client
-            sendAvatarScaleToWorld(av.itemId, newScale);
+            Element client = FlashClients.findClient();
+            if (client != null) {
+                sendAvatarScaleToWorld(client, av.itemId, newScale);
+            }
         }
     }
 
@@ -236,11 +241,9 @@ public abstract class BaseItemDetailPanel extends SmartTable
     /**
      * Sends the new avatar scale to the whirled client.
      */
-    protected static native void sendAvatarScaleToWorld (int avatarId, float newScale) /*-{
-        var client = $doc.getElementById("asclient");
-        if (client) {
-            client.updateAvatarScale(avatarId, newScale);
-        }
+    protected static native void sendAvatarScaleToWorld (
+        Element client, int avatarId, float newScale) /*-{
+        client.updateAvatarScale(avatarId, newScale);
     }-*/;
 
     /**
