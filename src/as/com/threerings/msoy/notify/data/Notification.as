@@ -46,6 +46,15 @@ public /* abstract */ class Notification extends SimpleStreamableObject
         throw new Error("Abstract");
     }
 
+    /**
+     * Get the special notification display to use for this notification, or
+     * return null to just use the standard widget.
+     */
+    public function getDisplayClass () :String
+    {
+        return null;
+    }
+
     // from SimpleStreamableObject
     override public function readObject (ins :ObjectInputStream) :void
     {

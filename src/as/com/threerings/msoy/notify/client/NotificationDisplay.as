@@ -28,9 +28,11 @@ import mx.managers.PopUpManager;
 
 import caurina.transitions.Tweener;
 
+import com.threerings.util.ClassUtil;
+import com.threerings.util.Log;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexWrapper;
-import com.threerings.util.Log;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.utils.TextUtil;
@@ -138,6 +140,13 @@ public class NotificationDisplay extends HBox
                     checkPendingNotifications();
                 }
             });
+    }
+
+    protected function displayCustomNotification (notification :Notification) :void
+    {
+        var clazz :String = notification.getDisplayClass();
+        var thing :Object = ClassUtil.newInstance(clazz);
+        thing.init(_ctx, notification);
     }
 
     protected function createDisplay (
