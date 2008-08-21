@@ -38,6 +38,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
@@ -133,6 +134,18 @@ public class LobbyManager
     }
 
     /**
+     * Initialize the specified config.
+     * Exposed to allow MsoyTableManager to call it.
+     */
+    public void initConfig (MsoyGameConfig config)
+    {
+        config.init(_lobj.game, _lobj.gameDef);
+        if (config.groupId == Game.NO_GROUP) {
+            config.groupId = ServerConfig.getDefaultGameGroupId();
+        }
+    }
+
+    /**
      * Attempts to create and place the player into a single player game.
      *
      * @return if a game was created for the player, false if we were unable to create a game.
@@ -148,7 +161,7 @@ public class LobbyManager
 
         // start up a single player game
         MsoyGameConfig config = new MsoyGameConfig();
-        config.init(_lobj.game, _lobj.gameDef);
+        initConfig(config);
         if (_lobj.gameDef.params != null) {
             for (Parameter param : _lobj.gameDef.params) {
                 config.params.put(param.ident, param.getDefaultValue());

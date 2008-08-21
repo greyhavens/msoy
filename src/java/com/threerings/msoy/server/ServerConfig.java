@@ -218,6 +218,14 @@ public class ServerConfig
         return config.getValue("issue_group_id", 0);
     }
 
+    /**
+     * Returns the default groupId to use for games that have no groupId configured.
+     */
+    public static int getDefaultGameGroupId ()
+    {
+        return config.getValue("default_game_group_id", 0);
+    }
+
     /** The pattern via which we obtain our node id from our name. */
     protected static final Pattern NODE_ID_PATTERN = Pattern.compile("msoy([0-9]+)");
 

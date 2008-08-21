@@ -50,7 +50,7 @@ public class MsoyTableManager extends TableManager
     protected GameConfig createConfig (Table table)
     {
         MsoyGameConfig config = (MsoyGameConfig)super.createConfig(table);
-        config.init(_lobj.game, _lobj.gameDef);
+        _lmgr.initConfig(config);
         return config;
     }
 
@@ -87,12 +87,13 @@ public class MsoyTableManager extends TableManager
     @Override
     protected void gameCreated (Table table, GameObject gameobj, GameManager gmgr)
     {
-        for (int ii = 0; table.players != null && ii < table.players.length; ii++) {
-            if (table.players[ii] == null) {
-                continue;
+        if (table.players != null) {
+            for (int ii = 0, nn = table.players.length; ii < nn; ii++) {
+                MemberName member = (MemberName) table.players[ii];
+                if (member != null) {
+                    _membersPlaying.add(member.getMemberId());
+                }
             }
-            MemberName member = (MemberName) table.players[ii];
-            _membersPlaying.add(member.getMemberId());
         }
 
         super.gameCreated(table, gameobj, gmgr);
