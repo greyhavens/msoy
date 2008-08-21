@@ -57,7 +57,6 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GroupCard;
-import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;

@@ -33,8 +33,8 @@ public abstract class ItemGrid extends PagedGrid<Item>
     }
 
     /**
-     * Sets the optional command arguments to passed to the page. This is particularly useful when this
-     * is not the only grid on the page.
+     * Sets the optional command arguments to passed to the page. This is particularly useful when
+     * this is not the only grid on the page.
      */
     public void setPrefixArgs (String[] prefixArgs)
     {

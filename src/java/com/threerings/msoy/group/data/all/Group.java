@@ -13,8 +13,6 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.StaticMediaDesc;
 import com.threerings.msoy.fora.gwt.ForumThread;
-import com.threerings.msoy.group.gwt.CanonicalImageData;
-import com.threerings.msoy.item.data.all.Game;
 
 /**
  * Contains the basic data of a group.

@@ -40,7 +40,6 @@ import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.DecorRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 

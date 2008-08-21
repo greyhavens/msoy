@@ -3,12 +3,9 @@
 
 package client.ui;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupListener;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import client.shell.Frame;
 
 /**
  * Displays a popup with a nice border around it.

@@ -28,7 +28,6 @@ import com.threerings.msoy.web.data.AccountInfo;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
-import client.util.FlashClients;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
