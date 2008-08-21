@@ -57,7 +57,7 @@ public class RemixControls extends HBox
 {
     // Magic fucking trial-and-error numbers, since flex can't lay out worth a shit.
     public static const CONTROLS_WIDTH :int = 290;
-    public static const CONTROLS_MAX_HEIGHT :int = 440;
+    public static const CONTROLS_MAX_HEIGHT :int = 410;
 
     public static const PREVIEW_WIDTH :int = 320;
 
