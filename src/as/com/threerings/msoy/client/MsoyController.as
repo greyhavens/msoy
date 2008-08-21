@@ -383,8 +383,11 @@ public class MsoyController extends Controller
      */
     public function handlePopVolume (trigger :Button) :void
     {
+        var dfmt :Function = function (value :Number) :String {
+            return Msgs.GENERAL.get("i.percent_fmt", ""+Math.floor(value*100));
+        };
         SliderPopup.toggle(trigger, Prefs.getSoundVolume(), Prefs.setSoundVolume,
-            { styleName: "volumeSlider", tickValues: [ 0, 1 ] });
+            { styleName: "volumeSlider", tickValues: [ 0, 1 ], dataTipFormatFunction: dfmt });
     }
 
     /**
