@@ -32,8 +32,9 @@ public class MoneyResult
     }
     
     /**
-     * The new amount of money in the creator's account.  Null if the creator was not
-     * modified.
+     * The new amount of money in the creator's account.  Null if the creator account was not 
+     * modified.  Note that the creator account will still be modified if an operation involving
+     * 0 coins was performed. 
      */
     public MemberMoney getNewCreatorMoney ()
     {
@@ -42,7 +43,8 @@ public class MoneyResult
 
     /**
      * The new amount of money in the affiliate's account.  Null if the affiliate was not
-     * modified.
+     * modified.  Note that the affiliate account will still be modified if an operation involving
+     * 0 coins was performed.
      */
     public MemberMoney getNewAffiliateMoney ()
     {
@@ -59,7 +61,8 @@ public class MoneyResult
     
     /**
      * The transaction that was performed on the creator's account.  Null if the creator was
-     * not modified.
+     * not modified.  Note that the creator account will still be modified if an operation involving
+     * 0 coins was performed. 
      */
     public MoneyHistory getCreatorTransaction ()
     {
@@ -68,7 +71,8 @@ public class MoneyResult
     
     /**
      * The transaction that was performed on the affiliate's account.  Null if the affiliate
-     * was not modified.
+     * was not modified.  Note that the affiliate account will still be modified if an operation 
+     * involving 0 coins was performed.
      */
     public MoneyHistory getAffiliateTransaction ()
     {
