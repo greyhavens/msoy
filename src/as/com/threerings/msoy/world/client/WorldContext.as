@@ -135,6 +135,15 @@ public class WorldContext extends MsoyContext
         return _controller;
     }
 
+    /**
+     * Displays an award in a fancy animated popdown.  Check {@link AwardPanel} for valid award 
+     * object types.
+     */
+    public function displayAward (award :Object) :void
+    {
+        _notifyDir.displayAward(award);
+    }
+
     // from MsoyContext
     override public function getTokens () :MsoyTokenRing
     {

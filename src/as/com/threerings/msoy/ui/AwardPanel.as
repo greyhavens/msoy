@@ -15,8 +15,6 @@ import flash.text.TextField;
 
 import caurina.transitions.Tweener;
 
-import com.threerings.crowd.chat.client.ChatDirector;
-
 import com.threerings.flash.MediaContainer;
 
 import com.threerings.util.Log;
@@ -36,12 +34,9 @@ import com.threerings.msoy.world.client.WorldContext;
 
 public class AwardPanel
 {
-    public static const log :Log = Log.getLog(AwardPanel);
-
-    public function AwardPanel (wctx :WorldContext, chatDirector :ChatDirector = null)
+    public function AwardPanel (wctx :WorldContext)
     {
         _wctx = wctx;
-        _chatDirector = chatDirector;
     }
 
     /**
@@ -122,9 +117,7 @@ public class AwardPanel
         }
 
         // display a chat message reporting their award
-        if (_chatDirector != null) {
-            _chatDirector.displayInfo(messageBundle, msg);
-        }
+        _wctx.getChatDirector().displayInfo(messageBundle, msg);
 
         // configure the award display panel with the award info
         (_panel.getChildByName("statement") as TextField).text = title;
@@ -172,13 +165,13 @@ public class AwardPanel
     /** Provides access to main client services. */
     protected var _wctx :WorldContext;
 
-    protected var _chatDirector :ChatDirector;
-
     /** The award display movie. */
     protected var _panel :DisplayObjectContainer;
 
     /** Awards waiting to be displayed. Either Trophy or Item. */
     protected var _pendingAwards :Array = [];
+
+    protected static const log :Log = Log.getLog(AwardPanel);
 
     /** Used to note that we're loading an embedded SWF. */
     protected static const LOADING :Sprite = new Sprite();

@@ -27,6 +27,8 @@ import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 
+import com.threerings.msoy.ui.AwardPanel;
+
 import com.threerings.msoy.client.MemberService;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
@@ -43,6 +45,8 @@ import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldControlBar;
+
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 
 import com.threerings.msoy.notify.data.EntityCommentedNotification;
 import com.threerings.msoy.notify.data.LevelUpNotification;
@@ -166,12 +170,28 @@ public class NotificationDirector extends BasicDirector
             if (notification != null) {
                 addNotification(notification);
             }
+
+        } else if (name == MemberObject.BADGE_AWARDED) {
+            // TODO: create badge awarded notifications and dispatch through the NOTIFICATION 
+            // mechanism above.
+            displayAward(event.getArgs()[0] as EarnedBadge);
         }
     }
 
     public function getCurrentNotifications () :Array
     {
         return _notifications;
+    }
+
+    /**
+     * Display an award in a {@ AwardPanel}.
+     */
+    public function displayAward (award :Object) :void
+    {
+        if (_awardPanel == null) {
+            _awardPanel = new AwardPanel(_wctx);
+        }
+        _awardPanel.displayAward(award);
     }
 
     // from BasicDirector
@@ -249,5 +269,6 @@ public class NotificationDirector extends BasicDirector
 
     protected var _lastId :uint = 0;
     protected var _notifications :Array = [];
+    protected var _awardPanel :AwardPanel;
 }
 }

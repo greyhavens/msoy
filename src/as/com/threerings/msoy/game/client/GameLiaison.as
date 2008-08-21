@@ -38,7 +38,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.ui.AwardPanel;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.data.MsoyGameCodes;
@@ -196,12 +195,6 @@ public class GameLiaison
     // from interface ClientObserver
     public function clientDidClear (event :ClientEvent) :void
     {
-        // remove any trophy panel we might have lying around
-        if (_awardPanel != null) {
-            _awardPanel.close();
-            // if the path completes after this, it will generate a warning, but in "theory" it
-            // should stop receiving onEnterFrame when it's removed from the hierarchy
-        }
         // tell the game director that we're audi
         _wctx.getGameDirector().liaisonCleared(this);
     }
@@ -212,10 +205,7 @@ public class GameLiaison
         const name :String = event.getName();
         const args :Array = event.getArgs();
         if (name == MsoyGameCodes.TROPHY_AWARDED || name == MsoyGameCodes.PRIZE_AWARDED) {
-            if (_awardPanel == null) {
-                _awardPanel = new AwardPanel(_wctx, _gctx.getChatDirector());
-            }
-            _awardPanel.displayAward(args[0]);
+            _wctx.displayAward(args[0]);
 
         } else if (name == WhirledGameObject.COINS_AWARDED_MESSAGE) {
             const coins :int = int(args[0]);
@@ -306,9 +296,6 @@ public class GameLiaison
 
     /** Automatically dismisses the flow panel. */
     protected var _flowPanelAutoDismiss :Timer;
-
-    /** The award display movie. */
-    protected var _awardPanel :AwardPanel;
 
     /** Used to note that we're loading an embedded SWF. */
     protected static const LOADING :Sprite = new Sprite();
