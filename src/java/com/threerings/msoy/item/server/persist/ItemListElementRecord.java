@@ -98,10 +98,7 @@ public class ItemListElementRecord extends PersistentRecord
 
     public ItemListElementRecord (int listId, Item item, int sequence)
     {
-        this.listId = listId;
-        this.type = item.getType();
-        this.itemId = item.itemId;
-        this.sequence = (short) sequence;
+        this(listId, item.getIdent(), sequence);
     }
 
     public ItemIdent toItemIdent ()

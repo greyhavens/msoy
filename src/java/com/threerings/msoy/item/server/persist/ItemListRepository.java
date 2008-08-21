@@ -27,6 +27,7 @@ import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic;
+import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.msoy.item.data.all.Item;
@@ -305,24 +306,27 @@ public class ItemListRepository extends DepotRepository
      * @param listId identifies the list.
      * @param fromIndex shift everything from this location on to the right.
      */
-    protected void shiftItemsRight (int listId, final short fromIndex)
+    protected void shiftItemsRight (final int listId, final short fromIndex)
         throws PersistenceException
     {
+        Equals findList = new Equals(ItemListElementRecord.LIST_ID_C, listId);
         Conditionals.GreaterThanEquals after =
             new Conditionals.GreaterThanEquals(ItemListElementRecord.SEQUENCE_C, fromIndex);
+        Logic.And condition = new Logic.And(findList, after);
+
         Map<String, SQLExpression> shift = new HashMap<String, SQLExpression>();
         shift.put(ItemListElementRecord.SEQUENCE,
-                  new Arithmetic.Add(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
+                  new Arithmetic.Add(ItemListElementRecord.SEQUENCE_C, 1));
 
         CacheInvalidator invalidator =
             new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
             public boolean testForEviction (Serializable key, ItemListElementRecord record) {
-                return (record != null) && record.sequence >= fromIndex;
+                return record.listId == listId && record.sequence >= fromIndex;
             }
         };
 
-        updateLiteral(ItemListElementRecord.class, new Where(after), invalidator, shift);
+        updateLiteral(ItemListElementRecord.class, new Where(condition), invalidator, shift);
     }
 
     /**
@@ -330,11 +334,13 @@ public class ItemListRepository extends DepotRepository
      *
      * @param fromIndex the starting point from which to shift.
      */
-    protected void shiftItemsLeft (int listId, final short fromIndex)
+    protected void shiftItemsLeft (final int listId, final short fromIndex)
         throws PersistenceException
     {
+        Equals findList = new Equals(ItemListElementRecord.LIST_ID_C, listId);
         Conditionals.GreaterThan after =
             new Conditionals.GreaterThan(ItemListElementRecord.SEQUENCE_C, fromIndex);
+        Logic.And condition = new Logic.And(findList, after);
         Map<String, SQLExpression> shift = new HashMap<String, SQLExpression>();
         shift.put(ItemListElementRecord.SEQUENCE,
                   new Arithmetic.Sub(ItemListElementRecord.SEQUENCE_C, Integer.valueOf(1)));
@@ -343,11 +349,11 @@ public class ItemListRepository extends DepotRepository
             new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
             public boolean testForEviction (Serializable key, ItemListElementRecord record) {
-                return (record != null) && record.sequence > fromIndex;
+                return record.listId == listId && record.sequence > fromIndex;
             }
         };
 
-        updateLiteral(ItemListElementRecord.class, new Where(after), invalidator, shift);
+        updateLiteral(ItemListElementRecord.class, new Where(condition), invalidator, shift);
     }
 
     /**
@@ -357,7 +363,7 @@ public class ItemListRepository extends DepotRepository
      * @param fromIndex the item's old location in the list.
      * @param toIndex the item's new location in the list.
      */
-    protected void shiftItems (int listId, final short fromIndex, final short toIndex)
+    protected void shiftItems (final int listId, final short fromIndex, final short toIndex)
         throws PersistenceException
     {
         CacheInvalidator invalidator;
@@ -378,7 +384,7 @@ public class ItemListRepository extends DepotRepository
             invalidator = new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
                 ItemListElementRecord.class) {
                 public boolean testForEviction (Serializable key, ItemListElementRecord record) {
-                    return (record != null) && record.sequence > fromIndex &&
+                    return record.listId == listId && record.sequence > fromIndex &&
                         record.sequence <= toIndex;
                 }
             };
@@ -403,8 +409,11 @@ public class ItemListRepository extends DepotRepository
             };
         }
 
+        Equals findList = new Equals(ItemListElementRecord.LIST_ID_C, listId);
+        Logic.And condition = new Logic.And(findList, range);
+
         // update all of the affected items
-        updateLiteral(ItemListElementRecord.class, new Where(range), invalidator, shift);
+        updateLiteral(ItemListElementRecord.class, new Where(condition), invalidator, shift);
     }
 
     /**
