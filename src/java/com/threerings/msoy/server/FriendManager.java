@@ -26,8 +26,14 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton @EventThread
 public class FriendManager
-    implements MsoyPeerManager.RemoteMemberObserver
+    implements MemberLocator.Observer, MsoyPeerManager.RemoteMemberObserver
 {
+    @Inject public FriendManager (MemberLocator locator)
+    {
+        // register to hear about member logon and logoff
+        locator.addObserver(this);
+    }
+
     /**
      * Prepares the friend manager for operation.
      */
@@ -37,9 +43,7 @@ public class FriendManager
         _peerMan.addRemoteMemberObserver(this);
     }
 
-    /**
-     * Called when a member logs onto this server.
-     */
+    // from interface MemberLocator.Observer
     public void memberLoggedOn (final MemberObject memobj)
     {
         if (memobj.isGuest()) {
@@ -65,9 +69,7 @@ public class FriendManager
         updateOnlineStatus(memobj.getMemberId(), true);
     }
 
-    /**
-     * Called when a member logs off of this server.
-     */
+    // from interface MemberLocator.Observer
     public void memberLoggedOff (MemberObject memobj)
     {
         // clear out our friend interest registrations

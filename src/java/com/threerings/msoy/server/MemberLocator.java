@@ -10,6 +10,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
+import com.samskivert.util.ObserverList;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -30,6 +31,15 @@ import java.util.Collection;
 @Singleton @EventThread
 public class MemberLocator extends BodyLocator
 {
+    /** Used to notify server entities of member logon and logoff. */
+    public static interface Observer {
+        /** Called when a member logs onto this server. */
+        public void memberLoggedOn (MemberObject memobj);
+
+        /** Called when a member log off of this server. */
+        public void memberLoggedOff (MemberObject memobj);
+    }
+
     /**
      * Returns the member object for the user identified by the given ID if they are online
      * currently, null otherwise.
@@ -59,14 +69,36 @@ public class MemberLocator extends BodyLocator
     }
 
     /**
+     * Adds a member session observer.
+     */
+    public void addObserver (Observer observer)
+    {
+        _observers.add(observer);
+    }
+
+    /**
+     * Removes a member session observer.
+     */
+    public void removeObserver (Observer observer)
+    {
+        _observers.remove(observer);
+    }
+
+    /**
      * Called when a member starts their session to associate the name with the member's
      * distributed object.
      */
-    public void memberLoggedOn (MemberObject memobj)
+    public void memberLoggedOn (final MemberObject memobj)
     {
         _online.put(memobj.memberName.getMemberId(), memobj);
-        _memberMan.memberLoggedOn(memobj);
-        _friendMan.memberLoggedOn(memobj);
+
+        // notify our observers
+        _observers.apply(new ObserverList.ObserverOp<Observer>() {
+            public boolean apply (Observer observer) {
+                observer.memberLoggedOn(memobj);
+                return true;
+            }
+        });
 
         // update our members online count in the status object
         _adminMan.statObj.setMembersOnline(_clmgr.getClientCount());
@@ -75,10 +107,17 @@ public class MemberLocator extends BodyLocator
     /**
      * Called when a member ends their session to clear their name to member object mapping.
      */
-    public void memberLoggedOff (MemberObject memobj)
+    public void memberLoggedOff (final MemberObject memobj)
     {
         _online.remove(memobj.memberName.getMemberId());
-        _friendMan.memberLoggedOff(memobj);
+
+        // notify our observers
+        _observers.apply(new ObserverList.ObserverOp<Observer>() {
+            public boolean apply (Observer observer) {
+                observer.memberLoggedOff(memobj);
+                return true;
+            }
+        });
 
         // update our members online count in the status object
         _adminMan.statObj.setMembersOnline(_clmgr.getClientCount());
@@ -93,6 +132,9 @@ public class MemberLocator extends BodyLocator
 
     /** A mapping from member name to member object for all online members. */
     protected IntMap<MemberObject> _online = IntMaps.newHashIntMap();
+
+    /** A list of member session observers. */
+    protected ObserverList<Observer> _observers = ObserverList.newFastUnsafe();
 
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected MemberManager _memberMan;
