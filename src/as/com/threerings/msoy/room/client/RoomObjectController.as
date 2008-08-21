@@ -805,6 +805,8 @@ public class RoomObjectController extends RoomController
         // get a copy of the scene
         _scene = (_wdctx.getSceneDirector().getScene() as MsoyScene);
 
+        _wdctx.getMsoyController().addGoMenuProvider(populateGoMenu);
+
         _roomEditBtn = WorldControlBar(_wdctx.getTopPanel().getControlBar()).roomEditBtn;
         _roomEditBtn.enabled = canManageRoom();
 
@@ -830,6 +832,8 @@ public class RoomObjectController extends RoomController
         if (isRoomEditing()) {
             cancelRoomEditing();
         }
+
+        _wdctx.getMsoyController().removeGoMenuProvider(populateGoMenu);
 
         _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
@@ -1199,6 +1203,21 @@ public class RoomObjectController extends RoomController
         _roomObjectView.processUpdate(update);
         if (_editor != null) {
             _editor.processUpdate(update);
+        }
+    }
+
+    /**
+     * Populates any room-specific entries on the client's "go" menu.
+     */
+    protected function populateGoMenu (menuData :Array) :void
+    {
+        const model :MsoySceneModel = _scene.getSceneModel() as MsoySceneModel;
+
+        if (model.gameId != 0) {
+            menuData.push({ type: "separator" });
+            menuData.push({ label: Msgs.GENERAL.get("b.group_game"),
+                command: WorldController.JOIN_GAME_LOBBY, arg: model.gameId });
+            menuData.push({ type: "separator" });
         }
     }
     

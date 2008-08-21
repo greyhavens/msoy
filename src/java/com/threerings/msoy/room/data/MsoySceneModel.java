@@ -55,6 +55,9 @@ public class MsoySceneModel extends SceneModel
     /** The name of the owner, either a MemberName or the group's name. */
     public Name ownerName;
 
+    /** The game associated with this room (usually the group's game), or 0 if none. */
+    public int gameId;
+
     /** The furniture in the scene. */
     public FurniData[] furnis = new FurniData[0];
 

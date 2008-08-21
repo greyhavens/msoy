@@ -54,6 +54,9 @@ public class MsoySceneModel extends SceneModel
     /** The name of the owner, either a MemberName or the group's name. */
     public var ownerName :Name;
 
+    /** The game associated with this room (usually the group's game), or 0 if none. */
+    public var gameId :int;
+
     /** The furniture in the scene. */
     public var furnis :TypedArray /* of FurniData */;
 
@@ -201,6 +204,7 @@ public class MsoySceneModel extends SceneModel
         model.ownerType = ownerType;
         model.ownerId = ownerId;
         model.ownerName = ownerName;
+        model.gameId = gameId;
         model.furnis = (furnis.clone() as TypedArray);
         model.entrance = (entrance.clone() as MsoyLocation);
         model.decor = decor;
@@ -217,6 +221,7 @@ public class MsoySceneModel extends SceneModel
         out.writeByte(ownerType);
         out.writeInt(ownerId);
         out.writeObject(ownerName);
+        out.writeInt(gameId);
         out.writeObject(furnis);
         out.writeObject(entrance);
         out.writeObject(decor);
@@ -232,6 +237,7 @@ public class MsoySceneModel extends SceneModel
         ownerType = ins.readByte();
         ownerId = ins.readInt();
         ownerName = (ins.readObject() as Name);
+        gameId = ins.readInt();
         furnis = (ins.readObject() as TypedArray);
         entrance = (ins.readObject() as MsoyLocation);
         decor = (ins.readObject() as Decor);
