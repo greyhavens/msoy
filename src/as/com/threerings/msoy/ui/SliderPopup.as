@@ -131,6 +131,8 @@ public class SliderPopup extends Canvas
      */
     protected function resetTick () :void
     {
+        _adjusted = true;
+
         const value :Number = _slider.value;
         const ticks :Array = _slider.tickValues;
         if (ticks == null) {
