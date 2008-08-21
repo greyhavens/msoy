@@ -51,7 +51,6 @@ public class NotificationManager
                 target.postMessage(MemberObject.NOTIFICATION, note);
             }
             target.commitTransaction();
-            target.deferredNotifications = null;
         }
     }
 
