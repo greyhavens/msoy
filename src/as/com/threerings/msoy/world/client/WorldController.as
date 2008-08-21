@@ -167,6 +167,9 @@ public class WorldController extends MsoyController
     /** Command to invoke when the featured place was clicked. */
     public static const FEATURED_PLACE_CLICKED :String = "FeaturedPlaceClicked";
 
+    /** Command to view the passport page. */
+    public static const VIEW_PASSPORT :String = "ViewPassport";
+
     public function WorldController (ctx :WorldContext, topPanel :TopPanel)
     {
         super(ctx, topPanel);
@@ -455,6 +458,14 @@ public class WorldController extends MsoyController
         if (!inGWTApp() || !displayPage("games", "d_" + gameId)) {
             handleJoinGameLobby(gameId);
         }
+    }
+
+    /**
+     * Handles the VIEW_PASSPORT command.
+     */
+    public function handleViewPassport () :void
+    {
+        displayPage("me", "passport");
     }
 
     /**
