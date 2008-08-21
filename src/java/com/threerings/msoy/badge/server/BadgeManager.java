@@ -64,8 +64,8 @@ public class BadgeManager
 
         // iterate the list of badges to see if the player has won any new ones
         long whenEarned = System.currentTimeMillis();
-        List<EarnedBadge> newBadges = null;
-        List<InProgressBadge> inProgressBadges = null;
+        List<EarnedBadge> newBadges = Lists.newArrayList();
+        List<InProgressBadge> inProgressBadges = Lists.newArrayList();
         for (BadgeType badgeType : BadgeType.values()) {
             BadgeProgress progress = badgeType.getProgress(user.stats);
             if (progress.highestLevel >= 0) {
@@ -73,19 +73,14 @@ public class BadgeManager
                 int currentLevel = earnedBadge == null ? -1 : earnedBadge.level;
                 for (int level = currentLevel + 1; level <= progress.highestLevel; level++) {
                     // award an EarnedBadge for each level that was earned in this update.
-                    EarnedBadge newBadge = new EarnedBadge(badgeType.getCode(), level,
-                        badgeType.getLevelUnits(level), badgeType.getCoinValue(level), whenEarned);
-
-                    if (newBadges == null) {
-                        newBadges = Lists.newArrayList();
-                    }
-                    newBadges.add(newBadge);
+                    newBadges.add(new EarnedBadge(badgeType.getCode(), level,
+                        badgeType.getLevelUnits(level), badgeType.getCoinValue(level), whenEarned));
                 }
             }
 
             if (progress.highestLevel >= 0 && progress.highestLevel < badgeType.getNumLevels()-1) {
-                // If we haven't reached the highest badge level for this badge,
-                // we should have a corresponding InProgressBadge for it.
+                // If we haven't reached the highest badge level for this badge, we should have a
+                // corresponding InProgressBadge for it.
                 InProgressBadge inProgressBadge = user.inProgressBadges.getBadge(badgeType);
 
                 float quantizedProgress = InProgressBadgeRecord.quantizeProgress(
@@ -95,23 +90,18 @@ public class BadgeManager
                         (progress.highestLevel == inProgressBadge.level - 1 &&
                                 quantizedProgress > inProgressBadge.progress)) {
                     int nextLevel = progress.highestLevel + 1;
-                    InProgressBadge newBadge =  new InProgressBadge(badgeType.getCode(),
-                            nextLevel, badgeType.getLevelUnits(nextLevel),
-                            badgeType.getCoinValue(nextLevel), quantizedProgress);
-
-                    if (inProgressBadges == null) {
-                        inProgressBadges = Lists.newArrayList();
-                    }
-                    inProgressBadges.add(newBadge);
+                    inProgressBadges.add(new InProgressBadge(badgeType.getCode(),
+                        nextLevel, badgeType.getLevelUnits(nextLevel),
+                        badgeType.getCoinValue(nextLevel), quantizedProgress));
                 }
             }
         }
 
-        if (newBadges != null) {
+        if (!newBadges.isEmpty()) {
             awardBadges(user, newBadges);
         }
 
-        if (inProgressBadges != null) {
+        if (!inProgressBadges.isEmpty()) {
             updateInProgressBadges(user, inProgressBadges);
         }
     }
