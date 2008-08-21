@@ -929,9 +929,12 @@ public abstract class ItemRepository<T extends ItemRecord>
     public void incrementFavoriteCount (CatalogRecord record, int increment)
         throws PersistenceException
     {
-        // TODO increment the column value in the database in case the give record has a stale count
-        int modifiedRows = updatePartial(getCatalogClass(), record.catalogId,
-            CatalogRecord.FAVORITE_COUNT, record.favoriteCount + increment);
+        Map<String, SQLExpression> fieldsToValues = Maps.newHashMap();
+        Arithmetic.Add add = new Arithmetic.Add(new ColumnExp(getCatalogClass(), CatalogRecord.FAVORITE_COUNT), increment);
+        fieldsToValues.put(CatalogRecord.FAVORITE_COUNT, add);
+
+        int modifiedRows = updateLiteral(getCatalogClass(), record.catalogId, fieldsToValues);
+
         if (modifiedRows == 0) {
             log.warning("Could not update favorite count on catalog record.", "catalogId",
                 record.catalogId, "increment", increment);
