@@ -25,11 +25,7 @@ public class BorderedPopup extends PopupPanel
         super.setWidget(_widget = new BorderedWidget());
 
         // listen for our own closes and export that in a handy calldown method
-        addPopupListener(new PopupListener() {
-            public void onPopupClosed (PopupPanel panel, boolean autoClosed) {
-                onClosed(autoClosed);
-            }
-        });
+        addPopupListener(_closeListener);
 
         // start out with animation enabled for our first pop
         setAnimationEnabled(true);
@@ -46,7 +42,9 @@ public class BorderedPopup extends PopupPanel
     {
         if (_centerOnShow) {
             _centerOnShow = false;
+            removePopupListener(_closeListener);
             center(); // this will show us
+            addPopupListener(_closeListener);
         } else {
             super.show();
         }
@@ -71,9 +69,17 @@ public class BorderedPopup extends PopupPanel
     {
         // if I could access 'impl' here, I wouldn't have to do this lame hack, but the GWT
         // engineers conveniently made it private, so I can't
+        removePopupListener(_closeListener);
         hide();
         super.show();
+        addPopupListener(_closeListener);
     }
+
+    protected PopupListener _closeListener = new PopupListener() {
+        public void onPopupClosed (PopupPanel panel, boolean autoClosed) {
+            onClosed(autoClosed);
+        }
+    };
 
     protected BorderedWidget _widget;
 
