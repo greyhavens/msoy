@@ -155,8 +155,6 @@ public class WorldControlBar extends ControlBar
             return new FriendsListPanel(_wctx);
         }, _friendsBtn));
         _friendsBtn.styleName = "controlBarFriendButton";
-        _friendsBtn.enabled = true;
-        _friendsBtn.focusEnabled = false;
 
         // Not ready for consumption
         if (_ctx.getTokens().isAdmin()) {
