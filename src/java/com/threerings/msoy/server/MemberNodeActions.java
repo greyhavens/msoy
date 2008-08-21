@@ -346,7 +346,7 @@ public class MemberNodeActions
 
         protected EarnedBadge _badge;
 
-        @Inject protected NotificationManager _notifyMan;
+        @Inject transient protected NotificationManager _notifyMan;
     }
 
     protected static class InProgressBadgeUpdated extends MemberNodeAction
