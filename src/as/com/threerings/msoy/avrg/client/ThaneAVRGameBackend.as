@@ -7,7 +7,9 @@ import flash.events.Event;
 
 import com.threerings.io.TypedArray;
 import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
+import com.threerings.msoy.room.data.RoomPropertiesObject;
 import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.dobj.MessageAdapter;
@@ -18,16 +20,17 @@ import com.whirled.game.data.WhirledPlayerObject;
 
 public class ThaneAVRGameBackend
 {
-    public static const log :Log = Log.getLog(ThaneAVRGameBackend);
+    public static const log :Log = BackendUtils.log;
 
     /**
      * Constructs a new base avr game backend.
      */
-    public function ThaneAVRGameBackend (ctx :MsoyBureauContext, gameObj :AVRGameObject)
+    public function ThaneAVRGameBackend (
+        ctx :MsoyBureauContext, gameObj :AVRGameObject, controller :ThaneAVRGameController)
     {
         _ctx = ctx;
         _gameObj = gameObj;
-        _ctx.getClient().getClientObject().addListener(_privateMessageListener);
+        _controller = controller;
     }
 
     public function isConnected () :Boolean
@@ -43,7 +46,13 @@ public class ThaneAVRGameBackend
     public function shutdown () :void
     {
         // shut down sub-backends, remove listeners
-        _ctx.getClient().getClientObject().removeListener(_privateMessageListener);
+        _privateMessageAdapter.release();
+        _gameObjNetAdapter.release();
+    }
+
+    public function roomUnloaded (roomId :int) :void
+    {
+        callUserCode("roomUnloaded_v1", roomId);
     }
 
     protected function handleUserCodeConnect (evt :Object) :void
@@ -62,7 +71,14 @@ public class ThaneAVRGameBackend
         populateProperties(ourProps);
         props.hostProps = ourProps;
 
-        BackendUtils.initPropertyChangeDispatch(_gameObj, _userFuncs, "game_propertyWasSet_v1");
+        _gameObjNetAdapter = new BackendNetAdapter(
+            _gameObj, AVRGameObject.USER_MESSAGE, _userFuncs, "game_propertyWasSet_v1", 
+            "game_messageReceived_v1");
+
+        _privateMessageAdapter = new BackendNetAdapter(
+            _ctx.getClient().getClientObject(), 
+            WhirledPlayerObject.getMessageName(_gameObj.getOid()), _userFuncs, null, 
+            "game_messageReceived_v1");
     }
 
     protected function populateProperties (o :Object) :void
@@ -70,6 +86,7 @@ public class ThaneAVRGameBackend
         // .game
         o["game_getPlayerIds_v1"] = game_getPlayerIds_v1;
         o["game_sendMessage_v1"] = game_sendMessage_v1;
+        o["isRoomLoaded_v1"] = isRoomLoaded_v1
 
         // .game.props
         o["game_getGameData_v1"] = game_getGameData_v1;
@@ -112,6 +129,11 @@ public class ThaneAVRGameBackend
     protected function game_sendMessage_v1 (name :String, value :Object) :void
     {
     }
+
+    protected function isRoomLoaded_v1 (roomId :int) :Boolean
+    {
+        return _controller.getRoomProps(roomId) != null;
+    }
     
     // -------------------- .game.props --------------------
     protected function game_getGameData_v1 (targetId :int) :Object
@@ -135,12 +157,22 @@ public class ThaneAVRGameBackend
     // -------------------- .getRoom() --------------------
     protected function room_getPlayerIds_v1 (roomId :int) :Array
     {
-        return [];
+        var playerIds :Array = [];
+        for each (var pl :PlayerLocation in _gameObj.playerLocs) {
+            if (pl.sceneId == roomId) {
+                playerIds.push(pl.playerId);
+            }
+        }
+        return playerIds;
     }
 
     protected function isPlayerHere_v1 (roomId :int, playerId :int) :Boolean
     {
-        return false;
+        var pl :PlayerLocation = _gameObj.playerLocs.get(playerId) as PlayerLocation;
+        if (pl == null) {
+            return false;
+        }
+        return pl.sceneId == roomId;
     }
 
     protected function getAvatarInfo_v1 (roomId :int, playerId :int) :Array
@@ -170,19 +202,38 @@ public class ThaneAVRGameBackend
 
     protected function room_sendMessage_v1 (roomId :int, name :String, value :Object) :void
     {
+        var roomProps :RoomPropertiesObject = _controller.getRoomProps(roomId);
+        if (roomProps == null) {
+            throw new Error("Room not loaded [roomId=" + roomId + "]");
+        }
+        var encoded :Object = ObjectMarshaller.encode(value, false);
+        roomProps.messageService.sendMessage(
+            _controller.getRoomClient(roomId), name, encoded, 
+            BackendUtils.loggingInvocationListener("room_sendMessage"));
     }
 
     
     // -------------------- .getRoom().props --------------------
     protected function room_getGameData_v1 (roomId :int) :Object
     {
-        return {};
+        var roomProps :RoomPropertiesObject = _controller.getRoomProps(roomId);
+        if (roomProps == null) {
+            // TODO: is there a more appropriate way to deal with room errors?
+            throw new Error("Room not loaded [roomId=" + roomId + "]");
+        }
+        return roomProps.getUserProps();
     }
 
     protected function room_setProperty_v1 (
         roomId :int, name :String, value :Object, key :Object, isArray :Boolean, 
         immediate :Boolean) :void
     {
+        var roomProps :RoomPropertiesObject = _controller.getRoomProps(roomId);
+        if (roomProps == null) {
+            throw new Error("Room not loaded [roomId=" + roomId + "]");
+        }
+        BackendUtils.encodeAndSet(
+            _controller.getRoomClient(roomId), roomProps, name, value, key, isArray, immediate);
     }
 
     // -------------------- .getPlayer() --------------------
@@ -233,7 +284,8 @@ public class ThaneAVRGameBackend
         var targets :TypedArray = TypedArray.create(int);
         targets.push(playerId);
         _gameObj.messageService.sendPrivateMessage(
-            _ctx.getClient(), name, encoded, targets, loggingInvocationListener("sendMessage"));
+            _ctx.getClient(), name, encoded, targets, 
+            BackendUtils.loggingInvocationListener("player_sendMessage"));
     }
 
     // -------------------- .getPlayer().props --------------------
@@ -250,18 +302,10 @@ public class ThaneAVRGameBackend
 
     // -------------------- end of versioned methods --------------------
 
-    // internal utility method
-    protected function loggingInvocationListener (svc :String) :InvocationService_InvocationListener
-    {
-        return new InvocationAdapter(function (cause :String) :void {
-            log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
-        });
-    }
-
     /**
      * Call an exposed function in usercode.
      */
-    public function callUserCode (name :String, ... args) :*
+    protected function callUserCode (name :String, ... args) :*
     {
         if (_userFuncs != null) {
             try {
@@ -280,19 +324,11 @@ public class ThaneAVRGameBackend
     }
 
     protected var _userFuncs :Object;
-    protected var _ctx :MsoyBureauContext;
+    protected var _ctx :MsoyBureauContext; // this is for the game server
+    protected var _controller :ThaneAVRGameController;
     protected var _gameObj :AVRGameObject;
-    protected var _privateMessageListener :MessageAdapter = new MessageAdapter(
-        function (event: MessageEvent) :void {
-            var name :String = event.getName();
-            if (WhirledPlayerObject.isFromGame(name, _gameObj.getOid())) {
-                var args :Array = event.getArgs();
-                var mname :String = (args[0] as String);
-                var data :Object = ObjectMarshaller.decode(args[1]);
-                var senderId :int = (args[2] as int);
-                callUserCode("game_messageReceived_v1", mname, data, senderId);
-            }
-        });
+    protected var _gameObjNetAdapter :BackendNetAdapter;
+    protected var _privateMessageAdapter :BackendNetAdapter;
 }
 
 }

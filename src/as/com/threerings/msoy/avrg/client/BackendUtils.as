@@ -22,7 +22,7 @@ import com.whirled.game.data.PropertySpaceObject;
  */
 public class BackendUtils
 {
-    public static const log :Log = Log.getLog(BackendUtils);
+    public static const log :Log = new Log("avrg.Backend");
 
     /**
      * Throws an error if the name is not a valid property name.
@@ -98,33 +98,6 @@ public class BackendUtils
                 trace("Error setting property (immediate): " + re);
             }
         }
-    }
-
-    /**
-     * Listen for property changes on the given object and dispatch to the given user function
-     * in the standard way.
-     */
-    public static function initPropertyChangeDispatch (
-        object :DObject, userFuncs :Object, funcName :String) :void
-    {
-        var userFunc :Function = userFuncs[funcName];
-        if (userFunc == null) {
-            throw new Error("User function " + funcName + " not found");
-        }
-
-        function propChanged (event :PropertySetEvent) :void {
-            try {
-                var key :Integer = event.getKey();
-                var keyObj :Object = (key == null) ? null : key.value;
-                userFunc(
-                    event.getName(), event.getValue(), event.getOldValue(), keyObj);
-
-            } catch (err :Error) {
-                log.warning("Error in user-code: " + err, err);
-            }
-        }
-
-        object.addListener(new PropertySetAdapter(propChanged));
     }
 
     /**

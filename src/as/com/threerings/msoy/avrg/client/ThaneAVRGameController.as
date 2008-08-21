@@ -45,7 +45,7 @@ public class ThaneAVRGameController
         _gameAgentObj = gameAgentObj;
 
         // create the backend
-        _backend = new ThaneAVRGameBackend(ctx, gameObj);
+        _backend = new ThaneAVRGameBackend(ctx, gameObj, this);
 
         // set up existing player locations
         if (_gameObj.playerLocs.size () > 0) {
@@ -98,6 +98,24 @@ public class ThaneAVRGameController
     {
         log.info("Reporting agent ready " + _gameObj.which() + ".");
         _gameObj.manager.invoke("agentReady");
+    }
+
+    public function getRoomProps (roomId :int) :RoomPropertiesObject
+    {
+        var binding :SceneBinding = _bindings.get(roomId);
+        if (binding == null) {
+            return null;
+        }
+        return binding.roomProps;
+    }
+
+    public function getRoomClient (roomId :int) :Client
+    {
+        var binding :SceneBinding = _bindings.get(roomId);
+        if (binding == null) {
+            return null;
+        }
+        return binding.window.getClient();
     }
 
     protected function entryAdded (event :EntryAddedEvent) :void
@@ -355,6 +373,8 @@ public class ThaneAVRGameController
         }
 
         log.debug("Removing binding: " + binding);
+
+        _backend.roomUnloaded(sceneId);
 
         // Release all resources
         if (binding.room != null) {

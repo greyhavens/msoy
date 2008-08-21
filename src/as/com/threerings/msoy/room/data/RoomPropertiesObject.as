@@ -13,6 +13,9 @@ import com.whirled.game.data.WhirledGameMessageMarshaller;
 public class RoomPropertiesObject extends DObject
     implements PropertySpaceObject
 {
+    /** Name of messages posted as a result of a message service call. */
+    public static const USER_MESSAGE :String = "Umsg";
+
     /** Service for setting the properties. */
     public var propertiesService :PropertySpaceMarshaller;
     

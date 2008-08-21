@@ -8,7 +8,6 @@ import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import com.threerings.io.TypedArray;
-import com.threerings.util.Integer;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
@@ -17,9 +16,6 @@ import com.threerings.util.Name;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.StringUtil;
 
-import com.whirled.game.client.PropertySpaceHelper;
-import com.whirled.game.data.PropertySetEvent;
-import com.whirled.game.data.PropertySetListener;
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -36,7 +32,6 @@ import com.threerings.crowd.client.OccupantAdapter;
 import com.threerings.crowd.client.OccupantObserver;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
-import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.spot.data.SpotSceneObject;
@@ -55,17 +50,16 @@ import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.room.client.RoomMetrics;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomView;
-import com.threerings.msoy.room.client.layout.RoomLayout;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.RoomPropertiesObject;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
 
 public class AVRGameBackend extends ControlBackend
-    implements PropertySetListener
 {
-    public static const log :Log = Log.getLog(AVRGameBackend);
+    public static const log :Log = BackendUtils.log;
 
     /** 
      * Magic number for specifying the server agent.
@@ -78,13 +72,10 @@ public class AVRGameBackend extends ControlBackend
         _wctx = wctx;
         _gctx = gctx;
         _ctrl = ctrl;
-        _this = this;
         _playerObj = _gctx.getPlayerObject();
-        _playerObj.addListener(this); // for PropertySetListener
 
         _gameObj = gameObj;
         _gameObj.addListener(_gameListener);
-        _gameObj.addListener(this); // for PropertySetListener
 
         _gctx.getClient().getClientObject().addListener(_playerListener);
 
@@ -95,7 +86,6 @@ public class AVRGameBackend extends ControlBackend
         _roomObj = (_wctx.getLocationDirector().getPlaceObject() as RoomObject);
         if (_roomObj != null) {
             _roomObj.addListener(_movementListener);
-            _roomObj.addListener(this); // for PropertySetListener
         }
     }
 
@@ -104,7 +94,6 @@ public class AVRGameBackend extends ControlBackend
     {
          if (_roomObj != null) {
              _roomObj.removeListener(_movementListener);
-             _roomObj.removeListener(this); // for PropertySetListener
              _roomObj = null;
          }
 
@@ -113,6 +102,16 @@ public class AVRGameBackend extends ControlBackend
 
          _gctx.getClient().getClientObject().removeListener(_playerListener);
          _gameObj.removeListener(_gameListener);
+
+         if (_gameNetAdapter != null) {
+             _gameNetAdapter.release();
+         }
+
+         if (_playerNetAdapter != null) {
+             _playerNetAdapter.release();
+         }
+
+         setRoomProperties(null);
 
          super.shutdown();
     }
@@ -156,6 +155,35 @@ public class AVRGameBackend extends ControlBackend
     public function isPlaying () :Boolean
     {
         return _wctx.getGameDirector().getGameId() == _ctrl.getGameId();
+    }
+
+    public function setRoomProperties (props :RoomPropertiesObject) :void
+    {
+        if (_roomPropsNetAdapter != null) {
+            _roomPropsNetAdapter.release();
+            _roomPropsNetAdapter = null;
+        }
+
+        if (props != null && _props != null) {
+            _roomPropsNetAdapter = new BackendNetAdapter(
+                props, RoomPropertiesObject.USER_MESSAGE, _props, "room_propertyWasSet_v1", 
+                "room_messageReceived_v1");
+        }
+    }
+
+    override protected function setUserProperties (o :Object) :void
+    {
+        super.setUserProperties(o);
+
+        _gameNetAdapter = new BackendNetAdapter(
+            _gameObj, AVRGameObject.USER_MESSAGE, o, "game_propertyWasSet_v1", 
+            "game_messageReceived_v1");
+
+        _playerNetAdapter = new BackendNetAdapter(
+            _playerObj, WhirledPlayerObject.getMessageName(_gameObj.getOid()), o,
+            "player_propertyWasSet_v1", "player_messageReceived_v1");
+
+        setRoomProperties(_ctrl.getRoomProperties());
     }
 
     // from ControlBackend
@@ -549,35 +577,6 @@ public class AVRGameBackend extends ControlBackend
         return null;
     }
 
-    // from PropertySetListener
-    public function propertyWasSet (event :PropertySetEvent) :void
-    {
-        if (_props == null) {
-            // Normally this is not needed, because callUserCode will fail gracefully if we're
-            // not connected. However, this method accesses _userFuncs directly, and it may not
-            // yet be set up if the user is still downloading the game media.
-            return;
-        }
-        var key :Integer = event.getKey();
-        var keyObj :Object = (key == null) ? null : key.value;
-
-        var target :String;
-        // TODO: we should probably write a PropertySetAdapter, at least for the Thane version
-        if (event.getTargetOid() == _gameObj.getOid()) {
-            target = "game";
-        } else if (event.getTargetOid() == _roomObj.getOid()) {
-            target = "room";
-        } else if (event.getTargetOid() == _playerObj.getOid()) {
-            target = "player";
-        } else {
-            return;
-        }
-
-        callUserCode(
-            target + "_propertyWasSet_v1", event.getName(), event.getValue(),
-            event.getOldValue(), keyObj);
-    }
-
     // internal callback
     protected function playerEntered (name :Name) :void
     {
@@ -601,7 +600,7 @@ public class AVRGameBackend extends ControlBackend
      */
     protected function displayInfo (bundle :String, msg :String, localType :String = null) :void
     {
-        (_wctx as CrowdContext).getChatDirector().displayInfo(bundle, msg, localType);
+        _wctx.getChatDirector().displayInfo(bundle, msg, localType);
     }
 
     // internal utility method
@@ -668,23 +667,17 @@ public class AVRGameBackend extends ControlBackend
     protected var _ctrl :AVRGameController;
 
     protected var _gameObj :AVRGameObject;
+    protected var _gameNetAdapter :BackendNetAdapter;
     protected var _playerObj :PlayerObject;
+    protected var _playerNetAdapter :BackendNetAdapter;
     protected var _roomObj :RoomObject;
-
-    // For access to "this" within observers and listeners
-    protected var _this :AVRGameBackend;
+    protected var _roomPropsNetAdapter :BackendNetAdapter;
 
     protected var _playerListener :MessageAdapter = new MessageAdapter(
         function (event :MessageEvent) :void {
             var name :String = event.getName();
             if (name == AVRGameObject.COINS_AWARDED_MESSAGE) {
                 callUserCode("coinsAwarded_v1", int(event.getArgs()[0]));
-            } else if (WhirledPlayerObject.isFromGame(name, _gameObj.getOid())) {
-                var args :Array = event.getArgs();
-                var mname :String = (args[0] as String);
-                var data :Object = ObjectMarshaller.decode(args[1]);
-                var senderId :int = (args[2] as int);
-                callUserCode("game_messageReceived_v1", mname, data, senderId);
             }
     });
 
@@ -717,13 +710,11 @@ public class AVRGameBackend extends ControlBackend
         null, function (place :PlaceObject) :void {
             if (_roomObj != null) {
                 _roomObj.removeListener(_movementListener);
-                _roomObj.removeListener(_this);
                 callUserCode("leftRoom_v1");
             }
             _roomObj = (place as RoomObject);
             if (_roomObj != null) {
                 _roomObj.addListener(_movementListener);
-                _roomObj.addListener(_this); // for PropertySetListener
 
                 // TODO: this is where we may need to get clever and hold off on the
                 // TODO: dispatch until a number of conditions are true.

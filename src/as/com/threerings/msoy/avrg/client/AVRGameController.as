@@ -140,6 +140,18 @@ public class AVRGameController extends PlaceController
         return getAVRGameConfig().getGameId();
     }
 
+    /**
+     * Retrieve the room properties for our current rooom. Returns null if they are not yet 
+     * available.
+     */
+    public function getRoomProperties () :RoomPropertiesObject
+    {
+        if (_roomPropsOid == 0) {
+            return null;
+        }
+        return _worldObjectMgr.getObj(_roomPropsOid) as RoomPropertiesObject;
+    }
+
     // both initializeWorldContext() and willEnterPlace() contribute data that is vital to
     // the creation of the backend, and we cannot know which order they will execute in, so
     // we call this method in both; it will be executed when both have done their job.
@@ -156,7 +168,8 @@ public class AVRGameController extends PlaceController
         var panel :AVRGamePanel = (getPlaceView() as AVRGamePanel);
         panel.backendIsReady();
 
-        _worldObjectMgr = new SafeObjectManager(_wctx.getClient().getDObjectManager(), log);
+        _worldObjectMgr = new SafeObjectManager(
+            _wctx.getClient().getDObjectManager(), log, roomPropsAvailable);
 
         // sign up for room objects
         _wctx.getLocationDirector().addLocationObserver(_roomObserver);
@@ -222,28 +235,22 @@ public class AVRGameController extends PlaceController
     protected function setRoomPropsOid (propsOid :int) :void
     {
         if (_roomPropsOid != 0) {
+            _backend.setRoomProperties(null);
             _worldObjectMgr.unsubscribe(_roomPropsOid);
         }
 
         _roomPropsOid = propsOid;
 
         if (_roomPropsOid != 0) {
-            // TODO: do we need to pass response functions and inform the backend when the properties
-            // become available?
             _worldObjectMgr.subscribe(_roomPropsOid);
         }
     }
 
-    /**
-     * Retrieve the room properties for our current rooom. Returns null if they are not yet 
-     * available.
-     */
-    protected function getRoomProperties () :RoomPropertiesObject
+    protected function roomPropsAvailable (roomProps :RoomPropertiesObject) :void
     {
-        if (_roomPropsOid == 0) {
-            return null;
+        if (roomProps.getOid() == _roomPropsOid) {
+            _backend.setRoomProperties(roomProps);
         }
-        return _worldObjectMgr.getObj(_roomPropsOid) as RoomPropertiesObject;
     }
 
     protected var _wctx :WorldContext;
