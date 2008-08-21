@@ -34,6 +34,7 @@ import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
@@ -272,10 +273,12 @@ public class ItemLogic
         if (nrecord instanceof GameRecord) {
             GameRecord grec = (GameRecord)nrecord;
             if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
-                GroupMembershipRecord membership = _groupRepo.getMembership(grec.groupId,
-                    memrec.memberId);
-                if (membership == null || membership.rank < GroupMembership.RANK_MANAGER) {
-                    throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+                if (grec.groupId != Game.NO_GROUP) {
+                    GroupMembershipRecord membership = _groupRepo.getMembership(grec.groupId,
+                        memrec.memberId);
+                    if (membership == null || membership.rank < GroupMembership.RANK_MANAGER) {
+                        throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+                    }
                 }
             }
         }
@@ -311,10 +314,13 @@ public class ItemLogic
                     GameRecord gameRecord = _gameRepo.loadItem(grec.itemId);
                     grec.gameId = gameRecord.gameId;
                 }
-                if (orecord != null) {
+                if (orecord != null && ((GameRecord)orecord).groupId != Game.NO_GROUP) {
                     _groupRepo.updateGroup(((GameRecord)orecord).groupId, GroupRecord.GAME_ID, 0);
                 }
-                _groupRepo.updateGroup(grec.groupId, GroupRecord.GAME_ID, Math.abs(grec.gameId));
+                if (grec.groupId != Game.NO_GROUP) {
+                    _groupRepo.updateGroup(grec.groupId, GroupRecord.GAME_ID,
+                        Math.abs(grec.gameId));
+                }
             }
         }
     }
