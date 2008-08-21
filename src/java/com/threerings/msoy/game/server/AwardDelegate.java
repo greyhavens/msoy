@@ -43,15 +43,15 @@ public class AwardDelegate extends RatingDelegate
     /**
      * Creates a Whirled game manager delegate with the supplied game content.
      */
-    public AwardDelegate (final GameContent content)
+    public AwardDelegate (GameContent content)
     {
         // keep our game content around for later
         _content = content;
     }
 
     // from interface WhirledGameProvider
-    public void endGameWithScores (final ClientObject caller, final int[] playerOids, final int[] scores,
-                                   final int payoutType, final InvocationService.InvocationListener listener)
+    public void endGameWithScores (ClientObject caller, int[] playerOids, int[] scores,
+                                   int payoutType, InvocationService.InvocationListener listener)
         throws InvocationException
     {
         verifyIsPlayerOrAgent(caller);
@@ -131,8 +131,8 @@ public class AwardDelegate extends RatingDelegate
     }
 
     // from interface WhirledGameProvider
-    public void endGameWithWinners (final ClientObject caller, final int[] winnerOids, final int[] loserOids,
-                                    final int payoutType, final InvocationService.InvocationListener listener)
+    public void endGameWithWinners (ClientObject caller, int[] winnerOids, int[] loserOids,
+                                    int payoutType, InvocationService.InvocationListener listener)
         throws InvocationException
     {
         verifyIsPlayerOrAgent(caller);
@@ -821,7 +821,7 @@ public class AwardDelegate extends RatingDelegate
         public int percentile;
         public int flowAward;
 
-        public Player (final MemberName name, final int playerOid, final int score, final int availFlow) {
+        public Player (MemberName name, int playerOid, int score, int availFlow) {
             this.name = name;
             this.playerOid = playerOid;
             this.score = score;
@@ -832,7 +832,7 @@ public class AwardDelegate extends RatingDelegate
             return (name == null) ? 0 : name.getMemberId();
         }
 
-        public int compareTo (final Player other) {
+        public int compareTo (Player other) {
             return Comparators.compare(playerOid, other.playerOid);
         }
 
