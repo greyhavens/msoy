@@ -12,7 +12,6 @@ import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.badge.server.BadgeLogic;
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -607,7 +606,6 @@ public class MsoyAuthenticator extends Authenticator
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected BadgeLogic _badgeLogic;
 
     /** The number of times we'll try generate a unique ident before failing. */
     protected static final int MAX_TRIES = 100;

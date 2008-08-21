@@ -82,6 +82,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.data.LevelUpNotification;
+import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
@@ -205,7 +206,7 @@ public class MemberManager
         checkCurrentLevel(member);
 
         // update badges
-        _badgeMan.updateBadges(member);
+        _badgeMan.updateBadges(member, true);
     }
 
     // from interface MemberProvider
@@ -759,6 +760,18 @@ public class MemberManager
         }
 
         listener.requestProcessed(badges.toArray(new EarnedBadge[badges.size()]));
+    }
+
+    // from interface MemberProvider
+    public void dispatchDeferredNotifications (ClientObject caller)
+    {
+        MemberObject member = (MemberObject)caller;
+        member.startTransaction();
+        for (Notification notification : member.deferredNotifications) {
+            _notifyMan.notify(member, notification);
+        }
+        member.commitTransaction();
+        member.deferredNotifications.clear();
     }
 
     /**

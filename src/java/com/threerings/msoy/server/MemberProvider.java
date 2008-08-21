@@ -32,6 +32,11 @@ public interface MemberProvider extends InvocationProvider
     void complainMember (ClientObject caller, int arg1, String arg2);
 
     /**
+     * Handles a {@link MemberService#dispatchDeferredNotifications} request.
+     */
+    void dispatchDeferredNotifications (ClientObject caller);
+
+    /**
      * Handles a {@link MemberService#emailShare} request.
      */
     void emailShare (ClientObject caller, int arg1, int arg2, String[] arg3, String arg4, InvocationService.ConfirmListener arg5)

@@ -3,16 +3,19 @@
 
 package com.threerings.msoy.data;
 
+import java.util.List;
+
 import com.threerings.presents.dobj.DSet;
 import com.threerings.util.Name;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.data.TokenRing;
+
+import com.google.common.collect.Lists;
 import com.threerings.stats.data.StatSet;
 
 import com.threerings.msoy.item.data.all.Avatar;
 import com.threerings.msoy.item.data.all.ItemListInfo;
-
 
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -30,6 +33,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
+import com.threerings.msoy.notify.data.Notification;
+
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.ObserverInfo;
@@ -222,6 +227,10 @@ public class MemberObject extends MsoyBodyObject
 
     /** The set of badges that this player is working towards. */
     public transient InProgressBadgeSet inProgressBadges;
+
+    /** A list of notifications that will be dispatched when the client's NotificationDirector
+     * asks for them */
+    public transient List<Notification> deferredNotifications = Lists.newArrayList();
 
     /**
      * Adds an EarnedBadge to the member's BadgeSet (or updates the existing badge if the badge

@@ -213,7 +213,10 @@ public class NotificationDirector extends BasicDirector
             notifyNewMail();
         }
 
-        // and so forth..
+        // tell the server to go ahead and dispatch any notifications it had saved up.
+        var client :Client = _ctx.getClient();
+        var msvc :MemberService = client.requireService(MemberService) as MemberService;
+        msvc.dispatchDeferredNotifications(client);
     }
 
     protected function notifyNewMail () :void

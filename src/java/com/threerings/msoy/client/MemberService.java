@@ -139,4 +139,9 @@ public interface MemberService extends InvocationService
      * testing.  This is only used on dev deployments.
      */
     void loadAllBadges (Client client, ResultListener listener);
+
+    /**
+     * Requests that any notifications that were deferred on the MemberObject be dispatched now
+     */
+    void dispatchDeferredNotifications (Client client);
 }

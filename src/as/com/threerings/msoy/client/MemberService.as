@@ -26,6 +26,9 @@ public interface MemberService extends InvocationService
     function complainMember (arg1 :Client, arg2 :int, arg3 :String) :void;
 
     // from Java interface MemberService
+    function dispatchDeferredNotifications (arg1 :Client) :void;
+
+    // from Java interface MemberService
     function emailShare (arg1 :Client, arg2 :int, arg3 :int, arg4 :TypedArray /* of class java.lang.String */, arg5 :String, arg6 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService

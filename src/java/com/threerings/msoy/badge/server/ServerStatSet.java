@@ -39,7 +39,7 @@ public class ServerStatSet extends StatSet
     {
         super.addStat(stat, syncingWithRepo);
         if (!syncingWithRepo) {
-            _badgeMan.updateBadges(_memObj);
+            _badgeMan.updateBadges(_memObj, false);
         }
     }
 
@@ -48,7 +48,7 @@ public class ServerStatSet extends StatSet
     {
         super.updateStat(stat, syncingWithRepo);
         if (!syncingWithRepo) {
-            _badgeMan.updateBadges(_memObj);
+            _badgeMan.updateBadges(_memObj, false);
         }
     }
 

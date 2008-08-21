@@ -23,6 +23,7 @@ import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 
 /**
  * Handles badge related services for the world server.
@@ -48,8 +49,11 @@ public class BadgeManager
     /**
      * For each Badge type, awards the Badge to the user if the Badge's award conditions
      * have been met.
+     *
+     * @param storeNew If new badge dispatches are likely to be missed by a connecting client,
+     *                 this will store notifications in the MemberObject, to be dispatched later.
      */
-    public void updateBadges (MemberObject user)
+    public void updateBadges (MemberObject user, boolean storeNew)
     {
         // guests are not awarded badges
         if (user.isGuest()) {
@@ -103,6 +107,11 @@ public class BadgeManager
 
         if (newBadges != null) {
             awardBadges(user, newBadges);
+            if (storeNew) {
+                for (EarnedBadge badge : newBadges) {
+                    user.deferredNotifications.add(new BadgeEarnedNotification(badge));
+                }
+            }
         }
 
         if (inProgressBadges != null) {

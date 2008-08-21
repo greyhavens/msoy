@@ -54,6 +54,12 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
+        case MemberMarshaller.DISPATCH_DEFERRED_NOTIFICATIONS:
+            ((MemberProvider)provider).dispatchDeferredNotifications(
+                source
+            );
+            return;
+
         case MemberMarshaller.EMAIL_SHARE:
             ((MemberProvider)provider).emailShare(
                 source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (String[])args[2], (String)args[3], (InvocationService.ConfirmListener)args[4]
