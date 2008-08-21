@@ -262,7 +262,7 @@ public class ItemLogic
      * @exception ServiceException thrown if illegal or invalid data was detected in the item.
      */
     public void validateItem (MemberRecord memrec, ItemRecord orecord, ItemRecord nrecord)
-        throws ServiceException
+        throws ServiceException, PersistenceException
     {
         if (nrecord instanceof GameRecord) {
             GameRecord grec = (GameRecord)nrecord;
