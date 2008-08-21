@@ -73,6 +73,7 @@ public class WorldControlBar extends ControlBar
     {
         _zoomBtn.enabled = enabled;
         _zoomBtn.toolTip = Msgs.GENERAL.get(enabled ? "i.zoom" : "i.zoom_disabled");
+        updateZoomButton();
     }
 
     public function setNotificationDisplay (notificationDisplay :NotificationDisplay) :void
@@ -124,7 +125,7 @@ public class WorldControlBar extends ControlBar
         _zoomBtn = new CommandButton();
         _zoomBtn.styleName = "controlBarButtonZoom";
         _zoomBtn.toolTip = Msgs.GENERAL.get("i.zoom");
-        _zoomBtn.setCallback(handlePopZoom);
+        _zoomBtn.setCallback(handleToggleZoom);
 
         _hotZoneBtn = new CommandButton();
         _hotZoneBtn.toolTip = Msgs.GENERAL.get("i.hover");
@@ -319,18 +320,25 @@ public class WorldControlBar extends ControlBar
     }
 
     /**
-     * Handle the zoom button popup.
+     * Handle the zoom button.
      */
-    protected function handlePopZoom () :void
-    {   
-        SliderPopup.toggle(_zoomBtn, getZoom(), setZoom, { tickValues: [ 0, 1 ] });
-    }       
+    protected function handleToggleZoom () :void
+    {
+        setZoom(1 - getZoom()); // toggle between 1 and 0
+        updateZoomButton();
+    }
+
+    protected function updateZoomButton () :void
+    {
+        _zoomBtn.selected = (getZoom() == 0);
+    }
 
     protected function getZoom () :Number
     {
         // in the "viewer", we don't save the zoom in preferences
+        // and we use Math.round() to adapt older-style settings which could be .5634
         var studioView :RoomStudioView = _ctx.getTopPanel().getPlaceView() as RoomStudioView;
-        return (studioView != null) ? studioView.getZoom() : Prefs.getZoom();
+        return (studioView != null) ? studioView.getZoom() : Math.round(Prefs.getZoom());
     }
 
     protected function setZoom (newZoom :Number) :void

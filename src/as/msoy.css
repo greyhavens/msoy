@@ -529,6 +529,10 @@ TabNavigator, TabBar {
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_over.png");
   downSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_down.png");
   disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_disabled.png");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_down.png");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_down.png");
+  selectedDownSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_down.png");
+  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/controlbar/zoom_disabled.png");
 }
 
 .controlBarButtonComment {
