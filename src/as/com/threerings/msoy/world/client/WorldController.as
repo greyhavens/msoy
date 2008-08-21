@@ -1098,16 +1098,22 @@ public class WorldController extends MsoyController
             return displayPageGWT(page, args);
 
         } else {
+            const params :Object = MsoyParameters.get();
+            var tracking :String = "";
+            if ((params["aff"] != null) && (params["vec"] != null) && (params["cre"] != null)) {
+                tracking += "_aid_" + params["aff"] + "_" + params["vec"] + "_" + params["cre"];
+            }
+
             var fullURL :String = DeploymentConfig.serverURL;
             // if we have no current scene, or we're asking to display our current scene (because
             // we're in embed mode and are trying to get out) don't do the scene wrap business
             const sceneId :int = getCurrentSceneId();
             if (sceneId == 0 || (page == "world" && args == ("s"+sceneId))) {
                 if (!StringUtil.isBlank(page)) {
-                    fullURL += "#" + page + "-" + args;
+                    fullURL += "#" + page + "-" + args + tracking;
                 }
             } else {
-                fullURL += "#world-s" + sceneId + "_" + page + "-" + args;
+                fullURL += "#world-s" + sceneId + "_" + page + "-" + args + tracking;
             }
             log.info("Showing external URL " + fullURL);
             return super.showExternalURL(fullURL, false);
