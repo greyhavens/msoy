@@ -17,15 +17,38 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Tuple;
+
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MemberManager;
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.PopularPlacesSnapshot;
+import com.threerings.msoy.server.persist.MemberCardRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagHistoryRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
+import com.threerings.msoy.server.persist.TagPopularityRecord;
+import com.threerings.msoy.server.persist.TagRepository;
+
+import com.threerings.msoy.web.data.ServiceCodes;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.TagHistory;
+import com.threerings.msoy.web.server.MemberHelper;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+
 import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
+
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.gwt.GalaxyData;
@@ -38,24 +61,6 @@ import com.threerings.msoy.group.gwt.MyGroupCard;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
-import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.PopularPlacesSnapshot;
-import com.threerings.msoy.server.persist.MemberCardRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.TagHistoryRecord;
-import com.threerings.msoy.server.persist.TagNameRecord;
-import com.threerings.msoy.server.persist.TagPopularityRecord;
-import com.threerings.msoy.server.persist.TagRepository;
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.TagHistory;
-import com.threerings.msoy.web.server.MemberHelper;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 /**
  * Provides the server implementation of {@link GroupService}.
