@@ -164,7 +164,7 @@ public class SliderPopup extends Canvas
         if (event.relatedObject != null) {
             _cursorOffCanvas = true;
 
-            if (!event.buttonDown) {
+            if (_adjusted && !event.buttonDown) {
                 // We rolled out into room view, or other element - close up,
                 // but don't delete the object, in case there are still events
                 // queued up for it.
@@ -180,6 +180,7 @@ public class SliderPopup extends Canvas
 
     protected function thumbReleaseHandler (event :SliderEvent): void
     {
+        _adjusted = true;
         if (_cursorOffCanvas) {
             destroy();
         }
@@ -190,6 +191,9 @@ public class SliderPopup extends Canvas
 
     /** True if the mouse cursor has left the canvas area. */
     protected var _cursorOffCanvas :Boolean;
+
+    /** Have we adjusted the slider? */
+    protected var _adjusted :Boolean;
 
     /** The object that triggered this popup. */
     protected var _trigger :DisplayObject;
