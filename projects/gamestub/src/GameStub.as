@@ -15,8 +15,7 @@ import flash.system.LoaderContext;
 import flash.system.Security;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
-
-import com.threerings.flash.TextFieldUtil;
+import flash.text.TextFormat;
 
 // On Kongregate, the width limit is 700, but there appears to be
 // no height limit.
@@ -39,6 +38,8 @@ public class GameStub extends Sprite
     /** The affiliate we're building this for. */
     public static const AFFILIATE :String = "kongregate";
 
+    public static const SERVER :String = "http://www.whirled.com/";
+
     public function GameStub ()
     {
         if (stage != null) {
@@ -46,13 +47,16 @@ public class GameStub extends Sprite
             stage.align = StageAlign.TOP_LEFT;
         }
 
-        _label = TextFieldUtil.createField("Loading...",
-            {
-                autoSize: TextFieldAutoSize.LEFT, selectable: false
-            }, {
-                size: 18, bold: true, color: 0xFFFFFF
-            });
+        _label = new TextField();
+        _label.autoSize = TextFieldAutoSize.LEFT;
+        _label.selectable = false;
+        var tf :TextFormat = new TextFormat();
+        tf.size = 18;
+        tf.bold = true;
+        tf.color = 0xFFFFFF;
+        _label.defaultTextFormat = tf;
         addChild(_label);
+        setLabel("Loading...");
 
         // ask Whirled where to find the SWF client that we'll load to play our game
         _clientDetailsLoader = new URLLoader();
@@ -77,7 +81,7 @@ public class GameStub extends Sprite
 
         var error :Object = details.error[0];
         if (error != null) {
-            TextFieldUtil.updateText(_label, String(error));
+            setLabel(String(error));
             return;
         }
 
@@ -120,7 +124,14 @@ public class GameStub extends Sprite
 
     protected function reportError (e :ErrorEvent) :void
     {
-        TextFieldUtil.updateText(_label, "Error loading: " + e.text);
+        setLabel("Error loading: " + e.text);
+    }
+
+    protected function setLabel (s :String) :void
+    {
+        _label.text = s;
+        _label.width = _label.textWidth + 5;
+        _label.height = _label.textHeight + 4;
     }
 
     protected var _clientDetailsLoader :URLLoader;
@@ -131,8 +142,7 @@ public class GameStub extends Sprite
 
     protected static const STUB_VERSION :uint = 0;
 
-    protected static const URL :String =
-        "http://tasman.sea.earth.threerings.net:8080/gamestubsvc" +
+    protected static const URL :String = SERVER + "gamestubsvc" + 
         "?gameId=" + GAME_ID +
         "&aff=" + AFFILIATE +
         "&v=" + STUB_VERSION;
