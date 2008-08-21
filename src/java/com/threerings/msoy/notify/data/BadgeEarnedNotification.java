@@ -18,5 +18,10 @@ public class BadgeEarnedNotification extends Notification
         return null;
     }
 
+    @Override
+    public String toString () {
+        return "BadgeEarnedNotification [" + _badge + "]";
+    }
+
     protected EarnedBadge _badge;
 }

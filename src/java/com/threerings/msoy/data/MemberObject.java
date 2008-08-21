@@ -31,7 +31,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 
-import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.notify.data.Notification;
 
 import com.threerings.msoy.room.data.MemberInfo;

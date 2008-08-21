@@ -20,6 +20,13 @@ public class EarnedBadge extends Badge
             uint(badgeCode).toString(16) + "_" + level + "f" + BADGE_IMAGE_TYPE;
     }
 
+    // from Object
+    override public function toString () :String
+    {
+        return "EarnedBadge [code=" + badgeCode + ", level=" + level + ", whenEarned=" + 
+            whenEarned + ", coinValue=" + coinValue + "]";
+    }
+
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {

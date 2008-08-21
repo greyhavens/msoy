@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -92,6 +90,8 @@ import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.room.server.persist.SceneRecord;
 import com.threerings.msoy.underwire.server.SupportLogic;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Manage msoy members.

@@ -5,7 +5,6 @@ package com.threerings.msoy.notify.server;
 
 import java.util.List;
 
-import com.google.common.collect.Lists;
 import com.google.inject.Singleton;
 
 import com.threerings.presents.annotation.EventThread;
