@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.badge.data.all.InProgressBadge;
+
 import com.threerings.msoy.web.data.MemberCard;
 
 /**
@@ -30,4 +32,9 @@ public class MyWhirledData
      * This member's recent feed messages.
      */
     public List<FeedMessage> feed;
+
+    /**
+     * A list of up to four InProgressBadges for display on the MyWhirled page
+     */
+    public List<InProgressBadge> badges;
 }

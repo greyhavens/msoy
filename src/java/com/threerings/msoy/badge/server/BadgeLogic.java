@@ -180,13 +180,21 @@ public class BadgeLogic
         throws PersistenceException
     {
         // Read in our in-progress badges and choose a number of them randomly
-        List<InProgressBadge> badges = getInProgressBadges(memberId, false);
-        if (!badges.isEmpty()) {
-            Collections.shuffle(badges);
-            badges = badges.subList(0, Math.min(maxBadges, badges.size()));
+        List<InProgressBadge> allBadges = getInProgressBadges(memberId, false);
+        List<InProgressBadge> randomSelection = Lists.newArrayList();
+        if (!allBadges.isEmpty()) {
+            Collections.shuffle(allBadges);
+
+            // Java.util.List.subList() returns a list that cannot be sent to GWT.
+            for (InProgressBadge badge : allBadges) {
+                randomSelection.add(badge);
+                if (randomSelection.size() >= maxBadges - 1) {
+                    break;
+                }
+            }
         }
 
-        return badges;
+        return randomSelection;
     }
 
     @Inject protected BadgeRepository _badgeRepo;

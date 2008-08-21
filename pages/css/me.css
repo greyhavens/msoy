@@ -20,39 +20,14 @@
 -------------------------------------*/
 
 .whatsNext {
-  background: url(/images/me/next_bg.png) no-repeat top left;
   width: 649px;
   height: 341px;
   margin: 0px auto 10px;
   color: #216CA3;
 }
 
-.whatsNext .roundBox {
-  width: 100%;
-  height: 100%;
-}
-
-.whatsNext .Play {
-  width: 191px;
-  padding: 10px 5px 5px 10px;
-}
-
-.whatsNext .Explore {
-  width: 191px;
-  padding: 10px 10px 5px 5px;
-}
-
-.whatsNext .Decorate {
-  background: none;
-  padding: 5px 10px 10px 10px;
-  text-align: center;
-}
-
-.whatsNext .Decorate .Screen {
-  padding-right: 10px;
-}
-
 .whatsNext .NoFriends, .whatsNext .Friends {
+  background: url(/images/me/next_bg.png) no-repeat top left;
   width: 217px;
   padding: 5px 10px 10px 10px;
   color: #FFFFFF;
@@ -73,7 +48,7 @@
   margin-right: auto;
 }
 
-.whatsNext .NoFriends .NoFriends {
+.whatsNext .NoFriends .NoFriendsMsg {
   height: 60px;
   vertical-align: bottom;
   padding-bottom: 5px;
@@ -133,6 +108,82 @@
 
 .whatsNext .Friends .MemberGame .Name {
   color: #E88436;
+}
+
+.whatsNext .LeftPanel {
+  width: 96px;
+  background: url(/images/me/me_pattern.png) no-repeat top left;
+  vertical-align: top;
+}
+
+.whatsNext .LeftPanel .PassportIcon {
+  position: relative;
+  top: -10px;
+  width: 75px;
+  height: 75px;
+}
+
+.whatsNext .LeftPanel .PassportTip {
+  color: white;
+  text-align: left;
+  padding-left: 11px;
+  padding-right: 11px;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 17px;
+}
+
+.whatsNext .NextBadges {
+  width: 100%;
+  height: 341px;
+}
+
+.whatsNext .NextBadges .NextTitle {
+  background: url(/images/me/next_tile.png);
+  height: 27px;
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  font-size: 16px;
+  border-right: solid 1px #8d5e30;
+}
+
+.whatsNext .NextBadges .SeeAllLink {
+  background-color: #dbe9f4;
+  height: 28px;
+  text-align: right;
+  font-style: italic;
+  font-size: 16px;
+  padding-right: 10px;
+}
+
+.whatsNext .NextBadges .SeeAllLink a, .whatsNext .NextBadges .SeeAllLink a.visited {
+  color: #2a6c9e;
+}
+
+.whatsNext .NextBadges .SeeAllLink, .whatsNext .NextBadges .badgeDisplay,
+.whatsNext .NextBadges .Spacer, .whatsNext .NextBadges .Divider {
+  border-bottom: solid 1px #569ccd;
+}
+.whatsNext .NextBadges .badgeDisplay, .whatsNext .NextBadges .Spacer,
+.whatsNext .NextBadges .Divider {
+  background: url(/images/me/passport_box_tile.png);
+}
+
+.whatsNext .NextBadges .Spacer {
+  height: 141px;
+  width: 156px;
+}
+
+.whatsNext .NextBadges .Divider {
+  width: 3px;
+  height: 141px;
+  position: relative;
+}
+
+.whatsNext .NextBadges .Divider img {
+  position: absolute;
+  top: 4px;
 }
 
 /* ------------------------------------
@@ -284,6 +335,7 @@
   left: 90px;
   top: 48px;
   font-size: 12px;
+  color: black;
 }
 
 .badgeDisplay .CoinReward img {
@@ -298,7 +350,7 @@
 
 .badgeDisplay .StampDescription {
   position: absolute;
-  top: 70px;
+  top: 69px;
   left: 7px;
   width: 142px;
   height: 43px;

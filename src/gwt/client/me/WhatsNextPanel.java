@@ -7,111 +7,87 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Random;
+
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.MyWhirledData;
+
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.images.next.NextImages;
 import client.shell.Args;
 import client.shell.Pages;
 import client.ui.MsoyUI;
-import client.ui.RoundBox;
 import client.ui.ThumbBox;
+import client.ui.TongueBox;
 import client.util.Link;
 
 /**
  * Displays blurbs about things to do and a player's online friends.
  */
-public class WhatsNextPanel extends SmartTable
+public class WhatsNextPanel extends TongueBox
 {
     public WhatsNextPanel (MyWhirledData data)
     {
-        super("whatsNext", 0, 0);
+        setHeader(_msgs.nextHeader());
 
-        setWidget(0, 0, createPlay(data), 1, "Play");
-        setWidget(0, 1, createExplore(data), 1, "Explore");
+        SmartTable content = new SmartTable("whatsNext", 0, 0);
+        setContent(content);
+
+        content.setWidget(0, 0, createLeftPanel(), 1, "LeftPanel");
+        content.setWidget(0, 1, createNextBadges(data), 1, null);
         if (data.friends == null || data.friends.size() == 0) {
-            setWidget(0, 2, createNoFriends(data), 1, "NoFriends");
+            content.setWidget(0, 2, createNoFriends(data), 1, "NoFriends");
         } else {
-            setWidget(0, 2, createFriends(data), 1, "Friends");
+            content.setWidget(0, 2, createFriends(data), 1, "Friends");
         }
-        getFlexCellFormatter().setRowSpan(0, 2, 2);
-        setWidget(1, 0, createDecorate(data), 2, "Decorate");
     }
 
-    protected Widget createPlay (MyWhirledData data)
+    protected Widget createLeftPanel ()
     {
-        RoundBox box = new RoundBox(RoundBox.BLUE);
-        box.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        Image shot = GAME_SHOTS[Random.nextInt(GAME_SHOTS.length)].createImage();
-        ClickListener onClick = Link.createListener(Pages.GAMES, "");
-        ClickListener trackListener = MsoyUI.createTrackingListener("mePlayGames", null);
-        Image image = MsoyUI.makeActionImage(shot, null, onClick);
-        image.addClickListener(trackListener);
-        box.add(image);
-        box.add(WidgetUtil.makeShim(10, 10));
-        PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.nextPlay(), onClick);
-        button.addClickListener(trackListener);
-        box.add(button);
-        box.add(WidgetUtil.makeShim(5, 5));
-        box.add(MsoyUI.createLabel(_msgs.nextPlayTip(), "tipLabel"));
-        return box;
+        FlowPanel panel = new FlowPanel();
+        panel.add(MsoyUI.createImage("/images/me/passport_icon_large.png", "PassportIcon"));
+        panel.add(MsoyUI.createLabel(_msgs.nextPassportTip(), "PassportTip"));
+        return panel;
     }
 
-    protected Widget createExplore (MyWhirledData data)
+    protected Widget createNextBadges (MyWhirledData data)
     {
-        RoundBox box = new RoundBox(RoundBox.BLUE);
-        box.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
-        Image shot = WHIRLED_SHOTS[Random.nextInt(WHIRLED_SHOTS.length)].createImage();
-        ClickListener onClick = Link.createListener(Pages.WHIRLEDS, "");
-        ClickListener trackListener = MsoyUI.createTrackingListener("meMakeFriends", null);
-        Image image = MsoyUI.makeActionImage(shot, null, onClick);
-        image.addClickListener(trackListener);
-        box.add(image);
-        box.add(WidgetUtil.makeShim(10, 10));
-        PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.nextExplore(), onClick);
-        button.addClickListener(trackListener);
-        box.add(button);
-        box.add(WidgetUtil.makeShim(5, 5));
-        box.add(MsoyUI.createLabel(_msgs.nextExploreTip(), "tipLabel"));
-        return box;
-    }
+        SmartTable badges = new SmartTable("NextBadges", 0, 0);
+        badges.setText(0, 0, _msgs.nextBadgesTitle(), 3, "NextTitle");
 
-    protected Widget createDecorate (MyWhirledData data)
-    {
-        RoundBox box = new RoundBox(RoundBox.BLUE);
-        SmartTable contents = new SmartTable(0, 0);
-        ClickListener onClick = Link.createListener(Pages.WORLD, "m" + CMe.getMemberId());
-        ClickListener trackListener = MsoyUI.createTrackingListener("meDecorate", null);
-        Image image = MsoyUI.makeActionImage(_images.home_shot().createImage(), null, onClick);
-        image.addClickListener(trackListener);
-        contents.setWidget(0, 0, image, 1, "Screen");
-        contents.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        PushButton button = MsoyUI.createButton(
-            MsoyUI.MEDIUM_THIN, _msgs.nextDecorate(), onClick);
-        button.addClickListener(trackListener);
-        contents.setWidget(0, 1, button);
-        contents.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_CENTER);
-        contents.setText(1, 0, _msgs.nextDecorateTip(), 1, "tipLabel");
-        box.add(contents);
-        return box;
+        for (int row = 0; row < 2; row++) {
+            if (data.badges.size() > row) {
+                badges.setWidget(row + 1, 0, new BadgeDisplay(data.badges.get(row)));
+            } else {
+                badges.setWidget(row + 1, 0, MsoyUI.createFlowPanel("Spacer"));
+            }
+            badges.setWidget(row + 1, 1, MsoyUI.createSimplePanel("Divider",
+                MsoyUI.createImage("/images/me/passport_box_divider.png", null)));
+            if (data.badges.size() > row + 1) {
+                badges.setWidget(row + 1, 2, new BadgeDisplay(data.badges.get(row + 1)));
+            } else {
+                badges.setWidget(row + 1, 2, MsoyUI.createFlowPanel("Spacer"));
+            }
+        }
+
+        badges.setWidget(
+            3, 0, Link.create(_msgs.nextBadgesSeeAll(), Pages.ME, "passport"), 3,  "SeeAllLink");
+        return badges;
     }
 
     protected Widget createNoFriends (MyWhirledData data)
@@ -119,7 +95,7 @@ public class WhatsNextPanel extends SmartTable
         SmartTable friends = new SmartTable(0, 0);
         friends.setHeight("100%");
         friends.setText(0, 0, _msgs.nextFriends(), 1, "Title");
-        friends.setText(1, 0, _msgs.nextNoFriends(), 1, "NoFriends");
+        friends.setText(1, 0, _msgs.nextNoFriends(), 1, "NoFriendsMsg");
         Widget imageLink = Link.createImage(
             "/images/me/invite_friends.png", _msgs.nextInviteTip(), Pages.PEOPLE, "invites");
         ((SourcesClickEvents)imageLink).addClickListener(

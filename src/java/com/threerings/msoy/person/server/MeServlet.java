@@ -82,6 +82,8 @@ public class MeServlet extends MsoyServiceServlet
             }
             data.feed = loadFeed(mrec, groupMemberships, DEFAULT_FEED_DAYS);
 
+            data.badges = _badgeLogic.getNextSuggestedBadges(mrec.memberId, 4);
+
             return data;
 
         } catch (PersistenceException pe) {
