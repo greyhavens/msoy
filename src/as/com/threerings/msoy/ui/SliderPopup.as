@@ -146,7 +146,7 @@ public class SliderPopup extends Canvas
             var closeValue :Number = value;
             var closeness :Number = Number.MAX_VALUE;
             for each (var tickVal :Number in ticks) {
-                const diff :Number = Math.abs(tickVal - value);
+                var diff :Number = Math.abs(tickVal - value);
                 if (diff < closeness) {
                     closeness = diff;
                     closeValue = tickVal;
