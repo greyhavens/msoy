@@ -69,10 +69,9 @@ public class BadgeManager
             if (progress.highestLevel >= 0) {
                 EarnedBadge earnedBadge = user.badges.getBadge(badgeType);
                 if (earnedBadge == null || earnedBadge.level < progress.highestLevel) {
-                    EarnedBadge newBadge = new EarnedBadge();
-                    newBadge.badgeCode = badgeType.getCode();
-                    newBadge.level = progress.highestLevel;
-                    newBadge.whenEarned = whenEarned;
+                    EarnedBadge newBadge =  new EarnedBadge(badgeType.getCode(),
+                        progress.highestLevel, badgeType.getLevelUnits(progress.highestLevel),
+                        badgeType.getCoinValue(progress.highestLevel), whenEarned);
 
                     if (newBadges == null) {
                         newBadges = Lists.newArrayList();
@@ -92,10 +91,10 @@ public class BadgeManager
                 if (inProgressBadge == null || progress.highestLevel >= inProgressBadge.level ||
                         (progress.highestLevel == inProgressBadge.level - 1 &&
                                 quantizedProgress > inProgressBadge.progress)) {
-                    InProgressBadge newBadge = new InProgressBadge();
-                    newBadge.badgeCode = badgeType.getCode();
-                    newBadge.level = progress.highestLevel + 1;
-                    newBadge.progress = quantizedProgress;
+                    int nextLevel = progress.highestLevel + 1;
+                    InProgressBadge newBadge =  new InProgressBadge(badgeType.getCode(),
+                            nextLevel, badgeType.getLevelUnits(nextLevel),
+                            badgeType.getCoinValue(nextLevel), quantizedProgress);
 
                     if (inProgressBadges == null) {
                         inProgressBadges = Lists.newArrayList();

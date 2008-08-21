@@ -178,9 +178,9 @@ public class MeServlet extends MsoyServiceServlet
             for (int ii = 0; ii < type.getNumLevels(); ii++) {
                 String levelUnits = type.getLevelUnits(ii);
                 int coinValue = type.getCoinValue(ii);
-                badges.add(new InProgressBadge(code, ii, levelUnits,
+                badges.add(new InProgressBadge(code, ii, levelUnits, type.getLevel(ii).coinValue,
                     // range through progresses from 0 - 100% inclusive, in 10% increments
-                    (progress = (progress + 1) % 11)/(float)10, type.getLevel(ii).coinValue));
+                    (progress = (progress + 1) % 11)/(float)10));
                 badges.add(new EarnedBadge(code, ii, levelUnits, coinValue, now));
             }
         }
