@@ -3,7 +3,6 @@
 
 package client.shop;
 
-import client.item.FavoritesPanel;
 import client.shell.Args;
 import client.shell.Pages;
 
@@ -24,7 +23,7 @@ public class FavesPanel extends HorizontalPanel
         setVerticalAlignment(HasAlignment.ALIGN_TOP);
 
         _sideBar = new FavoritesSideBar();
-        _favorites = new FavoritesPanel(Pages.SHOP, 3, 4, true);
+        _favorites = new FavoritesPanel(Pages.SHOP, 3, 4);
 
         add(_sideBar);
         add(WidgetUtil.makeShim(10, 10));

@@ -1,8 +1,12 @@
 //
 // $Id$
 
-package client.item;
+package client.shop;
 
+import client.item.FavoritesGrid;
+import client.item.ItemGrid;
+import client.item.ItemListDataModel;
+import client.item.ItemMessages;
 import client.shell.Args;
 import client.shell.Pages;
 import client.util.MsoyCallback;
@@ -24,24 +28,9 @@ import com.threerings.msoy.item.gwt.ItemServiceAsync;
 public class FavoritesPanel extends SimplePanel
 {
     /**
-     * The default number of rows to display.
-     */
-    public static final int DEFAULT_ROWS = 1;
-
-    /**
-     * The default number of columns to display in the favorites grid.
-     */
-    public static final int DEFAULT_COLUMNS = 5;
-
-    /**
      * An empty array used in the case that the are no prefix args required.
      */
     public static final String[] NO_PREFIX_ARGS = new String[0];
-
-    public FavoritesPanel (Pages parentPage)
-    {
-        this(parentPage, DEFAULT_ROWS, DEFAULT_COLUMNS);
-    }
 
     public FavoritesPanel (Pages parentPage, int rows, int cols)
     {

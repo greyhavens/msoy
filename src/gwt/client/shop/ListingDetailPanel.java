@@ -113,6 +113,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         info.setText(0, 1, MsoyUI.formatDate(listing.listedDate));
         info.setText(1, 0, CShop.msgs.listingPurchases(), 1, "What");
         info.setText(1, 1, "" + listing.purchases);
+        info.setText(2, 0, CShop.msgs.favoritesCount(), 1, "What");
+        info.setText(2, 1, "" + listing.favoriteCount);
 
         // if we are the creator (lister) of this item, allow us to delist it
         if (_detail.creator.getMemberId() == CShop.getMemberId() || CShop.isSupport()) {
