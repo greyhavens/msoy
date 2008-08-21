@@ -243,7 +243,6 @@ public class MemberObject extends MsoyBodyObject
         boolean added = badges.addOrUpdateBadge(badge);
         if (added) {
             this.postMessage(NOTIFICATION, new BadgeEarnedNotification(badge));
-            log.info("BadgeAwarded message sent", "badge", badge);
         }
 
         // remove this badge's associated InProgressBadge if the badge's highest level has
