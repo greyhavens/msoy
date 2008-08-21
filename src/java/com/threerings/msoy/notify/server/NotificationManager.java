@@ -18,6 +18,8 @@ import com.threerings.msoy.notify.data.FollowInviteNotification;
 import com.threerings.msoy.notify.data.InviteAcceptedNotification;
 import com.threerings.msoy.notify.data.GameInviteNotification;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Manages most notifications to users.
  */
@@ -102,8 +104,13 @@ public class NotificationManager
      */
     public void dispatchDeferredNotifications (MemberObject memobj)
     {
-        List<Notification> notes = memobj.deferredNotifications;
-        memobj.deferredNotifications = null;
-        notify(memobj, notes);
+        if (memobj.deferredNotifications != null) {
+            List<Notification> notes = memobj.deferredNotifications;
+            memobj.deferredNotifications = null;
+            notify(memobj, notes);
+        } else {
+            log.warning("Client requested deferred notifications, but they've already been " +
+                        "dispatched [who=" + memobj.who() + "].");
+        }
     }
 }
