@@ -10,7 +10,6 @@ import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemListInfo;
@@ -109,26 +108,7 @@ public class FavoritesPanel extends SimplePanel
         // order favorites starting with the most recently favorited items
         _favoriteModel.setDescending(true);
 
-        _favorites = new ItemGrid(_parentPage, _rows, _cols) {
-            @Override
-            protected String getEmptyMessage (){
-                return _imsgs.noFavorites();
-            }
-
-            @Override
-            public String getTitle () {
-                return _imsgs.favorites();
-            }
-
-            @Override
-            protected Widget createWidget (Item item)
-            {
-                // When this box is clicked, show the item listing in the shop
-                String args = Args.compose("l", String.valueOf(item.getType()),
-                    String.valueOf(item.catalogId));
-                return new ItemBox(item.getThumbnailMedia(), item.name, Pages.SHOP, args, false);
-            }
-        };
+        _favorites = new FavoritesGrid(_parentPage, _rows, _cols);
         _favorites.setDisplayNavigation(_displayNavigation);
         _favorites.setModel(_favoriteModel, 0);
 

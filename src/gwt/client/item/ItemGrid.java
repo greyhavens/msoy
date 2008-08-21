@@ -13,6 +13,7 @@ import client.util.Link;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.msoy.item.data.all.Item;
@@ -60,6 +61,8 @@ public abstract class ItemGrid extends PagedGrid<Item>
         if (model instanceof ItemListDataModel) {
             _listDataModel = (ItemListDataModel) model;
         }
+
+        updateTitle();
     }
 
     /**
@@ -98,8 +101,14 @@ public abstract class ItemGrid extends PagedGrid<Item>
 
     protected void addCustomControls (FlexTable controls)
     {
-        controls.setText(0, 0, getTitle());
+        _titleLabel = new Label(getTitle());
+        controls.setWidget(0, 0, _titleLabel);
         controls.getFlexCellFormatter().setStyleName(0, 0, "Show");
+    }
+
+    protected void updateTitle ()
+    {
+        _titleLabel.setText(getTitle());
     }
 
     /**
@@ -114,6 +123,8 @@ public abstract class ItemGrid extends PagedGrid<Item>
     protected boolean _displayNavigation = true;
 
     protected ItemListDataModel _listDataModel;
+
+    protected Label _titleLabel;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

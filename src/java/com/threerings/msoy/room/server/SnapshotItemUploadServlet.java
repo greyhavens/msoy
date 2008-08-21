@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import com.google.inject.Inject;
 
+import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.item.data.all.Photo;
@@ -36,6 +37,8 @@ public class SnapshotItemUploadServlet extends AbstractSnapshotUploadServlet
             _itemLogic.createItem(ctx.memrec, image);
         } catch (ServiceException se) {
             System.err.println("Ruh-roh: " + se);
+        } catch (PersistenceException ex) {
+            System.err.println(ex);
         }
 
         // TODO: some other response?
