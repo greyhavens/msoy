@@ -68,7 +68,7 @@ public class FieldEditor extends VBox
         var configgers :Array = getUI(entry);
         var topConfigger :UIComponent = UIComponent(configgers[0]);
         topConfigger.setStyle("color", NAME_AND_VALUE_COLOR);
-        topConfigger.maxWidth = 130;
+        topConfigger.maxWidth = 150;
         configArea.addChild(topConfigger);
 
         var botBox :HBox = new HBox();
@@ -78,7 +78,7 @@ public class FieldEditor extends VBox
         // add the description label
         var desc :Text = new Text();
         desc.selectable = false;
-        desc.width = 180;
+        desc.width = 210;
         desc.setStyle("color", 0xA1A2A2);
         if (entry.info != null) {
             desc.text = entry.info;

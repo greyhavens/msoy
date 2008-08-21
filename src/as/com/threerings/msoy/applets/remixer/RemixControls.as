@@ -56,10 +56,10 @@ import com.threerings.msoy.utils.UberClientLoader;
 public class RemixControls extends HBox
 {
     // Magic fucking trial-and-error numbers, since flex can't lay out worth a shit.
-    public static const CONTROLS_WIDTH :int = 290;
-    public static const CONTROLS_MAX_HEIGHT :int = 410;
+    public static const CONTROLS_WIDTH :int = 325;
+    public static const CONTROLS_MAX_HEIGHT :int = 440;
 
-    public static const PREVIEW_WIDTH :int = 320;
+    public static const PREVIEW_WIDTH :int = 340;
 
     public function RemixControls (app :Application, viewStack :ViewStack)
     {
@@ -228,7 +228,7 @@ public class RemixControls extends HBox
 
         _previewer = new UberClientLoader(mode);
         _previewer.width = PREVIEW_WIDTH;
-        _previewer.height = 468;
+        _previewer.height = 488;
         _previewer.addEventListener(Event.COMPLETE, handlePreviewerComplete);
         _previewer.addEventListener(IOErrorEvent.IO_ERROR, handlePreviewerError);
         _previewer.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handlePreviewerError);
