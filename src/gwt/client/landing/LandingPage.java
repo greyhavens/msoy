@@ -27,6 +27,8 @@ public class LandingPage extends Page
     public static String CREATORS_MAIN = "creators";
     public static String CREATORS_INFO = "creatorsinfo";
     public static String CREATORS_LINKS = "creatorslinks";
+    public static String CREATORS_PARLOR = "parlor";
+    public static String CREATORS_POPULAR = "popular";
 
     @Override // from Page
     public void onPageLoad ()
@@ -50,14 +52,12 @@ public class LandingPage extends Page
         } else if (action.equals(CREATORS_LINKS)) {
             setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
 
-        // some test redirects
-        //
-        // redirect to some popular whirled (TODO: FOR TESTING, DO NOT LINK)
-        } else if (action.equals("creatorswhirleds")) {
+        // landing page for content creators, redirects to a popular room
+        } else if (action.equals(CREATORS_POPULAR)) {
             redirectToPopularWhirled();
 
-        // redirect to some popular whirled (TODO: FOR TESTING, DO NOT LINK)
-        } else if (action.equals("creatorsrooms")) {
+        // landing page for content creators, redirects to the parlor
+        } else if (action.equals(CREATORS_PARLOR)) {
             redirectToStoryRooms();
 
         } else {
@@ -76,22 +76,22 @@ public class LandingPage extends Page
      */
     protected void runABTests ()
     {
+        // list of redirects, based on the user's test group.
+        // part of the aug08CreatorsLanding2 A/B test - see JIRA WRLD-251.
+        final String[] testpages = new String[] {
+            // since groups are 1-indexed, we reuse "group 0" to mean the default value.
+            CREATORS_INFO,
+            // everything else
+            CREATORS_LINKS, CREATORS_POPULAR, CREATORS_PARLOR, CREATORS_INFO
+        };
+
         _membersvc.getABTestGroup(
             TrackingCookie.get(), "aug08CreatorsLanding2", true, new MsoyCallback<Integer>() {
                 public void onSuccess (Integer group) {
-                    switch (group) {
-                    case 1:
-                        Link.go(Pages.LANDING, CREATORS_LINKS);
-                        break;
-                    case 2:
-                        redirectToPopularWhirled();
-                        break;
-                    case 3:
-                        redirectToStoryRooms();
-                        break;
-                    default:
-                        // group 4, and if test is not running visitors see info page
-                        Link.go(Pages.LANDING, CREATORS_INFO);
+                    if (group > 0 && group < testpages.length) {
+                        Link.go(Pages.LANDING, testpages[group]);
+                    } else {
+                        Link.go(Pages.LANDING, testpages[0]);
                     }
                 }});
     }
