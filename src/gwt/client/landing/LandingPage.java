@@ -24,6 +24,10 @@ import client.util.ServiceUtil;
  */
 public class LandingPage extends Page
 {
+    public static String CREATORS_MAIN = "creators";
+    public static String CREATORS_INFO = "creatorsinfo";
+    public static String CREATORS_LINKS = "creatorslinks";
+
     @Override // from Page
     public void onPageLoad ()
     {
@@ -34,23 +38,25 @@ public class LandingPage extends Page
     {
         String action = args.get(0, "");
 
-        // landing page for creators runs our custom A/B tests
-        if (action.equals("creators")) {
+        // general landing page for creators runs our custom A/B tests
+        if (action.equals(CREATORS_MAIN)) {
             runABTests();
 
-        // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
-        } else if (action.equals("creatorsinfotest")) {
+        // landing page for content creators
+        } else if (action.equals(CREATORS_INFO)) {
             setContent(_msgs.titleCreators(), new CreatorsPanel());
 
-        // info ver of creators landing test (TODO: FOR TESTING, DO NOT LINK)
-        } else if (action.equals("creatorslinkstest")) {
+        // landing page for content creators, with a multitude of links
+        } else if (action.equals(CREATORS_LINKS)) {
             setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
 
+        // some test redirects
+        //
         // redirect to some popular whirled (TODO: FOR TESTING, DO NOT LINK)
         } else if (action.equals("creatorswhirleds")) {
             redirectToPopularWhirled();
 
-            // redirect to some popular whirled (TODO: FOR TESTING, DO NOT LINK)
+        // redirect to some popular whirled (TODO: FOR TESTING, DO NOT LINK)
         } else if (action.equals("creatorsrooms")) {
             redirectToStoryRooms();
 
@@ -75,7 +81,7 @@ public class LandingPage extends Page
                 public void onSuccess (Integer group) {
                     switch (group) {
                     case 1:
-                        setContent(_msgs.titleCreators(), new CreatorsLinksPanel());
+                        Link.go(Pages.LANDING, CREATORS_LINKS);
                         break;
                     case 2:
                         redirectToPopularWhirled();
@@ -85,7 +91,7 @@ public class LandingPage extends Page
                         break;
                     default:
                         // group 4, and if test is not running visitors see info page
-                        setContent(_msgs.titleCreators(), new CreatorsPanel());
+                        Link.go(Pages.LANDING, CREATORS_INFO);
                     }
                 }});
     }
