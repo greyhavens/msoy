@@ -353,7 +353,7 @@ public class AwardDelegate extends RatingDelegate
             /*_worldClient.addToSetStat(
                 memberId, StatType.UNIQUE_GAMES_PLAYED, _content.detail.gameId);*/
 
-            if (isMultiplayer()) {
+            if (isMultiplayer() && getPlayerCount() > 1) {
                 // track multiplayer game wins
                 if (player.score == winningScore) {
                     _worldClient.incrementStat(memberId, StatType.MP_GAMES_WON, 1);
@@ -574,6 +574,11 @@ public class AwardDelegate extends RatingDelegate
         return ((MsoyGameManager) _gmgr).isMultiplayer();
     }
 
+    protected int getPlayerCount ()
+    {
+        return ((MsoyGameManager) _gmgr).getPlayerCount();
+    }
+
     protected Percentiler getScoreDistribution ()
     {
         // we want the "rating" game id so we use getGameId()
@@ -728,7 +733,7 @@ public class AwardDelegate extends RatingDelegate
             @Override
             public boolean invoke () {
                 try {
-                    _moneyLogic.awardCoins(record.memberId, _content.game.creatorId, 0, _content.game.getIdent(), 
+                    _moneyLogic.awardCoins(record.memberId, _content.game.creatorId, 0, _content.game.getIdent(),
                         record.awarded, details, UserAction.PLAYED_GAME);
                     _gameReg.gamePayout(record.memberId, _content.game, record.awarded,
                                         record.totalSecondsPlayed);
