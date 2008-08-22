@@ -9,6 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.DeferredCommand;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -22,6 +23,7 @@ import com.google.gwt.user.client.ui.KeyboardListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SourcesFocusEvents;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -109,7 +111,8 @@ public class CreateAccountPanel extends FlowPanel
 
         HorizontalPanel controls = new HorizontalPanel();
         controls.setWidth("500px");
-        controls.add(_status = MsoyUI.createLabel("", "Status"));
+
+        controls.add(_status = MsoyUI.createSimplePanel("Status", null));
         controls.add(WidgetUtil.makeShim(10, 10));
         controls.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
         ClickListener createGo = new ClickListener() {
@@ -219,10 +222,20 @@ public class CreateAccountPanel extends FlowPanel
 
         setStatus(_msgs.creatingAccount());
         _usersvc.register(DeploymentConfig.version, info, new AsyncCallback<SessionData>() {
-            public void onSuccess (SessionData result) {
+            public void onSuccess (final SessionData result) {
                 result.justCreated = true;
-                // let the top-level frame know that we logged on (which will trigger a redirect)
-                CShell.frame.dispatchDidLogon(result);
+
+                // display a nice confirmation message, as an excuse to embed a tracking iframe.
+                // we'll show it for two seconds, and then rock on!
+                final int feedbackDelayMs = 2000;
+                setStatus(_msgs.creatingDone(), AdWordsUtil.createConversionTrackingPanel());
+                Timer t = new Timer() {
+                    public void run () {
+                        // let the top-level frame know that we logged on (will trigger a redirect)
+                        CShell.frame.dispatchDidLogon(result);
+                    }
+                };
+                t.schedule(feedbackDelayMs); // this looks like it should get GCd, no?
             }
             public void onFailure (Throwable caught) {
                 if (RecaptchaUtil.isEnabled()) {
@@ -236,9 +249,20 @@ public class CreateAccountPanel extends FlowPanel
         });
     }
 
+    protected void setStatus (String text, Widget tracker)
+    {
+        FlowPanel p = new FlowPanel();
+        p.add(MsoyUI.createLabel(text, ""));
+        if (tracker != null) {
+            p.add(tracker);
+        }
+
+        _status.setWidget(p);
+    }
+
     protected void setStatus (String text)
     {
-        _status.setText(text);
+        _status.setWidget(MsoyUI.createLabel(text, ""));
     }
 
     protected static Widget makeStep (int step, Widget contents)
@@ -303,7 +327,7 @@ public class CreateAccountPanel extends FlowPanel
     protected PasswordTextBox _password, _confirm;
     protected DateFields _dateOfBirth;
     protected CheckBox _tosBox;
-    protected Label _status;
+    protected SimplePanel _status;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final AccountMessages _msgs = GWT.create(AccountMessages.class);

@@ -105,6 +105,11 @@
   border: solid #5c5d61 1px;
 }
 
+.createAccount .AdWordsFrame {
+  width: 100%;
+  border: 0px inset;
+}
+
 /* ------------------------------------
    LOGIN PAGE
 -------------------------------------*/
