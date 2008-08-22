@@ -106,9 +106,11 @@ public abstract class ItemRepository<T extends ItemRecord>
         super(ctx);
 
         _tagRepo = new TagRepository(ctx) {
+            @Override
             protected TagRecord createTagRecord () {
                 return ItemRepository.this.createTagRecord();
             }
+            @Override
             protected TagHistoryRecord createTagHistoryRecord () {
                 return ItemRepository.this.createTagHistoryRecord();
             }
@@ -116,10 +118,12 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         // TEMP added 2008.05.15
         _ctx.registerMigration(getItemClass(), new EntityMigration(17000) {
+            @Override
             public boolean runBeforeDefault () {
                 return false; // let the damn thing create the column first
             }
 
+            @Override
             public int invoke (Connection conn, DatabaseLiaison liaison) throws SQLException {
                 int migrated = 0;
                 try {
@@ -528,6 +532,10 @@ public abstract class ItemRepository<T extends ItemRecord>
         case CatalogQuery.SORT_BY_NEW_AND_HOT:
             addOrderByNewAndHot(obExprs, obOrders);
             break;
+        case CatalogQuery.SORT_BY_REMIXABLE:
+            // part of this sort will be applied after the select
+            addOrderByRating(obExprs, obOrders);
+            break;
         default:
             throw new IllegalArgumentException(
                 "Sort method not implemented [sortBy=" + sortBy + "]");
@@ -564,6 +572,12 @@ public abstract class ItemRepository<T extends ItemRecord>
         for (CatalogRecord record : records) {
             record.item = map.get(record.listedItemId);
         }
+
+        // sort by remix requires access to ItemRecord.isRemixable()
+        if (sortBy == CatalogQuery.SORT_BY_REMIXABLE) {
+            Collections.sort(records, SORT_BY_REMIXABLE);
+        }
+
         return records;
     }
 
@@ -808,7 +822,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             deleteAll(getRatingClass(),
                       new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId),
                       new CacheInvalidator.TraverseWithFilter<RatingRecord>(getRatingClass()) {
-                          public boolean testForEviction (Serializable key, RatingRecord record) {
+                          @Override
+                        public boolean testForEviction (Serializable key, RatingRecord record) {
                               return record.itemId == itemId;
                           }
                       });
@@ -893,7 +908,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         // TODO: this cache eviction might be slow :)
         updatePartial(getRatingClass(), new Where(getRatingColumn(RatingRecord.ITEM_ID), oldItemId),
                       new CacheInvalidator.TraverseWithFilter<RatingRecord>(getRatingClass()) {
-                          public boolean testForEviction (Serializable key, RatingRecord record) {
+                          @Override
+                        public boolean testForEviction (Serializable key, RatingRecord record) {
                               return (record.itemId == oldItemId);
                           }
                       }, RatingRecord.ITEM_ID, newItemId);
@@ -1219,6 +1235,26 @@ public abstract class ItemRepository<T extends ItemRecord>
         @SuppressWarnings("unchecked") Class<RatingRecord> cclazz = (Class<RatingRecord>)clazz;
         return cclazz;
     }
+
+    /**
+     * Comparator for sorting {@link CatalogRecord}, by remixability. CatalogRecord.item must be
+     * supplied for this method to work.
+     */
+    protected static Comparator<CatalogRecord> SORT_BY_REMIXABLE = new Comparator<CatalogRecord>() {
+        public int compare (CatalogRecord c1, CatalogRecord c2)
+        {
+            if (c1.item == null || c2.item == null) {
+                return 0;
+            }
+            if (c1.item.isRemixable() && !c2.item.isRemixable()) {
+                return -1;
+            }
+            if (c2.item.isRemixable() && !c1.item.isRemixable()) {
+                return 1;
+            }
+            return 0;
+        }
+    };
 
     /** The byte type of our item. */
     protected byte _itemType;

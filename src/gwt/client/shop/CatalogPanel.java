@@ -92,12 +92,15 @@ public class CatalogPanel extends SmartTable
         int rows = Math.max(1, (Window.getClientHeight() -
                                 HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT);
         _items = new PagedGrid<ListingCard>(rows, COLUMNS) {
+            @Override
             protected void displayPageFromClick (int page) {
                 Link.go(Pages.SHOP, ShopUtil.composeArgs(_query, page));
             }
+            @Override
             protected Widget createWidget (ListingCard card) {
                 return new ListingBox(card);
             }
+            @Override
             protected String getEmptyMessage () {
                 String name = _dmsgs.getString("itemType" + _query.itemType);
                 if (_query.tag != null) {
@@ -110,18 +113,21 @@ public class CatalogPanel extends SmartTable
                     return CShop.msgs.catalogNoList(name);
                 }
             }
+            @Override
             protected void configureNavi (FlexTable controls, int row, int col,
                                           int start, int limit, int total) {
                 super.configureNavi(controls, row, col, start, limit, total);
                 controls.getFlexCellFormatter().setHorizontalAlignment(
                     row, col, HasAlignment.ALIGN_RIGHT);
             }
+            @Override
             protected void addCustomControls (FlexTable controls) {
                 controls.setWidget(
                     0, 0, new InlineLabel(CShop.msgs.catalogSortBy(), false, false, false));
                 controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
                 controls.setWidget(0, 1, _sortBox);
             }
+            @Override
             protected boolean displayNavi (int items) {
                 return true;
             }
@@ -231,6 +237,7 @@ public class CatalogPanel extends SmartTable
         CShop.msgs.sortByPriceAsc(),
         CShop.msgs.sortByPriceDesc(),
         CShop.msgs.sortByPurchases(),
+        CShop.msgs.sortByRemixable(),
     };
     protected static final byte[] SORT_VALUES = new byte[] {
         CatalogQuery.SORT_BY_NEW_AND_HOT,
@@ -239,5 +246,6 @@ public class CatalogPanel extends SmartTable
         CatalogQuery.SORT_BY_PRICE_ASC,
         CatalogQuery.SORT_BY_PRICE_DESC,
         CatalogQuery.SORT_BY_PURCHASES,
+        CatalogQuery.SORT_BY_REMIXABLE,
     };
 }
