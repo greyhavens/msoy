@@ -47,7 +47,7 @@ public class TitleBar extends SmartTable
                 subnavi.addLink(null, "Me", Pages.ME, "");
                 subnavi.addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD,
                                      "m" + memberId);
-                subnavi.addLink(null, "Rooms", Pages.ME, "rooms");
+                subnavi.addLink(null, "Rooms", Pages.ME, "rooms", false);
                 subnavi.addLink(null, "Passport", Pages.ME, "passport");
                 subnavi.addLink(null, "Profile", Pages.PEOPLE, "" + memberId);
                 subnavi.addLink(null, "Mail", Pages.MAIL, "");
@@ -166,7 +166,13 @@ public class TitleBar extends SmartTable
     protected static class SubNaviPanel extends FlowPanel
     {
         public void addLink (String iconPath, String label, final Pages page, final String args) {
-            addSeparator();
+            addLink(iconPath, label, page, args, true);
+        }
+
+        public void addLink (
+            String iconPath, String label, final Pages page, final String args, boolean sep)
+        {
+            addSeparator(sep);
             if (iconPath != null) {
                 add(MsoyUI.createActionImage(iconPath, new ClickListener() {
                     public void onClick (Widget sender) {
@@ -179,7 +185,7 @@ public class TitleBar extends SmartTable
         }
 
         public Image addImageLink (String path, String tip, final Pages page, final String args) {
-            addSeparator();
+            addSeparator(true);
             Image icon = MsoyUI.createActionImage(path, new ClickListener() {
                 public void onClick (Widget sender) {
                     Link.go(page, args);
@@ -190,9 +196,9 @@ public class TitleBar extends SmartTable
             return icon;
         }
 
-        protected void addSeparator () {
+        protected void addSeparator (boolean sep) {
             if (getWidgetCount() > 0) {
-                add(new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;"));
+                add(new HTML("&nbsp;" + (sep ? "&nbsp;|&nbsp;" : "") + "&nbsp;"));
             }
         }
     }
