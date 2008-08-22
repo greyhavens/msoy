@@ -139,11 +139,11 @@ public enum BadgeType
 
     COLLECTOR(StampCategory.GAME, StatType.TROPHIES_EARNED, new Level[] {
         new Level(1, 250),
-        new Level(5, 500),
-        new Level(10, 1000),
-        new Level(25, 2000),
-        new Level(50, 3000),
-        new Level(100, 10000)
+        new Level(50, 500),
+        new Level(100, 1000),
+        new Level(200, 2000),
+        new Level(350, 3000),
+        new Level(500, 10000)
         }) {
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.TROPHIES_EARNED);
