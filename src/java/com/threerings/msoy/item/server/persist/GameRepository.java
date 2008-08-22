@@ -338,6 +338,8 @@ public class GameRepository extends ItemRepository<GameRecord>
             insert(gdr);
             // source games use -gameId to differentiate themselves from all non-source games
             updatePartial(getItemClass(), item.itemId, GameRecord.GAME_ID, -gdr.gameId);
+            // fill the game id back into the newly created game record
+            item.gameId = -gdr.gameId;
 
         } else if (catalogListing) {
             updatePartial(GameDetailRecord.class, item.gameId,
@@ -355,13 +357,13 @@ public class GameRepository extends ItemRepository<GameRecord>
         if (itemId > 0) {
             GameRecord item = load(getItemClass(), itemId);
             if (item != null && item.gameId != 0) {
-                gdr = load(GameDetailRecord.class, item.gameId);
+                gdr = load(GameDetailRecord.class, Math.abs(item.gameId));
             }
             if (gdr != null) {
                 if (gdr.sourceItemId == itemId) {
                     gdr.sourceItemId = 0;
                     if (gdr.listedItemId == 0) {
-                        delete(gdr);
+                        gameDeleted(gdr.gameId);
                     } else {
                         update(gdr);
                     }
@@ -375,6 +377,22 @@ public class GameRepository extends ItemRepository<GameRecord>
 
         // now go ahead and do the standard item deletion
         super.deleteItem(itemId);
+    }
+
+    /**
+     * Deletes all ephemeral data associated with the specified game.
+     */
+    protected void gameDeleted (int gameId)
+        throws PersistenceException
+    {
+        delete(GameDetailRecord.class, gameId);
+        delete(InstructionsRecord.class, gameId);
+        // no need to invalidate the cache on these, just let them expire
+        CacheInvalidator NOOP = new CacheInvalidator() {
+            public void invalidate (PersistenceContext ctx) { /* NOOP! */ }
+        };
+        deleteAll(GamePlayRecord.class, new Where(GamePlayRecord.GAME_ID_C, gameId), NOOP);
+        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID_C, gameId), NOOP);
     }
 
     @Override // from ItemRepository
