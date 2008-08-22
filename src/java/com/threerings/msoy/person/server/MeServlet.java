@@ -44,6 +44,7 @@ import com.threerings.msoy.person.gwt.PassportData;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -129,7 +130,7 @@ public class MeServlet extends MsoyServiceServlet
     }
 
     // from interface MeService
-    public PassportData loadBadges ()
+    public PassportData loadBadges (int memberId)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -137,21 +138,34 @@ public class MeServlet extends MsoyServiceServlet
         // PassportData contains the owner's name because we'll eventually be viewing passports for
         // other players as well
         PassportData data = new PassportData();
-        data.stampOwner = mrec.name;
 
         try {
-            // for now, we just ship along every badge relevant to this player.
-            data.nextBadges = _badgeLogic.getInProgressBadges(mrec.memberId, true);
+            if (mrec.memberId == memberId) {
+                data.stampOwner = mrec.name;
+                // for now, we just ship along every badge relevant to this player.
+                data.nextBadges = _badgeLogic.getInProgressBadges(mrec.memberId, true);
+
+            } else {
+                MemberRecord theirRec = _memberRepo.loadMember(memberId);
+                if (theirRec == null) {
+                    throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+                }
+
+                data.stampOwner = theirRec.name;
+                // we leave data.nextBadges empty when viewing other people's passport page.
+            }
 
             data.stamps = Maps.newHashMap();
+            Iterable<Badge> badgeUnion = data.nextBadges == null ?
+                Lists.<EarnedBadgeRecord, Badge>transform(
+                    _badgeRepo.loadEarnedBadges(memberId),  EarnedBadgeRecord.TO_BADGE) :
             // Create a set union between the in progress badges retrieved above, and earned
             // badge records from the database.  Due to InProgressFilter, we're guaranteed that
             // in the intersection between the EarnedBadges and InProgressBadges, we'll end
             // up with an InProgressBadge, which is what we want for client display.
-            Iterable<Badge> badgeUnion = Sets.union(
-                Sets.newHashSet(Lists.transform(_badgeRepo.loadEarnedBadges(mrec.memberId),
-                                                new InProgressFilter(data.nextBadges))),
-                Sets.newHashSet(data.nextBadges));
+                Sets.union(Sets.newHashSet(Lists.transform(_badgeRepo.loadEarnedBadges(memberId),
+                                                           new InProgressFilter(data.nextBadges))),
+                           Sets.newHashSet(data.nextBadges));
             for (StampCategory category : StampCategory.values()) {
                 data.stamps.put(category, Lists.newArrayList(
                     Iterables.filter(badgeUnion, new FilterByCategory(category))));
@@ -234,6 +248,7 @@ public class MeServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected MemberManager _memberMan;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected ServletLogic _servletLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected FeedRepository _feedRepo;

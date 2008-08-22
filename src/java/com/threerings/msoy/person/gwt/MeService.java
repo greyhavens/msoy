@@ -39,9 +39,10 @@ public interface MeService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads the badges relevant to this player.
+     * Loads the badges relevant to this player.  If the memberId is the same as the caller,
+     * the nextBadges field will be filled, null otherwise.
      */
-    PassportData loadBadges ()
+    PassportData loadBadges (int memberId)
         throws ServiceException;
 
     /**

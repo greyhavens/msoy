@@ -32,7 +32,7 @@ public interface MeServiceAsync
     /**
      * The asynchronous version of {@link MeService#loadBadges}.
      */
-    void loadBadges (AsyncCallback<PassportData> callback);
+    void loadBadges (int memberId, AsyncCallback<PassportData> callback);
 
     /**
      * Load all available badges.  For testing.

@@ -33,11 +33,11 @@ import client.util.ServiceUtil;
 
 public class PassportPanel extends FlowPanel
 {
-    public PassportPanel ()
+    public PassportPanel (int memberId)
     {
         setStyleName("passport");
 
-        _mesvc.loadBadges(new MsoyCallback<PassportData> () {
+        _mesvc.loadBadges(memberId, new MsoyCallback<PassportData> () {
             public void onSuccess (PassportData data) {
                 init(data);
             }
@@ -46,16 +46,25 @@ public class PassportPanel extends FlowPanel
 
     protected void init (PassportData data)
     {
-        add(new NextPanel(data.nextBadges));
+        if (data.nextBadges != null) {
+            add(new NextPanel(data.nextBadges));
+        }
+
         HeaderBox contents = new HeaderBox(null, _msgs.passportStampsTitle(data.stampOwner));
         contents.makeRoundBottom();
         add(contents);
         for (StampCategory category : StampCategory.values()) {
             String catNameLower = category.toString().toLowerCase();
+            String catName = _dmsgs.getString("passportCategory_" + catNameLower);
             FlowPanel stamps = new FlowPanel();
-            contents.add(new TongueBox(
-                MsoyUI.createImage("/images/me/icon_" + catNameLower + ".png", null),
-                _dmsgs.getString("passportCategory_" + catNameLower), stamps));
+            contents.add(new TongueBox(MsoyUI.createImage(
+                "/images/me/icon_" + catNameLower + ".png", null), catName, stamps));
+
+            if (data.stamps.get(category).size() == 0) {
+                stamps.add(MsoyUI.createSimplePanel("EmptyLabel", MsoyUI.createLabel(
+                    _msgs.passportEmptyCategory(data.stampOwner, catName), null)));
+                continue;
+            }
 
             for (Badge badge : data.stamps.get(category)) {
                 stamps.add(MsoyUI.createSimplePanel("BoxedBadge", new BadgeDisplay(badge)));

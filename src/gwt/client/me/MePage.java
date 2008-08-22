@@ -32,7 +32,10 @@ public class MePage extends Page
             setContent(_msgs.titleRooms(), new MyRoomsPanel());
 
         } else if (action.equals("passport")) {
-            setContent(_msgs.titlePassport(), new PassportPanel());
+            // guests should never get a link to a passport page that will use the default, so 0
+            // is fine (it'll through an internal error on the server)
+            int defaultId = CMe.creds == null ? 0 : CMe.creds.name.getMemberId();
+            setContent(_msgs.titlePassport(), new PassportPanel(args.get(1, defaultId)));
 
         } else if (DeploymentConfig.devDeployment && action.equals("passportimagetest")) {
             setContent(_msgs.titlePassportTest(), new PassportImageTestPanel());

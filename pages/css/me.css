@@ -302,6 +302,12 @@
   padding-top: 10px;
 }
 
+.passport .headerBox .Contents .EmptyLabel {
+  width: 100%;
+  text-align: center;
+  font-style: italic;
+}
+
 /* ------------------------------------
    BADGE DISPLAYS ANYWHERE
 -------------------------------------*/
