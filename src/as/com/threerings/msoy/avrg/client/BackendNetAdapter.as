@@ -61,6 +61,10 @@ public class BackendNetAdapter
     // from PropertySetListener
     public function propertyWasSet (event :PropertySetEvent) :void
     {
+        if (_propertyChanged == null) {
+            return;
+        }
+
         var key :Integer = event.getKey();
         var keyObj :Object = (key == null) ? null : key.value;
 
@@ -77,6 +81,10 @@ public class BackendNetAdapter
     // from MessageListener
     public function messageReceived (event :MessageEvent) :void
     {
+        if (_messageReceived == null) {
+            return;
+        }
+
         if (event.getName() == _messageName) {
             var args :Array = event.getArgs();
             var mname :String = (args[0] as String);
