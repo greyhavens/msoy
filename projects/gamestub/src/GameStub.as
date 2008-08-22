@@ -29,6 +29,19 @@ import flash.text.TextFormat;
 // armorgames: dunno, submissions are reviewed, 1000 wide x 700 tall
 // was submit-able
 
+
+/**
+ * GameStub. A small wrapper to load up a whirled client and play a game
+ * from some 3rd party site.
+ *
+ * NOTE: Please avoid using any non-builtin classes here.
+ *  1) We shouldn't need to
+ *  2) It helps keep the size down
+ *  3) It avoids possible problems. For example, if we use StringUtil in here, then that's loaded
+ *    in. We _do_ put the client in a new ApplicationDomain, but I'm still worried about
+ *    possible collision if our client uses newly-added methods in StringUtil and this stub
+ *    has defined a version of StringUtil that is old and lacking those methods.
+ */
 [SWF(width="700", height="575")]
 public class GameStub extends Sprite
 {
@@ -38,6 +51,7 @@ public class GameStub extends Sprite
     /** The affiliate we're building this for. */
     public static const AFFILIATE :String = "kongregate";
 
+    /** The server we're connecting with, with a trailing slash. */
     public static const SERVER :String = "http://www.whirled.com/";
 
     public function GameStub ()
