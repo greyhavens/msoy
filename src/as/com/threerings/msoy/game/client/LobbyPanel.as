@@ -326,8 +326,11 @@ public class LobbyPanel extends FloatingPanel
         }
 
         // if it's a running unwatchable seated game, no need to display it
-        if (table.config.getMatchType() != GameConfig.PARTY && table.inPlay() &&
-            (_lobbyObj.gameDef.match as MsoyMatchConfig).unwatchable) {
+        boolean inPlayUnwatchable = (table.config.getMatchType() != GameConfig.PARTY) &&
+            table.inPlay() && (_lobbyObj.gameDef.match as MsoyMatchConfig).unwatchable;
+        // if it's a private table, we also don't display it (TODO: what does private table really
+        // mean, how does anyone ever join a private table?)
+        if (inPlayUnwatchable || table.tconfig.privateTable) {
             return;
         }
 
