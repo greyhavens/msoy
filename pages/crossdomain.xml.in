@@ -2,6 +2,7 @@
    <allow-access-from domain="@SERVER_URL_HOST@" to-ports="*"/>
    <allow-access-from domain="first.whirled.com" to-ports="*"/>
    <allow-access-from domain="*.kongregate.com" to-ports="*"/>
+   <allow-access-from domain="*.newgrounds.com" to-ports="*"/>
 </cross-domain-policy>
 <!--
   Notice:
