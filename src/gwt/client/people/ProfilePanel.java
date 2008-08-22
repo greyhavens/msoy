@@ -62,7 +62,7 @@ public class ProfilePanel extends VerticalPanel
 
     /** The blurbs we'll display on our profile. */
     protected Blurb[] _blurbs = {
-        new ProfileBlurb(), new InterestsBlurb(), new FriendsBlurb(),
+        new ProfileBlurb(), new InterestsBlurb(), new FriendsBlurb(), new StampsBlurb(),
         new TrophiesBlurb(), new RatingsBlurb(), new GroupsBlurb(), new FeedBlurb(),
         new CommentsBlurb()
     };

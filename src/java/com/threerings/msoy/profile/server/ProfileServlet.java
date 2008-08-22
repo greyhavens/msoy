@@ -13,6 +13,10 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+
+import com.threerings.msoy.badge.server.persist.BadgeRepository;
+import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
+
 import com.google.inject.Inject;
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
@@ -93,6 +97,11 @@ public class ProfileServlet extends MsoyServiceServlet
             result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
             result.totalFriendCount = friendIds.size();
 
+            // load stamp info
+            result.stamps = Lists.newArrayList(Lists.transform(
+                _badgeRepo.loadRecentEarnedBadges(tgtrec.memberId, ProfileResult.MAX_STAMPS),
+                EarnedBadgeRecord.TO_BADGE));
+
             // load rating and trophy info
             result.trophies = resolveTrophyData(memrec, tgtrec);
             result.ratings = resolveRatingsData(memrec, tgtrec);
@@ -144,7 +153,7 @@ public class ProfileServlet extends MsoyServiceServlet
 
             // record that the user updated their profile
             if (nrec.modifications == 1) {
-                final MemberMoney money = _moneyLogic.awardCoins(memrec.memberId, 0, 0, null, CoinAwards.CREATED_PROFILE, 
+                final MemberMoney money = _moneyLogic.awardCoins(memrec.memberId, 0, 0, null, CoinAwards.CREATED_PROFILE,
                     "", UserAction.CREATED_PROFILE).getNewMemberMoney();
                 _moneyNodeActions.moneyUpdated(money);
             } else {
@@ -368,7 +377,8 @@ public class ProfileServlet extends MsoyServiceServlet
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MoneyNodeActions _moneyNodeActions;
     @Inject protected UserActionRepository _userActionRepo;
-    
+    @Inject protected BadgeRepository _badgeRepo;
+
     protected static final int MAX_PROFILE_MATCHES = 100;
     protected static final int MAX_PROFILE_FRIENDS = 6;
     protected static final int MAX_PROFILE_GAMES = 10;

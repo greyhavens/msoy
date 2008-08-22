@@ -13,6 +13,8 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.Limit;
+import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -132,6 +134,16 @@ public class BadgeRepository extends DepotRepository
         throws PersistenceException
     {
         return findAll(EarnedBadgeRecord.class, new Where(EarnedBadgeRecord.MEMBER_ID_C, memberId));
+    }
+
+    /**
+     * Returns up to limit badges, order by date descending.
+     */
+    public List<EarnedBadgeRecord> loadRecentEarnedBadges (int memberId, int limit)
+        throws PersistenceException
+    {
+        return findAll(EarnedBadgeRecord.class, new Where(EarnedBadgeRecord.MEMBER_ID_C, memberId),
+            new Limit(0, limit), OrderBy.descending(EarnedBadgeRecord.WHEN_EARNED_C));
     }
 
     /**

@@ -120,6 +120,10 @@
   width: 550px;
 }
 
+.profile .BadgeName {
+  font-size: 14px;
+}
+
 .ratingWidget {
   height: 44px;
 }

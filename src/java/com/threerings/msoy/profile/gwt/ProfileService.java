@@ -8,6 +8,8 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.badge.data.all.EarnedBadge;
+
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.data.all.Trophy;
@@ -27,6 +29,9 @@ public interface ProfileService extends RemoteService
     /** Provides results for {@link #loadProfile}. */
     public static class ProfileResult implements IsSerializable
     {
+        /** The maximum number of stamps that will be shown on the profile page. */
+        public static final int MAX_STAMPS = 6;
+
         /** This user's name and member id. */
         public MemberName name;
 
@@ -48,6 +53,11 @@ public interface ProfileService extends RemoteService
          * This user's featured friends.
          */
         public List<MemberCard> friends;
+
+        /**
+         * This user's recent stamps.
+         */
+        public List<EarnedBadge> stamps;
 
         /**
          * This user's groups.
