@@ -192,9 +192,10 @@ public class CatalogServlet extends MsoyServiceServlet
                 _moneyNodeActions.moneyUpdated(result.getNewCreatorMoney());
 
                 int creatorId = listing.item.creatorId;
-                if (mrec.memberId != creatorId) {
-                    _statLogic.incrementStat(creatorId, StatType.COINS_EARNED_SELLING,
-                        (int)result.getCreatorTransaction().getAmount());
+                int creatorAmount = (int)result.getCreatorTransaction().getAmount();
+                if (mrec.memberId != creatorId && creatorAmount > 0) {
+                    _statLogic.incrementStat(
+                        creatorId, StatType.COINS_EARNED_SELLING, creatorAmount);
 
                     // Some items have a stat that may need updating
                     if (itemType == Item.AVATAR) {
