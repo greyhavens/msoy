@@ -292,7 +292,6 @@ public class ItemLogic
      * @param nrecord the newly created or updated item.
      */
     public void itemUpdated (ItemRecord orecord, final ItemRecord nrecord)
-        throws PersistenceException
     {
         // let the item manager know that we've created or updated this item
         final boolean justCreated = (orecord == null);
@@ -310,17 +309,18 @@ public class ItemLogic
         if (nrecord instanceof GameRecord) {
             GameRecord grec = (GameRecord)nrecord;
             if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
-                if (grec.gameId == 0) {
-                    // fetch the gameId for the newly created game
-                    GameRecord gameRecord = _gameRepo.loadItem(grec.itemId);
-                    grec.gameId = gameRecord.gameId;
-                }
-                if (orecord != null && ((GameRecord)orecord).groupId != Game.NO_GROUP) {
-                    _groupRepo.updateGroup(((GameRecord)orecord).groupId, GroupRecord.GAME_ID, 0);
-                }
-                if (grec.groupId != Game.NO_GROUP) {
-                    _groupRepo.updateGroup(grec.groupId, GroupRecord.GAME_ID,
-                        Math.abs(grec.gameId));
+                try {
+                    if (orecord != null && ((GameRecord)orecord).groupId != Game.NO_GROUP) {
+                        _groupRepo.updateGroup(
+                            ((GameRecord)orecord).groupId, GroupRecord.GAME_ID, 0);
+                    }
+                    if (grec.groupId != Game.NO_GROUP) {
+                        _groupRepo.updateGroup(grec.groupId, GroupRecord.GAME_ID,
+                                               Math.abs(grec.gameId));
+                    }
+                } catch (PersistenceException pe) {
+                    log.warning("Failed to update group for game", "gameId", grec.itemId,
+                                "groupId", grec.groupId);
                 }
             }
         }
