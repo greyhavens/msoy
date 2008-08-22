@@ -988,5 +988,5 @@ public class MemberManager
     protected static final int[] BEGINNING_FLOW_LEVELS = { 0, 300, 900, 1800, 3000, 5100, 8100 };
 
     /** The frequency with which we recalculate our popular places snapshot. */
-    protected static final long POP_PLACES_REFRESH_PERIOD = 5*1000;
+    protected static final long POP_PLACES_REFRESH_PERIOD = 30*1000;
 }
