@@ -67,6 +67,13 @@ public class MsoyGameBackend extends WhirledGameBackend
         var cfg :MsoyGameConfig = (_ctrl.getPlaceConfig() as MsoyGameConfig);
         return (_ctx as GameContext).getPlayerObject().ownsGameContent(cfg.getGameId(), type, ident)
     }
+
+    // TEMP: provide the 'back to lobby' link for games that have it.
+    // TODO: Remove once we have the new standard game-over display sorted out
+    override protected function backToWhirled_v1 (showLobby :Boolean = false) :void
+    {
+        (_ctx as GameContext).backToWhirled(true); // always show lobby
+    }
 }
 }
 
