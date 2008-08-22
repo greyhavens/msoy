@@ -7,8 +7,8 @@ import flash.geom.Rectangle
  * The framer calculates the transformation necessary to place an image in a frame by providing
  * a _scale factor and offset.
  */ 
-public class CanonicalFramer implements Framer {
-  
+public class CanonicalFramer implements Framer
+{
     /**
      * Create a new framer given a rectangle indicating the size of a the source, a frame to
      * fit it to, and an offset value.
