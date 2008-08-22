@@ -46,13 +46,14 @@ import flash.text.TextFormat;
 public class GameStub extends Sprite
 {
     /** The id of the game we'd like to load. */
-    public static const GAME_ID :int = 12;
+    public static const GAME_ID :int = 8;
 
     /** The affiliate we're building this for. */
-    public static const AFFILIATE :String = "kongregate";
+    public static const AFFILIATE :String = "newgrounds";
 
     /** The server we're connecting with, with a trailing slash. */
     public static const SERVER :String = "http://www.whirled.com/";
+    //public static const SERVER :String = "http://tasman.sea.earth.threerings.net:8080/";
 
     public function GameStub ()
     {
@@ -65,6 +66,7 @@ public class GameStub extends Sprite
         _label.autoSize = TextFieldAutoSize.LEFT;
         _label.selectable = false;
         var tf :TextFormat = new TextFormat();
+        tf.font = "_sans";
         tf.size = 18;
         tf.bold = true;
         tf.color = 0xFFFFFF;
