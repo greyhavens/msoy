@@ -123,6 +123,10 @@ public class MemberLogic
             _peerMan.invokeNodeAction(new RemoveFriend(removerId, friendId));
             _peerMan.invokeNodeAction(new RemoveFriend(friendId, removerId));
 
+            // update the FRIENDS_MADE statistic for both players
+            _statLogic.incrementStat(removerId, StatType.FRIENDS_MADE, -1);
+            _statLogic.incrementStat(friendId, StatType.FRIENDS_MADE, -1);
+
             // note the sad event in the log
             _eventLog.friendRemoved(removerId, friendId);
 
