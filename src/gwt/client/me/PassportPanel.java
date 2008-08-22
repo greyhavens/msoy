@@ -39,7 +39,11 @@ public class PassportPanel extends FlowPanel
 
         _mesvc.loadBadges(memberId, new MsoyCallback<PassportData> () {
             public void onSuccess (PassportData data) {
-                init(data);
+                if (data == null) {
+                    MsoyUI.error(_msgs.passportPlayerNotFound());
+                } else {
+                    init(data);
+                }
             }
         });
     }

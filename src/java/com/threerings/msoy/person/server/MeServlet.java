@@ -150,7 +150,7 @@ public class MeServlet extends MsoyServiceServlet
             } else {
                 MemberName stampOwner = _memberRepo.loadMemberName(memberId);
                 if (stampOwner == null) {
-                    throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+                    return null;
                 }
                 data.stampOwner = stampOwner.toString();
                 // we leave data.nextBadges empty when viewing other people's passport page.
