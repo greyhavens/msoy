@@ -32,9 +32,9 @@ public class LoadingSpinner extends Sprite
         l.loadBytes(new SPINNER() as ByteArray);
 
         _label = new TextField();
-        //_label.autoSize = TextFieldAutoSize.CENTER;
         _label.width = WIDTH;
         const tf :TextFormat = new TextFormat();
+        tf.font = "_sans";
         tf.align = "center";
         tf.bold = true;
         tf.color = 0xFFFFFF;
