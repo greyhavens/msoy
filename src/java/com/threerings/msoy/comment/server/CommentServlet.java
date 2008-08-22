@@ -162,7 +162,8 @@ public class CommentServlet extends MsoyServiceServlet
             }
 
             // if this is a comment on an item, update the commenter's stat
-            if (etype <= Comment.TYPE_ITEM_MAX && etype >= Comment.TYPE_ITEM_MIN) {
+            if (etype <= Comment.TYPE_ITEM_MAX && etype >= Comment.TYPE_ITEM_MIN &&
+                ownerId != mrec.memberId) {
                 // update the member's ITEM_COMMENTS stat
                 _statLogic.incrementStat(mrec.memberId, StatType.ITEM_COMMENTS, 1);
             }

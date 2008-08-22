@@ -161,7 +161,7 @@ public class ItemServlet extends MsoyServiceServlet
             }
 
             // if this is the first time the player has rated this item, increment the stat.
-            if (isFirstRating) {
+            if (isFirstRating && item.creatorId != memrec.memberId) {
                 _statLogic.incrementStat(memrec.memberId, StatType.ITEMS_RATED, 1);
             }
 
