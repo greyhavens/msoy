@@ -7,6 +7,8 @@ import flash.events.TimerEvent;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
@@ -14,6 +16,7 @@ import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.bureau.client.ThaneWorldService;
 import com.threerings.msoy.bureau.client.Window;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
@@ -26,6 +29,7 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.presents.dobj.SubscriberAdapter;
+import com.threerings.presents.util.SafeObjectManager;
 import com.threerings.presents.util.SafeSubscriber;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
@@ -47,6 +51,9 @@ public class ThaneAVRGameController
         // create the backend
         _backend = new ThaneAVRGameBackend(ctx, gameObj, this);
 
+        _playerSubs = new SafeObjectManager(
+            _ctx.getClient().getDObjectManager(), log, gotPlayerObject);
+
         // set up existing player locations
         if (_gameObj.playerLocs.size () > 0) {
             // This is an unexpected condition, but... if the game agent ever reloads the user code,
@@ -63,9 +70,8 @@ public class ThaneAVRGameController
         }
 
         // listen for player location changes
-        var adapter :SetAdapter = new SetAdapter(entryAdded, entryUpdated, entryRemoved);
-        _gameObj.addListener(adapter);
-        _gameAgentObj.addListener(adapter);
+        _gameObj.addListener(_setAdapter);
+        _gameAgentObj.addListener(_setAdapter);
     }
 
     /** Shuts down the AVRG controller. */
@@ -80,6 +86,13 @@ public class ThaneAVRGameController
 
         // shutdown the backend
         backend.shutdown();
+
+        // remove listeners
+        _gameObj.removeListener(_setAdapter);
+        _gameAgentObj.removeListener(_setAdapter);
+
+        // unsubscribe from all players
+        _playerSubs.unsubscribeAll();
 
         // null our init references
         _ctx = null;
@@ -125,6 +138,10 @@ public class ThaneAVRGameController
 
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             bindScene(event.getEntry() as SceneInfo);
+
+        } else if (event.getName() == PlaceObject.OCCUPANT_INFO) {
+            var occInfo :OccupantInfo = event.getEntry() as OccupantInfo;
+            _playerSubs.subscribe(occInfo.bodyOid);
         }
     }
 
@@ -146,6 +163,10 @@ public class ThaneAVRGameController
 
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             removeBinding((event.getOldEntry() as SceneInfo).sceneId);
+
+        } else if (event.getName() == PlaceObject.OCCUPANT_INFO) {
+            var occInfo :OccupantInfo = event.getOldEntry() as OccupantInfo;
+            _playerSubs.unsubscribe(occInfo.bodyOid);
         }
     }
 
@@ -333,6 +354,7 @@ public class ThaneAVRGameController
         log.info("Got room props [" + info + "]");
 
         binding.roomProps = propsObj;
+
         _gameObj.avrgService.roomSubscriptionComplete(_ctx.getClient(), binding.sceneId);
 
         var test :Boolean = false;
@@ -395,11 +417,22 @@ public class ThaneAVRGameController
         }
     }
 
+    protected function gotPlayerObject (obj :PlayerObject) :void
+    {
+        var memberId :int = obj.getMemberId();
+        var playerLoc :PlayerLocation = _gameObj.playerLocs.get(memberId) as PlayerLocation;
+        if (playerLoc != null) {
+            //_backend.playerEnteredRoom(memberId, playerLoc.sceneId);
+        }
+    }
+
     protected var _ctx :MsoyBureauContext;
     protected var _backend :ThaneAVRGameBackend;
     protected var _gameObj :AVRGameObject;
     protected var _gameAgentObj :AVRGameAgentObject;
     protected var _bindings :HashMap = new HashMap();
+    protected var _setAdapter :SetAdapter = new SetAdapter(entryAdded, entryUpdated, entryRemoved);
+    protected var _playerSubs :SafeObjectManager;
 }
 
 }
