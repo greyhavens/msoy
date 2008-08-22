@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.data;
 
-import java.util.Map;
-
 import com.samskivert.util.StringUtil;
 import com.threerings.util.ActionScript;
 import com.threerings.util.MessageBundle;
@@ -12,8 +10,6 @@ import com.threerings.util.MessageBundle;
 import com.threerings.stats.data.IntSetStat;
 import com.threerings.stats.data.IntStat;
 import com.threerings.stats.data.Stat;
-
-import com.threerings.msoy.badge.data.BadgeType;
 
 /**
  * Enumerates the various stats used in Whirled.
