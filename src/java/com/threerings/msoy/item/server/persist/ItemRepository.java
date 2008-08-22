@@ -1244,10 +1244,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected static Comparator<CatalogRecord> SORT_BY_REMIXABLE = new Comparator<CatalogRecord>() {
         public int compare (CatalogRecord c1, CatalogRecord c2)
         {
-            if (c1.item == null || c2.item == null) {
-                return 0;
-            }
-            return Comparators.compare(c2.item.isRemixable(), c1.item.isRemixable());
+            return Comparators.compare(c2.item != null && c2.item.isRemixable(),
+                c1.item != null && c1.item.isRemixable());
         }
     };
 
