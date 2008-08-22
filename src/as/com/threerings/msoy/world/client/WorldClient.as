@@ -101,7 +101,14 @@ public class WorldClient extends MsoyClient
         // if we are embedded, we won't have a server host in our parameters, so we need to obtain
         // that via an HTTP request, otherwise just logon directly
         var params :Object = MsoyParameters.get();
-        if (getHostname() == null) {
+
+        // if we are going right into a game lobby, do that now and once we get into the game, then
+        // we'll be able to logon to a world with our assigned credentials
+        if (params["gameLobby"]) {
+            log.info("Doing pre-logon go to join game lobby.");
+            _wctx.getWorldController().preLogonGo(params);
+
+        } else if (getHostname() == null) {
             var loader :URLLoader = new URLLoader();
             loader.addEventListener(Event.COMPLETE, function () :void {
                 loader.removeEventListener(Event.COMPLETE, arguments.callee);
@@ -129,13 +136,8 @@ public class WorldClient extends MsoyClient
 
         if (_featuredPlaceView) {
             var overlay :FeaturedPlaceOverlay = new FeaturedPlaceOverlay(_ctx);
-            _ctx.getTopPanel().getPlaceContainer().addOverlay(overlay, PlaceBox.LAYER_FEATURED_PLACE);
-        }
-
-        // if we are actually going right into a game lobby, do that now
-        if (params["gameLobby"]) {
-            log.info("Doing pre-logon go to join game lobby.");
-            _wctx.getWorldController().preLogonGo(params);
+            _ctx.getTopPanel().getPlaceContainer().addOverlay(
+                overlay, PlaceBox.LAYER_FEATURED_PLACE);
         }
     }
 

@@ -88,7 +88,7 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /**
-     * Subscribes to our lobby object and 
+     * Subscribes to our lobby object.
      */
     public function enterLobby (lobbyOid :int) :void
     {
@@ -222,7 +222,7 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     /**
-     * Joins the specified player at their pending game table. 
+     * Joins the specified player at their pending game table.
      */
     public function joinPlayerTable (playerId :int) :void
     {
@@ -282,7 +282,7 @@ public class LobbyController extends Controller implements Subscriber
     }
 
     // from Subscriber
-    public function objectAvailable (obj :DObject) :void 
+    public function objectAvailable (obj :DObject) :void
     {
         _lobj = obj as LobbyObject;
         _panel.init(_lobj, _mode == LobbyCodes.PLAY_NOW_FRIENDS);
@@ -294,7 +294,7 @@ public class LobbyController extends Controller implements Subscriber
 
         _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
 
-        // if we have a player table to join, do that now, otherwise 
+        // if we have a player table to join, do that now, otherwise
         if (_playerId != 0) {
             joinPlayerTable(_playerId);
             return;
@@ -309,13 +309,13 @@ public class LobbyController extends Controller implements Subscriber
             joinSomeTable(false);
             break;
         }
-        
-        // pass group back to the caller once lobby has loaded 
+
+        // pass group back to the caller once lobby has loaded
         _lobbyLoaded(_lobj.game.groupId);
     }
 
     // from Subscriber
-    public function requestFailed (oid :int, cause :ObjectAccessError) :void 
+    public function requestFailed (oid :int, cause :ObjectAccessError) :void
     {
         Log.getLog(this).warning("Request for the LobbyObject failed: " + cause);
     }

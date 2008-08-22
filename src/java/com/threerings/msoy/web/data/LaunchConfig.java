@@ -41,11 +41,17 @@ public class LaunchConfig
     /** The path (relative to the resource URL) for the game client media (SWF or JAR). */
     public String gameMediaPath;
 
-    /** The server to which the game should connect (if this is a multiplayer game). */
-    public String server;
+    /** The game server to which the game should connect. */
+    public String gameServer;
 
-    /** The port on which the game should connect to the server (if this is a multiplayer game). */
-    public int port;
+    /** The port on which the game should connect to the game server. */
+    public int gamePort;
+
+    /** The world server that is hosting this game's main group room. */
+    public String groupServer;
+
+    /** The port on which the game should connect to the world server. */
+    public int groupPort;
 
     /** The port on which the game should connect to the server for HTTP requests (used by Java
      * which must connect back to the game server for its game jar file). */
@@ -60,12 +66,12 @@ public class LaunchConfig
     public int guestId;
 
     /**
-     * Creates a URL that can be used to communicate directly to the server represented by this
-     * launch config.
+     * Creates a URL that can be used to communicate directly to the game server represented by
+     * this launch config.
      */
-    public String getURL (String path)
+    public String getGameURL (String path)
     {
         String port = (httpPort == 80) ? "" : (":" + httpPort);
-        return "http://" + server + port + path;
+        return "http://" + gameServer + gamePort + path;
     }
 }

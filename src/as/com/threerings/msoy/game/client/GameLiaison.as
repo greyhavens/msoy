@@ -91,16 +91,32 @@ public class GameLiaison
             loader.addEventListener(Event.COMPLETE, function () :void {
                 loader.removeEventListener(Event.COMPLETE, arguments.callee);
                 var bits :Array = (loader.data as String).split(":");
-                var guestId :int = int(bits[2]);
-                if (guestId != 0) {
-                    var creds :MsoyGameCredentials  =
-                        (_gctx.getClient().getCredentials() as MsoyGameCredentials);
-                    creds.sessionToken = MsoyCredentials.GUEST_SESSION_PREFIX + guestId;
-                    if (creds.getUsername() == null) {
-                        creds.setUsername(new MemberName("Guest" + (-guestId), guestId));
-                    }
+                var guestId :int = int(bits[4]);
+                var guestToken :String = MsoyCredentials.GUEST_SESSION_PREFIX + guestId;
+                var guestName :MemberName = new MemberName("Guest" + (-guestId), guestId);
+
+                // start connecting to the game server first
+                var gcreds :MsoyGameCredentials  =
+                    (_gctx.getClient().getCredentials() as MsoyGameCredentials);
+                gcreds.sessionToken = MsoyCredentials.GUEST_SESSION_PREFIX + guestId;
+                if (gcreds.getUsername() == null) {
+                    gcreds.setUsername(new MemberName("Guest" + (-guestId), guestId));
                 }
                 gameLocated(bits[0], int(bits[1]));
+
+                log.info("Got group world server info, logging on [server=" + bits[2] +
+                    ", port=" + bits[3] + "].");
+
+                // now configure the world client to connect to the server that hosts our group
+                // room so that when we get into the lobby, we'll be ready to roll
+                _wctx.getClient().setServer(bits[2], [ int(bits[3]) ]);
+                var wcreds :MsoyCredentials =
+                    (_wctx.getClient().getCredentials() as MsoyCredentials);
+                wcreds.sessionToken = guestToken;
+                if (wcreds.getUsername() == null) {
+                    wcreds.setUsername(guestName);
+                }
+                _wctx.getClient().logon();
             });
             // TODO: add listeners for failure events? give feedback on failure?
             loader.load(new URLRequest(DeploymentConfig.serverURL + "embed/g" + _gameId));

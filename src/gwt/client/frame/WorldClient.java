@@ -27,14 +27,21 @@ public class WorldClient extends Widget
         public Panel get ();
     }
 
+    public static void setDefaultServer (String host, int port)
+    {
+        _defaultHost = host;
+        _defaultPort = port;
+    }
+
     public static void displayFlash (String flashArgs, final PanelProvider pprov)
     {
         // if we have not yet determined our default server, find that out now
-        if (_defaultServer == null) {
+        if (_defaultHost == null) {
             final String savedArgs = flashArgs;
             _usersvc.getConnectConfig(new MsoyCallback<ConnectConfig>() {
                 public void onSuccess (ConnectConfig config) {
-                    _defaultServer = config;
+                    _defaultHost = config.server;
+                    _defaultPort = config.port;
                     displayFlash(savedArgs, pprov);
                 }
             });
@@ -51,7 +58,12 @@ public class WorldClient extends Widget
         if (_curFlashArgs == null) {
             clientWillClose(); // clear our Java client if we have one
             _curFlashArgs = flashArgs; // note our new flash args before we tack on server info
-            flashArgs += "&host=" + _defaultServer.server + "&port=" + _defaultServer.port;
+            if (flashArgs.indexOf("&host") == -1) {
+                flashArgs += "&host=" + _defaultHost;
+            }
+            if (flashArgs.indexOf("&port") == -1) {
+                flashArgs += "&port=" + _defaultPort;
+            }
             String partner = CShell.getPartner();
             if (partner != null) {
                 flashArgs += "&partner=" + partner;
@@ -76,7 +88,7 @@ public class WorldClient extends Widget
         if (!action.equals("")) {
             flashArgs += "&gameMode=" + action;
         }
-        flashArgs += ("&host=" + config.server + "&port=" + config.port);
+        flashArgs += ("&host=" + config.gameServer + "&port=" + config.gamePort);
         if (CShell.getAuthToken() != null) {
             flashArgs += "&token=" + CShell.getAuthToken();
         }
@@ -168,8 +180,9 @@ public class WorldClient extends Widget
     protected static String _curFlashArgs;
     protected static Widget _jclient;
 
-    /** Our default world server. Configured the first time Flash is used. */
-    protected static ConnectConfig _defaultServer;
+    /** Our default world server host and port. Configured the first time Flash is used. */
+    protected static String _defaultHost;
+    protected static int _defaultPort;
 
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);

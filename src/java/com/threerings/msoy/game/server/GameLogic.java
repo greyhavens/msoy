@@ -19,10 +19,17 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 
-import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberRepository;
+
+import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+
+import com.threerings.msoy.web.data.LaunchConfig;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
@@ -30,17 +37,12 @@ import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.game.client.MsoyGameService;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.xml.MsoyGameParser;
-
-import com.threerings.msoy.web.data.LaunchConfig;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.server.ServletWaiter;
 
 import static com.threerings.msoy.Log.log;
 
@@ -70,7 +72,7 @@ public class GameLogic
         Game game = (Game)grec.toItem();
 
         // create a launch config record for the game
-        LaunchConfig config = new LaunchConfig();
+        final LaunchConfig config = new LaunchConfig();
         config.gameId = game.gameId;
 
         MsoyMatchConfig match;
@@ -114,19 +116,36 @@ public class GameLogic
         config.httpPort = ServerConfig.httpPort;
 
         // determine what server is hosting the game, start hosting it if necessary
+        final int gameGroupId = game.groupId == 0 ?
+            ServerConfig.getDefaultGameGroupId() : game.groupId;
         final GameLocationWaiter waiter = new GameLocationWaiter(config.gameId);
         _omgr.postRunnable(new Runnable() {
             public void run () {
                 try {
+                    // locate the server that's hosting this game's group whirled and fill that
+                    // directly into the LaunchConfig;
+                    Tuple<String, HostedRoom> shost = _peerMan.getSceneHost(gameGroupId);
+                    if (shost == null) {
+                        config.groupServer = ServerConfig.serverHost;
+                        config.groupPort = ServerConfig.serverPorts[0];
+                    } else {
+                        config.groupServer = _peerMan.getPeerPublicHostName(shost.left);
+                        config.groupPort = _peerMan.getPeerPort(shost.left);
+                    }
+
+                    // now figure out where the game is being hosted; this might result in this
+                    // server resolving the game in question, so we have to go through this
+                    // listener rigamarole
                     _gameReg.locateGame(null, waiter.gameId, waiter);
+
                 } catch (InvocationException ie) {
                     waiter.requestFailed(ie);
                 }
             }
         });
         Tuple<String, Integer> rhost = waiter.waitForResult();
-        config.server = rhost.left;
-        config.port = rhost.right;
+        config.gameServer = rhost.left;
+        config.gamePort = rhost.right;
 
         // finally, if they are a guest and have not yet been assigned a guest id, do so now so
         // that they can log directly into the game server

@@ -562,8 +562,11 @@ public class FrameEntryPoint
     {
     	// if we were assigned a guest id, make it known to everyone
         if (config.guestId != 0) {
-        	CShell.frame.dispatchEvent(new GotGuestIdEvent(config.guestId));
+            CShell.frame.dispatchEvent(new GotGuestIdEvent(config.guestId));
         }
+
+        // configure our world client with a default host and port in case we're first to the party
+        WorldClient.setDefaultServer(config.groupServer, config.groupPort);
 
         switch (config.type) {
         case LaunchConfig.FLASH_IN_WORLD:
@@ -572,7 +575,7 @@ public class FrameEntryPoint
 
         case LaunchConfig.FLASH_LOBBIED:
             if (gameOid <= 0) {
-                String hostPort = "&ghost=" + config.server + "&gport=" + config.port;
+                String hostPort = "&ghost=" + config.gameServer + "&gport=" + config.gamePort;
                 if (action.equals("m") || action.equals("f") || action.equals("s")) {
                     displayWorldClient(
                         "playNow=" + config.gameId + "&mode=" + action + hostPort, null);
@@ -606,7 +609,7 @@ public class FrameEntryPoint
                 bits.add(new Label("Loading game..."));
 
                 String hpath = "/clients/" + DeploymentConfig.version + "/howdy.jar";
-                bits.add(WidgetUtil.createApplet("game", config.getURL(hpath),
+                bits.add(WidgetUtil.createApplet("game", config.getGameURL(hpath),
                                                  "com.threerings.msoy.client.HowdyPardner",
                                                  "100", "10", true, new String[0]));
                 // TODO
@@ -750,7 +753,7 @@ public class FrameEntryPoint
 // take care of all of this...
 //         String[] args = new String[] {
 //             "game_id", "" + config.gameId, "game_oid", "" + gameOid,
-//             "server", config.server, "port", "" + config.port,
+//             "server", config.gameServer, "port", "" + config.gamePort,
 //             "authtoken", (CWorld.ident == null) ? "" : CWorld.ident.token };
 //         String gjpath = "/clients/" + DeploymentConfig.version + "/" +
 //             (config.lwjgl ? "lwjgl-" : "") + "game-client.jar";
@@ -758,7 +761,7 @@ public class FrameEntryPoint
 //             WidgetUtil.createApplet(
 //                 // here we explicitly talk directly to our game server (not via the public facing
 //                 // URL which is a virtual IP) so that Java's security policy works
-//                 "game", config.getURL(gjpath) + "," + config.getURL(config.gameMediaPath),
+//                 "game", config.getGameURL(gjpath) + "," + config.getGameURL(config.gameMediaPath),
 //                 "com.threerings.msoy.game.client." + (config.lwjgl ? "LWJGL" : "") + "GameApplet",
 //                 // TODO: allow games to specify their dimensions in their config
 //                 "100%", "600", false, args));
