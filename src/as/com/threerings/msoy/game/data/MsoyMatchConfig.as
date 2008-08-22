@@ -16,7 +16,7 @@ public class MsoyMatchConfig extends TableMatchConfig
     /** The creator configured matchmaking type. */
     public var type :int;
 
-    /** Whether this game is watchable or not. Defaults to not. */
+    /** Whether this game is watchable or not. */
     public var unwatchable :Boolean = false;
 
     public function MsoyMatchConfig ()
