@@ -28,6 +28,8 @@ import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
+import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.badge.data.BadgeType;
 import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
@@ -146,12 +148,11 @@ public class MeServlet extends MsoyServiceServlet
                 data.nextBadges = _badgeLogic.getInProgressBadges(mrec.memberId, true);
 
             } else {
-                MemberRecord theirRec = _memberRepo.loadMember(memberId);
-                if (theirRec == null) {
+                MemberName stampOwner = _memberRepo.loadMemberName(memberId);
+                if (stampOwner == null) {
                     throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
                 }
-
-                data.stampOwner = theirRec.name;
+                data.stampOwner = stampOwner.toString();
                 // we leave data.nextBadges empty when viewing other people's passport page.
             }
 
