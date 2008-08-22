@@ -15,12 +15,21 @@ if [ ! -e $JAVA_VM ]; then
     exit 255
 fi
 
+if [ -z "$1" ]; then
+    echo "Usage: $0 conf_prefix [arg ...]"
+    exit 255
+fi
+
 CONF_PREFIX="$1"
 shift
 
 # Obtain settings from MSOY_HOME/dist/${CONF_PREFIX}-server.conf
 if [ -f $MSOY_HOME/dist/${CONF_PREFIX}-server.conf ]; then
     . $MSOY_HOME/dist/${CONF_PREFIX}-server.conf
+else
+    echo "Unable to read ${CONF_PREFIX}-server.conf."
+    echo "Usage: $0 conf_prefix [arg ...]"
+    exit 255
 fi
 
 # set up our java arguments
