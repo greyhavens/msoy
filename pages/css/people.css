@@ -120,7 +120,11 @@
   width: 550px;
 }
 
-.profile .BadgeName {
+.profile .SimpleBadgeDisplay {
+  width: 110px;
+}
+
+.profile .SimpleBadgeDisplay .BadgeName {
   font-size: 14px;
 }
 

@@ -49,6 +49,7 @@ public class StampsBlurb extends Blurb
     {
         public SimpleBadgeDisplay (EarnedBadge badge)
         {
+            setStyleName("SimpleBadgeDisplay");
             setHorizontalAlignment(VerticalPanel.ALIGN_CENTER);
             add(MsoyUI.createImage(badge.imageUrl(), "BadgeImage"));
             String badgeName =  Integer.toHexString(badge.badgeCode);
