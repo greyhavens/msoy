@@ -73,7 +73,7 @@ public class WebUserServlet extends MsoyServiceServlet
 {
     // from interface WebUserService
     public SessionData login (
-        final String clientVersion, final String username, final String password, final int expireDays)
+        String clientVersion, String username, String password, int expireDays)
         throws ServiceException
     {
         checkClientVersion(clientVersion, username);
@@ -83,14 +83,14 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public SessionData register (final String clientVersion, final RegisterInfo info)
+    public SessionData register (String clientVersion, RegisterInfo info)
         throws ServiceException
     {
         checkClientVersion(clientVersion, info.email);
 
         // check age restriction
-        final java.sql.Date birthday = ProfileRecord.fromDateVec(info.birthday);
-        final Calendar thirteenYearsAgo = Calendar.getInstance();
+        java.sql.Date birthday = ProfileRecord.fromDateVec(info.birthday);
+        Calendar thirteenYearsAgo = Calendar.getInstance();
         thirteenYearsAgo.add(Calendar.YEAR, -13);
         if (birthday.compareTo(thirteenYearsAgo.getTime()) > 0) {
             log.warning("User submitted invalid birtdate [date=" + birthday + "].");
@@ -107,14 +107,14 @@ public class WebUserServlet extends MsoyServiceServlet
                     throw new ServiceException(MsoyAuthCodes.INVITE_ALREADY_REDEEMED);
                 }
                 ignoreRestrict = true;
-            } catch (final PersistenceException pe) {
+            } catch (PersistenceException pe) {
                 log.warning("Checking invite availability failed", "inviteId", info.inviteId, pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
         }
 
         // validate display name length (this is enforced on the client)
-        final String displayName = info.displayName.trim();
+        String displayName = info.displayName.trim();
         if (!MemberName.isValidDisplayName(displayName) ||
             !MemberName.isValidNonSupportName(displayName)) {
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -132,14 +132,14 @@ public class WebUserServlet extends MsoyServiceServlet
             info.referral);
 
         // store the user's birthday and realname in their profile
-        final ProfileRecord prec = new ProfileRecord();
+        ProfileRecord prec = new ProfileRecord();
         prec.memberId = mrec.memberId;
         prec.birthday = birthday;
         prec.realName = info.info.realName;
         prec.setPhoto(info.photo);
         try {
             _profileRepo.storeProfile(prec);
-        } catch (final PersistenceException pe) {
+        } catch (PersistenceException pe) {
             log.warning("Failed to create initial profile [prec=" + prec + "]", pe);
             // keep on keepin' on
         }
@@ -154,7 +154,7 @@ public class WebUserServlet extends MsoyServiceServlet
         if (invite != null && invite.inviterId != 0) {
             try {
                 _memberRepo.linkInvite(info.inviteId, mrec);
-            } catch (final PersistenceException pe) {
+            } catch (PersistenceException pe) {
                 log.warning("Linking invites failed", "inviteId", info.inviteId,
                             "memberId", mrec.memberId, pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
@@ -163,7 +163,7 @@ public class WebUserServlet extends MsoyServiceServlet
             MemberRecord inviter;
             try {
                 inviter = _memberRepo.loadMember(invite.inviterId);
-            } catch (final PersistenceException pe) {
+            } catch (PersistenceException pe) {
                 log.warning("Failed to lookup inviter [inviteId=" + info.inviteId +
                         ", memberId=" + invite.inviterId + "]", pe);
                 throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
@@ -171,12 +171,12 @@ public class WebUserServlet extends MsoyServiceServlet
 
             if (inviter != null) {
                 // send them a whirled mail informing them of the acceptance
-                final String subject = _serverMsgs.getBundle("server").get("m.invite_accepted_subject");
-                final String body = _serverMsgs.getBundle("server").get(
+                String subject = _serverMsgs.getBundle("server").get("m.invite_accepted_subject");
+                String body = _serverMsgs.getBundle("server").get(
                     "m.invite_accepted_body", invite.inviteeEmail, displayName);
                 try {
                     _mailLogic.startConversation(mrec, inviter, subject, body, null);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     log.warning("Failed to sent invite accepted mail", e);
                 }
 
@@ -185,9 +185,10 @@ public class WebUserServlet extends MsoyServiceServlet
 
                 try {
                     // pay out a sign up bonus to the inviter
-                    _moneyLogic.awardCoins(inviter.memberId, 0, 0, null, CoinAwards.INVITED_FRIEND_JOINED, 
+                    _moneyLogic.awardCoins(
+                        inviter.memberId, 0, 0, null, CoinAwards.INVITED_FRIEND_JOINED,
                         "", UserAction.INVITED_FRIEND_JOINED);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     log.warning("Failed to wire up friendship for created account " +
                             "[member=" + mrec.who() + ", inviter=" + inviter.who() + "].", e);
                 }
@@ -221,23 +222,23 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public SessionData validateSession (final String clientVersion, final String authtok, final int expireDays)
+    public SessionData validateSession (String clientVersion, String authtok, int expireDays)
         throws ServiceException
     {
         checkClientVersion(clientVersion, authtok);
 
         // refresh the token associated with their authentication session
         try {
-            final MemberRecord mrec = _memberRepo.refreshSession(authtok, expireDays);
+            MemberRecord mrec = _memberRepo.refreshSession(authtok, expireDays);
             if (mrec == null) {
                 return null;
             }
 
-            final WebCreds creds = mrec.toCreds(authtok);
+            WebCreds creds = mrec.toCreds(authtok);
             _mhelper.mapMemberId(creds.token, mrec.memberId);
             return loadSessionData(mrec, creds, _moneyLogic.getMoneyFor(mrec.memberId));
 
-        } catch (final PersistenceException pe) {
+        } catch (PersistenceException pe) {
             log.warning("Failed to refresh session [tok=" + authtok + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
@@ -247,7 +248,7 @@ public class WebUserServlet extends MsoyServiceServlet
     public ConnectConfig getConnectConfig ()
         throws ServiceException
     {
-        final ConnectConfig config = new ConnectConfig();
+        ConnectConfig config = new ConnectConfig();
         config.server = ServerConfig.serverHost;
         config.port = ServerConfig.serverPorts[0];
         config.httpPort = ServerConfig.httpPort;
@@ -255,23 +256,23 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public LaunchConfig loadLaunchConfig (final int gameId, final boolean assignGuestId)
+    public LaunchConfig loadLaunchConfig (int gameId, boolean assignGuestId)
         throws ServiceException
     {
         return _gameLogic.loadLaunchConfig(gameId, assignGuestId);
     }
 
     // from interface WebUserService
-    public void sendForgotPasswordEmail (final String email)
+    public void sendForgotPasswordEmail (String email)
         throws ServiceException
     {
         try {
-            final String code = _author.generatePasswordResetCode(email);
+            String code = _author.generatePasswordResetCode(email);
             if (code == null) {
                 throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
             }
 
-            final MemberRecord mrec = _memberRepo.loadMember(email);
+            MemberRecord mrec = _memberRepo.loadMember(email);
             if (mrec == null) {
                 throw new ServiceException(MsoyAuthCodes.NO_SUCH_USER);
             }
@@ -283,21 +284,21 @@ public class WebUserServlet extends MsoyServiceServlet
                                      "email", mrec.accountName,
                                      "memberId", mrec.memberId,
                                      "code", code);
-            } catch (final Exception e) {
+            } catch (Exception e) {
                 throw new ServiceException(e.getMessage());
             }
 
-        } catch (final PersistenceException pe) {
+        } catch (PersistenceException pe) {
             log.warning("Failed to lookup account [email=" + email + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
     }
 
     // from interface WebUserService
-    public void updateEmail (final String newEmail)
+    public void updateEmail (String newEmail)
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireAuthedUser();
 
         if (!MailUtil.isValidAddress(newEmail)) {
             throw new ServiceException(MsoyAuthCodes.INVALID_EMAIL);
@@ -305,9 +306,9 @@ public class WebUserServlet extends MsoyServiceServlet
 
         try {
             _memberRepo.configureAccountName(mrec.memberId, newEmail);
-        } catch (final DuplicateKeyException dke) {
+        } catch (DuplicateKeyException dke) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
-        } catch (final PersistenceException pe) {
+        } catch (PersistenceException pe) {
             log.warning("Failed to set email [who=" + mrec.memberId +
                     ", email=" + newEmail + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -321,16 +322,16 @@ public class WebUserServlet extends MsoyServiceServlet
     public void updateEmailPrefs (boolean emailOnWhirledMail, boolean emailAnnouncements)
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireAuthedUser();
 
         // update their mail preferences if appropriate
-        final int oflags = mrec.flags;
+        int oflags = mrec.flags;
         mrec.setFlag(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL, !emailOnWhirledMail);
         mrec.setFlag(MemberRecord.Flag.NO_ANNOUNCE_EMAIL, !emailAnnouncements);
         if (mrec.flags != oflags) {
             try {
                 _memberRepo.storeFlags(mrec);
-            } catch (final PersistenceException pe) {
+            } catch (PersistenceException pe) {
                 log.warning("Failed to update flags [who=" + mrec.memberId +
                         ", flags=" + mrec.flags + "].", pe);
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -339,26 +340,26 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void updatePassword (final String newPassword)
+    public void updatePassword (String newPassword)
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireAuthedUser();
         _author.updateAccount(mrec.accountName, null, null, newPassword);
     }
 
     // from interface WebUserService
-    public boolean resetPassword (final int memberId, final String code, final String newPassword)
+    public boolean resetPassword (int memberId, String code, String newPassword)
         throws ServiceException
     {
         try {
-            final MemberRecord mrec = _memberRepo.loadMember(memberId);
+            MemberRecord mrec = _memberRepo.loadMember(memberId);
             if (mrec == null) {
                 log.info("No such member for password reset " + memberId + ".");
                 return false;
             }
 
             if (!_author.validatePasswordResetCode(mrec.accountName, code)) {
-                final String actual = _author.generatePasswordResetCode(mrec.accountName);
+                String actual = _author.generatePasswordResetCode(mrec.accountName);
                 log.info("Code mismatch for password reset [id=" + memberId + ", code=" + code +
                          ", actual=" + actual + "].");
                 return false;
@@ -367,7 +368,7 @@ public class WebUserServlet extends MsoyServiceServlet
             _author.updateAccount(mrec.accountName, null, null, newPassword);
             return true;
 
-        } catch (final PersistenceException pe) {
+        } catch (PersistenceException pe) {
             log.warning("Failed to reset password [who=" + memberId +
                     ", code=" + code + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -375,10 +376,10 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void configurePermaName (final String permaName)
+    public void configurePermaName (String permaName)
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireAuthedUser();
         if (mrec.permaName != null) {
             log.warning("Rejecting attempt to reassing permaname [who=" + mrec.accountName +
                         ", oname=" + mrec.permaName + ", nname=" + permaName + "].");
@@ -394,9 +395,9 @@ public class WebUserServlet extends MsoyServiceServlet
 
         try {
             _memberRepo.configurePermaName(mrec.memberId, permaName);
-        } catch (final DuplicateKeyException dke) {
+        } catch (DuplicateKeyException dke) {
             throw new ServiceException(MsoyAuthCodes.DUPLICATE_PERMANAME);
-        } catch (final PersistenceException pe) {
+        } catch (PersistenceException pe) {
             log.warning("Failed to set permaname [who=" + mrec.memberId +
                     ", pname=" + permaName + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -410,11 +411,11 @@ public class WebUserServlet extends MsoyServiceServlet
     public AccountInfo getAccountInfo ()
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireAuthedUser();
 
         try {
-            final AccountInfo ainfo = new AccountInfo();
-            final ProfileRecord prec = _profileRepo.loadProfile(mrec.memberId);
+            AccountInfo ainfo = new AccountInfo();
+            ProfileRecord prec = _profileRepo.loadProfile(mrec.memberId);
             if (prec != null) {
                 ainfo.realName = prec.realName;
             }
@@ -422,7 +423,7 @@ public class WebUserServlet extends MsoyServiceServlet
             ainfo.emailAnnouncements = !mrec.isSet(MemberRecord.Flag.NO_ANNOUNCE_EMAIL);
             return ainfo;
 
-        } catch (final PersistenceException pe) {
+        } catch (PersistenceException pe) {
             log.warning("Failed to fetch account info [who=" + mrec.memberId +
                 "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
@@ -430,22 +431,22 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     // from interface WebUserService
-    public void updateAccountInfo (final AccountInfo info)
+    public void updateAccountInfo (AccountInfo info)
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireAuthedUser();
 
         try {
-            final ProfileRecord prec = _profileRepo.loadProfile(mrec.memberId);
+            ProfileRecord prec = _profileRepo.loadProfile(mrec.memberId);
             prec.realName = info.realName;
             _profileRepo.storeProfile(prec);
-        } catch (final PersistenceException pe) {
+        } catch (PersistenceException pe) {
             log.warning("Failed to update user account info [who=" + mrec.memberId + "].", pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
-    protected void checkClientVersion (final String clientVersion, final String who)
+    protected void checkClientVersion (String clientVersion, String who)
         throws ServiceException
     {
         if (!DeploymentConfig.version.equals(clientVersion)) {
@@ -455,7 +456,7 @@ public class WebUserServlet extends MsoyServiceServlet
         }
     }
 
-    protected void verifyCaptcha (final String challenge, final String response)
+    protected void verifyCaptcha (String challenge, String response)
         throws ServiceException
     {
         if (challenge == null || response == null) {
@@ -468,13 +469,13 @@ public class WebUserServlet extends MsoyServiceServlet
         InputStream in = null;
         try {
             // the reCaptcha verify api
-            final URL curl = new URL("http://api-verify.recaptcha.net/verify");
-            final HttpURLConnection conn = (HttpURLConnection)curl.openConnection();
+            URL curl = new URL("http://api-verify.recaptcha.net/verify");
+            HttpURLConnection conn = (HttpURLConnection)curl.openConnection();
             conn.setDoOutput(true);
             conn.setRequestMethod("POST");
 
-            final String ip = getThreadLocalRequest().getRemoteAddr();
-            final StringBuilder postData = new StringBuilder("privatekey=");
+            String ip = getThreadLocalRequest().getRemoteAddr();
+            StringBuilder postData = new StringBuilder("privatekey=");
             postData.append(URLEncoder.encode(ServerConfig.recaptchaPrivateKey, "UTF-8"));
             postData.append("&remoteip=").append(URLEncoder.encode(ip, "UTF-8"));
             postData.append("&challenge=").append(URLEncoder.encode(challenge, "UTF-8"));
@@ -484,14 +485,14 @@ public class WebUserServlet extends MsoyServiceServlet
             out.flush();
 
             in = conn.getInputStream();
-            final BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
             // see if the response was valid
             if ("true".equals(br.readLine())) {
                 return;
             }
 
-            final String error = br.readLine();
+            String error = br.readLine();
             // we're not supposed to rely on these error codes, but reCaptcha doesn't give
             // AJAX users any other options for error management
             if (!"incorrect-captcha-sol".equals(error)) {
@@ -500,10 +501,10 @@ public class WebUserServlet extends MsoyServiceServlet
             }
             throw new CaptchaException(MsoyAuthCodes.FAILED_CAPTCHA);
 
-        } catch (final MalformedURLException mue) {
+        } catch (MalformedURLException mue) {
             log.warning("Failed to verify captcha information.", mue);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        } catch (final IOException ioe) {
+        } catch (IOException ioe) {
             log.warning("Failed to verify captcha information.", ioe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         } finally {
@@ -512,24 +513,24 @@ public class WebUserServlet extends MsoyServiceServlet
         }
     }
 
-    protected SessionData startSession (final MemberRecord mrec, final int expireDays)
+    protected SessionData startSession (MemberRecord mrec, int expireDays)
         throws ServiceException
     {
         try {
             // if they made it through that gauntlet, create or update their session token
-            final WebCreds creds = mrec.toCreds(_memberRepo.startOrJoinSession(mrec.memberId, expireDays));
+            WebCreds creds = mrec.toCreds(_memberRepo.startOrJoinSession(mrec.memberId, expireDays));
             _mhelper.mapMemberId(creds.token, mrec.memberId);
             return loadSessionData(mrec, creds, _moneyLogic.getMoneyFor(mrec.memberId));
 
-        } catch (final PersistenceException pe) {
+        } catch (PersistenceException pe) {
             log.warning("Failed to start session [for=" + mrec.accountName + "].", pe);
             throw new ServiceException(MsoyAuthCodes.SERVER_UNAVAILABLE);
         }
     }
 
-    protected SessionData loadSessionData (final MemberRecord mrec, final WebCreds creds, final MemberMoney money)
+    protected SessionData loadSessionData (MemberRecord mrec, WebCreds creds, MemberMoney money)
     {
-        final SessionData data = new SessionData();
+        SessionData data = new SessionData();
         data.creds = creds;
 
         // fill in their flow, gold and level
@@ -540,7 +541,7 @@ public class WebUserServlet extends MsoyServiceServlet
         // load up their new mail count
         try {
             data.newMailCount = _mailRepo.loadUnreadConvoCount(mrec.memberId);
-        } catch (final PersistenceException pe) {
+        } catch (PersistenceException pe) {
             log.warning("Failed to load new mail count [id=" + mrec.memberId + "].", pe);
         }
 
@@ -549,7 +550,7 @@ public class WebUserServlet extends MsoyServiceServlet
 
     protected static class TransferGuestFlowAction extends MemberNodeAction
     {
-        public TransferGuestFlowAction (final int fromGuestId, final int toMemberId) {
+        public TransferGuestFlowAction (int fromGuestId, int toMemberId) {
             super(fromGuestId);
             Preconditions.checkArgument(fromGuestId < 0, "guest id must be < 0: " + fromGuestId);
             _toMemberId = toMemberId;
@@ -559,23 +560,21 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         @Override
-        protected void execute (final MemberObject memobj) {
+        protected void execute (MemberObject memobj) {
             final int flow = memobj.flow;
             if (flow > 0) {
                 log.info("Transfering guest-accumulated flow to user [guestId=" + _memberId +
                          ", memberId=" + _toMemberId + "].");
                 _invoker.postUnit(new Invoker.Unit() {
-                    @Override
-                    public boolean invoke ()
-                    {
+                    @Override public boolean invoke () {
                         try {
-                            final MoneyResult res = _moneyLogic.awardCoins(_toMemberId, 0, 0, null, flow, "", 
-                                UserAction.TRANSFER_FROM_GUEST);
+                            MoneyResult res = _moneyLogic.awardCoins(
+                                _toMemberId, 0, 0, null, flow, "", UserAction.TRANSFER_FROM_GUEST);
                             _moneyNodeActions.moneyUpdated(res.getNewMemberMoney());
                             return true;
-                        } catch (final Exception e) {
-                            log.warning("Unable to grant coins [memberId=" + _toMemberId +
-                                ", action=" + UserAction.TRANSFER_FROM_GUEST + ", amount=" + flow + "]", e);
+                        } catch (Exception e) {
+                            log.warning("Unable to grant coins", "to", _toMemberId,
+                                        "action", UserAction.TRANSFER_FROM_GUEST, "amount", flow, e);
                             return false;
                         }
                     }
@@ -584,6 +583,7 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         protected int _toMemberId;
+
         @Inject protected transient MoneyLogic _moneyLogic;
         @Inject protected transient MoneyNodeActions _moneyNodeActions;
         @Inject @MainInvoker protected transient Invoker _invoker;
@@ -603,7 +603,7 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected MailRepository _mailRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected MoneyLogic _moneyLogic;
-    
+
     /** The regular expression defining valid permanames. */
     protected static final String PERMANAME_REGEX = "^[a-z][_a-z0-9]*$";
 }
