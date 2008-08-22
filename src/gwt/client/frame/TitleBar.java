@@ -198,7 +198,7 @@ public class TitleBar extends SmartTable
 
         protected void addSeparator (boolean sep) {
             if (getWidgetCount() > 0) {
-                add(new HTML("&nbsp;" + (sep ? "&nbsp;|&nbsp;" : "") + "&nbsp;"));
+                add(new HTML("&nbsp;&nbsp;" + (sep ? "|&nbsp;&nbsp;" : "")));
             }
         }
     }
