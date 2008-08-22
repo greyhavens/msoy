@@ -72,9 +72,7 @@ public class MsoyGameManager extends WhirledGameManager
     public boolean isMultiplayer ()
     {
         return (_gameconfig.getMatchType() == GameConfig.PARTY)
-            // NOTE: originally the isMultiPlayer check in the delegate returned true
-            // for seated continuous, but if there's only 1 slot.. ?
-            || (_gameconfig.players.length > 1);
+            || (getPlayerCount() > 1);
     }
 
     @Override
