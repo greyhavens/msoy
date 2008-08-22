@@ -43,8 +43,6 @@ public class WhatsNextPanel extends TongueBox
 {
     public WhatsNextPanel (MyWhirledData data)
     {
-        setHeader(_msgs.nextHeader());
-
         SmartTable content = new SmartTable("whatsNext", 0, 0);
         setContent(content);
 
