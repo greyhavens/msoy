@@ -15,12 +15,18 @@ public class CanonicalFramer implements Framer
      */
     public function CanonicalFramer (source :Rectangle, frame :Rectangle, offset :int) 
     {
-        _source = source;                
-        _frame = frame;
-        _offset = offset;
-             
-        // at this point the results can't change after construction, so we calculate immediately.
-        calculate();
+        _scale = frame.height / source.height;
+        
+        // the width that the image is going to end up
+        const image_width :int = source.width * _scale;
+
+        // start off by centering the image within the frame
+        _x = (frame.width - image_width) / 2
+        
+        if (image_width > frame.width) {
+            // if the image will be larger than the frame, then we use the scaled offset
+            _x = _x - (offset * _scale);
+        }
     }
 
     /**
@@ -32,25 +38,6 @@ public class CanonicalFramer implements Framer
         matrix.translate(_x, 0);
     }
     
-    /** 
-     * Calculate the transformation.
-     */
-    protected function calculate () :void
-    {
-        _scale = _frame.height / _source.height;
-        
-        // the width that the image is going to end up
-        const image_width :int = _source.width * _scale;
-
-        // start off by centering the image within the frame
-        _x = (_frame.width - image_width) / 2
-        
-        if (image_width > _frame.width) {
-            // if the image will be larger than the frame, then we use the scaled offset
-            _x = _x - (_offset * _scale);
-        }
-    }
- 
     /**
      * The _scale factor to apply to the source rectangle to place it in the frame.
      */ 
@@ -61,9 +48,5 @@ public class CanonicalFramer implements Framer
      * in the frame.  Will centralize the image horizontally in the frame.
      */
     protected var _x :int;
- 
-    protected var _source :Rectangle;
-    protected var _frame :Rectangle;    
-    protected var _offset :int;
 }
 }
