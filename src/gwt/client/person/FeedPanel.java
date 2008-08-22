@@ -112,8 +112,6 @@ public class FeedPanel extends TongueBox
             return new MessageKey(message.type, message.data[1]);
         case 102: // FRIEND_WON_TROPHY
             return new MessageKey(message.type, message.data[1].concat(message.data[0]).hashCode());
-        case 105: // FRIEND_WON_BADGE
-            return new MessageKey(message.type, message.data[0].concat(message.data[1]).hashCode());
         }
         return null;
     }
@@ -311,7 +309,9 @@ public class FeedPanel extends TongueBox
                     badgeLevelName = "MISSING LEVEL NAME (level=" + badgeLevel + ")";
                 }
 
-                return Link.createHtml(badgeLevelName + " " + badgeName, Pages.ME, "passport");
+                int memberId = ((FriendFeedMessage)message).friend.getMemberId();
+                return Link.createHtml(
+                    badgeLevelName + " " + badgeName, Pages.ME, "passport_" + memberId);
             }
 
             return null;
