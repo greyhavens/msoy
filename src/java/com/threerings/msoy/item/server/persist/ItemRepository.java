@@ -23,6 +23,7 @@ import com.samskivert.io.PersistenceException;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
+import com.samskivert.util.Comparators;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntSet;
@@ -1246,13 +1247,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             if (c1.item == null || c2.item == null) {
                 return 0;
             }
-            if (c1.item.isRemixable() && !c2.item.isRemixable()) {
-                return -1;
-            }
-            if (c2.item.isRemixable() && !c1.item.isRemixable()) {
-                return 1;
-            }
-            return 0;
+            return Comparators.compare(c2.item.isRemixable(), c1.item.isRemixable());
         }
     };
 
