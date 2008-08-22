@@ -77,7 +77,9 @@ public class MoneyLogicImpl
         // TODO: creator and affiliate
 
         logUserAction(memberId, UserActionDetails.INVALID_ID, userAction, item, description);
-
+        final UserActionDetails info = logUserAction(memberId, 0, userAction, item, description);
+        logInPanopticon(info, MoneyType.COINS, amount, account);
+        
         return new MoneyResult(account.getMemberMoney(), null, null, history.createMoneyHistory(),
             null, null);
     }
@@ -274,7 +276,7 @@ public class MoneyLogicImpl
             _repo.saveAccount(creator);
             info = logUserAction(prices.getCreatorId(), memberId, UserAction.RECEIVED_PAYOUT, item,
                 prices.getDescription());
-            logInPanopticon(info, purchaseType, history.getSignedAmount(), account);
+            logInPanopticon(info, purchaseType, creatorHistory.getSignedAmount(), creator);
         }
 
         // TODO: update affiliate with some amount of bling.
