@@ -121,6 +121,7 @@ public class FavoritesPanel extends SimplePanel
         // use a title containing the member's name
         _title = (_memberId == CShell.getMemberId()) ?
             _shopmsgs.myFavoritesTitle() : _shopmsgs.memberFavorites(_memberName);
+        CShell.frame.setTitle(_title);
 
         _favoriteModel.setItemType(_itemType);
         _favorites.setPrefixArgs(_prefixArgs);
