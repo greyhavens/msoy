@@ -53,7 +53,7 @@ public class LobbyGameLiaison extends GameLiaison
         _wctx.getLocationDirector().addLocationObserver(_worldLocObs);
 
         // create our lobby controller which will display a "locating game..." interface
-        _lobby = new LobbyController(_gctx, _mode, lobbyCleared, playNow);
+        _lobby = new LobbyController(_gctx, _mode, lobbyCleared, playNow, lobbyLoaded);
     }
 
     /**
@@ -109,7 +109,8 @@ public class LobbyGameLiaison extends GameLiaison
     {
         if (_lobby == null) {
             _lobby = 
-                new LobbyController(_gctx, _mode = LobbyCodes.SHOW_LOBBY, lobbyCleared, playNow);
+                new LobbyController(_gctx, _mode = LobbyCodes.SHOW_LOBBY, lobbyCleared, playNow, 
+                lobbyLoaded);
             joinLobby();
         } // otherwise it's already showing
     }
@@ -142,6 +143,17 @@ public class LobbyGameLiaison extends GameLiaison
         // game for us; if it succeeds, it sends back a zero result and we need take no further
         // action; if it fails, it sends back the lobby OID so we can join the lobby
         lsvc.playNow(_gctx.getClient(), _gameId, mode, cb);
+    }
+
+    /**
+     * Opens the game's group home scene if a scene isn't already displayed.
+     */
+    public function lobbyLoaded (groupId :int) :void
+    {
+    	// TODO check for current scene
+        if (groupId > 0 && int(_wctx.getWorldController().getSceneAndGame()[0]) == 0) {
+        	_wctx.getWorldController().handleGoGroupHome(groupId);
+        }
     }
 
     /**

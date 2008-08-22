@@ -63,13 +63,14 @@ public class LobbyController extends Controller implements Subscriber
     public static const PLAY_SOLO :String = "PlaySolo";
 
     public function LobbyController (
-        gctx :GameContext, mode :int, onClear :Function, playNow :Function)
+        gctx :GameContext, mode :int, onClear :Function, playNow :Function, lobbyLoaded :Function)
     {
         _gctx = gctx;
         _mctx = gctx.getMsoyContext();
         _mode = mode;
         _onClear = onClear;
         _playNow = playNow;
+        _lobbyLoaded = lobbyLoaded;
 
         // let the compiler know that these must be compiled into the client
         var c :Class = MsoyGameDefinition;
@@ -308,6 +309,9 @@ public class LobbyController extends Controller implements Subscriber
             joinSomeTable(false);
             break;
         }
+        
+        // pass group back to the caller once lobby has loaded 
+        _lobbyLoaded(_lobj.game.groupId);
     }
 
     // from Subscriber
@@ -350,6 +354,9 @@ public class LobbyController extends Controller implements Subscriber
 
     /** Called when the player wants instant action. */
     protected var _playNow :Function;
+
+    /** Called when the lobby dialog is done loading, with the game's groupId as argument. */
+    protected var _lobbyLoaded :Function;
 
     /** Our distributed LobbyObject */
     protected var _lobj :LobbyObject;
