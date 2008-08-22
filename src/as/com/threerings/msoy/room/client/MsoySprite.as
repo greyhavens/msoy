@@ -122,7 +122,11 @@ public class MsoySprite extends DataPackMediaContainer
                 // (Actually, there's a good case for making all decorations
                 // on a different sub-object that undoes parent scale to
                 // keep scale consistent.
-                Object(Loader(_media).content).snapshot(bitmapData, m, r);
+                if (shouldUseStub(_url)) {
+                    Object(Loader(_media).content).snapshot(bitmapData, m, r);
+                } else {
+                    bitmapData.draw(Loader(_media).content, m, null, null, r, true);
+                }
                 //trace("== Snapshot: inside stub");
                 return true;
 

@@ -142,6 +142,10 @@ public class DataPackMediaContainer extends MsoyMediaContainer
             return (Security.sandboxType != Security.LOCAL_WITH_FILE);
         }
 
+        if (StringUtil.startsWith(url, DeploymentConfig.staticMediaURL)) {
+            return false;
+        }
+
         // we use the stub only on non-file non-images
         return !(isImage(url) || isFileUrl(url));
     }
