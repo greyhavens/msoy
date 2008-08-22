@@ -49,8 +49,8 @@ public class FavoritesBlurb extends Blurb
             }
         });
 
-        setFooterLink(CPeople.msgs.seeMoreFavorites(pdata.name.toString()), Pages.SHOP,
-            Args.compose("f", pdata.name.getMemberId()));
+        setFooterLink(CPeople.msgs.seeMoreFavorites(), Pages.SHOP,
+                      Args.compose("f", pdata.name.getMemberId()));
     }
 
     protected static final ItemServiceAsync _itemsvc =
