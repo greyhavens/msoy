@@ -311,7 +311,7 @@ public class FeedPanel extends TongueBox
 
                 int memberId = ((FriendFeedMessage)message).friend.getMemberId();
                 return Link.createHtml(
-                    badgeLevelName + " " + badgeName, Pages.ME, "passport_" + memberId);
+                    badgeLevelName + " " + badgeName, Pages.ME, Args.compose("passport", memberId));
             }
 
             return null;
