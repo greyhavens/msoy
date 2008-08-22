@@ -39,16 +39,13 @@ public class ShopPage extends Page
                 }
             });
         } else if (action.equals(FAVORITES)) {
-            // get the member id from args, if no member id, use the current user
+            // get the member id from args. if no member id, use the current user
             int memberId = args.get(1, CShop.getMemberId());
             byte itemType = (byte) args.get(2, Item.NOT_A_TYPE);
+            int gridPage = args.get(3, 0);
             String[] prefixArgs = new String[] { FAVORITES, String.valueOf(memberId) };
-            // TODO get member's name (passed from the profile page? loaded from service?) from id
-            // and display it in the page title
-            String title = (memberId == CShop.getMemberId()) ? CShop.msgs.myFavoritesTitle()
-                : CShop.msgs.favoritesTitle();
-            setContent(title, _favorites);
-            _favorites.update(memberId, itemType, prefixArgs, args);
+            _favorites.update(memberId, itemType, gridPage, prefixArgs);
+            setContent(_favorites.getTitle(), _favorites);
         } else {
             byte type = (byte)args.get(0, Item.NOT_A_TYPE);
             if (type == Item.NOT_A_TYPE) {

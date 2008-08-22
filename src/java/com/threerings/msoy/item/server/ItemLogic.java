@@ -39,6 +39,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
+import com.threerings.msoy.item.data.all.MemberItemListInfo;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.ListingCard;
 
@@ -462,19 +463,6 @@ public class ItemLogic
         incrementFavoriteCount(record, itemType, -1);
     }
 
-    protected void incrementFavoriteCount (CatalogRecord record, byte itemType, int increment)
-        throws ServiceException
-    {
-        ItemRepository<ItemRecord> repo = getRepository(itemType);
-        try {
-            repo.incrementFavoriteCount(record, increment);
-        } catch (PersistenceException pex) {
-            log.warning("Could not increment favorite count.", "catalogId", record.catalogId,
-                "increment", increment, pex);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-    }
-
     public int getItemListSize (int listId)
         throws PersistenceException
     {
@@ -556,6 +544,19 @@ public class ItemLogic
         return isFavorite(memberId, new ItemIdent(itemType, record.listedItemId));
     }
 
+    protected void incrementFavoriteCount (CatalogRecord record, byte itemType, int increment)
+        throws ServiceException
+    {
+        ItemRepository<ItemRecord> repo = getRepository(itemType);
+        try {
+            repo.incrementFavoriteCount(record, increment);
+        } catch (PersistenceException pex) {
+            log.warning("Could not increment favorite count.", "catalogId", record.catalogId,
+                "increment", increment, pex);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+    }
+
     /**
      * Check to see if the member's favorite list contains the given item.
      */
@@ -570,7 +571,7 @@ public class ItemLogic
      * Loads up info on the specified member's favorite items list. If the list does not yet exist,
      * it will be created.
      */
-    public ItemListInfo getFavoriteListInfo (int memberId)
+    public MemberItemListInfo getFavoriteListInfo (int memberId)
         throws PersistenceException
     {
         List<ItemListInfo> favoriteLists = Lists.newArrayList(
@@ -591,7 +592,12 @@ public class ItemLogic
             favorites = favoriteLists.get(0);
         }
 
-        return favorites;
+        // return the member name for display purposes
+        MemberRecord member = _memberRepo.loadMember(memberId);
+        MemberItemListInfo list = new MemberItemListInfo(favorites);
+        list.memberName = member.getName().getNormal();
+
+        return list;
     }
 
     public List<Item> loadFavoriteList (int memberId)

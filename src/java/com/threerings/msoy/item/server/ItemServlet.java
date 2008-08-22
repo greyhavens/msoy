@@ -26,8 +26,8 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
+import com.threerings.msoy.item.data.all.MemberItemListInfo;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
@@ -415,7 +415,6 @@ public class ItemServlet extends MsoyServiceServlet
         try {
             // load up the catalog record
             CatalogRecord record = repo.loadListing(catalogId, false);
-
             if (record == null) {
                 log.warning("Could not set favorite. Could not find catalog record.", "catalogId",
                     catalogId, "itemType", itemType);
@@ -477,7 +476,7 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from interface ItemService
-    public ItemListInfo getFavoriteListInfo (int memberId) throws ServiceException
+    public MemberItemListInfo getFavoriteListInfo (int memberId) throws ServiceException
     {
         try {
             return _itemLogic.getFavoriteListInfo (memberId);

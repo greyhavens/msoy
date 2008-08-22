@@ -6,8 +6,7 @@ package client.shop;
 import client.item.FavoritesGrid;
 import client.item.ItemGrid;
 import client.item.ItemListDataModel;
-import client.item.ItemMessages;
-import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -16,7 +15,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.MemberItemListInfo;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 
@@ -48,20 +47,23 @@ public class FavoritesPanel extends SimplePanel
     }
 
     /**
-     * Delegates args from the parent page when onHistoryChanged() is called.
+     * Updates the favorites panel.
+     *
+     * @param prefixArgs page args that the FavoritesGrid should prepend to its links.
      */
-    public void update (int memberId, String[] prefixArgs, Args allPageArgs)
+    public void update (int memberId, byte itemType, int gridPage, String[] prefixArgs)
     {
-        // save the args in case the _favoritesPanel is not initialized yet
+        // save these values in case the _favoritesPanel is not initialized yet
+        _itemType = itemType;
+        _page = gridPage;
         _prefixArgs = prefixArgs;
-        _lastArgs = allPageArgs;
 
         if (memberId != _memberId && !MemberName.isGuest(memberId)) {
             // if the member Id has changed, then we have some reloading to do
             setMemberId(memberId);
         } else if (_favorites != null) {
             // otherwise just update and display the grid
-            displayGrid(allPageArgs);
+            displayGrid();
         }
     }
 
@@ -76,14 +78,21 @@ public class FavoritesPanel extends SimplePanel
         }
     }
 
+    /**
+     * Returns the title that should be displayed for this panel.
+     */
+    @Override
+    public String getTitle ()
+    {
+        return _title;
+    }
+
     protected void setMemberId (int memberId)
     {
-        // update the prefix args to contain the correct memberId
-        _prefixArgs[_prefixArgs.length-1] = String.valueOf(memberId);
-
         _memberId = memberId;
-        _itemsvc.getFavoriteListInfo(_memberId, new MsoyCallback<ItemListInfo>() {
-            public void onSuccess (ItemListInfo favoriteListInfo) {
+        _itemsvc.getFavoriteListInfo(_memberId, new MsoyCallback<MemberItemListInfo>() {
+            public void onSuccess (MemberItemListInfo favoriteListInfo) {
+                _memberName = favoriteListInfo.memberName;
                 setListId(favoriteListInfo.listId);
             }
         });
@@ -102,43 +111,26 @@ public class FavoritesPanel extends SimplePanel
         _favorites.setModel(_favoriteModel, 0);
 
         // if update has already been called, then display the grid
-        if (_lastArgs != null) {
-            displayGrid(_lastArgs);
+        if (_prefixArgs != null) {
+            displayGrid();
         }
     }
 
-    protected void displayGrid (Args args)
+    protected void displayGrid ()
     {
+        // use a title containing the member's name
+        _title = (_memberId == CShell.getMemberId()) ?
+            _shopmsgs.myFavoritesTitle() : _shopmsgs.memberFavorites(_memberName);
+
+        _favoriteModel.setItemType(_itemType);
         _favorites.setPrefixArgs(_prefixArgs);
-        byte itemType = (byte) getArg(args, 0, _favoriteModel.getItemType());
-        int page = getArg(args, 1, 0);
-        _favoriteModel.setItemType(itemType);
-        _favorites.setModel(_favoriteModel, page);
+        _favorites.setModel(_favoriteModel, _page);
         setWidget(_favorites);
-    }
-
-    protected int getArg (Args args, int index, int defaultValue)
-    {
-        return args.get(getArgIndex(index), defaultValue);
-    }
-
-    /**
-     * Gets an argument index relative to the _prefixArgs.
-     */
-    protected int getArgIndex (int index)
-    {
-        return index + _prefixArgs.length;
     }
 
     protected ItemListDataModel _favoriteModel;
 
     protected ItemGrid _favorites;
-
-    /**
-     * The most recent args passed to onHistoryChanged(). This is used in the case that the
-     * _favoritesPanel was not yet initialized when onHistoryChanged() is first called.
-     */
-    protected Args _lastArgs;
 
     protected String[] _prefixArgs = NO_PREFIX_ARGS;
 
@@ -156,6 +148,11 @@ public class FavoritesPanel extends SimplePanel
      */
     protected boolean _displayNavigation;
 
+    /**
+     * The current page to display in the favorite item grid.
+     */
+    protected int _page;
+
     protected byte _itemType = Item.NOT_A_TYPE;
 
     /**
@@ -163,7 +160,17 @@ public class FavoritesPanel extends SimplePanel
      */
     protected int _memberId;
 
-    protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
+    /**
+     * The member's name for display in the page title.
+     */
+    protected String _memberName;
+
+    /**
+     * The title for this panel including the current member's name.
+     */
+    protected String _title = _shopmsgs.myFavoritesTitle();
+
+    protected static final ShopMessages _shopmsgs = GWT.create(ShopMessages.class);
 
     protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)
         ServiceUtil.bind(GWT.create(ItemService.class), ItemService.ENTRY_POINT);

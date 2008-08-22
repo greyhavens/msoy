@@ -12,7 +12,7 @@ import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemListInfo;
+import com.threerings.msoy.item.data.all.MemberItemListInfo;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
 import com.threerings.msoy.profile.gwt.ProfileService;
@@ -32,8 +32,8 @@ public class FavoritesBlurb extends Blurb
         setHeader(CPeople.msgs.favoritesTitle());
 
         // load the first few items of the favorites list
-        _itemsvc.getFavoriteListInfo(pdata.name.getMemberId(), new MsoyCallback<ItemListInfo>() {
-            public void onSuccess (ItemListInfo favoriteListInfo)
+        _itemsvc.getFavoriteListInfo(pdata.name.getMemberId(), new MsoyCallback<MemberItemListInfo>() {
+            public void onSuccess (MemberItemListInfo favoriteListInfo)
             {
                 // create the favorites model
                 ItemListDataModel favoriteModel = new ItemListDataModel(Item.NOT_A_TYPE);
@@ -50,7 +50,7 @@ public class FavoritesBlurb extends Blurb
         });
 
         setFooterLink(CPeople.msgs.seeMoreFavorites(), Pages.SHOP,
-                      Args.compose("f", pdata.name.getMemberId()));
+            Args.compose("f", pdata.name.getMemberId()));
     }
 
     protected static final ItemServiceAsync _itemsvc =

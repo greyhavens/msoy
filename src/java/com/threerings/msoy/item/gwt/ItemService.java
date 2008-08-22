@@ -10,8 +10,8 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
+import com.threerings.msoy.item.data.all.MemberItemListInfo;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.web.data.ServiceException;
 
@@ -106,7 +106,7 @@ public interface ItemService extends RemoteService
     /**
      * Gets the favorite list info for the given member.
      */
-    ItemListInfo getFavoriteListInfo (int memberId) throws ServiceException;
+    MemberItemListInfo getFavoriteListInfo (int memberId) throws ServiceException;
 
     /**
      * Loads up all of this member's photo inventory. This exists separate from

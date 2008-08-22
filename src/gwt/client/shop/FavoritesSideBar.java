@@ -31,7 +31,7 @@ public class FavoritesSideBar extends SmartTable
         super("sideBar", 0, 0);
     }
 
-    public void update (String[] prefixArgs, byte selectedItemType)
+    public void update (byte selectedItemType, String[] prefixArgs)
     {
         // remove all of the widgets and add fresh ones
         clear();

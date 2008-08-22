@@ -10,8 +10,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.msoy.web.data.TagHistory;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
+import com.threerings.msoy.item.data.all.MemberItemListInfo;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService.ItemListResult;
 
@@ -84,5 +84,5 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService#getFavoriteListInfo}.
      */
-    void getFavoriteListInfo (int memberId, AsyncCallback<ItemListInfo> callback);
+    void getFavoriteListInfo (int memberId, AsyncCallback<MemberItemListInfo> callback);
 }

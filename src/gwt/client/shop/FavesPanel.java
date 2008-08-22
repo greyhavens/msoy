@@ -3,7 +3,6 @@
 
 package client.shop;
 
-import client.shell.Args;
 import client.shell.Pages;
 
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -31,11 +30,16 @@ public class FavesPanel extends HorizontalPanel
         add(WidgetUtil.makeShim(10, 10));
     }
 
-    public void update (int memberId, byte selectedItemType, String[] prefixArgs, Args allPageArgs)
+    public void update (int memberId, byte selectedItemType, int gridPage, String[] prefixArgs)
     {
-        _sideBar.update(prefixArgs, selectedItemType);
-        _favorites.setItemType(selectedItemType);
-        _favorites.update(memberId, prefixArgs, allPageArgs);
+        _sideBar.update(selectedItemType, prefixArgs);
+        _favorites.update(memberId, selectedItemType, gridPage, prefixArgs);
+    }
+
+    @Override
+    public String getTitle()
+    {
+        return _favorites.getTitle();
     }
 
     protected FavoritesSideBar _sideBar;
