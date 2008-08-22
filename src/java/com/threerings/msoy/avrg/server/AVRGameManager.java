@@ -5,9 +5,11 @@ package com.threerings.msoy.avrg.server;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import com.google.inject.Inject;
 
+import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Interval;
@@ -36,6 +38,7 @@ import com.threerings.crowd.server.PlaceManagerDelegate;
 
 import com.threerings.msoy.item.data.all.Game;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.QuestState;
@@ -51,9 +54,12 @@ import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.avrg.data.SceneInfo;
 import com.threerings.msoy.avrg.server.AVRGameDispatcher;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
+import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
+
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.server.PropertySpaceDispatcher;
 import com.whirled.game.server.PropertySpaceHandler;
+import com.whirled.game.server.PropertySpaceHelper;
 import com.whirled.game.server.WhirledGameManager;
 import com.whirled.game.server.WhirledGameMessageDispatcher;
 import com.whirled.game.server.WhirledGameMessageHandler;
@@ -388,6 +394,15 @@ public class AVRGameManager extends PlaceManager
 
         PlayerObject player = (PlayerObject) _omgr.getObject(bodyOid);
         _watchmgr.addWatch(player.getMemberId(), _observer);
+        
+        PropertySpaceHandler handler = new PropertySpaceHandler(player) {
+            @Override protected void validateUser (ClientObject caller)
+                throws InvocationException {
+                AVRGameManager.this.validateUser(caller);
+            }
+        };
+        
+        player.setPropertyService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(handler)));
     }
 
     @Override
@@ -397,6 +412,8 @@ public class AVRGameManager extends PlaceManager
 
         PlayerObject player = (PlayerObject) _omgr.getObject(bodyOid);
 
+        _invmgr.clearDispatcher(player.propertyService);
+        
         int memberId = player.getMemberId();
         // stop watching this player's movements
         _watchmgr.clearWatch(memberId);
@@ -465,8 +482,22 @@ public class AVRGameManager extends PlaceManager
         }
     }
 
-    protected void flushPlayerGameState (final PlayerObject player)
+    protected void flushPlayerGameState (PlayerObject player)
     {
+        final int memberId = player.getMemberId();
+        final Map<String, byte[]> state = PropertySpaceHelper.encodeDirtyStateForStore(player);
+        if (state.size() != 0 && !MemberName.isGuest(memberId)) {
+            _invoker.postUnit(new WriteOnlyUnit("flushPlayerAVRGState") {
+                @Override public void invokePersist ()
+                    throws Exception {
+                    for (Map.Entry<String, byte[]> entry : state.entrySet()) {
+                        _repo.storePlayerState(new PlayerGameStateRecord(
+                            _gameId, memberId, entry.getKey(), entry.getValue()));
+                    }
+                }
+            });
+        }
+        
         // then clear out the state associated with this game
         player.setQuestState(new DSet<QuestState>());
     }
