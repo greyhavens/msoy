@@ -40,7 +40,7 @@ public class CanonicalFramer implements Framer
         _scale = _frame.height / _source.height;
         
         // the width that the image is going to end up
-        const image_width:int = _source.width * _scale;
+        const image_width :int = _source.width * _scale;
 
         // start off by centering the image within the frame
         _x = (_frame.width - image_width) / 2

@@ -41,7 +41,9 @@ public class SnapshotPanel extends FloatingPanel
 {
     public static const SCENE_THUMBNAIL_WIDTH :int = 350;
     public static const SCENE_THUMBNAIL_HEIGHT :int = 200;
-    protected static const NOOP_FRAMER:Framer = new NoopFramer();
+
+    /** This is the maximum bitmap dimension, a flash limitation. */
+    public static const MAX_BITMAP_DIM :int = 2880;
 
     public var galleryImage :Snapshot;
     public var sceneThumbnail :Snapshot;
@@ -59,20 +61,35 @@ public class SnapshotPanel extends FloatingPanel
         // if the user is permitted to manage the room then enable the taking of canonical snapshots
         _sceneThumbnailPermitted = _view.getRoomController().canManageRoom();
 
-        Log.getLog(this).debug("_sceneThumbnailPermitted = " + _sceneThumbnailPermitted);
-        
         // for the canonical image, we create a new framer that centers the image within the frame, 
         // introducing black bars if necessary.
-        const frame:Rectangle = new Rectangle(0, 0, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
-        const framer:Framer = new CanonicalFramer(_view.getScrollBounds(), frame, 
+        const frame :Rectangle = new Rectangle(0, 0, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
+        const framer :Framer = new CanonicalFramer(_view.getScrollBounds(), frame, 
             _view.getScrollOffset());
         
+        // take this even if we aren't going to use it, it's used for the preview
         sceneThumbnail = new Snapshot(_view, framer, SCENE_THUMBNAIL_WIDTH, SCENE_THUMBNAIL_HEIGHT);
         sceneThumbnail.updateSnapshot();
 
         // TODO: we want the room bounds, not the room *view* bounds....
         const scene:MsoyScene = _view.getScene();
-        galleryImage = new Snapshot(_view, NOOP_FRAMER, scene.getWidth(), scene.getHeight());
+        var galWidth :int = scene.getWidth();
+        var galHeight :int = scene.getHeight();
+        var galFramer :Framer;
+        if (galWidth > MAX_BITMAP_DIM || galWidth > MAX_BITMAP_DIM) {
+            const galScale :Number = Math.min(MAX_BITMAP_DIM / galWidth,
+                MAX_BITMAP_DIM / galHeight);
+            galWidth *= galScale;
+            galHeight *= galScale;
+//            galFramer = new CanonicalFramer(_view.getScrollBounds(),
+//                new Rectangle(0, 0, galWidth, galHeight), _view.getScrollOffset());
+            // TODO: sort out real offset?
+            galFramer = new NoopFramer();
+
+        } else {
+            galFramer = new NoopFramer();
+        }
+        galleryImage = new Snapshot(_view, galFramer, galWidth, galHeight);
         galleryImage.updateSnapshot();
         open();
     }
@@ -82,10 +99,7 @@ public class SnapshotPanel extends FloatingPanel
      */
     public function get shouldSaveSceneThumbnail () :Boolean
     {
-        if (_useAsSceneThumbnail != null) {
-            return _useAsSceneThumbnail.selected;
-        }
-        return false;
+        return (_useAsSceneThumbnail != null) && _useAsSceneThumbnail.selected;
     }
 
     /**
@@ -136,28 +150,30 @@ public class SnapshotPanel extends FloatingPanel
     override protected function createChildren () :void
     {
         super.createChildren();        
-        createSnapshotControls(this);                
+        createSnapshotControls();                
+        showCloseButton = true;
     }
     
     protected function showProgressBar () :void
     {
         removeAllChildren();
         super.createChildren();
-        createProgressControls(this);
+        createProgressControls();
+        showCloseButton = false;
     }
     
-    protected function createProgressControls (container :Container) :void
+    protected function createProgressControls () :void
     {
         var bar :ProgressBar = new ProgressBar();
         bar.percentWidth = 100;
         bar.indeterminate = true;
         bar.label = Msgs.WORLD.get("b.snap_progress");
-        container.addChild(bar);
+        addChild(bar);
         _progressLabel = new Label();
         _progressLabel.text = Msgs.WORLD.get("b.snap_upload_starting");
-        container.addChild(_progressLabel);   
+        addChild(_progressLabel);   
         _cancelUploadButton = new CommandButton(Msgs.WORLD.get("b.snap_cancel"), cancelUpload);     
-        container.addChild(_cancelUploadButton);        
+        addChild(_cancelUploadButton);        
     }
 
     /**
@@ -173,37 +189,37 @@ public class SnapshotPanel extends FloatingPanel
         close();
     }
 
-    protected function createSnapshotControls (container :Container) :void
+    protected function createSnapshotControls () :void
     {
         // take gallery image
         _takeGalleryImage = new CommandCheckBox(Msgs.WORLD.get("b.snap_gallery"), 
             enforceUIInterlocks);
         _takeGalleryImage.selected = true;
-        container.addChild(_takeGalleryImage);
+        addChild(_takeGalleryImage);
 
         // only add the button to take the canonical snapshot if it's enabled.
         if (_sceneThumbnailPermitted) {
             _useAsSceneThumbnail = new CommandCheckBox(Msgs.WORLD.get("b.snap_scene_thumbnail"), 
                 enforceUIInterlocks);
             _useAsSceneThumbnail.selected = false;
-            container.addChild(_useAsSceneThumbnail);
+            addChild(_useAsSceneThumbnail);
         }
 
         // show occupants
         _showOccs = new CommandCheckBox(Msgs.WORLD.get("b.snap_occs"), takeNewSnapshot);
         _showOccs.selected = true;
-        container.addChild(_showOccs);
+        addChild(_showOccs);
         
         // show chat
         _showChat = new CommandCheckBox(Msgs.WORLD.get("b.snap_overlays"), takeNewSnapshot);
         _showChat.selected = true;
-        container.addChild(_showChat);
+        addChild(_showChat);
 
-        container.addChild(new CommandButton(Msgs.WORLD.get("b.snap_update"), takeNewSnapshot));
+        addChild(new CommandButton(Msgs.WORLD.get("b.snap_update"), takeNewSnapshot));
 
         _preview = new Image();
         _preview.source = new BitmapAsset(sceneThumbnail.bitmap);
-        container.addChild(_preview);
+        addChild(_preview);
 
         addButtons(OK_BUTTON, CANCEL_BUTTON);
         enforceUIInterlocks();        
