@@ -510,8 +510,6 @@ public class TopPanel extends Canvas
         return (view is MsoyPlaceView) && (view as MsoyPlaceView).padVertical();
     }
 
-    private static const log :Log = Log.getLog(TopPanel);
-
     protected static const CHAT_PADDING :int = 15;
 
     /** The giver of life. */
