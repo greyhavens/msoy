@@ -102,6 +102,11 @@ public class WorldClient extends MsoyClient
         // that via an HTTP request, otherwise just logon directly
         var params :Object = MsoyParameters.get();
 
+        // if we're an embedded client, turn on the embed header
+        if (getHostname() == null && !_featuredPlaceView) {
+            _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
+        }
+
         // if we are going right into a game lobby, do that now and once we get into the game, then
         // we'll be able to logon to a world with our assigned credentials
         if (params["gameLobby"]) {
@@ -125,10 +130,6 @@ public class WorldClient extends MsoyClient
                 (sceneId == 0 ? "" : ("s"+sceneId));
             loader.load(new URLRequest(url));
             log.info("Loading server info from " + url + ".");
-
-            if (!_featuredPlaceView) {
-                _wctx.getTopPanel().setTopPanel(new EmbedHeader(_wctx));
-            }
 
         } else {
             logon();
