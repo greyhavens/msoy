@@ -873,7 +873,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         record.itemId = itemId;
         record.memberId = memberId;
         record.rating = rating;
-        store(record);
+        boolean newRater = store(record);
 
         RatingAverageRecord average =
             load(RatingAverageRecord.class,
@@ -889,7 +889,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             (average.sum - rating)/(float)(average.count - 1);
         boolean newSolid =
             (average.count == MIN_SOLID_RATINGS && newRating >= 4) ||
-            (average.count > MIN_SOLID_RATINGS && newRating >= 4 && oldRating < 4);
+            (average.count > MIN_SOLID_RATINGS && newRating >= 4 && (!newRater || oldRating < 4));
 
         return new Tuple<Float, Boolean>(newRating, newSolid);
     }
