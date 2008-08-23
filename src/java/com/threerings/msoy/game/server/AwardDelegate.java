@@ -353,7 +353,7 @@ public class AwardDelegate extends RatingDelegate
             /*_worldClient.addToSetStat(
                 memberId, StatType.UNIQUE_GAMES_PLAYED, _content.detail.gameId);*/
 
-            if (isMultiplayer()) {
+            if (isMultiplayer() && ((MsoyGameManager) _gmgr).getPlayerCount() > 1) {
                 // track multiplayer game wins
                 if (player.score == winningScore) {
                     _worldClient.incrementStat(memberId, StatType.MP_GAMES_WON, 1);
