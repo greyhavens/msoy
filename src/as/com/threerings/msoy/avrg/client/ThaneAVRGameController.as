@@ -134,7 +134,9 @@ public class ThaneAVRGameController
     protected function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            updatePlayer(event.getEntry() as PlayerLocation, false);
+            var pl :PlayerLocation = event.getEntry() as PlayerLocation;
+            _backend.playerJoinedGame(pl.playerId);
+            _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
 
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             bindScene(event.getEntry() as SceneInfo);
@@ -148,8 +150,10 @@ public class ThaneAVRGameController
     protected function entryUpdated (event :EntryUpdatedEvent) :void
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            updatePlayer(event.getOldEntry() as PlayerLocation, true);
-            updatePlayer(event.getEntry() as PlayerLocation, false);
+            var pl :PlayerLocation = event.getEntry() as PlayerLocation;
+            var oldPl :PlayerLocation = event.getOldEntry() as PlayerLocation;
+            _backend.playerLeftRoom(oldPl.playerId, oldPl.sceneId);
+            _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
 
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             bindScene(event.getEntry() as SceneInfo);
@@ -159,37 +163,16 @@ public class ThaneAVRGameController
     protected function entryRemoved (event :EntryRemovedEvent) :void
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            updatePlayer(event.getOldEntry() as PlayerLocation, true);
+            var pl :PlayerLocation = event.getOldEntry() as PlayerLocation;
+            _backend.playerLeftRoom(pl.playerId, pl.sceneId);
+            _backend.playerLeftGame(pl.playerId);
 
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             removeBinding((event.getOldEntry() as SceneInfo).sceneId);
 
         } else if (event.getName() == PlaceObject.OCCUPANT_INFO) {
             var occInfo :OccupantInfo = event.getOldEntry() as OccupantInfo;
-            var player :PlayerObject = _playerSubs.getObj(occInfo.bodyOid) as PlayerObject;
-            if (player != null) {
-                _backend.playerLeftGame(player.getMemberId());
-            }
             _playerSubs.unsubscribe(occInfo.bodyOid);
-        }
-    }
-
-    protected function updatePlayer (loc :PlayerLocation, remove :Boolean) :void
-    {
-        var binding :SceneBinding = _bindings.get(loc.sceneId);
-        if (binding == null) {
-            log.warning("Player updated in unbound scene: [loc=" + loc + ", remove=" + remove);
-        }
-        else if (binding.room == null) {
-            log.warning("Player updated in unsubscribed scene: [loc=" + loc + ", binding=" + 
-                binding + ", remove=" + remove);
-        } else {
-            log.debug("Player updated [loc=" + loc + ", remove=" + remove);
-            if (remove) {
-                _backend.playerLeftRoom(loc.playerId, loc.sceneId);
-            } else {
-                _backend.playerEnteredRoom(loc.playerId, loc.sceneId);
-            }
         }
     }
 
@@ -427,8 +410,6 @@ public class ThaneAVRGameController
 
     protected function gotPlayerObject (obj :PlayerObject) :void
     {
-        var memberId :int = obj.getMemberId();
-        _backend.playerJoinedGame(memberId);
     }
 
     protected var _ctx :MsoyBureauContext;
