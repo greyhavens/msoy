@@ -63,16 +63,12 @@ public class MsoyGameManager extends WhirledGameManager
     }
 
     /**
-     * Returns true if the game is multiplayer, which happens when:
-     * <ul>
-     *   <li> The game is a party game, or
-     *   <li> The table contains more than one player slot
-     * </ul>
+     * Returns true if the game is multiplayer, which is true if the game is not a SEATED_GAME
+     * (fixed table size, player count established at game start) with exactly one player.
      */
     public boolean isMultiplayer ()
     {
-        return (_gameconfig.getMatchType() == GameConfig.PARTY)
-            || (getPlayerCount() > 1);
+        return (_gameconfig.getMatchType() != GameConfig.SEATED_GAME) || (getPlayerCount() > 1);
     }
 
     @Override
