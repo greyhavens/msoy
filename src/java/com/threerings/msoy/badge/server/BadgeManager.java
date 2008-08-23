@@ -66,6 +66,7 @@ public class BadgeManager
         long whenEarned = System.currentTimeMillis();
         List<EarnedBadge> newBadges = Lists.newArrayList();
         List<InProgressBadge> inProgressBadges = Lists.newArrayList();
+        List<InProgressBadge> deadBadges = Lists.newArrayList();
         for (BadgeType badgeType : BadgeType.values()) {
             BadgeProgress progress = badgeType.getProgress(user.stats);
             if (progress.highestLevel >= 0) {
@@ -75,6 +76,15 @@ public class BadgeManager
                     // award an EarnedBadge for each level that was earned in this update.
                     newBadges.add(new EarnedBadge(badgeType.getCode(), level,
                         badgeType.getLevelUnits(level), badgeType.getCoinValue(level), whenEarned));
+                }
+
+                if (progress.highestLevel >= badgeType.getNumLevels()-1) {
+                    // If we've reached the highest badge level, delete the existing InProgressBadge
+                    // for this badge type
+                    InProgressBadge inProgressBadge = user.inProgressBadges.getBadge(badgeType);
+                    if (inProgressBadge != null) {
+                        deadBadges.add(inProgressBadge);
+                    }
                 }
             }
 
@@ -103,6 +113,10 @@ public class BadgeManager
 
         if (!inProgressBadges.isEmpty()) {
             updateInProgressBadges(user, inProgressBadges);
+        }
+
+        if (!deadBadges.isEmpty()) {
+            deleteDeadInProgressBadges(user, deadBadges);
         }
     }
 
@@ -200,6 +214,32 @@ public class BadgeManager
             }
             protected String getFailureMessage () {
                 StringBuilder builder = new StringBuilder("Failed to update in-progress badges: ");
+                for (InProgressBadge badge : badges) {
+                    builder.append(BadgeType.getType(badge.badgeCode).name()).append(", ");
+                }
+                return builder.toString();
+            }
+        });
+    }
+
+    protected void deleteDeadInProgressBadges (final MemberObject user,
+        final List<InProgressBadge> badges)
+    {
+        // we don't need to remove the badge's from the user's in-memory InProgressBadgeSet,
+        // because they will be removed automatically by MemberObject.badgeAwarded when the
+        // highest level badge of a given type has been awarded.
+        for (InProgressBadge badge : badges) {
+            log.info("Deleting InProgressBadge", "badge", badge);
+        }
+
+        _invoker.postUnit(new WriteOnlyUnit("deleteDeadInProgressBadges") {
+            public void invokePersist () throws PersistenceException {
+                for (InProgressBadge badge : badges) {
+                    _badgeLogic.deleteInProgressBadge(user.getMemberId(), badge);
+                }
+            }
+            protected String getFailureMessage () {
+                StringBuilder builder = new StringBuilder("Failed to delete in-progress badges: ");
                 for (InProgressBadge badge : badges) {
                     builder.append(BadgeType.getType(badge.badgeCode).name()).append(", ");
                 }

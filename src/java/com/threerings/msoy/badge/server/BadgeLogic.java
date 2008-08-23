@@ -146,6 +146,18 @@ public class BadgeLogic
     }
 
     /**
+     * Deletes an InProgressBadge for the specified member.
+     *
+     * A MemberNodeAction will never be sent as a result, as MemberObject maintains its
+     * InProgressBadgeSet on its own.
+     */
+    public void deleteInProgressBadge (int memberId, InProgressBadge badge)
+        throws PersistenceException
+    {
+        _badgeRepo.deleteInProgressBadge(memberId, badge.badgeCode);
+    }
+
+    /**
      * Returns a List containing the set of badges that the member is working towards. This
      * method also checks that the member has had their initial set of InProgressBadgeRecords
      * created, and creates them if they haven't.
