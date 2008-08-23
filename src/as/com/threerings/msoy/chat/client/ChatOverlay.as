@@ -482,7 +482,7 @@ public class ChatOverlay
     {
         switch (event.name) {
         case Prefs.CHAT_HISTORY:
-            setHistoryEnabled(Boolean(event.value) || Prefs.getSidebarChat());
+            setHistoryEnabled(Boolean(event.value) || shouldUseSidebar());
             break;
 
         case Prefs.CHAT_SIDEBAR:
@@ -640,7 +640,7 @@ public class ChatOverlay
 
         _historyExtent = (_targetBounds.height - PAD) / SUBTITLE_HEIGHT_GUESS;
 
-        if (Prefs.getShowingChatHistory() || Prefs.getSidebarChat() || !(_target is PlaceBox)) {
+        if (Prefs.getShowingChatHistory() || shouldUseSidebar() || !(_target is PlaceBox)) {
             if (_historyBar == null) {
                 _historyBar = new VScrollBar();
                 _historyBar.addEventListener(FlexEvent.UPDATE_COMPLETE, configureHistoryBarSize);
