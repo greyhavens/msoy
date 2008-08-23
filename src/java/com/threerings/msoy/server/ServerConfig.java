@@ -19,6 +19,8 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.client.Client;
 
+import com.threerings.msoy.item.data.all.Game;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -219,11 +221,12 @@ public class ServerConfig
     }
 
     /**
-     * Returns the default groupId to use for games that have no groupId configured.
+     * Returns the supplied group id if it is non-zero or the default groupId to use for games that
+     * have no groupId configured if it is zero.
      */
-    public static int getDefaultGameGroupId ()
+    public static int getGameGroupId (int groupId)
     {
-        return config.getValue("default_game_group_id", 0);
+        return (groupId == Game.NO_GROUP) ? config.getValue("default_game_group_id", 0) : groupId;
     }
 
     /** The pattern via which we obtain our node id from our name. */

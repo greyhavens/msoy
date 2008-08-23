@@ -311,7 +311,7 @@ public class LobbyController extends Controller implements Subscriber
         }
 
         // pass group back to the caller once lobby has loaded
-        _lobbyLoaded(_lobj.game.groupId);
+        _lobbyLoaded(_lobj.groupId);
     }
 
     // from Subscriber

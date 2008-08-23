@@ -7,8 +7,8 @@ import flash.errors.IllegalOperationError;
 
 import com.threerings.io.ObjectInputStream;
 
-import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.DObject;
+import com.threerings.presents.dobj.DSet;
 
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableLobbyObject;
@@ -24,11 +24,14 @@ import com.threerings.msoy.item.data.all.Game;
 public class LobbyObject extends DObject implements TableLobbyObject
 {
     // AUTO-GENERATED: FIELDS START
-    /** The field name of the <code>tables</code> field. */
+    /** The field name of the <code>game</code> field. */
     public static const GAME :String = "game";
 
     /** The field name of the <code>tables</code> field. */
     public static const TABLES :String = "tables";
+
+    /** The field name of the <code>groupId</code> field. */
+    public static const GROUP_ID :String = "groupId";
     // AUTO-GENERATED: FIELDS END
 
     /** The game we're matchmaking for. */
@@ -42,6 +45,9 @@ public class LobbyObject extends DObject implements TableLobbyObject
 
     /** Used to communicate with table manager. */
     public var tableService :TableMarshaller;
+    
+    /** The group to load up behind the lobby if not already in a room. */
+    public var groupId :int;
 
     // from TableLobbyObject
     public function getTables () :DSet
@@ -87,6 +93,7 @@ public class LobbyObject extends DObject implements TableLobbyObject
         gameDef = (ins.readObject() as GameDefinition);
         tables = (ins.readObject() as DSet);
         tableService = (ins.readObject() as TableMarshaller);
+        groupId = (ins.readInt());
     }
 }
 }

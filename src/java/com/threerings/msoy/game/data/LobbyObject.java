@@ -39,6 +39,9 @@ public class LobbyObject extends DObject implements TableLobbyObject
 
     /** The field name of the <code>tableService</code> field. */
     public static final String TABLE_SERVICE = "tableService";
+
+    /** The field name of the <code>groupId</code> field. */
+    public static final String GROUP_ID = "groupId";
     // AUTO-GENERATED: FIELDS END
 
     /** The game that we're matchmaking for. If the game is mutable, this may be updated while the
@@ -53,6 +56,9 @@ public class LobbyObject extends DObject implements TableLobbyObject
 
     /** Used to communicate to the table manager. */
     public TableMarshaller tableService;
+
+    /** The group to load up behind the lobby if not already in a room. */
+    public int groupId;
 
     /** If set on the server, will be called with subscriber updates. */
     public transient SubscriberListener subscriberListener;
@@ -189,6 +195,22 @@ public class LobbyObject extends DObject implements TableLobbyObject
         requestAttributeChange(
             TABLE_SERVICE, value, ovalue);
         this.tableService = value;
+    }
+
+    /**
+     * Requests that the <code>groupId</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setGroupId (int value)
+    {
+        int ovalue = this.groupId;
+        requestAttributeChange(
+            GROUP_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.groupId = value;
     }
     // AUTO-GENERATED: METHODS END
 }

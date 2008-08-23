@@ -116,8 +116,7 @@ public class GameLogic
         config.httpPort = ServerConfig.httpPort;
 
         // determine what server is hosting the game, start hosting it if necessary
-        final int gameGroupId = game.groupId == 0 ?
-            ServerConfig.getDefaultGameGroupId() : game.groupId;
+        final int gameGroupId = ServerConfig.getGameGroupId(game.groupId);
         final GameLocationWaiter waiter = new GameLocationWaiter(config.gameId);
         _omgr.postRunnable(new Runnable() {
             public void run () {

@@ -128,6 +128,7 @@ public class LobbyManager
         try {
             _lobj.setGame(_content.game);
             _lobj.setGameDef(gameDef);
+            _lobj.setGroupId(ServerConfig.getGameGroupId(_content.game.groupId));
         } finally {
             _lobj.commitTransaction();
         }
@@ -140,9 +141,7 @@ public class LobbyManager
     public void initConfig (MsoyGameConfig config)
     {
         config.init(_lobj.game, _lobj.gameDef);
-        if (config.groupId == Game.NO_GROUP) {
-            config.groupId = ServerConfig.getDefaultGameGroupId();
-        }
+        config.groupId = ServerConfig.getGameGroupId(_lobj.game.groupId);
     }
 
     /**
@@ -287,7 +286,7 @@ public class LobbyManager
             // queue up a shutdown interval, unless we've already got one.
             if (_shutdownInterval == null) {
                 _shutdownInterval = new Interval(_omgr) {
-                    public void expired () {
+                    @Override public void expired () {
                         log.debug("Unloading idle game lobby [gameId=" + getGameId() + "]");
                         shutdown();
                     }
@@ -313,12 +312,12 @@ public class LobbyManager
 
     /** Listens for table removal/addition and considers destroying the room. */
     protected SetAdapter<Table> _tableWatcher = new SetAdapter<Table>() {
-        public void entryAdded (EntryAddedEvent<Table> event) {
+        @Override public void entryAdded (EntryAddedEvent<Table> event) {
             if (event.getName().equals(LobbyObject.TABLES)) {
                 cancelShutdowner();
             }
         }
-        public void entryRemoved (EntryRemovedEvent<Table> event) {
+        @Override public void entryRemoved (EntryRemovedEvent<Table> event) {
             if (event.getName().equals(LobbyObject.TABLES)) {
                 recheckShutdownInterval();
             }
