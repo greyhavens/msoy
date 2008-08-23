@@ -154,7 +154,7 @@ public class UploadUtil
          * Returns true if this dimension covers the one passed in.
          */
         public boolean covers (Rectangle d) {
-            return (this.width > d.width && this.height > d.height);
+            return (this.width >= d.width && this.height >= d.height);
         }
     }
 
