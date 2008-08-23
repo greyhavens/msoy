@@ -8,7 +8,11 @@ import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.containers.HBox;
+import mx.containers.VBox;
+
 import mx.controls.Label;
+import mx.controls.Spacer;
+import mx.controls.Text;
 import mx.controls.TextInput;
 import mx.core.UITextField;
 import mx.events.FlexEvent;
@@ -43,23 +47,50 @@ public class LogonPanel extends FloatingPanel
         super.createChildren();
         styleName = "sexyWindow";
         setStyle("horizontalAlign", "left");
+        setStyle("verticalAlign", "middle");
         showCloseButton = true;
 
+        const left :VBox = new VBox();
+        left.percentHeight = 100;
+        createLogonChildren(left);
+
+        //const sep :Spacer = FlexUtil.createSpacer(1);
+        const sep :VBox = new VBox();
+        sep.width = 1;
+        sep.percentHeight = 90;
+        sep.setStyle("borderStyle", "solid");
+        sep.setStyle("borderSides", "right");
+        sep.setStyle("borderThickness", 1);
+        sep.setStyle("borderColor", 0x0d4c77);
+
+        const right :VBox = new VBox();
+        right.percentHeight = 100;
+        createRegisterChildren(right);
+
+        const panel :HBox = new HBox();
+        panel.addChild(left);
+        panel.addChild(sep);
+        panel.addChild(right);
+        addChild(panel);
+    }
+
+    protected function createLogonChildren (box :VBox) :void
+    {
         var label :UITextField = new UITextField();
         label.text = Msgs.GENERAL.get("l.email");
-        addChild(label);
+        box.addChild(label);
 
         _email = new TextInput();
         _email.text = Prefs.getUsername();
-        addChild(_email);
+        box.addChild(_email);
 
         label = new UITextField();
         label.text = Msgs.GENERAL.get("l.password");
-        addChild(label);
+        box.addChild(label);
 
         _password = new TextInput();
         _password.displayAsPassword = true;
-        addChild(_password);
+        box.addChild(_password);
 
         _email.addEventListener(Event.CHANGE, checkTexts);
         _password.addEventListener(Event.CHANGE, checkTexts);
@@ -72,13 +103,30 @@ public class LogonPanel extends FloatingPanel
         buttons.percentWidth = 100;
         buttons.setStyle("horizontalAlign", "right");
         buttons.addChild(_logonBtn);
-        addChild(buttons);
+        box.addChild(buttons);
 
         _error = new Label();
         FlexUtil.setVisible(_error, false);
-        addChild(_error);
+        box.addChild(_error);
 
         checkTexts();
+    }
+
+    protected function createRegisterChildren (box :VBox) :void
+    {
+        box.setStyle("horizontalAlign", "center");
+        box.setStyle("verticalAlign", "middle");
+
+        const prompt :Text = new Text();
+        prompt.setStyle("fontSize", 18);
+        prompt.setStyle("textAlign", "center");
+        prompt.text = Msgs.GENERAL.get("p.sign_up");
+        prompt.width = 200;
+        box.addChild(prompt);
+
+        const joinBtn :CommandButton = new CommandButton(null, MsoyController.SHOW_SIGN_UP);
+        joinBtn.styleName = "joinNowButton";
+        box.addChild(joinBtn);
     }
 
     /**
@@ -108,6 +156,8 @@ public class LogonPanel extends FloatingPanel
             return;
         }
 
+        _logonBtn.enabled = false;
+
 //         if (_sceneId == -1) {
 //             _sceneId = _ctx.getSceneDirector().getScene().getId();
 //         }
@@ -122,6 +172,7 @@ public class LogonPanel extends FloatingPanel
             Log.getLog(this).debug("failed: " + Msgs.GENERAL.get(evt.getCause().message));
             _error.text = "Logon failed: " + Msgs.GENERAL.get(evt.getCause().message);
             FlexUtil.setVisible(_error, true);
+            _logonBtn.enabled = true;
         };
         observer = new ClientAdapter(null, didLogon, null, null, failed, failed);
         _ctx.getClient().addClientObserver(observer);
