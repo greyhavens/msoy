@@ -55,6 +55,26 @@ public class ThaneAVRGameBackend
         callUserCode("roomUnloaded_v1", roomId);
     }
 
+    public function playerJoinedGame (memberId :int) :void
+    {
+        log.info("Player joined game: " + memberId);
+    }
+
+    public function playerLeftGame (memberId :int) :void
+    {
+        log.info("Player left game: " + memberId);
+    }
+
+    public function playerEnteredRoom (memberId :int, roomId :int) :void
+    {
+        log.info("Player entered room: " + memberId + ", " + roomId);
+    }
+
+    public function playerLeftRoom (memberId :int, roomId :int) :void
+    {
+        log.info("Player left room: " + memberId + ", " + roomId);
+    }
+
     protected function handleUserCodeConnect (evt :Object) :void
     {
         var props :Object = evt.props;

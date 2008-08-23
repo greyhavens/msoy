@@ -166,6 +166,10 @@ public class ThaneAVRGameController
 
         } else if (event.getName() == PlaceObject.OCCUPANT_INFO) {
             var occInfo :OccupantInfo = event.getOldEntry() as OccupantInfo;
+            var player :PlayerObject = _playerSubs.getObj(occInfo.bodyOid) as PlayerObject;
+            if (player != null) {
+                _backend.playerLeftGame(player.getMemberId());
+            }
             _playerSubs.unsubscribe(occInfo.bodyOid);
         }
     }
@@ -180,8 +184,12 @@ public class ThaneAVRGameController
             log.warning("Player updated in unsubscribed scene: [loc=" + loc + ", binding=" + 
                 binding + ", remove=" + remove);
         } else {
-            // TODO: notify backend
             log.debug("Player updated [loc=" + loc + ", remove=" + remove);
+            if (remove) {
+                _backend.playerLeftRoom(loc.playerId, loc.sceneId);
+            } else {
+                _backend.playerEnteredRoom(loc.playerId, loc.sceneId);
+            }
         }
     }
 
@@ -420,10 +428,7 @@ public class ThaneAVRGameController
     protected function gotPlayerObject (obj :PlayerObject) :void
     {
         var memberId :int = obj.getMemberId();
-        var playerLoc :PlayerLocation = _gameObj.playerLocs.get(memberId) as PlayerLocation;
-        if (playerLoc != null) {
-            //_backend.playerEnteredRoom(memberId, playerLoc.sceneId);
-        }
+        _backend.playerJoinedGame(memberId);
     }
 
     protected var _ctx :MsoyBureauContext;
@@ -440,8 +445,8 @@ public class ThaneAVRGameController
 import com.threerings.msoy.bureau.client.Window;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
-import com.threerings.util.StringUtil;
 import com.threerings.presents.util.SafeSubscriber;
+import com.threerings.util.StringUtil;
 
 /** Binds a scene id to its window, room and players. */
 class SceneBinding
