@@ -187,7 +187,7 @@ public class Prefs
      */
     public static function getShowingChatHistory () :Boolean
     {
-        return (config.getValue(CHAT_HISTORY, true) as Boolean);
+        return (config.getValue(CHAT_HISTORY, false) as Boolean);
     }
 
     public static function setShowingChatHistory (showing :Boolean) :void
