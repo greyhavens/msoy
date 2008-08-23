@@ -79,6 +79,13 @@ public class GameLiaison
         if (ghost != null && gport != 0) {
             gameLocated(ghost, gport);
 
+            // we may be doing a pre-logon go but were passed all the necessary information in our
+            // Flash parameters, in which case we need to let the world client know that it's cool
+            // to log in now
+            if (!_wctx.getClient().isLoggedOn()) {
+                _wctx.getClient().logon();
+            }
+
         } else if (_wctx.getClient().isLoggedOn()) {
             log.info("Resolving location of game [id=" + _gameId + "].");
             var mgsvc :MsoyGameService =
