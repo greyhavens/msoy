@@ -773,6 +773,5 @@ public class ItemLogic
     @Inject protected TrophySourceRepository _tsourceRepo;
     @Inject protected PrizeRepository _prizeRepo;
     @Inject protected PropRepository _propRepo;
-    @Inject
-    protected GroupRepository _groupRepo;
+    @Inject protected GroupRepository _groupRepo;
 }
