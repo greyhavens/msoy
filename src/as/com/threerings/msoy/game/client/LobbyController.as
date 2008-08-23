@@ -209,7 +209,7 @@ public class LobbyController extends Controller implements Subscriber
 
         // then our distributed services cleanup
         if (_subscriber != null) {
-            _subscriber.unsubscribe(_mctx.getDObjectManager());
+            _subscriber.unsubscribe(_gctx.getDObjectManager());
         }
         if (_tableDir != null) {
             _tableDir.clearTableObject();
