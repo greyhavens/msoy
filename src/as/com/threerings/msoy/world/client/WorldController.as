@@ -24,6 +24,8 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ResultWrapper;
 import com.threerings.presents.net.Credentials;
 
+import com.threerings.crowd.client.PlaceView;
+
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
@@ -235,15 +237,23 @@ public class WorldController extends MsoyController
             callback: _wctx.getChatDirector().clearDisplays });
         menuData.push({ type: "separator" });
 
-        if (!(_wctx.getTopPanel().getPlaceView() is MsoyGamePanel)) {
-            if (!Prefs.getSidebarChat()) {
-                menuData.push({ command: TOGGLE_CHAT_HIDE, label: Msgs.GENERAL.get(
-                        Prefs.getShowingChatHistory() ? "b.hide_chat" : "b.show_chat") });
-            }
+        const place :PlaceView = _wctx.getTopPanel().getPlaceView();
+        const allowHistoryToggle :Boolean = !(place is MsoyGamePanel) ||
+            (place as MsoyGamePanel).shouldUseChatOverlay();
+        var addedSomething :Boolean = false;
+        if (allowHistoryToggle) {
+            menuData.push({ command: TOGGLE_CHAT_HIDE, label: Msgs.GENERAL.get(
+                    Prefs.getShowingChatHistory() ? "b.hide_chat" : "b.show_chat") });
+            addedSomething = true;
+        }
+        if (!(place is MsoyGamePanel)) {
             menuData.push({ command: TOGGLE_CHAT_SIDEBAR, label: Msgs.GENERAL.get(
                     Prefs.getSidebarChat() ? "b.overlay_chat" : "b.sidebar_chat") });
             menuData.push({ command: TOGGLE_OCC_LIST, label: Msgs.GENERAL.get(
                     Prefs.getShowingOccupantList() ? "b.hide_occ_list" : "b.show_occ_list") });
+            addedSomething = true;
+        }
+        if (addedSomething) {
             menuData.push({ type: "separator" });
         }
 
