@@ -89,7 +89,7 @@ public class WorldControlBar extends ControlBar
         super.locationDidChange(place);
 
         // if we just moved into a room...
-        if (place is RoomObject) {
+        if (place is RoomObject && !_wctx.getGameDirector().isGaming()) {
             // we may want to display our "click here to chat" tip
             // TODO: this thing is broken again and doesn't go away when it should - or ever, in
             // some cases.  It can be re-enabled when we get a chance to get it working.

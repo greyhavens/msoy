@@ -58,6 +58,14 @@ public class GameDirector extends BasicDirector
         c = MsoyGameMarshaller;
     }
 
+    /**
+     * Returns true if we're in a lobby or in a game.
+     */
+    public function isGaming () :Boolean
+    {
+        return (_liaison != null);
+    }
+
     public function getGameContext () :GameContext
     {
         return (_liaison != null) ? _liaison.getGameContext() : null;
