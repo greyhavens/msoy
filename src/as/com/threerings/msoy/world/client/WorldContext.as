@@ -26,7 +26,6 @@ import com.threerings.msoy.game.client.GameDirector;
 import com.threerings.msoy.notify.client.NotificationDirector;
 import com.threerings.msoy.room.client.MediaDirector;
 import com.threerings.msoy.room.client.MsoySceneDirector;
-import com.threerings.msoy.room.client.WorldDirector;
 import com.threerings.msoy.room.client.WorldProperties;
 
 import com.threerings.msoy.client.ControlBar;

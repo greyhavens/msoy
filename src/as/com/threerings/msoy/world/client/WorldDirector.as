@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.room.client {
+package com.threerings.msoy.world.client {
 
 import com.threerings.util.Log;
 
@@ -18,8 +18,6 @@ import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyCodes;
-
-import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.PetMarshaller;
