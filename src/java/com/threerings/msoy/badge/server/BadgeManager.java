@@ -228,10 +228,6 @@ public class BadgeManager
         // we don't need to remove the badge's from the user's in-memory InProgressBadgeSet,
         // because they will be removed automatically by MemberObject.badgeAwarded when the
         // highest level badge of a given type has been awarded.
-        for (InProgressBadge badge : badges) {
-            log.info("Deleting InProgressBadge", "badge", badge);
-        }
-
         _invoker.postUnit(new WriteOnlyUnit("deleteDeadInProgressBadges") {
             public void invokePersist () throws PersistenceException {
                 for (InProgressBadge badge : badges) {
