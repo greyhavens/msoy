@@ -86,7 +86,7 @@ public class LoadingSpinner extends Sprite
 
         } else if (_spinner.currentFrame < 102) {
             _spinner.gotoAndPlay(102);
-            _label.text = "whirling...";
+            _label.text = "";
         }
     }
 
