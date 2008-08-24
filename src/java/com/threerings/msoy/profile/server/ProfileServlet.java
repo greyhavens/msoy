@@ -18,17 +18,33 @@ import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 
 import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.StringUtil;
+
+import com.threerings.parlor.rating.server.persist.RatingRecord;
+import com.threerings.parlor.rating.server.persist.RatingRepository;
+
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.UserActionRepository;
+
+import com.threerings.msoy.web.data.MemberCard;
+import com.threerings.msoy.web.data.ServiceCodes;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.server.MemberHelper;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+import com.threerings.msoy.web.server.ServletLogic;
+
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
@@ -46,19 +62,9 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.InterestRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
+
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
-import com.threerings.msoy.server.MemberNodeActions;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.UserActionRepository;
-import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.server.MemberHelper;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
-import com.threerings.msoy.web.server.ServletLogic;
-import com.threerings.parlor.rating.server.persist.RatingRecord;
-import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 /**
  * Provides the server implementation of {@link ProfileService}.
@@ -153,11 +159,13 @@ public class ProfileServlet extends MsoyServiceServlet
 
             // record that the user updated their profile
             if (nrec.modifications == 1) {
-                final MemberMoney money = _moneyLogic.awardCoins(memrec.memberId, 0, 0, null, CoinAwards.CREATED_PROFILE,
+                final MemberMoney money = _moneyLogic.awardCoins(
+                    memrec.memberId, 0, 0, null, CoinAwards.CREATED_PROFILE,
                     "", UserAction.CREATED_PROFILE).getNewMemberMoney();
                 _moneyNodeActions.moneyUpdated(money);
             } else {
-                _userActionRepo.logUserAction(new UserActionDetails(memrec.memberId, UserAction.UPDATED_PROFILE));
+                _userActionRepo.logUserAction(
+                    new UserActionDetails(memrec.memberId, UserAction.UPDATED_PROFILE));
             }
             _eventLog.profileUpdated(memrec.memberId);
 
@@ -230,7 +238,7 @@ public class ProfileServlet extends MsoyServiceServlet
             }
 
             // finally resolve cards for these members
-            final List<MemberCard> results = _mhelper.resolveMemberCards(mids, false, callerFriendIds);
+            List<MemberCard> results = _mhelper.resolveMemberCards(mids, false, callerFriendIds);
             Collections.sort(results, MemberHelper.SORT_BY_LAST_ONLINE);
             return results;
 
@@ -260,7 +268,7 @@ public class ProfileServlet extends MsoyServiceServlet
         throws PersistenceException
     {
         // load up the feed records for the target member
-        final Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
+        Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
         return _servletLogic.resolveFeedMessages(_feedRepo.loadMemberFeed(profileMemberId, since));
     }
 
@@ -276,7 +284,7 @@ public class ProfileServlet extends MsoyServiceServlet
         return profile;
     }
 
-    protected List<MemberCard> resolveFriendsData (final MemberRecord reqrec, final MemberRecord tgtrec)
+    protected List<MemberCard> resolveFriendsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
         final Map<Integer,MemberCard> cards = Maps.newLinkedHashMap();
@@ -297,18 +305,18 @@ public class ProfileServlet extends MsoyServiceServlet
         return results;
     }
 
-    protected List<GroupCard> resolveGroupsData (final MemberRecord reqrec, final MemberRecord tgtrec)
+    protected List<GroupCard> resolveGroupsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
         final boolean showExclusive = (reqrec != null && reqrec.memberId == tgtrec.memberId);
         return _groupRepo.getMemberGroups(tgtrec.memberId, showExclusive);
     }
 
-    protected List<GameRating> resolveRatingsData (final MemberRecord reqrec, final MemberRecord tgtrec)
+    protected List<GameRating> resolveRatingsData (MemberRecord reqrec, MemberRecord tgtrec)
         throws PersistenceException
     {
         // fetch all the rating records for the user
-        final List<RatingRecord> ratings = _ratingRepo.getRatings(tgtrec.memberId, -1, MAX_PROFILE_GAMES);
+        List<RatingRecord> ratings = _ratingRepo.getRatings(tgtrec.memberId, -1, MAX_PROFILE_GAMES);
 
         // sort them by rating
         Collections.sort(ratings, new Comparator<RatingRecord>() {
