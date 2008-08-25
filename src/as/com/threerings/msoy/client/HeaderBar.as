@@ -107,27 +107,11 @@ public class HeaderBar extends HBox
         }
     }
 
-    public function miniChanged () :void
-    {
-        if (_ctx.getTopPanel().isMinimized()) {
-            for each (var comp :UIComponent in _extras) {
-                FlexUtil.setVisible(comp, false);
-            }
-            stretchSpacer(false);
-        } else {
-            for each (comp in _extras) {
-                FlexUtil.setVisible(comp, (_visibles[comp] === undefined) || _visibles[comp]);
-            }
-            stretchSpacer(true);
-        }
-    }
-
     public function stretchSpacer (stretch :Boolean) :void
     {
-        var mini :Boolean = _ctx.getTopPanel().isMinimized();
         var ownTabs :Boolean = (_tabsContainer.parent == this);
-        var stretchTabs :Boolean = !(stretch && ownTabs && !mini);
-        var stretchSpacer :Boolean = (stretch || !ownTabs) && !mini;
+        var stretchTabs :Boolean = !(stretch && ownTabs);
+        var stretchSpacer :Boolean = (stretch || !ownTabs);
         if (stretchTabs == isNaN(_tabsContainer.percentWidth)) {
             _tabsContainer.percentWidth = stretchTabs ? 100 : NaN;
         }
@@ -172,7 +156,6 @@ public class HeaderBar extends HBox
         _owner.styleName = "headerBox";
         _owner.percentHeight = 100;
         addChild(_owner);
-        _extras.push(_owner);
 
         _closeBox = new HBox();
         _closeBox.styleName = "headerCloseBox";
@@ -258,9 +241,6 @@ public class HeaderBar extends HBox
     protected var _closeBox :HBox;
 
     protected var _tabs :ChatTabBar;
-
-    /** Bits that get removed when in minimized view */
-    protected var _extras :Array = [];
 
     protected var _tabsContainer :TabsContainer;
 

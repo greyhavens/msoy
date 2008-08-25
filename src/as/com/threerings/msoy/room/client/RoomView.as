@@ -696,7 +696,7 @@ public class RoomView extends Sprite
     protected function computeScale () :Number
     {
         const maxScale :Number = _actualHeight / _layout.metrics.sceneHeight;
-        if (isNaN(_fullSizeActualWidth) || !_ctx.getTopPanel().isMinimized()) {
+        if (isNaN(_fullSizeActualWidth) || !_ctx.getMsoyClient().isMinimized()) {
             _fullSizeActualWidth = _actualWidth;
         }
         const minScale :Number = _fullSizeActualWidth / _layout.metrics.sceneWidth;

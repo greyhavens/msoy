@@ -120,7 +120,6 @@ public class TopPanel extends Canvas
         app.addChild(this);
 
         app.stage.addEventListener(Event.RESIZE, stageResized);
-        _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
         // display something until someone comes along and sets a real view on us
         setPlaceView(new BlankPlaceView());
@@ -367,43 +366,9 @@ public class TopPanel extends Canvas
         return (_leftPanel == null ? 0 : _leftPanel.width);
     }
 
-    public function isMinimized () :Boolean
-    {
-        return _minimized;
-    }
-
     protected function stageResized (event :Event) :void
     {
         layoutPanels();
-    }
-
-    protected function miniWillChange (event :ValueEvent) :void
-    {
-        if (event.value as Boolean) {
-            minimizePlaceView();
-        } else {
-            restorePlaceView();
-        }
-    }
-
-    /**
-     * Take care of any bits that need to be changed when the place view is getting mini'd.
-     */
-    protected function minimizePlaceView () :void
-    {
-        _minimized = true;
-
-        _headerBar.miniChanged();
-    }
-
-    /**
-     * Undo any bits that were changed in minimizePlaceView()
-     */
-    protected function restorePlaceView () :void
-    {
-        _minimized = false;
-
-        _headerBar.miniChanged();
     }
 
     protected function getTopPanelHeight () :int
@@ -523,9 +488,6 @@ public class TopPanel extends Canvas
 
     /** Control bar at the bottom of the window. */
     protected var _controlBar :ControlBar;
-
-    /** A flag to indicate if we're working in mini-view or not. */
-    protected var _minimized :Boolean = false;
 
     protected var _comicOverlay :ComicOverlay;
 
