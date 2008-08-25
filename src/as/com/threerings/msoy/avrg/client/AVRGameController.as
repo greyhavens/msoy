@@ -87,8 +87,8 @@ public class AVRGameController extends PlaceController
 
         _wctx.getLocationDirector().removeLocationObserver(_roomObserver);
 
-        _worldObjectMgr.unsubscribeAll();
-        _worldObjectMgr = null;
+        _roomPropsSubs.unsubscribeAll();
+        _roomPropsSubs = null;
 
         super.didLeavePlace(plobj);
     }
@@ -149,7 +149,11 @@ public class AVRGameController extends PlaceController
         if (_roomPropsOid == 0) {
             return null;
         }
-        return _worldObjectMgr.getObj(_roomPropsOid) as RoomPropertiesObject;
+        var placeObj :PlaceObject = _wctx.getLocationDirector().getPlaceObject();
+        if (placeObj == null || placeObj.getOid() != _roomOid) {
+            return null;
+        }
+        return _roomPropsSubs.getObj(_roomPropsOid) as RoomPropertiesObject;
     }
 
     // both initializeWorldContext() and willEnterPlace() contribute data that is vital to
@@ -168,7 +172,7 @@ public class AVRGameController extends PlaceController
         var panel :AVRGamePanel = (getPlaceView() as AVRGamePanel);
         panel.backendIsReady();
 
-        _worldObjectMgr = new SafeObjectManager(
+        _roomPropsSubs = new SafeObjectManager(
             _wctx.getClient().getDObjectManager(), log, roomPropsAvailable);
 
         // sign up for room objects
@@ -208,6 +212,9 @@ public class AVRGameController extends PlaceController
         var entry :RoomPropertiesEntry = null;
         if (roomObject != null) {
             entry = roomObject.propertySpaces.get(gameId) as RoomPropertiesEntry;
+            _roomOid = roomObject.getOid();
+        } else {
+            _roomOid = 0;
         }
 
         if (entry != null) {
@@ -217,10 +224,12 @@ public class AVRGameController extends PlaceController
             setRoomPropsOid(0);
             var setListener :SetAdapter;
             setListener = new SetAdapter(function (event :EntryAddedEvent) :void {
-                entry = event.getEntry() as RoomPropertiesEntry;
-                if (entry.ownerId == gameId) {
-                    setRoomPropsOid(entry.propsOid);
-                    roomObject.removeListener(setListener);
+                if (event.getName() == RoomObject.PROPERTY_SPACES) {
+                    entry = event.getEntry() as RoomPropertiesEntry;
+                    if (entry.ownerId == gameId) {
+                        setRoomPropsOid(entry.propsOid);
+                        roomObject.removeListener(setListener);
+                    }
                 }
             });
             roomObject.addListener(setListener);
@@ -235,21 +244,20 @@ public class AVRGameController extends PlaceController
     protected function setRoomPropsOid (propsOid :int) :void
     {
         if (_roomPropsOid != 0) {
-            _backend.setRoomProperties(null);
-            _worldObjectMgr.unsubscribe(_roomPropsOid);
+            _roomPropsSubs.unsubscribe(_roomPropsOid);
         }
 
         _roomPropsOid = propsOid;
 
         if (_roomPropsOid != 0) {
-            _worldObjectMgr.subscribe(_roomPropsOid);
+            _roomPropsSubs.subscribe(_roomPropsOid);
         }
     }
 
     protected function roomPropsAvailable (roomProps :RoomPropertiesObject) :void
     {
-        if (roomProps.getOid() == _roomPropsOid) {
-            _backend.setRoomProperties(roomProps);
+        if (getRoomProperties() != null) {
+            _backend.gotRoomProperties();
         }
     }
 
@@ -259,8 +267,9 @@ public class AVRGameController extends PlaceController
     protected var _gameObj :AVRGameObject;
     protected var _backend :AVRGameBackend;
 
-    protected var _worldObjectMgr :SafeObjectManager;
+    protected var _roomPropsSubs :SafeObjectManager;
     protected var _roomPropsOid :int;
+    protected var _roomOid :int;
     protected var _roomObserver :LocationAdapter = new LocationAdapter(null, updateRoom);
 }
 }

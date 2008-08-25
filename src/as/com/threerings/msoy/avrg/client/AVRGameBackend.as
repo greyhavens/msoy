@@ -56,6 +56,7 @@ import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
 
 public class AVRGameBackend extends ControlBackend
 {
@@ -72,9 +73,10 @@ public class AVRGameBackend extends ControlBackend
         _wctx = wctx;
         _gctx = gctx;
         _ctrl = ctrl;
+        _gameObj = gameObj;
+
         _playerObj = _gctx.getPlayerObject();
 
-        _gameObj = gameObj;
         _gameObj.addListener(_gameListener);
 
         _gctx.getClient().getClientObject().addListener(_playerListener);
@@ -92,6 +94,8 @@ public class AVRGameBackend extends ControlBackend
     // from ControlBackend
     override public function shutdown () :void
     {
+        maybeDispatchLeftRoom("shutdown");
+
          if (_roomObj != null) {
              _roomObj.removeListener(_movementListener);
              _roomObj = null;
@@ -111,7 +115,9 @@ public class AVRGameBackend extends ControlBackend
              _playerNetAdapter.release();
          }
 
-         setRoomProperties(null);
+         if (_roomPropsNetAdapter != null) {
+             _roomPropsNetAdapter.release();
+         }
 
          super.shutdown();
     }
@@ -157,17 +163,20 @@ public class AVRGameBackend extends ControlBackend
         return _wctx.getGameDirector().getGameId() == _ctrl.getGameId();
     }
 
-    public function setRoomProperties (props :RoomPropertiesObject) :void
+    public function gotRoomProperties () :void
     {
         if (_roomPropsNetAdapter != null) {
             _roomPropsNetAdapter.release();
             _roomPropsNetAdapter = null;
         }
 
+        var props :RoomPropertiesObject = _ctrl.getRoomProperties();
         if (props != null && _props != null) {
             _roomPropsNetAdapter = new BackendNetAdapter(
-                props, RoomPropertiesObject.USER_MESSAGE, _props, "room_propertyWasSet_v1", 
-                "room_messageReceived_v1");
+                props, RoomPropertiesObject.USER_MESSAGE, 
+                _props, "room_propertyWasSet_v1", "room_messageReceived_v1");
+
+            maybeDispatchEnteredRoom("props arrived");
         }
     }
 
@@ -183,7 +192,7 @@ public class AVRGameBackend extends ControlBackend
             _playerObj, WhirledPlayerObject.getMessageName(_gameObj.getOid()), o,
             "player_propertyWasSet_v1", "player_messageReceived_v1");
 
-        setRoomProperties(_ctrl.getRoomProperties());
+        gotRoomProperties();
     }
 
     // from ControlBackend
@@ -578,17 +587,19 @@ public class AVRGameBackend extends ControlBackend
     }
 
     // internal callback
-    protected function playerEntered (name :Name) :void
+    protected function playerEntered (name :Name, why :String) :void
     {
         if (name is MemberName) {
+            log.debug(playerIdStr(), "Player entered [name=" + name + ", why=" + why + "]");
             callUserCode("playerEntered_v1", MemberName(name).getMemberId());
         }
     }
 
     // internal callback
-    protected function playerLeft (name :Name) :void
+    protected function playerLeft (name :Name, why :String) :void
     {
         if (name is MemberName) {
+            log.debug(playerIdStr(), "Player left [name=" + name + ", why=" + why + "]");
             callUserCode("playerLeft_v1", MemberName(name).getMemberId());
         }
     }
@@ -662,6 +673,53 @@ public class AVRGameBackend extends ControlBackend
         }
     }
 
+    protected function maybeDispatchLeftRoom (why :String) :void
+    {
+        // Dispatch to user when first condition is met
+        if (_lastDispatchedSceneId != 0) {
+            log.debug(playerIdStr(), "Left room [sceneId=" + _lastDispatchedSceneId + 
+                ", why=" + why + "]");
+            callUserCode("leftRoom_v1");
+            _lastDispatchedSceneId = 0;
+        }
+    }
+
+    protected function maybeDispatchEnteredRoom (why :String) :void
+    {
+        var sceneId :int = _wctx.getSceneDirector().getScene().getId();
+        if (sceneId == _lastDispatchedSceneId) {
+            log.debug(
+                playerIdStr(), "Already entered room [sceneId=" + sceneId + ", why=" + why + "]");
+            return;
+        }
+
+        // Dispatch to user when all conditions are met
+        var ploc :PlayerLocation;
+        ploc = _gameObj.playerLocs.get(_playerObj.getMemberId()) as PlayerLocation;
+        var roomProps :Boolean = _ctrl.getRoomProperties() != null;
+        var placeObj :PlaceObject = _wctx.getLocationDirector().getPlaceObject();
+        var placeId :int = placeObj == null ? 0 : placeObj.getOid();
+        var roomOid :int = _roomObj == null ? 0 : _roomObj.getOid();
+
+        if (roomProps && ploc != null && sceneId == ploc.sceneId && placeId != 0 && 
+            placeId == roomOid) {
+            maybeDispatchLeftRoom("entered"); // no-op if left already
+            log.debug(playerIdStr(), "Entered room  [sceneId=" + sceneId + ", why=" + why + "]");
+            callUserCode("enteredRoom_v1", sceneId);
+            _lastDispatchedSceneId = sceneId;
+        } else {
+            log.debug(playerIdStr(), 
+                "Would dispatch but... [roomProps=" + roomProps + ", ploc=" + ploc + 
+                ", sceneId=" + sceneId + ", placeId=" + placeId + ", roomOid=" + roomOid + 
+                ", why=" + why + "]");
+        }
+    }
+
+    protected function playerIdStr () :String
+    {
+        return "[" + (_playerObj == null ? "null" : _playerObj.getMemberId()) + "]";
+    }
+
     protected var _wctx :WorldContext;
     protected var _gctx :GameContext;
     protected var _ctrl :AVRGameController;
@@ -672,6 +730,7 @@ public class AVRGameBackend extends ControlBackend
     protected var _playerNetAdapter :BackendNetAdapter;
     protected var _roomObj :RoomObject;
     protected var _roomPropsNetAdapter :BackendNetAdapter;
+    protected var _lastDispatchedSceneId :int;
 
     protected var _playerListener :MessageAdapter = new MessageAdapter(
         function (event :MessageEvent) :void {
@@ -689,11 +748,24 @@ public class AVRGameBackend extends ControlBackend
                 // we look this user up by display name in the room
                 if (_roomObj.getOccupantInfo(gameInfo.username) != null) {
                     // an occupant of our current room began playing this AVRG
-                    playerEntered(gameInfo.username);
+                    playerEntered(gameInfo.username, "game occupancy change");
+                }
+            } else if (event.getName() == AVRGameObject.PLAYER_LOCS) {
+                var ploc :PlayerLocation = event.getEntry() as PlayerLocation;
+                if (ploc.playerId == _playerObj.getMemberId()) {
+                    maybeDispatchEnteredRoom("location update");
                 }
             }
         },
-        null,
+        function (event :EntryUpdatedEvent) :void {
+            if (event.getName() == AVRGameObject.PLAYER_LOCS) {
+                var ploc :PlayerLocation = event.getEntry() as PlayerLocation;
+                if (ploc.playerId == _playerObj.getMemberId()) {
+                    maybeDispatchLeftRoom("location update");
+                    maybeDispatchEnteredRoom("location update");
+                }
+            }
+        },
         function (event :EntryRemovedEvent) :void {
             if (event.getName() == PlaceObject.OCCUPANT_INFO && _roomObj != null) {
                 var gameInfo :OccupantInfo = event.getOldEntry();
@@ -701,24 +773,30 @@ public class AVRGameBackend extends ControlBackend
                 // we look this user up by display name in the room
                 if (_roomObj.getOccupantInfo(gameInfo.username)) {
                     // an occupant of our current room stopped playing this AVRG
-                    playerLeft(gameInfo.username);
+                    playerLeft(gameInfo.username, "game occupancy change");
+                }
+            } else if (event.getName() == AVRGameObject.PLAYER_LOCS) {
+                var ploc :PlayerLocation = event.getOldEntry() as PlayerLocation;
+                if (ploc.playerId == _playerObj.getMemberId()) {
+                    maybeDispatchLeftRoom("location update");
                 }
             }
         });
 
     protected var _locationObserver :LocationObserver = new LocationAdapter(
         null, function (place :PlaceObject) :void {
+            if (place == _roomObj) {
+                log.warning("Room changing to same room?");
+            }
+
             if (_roomObj != null) {
                 _roomObj.removeListener(_movementListener);
-                callUserCode("leftRoom_v1");
+                maybeDispatchLeftRoom("room change");
             }
             _roomObj = (place as RoomObject);
             if (_roomObj != null) {
                 _roomObj.addListener(_movementListener);
-
-                // TODO: this is where we may need to get clever and hold off on the
-                // TODO: dispatch until a number of conditions are true.
-                callUserCode("enteredRoom_v1", _wctx.getSceneDirector().getScene().getId());
+                maybeDispatchEnteredRoom("room change");
             }
     }, null);
 
@@ -744,12 +822,12 @@ public class AVRGameBackend extends ControlBackend
     protected var _occupantObserver :OccupantObserver = new OccupantAdapter(
         function (info :OccupantInfo) :void {
             if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
-                playerEntered(info.username);
+                playerEntered(info.username, "room occupancy changed");
             }
         },
         function (info :OccupantInfo) :void {
             if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
-                playerLeft(info.username);
+                playerLeft(info.username, "room occupancy changed");
             }
         });
 
