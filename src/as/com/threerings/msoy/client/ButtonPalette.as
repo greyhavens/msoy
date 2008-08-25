@@ -47,7 +47,7 @@ public class ButtonPalette extends Canvas
             int(_tile.getStyle("paddingRight"));
 
         addEventListener(Event.RENDER, handleRender);
-        showAll(false);
+        showAll(false, false);
     }
 
     public function addButton (comp :UIComponent, priority :int) :void
@@ -77,7 +77,7 @@ public class ButtonPalette extends Canvas
         _toggle.visible = !singleRow;
         if (singleRow) {
             _toggle.selected = false;
-            showAll(false);
+            showAll(false, false);
         }
     }
 
@@ -119,10 +119,10 @@ public class ButtonPalette extends Canvas
     /**
      * Should we show all the buttons?
      */
-    protected function showAll (show :Boolean) :void
+    protected function showAll (show :Boolean, animate :Boolean = true) :void
     {
         _up = show;
-        updateTileLoc(true);
+        updateTileLoc(animate);
     }
 
     override protected function updateDisplayList (uw :Number, uh :Number) :void
