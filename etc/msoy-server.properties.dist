@@ -194,3 +194,6 @@ oooauth.access_denied_url = /register/access_denied.wm
 local_bureaus = true
 # bureau_secret = you can't guess this
 # window_secret = only the computer knows
+
+# Static log settings for action script deployments (default is to log everything, see Log.as)
+# log_levels_config = :warning;com.threerings.msoy:info

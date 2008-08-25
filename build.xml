@@ -513,6 +513,7 @@
     <!-- set default properties -->
     <property name="dev_deployment" value="true"/>
     <property name="socket_policy_port" value="47623"/>
+    <property name="log_levels_config" value=""/>
     <!-- then overwrite with values read from msoy-server.properties -->
     <copy file="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as.tmpl"
           tofile="${asrc.dir}/com/threerings/msoy/client/DeploymentConfig.as"
@@ -527,6 +528,7 @@
         <filter token="media_url" value="${media_url}"/>
         <filter token="dev_deployment" value="${dev_deployment}"/>
         <filter token="static_media_url" value="${static_media_url}"/>
+        <filter token="log_levels_config" value="${log_levels_config}"/>
       </filterset>
     </copy>
   </target>
