@@ -223,7 +223,7 @@ public class NotificationDisplay extends HBox
         PopUpManager.removePopUp(_nHistory);
         systemManager.removeEventListener(MouseEvent.CLICK, maybeCloseHistory);
         _nHistory = null;
-        _popUpBtn.selected = false;
+        _popupBtn.selected = false;
     }
 
     protected function linkClicked (event :TextEvent) :void
