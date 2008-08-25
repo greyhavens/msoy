@@ -297,7 +297,7 @@ public class ControlBar extends HBox
 
         // add buttons
         addButton(_volBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ], VOLUME_PRIORITY);
-        if (DeploymentConfig.devDeployment) {
+        if (false && DeploymentConfig.devDeployment) {
             addButton(_fullBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
                 GLOBAL_PRIORITY);
         }

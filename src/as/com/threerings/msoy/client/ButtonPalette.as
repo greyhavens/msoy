@@ -29,19 +29,20 @@ public class ButtonPalette extends Canvas
 
         _toggle = new CommandCheckBox(null, showAll);
         _toggle.styleName = "panelToggle";
-        _toggle.y = 7;
+        _toggle.y = 8;
         addChild(_toggle);
 
-        minWidth = TOGGLE_WIDTH + DIM;
-
         _tile = new Tile();
-        _tile.tileWidth = 22; //DIM;
-        _tile.tileHeight = 23; //DIM;
+        _tile.tileWidth = 22;
+        _tile.tileHeight = 23;
         _tile.styleName = "buttonPalette";
         _tile.owner = DisplayObjectContainer(Application.application.systemManager);
         _tile.owner.addChild(_tile);
 
         CommandEvent.configureBridge(_tile, parent);
+
+        minWidth = TOGGLE_WIDTH + _tile.tileWidth + int(_tile.getStyle("paddingLeft")) +
+            int(_tile.getStyle("paddingRight"));
 
         addEventListener(Event.RENDER, handleRender);
         showAll(false);
@@ -59,21 +60,33 @@ public class ButtonPalette extends Canvas
 
     public function recheckButtons () :void
     {
-        _tile.width = DIM * Math.max(1, Math.floor((this.width - TOGGLE_WIDTH) / DIM));
+        const hPad :int = int(_tile.getStyle("paddingLeft")) + int(_tile.getStyle("paddingRight"));
+        const vPad :int = int(_tile.getStyle("paddingTop")) + int(_tile.getStyle("paddingBottom"));
+        const hGap :int = int(_tile.getStyle("horizontalGap"));
+        const adjustedWidth :int = this.width - TOGGLE_WIDTH - hPad;
+        const tileW :int = _tile.tileWidth;
+        var w :int = tileW;
+        while ((w + hGap + tileW) <= adjustedWidth) {
+            w += hGap + tileW;
+        }
+        _tile.width = w + hPad;
         _tile.validateNow();
-        const singleRow :Boolean = (_tile.height == _tile.tileHeight);
+        const singleRow :Boolean = (_tile.height == (_tile.tileHeight + vPad));
         _toggle.visible = !singleRow;
         if (singleRow) {
             _toggle.selected = false;
-            _up = false;
+            showAll(false);
         }
     }
 
     protected function updateTileLoc () :void
     {
-        var y :int = 3;
+
+        var y :int;
         if (_up) {
-            y -= (_tile.height - _tile.tileHeight);
+            y = -_tile.height + this.height;
+        } else {
+            y = (ControlBar.HEIGHT - (_tile.tileHeight + int(_tile.getStyle("paddingTop")))) / 2;
         }
 
         var p :Point = localToGlobal(new Point(TOGGLE_WIDTH, y));
@@ -110,7 +123,5 @@ public class ButtonPalette extends Canvas
     protected var _up :Boolean;
 
     protected static const TOGGLE_WIDTH :int = 20;
-
-    protected static const DIM :int = ControlBar.HEIGHT;
 }
 }

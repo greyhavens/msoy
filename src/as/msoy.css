@@ -485,11 +485,10 @@ TabNavigator, TabBar {
   paddingTop: 5;
   paddingLeft: 5;
   paddingRight: 5;
-  cornerRadius: 10;
-
+  horizontalGap: 8;
+  verticalGap: 8;
   verticalAlign: "middle";
   horizontalAlign: "center";
-
   backgroundColor: black;
   backgroundAlphaClosed: 0;
   backgroundAlphaOpen: .85;
@@ -957,7 +956,7 @@ BasePanel {
 
 .chatControl {  
   paddingLeft: 0;
-  paddingRight: 4;
+  paddingRight: 0;
   paddingTop: 0;
   paddingBottom: 2;
   verticalAlign: "center";
