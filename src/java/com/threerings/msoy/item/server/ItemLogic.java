@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,6 +13,8 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
+import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -39,9 +42,9 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListInfo;
 import com.threerings.msoy.item.data.all.ItemListQuery;
-import com.threerings.msoy.item.data.all.MemberItemListInfo;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.ListingCard;
+import com.threerings.msoy.item.gwt.MemberItemInfo;
 
 import com.threerings.msoy.item.server.persist.AudioRepository;
 import com.threerings.msoy.item.server.persist.AvatarRepository;
@@ -49,6 +52,8 @@ import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.DecorRepository;
 import com.threerings.msoy.item.server.persist.DocumentRepository;
+import com.threerings.msoy.item.server.persist.FavoriteItemRecord;
+import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.FurnitureRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
@@ -327,6 +332,35 @@ public class ItemLogic
     }
 
     /**
+     * Resolves the supplied list of favorited items into properly initialized {@link ListingCard}
+     * records.
+     */
+    public List<ListingCard> resolveFavorites (List<FavoriteItemRecord> faves)
+        throws PersistenceException, ServiceException
+    {
+        // break the list up by item type
+        SetMultimap<Byte, Integer> typeMap = Multimaps.newHashMultimap();
+        for (FavoriteItemRecord fave : faves) {
+            typeMap.put(fave.itemType, fave.catalogId);
+        }
+
+        List<ListingCard> list = Lists.newArrayList();
+
+        // now go through and resolve the records into listing cards by type
+        for (Map.Entry<Byte, Collection<Integer>> entry : typeMap.asMap().entrySet()) {
+            ItemRepository<ItemRecord> repo = getRepository(entry.getKey());
+            list.addAll(Lists.transform(repo.loadCatalog(entry.getValue()), CatalogRecord.TO_CARD));
+        }
+
+        // finally resolve all of the member names in our list
+        resolveCardNames(list);
+
+        // TODO: restore the original order
+
+        return list;
+    }
+
+    /**
      * Resolves the member names in the supplied list of listing cards.
      */
     public void resolveCardNames (List<ListingCard> list)
@@ -444,23 +478,36 @@ public class ItemLogic
         _listRepo.removeItem(listId, item);
     }
 
-    public void addFavorite (int memberId, ItemIdent item)
-        throws PersistenceException
+    /**
+     * Loads up and returns the specified member's rating and favorite status of the supplied item.
+     */
+    public MemberItemInfo getMemberItemInfo (MemberRecord mrec, Item item)
+        throws PersistenceException, ServiceException
     {
-        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
-        _listRepo.addItem(favoriteList.listId, item);
+        MemberItemInfo info = new MemberItemInfo();
+        if (mrec != null) {
+            ItemRepository<ItemRecord> repo = getRepository(item.getType());
+            info.memberRating = repo.getRating(item.itemId, mrec.memberId);
+            info.favorite = (item.catalogId != 0) &&
+                (_faveRepo.loadFavorite(mrec.memberId, item.getType(), item.catalogId) != null);
+        }
+        return info;
     }
 
-    public void incrementFavoriteCount (CatalogRecord record, byte itemType)
-        throws ServiceException
+    /**
+     * Notes or clears favorite status for the specified catalog listing for the specified member.
+     */
+    public void setFavorite (int memberId, byte itemType, CatalogRecord record, boolean favorite)
+        throws ServiceException, PersistenceException
     {
-        incrementFavoriteCount(record, itemType, 1);
-    }
-
-    public void decrementFavoriteCount (CatalogRecord record, byte itemType)
-        throws ServiceException
-    {
-        incrementFavoriteCount(record, itemType, -1);
+        ItemRepository<ItemRecord> irepo = getRepository(itemType);
+        if (favorite) {
+            _faveRepo.noteFavorite(memberId, itemType, record.catalogId);
+            irepo.incrementFavoriteCount(record, 1);
+        } else {
+            _faveRepo.clearFavorite(memberId, itemType, record.catalogId);
+            irepo.incrementFavoriteCount(record, -1);
+        }
     }
 
     public int getItemListSize (int listId)
@@ -520,91 +567,6 @@ public class ItemLogic
         }
 
         return list;
-    }
-
-    public void removeFavorite (int memberId, ItemIdent item)
-        throws PersistenceException
-    {
-        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
-        _listRepo.removeItem(favoriteList.listId, item);
-    }
-
-    /**
-     * Check to see if the member's favorite list contains the given item.
-     */
-    public boolean isFavorite(int memberId, Item item)
-        throws PersistenceException, ServiceException
-    {
-        byte itemType = item.getType();
-        CatalogRecord record = getRepository(itemType).loadListing(item.catalogId, false);
-        if (record == null) {
-            return false;
-        }
-
-        return isFavorite(memberId, new ItemIdent(itemType, record.listedItemId));
-    }
-
-    protected void incrementFavoriteCount (CatalogRecord record, byte itemType, int increment)
-        throws ServiceException
-    {
-        ItemRepository<ItemRecord> repo = getRepository(itemType);
-        try {
-            repo.incrementFavoriteCount(record, increment);
-        } catch (PersistenceException pex) {
-            log.warning("Could not increment favorite count.", "catalogId", record.catalogId,
-                "increment", increment, pex);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-    }
-
-    /**
-     * Check to see if the member's favorite list contains the given item.
-     */
-    protected boolean isFavorite(int memberId, ItemIdent item)
-        throws PersistenceException
-    {
-        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
-        return _listRepo.contains(favoriteList.listId, item);
-    }
-
-    /**
-     * Loads up info on the specified member's favorite items list. If the list does not yet exist,
-     * it will be created.
-     */
-    public MemberItemListInfo getFavoriteListInfo (int memberId)
-        throws PersistenceException
-    {
-        List<ItemListInfo> favoriteLists = Lists.newArrayList(
-            Iterables.transform(_listRepo.loadInfos(memberId, ItemListInfo.FAVORITES),
-                                ItemListInfoRecord.TO_INFO));
-
-        ItemListInfo favorites;
-        if (favoriteLists.isEmpty()) {
-            // create the favorites list for this user
-            favorites = createItemList(
-                memberId, ItemListInfo.FAVORITES,
-                _serverMsgs.getBundle("server").get("m.favorites_list_name"));
-        } else {
-            // there should never be more than one FAVORITES list per member
-            if (favoriteLists.size() > 1) {
-                log.warning("More than one favorites list found for member.", "memberId", memberId);
-            }
-            favorites = favoriteLists.get(0);
-        }
-
-        // return the member name for display purposes
-        MemberRecord member = _memberRepo.loadMember(memberId);
-        MemberItemListInfo list = new MemberItemListInfo(favorites);
-        list.memberName = member.getName().getNormal();
-
-        return list;
-    }
-
-    public List<Item> loadFavoriteList (int memberId)
-        throws PersistenceException
-    {
-        ItemListInfo favoriteList = getFavoriteListInfo(memberId);
-        return loadItemList(favoriteList.listId);
     }
 
     /**
@@ -753,9 +715,10 @@ public class ItemLogic
 
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ItemManager _itemMan;
-    @Inject protected ItemListRepository _listRepo;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected ItemListRepository _listRepo;
+    @Inject protected FavoritesRepository _faveRepo;
 
     // our myriad item repositories
     @Inject protected AudioRepository _audioRepo;

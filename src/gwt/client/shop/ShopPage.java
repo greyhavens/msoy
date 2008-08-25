@@ -23,7 +23,6 @@ import client.util.ServiceUtil;
 public class ShopPage extends Page
 {
     public static final String LOAD_LISTING = "l";
-
     public static final String FAVORITES = "f";
 
     @Override // from Page
@@ -38,18 +37,19 @@ public class ShopPage extends Page
                     setContent(new ListingDetailPanel(_models, listing));
                 }
             });
+
         } else if (action.equals(FAVORITES)) {
-            // get the member id from args. if no member id, use the current user
+            // if no member is specified, we use the current member
             int memberId = args.get(1, CShop.getMemberId());
-            byte itemType = (byte) args.get(2, Item.NOT_A_TYPE);
-            int gridPage = args.get(3, 0);
-            String[] prefixArgs = new String[] { FAVORITES, String.valueOf(memberId) };
-            _favorites.update(memberId, itemType, gridPage, prefixArgs);
-            setContent(_favorites.getTitle(), _favorites);
+            byte itemType = (byte)args.get(2, Item.NOT_A_TYPE);
+            int page = args.get(3, 0);
+            setContent(_msgs.favoritesTitle(),
+                       new FavoritesPanel(_models, memberId, itemType, page));
+
         } else {
             byte type = (byte)args.get(0, Item.NOT_A_TYPE);
             if (type == Item.NOT_A_TYPE) {
-                setContent(CShop.msgs.catalogTitle(), new ShopPanel());
+                setContent(_msgs.catalogTitle(), new ShopPanel());
             } else {
                 if (!_catalog.isAttached()) {
                     setContent(_catalog);
@@ -74,18 +74,10 @@ public class ShopPage extends Page
         CShop.msgs = (ShopMessages)GWT.create(ShopMessages.class);
     }
 
-    @Override
-    public void onPageLoad ()
-    {
-        super.onPageLoad();
-
-        _favorites = new FavesPanel();
-    }
-
     protected CatalogModels _models = new CatalogModels();
     protected CatalogPanel _catalog = new CatalogPanel(_models);
-    protected FavesPanel _favorites;
 
+    protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 }

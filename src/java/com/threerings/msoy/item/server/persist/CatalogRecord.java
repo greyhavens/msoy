@@ -6,6 +6,8 @@ package com.threerings.msoy.item.server.persist;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import com.google.common.base.Function;
+
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.GeneratedValue;
@@ -70,6 +72,14 @@ public abstract class CatalogRecord extends PersistentRecord
 
     public static final int SCHEMA_VERSION = 9;
 
+    /** Converts this record to a runtime record. See {@link #toListingCard} for caveats.  */
+    public static final Function<CatalogRecord,ListingCard> TO_CARD =
+        new Function<CatalogRecord,ListingCard>() {
+        public ListingCard apply (CatalogRecord record) {
+            return record.toListingCard();
+        }
+    };
+
     /** A unique id assigned to this catalog listing. */
     @Id
     @GeneratedValue(generator="catalogId", strategy=GenerationType.TABLE, allocationSize=1)
@@ -133,7 +143,9 @@ public abstract class CatalogRecord extends PersistentRecord
     }
 
     /**
-     * Creates a runtime card record from this persistent record.
+     * Creates a runtime card record from this persistent record. The caller is responsible for
+     * looking up and filling in the member names of the creators. This method inserts a blank name
+     * with the appropriate id to make that process easier.
      */
     public ListingCard toListingCard ()
     {

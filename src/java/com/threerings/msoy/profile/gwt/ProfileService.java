@@ -8,18 +8,18 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
-import com.threerings.msoy.badge.data.all.EarnedBadge;
-
 import com.threerings.msoy.data.all.MemberName;
 
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.data.MemberCard;
+
+import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.group.gwt.GroupCard;
-
+import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.data.MemberCard;
 
 /**
  * Defines profile-related services available to the GWT/AJAX web client.
@@ -78,6 +78,11 @@ public interface ProfileService extends RemoteService
          * This member's recent self feed messages.
          */
         public List<FeedMessage> feed;
+
+        /**
+         * This member's recently favorited items.
+         */
+        public List<ListingCard> faves;
     }
 
     /** The entry point for this service. */

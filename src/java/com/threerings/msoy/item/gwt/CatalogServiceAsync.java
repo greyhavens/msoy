@@ -61,4 +61,10 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#getPopularTags}.
      */
     void getPopularTags (byte type, int count, AsyncCallback<Map<String, Integer>> callback);
+
+    /**
+     * The asynchronous version of {@link CatalogService#loadFavorites}.
+     */
+    void loadFavorites (int memberId, byte itemType,
+                        AsyncCallback<CatalogService.FavoritesResult> callback);
 }

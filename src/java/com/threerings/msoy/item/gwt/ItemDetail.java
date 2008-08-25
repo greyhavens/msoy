@@ -32,7 +32,7 @@ public class ItemDetail implements Streamable, IsSerializable
     public String useLocation;
 
     /** Contains member rating and favorite information about the item. */
-    public MemberItemInfo memberItemInfo = new MemberItemInfo();
+    public MemberItemInfo memberItemInfo;
 
     /** The tags on this item. */
     public List<String> tags;

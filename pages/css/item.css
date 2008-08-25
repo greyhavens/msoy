@@ -147,3 +147,18 @@
   padding-left: 5px;
   display: inline;
 }
+
+/** ListingBox styles */
+.itemBox .Creator {
+  font-size: 12px;
+  padding-top: 2px;
+  color: #AABDC8;
+}
+
+.itemBox .Rating {
+  width: 60px;
+}
+
+.itemBox .Cost {
+  font-size: 12px;
+}

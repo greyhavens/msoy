@@ -36,7 +36,7 @@ public class FavoriteIndicator extends FlowPanel
         toggle.addClickListener(new ClickListener() {
             public void onClick (Widget sender) {
                 final boolean favorite = ((ToggleButton) sender).isDown();
-                _itemsvc.setFavorite(_item.catalogId, _item.getType(), favorite,
+                _itemsvc.setFavorite(_item.getType(), _item.catalogId, favorite,
                     new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
                         _memberItemInfo.favorite = favorite;

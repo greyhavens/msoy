@@ -11,7 +11,6 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
-import com.threerings.msoy.item.data.all.MemberItemListInfo;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.web.data.ServiceException;
 
@@ -95,18 +94,13 @@ public interface ItemService extends RemoteService
     /**
      * Flags a item from the catalog as the current member's favorite (or not).
      */
-    void setFavorite (int catalogId, byte itemType, boolean favorite)
+    void setFavorite (byte itemType, int catalogId, boolean favorite)
         throws ServiceException;
 
     /**
      * Loads items from a list that match the given criteria.
      */
     ItemListResult loadItemList (ItemListQuery query) throws ServiceException;
-
-    /**
-     * Gets the favorite list info for the given member.
-     */
-    MemberItemListInfo getFavoriteListInfo (int memberId) throws ServiceException;
 
     /**
      * Loads up all of this member's photo inventory. This exists separate from

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -21,13 +20,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.InlineLabel;
-import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.gwt.CatalogQuery;
-import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.shell.DynamicMessages;
 import client.item.ShopUtil;
@@ -89,19 +85,11 @@ public class CatalogPanel extends SmartTable
             }
         });
 
-        int rows = Math.max(1, (Window.getClientHeight() -
-                                HEADER_HEIGHT - NAV_BAR_ETC) / BOX_HEIGHT);
-        _items = new PagedGrid<ListingCard>(rows, COLUMNS) {
-            @Override
-            protected void displayPageFromClick (int page) {
+        _items = new ListingGrid(HEADER_HEIGHT) {
+            @Override protected void displayPageFromClick (int page) {
                 Link.go(Pages.SHOP, ShopUtil.composeArgs(_query, page));
             }
-            @Override
-            protected Widget createWidget (ListingCard card) {
-                return new ListingBox(card);
-            }
-            @Override
-            protected String getEmptyMessage () {
+            @Override protected String getEmptyMessage () {
                 String name = _dmsgs.getString("itemType" + _query.itemType);
                 if (_query.tag != null) {
                     return CShop.msgs.catalogNoTag(name, _query.tag);
@@ -113,26 +101,19 @@ public class CatalogPanel extends SmartTable
                     return CShop.msgs.catalogNoList(name);
                 }
             }
-            @Override
-            protected void configureNavi (FlexTable controls, int row, int col,
+            @Override protected void configureNavi (FlexTable controls, int row, int col,
                                           int start, int limit, int total) {
                 super.configureNavi(controls, row, col, start, limit, total);
                 controls.getFlexCellFormatter().setHorizontalAlignment(
                     row, col, HasAlignment.ALIGN_RIGHT);
             }
-            @Override
-            protected void addCustomControls (FlexTable controls) {
+            @Override protected void addCustomControls (FlexTable controls) {
                 controls.setWidget(
                     0, 0, new InlineLabel(CShop.msgs.catalogSortBy(), false, false, false));
                 controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
                 controls.setWidget(0, 1, _sortBox);
             }
-            @Override
-            protected boolean displayNavi (int items) {
-                return true;
-            }
         };
-        _items.addStyleName("ListingGrid");
         _listings.setWidget(2, 0, _items, 2, null);
         _listings.getFlexCellFormatter().setHeight(2, 0, "100%");
         _listings.getFlexCellFormatter().setVerticalAlignment(2, 0, HasAlignment.ALIGN_TOP);
@@ -165,7 +146,7 @@ public class CatalogPanel extends SmartTable
         }
 
         // grab our data model and display it
-        CatalogModels.Listings model = _models.getModel(_query);
+        CatalogModels.Listings model = _models.getListingsModel(_query);
         CatalogModels.Listings current = (CatalogModels.Listings)_items.getModel();
         if (current != null && current.getType() != model.getType()) {
             // clear the display when we switching item types so that we don't see items of the
@@ -179,7 +160,7 @@ public class CatalogPanel extends SmartTable
         if (cloud == null) {
             _clouds.put(_query.itemType, cloud = new TagCloud(_query.itemType, TAG_COUNT, this));
         }
-        setWidget(0, 0, new SideBar(_query, cloud));
+        setWidget(0, 0, new SideBar(new CatalogQueryLinker(_query), false, cloud));
 
         // set up our page title
         CShop.frame.setTitle(_dmsgs.getString("pItemType" + _query.itemType));
@@ -216,19 +197,14 @@ public class CatalogPanel extends SmartTable
     protected SmartTable _listings;
     protected TextBox _searchBox;
     protected ListBox _sortBox;
-    protected PagedGrid<ListingCard> _items;
+    protected ListingGrid _items;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
-    /** The number of columns of items to display. */
-    protected static final int COLUMNS = 4;
-
     protected static final int TAG_COUNT = 10;
 
+    // TODO: this looks out of date
     protected static final int HEADER_HEIGHT = 15 /* gap */ + 59 /* top tags, etc. */;
-    protected static final int NAV_BAR_ETC = 15 /* gap */ + 20 /* bar height */ + 10 /* gap */;
-    protected static final int BOX_HEIGHT = MediaDesc.THUMBNAIL_HEIGHT + 20 /* border */ +
-        15 /* name */ + 20 /* creator */ + 20 /* rating/price */;
 
     protected static final String[] SORT_LABELS = new String[] {
         CShop.msgs.sortByNewAndHot(),

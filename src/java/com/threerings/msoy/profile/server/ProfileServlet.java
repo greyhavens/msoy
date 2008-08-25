@@ -51,6 +51,8 @@ import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.money.server.MemberMoney;
@@ -117,6 +119,10 @@ public class ProfileServlet extends MsoyServiceServlet
 
             // load feed
             result.feed = loadFeed(memberId, DEFAULT_FEED_DAYS);
+
+            // load recent favorites
+            result.faves = _itemLogic.resolveFavorites(
+                _faveRepo.loadRecentFavorites(memberId, MAX_PROFILE_FAVORITES));
 
             return result;
 
@@ -375,22 +381,25 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // our dependencies
+    @Inject protected MoneyNodeActions _moneyNodeActions;
     @Inject protected ServletLogic _servletLogic;
+    @Inject protected ItemLogic _itemLogic;
+    @Inject protected MoneyLogic _moneyLogic;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected GameRepository _gameRepo;
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected TrophyRepository _trophyRepo;
-    @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MoneyNodeActions _moneyNodeActions;
     @Inject protected UserActionRepository _userActionRepo;
     @Inject protected BadgeRepository _badgeRepo;
+    @Inject protected FavoritesRepository _faveRepo;
 
     protected static final int MAX_PROFILE_MATCHES = 100;
     protected static final int MAX_PROFILE_FRIENDS = 6;
     protected static final int MAX_PROFILE_GAMES = 10;
     protected static final int MAX_PROFILE_TROPHIES = 6;
+    protected static final int MAX_PROFILE_FAVORITES = 4;
 
     protected static final int DEFAULT_FEED_DAYS = 2;
 }

@@ -8,9 +8,12 @@ import java.util.Map;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
+
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.web.data.ServiceException;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.web.data.ServiceException;
 
 /**
  * Provides digital items related services.
@@ -29,13 +32,23 @@ public interface CatalogService extends RemoteService
         public List<ListingCard> listings;
     }
 
+    /** Provides results for {@link #loadFavorites}. */
+    public static class FavoritesResult implements IsSerializable
+    {
+        /** The member for whom we're returning favorites. */
+        public MemberName noter;
+
+        /** The listing information for said favorites. */
+        public List<ListingCard> favorites;
+    }
+
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/catalogsvc";
 
     /**
      * Loads the featured items shown on the top-level catalog page.
      */
-    public ShopData loadShopData ()
+    ShopData loadShopData ()
         throws ServiceException;
 
     /**
@@ -44,13 +57,13 @@ public interface CatalogService extends RemoteService
      * @param includeCount if true, the count of all listings matching the query terms will also be
      * computed and included in the result.
      */
-    public CatalogResult loadCatalog (CatalogQuery query, int offset, int rows, boolean includeCount)
+    CatalogResult loadCatalog (CatalogQuery query, int offset, int rows, boolean includeCount)
         throws ServiceException;
 
     /**
      * Purchases the item of the specified id and type.
      */
-    public Item purchaseItem (byte itemType, int catalogId, int authedFlowCost, int authedGoldCost)
+    Item purchaseItem (byte itemType, int catalogId, int authedFlowCost, int authedGoldCost)
         throws ServiceException;
 
     /**
@@ -58,38 +71,44 @@ public interface CatalogService extends RemoteService
      *
      * @return the catalog id of the newly listed item.
      */
-    public int listItem (ItemIdent item, String descrip, int pricing, int salesTarget,
-                         int flowCost, int goldCost)
+    int listItem (ItemIdent item, String descrip, int pricing, int salesTarget,
+                  int flowCost, int goldCost)
         throws ServiceException;
 
     /**
      * Loads and returns the specified catalog listing.
      */
-    public CatalogListing loadListing (byte itemType, int catalogId)
+    CatalogListing loadListing (byte itemType, int catalogId)
         throws ServiceException;
 
     /**
      * Updates the catalog listing associated with the supplied catalog original.
      */
-    public void updateListing (ItemIdent item, String descrip)
+    void updateListing (ItemIdent item, String descrip)
         throws ServiceException;
 
     /**
      * Updates the specified catalog listing's price.
      */
-    public void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
-                               int flowCost, int goldCost)
+    void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
+                        int flowCost, int goldCost)
         throws ServiceException;
 
     /**
      * Removes the specified catalog listing.
      */
-    public void removeListing (byte itemType, int catalogId)
+    void removeListing (byte itemType, int catalogId)
         throws ServiceException;
 
     /**
      * Fetches the N most-used tags for a given item type.
      */
-    public Map<String, Integer> getPopularTags (byte type, int rows)
+    Map<String, Integer> getPopularTags (byte type, int rows)
+        throws ServiceException;
+
+    /**
+     * Loads up the favorite items of the specified member of the specified type.
+     */
+    FavoritesResult loadFavorites (int memberId, byte itemType)
         throws ServiceException;
 }

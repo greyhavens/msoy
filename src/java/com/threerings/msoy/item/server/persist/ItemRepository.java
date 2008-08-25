@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -550,6 +551,31 @@ public abstract class ItemRepository<T extends ItemRecord>
         // finally fetch all the catalog records of interest
         List<CatalogRecord> records = findAll(
             getCatalogClass(), clauses.toArray(new QueryClause[clauses.size()]));
+
+        // resolve their item bits
+        records = resolveCatalogRecords(records);
+
+        // sort by remix requires access to ItemRecord.isRemixable()
+        if (sortBy == CatalogQuery.SORT_BY_REMIXABLE) {
+            Collections.sort(records, SORT_BY_REMIXABLE);
+        }
+
+        return records;
+    }
+
+    /**
+     * Loads up the specified catalog records.
+     */
+    public List<CatalogRecord> loadCatalog (Collection<Integer> catalogIds)
+        throws PersistenceException
+    {
+        Where where = new Where(new In(getCatalogColumn(CatalogRecord.CATALOG_ID), catalogIds));
+        return resolveCatalogRecords(findAll(getCatalogClass(), where));
+    }
+
+    protected List<CatalogRecord> resolveCatalogRecords (List<CatalogRecord> records)
+        throws PersistenceException
+    {
         if (records.size() == 0) {
             return records;
         }
@@ -572,11 +598,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         // finally populate the catalog records
         for (CatalogRecord record : records) {
             record.item = map.get(record.listedItemId);
-        }
-
-        // sort by remix requires access to ItemRecord.isRemixable()
-        if (sortBy == CatalogQuery.SORT_BY_REMIXABLE) {
-            Collections.sort(records, SORT_BY_REMIXABLE);
         }
 
         return records;

@@ -37,11 +37,6 @@
   padding-top: 3px;
 }
 
-.sideBar .FavoritesNaviPanel {
-  background: url(/images/shop/navi_fav.png) no-repeat top;
-  height: 246px;
-}
-
 .sideBar .NaviPanel div {
   padding: 3px 0px 0px 5px;
   height: 21px;
@@ -54,6 +49,12 @@
 .sideBar .NaviPanel a {
   color: #27628E;
   text-decoration: none;
+}
+
+.listingGrid {
+  background: white;
+  width: 100%;
+  margin-top: 5px;
 }
 
 .catalogPanel .sideBar .tagCloud {
@@ -145,37 +146,17 @@
   margin-bottom: 5px;
 }
 
-.catalogPanel .Listings .ListingGrid {
-  background: white;
-  width: 100%;
-  margin-top: 5px;
-}
-
 .catalogPanel .pagedGrid .Header .SortBy {
   width: 50px;
   padding-right: 5px;
 }
 
-.catalogPanel .pagedGrid .Header .TopLeft {
+.catalogPanel .pagedGrid .Header .TopLeft, .favoritesPanel .pagedGrid .Header .TopLeft {
   background: #1D5884 url(/images/ui/grid_header_left.png) no-repeat left;
 }
 
-.catalogPanel .pagedGrid .Header .TopRight {
+.catalogPanel .pagedGrid .Header .TopRight, .favoritesPanel .pagedGrid .Header .TopRight {
   background: #1D5884 url(/images/ui/grid_header_right.png) no-repeat right;
-}
-
-.catalogPanel .itemBox .Creator {
-  font-size: 12px;
-  padding-top: 2px;
-  color: #AABDC8;
-}
-
-.catalogPanel .itemBox .Rating {
-  width: 60px;
-}
-
-.catalogPanel .itemBox .Cost {
-  font-size: 12px;
 }
 
 .listingDetailPanel .Price {
@@ -214,17 +195,11 @@
   width: 555px;
 }
 
-.favoritesPanel .Contents {
-  margin: 10px;
-  width: 555px;
-  background: #FFFFFF;
+.favoritesPanel .sideBar .NaviPanel {
+  background: url(/images/shop/navi_fav.png) no-repeat top;
+  height: 246px;
 }
 
-.favoritesPanel .pagedGrid .Header .TopLeft {
-  background: #1D5884 url(/images/ui/grid_header_left.png) no-repeat left;
+.favoritesPanel .pagedGrid {
+  margin-top: 15px;
 }
-
-.favoritesPanel .pagedGrid .Header .TopRight {
-  background: #1D5884 url(/images/ui/grid_header_right.png) no-repeat right;
-}
-

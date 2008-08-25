@@ -49,7 +49,7 @@ public class ShopPanel extends HorizontalPanel
         setStyleName("shopPanel");
         setVerticalAlignment(HasAlignment.ALIGN_TOP);
 
-        add(new SideBar(new CatalogQuery(), null));
+        add(new SideBar(new CatalogQueryLinker(new CatalogQuery()), false, null));
         add(WidgetUtil.makeShim(10, 10));
         add(_contents = new FlowPanel());
         add(WidgetUtil.makeShim(10, 10));

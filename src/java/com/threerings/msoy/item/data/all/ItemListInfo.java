@@ -14,9 +14,6 @@ import com.threerings.presents.dobj.DSet;
 public class ItemListInfo
     implements Streamable, IsSerializable, DSet.Entry
 {
-    /** Special list type used to indicate a member's favorite items. */
-    public static final byte FAVORITES = -1;
-
     /** The default item list type. This type of list can hold any type of item. */
     public static final byte GENERIC = 0;
 

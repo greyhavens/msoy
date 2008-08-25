@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shop;
+package client.item;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasAlignment;
@@ -11,8 +11,6 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.item.gwt.ListingCard;
 
-import client.item.ItemBox;
-import client.item.ItemMessages;
 import client.shell.Args;
 import client.shell.Pages;
 import client.ui.MsoyUI;

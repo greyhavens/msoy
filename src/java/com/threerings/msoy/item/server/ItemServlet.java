@@ -27,7 +27,6 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
-import com.threerings.msoy.item.data.all.MemberItemListInfo;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
@@ -406,31 +405,23 @@ public class ItemServlet extends MsoyServiceServlet
     }
 
     // from ItemService interface
-    public void setFavorite (int catalogId, byte itemType, boolean favorite)
+    public void setFavorite (byte itemType, int catalogId, boolean favorite)
         throws ServiceException
     {
         MemberRecord member = requireAuthedUser();
-
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
+
         try {
-            // load up the catalog record
             CatalogRecord record = repo.loadListing(catalogId, false);
             if (record == null) {
-                log.warning("Could not set favorite. Could not find catalog record.", "catalogId",
-                    catalogId, "itemType", itemType);
+                log.warning("Could not set favorite, no catalog record.",
+                            "catalogId", catalogId, "itemType", itemType);
             } else {
-                ItemIdent ident = new ItemIdent(itemType, record.listedItemId);
-                if (favorite) {
-                    _itemLogic.addFavorite(member.memberId, ident);
-                    _itemLogic.incrementFavoriteCount(record, itemType);
-                } else {
-                    _itemLogic.removeFavorite(member.memberId, ident);
-                    _itemLogic.decrementFavoriteCount(record, itemType);
-                }
+                _itemLogic.setFavorite(member.memberId, itemType, record, favorite);
             }
 
         } catch (PersistenceException pex) {
-            log.warning("Could not set favorite.", "catalogId", catalogId, "type", itemType, pex);
+            log.warning("setFavorite failed", "catalogId", catalogId, "type", itemType, pex);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -475,20 +466,9 @@ public class ItemServlet extends MsoyServiceServlet
         }
     }
 
-    // from interface ItemService
-    public MemberItemListInfo getFavoriteListInfo (int memberId) throws ServiceException
-    {
-        try {
-            return _itemLogic.getFavoriteListInfo (memberId);
-        } catch (PersistenceException pex) {
-            log.warning("Could not get favorite list info.", "memberId", memberId, pex);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-    }
-
     // our dependencies
-    @Inject protected ItemLogic _itemLogic;
     @Inject protected ItemManager _itemMan;
-    @Inject protected PhotoRepository _photoRepo;
+    @Inject protected ItemLogic _itemLogic;
     @Inject protected StatLogic _statLogic;
+    @Inject protected PhotoRepository _photoRepo;
 }

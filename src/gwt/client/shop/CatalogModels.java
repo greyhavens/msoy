@@ -10,14 +10,17 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.gwt.util.ChainedCallback;
 import com.threerings.gwt.util.DataModel;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.ListingCard;
 
+import client.util.LazyDataModel;
 import client.util.ServiceUtil;
 import client.util.MsoyCallback;
 
@@ -62,13 +65,49 @@ public class CatalogModels
         protected int _listingCount = -1;
     }
 
-    public Listings getModel (CatalogQuery query)
+    public static class Favorites extends LazyDataModel<ListingCard>
     {
-        Listings model = _models.get(query);
+        public Favorites (int memberId, byte type) {
+            _memberId = memberId;
+            _type = type;
+        }
+
+        public MemberName getNoter () {
+            return _noter;
+        }
+
+        protected void fetchData (AsyncCallback<List<ListingCard>> callback) {
+            _catalogsvc.loadFavorites(_memberId, _type,
+                new ChainedCallback<CatalogService.FavoritesResult, List<ListingCard>>(callback) {
+                public void onSuccess (CatalogService.FavoritesResult result) {
+                    _noter = result.noter;
+                    _parent.onSuccess(result.favorites);
+                }
+            });
+        }
+
+        protected int _memberId;
+        protected byte _type;
+        protected MemberName _noter;
+    }
+
+    public Listings getListingsModel (CatalogQuery query)
+    {
+        Listings model = _lmodels.get(query);
         if (model == null) {
-            _models.put(query, model = new Listings(query));
+            _lmodels.put(query, model = new Listings(query));
         }
         return model;
+    }
+
+    public Favorites getFavoritesModel (int memberId, byte itemType)
+    {
+        String key = memberId + ":" + itemType;
+        Favorites faves = _fmodels.get(key);
+        if (faves == null) {
+            _fmodels.put(key, faves = new Favorites(memberId, itemType));
+        }
+        return faves;
     }
 
     public void itemDelisted (CatalogListing listing)
@@ -79,7 +118,7 @@ public class CatalogModels
         card.catalogId = listing.catalogId;
 
         // now scan through our models and remove that listing from any that might contain it
-        for (Map.Entry<CatalogQuery, Listings> entry : _models.entrySet()) {
+        for (Map.Entry<CatalogQuery, Listings> entry : _lmodels.entrySet()) {
             if (entry.getKey().itemType != listing.detail.item.getType()) {
                 continue;
             }
@@ -87,7 +126,9 @@ public class CatalogModels
         }
     }
 
-    protected Map<CatalogQuery, Listings> _models = new HashMap<CatalogQuery, Listings>();
+    protected Map<CatalogQuery, Listings> _lmodels = new HashMap<CatalogQuery, Listings>();
+
+    protected Map<String, Favorites> _fmodels = new HashMap<String, Favorites>();
 
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);

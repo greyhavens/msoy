@@ -11,7 +11,6 @@ import com.threerings.msoy.web.data.TagHistory;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.ItemListQuery;
-import com.threerings.msoy.item.data.all.MemberItemListInfo;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService.ItemListResult;
 
@@ -69,7 +68,7 @@ public interface ItemServiceAsync
     /**
      * The asynchronous version of {@link ItemService.setFavorite}.
      */
-    void setFavorite (int catalogId, byte itemType, boolean favorite, AsyncCallback<Void> callback);
+    void setFavorite (byte itemType, int catalogId, boolean favorite, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link ItemService#loadPhotos}.
@@ -80,9 +79,4 @@ public interface ItemServiceAsync
      * Loads items from a list that match the given criteria.
      */
     void loadItemList (ItemListQuery query, AsyncCallback<ItemListResult> callback);
-
-    /**
-     * The asynchronous version of {@link ItemService#getFavoriteListInfo}.
-     */
-    void getFavoriteListInfo (int memberId, AsyncCallback<MemberItemListInfo> callback);
 }

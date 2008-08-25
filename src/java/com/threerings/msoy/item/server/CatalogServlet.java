@@ -19,6 +19,25 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
+import com.threerings.msoy.server.persist.TagPopularityRecord;
+import com.threerings.msoy.server.persist.UserActionRepository;
+
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+
+import com.threerings.msoy.money.server.MoneyHistory;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyNodeActions;
+import com.threerings.msoy.money.server.MoneyResult;
+import com.threerings.msoy.money.server.MoneyType;
+import com.threerings.msoy.money.server.NotEnoughMoneyException;
+import com.threerings.msoy.money.server.NotSecuredException;
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
+
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -30,26 +49,10 @@ import com.threerings.msoy.item.gwt.CostUpdatedException;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
+import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
-
-import com.threerings.msoy.money.server.MoneyHistory;
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyNodeActions;
-import com.threerings.msoy.money.server.MoneyResult;
-import com.threerings.msoy.money.server.MoneyType;
-import com.threerings.msoy.money.server.NotEnoughMoneyException;
-import com.threerings.msoy.money.server.NotSecuredException;
-import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.TagNameRecord;
-import com.threerings.msoy.server.persist.TagPopularityRecord;
-import com.threerings.msoy.server.persist.UserActionRepository;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import static com.threerings.msoy.Log.log;
 
@@ -118,12 +121,9 @@ public class CatalogServlet extends MsoyServiceServlet
             final int tagId = (tagRecord != null) ? tagRecord.tagId : 0;
 
             // fetch catalog records and loop over them
-            for (final CatalogRecord record : repo.loadCatalog(query.sortBy, showMature(mrec),
-                                                         query.search, tagId, query.creatorId,
-                                                         null, offset, rows)) {
-                // convert them to listings
-                list.add(record.toListingCard());
-            }
+            list.addAll(Lists.transform(repo.loadCatalog(
+                query.sortBy, showMature(mrec), query.search, tagId, query.creatorId, null, offset,
+                rows), CatalogRecord.TO_CARD));
 
             // resolve the creator names for these listings
             _itemLogic.resolveCardNames(list);
@@ -376,12 +376,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // finally convert the listing to a runtime record
             final CatalogListing clrec = record.toListing();
             clrec.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
-            if (mrec != null) {
-                clrec.detail.memberItemInfo.memberRating =
-                    repo.getRating(record.item.itemId, mrec.memberId);
-                clrec.detail.memberItemInfo.favorite =
-                    _itemLogic.isFavorite(mrec.memberId, record.item.toItem());
-            }
+            clrec.detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, record.item.toItem());
             return clrec;
 
         } catch (final PersistenceException pe) {
@@ -545,6 +540,27 @@ public class CatalogServlet extends MsoyServiceServlet
         return result;
     }
 
+    // from interface CatalogService
+    public FavoritesResult loadFavorites (int memberId, byte itemType)
+        throws ServiceException
+    {
+        try {
+            FavoritesResult result = new FavoritesResult();
+            // look up the party in question, if they don't exist, return null
+            result.noter = _memberRepo.loadMemberName(memberId);
+            if (result.noter == null) {
+                return null;
+            }
+            result.favorites = _itemLogic.resolveFavorites(
+                _faveRepo.loadFavorites(memberId, itemType));
+            return result;
+
+        } catch (PersistenceException pe) {
+            log.warning("loadFavorites failed", "mid", memberId, "type", itemType, pe);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+    }
+
     /**
      * Helper function for {@link #loadShopData}.
      */
@@ -598,6 +614,7 @@ public class CatalogServlet extends MsoyServiceServlet
     // our dependencies
     @Inject protected ItemManager _itemMan;
     @Inject protected ItemLogic _itemLogic;
+    @Inject protected FavoritesRepository _faveRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MoneyNodeActions _moneyNodeActions;
