@@ -59,8 +59,9 @@ public class ChatChannelController
         _showTabFn = showTabFn;
 
         if (_channel.type != ChatChannel.MEMBER_CHANNEL &&
-            _channel.type != ChatChannel.JABBER_CHANNEL) {
-            _occList = new ChannelPlayerList(new MsoyNameLabelCreator(ctx));
+                _channel.type != ChatChannel.JABBER_CHANNEL) {
+            _occList = new ChannelPlayerList(
+                new MsoyNameLabelCreator(ctx, (_channel.type == ChatChannel.ROOM_CHANNEL)));
 
             _departing = new ExpiringSet(3);
             _departing.addEventListener(ExpiringSet.ELEMENT_EXPIRED, handleDeparted);

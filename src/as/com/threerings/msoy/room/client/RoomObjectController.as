@@ -54,7 +54,6 @@ import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.BootablePlaceController;
 import com.threerings.msoy.client.ControlBar;
-import com.threerings.msoy.client.LogonPanel;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
@@ -65,7 +64,6 @@ import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -153,6 +151,81 @@ public class RoomObjectController extends RoomController
     public function canBoot () :Boolean
     {
         return canManageRoom();
+    }
+
+    /**
+     * Add to the specified menu, any room/avatar related menu items.
+     */
+    public function addAvatarMenuItems (name :MemberName, menuItems :Array) :void
+    {
+        const occInfo :MemberInfo = _roomObj.getOccupantInfo(name) as MemberInfo;
+        if (occInfo == null) {
+            return;
+        }
+
+        const us :MemberObject = _wdctx.getMemberObject();
+        const avatar :MemberSprite = _roomObjectView.getOccupant(occInfo.bodyOid) as MemberSprite;
+        // avatar may be null if not yet loaded. We check below..
+
+        // then add our custom menu items
+        if (occInfo.bodyOid == us.getOid()) {
+            // see if we can control our own avatar right now...
+            const canControl :Boolean = _wdctx.worldProps.userControlsAvatar;
+
+            // if we have followers, add a menu item for clearing them
+            if (us.followers.size() > 0) {
+                menuItems.push({ label: Msgs.GENERAL.get("l.clear_followers"),
+                                 callback: inviteFollow, arg: null });
+            }
+
+            // if we're following someone, add a menu item for stopping
+            if (us.following != null) {
+                menuItems.push({ label: Msgs.GENERAL.get("l.stop_following"),
+                                 callback: clearFollow });
+            }
+
+            // if we're not a guest add a menu for changing avatars
+            if (!us.isGuest()) {
+                menuItems.push(createChangeAvatarMenu(us, canControl));
+            }
+
+            // add our custom menu items (avatar actions and states)
+            if (avatar != null) {
+                addSelfMenuItems(avatar, menuItems, canControl);
+            }
+
+        } else {
+            // create a menu for clicking on someone else
+            const memId :int = occInfo.getMemberId();
+            if (!MemberName.isGuest(memId)) {
+                // TODO: move up when we can forward MemberObjects between servers for guests
+                menuItems.push({ label: Msgs.GENERAL.get("b.invite_follow"),
+                                 callback: inviteFollow, arg: occInfo.username });
+
+                if (avatar != null) {
+                    var kind :String = Msgs.GENERAL.get(avatar.getDesc());
+                    var flagItems :Array = [];
+
+                    if (avatar.isBlockable()) {
+                        var key :String = avatar.isBlocked() ? "b.unbleep_item" : "b.bleep_item";
+                        flagItems.push({ label: Msgs.GENERAL.get(key, kind),
+                                         callback: avatar.toggleBlocked, arg: _wdctx });
+                    }
+
+                    var ident :ItemIdent = avatar.getItemIdent();
+                    if (ident != null && ident.type >= 0) { // -1 is used for the default avatar, etc
+                        flagItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
+                                         command: MsoyController.VIEW_ITEM, arg: ident });
+                    }
+
+                    if (flagItems.length > 0) {
+                        menuItems.push({ type: "separator"},
+                                       { label: Msgs.GENERAL.get("l.item_menu", kind),
+                                         children: flagItems });
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -330,85 +403,9 @@ public class RoomObjectController extends RoomController
             return;
         }
 
-        var us :MemberObject = _wdctx.getMemberObject();
         var menuItems :Array = [];
-
-        // add the standard menu items
-        _wdctx.getMsoyController().addMemberMenuItems(occInfo.username as MemberName, menuItems);
-
-        // then add our custom menu items
-        if (occInfo.bodyOid == us.getOid()) {
-            // see if we can control our own avatar right now...
-            var canControl :Boolean = _wdctx.worldProps.userControlsAvatar;
-
-            // if we have followers, add a menu item for clearing them
-            if (us.followers.size() > 0) {
-                menuItems.push({ label: Msgs.GENERAL.get("l.clear_followers"),
-                                 callback: inviteFollow, arg: null });
-            }
-
-            // if we're following someone, add a menu item for stopping
-            if (us.following != null) {
-                menuItems.push({ label: Msgs.GENERAL.get("l.stop_following"),
-                                 callback: clearFollow });
-            }
-
-            // if we're not a guest add a menu for changing avatars
-            if (!us.isGuest()) {
-                menuItems.push(createChangeAvatarMenu(us, canControl));
-            }
-
-            // add our custom menu items (avatar actions and states)
-            addSelfMenuItems(avatar, menuItems, canControl);
-
-            if (_wdctx.getWorldClient().isEmbedded()) {
-                if (us.isGuest()) {
-                    menuItems.push({ label: Msgs.GENERAL.get("b.logon"),
-                        callback: function () :void {
-                            (new LogonPanel(_wdctx)).open();
-                        }});
-                } else {
-                    var creds :MsoyCredentials = new MsoyCredentials(null, null);
-                    creds.ident = "";
-                    menuItems.push({ label: Msgs.GENERAL.get("b.logout"), 
-                        command: MsoyController.LOGON, arg: creds });
-                }
-            }
-
-        } else {
-            // create a menu for clicking on someone else
-            var memId :int = occInfo.getMemberId();
-
-            if (!MemberName.isGuest(memId)) {
-                // TODO: move up when we can forward MemberObjects between servers for guests
-                menuItems.push({ label: Msgs.GENERAL.get("b.invite_follow"),
-                                 callback: inviteFollow, arg: occInfo.username });
-                menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
-                                 command: WorldController.GO_MEMBER_HOME, arg: memId });
-
-                var kind :String = Msgs.GENERAL.get(avatar.getDesc());
-                var flagItems :Array = [];
-
-                if (avatar.isBlockable()) {
-                    var key :String = avatar.isBlocked() ? "b.unbleep_item" : "b.bleep_item";
-                    flagItems.push({ label: Msgs.GENERAL.get(key, kind),
-                                     callback: avatar.toggleBlocked, arg: _wdctx });
-                }
-
-                var ident :ItemIdent = avatar.getItemIdent();
-                if (ident != null && ident.type >= 0) { // -1 is used for the default avatar, etc
-                    flagItems.push({ label: Msgs.GENERAL.get("b.view_item", kind),
-                                     command: MsoyController.VIEW_ITEM, arg: ident });
-                }
-
-                if (flagItems.length > 0) {
-                    menuItems.push({ type: "separator"},
-                                   { label: Msgs.GENERAL.get("l.item_menu", kind),
-                                     children: flagItems });
-                }
-            }
-        }
-
+        _wdctx.getMsoyController().addMemberMenuItems(
+            occInfo.username as MemberName, menuItems, true);
         popActorMenu(avatar, menuItems);
     }
 

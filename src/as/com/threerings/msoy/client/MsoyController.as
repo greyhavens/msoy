@@ -430,7 +430,8 @@ public class MsoyController extends Controller
      * Requests that standard menu items be added to the supplied menu which is being popped up as
      * a result of clicking on another player (their name, or their avatar) somewhere in Whirled.
      */
-    public function addMemberMenuItems (member :MemberName, menuItems :Array) :void
+    public function addMemberMenuItems (
+        member :MemberName, menuItems :Array, addAvatarItems :Boolean = false) :void
     {
         // nothing by default
     }

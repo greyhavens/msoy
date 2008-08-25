@@ -16,9 +16,10 @@ import com.threerings.msoy.data.VizMemberName;
 public class MsoyNameLabelCreator 
     implements NameLabelCreator
 {
-    public function MsoyNameLabelCreator (mctx :MsoyContext) 
+    public function MsoyNameLabelCreator (mctx :MsoyContext, forRoom :Boolean = false)
     {
         _mctx = mctx;
+        _forRoom = forRoom;
     }
 
     public function createLabel (name :Name) :NameLabel
@@ -29,10 +30,12 @@ public class MsoyNameLabelCreator
             return null;
         }
         
-        return new LabelBox(_mctx, name as VizMemberName);
+        return new LabelBox(_mctx, name as VizMemberName, _forRoom);
     }
 
     protected var _mctx :MsoyContext;
+
+    protected var _forRoom :Boolean;
 }
 }
 
@@ -65,10 +68,11 @@ import com.threerings.msoy.room.client.RoomObjectView;
 class LabelBox extends HBox
     implements NameLabel
 {
-    public function LabelBox (mctx :MsoyContext, name :VizMemberName)
+    public function LabelBox (mctx :MsoyContext, name :VizMemberName, forRoom :Boolean)
     {
         _mctx = mctx;
         _name = name;
+        _forRoom = forRoom;
 
         verticalScrollPolicy = ScrollPolicy.OFF;
         horizontalScrollPolicy = ScrollPolicy.OFF;
@@ -127,7 +131,7 @@ class LabelBox extends HBox
     protected function handleClick (event :MouseEvent) :void
     {
         var menuItems :Array = [];
-        _mctx.getMsoyController().addMemberMenuItems(_name, menuItems);
+        _mctx.getMsoyController().addMemberMenuItems(_name, menuItems, _forRoom);
         CommandMenu.createMenu(menuItems, _mctx.getTopPanel()).popUpAtMouse();
     }
 
@@ -142,5 +146,6 @@ class LabelBox extends HBox
 
     protected var _mctx :MsoyContext;
     protected var _name :VizMemberName;
+    protected var _forRoom :Boolean;
     protected var _label :NameField;
 }

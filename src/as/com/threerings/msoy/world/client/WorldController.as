@@ -65,6 +65,7 @@ import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.MsoyCredentials;
 
 import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
@@ -73,6 +74,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
 // import com.threerings.msoy.data.all.SceneBookmarkEntry;
 
+import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
@@ -901,14 +903,21 @@ public class WorldController extends MsoyController
     }
 
     // from MsoyController
-    override public function addMemberMenuItems (member :MemberName, menuItems :Array) :void
+    override public function addMemberMenuItems (
+        member :MemberName, menuItems :Array, addAvatarItems :Boolean = false) :void
     {
         const memId :int = member.getMemberId();
         const us :MemberObject = _wctx.getMemberObject();
         const isUs :Boolean = (memId == us.getMemberId());
+        const isGuest :Boolean = MemberName.isGuest(memId);
+        var placeCtrl :Object = _wctx.getLocationDirector().getPlaceController();
+        if (placeCtrl == null) {
+            // check the gamecontext's place
+            placeCtrl = _wctx.getGameDirector().getGameController();
+        }
 
         // if we're not a guest, populate availability menu.
-        if (isUs && !MemberName.isGuest(memId)) {
+        if (isUs && !isGuest) {
             var availActions :Array = [];
             for (var ii :int = MemberObject.AVAILABLE; ii <= MemberObject.UNAVAILABLE; ii++) {
                 availActions.push({
@@ -920,11 +929,14 @@ public class WorldController extends MsoyController
         } else if (!isUs) {
             menuItems.push({ label: Msgs.GENERAL.get("b.open_channel"),
                              command: OPEN_CHANNEL, arg: member });
-            if (!MemberName.isGuest(memId)) {
+            if (!isGuest) {
+                // TODO: do we need this embedded check?
                 if (!_wctx.getMsoyClient().isEmbedded()) {
                     menuItems.push({ label: Msgs.GENERAL.get("b.view_member"),
                                      command: VIEW_MEMBER, arg: memId });
                 }
+                menuItems.push({ label: Msgs.GENERAL.get("b.visit_home"),
+                                 command: GO_MEMBER_HOME, arg: memId });
                 if (!us.isGuest() && !us.friends.containsKey(memId)) {
                     menuItems.push({ label: Msgs.GENERAL.get("l.add_as_friend"),
                                      command: INVITE_FRIEND, arg: [memId] });
@@ -934,15 +946,28 @@ public class WorldController extends MsoyController
                              command: COMPLAIN_MEMBER, arg: [memId, member] });
 
             // possibly add a menu item for booting this user
-            var placeCtrl :Object = _wctx.getLocationDirector().getPlaceController();
-            if (placeCtrl == null) {
-                // check the gamecontext's place
-                placeCtrl = _wctx.getGameDirector().getGameController();
-            }
             if ((placeCtrl is BootablePlaceController) &&
                     BootablePlaceController(placeCtrl).canBoot()) {
                 menuItems.push({ label: Msgs.GENERAL.get("b.boot"),
                     callback: handleBootFromPlace, arg: memId });
+            }
+        }
+
+        if (addAvatarItems && (placeCtrl is RoomObjectController)) {
+            RoomObjectController(placeCtrl).addAvatarMenuItems(member, menuItems);
+        }
+
+        if (isUs && _wctx.getMsoyClient().isEmbedded()) {
+            if (isGuest) {
+                menuItems.push({ label: Msgs.GENERAL.get("b.logon"),
+                    callback: function () :void {
+                        (new LogonPanel(_wctx)).open();
+                    }});
+            } else {
+                var creds :MsoyCredentials = new MsoyCredentials(null, null);
+                creds.ident = "";
+                menuItems.push({ label: Msgs.GENERAL.get("b.logout"),
+                    command: MsoyController.LOGON, arg: creds });
             }
         }
     }
