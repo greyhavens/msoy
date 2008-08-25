@@ -31,7 +31,7 @@ import caurina.transitions.Tweener;
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 
-import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexWrapper;
 
 import com.threerings.msoy.client.Msgs;
@@ -108,10 +108,8 @@ public class NotificationDisplay extends HBox
         super.createChildren();
         styleName = "notificationDisplay"; 
 
-        addChild(_popupBtn = new CommandButton(null, toggleNotificationHistory));
-        _popupBtn.styleName = "notificationClosedBtn";
-        _popupBtn.width = 20;
-        _popupBtn.height = 19;
+        addChild(_popupBtn = new CommandCheckBox(null, toggleNotificationHistory));
+        _popupBtn.styleName = "panelToggle";
         
         addChild(_canvas = new Canvas());
         _canvas.styleName = "notificationCanvas";
@@ -202,20 +200,18 @@ public class NotificationDisplay extends HBox
         return box;
     }
 
-    protected function toggleNotificationHistory () :void
+    protected function toggleNotificationHistory (show :Boolean) :void
     {
-        if (_nHistory != null) {
-            hideNotificationHistory();
-            return; 
-        }
+        hideNotificationHistory();
 
-        _popupBtn.styleName = "notificationOpenBtn";
-        _nHistory = new NotificationHistoryDisplay(prepareNotifications(
-            _ctx.getNotificationDirector().getCurrentNotifications()));
-        _nHistory.addEventListener(TextEvent.LINK, linkClicked);
-        PopUpManager.addPopUp(_nHistory, _ctx.getTopPanel(), false);
-        updatePopupLocation();
-        systemManager.addEventListener(MouseEvent.CLICK, maybeCloseHistory);
+        if (show) {
+            _nHistory = new NotificationHistoryDisplay(prepareNotifications(
+                _ctx.getNotificationDirector().getCurrentNotifications()));
+            _nHistory.addEventListener(TextEvent.LINK, linkClicked);
+            PopUpManager.addPopUp(_nHistory, _ctx.getTopPanel(), false);
+            updatePopupLocation();
+            systemManager.addEventListener(MouseEvent.CLICK, maybeCloseHistory);
+        }
     }
 
     protected function hideNotificationHistory (...ignored) :void
@@ -224,10 +220,10 @@ public class NotificationDisplay extends HBox
             return;
         }
 
-        _popupBtn.styleName = "notificationClosedBtn";
         PopUpManager.removePopUp(_nHistory);
         systemManager.removeEventListener(MouseEvent.CLICK, maybeCloseHistory);
         _nHistory = null;
+        _popUpBtn.selected = false;
     }
 
     protected function linkClicked (event :TextEvent) :void
@@ -289,7 +285,7 @@ public class NotificationDisplay extends HBox
 
     protected var _ctx :WorldContext;
     protected var _canvas :Canvas;
-    protected var _popupBtn :CommandButton;
+    protected var _popupBtn :CommandCheckBox;
     protected var _pendingNotifications :Array = [];
     protected var _currentlyAnimating :Boolean = false;
     protected var _nHistory :NotificationHistoryDisplay;
