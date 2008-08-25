@@ -22,7 +22,7 @@ import com.threerings.flex.CommandCheckBox;
 
 public class ButtonPalette extends Canvas
 {
-    public function ButtonPalette (ctx :MsoyContext)
+    public function ButtonPalette (parent :UIComponent)
     {
         percentWidth = 100;
         height = ControlBar.HEIGHT;
@@ -41,7 +41,7 @@ public class ButtonPalette extends Canvas
         _tile.owner = DisplayObjectContainer(Application.application.systemManager);
         _tile.owner.addChild(_tile);
 
-        CommandEvent.configureBridge(_tile, ctx.getTopPanel());
+        CommandEvent.configureBridge(_tile, parent);
 
         addEventListener(Event.RENDER, handleRender);
         showAll(false);

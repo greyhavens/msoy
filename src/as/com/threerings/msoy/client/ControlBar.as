@@ -105,7 +105,7 @@ public class ControlBar extends HBox
         _ctx.getClient().addClientObserver(
             new ClientAdapter(checkControls, checkControls, null, null, null, null, checkControls));
 
-        _buttons = new ButtonPalette(_ctx);
+        _buttons = new ButtonPalette(top);
 
         createControls();
         checkControls();
