@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.money.gwt;
 
 import java.util.List;
@@ -13,12 +16,12 @@ import com.threerings.msoy.web.data.ServiceException;
  */
 public interface MoneyService extends RemoteService
 {
+    /** The entry point for this service. */
+    public static final String ENTRY_POINT = "/moneysvc";
+
     /**
      * Fetches a player's complete income and spending history.
      */
     List<Integer> getTransactionHistory (int memberId)
         throws ServiceException;
-
-    /** The entry point for this service. */
-    public static final String ENTRY_POINT = "/moneysvc";
 }
