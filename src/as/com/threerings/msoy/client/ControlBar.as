@@ -46,28 +46,11 @@ import com.threerings.msoy.ui.SkinnableImage;
 
 import com.threerings.msoy.world.client.WorldController;
 
-[Style(name="backgroundSkin", type="Class", inherit="no")]
-
-/**
- * Dispatched when the client is unminimized, and this component's display list has been validated.
- *
- * @eventType com.threerings.msoy.client.ControlBar.DISPLAY_LIST_VALID
- */
-[Event(name="displayListValid", type="com.threerings.util.ValueEvent")]
-
 /**
  * The control bar: the main menu and global UI element across all scenes.
  */
 public class ControlBar extends HBox
 {
-    /**
-     * An event dispatched when the client is unminimized, and this component's
-     * display list has been validated.
-     *
-     * @eventType displayListValid
-     */
-    public static const DISPLAY_LIST_VALID :String = "displayListValid";
-
     /** The height of the control bar. This is fixed. */
     public static const HEIGHT :int = 28;
 
@@ -82,11 +65,9 @@ public class ControlBar extends HBox
     public static const UI_BASE :String = "Base UI"; // when in neither a game nor a room
     public static const UI_ROOM :String = "Room UI";
     public static const UI_GAME :String = "Game UI";
-    public static const UI_MINI :String = "Mini UI"; // when GWT is up (TODO: remove, auto-adjust)
     public static const UI_VIEWER :String = "Room Entity Viewer UI";
 
-    public static const ALL_UI_GROUPS :Array = [
-        UI_ALL, UI_BASE, UI_ROOM, UI_GAME, UI_MINI, UI_VIEWER ];
+    public static const ALL_UI_GROUPS :Array = [ UI_ALL, UI_BASE, UI_ROOM, UI_GAME, UI_VIEWER ];
 
     public function ControlBar (ctx :MsoyContext)
     {
@@ -160,15 +141,6 @@ public class ControlBar extends HBox
     }
 
     /**
-     * Called when our minimization status has changed.
-     */
-    public function miniChanged () :void
-    {
-        _isMinimized = _ctx.getTopPanel().isMinimized();
-        updateUI();
-    }
-
-    /**
      * Called to tell us when we're in game mode.
      */
     public function setInGame (inGame :Boolean) :void
@@ -192,16 +164,6 @@ public class ControlBar extends HBox
     public function setChatColor (color :int) :void
     {
         _chatControl.setChatColor(color);
-    }
-
-    // from HBox
-    override protected function updateDisplayList (w :Number, h :Number) :void
-    {
-        super.updateDisplayList(w, h);
-
-        if (!_isMinimized && width != 0) {
-            dispatchEvent(new ValueEvent(DISPLAY_LIST_VALID, true));
-        }
     }
 
     /**
@@ -254,7 +216,6 @@ public class ControlBar extends HBox
 
         // remember how things are set for now
         _isMember = isMember;
-        _isMinimized = false;
 
         // and add our various control buttons
         setupControls();
@@ -287,26 +248,24 @@ public class ControlBar extends HBox
     protected function addControls () :void
     {
         // add our standard control bar features
-        addControl(_chatOptsBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_SECTION);
+        addControl(_chatOptsBtn, [ UI_BASE, UI_ROOM, UI_GAME ], CHAT_SECTION);
         _chatControl = new ChatControl(_ctx, null);
         _chatControl.chatInput.height = HEIGHT - 8;
         _chatControl.sendButton.styleName = "controlBarButtonSend";
-        addControl(_chatControl, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_SECTION);
-        addControl(_buttons, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
-            BUTTON_SECTION);
+        addControl(_chatControl, [ UI_BASE, UI_ROOM, UI_GAME ], CHAT_SECTION);
+        addControl(_buttons, [ UI_BASE, UI_ROOM, UI_GAME, UI_VIEWER ], BUTTON_SECTION);
 
         // add buttons
-        addButton(_volBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ], VOLUME_PRIORITY);
+        addButton(_volBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_VIEWER ], VOLUME_PRIORITY);
         if (false && DeploymentConfig.devDeployment) {
-            addButton(_fullBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
-                GLOBAL_PRIORITY);
+            addButton(_fullBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_VIEWER ], GLOBAL_PRIORITY);
         }
 
         addButton(_instructBtn, [ UI_GAME ]);
         addButton(_shareBtn, [ UI_BASE, UI_ROOM, UI_GAME ]);
         addButton(_commentBtn, [ UI_ROOM, UI_GAME ]);
 
-        //addButton(_partyBtn, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
+        //addButton(_partyBtn, [ UI_ROOM, UI_GAME, UI_VIEWER ]);
     }
 
     /**
@@ -367,9 +326,7 @@ public class ControlBar extends HBox
 
     protected function getMode () :String
     {
-        if (_isMinimized) {
-            return UI_MINI;
-        } else if (_inGame) {
+        if (_inGame) {
             return UI_GAME;
         } else if (_inRoom) {
             return UI_ROOM;
@@ -401,9 +358,6 @@ public class ControlBar extends HBox
 
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
-
-    /** Are we in a minimized mode? */
-    protected var _isMinimized :Boolean;
 
     /** Are we in a game? */
     protected var _inGame :Boolean;

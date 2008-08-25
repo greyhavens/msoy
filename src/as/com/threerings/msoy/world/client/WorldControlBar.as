@@ -104,8 +104,6 @@ public class WorldControlBar extends ControlBar
     {
         super.setActualSize(uw, uh);
 
-        checkNotificationDisplay();
-
         if (_notificationDisplay != null && _notificationDisplay.visible) {
             callLater(_notificationDisplay.updatePopupLocation);
         }
@@ -197,32 +195,6 @@ public class WorldControlBar extends ControlBar
     override protected function getMode () :String
     {
         return UberClient.isRegularClient() ? super.getMode() : UI_VIEWER;
-    }
-
-    // from ControlBar
-    override protected function updateGroup (groupName :String, value :Boolean) :void
-    {
-        super.updateGroup(groupName, value);
-
-        if (groupName == UI_MINI && value) {
-            checkNotificationDisplay();
-        }
-    }
-
-    protected function checkNotificationDisplay () :void
-    {
-        if (getMode() != UI_MINI || _notificationDisplay == null) {
-            return;
-        }
-
-        callLater(function () :void {
-            // if we're mini, make sure we have room for the display
-            if (!_notificationDisplay.visible && _buttons.width > _notificationDisplay.width) {
-                FlexUtil.setVisible(_notificationDisplay, true);
-            } else if (_notificationDisplay.visible && _buttons.width <= 0) {
-                FlexUtil.setVisible(_notificationDisplay, false);
-            }
-        });
     }
 
 //    protected function maybeDisplayChatTip () :void

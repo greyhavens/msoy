@@ -394,7 +394,6 @@ public class TopPanel extends Canvas
         _minimized = true;
 
         _headerBar.miniChanged();
-        _controlBar.miniChanged();
     }
 
     /**
@@ -405,7 +404,6 @@ public class TopPanel extends Canvas
         _minimized = false;
 
         _headerBar.miniChanged();
-        _controlBar.miniChanged();
     }
 
     protected function getTopPanelHeight () :int
