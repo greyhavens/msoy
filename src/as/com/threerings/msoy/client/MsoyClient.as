@@ -325,7 +325,16 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         } catch (e :Error) {
             log.info("ExternalInterface.call('setReferral') failed", "error", e);
         }
+
+        if (_embedded && !_reportedLogon) {
+            trackClientAction("embeddedLogon", null);
+            _reportedLogon = true;
+        }
     }
+
+    // TEMP: quickHack. I'm not sure if switching servers makes you log in again,
+    // and I can't test that now before this release...
+    protected var _reportedLogon :Boolean;
 
     /**
      * Called after we log off.
