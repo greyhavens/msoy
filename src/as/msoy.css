@@ -1327,6 +1327,26 @@ fontWeight: bold;
   backgroundColor: black;
 }
 
+.panelToggle {
+  icon: ClassReference(null);
+  upIcon: ClassReference(null);
+  overIcon: ClassReference(null);
+  downIcon: ClassReference(null);
+  disabledIcon: ClassReference(null);
+  selectedUpIcon: ClassReference(null);
+  selectedOverIcon: ClassReference(null);
+  selectedDownIcon: ClassReference(null);
+  selectedDisabledIcon: ClassReference(null);
+  upSkin: Embed(source="../../rsrc/media/skins/checkbox/panel.png");
+  overSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/checkbox/panel.png"); /* TODO? */
+  disabledSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_disabled.png");
+  selectedUpSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_selected.png");
+  selectedOverSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_selected_over.png");
+  selectedDownSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_selected.png"); /* TODO? */
+  selectedDisabledSkin: Embed(source="../../rsrc/media/skins/checkbox/panel_selected.png"); /* TODO? */
+}
+
 .notificationDisplay {
   horizontalGap: 0;
   verticalGap: 0;
@@ -1340,20 +1360,6 @@ fontWeight: bold;
                          scaleGridTop="4", scaleGridBottom="15", 
                          scaleGridLeft="4", scaleGridRight="8");
   backgroundSize: "100%";
-}
-
-.notificationClosedBtn {
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/notif_closed_over.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/notif_closed_disabled.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/notif_closed_over.png");
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/notif_closed_up.png");
-}
-
-.notificationOpenBtn {
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/notif_open_over.png");
-  disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/notif_open_up.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/notif_open_over.png");
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/notif_open_up.png");
 }
 
 .notificationHistoryDisplay {
