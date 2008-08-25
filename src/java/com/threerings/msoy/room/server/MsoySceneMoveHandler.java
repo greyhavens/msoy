@@ -28,6 +28,7 @@ public class MsoySceneMoveHandler extends SceneMoveHandler
                                  SceneService.SceneMoveListener listener)
     {
         super(locman, body, sceneVer, listener);
+        _peerMan = peerMan;
         _dest = dest;
     }
 
