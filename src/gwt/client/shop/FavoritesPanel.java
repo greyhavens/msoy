@@ -11,6 +11,8 @@ import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
 import com.threerings.gwt.ui.WidgetUtil;
+
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.ListingCard;
 
@@ -59,18 +61,33 @@ public class FavoritesPanel extends HorizontalPanel
             }
             @Override protected void displayResults (int start, int count, List<ListingCard> list) {
                 super.displayResults(start, count, list);
-                CShell.frame.setTitle(
-                    (memberId == CShell.getMemberId()) ? _msgs.myFavoritesTitle() :
-                    _msgs.memberFavorites(""+((CatalogModels.Favorites)_model).getNoter()));
+                updatePageTitle();
             }
         };
-        faves.setModel(models.getFavoritesModel(memberId, itemType), pageNo);
+        faves.setModel(_model = models.getFavoritesModel(memberId, itemType), pageNo);
         add(faves);
         add(WidgetUtil.makeShim(10, 10));
     }
 
+    @Override // from Widget
+    protected void onLoad ()
+    {
+        super.onLoad();
+        updatePageTitle();
+    }
+
+    protected void updatePageTitle ()
+    {
+        MemberName noter = _model.getNoter();
+        if (noter != null) {
+            CShell.frame.setTitle(_msgs.memberFavorites(noter.toString()));
+        }
+    }
+
+    protected CatalogModels.Favorites _model;
+
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
-    protected static final int HEADER_HEIGHT = 5 /* gap */;
+    protected static final int HEADER_HEIGHT = 15 /* gap */;
 }

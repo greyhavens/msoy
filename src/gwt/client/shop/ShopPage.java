@@ -43,8 +43,7 @@ public class ShopPage extends Page
             int memberId = args.get(1, CShop.getMemberId());
             byte itemType = (byte)args.get(2, Item.NOT_A_TYPE);
             int page = args.get(3, 0);
-            setContent(_msgs.favoritesTitle(),
-                       new FavoritesPanel(_models, memberId, itemType, page));
+            setContent(new FavoritesPanel(_models, memberId, itemType, page));
 
         } else {
             byte type = (byte)args.get(0, Item.NOT_A_TYPE);
