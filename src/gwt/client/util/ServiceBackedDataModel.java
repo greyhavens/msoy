@@ -75,13 +75,20 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
     }
 
     // from interface DataModel
-    public void doFetchRows (int start, int count, AsyncCallback<List<T>> callback)
+    public void doFetchRows (int start, int count, final AsyncCallback<List<T>> callback)
     {
         if (_pageOffset == start && _pageCount == count) {
             callback.onSuccess(_pageItems);
         } else {
-            callFetchService(_pageOffset = start, _pageCount = count, _count < 0,
-                             new ResultCallback(callback));
+            callFetchService(
+                _pageOffset = start, _pageCount = count, _count < 0, new AsyncCallback<R>() {
+                public void onSuccess (R result) {
+                    ServiceBackedDataModel.this.onSuccess(result, callback);
+                }
+                public void onFailure (Throwable cause) {
+                    ServiceBackedDataModel.this.onFailure(cause, callback);
+                }
+            });
         }
     }
 
@@ -101,29 +108,6 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
         } else {
             MsoyUI.error(CShell.serverError(caught));
         }
-    }
-
-    /**
-     * This prevents the callback field from being set to null in the case that the rows are fetched
-     * multiple times in short succession.
-     */
-    protected class ResultCallback implements AsyncCallback<R> {
-
-        public ResultCallback (AsyncCallback<List<T>> callback) {
-            _callback = callback;
-        }
-
-        // from interface AsyncCallback
-        public void onSuccess (R result) {
-            ServiceBackedDataModel.this.onSuccess(result, _callback);
-        }
-
-        // from interface AsyncCallback
-        public void onFailure (Throwable caught) {
-            ServiceBackedDataModel.this.onFailure(caught, _callback);
-        }
-
-        protected AsyncCallback<List<T>> _callback;
     }
 
     /** Calls the service to obtain data, should pass this as the callback. */
