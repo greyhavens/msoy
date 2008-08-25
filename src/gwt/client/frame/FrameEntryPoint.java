@@ -389,7 +389,7 @@ public class FrameEntryPoint
 
         // make a note of our current page and create our iframe
         _page = page;
-        _iframe = new Frame("/gwt/" + _page.getPath() + "/");
+        _iframe = new Frame("/gwt/" + DeploymentConfig.version + "/" + _page.getPath() + "/");
         _iframe.setStyleName("pageIFrame");
 
         // select the appropriate header tab

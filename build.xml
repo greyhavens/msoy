@@ -425,10 +425,11 @@
   <property name="pages" value="${gpages.list}"/>
   <target name="gclient" depends="jprepare,gmsgs"
           description="Rebuilds the GWT client (but only for Mozilla).">
-    <mkdir dir="${gwtout.dir}"/>
+    <property name="pageout.dir" value="${gwtout.dir}/${version}"/>
+    <mkdir dir="${pageout.dir}"/>
     <for list="${pages}" param="page" parallel="true" threadCount="${gwt_build_threads}"><sequential>
-      <delete dir="${gwtout.dir}/@{page}"/>
-      <mkdir dir="${gwtout.dir}/@{page}"/>
+      <delete dir="${pageout.dir}/@{page}"/>
+      <mkdir dir="${pageout.dir}/@{page}"/>
       <if><isset property="gwt_user_agent"/><then>
           <echo>Building GWT clients for: ${gwt_user_agent}...</echo>
           <exec executable="bin/quickify" failonerror="true">
@@ -453,7 +454,7 @@
         </classpath>
         <arg value="-style"/><arg value="${gwt_style}"/>
         <arg value="-out"/>
-        <arg value="${gwtout.dir}"/>
+        <arg value="${pageout.dir}"/>
         <arg value="@{page}"/>
         <!-- gather all the compiler output into a property -->
         <redirector outputproperty="redirector.out"/>
@@ -485,11 +486,16 @@
       <apply failonerror="true" executable="gzip">
         <arg value="-c"/>
         <srcfile/>
-        <fileset dir="${gwtout.dir}/@{page}" includes="*.cache.html"/>
+        <fileset dir="${pageout.dir}/@{page}" includes="*.cache.html"/>
         <redirector>
-          <outputmapper type="glob" from="*.cache.html" to="${gwtout.dir}/@{page}/*.cache.html.gz"/>
+          <outputmapper type="glob" from="*.cache.html" to="${pageout.dir}/@{page}/*.cache.html.gz"/>
         </redirector>
       </apply>
+
+      <!-- if we're building the 'frame' page, we need to move it up out of the version dir -->
+      <if><equals arg1="@{page}" arg2="frame"/><then>
+        <move file="${pageout.dir}/@{page}" todir="${gwtout.dir}"/>
+      </then></if>
 
       <!-- clear out some variables -->
       <var name="gwt.result" unset="true"/>
