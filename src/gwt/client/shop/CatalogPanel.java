@@ -101,8 +101,8 @@ public class CatalogPanel extends SmartTable
                     return CShop.msgs.catalogNoList(name);
                 }
             }
-            @Override protected void configureNavi (FlexTable controls, int row, int col,
-                                          int start, int limit, int total) {
+            @Override protected void configureNavi (
+                FlexTable controls, int row, int col, int start, int limit, int total) {
                 super.configureNavi(controls, row, col, start, limit, total);
                 controls.getFlexCellFormatter().setHorizontalAlignment(
                     row, col, HasAlignment.ALIGN_RIGHT);
