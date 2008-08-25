@@ -47,6 +47,7 @@ import com.threerings.flex.GridUtil;
 import com.threerings.msoy.applets.net.MediaUploader;
 
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.MsoyLogConfig;
 
 import com.threerings.msoy.data.UberClientModes;
 import com.threerings.msoy.utils.UberClientLoader;
@@ -430,6 +431,9 @@ public class RemixControls extends HBox
     protected var _lastBytes :ByteArray;
 
     protected var _params :Object;
+
+    // configure log levels
+    MsoyLogConfig.init();
 
     [Embed(source="../../../../../../../pages/images/ui/box/header_left.png")]
     protected static const HEADER_BAR_LEFT :Class;

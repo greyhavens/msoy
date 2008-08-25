@@ -41,6 +41,7 @@ import com.threerings.flex.GridUtil;
 import com.threerings.flex.FlexUtil;
 
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyLogConfig;
 
 import com.threerings.msoy.item.data.all.Decor;
  
@@ -601,7 +602,10 @@ public class DecorViewerComp extends Canvas
     // temporary display-only values, used while dragging the background
     protected var _deltaX :Number = 0;
     protected var _deltaY :Number = 0;
-        
+
+    // configure log levels
+    MsoyLogConfig.init();
+
     [Embed(source="../../../../../../../rsrc/media/mouse_pointers/hand_open.png")]
     protected static const HAND_OPEN :Class;
     [Embed(source="../../../../../../../rsrc/media/mouse_pointers/hand_closed.png")]
