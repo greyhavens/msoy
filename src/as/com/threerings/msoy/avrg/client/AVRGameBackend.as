@@ -60,7 +60,7 @@ import com.threerings.msoy.avrg.data.PlayerLocation;
 
 public class AVRGameBackend extends ControlBackend
 {
-    public static const log :Log = BackendUtils.log;
+    public static const log :Log = Log.getLog(AVRGameBackend);
 
     /** 
      * Magic number for specifying the server agent.

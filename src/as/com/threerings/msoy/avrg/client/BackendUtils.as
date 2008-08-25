@@ -22,7 +22,7 @@ import com.whirled.game.data.PropertySpaceObject;
  */
 public class BackendUtils
 {
-    public static const log :Log = new Log("avrg.Backend");
+    public static const log :Log = Log.getLog(BackendUtils);
 
     /**
      * Throws an error if the name is not a valid property name.

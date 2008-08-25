@@ -20,7 +20,7 @@ import com.whirled.game.data.WhirledPlayerObject;
 
 public class ThaneAVRGameBackend
 {
-    public static const log :Log = BackendUtils.log;
+    public static const log :Log = Log.getLog(ThaneAVRGameBackend);
 
     /**
      * Constructs a new base avr game backend.
