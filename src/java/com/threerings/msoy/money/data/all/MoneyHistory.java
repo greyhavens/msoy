@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.money.server;
+package com.threerings.msoy.money.data.all;
 
 import java.util.Date;
 

@@ -31,6 +31,9 @@ import com.threerings.msoy.server.persist.UserActionRepository;
 import com.threerings.presents.annotation.EventQueue;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
+import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyType;
+
 /**
  * This really should be an integration test that's executed on every build, but it's not
  * current setup to handle database updates (it will try modifying the database, there's

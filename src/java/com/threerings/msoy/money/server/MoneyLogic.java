@@ -10,6 +10,9 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyType;
+
 /**
  * Facade for all money (coins, bars, and bling) transactions. This is the starting place to
  * access these services.

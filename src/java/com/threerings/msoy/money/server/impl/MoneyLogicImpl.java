@@ -19,10 +19,8 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.MemberMoney;
 import com.threerings.msoy.money.server.MoneyConfiguration;
-import com.threerings.msoy.money.server.MoneyHistory;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyResult;
-import com.threerings.msoy.money.server.MoneyType;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 import com.threerings.msoy.money.server.NotSecuredException;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
@@ -32,6 +30,9 @@ import com.threerings.msoy.money.server.persist.RepositoryException;
 import com.threerings.msoy.money.server.persist.StaleDataException;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.UserActionRepository;
+
+import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyType;
 
 /**
  * Default implementation of the money service.

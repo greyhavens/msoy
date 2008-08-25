@@ -17,8 +17,9 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.money.server.MoneyHistory;
-import com.threerings.msoy.money.server.MoneyType;
+
+import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyType;
 
 /**
  * Domain object representing an entry in a member's account history. The account history keeps

@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.money.server;
 
+import com.threerings.msoy.money.data.all.MoneyHistory;
+
 /**
  * Result of an operation on the money service that modified a member's, creator's, or
  * affiliate's accounts.

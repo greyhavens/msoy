@@ -16,7 +16,8 @@ import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.MemberMoney;
-import com.threerings.msoy.money.server.MoneyType;
+
+import com.threerings.msoy.money.data.all.MoneyType;
 
 /**
  * Domain model for the current status of a member's account, including the amount of each money

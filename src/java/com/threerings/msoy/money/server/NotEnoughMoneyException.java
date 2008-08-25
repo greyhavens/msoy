@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.money.server;
 
+import com.threerings.msoy.money.data.all.MoneyType;
+
 /**
  * Occurs when a member attempts to use some amount of money they do not have.
  * 

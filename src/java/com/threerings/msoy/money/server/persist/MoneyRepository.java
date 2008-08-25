@@ -5,7 +5,7 @@ package com.threerings.msoy.money.server.persist;
 
 import java.util.List;
 
-import com.threerings.msoy.money.server.MoneyType;
+import com.threerings.msoy.money.data.all.MoneyType;
 
 /**
  * Interface for retrieving and persisting entities in the money service.

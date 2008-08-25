@@ -12,11 +12,12 @@ import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.threerings.msoy.money.server.MoneyType;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
+
+import com.threerings.msoy.money.data.all.MoneyType;
 
 /**
  * Manages expiration of {@link MemberAccountHistoryRecord}s.  Coin records should

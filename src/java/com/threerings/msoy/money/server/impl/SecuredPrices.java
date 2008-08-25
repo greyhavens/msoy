@@ -5,7 +5,7 @@ package com.threerings.msoy.money.server.impl;
 
 import java.io.Serializable;
 
-import com.threerings.msoy.money.server.MoneyType;
+import com.threerings.msoy.money.data.all.MoneyType;
 
 /**
  * Contains secured prices when a member views an item. This can be cached and identified by a
