@@ -109,10 +109,6 @@ public class FloatingPanel extends TitleWindow
         // Add a listener for the CLOSE event. It's only possible to be dispatched if
         // showCloseButton=true, which we allow subclasses to do with convenience.
         addEventListener(CloseEvent.CLOSE, handleClose);
-
-        // add a listener to handle command events we generate (we use priority -1 so that if a
-        // controller is listening to this panel directly, it will get the event first)
-        addEventListener(CommandEvent.COMMAND, handleCommand, false, -1);
     }
 
     /**
@@ -143,6 +139,7 @@ public class FloatingPanel extends TitleWindow
         if (center) {
             PopUpManager.centerPopUp(this);
         }
+        CommandEvent.configureBridge(this, _parent);
     }
 
     /**
@@ -284,21 +281,6 @@ public class FloatingPanel extends TitleWindow
 
         default:
             throw new ArgumentError("No button action [buttonId=" + buttonId + "]");
-        }
-    }
-
-    /**
-     * Handles CommandEvents. By default we shuttle the command to our real parent.
-     */
-    protected function handleCommand (event :CommandEvent) :void
-    {
-        if (_parent != null) {
-            Log.getLog(this).info("Forwarding " + event);
-            event.markAsHandled();
-            // redispatch a new event...
-            CommandEvent.dispatch(_parent, event.command, event.arg);
-        } else {
-            Log.getLog(this).info("Not forwarding " + event);
         }
     }
 

@@ -10,14 +10,14 @@ import flash.display.StageDisplayState;
 
 import flash.utils.Dictionary;
 
-import mx.core.Container;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
+import mx.containers.Tile;
+
 import mx.controls.Spacer;
-import mx.core.UIComponent;
 
 import mx.events.FlexEvent;
 
@@ -71,6 +71,12 @@ public class ControlBar extends HBox
     /** The height of the control bar. This is fixed. */
     public static const HEIGHT :int = 28;
 
+    /** Button priorities */
+    public static const VOLUME_PRIORITY :int = 0;
+    public static const GLOBAL_PRIORITY :int = 100;
+    public static const DEFAULT_PRIORITY :int = 200;
+    public static const PLACE_PRIORITY :int = 300;
+
     /** Different groups of UI elements. */
     public static const UI_ALL :String = "All UI Elements"; // created automatically
     public static const UI_BASE :String = "Base UI"; // when in neither a game nor a room
@@ -81,12 +87,6 @@ public class ControlBar extends HBox
 
     public static const ALL_UI_GROUPS :Array = [
         UI_ALL, UI_BASE, UI_ROOM, UI_GAME, UI_MINI, UI_VIEWER ];
-
-    /** These will probably be expanded soon. */
-    public static const CHAT_PRIORITY :int = 0;
-    public static const BUTTON_PRIORITY :int = 100;
-    public static const SPACER_PRIORITY :int = 200;
-    public static const LAST_PRIORITY :int = 300;
 
     public function ControlBar (ctx :MsoyContext)
     {
@@ -104,6 +104,8 @@ public class ControlBar extends HBox
 
         _ctx.getClient().addClientObserver(
             new ClientAdapter(checkControls, checkControls, null, null, null, null, checkControls));
+
+        _buttons = new ButtonPalette(_ctx);
 
         createControls();
         checkControls();
@@ -142,15 +144,19 @@ public class ControlBar extends HBox
      * Add a custom component to the control bar.
      * Note that there is no remove: just do component.parent.removeChild(component);
      */
-    public function addCustomComponent (comp :UIComponent, priority :int = BUTTON_PRIORITY) :void
+    public function addCustomComponent (comp :UIComponent) :void
     {
-//        if (_leftSpacer.width != 0) {
-//            _leftSpacer.addChild(comp);
-//        } else {
-            _priorities[comp] = priority;
-            addChild(comp);
-            sortControls();
-//        }
+        // no priority set- becomes priority = 0.
+        addChild(comp);
+        sortControls();
+    }
+
+    public function addCustomButton (comp :UIComponent, priority :int = DEFAULT_PRIORITY) :void
+    {
+        _priorities[comp] = priority;
+        _buttons.addButton(comp, priority);
+        sortControls();
+        _buttons.recheckButtons();
     }
 
     /**
@@ -181,14 +187,6 @@ public class ControlBar extends HBox
     }
 
     /**
-     * Configures our spacer width.
-     */
-    public function setSpacerWidth (width :Number) :void
-    {
-        _leftSpacer.width = width;
-    }
-
-    /**
      * Configures the chat input background color.
      */
     public function setChatColor (color :int) :void
@@ -200,6 +198,7 @@ public class ControlBar extends HBox
     override protected function updateDisplayList (w :Number, h :Number) :void
     {
         super.updateDisplayList(w, h);
+
         if (!_isMinimized && width != 0) {
             dispatchEvent(new ValueEvent(DISPLAY_LIST_VALID, true));
         }
@@ -210,9 +209,6 @@ public class ControlBar extends HBox
      */
     protected function createControls () :void
     {
-        _leftSpacer = new Spacer();
-        _leftSpacer.percentWidth = 100;
-
         _chatOptsBtn = new CommandButton();
         _chatOptsBtn.toolTip = Msgs.GENERAL.get("i.channel");
         _chatOptsBtn.setCommand(WorldController.POP_CHANNEL_MENU, _chatOptsBtn);
@@ -227,7 +223,7 @@ public class ControlBar extends HBox
 
         _fullBtn = new CommandButton();
         _fullBtn.styleName = "controlBarButtonFull";
-        _fullBtn.toolTip = Msgs.GENERAL.get("i.full") + " TODO: admin only for testing";
+        _fullBtn.toolTip = "FullScreen: dev only"; //Msgs.GENERAL.get("i.full");
         _fullBtn.setCallback(handleFullScreen);
 
         _commentBtn = new CommandButton(null, MsoyController.VIEW_COMMENT_PAGE);
@@ -277,43 +273,40 @@ public class ControlBar extends HBox
     protected function setupControls () :void
     {
         removeAllChildren();
+        _buttons.clearButtons();
         clearAllGroups();
-
-//        addGroupChild(_leftSpacer, [ UI_GAME ]);
-
-        addControlButtons();
-
-        _rightSpacer = new Spacer();
-        _rightSpacer.percentWidth = 100;
-        addGroupChild(_rightSpacer, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
-            SPACER_PRIORITY);
+        addControls();
     }
 
     protected function sortControls () :void
     {
         DisplayUtil.sortDisplayChildren(this, comparePriority);
+        DisplayUtil.sortDisplayChildren(_volBtn.parent, comparePriority);
     }
 
-    protected function addControlButtons () :void
+    protected function addControls () :void
     {
         // add our standard control bar features
-        addGroupChild(_chatOptsBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
+        addControl(_chatOptsBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_SECTION);
         _chatControl = new ChatControl(_ctx, null);
         _chatControl.chatInput.height = HEIGHT - 8;
         _chatControl.sendButton.styleName = "controlBarButtonSend";
-        addGroupChild(_chatControl, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_PRIORITY);
-        addGroupChild(_volBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
-            BUTTON_PRIORITY - 2);
-        if (_ctx.getTokens().isAdmin()) {
-            addGroupChild(_fullBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
-                BUTTON_PRIORITY + 1);
+        addControl(_chatControl, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME ], CHAT_SECTION);
+        addControl(_buttons, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
+            BUTTON_SECTION);
+
+        // add buttons
+        addButton(_volBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ], VOLUME_PRIORITY);
+        if (DeploymentConfig.devDeployment) {
+            addButton(_fullBtn, [ UI_BASE, UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ],
+                GLOBAL_PRIORITY);
         }
 
-        addGroupChild(_instructBtn, [ UI_GAME ]);
-        addGroupChild(_shareBtn, [ UI_BASE, UI_ROOM, UI_GAME ]);
-        addGroupChild(_commentBtn, [ UI_ROOM, UI_GAME ]);
+        addButton(_instructBtn, [ UI_GAME ]);
+        addButton(_shareBtn, [ UI_BASE, UI_ROOM, UI_GAME ]);
+        addButton(_commentBtn, [ UI_ROOM, UI_GAME ]);
 
-        //addGroupChild(_partyBtn, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
+        //addButton(_partyBtn, [ UI_ROOM, UI_MINI, UI_GAME, UI_VIEWER ]);
     }
 
     /**
@@ -333,11 +326,22 @@ public class ControlBar extends HBox
         }
     }
 
-    protected function addGroupChild (
-        child :UIComponent, groupNames :Array, priority :int = BUTTON_PRIORITY) :void
+    protected function addControl (child :UIComponent, groupNames :Array, section :int) :void
+    {
+        addChild(child);
+        addToGroups(child, groupNames, section);
+    }
+
+    protected function addButton (
+        child :UIComponent, groupNames :Array, priority :int = DEFAULT_PRIORITY) :void
+    {
+        _buttons.addButton(child, priority);
+        addToGroups(child, groupNames, priority);
+    }
+
+    protected function addToGroups (child :UIComponent, groupNames :Array, priority :int) :void
     {
         _priorities[child] = priority;
-        addChild(child);
         if (!ArrayUtil.contains(groupNames, UI_ALL)) {
             groupNames.push(UI_ALL);
         }
@@ -358,6 +362,7 @@ public class ControlBar extends HBox
         updateGroup(UI_ALL, false);
         updateGroup(getMode(), true);
         sortControls();
+        _buttons.recheckButtons();
     }
 
     protected function getMode () :String
@@ -384,6 +389,11 @@ public class ControlBar extends HBox
         }
     }
 
+    protected static const CHAT_SECTION :int = -2;
+    protected static const BUTTON_SECTION :int = -1;
+    // implicit: custom controls section = 0
+    protected static const NOTIFICATION_SECTION :int = 1;
+
     /** Our clientside context. */
     protected var _ctx :MsoyContext;
 
@@ -407,6 +417,8 @@ public class ControlBar extends HBox
     /** Button priority levels. */
     protected var _priorities :Dictionary = new Dictionary(true);
 
+    protected var _buttons :ButtonPalette;
+
     /** Our chat control. */
     protected var _chatControl :ChatControl;
 
@@ -427,12 +439,5 @@ public class ControlBar extends HBox
 
     /** Handles bringing up a share dialog. */
     protected var _shareBtn :CommandButton;
-
-    /** A spacer to bump the UI bits over to the right if needed */
-    protected var _leftSpacer :Spacer;
-
-    /** A spacer to the right of the UI bits in this class, set to percentWidth = 100 */
-    //protected var _rightSpacer :Canvas;
-    protected var _rightSpacer :Spacer;
 }
 }

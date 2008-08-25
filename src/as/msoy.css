@@ -480,6 +480,21 @@ TabNavigator, TabBar {
   paddingRight: 0;
 }
 
+.buttonPalette {
+  paddingBottom: 5;
+  paddingTop: 5;
+  paddingLeft: 5;
+  paddingRight: 5;
+  cornerRadius: 10;
+
+  verticalAlign: "middle";
+  horizontalAlign: "center";
+
+  backgroundColor: black;
+  backgroundAlphaClosed: 0;
+  backgroundAlphaOpen: .85;
+}
+
 .coinLabel {
   color: white;
   fontSize: 12;

@@ -171,25 +171,25 @@ public class WorldControlBar extends ControlBar
     }
 
     // from ControlBar
-    override protected function addControlButtons () :void
+    override protected function addControls () :void
     {
-        super.addControlButtons(); 
+        super.addControls(); 
 
-        addGroupChild(_hotZoneBtn, [ UI_ROOM ]);
-        addGroupChild(_zoomBtn, [ UI_ROOM, UI_VIEWER ]);
+        addButton(_hotZoneBtn, [ UI_ROOM ], PLACE_PRIORITY);
+        addButton(_zoomBtn, [ UI_ROOM, UI_VIEWER ], PLACE_PRIORITY);
 
-        addGroupChild(_snapBtn, [ UI_ROOM ]);
-        addGroupChild(_roomeditBtn, [ UI_ROOM ]);
+        addButton(_snapBtn, [ UI_ROOM ], PLACE_PRIORITY);
+        addButton(_roomeditBtn, [ UI_ROOM ], PLACE_PRIORITY);
 
         // TODO: notifications are global, yes? They should be in ControlBar
         if (_notificationDisplay != null) {
-            addGroupChild(_notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME ], LAST_PRIORITY);
+            addControl(_notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME ], NOTIFICATION_SECTION);
         }
 
         // TODO: enable friends for guests, even if it just goads them into signup
         // TODO: friends are global, yes? They should be in ControlBar
         if (_friendsBtn != null && _isMember) {
-            addGroupChild(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME ], BUTTON_PRIORITY - 1);
+            addButton(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME ], GLOBAL_PRIORITY);
         }
     }
 
@@ -217,9 +217,9 @@ public class WorldControlBar extends ControlBar
 
         callLater(function () :void {
             // if we're mini, make sure we have room for the display
-            if (!_notificationDisplay.visible && _rightSpacer.width > _notificationDisplay.width) {
+            if (!_notificationDisplay.visible && _buttons.width > _notificationDisplay.width) {
                 FlexUtil.setVisible(_notificationDisplay, true);
-            } else if (_notificationDisplay.visible && _rightSpacer.width <= 0) {
+            } else if (_notificationDisplay.visible && _buttons.width <= 0) {
                 FlexUtil.setVisible(_notificationDisplay, false);
             }
         });

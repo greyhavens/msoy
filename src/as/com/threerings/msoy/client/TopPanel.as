@@ -450,10 +450,6 @@ public class TopPanel extends Canvas
             } else {
                 _leftPanel.setStyle("right", 0);
             }
-
-            _controlBar.setSpacerWidth(_ctx.getWidth() - _leftPanel.width);
-        } else {
-            _controlBar.setSpacerWidth(0);
         }
 
         updatePlaceViewSize();

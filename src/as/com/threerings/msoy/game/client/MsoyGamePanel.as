@@ -149,7 +149,7 @@ public class MsoyGamePanel extends WhirledGamePanel
                 panel.addChild(box);
                 return panel;
             }, _showPlayers));
-            bar.addCustomComponent(_showPlayers);
+            bar.addCustomButton(_showPlayers);
 
             var overlay :ChatOverlay = mctx.getTopPanel().getPlaceChatOverlay();
             overlay.setSuppressSidebar(true);
@@ -260,8 +260,8 @@ public class MsoyGamePanel extends WhirledGamePanel
             }
             if (gameOver) {
                 const bar :ControlBar = _gctx.getMsoyContext().getTopPanel().getControlBar();
-                bar.addCustomComponent(_rematch, ControlBar.BUTTON_PRIORITY - 2);
-                bar.addCustomComponent(_goBtn, ControlBar.BUTTON_PRIORITY - 2);
+                bar.addCustomComponent(_rematch);
+                bar.addCustomComponent(_goBtn);
 
             } else {
                 _rematch.parent.removeChild(_rematch);
