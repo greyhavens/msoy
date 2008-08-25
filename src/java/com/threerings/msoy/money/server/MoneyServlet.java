@@ -62,7 +62,7 @@ public class MoneyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         log.warning("============= Woot");
-        return new java.util.ArrayList();
+        return new java.util.ArrayList<Integer>();
     }
    // TODO: this is dormant right now, but we might need something like it when we
     // enable listing purchased remixables.

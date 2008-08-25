@@ -28,11 +28,11 @@ import com.threerings.msoy.server.persist.UserActionRepository;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
-import com.threerings.msoy.money.server.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyType;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
 import com.threerings.msoy.money.server.MoneyResult;
-import com.threerings.msoy.money.server.MoneyType;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 import com.threerings.msoy.money.server.NotSecuredException;
 import com.threerings.msoy.person.server.persist.FeedRepository;

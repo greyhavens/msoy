@@ -24,7 +24,7 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.LessThan;
 import com.samskivert.jdbc.depot.operator.Logic.And;
-import com.threerings.msoy.money.server.MoneyType;
+import com.threerings.msoy.money.data.all.MoneyType;
 import com.threerings.presents.annotation.BlockingThread;
 
 /**
