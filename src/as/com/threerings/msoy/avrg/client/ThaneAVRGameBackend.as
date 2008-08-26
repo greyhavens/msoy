@@ -8,6 +8,7 @@ import flash.events.Event;
 import com.threerings.io.TypedArray;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
+import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
 import com.threerings.presents.client.InvocationAdapter;
@@ -311,13 +312,23 @@ public class ThaneAVRGameBackend
     // -------------------- .getPlayer().props --------------------
     protected function player_getGameData_v1 (playerId :int) :Object
     {
-        return {};
+        var player :PlayerObject = _controller.getPlayer(playerId);
+        if (player == null) {
+            throw new Error("Player not found [playerId=" + playerId + "]");
+        }
+        return player.getUserProps();
     }
 
     protected function player_setProperty_v1 (
         playerId :int, name :String, value :Object, key :Object, isArray :Boolean, 
         immediate :Boolean) :void
     {
+        var player :PlayerObject = _controller.getPlayer(playerId);
+        if (player == null) {
+            throw new Error("Player not found [playerId=" + playerId + "]");
+        }
+        BackendUtils.encodeAndSet(
+            _ctx.getClient(), player, name, value, key, isArray, immediate);
     }
 
     // -------------------- end of versioned methods --------------------

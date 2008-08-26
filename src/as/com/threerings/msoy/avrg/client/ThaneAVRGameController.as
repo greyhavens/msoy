@@ -4,6 +4,7 @@
 package com.threerings.msoy.avrg.client {
 
 import flash.events.TimerEvent;
+import flash.utils.Dictionary;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
@@ -113,6 +114,8 @@ public class ThaneAVRGameController
         _gameObj.manager.invoke("agentReady");
     }
 
+    /** Retrieves the room properties for the given room id. Returns null if they are not yet
+     * available or if the room could not be found. */
     public function getRoomProps (roomId :int) :RoomPropertiesObject
     {
         var binding :SceneBinding = _bindings.get(roomId);
@@ -122,6 +125,8 @@ public class ThaneAVRGameController
         return binding.roomProps;
     }
 
+    /** Retrieves the client session instance for the given room id. Returns null if the room could
+     * not be found or if the window to the room has not yet been opened. */
     public function getRoomClient (roomId :int) :Client
     {
         var binding :SceneBinding = _bindings.get(roomId);
@@ -131,10 +136,27 @@ public class ThaneAVRGameController
         return binding.window.getClient();
     }
 
+    /** Retrieves the player object by the given player id (member id). Returns null if the player is not
+     * in the game or the subscription to the player is not yet completed. */
+    public function getPlayer (playerId :int) :PlayerObject
+    {
+        var playerOid :Object = _playerIds[playerId];
+        if (playerOid == null) {
+            return null;
+        }
+        var player :PlayerObject = _playerSubs.getObj(int(playerOid)) as PlayerObject;
+        return player;
+    }
+
     protected function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
             var pl :PlayerLocation = event.getEntry() as PlayerLocation;
+            if (getPlayer(pl.playerId) == null) {
+                log.warning(
+                    "Player subscription not finished before player location update [playerId=" + 
+                    pl.playerId + "]");
+            }
             _backend.playerJoinedGame(pl.playerId);
             _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
 
@@ -172,6 +194,10 @@ public class ThaneAVRGameController
 
         } else if (event.getName() == PlaceObject.OCCUPANT_INFO) {
             var occInfo :OccupantInfo = event.getOldEntry() as OccupantInfo;
+            var player :PlayerObject = _playerSubs.getObj(occInfo.bodyOid) as PlayerObject;
+            if (player != null) {
+                delete _playerIds[player.getMemberId()];
+            }
             _playerSubs.unsubscribe(occInfo.bodyOid);
         }
     }
@@ -410,6 +436,7 @@ public class ThaneAVRGameController
 
     protected function gotPlayerObject (obj :PlayerObject) :void
     {
+        _playerIds[obj.getMemberId()] = obj.getOid();
     }
 
     protected var _ctx :MsoyBureauContext;
@@ -419,6 +446,7 @@ public class ThaneAVRGameController
     protected var _bindings :HashMap = new HashMap();
     protected var _setAdapter :SetAdapter = new SetAdapter(entryAdded, entryUpdated, entryRemoved);
     protected var _playerSubs :SafeObjectManager;
+    protected var _playerIds :Dictionary = new Dictionary();
 }
 
 }
