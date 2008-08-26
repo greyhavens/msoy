@@ -9,6 +9,7 @@
   <source path="com/threerings/msoy/group/data/all"/>
   <source path="com/threerings/msoy/group/gwt"/>
   <source path="com/threerings/msoy/fora/gwt"/>
+  <source path="com/threerings/msoy/money/gwt"/>
 
   <source path="client/shop"/>
   <source path="client/comment"/>
