@@ -4,6 +4,8 @@
 package com.threerings.msoy.server;
 
 import com.google.inject.Inject;
+
+import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.MainInvoker;
@@ -46,6 +48,15 @@ public class MsoyClient extends WhirledClient
     public void setSessionForwarded (boolean sessionForwarded)
     {
         _sessionForwarded = sessionForwarded;
+    }
+
+    /**
+     * Returns the number of non-idle seconds this client has passed during this session.
+     */
+    public int getSessionSeconds ()
+    {
+        int connectTime = (int)((System.currentTimeMillis() - _networkStamp) / 1000L);
+        return connectTime - _idleTracker.getIdleTime();
     }
 
     @Override // from PresentsClient
@@ -110,12 +121,10 @@ public class MsoyClient extends WhirledClient
 
         // let our various server entities know that this member logged off
         _locator.memberLoggedOff(_memobj);
-        final int idleSeconds = _idleTracker.getIdleTime();
-        final int activeSeconds = _connectTime - idleSeconds;
 
         // if this is a real logoff event, and this was a player, log what they did; (otherwise, if
         // it's not a logoff, do nothing - the memobj was already forwarded to the new host.)
-        if (! _sessionForwarded && ! (_memobj.username instanceof LurkerName)) {
+        if (!_sessionForwarded && !(_memobj.username instanceof LurkerName)) {
             String sessTok = ((MsoyCredentials)getCredentials()).sessionToken;
             _memobj.metrics.save(_memobj);
             _eventLog.logPlayerMetrics(_memobj, sessTok);
@@ -130,26 +139,25 @@ public class MsoyClient extends WhirledClient
             return;
         }
 
-        // update session related stats in their MemberRecord
-        final int activeMins = Math.round(activeSeconds / 60f);
-        final MemberName name = _memobj.memberName;
-        final StatSet stats = _memobj.stats;
-        stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
-        _invoker.postUnit(new Invoker.Unit("sessionDidEnd:" + name) {
-            public boolean invoke () {
-                try {
+        // if this session was not forwarded to another server; we want to record some end of
+        // session related information to the database
+        if (!_sessionForwarded) {
+            final int activeMins = Math.round((_memobj.sessionSeconds + getSessionSeconds()) / 60f);
+            final MemberName name = _memobj.memberName;
+            final StatSet stats = _memobj.stats;
+            stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
+            _invoker.postUnit(new WriteOnlyUnit("sessionDidEnd:" + name) {
+                public void invokePersist () throws Exception {
                     // write out any modified stats
-                    Stat[] statArr = new Stat[stats.size()];
-                    stats.toArray(statArr);
-                    _statRepo.writeModified(name.getMemberId(), statArr);
+                    _statRepo.writeModified(
+                        name.getMemberId(), stats.toArray(new Stat[stats.size()]));
+                    // increment their session and minutes online counters
                     _memberRepo.noteSessionEnded(
-                        name.getMemberId(), activeMins, RuntimeConfig.server.humanityReassessment);
-                } catch (Exception e) {
-                    log.warning("Failed to note ended session [member=" + name + "].", e);
+                        name.getMemberId(), activeMins,
+                        RuntimeConfig.server.humanityReassessment);
                 }
-                return false;
-            }
-        });
+            });
+        }
 
         // finally clear out our _memobj reference
         _memobj = null;

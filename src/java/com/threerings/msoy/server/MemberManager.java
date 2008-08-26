@@ -124,12 +124,20 @@ public class MemberManager
                 // before we depart our current room (which is when the are normally saved)
                 memobj.metrics.save(memobj);
 
+                // update the number of active seconds they've spent online
+                MsoyClient client = (MsoyClient)_clmgr.getClient(memobj.username);
+                if (client != null) {
+                    memobj.sessionSeconds += client.getSessionSeconds();
+                    log.info("Incremented session seconds " + memobj.sessionSeconds);
+                }
+
                 // store our transient bits in the additional data map
                 data.put("MO.actorState", memobj.actorState);
                 data.put("MO.metrics", memobj.metrics);
                 data.put("MO.badges", memobj.badges);
                 data.put("MO.inProgressBadges", memobj.inProgressBadges);
                 data.put("MO.stats", memobj.stats);
+                data.put("MO.sessionSeconds", memobj.sessionSeconds);
             }
 
             public void unpackMember (final MemberObject memobj, final Map<String,Object> data) {
@@ -143,6 +151,7 @@ public class MemberManager
                     ((ServerStatSet)stats).init(_badgeMan, memobj);
                 }
                 memobj.stats = stats;
+                memobj.sessionSeconds = (Integer)data.get("MO.sessionSeconds");
             }
         });
     }

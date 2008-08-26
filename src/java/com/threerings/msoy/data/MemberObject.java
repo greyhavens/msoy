@@ -214,6 +214,11 @@ public class MemberObject extends MsoyBodyObject
     /** Player's current party, or 0 if no party. */
     public int partyId;
 
+    /** The number of non-idle seconds that have elapsed in this member's session. When the member
+     * is forwarded between servers, this value is incremented by the time they spent on the server
+     * from which they are departing. */
+    public transient int sessionSeconds;
+
     /** Statistics tracked for this player. */
     public transient StatSet stats;
 

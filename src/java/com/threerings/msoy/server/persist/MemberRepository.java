@@ -666,7 +666,7 @@ public class MemberRepository extends DepotRepository
 //         _flowRepo.expireFlow(record, minutes);
 // END TEMP
 
-        record.sessions ++;
+        record.sessions++;
         record.sessionMinutes += minutes;
         record.lastSession = nowStamp;
         update(record);
