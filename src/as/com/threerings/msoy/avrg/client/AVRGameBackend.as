@@ -613,8 +613,11 @@ public class AVRGameBackend extends ControlBackend
     protected function playerEntered (name :Name, why :String) :void
     {
         if (name is MemberName) {
-            log.debug(playerIdStr(), "Player entered [name=" + name + ", why=" + why + "]");
-            callUserCode("playerEntered_v1", MemberName(name).getMemberId());
+            var memberId :int = MemberName(name).getMemberId();
+            if (memberId != _playerObj.getMemberId()) {
+                log.debug(playerIdStr(), "Player entered [name=" + name + ", why=" + why + "]");
+                callUserCode("playerEntered_v1", memberId);
+            }
         }
     }
 
@@ -622,8 +625,11 @@ public class AVRGameBackend extends ControlBackend
     protected function playerLeft (name :Name, why :String) :void
     {
         if (name is MemberName) {
-            log.debug(playerIdStr(), "Player left [name=" + name + ", why=" + why + "]");
-            callUserCode("playerLeft_v1", MemberName(name).getMemberId());
+            var memberId :int = MemberName(name).getMemberId();
+            if (memberId != _playerObj.getMemberId()) {
+                log.debug(playerIdStr(), "Player left [name=" + name + ", why=" + why + "]");
+                callUserCode("playerLeft_v1", memberId);
+            }
         }
     }
 
@@ -702,7 +708,7 @@ public class AVRGameBackend extends ControlBackend
         if (_lastDispatchedSceneId != 0) {
             log.debug(playerIdStr(), "Left room [sceneId=" + _lastDispatchedSceneId + 
                 ", why=" + why + "]");
-            callUserCode("leftRoom_v1");
+            callUserCode("leftRoom_v1", _lastDispatchedSceneId);
             _lastDispatchedSceneId = 0;
         }
     }

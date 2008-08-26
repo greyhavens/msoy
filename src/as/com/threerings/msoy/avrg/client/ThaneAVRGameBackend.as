@@ -72,12 +72,14 @@ public class ThaneAVRGameBackend
     {
         log.info("Player entered room: " + memberId + ", " + roomId);
         callUserCode("enteredRoom_v1", memberId, roomId);
+        callUserCode("playerEntered_v1", roomId, memberId);
     }
 
     public function playerLeftRoom (memberId :int, roomId :int) :void
     {
         log.info("Player left room: " + memberId + ", " + roomId);
-        callUserCode("leftRoom_v1", memberId);
+        callUserCode("playerLeft_v1", roomId, memberId);
+        callUserCode("leftRoom_v1", memberId, roomId);
     }
 
     protected function handleUserCodeConnect (evt :Object) :void
