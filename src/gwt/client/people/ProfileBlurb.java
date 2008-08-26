@@ -84,11 +84,10 @@ public class ProfileBlurb extends Blurb
         }
         addButton(photo, "/images/profile/visithome.png", CPeople.msgs.visitHome(),
                   Pages.WORLD, "m" + _name.getMemberId());
+        addButton(photo, "/images/profile/visithome.png",
+                  CPeople.msgs.seeRooms(), Pages.PEOPLE, Args.compose("rooms", _name.getMemberId()));
         addButton(photo, "/images/profile/browseitems.png", CPeople.msgs.browseItems(),
                   Pages.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
-        addButton(photo, "/images/profile/visithome.png",
-            CPeople.msgs.seeRooms(_name.toString()), Pages.PEOPLE, Args.compose("rooms", ""
-                + _name.getMemberId()));
 
         // create the info section with their name, a/s/l, etc.
         SmartTable info = new SmartTable("Info", 0, 5);
