@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 
 import com.google.common.base.Function;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Id;
@@ -102,14 +104,16 @@ public class EarnedBadgeRecord extends PersistentRecord
         return new EarnedBadge(badgeCode, level, levelUnits, coinValue, whenEarned.getTime());
     }
 
-    /**
-     * @return a String representation of the record.
-     */
-    @Override
+    @Override // from Object
     public String toString ()
     {
-        return "memberId=" + memberId + " BadgeType=" + BadgeType.getType(badgeCode) +
-        " level=" + level + " whenEarned=" + whenEarned;
+        return StringUtil.fieldsToString(this);
+    }
+
+    /** Helper function for {@link #toString}. */
+    public String badgeCodeToString ()
+    {
+        return String.valueOf(BadgeType.getType(badgeCode));
     }
 
     // AUTO-GENERATED: METHODS START

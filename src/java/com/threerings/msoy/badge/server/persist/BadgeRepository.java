@@ -108,14 +108,16 @@ public class BadgeRepository extends DepotRepository
                  "trophies", created[2]);
     }
     // END TEMP
-
+        
     /**
      * Stores the supplied badge record in the database.
+     *
+     * @return true if the record was created, false if it was updated.
      */
-    public void storeBadge (EarnedBadgeRecord badge)
+    public boolean storeBadge (EarnedBadgeRecord badge)
         throws PersistenceException
     {
-        store(badge);
+        return store(badge);
     }
 
     /**

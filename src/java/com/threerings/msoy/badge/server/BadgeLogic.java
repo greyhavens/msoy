@@ -59,7 +59,13 @@ public class BadgeLogic
             return;
         }
 
-        _badgeRepo.storeBadge(brec);
+        // store our badge record and sanity check the outcome
+        boolean created = _badgeRepo.storeBadge(brec);
+        if (brec.level == 0 && !created) {
+            log.warning("Funny business! Already had a badge record for a level 0 update.",
+                        "badge", brec, new Exception());
+            return;
+        }
 
         // publish a member message with {badgeCode, level} as the data
         _feedRepo.publishMemberMessage(brec.memberId, FeedMessageType.FRIEND_WON_BADGE,
