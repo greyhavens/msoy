@@ -73,19 +73,19 @@ public class MsoyClientResolver extends CrowdClientResolver
     {
         super.resolveClientData(clobj);
 
-        final MemberObject userObj = (MemberObject) clobj;
-        userObj.setAccessController(MsoyObjectAccess.USER);
+        final MemberObject memobj = (MemberObject) clobj;
+        memobj.setAccessController(MsoyObjectAccess.USER);
 
         // create a deferred notifications array so that we can track any notifications dispatched
         // to this client until they're ready to read them; we'd have NotificationManager do this
         // in a MemberLocator.Observer but we need to be sure this is filled in before any other
         // MemberLocator.Observers are notified because that's precisely when early notifications
         // are likely to be generated
-        userObj.deferredNotifications = Lists.newArrayList();
+        memobj.deferredNotifications = Lists.newArrayList();
 
         // if our member object was forwarded from another server, it will already be fully ready
         // to go so we can avoid the expensive resolution process
-        if (userObj.memberName != null) {
+        if (memobj.memberName != null) {
             return;
         }
 
@@ -93,68 +93,68 @@ public class MsoyClientResolver extends CrowdClientResolver
         if (_username instanceof MemberName) {
             // our auth username has our assigned name and member id, so use those
             final MemberName aname = (MemberName)_username;
-            userObj.memberName = new VizMemberName(
+            memobj.memberName = new VizMemberName(
                 aname.toString(), aname.getMemberId(), MemberCard.DEFAULT_PHOTO);
-            userObj.stats = new StatSet();
-            userObj.badges = new EarnedBadgeSet();
-            userObj.inProgressBadges = new InProgressBadgeSet();
+            memobj.stats = new StatSet();
+            memobj.badges = new EarnedBadgeSet();
+            memobj.inProgressBadges = new InProgressBadgeSet();
 
         } else if (_username instanceof LurkerName) {
             // we are lurker, we have no visible name to speak of
-            userObj.memberName = new VizMemberName("", 0, MemberCard.DEFAULT_PHOTO);
-            userObj.stats = new StatSet();
-            userObj.badges = new EarnedBadgeSet();
-            userObj.inProgressBadges = new InProgressBadgeSet();
+            memobj.memberName = new VizMemberName("", 0, MemberCard.DEFAULT_PHOTO);
+            memobj.stats = new StatSet();
+            memobj.badges = new EarnedBadgeSet();
+            memobj.inProgressBadges = new InProgressBadgeSet();
 
         } else {
-            resolveMember(userObj);
+            resolveMember(memobj);
         }
     }
 
     /**
      * Resolve a msoy member. This is called on the invoker thread.
      */
-    protected void resolveMember (final MemberObject userObj)
+    protected void resolveMember (final MemberObject memobj)
         throws Exception
     {
         // load up their member information using on their authentication (account) name
         final MemberRecord member = _memberRepo.loadMember(_username.toString());
         final MemberMoney money = _moneyLogic.getMoneyFor(member.memberId);
-        
+
         // NOTE: we avoid using the dobject setters here because we know the object is not out in
         // the wild and there's no point in generating a crapload of events during user
         // initialization when we know that no one is listening
 
         // we need their profile photo to create the member name
         final ProfileRecord precord = _profileRepo.loadProfile(member.memberId);
-        userObj.memberName = new VizMemberName(
+        memobj.memberName = new VizMemberName(
             member.name, member.memberId,
             (precord == null) ? MemberCard.DEFAULT_PHOTO : precord.getPhoto());
         if (precord != null) {
-            userObj.headline = precord.headline;
+            memobj.headline = precord.headline;
         }
 
         // configure various bits directly from their member record
-        userObj.homeSceneId = member.homeSceneId;
-        userObj.flow = money.getCoins();
-        userObj.accFlow = (int)money.getAccCoins();
-        userObj.level = member.level;
+        memobj.homeSceneId = member.homeSceneId;
+        memobj.flow = money.getCoins();
+        memobj.accFlow = (int)money.getAccCoins();
+        memobj.level = member.level;
 
         // load up this member's persistent stats
         final List<Stat> stats = _statRepo.loadStats(member.memberId);
-        userObj.stats = new ServerStatSet(stats.iterator(), _badgeMan, userObj);
+        memobj.stats = new ServerStatSet(stats.iterator(), _badgeMan, memobj);
 
         // and their badges
-        userObj.badges = new EarnedBadgeSet(
+        memobj.badges = new EarnedBadgeSet(
             Iterables.transform(_badgeRepo.loadEarnedBadges(member.memberId),
                                 EarnedBadgeRecord.TO_BADGE));
-        userObj.inProgressBadges = new InProgressBadgeSet(
+        memobj.inProgressBadges = new InProgressBadgeSet(
             Iterables.transform(_badgeRepo.loadInProgressBadges(member.memberId),
                                 InProgressBadgeRecord.TO_BADGE));
 
 //        // load up any item lists they may have
 //        List<ItemListInfo> itemLists = _itemMan.getItemLists(member.memberId);
-//        userObj.lists = new DSet<ItemListInfo>(itemLists);
+//        memobj.lists = new DSet<ItemListInfo>(itemLists);
 
 // TEMP: flow evaporation is disabled; we need to think more about this
 //         // calculate flow evaporation since last logon
@@ -162,25 +162,25 @@ public class MsoyClientResolver extends CrowdClientResolver
 //         _memberRepo.getFlowRepository().expireFlow(member, dT); // modifies member.flow
 // END TEMP
 
-//        userObj.ownedScenes = new DSet<SceneBookmarkEntry>(
+//        memobj.ownedScenes = new DSet<SceneBookmarkEntry>(
 //            _sceneRepo.getOwnedScenes(member.memberId).iterator());
 
         // fill in this member's raw friends list; the friend manager will update it later
-        userObj.friends = new DSet<FriendEntry>(_memberRepo.loadFriends(member.memberId, -1));
+        memobj.friends = new DSet<FriendEntry>(_memberRepo.loadFriends(member.memberId, -1));
 
         // load up this member's group memberships
-        userObj.groups = new DSet<GroupMembership>(
+        memobj.groups = new DSet<GroupMembership>(
             // we don't pass in member name here because we don't need it on the client
             _groupRepo.resolveGroupMemberships(member.memberId, null).iterator());
 
         // load up this member's current new mail count
-        userObj.newMailCount = _mailRepo.loadUnreadConvoCount(member.memberId);
+        memobj.newMailCount = _mailRepo.loadUnreadConvoCount(member.memberId);
 
         // load up their selected avatar, we'll configure it later
         if (member.avatarId != 0) {
             final AvatarRecord avatar = _itemMan.getAvatarRepository().loadItem(member.avatarId);
             if (avatar != null) {
-                userObj.avatar = (Avatar)avatar.toItem();
+                memobj.avatar = (Avatar)avatar.toItem();
             }
         }
 
@@ -193,7 +193,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             refrec = _memberRepo.setReferral(member.memberId,
                 ReferralInfo.makeInstance("", "", "", ReferralInfo.makeRandomTracker()));
         }
-        userObj.referral = refrec.toInfo();
+        memobj.referral = refrec.toInfo();
     }
 
     @Override // from ClientResolver
