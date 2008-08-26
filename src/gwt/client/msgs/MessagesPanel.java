@@ -126,8 +126,9 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         // ephmera to determine how they lay themselves out
         if (_model == _tmodel) {
             _parent.gotThread(_tmodel.getThread());
-            _postReply.setEnabled(_tmodel.canPostReply() && !_tmodel.getThread().isLocked());
-            _editFlags.setEnabled(_tmodel.isManager());
+            _postReply.setEnabled((_tmodel.canPostReply() && !_tmodel.getThread().isLocked())
+                    || CShell.isSupport());
+            _editFlags.setEnabled(_tmodel.isManager() || CShell.isSupport());
         }
 
         super.displayResults(start, count, list);
@@ -257,7 +258,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
             FlowPanel toolBar = MsoyUI.createFlowPanel("ToolBar");
             info.insert(toolBar, 0);
 
-            if (CShell.getMemberId() == _message.poster.name.getMemberId()) {
+            if (CShell.getMemberId() == _message.poster.name.getMemberId() || CShell.isSupport()) {
                 toolBar.add(makeInfoImage(_images.edit_post(),
                                                 _mmsgs.inlineEdit(), new ClickListener() {
                     public void onClick (Widget sender) {
