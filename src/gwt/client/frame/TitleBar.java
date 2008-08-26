@@ -92,6 +92,7 @@ public class TitleBar extends SmartTable
             // TODO hiding favorites feature
             if (DeploymentConfig.devDeployment) {
                 subnavi.addLink(null, "My Favorites", Pages.SHOP, "f");
+                subnavi.addLink(null, "Transactions", Pages.SHOP, "t");
             }
             break;
 
