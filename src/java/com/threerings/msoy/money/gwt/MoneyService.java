@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ServiceException;
 
-//import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyHistory;
 
 /**
  * Provides currency related services.
@@ -22,6 +22,6 @@ public interface MoneyService extends RemoteService
     /**
      * Fetches a player's complete income and spending history.
      */
-    List<Integer> getTransactionHistory (int memberId)
+    List<MoneyHistory> getTransactionHistory (int memberId)
         throws ServiceException;
 }
