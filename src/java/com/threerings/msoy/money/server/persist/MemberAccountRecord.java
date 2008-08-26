@@ -15,8 +15,7 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.money.server.MemberMoney;
-
+import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyType;
 
 /**
@@ -99,7 +98,7 @@ public class MemberAccountRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #MemberAccountRecord}
      * with the supplied key values.
      */
-    public static Key<MemberAccountRecord> getKey (int memberId)
+    public static Key<MemberAccountRecord> getKey (final int memberId)
     {
         return new Key<MemberAccountRecord>(
                 MemberAccountRecord.class,

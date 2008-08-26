@@ -21,7 +21,7 @@ import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.util.IntSet;
-import com.threerings.msoy.money.server.MemberMoney;
+import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;

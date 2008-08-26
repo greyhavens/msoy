@@ -5,6 +5,7 @@ package com.threerings.msoy.money.server;
 
 import com.google.inject.Inject;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
@@ -34,6 +35,8 @@ public class MoneyNodeActions
             _coins = coins;
             _accCoins = accCoins;
         }
+        
+        public MoneyUpdated () { }
 
         @Override
         protected void execute (final MemberObject memobj)
@@ -49,8 +52,8 @@ public class MoneyNodeActions
             }
         }
 
-        private final int _coins;
-        private final int _accCoins;
+        private int _coins;
+        private int _accCoins;
     }
 
     private final MsoyPeerManager _peerMan;

@@ -8,6 +8,9 @@ import java.util.List;
 
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.money.data.all.MemberMoney;
+import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyType;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.money.data.all.MoneyHistory;

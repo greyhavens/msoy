@@ -3,41 +3,22 @@
 
 package com.threerings.msoy.item.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
-
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.TagNameRecord;
-import com.threerings.msoy.server.persist.TagPopularityRecord;
-import com.threerings.msoy.server.persist.UserActionRepository;
-
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
-
-import com.threerings.msoy.money.data.all.MoneyHistory;
-import com.threerings.msoy.money.data.all.MoneyType;
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyNodeActions;
-import com.threerings.msoy.money.server.MoneyResult;
-import com.threerings.msoy.money.server.NotEnoughMoneyException;
-import com.threerings.msoy.money.server.NotSecuredException;
-import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
-
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -53,8 +34,22 @@ import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyNodeActions;
+import com.threerings.msoy.money.server.MoneyResult;
+import com.threerings.msoy.money.server.NotEnoughMoneyException;
+import com.threerings.msoy.money.server.NotSecuredException;
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
+import com.threerings.msoy.server.persist.TagPopularityRecord;
+import com.threerings.msoy.server.persist.UserActionRepository;
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 /**
  * Provides the server implementation of {@link CatalogService}.
@@ -191,8 +186,8 @@ public class CatalogServlet extends MsoyServiceServlet
             if (result.getNewCreatorMoney() != null) {
                 _moneyNodeActions.moneyUpdated(result.getNewCreatorMoney());
 
-                int creatorId = listing.item.creatorId;
-                int creatorAmount = (int)result.getCreatorTransaction().getAmount();
+                final int creatorId = listing.item.creatorId;
+                final int creatorAmount = (int)result.getCreatorTransaction().getAmount();
                 if (mrec.memberId != creatorId && creatorAmount > 0) {
                     _statLogic.incrementStat(
                         creatorId, StatType.COINS_EARNED_SELLING, creatorAmount);
@@ -220,7 +215,7 @@ public class CatalogServlet extends MsoyServiceServlet
             });
 
             // update their stat set, if they aren't buying something from themselves.
-            MoneyHistory transaction = result.getMemberTransaction();
+            final MoneyHistory transaction = result.getMemberTransaction();
             if (mrec.memberId != listing.item.creatorId &&
                 transaction.getType() == MoneyType.COINS) {
                 _statLogic.incrementStat(
@@ -541,11 +536,11 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public FavoritesResult loadFavorites (int memberId, byte itemType)
+    public FavoritesResult loadFavorites (final int memberId, final byte itemType)
         throws ServiceException
     {
         try {
-            FavoritesResult result = new FavoritesResult();
+            final FavoritesResult result = new FavoritesResult();
             // look up the party in question, if they don't exist, return null
             result.noter = _memberRepo.loadMemberName(memberId);
             if (result.noter == null) {
@@ -555,7 +550,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 _faveRepo.loadFavorites(memberId, itemType));
             return result;
 
-        } catch (PersistenceException pe) {
+        } catch (final PersistenceException pe) {
             log.warning("loadFavorites failed", "mid", memberId, "type", itemType, pe);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }

@@ -33,7 +33,7 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
-import com.threerings.msoy.money.server.MemberMoney;
+import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
 import com.threerings.msoy.money.server.MoneyResult;

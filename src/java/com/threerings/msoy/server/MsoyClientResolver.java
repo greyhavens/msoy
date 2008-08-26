@@ -49,7 +49,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.AvatarRecord;
 import com.threerings.msoy.mail.server.persist.MailRepository;
-import com.threerings.msoy.money.server.MemberMoney;
+import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;

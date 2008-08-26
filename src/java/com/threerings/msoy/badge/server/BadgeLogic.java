@@ -26,7 +26,7 @@ import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.money.server.MemberMoney;
+import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
 

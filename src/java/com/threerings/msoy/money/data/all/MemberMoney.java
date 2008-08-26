@@ -1,9 +1,11 @@
 //
 // $Id$
 
-package com.threerings.msoy.money.server;
+package com.threerings.msoy.money.data.all;
 
 import net.jcip.annotations.Immutable;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
  * The amount of money a member has in their coins, bars, and bling accounts.
@@ -11,7 +13,7 @@ import net.jcip.annotations.Immutable;
  * @author Kyle Sampson <kyle@threerings.net>
  */
 @Immutable
-public class MemberMoney
+public class MemberMoney implements IsSerializable
 {
     public MemberMoney (final int memberId)
     {
