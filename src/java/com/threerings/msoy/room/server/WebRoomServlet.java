@@ -6,6 +6,7 @@ package com.threerings.msoy.room.server;
 import java.util.List;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -76,19 +77,14 @@ public class WebRoomServlet extends MsoyServiceServlet
             MemberRecord reqrec = getAuthedUser();
             List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(memberId);
             MemberRoomsResult data = new MemberRoomsResult();
-            data.memberName = mrec.name.toString();
-            if (reqrec != null && reqrec.memberId == memberId) {
-                data.self = true;
-            } else {
-                data.self = false;
+            data.owner = mrec.getName();
+            if (reqrec == null || reqrec.memberId != memberId) {
                 // hide locked rooms from other members (even from friends)
-                List<SceneRecord> allRooms = rooms;
-                rooms = Lists.newArrayList();
-                for (SceneRecord room : allRooms) {
-                    if (room.accessControl == MsoySceneModel.ACCESS_EVERYONE) {
-                        rooms.add(room);
-                    }
-                }
+                boolean owner = (reqrec != null && reqrec.memberId == memberId);
+                Predicate<SceneRecord> filter = owner ? Predicates.<SceneRecord> alwaysTrue()
+                    : IS_PUBLIC;
+                data.rooms = Lists.newArrayList(Iterables.transform(Iterables.filter(rooms,
+                    filter), SceneRecord.TO_ROOM_INFO));
             }
             data.rooms = Lists.newArrayList(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
             return data;
@@ -130,9 +126,15 @@ public class WebRoomServlet extends MsoyServiceServlet
         }
     }
 
+    protected static final Predicate<SceneRecord> IS_PUBLIC = new Predicate<SceneRecord>() {
+        public boolean apply (SceneRecord room)
+        {
+            return room.accessControl == MsoySceneModel.ACCESS_EVERYONE;
+        }
+    };
+
     // our dependencies
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupRepository _groupRepo;
-    @Inject
-    protected MemberRepository _memberRepo;
+    @Inject protected MemberRepository _memberRepo;
 }

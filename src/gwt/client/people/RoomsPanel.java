@@ -31,7 +31,6 @@ public class RoomsPanel extends VerticalPanel
     public RoomsPanel (int memberId)
     {
         setStyleName("roomsPanel");
-        _memberId = memberId;
         _roomsvc.loadMemberRooms(memberId, new MsoyCallback<MemberRoomsResult>() {
             public void onSuccess (MemberRoomsResult result)
             {
@@ -42,19 +41,20 @@ public class RoomsPanel extends VerticalPanel
 
     protected void init (MemberRoomsResult result)
     {
-        CPeople.frame.setTitle(result.self ? _msgs.roomsMineTitle()
-            : _msgs.roomsTitle(result.memberName));
+        boolean isOwner = result.owner.getMemberId() == CPeople.getMemberId();
+        CPeople.frame.setTitle(isOwner ? _msgs.roomsMineTitle()
+            : _msgs.roomsTitle(result.owner.toString()));
 
-        add(new TongueBox(null, result.self ? _msgs.roomsMineIntro()
-            : _msgs.roomsIntro(result.memberName), false));
+        add(new TongueBox(null, isOwner ? _msgs.roomsMineIntro()
+            : _msgs.roomsIntro(result.owner.toString()), false));
 
         SmartTable grid = new SmartTable(0, 0);
         for (int ii = 0; ii < result.rooms.size(); ii++) {
             int row = ii / ROOM_COLUMNS, col = ii % ROOM_COLUMNS;
             grid.setWidget(row, col, new RoomWidget(result.rooms.get(ii)));
         }
-        add(new TongueBox(result.self ? _msgs.roomsMineTitle()
-            : _msgs.roomsTitle(result.memberName), grid));
+        add(new TongueBox(isOwner ? _msgs.roomsMineTitle()
+            : _msgs.roomsTitle(result.owner.toString()), grid));
     }
 
     protected static class RoomWidget extends SmartTable
@@ -68,8 +68,6 @@ public class RoomsPanel extends VerticalPanel
             setWidget(1, 0, MsoyUI.createActionLabel(room.name, onClick));
         }
     }
-
-    protected int _memberId;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)

@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.ServiceException;
 
 /**
@@ -40,10 +41,7 @@ public interface WebRoomService extends RemoteService
         public List<RoomInfo> rooms;
 
         /** Name of the member whose rooms these are */
-        public String memberName;
-
-        /** True if the this is a member requesting their own rooms, otherwise false */
-        public boolean self;
+        public MemberName owner;
     }
 
     /**
