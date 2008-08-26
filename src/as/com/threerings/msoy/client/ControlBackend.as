@@ -34,9 +34,7 @@ public class ControlBackend
         if (_props != null) {
             try {
                 var func :Function = (_props[name] as Function);
-                if (func == null) {
-                    Log.getLog(this).warning("User function not found [name=" + name + "]");
-                } else {
+                if (func != null) {
                     return func.apply(null, args);
                 }
 
