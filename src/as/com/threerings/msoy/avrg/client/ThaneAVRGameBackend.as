@@ -59,21 +59,25 @@ public class ThaneAVRGameBackend
     public function playerJoinedGame (memberId :int) :void
     {
         log.info("Player joined game: " + memberId);
+        callUserCode("playerJoinedGame_v1", memberId);
     }
 
     public function playerLeftGame (memberId :int) :void
     {
         log.info("Player left game: " + memberId);
+        callUserCode("playerLeftGame_v1", memberId);
     }
 
     public function playerEnteredRoom (memberId :int, roomId :int) :void
     {
         log.info("Player entered room: " + memberId + ", " + roomId);
+        callUserCode("enteredRoom_v1", memberId, roomId);
     }
 
     public function playerLeftRoom (memberId :int, roomId :int) :void
     {
         log.info("Player left room: " + memberId + ", " + roomId);
+        callUserCode("leftRoom_v1", memberId);
     }
 
     protected function handleUserCodeConnect (evt :Object) :void
