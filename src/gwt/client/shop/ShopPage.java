@@ -28,7 +28,6 @@ public class ShopPage extends Page
 {
     public static final String LOAD_LISTING = "l";
     public static final String FAVORITES = "f";
-
     public static final String TRANSACTIONS = "t";
 
     @Override // from Page
@@ -54,12 +53,13 @@ public class ShopPage extends Page
 
 
         } else if (action.equals(TRANSACTIONS)) {
-            _moneysvc.getTransactionHistory(CShop.getMemberId(), new MsoyCallback<List<Integer>>() {
-                public void onSuccess (List<Integer> history) {
-                    setContent(CShop.msgs.transactionsTitle(), new ShopPanel());
-                    // TODO
-                }
-            });
+//             _moneysvc.getTransactionHistory(CShop.getMemberId(), new MsoyCallback<List<Integer>>() {
+//                 public void onSuccess (List<Integer> history) {
+//                     setContent(CShop.msgs.transactionsTitle(), new ShopPanel());
+//                     // TODO
+//                 }
+//             });
+
         } else {
             byte type = (byte)args.get(0, Item.NOT_A_TYPE);
             if (type == Item.NOT_A_TYPE) {
