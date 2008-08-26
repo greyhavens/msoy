@@ -364,13 +364,16 @@ public class AVRGameBackend extends ControlBackend
     // PlayerSubControl
     protected function player_getGameData_v1 (targetId :int) :Object
     {
+        validatePlayerTargetId(targetId);
         return _playerObj.getUserProps();
     }
 
     // PlayerSubControl
     protected function player_setProperty_v1 (
-        propName :String, value :Object, key :Object, isArray :Boolean, immediate :Boolean) :void
+        targetId :int, propName :String, value :Object, key :Object, isArray :Boolean, 
+        immediate :Boolean) :void
     {
+        validatePlayerTargetId(targetId);
         if (!isPlaying()) {
             return;
         }
@@ -382,12 +385,14 @@ public class AVRGameBackend extends ControlBackend
     // PlayerSubControl
     protected function getPlayerId_v1 (targetId :int /* ignored */) :int
     {
+        validatePlayerTargetId(targetId);
         return _wctx.getMemberObject().getMemberId();
     }
 
     // PlayerSubControl
     protected function deactivateGame_v1 (targetId :int /* ignored */) :Boolean
     {
+        validatePlayerTargetId(targetId);
         if (!isPlaying()) {
             return false;
         }
@@ -399,6 +404,7 @@ public class AVRGameBackend extends ControlBackend
     protected function completeTask_v1 (
         targetId :int /* ignored */, taskId :String, payout :Number) :Boolean
     {
+        validatePlayerTargetId(targetId);
         if (!taskId || !isPlaying()) {
             return false;
         }
@@ -417,6 +423,7 @@ public class AVRGameBackend extends ControlBackend
     // PlayerSubControl
     protected function playAvatarAction_v1 (targetId :int /* ignored */, action :String) :Boolean
     {
+        validatePlayerTargetId(targetId);
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.sendMessage(action, null, true);
@@ -428,6 +435,7 @@ public class AVRGameBackend extends ControlBackend
     // PlayerSubControl
     protected function setAvatarState_v1 (targetId :int /* ignored */, state :String) :Boolean
     {
+        validatePlayerTargetId(targetId);
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setState(state);
@@ -440,6 +448,7 @@ public class AVRGameBackend extends ControlBackend
     protected function setAvatarMoveSpeed_v1 (
         targetId :int /* ignored */, pixelsPerSecond :Number) :Boolean
     {
+        validatePlayerTargetId(targetId);
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setMoveSpeedFromUser(pixelsPerSecond);
@@ -452,6 +461,7 @@ public class AVRGameBackend extends ControlBackend
     protected function setAvatarLocation_v1 (
         targetId :int /* ignored */, x :Number, y :Number, z: Number, orient :Number) :Boolean
     {
+        validatePlayerTargetId(targetId);
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setLocationFromUser(x, y, z, orient);
@@ -464,6 +474,7 @@ public class AVRGameBackend extends ControlBackend
     protected function setAvatarOrientation_v1 (
         targetId :int /* ignored */, orient :Number) :Boolean
     {
+        validatePlayerTargetId(targetId);
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setOrientationFromUser(orient);
@@ -718,6 +729,13 @@ public class AVRGameBackend extends ControlBackend
     protected function playerIdStr () :String
     {
         return "[" + (_playerObj == null ? "null" : _playerObj.getMemberId()) + "]";
+    }
+
+    protected function validatePlayerTargetId (targetId :int) :void
+    {
+        if (targetId != 0) {
+            throw new Error("Unexpected target [id=" + targetId + "]");
+        }
     }
 
     protected var _wctx :WorldContext;
