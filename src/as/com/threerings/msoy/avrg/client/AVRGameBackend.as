@@ -268,19 +268,27 @@ public class AVRGameBackend extends ControlBackend
     // RoomSubControl
     protected function room_getGameData_v1 (targetId :int) :Object
     {
-        // TODO: Wait for Jamie's AVRGameController/ThaneAVRGameController refactor.
-        return { };
+        validateRoomTargetId(targetId);
+        var roomProps :RoomPropertiesObject = _ctrl.getRoomProperties();
+        if (roomProps == null) {
+            log.warning("Room properties not found [roomObj=" + _roomObj + "]");
+            log.logStackTrace(new Error());
+            return { };
+        }
+        return roomProps.getUserProps();
     }
 
     // RoomSubControl
     protected function getRoomId_v1 (targetId :int /* ignored */) :int
     {
+        validateRoomTargetId(targetId);
         return getRoomId();
     }
 
     // RoomSubControl
     protected function room_getPlayerIds_v1 (targetId :int /* ignored */) :Array
     {
+        validateRoomTargetId(targetId);
         if (!isPlaying() || _roomObj == null) {
             return null;
         }
@@ -300,6 +308,7 @@ public class AVRGameBackend extends ControlBackend
     // RoomSubControl
     protected function isPlayerHere_v1 (targetId :int /* ignored */, playerId :int) :Boolean
     {
+        validateRoomTargetId(targetId);
         if (isPlaying() && _roomObj != null) {
             var fakeName :MemberName = new MemberName("", playerId);
             return (_gameObj.getOccupantInfo(fakeName) != null &&
@@ -311,6 +320,7 @@ public class AVRGameBackend extends ControlBackend
     // RoomSubControl
     protected function getAvatarInfo_v1 (targetId :int /* ignored */, playerId :int) :Object
     {
+        validateRoomTargetId(targetId);
         var sprite :MemberSprite = getAvatarSprite(playerId);
         if (sprite != null) {
             return [
@@ -333,6 +343,7 @@ public class AVRGameBackend extends ControlBackend
     protected function spawnMob_v1 (
         targetId :int /* ignored */, mobId :String, mobName :String) :Boolean
     {
+        validateRoomTargetId(targetId);
         if (mobId && mobName && isPlaying()) {
             var sprite :MobSprite = getMobSprite(mobId);
             if (sprite == null) {
@@ -349,6 +360,7 @@ public class AVRGameBackend extends ControlBackend
     protected function despawnMob_v1 (
         targetId :int /* ignored */, mobId :String) :Boolean
     {
+        validateRoomTargetId(targetId);
         if (mobId && isPlaying()) {
             var sprite :MobSprite = getMobSprite(mobId);
             if (sprite != null) {
@@ -734,7 +746,14 @@ public class AVRGameBackend extends ControlBackend
     protected function validatePlayerTargetId (targetId :int) :void
     {
         if (targetId != 0) {
-            throw new Error("Unexpected target [id=" + targetId + "]");
+            throw new Error("Unexpected player target [id=" + targetId + "]");
+        }
+    }
+
+    protected function validateRoomTargetId (targetId :int) :void
+    {
+        if (targetId != 0) {
+            throw new Error("Unexpected room target [id=" + targetId + "]");
         }
     }
 
