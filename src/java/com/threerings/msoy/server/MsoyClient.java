@@ -52,6 +52,7 @@ public class MsoyClient extends WhirledClient
 
     /**
      * Returns the number of non-idle seconds this client has passed during this session.
+     * <em>Note:</em> this value is only valid <em>before</em> the session has actually ended.
      */
     public int getSessionSeconds ()
     {
@@ -140,19 +141,19 @@ public class MsoyClient extends WhirledClient
 
         // if this was a member, record some end of session related info to the database
         if (!_memobj.isGuest()) {
-            final int activeMins = Math.round((_memobj.sessionSeconds + getSessionSeconds()) / 60f);
-            final MemberName name = _memobj.memberName;
+            final int activeMins = Math.round((_memobj.sessionSeconds + _connectTime -
+                                               _idleTracker.getIdleTime()) / 60f);
+            final int memberId = _memobj.getMemberId();
             final StatSet stats = _memobj.stats;
+            log.info("Session ended [id=" + memberId + ", amins=" + activeMins + "].");
             stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
-            _invoker.postUnit(new WriteOnlyUnit("sessionDidEnd:" + name) {
+            _invoker.postUnit(new WriteOnlyUnit("sessionDidEnd:" + _memobj.memberName) {
                 public void invokePersist () throws Exception {
                     // write out any modified stats
-                    _statRepo.writeModified(
-                        name.getMemberId(), stats.toArray(new Stat[stats.size()]));
+                    _statRepo.writeModified(memberId, stats.toArray(new Stat[stats.size()]));
                     // increment their session and minutes online counters
                     _memberRepo.noteSessionEnded(
-                        name.getMemberId(), activeMins,
-                        RuntimeConfig.server.humanityReassessment);
+                        memberId, activeMins, RuntimeConfig.server.humanityReassessment);
                 }
             });
         }
