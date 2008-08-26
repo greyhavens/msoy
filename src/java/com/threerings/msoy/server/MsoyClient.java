@@ -122,26 +122,24 @@ public class MsoyClient extends WhirledClient
         // let our various server entities know that this member logged off
         _locator.memberLoggedOff(_memobj);
 
-        // if this is a real logoff event, and this was a player, log what they did; (otherwise, if
-        // it's not a logoff, do nothing - the memobj was already forwarded to the new host.)
-        if (!_sessionForwarded && !(_memobj.username instanceof LurkerName)) {
+        // remove our idle tracker
+        _memobj.removeListener(_idleTracker);
+
+        // if this session was forwarded to another server, we can stop here
+        if (_sessionForwarded) {
+            _memobj = null;
+            return;
+        }
+
+        // if this this was a player or guest (but not a lurker), log their stats
+        if (!(_memobj.username instanceof LurkerName)) {
             String sessTok = ((MsoyCredentials)getCredentials()).sessionToken;
             _memobj.metrics.save(_memobj);
             _eventLog.logPlayerMetrics(_memobj, sessTok);
         }
 
-        // remove our idle tracker
-        _memobj.removeListener(_idleTracker);
-
-        // nothing more needs doing for guests
-        if (_memobj.isGuest()) {
-            _memobj = null;
-            return;
-        }
-
-        // if this session was not forwarded to another server; we want to record some end of
-        // session related information to the database
-        if (!_sessionForwarded) {
+        // if this was a member, record some end of session related info to the database
+        if (!_memobj.isGuest()) {
             final int activeMins = Math.round((_memobj.sessionSeconds + getSessionSeconds()) / 60f);
             final MemberName name = _memobj.memberName;
             final StatSet stats = _memobj.stats;
