@@ -128,7 +128,6 @@ public class MemberManager
                 MsoyClient client = (MsoyClient)_clmgr.getClient(memobj.username);
                 if (client != null) {
                     memobj.sessionSeconds += client.getSessionSeconds();
-                    log.info("Incremented session seconds " + memobj.sessionSeconds);
                 }
 
                 // store our transient bits in the additional data map
