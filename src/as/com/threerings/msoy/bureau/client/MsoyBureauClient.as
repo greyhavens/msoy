@@ -9,6 +9,7 @@ import com.threerings.msoy.bureau.data.ThaneCodes;
 import com.threerings.msoy.bureau.data.ThaneWorldMarshaller;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
 import com.threerings.msoy.client.DeploymentConfig;
+import com.threerings.msoy.client.MsoyLogConfig;
 import com.whirled.bureau.client.UserCodeLoader;
 import com.whirled.bureau.client.WhirledBureauClient;
 
@@ -82,6 +83,9 @@ public class MsoyBureauClient extends WhirledBureauClient
 
     protected var _windowDirector :WindowDirector;
     protected var _windowToken :String;
+
+    // configure log levels
+    MsoyLogConfig.init();
 }
 
 }
