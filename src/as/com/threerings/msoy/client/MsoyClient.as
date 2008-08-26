@@ -39,6 +39,7 @@ import com.threerings.crowd.client.CrowdClient;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.client.MsoyLogConfig;
 import com.threerings.msoy.client.TrackingCookie;
 
 import com.threerings.msoy.data.LurkerName;
@@ -519,5 +520,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
 
     /** Array of ReferralInfo objects to be sent out to the server, once we finish handshake. */
     protected var _referrals :Array; // of ReferralInfo
+
+    // configure log levels
+    MsoyLogConfig.init();
 }
 }

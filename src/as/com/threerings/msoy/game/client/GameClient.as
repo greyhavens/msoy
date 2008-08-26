@@ -12,7 +12,6 @@ import com.threerings.presents.net.Credentials;
 
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.MsoyLogConfig;
 import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -73,9 +72,6 @@ public class GameClient extends MsoyClient
     }
 
     protected var _gctx :GameContextImpl;
-
-    // configure log levels
-    MsoyLogConfig.init();
 
     private static const log :Log = Log.getLog(GameClient);
 }
