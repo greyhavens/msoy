@@ -1,9 +1,7 @@
 //
-// $Id$
+// $Id: MyRoomsPanel.java 10984 2008-08-19 19:03:33Z mdb $
 
-package client.me;
-
-import java.util.List;
+package client.people;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -15,6 +13,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.room.gwt.RoomInfo;
 import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
+import com.threerings.msoy.room.gwt.WebRoomService.MemberRoomsResult;
 
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -27,28 +26,35 @@ import client.util.ServiceUtil;
 /**
  * Displays this member's rooms.
  */
-public class MyRoomsPanel extends VerticalPanel
+public class RoomsPanel extends VerticalPanel
 {
-    public MyRoomsPanel ()
+    public RoomsPanel (int memberId)
     {
-        setStyleName("myRooms");
-
-        _roomsvc.loadMyRooms(new MsoyCallback<List<RoomInfo>>() {
-            public void onSuccess (List<RoomInfo> rooms) {
-                init(rooms);
+        setStyleName("roomsPanel");
+        _memberId = memberId;
+        _roomsvc.loadMemberRooms(memberId, new MsoyCallback<MemberRoomsResult>() {
+            public void onSuccess (MemberRoomsResult result)
+            {
+                init(result);
             }
         });
     }
 
-    protected void init (List<RoomInfo> rooms)
+    protected void init (MemberRoomsResult result)
     {
-        add(new TongueBox(null, _msgs.roomsIntro(), false));
+        CPeople.frame.setTitle(result.self ? _msgs.roomsMineTitle()
+            : _msgs.roomsTitle(result.memberName));
+
+        add(new TongueBox(null, result.self ? _msgs.roomsMineIntro()
+            : _msgs.roomsIntro(result.memberName), false));
+
         SmartTable grid = new SmartTable(0, 0);
-        for (int ii = 0; ii < rooms.size(); ii++) {
+        for (int ii = 0; ii < result.rooms.size(); ii++) {
             int row = ii / ROOM_COLUMNS, col = ii % ROOM_COLUMNS;
-            grid.setWidget(row, col, new RoomWidget(rooms.get(ii)));
+            grid.setWidget(row, col, new RoomWidget(result.rooms.get(ii)));
         }
-        add(new TongueBox(_msgs.titleRooms(), grid));
+        add(new TongueBox(result.self ? _msgs.roomsMineTitle()
+            : _msgs.roomsTitle(result.memberName), grid));
     }
 
     protected static class RoomWidget extends SmartTable
@@ -63,7 +69,9 @@ public class MyRoomsPanel extends VerticalPanel
         }
     }
 
-    protected static final MeMessages _msgs = GWT.create(MeMessages.class);
+    protected int _memberId;
+
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final WebRoomServiceAsync _roomsvc = (WebRoomServiceAsync)
         ServiceUtil.bind(GWT.create(WebRoomService.class), WebRoomService.ENTRY_POINT);
 

@@ -1,7 +1,6 @@
 <module>
   <inherits name="item"/>
 
-  <source path="com/threerings/msoy/room/gwt"/>
   <source path="com/threerings/msoy/badge/data/all"/>
   <source path="com/threerings/msoy/badge/gwt"/>
   <source path="com/threerings/msoy/person/gwt"/>

@@ -18,7 +18,7 @@ public interface WebRoomService extends RemoteService
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/roomsvc";
 
-    /** Delivers the respose to {@link #getGroupRooms}. */
+    /** Delivers the respose to {@link #loadGroupRooms}. */
     public static class RoomsResult implements IsSerializable
     {
         /**
@@ -32,6 +32,20 @@ public interface WebRoomService extends RemoteService
         public List<RoomInfo> callerRooms;
     }
 
+    /** Delivers the respose to {@link #loadMemberRooms}. */
+    public static class MemberRoomsResult
+        implements IsSerializable
+    {
+        /** List of visible rooms for this member. */
+        public List<RoomInfo> rooms;
+
+        /** Name of the member whose rooms these are */
+        public String memberName;
+
+        /** True if the this is a member requesting their own rooms, otherwise false */
+        public boolean self;
+    }
+
     /**
      * Loads information on a particular room.
      */
@@ -39,9 +53,9 @@ public interface WebRoomService extends RemoteService
         throws ServiceException;
 
     /**
-     * Loads the list of rooms owned by the calling user.
+     * Loads the list of rooms owned by a given member, excluding ones locked to the calling user.
      */
-    List<RoomInfo> loadMyRooms ()
+    MemberRoomsResult loadMemberRooms (int memberId)
         throws ServiceException;
 
     /**

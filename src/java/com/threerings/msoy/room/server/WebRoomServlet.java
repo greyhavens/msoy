@@ -14,6 +14,7 @@ import com.samskivert.io.PersistenceException;
 
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
@@ -63,15 +64,36 @@ public class WebRoomServlet extends MsoyServiceServlet
     }
 
     // from interface WebRoomService
-    public List<RoomInfo> loadMyRooms ()
+    public MemberRoomsResult loadMemberRooms (int memberId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
         try {
-            List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(mrec.memberId);
-            return Lists.newArrayList(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
+            MemberRecord mrec = _memberRepo.loadMember(memberId);
+            if (mrec == null) {
+                log.warning("Could not locate member when loading rooms", "memberId", memberId);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            }
+            MemberRecord reqrec = getAuthedUser();
+            List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(memberId);
+            MemberRoomsResult data = new MemberRoomsResult();
+            data.memberName = mrec.name.toString();
+            if (reqrec != null && reqrec.memberId == memberId) {
+                data.self = true;
+            } else {
+                data.self = false;
+                // hide locked rooms from other members (even from friends)
+                List<SceneRecord> allRooms = rooms;
+                rooms = Lists.newArrayList();
+                for (SceneRecord room : allRooms) {
+                    if (room.accessControl == MsoySceneModel.ACCESS_EVERYONE) {
+                        rooms.add(room);
+                    }
+                }
+            }
+            data.rooms = Lists.newArrayList(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
+            return data;
         } catch (PersistenceException pe) {
-            log.warning("Load rooms failed", "memberId", mrec.memberId, pe);
+            log.warning("Load rooms failed", "memberId", memberId, pe);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -107,8 +129,10 @@ public class WebRoomServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
-  
+
     // our dependencies
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupRepository _groupRepo;
+    @Inject
+    protected MemberRepository _memberRepo;
 }

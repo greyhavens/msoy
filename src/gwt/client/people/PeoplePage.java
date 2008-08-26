@@ -28,6 +28,9 @@ public class PeoplePage extends Page
         } else if (action.equals("f")) {
             setContent(new FriendsPanel(args.get(1, 0)));
 
+        } else if (action.equals("rooms")) {
+            setContent(new RoomsPanel(args.get(1, 0)));
+
         } else if (CPeople.isGuest()) {
             setContent(new PeoplePanel());
 

@@ -28,9 +28,6 @@ public class MePage extends Page
         if (action.equals("account")) {
             setContent(_msgs.titleAccount(), new EditAccountPanel());
 
-        } else if (action.equals("rooms")) {
-            setContent(_msgs.titleRooms(), new MyRoomsPanel());
-
         } else if (action.equals("passport")) {
             // guests should never get a link to a passport page that will use the default, so 0
             // is fine (it'll through an internal error on the server)

@@ -17,6 +17,7 @@
   <source path="com/threerings/msoy/person/gwt"/>
   <source path="com/threerings/msoy/profile/gwt"/>
   <source path="com/threerings/msoy/stuff/gwt"/>
+  <source path="com/threerings/msoy/room/gwt"/>
 
   <source path="client/comment"/>
   <source path="client/mail"/>

@@ -47,7 +47,8 @@ public class TitleBar extends SmartTable
                 subnavi.addLink(null, "Me", Pages.ME, "");
                 subnavi.addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD,
                                      "m" + memberId);
-                subnavi.addLink(null, "Rooms", Pages.ME, "rooms", false);
+                subnavi.addLink(null, "Rooms", Pages.PEOPLE, Args.compose("rooms", memberId),
+                    false);
                 subnavi.addLink(null, "Passport", Pages.ME, "passport");
                 subnavi.addLink(null, "Profile", Pages.PEOPLE, "" + memberId);
                 subnavi.addLink(null, "Mail", Pages.MAIL, "");
@@ -143,6 +144,7 @@ public class TitleBar extends SmartTable
         setCloseVisible(false);
     }
 
+    @Override
     public void setTitle (String title) {
         if (title != null) {
             _titleLabel.setText(title);
