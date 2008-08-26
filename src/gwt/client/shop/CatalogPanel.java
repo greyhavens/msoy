@@ -213,7 +213,6 @@ public class CatalogPanel extends SmartTable
         CShop.msgs.sortByPriceAsc(),
         CShop.msgs.sortByPriceDesc(),
         CShop.msgs.sortByPurchases(),
-        CShop.msgs.sortByRemixable(),
     };
     protected static final byte[] SORT_VALUES = new byte[] {
         CatalogQuery.SORT_BY_NEW_AND_HOT,
@@ -222,6 +221,5 @@ public class CatalogPanel extends SmartTable
         CatalogQuery.SORT_BY_PRICE_ASC,
         CatalogQuery.SORT_BY_PRICE_DESC,
         CatalogQuery.SORT_BY_PURCHASES,
-        CatalogQuery.SORT_BY_REMIXABLE,
     };
 }

@@ -534,10 +534,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         case CatalogQuery.SORT_BY_NEW_AND_HOT:
             addOrderByNewAndHot(obExprs, obOrders);
             break;
-        case CatalogQuery.SORT_BY_REMIXABLE:
-            // part of this sort will be applied after the select
-            addOrderByRating(obExprs, obOrders);
-            break;
         default:
             throw new IllegalArgumentException(
                 "Sort method not implemented [sortBy=" + sortBy + "]");
@@ -553,14 +549,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             getCatalogClass(), clauses.toArray(new QueryClause[clauses.size()]));
 
         // resolve their item bits
-        records = resolveCatalogRecords(records);
-
-        // sort by remix requires access to ItemRecord.isRemixable()
-        if (sortBy == CatalogQuery.SORT_BY_REMIXABLE) {
-            Collections.sort(records, SORT_BY_REMIXABLE);
-        }
-
-        return records;
+        return resolveCatalogRecords(records);
     }
 
     /**
@@ -1257,18 +1246,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         @SuppressWarnings("unchecked") Class<RatingRecord> cclazz = (Class<RatingRecord>)clazz;
         return cclazz;
     }
-
-    /**
-     * Comparator for sorting {@link CatalogRecord}, by remixability. CatalogRecord.item must be
-     * supplied for this method to work.
-     */
-    protected static Comparator<CatalogRecord> SORT_BY_REMIXABLE = new Comparator<CatalogRecord>() {
-        public int compare (CatalogRecord c1, CatalogRecord c2)
-        {
-            return Comparators.compare(c2.item != null && c2.item.isRemixable(),
-                c1.item != null && c1.item.isRemixable());
-        }
-    };
 
     /** The byte type of our item. */
     protected byte _itemType;
