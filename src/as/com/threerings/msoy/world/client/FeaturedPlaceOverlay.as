@@ -45,7 +45,7 @@ public class FeaturedPlaceOverlay extends Sprite
 
                 // NOTE: If watermark.png ever changes, update the width/height constants
                 MultiLoader.getContents(
-                    DeploymentConfig.serverURL + "images/ui/watermark.png",
+                    DeploymentConfig.serverURL + "rsrc/watermark.png",
                     _waterMark.addChild);
             }
 
