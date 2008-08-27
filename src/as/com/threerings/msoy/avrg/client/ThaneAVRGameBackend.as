@@ -34,16 +34,26 @@ public class ThaneAVRGameBackend
         _controller = controller;
     }
 
+    /**
+     * Determines if we are connected to the front end code.
+     */
     public function isConnected () :Boolean
     {
         return _userFuncs != null;
     }
 
+    /**
+     * Retrieves the function pointer that will be called with the user properties when the front 
+     * end connects.
+     */
     public function getConnectListener () :Function
     {
         return handleUserCodeConnect;
     }
 
+    /**
+     * Cleans up our references when this agent is going away.
+     */
     public function shutdown () :void
     {
         // shut down sub-backends, remove listeners
@@ -51,23 +61,35 @@ public class ThaneAVRGameBackend
         _gameObjNetAdapter.release();
     }
 
+    /**
+     * Informs the user code that the room is no longer accessible.
+     */
     public function roomUnloaded (roomId :int) :void
     {
         callUserCode("roomUnloaded_v1", roomId);
     }
 
+    /**
+     * Informs the user code that a player has joined the game.
+     */
     public function playerJoinedGame (memberId :int) :void
     {
         log.info("Player joined game: " + memberId);
         callUserCode("playerJoinedGame_v1", memberId);
     }
 
+    /**
+     * Informs the user code that a player has left the game.
+     */
     public function playerLeftGame (memberId :int) :void
     {
         log.info("Player left game: " + memberId);
         callUserCode("playerLeftGame_v1", memberId);
     }
 
+    /**
+     * Informs the user code that a player has entered a room.
+     */
     public function playerEnteredRoom (memberId :int, roomId :int) :void
     {
         log.info("Player entered room: " + memberId + ", " + roomId);
@@ -75,11 +97,26 @@ public class ThaneAVRGameBackend
         callUserCode("playerEntered_v1", roomId, memberId);
     }
 
+    /**
+     * Informs the user code that a player has left a room.
+     */
     public function playerLeftRoom (memberId :int, roomId :int) :void
     {
         log.info("Player left room: " + memberId + ", " + roomId);
         callUserCode("playerLeft_v1", roomId, memberId);
         callUserCode("leftRoom_v1", memberId, roomId);
+    }
+
+    /**
+     * Creates an adapter that will dispatch to the player controls in the user code.
+     */
+    public function createPlayerNetAdapter (player :PlayerObject) :BackendNetAdapter
+    {
+        var adapter :BackendNetAdapter = new BackendNetAdapter(
+            player, RoomPropertiesObject.USER_MESSAGE, _userFuncs, "player_propertyWasSet_v1", 
+            null);
+        adapter.setTargetId(player.getMemberId());
+        return adapter;
     }
 
     protected function handleUserCodeConnect (evt :Object) :void
@@ -99,7 +136,7 @@ public class ThaneAVRGameBackend
         props.hostProps = ourProps;
 
         _gameObjNetAdapter = new BackendNetAdapter(
-            _gameObj, AVRGameObject.USER_MESSAGE, _userFuncs, "game_propertyWasSet_v1", 
+            _gameObj, AVRGameObject.USER_MESSAGE, _userFuncs, null, 
             "game_messageReceived_v1");
 
         _privateMessageAdapter = new BackendNetAdapter(
