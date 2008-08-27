@@ -9,8 +9,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
-import com.threerings.msoy.money.gwt.MoneyService;
-import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 
 import client.item.ShopUtil;
 import client.shell.Args;

@@ -18,5 +18,5 @@ public interface MoneyServiceAsync
      * The asynchronous version of {@link MoneyService#getTransactionHistory}.
      */
     void getTransactionHistory (int memberId, int from, int count,
-                                AsyncCallback<List<MoneyHistory>> callback);
+                                AsyncCallback<HistoryListResult> callback);
 }

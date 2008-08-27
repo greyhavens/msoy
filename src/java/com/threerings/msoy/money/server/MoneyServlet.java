@@ -15,6 +15,7 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.money.data.all.MoneyHistory;
 import com.threerings.msoy.money.data.all.MoneyType;
 import com.threerings.msoy.money.gwt.MoneyService;
+import com.threerings.msoy.money.gwt.HistoryListResult;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 
 /**
@@ -23,16 +24,18 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
 public class MoneyServlet extends MsoyServiceServlet
     implements MoneyService
 {
-    public List<MoneyHistory> getTransactionHistory (int memberId, int from, int count)
+    public HistoryListResult getTransactionHistory (int memberId, int from, int count)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
         if (mrec.memberId != memberId && !mrec.isSupport()) {
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
-        // TODO: Access control
-        // TODO: Money type
-        return _moneyLogic.getLog(memberId, MoneyType.COINS, from, count, true);
+
+        HistoryListResult ofTheJedi = new HistoryListResult();
+        ofTheJedi.history = _moneyLogic.getLog(memberId, MoneyType.COINS, from, count, true);
+        ofTheJedi.totalCount = 50; // TODO
+        return ofTheJedi;
     }
 
     @Inject protected MoneyLogic _moneyLogic;
