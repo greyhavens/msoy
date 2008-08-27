@@ -35,6 +35,7 @@ public class ButtonPalette extends Canvas
         addChild(_toggle);
 
         _tile = new Tile();
+        _tile.visible = !UberClient.isFeaturedPlaceView();
         _tile.tileWidth = 22;
         _tile.tileHeight = 23;
         _tile.styleName = "buttonPalette";
