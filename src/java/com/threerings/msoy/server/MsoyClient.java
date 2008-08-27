@@ -29,7 +29,6 @@ import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRepository;
 

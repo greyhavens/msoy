@@ -24,7 +24,6 @@ import com.samskivert.io.PersistenceException;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
-import com.samskivert.util.Comparators;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntSet;

@@ -3,11 +3,7 @@
 
 package com.threerings.msoy.money.gwt;
 
-import java.util.List;
-
 import com.google.gwt.user.client.rpc.RemoteService;
-
-import com.threerings.msoy.web.data.ServiceException;
 
 // import com.threerings.msoy.money.data.all.MoneyHistory;
 

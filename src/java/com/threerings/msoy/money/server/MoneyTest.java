@@ -34,14 +34,11 @@ import com.threerings.msoy.server.persist.UserActionRepository;
 import com.threerings.presents.annotation.EventQueue;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
-import com.threerings.msoy.money.data.all.MoneyHistory;
-import com.threerings.msoy.money.data.all.MoneyType;
-
 /**
  * This really should be an integration test that's executed on every build, but it's not
  * current setup to handle database updates (it will try modifying the database, there's
  * no way to rollback, etc.).
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class MoneyTest
@@ -64,16 +61,16 @@ public class MoneyTest
         final long end2 = System.currentTimeMillis() / 1000;
         _expirer.setMaxAge(3000);
         _expirer.start();
-        
+
         final List<MoneyHistory> log = _service.getLog(1, null, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 10.0, false, 
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 10.0, false,
             "Purchased 10 bars.", null), start, end, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 101.0, false, 
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 101.0, false,
             "testExpirer - coins2", null), start2, end2, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, false, 
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, false,
             "testExpirer - coins1", null), start, end, false);
     }
-    
+
     @Test
     public void testBuyBars ()
         throws Exception
@@ -84,14 +81,14 @@ public class MoneyTest
         assertEquals(oldMoney.getBars() + 2, result.getNewMemberMoney().getBars());
         assertEquals(oldMoney.getAccBars() + 2, result.getNewMemberMoney().getAccBars());
         final long endTime = System.currentTimeMillis() / 1000;
-        
+
         final List<MoneyHistory> log = _service.getLog(1, MoneyType.BARS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 2.0, false, 
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 2.0, false,
             "Purchased 2 bars.", null), startTime, endTime, true);
-        
+
         checkActionLogExists(1, UserAction.BOUGHT_BARS.getNumber(), "Purchased 2 bars.", startTime, endTime);
     }
-    
+
     @Test
     public void testBuyBarItemWithBars ()
         throws Exception
@@ -104,32 +101,32 @@ public class MoneyTest
         _service.secureBarPrice(1, 2, 3, item, 100, "My bar item");
         final MoneyResult result = _service.buyItemWithBars(1, item, false);
         final long endTime = System.currentTimeMillis() / 1000;
-        
+
         // Check member account
         final MemberMoney newMoney = result.getNewMemberMoney();
         assertEquals(oldMoney.getBars() + 50, newMoney.getBars());
         assertEquals(oldMoney.getAccBars() + 150, newMoney.getAccBars());
-        
+
         List<MoneyHistory> log = _service.getLog(1, MoneyType.BARS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 100.0, true, 
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 100.0, true,
             "My bar item", item), startTime, endTime, true);
-        
+
         checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(), "My bar item", startTime, endTime);
-        
+
         // Check creator account
         final MemberMoney newCreatorMoney = result.getNewCreatorMoney();
         assertEquals(oldCreatorMoney.getBling() + 100.0*0.3, newCreatorMoney.getBling(), 0.001);
         assertEquals(oldCreatorMoney.getAccBling() + 100.0*0.3, newCreatorMoney.getAccBling(), 0.001);
-        
+
         log = _service.getLog(2, MoneyType.BLING, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.BLING, 100.0*0.3, false, 
+        checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.BLING, 100.0*0.3, false,
             "Item purchased: My bar item", item), startTime, endTime, true);
-        
+
         checkActionLogExists(2, UserAction.RECEIVED_PAYOUT.getNumber(), "My bar item", startTime, endTime);
-        
+
         // TODO: check affiliate account
     }
-    
+
     @Test(expected=NotEnoughMoneyException.class)
     public void testNotEnoughBars ()
         throws Exception
@@ -139,7 +136,7 @@ public class MoneyTest
         _service.secureBarPrice(1, 2, 3, item, oldMoney.getBars() + 1, "My bar item");
         _service.buyItemWithBars(1, item, false);
     }
-        
+
     @Test(expected=NotEnoughMoneyException.class)
     public void testNotEnoughCoins ()
         throws Exception
@@ -149,7 +146,7 @@ public class MoneyTest
         _service.secureCoinPrice(1, 2, 3, item, oldMoney.getCoins() + 1, "My coin item");
         _service.buyItemWithCoins(1, item, false);
     }
-    
+
     @Test(expected=NotSecuredException.class)
     public void testNotSecured ()
         throws Exception
@@ -157,7 +154,7 @@ public class MoneyTest
         final ItemIdent item = new ItemIdent(Item.AVATAR, 1);
         _service.buyItemWithBars(1, item, false);
     }
-    
+
     @Test
     public void testBuyCoinItemWithCoins ()
         throws Exception
@@ -170,34 +167,34 @@ public class MoneyTest
         _service.secureCoinPrice(1, 2, 3, item, 100, "testBuyCoinItemWithCoins - test");
         final MoneyResult result = _service.buyItemWithCoins(1, item, false);
         final long endTime = System.currentTimeMillis() / 1000;
-        
+
         // Check member account
         final MemberMoney newMoney = result.getNewMemberMoney();
         assertEquals(oldMoney.getCoins() + 50, newMoney.getCoins());
         assertEquals(oldMoney.getAccCoins() + 150, newMoney.getAccCoins());
-        
+
         List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, true, 
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, true,
             "testBuyCoinItemWithCoins - test", item), startTime, endTime, true);
-        
-        checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(), "testBuyCoinItemWithCoins - test", 
+
+        checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(), "testBuyCoinItemWithCoins - test",
             startTime, endTime);
-        
+
         // Check creator account
         final MemberMoney newCreatorMoney = result.getNewCreatorMoney();
         assertEquals(oldCreatorMoney.getCoins() + 30, newCreatorMoney.getCoins());
         assertEquals(oldCreatorMoney.getAccCoins() + 30, newCreatorMoney.getAccCoins());
-        
+
         log = _service.getLog(2, MoneyType.COINS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.COINS, 30.0, false, 
+        checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.COINS, 30.0, false,
             "Item purchased: testBuyCoinItemWithCoins - test", item), startTime, endTime, true);
-        
-        checkActionLogExists(2, UserAction.RECEIVED_PAYOUT.getNumber(), "testBuyCoinItemWithCoins - test", 
+
+        checkActionLogExists(2, UserAction.RECEIVED_PAYOUT.getNumber(), "testBuyCoinItemWithCoins - test",
             startTime, endTime);
-        
-        // TODO: check affiliate account        
+
+        // TODO: check affiliate account
     }
-    
+
     @Test
     public void testAwardCoins ()
         throws Exception
@@ -208,21 +205,21 @@ public class MoneyTest
         final MoneyResult result = _service.awardCoins(1, 2, 3, item, 150,
             "150 coins awarded.  Thanks for playing!", UserAction.PLAYED_GAME);
         final long endTime = System.currentTimeMillis() / 1000;
-        
+
         final MemberMoney newMoney = result.getNewMemberMoney();
         assertEquals(oldMoney.getCoins() + 150, newMoney.getCoins());
         assertEquals(oldMoney.getAccCoins() + 150, newMoney.getAccCoins());
-        
+
         final List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 150.0, false, 
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 150.0, false,
             "150 coins awarded.  Thanks for playing!", item), startTime, endTime, true);
-        
-        checkActionLogExists(1, UserAction.PLAYED_GAME.getNumber(), "150 coins awarded.  Thanks for playing!", 
+
+        checkActionLogExists(1, UserAction.PLAYED_GAME.getNumber(), "150 coins awarded.  Thanks for playing!",
             startTime, endTime);
-        
+
         // TODO: check creator and affiliate accounts
     }
-    
+
     @Test
     public void testCreatorBoughtOwnItem ()
         throws Exception
@@ -234,19 +231,19 @@ public class MoneyTest
         _service.secureCoinPrice(1, 1, 3, item, 100, "testCreatorBoughtOwnItem - test");
         final MoneyResult result = _service.buyItemWithCoins(1, item, false);
         final long endTime = System.currentTimeMillis() / 1000;
-        
+
         // Check member account
         final MemberMoney newMoney = result.getNewMemberMoney();
         assertEquals(oldMoney.getCoins() + 50 + 30, newMoney.getCoins());
         assertEquals(oldMoney.getAccCoins() + 150, newMoney.getAccCoins());
-        
+
         final List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 70.0, true, 
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 70.0, true,
             "testCreatorBoughtOwnItem - test", item), startTime, endTime, true);
-        
+
         checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(), "testCreatorBoughtOwnItem - test", startTime, endTime);
     }
-    
+
     @Test
     public void testSupport () throws Exception
     {
@@ -257,21 +254,21 @@ public class MoneyTest
         _service.secureCoinPrice(1, 2, 3, item, oldMoney.getCoins() - 100, "testSupport - test");
         final MemberMoney newMoney = _service.buyItemWithCoins(1, item, true).getNewMemberMoney();
         assertEquals(100, newMoney.getCoins());
-        
+
         // Now buy a 150 coin item.  Should succeed, bringing available coins to 0.
         final MemberMoney oldCreatorMoney = _service.getMoneyFor(2);
         _service.secureCoinPrice(1, 2, 3, item, 150, "testSupport - test2");
         MoneyResult result = _service.buyItemWithCoins(1, item, true);
         assertEquals(0, result.getNewMemberMoney().getCoins());
         assertEquals(30 + oldCreatorMoney.getCoins(), result.getNewCreatorMoney().getCoins());
-        
+
         // Buy a 50 coin item.  Should succeed and remain at 0
         _service.secureCoinPrice(1, 2, 3, item, 50, "testSupport - test3");
         result = _service.buyItemWithCoins(1, item, true);
         assertEquals(0, result.getNewMemberMoney().getCoins());
         assertEquals(30 + oldCreatorMoney.getCoins(), result.getNewCreatorMoney().getCoins());
     }
-    
+
     @Before
     public void setup () throws Exception
     {
@@ -291,8 +288,8 @@ public class MoneyTest
             initialized = true;
         }
     }
-    
-    private void checkMoneyHistory (final List<MoneyHistory> log, final MoneyHistory expected, 
+
+    private void checkMoneyHistory (final List<MoneyHistory> log, final MoneyHistory expected,
         final long start, final long end, final boolean isPresent)
     {
         MoneyHistory logEntry = null;
@@ -310,14 +307,14 @@ public class MoneyTest
                 return;
             }
         }
-     
+
         assertEquals(expected.getAmount(), logEntry.getAmount(), 0.0);
         assertEquals(expected.getItem(), logEntry.getItem());
         assertEquals(expected.getMemberId(), logEntry.getMemberId());
         assertEquals(expected.getType(), logEntry.getType());
         assertEquals(expected.isSpent(), logEntry.isSpent());
     }
-    
+
     private void checkActionLogExists (final int memberId, final int actionId, final String data,
         final long start, final long end)
         throws Exception
@@ -333,7 +330,7 @@ public class MoneyTest
         }
         assertTrue("No matching action log record found.", found);
     }
-    
+
     @Inject private MoneyLogic _service;
     @Inject private UserActionRepository _userActionRepo;
     @Inject private MsoyEventLogger _eventLog;

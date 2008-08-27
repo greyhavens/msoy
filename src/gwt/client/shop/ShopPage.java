@@ -3,8 +3,6 @@
 
 package client.shop;
 
-import java.util.List;
-
 import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.item.data.all.Item;

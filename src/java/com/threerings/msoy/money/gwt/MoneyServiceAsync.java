@@ -3,10 +3,6 @@
 
 package com.threerings.msoy.money.gwt;
 
-import java.util.List;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
-
 // import com.threerings.msoy.money.data.all.MoneyHistory;
 
 /**
