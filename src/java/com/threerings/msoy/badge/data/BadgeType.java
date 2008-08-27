@@ -188,7 +188,7 @@ public enum BadgeType
             return stats.getIntStat(StatType.FURNITURE_CREATED);
         }
 
-        // FURNITURE_BUILDER is unlocked once you have at least one other CREATION badge
+        // FURNITURE_BUILDER is unlocked once either JUDGE or SHOPPER has been earned
         @Override public boolean isUnlocked (Collection<EarnedBadge> badges) {
             return Iterables.any(badges, new Predicate<EarnedBadge>() {
                 public boolean apply (EarnedBadge badge) {
