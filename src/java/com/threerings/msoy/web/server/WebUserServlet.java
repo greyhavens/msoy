@@ -457,7 +457,7 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     protected void verifyCaptcha (String challenge, String response)
-        throws ServiceException
+    throws ServiceException
     {
         if (challenge == null || response == null) {
             log.warning("Registration request with invalid captcha [challenge=" + challenge +
@@ -487,16 +487,12 @@ public class WebUserServlet extends MsoyServiceServlet
             in = conn.getInputStream();
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-            String status = br.readLine();
-            log.info("Captcha response", "challenge", challenge, "response", response, "status", status);
-
             // see if the response was valid
-            if ("true".equals(status)) {
+            if ("true".equals(br.readLine())) {
                 return;
             }
 
             String error = br.readLine();
-            log.info("Captcha error", "error", error);
             // we're not supposed to rely on these error codes, but reCaptcha doesn't give
             // AJAX users any other options for error management
             if (!"incorrect-captcha-sol".equals(error)) {
