@@ -3,6 +3,10 @@
 
 package com.threerings.msoy.avrg.client {
 
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.io.TypedArray;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.InvocationAdapter;
@@ -10,9 +14,11 @@ import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.util.Integer;
+import com.threerings.util.Iterator;
 import com.threerings.util.Log;
 import com.threerings.util.ObjectMarshaller;
 import com.whirled.game.client.PropertySpaceHelper;
+import com.whirled.game.client.WhirledGameMessageService;
 import com.whirled.game.data.PropertySetEvent;
 import com.whirled.game.data.PropertySetAdapter;
 import com.whirled.game.data.PropertySpaceObject;
@@ -98,6 +104,40 @@ public class BackendUtils
                 trace("Error setting property (immediate): " + re);
             }
         }
+    }
+
+    public static function getPlayerIds (gameObj :AVRGameObject) :Array
+    {
+        var result :Array = new Array();
+        var iterator :Iterator = gameObj.occupantInfo.iterator();
+        while (iterator.hasNext()) {
+            var name :MemberName = OccupantInfo(iterator.next()).username as MemberName;
+            if (name != null) {
+                result.push(name.getMemberId());
+            }
+        }
+        return result;
+    }
+
+    public static function sendMessage (
+        svc :WhirledGameMessageService, client :Client, msgName :String, msgValue :Object, 
+        svcName :String) :void
+    {
+        var encoded :Object = ObjectMarshaller.encode(msgValue, false);
+        svc.sendMessage(
+            client, msgName, encoded, loggingInvocationListener(svcName + " sendMessage"));
+    }
+
+    public static function sendPrivateMessage (
+        svc :WhirledGameMessageService, client :Client, receiverId :int, msgName :String, 
+        msgValue :Object, svcName :String) :void
+    {
+        var encoded :Object = ObjectMarshaller.encode(msgValue, false);
+        var targets :TypedArray = TypedArray.create(int);
+        targets.push(receiverId);
+        svc.sendPrivateMessage(
+            client, msgName, encoded, targets, 
+            loggingInvocationListener(svcName + " sendPrivateMessage"));
     }
 
     /**

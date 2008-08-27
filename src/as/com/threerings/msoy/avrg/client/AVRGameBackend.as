@@ -253,16 +253,8 @@ public class AVRGameBackend extends ControlBackend
         if (!isPlaying()) {
             return null;
         }
-
-        var result :Array = new Array();
-        var iterator :Iterator = _gameObj.occupantInfo.iterator();
-        while (iterator.hasNext()) {
-            var name :MemberName = OccupantInfo(iterator.next()).username as MemberName;
-            if (name != null) {
-                result.push(name.getMemberId());
-            }
-        }
-        return result;
+        
+        return BackendUtils.getPlayerIds(_gameObj);
     }
 
     // RoomSubControl
@@ -563,10 +555,8 @@ public class AVRGameBackend extends ControlBackend
     // AgentSubControl
     protected function agent_sendMessage_v1 (name :String, value :Object) :void
     {
-        var encoded :Object = ObjectMarshaller.encode(value, false);
-        _gameObj.messageService.sendPrivateMessage(
-            _gctx.getClient(), name, encoded, TO_AGENT, 
-            BackendUtils.loggingConfirmListener("sendMessage"));
+        BackendUtils.sendPrivateMessage(
+            _gameObj.messageService, _gctx.getClient(), SERVER_AGENT_ID, name, value, "game");
     }
 
     // TODO: MobControl
@@ -873,8 +863,5 @@ public class AVRGameBackend extends ControlBackend
                 playerLeft(info.username, "room occupancy changed");
             }
         });
-
-    protected static const TO_AGENT :TypedArray = TypedArray.create(int);
-    TO_AGENT.push(SERVER_AGENT_ID);
 }
 }

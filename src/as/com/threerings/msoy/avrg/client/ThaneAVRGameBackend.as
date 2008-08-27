@@ -150,11 +150,12 @@ public class ThaneAVRGameBackend
     // -------------------- .game --------------------
     protected function game_getPlayerIds_v1 () :Array
     {
-        return [];
+        return BackendUtils.getPlayerIds(_gameObj);
     }
 
     protected function game_sendMessage_v1 (name :String, value :Object) :void
     {
+        BackendUtils.sendMessage(_gameObj.messageService, _ctx.getClient(), name, value, "game");
     }
 
     protected function isRoomLoaded_v1 (roomId :int) :Boolean
@@ -233,10 +234,8 @@ public class ThaneAVRGameBackend
         if (roomProps == null) {
             throw new Error("Room not loaded [roomId=" + roomId + "]");
         }
-        var encoded :Object = ObjectMarshaller.encode(value, false);
-        roomProps.messageService.sendMessage(
-            _controller.getRoomClient(roomId), name, encoded, 
-            BackendUtils.loggingInvocationListener("room_sendMessage"));
+        BackendUtils.sendMessage(
+            roomProps.messageService, _controller.getRoomClient(roomId), name, value, "room");
     }
 
     
@@ -307,12 +306,8 @@ public class ThaneAVRGameBackend
 
     protected function player_sendMessage_v1 (playerId :int, name :String, value :Object) :void
     {
-        var encoded :Object = ObjectMarshaller.encode(value, false);
-        var targets :TypedArray = TypedArray.create(int);
-        targets.push(playerId);
-        _gameObj.messageService.sendPrivateMessage(
-            _ctx.getClient(), name, encoded, targets, 
-            BackendUtils.loggingInvocationListener("player_sendMessage"));
+        BackendUtils.sendPrivateMessage(
+            _gameObj.messageService, _ctx.getClient(), playerId, name, value, "room");
     }
 
     // -------------------- .getPlayer().props --------------------
