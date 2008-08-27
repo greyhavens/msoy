@@ -58,7 +58,6 @@ public class ThaneAVRGameBackend
     {
         // shut down sub-backends, remove listeners
         _privateMessageAdapter.release();
-        _gameObjNetAdapter.release();
     }
 
     /**
@@ -134,10 +133,6 @@ public class ThaneAVRGameBackend
         var ourProps :Object = new Object();
         populateProperties(ourProps);
         props.hostProps = ourProps;
-
-        _gameObjNetAdapter = new BackendNetAdapter(
-            _gameObj, AVRGameObject.USER_MESSAGE, _userFuncs, null, 
-            "game_messageReceived_v1");
 
         _privateMessageAdapter = new BackendNetAdapter(
             _ctx.getClient().getClientObject(), 
@@ -396,7 +391,6 @@ public class ThaneAVRGameBackend
     protected var _ctx :MsoyBureauContext; // this is for the game server
     protected var _controller :ThaneAVRGameController;
     protected var _gameObj :AVRGameObject;
-    protected var _gameObjNetAdapter :BackendNetAdapter;
     protected var _privateMessageAdapter :BackendNetAdapter;
 }
 
