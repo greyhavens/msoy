@@ -187,16 +187,6 @@ public enum BadgeType
         @Override protected int getAcquiredUnits (StatSet stats) {
             return stats.getIntStat(StatType.FURNITURE_CREATED);
         }
-
-        // FURNITURE_BUILDER is unlocked once either JUDGE or SHOPPER has been earned
-        @Override public boolean isUnlocked (Collection<EarnedBadge> badges) {
-            return Iterables.any(badges, new Predicate<EarnedBadge>() {
-                public boolean apply (EarnedBadge badge) {
-                    BadgeType type = getType(badge.badgeCode);
-                    return (type == JUDGE || type == SHOPPER);
-                }
-            });
-        }
     },
 
     LANDSCAPE_PAINTER(StampCategory.CREATION, StatType.BACKDROPS_CREATED, new Level[] {
