@@ -5,16 +5,14 @@ package com.threerings.msoy.money.data.all;
 
 import java.util.Date;
 
-import net.jcip.annotations.Immutable;
-
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Contains the history of a single transaction involving coins, bars, or bling.
  * 
+ * @Immutable
  * @author Kyle Sampson <kyle@threerings.net>
  */
-@Immutable
 public class MoneyHistory
 {
     public MoneyHistory (final int memberId, final Date timestamp, final MoneyType type,
