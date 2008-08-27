@@ -181,7 +181,7 @@ public class HeaderBar extends HBox
         if (embedded) {
             addChild(FlexUtil.createSpacer(10));
             const coinIcon :Image = new Image();
-            coinIcon.source = DeploymentConfig.serverURL + "images/ui/coin_14x14.png";
+            coinIcon.source = DeploymentConfig.serverURL + "rsrc/coin_14x14.png";
             const hb :HBox = new HBox();
             hb.setStyle("verticalAlign", "middle");
             hb.percentHeight = 100;
