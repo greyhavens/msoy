@@ -3,22 +3,24 @@
 
 package com.threerings.msoy.avrg.client {
 
-import flash.events.Event;
-
-import com.threerings.io.TypedArray;
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.avrg.data.PlayerLocation;
-import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.bureau.util.MsoyBureauContext;
-import com.threerings.msoy.room.data.RoomPropertiesObject;
-import com.threerings.presents.client.InvocationAdapter;
-import com.threerings.presents.client.InvocationService_InvocationListener;
-import com.threerings.presents.dobj.MessageAdapter;
-import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.util.Log;
 import com.threerings.util.ObjectMarshaller;
+
 import com.whirled.game.data.WhirledPlayerObject;
 
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
+
+import com.threerings.msoy.game.data.PlayerObject;
+
+import com.threerings.msoy.bureau.util.MsoyBureauContext;
+
+import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.RoomPropertiesObject;
+
+/**
+ * Manages the connection to the server agent thane user code for an AVRG.
+ */
 public class ThaneAVRGameBackend
 {
     public static const log :Log = Log.getLog(ThaneAVRGameBackend);
@@ -115,6 +117,16 @@ public class ThaneAVRGameBackend
             player, RoomPropertiesObject.USER_MESSAGE, _userFuncs, "player_propertyWasSet_v1", 
             null);
         adapter.setTargetId(player.getMemberId());
+        return adapter;
+    }
+
+    /**
+     * Creates an adapter that will dispatch movements to the room controls in the user code.
+     */
+    public function createMovementAdapter (room :RoomObject) :BackendMovementAdapter
+    {
+        var adapter :BackendMovementAdapter = new BackendMovementAdapter(
+            _gameObj, room, _userFuncs, "playerMoved_v1");
         return adapter;
     }
 

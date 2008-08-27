@@ -322,7 +322,9 @@ public class ThaneAVRGameController
         log.info("Got room [" + info + "]");
 
         binding.room = roomObj;
-        
+        binding.movementAdapter = _backend.createMovementAdapter(roomObj);
+        binding.movementAdapter.setTargetId(binding.sceneId);
+
         var entry :RoomPropertiesEntry;
         entry = binding.room.propertySpaces.get(_gameAgentObj.gameId) as RoomPropertiesEntry;
         if (entry != null) {
@@ -410,6 +412,8 @@ public class ThaneAVRGameController
 
         // Release all resources
         if (binding.room != null) {
+            binding.movementAdapter.release();
+            binding.movementAdapter = null;
             binding.subscriber.unsubscribe(binding.window.getDObjectManager());
             binding.subscriber = null;
             binding.room = null;
@@ -447,6 +451,7 @@ public class ThaneAVRGameController
 
 }
 
+import com.threerings.msoy.avrg.client.BackendMovementAdapter;
 import com.threerings.msoy.avrg.client.BackendNetAdapter;
 import com.threerings.msoy.bureau.client.Window;
 import com.threerings.msoy.room.data.RoomObject;
@@ -463,6 +468,7 @@ class SceneBinding
     public var room :RoomObject;
     public var propsSubscriber :SafeSubscriber;
     public var roomProps :RoomPropertiesObject;
+    public var movementAdapter :BackendMovementAdapter;
 
     // from Object
     public function toString () :String

@@ -26,8 +26,6 @@ import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.whirled.spot.data.SpotSceneObject;
-
 import com.threerings.msoy.client.MsoyClient;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -98,11 +96,6 @@ public class AVRGameController extends PlaceController
         gameAvailable(0);
 
         maybeDispatchLeftRoom("shutdown");
-
-        if (_roomObj != null) {
-            _roomObj.removeListener(_movementListener);
-            _roomObj = null;
-        }
 
         _wctx.getOccupantDirector().removeOccupantObserver(_occupantObserver);
 
@@ -211,9 +204,6 @@ public class AVRGameController extends PlaceController
 
         // will be null if not a room
         _roomObj = (_wctx.getLocationDirector().getPlaceObject() as RoomObject);
-        if (_roomObj != null) {
-            _roomObj.addListener(_movementListener);
-        }
 
         var panel :AVRGamePanel = (getPlaceView() as AVRGamePanel);
         panel.backendIsReady();
@@ -256,14 +246,9 @@ public class AVRGameController extends PlaceController
             log.warning("Room changing to same room?");
         }
 
-        if (_roomObj != null) {
-            _roomObj.removeListener(_movementListener);
-            maybeDispatchLeftRoom("room change");
-        }
+        maybeDispatchLeftRoom("room change");
+
         _roomObj = roomObject;
-        if (_roomObj != null) {
-            _roomObj.addListener(_movementListener);
-        }
 
         // establish a subscription to the properties of the room
         var gameId :int = getGameId();
@@ -456,25 +441,6 @@ public class AVRGameController extends PlaceController
             }
         });
 
-    protected var _movementListener :SetAdapter = new SetAdapter(null,
-        function (event :EntryUpdatedEvent) :void {
-            if (event.getName() == SpotSceneObject.OCCUPANT_LOCS) {
-                var oid :int = event.getEntry().getKey();
-                if (_roomObj != null) {
-                    // find the occupant info for this body
-                    var occInfo :OccupantInfo = _roomObj.occupantInfo.get(oid);
-                    if (occInfo) {
-                        // and its name
-                        var name :MemberName = occInfo.username as MemberName;
-                        // and make sure it's a player
-                        if (name != null && _gameObj.getOccupantInfo(name)) {
-                            _backend.playerMoved(name.getMemberId());
-                        }
-                    }
-                }
-            }
-        });
-
     protected var _occupantObserver :OccupantObserver = new OccupantAdapter(
         function (info :OccupantInfo) :void {
             if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
@@ -486,6 +452,5 @@ public class AVRGameController extends PlaceController
                 roomOccupantRemoved(info.username, "room occupancy changed");
             }
         });
-
 }
 }

@@ -122,6 +122,11 @@ public class AVRGameBackend extends ControlBackend
             _roomPropsNetAdapter.release();
             _roomPropsNetAdapter = null;
         }
+
+        if (_movementAdapter != null) {
+            _movementAdapter.release();
+            _movementAdapter = null;
+        }
     }
 
     public function playerEnteredRoom (roomId :int, roomProps :RoomPropertiesObject) :void
@@ -129,6 +134,9 @@ public class AVRGameBackend extends ControlBackend
         _roomPropsNetAdapter = new BackendNetAdapter(
             roomProps, RoomPropertiesObject.USER_MESSAGE, 
             _props, "room_propertyWasSet_v1", "room_messageReceived_v1");
+
+        _movementAdapter = new BackendMovementAdapter(
+            _gameObj, _ctrl.getRoom(), _props, "playerMoved_v1");
 
         callUserCode("enteredRoom_v1", roomId);
     }
@@ -662,5 +670,6 @@ public class AVRGameBackend extends ControlBackend
     protected var _gameNetAdapter :BackendNetAdapter;
     protected var _playerNetAdapter :BackendNetAdapter;
     protected var _roomPropsNetAdapter :BackendNetAdapter;
+    protected var _movementAdapter :BackendMovementAdapter;
 }
 }
