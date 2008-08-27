@@ -47,12 +47,12 @@ public class MoneyLogicImpl
 {
     @Inject
     public MoneyLogicImpl (
-        final MoneyRepository repo, final SecuredPricesCache securedPricesCache,
+        final MoneyRepository repo, final EscrowCache escrowCache,
         final MoneyHistoryExpirer expirer, final UserActionRepository userActionRepo,
         final MsoyEventLogger eventLog)
     {
         _repo = repo;
-        _securedPricesCache = securedPricesCache;
+        _escrowCache = escrowCache;
         _userActionRepo = userActionRepo;
         _eventLog = eventLog;
         _expirer = expirer;
@@ -186,8 +186,10 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(numBars >= 0, "bars is invalid: %d", numBars);
 
         // TODO: Use exchange rate to calculate coins.
-        _securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.BARS, 0,
-            numBars, creatorId, affiliateId, description));
+        PriceQuote quote = new PriceQuote(MoneyType.BARS, 0, numBars);
+        PriceKey key = new PriceKey(memberId, item);
+        Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
+        _escrowCache.addEscrow(key, escrow);
         return 0;
     }
 
@@ -202,8 +204,10 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(numCoins >= 0, "numCoins is invalid: %d", numCoins);
 
         // TODO: Use exchange rate to calculate bars.
-        _securedPricesCache.securePrice(memberId, item, new SecuredPrices(MoneyType.COINS, numCoins,
-            0, creatorId, affiliateId, description));
+        PriceQuote quote = new PriceQuote(MoneyType.COINS, numCoins, 0);
+        PriceKey key = new PriceKey(memberId, item);
+        Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
+        _escrowCache.addEscrow(key, escrow);
         return 0;
     }
 
@@ -230,16 +234,19 @@ public class MoneyLogicImpl
             purchaseType.toString());
 
         // Get the secured prices for the item.
-        final SecuredPrices prices = _securedPricesCache.getSecuredPrice(memberId, item);
-        if (prices == null) {
+        PriceKey key = new PriceKey(memberId, item);
+        final Escrow escrow = _escrowCache.getEscrow(key);
+        if (escrow == null) {
             throw new NotSecuredException(memberId, item);
         }
-        int amount = (purchaseType == MoneyType.BARS ? prices.getBars() : prices.getCoins());
+        PriceQuote quote = escrow.getQuote();
+        // TODO: MUCH TODO
+        int amount = purchaseType == MoneyType.BARS ? quote.getBars() : quote.getCoins();
 
         // If the creator is buying their own item, don't give them a payback, and deduct the amount
         // they would have received.
         boolean payCreator = true;
-        if (memberId == prices.getCreatorId()) {
+        if (memberId == escrow.getCreatorId()) {
             amount -= (int)(0.3 * amount);
             payCreator = false;
         }
@@ -254,40 +261,40 @@ public class MoneyLogicImpl
 
         // Get creator.
         MemberAccountRecord creator;
-        if (memberId == prices.getCreatorId()) {
+        if (memberId == escrow.getCreatorId()) {
             creator = account;
         } else {
-            creator = _repo.getAccountById(prices.getCreatorId());
+            creator = _repo.getAccountById(escrow.getCreatorId());
             if (creator == null) {
-                creator = new MemberAccountRecord(prices.getCreatorId());
+                creator = new MemberAccountRecord(escrow.getCreatorId());
             }
         }
 
         // Update the member account
         final MemberAccountHistoryRecord history = account.buyItem(amount, purchaseType,
-            prices.getDescription(), item, support);
+            escrow.getDescription(), item, support);
         _repo.addHistory(history);
         _repo.saveAccount(account);
         UserActionDetails info = logUserAction(memberId, UserActionDetails.INVALID_ID,
-            UserAction.BOUGHT_ITEM, item, prices.getDescription());
+            UserAction.BOUGHT_ITEM, item, escrow.getDescription());
         logInPanopticon(info, purchaseType, history.getSignedAmount(), account);
 
         // Update the creator account, if they get a payment.
         MemberAccountHistoryRecord creatorHistory = history;
         if (payCreator) {
-            creatorHistory = creator.creatorPayout((int)history.getAmount(), prices.getListedType(),
-                "Item purchased: " + prices.getDescription(), item, 0.3);
+            creatorHistory = creator.creatorPayout((int)history.getAmount(), quote.getListedType(),
+                "Item purchased: " + escrow.getDescription(), item, 0.3);
             _repo.addHistory(creatorHistory);
             _repo.saveAccount(creator);
-            info = logUserAction(prices.getCreatorId(), memberId, UserAction.RECEIVED_PAYOUT, item,
-                prices.getDescription());
+            info = logUserAction(escrow.getCreatorId(), memberId, UserAction.RECEIVED_PAYOUT, item,
+                escrow.getDescription());
             logInPanopticon(info, purchaseType, creatorHistory.getSignedAmount(), creator);
         }
 
         // TODO: update affiliate with some amount of bling.
 
         // The item no longer needs to be in the cache.
-        _securedPricesCache.removeSecuredPrice(memberId, item);
+        _escrowCache.removeEscrow(key);
 
         return new MoneyResult(account.getMemberMoney(), payCreator ? creator.getMemberMoney() :
             null, null, history.createMoneyHistory(), payCreator ?
@@ -328,5 +335,5 @@ public class MoneyLogicImpl
     private final MsoyEventLogger _eventLog;
     private final UserActionRepository _userActionRepo;
     private final MoneyRepository _repo;
-    private final SecuredPricesCache _securedPricesCache;
+    private final EscrowCache _escrowCache;
 }

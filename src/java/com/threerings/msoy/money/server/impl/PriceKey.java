@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.money.server.impl;
 
-import java.io.Serializable;
+import com.google.common.base.Preconditions;
+
+import com.samskivert.util.ObjectUtil;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -11,14 +13,16 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  * Key identifying a secured price.  The key is made up of the member ID and item ID.
  * 
  * @author Kyle Sampson <kyle@threerings.net>
+ * @author Ray Greenwell <ray@threerings.net>
  */
-class PriceKey implements Serializable
+class PriceKey
 {
-    public PriceKey (final int memberId, final ItemIdent item)
+    public PriceKey (final int memberId, final ItemIdent itemIdent)
     {
+        Preconditions.checkNotNull(itemIdent);
+
         _memberId = memberId;
-        _itemId = item.itemId;
-        _itemType = item.type;
+        _ident = itemIdent;
     }
     
     public int getMemberId ()
@@ -28,17 +32,15 @@ class PriceKey implements Serializable
     
     public ItemIdent getItem ()
     {
-        return new ItemIdent(_itemType, _itemId);
+        return _ident;
     }
 
     @Override
     public int hashCode ()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + _itemId;
-        result = prime * result + _memberId;
-        return result;
+        int hash = _memberId;
+        hash = 31 * hash + _ident.hashCode();
+        return hash;
     }
 
     @Override
@@ -49,11 +51,9 @@ class PriceKey implements Serializable
             return false;
         }
         final PriceKey that = (PriceKey)obj;
-        return (this._itemId == that._itemId) && (this._itemType == that._itemType) &&
-            (this._memberId == that._memberId);
+        return (this._memberId == that._memberId) && ObjectUtil.equals(this._ident, that._ident);
     }
     
     private final int _memberId;
-    private final int _itemId;
-    private final byte _itemType;
+    private final ItemIdent _ident;
 }

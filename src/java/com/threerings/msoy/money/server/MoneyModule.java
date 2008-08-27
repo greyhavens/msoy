@@ -10,8 +10,8 @@ import com.google.inject.AbstractModule;
 import com.threerings.msoy.money.server.impl.MoneyLogicImpl;
 import com.threerings.msoy.money.server.impl.Retry;
 import com.threerings.msoy.money.server.impl.RetryInterceptor;
-import com.threerings.msoy.money.server.impl.SecuredPricesCache;
-import com.threerings.msoy.money.server.impl.SecuredPricesEhcache;
+import com.threerings.msoy.money.server.impl.EscrowCache;
+import com.threerings.msoy.money.server.impl.EscrowCacheMap;
 import com.threerings.msoy.money.server.persist.DepotMoneyRepository;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 
@@ -27,8 +27,8 @@ public final class MoneyModule extends AbstractModule
     {
         bind(MoneyRepository.class).to(DepotMoneyRepository.class);
         bind(MoneyLogic.class).to(MoneyLogicImpl.class);
-        bind(SecuredPricesCache.class).toInstance(
-            new SecuredPricesEhcache(SECURED_PRICES_MAX_ELEMENTS, SECURED_PRICES_MAX_DURATION));
+        bind(EscrowCache.class).toInstance(
+            new EscrowCacheMap(SECURED_PRICES_MAX_ELEMENTS, SECURED_PRICES_MAX_DURATION));
         bindInterceptor(any(), annotatedWith(Retry.class), new RetryInterceptor());
     }
 
