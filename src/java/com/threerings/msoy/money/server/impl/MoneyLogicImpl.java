@@ -65,7 +65,7 @@ public class MoneyLogicImpl
         UserAction userAction)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot award coins to guests.");
-        Preconditions.checkArgument(amount > 0, "amount is invalid: %d", amount);
+        Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
         Preconditions.checkArgument(item == null || item.itemId != 0 || item.type != 0,
             "item is invalid: %s", (item == null ? null : item.toString()));
 
@@ -91,7 +91,7 @@ public class MoneyLogicImpl
     public MoneyResult buyBars (final int memberId, final int numBars)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy bars.");
-        Preconditions.checkArgument(numBars > 0, "numBars is invalid: %d", numBars);
+        Preconditions.checkArgument(numBars >= 0, "numBars is invalid: %d", numBars);
 
         MemberAccountRecord account = _repo.getAccountById(memberId);
         if (account == null) {
@@ -312,11 +312,11 @@ public class MoneyLogicImpl
         final ItemIdent item, final String description)
     {
         try {
-            final UserActionDetails details = item == null ?
-                new UserActionDetails(memberId, userAction, otherMemberId, Item.NOT_A_TYPE,
-                    UserActionDetails.INVALID_ID, description) :
-                new UserActionDetails(memberId, userAction, otherMemberId, item.type,
-                    item.itemId, description);
+            final UserActionDetails details = new UserActionDetails(
+                memberId, userAction, otherMemberId,
+                (item == null) ? Item.NOT_A_TYPE : item.type,
+                (item == null) ? UserActionDetails.INVALID_ID : item.itemId,
+                description);
             _userActionRepo.logUserAction(details);
             return details;
         } catch (final PersistenceException pe) {

@@ -31,7 +31,8 @@ import com.threerings.msoy.money.server.persist.PersistentMoneyType;
  * @author Kyle Sampson <kyle@threerings.net>
  */
 @Singleton
-public class MoneyHistoryExpirer implements Shutdowner
+public class MoneyHistoryExpirer
+    implements Shutdowner
 {
     /**
      * Starts the expirer.  By default, it will use a single-threaded scheduled executor,
@@ -43,7 +44,8 @@ public class MoneyHistoryExpirer implements Shutdowner
         this(repo, sm, Executors.newSingleThreadScheduledExecutor());
     }
     
-    public MoneyHistoryExpirer (final MoneyRepository repo, final ShutdownManager sm, 
+    public MoneyHistoryExpirer (
+        final MoneyRepository repo, final ShutdownManager sm,
         final ScheduledExecutorService service)
     {
         _repo = repo;

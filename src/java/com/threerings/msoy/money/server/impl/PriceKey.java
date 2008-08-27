@@ -44,20 +44,13 @@ class PriceKey implements Serializable
     @Override
     public boolean equals (final Object obj)
     {
-        if (this == obj)
-            return true;
-        if (obj == null)
+        if (this == obj) return true;
+        if (obj == null || (getClass() != obj.getClass())) {
             return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final PriceKey other = (PriceKey)obj;
-        if (_itemId != other._itemId)
-            return false;
-        if (_itemType != other._itemType)
-            return false;
-        if (_memberId != other._memberId)
-            return false;
-        return true;
+        }
+        final PriceKey that = (PriceKey)obj;
+        return (this._itemId == that._itemId) && (this._itemType == that._itemType) &&
+            (this._memberId == that._memberId);
     }
     
     private final int _memberId;
