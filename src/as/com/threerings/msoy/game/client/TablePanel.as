@@ -208,11 +208,12 @@ class SeatPanel extends VBox
         preparePlayer();
         _headShot.setMediaDesc(player.getPhoto());
         _name.text = player.toString();
+        const ourName :VizMemberName = _ctx.getPlayerObject().memberName;
         var canLeave :Boolean = false;
-        if (player.equals(_ctx.getPlayerObject().memberName)) {
+        if (player.equals(ourName)) {
             _leaveBtn.setCommand(LobbyController.LEAVE_TABLE, _table.tableId);
             canLeave = true;
-        } else if (_ctx.getPlayerObject().memberName.equals(table.players[0])) {
+        } else if (ourName.equals(table.players[0])) {
             _leaveBtn.setCommand(LobbyController.BOOT_PLAYER, [ _table.tableId, player ]);
             canLeave = true;
         }
