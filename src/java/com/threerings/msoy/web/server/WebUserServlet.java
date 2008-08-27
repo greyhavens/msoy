@@ -457,7 +457,7 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     protected void verifyCaptcha (String challenge, String response)
-    throws ServiceException
+        throws ServiceException
     {
         if (challenge == null || response == null) {
             log.warning("Registration request with invalid captcha [challenge=" + challenge +
