@@ -78,11 +78,18 @@ public class ThaneAVRGameController
     /** Shuts down the AVRG controller. */
     public function shutdown () :void
     {
-        // flush all player bindings
+        // flush all scene bindings
         var bindings :Array = _bindings.values();
         _bindings.clear();
         for each (var binding :SceneBinding in bindings) {
             removeBinding(binding.sceneId);
+        }
+
+        // release all player adapters
+        bindings = _players.values();
+        _players.clear();
+        for each (var player :PlayerBinding in bindings) {
+            player.netAdapter.release();
         }
 
         // shutdown the backend
@@ -140,12 +147,12 @@ public class ThaneAVRGameController
      * in the game or the subscription to the player is not yet completed. */
     public function getPlayer (playerId :int) :PlayerObject
     {
-        var playerOid :Object = _playerIds[playerId];
-        if (playerOid == null) {
+        var playerBinding :PlayerBinding = _players.get(playerId) as PlayerBinding;
+        if (playerBinding == null) {
             return null;
         }
-        var player :PlayerObject = _playerSubs.getObj(int(playerOid)) as PlayerObject;
-        return player;
+        var playerObj :PlayerObject = _playerSubs.getObj(playerBinding.oid) as PlayerObject;
+        return playerObj;
     }
 
     protected function entryAdded (event :EntryAddedEvent) :void
@@ -194,9 +201,17 @@ public class ThaneAVRGameController
 
         } else if (event.getName() == PlaceObject.OCCUPANT_INFO) {
             var occInfo :OccupantInfo = event.getOldEntry() as OccupantInfo;
-            var player :PlayerObject = _playerSubs.getObj(occInfo.bodyOid) as PlayerObject;
-            if (player != null) {
-                delete _playerIds[player.getMemberId()];
+            var playerObj :PlayerObject = _playerSubs.getObj(occInfo.bodyOid) as PlayerObject;
+            if (playerObj == null) {
+                log.info("Player left game before subscription completed: " + occInfo);
+            } else {
+                var playerBinding :PlayerBinding;
+                playerBinding = _players.remove(playerObj.getMemberId()) as PlayerBinding;
+                if (playerBinding == null) {
+                    log.warning("Player leaving game has a subscriptino but no binding");
+                } else {
+                    playerBinding.netAdapter.release();
+                }
             }
             _playerSubs.unsubscribe(occInfo.bodyOid);
         }
@@ -373,28 +388,6 @@ public class ThaneAVRGameController
         binding.roomProps = propsObj;
 
         _gameObj.avrgService.roomSubscriptionComplete(_ctx.getClient(), binding.sceneId);
-
-        var test :Boolean = false;
-        if (test) {
-            trace("Properties:");
-            var propsMap :Object = propsObj.getUserProps();
-            for (var key :String in propsMap) {
-                trace("    " + key + " = " + propsMap[key]);
-            }
-
-            var adapter :InvocationAdapter = new InvocationAdapter(
-                function (cause :String) :void {
-                    log.warning("Failed to set a property: " + cause);
-                }
-            );
-            var client :Client = binding.window.getClient();
-            var value :Object = "Hello World!";
-            value = PropertySpaceHelper.encodeProperty(value, true);
-            binding.room.roomService.setProperty(
-                client, "Message", value, null, false, false, null, adapter);
-            binding.room.roomService.setProperty(
-                client, "@Message", value, null, false, false, null, adapter);
-        }
     }
 
     protected function wasRemoved (binding :SceneBinding) :Boolean
@@ -436,7 +429,10 @@ public class ThaneAVRGameController
 
     protected function gotPlayerObject (obj :PlayerObject) :void
     {
-        _playerIds[obj.getMemberId()] = obj.getOid();
+        var playerBinding :PlayerBinding = new PlayerBinding();
+        playerBinding.oid = obj.getOid();
+        playerBinding.netAdapter = _backend.createPlayerNetAdapter(obj);
+        _players.put(obj.getMemberId(), playerBinding);
     }
 
     protected var _ctx :MsoyBureauContext;
@@ -446,11 +442,12 @@ public class ThaneAVRGameController
     protected var _bindings :HashMap = new HashMap();
     protected var _setAdapter :SetAdapter = new SetAdapter(entryAdded, entryUpdated, entryRemoved);
     protected var _playerSubs :SafeObjectManager;
-    protected var _playerIds :Dictionary = new Dictionary();
+    protected var _players :HashMap = new HashMap();
 }
 
 }
 
+import com.threerings.msoy.avrg.client.BackendNetAdapter;
 import com.threerings.msoy.bureau.client.Window;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
@@ -472,4 +469,12 @@ class SceneBinding
     {
         return StringUtil.simpleToString(this);
     }
+}
+
+/** Holds the transient information about a player so that we can clean up after ourselves and
+ * lookup the object id of a member. */
+class PlayerBinding
+{
+    public var oid :int;
+    public var netAdapter :BackendNetAdapter;
 }
