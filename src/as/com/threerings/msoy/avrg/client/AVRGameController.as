@@ -4,31 +4,47 @@
 package com.threerings.msoy.avrg.client {
 
 import com.threerings.util.Log;
+import com.threerings.util.Name;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.EntryRemovedEvent;
+import com.threerings.presents.dobj.EntryUpdatedEvent;
+import com.threerings.presents.dobj.MessageAdapter;
+import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.presents.util.SafeObjectManager;
 
 import com.threerings.crowd.client.LocationAdapter;
+import com.threerings.crowd.client.OccupantAdapter;
+import com.threerings.crowd.client.OccupantObserver;
 import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.client.PlaceView;
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
+import com.threerings.whirled.spot.data.SpotSceneObject;
+
 import com.threerings.msoy.client.MsoyClient;
 
+import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.world.client.WorldContext;
+
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
+
 import com.threerings.msoy.game.client.GameContext;
+import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
 
 public class AVRGameController extends PlaceController
 {
@@ -80,6 +96,18 @@ public class AVRGameController extends PlaceController
         _wctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
         gameAvailable(0);
+
+        maybeDispatchLeftRoom("shutdown");
+
+        if (_roomObj != null) {
+            _roomObj.removeListener(_movementListener);
+            _roomObj = null;
+        }
+
+        _wctx.getOccupantDirector().removeOccupantObserver(_occupantObserver);
+
+        _gctx.getClient().getClientObject().removeListener(_playerListener);
+        _gameObj.removeListener(_gameListener);
 
         _backend.shutdown();
 
@@ -140,6 +168,11 @@ public class AVRGameController extends PlaceController
         return getAVRGameConfig().getGameId();
     }
 
+    public function getRoom () :RoomObject
+    {
+        return _roomObj;
+    }
+
     /**
      * Retrieve the room properties for our current rooom. Returns null if they are not yet 
      * available.
@@ -168,6 +201,19 @@ public class AVRGameController extends PlaceController
 
         // else create the backend!
         _backend = new AVRGameBackend(_wctx, _gctx, this, _gameObj);
+
+        _playerObj = _gctx.getPlayerObject();
+        _gameObj.addListener(_gameListener);
+
+        _gctx.getClient().getClientObject().addListener(_playerListener);
+
+        _wctx.getOccupantDirector().addOccupantObserver(_occupantObserver);
+
+        // will be null if not a room
+        _roomObj = (_wctx.getLocationDirector().getPlaceObject() as RoomObject);
+        if (_roomObj != null) {
+            _roomObj.addListener(_movementListener);
+        }
 
         var panel :AVRGamePanel = (getPlaceView() as AVRGamePanel);
         panel.backendIsReady();
@@ -206,6 +252,19 @@ public class AVRGameController extends PlaceController
      */
     protected function updateRoom (roomObject :RoomObject) :void
     {
+        if (roomObject == _roomObj) {
+            log.warning("Room changing to same room?");
+        }
+
+        if (_roomObj != null) {
+            _roomObj.removeListener(_movementListener);
+            maybeDispatchLeftRoom("room change");
+        }
+        _roomObj = roomObject;
+        if (_roomObj != null) {
+            _roomObj.addListener(_movementListener);
+        }
+
         // establish a subscription to the properties of the room
         var gameId :int = getGameId();
 
@@ -256,20 +315,177 @@ public class AVRGameController extends PlaceController
 
     protected function roomPropsAvailable (roomProps :RoomPropertiesObject) :void
     {
-        if (getRoomProperties() != null) {
-            _backend.gotRoomProperties();
+        maybeDispatchEnteredRoom("props arrived");
+    }
+
+    // internal callback
+    protected function roomOccupantAdded (name :Name, why :String) :void
+    {
+        if (name is MemberName) {
+            var memberId :int = MemberName(name).getMemberId();
+            if (memberId != _playerObj.getMemberId()) {
+                log.debug(playerIdStr(), "Player entered [name=" + name + ", why=" + why + "]");
+                _backend.roomOccupantAdded(memberId);
+            }
         }
+    }
+
+    // internal callback
+    protected function roomOccupantRemoved (name :Name, why :String) :void
+    {
+        if (name is MemberName) {
+            var memberId :int = MemberName(name).getMemberId();
+            if (memberId != _playerObj.getMemberId()) {
+                log.debug(playerIdStr(), "Player left [name=" + name + ", why=" + why + "]");
+                _backend.roomOccupantRemoved(memberId);
+            }
+        }
+    }
+
+    protected function maybeDispatchLeftRoom (why :String) :void
+    {
+        // Dispatch to user when first condition is met
+        if (_lastDispatchedSceneId != 0) {
+            log.debug(playerIdStr(), "Left room [sceneId=" + _lastDispatchedSceneId + 
+                ", why=" + why + "]");
+            _backend.playerLeftRoom(_lastDispatchedSceneId);
+            _lastDispatchedSceneId = 0;
+        }
+    }
+
+    protected function maybeDispatchEnteredRoom (why :String) :void
+    {
+        var sceneId :int = _wctx.getSceneDirector().getScene().getId();
+        if (sceneId == _lastDispatchedSceneId) {
+            log.debug(
+                playerIdStr(), "Already entered room [sceneId=" + sceneId + ", why=" + why + "]");
+            return;
+        }
+
+        // Dispatch to user when all conditions are met
+        var ploc :PlayerLocation;
+        ploc = _gameObj.playerLocs.get(_playerObj.getMemberId()) as PlayerLocation;
+        var roomProps :RoomPropertiesObject = getRoomProperties();
+        var placeObj :PlaceObject = _wctx.getLocationDirector().getPlaceObject();
+        var placeId :int = placeObj == null ? 0 : placeObj.getOid();
+        var roomOid :int = _roomObj == null ? 0 : _roomObj.getOid();
+
+        if (roomProps != null && ploc != null && sceneId == ploc.sceneId && placeId != 0 && 
+            placeId == roomOid) {
+            maybeDispatchLeftRoom("entered"); // no-op if left already
+            log.debug(playerIdStr(), "Entered room  [sceneId=" + sceneId + ", why=" + why + "]");
+            _backend.playerEnteredRoom(sceneId, roomProps);
+            _lastDispatchedSceneId = sceneId;
+
+        } else {
+            log.debug(playerIdStr(), 
+                "Would dispatch but... [roomProps=" + roomProps + ", ploc=" + ploc + 
+                ", sceneId=" + sceneId + ", placeId=" + placeId + ", roomOid=" + roomOid + 
+                ", why=" + why + "]");
+        }
+    }
+
+    protected function playerIdStr () :String
+    {
+        return "[" + (_playerObj == null ? "null" : _playerObj.getMemberId()) + "]";
     }
 
     protected var _wctx :WorldContext;
     protected var _gctx :GameContext;
 
     protected var _gameObj :AVRGameObject;
+    protected var _playerObj :PlayerObject;
     protected var _backend :AVRGameBackend;
 
+    protected var _roomObj :RoomObject;
     protected var _roomPropsSubs :SafeObjectManager;
     protected var _roomPropsOid :int;
     protected var _roomOid :int;
     protected var _roomObserver :LocationAdapter = new LocationAdapter(null, updateRoom);
+
+    protected var _lastDispatchedSceneId :int;
+
+    protected var _playerListener :MessageAdapter = new MessageAdapter(
+        function (event :MessageEvent) :void {
+            var name :String = event.getName();
+            if (name == AVRGameObject.COINS_AWARDED_MESSAGE) {
+                _backend.coinsAwarded(int(event.getArgs()[0]));
+            }
+        });
+
+    protected var _gameListener :SetAdapter = new SetAdapter(
+        function (event :EntryAddedEvent) :void {
+            if (event.getName() == PlaceObject.OCCUPANT_INFO && _roomObj != null) {
+                var gameInfo :OccupantInfo = event.getEntry();
+
+                // we look this user up by display name in the room
+                if (_roomObj.getOccupantInfo(gameInfo.username) != null) {
+                    // an occupant of our current room began playing this AVRG
+                    roomOccupantAdded(gameInfo.username, "game occupancy change");
+                }
+            } else if (event.getName() == AVRGameObject.PLAYER_LOCS) {
+                var ploc :PlayerLocation = event.getEntry() as PlayerLocation;
+                if (ploc.playerId == _playerObj.getMemberId()) {
+                    maybeDispatchEnteredRoom("location update");
+                }
+            }
+        },
+        function (event :EntryUpdatedEvent) :void {
+            if (event.getName() == AVRGameObject.PLAYER_LOCS) {
+                var ploc :PlayerLocation = event.getEntry() as PlayerLocation;
+                if (ploc.playerId == _playerObj.getMemberId()) {
+                    maybeDispatchLeftRoom("location update");
+                    maybeDispatchEnteredRoom("location update");
+                }
+            }
+        },
+        function (event :EntryRemovedEvent) :void {
+            if (event.getName() == PlaceObject.OCCUPANT_INFO && _roomObj != null) {
+                var gameInfo :OccupantInfo = event.getOldEntry();
+
+                // we look this user up by display name in the room
+                if (_roomObj.getOccupantInfo(gameInfo.username)) {
+                    // an occupant of our current room stopped playing this AVRG
+                    roomOccupantRemoved(gameInfo.username, "game occupancy change");
+                }
+            } else if (event.getName() == AVRGameObject.PLAYER_LOCS) {
+                var ploc :PlayerLocation = event.getOldEntry() as PlayerLocation;
+                if (ploc.playerId == _playerObj.getMemberId()) {
+                    maybeDispatchLeftRoom("location update");
+                }
+            }
+        });
+
+    protected var _movementListener :SetAdapter = new SetAdapter(null,
+        function (event :EntryUpdatedEvent) :void {
+            if (event.getName() == SpotSceneObject.OCCUPANT_LOCS) {
+                var oid :int = event.getEntry().getKey();
+                if (_roomObj != null) {
+                    // find the occupant info for this body
+                    var occInfo :OccupantInfo = _roomObj.occupantInfo.get(oid);
+                    if (occInfo) {
+                        // and its name
+                        var name :MemberName = occInfo.username as MemberName;
+                        // and make sure it's a player
+                        if (name != null && _gameObj.getOccupantInfo(name)) {
+                            _backend.playerMoved(name.getMemberId());
+                        }
+                    }
+                }
+            }
+        });
+
+    protected var _occupantObserver :OccupantObserver = new OccupantAdapter(
+        function (info :OccupantInfo) :void {
+            if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
+                roomOccupantAdded(info.username, "room occupancy changed");
+            }
+        },
+        function (info :OccupantInfo) :void {
+            if (_roomObj != null && _gameObj.getOccupantInfo(info.username) != null) {
+                roomOccupantRemoved(info.username, "room occupancy changed");
+            }
+        });
+
 }
 }
