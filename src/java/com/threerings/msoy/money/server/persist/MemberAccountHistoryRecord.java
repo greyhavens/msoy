@@ -17,9 +17,7 @@ import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.money.data.all.MoneyHistory;
-import com.threerings.msoy.money.data.all.MoneyType;
 
 /**
  * Domain object representing an entry in a member's account history. The account history keeps
@@ -104,7 +102,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #MemberAccountHistoryRecord}
      * with the supplied key values.
      */
-    public static Key<MemberAccountHistoryRecord> getKey (int id)
+    public static Key<MemberAccountHistoryRecord> getKey (final int id)
     {
         return new Key<MemberAccountHistoryRecord>(
                 MemberAccountHistoryRecord.class,
@@ -129,7 +127,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * @param itemType Type of the item.
      */
     public MemberAccountHistoryRecord (final int memberId, final Date timestamp,
-            final MoneyType type, final double amount, final boolean spent,
+            final PersistentMoneyType type, final double amount, final boolean spent,
             final String description, final ItemIdent item)
     {
         this.memberId = memberId;
@@ -156,7 +154,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * @param description Description of the transaction.
      */
     public MemberAccountHistoryRecord (final int memberId, final Date timestamp,
-            final MoneyType type, final double amount, final boolean spent,
+            final PersistentMoneyType type, final double amount, final boolean spent,
             final String description)
     {
         this.memberId = memberId;
@@ -224,7 +222,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     /**
      * Type of money that was transferred.
      */
-    public MoneyType getType ()
+    public PersistentMoneyType getType ()
     {
         return type;
     }
@@ -253,7 +251,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
 
     public MoneyHistory createMoneyHistory ()
     {
-        return new MoneyHistory(memberId, timestamp, type, amount, spent, description,
+        return new MoneyHistory(memberId, timestamp, type.toMoneyType(), amount, spent, description,
             itemId == 0 ? null : new ItemIdent((byte)itemType, itemId));
     }
 
@@ -271,7 +269,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     public Timestamp timestamp;
 
     /** Type of money modified. Note: this is not part of the API, do not use it. */
-    public MoneyType type;
+    public PersistentMoneyType type;
 
     /** Amount debited/credited. Note: this is not part of the API, do not use it. */
     public double amount;

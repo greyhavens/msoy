@@ -12,12 +12,12 @@ import org.apache.log4j.Logger;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.threerings.msoy.money.data.all.MoneyType;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
+import com.threerings.msoy.money.server.persist.PersistentMoneyType;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
-
-import com.threerings.msoy.money.data.all.MoneyType;
 
 /**
  * Manages expiration of {@link MemberAccountHistoryRecord}s.  Coin records should
@@ -60,7 +60,8 @@ public class MoneyHistoryExpirer implements Shutdowner
         if (_future == null) {
             _future = _service.scheduleAtFixedRate(new Runnable() {
                 public void run () {
-                    final int count = _repo.deleteOldHistoryRecords(MoneyType.COINS, _maxAge);
+                    final int count = _repo.deleteOldHistoryRecords(
+                        PersistentMoneyType.fromMoneyType(MoneyType.COINS), _maxAge);
                     if (count > 0) {
                         logger.info("Removed " + count + 
                             " old member account history records for coins.");

@@ -143,7 +143,8 @@ public class MemberAccountRecord extends PersistentRecord
         this.accBars += bars;
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated,
-            MoneyType.BARS, bars, false, "Purchased " + bars + " bars.");
+            PersistentMoneyType.fromMoneyType(MoneyType.BARS), bars, false, "Purchased " + bars + 
+            " bars.");
     }
 
     /**
@@ -159,7 +160,7 @@ public class MemberAccountRecord extends PersistentRecord
         this.accCoins += coins;
         this.dateLastUpdated = new Timestamp(new Date().getTime());
         return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated,
-            MoneyType.COINS, coins, false, description, item);
+            PersistentMoneyType.fromMoneyType(MoneyType.COINS), coins, false, description, item);
     }
 
     /**
@@ -185,8 +186,8 @@ public class MemberAccountRecord extends PersistentRecord
             this.coins -= amount;
         }
         this.dateLastUpdated = new Timestamp(new Date().getTime());
-        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, type, amount, true,
-            description, item);
+        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, 
+            PersistentMoneyType.fromMoneyType(type), amount, true, description, item);
     }
 
     /**
@@ -227,8 +228,8 @@ public class MemberAccountRecord extends PersistentRecord
             paymentType = MoneyType.COINS;
         }
         this.dateLastUpdated = new Timestamp(new Date().getTime());
-        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, paymentType, amountPaid,
-            false, description, item);
+        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, 
+            PersistentMoneyType.fromMoneyType(paymentType), amountPaid, false, description, item);
     }
 
     public int getMemberId ()

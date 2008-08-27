@@ -24,7 +24,6 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.LessThan;
 import com.samskivert.jdbc.depot.operator.Logic.And;
-import com.threerings.msoy.money.data.all.MoneyType;
 import com.threerings.presents.annotation.BlockingThread;
 
 /**
@@ -96,8 +95,8 @@ public final class DepotMoneyRepository extends DepotRepository
         }
     }
 
-    public List<MemberAccountHistoryRecord> getHistory (final int memberId, final MoneyType type,
-        final int start, final int count, final boolean descending)
+    public List<MemberAccountHistoryRecord> getHistory (final int memberId, final 
+        PersistentMoneyType type, final int start, final int count, final boolean descending)
     {
         try {
             // select * from MemberAccountRecord where type in (?) and memberId=? order by
@@ -119,7 +118,7 @@ public final class DepotMoneyRepository extends DepotRepository
         }
     }
 
-    public int deleteOldHistoryRecords (final MoneyType type, final long maxAge)
+    public int deleteOldHistoryRecords (final PersistentMoneyType type, final long maxAge)
     {
         final long oldestTimestamp = System.currentTimeMillis() - maxAge;
         final Where where = new Where(new And(

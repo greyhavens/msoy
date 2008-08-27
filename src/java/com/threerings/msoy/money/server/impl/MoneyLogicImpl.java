@@ -28,13 +28,11 @@ import com.threerings.msoy.money.server.NotSecuredException;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
+import com.threerings.msoy.money.server.persist.PersistentMoneyType;
 import com.threerings.msoy.money.server.persist.RepositoryException;
 import com.threerings.msoy.money.server.persist.StaleDataException;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.UserActionRepository;
-
-import com.threerings.msoy.money.data.all.MoneyHistory;
-import com.threerings.msoy.money.data.all.MoneyType;
 
 /**
  * Default implementation of the money service.
@@ -152,8 +150,8 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
 
         final List<MoneyHistory> log = new ArrayList<MoneyHistory>();
-        final Collection<MemberAccountHistoryRecord> records =
-            _repo.getHistory(memberId, type, start, count, descending);
+        final Collection<MemberAccountHistoryRecord> records = _repo.getHistory(memberId, 
+            PersistentMoneyType.fromMoneyType(type), start, count, descending);
         for (final MemberAccountHistoryRecord record : records) {
             log.add(record.createMoneyHistory());
         }
