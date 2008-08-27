@@ -5,6 +5,8 @@ package com.threerings.msoy.money.data.all;
 
 import java.util.Date;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
@@ -14,11 +16,13 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class MoneyHistory
+    implements IsSerializable
 {
-    public MoneyHistory (
-        final int memberId, final Date timestamp, final MoneyType type,
-        final double amount, final boolean spent, final String description,
-        final ItemIdent item)
+    // Required by for serializing
+    public MoneyHistory () { }
+
+    public MoneyHistory (int memberId, Date timestamp, MoneyType type,
+        double amount, boolean spent, String description, ItemIdent item)
     {
         _memberId = memberId;
         _timestamp = timestamp;
@@ -86,11 +90,11 @@ public class MoneyHistory
         return _item;
     }
 
-    private final int _memberId;
-    private final Date _timestamp;
-    private final MoneyType _type;
-    private final double _amount;
-    private final boolean _spent;
-    private final String _description;
-    private final ItemIdent _item;
+    private int _memberId;
+    private Date _timestamp;
+    private MoneyType _type;
+    private double _amount;
+    private boolean _spent;
+    private String _description;
+    private ItemIdent _item;
 }

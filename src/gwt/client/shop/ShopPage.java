@@ -49,14 +49,9 @@ public class ShopPage extends Page
             int page = args.get(3, 0);
             setContent(new FavoritesPanel(_models, memberId, itemType, page));
 
-
         } else if (action.equals(TRANSACTIONS)) {
-//             _moneysvc.getTransactionHistory(CShop.getMemberId(), new MsoyCallback<List<Integer>>() {
-//                 public void onSuccess (List<Integer> history) {
-//                     setContent(CShop.msgs.transactionsTitle(), new ShopPanel());
-//                     // TODO
-//                 }
-//             });
+            int memberId = args.get(1, CShop.getMemberId());
+            setContent(CShop.msgs.transactionsTitle(), new TransactionsPanel(memberId));
 
         } else {
             byte type = (byte)args.get(0, Item.NOT_A_TYPE);
@@ -92,7 +87,4 @@ public class ShopPage extends Page
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
-
-    protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
-        ServiceUtil.bind(GWT.create(MoneyService.class), MoneyService.ENTRY_POINT);
 }
