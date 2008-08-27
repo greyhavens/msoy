@@ -46,19 +46,21 @@ public class MoneyLogicImpl
     implements MoneyLogic
 {
     @Inject
-    public MoneyLogicImpl(final MoneyRepository repo, final SecuredPricesCache securedPricesCache,
+    public MoneyLogicImpl (
+        final MoneyRepository repo, final SecuredPricesCache securedPricesCache,
         final MoneyHistoryExpirer expirer, final UserActionRepository userActionRepo,
         final MsoyEventLogger eventLog)
     {
-        this._repo = repo;
-        this._securedPricesCache = securedPricesCache;
-        this._userActionRepo = userActionRepo;
-        this._eventLog = eventLog;
-        this._expirer = expirer;
+        _repo = repo;
+        _securedPricesCache = securedPricesCache;
+        _userActionRepo = userActionRepo;
+        _eventLog = eventLog;
+        _expirer = expirer;
     }
 
     @Retry(exception=StaleDataException.class)
-    public MoneyResult awardCoins (final int memberId, final int creatorId, final int affiliateId,
+    public MoneyResult awardCoins (
+        final int memberId, final int creatorId, final int affiliateId,
         final ItemIdent item, final int amount, final String description, final
         UserAction userAction)
     {
@@ -107,16 +109,16 @@ public class MoneyLogicImpl
     }
 
     @Retry(exception=StaleDataException.class)
-    public MoneyResult buyItemWithBars (final int memberId, final ItemIdent item,
-        final boolean support)
+    public MoneyResult buyItemWithBars (
+        final int memberId, final ItemIdent item, final boolean support)
         throws NotEnoughMoneyException, NotSecuredException
     {
         return buyItem(memberId, item, MoneyType.BARS, support);
     }
 
     @Retry(exception=StaleDataException.class)
-    public MoneyResult buyItemWithCoins (final int memberId, final ItemIdent item,
-        final boolean support)
+    public MoneyResult buyItemWithCoins (
+        final int memberId, final ItemIdent item, final boolean support)
         throws NotEnoughMoneyException, NotSecuredException
     {
         return buyItem(memberId, item, MoneyType.COINS, support);
@@ -124,8 +126,7 @@ public class MoneyLogicImpl
 
     public void deductBling (final int memberId, final double amount)
     {
-    // TODO Auto-generated method stub
-
+        // TODO Auto-generated method stub
     }
 
     public int exchangeBlingForBars (final int memberId, final double blingAmount)
@@ -141,7 +142,8 @@ public class MoneyLogicImpl
         return null;
     }
 
-    public List<MoneyHistory> getLog (final int memberId, final MoneyType type, final int start,
+    public List<MoneyHistory> getLog (
+        final int memberId, final MoneyType type, final int start,
         final int count, final boolean descending)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId),
@@ -173,7 +175,8 @@ public class MoneyLogicImpl
         return account != null ? account.getMemberMoney() : new MemberMoney(memberId);
     }
 
-    public int secureBarPrice (final int memberId, final int creatorId, final int affiliateId,
+    public int secureBarPrice (
+        final int memberId, final int creatorId, final int affiliateId,
         final ItemIdent item, final int numBars, final String description)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
@@ -188,7 +191,8 @@ public class MoneyLogicImpl
         return 0;
     }
 
-    public int secureCoinPrice (final int memberId, final int creatorId, final int affiliateId,
+    public int secureCoinPrice (
+        final int memberId, final int creatorId, final int affiliateId,
         final ItemIdent item, final int numCoins, final String description)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
@@ -205,8 +209,7 @@ public class MoneyLogicImpl
 
     public void updateMoneyConfiguration (final MoneyConfiguration config)
     {
-    // TODO Auto-generated method stub
-
+        // TODO Auto-generated method stub
     }
 
     public void init ()
@@ -214,8 +217,9 @@ public class MoneyLogicImpl
         _expirer.start();
     }
 
-    private MoneyResult buyItem (final int memberId, final ItemIdent item,
-        final MoneyType purchaseType, final boolean support)
+    private MoneyResult buyItem (
+        final int memberId, final ItemIdent item, final MoneyType purchaseType,
+        final boolean support)
         throws NotEnoughMoneyException, NotSecuredException
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy items.");
@@ -290,7 +294,8 @@ public class MoneyLogicImpl
             creatorHistory.createMoneyHistory() : null, null);
     }
 
-    private void logInPanopticon (final UserActionDetails info, final MoneyType type,
+    private void logInPanopticon (
+        final UserActionDetails info, final MoneyType type,
         final double delta, final MemberAccountRecord account)
     {
         if (type == MoneyType.COINS) {
@@ -302,8 +307,9 @@ public class MoneyLogicImpl
         }
     }
 
-    private UserActionDetails logUserAction (final int memberId, final int otherMemberId,
-        final UserAction userAction, final ItemIdent item, final String description)
+    private UserActionDetails logUserAction (
+        final int memberId, final int otherMemberId, final UserAction userAction,
+        final ItemIdent item, final String description)
     {
         try {
             final UserActionDetails details = item == null ?

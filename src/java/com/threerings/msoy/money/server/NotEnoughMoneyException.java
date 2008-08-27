@@ -12,28 +12,30 @@ import com.threerings.msoy.money.data.all.MoneyType;
  */
 public class NotEnoughMoneyException extends MoneyException
 {
-    public NotEnoughMoneyException (final double moneyAvailable, final double moneyRequested,
-            final MoneyType type, final int memberId)
+    public NotEnoughMoneyException (
+        final double moneyAvailable, final double moneyRequested, final MoneyType type,
+        final int memberId)
     {
         super("An attempt to secure " + moneyRequested + " currency of type " + type
             + " from member ID " + memberId + " failed because only " + moneyAvailable
             + " is available.");
-        this._moneyAvailable = moneyAvailable;
-        this._moneyRequested = moneyRequested;
-        this._type = type;
-        this._memberId = memberId;
+        _moneyAvailable = moneyAvailable;
+        _moneyRequested = moneyRequested;
+        _type = type;
+        _memberId = memberId;
     }
 
-    public NotEnoughMoneyException (final double moneyAvailable, final double moneyRequested,
-            final MoneyType type, final int memberId, final Throwable cause)
+    public NotEnoughMoneyException (
+        final double moneyAvailable, final double moneyRequested, final MoneyType type,
+        final int memberId, final Throwable cause)
     {
         super("An attempt to secure " + moneyRequested + " currency of type " + type
             + " from member ID " + memberId + " failed because only " + moneyAvailable
             + " is available.", cause);
-        this._moneyAvailable = moneyAvailable;
-        this._moneyRequested = moneyRequested;
-        this._type = type;
-        this._memberId = memberId;
+        _moneyAvailable = moneyAvailable;
+        _moneyRequested = moneyRequested;
+        _type = type;
+        _memberId = memberId;
     }
 
     public int getMemberId ()

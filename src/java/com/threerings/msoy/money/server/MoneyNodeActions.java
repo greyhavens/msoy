@@ -14,7 +14,7 @@ public class MoneyNodeActions
     @Inject
     public MoneyNodeActions (final MsoyPeerManager peerMan)
     {
-        this._peerMan = peerMan;
+        _peerMan = peerMan;
     }
 
     /**

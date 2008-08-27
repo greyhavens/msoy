@@ -19,8 +19,8 @@ import java.lang.annotation.Target;
 public @interface Retry 
 {
     /** The exception that indicates when the method should be retried. */
-    Class<? extends Exception> exception();
+    Class<? extends Exception> exception ();
     
     /** Maximum number of attempts to run the method.  Defaults to 3. */
-    int attempts() default 3;
+    int attempts () default 3;
 }

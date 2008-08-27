@@ -16,16 +16,16 @@ public class NotSecuredException extends MoneyException
     {
         super("The price of the item " + item + " was not secured previously by member "
             + memberId);
-        this._memberId = memberId;
-        this._item = item;
+        _memberId = memberId;
+        _item = item;
     }
 
     public NotSecuredException (final int memberId, final ItemIdent item, final Throwable cause)
     {
         super("The price of the item " + item + " was not secured previously by member "
             + memberId, cause);
-        this._memberId = memberId;
-        this._item = item;
+        _memberId = memberId;
+        _item = item;
     }
 
     public int getMemberId ()

@@ -32,19 +32,19 @@ public class SecuredPricesEhcache
     public SecuredPricesEhcache (final int maxElements, final int expireSeconds)
     {
         if (CacheManager.getInstance().getCache(CACHE_NAME) == null) {
-            this._cache = new Cache(CACHE_NAME, maxElements, false, false, expireSeconds,
+            _cache = new Cache(CACHE_NAME, maxElements, false, false, expireSeconds,
                 expireSeconds);
 
             // If we're running ehcache distributedly, then add an event listener to
             // send out updates.
             if (CacheManager.getInstance().getCacheManagerPeerProvider() != null) {
-                this._cache.getCacheEventNotificationService().registerListener(
+                _cache.getCacheEventNotificationService().registerListener(
                     new RMIAsynchronousCacheReplicator(true, true, true, true, 1000));
             }
             CacheManager.getInstance().addCache(_cache);
         } else {
-            this._cache = CacheManager.getInstance().getCache(CACHE_NAME);
-            this._cache.removeAll();
+            _cache = CacheManager.getInstance().getCache(CACHE_NAME);
+            _cache.removeAll();
         }
     }
 

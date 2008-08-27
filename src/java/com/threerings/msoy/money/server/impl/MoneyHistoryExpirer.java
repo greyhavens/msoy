@@ -8,16 +8,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.samskivert.util.Logger;
+
+import com.threerings.presents.server.ShutdownManager;
+import com.threerings.presents.server.ShutdownManager.Shutdowner;
+
 import com.threerings.msoy.money.data.all.MoneyType;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.money.server.persist.PersistentMoneyType;
-import com.threerings.presents.server.ShutdownManager;
-import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
 /**
  * Manages expiration of {@link MemberAccountHistoryRecord}s.  Coin records should
@@ -44,11 +46,11 @@ public class MoneyHistoryExpirer implements Shutdowner
     public MoneyHistoryExpirer (final MoneyRepository repo, final ShutdownManager sm, 
         final ScheduledExecutorService service)
     {
-        this._repo = repo;
-        this._service = service;
-        this._maxAge = 10*24*60*60*1000;     // 10 days
-        this._period = 60*60*1000;           // 1 hour
-        this._future = null;
+        _repo = repo;
+        _service = service;
+        _maxAge = 10*24*60*60*1000;     // 10 days
+        _period = 60*60*1000;           // 1 hour
+        _future = null;
         sm.registerShutdowner(this);
     }
     
@@ -63,8 +65,8 @@ public class MoneyHistoryExpirer implements Shutdowner
                     final int count = _repo.deleteOldHistoryRecords(
                         PersistentMoneyType.fromMoneyType(MoneyType.COINS), _maxAge);
                     if (count > 0) {
-                        logger.info("Removed " + count + 
-                            " old member account history records for coins.");
+                        log.info("Removed old member account history records for coins",
+                            "count", count);
                     }
                 }
             }, 0, _period, TimeUnit.MILLISECONDS);
@@ -121,7 +123,7 @@ public class MoneyHistoryExpirer implements Shutdowner
         _service.shutdown();
     }
     
-    private static final Logger logger = Logger.getLogger(MoneyHistoryExpirer.class);
+    private static final Logger log = Logger.getLogger(MoneyHistoryExpirer.class);
     
     private final MoneyRepository _repo;
     private final ScheduledExecutorService _service;

@@ -45,8 +45,9 @@ public interface MoneyLogic
      * history if purchased.
      * @return Price of the item secured in coins, according to the current exchange rate.
      */
-    int secureBarPrice (int memberId, int creatorId, int affiliateId, ItemIdent item,
-        int numBars, String description);
+    int secureBarPrice (
+        int memberId, int creatorId, int affiliateId, ItemIdent item, int numBars,
+        String description);
 
     /**
      * Secures a price for an item in coins. This ensures the user will be able to purchase an
@@ -68,8 +69,9 @@ public interface MoneyLogic
      * history if purchased.
      * @return Price of the item secured in bars, according to the current exchange rate.
      */
-    int secureCoinPrice (int memberId, int creatorId, int affiliateId, ItemIdent item,
-        int numCoins, String description);
+    int secureCoinPrice (
+        int memberId, int creatorId, int affiliateId, ItemIdent item, int numCoins,
+        String description);
 
     /**
      * Purchases an item using bars as the currency. This will only update the appropriate
@@ -150,8 +152,9 @@ public interface MoneyLogic
      * @return Map containing member ID to the money that member has in the account. The recipient
      * of the coins, the creator, and the affiliate will all be included, if applicable.
      */
-    MoneyResult awardCoins (int memberId, int creatorId, int affiliateId, ItemIdent item,
-        int amount, String description, UserAction userAction);
+    MoneyResult awardCoins (
+        int memberId, int creatorId, int affiliateId, ItemIdent item, int amount,
+        String description, UserAction userAction);
 
     /**
      * Retrieves the current account balance (coins, bars, and bling) for the given member.
@@ -175,8 +178,8 @@ public interface MoneyLogic
      * @param descending If true, the log will be sorted by transaction date descending.
      * @return List of requested past transactions.
      */
-    List<MoneyHistory> getLog (int memberId, MoneyType type, int start, int count,
-        boolean descending);
+    List<MoneyHistory> getLog (
+        int memberId, MoneyType type, int start, int count, boolean descending);
 
     /**
      * Retrieves the amount that a member's current bling is worth in American dollars.

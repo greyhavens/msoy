@@ -14,10 +14,11 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  */
 class PriceKey implements Serializable
 {
-    public PriceKey (final int memberId, final ItemIdent item) {
-        this._memberId = memberId;
-        this._itemId = item.itemId;
-        this._itemType = item.type;
+    public PriceKey (final int memberId, final ItemIdent item)
+    {
+        _memberId = memberId;
+        _itemId = item.itemId;
+        _itemType = item.type;
     }
     
     public int getMemberId ()

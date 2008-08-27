@@ -14,16 +14,17 @@ import com.threerings.msoy.money.data.all.MoneyHistory;
  */
 public class MoneyResult
 {
-    public MoneyResult (final MemberMoney newMemberMoney, final MemberMoney newCreatorMoney,
+    public MoneyResult (
+        final MemberMoney newMemberMoney, final MemberMoney newCreatorMoney,
         final MemberMoney newAffiliateMoney, final MoneyHistory memberTransaction,
         final MoneyHistory creatorTransaction, final MoneyHistory affiliateTransaction)
     {
-        this.newMemberMoney = newMemberMoney;
-        this.newCreatorMoney = newCreatorMoney;
-        this.newAffiliateMoney = newAffiliateMoney;
-        this.memberTransaction = memberTransaction;
-        this.creatorTransaction = creatorTransaction;
-        this.affiliateTransaction = affiliateTransaction;
+        _newMemberMoney = newMemberMoney;
+        _newCreatorMoney = newCreatorMoney;
+        _newAffiliateMoney = newAffiliateMoney;
+        _memberTransaction = memberTransaction;
+        _creatorTransaction = creatorTransaction;
+        _affiliateTransaction = affiliateTransaction;
     }
 
     /**
@@ -31,7 +32,7 @@ public class MoneyResult
      */
     public MemberMoney getNewMemberMoney ()
     {
-        return newMemberMoney;
+        return _newMemberMoney;
     }
     
     /**
@@ -41,7 +42,7 @@ public class MoneyResult
      */
     public MemberMoney getNewCreatorMoney ()
     {
-        return newCreatorMoney;
+        return _newCreatorMoney;
     }
 
     /**
@@ -51,7 +52,7 @@ public class MoneyResult
      */
     public MemberMoney getNewAffiliateMoney ()
     {
-        return newAffiliateMoney;
+        return _newAffiliateMoney;
     }
 
     /**
@@ -59,7 +60,7 @@ public class MoneyResult
      */
     public MoneyHistory getMemberTransaction ()
     {
-        return memberTransaction;
+        return _memberTransaction;
     }
     
     /**
@@ -69,7 +70,7 @@ public class MoneyResult
      */
     public MoneyHistory getCreatorTransaction ()
     {
-        return creatorTransaction;
+        return _creatorTransaction;
     }
     
     /**
@@ -79,13 +80,13 @@ public class MoneyResult
      */
     public MoneyHistory getAffiliateTransaction ()
     {
-        return affiliateTransaction;
+        return _affiliateTransaction;
     }
     
-    private final MemberMoney newMemberMoney;
-    private final MemberMoney newCreatorMoney;
-    private final MemberMoney newAffiliateMoney;
-    private final MoneyHistory memberTransaction;
-    private final MoneyHistory creatorTransaction;
-    private final MoneyHistory affiliateTransaction;
+    private final MemberMoney _newMemberMoney;
+    private final MemberMoney _newCreatorMoney;
+    private final MemberMoney _newAffiliateMoney;
+    private final MoneyHistory _memberTransaction;
+    private final MoneyHistory _creatorTransaction;
+    private final MoneyHistory _affiliateTransaction;
 }

@@ -126,9 +126,9 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * @param itemId ID of the item
      * @param itemType Type of the item.
      */
-    public MemberAccountHistoryRecord (final int memberId, final Date timestamp,
-            final PersistentMoneyType type, final double amount, final boolean spent,
-            final String description, final ItemIdent item)
+    public MemberAccountHistoryRecord (
+        final int memberId, final Date timestamp, final PersistentMoneyType type,
+        final double amount, final boolean spent, final String description, final ItemIdent item)
     {
         this.memberId = memberId;
         this.timestamp = new Timestamp(timestamp.getTime());

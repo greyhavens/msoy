@@ -13,15 +13,16 @@ import net.jcip.annotations.Immutable;
 @Immutable
 public class MoneyConfiguration
 {
-    public MoneyConfiguration (final double creatorKickback, final long securePriceDuration,
-            final double coinsToBarsWeightValue, final double blingCashoutTransactionFee, final
-            int maxSecuredPrices)
+    public MoneyConfiguration (
+        final double creatorKickback, final long securePriceDuration,
+        final double coinsToBarsWeightValue, final double blingCashoutTransactionFee,
+        final int maxSecuredPrices)
     {
-        this._creatorKickback = creatorKickback;
-        this._securePriceDuration = securePriceDuration;
-        this._coinsToBarsWeightValue = coinsToBarsWeightValue;
-        this._blingCashoutTransactionFee = blingCashoutTransactionFee;
-        this._maxSecuredPrices = maxSecuredPrices;
+        _creatorKickback = creatorKickback;
+        _securePriceDuration = securePriceDuration;
+        _coinsToBarsWeightValue = coinsToBarsWeightValue;
+        _blingCashoutTransactionFee = blingCashoutTransactionFee;
+        _maxSecuredPrices = maxSecuredPrices;
     }
 
     /**

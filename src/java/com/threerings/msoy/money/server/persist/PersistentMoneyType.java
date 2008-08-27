@@ -70,7 +70,7 @@ public enum PersistentMoneyType implements ByteEnum
 
     private PersistentMoneyType (final int value)
     {
-        this._value = (byte)value;
+        _value = (byte)value;
     }
 
     private final byte _value;

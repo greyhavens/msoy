@@ -95,8 +95,9 @@ public final class DepotMoneyRepository extends DepotRepository
         }
     }
 
-    public List<MemberAccountHistoryRecord> getHistory (final int memberId, final 
-        PersistentMoneyType type, final int start, final int count, final boolean descending)
+    public List<MemberAccountHistoryRecord> getHistory (
+        final int memberId, final PersistentMoneyType type, final int start,
+        final int count, final boolean descending)
     {
         try {
             // select * from MemberAccountRecord where type in (?) and memberId=? order by

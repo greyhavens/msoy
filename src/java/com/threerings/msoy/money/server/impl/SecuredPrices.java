@@ -16,15 +16,16 @@ import com.threerings.msoy.money.data.all.MoneyType;
 class SecuredPrices
     implements Serializable
 {
-    public SecuredPrices (final MoneyType listedType, final int coins, final int bars,
-            final int creatorId, final int affiliateId, final String description)
+    public SecuredPrices (
+        final MoneyType listedType, final int coins, final int bars,
+        final int creatorId, final int affiliateId, final String description)
     {
-        this._coins = coins;
-        this._bars = bars;
-        this._creatorId = creatorId;
-        this._affiliateId = affiliateId;
-        this._description = description;
-        this._listedType = listedType;
+        _coins = coins;
+        _bars = bars;
+        _creatorId = creatorId;
+        _affiliateId = affiliateId;
+        _description = description;
+        _listedType = listedType;
     }
 
     public int getCoins ()

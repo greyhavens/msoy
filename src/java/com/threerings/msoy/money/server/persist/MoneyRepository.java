@@ -31,8 +31,8 @@ public interface MoneyRepository
      */
     void addHistory (MemberAccountHistoryRecord history);
     
-    List<MemberAccountHistoryRecord> getHistory (int memberId, PersistentMoneyType type, 
-        int start, int count, boolean descending);
+    List<MemberAccountHistoryRecord> getHistory (
+        int memberId, PersistentMoneyType type, int start, int count, boolean descending);
     
     int deleteOldHistoryRecords (PersistentMoneyType type, long maxAge);
 }

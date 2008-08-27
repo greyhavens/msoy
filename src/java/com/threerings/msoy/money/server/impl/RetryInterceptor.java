@@ -5,7 +5,8 @@ package com.threerings.msoy.money.server.impl;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.log4j.Logger;
+
+import com.samskivert.util.Logger;
 
 /**
  * Interceptor that will retry a method call if a certain exception occurs.  The
@@ -33,7 +34,7 @@ public class RetryInterceptor
             } catch (final Throwable t) {
                 if (retryAnn.exception().isInstance(t)) {
                     retries++;
-                    _logger.info("Retrying method: " + invocation.getMethod().toString() + 
+                    _log.info("Retrying method: " + invocation.getMethod().toString() + 
                         ", exception: " + t.getMessage() + ", attempts: " + retries);
                     lastException = t;
                 } else {
@@ -46,5 +47,5 @@ public class RetryInterceptor
             invocation.getMethod().toString(), lastException);
     }
 
-    private static final Logger _logger = Logger.getLogger(RetryInterceptor.class);
+    private static final Logger _log = Logger.getLogger(RetryInterceptor.class);
 }
