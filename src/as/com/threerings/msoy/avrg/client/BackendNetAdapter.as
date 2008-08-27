@@ -49,6 +49,11 @@ public class BackendNetAdapter
         _object.addListener(this);
     }
 
+    public function setTargetId (targetId :int) :void
+    {
+        _targetId = targetId;
+    }
+
     /**
      * Removes this adapter from the object's listeners.
      */
@@ -69,11 +74,18 @@ public class BackendNetAdapter
         var keyObj :Object = (key == null) ? null : key.value;
 
         try {
-            _propertyChanged(
-                event.getName(), event.getValue(), event.getOldValue(), keyObj);
+            if (_targetId != 0) {
+                _propertyChanged(
+                    _targetId, event.getName(), event.getValue(), event.getOldValue(), keyObj);
+
+            } else {
+                _propertyChanged(
+                    event.getName(), event.getValue(), event.getOldValue(), keyObj);
+            }
 
         } catch (err :Error) {
-            BackendUtils.log.warning("Error in user-code: " + err, err);
+            BackendUtils.log.warning("Error in user-code: " + err);
+            BackendUtils.log.logStackTrace(err);
         }
     }
 
@@ -95,7 +107,8 @@ public class BackendNetAdapter
                 _messageReceived(mname, data, senderId);
 
             } catch (err :Error) {
-                BackendUtils.log.warning("Error in user-code: " + err, err);
+                BackendUtils.log.warning("Error in user-code: " + err);
+                BackendUtils.log.logStackTrace(err);
             }
         }
     }
@@ -104,5 +117,6 @@ public class BackendNetAdapter
     protected var _messageName :String;
     protected var _propertyChanged :Function;
     protected var _messageReceived :Function;
+    protected var _targetId :int = 0;
 }
 }
