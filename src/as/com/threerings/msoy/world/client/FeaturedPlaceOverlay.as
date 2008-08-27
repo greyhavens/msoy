@@ -9,7 +9,9 @@ import flash.display.Sprite;
 import flash.events.MouseEvent;
 
 import com.threerings.util.Command;
+import com.threerings.util.MultiLoader;
 
+import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceLayer;
 
@@ -38,23 +40,29 @@ public class FeaturedPlaceOverlay extends Sprite
 
         if (_ctx.getMsoyClient().isEmbedded()) {
             if (_waterMark == null) {
-                _waterMark = new WATER_MARK() as DisplayObject;
+                _waterMark = new Sprite();
                 addChild(_waterMark);
+
+                // NOTE: If watermark.png ever changes, update the width/height constants
+                MultiLoader.getContents(
+                    DeploymentConfig.serverURL + "images/ui/watermark.png",
+                    _waterMark.addChild);
             }
 
             // Put it in bottom right, with a bit of padding
-            _waterMark.x = width - _waterMark.width - 4;
-            _waterMark.y = height - _waterMark.height - 6;
+            _waterMark.x = width - WATERMARK_WIDTH - 4;
+            _waterMark.y = height - WATERMARK_HEIGHT - 6;
         }
     }
 
     /** Now with 20% more context. */
     protected var _ctx :MsoyContext;
 
-    protected var _waterMark :DisplayObject;
+    protected var _waterMark :Sprite;
 
-    [Embed(source="../../../../../../../rsrc/media/skins/watermark.png")]
-    protected static const WATER_MARK :Class;
+    // These need to be known ahead of time for layout purposes
+    protected static const WATERMARK_WIDTH :int = 57;
+    protected static const WATERMARK_HEIGHT :int = 35;
 }
 
 }
