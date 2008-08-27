@@ -769,7 +769,7 @@ public class MemberManager
 
             int code = type.getCode();
             for (int ii = 0; ii < type.getNumLevels(); ii++) {
-                String levelUnits = type.getLevelUnits(ii);
+                String levelUnits = type.getRequiredUnitsString(ii);
                 int coinValue = type.getCoinValue(ii);
                 badges.add(new EarnedBadge(code, ii, levelUnits, coinValue, now));
             }

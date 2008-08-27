@@ -193,7 +193,7 @@ public class MeServlet extends MsoyServiceServlet
 
             int code = type.getCode();
             for (int ii = 0; ii < type.getNumLevels(); ii++) {
-                String levelUnits = type.getLevelUnits(ii);
+                String levelUnits = type.getRequiredUnitsString(ii);
                 int coinValue = type.getCoinValue(ii);
                 badges.add(new InProgressBadge(code, ii, levelUnits, type.getLevel(ii).coinValue,
                     // range through progresses from 0 - 100% inclusive, in 10% increments
