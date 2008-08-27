@@ -26,8 +26,11 @@ public class DeploymentConfig
     /** The URL via which we should load our static media. */
     public static final String staticMediaURL = "@static_media_url@";
 
-    /** Wheher we're running on dev or in production. */
+    /** Whether we're running on dev or in production. */
     public static final boolean devDeployment = @dev_deployment@;
+
+    /** Are bars (and bling) yet enabled on this server? */
+    public static final boolean barsEnabled = false; //@bars_enabled@;
 
     /** The public key for our RECAPTCHA service or "" if it's disabled. */
     public static final String recaptchaPublic = "@recaptcha_public@";
