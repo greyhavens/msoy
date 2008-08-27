@@ -8,7 +8,8 @@ package com.threerings.msoy.money.data.all;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-public enum MoneyType {
+public enum MoneyType
+{
     /**
      * Bars are usually purchased for some real money amount and may be required to purchase some
      * items.

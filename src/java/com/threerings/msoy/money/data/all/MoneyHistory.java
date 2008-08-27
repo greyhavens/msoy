@@ -15,17 +15,18 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  */
 public class MoneyHistory
 {
-    public MoneyHistory (final int memberId, final Date timestamp, final MoneyType type,
-            final double amount, final boolean spent, final String description,
-            final ItemIdent item)
+    public MoneyHistory (
+        final int memberId, final Date timestamp, final MoneyType type,
+        final double amount, final boolean spent, final String description,
+        final ItemIdent item)
     {
-        this._memberId = memberId;
-        this._timestamp = timestamp;
-        this._type = type;
-        this._amount = amount;
-        this._spent = spent;
-        this._description = description;
-        this._item = item;
+        _memberId = memberId;
+        _timestamp = timestamp;
+        _type = type;
+        _amount = amount;
+        _spent = spent;
+        _description = description;
+        _item = item;
     }
 
     /**

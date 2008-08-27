@@ -6,7 +6,8 @@ package com.threerings.msoy.money.server.persist;
 import com.samskivert.jdbc.depot.ByteEnum;
 import com.threerings.msoy.money.data.all.MoneyType;
 
-public enum PersistentMoneyType implements ByteEnum {
+public enum PersistentMoneyType implements ByteEnum
+{
     /**
      * Bars are usually purchased for some real money amount and may be required to purchase some
      * items.
@@ -29,27 +30,26 @@ public enum PersistentMoneyType implements ByteEnum {
         }
         
         switch (type) {
-        case BARS:
-            return PersistentMoneyType.BARS;
-        case COINS:
-            return PersistentMoneyType.COINS;
-        case BLING:
-            return PersistentMoneyType.BLING;
+        case BARS: return PersistentMoneyType.BARS;
+        case COINS: return PersistentMoneyType.COINS;
+        case BLING: return PersistentMoneyType.BLING;
         }
         throw new IllegalArgumentException("Invalid money type: " + type);
     }
     
     public static PersistentMoneyType fromByte (final byte value)
     {
-        switch(value) {
-        case 0:
-            return BARS;
-        case 1:
-            return COINS;
-        case 2:
-            return BLING;
+        // Note: this is not ideal. We should iterate over values() and check each value's
+        // toByte() to see if it's the same as the passed-in value. That reduces the number
+        // of places that things must be changed if we add a new currency and is generally
+        // the right way to do things with enums.
+        switch (value) {
+        case 0: return BARS;
+        case 1: return COINS;
+        case 2: return BLING;
         default:
-            throw new IllegalArgumentException("Invalid byte value for PersistentMoneyType: " + value);
+            throw new IllegalArgumentException(
+                "Invalid byte value for PersistentMoneyType: " + value);
         }
     }
 
@@ -61,12 +61,9 @@ public enum PersistentMoneyType implements ByteEnum {
     public MoneyType toMoneyType ()
     {
         switch (this) {
-        case BARS:
-            return MoneyType.BARS;
-        case COINS:
-            return MoneyType.COINS;
-        case BLING:
-            return MoneyType.BLING;
+        case BARS: return MoneyType.BARS;
+        case COINS: return MoneyType.COINS;
+        case BLING: return MoneyType.BLING;
         }
         throw new IllegalArgumentException("Cannot convert this to money type: " + this);
     }
