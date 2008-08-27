@@ -44,7 +44,7 @@ public class BadgeUtil
             if (!existingBadges.contains(dummyBadge) && badgeType.isUnlocked(earnedBadges)) {
                 float progress = badgeType.progressValid(0) ? 0 : -1;
                 newBadges.add(new InProgressBadge(badgeType.getCode(), 0,
-                    badgeType.getLevelUnits(0), badgeType.getCoinValue(0), progress));
+                    badgeType.getRequiredUnitsString(0), badgeType.getCoinValue(0), progress));
             }
         }
 

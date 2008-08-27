@@ -99,7 +99,7 @@ public class EarnedBadgeRecord extends PersistentRecord
     public EarnedBadge toBadge ()
     {
         BadgeType type = BadgeType.getType(badgeCode);
-        String levelUnits = type.getLevelUnits(level);
+        String levelUnits = type.getRequiredUnitsString(level);
         int coinValue = type.getCoinValue(level);
         return new EarnedBadge(badgeCode, level, levelUnits, coinValue, whenEarned.getTime());
     }

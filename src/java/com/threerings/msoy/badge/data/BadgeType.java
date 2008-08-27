@@ -86,7 +86,7 @@ public enum BadgeType
         new Level(200 * 60, 5000),
         new Level(500 * 60, 10000)
         }) {
-        @Override public String getLevelUnits (int levelNumber) {
+        @Override public String getRequiredUnitsString (int levelNumber) {
             Level level = getLevel(levelNumber);
             // the real unit is minutes, but we tell the player hours
             return level == null ? null : "" + (level.requiredUnits / 60);
@@ -226,7 +226,7 @@ public enum BadgeType
             });
         }
 
-        @Override public String getLevelUnits (int levelNumber) {
+        @Override public String getRequiredUnitsString (int levelNumber) {
             Level level = getLevel(levelNumber);
             if (level == null) {
                 return null;
@@ -283,9 +283,9 @@ public enum BadgeType
         new Level(100000, 3000),
         new Level(200000, 10000),
         }) {
-        @Override public String getLevelUnits (int levelNumber) {
+        @Override public String getRequiredUnitsString (int levelNumber) {
             if (levelNumber < 1) {
-                return super.getLevelUnits(levelNumber);
+                return super.getRequiredUnitsString(levelNumber);
             }
 
             Level level = getLevel(levelNumber);
@@ -402,10 +402,10 @@ public enum BadgeType
     /**
      * Pulls the levelUnits string out of the type that maps to the given code
      */
-    public static String getLevelUnits (int code, int level)
+    public static String getRequiredUnitsString (int badgeCode, int level)
     {
-        BadgeType type = getType(code);
-        return type == null ? null : type.getLevelUnits(level);
+        BadgeType type = getType(badgeCode);
+        return type == null ? null : type.getRequiredUnitsString(level);
     }
 
     /**
@@ -450,7 +450,7 @@ public enum BadgeType
      * Convenience method to get the requiredUnits for the given level number.  This function
      * will return null if the level is not found.
      */
-    public String getLevelUnits (int levelNumber)
+    public String getRequiredUnitsString (int levelNumber)
     {
         Level level = getLevel(levelNumber);
         return level == null ? null : "" + level.requiredUnits;
