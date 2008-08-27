@@ -21,6 +21,8 @@ import mx.core.ScrollPolicy;
 
 import mx.containers.HBox;
 
+import caurina.transitions.Tweener;
+
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
@@ -90,11 +92,7 @@ public class WorldControlBar extends ControlBar
 
         // if we just moved into a room...
         if (place is RoomObject && !_wctx.getGameDirector().isGaming()) {
-            // we may want to display our "click here to chat" tip
-            // TODO: this thing is broken again and doesn't go away when it should - or ever, in
-            // some cases.  It can be re-enabled when we get a chance to get it working.
-            //maybeDisplayChatTip();
-            // possibly also show the avatar introduction
+            // maybe show the avatar introduction
             maybeDisplayAvatarIntro();
         }
     }
@@ -197,47 +195,18 @@ public class WorldControlBar extends ControlBar
         return UberClient.isRegularClient() ? super.getMode() : UI_VIEWER;
     }
 
-//    protected function maybeDisplayChatTip () :void
-//    {
-//        // if we've already shown the tip, have no chat control or they have been a member for a
-//        // while, don't show the chat tip
-//        var mobj :MemberObject = _wctx.getMemberObject();
-//        if (_chatTip != null || _chatControl == null || mobj.level >= CHAT_TIP_GRADUATE_LEVEL ||
-//            Prefs.getSlidingChatHistory()) {
-//            return;
-//        }
-//
-//        // create, position and add our chat tip sprite
-//        _chatTip = (new CHAT_TIP() as DisplayObject);
-//        _chatTip.x = 5;
-//        _chatTip.y = _ctx.getTopPanel().getPlaceContainer().height - _chatTip.height - 5;
-//        fadeIn(_chatTip);
-//        _ctx.getTopPanel().getPlaceContainer().addOverlay(_chatTip, PlaceBox.LAYER_TRANSIENT);
-//
-//        // when they click or type in the chat entry, we want to remove the sprite
-//        var onAction :Function = function (... ignored) :void {
-//            _chatControl.chatInput.removeEventListener(KeyboardEvent.KEY_DOWN, onAction);
-//            _chatControl.chatInput.removeEventListener(MouseEvent.MOUSE_DOWN, onAction);
-//            fadeOutAndRemove(_chatTip);
-//        };
-//        _chatControl.chatInput.addEventListener(KeyboardEvent.KEY_DOWN, onAction);
-//        _chatControl.chatInput.addEventListener(MouseEvent.MOUSE_DOWN, onAction);
-//
-//        // or clear it out if they haven't already after ten seconds
-//        new Timer(10000, 1).addEventListener(TimerEvent.TIMER, onAction);
-//    }
-
     protected function maybeDisplayAvatarIntro () :void
     {
         // if we have already shown the intro, they are a guest, are not wearing the tofu avatar,
         // or have ever worn any non-tofu avatar, don't show the avatar intro
         var mobj :MemberObject = _wctx.getMemberObject();
         if (_avatarIntro != null || mobj.isGuest() || mobj.avatar != null ||
-            mobj.avatarCache.size() > 0) {
+                mobj.avatarCache.size() > 0) {
             return;
         }
 
-        MultiLoader.getContents(AVATAR_INTRO, function (result :DisplayObjectContainer) :void {
+        MultiLoader.getContents(DeploymentConfig.serverURL + "rsrc/avatar_intro.swf",
+            function (result :DisplayObjectContainer) :void {
             _avatarIntro = result;
             _avatarIntro.x = 15;
 
@@ -267,28 +236,14 @@ public class WorldControlBar extends ControlBar
     protected function fadeIn (thing :DisplayObject) :void
     {
         thing.alpha = 0;
-        thing.addEventListener(Event.ENTER_FRAME, function (event :Event) :void {
-            if (thing.alpha >= 1) {
-                thing.removeEventListener(Event.ENTER_FRAME, arguments.callee);
-            } else {
-                thing.alpha += 0.05;
-            }
-        });
+        Tweener.addTween(thing, { alpha: 1, time: .75, transition: "linear" });
     }
 
     protected function fadeOutAndRemove (thing :DisplayObject) :void
     {
-        // can't use a fancy Dissolve effect on non-Flex components, so we roll our own
-        thing.addEventListener(Event.ENTER_FRAME, function (event :Event) :void {
-            if (thing.alpha <= 0) {
-                if (thing.parent != null) {
-                    _ctx.getTopPanel().getPlaceContainer().removeOverlay(thing);
-                }
-                thing.removeEventListener(Event.ENTER_FRAME, arguments.callee);
-            } else {
-                thing.alpha -= 0.05;
-            }
-        });
+        Tweener.addTween(thing, { alpha: 0, time: .75, transition: "linear",
+            onComplete: _ctx.getTopPanel().getPlaceContainer().removeOverlay,
+            onCompleteParams: [ thing ] });
     }
 
     /**
@@ -344,23 +299,10 @@ public class WorldControlBar extends ControlBar
 
     protected var _partyBtn :CommandButton;
 
-//    /** A tip shown when we first enter a room. */
-//    protected var _chatTip :DisplayObject;
-
-    /** An introduction to avatars shown to brand new players. */
-    protected var _avatarIntro :DisplayObjectContainer;
-
     /** The little gray area that displays incoming notifications. */
     protected var _notificationDisplay :NotificationDisplay;
 
-    /** We stop showing the "type here to chat" tip after the user reaches level 5. */
-    protected static const CHAT_TIP_GRADUATE_LEVEL :int = 5;
-
-//    [Embed(source="../../../../../../../rsrc/media/chat_tip.swf")]
-//    protected static const CHAT_TIP :Class;
-
-    [Embed(source="../../../../../../../rsrc/media/avatar_intro.swf",
-           mimeType="application/octet-stream")]
-    protected static const AVATAR_INTRO :Class;
+    /** An introduction to avatars shown to brand new players. */
+    protected var _avatarIntro :DisplayObjectContainer;
 }
 }
