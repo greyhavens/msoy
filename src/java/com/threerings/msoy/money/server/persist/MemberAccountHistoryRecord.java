@@ -153,16 +153,11 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * credited.
      * @param description Description of the transaction.
      */
-    public MemberAccountHistoryRecord (final int memberId, final Date timestamp,
-            final PersistentMoneyType type, final double amount, final boolean spent,
-            final String description)
+    public MemberAccountHistoryRecord (
+        final int memberId, final Date timestamp, final PersistentMoneyType type,
+        final double amount, final boolean spent, final String description)
     {
-        this.memberId = memberId;
-        this.timestamp = new Timestamp(timestamp.getTime());
-        this.type = type;
-        this.amount = amount;
-        this.spent = spent;
-        this.description = description;
+        this(memberId, timestamp, type, amount, spent, description, null);
     }
 
     /** Not part of the API. For depot's eyes only. */

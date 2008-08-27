@@ -86,7 +86,8 @@ public class MoneyTest
         checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 2.0, false,
             "Purchased 2 bars.", null), startTime, endTime, true);
 
-        checkActionLogExists(1, UserAction.BOUGHT_BARS.getNumber(), "Purchased 2 bars.", startTime, endTime);
+        checkActionLogExists(1, UserAction.BOUGHT_BARS.getNumber(), "Purchased 2 bars.",
+            startTime, endTime);
     }
 
     @Test
@@ -111,18 +112,21 @@ public class MoneyTest
         checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 100.0, true,
             "My bar item", item), startTime, endTime, true);
 
-        checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(), "My bar item", startTime, endTime);
+        checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(), "My bar item",
+            startTime, endTime);
 
         // Check creator account
         final MemberMoney newCreatorMoney = result.getNewCreatorMoney();
         assertEquals(oldCreatorMoney.getBling() + 100.0*0.3, newCreatorMoney.getBling(), 0.001);
-        assertEquals(oldCreatorMoney.getAccBling() + 100.0*0.3, newCreatorMoney.getAccBling(), 0.001);
+        assertEquals(oldCreatorMoney.getAccBling() + 100.0*0.3, newCreatorMoney.getAccBling(),
+            0.001);
 
         log = _service.getLog(2, MoneyType.BLING, 0, 30, true);
         checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.BLING, 100.0*0.3, false,
             "Item purchased: My bar item", item), startTime, endTime, true);
 
-        checkActionLogExists(2, UserAction.RECEIVED_PAYOUT.getNumber(), "My bar item", startTime, endTime);
+        checkActionLogExists(2, UserAction.RECEIVED_PAYOUT.getNumber(), "My bar item",
+            startTime, endTime);
 
         // TODO: check affiliate account
     }
@@ -177,8 +181,8 @@ public class MoneyTest
         checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, true,
             "testBuyCoinItemWithCoins - test", item), startTime, endTime, true);
 
-        checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(), "testBuyCoinItemWithCoins - test",
-            startTime, endTime);
+        checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(),
+            "testBuyCoinItemWithCoins - test", startTime, endTime);
 
         // Check creator account
         final MemberMoney newCreatorMoney = result.getNewCreatorMoney();
@@ -189,8 +193,8 @@ public class MoneyTest
         checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.COINS, 30.0, false,
             "Item purchased: testBuyCoinItemWithCoins - test", item), startTime, endTime, true);
 
-        checkActionLogExists(2, UserAction.RECEIVED_PAYOUT.getNumber(), "testBuyCoinItemWithCoins - test",
-            startTime, endTime);
+        checkActionLogExists(2, UserAction.RECEIVED_PAYOUT.getNumber(),
+            "testBuyCoinItemWithCoins - test", startTime, endTime);
 
         // TODO: check affiliate account
     }
@@ -214,8 +218,8 @@ public class MoneyTest
         checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 150.0, false,
             "150 coins awarded.  Thanks for playing!", item), startTime, endTime, true);
 
-        checkActionLogExists(1, UserAction.PLAYED_GAME.getNumber(), "150 coins awarded.  Thanks for playing!",
-            startTime, endTime);
+        checkActionLogExists(1, UserAction.PLAYED_GAME.getNumber(),
+            "150 coins awarded.  Thanks for playing!", startTime, endTime);
 
         // TODO: check creator and affiliate accounts
     }
@@ -241,7 +245,8 @@ public class MoneyTest
         checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 70.0, true,
             "testCreatorBoughtOwnItem - test", item), startTime, endTime, true);
 
-        checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(), "testCreatorBoughtOwnItem - test", startTime, endTime);
+        checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(),
+            "testCreatorBoughtOwnItem - test", startTime, endTime);
     }
 
     @Test
@@ -278,8 +283,10 @@ public class MoneyTest
                 @Override
                 protected void configure ()
                 {
-                    bind(RunQueue.class).annotatedWith(EventQueue.class).to(PresentsDObjectMgr.class);
-                    bind(PersistenceContext.class).toInstance(new PersistenceContext("msoy", connProv, null));
+                    bind(RunQueue.class).annotatedWith(EventQueue.class).to(
+                        PresentsDObjectMgr.class);
+                    bind(PersistenceContext.class).toInstance(
+                        new PersistenceContext("msoy", connProv, null));
                     install(new MoneyModule());
                 }
             });
@@ -289,13 +296,15 @@ public class MoneyTest
         }
     }
 
-    private void checkMoneyHistory (final List<MoneyHistory> log, final MoneyHistory expected,
-        final long start, final long end, final boolean isPresent)
+    private void checkMoneyHistory (
+        final List<MoneyHistory> log, final MoneyHistory expected, final long start, final long end,
+        final boolean isPresent)
     {
         MoneyHistory logEntry = null;
         for (final MoneyHistory history : log) {
             final long time = history.getTimestamp().getTime() / 1000;
-            if (history.getDescription().equals(expected.getDescription()) && time >= start && time <= end) {
+            if (history.getDescription().equals(expected.getDescription()) &&
+                    time >= start && time <= end) {
                 logEntry = history;
                 break;
             }
@@ -315,8 +324,8 @@ public class MoneyTest
         assertEquals(expected.isSpent(), logEntry.isSpent());
     }
 
-    private void checkActionLogExists (final int memberId, final int actionId, final String data,
-        final long start, final long end)
+    private void checkActionLogExists (
+        final int memberId, final int actionId, final String data, final long start, final long end)
         throws Exception
     {
         boolean found = false;

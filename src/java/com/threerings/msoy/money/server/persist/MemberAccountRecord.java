@@ -123,7 +123,7 @@ public class MemberAccountRecord extends PersistentRecord
         this.accCoins = 0;
         this.accBars = 0;
         this.accBling = 0.0;
-        this.dateLastUpdated = new Timestamp(new Date().getTime());
+        this.dateLastUpdated = new Timestamp(System.currentTimeMillis());
         this.versionId = 0;
     }
 
@@ -141,10 +141,10 @@ public class MemberAccountRecord extends PersistentRecord
     {
         this.bars += bars;
         this.accBars += bars;
-        this.dateLastUpdated = new Timestamp(new Date().getTime());
+        this.dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated,
-            PersistentMoneyType.fromMoneyType(MoneyType.BARS), bars, false, "Purchased " + bars + 
-            " bars.");
+            PersistentMoneyType.fromMoneyType(MoneyType.BARS), bars, false,
+            "Purchased " + bars + " bars.");
     }
 
     /**
@@ -153,12 +153,12 @@ public class MemberAccountRecord extends PersistentRecord
      * @param coins Number of coins to add.
      * @return Account history record for this transaction.
      */
-    public MemberAccountHistoryRecord awardCoins (final int coins, final ItemIdent item,
-        final String description)
+    public MemberAccountHistoryRecord awardCoins (
+        final int coins, final ItemIdent item, final String description)
     {
         this.coins += coins;
         this.accCoins += coins;
-        this.dateLastUpdated = new Timestamp(new Date().getTime());
+        this.dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated,
             PersistentMoneyType.fromMoneyType(MoneyType.COINS), coins, false, description, item);
     }
@@ -171,8 +171,9 @@ public class MemberAccountRecord extends PersistentRecord
      * @param description Description that should be used in the history record.
      * @return Account history record for this transaction.
      */
-    public MemberAccountHistoryRecord buyItem (int amount, final MoneyType type,
-        final String description, final ItemIdent item, final boolean support)
+    public MemberAccountHistoryRecord buyItem (
+        int amount, final MoneyType type, final String description,
+        final ItemIdent item, final boolean support)
     {
         if (type == MoneyType.BARS) {
             if (support) {
@@ -185,7 +186,7 @@ public class MemberAccountRecord extends PersistentRecord
             }
             this.coins -= amount;
         }
-        this.dateLastUpdated = new Timestamp(new Date().getTime());
+        this.dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated, 
             PersistentMoneyType.fromMoneyType(type), amount, true, description, item);
     }
@@ -227,7 +228,7 @@ public class MemberAccountRecord extends PersistentRecord
             this.accCoins += (int)amountPaid;
             paymentType = MoneyType.COINS;
         }
-        this.dateLastUpdated = new Timestamp(new Date().getTime());
+        this.dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated, 
             PersistentMoneyType.fromMoneyType(paymentType), amountPaid, false, description, item);
     }
