@@ -167,7 +167,7 @@ public class AVRGameBackend extends ControlBackend
         callUserCode("gotControl_v1");
     }
 
-    public override function callUserCode (name :String, ... args) :*
+    override public function callUserCode (name :String, ... args) :*
     {
         if (_props == null) {
             log.warning("Calling user code " + name + " before connection.");
@@ -177,7 +177,7 @@ public class AVRGameBackend extends ControlBackend
         }
 
         args.unshift(name);
-        super.callUserCode.apply(null, args);
+        return super.callUserCode.apply(null, args);
     }
 
     override protected function setUserProperties (o :Object) :void
