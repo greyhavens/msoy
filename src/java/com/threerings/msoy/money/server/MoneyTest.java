@@ -19,6 +19,8 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.PersistenceContext;
+import com.samskivert.util.BasicRunQueue;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.RunQueue;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.item.data.all.Item;
@@ -285,6 +287,7 @@ public class MoneyTest
                 {
                     bind(RunQueue.class).annotatedWith(EventQueue.class).to(
                         PresentsDObjectMgr.class);
+                    bind(Invoker.class).toInstance(new Invoker("test", new BasicRunQueue()));
                     bind(PersistenceContext.class).toInstance(
                         new PersistenceContext("msoy", connProv, null));
                     install(new MoneyModule());

@@ -3,14 +3,18 @@
 
 package com.threerings.msoy.money.server.impl;
 
+import java.io.Serializable;
+
 /**
  * Contains all the information for a quoted transaction.
  *
  * @author Ray Greenwell <ray@threerings.net>
  */
 public class Escrow
+    implements Serializable
 {
-    public Escrow (int creatorId, int affiliateId, String description, PriceQuote quote)
+    public Escrow (final int creatorId, final int affiliateId, final String description, 
+        final PriceQuote quote)
     {
         _creatorId = creatorId;
         _affiliateId = affiliateId;

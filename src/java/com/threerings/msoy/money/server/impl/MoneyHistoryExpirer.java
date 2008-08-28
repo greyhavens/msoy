@@ -5,21 +5,19 @@ package com.threerings.msoy.money.server.impl;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
+import com.samskivert.util.Interval;
+import com.samskivert.util.Invoker;
 import com.samskivert.util.Logger;
-
-import com.threerings.presents.server.ShutdownManager;
-import com.threerings.presents.server.ShutdownManager.Shutdowner;
-
 import com.threerings.msoy.money.data.all.MoneyType;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.money.server.persist.PersistentMoneyType;
+import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.server.ShutdownManager;
+import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
 /**
  * Manages expiration of {@link MemberAccountHistoryRecord}s.  Coin records should
@@ -39,20 +37,21 @@ public class MoneyHistoryExpirer
      * and check once every hour for coins history records that are at least 10 days old.
      */
     @Inject
-    public MoneyHistoryExpirer (final MoneyRepository repo, final ShutdownManager sm)
+    public MoneyHistoryExpirer (final MoneyRepository repo, final ShutdownManager sm,
+        final Invoker invoker)
     {
-        this(repo, sm, Executors.newSingleThreadScheduledExecutor());
+        this(repo, sm, Executors.newSingleThreadScheduledExecutor(), invoker);
     }
     
     public MoneyHistoryExpirer (
         final MoneyRepository repo, final ShutdownManager sm,
-        final ScheduledExecutorService service)
+        final ScheduledExecutorService service, final Invoker invoker)
     {
         _repo = repo;
-        _service = service;
+        _invoker = invoker;
         _maxAge = 10*24*60*60*1000;     // 10 days
         _period = 60*60*1000;           // 1 hour
-        _future = null;
+        _interval = null;
         sm.registerShutdowner(this);
     }
     
@@ -61,9 +60,11 @@ public class MoneyHistoryExpirer
      */
     public void start ()
     {
-        if (_future == null) {
-            _future = _service.scheduleAtFixedRate(new Runnable() {
-                public void run () {
+        if (_interval == null) {
+            _interval = new Interval(_invoker) {
+                @Override
+                public void expired ()
+                {
                     final int count = _repo.deleteOldHistoryRecords(
                         PersistentMoneyType.fromMoneyType(MoneyType.COINS), _maxAge);
                     if (count > 0) {
@@ -71,7 +72,8 @@ public class MoneyHistoryExpirer
                             "count", count);
                     }
                 }
-            }, 0, _period, TimeUnit.MILLISECONDS);
+            };
+            _interval.schedule(_period, true);
         }
     }
     
@@ -80,9 +82,9 @@ public class MoneyHistoryExpirer
      */
     public void stop ()
     {
-        if (_future != null) {
-            _future.cancel(false);
-            _future = null;
+        if (_interval != null) {
+            _interval.cancel();
+            _interval = null;
         }
     }
     
@@ -100,7 +102,7 @@ public class MoneyHistoryExpirer
      */
     public void setMaxAge (final long maxAge)
     {
-        this._maxAge = maxAge;
+        _maxAge = maxAge;
     }
 
     /**
@@ -117,19 +119,19 @@ public class MoneyHistoryExpirer
      */
     public void setPeriod (final long period)
     {
-        this._period = period;
+        _period = period;
     }
 
     public void shutdown ()
     {
-        _service.shutdown();
+        stop();
     }
     
     private static final Logger log = Logger.getLogger(MoneyHistoryExpirer.class);
     
     private final MoneyRepository _repo;
-    private final ScheduledExecutorService _service;
+    private final @MainInvoker Invoker _invoker;
     private long _maxAge;
     private long _period;
-    private ScheduledFuture<?> _future;
+    private Interval _interval;
 }

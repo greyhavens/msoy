@@ -6,14 +6,12 @@ package com.threerings.msoy.money.server.impl;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-import net.sf.ehcache.distribution.RMIAsynchronousCacheReplicator;
 
 import com.google.inject.Singleton;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.NotSecuredException;
 
 /**
- * Implementation of {@link EscrowCache} that uses a ConcurrentHashMap to store the escrows.
+ * Implementation of {@link EscrowCache} that uses a local EHCache to store the escrows.
  * 
  * @author Ray Greenwell <ray@threerings.net>
  */
@@ -42,7 +40,7 @@ public class EscrowCacheMap
     }
 
     // from EscrowCache
-    public Escrow getEscrow (PriceKey key)
+    public Escrow getEscrow (final PriceKey key)
         throws NotSecuredException
     {
         final Element e = _cache.get(key);
@@ -53,13 +51,13 @@ public class EscrowCacheMap
     }
 
     // from EscrowCache
-    public void addEscrow (PriceKey key, Escrow escrow)
+    public void addEscrow (final PriceKey key, final Escrow escrow)
     {
         _cache.put(new Element(key, escrow));
     }
 
     // from EscrowCache
-    public void removeEscrow (PriceKey key)
+    public void removeEscrow (final PriceKey key)
     {
         _cache.remove(key);
     }

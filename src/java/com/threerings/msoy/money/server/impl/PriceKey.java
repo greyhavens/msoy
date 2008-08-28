@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.money.server.impl;
 
+import java.io.Serializable;
+
 import com.google.common.base.Preconditions;
-
 import com.samskivert.util.ObjectUtil;
-
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
@@ -16,6 +16,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  * @author Ray Greenwell <ray@threerings.net>
  */
 class PriceKey
+    implements Serializable
 {
     public PriceKey (final int memberId, final ItemIdent itemIdent)
     {
@@ -51,7 +52,7 @@ class PriceKey
             return false;
         }
         final PriceKey that = (PriceKey)obj;
-        return (this._memberId == that._memberId) && ObjectUtil.equals(this._ident, that._ident);
+        return (_memberId == that._memberId) && ObjectUtil.equals(_ident, that._ident);
     }
     
     private final int _memberId;
