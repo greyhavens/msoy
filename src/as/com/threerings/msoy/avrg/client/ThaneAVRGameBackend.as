@@ -121,12 +121,13 @@ public class ThaneAVRGameBackend
     }
 
     /**
-     * Creates an adapter that will dispatch movements to the room controls in the user code.
+     * Creates an adapter that will dispatch avatar actions to the user code.
      */
-    public function createMovementAdapter (room :RoomObject) :BackendMovementAdapter
+    public function createAvatarAdapter (room :RoomObject) :BackendAvatarAdapter
     {
-        var adapter :BackendMovementAdapter = new BackendMovementAdapter(
-            _gameObj, room, _userFuncs, "playerMoved_v1");
+        var adapter :BackendAvatarAdapter = new BackendAvatarAdapter(
+            _gameObj, room, _userFuncs, "playerMoved_v1", "actorStateSet_v1", 
+            "actorAppearanceChanged_v1");
         return adapter;
     }
 
