@@ -396,6 +396,8 @@ public class ThaneAVRGameBackend
                 log.warning("Error in user code: " + err);
                 log.logStackTrace(err);
             }
+        } else {
+            log.warning("Calling user code " + name + " before connection.");
         }
         return undefined;
     }

@@ -167,6 +167,19 @@ public class AVRGameBackend extends ControlBackend
         callUserCode("gotControl_v1");
     }
 
+    public override callUserCode (name :String, ... args) :*
+    {
+        if (_props == null) {
+            log.warning("Calling user code " + name + " before connection.");
+
+        } else if (_props[name] == null) {
+            log.warning("User code " + name + " not found.");
+        }
+
+        args.unshift(name);
+        super.callUserCode.apply(null, args);
+    }
+
     override protected function setUserProperties (o :Object) :void
     {
         super.setUserProperties(o);
@@ -195,8 +208,6 @@ public class AVRGameBackend extends ControlBackend
         o["getRoomId_v1"] = getRoomId_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getAvatarInfo_v1"] = getAvatarInfo_v1;
-        o["spawnMob_v1"] = spawnMob_v1;
-        o["despawnMob_v1"] = despawnMob_v1;
 
         // PlayerSubControl
         o["player_getGameData_v1"] = player_getGameData_v1;
@@ -313,40 +324,6 @@ public class AVRGameBackend extends ControlBackend
             ];
         }
         return null;
-    }
-
-    // RoomSubControl
-    protected function spawnMob_v1 (
-        targetId :int /* ignored */, mobId :String, mobName :String) :Boolean
-    {
-        validateRoomTargetId(targetId);
-        if (mobId && mobName && isPlaying()) {
-            var sprite :MobSprite = getMobSprite(mobId);
-            if (sprite == null) {
-                _ctrl.getRoom().roomService.spawnMob(
-                    _wctx.getClient(), _ctrl.getGameId(), mobId, mobName,
-                    BackendUtils.loggingInvocationListener("spawnMob"));
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // RoomSubControl
-    protected function despawnMob_v1 (
-        targetId :int /* ignored */, mobId :String) :Boolean
-    {
-        validateRoomTargetId(targetId);
-        if (mobId && isPlaying()) {
-            var sprite :MobSprite = getMobSprite(mobId);
-            if (sprite != null) {
-                _ctrl.getRoom().roomService.despawnMob(
-                    _wctx.getClient(), _ctrl.getGameId(), mobId,
-                    BackendUtils.loggingInvocationListener("despawnMob"));
-                return true;
-            }
-        }
-        return false;
     }
 
     // PlayerSubControl
