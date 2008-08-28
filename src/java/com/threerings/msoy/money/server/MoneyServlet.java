@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.money.server;
 
-import java.util.List;
-
 import com.google.inject.Inject;
 
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -12,7 +10,6 @@ import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
-import com.threerings.msoy.money.data.all.MoneyHistory;
 import com.threerings.msoy.money.data.all.MoneyType;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.gwt.HistoryListResult;

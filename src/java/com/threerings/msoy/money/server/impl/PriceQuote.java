@@ -3,14 +3,12 @@
 
 package com.threerings.msoy.money.server.impl;
 
-import java.io.Serializable;
-
 import com.threerings.msoy.money.data.all.MoneyType;
 
 /**
  * Contains secured prices when a member views an item. This can be cached and identified by a
  * {@link PriceKey}.
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
  */

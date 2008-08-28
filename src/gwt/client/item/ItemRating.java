@@ -15,7 +15,6 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.WidgetUtil;
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.MemberItemInfo;
 import com.threerings.msoy.item.data.all.Item;
