@@ -12,22 +12,23 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-
+import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 
-import client.item.StuffNaviBar;
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Pages;
@@ -38,12 +39,13 @@ import client.util.MsoyCallback;
 import client.util.NaviUtil;
 
 /**
- * Displays all items of a particular type in a player's inventory.
+ * Displays all items of a particular type in a player's inventory, or display the main inventory
+ * page with a list of recent items of all types.
  */
-public class ItemPanel extends VerticalPanel
+public class ItemPanel extends FlowPanel
 {
     /** The number of columns of items to display. */
-    public static final int COLUMNS = 5;
+    public static final int COLUMNS = 4;
 
     public ItemPanel (InventoryModels models, byte type)
     {
@@ -51,33 +53,48 @@ public class ItemPanel extends VerticalPanel
 
         _models = models;
         _type = type;
-
         boolean isCatalogType = isCatalogItem(type);
+
+        _search = new HorizontalPanel();
+        _search.setStyleName("Search");
+        _search.setSpacing(5);
+        _search.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        _search.add(MsoyUI.createLabel("Search", "SearchTitle"));
+        final ListBox searchTypes = new ListBox();
+        for (byte searchType : Item.TYPES) {
+            searchTypes.addItem(_dmsgs.getString("pItemType" + searchType), searchType + "");
+        }
+        _search.add(searchTypes);
+        final TextBox searchBox = new TextBox();
+        searchBox.setVisibleLength(20);
+        _search.add(searchBox);
+        // TODO show query: if (query != null) { searchBox.setText(query); }
+
+        // TODO get from somewhere.. _filters?
+        final byte sortMethod = 0;
+
+        ClickListener searchListener = new ClickListener() {
+            public void onClick (Widget sender)
+            {
+                String newQuery = searchBox.getText().trim();
+                Link.go(Pages.STUFF, Args.compose(new String[] {
+                    searchTypes.getValue(searchTypes.getSelectedIndex()), sortMethod + "",
+                    newQuery }));
+            }
+        };
+        searchBox.addKeyboardListener(new EnterClickAdapter(searchListener));
+        _search.add(MsoyUI.createImageButton("GoButton", searchListener));
 
         // a drop down for setting filters
         _filters = new ListBox();
-        for (int ii = 0; ii < FLABELS.length; ii++) {
-            _filters.addItem(FLABELS[ii]);
+        for (String element2 : FLABELS) {
+            _filters.addItem(element2);
         }
         _filters.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
                 showInventory(0, FILTERS.get(_filters.getSelectedIndex()));
             }
         });
-
-        if (isCatalogType) {
-            _shop = new HorizontalPanel();
-            _shop.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
-            _shop.add(MsoyUI.createLabel(CStuff.msgs.ipShopFor(), null));
-            _shop.add(WidgetUtil.makeShim(5, 5));
-            ClickListener onClick = new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.SHOP, ""+_type);
-                }
-            };
-            _shop.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, CStuff.msgs.ipToCatalog(), onClick));
-            _shop.add(WidgetUtil.makeShim(10, 10));
-        }
 
         // compute the number of rows of items we can fit on the page
         int used = NAV_BAR_ETC;
@@ -92,20 +109,20 @@ public class ItemPanel extends VerticalPanel
 
         // now create our grid of items
         _contents = new PagedGrid<Item>(rows, COLUMNS) {
-            protected void displayPageFromClick (int page) {
+            @Override protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
                 Link.go(Pages.STUFF, Args.compose(new String[] { ""+_type, ""+page }));
             }
-            protected Widget createWidget (Item item) {
+            @Override protected Widget createWidget (Item item) {
                 return new ItemEntry(item);
             }
-            protected String getEmptyMessage () {
+            @Override protected String getEmptyMessage () {
                 return CStuff.msgs.panelNoItems(_dmsgs.getString("itemType" + _type));
             }
-            protected boolean displayNavi (int items) {
+            @Override protected boolean displayNavi (int items) {
                 return true;
             }
-            protected void addCustomControls (FlexTable controls) {
+            @Override protected void addCustomControls (FlexTable controls) {
                 controls.setText(0, 0, CStuff.msgs.ipfTitle());
                 controls.getFlexCellFormatter().setStyleName(0, 0, "Show");
                 controls.setWidget(0, 1, _filters);
@@ -136,8 +153,8 @@ public class ItemPanel extends VerticalPanel
 
     protected boolean isCatalogItem (byte type)
     {
-        for (int ii = 0; ii < Item.TYPES.length; ii++) {
-            if (type == Item.TYPES[ii]) {
+        for (byte element2 : Item.TYPES) {
+            if (type == element2) {
                 return true;
             }
         }
@@ -182,11 +199,20 @@ public class ItemPanel extends VerticalPanel
         // don't fiddle with things if the inventory is already showing
         if (!_contents.isAttached()) {
             clear();
+            String title = _type == Item.NOT_A_TYPE ? CStuff.msgs.stuffTitleMain()
+                : CStuff.msgs.stuffTitle(_dmsgs.getString("pItemType" + _type));
+            add(MsoyUI.createLabel(title, "TypeTitle"));
+
+            // TODO: this has been styled but the functionality not yet implemented
+            // add(_search);
+
             add(new StuffNaviBar(_type));
-            if (_shop != null) {
-                add(_shop);
-                setCellHorizontalAlignment(_shop, HasAlignment.ALIGN_RIGHT);
-            }
+            Image shopImage = MsoyUI.createActionImage("/images/stuff/shop.png",
+                Link.createListener(Pages.SHOP, ""));
+            shopImage.addStyleName("Shop");
+            add(shopImage);
+
+            // TODO switch to Bill's horizontal layout instead if it will fit more items
             add(_contents);
             if (_upload != null) {
                 add(_upload);
@@ -218,11 +244,10 @@ public class ItemPanel extends VerticalPanel
     protected InventoryModels _models;
     protected byte _type;
     protected int _mostRecentPage;
-
-    protected HorizontalPanel _shop;
     protected ListBox _filters;
     protected PagedGrid<Item> _contents;
     protected SmartTable _upload;
+    protected HorizontalPanel _search;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
@@ -259,7 +284,8 @@ public class ItemPanel extends VerticalPanel
     }
 
     protected static final int NAV_BAR_ETC = 80 /* item navi */ + 24 /* shop */ +
-        29 /* grid navi */ + 20 /* margin */;
+        29 /* grid navi */
+        + 20 /* margin */+ 50 /* TODO calculate this correctly */;
     protected static final int BLURB_HEIGHT = 33 /* title */ + 71 /* contents */;
     protected static final int BOX_HEIGHT = 104;
     protected static final int ACTIVATOR_HEIGHT = 22;

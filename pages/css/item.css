@@ -35,22 +35,6 @@
   background: #FFFFFF;
 }
 
-.stuffNaviBar {
-  background-image: url(/images/me/stuff_bg.png);
-}
-
-.stuffNaviBar .Link {
-  width: 64px;
-}
-
-.stuffNaviBar .Label {
-  background-image: none;
-  text-align: center;
-  font-weight: bold;
-  color: #FFFFFF;
-  height: 25px;
-}
-
 .tagCloud {
   background: url(/images/item/top_tags.png) no-repeat top;
   font-size: 12px;

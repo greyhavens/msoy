@@ -49,7 +49,8 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      * only shown when viewing an item of their containing type (ie. GAME).
      */
     public static final byte[] TYPES = {
-        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO, VIDEO
+        AVATAR, FURNITURE, DECOR, TOY, PET, GAME, PHOTO, AUDIO,
+        VIDEO
     };
 
     /**

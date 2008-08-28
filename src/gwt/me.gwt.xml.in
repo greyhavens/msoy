@@ -4,9 +4,16 @@
   <source path="com/threerings/msoy/badge/data/all"/>
   <source path="com/threerings/msoy/badge/gwt"/>
   <source path="com/threerings/msoy/person/gwt"/>
-
+  
   <source path="client/person"/>
   <source path="client/me"/>
+
+  <!-- TODO: remove SOON when stuff is in its own tab and stuff bar is gone from #me --> 
+  <source path="com/threerings/msoy/stuff/gwt"/>
+  <source path="client/stuff"/>
+  <inherits name="editem"/>
+  <source path="client/remix"/>
+  <!-- END TODO remove -->
 
   <public path="public/me"/>
   <stylesheet src="/css/person.css"/>

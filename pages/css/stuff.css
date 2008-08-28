@@ -4,9 +4,75 @@
  * CSS styles for the Inventory interfaces.
  */
 
+/* ------------------------------------
+   ITEM DETAIL CONTENT
+-------------------------------------*/
+
 .itemDetailContent .Status {
   width: 125px;
   font-size: 12px;
+}
+
+/* ------------------------------------
+   ITEM PANEL / MAIN STUFF PAGE
+-------------------------------------*/
+
+.itemPanel {
+  width: 100%;
+  background: #61a9cf url(/images/stuff/stuff_bg.png) repeat-x;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  min-height: 100%;
+}
+
+.itemPanel .TypeTitle {
+  background: url(/images/stuff/orange_header.png) no-repeat;
+  width: 233px;
+  height: 38px; /* 41 - padding */
+  margin-left: 7px;
+  color: #FFFFFF;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 26px;
+  text-align: center;
+  padding-top: 3px;
+  margin-bottom: 10px;
+}
+
+.itemPanel .Search {
+  position: absolute;
+  top: 10px;
+  left: 265px;
+  background: url(/images/stuff/search_bg.png) no-repeat;
+  width: 411px;
+  height: 31px;
+}
+
+.itemPanel .Search .SearchTitle {
+  color: #b8daf0;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-left: 5px;
+}
+
+.itemPanel .Search select,
+.itemPanel .Search input {
+  font-size: 13px;
+}
+
+.itemPanel .Shop {
+  position: absolute;
+  left: 0;
+  top: 140px;
+}
+
+.itemPanel .pagedGrid {
+  margin: 10px 0 10px 115px;
+  width: 550px;
+}
+
+.itemPanel .pagedGrid .Header .TopLeft, 
+.itemPanel .pagedGrid .Header .TopRight {
+  background-color: #29688d;
 }
 
 .itemPanel .pagedGrid .Header .Show {
@@ -15,13 +81,17 @@
   padding-right: 5px;
 }
 
+.itemPanel .pagedGrid .Grid,
+.itemPanel .pagedGrid .Empty {
+  background-color: #FFFFFF;
+}
+.itemPanel .pagedGrid .Empty {
+  padding: 40px 0;
+}
+	
+
 .itemPanel .itemDetailPanel .itemActivator .Tip {
   color: #3776A0;
-}
-
-.itemPanel .Contents {
-  margin: 10px;
-  width: 650px;
 }
 
 .itemPanel .Upload {
@@ -40,7 +110,7 @@
 
 .itemPanel .Upload .Pitch {
   background-image: none;
-  padding-left: 20px;
+  padding: 5px 0 10px 20px;
   font-size: 14px;
 }
 
@@ -59,6 +129,22 @@
 .itemPanel .Upload .Button {
   padding-right: 20px;
 }
+
+/* ------------------------------------
+   NAVIGATION BAR
+-------------------------------------*/
+
+.stuffNaviBar {
+  margin-left: 7px;
+}
+
+.stuffNaviBar img {
+  float: left;
+}
+
+/* ------------------------------------
+   SUB INVENTORY CONTENTS
+-------------------------------------*/
 
 .subInventoryContents {
   width: 650px;

@@ -5,6 +5,20 @@
  */
 
 /* ------------------------------------
+   NAVIGATION BAR
+   TODO: delete when nav bar is removed from #me
+-------------------------------------*/
+
+.stuffNaviBar {
+  margin-left: 7px;
+  margin-top: 10px;
+}
+
+.stuffNaviBar img {
+  float: left;
+}
+
+/* ------------------------------------
    POPUP PAGE
 -------------------------------------*/
 

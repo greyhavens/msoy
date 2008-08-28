@@ -132,7 +132,7 @@ public class StuffPage extends Page
         } else {
             // otherwise we're viewing our inventory
             byte type = (byte)args.get(0, Item.AVATAR);
-            String title = CStuff.msgs.stuffTitle(_dmsgs.getString("pItemType" + type));
+            String title = CStuff.msgs.stuffTitleMain();
             ItemPanel panel = getItemPanel(type);
             panel.setPage(args.get(1, -1));
             setContent(title, panel);
