@@ -27,7 +27,7 @@ public class MoneyNodeActions
             (int)money.getAccCoins()));
     }
 
-    private static class MoneyUpdated extends MemberNodeAction
+    protected static class MoneyUpdated extends MemberNodeAction
     {
         public MoneyUpdated (final int memberId, final int coins, final int accCoins)
         {
@@ -52,8 +52,8 @@ public class MoneyNodeActions
             }
         }
 
-        private int _coins;
-        private int _accCoins;
+        protected int _coins;
+        protected int _accCoins;
     }
 
     private final MsoyPeerManager _peerMan;
