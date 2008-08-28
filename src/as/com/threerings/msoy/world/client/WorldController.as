@@ -481,6 +481,8 @@ public class WorldController extends MsoyController
      */
     override public function handleViewGames () :void
     {
+        // log that the view games event was fired
+        _wctx.getMsoyClient().trackClientAction("flashViewGames", null);
         displayPage("games", "");
     }
 
@@ -700,6 +702,8 @@ public class WorldController extends MsoyController
      */
     public function handleCreateAccount (invite :String = null) :void
     {
+        // log that the create account event was fired
+        _wctx.getMsoyClient().trackClientAction("flashCreateAccount", null);
         displayPage("account", (invite == null) ? "create" : ("create_" + invite));
     }
 

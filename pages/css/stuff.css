@@ -60,14 +60,19 @@
 }
 
 .itemPanel .Shop {
-  position: absolute;
-  left: 0;
-  top: 140px;
+  clear: both;
+  margin-left: 10px;
+  padding-top: 10px;
+  color: white;
+}
+
+.itemPanel .Shop .gwt-Label {
+  font-size: 13px;
 }
 
 .itemPanel .pagedGrid {
-  margin: 10px 0 10px 115px;
-  width: 550px;
+  margin: 10px 0 10px 10px;
+  width: 660px;
 }
 
 .itemPanel .pagedGrid .Header .TopLeft, 
@@ -89,7 +94,6 @@
   padding: 40px 0;
 }
 	
-
 .itemPanel .itemDetailPanel .itemActivator .Tip {
   color: #3776A0;
 }

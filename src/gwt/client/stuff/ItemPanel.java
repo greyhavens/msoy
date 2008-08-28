@@ -16,13 +16,13 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
@@ -45,7 +45,7 @@ import client.util.NaviUtil;
 public class ItemPanel extends FlowPanel
 {
     /** The number of columns of items to display. */
-    public static final int COLUMNS = 4;
+    public static final int COLUMNS = 5;
 
     public ItemPanel (InventoryModels models, byte type)
     {
@@ -207,12 +207,28 @@ public class ItemPanel extends FlowPanel
             // add(_search);
 
             add(new StuffNaviBar(_type));
-            Image shopImage = MsoyUI.createActionImage("/images/stuff/shop.png",
-                Link.createListener(Pages.SHOP, ""));
-            shopImage.addStyleName("Shop");
-            add(shopImage);
 
-            // TODO switch to Bill's horizontal layout instead if it will fit more items
+            // TODO: takes up too much room - display only on main stuff page?
+            // Image shopImage = MsoyUI.createActionImage("/images/stuff/shop.png",
+            // Link.createListener(Pages.SHOP, ""));
+            // shopImage.addStyleName("Shop");
+            // add(shopImage);
+
+            // TODO replace this old image with the above shop image
+            HorizontalPanel shop = new HorizontalPanel();
+            shop.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+            shop.add(MsoyUI.createLabel(CStuff.msgs.ipShopFor(), null));
+            shop.add(WidgetUtil.makeShim(5, 5));
+            ClickListener onClick = new ClickListener() {
+                public void onClick (Widget sender)
+                {
+                    Link.go(Pages.SHOP, "" + _type);
+                }
+            };
+            shop.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, CStuff.msgs.ipToCatalog(), onClick));
+            shop.add(WidgetUtil.makeShim(10, 10));
+            add(MsoyUI.createSimplePanel("Shop", shop));
+
             add(_contents);
             if (_upload != null) {
                 add(_upload);
