@@ -161,6 +161,11 @@ public class AVRGameBackend extends ControlBackend
         callUserCode("playerMoved_v1", memberId);
     }
 
+    public function gotControl () :void
+    {
+        callUserCode("gotControl_v1");
+    }
+
     override protected function setUserProperties (o :Object) :void
     {
         super.setUserProperties(o);

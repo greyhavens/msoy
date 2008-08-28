@@ -551,15 +551,6 @@ public class RoomObjectView extends RoomView
         }
     }
 
-    /** Executes a usercode method through the AVRG backend. */
-    public function callAVRGCode (... args) :*
-    {
-        var backend :AVRGameBackend = _ctx.getGameDirector().getAVRGameBackend();
-        if (backend != null) {
-            return backend.callUserCode.apply(backend, args);
-        }
-    }
-
     /**
      * Called when control of an AVRG is assigned to us.
      */
@@ -570,7 +561,12 @@ public class RoomObjectView extends RoomView
             return;
         }
         log.debug("AVRG got control [gameId=" + gameId + "]");
-        callAVRGCode("gotControl_v1");
+
+        // TODO: remove this
+        var backend :AVRGameBackend = _ctx.getGameDirector().getAVRGameBackend();
+        if (backend != null) {
+            return backend.gotControl();
+        }
     }
 
     override protected function backgroundFinishedLoading () :void

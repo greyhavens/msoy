@@ -80,7 +80,6 @@ public class ActorSprite extends OccupantSprite
         // if the state has changed, dispatch an event 
         if (stateChanged) {
             callUserCode("stateSet_v1", getState());
-            callAVRGCode("actorStateSet_v1", getState());
         }
     }
 
@@ -144,24 +143,12 @@ public class ActorSprite extends OccupantSprite
         } else {
             callUserCode("appearanceChanged_v1", locArray, _loc.orient, isMoving());
         }
-        callAVRGCode("actorAppearanceChanged_v1");
     }
 
     // from MsoySprite
     override protected function createBackend () :EntityBackend
     {
         return new ActorBackend();
-    }
-
-    // a helper function to call functions in the AVRG backend
-    protected function callAVRGCode (name :String, ... args) :*
-    {
-        if (_ident != null && parent is RoomObjectView && _occInfo is MemberInfo) {
-            args.unshift(MemberInfo(_occInfo).getMemberId());
-            args.unshift(name);
-            return RoomObjectView(parent).callAVRGCode.apply(parent, args);
-        }
-        return undefined;
     }
 }
 }
