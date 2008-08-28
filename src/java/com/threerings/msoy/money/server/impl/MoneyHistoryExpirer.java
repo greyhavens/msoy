@@ -37,18 +37,17 @@ public class MoneyHistoryExpirer
      * and check once every hour for coins history records that are at least 10 days old.
      */
     @Inject
-    public MoneyHistoryExpirer (final MoneyRepository repo, final ShutdownManager sm,
-        final Invoker invoker)
+    public MoneyHistoryExpirer (final MoneyRepository repo, final ShutdownManager sm)
     {
-        this(repo, sm, Executors.newSingleThreadScheduledExecutor(), invoker);
+        this(repo, sm, Executors.newSingleThreadScheduledExecutor());
     }
     
-    public MoneyHistoryExpirer (
+    private MoneyHistoryExpirer (
         final MoneyRepository repo, final ShutdownManager sm,
-        final ScheduledExecutorService service, final Invoker invoker)
+        final ScheduledExecutorService service)
     {
         _repo = repo;
-        _invoker = invoker;
+        //_invoker = invoker;
         _maxAge = 10*24*60*60*1000;     // 10 days
         _period = 60*60*1000;           // 1 hour
         _interval = null;
@@ -130,7 +129,7 @@ public class MoneyHistoryExpirer
     private static final Logger log = Logger.getLogger(MoneyHistoryExpirer.class);
     
     private final MoneyRepository _repo;
-    private final @MainInvoker Invoker _invoker;
+    @Inject private @MainInvoker Invoker _invoker;
     private long _maxAge;
     private long _period;
     private Interval _interval;
