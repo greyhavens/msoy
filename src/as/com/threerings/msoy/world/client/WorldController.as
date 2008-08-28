@@ -491,6 +491,7 @@ public class WorldController extends MsoyController
      */
     public function handleViewGameComments (gameId :int) :void
     {
+        _wctx.getMsoyClient().trackClientAction("flashViewGameComments", null);
         displayPage("games", "d_" + gameId + "_c");
     }
 
@@ -499,6 +500,7 @@ public class WorldController extends MsoyController
      */
     public function handleViewGameInstructions () :void
     {
+        _wctx.getMsoyClient().trackClientAction("flashViewGameInstructions", null);
         const gameId :int = getCurrentGameId();
         displayPage("games", "d_" + gameId + "_i");
     }
