@@ -81,8 +81,7 @@ public class ItemRating extends FlexTable
                 setWidget(0, 3, _ratingDesc);
                 setWidget(1, 2, _playerStars);
                 getFlexCellFormatter().setColSpan(1, 2, 2);
-                // TODO hiding favorites feature
-                if (DeploymentConfig.devDeployment && item.catalogId != 0) {
+                if (item.catalogId != 0) {
                     setWidget(0, 4, favoriteIndicator);
                     getFlexCellFormatter().setRowSpan(0, 4, 2);
                 }
@@ -99,8 +98,7 @@ public class ItemRating extends FlexTable
                 setWidget(3, 0, _ratingDesc);
                 setWidget(3, 1, nbsp);
                 getFlexCellFormatter().setColSpan(3, 0, 2);
-                // TODO hiding favorites feature
-                if (DeploymentConfig.devDeployment && item.catalogId != 0) {
+                if (item.catalogId != 0) {
                     setWidget(4, 0, favoriteIndicator);
                 }
             }
