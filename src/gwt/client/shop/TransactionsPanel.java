@@ -5,6 +5,8 @@ package client.shop;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
+import com.threerings.msoy.money.data.all.MoneyType;
+
 import client.ui.MsoyUI;
 
 public class TransactionsPanel extends VerticalPanel
@@ -13,7 +15,10 @@ public class TransactionsPanel extends VerticalPanel
     {
         setStyleName("shopPanel");
 
-        add(MsoyUI.createLabel("Transaction History WIP:", ""));
-        add(new BalancePanel(memberId));
+        // TODO: Fixer upper
+        add(MsoyUI.createLabel("Bars", ""));
+        add(new BalancePanel(memberId, MoneyType.BARS));
+        add(MsoyUI.createLabel("Coins", ""));
+        add(new BalancePanel(memberId, MoneyType.COINS));
     }
 }

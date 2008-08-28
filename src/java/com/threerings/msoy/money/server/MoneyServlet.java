@@ -24,7 +24,8 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
 public class MoneyServlet extends MsoyServiceServlet
     implements MoneyService
 {
-    public HistoryListResult getTransactionHistory (int memberId, int from, int count)
+    public HistoryListResult getTransactionHistory (int memberId, MoneyType type,
+                                                    int from, int count)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -33,7 +34,7 @@ public class MoneyServlet extends MsoyServiceServlet
         }
 
         HistoryListResult ofTheJedi = new HistoryListResult();
-        ofTheJedi.history = _moneyLogic.getLog(memberId, MoneyType.COINS, from, count, true);
+        ofTheJedi.history = _moneyLogic.getLog(memberId, type, from, count, true);
         ofTheJedi.totalCount = 50; // TODO
         return ofTheJedi;
     }

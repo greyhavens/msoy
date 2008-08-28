@@ -22,16 +22,17 @@ import client.util.ServiceUtil;
  */
 public class MoneyHistoryDataModel extends ServiceBackedDataModel<MoneyHistory, HistoryListResult>
 {
-    public MoneyHistoryDataModel (int memberId)
+    public MoneyHistoryDataModel (int memberId, MoneyType type)
     {
         _memberId = memberId;
+        _type = type;
     }
 
     @Override
     protected void callFetchService (int start, int count, boolean needCount,
         AsyncCallback<HistoryListResult> callback)
     {
-        _moneysvc.getTransactionHistory(_memberId, start, count, callback);
+        _moneysvc.getTransactionHistory(_memberId, _type, start, count, callback);
     }
 
     @Override
@@ -47,6 +48,7 @@ public class MoneyHistoryDataModel extends ServiceBackedDataModel<MoneyHistory, 
     }
 
     protected int _memberId;
+    protected MoneyType _type;
 
     protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
         ServiceUtil.bind(GWT.create(MoneyService.class), MoneyService.ENTRY_POINT);

@@ -14,11 +14,11 @@ import client.ui.MsoyUI;
 
 public class BalancePanel extends PagedGrid<MoneyHistory>
 {
-    public BalancePanel (int memberId)
+    public BalancePanel (int memberId, MoneyType type)
     {
         super(10, 1, PagedGrid.NAV_ON_BOTTOM);
 
-        setModel(new MoneyHistoryDataModel(memberId), 0);
+        setModel(new MoneyHistoryDataModel(memberId, type), 0);
     }
 
     public Widget createWidget (MoneyHistory item)
