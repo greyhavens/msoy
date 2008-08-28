@@ -5,6 +5,8 @@ package com.threerings.msoy.room.data {
 
 import com.threerings.io.ObjectInputStream;
 
+import com.threerings.util.StringBuilder;
+
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -63,6 +65,16 @@ public class ActorInfo extends OccupantInfo
         _media = (ins.readObject() as MediaDesc);
         _ident = (ins.readObject() as ItemIdent);
         _state = (ins.readField(String) as String);
+    }
+
+    /** @inheritDoc */
+    // from SimpleStreamableObject
+    override protected function toStringBuilder (buf :StringBuilder): void
+    {
+        super.toStringBuilder(buf);
+        buf.append(", media=", _media);
+        buf.append(", ident=", _ident);
+        buf.append(", state=", _state);
     }
 
     protected var _media :MediaDesc;
