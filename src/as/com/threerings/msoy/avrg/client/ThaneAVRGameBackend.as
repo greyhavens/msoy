@@ -348,7 +348,7 @@ public class ThaneAVRGameBackend
         var roomObj :RoomObject = _controller.getRoom(roomId);
         if (roomObj == null) {
             log.warning("Room object is null [roomId=" + roomId + "]");
-            return;
+            return false;
         }
 
         BackendUtils.setAvatarLocation(
