@@ -3,25 +3,38 @@
 
 package com.threerings.msoy.avrg.client {
 
-import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.io.TypedArray;
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.util.Integer;
+import com.threerings.util.Iterator;
+import com.threerings.util.Log;
+import com.threerings.util.ObjectMarshaller;
+
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
 import com.threerings.presents.dobj.DObject;
-import com.threerings.util.Integer;
-import com.threerings.util.Iterator;
-import com.threerings.util.Log;
-import com.threerings.util.ObjectMarshaller;
+
+import com.threerings.crowd.data.OccupantInfo;
+
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.client.WhirledGameMessageService;
+
 import com.whirled.game.data.PropertySetEvent;
 import com.whirled.game.data.PropertySetAdapter;
 import com.whirled.game.data.PropertySpaceObject;
+
+import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.item.data.all.ItemIdent;
+
+import com.threerings.msoy.avrg.data.AVRGameObject;
+
+import com.threerings.msoy.room.data.ActorInfo;
+import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.room.data.RoomObject;
 
 /**
  * Various functions useful to both the thane and the flash backends.
@@ -141,6 +154,27 @@ public class BackendUtils
     }
 
     /**
+     * Sets the location of an avatar in its room.
+     */
+    public static function setAvatarLocation (
+        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
+        x :Number, y :Number, z: Number, orient :Number) :void
+    {
+        var occInfo :OccupantInfo = resolvePlayerWorldInfo(gameObj, room, playerId);
+        if (occInfo == null) {
+            return;
+        }
+        var actorInfo :ActorInfo = occInfo as ActorInfo;
+        if (actorInfo == null) {
+            log.warning("Setting location of non-actor [occInfo=" + occInfo + "]");
+            return;
+        }
+        var newLoc :MsoyLocation = new MsoyLocation(x, y, z, orient);
+        var ident :ItemIdent = actorInfo.getItemIdent();
+        room.roomService.changeLocation(client, ident, newLoc);
+    }
+
+    /**
      * Creates a confirm listener that will log failures with a service name and optionally 
      * call a function on success.
      */
@@ -161,6 +195,25 @@ public class BackendUtils
         return new InvocationAdapter(function (cause :String) :void {
             log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
         });
+    }
+
+    /**
+     * Extracts the room occupant info for the given player id, also making sure the player is in
+     * the game. Returns null if the player is not in the game or room.
+     */
+    protected static function resolvePlayerWorldInfo (
+        gameObj :AVRGameObject, roomObj :RoomObject, playerId :int) :OccupantInfo
+    {
+        var occInfo :OccupantInfo = gameObj.getOccupantInfo(new MemberName("", playerId));
+        if (occInfo == null) {
+            log.warning("Player not found on game server [id=" + playerId + "]");
+            return null;
+        }
+        occInfo = roomObj.getOccupantInfo(occInfo.username);
+        if (occInfo == null) {
+            log.warning("Player not found on world server [id=" + playerId + "]");
+        }
+        return occInfo;
     }
 }
 }

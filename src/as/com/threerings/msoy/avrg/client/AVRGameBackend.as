@@ -427,12 +427,10 @@ public class AVRGameBackend extends ControlBackend
         targetId :int /* ignored */, x :Number, y :Number, z: Number, orient :Number) :Boolean
     {
         validatePlayerTargetId(targetId);
-        var sprite :MemberSprite = getMySprite();
-        if (sprite != null) {
-            sprite.setLocationFromUser(x, y, z, orient);
-            return true;
-        }
-        return false;
+        BackendUtils.setAvatarLocation(
+            _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMemberObject().getMemberId(), 
+            x, y, z, orient);
+        return true;
     }
 
     // PlayerSubControl

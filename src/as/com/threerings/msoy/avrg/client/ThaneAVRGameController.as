@@ -121,6 +121,17 @@ public class ThaneAVRGameController
         _gameObj.manager.invoke("agentReady");
     }
 
+    /** Retrieves the room for the given room id. Returns null if it is not yet available or could 
+     *  not be found. */
+    public function getRoom (roomId :int) :RoomObject
+    {
+        var binding :SceneBinding = _bindings.get(roomId);
+        if (binding == null) {
+            return null;
+        }
+        return binding.room;
+    }
+
     /** Retrieves the room properties for the given room id. Returns null if they are not yet
      * available or if the room could not be found. */
     public function getRoomProps (roomId :int) :RoomPropertiesObject

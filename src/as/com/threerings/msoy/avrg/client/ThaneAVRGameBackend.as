@@ -241,11 +241,8 @@ public class ThaneAVRGameBackend
 
     protected function isPlayerHere_v1 (roomId :int, playerId :int) :Boolean
     {
-        var pl :PlayerLocation = _gameObj.playerLocs.get(playerId) as PlayerLocation;
-        if (pl == null) {
-            return false;
-        }
-        return pl.sceneId == roomId;
+        var playerRoomId :int = getPlayerRoomId(playerId);
+        return playerRoomId != 0 && playerRoomId == roomId;
     }
 
     protected function getAvatarInfo_v1 (roomId :int, playerId :int) :Array
@@ -341,7 +338,22 @@ public class ThaneAVRGameBackend
     protected function setAvatarLocation_v1 (
         playerId :int, x :Number, y :Number, z: Number, orient :Number) :Boolean
     {
-        return false;
+        var roomId :int = getPlayerRoomId(playerId);
+        if (roomId == 0) {
+            return false;
+        }
+
+        // TODO: maybe expose ThaneAVRGameController::SceneBinding instead of always doing lookup 
+        // twice
+        var roomObj :RoomObject = _controller.getRoom(roomId);
+        if (roomObj == null) {
+            log.warning("Room object is null [roomId=" + roomId + "]");
+            return;
+        }
+
+        BackendUtils.setAvatarLocation(
+            _gameObj, roomObj, _controller.getRoomClient(roomId), playerId, x, y, z, orient);
+        return true;
     }
 
     protected function setAvatarOrientation_v1 (playerId :int, orient :Number) :Boolean
@@ -378,6 +390,16 @@ public class ThaneAVRGameBackend
     }
 
     // -------------------- end of versioned methods --------------------
+
+    protected function getPlayerRoomId (playerId :int) :int
+    {
+        var pl :PlayerLocation = _gameObj.playerLocs.get(playerId) as PlayerLocation;
+        if (pl == null) {
+            log.warning("Room not found for player [id=" + playerId + "]");
+            return 0;
+        }
+        return pl.sceneId;
+    }
 
     /**
      * Call an exposed function in usercode.
