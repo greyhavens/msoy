@@ -4,6 +4,7 @@
 package com.threerings.msoy.money.server;
 
 import java.math.BigDecimal;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.threerings.msoy.data.UserAction;
@@ -11,6 +12,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyHistory;
 import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.presents.annotation.BlockingThread;
 
 /**
@@ -131,7 +133,7 @@ public interface MoneyLogic
      * @param numBars Number of bars to add to their account.
      * @return The money the member now has in their account.
      */
-    MoneyResult buyBars (int memberId, int numBars);
+    MoneyResult buyBars (int memberId, int numBars, String description);
 
     /**
      * Awards some number of coins to a member for some activity, such as playing a game. This
@@ -169,6 +171,8 @@ public interface MoneyLogic
      * @param memberId ID of the member to retrieve money for.
      * @param type Money type to retrieve logs for. If null, then records for all money types are
      * returned.
+     * @param transactionTypes Set of transaction types to retrieve logs for.  If null, all
+     *      transactionTypes will be retrieved.
      * @param start Zero-based index of the first log item to return.
      * @param count The number of log items to return. If Integer.MAX_VALUE, this will return all
      * records.
@@ -176,7 +180,8 @@ public interface MoneyLogic
      * @return List of requested past transactions.
      */
     List<MoneyHistory> getLog (
-        int memberId, MoneyType type, int start, int count, boolean descending);
+        int memberId, MoneyType type, EnumSet<TransactionType> transactionTypes, int start, int 
+        count, boolean descending);
 
     /**
      * Retrieves the amount that a member's current bling is worth in American dollars.

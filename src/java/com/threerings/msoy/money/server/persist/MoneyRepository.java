@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.money.server.persist;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interface for retrieving and persisting entities in the money service.
@@ -32,7 +34,10 @@ public interface MoneyRepository
     void addHistory (MemberAccountHistoryRecord history);
     
     List<MemberAccountHistoryRecord> getHistory (
-        int memberId, PersistentMoneyType type, int start, int count, boolean descending);
+        int memberId, PersistentMoneyType type, EnumSet<PersistentTransactionType> transactionTypes,
+        int start, int count, boolean descending);
+    
+    List<MemberAccountHistoryRecord> getHistory (Set<Integer> ids);
     
     int deleteOldHistoryRecords (PersistentMoneyType type, long maxAge);
 }

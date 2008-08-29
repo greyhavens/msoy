@@ -6,13 +6,13 @@ package com.threerings.msoy.money.data.all;
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Contains the history of a single transaction involving coins, bars, or bling.
  * 
- * @Immutable
+ * Immutable, except for serialization needs.
+ * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class MoneyHistory
@@ -21,16 +21,19 @@ public class MoneyHistory
     // Required by for serializing
     public MoneyHistory () { }
 
-    public MoneyHistory (int memberId, Date timestamp, MoneyType type,
-        double amount, boolean spent, String description, ItemIdent item)
+    public MoneyHistory (final int memberId, final Date timestamp, final MoneyType type,
+        final double amount, final TransactionType transactionType, final boolean spent, 
+        final String description, final ItemIdent item, final MoneyHistory referenceTx)
     {
         _memberId = memberId;
         _timestamp = timestamp;
         _type = type;
         _amount = amount;
+        _transactionType = transactionType;
         _spent = spent;
         _description = description;
         _item = item;
+        _referenceTx = referenceTx;
     }
 
     /**
@@ -89,12 +92,33 @@ public class MoneyHistory
     {
         return _item;
     }
+    
+    /**
+     * The type of this transaction.
+     */
+    public TransactionType getTransactionType ()
+    {
+        return _transactionType;
+    }
+    
+    /**
+     * For some transaction types, the transaction that corresponds to this transaction for the
+     * other member involved.  For example, if A sold an item to B, two transactions would be
+     * created.  Their reference transactions will be each other.  If there is no reference
+     * transaction, this should be null.
+     */
+    public MoneyHistory getReferenceTx ()
+    {
+        return _referenceTx;
+    }
 
     private int _memberId;
     private Date _timestamp;
     private MoneyType _type;
+    private TransactionType _transactionType;
     private double _amount;
     private boolean _spent;
     private String _description;
     private ItemIdent _item;
+    private MoneyHistory _referenceTx;
 }

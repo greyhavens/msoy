@@ -28,7 +28,8 @@ import com.threerings.msoy.money.data.all.MoneyHistory;
 @Entity(indices = {
     @Index(name = "ixMemberId", fields = { MemberAccountHistoryRecord.MEMBER_ID }),
     @Index(name = "ixTimestamp", fields = { MemberAccountHistoryRecord.TIMESTAMP }),
-    @Index(name = "ixType", fields = { MemberAccountHistoryRecord.TYPE }) })
+    @Index(name = "ixType", fields = { MemberAccountHistoryRecord.TYPE }), 
+    @Index(name = "ixTransactionType", fields = { MemberAccountHistoryRecord.TRANSACTION_TYPE }) })
 @NotThreadSafe
 public class MemberAccountHistoryRecord extends PersistentRecord
 {
@@ -95,6 +96,20 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #itemType} field. */
     public static final ColumnExp ITEM_TYPE_C =
         new ColumnExp(MemberAccountHistoryRecord.class, ITEM_TYPE);
+
+    /** The column identifier for the {@link #transactionType} field. */
+    public static final String TRANSACTION_TYPE = "transactionType";
+
+    /** The qualified column identifier for the {@link #transactionType} field. */
+    public static final ColumnExp TRANSACTION_TYPE_C =
+        new ColumnExp(MemberAccountHistoryRecord.class, TRANSACTION_TYPE);
+
+    /** The column identifier for the {@link #referenceTxId} field. */
+    public static final String REFERENCE_TX_ID = "referenceTxId";
+
+    /** The qualified column identifier for the {@link #referenceTxId} field. */
+    public static final ColumnExp REFERENCE_TX_ID_C =
+        new ColumnExp(MemberAccountHistoryRecord.class, REFERENCE_TX_ID);
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START
@@ -111,7 +126,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     }
     // AUTO-GENERATED: METHODS END
 
-    public static final int SCHEMA_VERSION = 2;
+    public static final int SCHEMA_VERSION = 3;
 
     /**
      * Creates an account history record involving some particular item.
@@ -128,7 +143,8 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      */
     public MemberAccountHistoryRecord (
         final int memberId, final Date timestamp, final PersistentMoneyType type,
-        final double amount, final boolean spent, final String description, final ItemIdent item)
+        final double amount, final PersistentTransactionType transactionType, final boolean spent, 
+        final String description, final ItemIdent item)
     {
         this.memberId = memberId;
         this.timestamp = new Timestamp(timestamp.getTime());
@@ -136,9 +152,10 @@ public class MemberAccountHistoryRecord extends PersistentRecord
         this.amount = amount;
         this.spent = spent;
         this.description = description;
+        this.transactionType = transactionType;
         if (item != null) {
-            this.itemId = item.itemId;
-            this.itemType = item.type;
+            itemId = item.itemId;
+            itemType = item.type;
         }
     }
 
@@ -155,9 +172,10 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      */
     public MemberAccountHistoryRecord (
         final int memberId, final Date timestamp, final PersistentMoneyType type,
-        final double amount, final boolean spent, final String description)
+        final double amount, final PersistentTransactionType transactionType, final boolean spent, 
+        final String description)
     {
-        this(memberId, timestamp, type, amount, spent, description, null);
+        this(memberId, timestamp, type, amount, transactionType, spent, description, null);
     }
 
     /** Not part of the API. For depot's eyes only. */
@@ -243,11 +261,27 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     {
         return id;
     }
-
-    public MoneyHistory createMoneyHistory ()
+    
+    public PersistentTransactionType getTransactionType ()
     {
-        return new MoneyHistory(memberId, timestamp, type.toMoneyType(), amount, spent, description,
-            itemId == 0 ? null : new ItemIdent((byte)itemType, itemId));
+        return transactionType;
+    }
+    
+    public int getReferenceTxId ()
+    {
+        return referenceTxId;
+    }
+    
+    public void setReferenceTxId (final int referenceTxId)
+    {
+        this.referenceTxId = referenceTxId;
+    }
+
+    public MoneyHistory createMoneyHistory (final MoneyHistory referenceTx)
+    {
+        return new MoneyHistory(memberId, timestamp, type.toMoneyType(), amount, 
+            transactionType.toTransactionType(), spent, description, 
+            itemId == 0 ? null : new ItemIdent((byte)itemType, itemId), referenceTx);
     }
 
     // These are not part of the api! They should be private (depot requirement...)
@@ -289,4 +323,14 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * API, do not use it.
      */
     public int itemType;
+
+    /**
+     * Type of transaction this history record was for.
+     */
+    public PersistentTransactionType transactionType;
+    
+    /**
+     * For certain types of transactions, the reference transaction this was in response to.
+     */
+    public int referenceTxId;
 }

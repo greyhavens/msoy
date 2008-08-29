@@ -4,7 +4,11 @@
 package com.threerings.msoy.money.server.persist;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,15 +17,19 @@ import net.jcip.annotations.NotThreadSafe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
+import com.samskivert.jdbc.depot.operator.Conditionals.In;
 import com.samskivert.jdbc.depot.operator.Conditionals.LessThan;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.threerings.presents.annotation.BlockingThread;
@@ -45,6 +53,28 @@ public final class DepotMoneyRepository extends DepotRepository
     public DepotMoneyRepository (final PersistenceContext ctx)
     {
         super(ctx);
+        
+        // 08-27-2008: Added transactionType and referenceTxId fields.  Set all existing 
+        // transactions to a type of OTHER.
+        ctx.registerMigration(MemberAccountHistoryRecord.class, new EntityMigration(3) {
+            @Override
+            public int invoke (final Connection conn, final DatabaseLiaison liaison)
+                throws SQLException
+            {
+                // All current records should be marked as a transaction type of 'OTHER'.
+                final PreparedStatement stmt = conn.prepareStatement("update " + 
+                    liaison.tableSQL("MemberAccountHistoryRecord") + " set " +
+                    liaison.columnSQL("transactionType") + "=" + 
+                    PersistentTransactionType.OTHER.toByte());
+                return stmt.executeUpdate();
+            }
+            
+            @Override
+            public boolean runBeforeDefault ()
+            {
+                return false;
+            }
+        });
     }
 
     public void addHistory (final MemberAccountHistoryRecord history)
@@ -96,24 +126,25 @@ public final class DepotMoneyRepository extends DepotRepository
     }
 
     public List<MemberAccountHistoryRecord> getHistory (
-        final int memberId, final PersistentMoneyType type, final int start,
-        final int count, final boolean descending)
+        final int memberId, final PersistentMoneyType type, final EnumSet<PersistentTransactionType> 
+        transactionTypes, final int start, final int count, final boolean descending)
     {
         try {
-            // select * from MemberAccountRecord where type in (?) and memberId=? order by
-            // timestamp
-            final QueryClause where = type == null ? new Where(new Equals(
-                MemberAccountHistoryRecord.MEMBER_ID_C, memberId)) : new Where(new And(
-                new Equals(MemberAccountHistoryRecord.TYPE_C, type), new Equals(
-                    MemberAccountHistoryRecord.MEMBER_ID_C, memberId)));
+            // select * from MemberAccountRecord where type = ? and transactionType in (?) 
+            // and memberId=? order by timestamp
+            SQLOperator op = new Equals(MemberAccountHistoryRecord.MEMBER_ID_C, memberId);
+            if (type != null) {
+                op = new And(op, new Equals(MemberAccountHistoryRecord.TYPE_C, type));
+            }
+            op = new And(op, new In(MemberAccountHistoryRecord.TRANSACTION_TYPE_C, transactionTypes));
             final QueryClause orderBy = descending
                 ? OrderBy.descending(MemberAccountHistoryRecord.TIMESTAMP_C)
                 : OrderBy.ascending(MemberAccountHistoryRecord.TIMESTAMP_C);
             final QueryClause limit = new Limit(start, count);
 
             // Only include the limit clause if we're not getting all the values.
-            return count == Integer.MAX_VALUE ? findAll(MemberAccountHistoryRecord.class, where,
-                orderBy) : findAll(MemberAccountHistoryRecord.class, where, orderBy, limit);
+            return count == Integer.MAX_VALUE ? findAll(MemberAccountHistoryRecord.class, new Where(op),
+                orderBy) : findAll(MemberAccountHistoryRecord.class, new Where(op), orderBy, limit);
         } catch (final PersistenceException pe) {
             throw new RepositoryException(pe);
         }
@@ -139,6 +170,16 @@ public final class DepotMoneyRepository extends DepotRepository
                             && record.getType() == type;
                     }
                 });
+        } catch (final PersistenceException pe) {
+            throw new RepositoryException(pe);
+        }
+    }
+
+    public List<MemberAccountHistoryRecord> getHistory (final Set<Integer> ids)
+    {
+        try {
+            return findAll(MemberAccountHistoryRecord.class, new Where(
+                new In(MemberAccountHistoryRecord.ID_C, ids)));
         } catch (final PersistenceException pe) {
             throw new RepositoryException(pe);
         }

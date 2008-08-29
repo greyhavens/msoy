@@ -117,14 +117,14 @@ public class MemberAccountRecord extends PersistentRecord
     public MemberAccountRecord (final int memberId)
     {
         this.memberId = memberId;
-        this.coins = 0;
-        this.bars = 0;
-        this.bling = 0.0;
-        this.accCoins = 0;
-        this.accBars = 0;
-        this.accBling = 0.0;
-        this.dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        this.versionId = 0;
+        coins = 0;
+        bars = 0;
+        bling = 0.0;
+        accCoins = 0;
+        accBars = 0;
+        accBling = 0.0;
+        dateLastUpdated = new Timestamp(System.currentTimeMillis());
+        versionId = 0;
     }
 
     /** For depot's eyes only. Not part of the API. */
@@ -137,14 +137,14 @@ public class MemberAccountRecord extends PersistentRecord
      * @param bars Number of bars to add.
      * @return Account history record for this transaction.
      */
-    public MemberAccountHistoryRecord buyBars (final int bars)
+    public MemberAccountHistoryRecord buyBars (final int bars, final String description)
     {
         this.bars += bars;
-        this.accBars += bars;
-        this.dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated,
-            PersistentMoneyType.fromMoneyType(MoneyType.BARS), bars, false,
-            "Purchased " + bars + " bars.");
+        accBars += bars;
+        dateLastUpdated = new Timestamp(System.currentTimeMillis());
+        return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
+            PersistentMoneyType.BARS, bars, PersistentTransactionType.BARS_BOUGHT, false, 
+            description);
     }
 
     /**
@@ -157,10 +157,11 @@ public class MemberAccountRecord extends PersistentRecord
         final int coins, final ItemIdent item, final String description)
     {
         this.coins += coins;
-        this.accCoins += coins;
-        this.dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        return new MemberAccountHistoryRecord(this.memberId, this.dateLastUpdated,
-            PersistentMoneyType.fromMoneyType(MoneyType.COINS), coins, false, description, item);
+        accCoins += coins;
+        dateLastUpdated = new Timestamp(System.currentTimeMillis());
+        return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
+            PersistentMoneyType.COINS, coins, PersistentTransactionType.AWARD, false, description, 
+            item);
     }
 
     /**
@@ -177,18 +178,19 @@ public class MemberAccountRecord extends PersistentRecord
     {
         if (type == MoneyType.BARS) {
             if (support) {
-                amount = Math.min(amount, this.bars);
+                amount = Math.min(amount, bars);
             }
-            this.bars -= amount;
+            bars -= amount;
         } else {
             if (support) {
-                amount = Math.min(amount, this.coins);
+                amount = Math.min(amount, coins);
             }
-            this.coins -= amount;
+            coins -= amount;
         }
-        this.dateLastUpdated = new Timestamp(System.currentTimeMillis());
+        dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated, 
-            PersistentMoneyType.fromMoneyType(type), amount, true, description, item);
+            PersistentMoneyType.fromMoneyType(type), amount, 
+            PersistentTransactionType.ITEM_PURCHASE, true, description, item);
     }
 
     /**
@@ -214,23 +216,26 @@ public class MemberAccountRecord extends PersistentRecord
      */
     public MemberAccountHistoryRecord creatorPayout (final int amount,
         final MoneyType listingType, final String description, final ItemIdent item,
-        final double percentage)
+        final double percentage, final int referenceTxId)
     {
         // TODO: Determine percentage from administrator.
         final double amountPaid = percentage * amount;
         final MoneyType paymentType;
         if (listingType == MoneyType.BARS) {
-            this.bling += amountPaid;
-            this.accBling += amountPaid;
+            bling += amountPaid;
+            accBling += amountPaid;
             paymentType = MoneyType.BLING;
         } else {
-            this.coins += (int)amountPaid;
-            this.accCoins += (int)amountPaid;
+            coins += (int)amountPaid;
+            accCoins += (int)amountPaid;
             paymentType = MoneyType.COINS;
         }
-        this.dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, 
-            PersistentMoneyType.fromMoneyType(paymentType), amountPaid, false, description, item);
+        dateLastUpdated = new Timestamp(System.currentTimeMillis());
+        final MemberAccountHistoryRecord history = new MemberAccountHistoryRecord(memberId, 
+            dateLastUpdated, PersistentMoneyType.fromMoneyType(paymentType), amountPaid, 
+            PersistentTransactionType.CREATOR_PAYOUT, false, description, item);
+        history.setReferenceTxId(referenceTxId);
+        return history;
     }
 
     public int getMemberId ()

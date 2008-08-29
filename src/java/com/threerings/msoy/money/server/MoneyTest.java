@@ -28,12 +28,14 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyHistory;
 import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.impl.MoneyHistoryExpirer;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberActionLogRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
 import com.threerings.presents.annotation.EventQueue;
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
 /**
@@ -54,7 +56,7 @@ public class MoneyTest
         // the other two exist.
         final long start = System.currentTimeMillis() / 1000;
         _service.awardCoins(1, 0, 0, null, 100, "testExpirer - coins1", UserAction.PLAYED_GAME);
-        _service.buyBars(1, 10);
+        _service.buyBars(1, 10, "Bought 10 bars");
         final long end = System.currentTimeMillis() / 1000;
         System.out.println("Waiting 3s to create non-expiring item.");
         Thread.sleep(3000);
@@ -64,13 +66,13 @@ public class MoneyTest
         _expirer.setMaxAge(3000);
         _expirer.start();
 
-        final List<MoneyHistory> log = _service.getLog(1, null, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 10.0, false,
-            "Purchased 10 bars.", null), start, end, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 101.0, false,
-            "testExpirer - coins2", null), start2, end2, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, false,
-            "testExpirer - coins1", null), start, end, false);
+        final List<MoneyHistory> log = _service.getLog(1, null, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 10.0, 
+            TransactionType.BARS_BOUGHT, false, "Bought 10 bars", null, null), null, start, end, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 101.0, 
+            TransactionType.AWARD, false, "testExpirer - coins2", null, null), null, start2, end2, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, 
+            TransactionType.AWARD, false, "testExpirer - coins1", null, null), null, start, end, false);
     }
 
     @Test
@@ -79,16 +81,17 @@ public class MoneyTest
     {
         final long startTime = System.currentTimeMillis() / 1000;
         final MemberMoney oldMoney = _service.getMoneyFor(1);
-        final MoneyResult result = _service.buyBars(1, 2);
+        final MoneyResult result = _service.buyBars(1, 2, "Bought 2 bars.");
         assertEquals(oldMoney.getBars() + 2, result.getNewMemberMoney().getBars());
         assertEquals(oldMoney.getAccBars() + 2, result.getNewMemberMoney().getAccBars());
         final long endTime = System.currentTimeMillis() / 1000;
 
-        final List<MoneyHistory> log = _service.getLog(1, MoneyType.BARS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 2.0, false,
-            "Purchased 2 bars.", null), startTime, endTime, true);
+        final List<MoneyHistory> log = _service.getLog(1, MoneyType.BARS, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 2.0, 
+            TransactionType.BARS_BOUGHT, false, "Bought 2 bars.", null, null), null, startTime, 
+            endTime, true);
 
-        checkActionLogExists(1, UserAction.BOUGHT_BARS.getNumber(), "Purchased 2 bars.",
+        checkActionLogExists(1, UserAction.BOUGHT_BARS.getNumber(), "Bought 2 bars.",
             startTime, endTime);
     }
 
@@ -99,7 +102,7 @@ public class MoneyTest
         final long startTime = System.currentTimeMillis() / 1000;
         final MemberMoney oldMoney = _service.getMoneyFor(1);
         final MemberMoney oldCreatorMoney = _service.getMoneyFor(2);
-        _service.buyBars(1, 150);
+        _service.buyBars(1, 150, "Bought 150 bars.");
         final ItemIdent item = new ItemIdent(Item.AVATAR, 1);
         _service.secureBarPrice(1, 2, 3, item, 100, "My bar item");
         final MoneyResult result = _service.buyItemWithBars(1, item, false);
@@ -109,10 +112,11 @@ public class MoneyTest
         final MemberMoney newMoney = result.getNewMemberMoney();
         assertEquals(oldMoney.getBars() + 50, newMoney.getBars());
         assertEquals(oldMoney.getAccBars() + 150, newMoney.getAccBars());
-
-        List<MoneyHistory> log = _service.getLog(1, MoneyType.BARS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 100.0, true,
-            "My bar item", item), startTime, endTime, true);
+        
+        List<MoneyHistory> log = _service.getLog(1, MoneyType.BARS, null, 0, 30, true);
+        final MoneyHistory expectedMH = new MoneyHistory(1, new Date(), MoneyType.BARS, 100.0, 
+            TransactionType.ITEM_PURCHASE, true, "My bar item", item, null);
+        checkMoneyHistory(log, expectedMH, null, startTime, endTime, true);
 
         checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(), "My bar item",
             startTime, endTime);
@@ -123,9 +127,10 @@ public class MoneyTest
         assertEquals(oldCreatorMoney.getAccBling() + 100.0*0.3, newCreatorMoney.getAccBling(),
             0.001);
 
-        log = _service.getLog(2, MoneyType.BLING, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.BLING, 100.0*0.3, false,
-            "Item purchased: My bar item", item), startTime, endTime, true);
+        log = _service.getLog(2, MoneyType.BLING, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.BLING, 100.0*0.3, 
+            TransactionType.CREATOR_PAYOUT, false, "Item purchased: My bar item", item, null), 
+            expectedMH, startTime, endTime, true);
 
         checkActionLogExists(2, UserAction.RECEIVED_PAYOUT.getNumber(), "My bar item",
             startTime, endTime);
@@ -179,9 +184,10 @@ public class MoneyTest
         assertEquals(oldMoney.getCoins() + 50, newMoney.getCoins());
         assertEquals(oldMoney.getAccCoins() + 150, newMoney.getAccCoins());
 
-        List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, true,
-            "testBuyCoinItemWithCoins - test", item), startTime, endTime, true);
+        List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, null, 0, 30, true);
+        final MoneyHistory expectedMH = new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, 
+            TransactionType.ITEM_PURCHASE, true, "testBuyCoinItemWithCoins - test", item, null);
+        checkMoneyHistory(log, expectedMH, null, startTime, endTime, true);
 
         checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(),
             "testBuyCoinItemWithCoins - test", startTime, endTime);
@@ -191,9 +197,10 @@ public class MoneyTest
         assertEquals(oldCreatorMoney.getCoins() + 30, newCreatorMoney.getCoins());
         assertEquals(oldCreatorMoney.getAccCoins() + 30, newCreatorMoney.getAccCoins());
 
-        log = _service.getLog(2, MoneyType.COINS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.COINS, 30.0, false,
-            "Item purchased: testBuyCoinItemWithCoins - test", item), startTime, endTime, true);
+        log = _service.getLog(2, MoneyType.COINS, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.COINS, 30.0, 
+            TransactionType.CREATOR_PAYOUT, false, "Item purchased: testBuyCoinItemWithCoins - test", 
+            item, null), expectedMH, startTime, endTime, true);
 
         checkActionLogExists(2, UserAction.RECEIVED_PAYOUT.getNumber(),
             "testBuyCoinItemWithCoins - test", startTime, endTime);
@@ -216,9 +223,10 @@ public class MoneyTest
         assertEquals(oldMoney.getCoins() + 150, newMoney.getCoins());
         assertEquals(oldMoney.getAccCoins() + 150, newMoney.getAccCoins());
 
-        final List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 150.0, false,
-            "150 coins awarded.  Thanks for playing!", item), startTime, endTime, true);
+        final List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 150.0, 
+            TransactionType.AWARD, false, "150 coins awarded.  Thanks for playing!", item, null), 
+            null, startTime, endTime, true);
 
         checkActionLogExists(1, UserAction.PLAYED_GAME.getNumber(),
             "150 coins awarded.  Thanks for playing!", startTime, endTime);
@@ -243,9 +251,10 @@ public class MoneyTest
         assertEquals(oldMoney.getCoins() + 50 + 30, newMoney.getCoins());
         assertEquals(oldMoney.getAccCoins() + 150, newMoney.getAccCoins());
 
-        final List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 70.0, true,
-            "testCreatorBoughtOwnItem - test", item), startTime, endTime, true);
+        final List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 70.0, 
+            TransactionType.ITEM_PURCHASE, true, "testCreatorBoughtOwnItem - test", item, null), 
+            null, startTime, endTime, true);
 
         checkActionLogExists(1, UserAction.BOUGHT_ITEM.getNumber(),
             "testCreatorBoughtOwnItem - test", startTime, endTime);
@@ -287,7 +296,8 @@ public class MoneyTest
                 {
                     bind(RunQueue.class).annotatedWith(EventQueue.class).to(
                         PresentsDObjectMgr.class);
-                    bind(Invoker.class).toInstance(new Invoker("test", new BasicRunQueue()));
+                    bind(Invoker.class).annotatedWith(MainInvoker.class).toInstance(
+                        new Invoker("test", new BasicRunQueue()));
                     bind(PersistenceContext.class).toInstance(
                         new PersistenceContext("msoy", connProv, null));
                     install(new MoneyModule());
@@ -300,8 +310,8 @@ public class MoneyTest
     }
 
     private void checkMoneyHistory (
-        final List<MoneyHistory> log, final MoneyHistory expected, final long start, final long end,
-        final boolean isPresent)
+        final List<MoneyHistory> log, final MoneyHistory expected, final MoneyHistory reference,
+        final long start, final long end, final boolean isPresent)
     {
         MoneyHistory logEntry = null;
         for (final MoneyHistory history : log) {
@@ -325,6 +335,19 @@ public class MoneyTest
         assertEquals(expected.getMemberId(), logEntry.getMemberId());
         assertEquals(expected.getType(), logEntry.getType());
         assertEquals(expected.isSpent(), logEntry.isSpent());
+        assertEquals(expected.getTransactionType(), logEntry.getTransactionType());
+        
+        if (reference != null) {
+            assertEquals(reference.getAmount(), logEntry.getReferenceTx().getAmount(), 0.0);
+            assertEquals(reference.getItem(), logEntry.getReferenceTx().getItem());
+            assertEquals(reference.getMemberId(), logEntry.getReferenceTx().getMemberId());
+            assertEquals(reference.getType(), logEntry.getReferenceTx().getType());
+            assertEquals(reference.isSpent(), logEntry.getReferenceTx().isSpent());
+            assertEquals(reference.getTransactionType(), 
+                logEntry.getReferenceTx().getTransactionType());
+        } else {
+            assertTrue(logEntry.getReferenceTx() == null);
+        }
     }
 
     private void checkActionLogExists (

@@ -5,8 +5,12 @@ package com.threerings.msoy.money.server.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
@@ -20,6 +24,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyHistory;
 import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.MoneyConfiguration;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyResult;
@@ -29,6 +34,7 @@ import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.money.server.persist.PersistentMoneyType;
+import com.threerings.msoy.money.server.persist.PersistentTransactionType;
 import com.threerings.msoy.money.server.persist.RepositoryException;
 import com.threerings.msoy.money.server.persist.StaleDataException;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -83,12 +89,12 @@ public class MoneyLogicImpl
         final UserActionDetails info = logUserAction(memberId, 0, userAction, item, description);
         logInPanopticon(info, MoneyType.COINS, amount, account);
         
-        return new MoneyResult(account.getMemberMoney(), null, null, history.createMoneyHistory(),
-            null, null);
+        return new MoneyResult(account.getMemberMoney(), null, null, 
+            history.createMoneyHistory(null), null, null);
     }
 
     @Retry(exception=StaleDataException.class)
-    public MoneyResult buyBars (final int memberId, final int numBars)
+    public MoneyResult buyBars (final int memberId, final int numBars, final String description)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy bars.");
         Preconditions.checkArgument(numBars >= 0, "numBars is invalid: %d", numBars);
@@ -97,15 +103,15 @@ public class MoneyLogicImpl
         if (account == null) {
             account = new MemberAccountRecord(memberId);
         }
-        final MemberAccountHistoryRecord history = account.buyBars(numBars);
+        final MemberAccountHistoryRecord history = account.buyBars(numBars, description);
         _repo.saveAccount(account);
         _repo.addHistory(history);
 
         logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS, null,
             history.getDescription());
 
-        return new MoneyResult(account.getMemberMoney(), null, null, history.createMoneyHistory(),
-            null, null);
+        return new MoneyResult(account.getMemberMoney(), null, null, 
+            history.createMoneyHistory(null), null, null);
     }
 
     @Retry(exception=StaleDataException.class)
@@ -143,20 +149,56 @@ public class MoneyLogicImpl
     }
 
     public List<MoneyHistory> getLog (
-        final int memberId, final MoneyType type, final int start,
-        final int count, final boolean descending)
+        final int memberId, final MoneyType type, final EnumSet<TransactionType> transactionTypes,
+        final int start, final int count, final boolean descending)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId),
             "Cannot retrieve money log for guests.");
         Preconditions.checkArgument(start >= 0, "start is invalid: %d", start);
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
 
-        final List<MoneyHistory> log = new ArrayList<MoneyHistory>();
-        final Collection<MemberAccountHistoryRecord> records = _repo.getHistory(memberId, 
-            PersistentMoneyType.fromMoneyType(type), start, count, descending);
-        for (final MemberAccountHistoryRecord record : records) {
-            log.add(record.createMoneyHistory());
+        // Convert transaction types to their persistent version
+        final EnumSet<PersistentTransactionType> persistTransactionTypes;
+        if (transactionTypes == null) {
+             persistTransactionTypes = EnumSet.allOf(PersistentTransactionType.class);
+        } else {
+            persistTransactionTypes = EnumSet.noneOf(PersistentTransactionType.class);
+            for (final TransactionType transactionType : transactionTypes) {
+                persistTransactionTypes.add(PersistentTransactionType.fromTransactionType(transactionType));
+            }
         }
+        
+        final List<MemberAccountHistoryRecord> records = _repo.getHistory(memberId, 
+            PersistentMoneyType.fromMoneyType(type), persistTransactionTypes, start, count, 
+            descending);
+        
+        // Put all records into a map by their ID.  We'll use this map to get a set of history ID's
+        // that we currently have.
+        final Map<Integer, MoneyHistory> referenceMap = new HashMap<Integer, MoneyHistory>();
+        for (final MemberAccountHistoryRecord record : records) {
+            referenceMap.put(record.id, record.createMoneyHistory(null));
+        }
+        
+        // Create a set of reference transaction IDs we don't already have.  We'll look these up.
+        final Set<Integer> lookupRefIds = new HashSet<Integer>();
+        for (final MemberAccountHistoryRecord record : records) {
+            if (record.referenceTxId != 0 && !referenceMap.keySet().contains(record.referenceTxId)) {
+                lookupRefIds.add(record.referenceTxId);
+            }
+        }
+        if (lookupRefIds.size() > 0) {
+            for (final MemberAccountHistoryRecord record : _repo.getHistory(lookupRefIds)) {
+                referenceMap.put(record.id, record.createMoneyHistory(null));
+            }
+        }
+        
+        // Now create the money histories, using the reference map for the references as necessary.
+        final List<MoneyHistory> log = new ArrayList<MoneyHistory>();
+        for (final MemberAccountHistoryRecord record : records) {
+            log.add(record.createMoneyHistory(record.referenceTxId == 0 ? null : 
+                referenceMap.get(record.referenceTxId)));
+        }
+        
         return log;
     }
 
@@ -186,9 +228,9 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(numBars >= 0, "bars is invalid: %d", numBars);
 
         // TODO: Use exchange rate to calculate coins.
-        PriceQuote quote = new PriceQuote(MoneyType.BARS, 0, numBars);
-        PriceKey key = new PriceKey(memberId, item);
-        Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
+        final PriceQuote quote = new PriceQuote(MoneyType.BARS, 0, numBars);
+        final PriceKey key = new PriceKey(memberId, item);
+        final Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
         _escrowCache.addEscrow(key, escrow);
         return 0;
     }
@@ -204,9 +246,9 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(numCoins >= 0, "numCoins is invalid: %d", numCoins);
 
         // TODO: Use exchange rate to calculate bars.
-        PriceQuote quote = new PriceQuote(MoneyType.COINS, numCoins, 0);
-        PriceKey key = new PriceKey(memberId, item);
-        Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
+        final PriceQuote quote = new PriceQuote(MoneyType.COINS, numCoins, 0);
+        final PriceKey key = new PriceKey(memberId, item);
+        final Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
         _escrowCache.addEscrow(key, escrow);
         return 0;
     }
@@ -234,12 +276,12 @@ public class MoneyLogicImpl
             purchaseType.toString());
 
         // Get the secured prices for the item.
-        PriceKey key = new PriceKey(memberId, item);
+        final PriceKey key = new PriceKey(memberId, item);
         final Escrow escrow = _escrowCache.getEscrow(key);
         if (escrow == null) {
             throw new NotSecuredException(memberId, item);
         }
-        PriceQuote quote = escrow.getQuote();
+        final PriceQuote quote = escrow.getQuote();
         // TODO: MUCH TODO
         int amount = purchaseType == MoneyType.BARS ? quote.getBars() : quote.getCoins();
 
@@ -283,7 +325,7 @@ public class MoneyLogicImpl
         MemberAccountHistoryRecord creatorHistory = history;
         if (payCreator) {
             creatorHistory = creator.creatorPayout((int)history.getAmount(), quote.getListedType(),
-                "Item purchased: " + escrow.getDescription(), item, 0.3);
+                "Item purchased: " + escrow.getDescription(), item, 0.3, history.id);
             _repo.addHistory(creatorHistory);
             _repo.saveAccount(creator);
             info = logUserAction(escrow.getCreatorId(), memberId, UserAction.RECEIVED_PAYOUT, item,
@@ -296,9 +338,10 @@ public class MoneyLogicImpl
         // The item no longer needs to be in the cache.
         _escrowCache.removeEscrow(key);
 
+        final MoneyHistory mh = history.createMoneyHistory(null);
+        final MoneyHistory creatorMH = creatorHistory.createMoneyHistory(mh);
         return new MoneyResult(account.getMemberMoney(), payCreator ? creator.getMemberMoney() :
-            null, null, history.createMoneyHistory(), payCreator ?
-            creatorHistory.createMoneyHistory() : null, null);
+            null, null, mh, payCreator ? creatorMH : null, null);
     }
 
     private void logInPanopticon (
