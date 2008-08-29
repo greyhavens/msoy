@@ -7,8 +7,6 @@ import flash.geom.Point;
 
 import mx.containers.VBox;
 
-import mx.core.Application;
-
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;

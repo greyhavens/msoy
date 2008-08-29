@@ -15,7 +15,6 @@ import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 
 import mx.controls.Button;
-import mx.core.Application;
 import mx.core.IChildList;
 import mx.core.IToolTip;
 import mx.core.UIComponent;

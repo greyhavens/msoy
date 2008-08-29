@@ -23,7 +23,6 @@ import mx.containers.VBox;
 
 import mx.events.ValidationResultEvent;
 
-import mx.core.Application;
 import mx.core.UIComponent;
 
 import mx.managers.PopUpManager;
@@ -117,7 +116,7 @@ public class NewImageDialog extends TitleWindow
         bar.addChild(_okBtn = new CommandButton(ctx.IMAGE.get("b.ok"), close, true));
         box.addChild(bar);
 
-        PopUpManager.addPopUp(this, Application(Application.application), true);
+        PopUpManager.addPopUp(this, ctx.getApplication(), true);
         PopUpUtil.center(this);
     }
 

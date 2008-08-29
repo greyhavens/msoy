@@ -47,6 +47,15 @@ public class UberClient
         return _mode;
     }
 
+    /**
+     * Get the Application, which is not necessarily the same as
+     * Application.application if we've been loaded into another app (like the remixer).
+     */
+    public static function getApplication () :Application
+    {
+        return _app;
+    }
+
     // NOTE: The mode constants are defined in UberClientModes, so that users of that
     // class do not also need to include this class, which will drag in all the world client
     // classes.
@@ -98,6 +107,7 @@ public class UberClient
      */
     protected static function setMode (app :Application, mode :int, params :Object = null) :void
     {
+        _app = app;
         _mode = mode;
 
         // Stash the mode back into the real parameters, in case we figured it out
@@ -127,6 +137,8 @@ public class UberClient
             break;
         }
     }
+
+    protected static var _app :Application;
 
     /** The mode, once we've figured it out. */
     protected static var _mode :int;

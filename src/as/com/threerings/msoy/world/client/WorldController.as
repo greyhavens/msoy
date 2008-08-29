@@ -11,7 +11,6 @@ import flash.net.URLRequest;
 import flash.system.Capabilities;
 
 import mx.controls.Button;
-import mx.core.Application;
 import mx.core.UIComponent;
 
 import com.threerings.flex.CommandMenu;

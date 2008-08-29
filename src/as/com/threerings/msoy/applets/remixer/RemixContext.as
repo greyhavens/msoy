@@ -7,6 +7,7 @@ import flash.utils.ByteArray;
 
 import mx.containers.ViewStack;
 
+import mx.core.Application;
 import mx.core.UIComponent;
 
 import com.threerings.util.MessageBundle;
@@ -24,9 +25,9 @@ public class RemixContext extends ImageContext
     /**
      * Create a RemixContext.
      */
-    public function RemixContext (viewStack :ViewStack)
+    public function RemixContext (app :Application, viewStack :ViewStack)
     {
-        super();
+        super(app);
 
         _viewStack = viewStack;
 

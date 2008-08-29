@@ -16,8 +16,6 @@ import flash.net.URLVariables;
 
 import flash.utils.Dictionary;
 
-import mx.core.Application;
-
 import com.adobe.crypto.MD5;
 
 import com.threerings.util.Command;

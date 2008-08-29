@@ -15,8 +15,6 @@ import flash.system.Security;
 import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 
-import mx.core.Application;
-
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
@@ -133,7 +131,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         // set up a context menu that blocks funnybiz on the stage
         var menu :ContextMenu = new ContextMenu();
         menu.hideBuiltInItems();
-        Application.application.contextMenu = menu;
+        UberClient.getApplication().contextMenu = menu;
         menu.addEventListener(ContextMenuEvent.MENU_SELECT, contextMenuWillPopUp);
 
         // ensure that the compiler includes these necessary symbols

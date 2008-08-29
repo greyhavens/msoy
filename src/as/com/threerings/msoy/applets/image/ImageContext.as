@@ -3,15 +3,17 @@
 
 package com.threerings.msoy.applets.image {
 
+import mx.core.Application;
+
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.applets.AppletContext;
 
 public class ImageContext extends AppletContext
 {
-    public function ImageContext ()
+    public function ImageContext (app :Application)
     {
-        super();
+        super(app);
 
         _imageBundle = _msgMgr.getBundle("image");
     }

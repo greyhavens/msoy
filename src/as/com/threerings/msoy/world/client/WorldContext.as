@@ -7,8 +7,6 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 
-import mx.core.Application;
-
 import mx.managers.ISystemManager;
 
 import com.threerings.util.MessageBundle;

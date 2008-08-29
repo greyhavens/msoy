@@ -20,7 +20,6 @@ import flash.text.TextFormat;
 import mx.containers.Canvas;
 import mx.containers.HBox;
 
-import mx.core.Application;
 import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
 

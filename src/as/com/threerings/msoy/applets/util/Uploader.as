@@ -23,8 +23,6 @@ import mx.containers.HBox;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
 
-import mx.core.Application;
-
 import mx.managers.PopUpManager;
 
 import com.threerings.util.ValueEvent;
@@ -97,7 +95,7 @@ public class Uploader extends TitleWindow
 
         _progress.source = _fileRef;
 
-        PopUpManager.addPopUp(this, Application(Application.application), true);
+        PopUpManager.addPopUp(this, _ctx.getApplication(), true);
         PopUpManager.centerPopUp(this);
 
         var req :URLRequest = new URLRequest(_serverURL);

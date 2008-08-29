@@ -108,17 +108,9 @@ public class TopPanel extends Canvas
         }
 
         // clear out the application and install ourselves as the only child
-        var app :Application = Application(Application.application);
-        // UGLY ASS HACK, but we now name world.mxml this, and look for it so that
-        // we work inside the remixer
-        var lower :Application = Application(DisplayUtil.findInHierarchy(app,
-            "WorldApplication", false));
-        if (lower != null) {
-            app = lower;
-        }
+        var app :Application = UberClient.getApplication();
         app.removeAllChildren();
         app.addChild(this);
-
         app.stage.addEventListener(Event.RESIZE, stageResized);
 
         // display something until someone comes along and sets a real view on us

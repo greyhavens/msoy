@@ -22,8 +22,6 @@ import mx.controls.TextArea;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
 
-import mx.core.Application;
-
 import mx.events.CloseEvent;
 
 import mx.managers.PopUpManager;
@@ -47,7 +45,7 @@ public class Downloader extends TitleWindow
         _loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, handleDownloadError);
         _loader.addEventListener(Event.COMPLETE, handleDownloadComplete);
 
-        PopUpManager.addPopUp(this, Application(Application.application), true);
+        PopUpManager.addPopUp(this, ctx.getApplication(), true);
         PopUpManager.centerPopUp(this);
     }
 

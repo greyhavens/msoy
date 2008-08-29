@@ -61,7 +61,7 @@ import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
-import com.threerings.msoy.client.TopPanel;
+import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -400,7 +400,7 @@ public class RoomController extends SceneController
 
 //            var menu :RadialMenu = new RadialMenu(100);
 //            menu.dataProvider = menuItems;
-//            menu.popUp(Application(Application.application));
+//            menu.popUp(UberClient.getApplication());
         }
     }
 
@@ -445,7 +445,7 @@ public class RoomController extends SceneController
         }
 
         // first, avoid any popups
-        var smgr :ISystemManager = Application.application.systemManager as ISystemManager;
+        var smgr :ISystemManager = UberClient.getApplication().systemManager;
         var ii :int;
         var disp :DisplayObject;
         for (ii = smgr.numChildren - 1; ii >= 0; ii--) {

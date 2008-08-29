@@ -23,8 +23,6 @@ import mx.controls.TextArea;
 
 import mx.containers.TitleWindow;
 
-import mx.core.Application;
-
 import mx.events.CloseEvent;
 
 import mx.managers.PopUpManager;
@@ -79,7 +77,7 @@ public class MediaUploader extends TitleWindow
 
         title = ctx.APPLET.get("t.saving");
 
-        PopUpManager.addPopUp(this, Application(Application.application), true);
+        PopUpManager.addPopUp(this, ctx.getApplication(), true);
         PopUpManager.centerPopUp(this);
     }
 

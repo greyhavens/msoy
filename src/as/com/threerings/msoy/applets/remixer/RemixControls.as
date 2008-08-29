@@ -64,7 +64,7 @@ public class RemixControls extends HBox
 
     public function RemixControls (app :Application, viewStack :ViewStack)
     {
-        _ctx = new RemixContext(viewStack);
+        _ctx = new RemixContext(app, viewStack);
 
         percentWidth = 100;
         percentHeight = 100;

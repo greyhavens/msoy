@@ -46,6 +46,7 @@ public class RadialMenu extends Canvas
             bar.dataProvider = value;
 
             addChild(bar);
+            // we just need the global mouse coordinates, even if we're down
             bar.x = Application(Application.application).mouseX + (_size * Math.cos(radians));
             bar.y = Application(Application.application).mouseY + (_size * Math.sin(radians));
             radians += inc;

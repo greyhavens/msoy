@@ -51,7 +51,7 @@ public class ExistingFileChooser extends TitleWindow
         bar.addChild(new CommandButton(ctx.REMIX.get("b.cancel"), close));
         box.addChild(bar);
 
-        PopUpManager.addPopUp(this, Application(Application.application), true);
+        PopUpManager.addPopUp(this, ctx.getApplication(), true);
         // fuck centering, let's just be in the upper-left, since it resizes
         // as each image is added
         x = 0;
