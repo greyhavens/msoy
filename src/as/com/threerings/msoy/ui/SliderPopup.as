@@ -8,6 +8,7 @@ import flash.geom.Rectangle;
 import mx.binding.utils.BindingUtils;
 import mx.containers.Canvas;
 import mx.controls.VSlider;
+import mx.core.Application;
 import mx.core.IFlexDisplayObject;
 import mx.core.ScrollPolicy;
 import mx.events.SliderEvent;
@@ -58,7 +59,7 @@ public class SliderPopup extends Canvas
         styleName = "sliderPopup";
 
         _trigger = trigger;
-        owner = DisplayObjectContainer(UberClient.getApplication().systemManager);
+        owner = DisplayObjectContainer(Application.application.systemManager);
 
         // Initialize the window
         var r : Rectangle = _trigger.getBounds(trigger.stage);

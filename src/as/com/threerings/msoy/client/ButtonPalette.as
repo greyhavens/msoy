@@ -9,6 +9,7 @@ import flash.events.Event;
 
 import flash.geom.Point;
 
+import mx.core.Application;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
@@ -38,7 +39,7 @@ public class ButtonPalette extends Canvas
         _tile.tileWidth = 22;
         _tile.tileHeight = 23;
         _tile.styleName = "buttonPalette";
-        _tile.owner = DisplayObjectContainer(UberClient.getApplication().systemManager);
+        _tile.owner = DisplayObjectContainer(Application.application.systemManager);
         _tile.owner.addChild(_tile);
 
         CommandEvent.configureBridge(_tile, parent);
