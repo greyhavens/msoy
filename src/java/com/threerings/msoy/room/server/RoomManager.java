@@ -583,8 +583,7 @@ public class RoomManager extends SpotSceneManager
     {
         // if this client does not currently control this entity; ignore the request; if no one
         // controls it, this will assign this client as controller
-        MemberObject who = (MemberObject) caller;
-        if (!ensureEntityControl(who, item, "changeLocation")) {
+        if (!ensureEntityControl(caller, item, "changeLocation")) {
             return;
         }
 
@@ -713,19 +712,31 @@ public class RoomManager extends SpotSceneManager
     /**
      * Checks to see if an item is being controlled by any client. If not, the calling client is
      * assigned as the item's controller and true is returned. If the item is already being
-     * controlled by the calling client, true is returned. Otherwise false is returned (indicating
-     * that another client currently has control of the item).
+     * controlled or is controllable by the calling client, true is returned. Otherwise false is 
+     * returned (indicating that another client currently has control of the item or the client
+     * is not allowed to control the item).
      */
-    public boolean ensureEntityControl (MemberObject who, ItemIdent item, String from)
+    protected boolean ensureEntityControl (ClientObject who, ItemIdent item, String from)
     {
         Integer memberOid = _avatarIdents.get(item);
         if (memberOid != null) {
-            if (who.getOid() == memberOid.intValue()) {
+            if (who instanceof WindowClientObject) {
+                // Agents may control avatars that are playing their game
+                MemberObject target = (MemberObject)_omgr.getObject(memberOid);
+                if (target.game == null || !target.game.avrGame || 
+                    !WindowClientObject.isForGame(who, target.game.gameId)) {
+                    log.warning("Agent attempting control of non-player avatar", "who", 
+                        who.who(), "avatar", item);
+                    return false;
+                }
+                return true;
+
+            } else if (who.getOid() == memberOid.intValue()) {
                 // yes, you may control your own avatar
                 return true;
             }
-            log.warning("Some user is trying to control another's avatar! " +
-                "[who=" + who.who() + ", avatar=" + item + "].");
+            log.warning("Some user is trying to control another's avatar", "who", who.who(), 
+                "avatar", item, "member", memberOid);
             return false;
         }
         // otherwise, it's for some entity other than a user's avatar...
