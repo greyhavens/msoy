@@ -307,12 +307,13 @@ public class ThaneAVRGameBackend
     // -------------------- .getPlayer() --------------------
     protected function getRoomId_v1 (playerId :int) :int
     {
-        return 0;
+        return getPlayerRoomId(playerId);
     }
 
     protected function deactivateGame_v1 (playerId :int) :Boolean
     {
-        return false;
+        _controller.deactivateGame(playerId);
+        return true;
     }
 
     protected function completeTask_v1 (playerId :int, taskId :String, payout :Number) :Boolean

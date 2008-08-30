@@ -166,6 +166,14 @@ public class ThaneAVRGameController
         return playerObj;
     }
 
+    /**
+     * Removes the given player from the game.
+     */
+    public function deactivateGame (playerId :int) :void
+    {
+        _gameAgentObj.agentService.leaveGame(_ctx.getClient(), playerId);
+    }
+
     protected function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
