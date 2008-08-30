@@ -276,7 +276,7 @@ public class AVRGameManager extends PlaceManager
         _questDelegate.cancelQuest(caller, questId, listener);
     }
 
-    // from AVRGameProvider
+    // from AVRGameAgentProvider
     public void roomSubscriptionComplete (ClientObject caller, int sceneId)
     {
         if (caller.getOid() != _gameAgentObj.clientOid) {

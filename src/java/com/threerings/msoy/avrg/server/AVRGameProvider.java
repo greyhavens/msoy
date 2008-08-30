@@ -27,11 +27,6 @@ public interface AVRGameProvider extends InvocationProvider
         throws InvocationException;
 
     /**
-     * Handles a {@link AVRGameService#roomSubscriptionComplete} request.
-     */
-    void roomSubscriptionComplete (ClientObject caller, int arg1);
-
-    /**
      * Handles a {@link AVRGameService#setTicker} request.
      */
     void setTicker (ClientObject caller, String arg1, int arg2, InvocationService.InvocationListener arg3)

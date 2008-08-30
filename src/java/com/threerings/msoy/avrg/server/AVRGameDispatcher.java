@@ -47,12 +47,6 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
             );
             return;
 
-        case AVRGameMarshaller.ROOM_SUBSCRIPTION_COMPLETE:
-            ((AVRGameProvider)provider).roomSubscriptionComplete(
-                source, ((Integer)args[0]).intValue()
-            );
-            return;
-
         case AVRGameMarshaller.SET_TICKER:
             ((AVRGameProvider)provider).setTicker(
                 source, (String)args[0], ((Integer)args[1]).intValue(), (InvocationService.InvocationListener)args[2]

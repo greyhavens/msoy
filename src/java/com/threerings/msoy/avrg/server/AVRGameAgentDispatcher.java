@@ -40,6 +40,12 @@ public class AVRGameAgentDispatcher extends InvocationDispatcher<AVRGameAgentMar
             );
             return;
 
+        case AVRGameAgentMarshaller.ROOM_SUBSCRIPTION_COMPLETE:
+            ((AVRGameAgentProvider)provider).roomSubscriptionComplete(
+                source, ((Integer)args[0]).intValue()
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

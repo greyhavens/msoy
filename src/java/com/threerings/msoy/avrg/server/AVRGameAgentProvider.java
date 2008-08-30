@@ -16,4 +16,9 @@ public interface AVRGameAgentProvider extends InvocationProvider
      * Handles a {@link AVRGameAgentService#leaveGame} request.
      */
     void leaveGame (ClientObject caller, int arg1);
+
+    /**
+     * Handles a {@link AVRGameAgentService#roomSubscriptionComplete} request.
+     */
+    void roomSubscriptionComplete (ClientObject caller, int arg1);
 }

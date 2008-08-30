@@ -408,7 +408,7 @@ public class ThaneAVRGameController
 
         binding.roomProps = propsObj;
 
-        _gameObj.avrgService.roomSubscriptionComplete(_ctx.getClient(), binding.sceneId);
+        _gameAgentObj.agentService.roomSubscriptionComplete(_ctx.getClient(), binding.sceneId);
     }
 
     protected function wasRemoved (binding :SceneBinding) :Boolean

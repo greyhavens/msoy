@@ -27,4 +27,15 @@ public class AVRGameAgentMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2)
         });
     }
+
+    /** The method id used to dispatch {@link #roomSubscriptionComplete} requests. */
+    public static final int ROOM_SUBSCRIPTION_COMPLETE = 2;
+
+    // from interface AVRGameAgentService
+    public void roomSubscriptionComplete (Client arg1, int arg2)
+    {
+        sendRequest(arg1, ROOM_SUBSCRIPTION_COMPLETE, new Object[] {
+            Integer.valueOf(arg2)
+        });
+    }
 }

@@ -13,4 +13,9 @@ public interface AVRGameAgentService extends InvocationService
      * access to any other location management services.
      */
     void leaveGame (Client caller, int playerId);
+
+    /**
+     * Inform the server that we have finished resolving the RoomObject for the given scene.
+     */
+    void roomSubscriptionComplete (Client caller, int sceneId);
 }

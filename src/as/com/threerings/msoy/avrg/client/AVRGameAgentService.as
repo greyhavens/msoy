@@ -13,5 +13,8 @@ public interface AVRGameAgentService extends InvocationService
 {
     // from Java interface AVRGameAgentService
     function leaveGame (arg1 :Client, arg2 :int) :void;
+
+    // from Java interface AVRGameAgentService
+    function roomSubscriptionComplete (arg1 :Client, arg2 :int) :void;
 }
 }
