@@ -33,6 +33,7 @@ import com.threerings.presents.server.InvocationManager;
 import com.threerings.bureau.server.BureauRegistry;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.PlaceObject;
+import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
@@ -71,7 +72,7 @@ import static com.threerings.msoy.Log.log;
  */
 @EventThread
 public class AVRGameManager extends PlaceManager
-    implements AVRGameProvider, PlayManager
+    implements AVRGameProvider, PlayManager, AVRGameAgentProvider
 {
     /** The magic player id constant for the server agent used when sending private messages. */
     public static final int SERVER_AGENT = Integer.MIN_VALUE;
@@ -332,6 +333,22 @@ public class AVRGameManager extends PlaceManager
         _lifecycleObserver.avrGameReady(this);
     }
 
+    // From AVRGameAgentProvider
+    public void leaveGame (ClientObject caller, int playerId)
+    {
+        if (!isAgent(caller)) {
+            log.warning("Non agent calling leaveGame", "caller", caller);
+            return;
+        }
+        PlayerObject player = _locator.lookupPlayer(playerId);
+        if (player == null) {
+            log.warning("Agent requested non-player to leave", "caller", caller, 
+                "playerId", playerId);
+            return;
+        }
+        _locmgr.leavePlace(player);
+    }
+
     /**
      * This method is called when the agent completes the subscription of a scene's RoomObject.
      */
@@ -371,6 +388,7 @@ public class AVRGameManager extends PlaceManager
         stopTickers();
 
         if (_gameAgentObj != null) {
+            _invmgr.clearDispatcher(_gameAgentObj.agentService);
             _breg.destroyAgent(_gameAgentObj);
         }
 
@@ -536,6 +554,7 @@ public class AVRGameManager extends PlaceManager
         agent.bureauType = BureauTypes.THANE_BUREAU_TYPE;
         agent.gameId = gameId;
         agent.code = code;
+        agent.agentService = _invmgr.registerDispatcher(new AVRGameAgentDispatcher(this));
         if (StringUtil.isBlank(def.server)) {
             agent.className = WhirledGameManager.DEFAULT_SERVER_CLASS;
         } else {
@@ -728,6 +747,7 @@ public class AVRGameManager extends PlaceManager
     @Inject protected BureauRegistry _breg;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected PlayerLocator _locator;
+    @Inject protected LocationManager _locmgr;
 
     /** The minimum delay a ticker can have. */
     protected static final int MIN_TICKER_DELAY = 50;
