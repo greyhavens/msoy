@@ -6,26 +6,23 @@ package com.threerings.msoy.avrg.client {
 import com.threerings.util.Log;
 
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.client.ConfirmAdapter;
-import com.threerings.presents.client.ResultWrapper;
 
-import com.threerings.crowd.client.LocationAdapter;
+import com.threerings.presents.dobj.AttributeChangeAdapter;
+import com.threerings.presents.dobj.AttributeChangedEvent;
+
+import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.client.PlaceController;
-import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.game.client.GameLiaison;
-import com.threerings.msoy.game.data.MsoyGameConfig;
 
 import com.threerings.msoy.avrg.client.AVRService_AVRGameJoinListener;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameMarshaller;
-import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.AVRMarshaller;
 
 /**
@@ -52,7 +49,6 @@ public class AVRGameLiaison extends GameLiaison
 
         // AVRG's need access to the world services, too.
         _gctx.getClient().addServiceGroup(MsoyCodes.WORLD_GROUP);
-
     }
 
     override public function clientDidLogon (event :ClientEvent) :void
@@ -60,7 +56,20 @@ public class AVRGameLiaison extends GameLiaison
         super.clientDidLogon(event);
 
         var svc :AVRService = (_gctx.getClient().requireService(AVRService) as AVRService);
-        svc.activateGame(_gctx.getClient(), _gameId, this)
+        svc.activateGame(_gctx.getClient(), _gameId, this);
+
+        // Call shutdown when the location is cleared
+        var listener :AttributeChangeAdapter;
+        listener = new AttributeChangeAdapter(
+            function (evt :AttributeChangedEvent) :void {
+                if (evt.getName() == BodyObject.LOCATION) {
+                    if (evt.getValue() == null) {
+                        _gctx.getClient().getClientObject().removeListener(listener);
+                        shutdown();
+                    }
+                }
+            });
+        _gctx.getClient().getClientObject().addListener(listener);
     }
 
     // from AVRGameJoinListener
@@ -84,8 +93,6 @@ public class AVRGameLiaison extends GameLiaison
 
     override public function shutdown () :void
     {
-        _gctx.getLocationDirector().leavePlace();
-
         super.shutdown();
     }
 
@@ -96,7 +103,10 @@ public class AVRGameLiaison extends GameLiaison
             function (cause :String) :void {
                 log.warning("Failed to deactivate AVRG [gameId=" + _gameId +
                             ", cause=" + cause + "].");        
-            }, shutdown));
+            }, 
+            function () :void {
+                _gctx.getLocationDirector().leavePlace();
+            }));
     }
 
     /**
