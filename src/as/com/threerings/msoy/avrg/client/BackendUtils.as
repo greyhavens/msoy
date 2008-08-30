@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.avrg.client {
 
+import flash.utils.ByteArray;
+
 import com.threerings.io.TypedArray;
 
 import com.threerings.util.Integer;
@@ -160,18 +162,28 @@ public class BackendUtils
         gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
         x :Number, y :Number, z: Number, orient :Number) :void
     {
-        var occInfo :OccupantInfo = resolvePlayerWorldInfo(gameObj, room, playerId);
-        if (occInfo == null) {
-            return;
-        }
-        var actorInfo :ActorInfo = occInfo as ActorInfo;
-        if (actorInfo == null) {
-            log.warning("Setting location of non-actor [occInfo=" + occInfo + "]");
+        var ident :ItemIdent = resolvePlayerIdent(gameObj, room, playerId);
+        if (ident == null) {
             return;
         }
         var newLoc :MsoyLocation = new MsoyLocation(x, y, z, orient);
-        var ident :ItemIdent = actorInfo.getItemIdent();
         room.roomService.changeLocation(client, ident, newLoc);
+    }
+
+    /**
+     * Tells an avatar to play a custom action.
+     */
+    public static function playAvatarAction (
+        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
+        action :String) :void
+    {
+        var ident :ItemIdent = resolvePlayerIdent(gameObj, room, playerId);
+        if (ident == null) {
+            return;
+        }
+        var data :ByteArray = null;
+        var isAction :Boolean = true;
+        room.roomService.sendSpriteMessage(client, ident, action, data, isAction);
     }
 
     /**
@@ -214,6 +226,26 @@ public class BackendUtils
             log.warning("Player not found on world server [id=" + playerId + "]");
         }
         return occInfo;
+    }
+
+    /**
+     * Extracts the ident of an actor in a room. Returns null if the given id is not an occupant 
+     * of the room and the game or is not an actor.
+     */
+    public static function resolvePlayerIdent (
+        gameObj :AVRGameObject, roomObj :RoomObject, playerId :int) :ItemIdent
+    {
+        var occInfo :OccupantInfo = resolvePlayerWorldInfo(gameObj, roomObj, playerId);
+        if (occInfo == null) {
+            return null;
+        }
+        var actorInfo :ActorInfo = occInfo as ActorInfo;
+        if (actorInfo == null) {
+            log.warning("Resolving ident of non-actor [occInfo=" + occInfo + "]");
+            return null;
+        }
+        var ident :ItemIdent = actorInfo.getItemIdent();
+        return ident;
     }
 }
 }

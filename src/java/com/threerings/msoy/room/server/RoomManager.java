@@ -356,18 +356,20 @@ public class RoomManager extends SpotSceneManager
                                    boolean isAction)
     {
         // make sure the caller is in the room
-        MemberObject who = (MemberObject)caller;
-        if (!_roomObj.occupants.contains(who.getOid())) {
-            log.warning("Rejecting sprite message request by non-occupant [who=" + who.who() +
-                        ", item=" + item + ", name=" + name + "].");
-            return;
+        if (caller instanceof MemberObject) {
+            MemberObject who = (MemberObject)caller;
+            if (!_roomObj.occupants.contains(who.getOid())) {
+                log.warning("Rejecting sprite message request by non-occupant", "who", who.who(),
+                    "item", item, "name", name);
+                return;
+            }
         }
 
         // if this client does not currently control this entity; ignore the request; if no one
         // controls it, this will assign this client as controller
-        if (isAction && !ensureEntityControl(who, item, "triggerAction")) {
-            log.info("Dropping sprite message for lack of control [who=" + who.who() +
-                     ", item=" + item + ", name=" + name + "].");
+        if (isAction && !ensureEntityControl(caller, item, "triggerAction")) {
+            log.info("Dropping sprite message for lack of control", "who", caller.who(),
+                "item", item, "name", name);
             return;
         }
 

@@ -131,6 +131,10 @@ public class AVRGameBackend extends ControlBackend
 
     public function playerEnteredRoom (roomId :int, roomProps :RoomPropertiesObject) :void
     {
+        if (_props == null) {
+            return;
+        }
+
         _roomPropsNetAdapter = new BackendNetAdapter(
             roomProps, RoomPropertiesObject.USER_MESSAGE, 
             _props, "room_propertyWasSet_v1", "room_messageReceived_v1");
@@ -355,95 +359,95 @@ public class AVRGameBackend extends ControlBackend
     }
 
     // PlayerSubControl
-    protected function deactivateGame_v1 (targetId :int /* ignored */) :Boolean
+    protected function deactivateGame_v1 (targetId :int /* ignored */) :void
     {
         validatePlayerTargetId(targetId);
         if (!isPlaying()) {
-            return false;
+            return;
         }
         _wctx.getGameDirector().leaveAVRGame();
-        return true;
     }
 
     // PlayerSubControl
     protected function completeTask_v1 (
-        targetId :int /* ignored */, taskId :String, payout :Number) :Boolean
+        targetId :int /* ignored */, taskId :String, payout :Number) :void
     {
         validatePlayerTargetId(targetId);
         if (StringUtil.isBlank(taskId) || !isPlaying()) {
-            return false;
+            return;
         }
 
         // sanity check payout
         if (payout < 0 || payout > 1) {
             _wctx.displayFeedback(null, "completeTask() payout must be between 0 and 1.");
-            return false;
+            return;
         }
 
         _gameObj.avrgService.completeQuest(
             _gctx.getClient(), taskId, payout, BackendUtils.loggingConfirmListener("completeTask"));
-        return true;
     }
 
     // PlayerSubControl
-    protected function playAvatarAction_v1 (targetId :int /* ignored */, action :String) :Boolean
+    protected function playAvatarAction_v1 (targetId :int /* ignored */, action :String) :void
     {
         validatePlayerTargetId(targetId);
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.sendMessage(action, null, true);
-            return true;
+        } else {
+            BackendUtils.playAvatarAction(
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), 
+                _wctx.getMemberObject().getMemberId(), action);
         }
-        return false;
     }
 
     // PlayerSubControl
-    protected function setAvatarState_v1 (targetId :int /* ignored */, state :String) :Boolean
+    protected function setAvatarState_v1 (targetId :int /* ignored */, state :String) :void
     {
         validatePlayerTargetId(targetId);
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setState(state);
-            return true;
         }
-        return false;
     }
 
     // PlayerSubControl
     protected function setAvatarMoveSpeed_v1 (
-        targetId :int /* ignored */, pixelsPerSecond :Number) :Boolean
+        targetId :int /* ignored */, pixelsPerSecond :Number) :void
     {
         validatePlayerTargetId(targetId);
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setMoveSpeedFromUser(pixelsPerSecond);
-            return true;
         }
-        return false;
     }
 
     // PlayerSubControl
     protected function setAvatarLocation_v1 (
-        targetId :int /* ignored */, x :Number, y :Number, z: Number, orient :Number) :Boolean
+        targetId :int /* ignored */, x :Number, y :Number, z: Number, orient :Number) :void
     {
         validatePlayerTargetId(targetId);
-        BackendUtils.setAvatarLocation(
-            _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMemberObject().getMemberId(), 
-            x, y, z, orient);
-        return true;
+        var sprite :MemberSprite = getMySprite();
+        if (sprite != null) {
+            sprite.setLocationFromUser(x, y, z, orient);
+
+        } else {
+            log.info("No sprite, using backend setAvatarLocation");
+            BackendUtils.setAvatarLocation(
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMemberObject().getMemberId(), 
+                x, y, z, orient);
+        }
     }
 
     // PlayerSubControl
     protected function setAvatarOrientation_v1 (
-        targetId :int /* ignored */, orient :Number) :Boolean
+        targetId :int /* ignored */, orient :Number) :void
     {
         validatePlayerTargetId(targetId);
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setOrientationFromUser(orient);
-            return true;
         }
-        return false;
     }
 
     // LocalSubControl

@@ -310,38 +310,20 @@ public class ThaneAVRGameBackend
         return getPlayerRoomId(playerId);
     }
 
-    protected function deactivateGame_v1 (playerId :int) :Boolean
+    protected function deactivateGame_v1 (playerId :int) :void
     {
         _controller.deactivateGame(playerId);
-        return true;
     }
 
-    protected function completeTask_v1 (playerId :int, taskId :String, payout :Number) :Boolean
+    protected function completeTask_v1 (playerId :int, taskId :String, payout :Number) :void
     {
-        return false;
     }
 
-    protected function playAvatarAction_v1 (playerId :int, action :String) :Boolean
-    {
-        return false;
-    }
-
-    protected function setAvatarState_v1 (playerId :int, state :String) :Boolean
-    {
-        return false;
-    }
-
-    protected function setAvatarMoveSpeed_v1 (playerId :int, pixelsPerSecond :Number) :Boolean
-    {
-        return false;
-    }
-
-    protected function setAvatarLocation_v1 (
-        playerId :int, x :Number, y :Number, z: Number, orient :Number) :Boolean
+    protected function playAvatarAction_v1 (playerId :int, action :String) :void
     {
         var roomId :int = getPlayerRoomId(playerId);
         if (roomId == 0) {
-            return false;
+            return;
         }
 
         // TODO: maybe expose ThaneAVRGameController::SceneBinding instead of always doing lookup 
@@ -349,17 +331,43 @@ public class ThaneAVRGameBackend
         var roomObj :RoomObject = _controller.getRoom(roomId);
         if (roomObj == null) {
             log.warning("Room object is null [roomId=" + roomId + "]");
-            return false;
+            return;
+        }
+
+        BackendUtils.playAvatarAction(
+            _gameObj, roomObj, _controller.getRoomClient(roomId), playerId, action);
+    }
+
+    protected function setAvatarState_v1 (playerId :int, state :String) :void
+    {
+    }
+
+    protected function setAvatarMoveSpeed_v1 (playerId :int, pixelsPerSecond :Number) :void
+    {
+    }
+
+    protected function setAvatarLocation_v1 (
+        playerId :int, x :Number, y :Number, z: Number, orient :Number) :void
+    {
+        var roomId :int = getPlayerRoomId(playerId);
+        if (roomId == 0) {
+            return;
+        }
+
+        // TODO: maybe expose ThaneAVRGameController::SceneBinding instead of always doing lookup 
+        // twice
+        var roomObj :RoomObject = _controller.getRoom(roomId);
+        if (roomObj == null) {
+            log.warning("Room object is null [roomId=" + roomId + "]");
+            return;
         }
 
         BackendUtils.setAvatarLocation(
             _gameObj, roomObj, _controller.getRoomClient(roomId), playerId, x, y, z, orient);
-        return true;
     }
 
-    protected function setAvatarOrientation_v1 (playerId :int, orient :Number) :Boolean
+    protected function setAvatarOrientation_v1 (playerId :int, orient :Number) :void
     {
-        return false;
     }
 
     protected function player_sendMessage_v1 (playerId :int, name :String, value :Object) :void
