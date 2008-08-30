@@ -11,10 +11,13 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 import com.google.gwt.user.server.rpc.UnexpectedException;
 import com.google.inject.Inject;
 import com.samskivert.servlet.util.CookieUtil;
+
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -49,6 +52,17 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         if (mrec == null) {
             throw new ServiceException(MsoyAuthCodes.SESSION_EXPIRED);
         }
+
+        // User SWFs can send HTTP requests posing as the GWT client and potentially cause 50 kinds
+        // of havoc. These requests come from Flash with the same cookies and User-Agent as a legit
+        // browser request. However, there is no Referer, and Flash 9 doesn't allow you to spoof
+        // one. So check that the Referrer is present, and for good measure, make sure it's coming
+        // from on-site.
+        String referer = getThreadLocalRequest().getHeader("Referer");
+        if (referer == null || !referer.startsWith(DeploymentConfig.serverURL)) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
         return mrec;
     }
 
