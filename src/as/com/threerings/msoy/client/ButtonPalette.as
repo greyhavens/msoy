@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.client {
 
+import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 
 import flash.events.Event;
@@ -15,6 +16,9 @@ import mx.core.UIComponent;
 
 import mx.containers.Canvas;
 import mx.containers.Tile;
+import mx.containers.ViewStack;
+
+import mx.events.IndexChangedEvent;
 
 import caurina.transitions.Tweener;
 
@@ -43,6 +47,8 @@ public class ButtonPalette extends Canvas
         _tile.owner.addChild(_tile);
 
         CommandEvent.configureBridge(_tile, parent);
+
+        addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
 
         minWidth = TOGGLE_WIDTH + _tile.tileWidth + int(_tile.getStyle("paddingLeft")) +
             int(_tile.getStyle("paddingRight"));
@@ -140,6 +146,32 @@ public class ButtonPalette extends Canvas
             _lastPoint = p;
             updateTileLoc();
         }
+    }
+
+    /**
+     * In the remixer, our buttons show up even in the image editing phase because
+     * the Tile is added as a child to the top-level systemManager. I tried
+     * adding it to the most local systemManager, but then it doesn't even show up-
+     * it seems to size at 0 or something.
+     * So- we just see if we're in a ViewStack and listen to see when we're hidden,
+     * and also hide the Tile.
+     */
+    protected function handleAddedToStage (event :Event) :void
+    {
+        var d :DisplayObject = this;
+        while (d != null) {
+            if (d is ViewStack) {
+                d.addEventListener(IndexChangedEvent.CHANGE, handleViewStackChanged,
+                    false, 0, true);
+                return;
+            }
+            d = d.parent;
+        }
+    }
+
+    protected function handleViewStackChanged (event :IndexChangedEvent) :void
+    {
+        _tile.visible = DisplayObjectContainer(event.relatedObject).contains(this);
     }
 
     protected var _toggle :CommandCheckBox;

@@ -15,7 +15,6 @@ import mx.core.UIComponent;
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
-import mx.containers.Tile;
 
 import mx.controls.Spacer;
 
