@@ -60,6 +60,7 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         // from on-site.
         String referer = getThreadLocalRequest().getHeader("Referer");
         if (referer == null || !referer.startsWith(DeploymentConfig.serverURL)) {
+            log.info("Rejected request that contained invalid referer.", "referer", referer);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
