@@ -28,6 +28,9 @@ public class AVRGameAgentObject extends AgentObject
     /** ID of the game record. */
     public var gameId :int;
 
+    /** Service for doing agent things. */
+    public var agentService :AVRGameAgentMarshaller;
+
     // from interface Streamable
     override public function readObject (ins :ObjectInputStream) :void
     {
@@ -35,6 +38,7 @@ public class AVRGameAgentObject extends AgentObject
         scenes = (ins.readObject() as DSet);
         gameOid = ins.readInt();
         gameId = ins.readInt();
+        agentService = ins.readObject() as AVRGameAgentMarshaller;
     }
 }
 

@@ -30,6 +30,9 @@ public class AVRGameAgentObject extends AgentObject
     
     /** ID of the game record. */
     public int gameId;
+    
+    /** Service for agent requests. */
+    public AVRGameAgentMarshaller agentService;
 
     // AUTO-GENERATED: METHODS START
     /**
