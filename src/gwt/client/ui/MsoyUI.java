@@ -308,7 +308,7 @@ public class MsoyUI
     /**
      * Puts a pair buttons in a horizontal panel with a small gap betwixt them.
      */
-    public static Widget createButtonPair (Button left, Button right)
+    public static Widget createButtonPair (Widget left, Widget right)
     {
         HorizontalPanel panel = new HorizontalPanel();
         panel.addStyleName("ButtonPair");

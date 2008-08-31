@@ -60,8 +60,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _indeets.add(_priceLabel = new PriceLabel(_listing.flowCost, _listing.goldCost));
 
         _details.add(WidgetUtil.makeShim(10, 10));
-        PushButton purchase =
-            MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);
+
+        // create the buy button
+        PushButton purchase = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);
         new ClickCallback<Item>(purchase) {
             public boolean callService () {
                 if (CShop.isGuest()) {
@@ -90,9 +91,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 }
             }
         };
-        _buyPanel = new FlowPanel();
-        _buyPanel.add(purchase);
 
+        _buyPanel = new FlowPanel();
+        _buyPanel.setStyleName("Buy");
+
+        // if the item is remixable, also create a remix button
         if (!CShop.isGuest() && isRemixable()) {
             PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingRemix(),
                 new ClickListener() {
@@ -102,7 +105,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                             _listing.flowCost, _listing.goldCost);
                     }
                 });
-            _buyPanel.add(remix);
+            _buyPanel.add(MsoyUI.createButtonPair(remix, purchase));
+        } else {
+            _buyPanel.add(purchase);
         }
 
         _details.add(_buyPanel);
@@ -177,7 +182,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // clear out the buy button
         _buyPanel.clear();
-        _buyPanel.addStyleName("Bought");
+        _buyPanel.setStyleName("Bought");
 
         // report to the client that we generated a tutorial event
         if (itype == Item.DECOR) {
