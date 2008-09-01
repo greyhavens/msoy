@@ -395,33 +395,35 @@ public class RoomManager extends SpotSceneManager
     // documentation inherited from RoomProvider
     public void setActorState (ClientObject caller, ItemIdent item, int actorOid, String state)
     {
-        MemberObject who = (MemberObject) caller;
-        if (!_roomObj.occupants.contains(who.getOid())) {
-            log.warning("Rejecting actor state request by non-occupant [who=" + who.who() +
-                        ", item=" + item + ", state=" + state + "].");
-            return;
+        if (caller instanceof MemberObject) {
+            MemberObject who = (MemberObject) caller;
+            if (!_roomObj.occupants.contains(who.getOid())) {
+                log.warning("Rejecting actor state request by non-occupant", "who", who.who(),
+                    "item", item, "state", state);
+                return;
+            }
         }
 
         // make sure the actor to be state-changed is also in this room
         MsoyBodyObject actor;
-        if (who.getOid() != actorOid) {
+        if (caller.getOid() != actorOid) {
             if (!_roomObj.occupants.contains(actorOid)) {
-                log.warning("Rejecting actor state request for non-occupant [who=" + who.who() +
-                    ", item=" + item + ", state=" + state + "].");
+                log.warning("Rejecting actor state request for non-occupant", "who", caller.who(),
+                    "item", item, "state", state);
                 return;
             }
             actor = (MsoyBodyObject) _omgr.getObject(actorOid);
 
         } else {
             // the actor is the caller
-            actor = who;
+            actor = (MemberObject)caller;
         }
 
         // if this client does not currently control this entity; ignore the request; if no one
         // controls it, this will assign this client as controller
-        if (!ensureEntityControl(who, item, "setState")) {
-            log.info("Dropping change state for lack of control [who=" + who.who() +
-                     ", item=" + item + ", state=" + state + "].");
+        if (!ensureEntityControl(caller, item, "setState")) {
+            log.info("Dropping change state for lack of control", "who", caller.who(),
+                "item", item, "state", state);
             return;
         }
 
