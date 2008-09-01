@@ -162,12 +162,10 @@ public class BackendUtils
         gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
         x :Number, y :Number, z: Number, orient :Number) :void
     {
-        var ident :ItemIdent = resolvePlayerIdent(gameObj, room, playerId);
-        if (ident == null) {
-            return;
-        }
-        var newLoc :MsoyLocation = new MsoyLocation(x, y, z, orient);
-        room.roomService.changeLocation(client, ident, newLoc);
+        resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
+            var newLoc :MsoyLocation = new MsoyLocation(x, y, z, orient);
+            room.roomService.changeLocation(client, ident, newLoc);
+        });
     }
 
     /**
@@ -177,13 +175,48 @@ public class BackendUtils
         gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
         action :String) :void
     {
-        var ident :ItemIdent = resolvePlayerIdent(gameObj, room, playerId);
-        if (ident == null) {
-            return;
-        }
-        var data :ByteArray = null;
-        var isAction :Boolean = true;
-        room.roomService.sendSpriteMessage(client, ident, action, data, isAction);
+        resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
+            var data :ByteArray = null;
+            var isAction :Boolean = true;
+            room.roomService.sendSpriteMessage(client, ident, action, data, isAction);
+        });
+    }
+
+    /**
+     * Sets the state of an avatar.
+     */
+    public static function setAvatarState (
+        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
+        state :String) :void
+    {
+        resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
+            var actorOid :int = resolvePlayerWorldInfo(gameObj, room, playerId).bodyOid;
+            room.roomService.setActorState(client, ident, actorOid, state);
+        });
+    }
+
+    /**
+     * Sets the move speed of an avatar.
+     */
+    public static function setAvatarMoveSpeed (
+        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
+        pixelsPerSecond :Number) :void
+    {
+        resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
+            // todo
+        });
+    }
+
+    /**
+     * Sets the move speed of an avatar.
+     */
+    public static function setAvatarOrientation (
+        gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
+        orient :Number) :void
+    {
+        resolvePlayerIdent(gameObj, room, playerId, function (ident :ItemIdent) :void {
+            // todo
+        });
     }
 
     /**
@@ -229,23 +262,23 @@ public class BackendUtils
     }
 
     /**
-     * Extracts the ident of an actor in a room. Returns null if the given id is not an occupant 
-     * of the room and the game or is not an actor.
+     * Extracts the ident of an actor in a room and passes it to a function. Reports a warning if 
+     * the ident could not be obtained and does not call the function.
      */
     public static function resolvePlayerIdent (
-        gameObj :AVRGameObject, roomObj :RoomObject, playerId :int) :ItemIdent
+        gameObj :AVRGameObject, roomObj :RoomObject, playerId :int, fn :Function) :void
     {
         var occInfo :OccupantInfo = resolvePlayerWorldInfo(gameObj, roomObj, playerId);
         if (occInfo == null) {
-            return null;
+            return;
         }
         var actorInfo :ActorInfo = occInfo as ActorInfo;
         if (actorInfo == null) {
             log.warning("Resolving ident of non-actor [occInfo=" + occInfo + "]");
-            return null;
+            return;
         }
         var ident :ItemIdent = actorInfo.getItemIdent();
-        return ident;
+        fn(ident);
     }
 }
 }

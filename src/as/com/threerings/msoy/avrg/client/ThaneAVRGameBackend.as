@@ -6,6 +6,8 @@ package com.threerings.msoy.avrg.client {
 import com.threerings.util.Log;
 import com.threerings.util.ObjectMarshaller;
 
+import com.threerings.presents.client.Client;
+
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
@@ -321,53 +323,38 @@ public class ThaneAVRGameBackend
 
     protected function playAvatarAction_v1 (playerId :int, action :String) :void
     {
-        var roomId :int = getPlayerRoomId(playerId);
-        if (roomId == 0) {
-            return;
-        }
-
-        // TODO: maybe expose ThaneAVRGameController::SceneBinding instead of always doing lookup 
-        // twice
-        var roomObj :RoomObject = _controller.getRoom(roomId);
-        if (roomObj == null) {
-            log.warning("Room object is null [roomId=" + roomId + "]");
-            return;
-        }
-
-        BackendUtils.playAvatarAction(
-            _gameObj, roomObj, _controller.getRoomClient(roomId), playerId, action);
+        resolveRoomAndClient(playerId, function (roomObj :RoomObject, client :Client) :void {
+            BackendUtils.playAvatarAction(_gameObj, roomObj, client, playerId, action);
+        });
     }
 
     protected function setAvatarState_v1 (playerId :int, state :String) :void
     {
+        resolveRoomAndClient(playerId, function (roomObj :RoomObject, client :Client) :void {
+            BackendUtils.setAvatarState(_gameObj, roomObj, client, playerId, state);
+        });
     }
 
     protected function setAvatarMoveSpeed_v1 (playerId :int, pixelsPerSecond :Number) :void
     {
+        resolveRoomAndClient(playerId, function (roomObj :RoomObject, client :Client) :void {
+            BackendUtils.setAvatarMoveSpeed(_gameObj, roomObj, client, playerId, pixelsPerSecond);
+        });
     }
 
     protected function setAvatarLocation_v1 (
         playerId :int, x :Number, y :Number, z: Number, orient :Number) :void
     {
-        var roomId :int = getPlayerRoomId(playerId);
-        if (roomId == 0) {
-            return;
-        }
-
-        // TODO: maybe expose ThaneAVRGameController::SceneBinding instead of always doing lookup 
-        // twice
-        var roomObj :RoomObject = _controller.getRoom(roomId);
-        if (roomObj == null) {
-            log.warning("Room object is null [roomId=" + roomId + "]");
-            return;
-        }
-
-        BackendUtils.setAvatarLocation(
-            _gameObj, roomObj, _controller.getRoomClient(roomId), playerId, x, y, z, orient);
+        resolveRoomAndClient(playerId, function (roomObj :RoomObject, client :Client) :void {
+            BackendUtils.setAvatarLocation(_gameObj, roomObj, client, playerId, x, y, z, orient);
+        });
     }
 
     protected function setAvatarOrientation_v1 (playerId :int, orient :Number) :void
     {
+        resolveRoomAndClient(playerId, function (roomObj :RoomObject, client :Client) :void {
+            BackendUtils.setAvatarOrientation(_gameObj, roomObj, client, playerId, orient);
+        });
     }
 
     protected function player_sendMessage_v1 (playerId :int, name :String, value :Object) :void
@@ -408,6 +395,28 @@ public class ThaneAVRGameBackend
             return 0;
         }
         return pl.sceneId;
+    }
+
+    /**
+     * Find the given player's room and the client session that is connected to the room and call
+     * fn(roomObj, client) if found.
+     */
+    protected function resolveRoomAndClient (playerId :int, fn :Function) :void
+    {
+        var roomId :int = getPlayerRoomId(playerId);
+        if (roomId == 0) {
+            return;
+        }
+
+        // TODO: maybe expose ThaneAVRGameController::SceneBinding instead of always doing lookup 
+        // twice
+        var roomObj :RoomObject = _controller.getRoom(roomId);
+        if (roomObj == null) {
+            log.warning("Room object is null [roomId=" + roomId + "]");
+            return;
+        }
+
+        fn(roomObj, _controller.getRoomClient(roomId));
     }
 
     /**

@@ -396,8 +396,7 @@ public class AVRGameBackend extends ControlBackend
             sprite.sendMessage(action, null, true);
         } else {
             BackendUtils.playAvatarAction(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), 
-                _wctx.getMemberObject().getMemberId(), action);
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), getMemberId(), action);
         }
     }
 
@@ -408,6 +407,9 @@ public class AVRGameBackend extends ControlBackend
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setState(state);
+        } else {
+            BackendUtils.setAvatarState(
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), getMemberId(), state);
         }
     }
 
@@ -416,9 +418,16 @@ public class AVRGameBackend extends ControlBackend
         targetId :int /* ignored */, pixelsPerSecond :Number) :void
     {
         validatePlayerTargetId(targetId);
+
+        // todo make the below dispatch to all clients
+        return;
+
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setMoveSpeedFromUser(pixelsPerSecond);
+        } else {
+            BackendUtils.setAvatarMoveSpeed(
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), getMemberId(), pixelsPerSecond);
         }
     }
 
@@ -430,12 +439,9 @@ public class AVRGameBackend extends ControlBackend
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setLocationFromUser(x, y, z, orient);
-
         } else {
-            log.info("No sprite, using backend setAvatarLocation");
             BackendUtils.setAvatarLocation(
-                _gameObj, _ctrl.getRoom(), _wctx.getClient(), _wctx.getMemberObject().getMemberId(), 
-                x, y, z, orient);
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), getMemberId(), x, y, z, orient);
         }
     }
 
@@ -444,9 +450,16 @@ public class AVRGameBackend extends ControlBackend
         targetId :int /* ignored */, orient :Number) :void
     {
         validatePlayerTargetId(targetId);
+
+        // todo make the below dispatch to all clients
+        return;
+
         var sprite :MemberSprite = getMySprite();
         if (sprite != null) {
             sprite.setOrientationFromUser(orient);
+        } else {
+            BackendUtils.setAvatarOrientation(
+                _gameObj, _ctrl.getRoom(), _wctx.getClient(), getMemberId(), orient);
         }
     }
 
@@ -643,6 +656,11 @@ public class AVRGameBackend extends ControlBackend
         if (targetId != 0) {
             throw new Error("Unexpected room target [id=" + targetId + "]");
         }
+    }
+
+    protected function getMemberId () :int
+    {
+        return _wctx.getMemberObject().getMemberId();
     }
 
     protected var _wctx :WorldContext;
