@@ -8,6 +8,10 @@ import com.threerings.util.ObjectMarshaller;
 
 import com.threerings.presents.client.Client;
 
+import com.threerings.crowd.data.OccupantInfo;
+
+import com.threerings.whirled.spot.data.SceneLocation;
+
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
@@ -17,6 +21,8 @@ import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
 
+import com.threerings.msoy.room.data.ActorInfo;
+import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
 
@@ -249,17 +255,40 @@ public class ThaneAVRGameBackend
 
     protected function getAvatarInfo_v1 (roomId :int, playerId :int) :Array
     {
-        // info.name = data[ix ++];
-        // info.state = data[ix ++];
-        // info.x = data[ix ++];
-        // info.y = data[ix ++];
-        // info.z = data[ix ++];
-        // info.orientation = data[ix ++];
-        // info.moveSpeed = data[ix ++];
-        // info.isMoving = data[ix ++];
-        // info.isIdle = data[ix ++];
-        // info.stageBounds = data[ix ++];
-        return [null, null, null, null, null, null, null, null, null, null];
+        var roomObj :RoomObject = _controller.getRoom(getPlayerRoomId(playerId));
+        if (roomObj == null) {
+            log.debug("Room not found [playerId=" + playerId + "]");
+            return null;
+        }
+
+        var actorInfo :ActorInfo;
+        actorInfo = BackendUtils.resolvePlayerWorldInfo(_gameObj, roomObj, playerId) as ActorInfo;
+        if (actorInfo == null) {
+            log.debug("ActorInfo not found [playerId=" + playerId + "]");
+            return null;
+        }
+
+        var loc :MsoyLocation;
+        loc = (roomObj.occupantLocs.get(actorInfo.bodyOid) as SceneLocation).loc as MsoyLocation;
+        if (loc == null) {
+            log.debug(
+                "Location not found [playerId=" + playerId + ", boyOid=" + actorInfo.bodyOid +
+                ", sceneLoc=" + roomObj.occupantLocs.get(actorInfo.bodyOid) + "]");
+            return null;
+        }
+
+        var data :Array = new Array(10);
+        data[0] = actorInfo.username.toString();
+        data[1] = actorInfo.getState();
+        data[2] = loc.x;
+        data[3] = loc.y;
+        data[4] = loc.z;
+        data[5] = loc.orient;
+        data[6] = 1.0; // TODO moveSpeed
+        data[7] = false; // TODO isMoving
+        data[8] = actorInfo.status == OccupantInfo.IDLE;
+        data[9] = null; // TODO: stageBounds
+        return data;
     }
 
     protected function spawnMob_v1 (roomId :int, id :String, name :String) :Boolean

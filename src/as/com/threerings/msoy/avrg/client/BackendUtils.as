@@ -246,7 +246,7 @@ public class BackendUtils
      * Extracts the room occupant info for the given player id, also making sure the player is in
      * the game. Returns null if the player is not in the game or room.
      */
-    protected static function resolvePlayerWorldInfo (
+    public static function resolvePlayerWorldInfo (
         gameObj :AVRGameObject, roomObj :RoomObject, playerId :int) :OccupantInfo
     {
         var occInfo :OccupantInfo = gameObj.getOccupantInfo(new MemberName("", playerId));

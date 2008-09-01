@@ -36,6 +36,7 @@ import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
@@ -623,15 +624,27 @@ public class AVRGameBackend extends ControlBackend
             log.debug("getAvatarSprite(" + playerId + ") without RoomView");
             return null;
         }
-        var occInfo :OccupantInfo = _gameObj.getOccupantInfo(new MemberName("", playerId));
-        if (occInfo != null) {
-            var sprite :OccupantSprite = view.getOccupant(occInfo.bodyOid);
-            if (sprite != null) {
-                return sprite as MemberSprite;
-            }
+        var roomObj :RoomObject = _ctrl.getRoom();
+        if (roomObj == null) {
+            log.debug("getAvatarSprite(" + playerId + ") without RoomObject");
+            return null;
         }
-        log.debug("getAvatarSprite(" + playerId + ") return null");
-        return null;
+        var occInfo :OccupantInfo = _gameObj.getOccupantInfo(new MemberName("", playerId));
+        if (occInfo == null) {
+            log.debug("getAvatarSprite(" + playerId + ") player not in game");
+            return null;
+        }
+        occInfo = roomObj.getOccupantInfo(occInfo.username);
+        if (occInfo == null) {
+            log.debug("getAvatarSprite(" + playerId + ") player not in room");
+            return null;
+        }
+        var sprite :OccupantSprite = view.getOccupant(occInfo.bodyOid);
+        if (sprite == null) {
+            log.debug("getAvatarSprite(" + playerId + ") sprite not found");
+            return null;
+        }
+        return sprite as MemberSprite;
     }
 
     /**
