@@ -73,9 +73,11 @@ public class DecorEditor extends ItemEditor
         DeferredCommand.addCommand(new Command() {
             public void execute () {
                 FlashClients.embedDecorViewer(viewer);
-                configureCallbacks(DecorEditor.this);
             }
         });
+
+        // wire up the callbacks needed by the Flash decor editor
+        configureCallbacks(DecorEditor.this);
     }
 
     @Override // from ItemEditor
