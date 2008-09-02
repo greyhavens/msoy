@@ -369,9 +369,14 @@ public class GameServlet extends MsoyServiceServlet
                 friendIds.add(mrec.memberId); // us too!
             }
 
+            // if we're showing the full top-ranked list, trim non-recent-players
+            long since = onlyMyFriends ? 0L : RATING_CUTOFF;
+
             // load up the single and mutiplayer ratings
-            List<RatingRecord> single = _ratingRepo.getTopRatings(-gameId, MAX_RANKINGS, friendIds);
-            List<RatingRecord> multi = _ratingRepo.getTopRatings(gameId, MAX_RANKINGS, friendIds);
+            List<RatingRecord> single =
+                _ratingRepo.getTopRatings(-gameId, MAX_RANKINGS, since, friendIds);
+            List<RatingRecord> multi =
+                _ratingRepo.getTopRatings(gameId, MAX_RANKINGS, since, friendIds);
 
             // combine all players in question into one map for name/photo resolution
             IntMap<PlayerRating> players = IntMaps.newHashIntMap();
@@ -763,4 +768,7 @@ public class GameServlet extends MsoyServiceServlet
     };
 
     protected static final int MAX_RANKINGS = 10;
+
+    /** Players that haven't played a rated game in 14 days are not included in top-ranked. */
+    protected static final long RATING_CUTOFF = 14 * 24*60*60*1000L;
 }
