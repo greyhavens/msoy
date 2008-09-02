@@ -185,6 +185,12 @@ public interface MoneyLogic
 
     /**
      * Retrieves the total number of transaction history entries we have stored for this query.
+     *
+     * @param memberId ID of the member to count transactions for.
+     * @param type Money type to retrieve logs for. If null, then records for all money types are
+     * counted.
+     * @param transactionTypes Set of transaction types to retrieve logs for.  If null, all
+     *      transactionTypes will be counted.
      */
     int getHistoryCount (int memberId, MoneyType type, EnumSet<TransactionType> transactionTypes);
 
