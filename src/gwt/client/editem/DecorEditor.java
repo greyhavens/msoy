@@ -4,6 +4,8 @@
 package client.editem;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 
@@ -11,6 +13,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 
+import client.shell.CShell;
 import client.util.FlashClients;
 
 /**
@@ -60,11 +63,19 @@ public class DecorEditor extends ItemEditor
 
         addSpacer();
         addRow(new Label(_emsgs.decorConfigTab()));
-        HTML viewer = new HTML();
-        // note: the container has to be added to the DOM *before* we add the flash viewer
+
+        // note: the container has to be added to the DOM *before* we add the flash viewer due to a
+        // bug in IE6; since we're in ItemEditor's constructor right now, we have to add the HTML
+        // that will contain the viewer, then queue up a deferred command so that our constructor
+        // can return, we can be added into the DOM and *then* the Flash <embed> will be added
+        final HTML viewer = new HTML();
         addRow(viewer);
-        FlashClients.embedDecorViewer(viewer);
-        configureCallbacks(this);
+        DeferredCommand.addCommand(new Command() {
+            public void execute () {
+                FlashClients.embedDecorViewer(viewer);
+                configureCallbacks(DecorEditor.this);
+            }
+        });
     }
 
     @Override // from ItemEditor
