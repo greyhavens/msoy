@@ -4,9 +4,6 @@
 package com.threerings.msoy.money.server.persist;
 
 import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.EnumSet;
 import java.util.List;
@@ -17,10 +14,8 @@ import net.jcip.annotations.NotThreadSafe;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.Limit;
@@ -53,28 +48,6 @@ public final class DepotMoneyRepository extends DepotRepository
     public DepotMoneyRepository (final PersistenceContext ctx)
     {
         super(ctx);
-        
-        // 08-27-2008: Added transactionType and referenceTxId fields.  Set all existing 
-        // transactions to a type of OTHER.
-        ctx.registerMigration(MemberAccountHistoryRecord.class, new EntityMigration(3) {
-            @Override
-            public int invoke (final Connection conn, final DatabaseLiaison liaison)
-                throws SQLException
-            {
-                // All current records should be marked as a transaction type of 'OTHER'.
-                final PreparedStatement stmt = conn.prepareStatement("update " + 
-                    liaison.tableSQL("MemberAccountHistoryRecord") + " set " +
-                    liaison.columnSQL("transactionType") + "=" + 
-                    PersistentTransactionType.OTHER.toByte());
-                return stmt.executeUpdate();
-            }
-            
-            @Override
-            public boolean runBeforeDefault ()
-            {
-                return false;
-            }
-        });
     }
 
     public void addHistory (final MemberAccountHistoryRecord history)
