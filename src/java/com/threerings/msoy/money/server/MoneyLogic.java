@@ -184,6 +184,11 @@ public interface MoneyLogic
         count, boolean descending);
 
     /**
+     * Retrieves the total number of transaction history entries we have stored for this query.
+     */
+    int getHistoryCount (int memberId, MoneyType type, EnumSet<TransactionType> transactionTypes);
+
+    /**
      * Retrieves the amount that a member's current bling is worth in American dollars.
      *
      * @param memberId ID of the member to retrieve bling for.

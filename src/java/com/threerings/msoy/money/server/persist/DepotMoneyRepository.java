@@ -11,13 +11,16 @@ import java.util.Set;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
@@ -105,19 +108,18 @@ public final class DepotMoneyRepository extends DepotRepository
         try {
             // select * from MemberAccountRecord where type = ? and transactionType in (?) 
             // and memberId=? order by timestamp
-            SQLOperator op = new Equals(MemberAccountHistoryRecord.MEMBER_ID_C, memberId);
-            if (type != null) {
-                op = new And(op, new Equals(MemberAccountHistoryRecord.TYPE_C, type));
-            }
-            op = new And(op, new In(MemberAccountHistoryRecord.TRANSACTION_TYPE_C, transactionTypes));
-            final QueryClause orderBy = descending
-                ? OrderBy.descending(MemberAccountHistoryRecord.TIMESTAMP_C)
-                : OrderBy.ascending(MemberAccountHistoryRecord.TIMESTAMP_C);
-            final QueryClause limit = new Limit(start, count);
+            List<QueryClause> clauses = Lists.newArrayList();
+            populateSearch(clauses, memberId, type, transactionTypes);
 
-            // Only include the limit clause if we're not getting all the values.
-            return count == Integer.MAX_VALUE ? findAll(MemberAccountHistoryRecord.class, new Where(op),
-                orderBy) : findAll(MemberAccountHistoryRecord.class, new Where(op), orderBy, limit);
+            clauses.add(descending ?
+                OrderBy.descending(MemberAccountHistoryRecord.TIMESTAMP_C) :
+                OrderBy.ascending(MemberAccountHistoryRecord.TIMESTAMP_C));
+
+            if (count != Integer.MAX_VALUE) {
+                clauses.add(new Limit(start, count));
+            }
+
+            return findAll(MemberAccountHistoryRecord.class, clauses);
         } catch (final PersistenceException pe) {
             throw new RepositoryException(pe);
         }
@@ -153,6 +155,36 @@ public final class DepotMoneyRepository extends DepotRepository
         try {
             return findAll(MemberAccountHistoryRecord.class, new Where(
                 new In(MemberAccountHistoryRecord.ID_C, ids)));
+        } catch (final PersistenceException pe) {
+            throw new RepositoryException(pe);
+        }
+    }
+
+    /** Helper method to setup a query for a transaction history search. */
+    protected void populateSearch (List<QueryClause> clauses, int memberId,
+        PersistentMoneyType type, EnumSet<PersistentTransactionType> transactionTypes)
+    {
+        List<SQLOperator> where = Lists.newArrayList();
+
+        where.add(new Equals(MemberAccountHistoryRecord.MEMBER_ID_C, memberId));
+        if (type != null) {
+            where.add(new Equals(MemberAccountHistoryRecord.TYPE_C, type));
+        }
+        where.add(new In(MemberAccountHistoryRecord.TRANSACTION_TYPE_C, transactionTypes));
+
+        clauses.add(new Where(new And(where.toArray(new SQLOperator[where.size()]))));
+    }
+
+    public int getHistoryCount (
+        final int memberId, final PersistentMoneyType type, final EnumSet<PersistentTransactionType>
+        transactionTypes)
+    {
+        try {
+            List<QueryClause> clauses = Lists.newArrayList();
+            clauses.add(new FromOverride(MemberAccountHistoryRecord.class));
+            populateSearch(clauses, memberId, type, transactionTypes);
+
+            return load(HistoryCountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
         } catch (final PersistenceException pe) {
             throw new RepositoryException(pe);
         }

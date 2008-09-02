@@ -30,7 +30,7 @@ public class MoneyServlet extends MsoyServiceServlet
 
         final HistoryListResult ofTheJedi = new HistoryListResult();
         ofTheJedi.history = _moneyLogic.getLog(memberId, type, null, from, count, true);
-        ofTheJedi.totalCount = 50; // TODO
+        ofTheJedi.totalCount = _moneyLogic.getHistoryCount(memberId, type, null);
         return ofTheJedi;
     }
 

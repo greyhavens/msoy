@@ -40,4 +40,7 @@ public interface MoneyRepository
     List<MemberAccountHistoryRecord> getHistory (Set<Integer> ids);
     
     int deleteOldHistoryRecords (PersistentMoneyType type, long maxAge);
+
+    int getHistoryCount (int memberId, PersistentMoneyType type,
+                         EnumSet<PersistentTransactionType> transactionTypes);
 }

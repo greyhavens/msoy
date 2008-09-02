@@ -148,6 +148,23 @@ public class MoneyLogicImpl
         return null;
     }
 
+    protected static EnumSet<PersistentTransactionType> toPersist (
+        final EnumSet<TransactionType> transactionTypes)
+    {
+        if (transactionTypes == null) {
+            return EnumSet.allOf(PersistentTransactionType.class);
+        } else {
+            EnumSet<PersistentTransactionType> persistTransactionTypes =
+                EnumSet.noneOf(PersistentTransactionType.class);
+            for (TransactionType transactionType : transactionTypes) {
+                persistTransactionTypes.add(
+                    PersistentTransactionType.fromTransactionType(transactionType));
+            }
+
+            return persistTransactionTypes;
+        }
+    }
+
     public List<MoneyHistory> getLog (
         final int memberId, final MoneyType type, final EnumSet<TransactionType> transactionTypes,
         final int start, final int count, final boolean descending)
@@ -157,19 +174,8 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(start >= 0, "start is invalid: %d", start);
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
 
-        // Convert transaction types to their persistent version
-        final EnumSet<PersistentTransactionType> persistTransactionTypes;
-        if (transactionTypes == null) {
-             persistTransactionTypes = EnumSet.allOf(PersistentTransactionType.class);
-        } else {
-            persistTransactionTypes = EnumSet.noneOf(PersistentTransactionType.class);
-            for (final TransactionType transactionType : transactionTypes) {
-                persistTransactionTypes.add(PersistentTransactionType.fromTransactionType(transactionType));
-            }
-        }
-        
         final List<MemberAccountHistoryRecord> records = _repo.getHistory(memberId, 
-            PersistentMoneyType.fromMoneyType(type), persistTransactionTypes, start, count, 
+            PersistentMoneyType.fromMoneyType(type), toPersist(transactionTypes), start, count, 
             descending);
         
         // Put all records into a map by their ID.  We'll use this map to get a set of history ID's
@@ -200,6 +206,13 @@ public class MoneyLogicImpl
         }
         
         return log;
+    }
+
+    public int getHistoryCount (
+        final int memberId, final MoneyType type, final EnumSet<TransactionType> transactionTypes)
+    {
+        return _repo.getHistoryCount(memberId, PersistentMoneyType.fromMoneyType(type),
+            toPersist(transactionTypes));
     }
 
     public MoneyConfiguration getMoneyConfiguration ()
