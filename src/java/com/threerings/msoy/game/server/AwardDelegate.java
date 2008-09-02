@@ -3,37 +3,46 @@
 
 package com.threerings.msoy.game.server;
 
-import static com.threerings.msoy.Log.log;
-
 import com.google.common.collect.Comparators;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
+
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
-import com.threerings.crowd.data.PlaceObject;
+
 import com.threerings.media.util.MathUtil;
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.server.persist.MemberRepository;
-import com.threerings.parlor.rating.server.RatingDelegate;
-import com.threerings.parlor.rating.util.Percentiler;
+
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.server.InvocationException;
+
+import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.parlor.rating.server.RatingDelegate;
+import com.threerings.parlor.rating.util.Percentiler;
+
 import com.whirled.game.data.WhirledGameObject;
 import com.whirled.game.server.WhirledGameManager;
+
+import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.persist.MemberRepository;
+
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.money.server.MoneyLogic;
+
+import com.threerings.msoy.game.data.PlayerObject;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Handles Whirled game services like paying out coins.
@@ -728,10 +737,11 @@ public class AwardDelegate extends RatingDelegate
             @Override
             public boolean invoke () {
                 try {
-                    _moneyLogic.awardCoins(record.memberId, _content.game.creatorId, 0, _content.game.getIdent(),
+                    _moneyLogic.awardCoins(
+                        record.memberId, _content.game.creatorId, 0, _content.game.getIdent(),
                         record.awarded, details, UserAction.PLAYED_GAME);
-                    _gameReg.gamePayout(record.memberId, _content.game, record.awarded,
-                                        record.totalSecondsPlayed);
+                    _gameReg.gamePayout(
+                        record.memberId, _content.game, record.awarded, record.totalSecondsPlayed);
                 } catch (final Exception e) {
                     log.warning("Failed to grant flow", "amount", record.awarded, e);
                 }
@@ -847,12 +857,6 @@ public class AwardDelegate extends RatingDelegate
 
     /** The base flow per player per minute rate that can be awarded by this game. */
     protected int _flowPerMinute = -1; // marker for 'unknown'.
-
-//    /** The average duration (in seconds) of this game. */
-//    protected int _averageDuration;
-//
-//    /** The number of samples used to compute {@link #_averageDuration}. */
-//    protected int _averageSamples;
 
     /** If true, the clock is ticking and participants are earning flow potential. */
     protected boolean _tracking;
