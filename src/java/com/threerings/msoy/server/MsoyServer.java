@@ -73,12 +73,6 @@ import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.server.WorldWatcherManager;
 
-// TEMP
-import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.TransitionRepository;
-import com.threerings.msoy.badge.server.persist.BadgeRepository;
-// END TEMP
-
 /**
  * Brings together all of the services needed by the World server.
  */
@@ -339,15 +333,6 @@ public class MsoyServer extends MsoyBaseServer
             _userCtx.initializeManagedRecords(true);
         }
 
-        // TEMP (2008-08-20)
-        _transitRepo.transition(
-            MsoyServer.class, "init_stats_2008_08", new TransitionRepository.Transition() {
-            public void run () throws PersistenceException {
-                _badgeRepo.migrateStats();
-            }
-        });
-        // END TEMP
-
         log.info("Msoy server initialized.");
     }
 
@@ -436,11 +421,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides database access to the user databases. TODO: This should probably be removed. */
     @Inject protected @OOODatabase PersistenceContext _userCtx;
-
-    // TEMP
-    @Inject protected BadgeRepository _badgeRepo;
-    @Inject protected TransitionRepository _transitRepo;
-    // END TEMP
 
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;

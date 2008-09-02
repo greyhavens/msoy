@@ -60,10 +60,6 @@ public class GameRepository extends ItemRepository<GameRecord>
     @Inject public GameRepository (PersistenceContext ctx)
     {
         super(ctx);
-
-        // TEMP 05-23-2008
-        ctx.registerMigration(GameRecord.class, new EntityMigration.Drop(17014, "serverClass"));
-        // END TEMP
     }
 
     /**
@@ -440,9 +436,6 @@ public class GameRepository extends ItemRepository<GameRecord>
         classes.add(InstructionsRecord.class);
         classes.add(GameTraceLogRecord.class);
     }
-
-    /** TEMP: Used to migrate game instructions. */
-    protected Map<Integer,String> _instructions = Maps.newHashMap();
 
     /** We will not adjust a game's payout higher than 2x to bring it in line with our desired
      * payout rates to avoid potential abuse. Games that consistently award very low amounts can
