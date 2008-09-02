@@ -3,7 +3,9 @@
 
 package com.threerings.msoy.game.server;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Comparators;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
@@ -80,6 +82,9 @@ public class AwardDelegate extends RatingDelegate
             final int thisScore = scores[ii];
             highestScore = Math.max(highestScore, thisScore);
         }
+
+        // note whether any guests were involved in this game
+        _gameInvolvedGuest = Iterables.any(players.values(), IS_GUEST);
 
         log.info("endGameWithScores", "name", _content.game.name, "id", _content.game.gameId,
                  "payoutType", payoutType, "players", players.values());
@@ -167,6 +172,9 @@ public class AwardDelegate extends RatingDelegate
             pl.percentile = 49;
             players.put(loserOids[ii], pl);
         }
+
+        // note whether any guests were involved in this game
+        _gameInvolvedGuest = Iterables.any(players.values(), IS_GUEST);
 
         // award flow according to the rankings and the payout type
         awardFlow(players, payoutType);
@@ -761,8 +769,8 @@ public class AwardDelegate extends RatingDelegate
     @Override
     protected boolean shouldRateGame ()
     {
-        // we don't support ratings for non-published games
-        return !_content.game.isDeveloperVersion() && super.shouldRateGame();
+        // don't rate games involving guests, and don't rate non-published games
+        return !_gameInvolvedGuest && !_content.game.isDeveloperVersion() && super.shouldRateGame();
     }
 
     /**
@@ -858,6 +866,10 @@ public class AwardDelegate extends RatingDelegate
     /** The base flow per player per minute rate that can be awarded by this game. */
     protected int _flowPerMinute = -1; // marker for 'unknown'.
 
+    /** Indicates whether the most recently finished game involved a guest player. Set in {@link
+     * #endGameWithWinners} or {@link #endGameWithScores} and used in {@link #shouldRateGame}. */
+    protected boolean _gameInvolvedGuest;
+
     /** If true, the clock is ticking and participants are earning flow potential. */
     protected boolean _tracking;
 
@@ -874,6 +886,20 @@ public class AwardDelegate extends RatingDelegate
     /** Tracks accumulated playtime for all players in the game. */
     protected IntMap<FlowRecord> _flowRecords = IntMaps.newHashIntMap();
 
+    // our dependencies
+    @Inject protected GameGameRegistry _gameReg;
+    @Inject protected WorldServerClient _worldClient;
+    @Inject protected MemberRepository _memberRepo;
+    @Inject protected GameRepository _gameRepo;
+    @Inject protected MoneyLogic _moneyLogic;
+
+    /** Returns whether or not a {@link Player} is a guest. */
+    protected static final Predicate<Player> IS_GUEST = new Predicate<Player>() {
+        public boolean apply (Player player) {
+            return player.name.isGuest();
+        }
+    };
+
     /** Games for which we have no history earn no flow beyond this many minutes. */
     protected static final int MAX_FRESH_GAME_DURATION = 8*60;
 
@@ -883,11 +909,4 @@ public class AwardDelegate extends RatingDelegate
 
     /** If we lack a valid or sufficiently large score distribution, we use this performance. */
     protected static final int DEFAULT_PERCENTILE = 50;
-
-    // our dependencies
-    @Inject protected GameGameRegistry _gameReg;
-    @Inject protected WorldServerClient _worldClient;
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected GameRepository _gameRepo;
-    @Inject protected MoneyLogic _moneyLogic;
 }
