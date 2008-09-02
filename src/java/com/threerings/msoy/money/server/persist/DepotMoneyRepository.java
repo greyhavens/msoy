@@ -30,7 +30,10 @@ import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
 import com.samskivert.jdbc.depot.operator.Conditionals.LessThan;
 import com.samskivert.jdbc.depot.operator.Logic.And;
+
 import com.threerings.presents.annotation.BlockingThread;
+
+import com.threerings.msoy.server.persist.CountRecord;
 
 /**
  * Depot implementation of {@link MoneyRepository}. Since depot is not thread-safe, this class is
@@ -184,7 +187,7 @@ public final class DepotMoneyRepository extends DepotRepository
             clauses.add(new FromOverride(MemberAccountHistoryRecord.class));
             populateSearch(clauses, memberId, type, transactionTypes);
 
-            return load(HistoryCountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
+            return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
         } catch (final PersistenceException pe) {
             throw new RepositoryException(pe);
         }

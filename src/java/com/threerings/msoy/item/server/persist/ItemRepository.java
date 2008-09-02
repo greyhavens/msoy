@@ -60,12 +60,12 @@ import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
-
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -483,8 +483,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         addSearchClause(clauses, mature, search, tag, creator, minRating);
 
         // finally fetch all the catalog records of interest
-        ListingCountRecord crec = load(
-            ListingCountRecord.class, clauses.toArray(new QueryClause[clauses.size()]));
+        CountRecord crec = load(
+            CountRecord.class, clauses.toArray(new QueryClause[clauses.size()]));
         return crec.count;
     }
 
