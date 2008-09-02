@@ -6,11 +6,9 @@ package com.threerings.msoy.item.server.persist;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -19,7 +17,6 @@ import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.depot.CacheInvalidator;
-import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
