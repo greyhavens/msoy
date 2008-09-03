@@ -354,43 +354,6 @@ public class MoneyLogicImpl
         return quote;
     }
 
-//    // TODO: remove
-//    public int secureBarPrice (
-//        final int memberId, final int creatorId, final int affiliateId,
-//        final ItemIdent item, final int numBars, final String description)
-//    {
-//        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
-//        Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Creators cannot be guests.");
-//        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0),
-//            "item is invalid: %s", item.toString());
-//        Preconditions.checkArgument(numBars >= 0, "bars is invalid: %d", numBars);
-//
-//        final PriceQuote quote = new PriceQuote(Currency.BARS, 0, numBars);
-//        final PriceKey key = new PriceKey(memberId, item);
-//        final Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
-//        _escrowCache.addEscrow(key, escrow);
-//        return 0;
-//    }
-//
-//    // TODO: remove
-//    public int secureCoinPrice (
-//        final int memberId, final int creatorId, final int affiliateId,
-//        final ItemIdent item, final int numCoins, final String description)
-//    {
-//        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
-//        Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Creators cannot be guests.");
-//        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0),
-//            "item is invalid: %s", item.toString());
-//        Preconditions.checkArgument(numCoins >= 0, "numCoins is invalid: %d", numCoins);
-//
-//        // TODO: Use exchange rate to calculate bars.
-//        final PriceQuote quote = new PriceQuote(Currency.COINS, numCoins, 0);
-//        final PriceKey key = new PriceKey(memberId, item);
-//        final Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
-//        _escrowCache.addEscrow(key, escrow);
-//        return 0;
-//    }
-
     public void updateMoneyConfiguration (final MoneyConfiguration config)
     {
         // TODO Auto-generated method stub
