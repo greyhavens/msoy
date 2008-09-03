@@ -24,6 +24,7 @@ import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
 
 import com.threerings.msoy.item.data.all.CatalogIdent;
@@ -132,11 +133,10 @@ public class MoneyLogicImpl
 
     @Retry(exception=StaleDataException.class)
     public MoneyResult buyItem (
-        int buyerId, CatalogIdent item, MoneyType listedType, int listedAmount,
-        MoneyType buyType, int buyAmount, boolean isSupport)
+        final MemberRecord buyrec, CatalogIdent item, MoneyType listedType, int listedAmount,
+        MoneyType buyType, int buyAmount)
         throws NotEnoughMoneyException, NotSecuredException
     {
-        Preconditions.checkArgument(!MemberName.isGuest(buyerId), "Guests cannot buy items.");
         Preconditions.checkArgument(item != null && (item.type != 0 || item.catalogId != 0),
             "item is invalid: %s", item.toString());
         Preconditions.checkArgument(
@@ -144,7 +144,7 @@ public class MoneyLogicImpl
             "buyType is invalid: %s", buyType.toString());
 
         // Get the secured prices for the item.
-        final PriceKey key = new PriceKey(buyerId, item);
+        final PriceKey key = new PriceKey(buyrec.memberId, item);
         final Escrow escrow = _escrowCache.getEscrow(key);
         if (escrow == null) {
             // TODO: 
@@ -153,22 +153,22 @@ public class MoneyLogicImpl
             // we can go ahead and process the purchase here. Otherwise we need to throw
             // the exception with the new PriceQuote inside it! Why not! Do the fucking thing
             // that will need to be done anyway!
-            throw new NotSecuredException(buyerId, item);
+            throw new NotSecuredException(buyrec.memberId, item);
         }
         final PriceQuote quote = escrow.getQuote();
 
-        if (!isSupport && !quote.isSatisfied(buyType, buyAmount)) {
+        if (!buyrec.isSupport() && !quote.isSatisfied(buyType, buyAmount)) {
             // TODO: see TODO note above, only here we actually have a quote already secured
             // (And we should either get a new quote, or just leave the one in the cache,
             // but it would be an exploit to extend the lifetime of the quote)
-            throw new NotSecuredException(buyerId, item);
+            throw new NotSecuredException(buyrec.memberId, item);
         }
 
         // Get buyer account and make sure they can afford the item.
-        final MemberAccountRecord buyer = _repo.getAccountById(buyerId);
-        if (buyer == null || (!isSupport && !buyer.canAfford(buyType, buyAmount))) {
+        final MemberAccountRecord buyer = _repo.getAccountById(buyrec.memberId);
+        if (buyer == null || (!buyrec.isSupport() && !buyer.canAfford(buyType, buyAmount))) {
             int hasAmount = (buyer == null) ? 0 : buyer.getAmount(buyType);
-            throw new NotEnoughMoneyException(buyerId, buyType, buyAmount, hasAmount);
+            throw new NotEnoughMoneyException(buyrec.memberId, buyType, buyAmount, hasAmount);
         }
 
         // TODO: move this until after the purchase... this WHOLE fucking method should
@@ -181,7 +181,7 @@ public class MoneyLogicImpl
         // If the creator is buying their own item, don't give them a payback, and deduct the amount
         // they would have received.
         int creatorId = escrow.getCreatorId();
-        boolean buyerIsCreator = (buyerId == creatorId);
+        boolean buyerIsCreator = (buyrec.memberId == creatorId);
         if (buyerIsCreator) {
             // TODO: hmmmm
             amount -= (int)(0.3 * amount);
@@ -199,12 +199,12 @@ public class MoneyLogicImpl
         }
 
         // Update the member account
-        final MemberAccountHistoryRecord history = buyer.buyItem(buyType, amount,
-            escrow.getDescription(), item, isSupport);
+        final MemberAccountHistoryRecord history = buyer.buyItem(
+            buyType, amount, escrow.getDescription(), item, buyrec.isSupport());
         _repo.addHistory(history);
         _repo.saveAccount(buyer);
         // TODO: fucking fuck, we want to change this to the CatalogIdent
-        UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID,
+        UserActionDetails info = logUserAction(buyrec.memberId, UserActionDetails.INVALID_ID,
             UserAction.BOUGHT_ITEM, null /*item*/, escrow.getDescription());
         logInPanopticon(info, buyType, history.getSignedAmount(), buyer);
 
@@ -219,8 +219,8 @@ public class MoneyLogicImpl
             _repo.addHistory(creatorHistory);
             _repo.saveAccount(creator);
             // TODO: fucking fuck, we want to change this to the CatalogIdent
-            info = logUserAction(creatorId, buyerId, UserAction.RECEIVED_PAYOUT, null /*item*/,
-                escrow.getDescription());
+            info = logUserAction(creatorId, buyrec.memberId, UserAction.RECEIVED_PAYOUT,
+                                 null /*item*/, escrow.getDescription());
             logInPanopticon(info, buyType, creatorHistory.getSignedAmount(), creator);
         }
 

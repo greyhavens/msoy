@@ -34,6 +34,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberActionLogRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
 
 import com.threerings.msoy.item.data.all.CatalogIdent;
@@ -173,8 +174,8 @@ public class MoneyTest
         _service.buyBars(1, 150, "Bought 150 bars.");
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         _service.securePrice(1, item, MoneyType.BARS, 100, 2, 3, "My bar item");
-        final MoneyResult result = _service.buyItem(1, item, MoneyType.BARS, 100,
-            MoneyType.BARS, 100, false);
+        final MoneyResult result = _service.buyItem(makeMember(false), item, MoneyType.BARS, 100,
+            MoneyType.BARS, 100);
         final long endTime = System.currentTimeMillis() / 1000;
 
         // Check member account
@@ -216,7 +217,7 @@ public class MoneyTest
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         final int bars = oldMoney.getBars() + 1;
         _service.securePrice(1, item, MoneyType.BARS, bars, 2, 3, "My bar item");
-        _service.buyItem(1, item, MoneyType.BARS, bars, MoneyType.BARS, bars, false);
+        _service.buyItem(makeMember(false), item, MoneyType.BARS, bars, MoneyType.BARS, bars);
     }
 
     @Test(expected=NotEnoughMoneyException.class)
@@ -227,7 +228,7 @@ public class MoneyTest
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         final  int coins = oldMoney.getCoins() + 1;
         _service.securePrice(1, item, MoneyType.COINS, coins, 2, 3, "My coin item");
-        _service.buyItem(1, item, MoneyType.COINS, coins, MoneyType.COINS, coins, false);
+        _service.buyItem(makeMember(false), item, MoneyType.COINS, coins, MoneyType.COINS, coins);
     }
 
     @Test(expected=NotSecuredException.class)
@@ -235,7 +236,7 @@ public class MoneyTest
         throws Exception
     {
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
-        _service.buyItem(1, item, MoneyType.COINS, 100, MoneyType.COINS, 100, false);
+        _service.buyItem(makeMember(false), item, MoneyType.COINS, 100, MoneyType.COINS, 100);
     }
 
     @Test
@@ -248,8 +249,8 @@ public class MoneyTest
         _service.awardCoins(1, 2, 3, null, 150, "150 coins awarded.", UserAction.PLAYED_GAME);
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         _service.securePrice(1, item, MoneyType.COINS, 100, 2, 3, "testBuyCoinItemWithCoins - test");
-        final MoneyResult result = _service.buyItem(1, item, MoneyType.COINS, 100,
-            MoneyType.COINS, 100, false);
+        final MoneyResult result = _service.buyItem(makeMember(false), item, MoneyType.COINS, 100,
+            MoneyType.COINS, 100);
         final long endTime = System.currentTimeMillis() / 1000;
 
         // Check member account
@@ -318,8 +319,8 @@ public class MoneyTest
         _service.awardCoins(1, 1, 3, null, 150, "150 coins awarded.", UserAction.PLAYED_GAME);
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         _service.securePrice(1, item, MoneyType.COINS, 100, 1, 3, "testCreatorBoughtOwnItem - test");
-        final MoneyResult result = _service.buyItem(1, item, MoneyType.COINS, 100,
-            MoneyType.COINS, 100, false);
+        final MoneyResult result = _service.buyItem(makeMember(false), item, MoneyType.COINS, 100,
+            MoneyType.COINS, 100);
         final long endTime = System.currentTimeMillis() / 1000;
 
         // Check member account
@@ -346,21 +347,21 @@ public class MoneyTest
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         int coins = oldMoney.getCoins() - 100;
         _service.securePrice(1, item, MoneyType.COINS, coins, 2, 3, "testSupport - test");
-        final MemberMoney newMoney = _service.buyItem(1, item, MoneyType.COINS, coins,
-            MoneyType.COINS, coins, true).getNewMemberMoney();
+        final MemberMoney newMoney = _service.buyItem(makeMember(true), item, MoneyType.COINS, coins,
+            MoneyType.COINS, coins).getNewMemberMoney();
         assertEquals(100, newMoney.getCoins());
 
         // Now buy a 150 coin item.  Should succeed, bringing available coins to 0.
         final MemberMoney oldCreatorMoney = _service.getMoneyFor(2);
         _service.securePrice(1, item, MoneyType.COINS, 150, 2, 3, "testSupport - test2");
-        MoneyResult result = _service.buyItem(1, item, MoneyType.COINS, 150, MoneyType.COINS, 150,
-            true);
+        MoneyResult result = _service.buyItem(
+            makeMember(true), item, MoneyType.COINS, 150, MoneyType.COINS, 150);
         assertEquals(0, result.getNewMemberMoney().getCoins());
         assertEquals(30 + oldCreatorMoney.getCoins(), result.getNewCreatorMoney().getCoins());
 
         // Buy a 50 coin item.  Should succeed and remain at 0
         _service.securePrice(1, item, MoneyType.COINS, 50, 2, 3, "testSupport - test3");
-        result = _service.buyItem(1, item, MoneyType.COINS, 50, MoneyType.COINS, 50, true);
+        result = _service.buyItem(makeMember(true), item, MoneyType.COINS, 50, MoneyType.COINS, 50);
         assertEquals(0, result.getNewMemberMoney().getCoins());
         assertEquals(30 + oldCreatorMoney.getCoins(), result.getNewCreatorMoney().getCoins());
     }
@@ -429,6 +430,14 @@ public class MoneyTest
         } else {
             assertTrue(logEntry.getReferenceTx() == null);
         }
+    }
+
+    private MemberRecord makeMember (final boolean isSupport)
+    {
+        final MemberRecord fakerec = new MemberRecord();
+        fakerec.memberId = 1;
+        fakerec.setFlag(MemberRecord.Flag.SUPPORT, isSupport);
+        return fakerec;
     }
 
     private void checkActionLogExists (

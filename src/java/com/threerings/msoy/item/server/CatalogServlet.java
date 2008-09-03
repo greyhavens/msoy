@@ -176,9 +176,8 @@ public class CatalogServlet extends MsoyServiceServlet
             // Update money as appropriate.
             MoneyResult result;
             try {
-                result = _moneyLogic.buyItem(mrec.memberId, new CatalogIdent(itemType, catalogId),
-                    MoneyType.COINS, listing.flowCost, MoneyType.COINS, authedFlowCost,
-                    mrec.isSupport());
+                result = _moneyLogic.buyItem(mrec, new CatalogIdent(itemType, catalogId),
+                    MoneyType.COINS, listing.flowCost, MoneyType.COINS, authedFlowCost);
             } catch (final NotEnoughMoneyException neme) {
                 throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
             } catch (final NotSecuredException nse) {

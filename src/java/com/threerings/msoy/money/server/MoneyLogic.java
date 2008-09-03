@@ -11,6 +11,7 @@ import java.util.List;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -57,7 +58,7 @@ public interface MoneyLogic
      * Purchases an item. This will only update the appropriate
      * accounts of an exchange of money -- item fulfillment must be handled separately.
      *
-     * @param buyerId the memberId of the buying user.
+     * @param buyer the member record of the buying user.
      * @param item the identity of the catalog listing.
      * @param listedType the currency at which the item is listed.
      * @param listedAmount the amount at which the item is listed.
@@ -68,8 +69,8 @@ public interface MoneyLogic
      * buy amount is not enough money.
      */
     MoneyResult buyItem (
-        int buyerId, CatalogIdent item, MoneyType listedType, int listedAmount,
-        MoneyType buyType, int buyAmount, boolean isSupport)
+        MemberRecord buyer, CatalogIdent item, MoneyType listedType, int listedAmount,
+        MoneyType buyType, int buyAmount)
         throws NotEnoughMoneyException, NotSecuredException;
 
     /**
