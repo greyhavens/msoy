@@ -4,6 +4,8 @@
 package client.landing;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.landing.gwt.LandingData;
 import com.threerings.msoy.landing.gwt.LandingService;
@@ -86,14 +88,23 @@ public class LandingPage extends Page
         };
 
         _membersvc.getABTestGroup(
-            TrackingCookie.get(), "aug08CreatorsLanding2", true, new MsoyCallback<Integer>() {
+            TrackingCookie.get(), "aug08CreatorsLanding2", true, new AsyncCallback<Integer>() {
                 public void onSuccess (Integer group) {
-                    if (group > 0 && group < testpages.length) {
-                        Link.go(Pages.LANDING, testpages[group]);
-                    } else {
-                        Link.go(Pages.LANDING, testpages[0]);
-                    }
-                }});
+                    gotTestGroup(group);
+                }
+                public void onFailure (Throwable cause) {
+                    gotTestGroup(-1);
+                }
+            }});
+    }
+
+    protected void gotTestGroup (itn group)
+    {
+        if (group > 0 && group < testpages.length) {
+            Link.go(Pages.LANDING, testpages[group]);
+        } else {
+            Link.go(Pages.LANDING, testpages[0]);
+        }
     }
 
     /**
