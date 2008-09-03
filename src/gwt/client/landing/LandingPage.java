@@ -90,15 +90,15 @@ public class LandingPage extends Page
         _membersvc.getABTestGroup(
             TrackingCookie.get(), "aug08CreatorsLanding2", true, new AsyncCallback<Integer>() {
                 public void onSuccess (Integer group) {
-                    gotTestGroup(group);
+                    gotTestGroup(testpages, group);
                 }
                 public void onFailure (Throwable cause) {
-                    gotTestGroup(-1);
+                    gotTestGroup(testpages, -1);
                 }
-            }});
+            });
     }
 
-    protected void gotTestGroup (itn group)
+    protected void gotTestGroup (String[] testpages, int group)
     {
         if (group > 0 && group < testpages.length) {
             Link.go(Pages.LANDING, testpages[group]);
