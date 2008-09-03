@@ -8,34 +8,45 @@ import flash.utils.Dictionary;
 import flash.utils.Timer;
 import flash.utils.getTimer;
 
-import com.threerings.crowd.data.OccupantInfo;
-import com.threerings.crowd.data.PlaceObject;
-import com.threerings.msoy.avrg.data.AVRGameAgentObject;
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.avrg.data.PlayerLocation;
-import com.threerings.msoy.avrg.data.SceneInfo;
-import com.threerings.msoy.bureau.client.ThaneWorldService;
-import com.threerings.msoy.bureau.client.Window;
-import com.threerings.msoy.bureau.util.MsoyBureauContext;
-import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.room.data.RoomObject;
-import com.threerings.msoy.room.data.RoomPropertiesEntry;
-import com.threerings.msoy.room.data.RoomPropertiesObject;
-import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationAdapter;
-import com.threerings.presents.client.ResultAdapter;
+import com.threerings.util.HashMap;
+import com.threerings.util.Iterator;
+import com.threerings.util.Log;
+
+import com.threerings.presents.util.SafeObjectManager;
+import com.threerings.presents.util.SafeSubscriber;
+
+import com.threerings.presents.dobj.DSet_Entry;
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
 import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.presents.dobj.SubscriberAdapter;
-import com.threerings.presents.util.SafeObjectManager;
-import com.threerings.presents.util.SafeSubscriber;
-import com.threerings.util.HashMap;
-import com.threerings.util.Iterator;
-import com.threerings.util.Log;
+
+import com.threerings.presents.client.Client;
+import com.threerings.presents.client.InvocationAdapter;
+import com.threerings.presents.client.ResultAdapter;
+
+import com.threerings.crowd.data.OccupantInfo;
+import com.threerings.crowd.data.PlaceObject;
+
 import com.whirled.game.client.PropertySpaceHelper;
+
+import com.threerings.msoy.game.data.PlayerObject;
+
+import com.threerings.msoy.room.data.MobInfo;
+import com.threerings.msoy.room.data.RoomObject;
+import com.threerings.msoy.room.data.RoomPropertiesEntry;
+import com.threerings.msoy.room.data.RoomPropertiesObject;
+
+import com.threerings.msoy.bureau.client.ThaneWorldService;
+import com.threerings.msoy.bureau.client.Window;
+import com.threerings.msoy.bureau.util.MsoyBureauContext;
+
+import com.threerings.msoy.avrg.data.AVRGameAgentObject;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
+import com.threerings.msoy.avrg.data.SceneInfo;
 
 public class ThaneAVRGameController
 {
@@ -172,6 +183,14 @@ public class ThaneAVRGameController
     public function deactivateGame (playerId :int) :void
     {
         _gameAgentObj.agentService.leaveGame(_ctx.getClient(), playerId);
+    }
+
+    /**
+     * Returns the id of the game being played.
+     */
+    public function getGameId () :int
+    {
+        return _gameAgentObj.gameId;
     }
 
     protected function entryAdded (event :EntryAddedEvent) :void
@@ -344,6 +363,18 @@ public class ThaneAVRGameController
         binding.avatarAdapter = _backend.createAvatarAdapter(roomObj);
         binding.avatarAdapter.setTargetId(binding.sceneId);
 
+        binding.roomListener = new SetAdapter(
+            function (event :EntryAddedEvent) :void {
+                roomEntryAdded(binding, event);
+            },
+            function (event :EntryUpdatedEvent) :void {
+                roomEntryUpdated(binding, event);
+            },
+            function (event :EntryRemovedEvent) :void {
+                roomEntryRemoved(binding, event);
+            });
+        binding.room.addListener(binding.roomListener);
+
         var entry :RoomPropertiesEntry;
         entry = binding.room.propertySpaces.get(_gameAgentObj.gameId) as RoomPropertiesEntry;
         if (entry != null) {
@@ -431,6 +462,8 @@ public class ThaneAVRGameController
 
         // Release all resources
         if (binding.room != null) {
+            binding.room.removeListener(binding.roomListener);
+            binding.roomListener = null;
             binding.avatarAdapter.release();
             binding.avatarAdapter = null;
             binding.subscriber.unsubscribe(binding.window.getDObjectManager());
@@ -458,6 +491,45 @@ public class ThaneAVRGameController
         _players.put(obj.getMemberId(), playerBinding);
     }
 
+    protected function getMobInfo (name :String, entry :DSet_Entry ) :MobInfo
+    {
+        var mobInfo :MobInfo = null;
+        if (name == PlaceObject.OCCUPANT_INFO) {
+            mobInfo = entry as MobInfo;
+            if (mobInfo != null) {
+                if (mobInfo.getGameId() != getGameId()) {
+                    mobInfo = null;
+                }
+            }
+        }
+
+        return mobInfo;
+    }
+
+    protected function roomEntryAdded (binding :SceneBinding, evt :EntryAddedEvent) :void
+    {
+        var mobInfo :MobInfo = getMobInfo(evt.getName(), evt.getEntry());
+        if (mobInfo != null) {
+            _backend.mobSpawned(binding.sceneId, mobInfo.getIdent());
+        }
+    }
+
+    protected function roomEntryUpdated (binding :SceneBinding, evt :EntryUpdatedEvent) :void
+    {
+        var mobInfo :MobInfo = getMobInfo(evt.getName(), evt.getEntry());
+        if (mobInfo != null) {
+            _backend.mobChanged(binding.sceneId, mobInfo.getIdent());
+        }
+    }
+
+    protected function roomEntryRemoved (binding :SceneBinding, evt :EntryRemovedEvent) :void
+    {
+        var mobInfo :MobInfo = getMobInfo(evt.getName(), evt.getOldEntry());
+        if (mobInfo != null) {
+            _backend.mobRemoved(binding.sceneId, mobInfo.getIdent());
+        }
+    }
+
     protected var _ctx :MsoyBureauContext;
     protected var _backend :ThaneAVRGameBackend;
     protected var _gameObj :AVRGameObject;
@@ -470,13 +542,19 @@ public class ThaneAVRGameController
 
 }
 
-import com.threerings.msoy.avrg.client.BackendAvatarAdapter;
-import com.threerings.msoy.avrg.client.BackendNetAdapter;
-import com.threerings.msoy.bureau.client.Window;
+import com.threerings.util.StringUtil;
+
+import com.threerings.presents.dobj.ChangeListener;
+
+import com.threerings.presents.util.SafeSubscriber;
+
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
-import com.threerings.presents.util.SafeSubscriber;
-import com.threerings.util.StringUtil;
+
+import com.threerings.msoy.bureau.client.Window;
+
+import com.threerings.msoy.avrg.client.BackendAvatarAdapter;
+import com.threerings.msoy.avrg.client.BackendNetAdapter;
 
 /** Binds a scene id to its window, room and players. */
 class SceneBinding
@@ -485,6 +563,7 @@ class SceneBinding
     public var window :Window;
     public var subscriber :SafeSubscriber;
     public var room :RoomObject;
+    public var roomListener :ChangeListener;
     public var propsSubscriber :SafeSubscriber;
     public var roomProps :RoomPropertiesObject;
     public var avatarAdapter :BackendAvatarAdapter;

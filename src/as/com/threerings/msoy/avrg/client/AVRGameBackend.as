@@ -96,7 +96,7 @@ public class AVRGameBackend extends ControlBackend
 
     public function mobRemoved (id :String) :void
     {
-        callUserCode("mobRemoved_v1", getRoomId(), id);
+        callUserCode("mobRemoved_v1", id);
     }
 
     public function mobAppearanceChanged (

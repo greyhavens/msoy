@@ -5,6 +5,7 @@ package com.threerings.msoy.avrg.client {
 
 import com.threerings.util.Log;
 import com.threerings.util.ObjectMarshaller;
+import com.threerings.util.StringUtil;
 
 import com.threerings.presents.client.Client;
 
@@ -137,6 +138,30 @@ public class ThaneAVRGameBackend
             _gameObj, room, _userFuncs, "playerMoved_v1", "actorStateSet_v1", 
             "actorAppearanceChanged_v1");
         return adapter;
+    }
+
+    /**
+     * Informs the user code that a mob has been spawned and is ready to control.
+     */
+    public function mobSpawned (roomId :int, mobId :String) :void
+    {
+        callUserCode("mobSpawned_v1", roomId, mobId);
+    }
+
+    /**
+     * Informs the user code that a mob has now been fully removed.
+     */
+    public function mobRemoved (roomId :int, mobId :String) :void
+    {
+        callUserCode("mobRemoved_v1", roomId, mobId);
+    }
+
+    /**
+     * Informs the use code that a mob change has now taken effect.
+     */
+    public function mobChanged (roomId :int, mobId :String) :void
+    {
+        callUserCode("mobAppearanceChanged_v1", roomId, mobId);
     }
 
     protected function handleUserCodeConnect (evt :Object) :void
@@ -291,14 +316,46 @@ public class ThaneAVRGameBackend
         return data;
     }
 
-    protected function spawnMob_v1 (roomId :int, id :String, name :String) :Boolean
+    protected function spawnMob_v1 (roomId :int, mobId :String, mobName :String) :void
     {
-        return false;
+        if (StringUtil.isBlank(mobId)) {
+            log.warning("Blank mobId in spawnMob");
+            return;
+        }
+
+        if (StringUtil.isBlank(mobName)) {
+            log.warning("Blank mobName in spawnMob");
+            return;
+        }
+
+        var roomObj :RoomObject = _controller.getRoom(roomId);
+        if (roomObj == null) {
+            log.warning("Room not found in spawnMob [roomId=" + roomId + "]");
+            return;
+        }
+
+        roomObj.roomService.spawnMob(
+            _controller.getRoomClient(roomId), _controller.getGameId(), mobId, mobName,
+            BackendUtils.loggingInvocationListener("spawnMob"));
     }
 
-    protected function despawnMob_v1 (roomId :int, id :String) :Boolean
+    // RoomSubControl
+    protected function despawnMob_v1 (roomId :int, mobId :String) :void
     {
-        return false;
+        if (StringUtil.isBlank(mobId)) {
+            log.warning("Blank mobId in despawnMob");
+            return;
+        }
+
+        var roomObj :RoomObject = _controller.getRoom(roomId);
+        if (roomObj == null) {
+            log.warning("Room not found in despawnMob [roomId=" + roomId + "]");
+            return;
+        }
+
+        roomObj.roomService.despawnMob(
+            _controller.getRoomClient(roomId), _controller.getGameId(), mobId,
+            BackendUtils.loggingInvocationListener("despawnMob"));
     }
 
     protected function room_sendMessage_v1 (roomId :int, name :String, value :Object) :void
