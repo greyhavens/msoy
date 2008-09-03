@@ -24,7 +24,6 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
-import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;

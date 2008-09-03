@@ -48,8 +48,6 @@ import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Provides the server implementation of {@link ForumService}.
  */

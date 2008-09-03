@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.person.server;
 
-import java.io.IOException;
 import java.util.List;
 
 import octazen.addressbook.AddressBookAuthenticationException;
@@ -11,7 +10,6 @@ import octazen.addressbook.AddressBookException;
 import octazen.addressbook.Contact;
 import octazen.addressbook.SimpleAddressBookImporter;
 import octazen.addressbook.UnexpectedFormatException;
-import octazen.http.HttpException;
 import octazen.http.UserInputRequiredException;
 
 import com.google.common.collect.Lists;

@@ -22,7 +22,6 @@ import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
-import com.samskivert.util.StringUtil;
 
 import com.threerings.presents.data.InvocationCodes;
 

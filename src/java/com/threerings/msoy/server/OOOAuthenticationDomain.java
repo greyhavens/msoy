@@ -7,7 +7,6 @@ import java.util.Arrays;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.StringUtil;
 
@@ -94,9 +93,6 @@ public class OOOAuthenticationDomain
                 }
             } catch (UserExistsException uee) {
                 throw new ServiceException(MsoyAuthCodes.DUPLICATE_PERMANAME);
-            } catch (PersistenceException pe) {
-                log.warning("Failed to change username", "id", user.userId, pe);
-                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
         }
 
@@ -110,9 +106,6 @@ public class OOOAuthenticationDomain
                 } catch (UserExistsException uee) {
                     log.warning("Requested to change email address to one in use.");
                     throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
-                } catch (PersistenceException pe) {
-                    log.warning("Failed to change email", "id", user.userId, pe);
-                    throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
                 }
             }
             _authrep.changeEmail(user.userId, newAccountName);

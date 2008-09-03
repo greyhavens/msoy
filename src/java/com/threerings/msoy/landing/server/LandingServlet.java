@@ -10,8 +10,6 @@ import com.google.inject.Inject;
 
 import com.samskivert.util.ExpiringReference;
 
-import com.threerings.presents.data.InvocationCodes;
-
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
@@ -35,8 +33,6 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.landing.gwt.LandingData;
 import com.threerings.msoy.landing.gwt.LandingService;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Implements the {@link LandingService}.

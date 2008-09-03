@@ -47,7 +47,6 @@ import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.money.server.persist.PersistentCurrency;
 import com.threerings.msoy.money.server.persist.PersistentTransactionType;
-import com.threerings.msoy.money.server.persist.RepositoryException;
 import com.threerings.msoy.money.server.persist.StaleDataException;
 
 /**
@@ -230,7 +229,6 @@ public class MoneyLogicImpl
         _escrowCache.removeEscrow(key);
 
         final MoneyHistory mh = history.createMoneyHistory(null);
-        final MoneyHistory creatorMH = creatorHistory.createMoneyHistory(mh);
         return new MoneyResult(buyer.getMemberMoney(),
             buyerIsCreator ? null : creator.getMemberMoney(),
             null, mh, buyerIsCreator ? null : creatorHistory.createMoneyHistory(mh), null);

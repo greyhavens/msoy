@@ -20,8 +20,6 @@ import com.google.inject.Inject;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 
-import com.threerings.presents.data.InvocationCodes;
-
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
@@ -52,9 +50,6 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletLogic;
 
 import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Implements the {@link MeService}.

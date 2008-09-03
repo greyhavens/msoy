@@ -35,8 +35,6 @@ import com.threerings.msoy.web.data.MemberCard;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Provides the server implementation of {@link IssueService}.
  */
@@ -65,7 +63,6 @@ public class IssueServlet extends MsoyServiceServlet
     public Issue loadIssue (int issueId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser();
         IssueRecord irec = _issueRepo.loadIssue(issueId);
         Issue issue = irec.toIssue();
         MemberRecord member = _memberRepo.loadMember(irec.creatorId);
@@ -81,8 +78,6 @@ public class IssueServlet extends MsoyServiceServlet
     public List<ForumMessage> loadMessages (int issueId, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser();
-
         List<ForumMessageRecord> msgrecs = _forumRepo.loadIssueMessages(issueId);
         if (messageId > 0) {
             ForumMessageRecord msgrec = _forumRepo.loadMessage(messageId);
@@ -172,8 +167,6 @@ public class IssueServlet extends MsoyServiceServlet
     public List<MemberName> loadOwners ()
         throws ServiceException
     {
-        MemberRecord mrec = getAuthedUser();
-
         List<MemberName> owners = Lists.newArrayList();
         List<GroupMembershipRecord> gmrs = _groupRepo.getMembers(
             ServerConfig.getIssueGroupId(), GroupMembership.RANK_MANAGER);
