@@ -18,16 +18,17 @@ public class MemberMoney implements IsSerializable
         this(memberId, 0, 0, 0.0, 0, 0, 0.0);
     }
     
-    public MemberMoney (final int memberId, final int coins, final int bars, final double bling,
+    public MemberMoney (
+        final int memberId, final int coins, final int bars, final double bling,
         final long accCoins, final long accBars, final double accBling)
     {
-        this._memberId = memberId;
-        this._coins = coins;
-        this._bars = bars;
-        this._bling = bling;
-        this._accCoins = accCoins;
-        this._accBars = accBars;
-        this._accBling = accBling;
+        _memberId = memberId;
+        _coins = coins;
+        _bars = bars;
+        _bling = bling;
+        _accCoins = accCoins;
+        _accBars = accBars;
+        _accBling = accBling;
     }
 
     public int getBars ()
