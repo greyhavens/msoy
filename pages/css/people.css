@@ -16,14 +16,14 @@
   width: 100%;
 }
 
-.profile .Profile .Photo {
+.profile .Profile .Photo .gwt-Image {
   margin-left: auto;
   margin-right: auto;
   padding: 10px 0px 10px 10px;
 }
 
 .profile .Profile .Info {
-  padding: 10px 0px;
+  margin: 10px 0px;
 }
 
 .profile .Profile .Details {
