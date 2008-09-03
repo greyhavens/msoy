@@ -87,7 +87,7 @@ public class Link
     {
         HTML escaper = new HTML();
         escaper.setText(label);
-        return "<a href=\"#" + createToken(page, args) + "\">" + escaper.getHTML() + "</a>";
+        return "<a href=\"/#" + createToken(page, args) + "\">" + escaper.getHTML() + "</a>";
     }
 
     /**
@@ -157,11 +157,6 @@ public class Link
         return link;
     }
 
-    /** Returns the path of the URL in the top frame. */
-    protected static native String getFramePath () /*-{
-        return $wnd.top.location.pathname;
-    }-*/;
-
     /**
      * A modified Hyperlink that routes its click through the application (so that it can be sent
      * to the top-level frame for processing) and which sets its path to the path of the top-level
@@ -184,7 +179,7 @@ public class Link
 
             Element anchorElem = DOM.createAnchor();
             DOM.appendChild(getElement(), anchorElem);
-            DOM.setElementProperty(anchorElem, "href", getFramePath() + "#" + _targetHistoryToken);
+            DOM.setElementProperty(anchorElem, "href", "/#" + _targetHistoryToken);
 
             if (asHTML) {
                 DOM.setInnerHTML(anchorElem, text);
