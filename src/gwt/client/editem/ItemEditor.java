@@ -342,7 +342,8 @@ public abstract class ItemEditor extends FlexTable
             flow.add(MsoyUI.createLabel(tip, "tipLabel"));
             setWidget(row, 0, flow);
         } else {
-            setText(row, 0, label); // let unadorned labels wrap
+            setText(row, 0, label);
+            getFlexCellFormatter().setStyleName(row, 0, "nowrapLabel");
         }
         getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
         setWidget(row, 1, widget);
