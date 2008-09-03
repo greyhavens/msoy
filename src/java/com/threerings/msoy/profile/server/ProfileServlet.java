@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.profile.server;
 
-import static com.threerings.msoy.Log.log;
-
 import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,6 +63,8 @@ import com.threerings.msoy.person.server.persist.ProfileRepository;
 
 import com.threerings.msoy.profile.gwt.Profile;
 import com.threerings.msoy.profile.gwt.ProfileService;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link ProfileService}.
