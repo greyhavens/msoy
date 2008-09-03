@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.money.server.impl;
 
+import com.google.inject.ImplementedBy;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.money.server.NotSecuredException;
 
@@ -12,6 +14,7 @@ import com.threerings.msoy.money.server.NotSecuredException;
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
  */
+@ImplementedBy(EscrowCacheMap.class)
 public interface EscrowCache
 {
     /**

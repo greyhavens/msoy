@@ -48,19 +48,19 @@ public class MoneyConfiguration
     }
 
     /**
-     * The length of time, in minutes, that a secured price will remain available.
-     */
-    public int getSecurePriceDuration ()
-    {
-        return _securePriceDuration;
-    }
-
-    /**
      * The amount to deduct when cashing out bling into real money.
      */
     public float getBlingCashoutTransactionFee ()
     {
         return _blingCashoutTransactionFee;
+    }
+
+    /**
+     * The length of time, in minutes, that a secured price will remain available.
+     */
+    public int getSecurePriceDuration ()
+    {
+        return _securePriceDuration;
     }
 
     /**

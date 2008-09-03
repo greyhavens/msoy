@@ -25,13 +25,18 @@ public final class MoneyModule extends AbstractModule
     @Override
     protected void configure ()
     {
+        bind(MoneyConfiguration.class).toInstance(
+            new MoneyConfiguration(CREATOR_PERCENTAGE, AFFILIATE_PERCENTAGE, BLING_CASH_OUT,
+                SECURED_PRICES_MAX_DURATION, SECURED_PRICES_MAX_ELEMENTS));
         bind(MoneyRepository.class).to(DepotMoneyRepository.class);
         bind(MoneyLogic.class).to(MoneyLogicImpl.class);
-        bind(EscrowCache.class).toInstance(
-            new EscrowCacheMap(SECURED_PRICES_MAX_ELEMENTS, SECURED_PRICES_MAX_DURATION));
         bindInterceptor(any(), annotatedWith(Retry.class), new RetryInterceptor());
     }
 
+    // TODO: these move. Maybe MoneyConfiguration becomes a server config object..
+    private static final float CREATOR_PERCENTAGE = .3f;
+    private static final float AFFILIATE_PERCENTAGE = .3f;
+    private static final float BLING_CASH_OUT = 0f;
     private static final int SECURED_PRICES_MAX_ELEMENTS = 100000;
-    private static final int SECURED_PRICES_MAX_DURATION = 600;
+    private static final int SECURED_PRICES_MAX_DURATION = 10;
 }

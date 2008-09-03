@@ -174,16 +174,6 @@ public interface MoneyLogic
     // Administrator actions
 
     /**
-     * Updates the current configuration for the Money service.
-     */
-    void updateMoneyConfiguration (MoneyConfiguration config);
-
-    /**
-     * Retrieves the current configuration of the Money service.
-     */
-    MoneyConfiguration getMoneyConfiguration ();
-
-    /**
      * Initializes the money service by starting up required services, such as an expiration
      * monitor and queue listeners. This method is idempotent.
      */

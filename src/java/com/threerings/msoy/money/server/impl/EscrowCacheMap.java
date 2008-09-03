@@ -7,7 +7,10 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.threerings.msoy.money.server.MoneyConfiguration;
 import com.threerings.msoy.money.server.NotSecuredException;
 
 /**
@@ -22,15 +25,14 @@ public class EscrowCacheMap
     /**
      * Creates a cache with the given maximum number of escrows, whose entries will expire
      * after some amount of time.
-     * 
-     * @param maxElements Maximum number of secured prices that can be stored in memory.
-     * @param expireSeconds Number of seconds until a secured price will be purged from the cache.
      */
-    public EscrowCacheMap (final int maxElements, final int expireSeconds)
+    @Inject public EscrowCacheMap (MoneyConfiguration config)
     {
         Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
         if (cache == null) {
-            cache = new Cache(CACHE_NAME, maxElements, false, false, expireSeconds, expireSeconds);
+            int expireSeconds = config.getSecurePriceDuration() * 60;
+            cache = new Cache(CACHE_NAME, config.getMaxSecuredPrices(), false, false,
+                expireSeconds, expireSeconds);
             CacheManager.getInstance().addCache(cache);
 
         } else {
@@ -62,6 +64,11 @@ public class EscrowCacheMap
         _cache.remove(key);
     }
 
+    /** Our money configuration. */
+    @Inject protected MoneyConfiguration _config;
+
     private static final String CACHE_NAME = "secured_prices";
     private final Cache _cache;
+
+
 }

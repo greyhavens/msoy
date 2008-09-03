@@ -181,7 +181,7 @@ public class MoneyLogicImpl
         boolean buyerIsCreator = (buyrec.memberId == creatorId);
         if (buyerIsCreator) {
             // TODO: hmmmm
-            amount -= (int)(0.3 * amount);
+            amount -= (int)(_config.getCreatorPercentage() * amount);
         }
 
         // Get creator.
@@ -214,7 +214,8 @@ public class MoneyLogicImpl
             creatorHistory = creator.creatorPayout(quote.getListedCurrency(),
                 (int)history.getAmount(),
                 // TODO: this is wrong, it needs translating
-                "Item purchased: " + escrow.getDescription(), item, 0.3f, history.id);
+                "Item purchased: " + escrow.getDescription(), item, _config.getCreatorPercentage(),
+                history.id);
             _repo.addHistory(creatorHistory);
             _repo.saveAccount(creator);
             // TODO: fucking fuck, we want to change this to the CatalogIdent
@@ -319,12 +320,6 @@ public class MoneyLogicImpl
             toPersist(transactionTypes));
     }
 
-    public MoneyConfiguration getMoneyConfiguration ()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     public MemberMoney getMoneyFor (final int memberId)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId),
@@ -350,11 +345,6 @@ public class MoneyLogicImpl
         final Escrow escrow = new Escrow(sellerId, affiliateId, description, quote);
         _escrowCache.addEscrow(key, escrow);
         return quote;
-    }
-
-    public void updateMoneyConfiguration (final MoneyConfiguration config)
-    {
-        // TODO Auto-generated method stub
     }
 
     public void init ()
@@ -387,6 +377,8 @@ public class MoneyLogicImpl
         _userActionRepo.logUserAction(details);
         return details;
     }
+
+    @Inject protected MoneyConfiguration _config;
 
     private final MoneyHistoryExpirer _expirer;
     private final MsoyEventLogger _eventLog;
