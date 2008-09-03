@@ -485,9 +485,10 @@ public class AVRGameBackend extends ControlBackend
         return null;
     }
 
-    // LocalSubControl
+    // RoomSubControl
     protected function getRoomBounds_v1 (targetId :int /* ignored */) :Rectangle
     {
+        validateRoomTargetId(targetId);
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
             var metrics :RoomMetrics = view.layout.metrics;
