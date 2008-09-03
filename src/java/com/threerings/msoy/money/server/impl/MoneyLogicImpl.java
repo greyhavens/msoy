@@ -17,6 +17,8 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.threerings.util.MessageBundle;
+
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
@@ -211,11 +213,11 @@ public class MoneyLogicImpl
             creatorHistory = history;
 
         } else {
-            creatorHistory = creator.creatorPayout(quote.getListedCurrency(),
-                (int)history.getAmount(),
-                // TODO: this is wrong, it needs translating
-                "Item purchased: " + escrow.getDescription(), item, _config.getCreatorPercentage(),
-                history.id);
+            creatorHistory = creator.creatorPayout(
+                quote.getListedCurrency(), (int)history.getAmount(),
+                // TODO: fuck me friday, I'm not sure how this will actually xlate in GWT land...
+                MessageBundle.tcompose("m.item_bought", escrow.getDescription()),
+                item, _config.getCreatorPercentage(), history.id);
             _repo.addHistory(creatorHistory);
             _repo.saveAccount(creator);
             // TODO: fucking fuck, we want to change this to the CatalogIdent
