@@ -9,7 +9,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.money.data.all.MoneyHistory;
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.gwt.HistoryListResult;
 import com.threerings.msoy.money.gwt.MoneyServiceAsync;
@@ -22,17 +22,17 @@ import client.util.ServiceUtil;
  */
 public class MoneyHistoryDataModel extends ServiceBackedDataModel<MoneyHistory, HistoryListResult>
 {
-    public MoneyHistoryDataModel (int memberId, MoneyType type)
+    public MoneyHistoryDataModel (int memberId, Currency currency)
     {
         _memberId = memberId;
-        _type = type;
+        _currency = currency;
     }
 
     @Override
     protected void callFetchService (int start, int count, boolean needCount,
         AsyncCallback<HistoryListResult> callback)
     {
-        _moneysvc.getTransactionHistory(_memberId, _type, start, count, callback);
+        _moneysvc.getTransactionHistory(_memberId, _currency, start, count, callback);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class MoneyHistoryDataModel extends ServiceBackedDataModel<MoneyHistory, 
     }
 
     protected int _memberId;
-    protected MoneyType _type;
+    protected Currency _currency;
 
     protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
         ServiceUtil.bind(GWT.create(MoneyService.class), MoneyService.ENTRY_POINT);

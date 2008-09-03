@@ -15,19 +15,19 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.money.data.all.MoneyHistory;
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 
 import client.ui.MsoyUI;
 
 public class BalancePanel extends PagedGrid<MoneyHistory>
 {
-    public BalancePanel (int memberId, MoneyType type)
+    public BalancePanel (int memberId, Currency currency)
     {
         super(10, 1, PagedGrid.NAV_ON_TOP);
 
         addStyleName("Balance");
 
-        setModel(new MoneyHistoryDataModel(memberId, type), 0);
+        setModel(new MoneyHistoryDataModel(memberId, currency), 0);
     }
 
 // TODO: This should work
