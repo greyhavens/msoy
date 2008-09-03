@@ -4,9 +4,9 @@
 package com.threerings.msoy.money.server.persist;
 
 import com.samskivert.jdbc.depot.ByteEnum;
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 
-public enum PersistentMoneyType implements ByteEnum
+public enum PersistentCurrency implements ByteEnum
 {
     /**
      * Bars are usually purchased for some real money amount and may be required to purchase some
@@ -23,21 +23,21 @@ public enum PersistentMoneyType implements ByteEnum
      */
     BLING(2);
 
-    public static PersistentMoneyType fromMoneyType (final MoneyType type) 
+    public static PersistentCurrency fromCurrency (final Currency currency) 
     {
-        if (type == null) {
+        if (currency == null) {
             return null;
         }
         
-        switch (type) {
-        case BARS: return PersistentMoneyType.BARS;
-        case COINS: return PersistentMoneyType.COINS;
-        case BLING: return PersistentMoneyType.BLING;
+        switch (currency) {
+        case BARS: return PersistentCurrency.BARS;
+        case COINS: return PersistentCurrency.COINS;
+        case BLING: return PersistentCurrency.BLING;
+        default: throw new IllegalArgumentException("Invalid currency: " + currency);
         }
-        throw new IllegalArgumentException("Invalid money type: " + type);
     }
     
-    public static PersistentMoneyType fromByte (final byte value)
+    public static PersistentCurrency fromByte (final byte value)
     {
         // Note: this is not ideal. We should iterate over values() and check each value's
         // toByte() to see if it's the same as the passed-in value. That reduces the number
@@ -49,7 +49,7 @@ public enum PersistentMoneyType implements ByteEnum
         case 2: return BLING;
         default:
             throw new IllegalArgumentException(
-                "Invalid byte value for PersistentMoneyType: " + value);
+                "Invalid byte value for PersistentCurrency: " + value);
         }
     }
 
@@ -58,17 +58,17 @@ public enum PersistentMoneyType implements ByteEnum
         return _value;
     }
     
-    public MoneyType toMoneyType ()
+    public Currency toCurrency ()
     {
         switch (this) {
-        case BARS: return MoneyType.BARS;
-        case COINS: return MoneyType.COINS;
-        case BLING: return MoneyType.BLING;
+        case BARS: return Currency.BARS;
+        case COINS: return Currency.COINS;
+        case BLING: return Currency.BLING;
         }
-        throw new IllegalArgumentException("Cannot convert this to money type: " + this);
+        throw new IllegalArgumentException("Cannot convert this to Currency: " + this);
     }
 
-    private PersistentMoneyType (final int value)
+    private PersistentCurrency (final int value)
     {
         _value = (byte)value;
     }

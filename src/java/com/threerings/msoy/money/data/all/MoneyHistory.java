@@ -21,13 +21,13 @@ public class MoneyHistory
     // Required by for serializing
     public MoneyHistory () { }
 
-    public MoneyHistory (final int memberId, final Date timestamp, final MoneyType type,
+    public MoneyHistory (final int memberId, final Date timestamp, final Currency currency,
         final double amount, final TransactionType transactionType, final boolean spent, 
         final String description, final ItemIdent item, final MoneyHistory referenceTx)
     {
         _memberId = memberId;
         _timestamp = timestamp;
-        _type = type;
+        _currency = currency;
         _amount = amount;
         _transactionType = transactionType;
         _spent = spent;
@@ -80,9 +80,9 @@ public class MoneyHistory
     /**
      * Type of money that was transferred.
      */
-    public MoneyType getType ()
+    public Currency getCurrency ()
     {
-        return _type;
+        return _currency;
     }
 
     /**
@@ -114,7 +114,7 @@ public class MoneyHistory
 
     private int _memberId;
     private Date _timestamp;
-    private MoneyType _type;
+    private Currency _currency;
     private TransactionType _transactionType;
     private double _amount;
     private boolean _spent;

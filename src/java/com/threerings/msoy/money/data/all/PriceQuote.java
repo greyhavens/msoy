@@ -5,7 +5,7 @@ package com.threerings.msoy.money.data.all;
 
 import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 
 /**
  * Contains secured prices when a member views an item. This can be cached and identified by a
@@ -16,9 +16,9 @@ import com.threerings.msoy.money.data.all.MoneyType;
  */
 public class PriceQuote extends SimpleStreamableObject
 {
-    public PriceQuote (MoneyType listedType, int coins, int bars, int coinChangeForBars)
+    public PriceQuote (Currency listedCurrency, int coins, int bars, int coinChangeForBars)
     {
-        _listedType = listedType;
+        _listedCurrency = listedCurrency;
         _coins = coins;
         _bars = bars;
         _coinChange = coinChangeForBars;
@@ -27,14 +27,14 @@ public class PriceQuote extends SimpleStreamableObject
     /**
      * Does the "buy" amount from the client work?
      */
-    public boolean isSatisfied (MoneyType buyType, int buyAmount)
+    public boolean isSatisfied (Currency buyCurrency, int buyAmount)
     {
-        return (buyAmount >= getAmount(buyType));
+        return (buyAmount >= getAmount(buyCurrency));
     }
 
-    public MoneyType getListedType ()
+    public Currency getListedCurrency ()
     {
-        return _listedType;
+        return _listedCurrency;
     }
 
     /**
@@ -42,12 +42,12 @@ public class PriceQuote extends SimpleStreamableObject
      */
     public int getListedAmount ()
     {
-        return getAmount(_listedType);
+        return getAmount(_listedCurrency);
     }
 
-    public int getAmount (MoneyType type)
+    public int getAmount (Currency currency)
     {
-        return (type == MoneyType.BARS) ? _bars : _coins;
+        return (currency == Currency.BARS) ? _bars : _coins;
     }
 
     public int getCoins ()
@@ -74,11 +74,11 @@ public class PriceQuote extends SimpleStreamableObject
     /* For debugging */
     public String toString ()
     {
-        return "PriceQuote[" + _listedType + "-listed]: " +
+        return "PriceQuote[" + _listedCurrency + "-listed]: " +
             _coins + "coins, " + _bars + "bars.";
     }
 
-    protected final MoneyType _listedType;
+    protected final Currency _listedCurrency;
     protected final int _coins;
     protected final int _bars;
     protected final int _coinChange;

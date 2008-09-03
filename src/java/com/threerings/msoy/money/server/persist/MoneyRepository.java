@@ -34,13 +34,14 @@ public interface MoneyRepository
     void addHistory (MemberAccountHistoryRecord history);
 
     List<MemberAccountHistoryRecord> getHistory (
-        int memberId, PersistentMoneyType type, EnumSet<PersistentTransactionType> transactionTypes,
+        int memberId, PersistentCurrency currency,
+        EnumSet<PersistentTransactionType> transactionTypes,
         int start, int count, boolean descending);
 
     List<MemberAccountHistoryRecord> getHistory (Set<Integer> ids);
 
-    int deleteOldHistoryRecords (PersistentMoneyType type, long maxAge);
+    int deleteOldHistoryRecords (PersistentCurrency currency, long maxAge);
 
-    int getHistoryCount (int memberId, PersistentMoneyType type,
+    int getHistoryCount (int memberId, PersistentCurrency currency,
                          EnumSet<PersistentTransactionType> transactionTypes);
 }

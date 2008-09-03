@@ -18,7 +18,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyHistory;
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
 
@@ -41,7 +41,7 @@ public interface MoneyLogic
      *
      * @param buyerId the memberId of the buying user.
      * @param item the identity of the catalog listing.
-     * @param listedType the currency at which the item is listed.
+     * @param listedCurrency the currency at which the item is listed.
      * @param listedAmount the amount at which the item is listed.
      * @param creatorId the memberId of the seller.
      * @param affiliateId the id of the affiliate associated with the purchase. Uhm..
@@ -50,7 +50,7 @@ public interface MoneyLogic
      * @return A full PriceQuote for the item.
      */
     PriceQuote securePrice (
-        int buyerId, CatalogIdent item, MoneyType listedType, int listedAmount,
+        int buyerId, CatalogIdent item, Currency listedCurrency, int listedAmount,
         int sellerId, int affiliateId, String description);
 
     /**
@@ -60,7 +60,7 @@ public interface MoneyLogic
      *
      * @param buyer the member record of the buying user.
      * @param item the identity of the catalog listing.
-     * @param listedType the currency at which the item is listed.
+     * @param listedCurrency the currency at which the item is listed.
      * @param listedAmount the amount at which the item is listed.
      * @param buyType the currency the buyer is using
      * @param buyAmount the amount the buyer has validated to purchase the item.
@@ -69,8 +69,8 @@ public interface MoneyLogic
      * buy amount is not enough money.
      */
     MoneyResult buyItem (
-        MemberRecord buyer, CatalogIdent item, MoneyType listedType, int listedAmount,
-        MoneyType buyType, int buyAmount)
+        MemberRecord buyer, CatalogIdent item, Currency listedCurrency, int listedAmount,
+        Currency buyType, int buyAmount)
         throws NotEnoughMoneyException, NotSecuredException;
 
     /**
@@ -117,7 +117,7 @@ public interface MoneyLogic
      * at a time for pagination.
      *
      * @param memberId ID of the member to retrieve money for.
-     * @param type Money type to retrieve logs for. If null, then records for all money types are
+     * @param currency Money type to retrieve logs for. If null, then records for all money types are
      * returned.
      * @param transactionTypes Set of transaction types to retrieve logs for.  If null, all
      *      transactionTypes will be retrieved.
@@ -128,19 +128,20 @@ public interface MoneyLogic
      * @return List of requested past transactions.
      */
     List<MoneyHistory> getLog (
-        int memberId, MoneyType type, EnumSet<TransactionType> transactionTypes, int start, int 
-        count, boolean descending);
+        int memberId, Currency currency, EnumSet<TransactionType> transactionTypes,
+        int start, int count, boolean descending);
 
     /**
      * Retrieves the total number of transaction history entries we have stored for this query.
      *
      * @param memberId ID of the member to count transactions for.
-     * @param type Money type to retrieve logs for. If null, then records for all money types are
+     * @param currency Currency to retrieve logs for. If null, then records for all money types are
      * counted.
      * @param transactionTypes Set of transaction types to retrieve logs for.  If null, all
      *      transactionTypes will be counted.
      */
-    int getHistoryCount (int memberId, MoneyType type, EnumSet<TransactionType> transactionTypes);
+    int getHistoryCount (
+        int memberId, Currency currency, EnumSet<TransactionType> transactionTypes);
 
     /**
      * Retrieves the amount that a member's current bling is worth in American dollars.

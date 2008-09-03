@@ -43,7 +43,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyHistory;
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.impl.MoneyHistoryExpirer;
 
@@ -136,11 +136,11 @@ public class MoneyTest
         _expirer.start();
 
         final List<MoneyHistory> log = _service.getLog(1, null, null, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 10.0, 
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), Currency.BARS, 10.0, 
             TransactionType.BARS_BOUGHT, false, "Bought 10 bars", null, null), null, start, end, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 101.0, 
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), Currency.COINS, 101.0, 
             TransactionType.AWARD, false, "testExpirer - coins2", null, null), null, start2, end2, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, 
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), Currency.COINS, 100.0, 
             TransactionType.AWARD, false, "testExpirer - coins1", null, null), null, start, end, false);
     }
 
@@ -155,8 +155,8 @@ public class MoneyTest
         assertEquals(oldMoney.getAccBars() + 2, result.getNewMemberMoney().getAccBars());
         final long endTime = System.currentTimeMillis() / 1000;
 
-        final List<MoneyHistory> log = _service.getLog(1, MoneyType.BARS, null, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.BARS, 2.0, 
+        final List<MoneyHistory> log = _service.getLog(1, Currency.BARS, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), Currency.BARS, 2.0, 
             TransactionType.BARS_BOUGHT, false, "Bought 2 bars.", null, null), null, startTime, 
             endTime, true);
 
@@ -173,9 +173,9 @@ public class MoneyTest
         final MemberMoney oldCreatorMoney = _service.getMoneyFor(2);
         _service.buyBars(1, 150, "Bought 150 bars.");
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
-        _service.securePrice(1, item, MoneyType.BARS, 100, 2, 3, "My bar item");
-        final MoneyResult result = _service.buyItem(makeMember(false), item, MoneyType.BARS, 100,
-            MoneyType.BARS, 100);
+        _service.securePrice(1, item, Currency.BARS, 100, 2, 3, "My bar item");
+        final MoneyResult result = _service.buyItem(makeMember(false), item, Currency.BARS, 100,
+            Currency.BARS, 100);
         final long endTime = System.currentTimeMillis() / 1000;
 
         // Check member account
@@ -183,8 +183,8 @@ public class MoneyTest
         assertEquals(oldMoney.getBars() + 50, newMoney.getBars());
         assertEquals(oldMoney.getAccBars() + 150, newMoney.getAccBars());
         
-        List<MoneyHistory> log = _service.getLog(1, MoneyType.BARS, null, 0, 30, true);
-        final MoneyHistory expectedMH = new MoneyHistory(1, new Date(), MoneyType.BARS, 100.0, 
+        List<MoneyHistory> log = _service.getLog(1, Currency.BARS, null, 0, 30, true);
+        final MoneyHistory expectedMH = new MoneyHistory(1, new Date(), Currency.BARS, 100.0, 
             TransactionType.ITEM_PURCHASE, true, "My bar item", null /*item*/, null);
         checkMoneyHistory(log, expectedMH, null, startTime, endTime, true);
 
@@ -197,8 +197,8 @@ public class MoneyTest
         assertEquals(oldCreatorMoney.getAccBling() + 100.0*0.3, newCreatorMoney.getAccBling(),
             0.001);
 
-        log = _service.getLog(2, MoneyType.BLING, null, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.BLING, 100.0*0.3, 
+        log = _service.getLog(2, Currency.BLING, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(2, new Date(), Currency.BLING, 100.0*0.3, 
             TransactionType.CREATOR_PAYOUT, false, "Item purchased: My bar item", null /*item*/,
             null), 
             expectedMH, startTime, endTime, true);
@@ -216,8 +216,8 @@ public class MoneyTest
         final MemberMoney oldMoney = _service.getMoneyFor(1);
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         final int bars = oldMoney.getBars() + 1;
-        _service.securePrice(1, item, MoneyType.BARS, bars, 2, 3, "My bar item");
-        _service.buyItem(makeMember(false), item, MoneyType.BARS, bars, MoneyType.BARS, bars);
+        _service.securePrice(1, item, Currency.BARS, bars, 2, 3, "My bar item");
+        _service.buyItem(makeMember(false), item, Currency.BARS, bars, Currency.BARS, bars);
     }
 
     @Test(expected=NotEnoughMoneyException.class)
@@ -227,8 +227,8 @@ public class MoneyTest
         final MemberMoney oldMoney = _service.getMoneyFor(1);
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         final  int coins = oldMoney.getCoins() + 1;
-        _service.securePrice(1, item, MoneyType.COINS, coins, 2, 3, "My coin item");
-        _service.buyItem(makeMember(false), item, MoneyType.COINS, coins, MoneyType.COINS, coins);
+        _service.securePrice(1, item, Currency.COINS, coins, 2, 3, "My coin item");
+        _service.buyItem(makeMember(false), item, Currency.COINS, coins, Currency.COINS, coins);
     }
 
     @Test(expected=NotSecuredException.class)
@@ -236,7 +236,7 @@ public class MoneyTest
         throws Exception
     {
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
-        _service.buyItem(makeMember(false), item, MoneyType.COINS, 100, MoneyType.COINS, 100);
+        _service.buyItem(makeMember(false), item, Currency.COINS, 100, Currency.COINS, 100);
     }
 
     @Test
@@ -248,9 +248,9 @@ public class MoneyTest
         final MemberMoney oldCreatorMoney = _service.getMoneyFor(2);
         _service.awardCoins(1, 2, 3, null, 150, "150 coins awarded.", UserAction.PLAYED_GAME);
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
-        _service.securePrice(1, item, MoneyType.COINS, 100, 2, 3, "testBuyCoinItemWithCoins - test");
-        final MoneyResult result = _service.buyItem(makeMember(false), item, MoneyType.COINS, 100,
-            MoneyType.COINS, 100);
+        _service.securePrice(1, item, Currency.COINS, 100, 2, 3, "testBuyCoinItemWithCoins - test");
+        final MoneyResult result = _service.buyItem(makeMember(false), item, Currency.COINS, 100,
+            Currency.COINS, 100);
         final long endTime = System.currentTimeMillis() / 1000;
 
         // Check member account
@@ -258,8 +258,8 @@ public class MoneyTest
         assertEquals(oldMoney.getCoins() + 50, newMoney.getCoins());
         assertEquals(oldMoney.getAccCoins() + 150, newMoney.getAccCoins());
 
-        List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, null, 0, 30, true);
-        final MoneyHistory expectedMH = new MoneyHistory(1, new Date(), MoneyType.COINS, 100.0, 
+        List<MoneyHistory> log = _service.getLog(1, Currency.COINS, null, 0, 30, true);
+        final MoneyHistory expectedMH = new MoneyHistory(1, new Date(), Currency.COINS, 100.0, 
             TransactionType.ITEM_PURCHASE, true, "testBuyCoinItemWithCoins - test", null /*item*/,
             null);
         checkMoneyHistory(log, expectedMH, null, startTime, endTime, true);
@@ -272,8 +272,8 @@ public class MoneyTest
         assertEquals(oldCreatorMoney.getCoins() + 30, newCreatorMoney.getCoins());
         assertEquals(oldCreatorMoney.getAccCoins() + 30, newCreatorMoney.getAccCoins());
 
-        log = _service.getLog(2, MoneyType.COINS, null, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(2, new Date(), MoneyType.COINS, 30.0, 
+        log = _service.getLog(2, Currency.COINS, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(2, new Date(), Currency.COINS, 30.0, 
             TransactionType.CREATOR_PAYOUT, false,
             "Item purchased: testBuyCoinItemWithCoins - test", null /*item*/, null),
             expectedMH, startTime, endTime, true);
@@ -299,8 +299,8 @@ public class MoneyTest
         assertEquals(oldMoney.getCoins() + 150, newMoney.getCoins());
         assertEquals(oldMoney.getAccCoins() + 150, newMoney.getAccCoins());
 
-        final List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, null, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 150.0, 
+        final List<MoneyHistory> log = _service.getLog(1, Currency.COINS, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), Currency.COINS, 150.0, 
             TransactionType.AWARD, false, "150 coins awarded.  Thanks for playing!", item, null), 
             null, startTime, endTime, true);
 
@@ -318,9 +318,9 @@ public class MoneyTest
         final MemberMoney oldMoney = _service.getMoneyFor(1);
         _service.awardCoins(1, 1, 3, null, 150, "150 coins awarded.", UserAction.PLAYED_GAME);
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
-        _service.securePrice(1, item, MoneyType.COINS, 100, 1, 3, "testCreatorBoughtOwnItem - test");
-        final MoneyResult result = _service.buyItem(makeMember(false), item, MoneyType.COINS, 100,
-            MoneyType.COINS, 100);
+        _service.securePrice(1, item, Currency.COINS, 100, 1, 3, "testCreatorBoughtOwnItem - test");
+        final MoneyResult result = _service.buyItem(makeMember(false), item, Currency.COINS, 100,
+            Currency.COINS, 100);
         final long endTime = System.currentTimeMillis() / 1000;
 
         // Check member account
@@ -328,8 +328,8 @@ public class MoneyTest
         assertEquals(oldMoney.getCoins() + 50 + 30, newMoney.getCoins());
         assertEquals(oldMoney.getAccCoins() + 150, newMoney.getAccCoins());
 
-        final List<MoneyHistory> log = _service.getLog(1, MoneyType.COINS, null, 0, 30, true);
-        checkMoneyHistory(log, new MoneyHistory(1, new Date(), MoneyType.COINS, 70.0, 
+        final List<MoneyHistory> log = _service.getLog(1, Currency.COINS, null, 0, 30, true);
+        checkMoneyHistory(log, new MoneyHistory(1, new Date(), Currency.COINS, 70.0, 
             TransactionType.ITEM_PURCHASE, true, "testCreatorBoughtOwnItem - test", null /*item*/,
             null), 
             null, startTime, endTime, true);
@@ -346,22 +346,22 @@ public class MoneyTest
         final MemberMoney oldMoney = _service.getMoneyFor(1);
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         int coins = oldMoney.getCoins() - 100;
-        _service.securePrice(1, item, MoneyType.COINS, coins, 2, 3, "testSupport - test");
-        final MemberMoney newMoney = _service.buyItem(makeMember(true), item, MoneyType.COINS, coins,
-            MoneyType.COINS, coins).getNewMemberMoney();
+        _service.securePrice(1, item, Currency.COINS, coins, 2, 3, "testSupport - test");
+        final MemberMoney newMoney = _service.buyItem(makeMember(true), item, Currency.COINS, coins,
+            Currency.COINS, coins).getNewMemberMoney();
         assertEquals(100, newMoney.getCoins());
 
         // Now buy a 150 coin item.  Should succeed, bringing available coins to 0.
         final MemberMoney oldCreatorMoney = _service.getMoneyFor(2);
-        _service.securePrice(1, item, MoneyType.COINS, 150, 2, 3, "testSupport - test2");
+        _service.securePrice(1, item, Currency.COINS, 150, 2, 3, "testSupport - test2");
         MoneyResult result = _service.buyItem(
-            makeMember(true), item, MoneyType.COINS, 150, MoneyType.COINS, 150);
+            makeMember(true), item, Currency.COINS, 150, Currency.COINS, 150);
         assertEquals(0, result.getNewMemberMoney().getCoins());
         assertEquals(30 + oldCreatorMoney.getCoins(), result.getNewCreatorMoney().getCoins());
 
         // Buy a 50 coin item.  Should succeed and remain at 0
-        _service.securePrice(1, item, MoneyType.COINS, 50, 2, 3, "testSupport - test3");
-        result = _service.buyItem(makeMember(true), item, MoneyType.COINS, 50, MoneyType.COINS, 50);
+        _service.securePrice(1, item, Currency.COINS, 50, 2, 3, "testSupport - test3");
+        result = _service.buyItem(makeMember(true), item, Currency.COINS, 50, Currency.COINS, 50);
         assertEquals(0, result.getNewMemberMoney().getCoins());
         assertEquals(30 + oldCreatorMoney.getCoins(), result.getNewCreatorMoney().getCoins());
     }
@@ -415,7 +415,7 @@ public class MoneyTest
         // TODO: I've temporary disabled the item check because I've broken all that temporarily
 //        assertEquals(expected.getItem(), logEntry.getItem());
         assertEquals(expected.getMemberId(), logEntry.getMemberId());
-        assertEquals(expected.getType(), logEntry.getType());
+        assertEquals(expected.getCurrency(), logEntry.getCurrency());
         assertEquals(expected.isSpent(), logEntry.isSpent());
         assertEquals(expected.getTransactionType(), logEntry.getTransactionType());
         
@@ -423,7 +423,7 @@ public class MoneyTest
             assertEquals(reference.getAmount(), logEntry.getReferenceTx().getAmount(), 0.01);
 //            assertEquals(reference.getItem(), logEntry.getReferenceTx().getItem());
             assertEquals(reference.getMemberId(), logEntry.getReferenceTx().getMemberId());
-            assertEquals(reference.getType(), logEntry.getReferenceTx().getType());
+            assertEquals(reference.getCurrency(), logEntry.getReferenceTx().getCurrency());
             assertEquals(reference.isSpent(), logEntry.getReferenceTx().isSpent());
             assertEquals(reference.getTransactionType(), 
                 logEntry.getReferenceTx().getTransactionType());

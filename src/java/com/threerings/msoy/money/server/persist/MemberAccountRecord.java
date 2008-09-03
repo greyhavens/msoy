@@ -20,7 +20,7 @@ import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 
 /**
  * Domain model for the current status of a member's account, including the amount of each money
@@ -138,9 +138,9 @@ public class MemberAccountRecord extends PersistentRecord
     /**
      * Get the amount of money this account has of the specified currency.
      */
-    public int getAmount (MoneyType type)
+    public int getAmount (Currency currency)
     {
-        switch (type) {
+        switch (currency) {
         case COINS: return coins;
         case BARS: return bars;
         case BLING: return (int) bling;
@@ -151,13 +151,13 @@ public class MemberAccountRecord extends PersistentRecord
     /**
      * Returns true if the account can afford spending the amount of currency indicated.
      * 
-     * @param type Currency to spend, either BARS or COINS.
+     * @param currency Currency to spend, either BARS or COINS.
      * @param amount Amount to spend.
      * @return True if the account can afford it, false otherwise.
      */
-    public boolean canAfford (final MoneyType type, final int amount)
+    public boolean canAfford (Currency currency, int amount)
     {
-        return getAmount(type) >= amount;
+        return getAmount(currency) >= amount;
     }
 
     /**
@@ -172,7 +172,7 @@ public class MemberAccountRecord extends PersistentRecord
         accBars += bars;
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
-            PersistentMoneyType.BARS, bars, PersistentTransactionType.BARS_BOUGHT, false, 
+            PersistentCurrency.BARS, bars, PersistentTransactionType.BARS_BOUGHT, false, 
             description);
     }
 
@@ -189,7 +189,7 @@ public class MemberAccountRecord extends PersistentRecord
         accCoins += coins;
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
-            PersistentMoneyType.COINS, coins, PersistentTransactionType.AWARD, false, description, 
+            PersistentCurrency.COINS, coins, PersistentTransactionType.AWARD, false, description, 
             // TODO: sort out the item/catalog discrepency
             null /*item*/);
     }
@@ -203,13 +203,13 @@ public class MemberAccountRecord extends PersistentRecord
      * @return Account history record for this transaction.
      */
     public MemberAccountHistoryRecord buyItem (
-        MoneyType type, int amount, final String description,
+        Currency currency, int amount, final String description,
         final CatalogIdent item, final boolean isSupport)
     {
         if (isSupport) {
-            amount = Math.min(amount, getAmount(type));
+            amount = Math.min(amount, getAmount(currency));
         }
-        switch (type) {
+        switch (currency) {
         case COINS:
             coins -= amount;
             break;
@@ -219,11 +219,11 @@ public class MemberAccountRecord extends PersistentRecord
             break;
 
         default:
-            throw new RuntimeException("Invalid purchase currency: " + type);
+            throw new RuntimeException("Invalid purchase currency: " + currency);
         }
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
-            PersistentMoneyType.fromMoneyType(type), amount,
+            PersistentCurrency.fromCurrency(currency), amount,
             PersistentTransactionType.ITEM_PURCHASE, true, description, item);
     }
 
@@ -237,24 +237,24 @@ public class MemberAccountRecord extends PersistentRecord
      * @return History record for the transaction.
      */
     public MemberAccountHistoryRecord creatorPayout (
-        final MoneyType listingType, final int amount, final String description,
+        final Currency listingCurrency, final int amount, final String description,
         final CatalogIdent item, final float percentage, final int referenceTxId)
     {
         // TODO: Determine percentage from administrator.
         final float amountPaid = percentage * amount;
-        final MoneyType paymentType;
-        switch (listingType) {
+        final Currency paymentCurrency;
+        switch (listingCurrency) {
         case COINS:
             int floorAmount = (int) Math.floor(amountPaid);
             coins += floorAmount;
             accCoins += floorAmount;
-            paymentType = MoneyType.COINS;
+            paymentCurrency = Currency.COINS;
             break;
 
         case BARS:
             bling += amountPaid;
             accBling += amountPaid;
-            paymentType = MoneyType.BLING;
+            paymentCurrency = Currency.BLING;
             break;
 
         default:
@@ -262,7 +262,7 @@ public class MemberAccountRecord extends PersistentRecord
         }
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         final MemberAccountHistoryRecord history = new MemberAccountHistoryRecord(memberId, 
-            dateLastUpdated, PersistentMoneyType.fromMoneyType(paymentType), amountPaid, 
+            dateLastUpdated, PersistentCurrency.fromCurrency(paymentCurrency), amountPaid, 
             PersistentTransactionType.CREATOR_PAYOUT, false, description, item);
         history.setReferenceTxId(referenceTxId);
         return history;

@@ -93,14 +93,14 @@ public final class DepotMoneyRepository extends DepotRepository
     }
 
     public List<MemberAccountHistoryRecord> getHistory (
-        final int memberId, final PersistentMoneyType type,
+        final int memberId, final PersistentCurrency currency,
         final EnumSet<PersistentTransactionType> transactionTypes, final int start, final int count,
         final boolean descending)
     {
         // select * from MemberAccountRecord where type = ? and transactionType in (?) 
         // and memberId=? order by timestamp
         List<QueryClause> clauses = Lists.newArrayList();
-        populateSearch(clauses, memberId, type, transactionTypes);
+        populateSearch(clauses, memberId, currency, transactionTypes);
 
         clauses.add(descending ?
                     OrderBy.descending(MemberAccountHistoryRecord.TIMESTAMP_C) :
@@ -113,11 +113,11 @@ public final class DepotMoneyRepository extends DepotRepository
         return findAll(MemberAccountHistoryRecord.class, clauses);
     }
 
-    public int deleteOldHistoryRecords (final PersistentMoneyType type, final long maxAge)
+    public int deleteOldHistoryRecords (final PersistentCurrency currency, final long maxAge)
     {
         final long oldestTimestamp = System.currentTimeMillis() - maxAge;
         final Where where = new Where(new And(
-            new Equals(MemberAccountHistoryRecord.TYPE_C, type), new LessThan(
+            new Equals(MemberAccountHistoryRecord.TYPE_C, currency), new LessThan(
                 MemberAccountHistoryRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp))));
 
         // Delete indicated records, removing the cache entries if necessary.
@@ -127,7 +127,7 @@ public final class DepotMoneyRepository extends DepotRepository
                              @Override protected boolean testForEviction (
                                  final Serializable key, final MemberAccountHistoryRecord record) {
                                  return record.getTimestamp().getTime() < oldestTimestamp
-                                     && record.getType() == type;
+                                     && record.getCurrency() == currency;
                              }
                          });
     }
@@ -138,24 +138,25 @@ public final class DepotMoneyRepository extends DepotRepository
                        new Where(new In(MemberAccountHistoryRecord.ID_C, ids)));
     }
 
-    public int getHistoryCount (final int memberId, final PersistentMoneyType type,
+    public int getHistoryCount (final int memberId, final PersistentCurrency currency,
                                 final EnumSet<PersistentTransactionType> transactionTypes)
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(MemberAccountHistoryRecord.class));
-        populateSearch(clauses, memberId, type, transactionTypes);
+        populateSearch(clauses, memberId, currency, transactionTypes);
         return load(CountRecord.class, clauses).count;
     }
 
     /** Helper method to setup a query for a transaction history search. */
-    protected void populateSearch (List<QueryClause> clauses, int memberId, PersistentMoneyType type,
-                                   EnumSet<PersistentTransactionType> transactionTypes)
+    protected void populateSearch (
+        List<QueryClause> clauses, int memberId, PersistentCurrency currency,
+        EnumSet<PersistentTransactionType> transactionTypes)
     {
         List<SQLOperator> where = Lists.newArrayList();
 
         where.add(new Equals(MemberAccountHistoryRecord.MEMBER_ID_C, memberId));
-        if (type != null) {
-            where.add(new Equals(MemberAccountHistoryRecord.TYPE_C, type));
+        if (currency != null) {
+            where.add(new Equals(MemberAccountHistoryRecord.TYPE_C, currency));
         }
         where.add(new In(MemberAccountHistoryRecord.TRANSACTION_TYPE_C, transactionTypes));
 

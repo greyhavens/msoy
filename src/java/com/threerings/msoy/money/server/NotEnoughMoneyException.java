@@ -3,7 +3,7 @@
 
 package com.threerings.msoy.money.server;
 
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 
 /**
  * Occurs when a member attempts to use some amount of money they do not have.
@@ -13,21 +13,21 @@ import com.threerings.msoy.money.data.all.MoneyType;
 public class NotEnoughMoneyException extends MoneyException
 {
     public NotEnoughMoneyException (
-        int memberId, MoneyType type, int amountDesired, int amountAvailable)
+        int memberId, Currency currency, int amountDesired, int amountAvailable)
     {
-        super("An attempt to secure " + amountDesired + " currency of type " + type
+        super("An attempt to secure " + amountDesired + " " + currency
             + " from member ID " + memberId + " failed because only " + amountAvailable
             + " is available.");
         _memberId = memberId;
-        _type = type;
+        _currency = currency;
         _moneyRequested = amountDesired;
         _moneyAvailable = amountAvailable;
     }
 
     public NotEnoughMoneyException (
-        int memberId, MoneyType type, int amountDesired, int amountAvailable, Throwable cause)
+        int memberId, Currency currency, int amountDesired, int amountAvailable, Throwable cause)
     {
-        this(memberId, type, amountDesired, amountAvailable);
+        this(memberId, currency, amountDesired, amountAvailable);
         initCause(cause);
     }
 
@@ -46,13 +46,13 @@ public class NotEnoughMoneyException extends MoneyException
         return _moneyRequested;
     }
 
-    public MoneyType getType ()
+    public Currency getCurrency ()
     {
-        return _type;
+        return _currency;
     }
 
     private final int _moneyAvailable;
     private final int _moneyRequested;
-    private final MoneyType _type;
+    private final Currency _currency;
     private final int _memberId;
 }

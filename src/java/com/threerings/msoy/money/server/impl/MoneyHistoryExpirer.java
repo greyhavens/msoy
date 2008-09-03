@@ -11,10 +11,10 @@ import com.google.inject.Singleton;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Logger;
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
-import com.threerings.msoy.money.server.persist.PersistentMoneyType;
+import com.threerings.msoy.money.server.persist.PersistentCurrency;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
@@ -66,7 +66,7 @@ public class MoneyHistoryExpirer
                 public void expired ()
                 {
                     final int count = _repo.deleteOldHistoryRecords(
-                        PersistentMoneyType.fromMoneyType(MoneyType.COINS), _maxAge);
+                        PersistentCurrency.fromCurrency(Currency.COINS), _maxAge);
                     if (count > 0) {
                         log.info("Removed old member account history records for coins",
                             "count", count);

@@ -4,7 +4,7 @@
 package com.threerings.msoy.money.server;
 
 import com.google.inject.Inject;
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.gwt.HistoryListResult;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
@@ -19,7 +19,7 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 public class MoneyServlet extends MsoyServiceServlet
     implements MoneyService
 {
-    public HistoryListResult getTransactionHistory (final int memberId, final MoneyType type,
+    public HistoryListResult getTransactionHistory (final int memberId, final Currency currency,
                                                     final int from, final int count)
         throws ServiceException
     {
@@ -28,10 +28,10 @@ public class MoneyServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
 
-        final HistoryListResult ofTheJedi = new HistoryListResult();
-        ofTheJedi.history = _moneyLogic.getLog(memberId, type, null, from, count, true);
-        ofTheJedi.totalCount = _moneyLogic.getHistoryCount(memberId, type, null);
-        return ofTheJedi;
+        final HistoryListResult result = new HistoryListResult();
+        result.history = _moneyLogic.getLog(memberId, currency, null, from, count, true);
+        result.totalCount = _moneyLogic.getHistoryCount(memberId, currency, null);
+        return result;
     }
 
     @Inject protected MoneyLogic _moneyLogic;

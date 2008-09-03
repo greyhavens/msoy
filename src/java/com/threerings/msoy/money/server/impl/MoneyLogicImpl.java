@@ -33,7 +33,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyHistory;
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
 
@@ -47,7 +47,7 @@ import com.threerings.msoy.money.server.NotSecuredException;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
-import com.threerings.msoy.money.server.persist.PersistentMoneyType;
+import com.threerings.msoy.money.server.persist.PersistentCurrency;
 import com.threerings.msoy.money.server.persist.PersistentTransactionType;
 import com.threerings.msoy.money.server.persist.RepositoryException;
 import com.threerings.msoy.money.server.persist.StaleDataException;
@@ -104,7 +104,7 @@ public class MoneyLogicImpl
             description);
         final UserActionDetails info = logUserAction(memberId, 0, userAction, null /*item*/,
             description);
-        logInPanopticon(info, MoneyType.COINS, amount, account);
+        logInPanopticon(info, Currency.COINS, amount, account);
         
         return new MoneyResult(account.getMemberMoney(), null, null, 
             history.createMoneyHistory(null), null, null);
@@ -133,15 +133,15 @@ public class MoneyLogicImpl
 
     @Retry(exception=StaleDataException.class)
     public MoneyResult buyItem (
-        final MemberRecord buyrec, CatalogIdent item, MoneyType listedType, int listedAmount,
-        MoneyType buyType, int buyAmount)
+        final MemberRecord buyrec, CatalogIdent item, Currency listedCurrency, int listedAmount,
+        Currency buyCurrency, int buyAmount)
         throws NotEnoughMoneyException, NotSecuredException
     {
         Preconditions.checkArgument(item != null && (item.type != 0 || item.catalogId != 0),
             "item is invalid: %s", item.toString());
         Preconditions.checkArgument(
-            buyType == MoneyType.BARS || buyType == MoneyType.COINS,
-            "buyType is invalid: %s", buyType.toString());
+            buyCurrency == Currency.BARS || buyCurrency == Currency.COINS,
+            "buyCurrency is invalid: %s", buyCurrency.toString());
 
         // Get the secured prices for the item.
         final PriceKey key = new PriceKey(buyrec.memberId, item);
@@ -157,7 +157,7 @@ public class MoneyLogicImpl
         }
         final PriceQuote quote = escrow.getQuote();
 
-        if (!buyrec.isSupport() && !quote.isSatisfied(buyType, buyAmount)) {
+        if (!buyrec.isSupport() && !quote.isSatisfied(buyCurrency, buyAmount)) {
             // TODO: see TODO note above, only here we actually have a quote already secured
             // (And we should either get a new quote, or just leave the one in the cache,
             // but it would be an exploit to extend the lifetime of the quote)
@@ -166,15 +166,15 @@ public class MoneyLogicImpl
 
         // Get buyer account and make sure they can afford the item.
         final MemberAccountRecord buyer = _repo.getAccountById(buyrec.memberId);
-        if (buyer == null || (!buyrec.isSupport() && !buyer.canAfford(buyType, buyAmount))) {
-            int hasAmount = (buyer == null) ? 0 : buyer.getAmount(buyType);
-            throw new NotEnoughMoneyException(buyrec.memberId, buyType, buyAmount, hasAmount);
+        if (buyer == null || (!buyrec.isSupport() && !buyer.canAfford(buyCurrency, buyAmount))) {
+            int hasAmount = (buyer == null) ? 0 : buyer.getAmount(buyCurrency);
+            throw new NotEnoughMoneyException(buyrec.memberId, buyCurrency, buyAmount, hasAmount);
         }
 
         // TODO: move this until after the purchase... this WHOLE fucking method should
         // accept a Runnable, maybe, to process the purchase
         // Inform the exchange that we've actually made the exchange
-        MoneyExchange.processPurchase(quote, buyType);
+        MoneyExchange.processPurchase(quote, buyCurrency);
 
         int amount = quote.getListedAmount();
 
@@ -200,13 +200,13 @@ public class MoneyLogicImpl
 
         // Update the member account
         final MemberAccountHistoryRecord history = buyer.buyItem(
-            buyType, amount, escrow.getDescription(), item, buyrec.isSupport());
+            buyCurrency, amount, escrow.getDescription(), item, buyrec.isSupport());
         _repo.addHistory(history);
         _repo.saveAccount(buyer);
         // TODO: fucking fuck, we want to change this to the CatalogIdent
         UserActionDetails info = logUserAction(buyrec.memberId, UserActionDetails.INVALID_ID,
             UserAction.BOUGHT_ITEM, null /*item*/, escrow.getDescription());
-        logInPanopticon(info, buyType, history.getSignedAmount(), buyer);
+        logInPanopticon(info, buyCurrency, history.getSignedAmount(), buyer);
 
         // Update the creator account, if they get a payment.
         MemberAccountHistoryRecord creatorHistory;
@@ -214,14 +214,16 @@ public class MoneyLogicImpl
             creatorHistory = history;
 
         } else {
-            creatorHistory = creator.creatorPayout(quote.getListedType(), (int)history.getAmount(),
+            creatorHistory = creator.creatorPayout(quote.getListedCurrency(),
+                (int)history.getAmount(),
+                // TODO: this is wrong, it needs translating
                 "Item purchased: " + escrow.getDescription(), item, 0.3f, history.id);
             _repo.addHistory(creatorHistory);
             _repo.saveAccount(creator);
             // TODO: fucking fuck, we want to change this to the CatalogIdent
             info = logUserAction(creatorId, buyrec.memberId, UserAction.RECEIVED_PAYOUT,
                                  null /*item*/, escrow.getDescription());
-            logInPanopticon(info, buyType, creatorHistory.getSignedAmount(), creator);
+            logInPanopticon(info, buyCurrency, creatorHistory.getSignedAmount(), creator);
         }
 
         // TODO: update affiliate with some amount of bling.
@@ -272,7 +274,7 @@ public class MoneyLogicImpl
     }
 
     public List<MoneyHistory> getLog (
-        final int memberId, final MoneyType type, final EnumSet<TransactionType> transactionTypes,
+        final int memberId, final Currency currency, final EnumSet<TransactionType> transactionTypes,
         final int start, final int count, final boolean descending)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId),
@@ -281,7 +283,7 @@ public class MoneyLogicImpl
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
 
         final List<MemberAccountHistoryRecord> records = _repo.getHistory(memberId, 
-            PersistentMoneyType.fromMoneyType(type), toPersist(transactionTypes), start, count, 
+            PersistentCurrency.fromCurrency(currency), toPersist(transactionTypes), start, count, 
             descending);
         
         // Put all records into a map by their ID.  We'll use this map to get a set of history ID's
@@ -315,9 +317,9 @@ public class MoneyLogicImpl
     }
 
     public int getHistoryCount (
-        final int memberId, final MoneyType type, final EnumSet<TransactionType> transactionTypes)
+        final int memberId, final Currency currency, final EnumSet<TransactionType> transactionTypes)
     {
-        return _repo.getHistoryCount(memberId, PersistentMoneyType.fromMoneyType(type),
+        return _repo.getHistoryCount(memberId, PersistentCurrency.fromCurrency(currency),
             toPersist(transactionTypes));
     }
 
@@ -338,7 +340,7 @@ public class MoneyLogicImpl
 
     // from MoneyLogic
     public PriceQuote securePrice (
-        int buyerId, CatalogIdent item, MoneyType listedType, int listedAmount,
+        int buyerId, CatalogIdent item, Currency listedCurrency, int listedAmount,
         int sellerId, int affiliateId, String description)
     {
         Preconditions.checkArgument(!MemberName.isGuest(buyerId), "Guests cannot secure prices.");
@@ -347,7 +349,7 @@ public class MoneyLogicImpl
             "item is invalid: %s", item.toString());
         Preconditions.checkArgument(listedAmount >= 0, "listedAmount is invalid: %d", listedAmount);
 
-        final PriceQuote quote = MoneyExchange.secureQuote(listedType, listedAmount);
+        final PriceQuote quote = MoneyExchange.secureQuote(listedCurrency, listedAmount);
         final PriceKey key = new PriceKey(buyerId, item);
         final Escrow escrow = new Escrow(sellerId, affiliateId, description, quote);
         _escrowCache.addEscrow(key, escrow);
@@ -365,7 +367,7 @@ public class MoneyLogicImpl
 //            "item is invalid: %s", item.toString());
 //        Preconditions.checkArgument(numBars >= 0, "bars is invalid: %d", numBars);
 //
-//        final PriceQuote quote = new PriceQuote(MoneyType.BARS, 0, numBars);
+//        final PriceQuote quote = new PriceQuote(Currency.BARS, 0, numBars);
 //        final PriceKey key = new PriceKey(memberId, item);
 //        final Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
 //        _escrowCache.addEscrow(key, escrow);
@@ -384,7 +386,7 @@ public class MoneyLogicImpl
 //        Preconditions.checkArgument(numCoins >= 0, "numCoins is invalid: %d", numCoins);
 //
 //        // TODO: Use exchange rate to calculate bars.
-//        final PriceQuote quote = new PriceQuote(MoneyType.COINS, numCoins, 0);
+//        final PriceQuote quote = new PriceQuote(Currency.COINS, numCoins, 0);
 //        final PriceKey key = new PriceKey(memberId, item);
 //        final Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
 //        _escrowCache.addEscrow(key, escrow);
@@ -402,12 +404,12 @@ public class MoneyLogicImpl
     }
 
     private void logInPanopticon (
-        final UserActionDetails info, final MoneyType type,
+        final UserActionDetails info, final Currency currency,
         final double delta, final MemberAccountRecord account)
     {
-        if (type == MoneyType.COINS) {
+        if (currency == Currency.COINS) {
             _eventLog.flowTransaction(info, (int)delta, account.getCoins());
-        } else if (type == MoneyType.BARS) {
+        } else if (currency == Currency.BARS) {
             // TODO
         } else {
             // TODO: bling

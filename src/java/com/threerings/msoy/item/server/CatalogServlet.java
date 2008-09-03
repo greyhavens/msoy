@@ -52,7 +52,7 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.money.data.all.MoneyHistory;
-import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
@@ -177,7 +177,7 @@ public class CatalogServlet extends MsoyServiceServlet
             MoneyResult result;
             try {
                 result = _moneyLogic.buyItem(mrec, new CatalogIdent(itemType, catalogId),
-                    MoneyType.COINS, listing.flowCost, MoneyType.COINS, authedFlowCost);
+                    Currency.COINS, listing.flowCost, Currency.COINS, authedFlowCost);
             } catch (final NotEnoughMoneyException neme) {
                 throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
             } catch (final NotSecuredException nse) {
@@ -226,7 +226,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // update their stat set, if they aren't buying something from themselves.
             final MoneyHistory transaction = result.getMemberTransaction();
             if (mrec.memberId != listing.item.creatorId &&
-                transaction.getType() == MoneyType.COINS) {
+                    transaction.getCurrency() == Currency.COINS) {
                 _statLogic.incrementStat(
                     mrec.memberId, StatType.COINS_SPENT, (int)transaction.getAmount());
             }
@@ -374,7 +374,7 @@ public class CatalogServlet extends MsoyServiceServlet
             // Secure the current price of the item for this member.
             if (mrec != null) {
                 PriceQuote quote = _moneyLogic.securePrice(mrec.memberId,
-                    new CatalogIdent(itemType, catalogId), MoneyType.COINS, record.flowCost,
+                    new CatalogIdent(itemType, catalogId), Currency.COINS, record.flowCost,
                     record.item.creatorId, 0, record.item.name);
             }
 

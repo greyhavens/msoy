@@ -138,7 +138,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * 
      * @param memberId ID of the member
      * @param timestamp Time the change was made.
-     * @param type Type of money (coins/bars/bling) modified.
+     * @param currency Currency (coins/bars/bling) modified.
      * @param amount Amount modified.
      * @param spent True if the amount was debited from the account, false if the amount was
      * credited.
@@ -147,13 +147,13 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * @param itemType Type of the item.
      */
     public MemberAccountHistoryRecord (
-        final int memberId, final Date timestamp, final PersistentMoneyType type,
+        final int memberId, final Date timestamp, final PersistentCurrency currency,
         final double amount, final PersistentTransactionType transactionType, final boolean spent, 
         final String description, final CatalogIdent item)
     {
         this.memberId = memberId;
         this.timestamp = new Timestamp(timestamp.getTime());
-        this.type = type;
+        this.type = currency;
         this.amount = amount;
         this.spent = spent;
         this.description = description;
@@ -177,11 +177,11 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * @param description Description of the transaction.
      */
     public MemberAccountHistoryRecord (
-        final int memberId, final Date timestamp, final PersistentMoneyType type,
+        final int memberId, final Date timestamp, final PersistentCurrency currency,
         final double amount, final PersistentTransactionType transactionType, final boolean spent, 
         final String description)
     {
-        this(memberId, timestamp, type, amount, transactionType, spent, description, null);
+        this(memberId, timestamp, currency, amount, transactionType, spent, description, null);
     }
 
     /** Not part of the API. For depot's eyes only. */
@@ -239,9 +239,9 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     }
 
     /**
-     * Type of money that was transferred.
+     * Currency that was transferred.
      */
-    public PersistentMoneyType getType ()
+    public PersistentCurrency getCurrency ()
     {
         return type;
     }
@@ -285,7 +285,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
 
     public MoneyHistory createMoneyHistory (final MoneyHistory referenceTx)
     {
-        return new MoneyHistory(memberId, timestamp, type.toMoneyType(), amount, 
+        return new MoneyHistory(memberId, timestamp, type.toCurrency(), amount, 
             transactionType.toTransactionType(), spent, description, 
             itemId == 0 ? null : new ItemIdent((byte)itemType, itemId), referenceTx);
     }
@@ -304,7 +304,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     public Timestamp timestamp;
 
     /** Type of money modified. Note: this is not part of the API, do not use it. */
-    public PersistentMoneyType type;
+    public PersistentCurrency type;
 
     /** Amount debited/credited. Note: this is not part of the API, do not use it. */
     public double amount;
