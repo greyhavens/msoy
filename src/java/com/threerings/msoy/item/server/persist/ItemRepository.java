@@ -20,8 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
-
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
@@ -32,6 +30,7 @@ import com.samskivert.util.Tuple;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.CacheInvalidator;
+import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
@@ -149,8 +148,8 @@ public abstract class ItemRepository<T extends ItemRecord>
                             count += limit;
                         }
                     }
-                } catch (PersistenceException pe) {
-                    log.warning("Couldn't migrate: " + pe);
+                } catch (Exception e) {
+                    log.warning("Couldn't migrate: " + e);
                     throw new SQLException();
                 }
 
@@ -204,7 +203,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Load an item, or a clone.
      */
     public T loadItem (int itemId)
-        throws PersistenceException
     {
         // TODO: This will only work for the first two billion clones.
         return itemId > 0 ? loadOriginalItem(itemId) : loadClone(itemId);
@@ -215,7 +213,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * identifier.
      */
     public T loadOriginalItem (int itemId)
-        throws PersistenceException
     {
         return load(getItemClass(), itemId);
     }
@@ -224,7 +221,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads the clone with the given identifier. Returns null if no clone exists with that
      * identifier.
      */
-    public T loadClone (int cloneId) throws PersistenceException
+    public T loadClone (int cloneId)
     {
         CloneRecord cloneRecord = loadCloneRecord(cloneId);
         if (cloneRecord == null) {
@@ -233,7 +230,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
         T clone = loadOriginalItem(cloneRecord.originalItemId);
         if (clone == null) {
-            throw new PersistenceException(
+            throw new DatabaseException(
                 "Clone's original does not exist [cloneId=" + cloneId +
                 ", originalItemId=" + cloneRecord.originalItemId + "]");
         }
@@ -245,7 +242,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads all original items owned by the specified member in the specified suite.
      */
     public List<T> loadOriginalItems (int ownerId, int suiteId)
-        throws PersistenceException
     {
         Where where;
         if (suiteId == 0) {
@@ -261,7 +257,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads all original items with the specified suite.
      */
     public List<T> loadOriginalItemsBySuite (int suiteId)
-        throws PersistenceException
     {
         return findAll(getItemClass(), new Where(getItemColumn(SubItemRecord.SUITE_ID), suiteId));
     }
@@ -270,7 +265,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads all cloned items owned by the specified member.
      */
     public List<T> loadClonedItems (int ownerId, int suiteId)
-        throws PersistenceException
     {
         Where where;
         if (suiteId == 0) {
@@ -286,7 +280,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads up to maxCount items from a user's inventory that were the most recently touched.
      */
     public List<T> loadRecentlyTouched (int ownerId, int maxCount)
-        throws PersistenceException
     {
         // Since we don't know how many we'll find of each kind (cloned, orig), we load the max
         // from each.
@@ -324,7 +317,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads the specified items. Omits missing items from results.
      */
     public List<T> loadItems (int[] itemIds)
-        throws PersistenceException
     {
         if (itemIds.length == 0) {
             return new ArrayList<T>();
@@ -342,7 +334,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * number of rows.
      */
     public List<T> loadFlaggedItems (int count)
-        throws PersistenceException
     {
         return findAll(getItemClass(),
                        new Where(new GreaterThan(getItemColumn(ItemRecord.FLAGGED), 0)),
@@ -353,7 +344,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads a single clone record by item id.
      */
     public CloneRecord loadCloneRecord (int itemId)
-        throws PersistenceException
     {
         return load(getCloneClass(), itemId);
     }
@@ -363,7 +353,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * potentially a very large dataset.
      */
     public List<CloneRecord> loadCloneRecords (int itemId)
-        throws PersistenceException
     {
         return findAll(
             getCloneClass(),
@@ -375,7 +364,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * location.
      */
     public List<T> loadItemsByLocation (int location)
-        throws PersistenceException
     {
         List<T> items = loadClonedItems(
             new Where(getCloneColumn(CloneRecord.LOCATION), location));
@@ -389,7 +377,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Mark the specified items as being used in the specified way.
      */
     public void markItemUsage (int[] itemIds, byte usageType, int location)
-        throws PersistenceException
     {
         Class<T> iclass = getItemClass();
         Class<CloneRecord> cclass = getCloneClass();
@@ -419,7 +406,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Find a single catalog entry randomly.
      */
     public CatalogRecord pickRandomCatalogEntry ()
-        throws PersistenceException
     {
         CatalogRecord record = load(getCatalogClass(), new QueryClause[] {
             new Limit(0, 1),
@@ -436,7 +422,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Find a single random catalog entry that is tagged with *any* of the specified tags.
      */
     public CatalogRecord findRandomCatalogEntryByTags (String... tags)
-        throws PersistenceException
     {
         // first find the tag record...
         List<TagNameRecord> tagRecords = getTagRepository().getTags(tags);
@@ -472,7 +457,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Counts all items in the catalog that match the supplied query terms.
      */
     public int countListings (boolean mature, String search, int tag, int creator, Float minRating)
-        throws PersistenceException
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(getCatalogClass()));
@@ -497,7 +481,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<CatalogRecord> loadCatalog (byte sortBy, boolean mature, String search, int tag,
                                   int creator, Float minRating, int offset, int rows)
-        throws PersistenceException
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
@@ -549,14 +532,12 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads up the specified catalog records.
      */
     public List<CatalogRecord> loadCatalog (Collection<Integer> catalogIds)
-        throws PersistenceException
     {
         Where where = new Where(new In(getCatalogColumn(CatalogRecord.CATALOG_ID), catalogIds));
         return resolveCatalogRecords(findAll(getCatalogClass(), where));
     }
 
     protected List<CatalogRecord> resolveCatalogRecords (List<CatalogRecord> records)
-        throws PersistenceException
     {
         if (records.size() == 0) {
             return records;
@@ -589,7 +570,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Load a single catalog listing.
      */
     public CatalogRecord loadListing (int catalogId, boolean loadListedItem)
-        throws PersistenceException
     {
         CatalogRecord record = load(getCatalogClass(), catalogId);
         if (record != null && loadListedItem) {
@@ -603,7 +583,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * it's time to reprice it.
      */
     public void nudgeListing (int catalogId, boolean purchased)
-        throws PersistenceException
     {
         CatalogRecord record = load(getCatalogClass(), catalogId);
         if (record == null) {
@@ -648,10 +627,9 @@ public abstract class ItemRepository<T extends ItemRecord>
      * {@link ItemRecord#lastTouched) fields will be filled in as a result of this call.
      */
     public void insertOriginalItem (T item, boolean catalogListing)
-        throws PersistenceException
     {
         if (item.itemId != 0) {
-            throw new PersistenceException("Can't insert item with existing key: " + item);
+            throw new IllegalArgumentException("Can't insert item with existing key: " + item);
         }
         item.lastTouched = new Timestamp(System.currentTimeMillis());
         insert(item);
@@ -662,7 +640,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * will be filled in as a result of this call.
      */
     public void updateOriginalItem (T item)
-        throws PersistenceException
     {
         updateOriginalItem(item, true);
     }
@@ -672,7 +649,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * will be optionally updated. In general, updateLastTouched should be true.
      */
     public void updateOriginalItem (T item, boolean updateLastTouched)
-        throws PersistenceException
     {
         if (updateLastTouched) {
             item.lastTouched = new Timestamp(System.currentTimeMillis());
@@ -685,7 +661,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
      */
     public void updateCloneMedia (CloneRecord cloneRec)
-        throws PersistenceException
     {
         Timestamp now = new Timestamp(System.currentTimeMillis());
         cloneRec.lastTouched = now;
@@ -702,7 +677,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
      */
     public void updateCloneName (CloneRecord cloneRec)
-        throws PersistenceException
     {
         cloneRec.lastTouched = new Timestamp(System.currentTimeMillis());
 
@@ -718,10 +692,9 @@ public abstract class ItemRepository<T extends ItemRecord>
     public CatalogRecord insertListing (
         ItemRecord listItem, int originalItemId, int pricing, int salesTarget,
         int flowCost, int goldCost, long listingTime)
-        throws PersistenceException
     {
         if (listItem.ownerId != 0) {
-            throw new PersistenceException(
+            throw new IllegalArgumentException(
                 "Can't list item with owner [itemId=" + listItem.itemId + "]");
         }
 
@@ -729,7 +702,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         try {
             record = getCatalogClass().newInstance();
         } catch (Exception e) {
-            throw new PersistenceException(e);
+            throw new RuntimeException(e);
         }
         record.item = listItem;
         record.listedItemId = listItem.itemId;
@@ -758,7 +731,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public void updatePricing (int catalogId, int pricing, int salesTarget,
                                int flowCost, int goldCost, long updateTime)
-        throws PersistenceException
     {
         updatePartial(getCatalogClass(), catalogId,
                       // TODO?: CatalogRecord.LISTED_DATE, new Timestamp(updateTime),
@@ -773,7 +745,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * found and removed, false otherwise.
      */
     public boolean removeListing (CatalogRecord listing)
-        throws PersistenceException
     {
         // clear out the listing mappings for the original item
         if (listing.originalItemId != 0) {
@@ -789,13 +760,12 @@ public abstract class ItemRepository<T extends ItemRecord>
      * {@link CloneRecord#purchaseTime).
      */
     public ItemRecord insertClone (ItemRecord parent, int newOwnerId, int flowPaid, int goldPaid)
-        throws PersistenceException
     {
         CloneRecord record;
         try {
             record = getCloneClass().newInstance();
         } catch (Exception e) {
-            throw new PersistenceException(e);
+            throw new RuntimeException(e);
         }
         record.initialize(parent, newOwnerId, flowPaid, goldPaid);
         insert(record);
@@ -813,7 +783,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * so do not call it unless you know the item is not listed in the catalog or otherwise in use.
      */
     public void deleteItem (final int itemId)
-        throws PersistenceException
     {
         if (itemId < 0) {
             delete(getCloneClass(), itemId);
@@ -845,7 +814,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * rated the item.
      */
     public byte getRating (int itemId, int memberId)
-        throws PersistenceException
     {
         RatingRecord record = load(
             getRatingClass(), RatingRecord.ITEM_ID, itemId, RatingRecord.MEMBER_ID, memberId);
@@ -861,16 +829,13 @@ public abstract class ItemRepository<T extends ItemRecord>
      *         went from below 4 to above 4, and has more than the requisite "solid" ratings.
      */
     public Tuple<Float, Boolean> rateItem (int itemId, int memberId, byte rating)
-        throws PersistenceException
     {
         // first create a new rating record
         RatingRecord record;
         try {
             record = getRatingClass().newInstance();
         } catch (Exception e) {
-            throw new PersistenceException(
-                "Failed to create a new item rating record " +
-                "[itemId=" + itemId + ", memberId=" + memberId + "]", e);
+            throw new RuntimeException(e);
         }
         // populate and insert it
         record.itemId = itemId;
@@ -907,7 +872,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * listings not items, but that's a giant fiasco we don't want to deal with.
      */
     public void reassignRatings (final int oldItemId, int newItemId)
-        throws PersistenceException
     {
         // TODO: this cache eviction might be slow :)
         updatePartial(getRatingClass(), new Where(getRatingColumn(RatingRecord.ITEM_ID), oldItemId),
@@ -923,7 +887,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Safely changes the owner of an item record with a sanity-check against race conditions.
      */
     public void updateOwnerId (ItemRecord item, int newOwnerId)
-        throws PersistenceException
     {
         Where where;
         Key<?> key;
@@ -941,23 +904,21 @@ public abstract class ItemRepository<T extends ItemRecord>
             ItemRecord.OWNER_ID, newOwnerId,
             ItemRecord.LAST_TOUCHED, new Timestamp(System.currentTimeMillis()));
         if (modifiedRows == 0) {
-            throw new PersistenceException("Failed to safely update ownerId [item=" + item +
-                                           ", newOwnerId=" + newOwnerId + "]");
+            throw new DatabaseException("Failed to safely update ownerId [item=" + item +
+                                        ", newOwnerId=" + newOwnerId + "]");
         }
     }
 
     public void incrementFavoriteCount (CatalogRecord record, int increment)
-        throws PersistenceException
     {
         Map<String, SQLExpression> fieldsToValues = Maps.newHashMap();
-        Arithmetic.Add add = new Arithmetic.Add(new ColumnExp(getCatalogClass(), CatalogRecord.FAVORITE_COUNT), increment);
+        Arithmetic.Add add = new Arithmetic.Add(
+            new ColumnExp(getCatalogClass(), CatalogRecord.FAVORITE_COUNT), increment);
         fieldsToValues.put(CatalogRecord.FAVORITE_COUNT, add);
 
-        int modifiedRows = updateLiteral(getCatalogClass(), record.catalogId, fieldsToValues);
-
-        if (modifiedRows == 0) {
-            log.warning("Could not update favorite count on catalog record.", "catalogId",
-                record.catalogId, "increment", increment);
+        if (updateLiteral(getCatalogClass(), record.catalogId, fieldsToValues) == 0) {
+            log.warning("Could not update favorite count on catalog record.",
+                        "catalogId", record.catalogId, "increment", increment);
         }
     }
 
@@ -966,7 +927,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * item (which may be zero to clear out a listing link).
      */
     protected void noteListing (int originalItemId, int catalogId)
-        throws PersistenceException
     {
         updatePartial(getItemClass(), originalItemId, ItemRecord.CATALOG_ID, catalogId);
     }
@@ -975,7 +935,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Performs the necessary join to load cloned items matching the supplied where clause.
      */
     protected List<T> loadClonedItems (Where where, QueryClause... clauses)
-        throws PersistenceException
     {
         // find the appropriate CloneRecords (in the order specified by the passed-in clauses)
         List<QueryClause> clauseList = new ArrayList<QueryClause>(clauses.length + 2);
@@ -1029,7 +988,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      * item's tags; this is accomplished with an 'exists' subquery
      */
     protected SQLOperator buildSearchStringClause (String search)
-        throws PersistenceException
     {
         List<SQLOperator> matches = Lists.newArrayList();
         // search item name and description
@@ -1074,7 +1032,6 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     protected void addSearchClause (List<QueryClause> clauses, boolean mature, String search,
                                     int tag, int creator, Float minRating)
-        throws PersistenceException
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
 

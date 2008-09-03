@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -50,9 +50,7 @@ public class ForumRepository extends DepotRepository
      * have messages that are unread by the specified member. The results are ordered from newest
      * to oldest.
      */
-    public List<ForumThreadRecord> loadUnreadThreads (
-        int memberId, Set<Integer> groupIds, int maximum)
-        throws PersistenceException
+    public List<ForumThreadRecord> loadUnreadThreads (int memberId, Set<Integer> groupIds, int max)
     {
         SQLExpression join = new And(
             new Equals(ForumThreadRecord.THREAD_ID_C, ReadTrackingRecord.THREAD_ID_C),
@@ -67,7 +65,7 @@ public class ForumRepository extends DepotRepository
         return findAll(ForumThreadRecord.class,
                        new Join(ReadTrackingRecord.class, join).setType(Join.Type.LEFT_OUTER),
                        new Where(where),
-                       new Limit(0, maximum),
+                       new Limit(0, max),
                        OrderBy.descending(ForumThreadRecord.MOST_RECENT_POST_ID_C));
     }
 
@@ -75,7 +73,6 @@ public class ForumRepository extends DepotRepository
      * Loads the latest threads for the specified group. Ordered by threadId (ie: creation time).
      */
     public List<ForumThreadRecord> loadRecentThreads (int groupId, int count)
-        throws PersistenceException
     {
         return findAll(ForumThreadRecord.class,
                        new Where(ForumThreadRecord.GROUP_ID_C, groupId),
@@ -87,7 +84,6 @@ public class ForumRepository extends DepotRepository
      * Loads the total number of threads in the specified group.
      */
     public int loadThreadCount (int groupId)
-        throws PersistenceException
     {
         return load(CountRecord.class,
                     new FromOverride(ForumThreadRecord.class),
@@ -98,7 +94,6 @@ public class ForumRepository extends DepotRepository
      * Loads the total number of threads in the specified group.
      */
     public int loadMessageCount (int groupId)
-        throws PersistenceException
     {
         return load(CountRecord.class,
             new FromOverride(ForumThreadRecord.class, ForumMessageRecord.class),
@@ -113,7 +108,6 @@ public class ForumRepository extends DepotRepository
      * and then by most recently updated (newer first).
      */
     public List<ForumThreadRecord> loadThreads (int groupId, int offset, int count)
-        throws PersistenceException
     {
         return findAll(ForumThreadRecord.class,
                        new Where(ForumThreadRecord.GROUP_ID_C, groupId),
@@ -129,7 +123,6 @@ public class ForumRepository extends DepotRepository
      * of their messages matches the supplied search.
      */
     public List<ForumThreadRecord> findThreads (int groupId, String search, int limit)
-        throws PersistenceException
     {
         And where = new And(new Equals(ForumThreadRecord.GROUP_ID_C, groupId),
                             new Or(new FullTextMatch(ForumThreadRecord.class,
@@ -146,7 +139,6 @@ public class ForumRepository extends DepotRepository
      * date.
      */
     public List<ForumMessageRecord> loadMessages (int threadId, int offset, int count)
-        throws PersistenceException
     {
         return findAll(ForumMessageRecord.class,
                        new Where(ForumMessageRecord.THREAD_ID_C, threadId),
@@ -158,7 +150,6 @@ public class ForumRepository extends DepotRepository
      * Searches the messages in a particular thread for a search string.
      */
     public List<ForumMessageRecord> findMessages (int threadId, String search, int limit)
-        throws PersistenceException
     {
         And where = new And(new Equals(ForumMessageRecord.THREAD_ID_C, threadId),
                             new FullTextMatch(ForumMessageRecord.class,
@@ -170,7 +161,6 @@ public class ForumRepository extends DepotRepository
      * Loads the specified forum thread record. Returns null if no record exists for that id.
      */
     public ForumThreadRecord loadThread (int threadId)
-        throws PersistenceException
     {
         return load(ForumThreadRecord.class, threadId);
     }
@@ -183,7 +173,6 @@ public class ForumRepository extends DepotRepository
      */
     public ForumThreadRecord createThread (int groupId, int creatorId, int flags,
                                            String subject, String message)
-        throws PersistenceException
     {
         // create a record for the thread
         ForumThreadRecord ftr = new ForumThreadRecord();
@@ -199,13 +188,13 @@ public class ForumRepository extends DepotRepository
             postMessage(ftr, creatorId, 0, message);
             return ftr;
 
-        } catch (PersistenceException pe) {
+        } catch (DatabaseException e) {
             try {
                 delete(ftr);
-            } catch (PersistenceException pe2) {
-                log.warning("Failed to roll back thread insert " + ftr + ": " + pe2 + ".");
+            } catch (DatabaseException e2) {
+                log.warning("Failed to roll back thread insert " + ftr + ": " + e2 + ".");
             }
-            throw pe;
+            throw e;
         }
     }
 
@@ -213,7 +202,6 @@ public class ForumRepository extends DepotRepository
      * Updates the flags of the specified thread.
      */
     public void updateThreadFlags (int threadId, int flags)
-        throws PersistenceException
     {
         updatePartial(ForumThreadRecord.class, threadId,
                       ForumThreadRecord.FLAGS, flags,
@@ -223,8 +211,8 @@ public class ForumRepository extends DepotRepository
     /**
      * Posts a message to the specified thread.
      */
-    public ForumMessageRecord postMessage (ForumThreadRecord thread, int posterId, int inReplyTo, String message)
-        throws PersistenceException
+    public ForumMessageRecord postMessage (
+        ForumThreadRecord thread, int posterId, int inReplyTo, String message)
     {
         // insert a record in the database for the message
         ForumMessageRecord fmr = new ForumMessageRecord();
@@ -258,7 +246,6 @@ public class ForumRepository extends DepotRepository
      * Loads the specified message record. Returns null if no record exists for that id.
      */
     public ForumMessageRecord loadMessage (int messageId)
-        throws PersistenceException
     {
         return load(ForumMessageRecord.class, messageId);
     }
@@ -267,7 +254,6 @@ public class ForumRepository extends DepotRepository
      * Loads all the message records that are associated with this issueId.
      */
     public List<ForumMessageRecord> loadIssueMessages (int issueId)
-        throws PersistenceException
     {
         return findAll(ForumMessageRecord.class,
                        new Where(ForumMessageRecord.ISSUE_ID_C, issueId));
@@ -277,7 +263,6 @@ public class ForumRepository extends DepotRepository
      * Updates the text of the supplied message.
      */
     public void updateMessage (int messageId, String message)
-        throws PersistenceException
     {
         updatePartial(ForumMessageRecord.class, messageId,
                       ForumMessageRecord.LAST_EDITED, new Timestamp(System.currentTimeMillis()),
@@ -288,7 +273,6 @@ public class ForumRepository extends DepotRepository
      * Updates the issueid of the supplied message.
      */
     public void updateMessageIssue (int messageId, int issueId)
-        throws PersistenceException
     {
         updatePartial(ForumMessageRecord.class, messageId,
                       ForumMessageRecord.ISSUE_ID, issueId);
@@ -298,7 +282,6 @@ public class ForumRepository extends DepotRepository
      * Deletes the specified message.
      */
     public void deleteMessage (int messageId)
-        throws PersistenceException
     {
         ForumMessageRecord fmr = loadMessage(messageId);
         if (fmr == null || delete(ForumMessageRecord.class, messageId) == 0) {
@@ -340,7 +323,6 @@ public class ForumRepository extends DepotRepository
      * Loads up the last read post information for the specified member and threads.
      */
     public List<ReadTrackingRecord> loadLastReadPostInfo (int memberId, Set<Integer> threadIds)
-        throws PersistenceException
     {
         return findAll(ReadTrackingRecord.class,
                        new Where(new And(new Equals(ReadTrackingRecord.MEMBER_ID_C, memberId),
@@ -352,7 +334,6 @@ public class ForumRepository extends DepotRepository
      */
     public void noteLastReadPostId (int memberId, int threadId,
                                     int lastReadPostId, int lastReadPostIndex)
-        throws PersistenceException
     {
         ReadTrackingRecord record = new ReadTrackingRecord();
         record.memberId = memberId;

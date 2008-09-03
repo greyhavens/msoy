@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 
@@ -83,8 +82,8 @@ public class RSSServlet extends HttpServlet
             rsp.setHeader("Content-Type", "application/xhtml+xml");
             rsp.getOutputStream().print(rss);
 
-        } catch (PersistenceException pe) {
-            log.warning("Failed to generate rss feed [groupId=" + groupId + "].", pe);
+        } catch (Exception e) {
+            log.warning("Failed to generate rss feed [groupId=" + groupId + "].", e);
             rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             return;
         }
@@ -94,7 +93,6 @@ public class RSSServlet extends HttpServlet
      * Loads the specified group, returning null if the group doesn't exist.
      */
     protected Group getGroup (int groupId)
-        throws PersistenceException
     {
         GroupRecord grec = _groupRepo.loadGroup(groupId);
         return grec == null ? null : grec.toGroupObject();
@@ -104,7 +102,6 @@ public class RSSServlet extends HttpServlet
      * Checks for a cached rss xml file and returns it if found and up-to-date.
      */
     protected String loadCachedRSS (int groupId, int numThreads)
-        throws PersistenceException
     {
         RSSCache cache = _rssCache.get(groupId);
         if (cache == null || cache.numThreads != numThreads) {

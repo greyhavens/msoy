@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.util.MessageBundle;
@@ -40,7 +39,6 @@ public class MsoyGameAuthenticator extends Authenticator
 {
     // from abstract Authenticator
     protected void processAuthentication (AuthingConnection conn, AuthResponse rsp)
-        throws PersistenceException
     {
         AuthRequest req = conn.getAuthRequest();
         AuthResponseData rdata = rsp.getData();

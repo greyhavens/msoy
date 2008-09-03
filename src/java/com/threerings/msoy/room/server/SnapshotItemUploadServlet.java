@@ -7,7 +7,6 @@ import java.io.IOException;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.item.data.all.Photo;
@@ -22,8 +21,8 @@ import com.threerings.msoy.web.server.UploadUtil.MediaInfo;
 public class SnapshotItemUploadServlet extends AbstractSnapshotUploadServlet
 {
     @Override
-    protected void sendResponse (
-        UploadContext ctx, Client client, String mediaId, MediaInfo info, MediaInfo tinfo)
+    protected void sendResponse (UploadContext ctx, Client client, String mediaId, MediaInfo info,
+                                 MediaInfo tinfo)
         throws IOException
     {
         Photo image = new Photo();
@@ -37,8 +36,6 @@ public class SnapshotItemUploadServlet extends AbstractSnapshotUploadServlet
             _itemLogic.createItem(ctx.memrec, image);
         } catch (ServiceException se) {
             System.err.println("Ruh-roh: " + se);
-        } catch (PersistenceException ex) {
-            System.err.println(ex);
         }
 
         // TODO: some other response?

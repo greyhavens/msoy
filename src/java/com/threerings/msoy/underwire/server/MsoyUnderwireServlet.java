@@ -5,7 +5,6 @@ package com.threerings.msoy.underwire.server;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.PersistenceContext;
 
 import com.samskivert.servlet.IndiscriminateSiteIdentifier;
@@ -63,7 +62,7 @@ public class MsoyUnderwireServlet extends UnderwireServlet
 
     @Override // from UnderwireServlet
     protected Caller userLogin (String username, String password, int expireDays)
-        throws PersistenceException, AuthenticationFailedException
+        throws AuthenticationFailedException
     {
         try {
             MemberRecord mrec = _author.authenticateSession(username, password);
@@ -108,8 +107,8 @@ public class MsoyUnderwireServlet extends UnderwireServlet
         MemberName name;
         try {
             name = _memberRepo.loadMemberName(username);
-        } catch (PersistenceException pe) {
-            log.warning("Error looking up member", pe);
+        } catch (Exception e) {
+            log.warning("Error looking up member", e);
             name = null; // handled with the next check
         }
         if (name == null) {
@@ -154,8 +153,8 @@ public class MsoyUnderwireServlet extends UnderwireServlet
             caller.isSupport = mrec.isSupport();
             return caller;
 
-        } catch (PersistenceException pe) {
-            log.warning("Failed to load caller [tok=" + authtok + "].", pe);
+        } catch (Exception e) {
+            log.warning("Failed to load caller [tok=" + authtok + "].", e);
             throw new UnderwireException("m.internal_error");
         }
     }

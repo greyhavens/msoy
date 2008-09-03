@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.depot.CacheInvalidator;
@@ -63,7 +62,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * Returns the total number of listed games in the repository.
      */
     public int getGameCount ()
-        throws PersistenceException
     {
         Where where = new Where(new Conditionals.NotEquals(GameDetailRecord.LISTED_ITEM_ID_C, 0));
         return load(CountRecord.class, new FromOverride(GameDetailRecord.class), where).count;
@@ -76,7 +74,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * available.
      */
     public GameRecord loadGameRecord (int gameId)
-        throws PersistenceException
     {
         return loadGameRecord(gameId, loadGameDetail(gameId));
     }
@@ -85,7 +82,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * Returns the {@link GameDetailRecord} for the specified game or null if the id is unknown.
      */
     public GameDetailRecord loadGameDetail (int gameId)
-        throws PersistenceException
     {
         return load(GameDetailRecord.class, Math.abs(gameId));
     }
@@ -94,7 +90,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * Loads the appropriate {@link GameRecord} for the specified game detail.
      */
     public GameRecord loadGameRecord (int gameId, GameDetailRecord gdr)
-        throws PersistenceException
     {
         if (gdr == null) {
             return null;
@@ -109,7 +104,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * @param limit a limit to the number of records loaded or <= 0 to load all records.
      */
     public List<GameRecord> loadGenre (byte genre, int limit)
-        throws PersistenceException
     {
         return loadGenre(genre, limit, null);
     }
@@ -122,7 +116,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * @param searchQuery string to search for in the title, tags and description
      */
     public List<GameRecord> loadGenre (byte genre, int limit, String searchQuery)
-        throws PersistenceException
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Join(getItemClass(), ItemRecord.ITEM_ID,
@@ -159,7 +152,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * decrease in flow to next recalc.
      */
     public void noteGamePlayed (int gameId, int playerGames, int flowAwarded)
-        throws PersistenceException
     {
         SQLExpression add = new Arithmetic.Add(GameDetailRecord.GAMES_PLAYED_C, playerGames);
         SQLExpression sub = new Arithmetic.Sub(GameDetailRecord.FLOW_TO_NEXT_RECALC_C, flowAwarded);
@@ -173,7 +165,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * manage their own payout factor.
      */
     public void updatePayoutFactor (int gameId, int newFactor, int flowToNextRecalc)
-        throws PersistenceException
     {
         updatePartial(GameDetailRecord.class, Math.abs(gameId),
                       GameDetailRecord.PAYOUT_FACTOR, newFactor,
@@ -186,7 +177,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      */
     public void noteGamePlayed (int gameId, boolean multiPlayer, int playerGames,
                                 int playerMins, int flowAwarded)
-        throws PersistenceException
     {
         // record a gameplay record for this play session
         GamePlayRecord gprec = new GamePlayRecord();
@@ -209,7 +199,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * @return a triplet of new values for (payoutFactor, avgSingleDuration, avgMultiDuration).
      */
     public int[] computeAndUpdatePayoutFactor (int gameId, int flowToNextRecalc, int hourlyRate)
-        throws PersistenceException
     {
         // load up all of our extant gameplay records and sum up some bits
         int singlePlayerMins = 0, singlePlayerGames = 0;
@@ -268,7 +257,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * Returns the instructions for the specified game or null if it has none.
      */
     public String loadInstructions (int gameId)
-        throws PersistenceException
     {
         InstructionsRecord irec = load(InstructionsRecord.class, gameId);
         return (irec == null) ? null : irec.instructions;
@@ -278,7 +266,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * Updates the instructions for the specified game.
      */
     public void updateInstructions (int gameId, String instructions)
-        throws PersistenceException
     {
         if (StringUtil.isBlank(instructions)) {
             delete(InstructionsRecord.class, gameId);
@@ -291,13 +278,11 @@ public class GameRepository extends ItemRepository<GameRecord>
     }
 
     public GameTraceLogRecord loadTraceLog (int logId)
-        throws PersistenceException
     {
         return load(GameTraceLogRecord.class, logId);
     }
 
     public List<GameTraceLogEnumerationRecord> enumerateTraceLogs (int gameId)
-        throws PersistenceException
     {
         return findAll(
             GameTraceLogEnumerationRecord.class,
@@ -306,14 +291,12 @@ public class GameRepository extends ItemRepository<GameRecord>
     }
 
     public void storeTraceLog (int gameId, String traceLog)
-        throws PersistenceException
     {
         insert(new GameTraceLogRecord(gameId, traceLog));
     }
 
     @Override // from ItemRepository
     public void insertOriginalItem (GameRecord item, boolean catalogListing)
-        throws PersistenceException
     {
         super.insertOriginalItem(item, catalogListing);
 
@@ -342,7 +325,6 @@ public class GameRepository extends ItemRepository<GameRecord>
 
     @Override // from ItemRepository
     public void deleteItem (int itemId)
-        throws PersistenceException
     {
         // if we're deleting an original item; we need to potentially delete or update its
         // associated game detail record
@@ -376,7 +358,6 @@ public class GameRepository extends ItemRepository<GameRecord>
      * Deletes all ephemeral data associated with the specified game.
      */
     protected void gameDeleted (int gameId)
-        throws PersistenceException
     {
         delete(GameDetailRecord.class, gameId);
         delete(InstructionsRecord.class, gameId);

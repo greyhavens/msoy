@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Invoker;
 
@@ -75,7 +74,8 @@ public class BadgeManager
                 for (int level = currentLevel + 1; level <= progress.highestLevel; level++) {
                     // award an EarnedBadge for each level that was earned in this update.
                     newBadges.add(new EarnedBadge(badgeType.getCode(), level,
-                        badgeType.getRequiredUnitsString(level), badgeType.getCoinValue(level), whenEarned));
+                                                  badgeType.getRequiredUnitsString(level),
+                                                  badgeType.getCoinValue(level), whenEarned));
                 }
 
                 if (progress.highestLevel >= badgeType.getNumLevels()-1) {
@@ -152,7 +152,7 @@ public class BadgeManager
         // stick the badges in the database
         final int totalCoinValue = coinValue;
         _invoker.postUnit(new WriteOnlyUnit("awardBadges") {
-            public void invokePersist () throws PersistenceException {
+            public void invokePersist () throws Exception {
                 for (EarnedBadge badge : badges) {
                     // BadgeLogic.awardBadge handles putting the badge in the repository and
                     // publishing a member feed about the event. We don't need awardBadge()
@@ -196,7 +196,7 @@ public class BadgeManager
 
         // and then in the database
         _invoker.postUnit(new WriteOnlyUnit("updateInProgressBadges") {
-            public void invokePersist () throws PersistenceException {
+            public void invokePersist () throws Exception {
                 for (InProgressBadge badge : badges) {
                     // BadgeLogic.updateInProgressBadge handles putting the badge in the repository
                     // and publishing a member feed about the event. We don't need
@@ -229,7 +229,7 @@ public class BadgeManager
         // because they will be removed automatically by MemberObject.badgeAwarded when the
         // highest level badge of a given type has been awarded.
         _invoker.postUnit(new WriteOnlyUnit("deleteDeadInProgressBadges") {
-            public void invokePersist () throws PersistenceException {
+            public void invokePersist () throws Exception {
                 for (InProgressBadge badge : badges) {
                     _badgeLogic.deleteInProgressBadge(user.getMemberId(), badge);
                 }

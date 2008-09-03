@@ -9,7 +9,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -38,13 +37,11 @@ public class AVRGameRepository extends DepotRepository
     }
 
     public List<QuestStateRecord> getQuests (int memberId)
-        throws PersistenceException
     {
         return findAll(QuestStateRecord.class, new Where(QuestStateRecord.MEMBER_ID_C, memberId));
     }
 
     public List<QuestStateRecord> getQuests (int gameId, int memberId)
-        throws PersistenceException
     {
         return findAll(QuestStateRecord.class, new Where(new And(
                 new Equals(QuestStateRecord.GAME_ID_C, gameId),
@@ -55,19 +52,16 @@ public class AVRGameRepository extends DepotRepository
 
     public void setQuestState (
         int gameId, int memberId, String questId, int step, String status, int sceneId)
-        throws PersistenceException
     {
         store(new QuestStateRecord(memberId, gameId, questId, step, status, sceneId));
     }
 
     public void deleteQuestState (int memberId, int gameId, String questId)
-        throws PersistenceException
     {
         delete(QuestStateRecord.class, QuestStateRecord.getKey(memberId, gameId, questId));
     }
 
     public List<PlayerGameStateRecord> getPlayerGameState (int gameId, int memberId)
-        throws PersistenceException
     {
         return findAll(PlayerGameStateRecord.class, new Where(
             PlayerGameStateRecord.GAME_ID_C, gameId,
@@ -75,7 +69,6 @@ public class AVRGameRepository extends DepotRepository
     }
 
     public List<GameStateRecord> getGameState (int gameId)
-        throws PersistenceException
     {
         return findAll(GameStateRecord.class, new Where(GameStateRecord.GAME_ID_C, gameId));
     }
@@ -84,7 +77,6 @@ public class AVRGameRepository extends DepotRepository
      * Stores a particular memory record in the repository.
      */
     public void storeState (GameStateRecord record)
-        throws PersistenceException
     {
         if (record.datumValue == null) {
             delete(record);
@@ -98,7 +90,6 @@ public class AVRGameRepository extends DepotRepository
      * Stores a particular memory record in the repository.
      */
     public void storePlayerState (PlayerGameStateRecord record)
-        throws PersistenceException
     {
         if (record.datumValue == null) {
             delete(record);
@@ -109,20 +100,17 @@ public class AVRGameRepository extends DepotRepository
     }
 
     public void deleteProperty (int gameId, String key)
-        throws PersistenceException
     {
         delete(GameStateRecord.class, GameStateRecord.getKey(gameId, key));
     }
 
     public void deletePlayerProperty (int gameId, int memberId, String key)
-        throws PersistenceException
     {
         delete(PlayerGameStateRecord.class, PlayerGameStateRecord.getKey(gameId, memberId, key));
     }
 
     public void noteQuestCompleted (int gameId, int memberId, String questId,
                                     int playerMins, float payoutFactor)
-        throws PersistenceException
     {
         gameId = Math.abs(gameId); // how to handle playing the original?
         setQuestState(gameId, memberId, questId, QuestState.STEP_COMPLETED, null, 0);
@@ -130,13 +118,11 @@ public class AVRGameRepository extends DepotRepository
     }
 
     public void noteUnawardedTime (int gameId, int playerMins)
-        throws PersistenceException
     {
         insert(new QuestLogRecord(gameId, 0, "", playerMins, 0));
     }
 
     public QuestLogSummaryRecord summarizeQuestLogRecords (int gameId)
-        throws PersistenceException
     {
         gameId = Math.abs(gameId); // how to handle playing the original?
         return load(
@@ -155,7 +141,6 @@ public class AVRGameRepository extends DepotRepository
     }
 
     public void deleteQuestLogRecords (int gameId)
-        throws PersistenceException
     {
         gameId = Math.abs(gameId); // how to handle playing the original?
         deleteAll(QuestLogRecord.class, new Where(QuestLogRecord.GAME_ID_C, gameId), null);

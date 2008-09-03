@@ -6,7 +6,6 @@ package com.threerings.msoy.item.server.persist;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.annotation.Entity;
 
@@ -40,7 +39,6 @@ public class AvatarRepository extends ItemRepository<AvatarRecord>
      * Update the scale of the specified avatar.
      */
     public void updateScale (int avatarId, float newScale)
-        throws PersistenceException
     {
         int result = updatePartial((avatarId > 0) ? getItemClass() : getCloneClass(),
             avatarId, (avatarId > 0) ? AvatarRecord.SCALE : AvatarCloneRecord.SCALE, newScale);

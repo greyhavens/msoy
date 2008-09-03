@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
@@ -65,7 +64,7 @@ public class MsoySceneRegistry extends SpotSceneRegistry
         final int memId = user.getMemberId();
         String uname = "publishRoomUpdate[id=" + memId + ", scid=" + scene.getId() + "]";
         _invoker.postUnit(new RepositoryUnit(uname) {
-            public void invokePersist () throws PersistenceException {
+            public void invokePersist () throws Exception {
                 _feedRepo.publishMemberMessage(
                     memId, FeedMessageType.FRIEND_UPDATED_ROOM,
                     String.valueOf(scene.getId()) + "\t" + scene.getName());

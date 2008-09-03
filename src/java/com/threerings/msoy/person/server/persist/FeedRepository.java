@@ -12,7 +12,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntSet;
 
 import com.samskivert.jdbc.depot.CacheInvalidator;
@@ -55,9 +54,8 @@ public class FeedRepository extends DepotRepository
      * @param since a timestamp before which not to load messages or null if all available messages
      * should be loaded.
      */
-    public List<FeedMessageRecord> loadPersonalFeed (
-        int memberId, IntSet friendIds, IntSet groupIds, Timestamp since)
-        throws PersistenceException
+    public List<FeedMessageRecord> loadPersonalFeed (int memberId, IntSet friendIds,
+                                                     IntSet groupIds, Timestamp since)
     {
         List<FeedMessageRecord> messages = Lists.newArrayList();
         loadFeedMessages(messages, GlobalFeedMessageRecord.class, null, since);
@@ -83,7 +81,6 @@ public class FeedRepository extends DepotRepository
      * should be loaded.
      */
     public List <FeedMessageRecord> loadMemberFeed (int memberId, Timestamp since)
-        throws PersistenceException
     {
         List<FeedMessageRecord> messages = Lists.newArrayList();
         SQLOperator actor = new Conditionals.Equals(FriendFeedMessageRecord.ACTOR_ID_C, memberId);
@@ -98,7 +95,6 @@ public class FeedRepository extends DepotRepository
      * never throttled.
      */
     public void publishGlobalMessage (FeedMessageType type, String data)
-        throws PersistenceException
     {
         GlobalFeedMessageRecord message = new GlobalFeedMessageRecord();
         message.type = type.getCode();
@@ -112,7 +108,6 @@ public class FeedRepository extends DepotRepository
      * currently not throttled.
      */
     public void publishSelfMessage (int targetId, int actorId, FeedMessageType type, String data)
-        throws PersistenceException
     {
         SelfFeedMessageRecord message = new SelfFeedMessageRecord();
         message.targetId = targetId;
@@ -130,7 +125,6 @@ public class FeedRepository extends DepotRepository
      * messages of the specified type to exceed their throttle period.
      */
     public boolean publishMemberMessage (int actorId, FeedMessageType type, String data)
-        throws PersistenceException
     {
         if (type.getThrottleCount() > 0) {
             Timestamp throttle =
@@ -162,7 +156,6 @@ public class FeedRepository extends DepotRepository
      * Publishes a feed message to the specified group's members.
      */
     public boolean publishGroupMessage (int groupId, FeedMessageType type, String data)
-        throws PersistenceException
     {
         if (type.getThrottleCount() > 0) {
             Timestamp throttle =
@@ -196,7 +189,6 @@ public class FeedRepository extends DepotRepository
      * Prunes feed messages of all types that have expired.
      */
     public void pruneFeeds ()
-        throws PersistenceException
     {
         final Timestamp cutoff = new Timestamp(System.currentTimeMillis() - FEED_EXPIRATION_PERIOD);
         deleteAll(GlobalFeedMessageRecord.class,
@@ -243,7 +235,6 @@ public class FeedRepository extends DepotRepository
     protected void loadFeedMessages (List<FeedMessageRecord> messages,
                                      Class<? extends FeedMessageRecord> pClass,
                                      SQLOperator main, Timestamp since)
-        throws PersistenceException
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
         if (main != null) {

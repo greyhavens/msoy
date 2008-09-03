@@ -12,7 +12,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -45,7 +44,6 @@ public class ForumLogic
     public List<ForumThread> resolveThreads (
         MemberRecord mrec, List<ForumThreadRecord> thrrecs, Map<Integer, GroupName> groups,
         boolean needLastReadPost, boolean needFirstPost)
-        throws PersistenceException
     {
         // enumerate the last-posters and create member names for them
         IntMap<MemberName> names = _memberRepo.loadMemberNames(

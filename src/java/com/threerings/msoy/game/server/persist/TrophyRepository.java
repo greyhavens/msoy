@@ -11,7 +11,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -37,7 +36,6 @@ public class TrophyRepository extends DepotRepository
      * Loads all of the specified member's trophies.
      */
     public List<TrophyRecord> loadTrophies (int memberId)
-        throws PersistenceException
     {
         return findAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId));
     }
@@ -46,7 +44,6 @@ public class TrophyRepository extends DepotRepository
      * Loads the specified number of recently earned trophies for the specified member.
      */
     public List<TrophyRecord> loadRecentTrophies (int memberId, int count)
-        throws PersistenceException
     {
         return findAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId),
                        OrderBy.descending(TrophyRecord.WHEN_EARNED_C),
@@ -57,7 +54,6 @@ public class TrophyRepository extends DepotRepository
      * Loads all of the specified member's trophies from the specified game.
      */
     public List<TrophyRecord> loadTrophies (int gameId, int memberId)
-        throws PersistenceException
     {
         return findAll(TrophyRecord.class, new Where(TrophyRecord.GAME_ID_C, gameId,
                                                      TrophyRecord.MEMBER_ID_C, memberId));
@@ -68,7 +64,6 @@ public class TrophyRepository extends DepotRepository
      * game.
      */
     public List<String> loadTrophyOwnership (int gameId, int memberId)
-        throws PersistenceException
     {
         ArrayList<String> idents = new ArrayList<String>();
         Where where = new Where(TrophyRecord.GAME_ID_C, gameId, TrophyRecord.MEMBER_ID_C, memberId);
@@ -82,7 +77,6 @@ public class TrophyRepository extends DepotRepository
      * Stores the supplied trophy record in the database.
      */
     public void storeTrophy (TrophyRecord trophy)
-        throws PersistenceException
     {
         insert(trophy);
     }
@@ -91,7 +85,6 @@ public class TrophyRepository extends DepotRepository
      * Deletes all trophies held by the supplied member.
      */
     public void deleteTrophies (final int memberId)
-        throws PersistenceException
     {
         deleteAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId),
                   new CacheInvalidator.TraverseWithFilter<TrophyRecord>(TrophyRecord.class) {

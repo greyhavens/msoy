@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Tuple;
@@ -27,6 +26,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
+import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.Key;
@@ -143,7 +143,6 @@ public class GroupRepository extends DepotRepository
      * @param limit a limit to the number of groups to load or Integer.MAX_VALUE for all of them.
      */
     public List<GroupRecord> getGroupsList (int offset, int limit)
-        throws PersistenceException
     {
         return findAll(
             GroupRecord.class,
@@ -159,7 +158,6 @@ public class GroupRepository extends DepotRepository
      * charter and name fields.  Results are returned in order of relevance.
      */
     public List<GroupRecord> searchGroups (String search)
-        throws PersistenceException
     {
         // for now, always operate with boolean searching enabled, without query expansion
         return findAll(
@@ -172,7 +170,6 @@ public class GroupRepository extends DepotRepository
      * Searches all groups for the specified tag.  Tagging is not supported on exclusive groups
      */
     public List<GroupRecord> searchForTag (String tag)
-        throws PersistenceException
     {
         List<Integer> groupIds = Lists.newArrayList();
         int tagId = _tagRepo.getOrCreateTag(tag).tagId;
@@ -188,7 +185,6 @@ public class GroupRepository extends DepotRepository
      * Fetches a single group, by id. Returns null if there's no such group.
      */
     public GroupRecord loadGroup (int groupId)
-        throws PersistenceException
     {
         return load(GroupRecord.class, groupId);
     }
@@ -197,7 +193,6 @@ public class GroupRepository extends DepotRepository
      * Returns the single group with the given unique name, or null if none is found.
      */
     public GroupRecord loadGroupByName (String name)
-        throws PersistenceException
     {
         return load(GroupRecord.class, new Where(new Equals(GroupRecord.NAME_C, name)));
     }
@@ -206,7 +201,6 @@ public class GroupRepository extends DepotRepository
      * Fetches multiple groups by id.
      */
     public List<GroupRecord> loadGroups (Set<Integer> groupIds)
-        throws PersistenceException
     {
         if (groupIds.size() == 0) {
             return Collections.emptyList();
@@ -219,7 +213,6 @@ public class GroupRepository extends DepotRepository
      * Looks up a group's name by id. Returns null if no group exists with the specified id.
      */
     public GroupName loadGroupName (int groupId)
-        throws PersistenceException
     {
         List<GroupName> result = loadGroupNames(Collections.singleton(groupId));
         return result.isEmpty() ? null : result.get(0);
@@ -229,7 +222,6 @@ public class GroupRepository extends DepotRepository
      * Looks up groups' names by id.
      */
     public List<GroupName> loadGroupNames (Set<Integer> groupIds)
-        throws PersistenceException
     {
         List<GroupName> names = Lists.newArrayList();
         if (groupIds.size() > 0) {
@@ -248,10 +240,9 @@ public class GroupRepository extends DepotRepository
      * is owned by the group.
      */
     public int createGroup (GroupRecord record)
-        throws PersistenceException
     {
         if (record.groupId != 0) {
-            throw new PersistenceException(
+            throw new IllegalArgumentException(
                 "Group record must have a null id for creation " + record);
         }
         record.creationDate = new Date(System.currentTimeMillis());
@@ -271,11 +262,10 @@ public class GroupRepository extends DepotRepository
      *                 GroupRecord.POLICY, Group.EXCLUSIVE);
      */
     public void updateGroup (int groupId, Object... fieldValues)
-        throws PersistenceException
     {
         int rows = updatePartial(GroupRecord.class, groupId, fieldValues);
         if (rows == 0) {
-            throw new PersistenceException("Couldn't find group for update [id=" + groupId + "]");
+            throw new DatabaseException("Couldn't find group for update [id=" + groupId + "]");
         }
     }
 
@@ -283,11 +273,10 @@ public class GroupRepository extends DepotRepository
      * Updates the specified group record with supplied field/value mapping.
      */
     public void updateGroup (int groupId, Map<String, Object> updates)
-        throws PersistenceException
     {
         int rows = updatePartial(GroupRecord.class, groupId, updates);
         if (rows == 0) {
-            throw new PersistenceException("Couldn't find group for update [id=" + groupId + "]");
+            throw new DatabaseException("Couldn't find group for update [id=" + groupId + "]");
         }
     }
 
@@ -297,7 +286,6 @@ public class GroupRepository extends DepotRepository
      * will take care of deleting the group's scenes.
      */
     public void deleteGroup (int groupId)
-        throws PersistenceException
     {
         delete(GroupRecord.class, groupId);
     }
@@ -306,7 +294,6 @@ public class GroupRepository extends DepotRepository
      * Makes a given person a member of a given group.
      */
     public void joinGroup (int groupId, int memberId, byte rank)
-        throws PersistenceException
     {
         GroupMembershipRecord record = new GroupMembershipRecord();
         record.groupId = groupId;
@@ -323,7 +310,6 @@ public class GroupRepository extends DepotRepository
      * Sets the rank of a member of a group.
      */
     public void setRank (int groupId, int memberId, byte newRank)
-        throws PersistenceException
     {
         Key<GroupMembershipRecord> key = GroupMembershipRecord.getKey(memberId, groupId);
         int rows = updatePartial(
@@ -331,7 +317,7 @@ public class GroupRepository extends DepotRepository
             GroupMembershipRecord.RANK, newRank,
             GroupMembershipRecord.RANK_ASSIGNED, new Timestamp(System.currentTimeMillis()));
         if (rows == 0) {
-            throw new PersistenceException(
+            throw new DatabaseException(
                 "Couldn't find group membership to modify [groupId=" + groupId +
                 "memberId=" + memberId + "]");
         } else {
@@ -343,7 +329,6 @@ public class GroupRepository extends DepotRepository
      * Fetches the membership details for a given group and member, or null.
      */
     public GroupMembershipRecord getMembership (int groupId, int memberId)
-        throws PersistenceException
     {
         return load(GroupMembershipRecord.class,
                     GroupMembershipRecord.GROUP_ID, groupId,
@@ -358,7 +343,6 @@ public class GroupRepository extends DepotRepository
      */
     public List<GroupMembership> resolveGroupMemberships (
         int memberId, Predicate<Tuple<GroupRecord,GroupMembershipRecord>> filter)
-        throws PersistenceException
     {
         List<GroupMembershipRecord> records = getMemberships(memberId);
         IntMap<GroupMembershipRecord> rmap = IntMaps.newHashIntMap();
@@ -389,7 +373,6 @@ public class GroupRepository extends DepotRepository
      * Returns a list of cards for the groups of which the specified person is a member.
      */
     public List<GroupCard> getMemberGroups (int memberId, boolean includeExclusive)
-        throws PersistenceException
     {
         List<GroupMembershipRecord> records = getMemberships(memberId);
         IntMap<GroupMembershipRecord> rmap = IntMaps.newHashIntMap();
@@ -412,7 +395,6 @@ public class GroupRepository extends DepotRepository
      * membership to cancel.
      */
     public boolean leaveGroup (int groupId, int memberId)
-        throws PersistenceException
     {
         Key<GroupMembershipRecord> key = GroupMembershipRecord.getKey(memberId, groupId);
         int rows = deleteAll(GroupMembershipRecord.class, key, key);
@@ -425,7 +407,6 @@ public class GroupRepository extends DepotRepository
      * Fetches the membership roster of a given group.
      */
     public int countMembers (int groupId)
-        throws PersistenceException
     {
         return load(CountRecord.class,
                     new FromOverride(GroupMembershipRecord.class),
@@ -436,7 +417,6 @@ public class GroupRepository extends DepotRepository
      * Fetches the membership roster of a given group.
      */
     public List<GroupMembershipRecord> getMembers (int groupId)
-        throws PersistenceException
     {
         return findAll(GroupMembershipRecord.class,
                        new Where(GroupMembershipRecord.GROUP_ID_C, groupId));
@@ -446,7 +426,6 @@ public class GroupRepository extends DepotRepository
      * Fetches the membership roster of a given group for a given member rank.
      */
     public List<GroupMembershipRecord> getMembers (int groupId, byte rank)
-        throws PersistenceException
     {
         return getMembers(groupId, rank, false);
     }
@@ -456,7 +435,6 @@ public class GroupRepository extends DepotRepository
      * @param minRank If true, return any member with a rank greater than or equal to the rank param
      */
     public List<GroupMembershipRecord> getMembers (int groupId, byte rank, boolean minRank)
-        throws PersistenceException
     {
         Where where;
         if (minRank) {
@@ -476,7 +454,6 @@ public class GroupRepository extends DepotRepository
      * Fetches the group memberships a given member belongs to.
      */
     public List<GroupMembershipRecord> getMemberships (int memberId)
-        throws PersistenceException
     {
         return findAll(GroupMembershipRecord.class,
                        new Where(GroupMembershipRecord.MEMBER_ID_C, memberId));
@@ -486,7 +463,6 @@ public class GroupRepository extends DepotRepository
      * Fetches the full records of the groups a given member belongs to.
      */
     public List<GroupRecord> getFullMemberships (int memberId)
-        throws PersistenceException
     {
         return findAll(GroupRecord.class,
                        new Join(GroupRecord.GROUP_ID_C, GroupMembershipRecord.GROUP_ID_C),
@@ -497,7 +473,6 @@ public class GroupRepository extends DepotRepository
      * Sets the home scene id for the given group.
      */
     public void setHomeSceneId (int groupId, int sceneId)
-        throws PersistenceException
     {
         updatePartial(GroupRecord.class, groupId, GroupRecord.HOME_SCENE_ID, sceneId);
     }
@@ -506,18 +481,16 @@ public class GroupRepository extends DepotRepository
      * Returns the home scene id for the given group.
      */
     public int getHomeSceneId (int groupId)
-        throws PersistenceException
     {
         GroupRecord rec = load(GroupRecord.class, groupId);
         if (rec == null) {
-            throw new PersistenceException("Group not found in getHomeSceneId! [" + groupId + "]");
+            throw new DatabaseException("Group not found in getHomeSceneId! [" + groupId + "]");
         }
 
         return rec.homeSceneId;
     }
 
     protected void updateMemberCount (int groupId)
-        throws PersistenceException
     {
         Map<String, SQLExpression> fieldMap = Maps.newHashMap();
         fieldMap.put(GroupRecord.MEMBER_COUNT,

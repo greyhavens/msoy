@@ -34,7 +34,7 @@ public class OOOAuthenticationDomain
 {
     // from interface MsoyAuthenticator.Domain
     public MsoyAuthenticator.Account createAccount (String accountName, String password)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         // make sure this account is not already in use
         if (_authrep.loadUserByEmail(accountName, false) != null) {
@@ -67,7 +67,6 @@ public class OOOAuthenticationDomain
 
     // from interface MsoyAuthenticator.Domain
     public void uncreateAccount (String accountName)
-        throws PersistenceException
     {
         OOOUser user = _authrep.loadUserByEmail(accountName, false);
         if (user != null) {
@@ -78,7 +77,7 @@ public class OOOAuthenticationDomain
     // from interface MsoyAuthenticator.Domain
     public void updateAccount (String accountName, String newAccountName, String newPermaName,
                                String newPassword)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         // load up their user account record
         OOOUser user = _authrep.loadUserByEmail(accountName, false);
@@ -95,6 +94,9 @@ public class OOOAuthenticationDomain
                 }
             } catch (UserExistsException uee) {
                 throw new ServiceException(MsoyAuthCodes.DUPLICATE_PERMANAME);
+            } catch (PersistenceException pe) {
+                log.warning("Failed to change username", "id", user.userId, pe);
+                throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
             }
         }
 
@@ -103,7 +105,15 @@ public class OOOAuthenticationDomain
             // if they have not yet set their permaname, change their account name to their new
             // email address to keep things in sync
             if (newPermaName == null && user.username.equals(user.email)) {
-                _authrep.changeUsername(user.userId, newAccountName);
+                try {
+                    _authrep.changeUsername(user.userId, newAccountName);
+                } catch (UserExistsException uee) {
+                    log.warning("Requested to change email address to one in use.");
+                    throw new ServiceException(MsoyAuthCodes.DUPLICATE_EMAIL);
+                } catch (PersistenceException pe) {
+                    log.warning("Failed to change email", "id", user.userId, pe);
+                    throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
+                }
             }
             _authrep.changeEmail(user.userId, newAccountName);
         }
@@ -114,7 +124,7 @@ public class OOOAuthenticationDomain
 
     // from interface MsoyAuthenticator.Domain
     public MsoyAuthenticator.Account authenticateAccount (String accountName, String password)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         // load up their user account record
         OOOUser user = _authrep.loadUserByEmail(accountName, false);
@@ -147,7 +157,7 @@ public class OOOAuthenticationDomain
     // from interface MsoyAuthenticator.Domain
     public void validateAccount (
             MsoyAuthenticator.Account account, String machIdent, boolean newIdent)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         OOOAccount oooacc = (OOOAccount)account;
         OOOUser user = oooacc.user;
@@ -195,7 +205,7 @@ public class OOOAuthenticationDomain
 
     // from interface MsoyAuthenticator.Domain
     public void validateAccount (MsoyAuthenticator.Account account)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         OOOAccount oooacc = (OOOAccount)account;
         if (oooacc.user.holdsToken(OOOUser.MSOY_BANNED)) {
@@ -206,7 +216,7 @@ public class OOOAuthenticationDomain
 
     // from interface MsoyAuthenticator.Domain
     public String generatePasswordResetCode (String accountName)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         OOOUser user = _authrep.loadUserByEmail(accountName, false);
         return (user == null) ? null : StringUtil.md5hex(user.username + user.password);
@@ -214,14 +224,13 @@ public class OOOAuthenticationDomain
 
     // from interface MsoyAuthenticator.Domain
     public boolean validatePasswordResetCode (String accountName, String code)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         return code.equals(generatePasswordResetCode(accountName));
     }
 
     // from interface MsoyAuthenticator.Domain
     public boolean isUniqueIdent (String machIdent)
-        throws PersistenceException
     {
         return _authrep.getMachineIdentCount(machIdent) == 0;
     }

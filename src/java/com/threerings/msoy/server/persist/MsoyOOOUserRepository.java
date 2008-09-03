@@ -10,8 +10,6 @@ import java.sql.Date;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
-
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Where;
@@ -52,7 +50,6 @@ public class MsoyOOOUserRepository extends DepotUserRepository
      * initiated account deletion use {@link #disableUser} (not yet implemented).
      */
     public void uncreateUser (int userId)
-        throws PersistenceException
     {
         delete(OOOUserRecord.class, userId);
         delete(HistoricalUserRecord.class, userId);
@@ -63,7 +60,6 @@ public class MsoyOOOUserRepository extends DepotUserRepository
 
     // from SupportRepository
     public OOOUser loadUserByAccountName (String accountName)
-        throws PersistenceException
     {
         int memberId;
         try {
@@ -79,7 +75,6 @@ public class MsoyOOOUserRepository extends DepotUserRepository
 
     // from SupportRepository
     public User loadUserBySession (String sessionKey)
-        throws PersistenceException
     {
         SQLOperator joinCondition = new And(
                 new Equals(OOOUserRecord.USER_ID_C, SessionRecord.MEMBER_ID_C),
@@ -95,7 +90,6 @@ public class MsoyOOOUserRepository extends DepotUserRepository
      * @param expireDays the number of days in which the session token should expire.
      */
     public String registerSession (User user, int expireDays)
-        throws PersistenceException
     {
         // see if we have a pre-existing session for this user
         SessionRecord session = load(SessionRecord.class,
@@ -122,12 +116,10 @@ public class MsoyOOOUserRepository extends DepotUserRepository
 
     // from SupportRepository
     public boolean refreshSession (String sessionKey, int expireDays)
-        throws PersistenceException
     {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, expireDays);
         Date expires = new Date(cal.getTime().getTime());
-
         return updatePartial(SessionRecord.class, sessionKey, SessionRecord.EXPIRES, expires) == 1;
     }
 }

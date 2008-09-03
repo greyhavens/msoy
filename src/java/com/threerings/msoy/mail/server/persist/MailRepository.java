@@ -13,7 +13,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.depot.CacheInvalidator;
@@ -55,7 +54,6 @@ public class MailRepository extends DepotRepository
      * Returns the number of conversations in which the specified member is a participant.
      */
     public int loadConversationCount (int participantId)
-        throws PersistenceException
     {
         return load(CountRecord.class, new FromOverride(ParticipantRecord.class),
                     new Where(ParticipantRecord.PARTICIPANT_ID_C, participantId)).count;
@@ -66,7 +64,6 @@ public class MailRepository extends DepotRepository
      * have messages not read by that member.
      */
     public int loadUnreadConvoCount (int memberId)
-        throws PersistenceException
     {
         SQLExpression isMe = new Conditionals.Equals(ParticipantRecord.PARTICIPANT_ID_C, memberId);
         SQLExpression isNew = new Conditionals.GreaterThan(
@@ -83,7 +80,6 @@ public class MailRepository extends DepotRepository
      * active to least.
      */
     public List<ConversationRecord> loadConversations (int participantId, int offset, int count)
-        throws PersistenceException
     {
         return findAll(
             ConversationRecord.class,
@@ -97,7 +93,6 @@ public class MailRepository extends DepotRepository
      * Loads a particular conversation record.
      */
     public ConversationRecord loadConversation (int conversationId)
-        throws PersistenceException
     {
         return load(ConversationRecord.class, conversationId);
     }
@@ -106,7 +101,6 @@ public class MailRepository extends DepotRepository
      * Loads the messages in the supplied conversation (in oldest to newest order).
      */
     public List<ConvMessageRecord> loadMessages (int conversationId)
-        throws PersistenceException
     {
         return findAll(ConvMessageRecord.class,
                        new Where(ConvMessageRecord.CONVERSATION_ID_C, conversationId),
@@ -118,7 +112,6 @@ public class MailRepository extends DepotRepository
      * conversation or null if the specified member is not a participant in that conversation.
      */
     public Long loadLastRead (int conversationId, int participantId)
-        throws PersistenceException
     {
         ParticipantRecord prec = load(ParticipantRecord.class,
                                       ParticipantRecord.getKey(conversationId, participantId));
@@ -129,7 +122,6 @@ public class MailRepository extends DepotRepository
      * Updates the last read timestamp for the specified member and conversation.
      */
     public void updateLastRead (int conversationId, int participantId, long lastRead)
-        throws PersistenceException
     {
         updatePartial(ParticipantRecord.getKey(conversationId, participantId),
                       ParticipantRecord.LAST_READ, new Timestamp(lastRead));
@@ -140,8 +132,19 @@ public class MailRepository extends DepotRepository
      */
     public ConversationRecord startConversation (int recipientId, int authorId, String subject,
                                                  String body, MailPayload payload)
-        throws PersistenceException
     {
+        // first serialize the payload so that we can fail early if that fails
+        ConvMessageRecord cmrec = new ConvMessageRecord();
+        if (payload != null) {
+            cmrec.payloadType = payload.getType();
+            try {
+                cmrec.payloadState =
+                    JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         // TODO: do this in a transaction
         ConversationRecord conrec = new ConversationRecord();
         conrec.subject = subject;
@@ -152,21 +155,10 @@ public class MailRepository extends DepotRepository
         conrec.lastAuthorId = authorId;
         insert(conrec);
 
-        ConvMessageRecord cmrec = new ConvMessageRecord();
         cmrec.conversationId = conrec.conversationId;
         cmrec.sent = conrec.lastSent;
         cmrec.authorId = authorId;
         cmrec.body = body;
-        // serialize the payload
-        if (payload != null) {
-            cmrec.payloadType = payload.getType();
-            try {
-                cmrec.payloadState =
-                    JSONMarshaller.getMarshaller(payload.getClass()).getStateBytes(payload);
-            } catch (Exception e) {
-                throw new PersistenceException(e);
-            }
-        }
         insert(cmrec);
 
         ParticipantRecord aprec = new ParticipantRecord();
@@ -189,7 +181,6 @@ public class MailRepository extends DepotRepository
      */
     public ConvMessageRecord addMessage (ConversationRecord conrec, int authorId, String body,
                                          int payloadType, byte[] payloadState)
-        throws PersistenceException
     {
         ConvMessageRecord record = new ConvMessageRecord();
         record.conversationId = conrec.conversationId;
@@ -231,7 +222,6 @@ public class MailRepository extends DepotRepository
      * having unread messages.
      */
     public boolean deleteConversation (final int conversationId, int participantId)
-        throws PersistenceException
     {
         // TODO: do this in a transaction
         Key<ParticipantRecord> key = ParticipantRecord.getKey(conversationId, participantId);
@@ -278,7 +268,6 @@ public class MailRepository extends DepotRepository
      * Updates the payload state of a message.
      */
     public void updatePayloadState (int conversationId, long sent, byte[] state)
-        throws PersistenceException
     {
         updatePartial(ConvMessageRecord.getKey(conversationId, new Timestamp(sent)),
                       ConvMessageRecord.PAYLOAD_STATE, state);

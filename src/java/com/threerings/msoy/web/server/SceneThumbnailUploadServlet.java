@@ -9,8 +9,6 @@ import org.apache.commons.fileupload.FileUploadException;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
-
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -66,7 +64,7 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
 
     @Override // from UploadServlet
     protected void handleFileItems (UploadContext ctx)
-        throws IOException, FileUploadException, AccessDeniedException, PersistenceException
+        throws IOException, FileUploadException, AccessDeniedException
     {
         // note - no call to the superclass, this is a complete replacement!
 
@@ -95,7 +93,6 @@ public class SceneThumbnailUploadServlet extends AbstractSnapshotUploadServlet
      * Helper function for {@link #validateAccess}.
      */
     protected boolean hasAccess (SceneRecord scene, MemberRecord member)
-        throws PersistenceException
     {
         if (scene == null) {
             return false;

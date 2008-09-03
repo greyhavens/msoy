@@ -7,20 +7,22 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-import com.samskivert.io.PersistenceException;
+
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.Interval;
 import com.samskivert.util.ProcessLogger;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
-import com.threerings.msoy.bureau.server.BureauLauncherConfig;
+
 import com.threerings.presents.server.SunSignalHandler;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.NativeSignalHandler;
 import com.threerings.presents.annotation.EventQueue;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 import com.threerings.presents.peer.server.persist.NodeRepository;
+
+import com.threerings.msoy.bureau.server.BureauLauncherConfig;
 
 import static com.threerings.msoy.Log.log;
 
@@ -290,8 +292,8 @@ public class BureauLauncher
                 }
             });
 
-        } catch (PersistenceException pe) {
-            log.warning("Could not load nodes", pe);
+        } catch (Exception e) {
+            log.warning("Could not load nodes", e);
         }
     }
 

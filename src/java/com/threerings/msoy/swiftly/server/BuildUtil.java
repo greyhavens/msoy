@@ -10,7 +10,6 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 
-import com.samskivert.io.PersistenceException;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.swiftly.server.build.BuildArtifact;
 import com.threerings.msoy.swiftly.server.build.ProjectBuilder;
@@ -23,10 +22,10 @@ public class BuildUtil
 {
     /**
      * Build the project and return the BuildArtifact. Any file system results will be deleted.
-     * @throws IOException, ProjectBuilderException, PersistenceException
+     * @throws IOException, ProjectBuilderException
      */
     public static BuildArtifact buildProject (AbstractBuildTask task, ProjectBuilder builder)
-        throws IOException, ProjectBuilderException, PersistenceException
+        throws IOException, ProjectBuilderException
     {
         final BuildArtifact artifact;
         File buildDir = null;

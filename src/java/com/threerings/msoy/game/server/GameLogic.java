@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
@@ -59,16 +58,11 @@ public class GameLogic
         throws ServiceException
     {
         // load up the metadata for this game
-        GameRecord grec;
-        try {
-            grec = _gameRepo.loadGameRecord(gameId);
-            if (grec == null) {
-                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-            }
-        } catch (PersistenceException pe) {
-            log.warning("Failed to load game record [gameId=" + gameId + "]", pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+        GameRecord grec = _gameRepo.loadGameRecord(gameId);
+        if (grec == null) {
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
+
         Game game = (Game)grec.toItem();
 
         // create a launch config record for the game
@@ -160,7 +154,6 @@ public class GameLogic
      * Games that do not payout flow, and those with a ranking less than 4 stars not included.
      */
     public FeaturedGameInfo[] loadTopGames (PopularPlacesSnapshot pps)
-        throws PersistenceException
     {
         // determine the games people are playing right now
         List<FeaturedGameInfo> featured = Lists.newArrayList();
@@ -195,7 +188,6 @@ public class GameLogic
      * Creates a {@link FeaturedGameInfo} record for the supplied game.
      */
     public FeaturedGameInfo toFeaturedGameInfo (GameRecord game, GameDetailRecord detail, int pop)
-        throws PersistenceException
     {
         FeaturedGameInfo info = (FeaturedGameInfo)game.toGameInfo(new FeaturedGameInfo());
         info.avgDuration = detail.getAverageDuration();

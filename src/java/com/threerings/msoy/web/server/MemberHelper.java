@@ -16,7 +16,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.IntSet;
@@ -133,7 +132,6 @@ public class MemberHelper
      * expired session or is null.
      */
     public MemberRecord getAuthedUser (String authToken)
-        throws ServiceException
     {
         if (authToken == null) {
             return null;
@@ -144,26 +142,16 @@ public class MemberHelper
         if (memberId == null) {
             // ...try looking up this session token, they may have originally authenticated with
             // another server and then started talking to us
-            try {
-                MemberRecord mrec = _memberRepo.loadMemberForSession(authToken);
-                if (mrec == null) {
-                    return null;
-                }
-                mapMemberId(authToken, mrec.memberId);
-                return mrec;
-            } catch (PersistenceException pe) {
-                log.warning("Failed to load session [tok=" + authToken + "].", pe);
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            MemberRecord mrec = _memberRepo.loadMemberForSession(authToken);
+            if (mrec == null) {
+                return null;
             }
+            mapMemberId(authToken, mrec.memberId);
+            return mrec;
         }
 
         // otherwise we already have a valid session token -> member id mapping, so use it
-        try {
-            return _memberRepo.loadMember(memberId);
-        } catch (PersistenceException pe) {
-            log.warning("Failed to load member [id=" + memberId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        return _memberRepo.loadMember(memberId);
     }
 
     /**
@@ -237,8 +225,8 @@ public class MemberHelper
                 }
             }
 
-        } catch (PersistenceException pe) {
-            log.warning("Failed to populate member cards.", pe);
+        } catch (Exception e) {
+            log.warning("Failed to populate member cards.", e);
         }
 
         if (friendIds != null) {

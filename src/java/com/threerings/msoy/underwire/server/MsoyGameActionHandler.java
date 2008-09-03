@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.util.StringUtil;
 
@@ -32,7 +31,6 @@ public class MsoyGameActionHandler extends GameActionHandler
 
     @Override // from GameActionHandler
     public void ban (String accountName)
-        throws PersistenceException
     {
         int memberId = getMemberId(accountName);
         if (memberId > 0) {
@@ -42,7 +40,6 @@ public class MsoyGameActionHandler extends GameActionHandler
 
     @Override // from GameActionHandler
     public void tempBan (String accountName, Timestamp expires, String warning)
-        throws PersistenceException
     {
         int memberId = getMemberId(accountName);
         if (memberId > 0) {
@@ -53,7 +50,6 @@ public class MsoyGameActionHandler extends GameActionHandler
 
     @Override // from GameActionHandler
     public void warn (String accountName, String warning)
-        throws PersistenceException
     {
         int memberId = getMemberId(accountName);
         if (memberId > 0) {
@@ -69,7 +65,6 @@ public class MsoyGameActionHandler extends GameActionHandler
      * Boots a member off any active session and clears their web session token as well.
      */
     protected void bootMember (final int memberId)
-        throws PersistenceException
     {
         // boot the player from the flash client
         MemberNodeActions.bootMember(memberId);

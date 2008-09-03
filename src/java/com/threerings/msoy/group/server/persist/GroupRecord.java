@@ -19,7 +19,6 @@ import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
-import com.samskivert.io.PersistenceException;
 
 import com.samskivert.util.StringUtil;
 
@@ -305,10 +304,8 @@ public class GroupRecord extends PersistentRecord
 
     /**
      * Creates a web-safe version of the extras in this group.
-     * @throws PersistenceException
      */
     public GroupExtras toExtrasObject (MsoySceneRepository sceneRepo)
-        throws PersistenceException
     {
         GroupExtras extras = new GroupExtras();
         extras.charter = charter;
@@ -329,10 +326,8 @@ public class GroupRecord extends PersistentRecord
 
     /**
      * Creates a card record for this group.
-     * @throws PersistenceException
      */
     public GroupCard toGroupCard (MsoySceneRepository sceneRepo)
-        throws PersistenceException
     {
         GroupCard card = new GroupCard();
         card.name = toGroupName();
@@ -345,22 +340,12 @@ public class GroupRecord extends PersistentRecord
         return card;
     }
 
-    private void populateCanonicalImage (MsoySceneRepository sceneRepo, CanonicalImageData data)
-        throws PersistenceException {
-        SceneRecord scene = sceneRepo.loadScene(homeSceneId);
-        if (scene.canonicalImageHash != null) {
-            data.setCanonicalImage(new MediaDesc(scene.canonicalImageHash,
-                scene.canonicalImageType, MediaDesc.NOT_CONSTRAINED));
-        }
-    }
-
     /**
      * Checks over the object definitions and returns a map of field/value pairs that contains all
      * of the entries that are non-null and different from what's in the object currently. Returns
      * null if the group is not found.
      */
     public Map<String, Object> findUpdates (Group groupDef, GroupExtras extrasDef)
-        throws PersistenceException
     {
         HashMap<String, Object> updates = Maps.newHashMap();
         if (groupDef.name != null && !groupDef.name.equals(name)) {
@@ -421,4 +406,13 @@ public class GroupRecord extends PersistentRecord
                 new Comparable[] { groupId });
     }
     // AUTO-GENERATED: METHODS END
+
+    protected void populateCanonicalImage (MsoySceneRepository sceneRepo, CanonicalImageData data)
+    {
+        SceneRecord scene = sceneRepo.loadScene(homeSceneId);
+        if (scene.canonicalImageHash != null) {
+            data.setCanonicalImage(new MediaDesc(scene.canonicalImageHash,
+                scene.canonicalImageType, MediaDesc.NOT_CONSTRAINED));
+        }
+    }
 }

@@ -13,7 +13,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.text.MessageUtil;
@@ -135,8 +134,8 @@ public class RoomManager extends SpotSceneManager
                 public boolean invoke () {
                     try {
                         memoryRepo.storeMemories(memrecs);
-                    } catch (PersistenceException pe) {
-                        log.warning("Failed to update memories " + memrecs + ".", pe);
+                    } catch (Exception e) {
+                        log.warning("Failed to update memories " + memrecs + ".", e);
                     }
                     return false;
                 }
@@ -481,7 +480,7 @@ public class RoomManager extends SpotSceneManager
         // TODO: charge some flow
 
         _invoker.postUnit(new RepositoryUnit("purchaseRoom") {
-            public void invokePersist () throws PersistenceException {
+            public void invokePersist () throws Exception {
                 _newRoomId = _sceneRepo.createBlankRoom(
                     ownerType, ownerId, roomName, portalAction, false);
             }
@@ -951,9 +950,9 @@ public class RoomManager extends SpotSceneManager
             public boolean invoke () {
                 try {
                     _propRecs = _sceneRepo.loadProperties(gameId, _scene.getId());
-                } catch (PersistenceException pe) {
-                    log.warning(
-                        "Failed to load room properties", "where", where(), "gameId", gameId, pe);
+                } catch (Exception e) {
+                    log.warning("Failed to load room properties", "where", where(),
+                                "gameId", gameId, e);
                 }
                 return true;
             }
@@ -1008,8 +1007,7 @@ public class RoomManager extends SpotSceneManager
             PropertySpaceHelper.encodeDirtyStateForStore(properties);
         final int sceneId = _scene.getId();
         _invoker.postUnit(new WriteOnlyUnit("save room props") {
-            public void invokePersist()
-                throws PersistenceException {
+            public void invokePersist() throws Exception {
                 for (Map.Entry<String, byte[]> entry : encodedMap.entrySet()) {
                     _sceneRepo.storeProperty(new RoomPropertyRecord(
                         ownerId, sceneId, entry.getKey(), entry.getValue()));
@@ -1264,9 +1262,9 @@ public class RoomManager extends SpotSceneManager
                 try {
                     _mems = _memoryRepo.loadMemories(idents);
                     return !_mems.isEmpty();
-                } catch (PersistenceException pe) {
+                } catch (Exception pe) {
                     log.warning("Failed to load memories [where=" + where() +
-                            ", ids=" + idents + "].", pe);
+                                ", ids=" + idents + "].", pe);
                     return false;
                 }
             };

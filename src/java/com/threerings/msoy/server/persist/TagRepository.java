@@ -12,8 +12,6 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
-import com.samskivert.io.PersistenceException;
-
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.CacheInvalidator;
@@ -94,7 +92,6 @@ public abstract class TagRepository extends DepotRepository
      * such tag.
      */
     public List<TagPopularityRecord> getPopularTags (int rows)
-        throws PersistenceException
     {
         return findAll(TagPopularityRecord.class,
                        new FromOverride(getTagClass()),
@@ -108,7 +105,6 @@ public abstract class TagRepository extends DepotRepository
      * Loads all tag records for the given target, translated to tag names.
      */
     public List<TagNameRecord> getTags (int targetId)
-        throws PersistenceException
     {
         return findAll(TagNameRecord.class,
                        new Where(getTagColumn(TagRecord.TARGET_ID), targetId),
@@ -119,7 +115,6 @@ public abstract class TagRepository extends DepotRepository
      * Loads all the tag history records for a given target.
      */
     public List<TagHistoryRecord> getTagHistoryByTarget (int targetId)
-        throws PersistenceException
     {
         return findAll(getTagHistoryClass(),
                        new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId));
@@ -129,7 +124,6 @@ public abstract class TagRepository extends DepotRepository
      * Loads all the tag history records for a given member.
      */
     public List<TagHistoryRecord> getTagHistoryByMember (int memberId)
-        throws PersistenceException
     {
         return findAll(getTagHistoryClass(),
                        new Where(getTagHistoryColumn(TagHistoryRecord.MEMBER_ID), memberId));
@@ -139,7 +133,6 @@ public abstract class TagRepository extends DepotRepository
      * Loads all tag records for the specified tags.
      */
     public List<TagNameRecord> getTags (String[] tags)
-        throws PersistenceException
     {
         return findAll(TagNameRecord.class, new Where(new In(TagNameRecord.TAG_C, tags)));
     }
@@ -148,7 +141,6 @@ public abstract class TagRepository extends DepotRepository
      * Finds the tag record for a certain tag.
      */
     public TagNameRecord getTag (String tagName)
-        throws PersistenceException
     {
         return load(TagNameRecord.class, new Where(TagNameRecord.TAG_C, tagName));
     }
@@ -157,7 +149,6 @@ public abstract class TagRepository extends DepotRepository
      * Finds the tag record for a certain tag, or create it.
      */
     public TagNameRecord getOrCreateTag (String tagName)
-        throws PersistenceException
     {
         // load the tag, if it exists
         TagNameRecord record = getTag(tagName);
@@ -174,7 +165,6 @@ public abstract class TagRepository extends DepotRepository
      * Find the tag record for a certain tag id.
      */
     public TagNameRecord getTag (int tagId)
-        throws PersistenceException
     {
         return load(TagNameRecord.class, tagId);
     }
@@ -184,7 +174,6 @@ public abstract class TagRepository extends DepotRepository
      * did not, creates the tag and adds a record in the history table.
      */
     public TagHistoryRecord tag (int targetId, int tagId, int taggerId, long now)
-        throws PersistenceException
     {
         TagRecord tag = load(getTagClass(), TagRecord.TARGET_ID, targetId, TagRecord.TAG_ID, tagId);
         if (tag != null) {
@@ -211,7 +200,6 @@ public abstract class TagRepository extends DepotRepository
      * it did, removes the tag and adds a record in the history table.
      */
     public TagHistoryRecord untag (int targetId, int tagId, int taggerId, long now)
-        throws PersistenceException
     {
         TagRecord tag = load(getTagClass(), TagRecord.TARGET_ID, targetId, TagRecord.TAG_ID, tagId);
         if (tag == null) {
@@ -241,7 +229,6 @@ public abstract class TagRepository extends DepotRepository
      * TODO: Depot is very very close to being able to handle this.
      */
     public int copyTags (final int fromTargetId, final int toTargetId, int ownerId, long now)
-        throws PersistenceException
     {
         final String tagTable = _ctx.getMarshaller(getTagClass()).getTableName();
         int rows = _ctx.invoke(new Modifier() {
@@ -279,7 +266,6 @@ public abstract class TagRepository extends DepotRepository
      * Deletes all tag and history records associated with the specified target.
      */
     public void deleteTags (final int targetId)
-        throws PersistenceException
     {
         // invalidate and delete tag records for this target
         deleteAll(getTagClass(), new Where(getTagColumn(TagRecord.TARGET_ID), targetId),

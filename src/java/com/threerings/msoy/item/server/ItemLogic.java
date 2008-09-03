@@ -18,7 +18,6 @@ import com.google.common.collect.SetMultimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Tuple;
@@ -187,14 +186,14 @@ public class ItemLogic
     public static interface CloneEditOp
     {
         public void doOp (CloneRecord record, ItemRecord orig, ItemRepository<ItemRecord> repo)
-            throws PersistenceException;
+            throws Exception;
     }
 
     /**
      * Creates a new item and inserts it into the appropriate repository.
      */
     public Item createItem (MemberRecord memrec, Item item)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         return createItem(memrec, item, null);
     }
@@ -203,7 +202,7 @@ public class ItemLogic
      * Creates a new item and inserts it into the appropriate repository.
      */
     public Item createItem (MemberRecord memrec, Item item, ItemIdent parent)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         // validate the item
         if (!item.isConsistent()) {
@@ -228,14 +227,7 @@ public class ItemLogic
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
             ItemRepository<ItemRecord> prepo = getRepository(parent.type);
-            ItemRecord prec = null;
-            try {
-                prec = prepo.loadItem(parent.itemId);
-            } catch (PersistenceException pe) {
-                log.warning("Failed to load parent in createItem [who=" + memrec.who() +
-                        ", item=" + item.getIdent() + ", parent=" + parent + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
+            ItemRecord prec = prepo.loadItem(parent.itemId);
             if (prec == null) {
                 log.warning("Requested to make item with missing parent [who=" + memrec.who() +
                             ", parent=" + parent + ", item=" + item + "].");
@@ -257,8 +249,12 @@ public class ItemLogic
         // write the item to the database
         repo.insertOriginalItem(record, false);
 
-        // now do any post update stuff
-        itemUpdated(null, record);
+        // now do any post update stuff (but don't let its failure fail our request)
+        try {
+            itemUpdated(null, record);
+        } catch (Exception e) {
+            log.warning("itemUpdated failed", "who", memrec.who(), "record", record, e);
+        }
 
         return record.toItem();
     }
@@ -273,7 +269,7 @@ public class ItemLogic
      * @exception ServiceException thrown if illegal or invalid data was detected in the item.
      */
     public void validateItem (MemberRecord memrec, ItemRecord orecord, ItemRecord nrecord)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         // member must be a manager of any group they assign to a game
         if (nrecord instanceof GameRecord) {
@@ -314,18 +310,13 @@ public class ItemLogic
         if (nrecord instanceof GameRecord) {
             GameRecord grec = (GameRecord)nrecord;
             if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
-                try {
-                    if (orecord != null && ((GameRecord)orecord).groupId != Game.NO_GROUP) {
-                        _groupRepo.updateGroup(
-                            ((GameRecord)orecord).groupId, GroupRecord.GAME_ID, 0);
-                    }
-                    if (grec.groupId != Game.NO_GROUP) {
-                        _groupRepo.updateGroup(grec.groupId, GroupRecord.GAME_ID,
-                                               Math.abs(grec.gameId));
-                    }
-                } catch (PersistenceException pe) {
-                    log.warning("Failed to update group for game", "gameId", grec.itemId,
-                                "groupId", grec.groupId);
+                if (orecord != null && ((GameRecord)orecord).groupId != Game.NO_GROUP) {
+                    _groupRepo.updateGroup(
+                        ((GameRecord)orecord).groupId, GroupRecord.GAME_ID, 0);
+                }
+                if (grec.groupId != Game.NO_GROUP) {
+                    _groupRepo.updateGroup(grec.groupId, GroupRecord.GAME_ID,
+                                           Math.abs(grec.gameId));
                 }
             }
         }
@@ -336,7 +327,7 @@ public class ItemLogic
      * records.
      */
     public List<ListingCard> resolveFavorites (List<FavoriteItemRecord> faves)
-        throws PersistenceException, ServiceException
+        throws ServiceException
     {
         // break the list up by item type
         SetMultimap<Byte, Integer> typeMap = Multimaps.newHashMultimap();
@@ -364,7 +355,6 @@ public class ItemLogic
      * Resolves the member names in the supplied list of listing cards.
      */
     public void resolveCardNames (List<ListingCard> list)
-        throws PersistenceException
     {
         // look up the names and build a map of memberId -> MemberName
         IntMap<MemberName> map = _memberRepo.loadMemberNames(
@@ -386,52 +376,50 @@ public class ItemLogic
         throws ServiceException
     {
         ItemRepository<ItemRecord> repo = getRepository(itemIdent.type);
-        try {
-            // load up the old version of the item
-            CloneRecord record = repo.loadCloneRecord(itemIdent.itemId);
-            if (record == null) {
-                throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-            }
+        // load up the old version of the item
+        CloneRecord record = repo.loadCloneRecord(itemIdent.itemId);
+        if (record == null) {
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+        }
 
-            // make sure they own it (or are admin)
-            if (record.ownerId != memrec.memberId && !memrec.isAdmin()) {
-                throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
-            }
+        // make sure they own it (or are admin)
+        if (record.ownerId != memrec.memberId && !memrec.isAdmin()) {
+            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+        }
 
-            // load up the original record so we can see what changed
-            final ItemRecord orig = repo.loadOriginalItem(record.originalItemId);
-            if (orig == null) {
-                log.warning("Unable to locate original of remixed clone [who=" + memrec.who() +
-                    ", item=" + itemIdent + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-
-            // do the operation
-            op.doOp(record, orig, repo);
-
-            // create the proper ItemRecord representing the clone
-            orig.initFromClone(record);
-
-            // let the item manager know that we've updated this item
-            _omgr.postRunnable(new Runnable() {
-                public void run () {
-                    _itemMan.itemUpdated(orig);
-                }
-            });
-
-            return orig;
-
-        } catch (PersistenceException pe) {
-            log.warning("Failed to edit clone " + itemIdent + ".", pe);
+        // load up the original record so we can see what changed
+        final ItemRecord orig = repo.loadOriginalItem(record.originalItemId);
+        if (orig == null) {
+            log.warning("Unable to locate original of remixed clone [who=" + memrec.who() +
+                        ", item=" + itemIdent + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+
+        // do the operation
+        try {
+            op.doOp(record, orig, repo);
+        } catch (Exception e) {
+            log.warning("Clone edit failed", "who", memrec.who(), "item", itemIdent, e);
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        // create the proper ItemRecord representing the clone
+        orig.initFromClone(record);
+
+        // let the item manager know that we've updated this item
+        _omgr.postRunnable(new Runnable() {
+            public void run () {
+                _itemMan.itemUpdated(orig);
+            }
+        });
+
+        return orig;
     }
 
     /**
      * Loads up the item lists for the specified member.
      */
     public List<ItemListInfo> getItemLists (int memberId)
-        throws PersistenceException
     {
         return Lists.newArrayList(
             Iterables.transform(_listRepo.loadInfos(memberId), ItemListInfoRecord.TO_INFO));
@@ -441,7 +429,6 @@ public class ItemLogic
      * Creates an item list for the specified member.
      */
     public ItemListInfo createItemList (int memberId, byte listType, String name)
-        throws PersistenceException
     {
         ItemListInfo listInfo = new ItemListInfo();
         listInfo.type = listType;
@@ -455,25 +442,21 @@ public class ItemLogic
      * Deletes a list and removes all list elements.
      */
     public void deleteList (int listId)
-        throws PersistenceException
     {
         _listRepo.deleteList(listId);
     }
 
     public void addItem (int listId, Item item)
-        throws PersistenceException
     {
         addItem(listId, item.getIdent());
     }
 
     public void addItem (int listId, ItemIdent item)
-        throws PersistenceException
     {
         _listRepo.addItem(listId, item);
     }
 
     public void removeItem (int listId, ItemIdent item)
-        throws PersistenceException
     {
         _listRepo.removeItem(listId, item);
     }
@@ -482,7 +465,7 @@ public class ItemLogic
      * Loads up and returns the specified member's rating and favorite status of the supplied item.
      */
     public MemberItemInfo getMemberItemInfo (MemberRecord mrec, Item item)
-        throws PersistenceException, ServiceException
+        throws ServiceException
     {
         MemberItemInfo info = new MemberItemInfo();
         if (mrec != null) {
@@ -498,7 +481,7 @@ public class ItemLogic
      * Notes or clears favorite status for the specified catalog listing for the specified member.
      */
     public void setFavorite (int memberId, byte itemType, CatalogRecord record, boolean favorite)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         ItemRepository<ItemRecord> irepo = getRepository(itemType);
         if (favorite) {
@@ -511,35 +494,28 @@ public class ItemLogic
     }
 
     public int getItemListSize (int listId)
-        throws PersistenceException
     {
         return _listRepo.getSize(listId);
     }
 
     public int getItemListSize (int listId, byte itemType)
-        throws PersistenceException
     {
         return _listRepo.getSize(listId, itemType);
     }
 
     public List<Item> loadItemList (int listId)
-        throws PersistenceException
     {
         // look up the list elements
-        ItemIdent[] idents = _listRepo.loadList(listId);
-        return loadItems(idents);
+        return loadItems(_listRepo.loadList(listId));
     }
 
     public List<Item> loadItemList (ItemListQuery query)
-        throws PersistenceException
     {
         // look up the list elements
-        ItemIdent[] idents = _listRepo.loadList(query);
-        return loadItems(idents);
+        return loadItems(_listRepo.loadList(query));
     }
 
     public List<Item> loadItems (ItemIdent[] idents)
-        throws PersistenceException
     {
         // now we're going to load all of these items
         LookupList lookupList = new LookupList();

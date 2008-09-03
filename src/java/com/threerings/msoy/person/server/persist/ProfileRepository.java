@@ -12,8 +12,6 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
-
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -41,7 +39,6 @@ public class ProfileRepository extends DepotRepository
      * created for that member.
      */
     public ProfileRecord loadProfile (int memberId)
-        throws PersistenceException
     {
         return load(ProfileRecord.class, memberId);
     }
@@ -50,7 +47,6 @@ public class ProfileRepository extends DepotRepository
      * Loads the profiles for all of the specified members.
      */
     public List<ProfileRecord> loadProfiles (Set<Integer> memberIds)
-        throws PersistenceException
     {
         if (memberIds.size() == 0) {
             return Collections.emptyList();
@@ -67,7 +63,6 @@ public class ProfileRepository extends DepotRepository
      * @return true if the profile was created, false if it was updated.
      */
     public boolean storeProfile (ProfileRecord record)
-        throws PersistenceException
     {
         return store(record);
     }
@@ -76,7 +71,6 @@ public class ProfileRepository extends DepotRepository
      * Loads the interests for the specified member.
      */
     public List<InterestRecord> loadInterests (int memberId)
-        throws PersistenceException
     {
         return findAll(InterestRecord.class, new Where(InterestRecord.MEMBER_ID_C, memberId));
     }
@@ -87,7 +81,6 @@ public class ProfileRepository extends DepotRepository
      * empty string as {@link Interest#interests} will be deleted.
      */
     public void storeInterests (int memberId, List<Interest> interests)
-        throws PersistenceException
     {
         InterestRecord record = new InterestRecord();
         record.memberId = memberId;
@@ -107,7 +100,6 @@ public class ProfileRepository extends DepotRepository
      * Finds the ids of members who's real names match the search parameter.
      */
     public List<Integer> findMembersByRealName (String search, int limit)
-        throws PersistenceException
     {
         Where where = new Where(
             new FullTextMatch(ProfileRecord.class, ProfileRecord.FTS_REAL_NAME, search));
@@ -129,7 +121,6 @@ public class ProfileRepository extends DepotRepository
      * Finds the ids of members who list the supplied term among their interests.
      */
     public List<Integer> findMembersByInterest (String search, int limit)
-        throws PersistenceException
     {
         Where where = new Where(
             new FullTextMatch(InterestRecord.class, InterestRecord.FTS_INTERESTS, search));
@@ -143,7 +134,6 @@ public class ProfileRepository extends DepotRepository
     }
 
     public void updateHeadline (int memberId, String headline)
-        throws PersistenceException
     {
         updatePartial(ProfileRecord.class, memberId, ProfileRecord.HEADLINE, headline);
     }

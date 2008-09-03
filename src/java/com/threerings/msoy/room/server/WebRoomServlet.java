@@ -11,8 +11,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
-
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -39,59 +37,48 @@ public class WebRoomServlet extends MsoyServiceServlet
     public RoomInfo loadRoomInfo (int sceneId)
         throws ServiceException
     {
-        try {
-            SceneRecord screc = _sceneRepo.loadScene(sceneId);
-            if (screc == null) {
-                return null;
-            }
-
-            RoomInfo info = new RoomInfo();
-            info.sceneId = screc.sceneId;
-            info.name = screc.name;
-            switch (screc.ownerType) {
-            case MsoySceneModel.OWNER_TYPE_MEMBER:
-                info.owner = _memberRepo.loadMemberName(screc.ownerId);
-                break;
-            case MsoySceneModel.OWNER_TYPE_GROUP:
-                info.owner = _groupRepo.loadGroupName(screc.ownerId);
-                break;
-            }
-            return info;
-
-        } catch (PersistenceException pe) {
-            log.warning("Load room info failed [sceneId=" + sceneId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        SceneRecord screc = _sceneRepo.loadScene(sceneId);
+        if (screc == null) {
+            return null;
         }
+
+        RoomInfo info = new RoomInfo();
+        info.sceneId = screc.sceneId;
+        info.name = screc.name;
+        switch (screc.ownerType) {
+        case MsoySceneModel.OWNER_TYPE_MEMBER:
+            info.owner = _memberRepo.loadMemberName(screc.ownerId);
+            break;
+        case MsoySceneModel.OWNER_TYPE_GROUP:
+            info.owner = _groupRepo.loadGroupName(screc.ownerId);
+            break;
+        }
+        return info;
     }
 
     // from interface WebRoomService
     public MemberRoomsResult loadMemberRooms (int memberId)
         throws ServiceException
     {
-        try {
-            MemberRecord mrec = _memberRepo.loadMember(memberId);
-            if (mrec == null) {
-                log.warning("Could not locate member when loading rooms", "memberId", memberId);
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-            MemberRecord reqrec = getAuthedUser();
-            List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(memberId);
-            MemberRoomsResult data = new MemberRoomsResult();
-            data.owner = mrec.getName();
-            if (reqrec == null || reqrec.memberId != memberId) {
-                // hide locked rooms from other members (even from friends)
-                boolean owner = (reqrec != null && reqrec.memberId == memberId);
-                Predicate<SceneRecord> filter = owner ? Predicates.<SceneRecord> alwaysTrue()
-                    : IS_PUBLIC;
-                data.rooms = Lists.newArrayList(Iterables.transform(Iterables.filter(rooms,
-                    filter), SceneRecord.TO_ROOM_INFO));
-            }
-            data.rooms = Lists.newArrayList(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
-            return data;
-        } catch (PersistenceException pe) {
-            log.warning("Load rooms failed", "memberId", memberId, pe);
+        MemberRecord mrec = _memberRepo.loadMember(memberId);
+        if (mrec == null) {
+            log.warning("Could not locate member when loading rooms", "memberId", memberId);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+        MemberRecord reqrec = getAuthedUser();
+        List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(memberId);
+        MemberRoomsResult data = new MemberRoomsResult();
+        data.owner = mrec.getName();
+        if (reqrec == null || reqrec.memberId != memberId) {
+            // hide locked rooms from other members (even from friends)
+            boolean owner = (reqrec != null && reqrec.memberId == memberId);
+            Predicate<SceneRecord> filter = owner ?
+                Predicates.<SceneRecord> alwaysTrue() : IS_PUBLIC;
+            data.rooms = Lists.newArrayList(
+                Iterables.transform(Iterables.filter(rooms, filter), SceneRecord.TO_ROOM_INFO));
+        }
+        data.rooms = Lists.newArrayList(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
+        return data;
     }
 
     // from interface WebRoomService
@@ -99,36 +86,28 @@ public class WebRoomServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord mrec = getAuthedUser();
+        RoomsResult result = new RoomsResult();
 
-        try {
-            RoomsResult result = new RoomsResult();
+        // load up all scenes owned by this group
+        List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(
+            MsoySceneModel.OWNER_TYPE_GROUP, groupId);
+        result.groupRooms = Lists.newArrayList(
+            Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
 
-            // load up all scenes owned by this group
-            List<SceneRecord> rooms = _sceneRepo.getOwnedScenes(
-                MsoySceneModel.OWNER_TYPE_GROUP, groupId);
-            result.groupRooms = Lists.newArrayList(
-                Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO));
-
-            // load up all scenes owned by this member, filtering out their home
-            Predicate<RoomInfo> notHome = new Predicate<RoomInfo>() {
-                public boolean apply (RoomInfo info) {
-                    return info.sceneId != mrec.homeSceneId;
-                }
-            };
-            rooms = _sceneRepo.getOwnedScenes(mrec.memberId);
-            result.callerRooms = Lists.newArrayList(
-                Iterables.filter(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO), notHome));
-            return result;
-
-        } catch (PersistenceException pe) {
-            log.warning("getGroupRooms failed [groupId=" + groupId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        // load up all scenes owned by this member, filtering out their home
+        Predicate<RoomInfo> notHome = new Predicate<RoomInfo>() {
+            public boolean apply (RoomInfo info) {
+                return info.sceneId != mrec.homeSceneId;
+            }
+        };
+        rooms = _sceneRepo.getOwnedScenes(mrec.memberId);
+        result.callerRooms = Lists.newArrayList(
+            Iterables.filter(Iterables.transform(rooms, SceneRecord.TO_ROOM_INFO), notHome));
+        return result;
     }
 
     protected static final Predicate<SceneRecord> IS_PUBLIC = new Predicate<SceneRecord>() {
-        public boolean apply (SceneRecord room)
-        {
+        public boolean apply (SceneRecord room) {
             return room.accessControl == MsoySceneModel.ACCESS_EVERYONE;
         }
     };

@@ -17,7 +17,6 @@ import com.google.common.collect.Sets;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 
@@ -68,31 +67,23 @@ public class MeServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
+        MyWhirledData data = new MyWhirledData();
+        data.whirledPopulation = _memberMan.getPPSnapshot().getPopulationCount();
 
-        try {
-            MyWhirledData data = new MyWhirledData();
-            data.whirledPopulation = _memberMan.getPPSnapshot().getPopulationCount();
-
-            IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
-            data.friendCount = friendIds.size();
-            if (data.friendCount > 0) {
-                data.friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
-            }
-
-            IntSet groupMemberships = new ArrayIntSet();
-            for (GroupMembershipRecord gmr : _groupRepo.getMemberships(mrec.memberId)) {
-                groupMemberships.add(gmr.groupId);
-            }
-            data.feed = loadFeed(mrec, groupMemberships, DEFAULT_FEED_DAYS);
-
-            data.badges = _badgeLogic.getNextSuggestedBadges(mrec.memberId, 4);
-
-            return data;
-
-        } catch (PersistenceException pe) {
-            log.warning("getMyWhirled failed", "memberId", mrec.memberId, pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+        IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);
+        data.friendCount = friendIds.size();
+        if (data.friendCount > 0) {
+            data.friends = _mhelper.resolveMemberCards(friendIds, true, friendIds);
         }
+
+        IntSet groupMemberships = new ArrayIntSet();
+        for (GroupMembershipRecord gmr : _groupRepo.getMemberships(mrec.memberId)) {
+            groupMemberships.add(gmr.groupId);
+        }
+        data.feed = loadFeed(mrec, groupMemberships, DEFAULT_FEED_DAYS);
+
+        data.badges = _badgeLogic.getNextSuggestedBadges(mrec.memberId, 4);
+        return data;
     }
 
     // from interface MeService
@@ -116,19 +107,12 @@ public class MeServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-
-        try {
-            List<GroupMembershipRecord> groups = _groupRepo.getMemberships(mrec.memberId);
-            ArrayIntSet groupIds = new ArrayIntSet(groups.size());
-            for (GroupMembershipRecord record : groups) {
-                groupIds.add(record.groupId);
-            }
-            return loadFeed(mrec, groupIds, cutoffDays);
-
-        } catch (PersistenceException pe) {
-            log.warning("Load feed failed", "memberId", mrec.memberId, pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+        List<GroupMembershipRecord> groups = _groupRepo.getMemberships(mrec.memberId);
+        ArrayIntSet groupIds = new ArrayIntSet(groups.size());
+        for (GroupMembershipRecord record : groups) {
+            groupIds.add(record.groupId);
         }
+        return loadFeed(mrec, groupIds, cutoffDays);
     }
 
     // from interface MeService
@@ -141,42 +125,36 @@ public class MeServlet extends MsoyServiceServlet
         // other players as well
         PassportData data = new PassportData();
 
-        try {
-            if (mrec.memberId == memberId) {
-                data.stampOwner = mrec.name;
-                // for now, we just ship along every badge relevant to this player.
-                data.nextBadges = _badgeLogic.getInProgressBadges(mrec.memberId, true);
+        if (mrec.memberId == memberId) {
+            data.stampOwner = mrec.name;
+            // for now, we just ship along every badge relevant to this player.
+            data.nextBadges = _badgeLogic.getInProgressBadges(mrec.memberId, true);
 
-            } else {
-                MemberName stampOwner = _memberRepo.loadMemberName(memberId);
-                if (stampOwner == null) {
-                    return null;
-                }
-                data.stampOwner = stampOwner.toString();
-                // we leave data.nextBadges empty when viewing other people's passport page.
+        } else {
+            MemberName stampOwner = _memberRepo.loadMemberName(memberId);
+            if (stampOwner == null) {
+                return null;
             }
+            data.stampOwner = stampOwner.toString();
+            // we leave data.nextBadges empty when viewing other people's passport page.
+        }
 
-            data.stamps = Maps.newHashMap();
-            Iterable<Badge> badgeUnion = data.nextBadges == null ?
-                Lists.<EarnedBadgeRecord, Badge>transform(
-                    _badgeRepo.loadEarnedBadges(memberId),  EarnedBadgeRecord.TO_BADGE) :
+        data.stamps = Maps.newHashMap();
+        Iterable<Badge> badgeUnion = data.nextBadges == null ?
+            Lists.<EarnedBadgeRecord, Badge>transform(
+                _badgeRepo.loadEarnedBadges(memberId),  EarnedBadgeRecord.TO_BADGE) :
             // Create a set union between the in progress badges retrieved above, and earned
             // badge records from the database.  Due to InProgressFilter, we're guaranteed that
             // in the intersection between the EarnedBadges and InProgressBadges, we'll end
             // up with an InProgressBadge, which is what we want for client display.
-                Sets.union(Sets.newHashSet(Lists.transform(_badgeRepo.loadEarnedBadges(memberId),
-                                                           new InProgressFilter(data.nextBadges))),
-                           Sets.newHashSet(data.nextBadges));
-            for (StampCategory category : StampCategory.values()) {
-                data.stamps.put(category, Lists.newArrayList(
-                    Iterables.filter(badgeUnion, new FilterByCategory(category))));
-            }
-            return data;
-
-        } catch (PersistenceException pe) {
-            log.warning("Loading badges failed ", "memberId", mrec.memberId, pe);
-            throw new ServiceException(InvocationCodes.E_INTERNAL_ERROR);
+            Sets.union(Sets.newHashSet(Lists.transform(_badgeRepo.loadEarnedBadges(memberId),
+                                                       new InProgressFilter(data.nextBadges))),
+                       Sets.newHashSet(data.nextBadges));
+        for (StampCategory category : StampCategory.values()) {
+            data.stamps.put(category, Lists.newArrayList(
+                                Iterables.filter(badgeUnion, new FilterByCategory(category))));
         }
+        return data;
     }
 
     // from interface MeService
@@ -208,7 +186,6 @@ public class MeServlet extends MsoyServiceServlet
      * Helper function for {@link #loadFeed} and {@link #getMyWhirled}.
      */
     protected List<FeedMessage> loadFeed (MemberRecord mrec, IntSet groupIds, int cutoffDays)
-        throws PersistenceException
     {
         Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
         IntSet friendIds = _memberRepo.loadFriendIds(mrec.memberId);

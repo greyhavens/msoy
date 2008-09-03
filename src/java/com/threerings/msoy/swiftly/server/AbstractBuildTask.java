@@ -5,8 +5,6 @@ package com.threerings.msoy.swiftly.server;
 
 import java.io.IOException;
 
-import com.samskivert.io.PersistenceException;
-
 import com.threerings.presents.client.InvocationService.ResultListener;
 import com.threerings.presents.dobj.RootDObjectManager;
 
@@ -62,7 +60,7 @@ public abstract class AbstractBuildTask
      * Let any subclass process the build artifact before it is deleted.
      */
     public abstract void processArtifact (final BuildArtifact artifact)
-        throws IOException, PersistenceException;
+        throws IOException;
 
     /**
      * Code to be run back on the calling thread, usually the dobject thread, to handle build

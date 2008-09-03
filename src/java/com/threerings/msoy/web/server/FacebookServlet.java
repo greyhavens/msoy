@@ -23,7 +23,6 @@ import org.w3c.dom.NodeList;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.servlet.util.CookieUtil;
 import com.samskivert.servlet.util.ParameterUtil;
 import com.samskivert.util.ArrayIntSet;
@@ -154,8 +153,8 @@ public class FacebookServlet extends HttpServlet
                 return new Tuple<Integer,String>(fbUserId, sessionCreds);
             }
 
-        } catch (PersistenceException pe) {
-            log.warning("Failed to authenticate [id=" + fbUserId + "].", pe);
+        } catch (Exception e) {
+            log.warning("Failed to authenticate [id=" + fbUserId + "].", e);
             return null;
         }
 
@@ -217,8 +216,8 @@ public class FacebookServlet extends HttpServlet
                         ", error=" + se.getMessage() + "].");
             return null;
 
-        } catch (PersistenceException pe) {
-            log.warning("Failed to create account [id=" + fbUserId + "].", pe);
+        } catch (Exception e) {
+            log.warning("Failed to create account [id=" + fbUserId + "].", e);
             return null;
         }
 
@@ -227,8 +226,8 @@ public class FacebookServlet extends HttpServlet
         try {
             prec.memberId = mrec.memberId;
             _profileRepo.storeProfile(prec);
-        } catch (PersistenceException pe) {
-            log.warning("Failed to store profile [id=" + fbUserId + ", prec=" + prec + "].", pe);
+        } catch (Exception e) {
+            log.warning("Failed to store profile [id=" + fbUserId + ", prec=" + prec + "].", e);
         }
 
         // connect them up to their Facebook friends who also have a Whirled account
@@ -241,10 +240,10 @@ public class FacebookServlet extends HttpServlet
                     continue;
                 }
                 _memberRepo.noteFriendship(mrec.memberId, friendId);
-            } catch (PersistenceException pe) {
+            } catch (Exception e) {
                 log.warning("Failed to link Facebook user to friend " +
                         "[mid=" + mrec.memberId + ", fid=" + friendId +
-                        ", mfbid=" + fbUserId + ", ffbid=" + friendFbId + "].", pe);
+                        ", mfbid=" + fbUserId + ", ffbid=" + friendFbId + "].", e);
             }
         }
 

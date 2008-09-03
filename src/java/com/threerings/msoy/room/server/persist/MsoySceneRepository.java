@@ -11,8 +11,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
-
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -70,7 +68,6 @@ public class MsoySceneRepository extends DepotRepository
      * Creates our default scenes and starts up our accumulator.
      */
     public void init ()
-        throws PersistenceException
     {
         // create our stock scenes if they are not yet created
         for (SceneRecord.Stock stock : SceneRecord.Stock.values()) {
@@ -85,7 +82,6 @@ public class MsoySceneRepository extends DepotRepository
      * Returns the total number of scenes in the repository.
      */
     public int getSceneCount ()
-        throws PersistenceException
     {
         return load(CountRecord.class, new FromOverride(SceneRecord.class)).count;
     }
@@ -94,7 +90,6 @@ public class MsoySceneRepository extends DepotRepository
      * Returns the number of rooms owned by the specified member.
      */
     public int getRoomCount (int memberId)
-        throws PersistenceException
     {
         Where where = new Where(
             new Logic.And(new Equals(SceneRecord.OWNER_TYPE_C, MsoySceneModel.OWNER_TYPE_MEMBER),
@@ -106,7 +101,6 @@ public class MsoySceneRepository extends DepotRepository
      * Retrieve a list of all the scenes that the user owns.
      */
     public List<SceneRecord> getOwnedScenes (byte ownerType, int memberId)
-        throws PersistenceException
     {
         Where where = new Where(new Logic.And(new Equals(SceneRecord.OWNER_TYPE_C, ownerType),
                                               new Equals(SceneRecord.OWNER_ID_C, memberId)));
@@ -117,7 +111,6 @@ public class MsoySceneRepository extends DepotRepository
      * Retrieve a list of all the member scenes that the user directly owns.
      */
     public List<SceneRecord> getOwnedScenes (int memberId)
-        throws PersistenceException
     {
         return getOwnedScenes(MsoySceneModel.OWNER_TYPE_MEMBER, memberId);
     }
@@ -127,7 +120,6 @@ public class MsoySceneRepository extends DepotRepository
      * doesn't exist.
      */
     public String identifyScene (int sceneId)
-        throws PersistenceException
     {
         // TODO: use a @Computed record?
         SceneRecord scene = load(SceneRecord.class, SceneRecord.getKey(sceneId));
@@ -138,7 +130,6 @@ public class MsoySceneRepository extends DepotRepository
      * Given a list of scene ids, return a map containing the current names, indexed by scene id.
      */
     public IntMap<String> identifyScenes (Set<Integer> sceneIds)
-        throws PersistenceException
     {
         IntMap<String> names = IntMaps.newHashIntMap();
         // TODO: use a @Computed record?
@@ -151,7 +142,6 @@ public class MsoySceneRepository extends DepotRepository
 
     // from interface SceneRepository
     public void applyAndRecordUpdate (SceneModel model, SceneUpdate update)
-        throws PersistenceException
     {
         // ensure that the update has been applied
         int targetVers = update.getSceneVersion() + update.getVersionIncrement();
@@ -166,14 +156,14 @@ public class MsoySceneRepository extends DepotRepository
 
     // from interface SceneRepository
     public UpdateList loadUpdates (int sceneId)
-        throws PersistenceException, NoSuchSceneException
+        throws NoSuchSceneException
     {
         return new UpdateList(); // we don't do scene updates
     }
 
     // from interface SceneRepository
     public SceneModel loadSceneModel (int sceneId)
-        throws PersistenceException, NoSuchSceneException
+        throws NoSuchSceneException
     {
         SceneRecord scene = load(SceneRecord.class, SceneRecord.getKey(sceneId));
         if (scene == null) {
@@ -225,7 +215,6 @@ public class MsoySceneRepository extends DepotRepository
      * Load the SceneRecord for the given sceneId
      */
     public SceneRecord loadScene (int sceneId)
-        throws PersistenceException
     {
         return load(SceneRecord.class, new Where(SceneRecord.SCENE_ID_C, sceneId));
     }
@@ -234,7 +223,6 @@ public class MsoySceneRepository extends DepotRepository
      * Load the SceneRecords for the given sceneIds.
      */
     public List<SceneRecord> loadScenes (Set<Integer> sceneIds)
-        throws PersistenceException
     {
         if (sceneIds.size() == 0) {
             return Collections.emptyList();
@@ -247,7 +235,6 @@ public class MsoySceneRepository extends DepotRepository
      * Saves the specified update to the database.
      */
     protected void persistUpdate (SceneUpdate update)
-        throws PersistenceException
     {
         int finalVersion = update.getSceneVersion() + update.getVersionIncrement();
         persistUpdates(Collections.singleton(update), finalVersion);
@@ -265,17 +252,17 @@ public class MsoySceneRepository extends DepotRepository
             sceneId = update.getSceneId();
             try {
                 applyUpdate(update);
-            } catch (PersistenceException pe) {
+            } catch (Exception e) {
                 log.warning("Failed to apply scene update " + update +
-                        " from " + StringUtil.toString(updates) + ".", pe);
+                        " from " + StringUtil.toString(updates) + ".", e);
             }
         }
         if (sceneId != 0) {
             try {
                 updatePartial(SceneRecord.class, sceneId, SceneRecord.VERSION, finalVersion);
-            } catch (PersistenceException pe) {
+            } catch (Exception e) {
                 log.warning("Failed to update scene to final version [id=" + sceneId +
-                        ", fvers=" + finalVersion + "].", pe);
+                        ", fvers=" + finalVersion + "].", e);
             }
         }
     }
@@ -284,7 +271,6 @@ public class MsoySceneRepository extends DepotRepository
      * Applies an update that adds, removes or changes furni.
      */
     protected void applyUpdate (SceneUpdate update)
-        throws PersistenceException
     {
         if (update instanceof FurniUpdate.Add) {
             insert(new SceneFurniRecord(update.getSceneId(), ((FurniUpdate)update).data));
@@ -328,7 +314,6 @@ public class MsoySceneRepository extends DepotRepository
      */
     public int createBlankRoom (byte ownerType, int ownerId, String roomName, String portalAction,
                                 boolean firstTime)
-        throws PersistenceException
     {
         // determine the scene id to clone
         SceneRecord.Stock stock = null;
@@ -387,7 +372,6 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     public void transferSceneOwnership (int sceneId, byte ownerType, int ownerId)
-        throws PersistenceException
     {
         updatePartial(SceneRecord.class, sceneId, SceneRecord.OWNER_TYPE, ownerType,
                       SceneRecord.OWNER_ID, ownerId);
@@ -395,7 +379,6 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Loads the room properties. */
     public List<RoomPropertyRecord> loadProperties (int ownerId, int sceneId)
-        throws PersistenceException
     {
         return findAll(RoomPropertyRecord.class, new Where(
             RoomPropertyRecord.OWNER_ID_C, ownerId,
@@ -404,7 +387,6 @@ public class MsoySceneRepository extends DepotRepository
 
     /** Saves a room property, deleting if the value is null. */
     public void storeProperty (RoomPropertyRecord record)
-        throws PersistenceException
     {
         if (record.value == null) {
             delete(record);
@@ -415,7 +397,6 @@ public class MsoySceneRepository extends DepotRepository
 
     public void setCanonicalImage (int sceneId, byte[] canonicalHash, byte canonicalType,
         byte[] thumbnailHash, byte thumbnailType)
-        throws PersistenceException
     {
         updatePartial(SceneRecord.class, sceneId,
             SceneRecord.CANONICAL_IMAGE_HASH, canonicalHash,
@@ -429,7 +410,6 @@ public class MsoySceneRepository extends DepotRepository
      * sceneId.
      */
     protected int insertScene (MsoySceneModel model)
-        throws PersistenceException
     {
         SceneRecord scene = new SceneRecord(model);
         insert(scene);
@@ -440,7 +420,6 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     protected void checkCreateStockScene (SceneRecord.Stock stock)
-        throws PersistenceException
     {
         // if it's already created, we're good to go
         if (load(SceneRecord.class, SceneRecord.getKey(stock.getSceneId())) != null) {

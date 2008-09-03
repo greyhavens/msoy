@@ -14,8 +14,6 @@ import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
-
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.badge.data.BadgeType;
@@ -49,7 +47,6 @@ public class BadgeLogic
      * b. recording to the member's feed that they earned the stamp in question
      */
     public void awardBadge (final EarnedBadgeRecord brec, final boolean dobjNeedsUpdate)
-        throws PersistenceException
     {
         // ensure this is a valid badge level
         final BadgeType type = BadgeType.getType(brec.badgeCode);
@@ -92,7 +89,6 @@ public class BadgeLogic
      */
     public void awardBadge (final int memberId, final EarnedBadge badge,
         final boolean dobjNeedsUpdate)
-        throws PersistenceException
     {
         awardBadge(new EarnedBadgeRecord(memberId, badge), dobjNeedsUpdate);
     }
@@ -106,7 +102,6 @@ public class BadgeLogic
      */
     public List<InProgressBadge> createNewInProgressBadges (final int memberId,
         final boolean dobjNeedsUpdate)
-        throws PersistenceException
     {
         // read this member's in-progress and earned badge records
         final Set<EarnedBadge> earnedBadges = Sets.newHashSet(
@@ -132,7 +127,6 @@ public class BadgeLogic
      */
     public void updateInProgressBadge (final InProgressBadgeRecord brec,
         final boolean dobjNeedsUpdate)
-        throws PersistenceException
     {
         _badgeRepo.storeInProgressBadge(brec);
 
@@ -146,7 +140,6 @@ public class BadgeLogic
      */
     public void updateInProgressBadge (final int memberId, final InProgressBadge badge,
         final boolean dobjNeedsUpdate)
-        throws PersistenceException
     {
         updateInProgressBadge(new InProgressBadgeRecord(memberId, badge), dobjNeedsUpdate);
     }
@@ -158,7 +151,6 @@ public class BadgeLogic
      * InProgressBadgeSet on its own.
      */
     public void deleteInProgressBadge (int memberId, InProgressBadge badge)
-        throws PersistenceException
     {
         _badgeRepo.deleteInProgressBadge(memberId, badge.badgeCode);
     }
@@ -169,7 +161,6 @@ public class BadgeLogic
      * created, and creates them if they haven't.
      */
     public List<InProgressBadge> getInProgressBadges (int memberId, boolean dobjNeedsUpdate)
-        throws PersistenceException
     {
         // Load up our in progress badges, and check to see if the initial set has been created
         Iterable<InProgressBadge> badges = Iterables.transform(
@@ -195,7 +186,6 @@ public class BadgeLogic
      * enough badges left for the player to pursue.
      */
     public List<InProgressBadge> getNextSuggestedBadges (final int memberId, final int maxBadges)
-        throws PersistenceException
     {
         // Read in our in-progress badges and choose a number of them randomly
         List<InProgressBadge> allBadges = getInProgressBadges(memberId, false);

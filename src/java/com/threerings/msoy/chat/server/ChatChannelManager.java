@@ -10,7 +10,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
 import com.threerings.util.Name;
 
@@ -115,7 +114,7 @@ public class ChatChannelManager
 
             // else check that the group is public
             _invoker.postUnit(new PersistingUnit("joinChannel", listener) {
-                public void invokePersistent () throws PersistenceException {
+                public void invokePersistent () throws Exception {
                     GroupRecord gRec = _groupRepo.loadGroup(gName.getGroupId());
                     _policy = (gRec == null) ? 0 : gRec.policy;
                 }

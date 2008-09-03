@@ -8,7 +8,6 @@ import java.util.Map;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -82,11 +81,6 @@ public class GroupLogic
 
         } catch (DuplicateKeyException dke) {
             throw new ServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
-
-        } catch (PersistenceException pe) {
-            log.warning("Failed to create group [for=" + mrec.who() +
-                    ", group=" + group + ", extras=" + extras + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -112,7 +106,8 @@ public class GroupLogic
 
             GroupRecord grec = _groupRepo.loadGroup(group.groupId);
             if (grec == null) {
-                throw new PersistenceException("Group not found [id=" + group.groupId + "]");
+                log.warning("Cannot update non-existent group", "id", group.groupId);
+                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
             Map<String, Object> updates = grec.findUpdates(group, extras);
             if (updates.size() > 0) {
@@ -121,11 +116,6 @@ public class GroupLogic
 
         } catch (DuplicateKeyException dke) {
             throw new ServiceException(GroupCodes.E_GROUP_NAME_IN_USE);
-
-        } catch (PersistenceException pe) {
-            log.warning("updateGroup failed [group=" + group +
-                    ", extras=" + extras + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 

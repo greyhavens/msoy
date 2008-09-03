@@ -19,7 +19,6 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.common.collect.Maps;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.io.StreamUtil;
 
 import com.threerings.msoy.server.ServerConfig;
@@ -77,8 +76,8 @@ public abstract class AbstractUploadServlet extends HttpServlet
             internalError(rsp);
             return;
         
-        } catch (PersistenceException pe) {
-            log.warning("File upload choked during persistence [error=" + pe + "].");
+        } catch (RuntimeException e) {
+            log.warning("File upload choked during persistence [error=" + e + "].");
             internalError(rsp);
             return;
             
@@ -108,10 +107,9 @@ public abstract class AbstractUploadServlet extends HttpServlet
 
     /**
      * Handles the extracted UploadFile in a concrete class specific way.
-     * @throws PersistenceException 
      */
     protected abstract void handleFileItems (UploadContext ctx)
-        throws IOException, FileUploadException, AccessDeniedException, PersistenceException;
+        throws IOException, FileUploadException, AccessDeniedException;
 
     /**
      * Returns the maximum size for an upload, in bytes.

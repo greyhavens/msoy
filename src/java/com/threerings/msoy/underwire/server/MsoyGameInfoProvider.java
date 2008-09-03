@@ -13,7 +13,6 @@ import com.google.common.base.Function;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -32,14 +31,12 @@ public class MsoyGameInfoProvider extends GameInfoProvider
 {
     @Override // from GameInfoProvider
     public void init (ConnectionProvider conprov)
-        throws PersistenceException
     {
         // nothing to init
     }
 
     @Override // from GameInfoProvider
     public HashMap<String,String> resolveGameNames (HashSet<String> names)
-        throws PersistenceException
     {
         HashMap<String,String> map = new HashMap<String,String>();
         for (MemberName name : _memberRepo.loadMemberNames(names, TO_INT).values()) {
@@ -50,7 +47,6 @@ public class MsoyGameInfoProvider extends GameInfoProvider
 
     @Override // from GameInfoProvider
     public String[] lookupAccountNames (String gameName)
-        throws PersistenceException
     {
         List<Integer> memberIds =
             _memberRepo.findMembersByDisplayName(gameName, true, LOOKUP_LIMIT);
@@ -63,7 +59,6 @@ public class MsoyGameInfoProvider extends GameInfoProvider
 
     @Override // from GameInfoProvider
     public void populateAccount (Account account)
-        throws PersistenceException
     {
         MemberRecord member = _memberRepo.loadMember(account.email);
         if (member != null) {

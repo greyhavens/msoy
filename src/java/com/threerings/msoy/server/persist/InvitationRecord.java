@@ -5,8 +5,6 @@ package com.threerings.msoy.server.persist;
 
 import java.sql.Timestamp;
 
-import com.samskivert.io.PersistenceException;
-
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
@@ -124,7 +122,6 @@ public class InvitationRecord extends PersistentRecord
      * @param inviterName {@link #inviterId} converted to a {@link MemberName}.
      */
     public Invitation toInvitation (MemberName inviterName)
-        throws PersistenceException
     {
         Invitation inv = new Invitation();
         inv.inviteeEmail = inviteeEmail;

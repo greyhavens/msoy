@@ -17,8 +17,6 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
-
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
@@ -420,17 +418,13 @@ public class MoneyLogicImpl
         final int memberId, final int otherMemberId, final UserAction userAction,
         final ItemIdent item, final String description)
     {
-        try {
-            final UserActionDetails details = new UserActionDetails(
-                memberId, userAction, otherMemberId,
-                (item == null) ? Item.NOT_A_TYPE : item.type,
-                (item == null) ? UserActionDetails.INVALID_ID : item.itemId,
-                description);
-            _userActionRepo.logUserAction(details);
-            return details;
-        } catch (final PersistenceException pe) {
-            throw new RepositoryException(pe);
-        }
+        final UserActionDetails details = new UserActionDetails(
+            memberId, userAction, otherMemberId,
+            (item == null) ? Item.NOT_A_TYPE : item.type,
+            (item == null) ? UserActionDetails.INVALID_ID : item.itemId,
+            description);
+        _userActionRepo.logUserAction(details);
+        return details;
     }
 
     private final MoneyHistoryExpirer _expirer;

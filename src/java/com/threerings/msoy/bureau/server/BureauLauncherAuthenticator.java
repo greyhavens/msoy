@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.bureau.server;
 
-import com.samskivert.io.PersistenceException;
 import com.threerings.msoy.bureau.data.BureauLauncherCredentials;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.presents.data.AuthCodes;
@@ -35,7 +34,6 @@ public class BureauLauncherAuthenticator extends ChainedAuthenticator
 
     @Override // from abstract Authenticator
     protected void processAuthentication (AuthingConnection conn, AuthResponse rsp)
-        throws PersistenceException
     {
         // here, we are ONLY authenticating bureau launchers
         AuthRequest req = conn.getAuthRequest();

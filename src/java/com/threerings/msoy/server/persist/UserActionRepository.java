@@ -12,7 +12,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -42,7 +41,6 @@ public class UserActionRepository extends DepotRepository
      * Logs an action for a member with optional action-specific data.
      */
     public void logUserAction (final UserActionDetails info)
-        throws PersistenceException
     {
         final MemberActionLogRecord record = new MemberActionLogRecord();
         record.memberId = info.memberId;
@@ -59,11 +57,8 @@ public class UserActionRepository extends DepotRepository
      *
      * @param memberId ID of the member to retrieve records for.
      * @return Collection of action log records for that member.
-     * @throws PersistenceException An error occurred while retrieving the logs from persistent
-     * storage.
      */
     public Collection<MemberActionLogRecord> getLogRecords (final int memberId)
-        throws PersistenceException
     {
         final Where condition = new Where(MemberActionLogRecord.MEMBER_ID_C, memberId);
         return findAll(MemberActionLogRecord.class, condition);
@@ -74,7 +69,6 @@ public class UserActionRepository extends DepotRepository
      */
     public int assessHumanity (final int memberId, final int currentHumanity,
                                final int secsSinceLast)
-        throws PersistenceException
     {
         // load up all of their actions since our last humanity assessment
         final Collection<MemberActionLogRecord> records = getLogRecords(memberId);

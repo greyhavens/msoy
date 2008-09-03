@@ -11,14 +11,12 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
-import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.server.AbstractUploadServlet;
 import com.threerings.msoy.web.server.FileItemUploadFile;
@@ -37,11 +35,10 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
     /**
      * Generates the MediaInfo object for this FileItem and publishes the data into the media store
      * and returns the results via Javascript to the GWT client.
-     * @throws PersistenceException 
      */
     @Override // from AbstractUploadServlet
     protected void handleFileItems (UploadContext ctx)
-        throws IOException, FileUploadException, AccessDeniedException, PersistenceException
+        throws IOException, FileUploadException, AccessDeniedException
     {
         // wrap the FileItem in an UploadFile for publishing
         UploadFile uploadFile = new FileItemUploadFile(ctx.file);
@@ -160,13 +157,9 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
     protected void validateAccess (UploadContext ctx)
         throws AccessDeniedException
     {
-        try {
-            String token = CookieUtil.getCookieValue(ctx.req, WebCreds.credsCookie());
-            if (_mhelper.getAuthedUser(token) == null) {
-                throw new AccessDeniedException("Must be logged in to upload item media.");
-            }
-        } catch (ServiceException se) {
-            throw new AccessDeniedException(se.getMessage());
+        String token = CookieUtil.getCookieValue(ctx.req, WebCreds.credsCookie());
+        if (_mhelper.getAuthedUser(token) == null) {
+            throw new AccessDeniedException("Must be logged in to upload item media.");
         }
     }
 

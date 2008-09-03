@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.io.StreamUtil;
 import com.samskivert.servlet.util.CookieUtil;
 
@@ -88,7 +87,7 @@ public class GameTraceLogServlet extends HttpServlet
     }
 
     protected void exportLog (HttpServletResponse rsp, int logId, int gameId)
-        throws PersistenceException, IOException
+        throws IOException
     {
         GameTraceLogRecord record = _gameRepo.loadTraceLog(logId);
         if (record == null) {
@@ -104,7 +103,7 @@ public class GameTraceLogServlet extends HttpServlet
     }
 
     protected void enumerateLogs (HttpServletResponse rsp, int gameId)
-        throws PersistenceException, IOException
+        throws IOException
     {
         rsp.setContentType("text/html");
         rsp.getOutputStream().println("Logs for game [id=" + gameId + "]: ");

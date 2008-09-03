@@ -10,7 +10,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -38,7 +37,6 @@ public class FavoritesRepository extends DepotRepository
      * item type).
      */
     public List<FavoriteItemRecord> loadRecentFavorites (int memberId, int count)
-        throws PersistenceException
     {
         return findAll(FavoriteItemRecord.class,
                        new Where(FavoriteItemRecord.MEMBER_ID_C, memberId),
@@ -53,7 +51,6 @@ public class FavoritesRepository extends DepotRepository
      * TODO: paginate if people start favoriting things up a storm.
      */
     public List<FavoriteItemRecord> loadFavorites (int memberId, byte itemType)
-        throws PersistenceException
     {
         Where where = (itemType == Item.NOT_A_TYPE) ?
             new Where(FavoriteItemRecord.MEMBER_ID_C, memberId) :
@@ -68,7 +65,6 @@ public class FavoritesRepository extends DepotRepository
      * no such favorite exists.
      */
     public FavoriteItemRecord loadFavorite (int memberId, byte itemType, int catalogId)
-        throws PersistenceException
     {
         return load(FavoriteItemRecord.class,
                     FavoriteItemRecord.getKey(memberId, itemType, catalogId));
@@ -78,7 +74,6 @@ public class FavoritesRepository extends DepotRepository
      * Notes that the specified member favorited the specified item.
      */
     public void noteFavorite (int memberId, byte itemType, int catalogId)
-        throws PersistenceException
     {
         FavoriteItemRecord record = new FavoriteItemRecord();
         record.memberId = memberId;
@@ -92,7 +87,6 @@ public class FavoritesRepository extends DepotRepository
      * Clears out a favorited item registration.
      */
     public void clearFavorite (int memberId, byte itemType, int catalogId)
-        throws PersistenceException
     {
         delete(FavoriteItemRecord.class, FavoriteItemRecord.getKey(memberId, itemType, catalogId));
     }

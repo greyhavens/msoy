@@ -19,7 +19,6 @@ import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -79,57 +78,51 @@ public class ProfileServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord memrec = getAuthedUser();
+        final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+        if (tgtrec == null) {
+            return null;
+        }
 
-        try {
-            final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
-            if (tgtrec == null) {
-                return null;
-            }
+        final ProfileResult result = new ProfileResult();
+        result.name = tgtrec.getName();
 
-            final ProfileResult result = new ProfileResult();
-            result.name = tgtrec.getName();
+        // load profile info
+        result.profile = resolveProfileData(memrec, tgtrec);
 
-            // load profile info
-            result.profile = resolveProfileData(memrec, tgtrec);
+        // load up the member's interests
+        final List<Interest> interests = Lists.newArrayList();
+        for (final InterestRecord iRec : _profileRepo.loadInterests(memberId)) {
+            interests.add(iRec.toRecord());
+        }
+        result.interests = interests;
 
-            // load up the member's interests
-            final List<Interest> interests = Lists.newArrayList();
-            for (final InterestRecord iRec : _profileRepo.loadInterests(memberId)) {
-                interests.add(iRec.toRecord());
-            }
-            result.interests = interests;
+        // load friend info
+        result.friends = resolveFriendsData(memrec, tgtrec);
+        final IntSet friendIds = _memberRepo.loadFriendIds(tgtrec.memberId);
+        result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
+        result.totalFriendCount = friendIds.size();
 
-            // load friend info
-            result.friends = resolveFriendsData(memrec, tgtrec);
-            final IntSet friendIds = _memberRepo.loadFriendIds(tgtrec.memberId);
-            result.isOurFriend = (memrec != null) && friendIds.contains(memrec.memberId);
-            result.totalFriendCount = friendIds.size();
-
-            // load stamp info
-            result.stamps = Lists.newArrayList(Lists.transform(
+        // load stamp info
+        result.stamps = Lists.newArrayList(
+            Lists.transform(
                 _badgeRepo.loadRecentEarnedBadges(tgtrec.memberId, ProfileResult.MAX_STAMPS),
                 EarnedBadgeRecord.TO_BADGE));
 
-            // load rating and trophy info
-            result.trophies = resolveTrophyData(memrec, tgtrec);
-            result.ratings = resolveRatingsData(memrec, tgtrec);
+        // load rating and trophy info
+        result.trophies = resolveTrophyData(memrec, tgtrec);
+        result.ratings = resolveRatingsData(memrec, tgtrec);
 
-            // load group info
-            result.groups = resolveGroupsData(memrec, tgtrec);
+        // load group info
+        result.groups = resolveGroupsData(memrec, tgtrec);
 
-            // load feed
-            result.feed = loadFeed(memberId, DEFAULT_FEED_DAYS);
+        // load feed
+        result.feed = loadFeed(memberId, DEFAULT_FEED_DAYS);
 
-            // load recent favorites
-            result.faves = _itemLogic.resolveFavorites(
-                _faveRepo.loadRecentFavorites(memberId, MAX_PROFILE_FAVORITES));
+        // load recent favorites
+        result.faves = _itemLogic.resolveFavorites(
+            _faveRepo.loadRecentFavorites(memberId, MAX_PROFILE_FAVORITES));
 
-            return result;
-
-        } catch (final PersistenceException pe) {
-            log.warning("Failure resolving blurbs [who=" + memberId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        return result;
     }
 
     // from interface ProfileService
@@ -149,51 +142,44 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // TODO: whatever filtering and profanity checking that we want
 
-        try {
-            // load their old profile record for "first time configuration" purposes
-            final ProfileRecord oprof = _profileRepo.loadProfile(memrec.memberId);
+        // load their old profile record for "first time configuration" purposes
+        final ProfileRecord oprof = _profileRepo.loadProfile(memrec.memberId);
 
-            // stuff their updated profile data into the database
-            final ProfileRecord nrec = new ProfileRecord(memrec.memberId, profile);
-            if (oprof != null) {
-                nrec.modifications = oprof.modifications+1;
-                nrec.realName = oprof.realName;
-            } else {
-                log.warning("Account missing old profile [id=" + memrec.memberId + "].");
-            }
-            _profileRepo.storeProfile(nrec);
+        // stuff their updated profile data into the database
+        final ProfileRecord nrec = new ProfileRecord(memrec.memberId, profile);
+        if (oprof != null) {
+            nrec.modifications = oprof.modifications+1;
+            nrec.realName = oprof.realName;
+        } else {
+            log.warning("Account missing old profile [id=" + memrec.memberId + "].");
+        }
+        _profileRepo.storeProfile(nrec);
 
-            // record that the user updated their profile
-            if (nrec.modifications == 1) {
-                final MemberMoney money = _moneyLogic.awardCoins(
-                    memrec.memberId, 0, 0, null, CoinAwards.CREATED_PROFILE,
-                    "", UserAction.CREATED_PROFILE).getNewMemberMoney();
-                _moneyNodeActions.moneyUpdated(money);
-            } else {
-                _userActionRepo.logUserAction(
-                    new UserActionDetails(memrec.memberId, UserAction.UPDATED_PROFILE));
-            }
-            _eventLog.profileUpdated(memrec.memberId);
+        // record that the user updated their profile
+        if (nrec.modifications == 1) {
+            final MemberMoney money = _moneyLogic.awardCoins(
+                memrec.memberId, 0, 0, null, CoinAwards.CREATED_PROFILE,
+                "", UserAction.CREATED_PROFILE).getNewMemberMoney();
+            _moneyNodeActions.moneyUpdated(money);
+        } else {
+            _userActionRepo.logUserAction(
+                new UserActionDetails(memrec.memberId, UserAction.UPDATED_PROFILE));
+        }
+        _eventLog.profileUpdated(memrec.memberId);
 
-            // handle a display name change if necessary
-            final boolean nameChanged = memrec.name == null || !memrec.name.equals(displayName);
-            final boolean photoChanged = !oprof.getPhoto().equals(nrec.getPhoto());
-            final boolean statusChanged = oprof.headline != nrec.headline;
+        // handle a display name change if necessary
+        final boolean nameChanged = memrec.name == null || !memrec.name.equals(displayName);
+        final boolean photoChanged = !oprof.getPhoto().equals(nrec.getPhoto());
+        final boolean statusChanged = oprof.headline != nrec.headline;
 
-            if (nameChanged) {
-                _memberRepo.configureDisplayName(memrec.memberId, displayName);
-            }
+        if (nameChanged) {
+            _memberRepo.configureDisplayName(memrec.memberId, displayName);
+        }
 
-            if (statusChanged || nameChanged || photoChanged) {
-                // let the world servers know about the info change
-                MemberNodeActions.infoChanged(
-                    memrec.memberId, displayName, nrec.getPhoto(), nrec.headline);
-            }
-
-        } catch (final PersistenceException pe) {
-            log.warning("Failed to update member's profile " +
-                    "[who=" + memrec.who() +
-                    ", profile=" + StringUtil.fieldsToString(profile) + "].", pe);
+        if (statusChanged || nameChanged || photoChanged) {
+            // let the world servers know about the info change
+            MemberNodeActions.infoChanged(
+                memrec.memberId, displayName, nrec.getPhoto(), nrec.headline);
         }
     }
 
@@ -202,15 +188,8 @@ public class ProfileServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser();
-
-        try {
-            // store the supplied interests in the repository; blank interests will be deleted
-                _profileRepo.storeInterests(memrec.memberId, interests);
-
-        } catch (final PersistenceException pe) {
-            log.warning("Failed to update member's interests [who=" + memrec.who() +
-                    ", interests=" + StringUtil.toString(interests) + "].", pe);
-        }
+        // store the supplied interests in the repository; blank interests will be deleted
+        _profileRepo.storeInterests(memrec.memberId, interests);
     }
 
     // from interface ProfileService
@@ -219,59 +198,46 @@ public class ProfileServlet extends MsoyServiceServlet
     {
         final MemberRecord mrec = getAuthedUser();
 
-        try {
-            // if the caller is a member, load up their friends set
-            final IntSet callerFriendIds = (mrec == null) ? null :
-                _memberRepo.loadFriendIds(mrec.memberId);
+        // if the caller is a member, load up their friends set
+        final IntSet callerFriendIds = (mrec == null) ? null :
+            _memberRepo.loadFriendIds(mrec.memberId);
 
-            // locate the members that match the supplied search
-            final IntSet mids = new ArrayIntSet();
+        // locate the members that match the supplied search
+        final IntSet mids = new ArrayIntSet();
 
-            // first check for an email match (and use only that if we have a match)
-            final MemberRecord memrec = _memberRepo.loadMember(search);
-            if (memrec != null) {
-                mids.add(memrec.memberId);
+        // first check for an email match (and use only that if we have a match)
+        final MemberRecord memrec = _memberRepo.loadMember(search);
+        if (memrec != null) {
+            mids.add(memrec.memberId);
 
-            } else {
-                // look for a display name match
-                mids.addAll(_memberRepo.findMembersByDisplayName(
-                                search, false, MAX_PROFILE_MATCHES));
-                // look for a real name match
-                mids.addAll(_profileRepo.findMembersByRealName(
-                                search, MAX_PROFILE_MATCHES));
-                // look for an interests match
-                mids.addAll(_profileRepo.findMembersByInterest(search, MAX_PROFILE_MATCHES));
-            }
-
-            // finally resolve cards for these members
-            List<MemberCard> results = _mhelper.resolveMemberCards(mids, false, callerFriendIds);
-            Collections.sort(results, MemberHelper.SORT_BY_LAST_ONLINE);
-            return results;
-
-        } catch (final PersistenceException pe) {
-            log.warning("Failure finding profiles [search=" + search + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        } else {
+            // look for a display name match
+            mids.addAll(_memberRepo.findMembersByDisplayName(
+                            search, false, MAX_PROFILE_MATCHES));
+            // look for a real name match
+            mids.addAll(_profileRepo.findMembersByRealName(
+                            search, MAX_PROFILE_MATCHES));
+            // look for an interests match
+            mids.addAll(_profileRepo.findMembersByInterest(search, MAX_PROFILE_MATCHES));
         }
+
+        // finally resolve cards for these members
+        List<MemberCard> results = _mhelper.resolveMemberCards(mids, false, callerFriendIds);
+        Collections.sort(results, MemberHelper.SORT_BY_LAST_ONLINE);
+        return results;
     }
 
     // from interface ProfileService
     public List<FeedMessage> loadSelfFeed (final int profileMemberId, final int cutoffDays)
         throws ServiceException
     {
-        try {
-            return loadFeed(profileMemberId, cutoffDays);
-
-        } catch (final PersistenceException pe) {
-            log.warning("Load feed failed [memberId=" + profileMemberId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        return loadFeed(profileMemberId, cutoffDays);
     }
 
     /**
      * Helper function for {@link #loadSelfFeed} and {@link #loadProfile}.
      */
     protected List<FeedMessage> loadFeed (final int profileMemberId, final int cutoffDays)
-        throws PersistenceException
     {
         // load up the feed records for the target member
         Timestamp since = new Timestamp(System.currentTimeMillis() - cutoffDays * 24*60*60*1000L);
@@ -279,7 +245,6 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     protected Profile resolveProfileData (final MemberRecord reqrec, final MemberRecord tgtrec)
-        throws PersistenceException
     {
         final ProfileRecord prec = _profileRepo.loadProfile(tgtrec.memberId);
         final int forMemberId = (reqrec == null) ? 0 : reqrec.memberId;
@@ -291,7 +256,6 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     protected List<MemberCard> resolveFriendsData (MemberRecord reqrec, MemberRecord tgtrec)
-        throws PersistenceException
     {
         final Map<Integer,MemberCard> cards = Maps.newLinkedHashMap();
         for (final FriendEntry entry : _memberRepo.loadFriends(
@@ -312,14 +276,12 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     protected List<GroupCard> resolveGroupsData (MemberRecord reqrec, MemberRecord tgtrec)
-        throws PersistenceException
     {
         final boolean showExclusive = (reqrec != null && reqrec.memberId == tgtrec.memberId);
         return _groupRepo.getMemberGroups(tgtrec.memberId, showExclusive);
     }
 
     protected List<GameRating> resolveRatingsData (MemberRecord reqrec, MemberRecord tgtrec)
-        throws PersistenceException
     {
         // fetch all the rating records for the user
         List<RatingRecord> ratings = _ratingRepo.getRatings(tgtrec.memberId, -1, MAX_PROFILE_GAMES);
@@ -370,7 +332,6 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     protected List<Trophy> resolveTrophyData (final MemberRecord reqrec, final MemberRecord tgtrec)
-        throws PersistenceException
     {
         final List<Trophy> list = Lists.newArrayList();
         for (final TrophyRecord record :

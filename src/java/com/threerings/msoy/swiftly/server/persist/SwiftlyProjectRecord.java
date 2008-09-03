@@ -8,7 +8,6 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
@@ -115,7 +114,6 @@ public class SwiftlyProjectRecord extends PersistentRecord
      */
 
     public Map<String, Object> findUpdates (SwiftlyProject project)
-        throws PersistenceException
     {
         Map<String, Object> updates = Maps.newHashMap();
         if (project.projectName != null && !project.projectName.equals(projectName)) {

@@ -5,8 +5,7 @@ package com.threerings.msoy.swiftly.server;
 
 import java.io.IOException;
 
-import com.samskivert.io.PersistenceException;
-
+import com.samskivert.jdbc.depot.DatabaseException;
 import com.threerings.presents.client.InvocationService.ResultListener;
 
 import com.threerings.msoy.item.data.all.Avatar;
@@ -77,7 +76,7 @@ public class BuildAndExportTask extends AbstractBuildTask
 
     @Override // from CommonBuildTask
     public void processArtifact (final BuildArtifact artifact)
-        throws IOException, PersistenceException
+        throws IOException
     {
         // First, publish the results into the media store
         UploadFile uploadFile = new GenericUploadFile(artifact.getOutputFile());
@@ -97,7 +96,7 @@ public class BuildAndExportTask extends AbstractBuildTask
             SwiftlyCollaboratorsRecord sRec = _swiftlyRepo.loadCollaborator(
                 _projectId, _member.getMemberId());
             if (sRec == null) {
-                throw new PersistenceException("No collaborator record found when expected. " +
+                throw new DatabaseException("No collaborator record found when expected. " +
                     "[projectId=" + _projectId + ", memberId=" +
                     _member.getMemberId() + "].");
             }

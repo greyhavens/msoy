@@ -14,8 +14,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.IntSet;
 
-import com.samskivert.io.PersistenceException;
-
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -52,9 +50,7 @@ public class IssueRepository extends DepotRepository
     /**
      * Load issues of specific types and states.
      */
-    public List<IssueRecord> loadIssues (
-            IntSet types, IntSet states, int offset, int count)
-        throws PersistenceException
+    public List<IssueRecord> loadIssues (IntSet types, IntSet states, int offset, int count)
     {
         return loadIssues(types, states, 0, offset, count);
     }
@@ -62,9 +58,8 @@ public class IssueRepository extends DepotRepository
     /**
      * Load issues of specific types, states and ownerId.
      */
-    public List<IssueRecord> loadIssues (
-            IntSet types, IntSet states, int ownerId, int offset, int count)
-        throws PersistenceException
+    public List<IssueRecord> loadIssues (IntSet types, IntSet states, int ownerId,
+                                         int offset, int count)
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
         ColumnExp sortColumn = IssueRecord.CREATED_TIME_C;
@@ -92,7 +87,6 @@ public class IssueRepository extends DepotRepository
      * Load an issue from the issueId.
      */
     public IssueRecord loadIssue (int issueId)
-        throws PersistenceException
     {
         return load(IssueRecord.class, issueId);
     }
@@ -101,7 +95,6 @@ public class IssueRepository extends DepotRepository
      * Load the total number of issues with specific types, states.
      */
     public int loadIssueCount (IntSet types, IntSet states)
-        throws PersistenceException
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
         if (types != null) {
@@ -119,7 +112,6 @@ public class IssueRepository extends DepotRepository
      * Creates an issue.
      */
     public IssueRecord createIssue (Issue issue)
-        throws PersistenceException
     {
         IssueRecord ir = new IssueRecord();
         ir.creatorId = issue.creator.getMemberId();
@@ -138,7 +130,6 @@ public class IssueRepository extends DepotRepository
      * Updates an issue.
      */
     public void updateIssue (Issue issue)
-        throws PersistenceException
     {
         updatePartial(IssueRecord.class, issue.issueId,
                 IssueRecord.OWNER_ID, (issue.owner != null ? issue.owner.getMemberId() : -1),

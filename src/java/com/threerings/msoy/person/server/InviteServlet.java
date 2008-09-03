@@ -16,7 +16,6 @@ import octazen.http.UserInputRequiredException;
 
 import com.google.common.collect.Lists;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.IntIntMap;
 import com.samskivert.util.StringUtil;
@@ -91,15 +90,8 @@ public class InviteServlet extends MsoyServiceServlet
             throw new ServiceException(ProfileCodes.E_UNSUPPORTED_WEBMAIL);
         } catch (UserInputRequiredException e) {
             throw new ServiceException(ProfileCodes.E_USER_INPUT_REQUIRED);
-        } catch (IOException e) {
-            log.warning("getWebMailAddresses failed [email=" + email + "].", e);
-            throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
-        } catch (HttpException e) {
-            log.warning("getWebMailAddresses failed [email=" + email + "].", e);
-            throw new ServiceException(ProfileCodes.E_INTERNAL_ERROR);
-        } catch (PersistenceException pe) {
-            log.warning("getWebMailAddresses failed [who=" + memrec.who() +
-                    ", email=" + email + "].", pe);
+        } catch (Exception e) {
+            log.warning("getWebMailAddresses failed", "who", memrec.who(), "email", email, e);
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
@@ -109,23 +101,16 @@ public class InviteServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-
-        try {
-            MemberInvites result = new MemberInvites();
-            result.availableInvitations = _memberRepo.getInvitesGranted(mrec.memberId);
-            List<Invitation> pending = Lists.newArrayList();
-            for (InvitationRecord iRec : _memberRepo.loadPendingInvites(mrec.memberId)) {
-                // we issued these invites so we are the inviter
-                pending.add(iRec.toInvitation(mrec.getName()));
-            }
-            result.pendingInvitations = pending;
-            result.serverUrl = ServerConfig.getServerURL() + "#invite-";
-            return result;
-
-        } catch (PersistenceException pe) {
-            log.warning("getInvitationsStatus failed [id=" + mrec.memberId +"]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        MemberInvites result = new MemberInvites();
+        result.availableInvitations = _memberRepo.getInvitesGranted(mrec.memberId);
+        List<Invitation> pending = Lists.newArrayList();
+        for (InvitationRecord iRec : _memberRepo.loadPendingInvites(mrec.memberId)) {
+            // we issued these invites so we are the inviter
+            pending.add(iRec.toInvitation(mrec.getName()));
         }
+        result.pendingInvitations = pending;
+        result.serverUrl = ServerConfig.getServerURL() + "#invite-";
+        return result;
     }
 
     // from InviteService
@@ -141,7 +126,6 @@ public class InviteServlet extends MsoyServiceServlet
         }
 
 // TODO: nix this when we stop caring about retaining the potential to limit growth
-//         try {
 //             // make sure this user still has available invites; we already check this value in GWT
 //             // land, and deal with it sensibly there
 //             int availInvites = _memberRepo.getInvitesGranted(mrec.memberId);
@@ -151,11 +135,6 @@ public class InviteServlet extends MsoyServiceServlet
 //                             ", have=" + availInvites + "].");
 //                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
 //             }
-
-//         } catch (PersistenceException pe) {
-//             log.warning("getInvitesGranted failed [id=" + mrec.memberId +"]", pe);
-//             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-//         }
 
         InvitationResults ir = new InvitationResults();
         ir.results = new String[addresses.size()];
@@ -185,22 +164,15 @@ public class InviteServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-
-        try {
-            InvitationRecord invRec = _memberRepo.loadInvite(inviteId, false);
-            if (invRec == null) {
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-
-            if (invRec.inviterId != mrec.memberId || invRec.inviteeId != 0) {
-                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
-            }
-            _memberRepo.deleteInvite(inviteId);
-
-        } catch (PersistenceException pe) {
-            log.warning("removeInvitation failed [inviteId=" + inviteId + "]", pe);
+        InvitationRecord invRec = _memberRepo.loadInvite(inviteId, false);
+        if (invRec == null) {
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+
+        if (invRec.inviterId != mrec.memberId || invRec.inviteeId != 0) {
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+        _memberRepo.deleteInvite(inviteId);
     }
 
     /**
@@ -210,71 +182,64 @@ public class InviteServlet extends MsoyServiceServlet
                                      String fromName, String customMessage)
         throws ServiceException
     {
-        try {
-            // make sure this address is valid
-            if (!MailUtil.isValidAddress(email)) {
-                throw new ServiceException(InvitationResults.INVALID_EMAIL);
-            }
-
-            // make sure this address isn't already registered
-            MemberRecord invitee = _memberRepo.loadMember(email);
-            if (invitee != null) {
-                if (_memberRepo.getFriendStatus(inviter.memberId, invitee.memberId)) {
-                    throw new ServiceException(InvitationResults.ALREADY_FRIEND);
-                }
-                throw new NameServiceException(
-                        InvitationResults.ALREADY_REGISTERED, invitee.getName());
-            }
-
-            // make sure this address isn't on the opt-out list
-            if (_memberRepo.hasOptedOut(email)) {
-                throw new ServiceException(InvitationResults.OPTED_OUT);
-            }
-
-            // make sure this user hasn't already invited this address
-            int inviterId = (inviter == null) ? 0 : inviter.memberId;
-            if (_memberRepo.loadInvite(email, inviterId) != null) {
-                throw new ServiceException(InvitationResults.ALREADY_INVITED);
-            }
-
-            String inviteId = _memberRepo.generateInviteId();
-
-            // create and send the invitation email
-            MailSender.Parameters params = new MailSender.Parameters();
-            if (inviter != null) {
-                params.set("friend", fromName);
-                params.set("email", inviter.accountName);
-            }
-            if (!StringUtil.isBlank(toName)) {
-                params.set("name", toName);
-            }
-            if (!StringUtil.isBlank(customMessage)) {
-                params.set("custom_message", customMessage);
-            }
-            params.set("invite_id", inviteId);
-            params.set("server_url", ServerConfig.getServerURL());
-
-            String from = (inviter == null) ? ServerConfig.getFromAddress() : inviter.accountName;
-            String result = MailSender.sendEmail(email, from, "memberInvite", params);
-            if (result != null) {
-                throw new ServiceException(result);
-            }
-
-            // record the invite and that we sent it
-            _memberRepo.addInvite(email, inviterId, inviteId);
-            _eventLog.inviteSent(inviteId, inviterId, email);
-
-            Invitation invite = new Invitation();
-            invite.inviteId = inviteId;
-            invite.inviteeEmail = email;
-            // invite.inviter left blank on purpose
-            return invite;
-
-        } catch (PersistenceException pe) {
-            log.warning("sendInvite failed [inviter=" + inviter.who() +
-                    ", email=" + email + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        // make sure this address is valid
+        if (!MailUtil.isValidAddress(email)) {
+            throw new ServiceException(InvitationResults.INVALID_EMAIL);
         }
+
+        // make sure this address isn't already registered
+        MemberRecord invitee = _memberRepo.loadMember(email);
+        if (invitee != null) {
+            if (_memberRepo.getFriendStatus(inviter.memberId, invitee.memberId)) {
+                throw new ServiceException(InvitationResults.ALREADY_FRIEND);
+            }
+            throw new NameServiceException(
+                InvitationResults.ALREADY_REGISTERED, invitee.getName());
+        }
+
+        // make sure this address isn't on the opt-out list
+        if (_memberRepo.hasOptedOut(email)) {
+            throw new ServiceException(InvitationResults.OPTED_OUT);
+        }
+
+        // make sure this user hasn't already invited this address
+        int inviterId = (inviter == null) ? 0 : inviter.memberId;
+        if (_memberRepo.loadInvite(email, inviterId) != null) {
+            throw new ServiceException(InvitationResults.ALREADY_INVITED);
+        }
+
+        String inviteId = _memberRepo.generateInviteId();
+
+        // create and send the invitation email
+        MailSender.Parameters params = new MailSender.Parameters();
+        if (inviter != null) {
+            params.set("friend", fromName);
+            params.set("email", inviter.accountName);
+        }
+        if (!StringUtil.isBlank(toName)) {
+            params.set("name", toName);
+        }
+        if (!StringUtil.isBlank(customMessage)) {
+            params.set("custom_message", customMessage);
+        }
+        params.set("invite_id", inviteId);
+        params.set("server_url", ServerConfig.getServerURL());
+
+        String from = (inviter == null) ? ServerConfig.getFromAddress() : inviter.accountName;
+        String result = MailSender.sendEmail(email, from, "memberInvite", params);
+        if (result != null) {
+            throw new ServiceException(result);
+        }
+
+        // record the invite and that we sent it
+        _memberRepo.addInvite(email, inviterId, inviteId);
+        _eventLog.inviteSent(inviteId, inviterId, email);
+
+        Invitation invite = new Invitation();
+        invite.inviteId = inviteId;
+        invite.inviteeEmail = email;
+        // invite.inviter left blank on purpose
+        return invite;
     }
 
     protected class NameServiceException extends ServiceException

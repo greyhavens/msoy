@@ -12,8 +12,8 @@ import java.util.Map;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
@@ -279,7 +279,7 @@ public class MemberManager
     {
         _invoker.postUnit(new PersistingUnit(listener) {
             @Override
-            public void invokePersistent () throws PersistenceException {
+            public void invokePersistent () throws Exception {
                 _homeId = _memberLogic.getHomeId(ownerType, ownerId);
             }
             @Override
@@ -505,16 +505,9 @@ public class MemberManager
     public void acknowledgeWarning (final ClientObject caller)
     {
         final MemberObject user = (MemberObject) caller;
-        _invoker.postUnit(new Invoker.Unit("acknowledgeWarning") {
-            @Override
-            public boolean invoke () {
-                try {
-                    _memberRepo.clearMemberWarning(user.getMemberId());
-                } catch (final PersistenceException pe) {
-                    log.warning("Failed to clean member warning [for=" +
-                        user.getMemberId() + "].", pe);
-                }
-                return false;
+        _invoker.postUnit(new WriteOnlyUnit("acknowledgeWarning(" + user.getMemberId() + ")") {
+            public void invokePersist () throws Exception {
+                _memberRepo.clearMemberWarning(user.getMemberId());
             }
         });
     }
@@ -623,8 +616,8 @@ public class MemberManager
             public boolean invoke () {
                 try {
                     _supportLogic.addComplaint(event, memberId);
-                } catch (PersistenceException pe) {
-                    log.warning("Failed to add complaint event [event=" + event + "].");
+                } catch (Exception e) {
+                    log.warning("Failed to add complaint event [event=" + event + "].", e);
                     _failed = true;
                 }
                 return true;
@@ -675,7 +668,7 @@ public class MemberManager
 
         _invoker.postUnit(new RepositoryUnit("emailShare") {
             @Override
-            public void invokePersist () throws PersistenceException {
+            public void invokePersist () throws Exception {
                 final MemberRecord sender = _memberRepo.loadMember(memObj.getMemberId());
 
                 // Send the email on the invoker thread... TODO?
@@ -707,7 +700,7 @@ public class MemberManager
         final boolean logEvent, final InvocationService.ResultListener listener)
     {
         _invoker.postUnit(new PersistingUnit(listener) {
-            @Override public void invokePersistent () throws PersistenceException {
+            @Override public void invokePersistent () throws Exception {
                 _testGroup = new Integer(_memberLogic.getABTestGroup(testName, info, logEvent));
             }
             @Override public void handleSuccess () {
@@ -821,7 +814,7 @@ public class MemberManager
             final int newLevel = level;
             _invoker.postUnit(new RepositoryUnit("updateLevel") {
                 @Override
-                public void invokePersist () throws PersistenceException {
+                public void invokePersist () throws Exception {
                     final int memberId = member.getMemberId();
                     // record the new level, and grant a new invite
                     _memberRepo.setUserLevel(memberId, newLevel);
@@ -883,7 +876,7 @@ public class MemberManager
     {
         _invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
             @Override
-            public void invokePersist () throws PersistenceException {
+            public void invokePersist () throws Exception {
                 _memberRepo.configureAvatarId(user.getMemberId(),
                     (avatar == null) ? 0 : avatar.itemId);
                 if (newScale != 0 && avatar != null && avatar.scale != newScale) {

@@ -11,7 +11,6 @@ import org.apache.commons.fileupload.FileUploadException;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.presents.dobj.RootDObjectManager;
@@ -109,8 +108,8 @@ public class SwiftlyUploadServlet extends AbstractUploadServlet
         } catch (ServiceException e) {
             throw new AccessDeniedException("Access denied. Member not logged in " +
                                             "[token=" + authTok + ", projectId=" + projectId + "]");
-        } catch (PersistenceException pe) {
-            throw new FileUploadException("Failed when trying to check collaborator status");
+        } catch (Exception e) {
+            throw new FileUploadException("Failed when trying to check collaborator status", e);
         }
     }
 

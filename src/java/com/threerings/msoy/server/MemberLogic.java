@@ -6,7 +6,6 @@ package com.threerings.msoy.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -51,7 +50,6 @@ public class MemberLogic
      * @return the id if the entity was found, null otherwise.
      */
     public Integer getHomeId (byte ownerType, int ownerId)
-        throws PersistenceException
     {
         switch (ownerType) {
         case MsoySceneModel.OWNER_TYPE_MEMBER:
@@ -101,11 +99,6 @@ public class MemberLogic
         } catch (DuplicateKeyException dke) {
             // no problem, just fall through and pretend like things succeeded (we'll have skipped
             // all the announcing and stat fiddling and whatnot)
-
-        } catch (PersistenceException pe) {
-            log.warning("establishFriendship failed", "for", caller.memberId,
-                        "friendId", friendId, pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
     }
 
@@ -115,26 +108,19 @@ public class MemberLogic
     public void clearFriendship (int removerId, int friendId)
         throws ServiceException
     {
-        try {
-            // clear their friendship in the database
-            _memberRepo.clearFriendship(removerId, friendId);
+        // clear their friendship in the database
+        _memberRepo.clearFriendship(removerId, friendId);
 
-            // remove them from the friends list of both parties, wherever they are online
-            _peerMan.invokeNodeAction(new RemoveFriend(removerId, friendId));
-            _peerMan.invokeNodeAction(new RemoveFriend(friendId, removerId));
+        // remove them from the friends list of both parties, wherever they are online
+        _peerMan.invokeNodeAction(new RemoveFriend(removerId, friendId));
+        _peerMan.invokeNodeAction(new RemoveFriend(friendId, removerId));
 
-            // update the FRIENDS_MADE statistic for both players
-            _statLogic.incrementStat(removerId, StatType.FRIENDS_MADE, -1);
-            _statLogic.incrementStat(friendId, StatType.FRIENDS_MADE, -1);
+        // update the FRIENDS_MADE statistic for both players
+        _statLogic.incrementStat(removerId, StatType.FRIENDS_MADE, -1);
+        _statLogic.incrementStat(friendId, StatType.FRIENDS_MADE, -1);
 
-            // note the sad event in the log
-            _eventLog.friendRemoved(removerId, friendId);
-
-        } catch (PersistenceException pe) {
-            log.warning("removeFriend failed [for=" + removerId +
-                        ", friendId=" + friendId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        // note the sad event in the log
+        _eventLog.friendRemoved(removerId, friendId);
     }
 
     /**
@@ -167,8 +153,8 @@ public class MemberLogic
                 return -1;
             }
             test = record.toABTest();
-        } catch (PersistenceException pe) {
-            log.warning("Failed to load A/B Test", "name", testName, pe);
+        } catch (Exception e) {
+            log.warning("Failed to load A/B Test", "name", testName, e);
             return -1;
         }
 

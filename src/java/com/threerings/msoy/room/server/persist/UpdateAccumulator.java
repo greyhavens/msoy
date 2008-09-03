@@ -10,7 +10,6 @@ import java.util.Set;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Interval;
@@ -56,7 +55,6 @@ public class UpdateAccumulator
      * whatever we had so far for this scene into the repository, followed by the new update.
      */
     public void add (SceneUpdate update)
-        throws PersistenceException
     {
         int sceneId = update.getSceneId();
         UpdateWrapper wrapper = _pending.get(sceneId);

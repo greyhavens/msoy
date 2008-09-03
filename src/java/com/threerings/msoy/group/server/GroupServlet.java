@@ -18,7 +18,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 import com.samskivert.util.Tuple;
@@ -72,73 +71,61 @@ public class GroupServlet extends MsoyServiceServlet
     public GalaxyData getGalaxyData ()
         throws ServiceException
     {
-        try {
-            GalaxyData data = new GalaxyData();
+        GalaxyData data = new GalaxyData();
 
-            // determine our featured whirled based on who's online now
-            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-            List<GroupCard> popWhirleds = Lists.newArrayList();
-            for (PopularPlacesSnapshot.Place card : pps.getTopWhirleds()) {
-                GroupRecord group = _groupRepo.loadGroup(card.placeId);
-                if (group != null) {
-                    GroupCard gcard = group.toGroupCard(_sceneRepo);
-                    gcard.population = card.population;
-                    popWhirleds.add(gcard);
-                    if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
-                        break;
-                    }
+        // determine our featured whirled based on who's online now
+        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
+        List<GroupCard> popWhirleds = Lists.newArrayList();
+        for (PopularPlacesSnapshot.Place card : pps.getTopWhirleds()) {
+            GroupRecord group = _groupRepo.loadGroup(card.placeId);
+            if (group != null) {
+                GroupCard gcard = group.toGroupCard(_sceneRepo);
+                gcard.population = card.population;
+                popWhirleds.add(gcard);
+                if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
+                    break;
                 }
             }
-            // if we don't have enough people online, supplement with other groups
-            if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
-                int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
-                for (GroupRecord group : _groupRepo.getGroupsList(0, count)) {
-                    popWhirleds.add(group.toGroupCard(_sceneRepo));
-                }
-            }
-            data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
-
-            // load up our popular tags
-            List<String> popularTags = Lists.newArrayList();
-            for (TagPopularityRecord popRec : _groupRepo.getTagRepository().getPopularTags(
-                     GalaxyData.POPULAR_TAG_COUNT)) {
-                popularTags.add(popRec.tag);
-            }
-            data.popularTags = popularTags;
-
-            return data;
-
-        } catch (PersistenceException pe) {
-            log.warning("getGalaxyData failed.", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+        // if we don't have enough people online, supplement with other groups
+        if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
+            int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
+            for (GroupRecord group : _groupRepo.getGroupsList(0, count)) {
+                popWhirleds.add(group.toGroupCard(_sceneRepo));
+            }
+        }
+        data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
+
+        // load up our popular tags
+        List<String> popularTags = Lists.newArrayList();
+        for (TagPopularityRecord popRec : _groupRepo.getTagRepository().getPopularTags(
+                 GalaxyData.POPULAR_TAG_COUNT)) {
+            popularTags.add(popRec.tag);
+        }
+        data.popularTags = popularTags;
+
+        return data;
     }
 
     // from GroupService
     public List<GroupCard> getGroupsList ()
         throws ServiceException
     {
-        try {
-            List<GroupCard> groups = Lists.newArrayList();
-            for (GroupRecord gRec : _groupRepo.getGroupsList(0, Integer.MAX_VALUE)) {
-                groups.add(gRec.toGroupCard(_sceneRepo));
-            }
-
-            // fill in the current population of these groups
-            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-            for (GroupCard group : groups) {
-                PopularPlacesSnapshot.Place card = pps.getWhirled(group.name.getGroupId());
-                if (card != null) {
-                    group.population = card.population;
-                }
-            }
-
-            return groups;
-
-        } catch (PersistenceException pe) {
-            log.warning("getGroupsList failed", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        List<GroupCard> groups = Lists.newArrayList();
+        for (GroupRecord gRec : _groupRepo.getGroupsList(0, Integer.MAX_VALUE)) {
+            groups.add(gRec.toGroupCard(_sceneRepo));
         }
+
+        // fill in the current population of these groups
+        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
+        for (GroupCard group : groups) {
+            PopularPlacesSnapshot.Place card = pps.getWhirled(group.name.getGroupId());
+            if (card != null) {
+                group.population = card.population;
+            }
+        }
+
+        return groups;
     }
 
     /**
@@ -151,71 +138,60 @@ public class GroupServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = getAuthedUser();
 
-        try {
-            // load the group record
-            GroupRecord grec = _groupRepo.loadGroup(groupId);
-            if (grec == null) {
-                return null;
-            }
-
-            // set up the detail
-            GroupDetail detail = new GroupDetail();
-            detail.group = grec.toGroupObject();
-            detail.extras = grec.toExtrasObject(_sceneRepo);
-            detail.creator = _memberRepo.loadMemberName(grec.creatorId);
-            detail.memberCount = _groupRepo.countMembers(grec.groupId);
-
-            // determine our rank info if we're a member
-            if (mrec != null) {
-                GroupMembershipRecord gmrec = _groupRepo.getMembership(grec.groupId, mrec.memberId);
-                if (gmrec != null) {
-                    detail.myRank = gmrec.rank;
-                    detail.myRankAssigned = gmrec.rankAssigned.getTime();
-                }
-            }
-
-            // load up recent threads for this group (ordered by thread id)
-            List<ForumThreadRecord> thrrecs = _forumRepo.loadRecentThreads(groupId, 3);
-            Map<Integer,GroupName> gmap =
-                Collections.singletonMap(detail.group.groupId, detail.group.getName());
-            detail.threads = _forumLogic.resolveThreads(mrec, thrrecs, gmap, false, true);
-
-            // fill in the current population of the group
-            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-            PopularPlacesSnapshot.Place card = pps.getWhirled(groupId);
-            if (card != null) {
-                detail.population = card.population;
-            }
-
-            // collect the top members ordered by rank, then last online
-            detail.topMembers = loadGroupMembers(
-                grec.groupId, GroupMembership.RANK_MEMBER, GroupDetail.NUM_TOP_MEMBERS, true);
-
-            return detail;
-        } catch (PersistenceException pe) {
-            log.warning("getGroupDetail failed [groupId=" + groupId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        // load the group record
+        GroupRecord grec = _groupRepo.loadGroup(groupId);
+        if (grec == null) {
+            return null;
         }
+
+        // set up the detail
+        GroupDetail detail = new GroupDetail();
+        detail.group = grec.toGroupObject();
+        detail.extras = grec.toExtrasObject(_sceneRepo);
+        detail.creator = _memberRepo.loadMemberName(grec.creatorId);
+        detail.memberCount = _groupRepo.countMembers(grec.groupId);
+
+        // determine our rank info if we're a member
+        if (mrec != null) {
+            GroupMembershipRecord gmrec = _groupRepo.getMembership(grec.groupId, mrec.memberId);
+            if (gmrec != null) {
+                detail.myRank = gmrec.rank;
+                detail.myRankAssigned = gmrec.rankAssigned.getTime();
+            }
+        }
+
+        // load up recent threads for this group (ordered by thread id)
+        List<ForumThreadRecord> thrrecs = _forumRepo.loadRecentThreads(groupId, 3);
+        Map<Integer,GroupName> gmap =
+            Collections.singletonMap(detail.group.groupId, detail.group.getName());
+        detail.threads = _forumLogic.resolveThreads(mrec, thrrecs, gmap, false, true);
+
+        // fill in the current population of the group
+        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
+        PopularPlacesSnapshot.Place card = pps.getWhirled(groupId);
+        if (card != null) {
+            detail.population = card.population;
+        }
+
+        // collect the top members ordered by rank, then last online
+        detail.topMembers = loadGroupMembers(
+            grec.groupId, GroupMembership.RANK_MEMBER, GroupDetail.NUM_TOP_MEMBERS, true);
+
+        return detail;
     }
 
     // from interface GroupService
     public MembersResult getGroupMembers (int groupId)
         throws ServiceException
     {
-        try {
-            GroupRecord grec = _groupRepo.loadGroup(groupId);
-            if (grec == null) {
-                return null;
-            }
-            MembersResult result = new MembersResult();
-            result.name = grec.toGroupName();
-            result.members = loadGroupMembers(grec.groupId, GroupMembership.RANK_MEMBER, 0, false);
-            return result;
-
-        } catch (PersistenceException pe) {
-            log.warning("getGroupMembers failed [groupId=" + groupId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        GroupRecord grec = _groupRepo.loadGroup(groupId);
+        if (grec == null) {
+            return null;
         }
+        MembersResult result = new MembersResult();
+        result.name = grec.toGroupName();
+        result.members = loadGroupMembers(grec.groupId, GroupMembership.RANK_MEMBER, 0, false);
+        return result;
     }
 
     // from interface GroupService
@@ -224,28 +200,21 @@ public class GroupServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = getAuthedUser();
 
-        try {
-            // ensure the caller is a manager of this group
-            GroupMembershipRecord membership = _groupRepo.getMembership(groupId, mrec.memberId);
-            if (membership.rank != GroupMembership.RANK_MANAGER) {
-                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
-            }
-
-            // ensure the caller is the owner of this scene
-            SceneRecord scene = _sceneRepo.loadScene(sceneId);
-            if (scene.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER ||
-                scene.ownerId != mrec.memberId) {
-                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
-            }
-
-            // sign the deed over
-            _sceneRepo.transferSceneOwnership(sceneId, MsoySceneModel.OWNER_TYPE_GROUP, groupId);
-
-        } catch (PersistenceException pe) {
-            log.warning("transferRoom failed [groupId=" + groupId + ", sceneId=" +
-                sceneId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        // ensure the caller is a manager of this group
+        GroupMembershipRecord membership = _groupRepo.getMembership(groupId, mrec.memberId);
+        if (membership.rank != GroupMembership.RANK_MANAGER) {
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
+
+        // ensure the caller is the owner of this scene
+        SceneRecord scene = _sceneRepo.loadScene(sceneId);
+        if (scene.ownerType != MsoySceneModel.OWNER_TYPE_MEMBER ||
+            scene.ownerId != mrec.memberId) {
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+
+        // sign the deed over
+        _sceneRepo.transferSceneOwnership(sceneId, MsoySceneModel.OWNER_TYPE_GROUP, groupId);
     }
 
     // from interface GroupService
@@ -253,72 +222,49 @@ public class GroupServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
-        try {
-            GroupRecord grec = _groupRepo.loadGroup(groupId);
-            if (grec == null) {
-                return null;
-            }
-
-            GroupInfo info = new GroupInfo();
-            info.name = grec.toGroupName();
-            if (mrec != null) {
-                GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
-                if (gmrec != null) {
-                    info.rank = gmrec.rank;
-                }
-            }
-            return info;
-
-        } catch (PersistenceException pe) {
-            log.warning("getGroupInfo failed [id=" + groupId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        GroupRecord grec = _groupRepo.loadGroup(groupId);
+        if (grec == null) {
+            return null;
         }
+
+        GroupInfo info = new GroupInfo();
+        info.name = grec.toGroupName();
+        if (mrec != null) {
+            GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
+            if (gmrec != null) {
+                info.rank = gmrec.rank;
+            }
+        }
+        return info;
     }
 
     // from GroupService
     public Integer getGroupHomeId (final int groupId)
         throws ServiceException
     {
-        try {
-            return _memberLogic.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, groupId);
-        } catch (PersistenceException pe) {
-            log.warning("getGroupHomeId failed [id=" + groupId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        return _memberLogic.getHomeId(MsoySceneModel.OWNER_TYPE_GROUP, groupId);
     }
 
     // from interface GroupService
     public List<GroupCard> searchGroups (String searchString)
         throws ServiceException
     {
-        try {
-            List<GroupCard> groups = Lists.newArrayList();
-            for (GroupRecord grec : _groupRepo.searchGroups(searchString)) {
-                groups.add(grec.toGroupCard(_sceneRepo));
-            }
-            return fillInPopulation(groups);
-
-        } catch (PersistenceException pe) {
-            log.warning("searchGroups failed [searchString=" + searchString + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        List<GroupCard> groups = Lists.newArrayList();
+        for (GroupRecord grec : _groupRepo.searchGroups(searchString)) {
+            groups.add(grec.toGroupCard(_sceneRepo));
         }
+        return fillInPopulation(groups);
     }
 
     // from interface GroupService
     public List<GroupCard> searchForTag (String tag)
         throws ServiceException
     {
-        try {
-            List<GroupCard> groups = Lists.newArrayList();
-            for (GroupRecord grec : _groupRepo.searchForTag(tag)) {
-                groups.add(grec.toGroupCard(_sceneRepo));
-            }
-            return fillInPopulation(groups);
-
-        } catch (PersistenceException pe) {
-            log.warning("searchForTag failed [tag=" + tag + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        List<GroupCard> groups = Lists.newArrayList();
+        for (GroupRecord grec : _groupRepo.searchForTag(tag)) {
+            groups.add(grec.toGroupCard(_sceneRepo));
         }
+        return fillInPopulation(groups);
     }
 
     // from interface GroupService
@@ -328,32 +274,26 @@ public class GroupServlet extends MsoyServiceServlet
         MemberRecord reqrec = getAuthedUser();
         final int requesterId = (reqrec == null) ? 0 : reqrec.memberId;
 
-        try {
-            MemberRecord mRec = _memberRepo.loadMember(memberId);
-            if (mRec == null) {
-                log.warning("Requested group membership for unknown member [id=" + memberId + "].");
-                return Collections.emptyList();
-            }
-
-            return _groupRepo.resolveGroupMemberships(
-                memberId, new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
-                    public boolean apply (Tuple<GroupRecord,GroupMembershipRecord> info) {
-                        // if we're not the person in question, don't show exclusive groups
-                        if (memberId != requesterId && info.left.policy == Group.POLICY_EXCLUSIVE) {
-                            return false;
-                        }
-                        // if we're only including groups into which we can invite, enforce that
-                        if (canInvite && !Group.canInvite(info.left.policy, info.right.rank)) {
-                            return false;
-                        }
-                        return true;
-                    }
-                });
-
-        } catch (PersistenceException pe) {
-            log.warning("getMembershipGroups failed [id=" + memberId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        MemberRecord mRec = _memberRepo.loadMember(memberId);
+        if (mRec == null) {
+            log.warning("Requested group membership for unknown member [id=" + memberId + "].");
+            return Collections.emptyList();
         }
+
+        return _groupRepo.resolveGroupMemberships(
+            memberId, new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
+                public boolean apply (Tuple<GroupRecord,GroupMembershipRecord> info) {
+                    // if we're not the person in question, don't show exclusive groups
+                    if (memberId != requesterId && info.left.policy == Group.POLICY_EXCLUSIVE) {
+                        return false;
+                    }
+                    // if we're only including groups into which we can invite, enforce that
+                    if (canInvite && !Group.canInvite(info.left.policy, info.right.rank)) {
+                        return false;
+                    }
+                    return true;
+                }
+            });
     }
 
     // from interface GroupService
@@ -376,46 +316,39 @@ public class GroupServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
 
-        try {
-            GroupMembershipRecord tgtrec = _groupRepo.getMembership(groupId, memberId);
-            if (tgtrec == null) {
-                log.info("Requested to remove non-member from group [who=" + mrec.who() +
-                         ", gid=" + groupId + ", mid=" + memberId + "].");
-                return; // no harm no foul
-            }
-
-            // if we're not removing ourselves, make sure we're a manager and outrank the target
-            if (mrec.memberId != memberId) {
-                GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
-                if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER ||
-                    (tgtrec.rank == GroupMembership.RANK_MANAGER &&
-                     tgtrec.rankAssigned.getTime() < gmrec.rankAssigned.getTime())) {
-                    log.warning("Rejecting remove from group request [who=" + mrec.who() +
-                                ", gid=" + groupId + ", mid=" + memberId +
-                                ", reqrec=" + gmrec + ", tgtrec=" + tgtrec + "].");
-                    throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
-                }
-            }
-
-            // if we made it this far, go ahead and remove the member from the group
-            _groupRepo.leaveGroup(groupId, memberId);
-
-            // if the group has no members left, remove the group as well
-            if (_groupRepo.countMembers(groupId) == 0) {
-                // TODO: delete this group's scenes
-                log.warning("Group deleted, but we haven't implemented group scene deletion! " +
-                            "[id=" + groupId + "].");
-                _groupRepo.deleteGroup(groupId);
-            }
-
-            // let the dobj world know that this member has been removed
-            MemberNodeActions.leftGroup(memberId, groupId);
-
-        } catch (PersistenceException pe) {
-            log.warning("leaveGroup failed [who=" + mrec.who() + ", gid=" + groupId +
-                    ", mid=" + memberId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        GroupMembershipRecord tgtrec = _groupRepo.getMembership(groupId, memberId);
+        if (tgtrec == null) {
+            log.info("Requested to remove non-member from group [who=" + mrec.who() +
+                     ", gid=" + groupId + ", mid=" + memberId + "].");
+            return; // no harm no foul
         }
+
+        // if we're not removing ourselves, make sure we're a manager and outrank the target
+        if (mrec.memberId != memberId) {
+            GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
+            if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER ||
+                (tgtrec.rank == GroupMembership.RANK_MANAGER &&
+                 tgtrec.rankAssigned.getTime() < gmrec.rankAssigned.getTime())) {
+                log.warning("Rejecting remove from group request [who=" + mrec.who() +
+                            ", gid=" + groupId + ", mid=" + memberId +
+                            ", reqrec=" + gmrec + ", tgtrec=" + tgtrec + "].");
+                throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+            }
+        }
+
+        // if we made it this far, go ahead and remove the member from the group
+        _groupRepo.leaveGroup(groupId, memberId);
+
+        // if the group has no members left, remove the group as well
+        if (_groupRepo.countMembers(groupId) == 0) {
+            // TODO: delete this group's scenes
+            log.warning("Group deleted, but we haven't implemented group scene deletion! " +
+                        "[id=" + groupId + "].");
+            _groupRepo.deleteGroup(groupId);
+        }
+
+        // let the dobj world know that this member has been removed
+        MemberNodeActions.leftGroup(memberId, groupId);
     }
 
     // from interface GroupService
@@ -424,31 +357,25 @@ public class GroupServlet extends MsoyServiceServlet
     {
         final MemberRecord mrec = requireAuthedUser();
 
-        try {
-            // make sure the group in question exists
-            final GroupRecord grec = _groupRepo.loadGroup(groupId);
-            if (grec == null) {
-                log.warning("Requested to join non-existent group [who=" + mrec.who() +
-                            ", gid=" + groupId + "].");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-
-            // TODO: we currently only prevent members from joining private groups by not showing
-            // them the UI for joining; this will eventually be a problem
-
-            // create a record indicating that we've joined this group
-            _groupRepo.joinGroup(groupId, mrec.memberId, GroupMembership.RANK_MEMBER);
-
-            // update this member's distributed object if they're online anywhere
-            GroupMembership gm = new GroupMembership();
-            gm.group = grec.toGroupName();
-            gm.rank = GroupMembership.RANK_MEMBER;
-            MemberNodeActions.joinedGroup(mrec.memberId, gm);
-
-        } catch (PersistenceException pe) {
-            log.warning("joinGroup failed [who=" + mrec.who() + ", gid=" + groupId + "].", pe);
+        // make sure the group in question exists
+        final GroupRecord grec = _groupRepo.loadGroup(groupId);
+        if (grec == null) {
+            log.warning("Requested to join non-existent group [who=" + mrec.who() +
+                        ", gid=" + groupId + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+
+        // TODO: we currently only prevent members from joining private groups by not showing
+        // them the UI for joining; this will eventually be a problem
+
+        // create a record indicating that we've joined this group
+        _groupRepo.joinGroup(groupId, mrec.memberId, GroupMembership.RANK_MEMBER);
+
+        // update this member's distributed object if they're online anywhere
+        GroupMembership gm = new GroupMembership();
+        gm.group = grec.toGroupName();
+        gm.rank = GroupMembership.RANK_MEMBER;
+        MemberNodeActions.joinedGroup(mrec.memberId, gm);
     }
 
     // from interface GroupService
@@ -457,23 +384,16 @@ public class GroupServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireAuthedUser();
 
-        try {
-            GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
-            if (!mrec.isSupport() &&
-                (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER)) {
-                log.warning("in updateMemberRank, invalid permissions");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-
-            _groupRepo.setRank(groupId, memberId, newRank);
-
-            // TODO: MemberNodeActions.groupRankUpdated(memberId, groupId, newRank)
-
-        } catch (PersistenceException pe) {
-            log.warning("updateMemberRank failed [groupId=" + groupId + ", memberId=" +
-                memberId + ", newRank=" + newRank + "]", pe);
+        GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
+        if (!mrec.isSupport() &&
+            (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER)) {
+            log.warning("in updateMemberRank, invalid permissions");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+
+        _groupRepo.setRank(groupId, memberId, newRank);
+
+        // TODO: MemberNodeActions.groupRankUpdated(memberId, groupId, newRank)
     }
 
     // from interface GroupService
@@ -487,75 +407,56 @@ public class GroupServlet extends MsoyServiceServlet
         }
 
         MemberRecord mrec = requireAuthedUser();
-
-        try {
-            GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
-            if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
-                log.warning("in tagGroup, invalid permissions");
-                throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-            }
-
-            long now = System.currentTimeMillis();
-
-            TagRepository tagRepo = _groupRepo.getTagRepository();
-            TagNameRecord tagRec = tagRepo.getOrCreateTag(tagName);
-
-            TagHistoryRecord historyRecord = set ?
-                tagRepo.tag(groupId, tagRec.tagId, mrec.memberId, now) :
-                tagRepo.untag(groupId, tagRec.tagId, mrec.memberId, now);
-            if (historyRecord != null) {
-                TagHistory history = new TagHistory();
-                history.member = mrec.getName();
-                history.tag = tagRec.tag;
-                history.action = historyRecord.action;
-                history.time = new Date(historyRecord.time.getTime());
-                return history;
-            }
-            return null;
-        } catch (PersistenceException pe) {
-            log.warning("tagGroup failed [groupId=" + groupId + ", tag=" + tag +
-                ", set=" + set + "]", pe);
+        GroupMembershipRecord gmrec = _groupRepo.getMembership(groupId, mrec.memberId);
+        if (gmrec == null || gmrec.rank != GroupMembership.RANK_MANAGER) {
+            log.warning("in tagGroup, invalid permissions");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
+
+        long now = System.currentTimeMillis();
+
+        TagRepository tagRepo = _groupRepo.getTagRepository();
+        TagNameRecord tagRec = tagRepo.getOrCreateTag(tagName);
+
+        TagHistoryRecord historyRecord = set ?
+            tagRepo.tag(groupId, tagRec.tagId, mrec.memberId, now) :
+            tagRepo.untag(groupId, tagRec.tagId, mrec.memberId, now);
+        if (historyRecord != null) {
+            TagHistory history = new TagHistory();
+            history.member = mrec.getName();
+            history.tag = tagRec.tag;
+            history.action = historyRecord.action;
+            history.time = new Date(historyRecord.time.getTime());
+            return history;
+        }
+        return null;
     }
 
     // from interface GroupService
     public List<TagHistory> getRecentTags () throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-
-        try {
-            MemberName memName = mrec.getName();
-            TagRepository tagRepo = _groupRepo.getTagRepository();
-            List<TagHistory> list = Lists.newArrayList();
-            for (TagHistoryRecord record : tagRepo.getTagHistoryByMember(mrec.memberId)) {
-                TagNameRecord tag = record.tagId == -1 ? null :
-                    tagRepo.getTag(record.tagId);
-                TagHistory history = new TagHistory();
-                history.member = memName;
-                history.tag = tag == null ? null : tag.tag;
-                history.action = record.action;
-                history.time = new Date(record.time.getTime());
-                list.add(history);
-            }
-            return list;
-
-        } catch (PersistenceException pe) {
-            log.warning("getRecentTags failed [for=" + mrec.who() + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        MemberName memName = mrec.getName();
+        TagRepository tagRepo = _groupRepo.getTagRepository();
+        List<TagHistory> list = Lists.newArrayList();
+        for (TagHistoryRecord record : tagRepo.getTagHistoryByMember(mrec.memberId)) {
+            TagNameRecord tag = record.tagId == -1 ? null :
+                tagRepo.getTag(record.tagId);
+            TagHistory history = new TagHistory();
+            history.member = memName;
+            history.tag = tag == null ? null : tag.tag;
+            history.action = record.action;
+            history.time = new Date(record.time.getTime());
+            list.add(history);
         }
+        return list;
     }
 
     // from interface GroupService
     public List<String> getTags (int groupId) throws ServiceException
     {
-        try {
-            List<TagNameRecord> trecs = _groupRepo.getTagRepository().getTags(groupId);
-            return Lists.newArrayList(Iterables.transform(trecs, TagNameRecord.TO_TAG));
-        } catch (PersistenceException pe) {
-            log.warning("getTags failed [groupId=" + groupId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        List<TagNameRecord> trecs = _groupRepo.getTagRepository().getTags(groupId);
+        return Lists.newArrayList(Iterables.transform(trecs, TagNameRecord.TO_TAG));
     }
 
     // from interface GroupService
@@ -565,70 +466,64 @@ public class GroupServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser();
         final int memberId = mrec.memberId;
 
-        try {
-            List<GroupRecord> groupRecords = _groupRepo.getFullMemberships(memberId);
-            List<MyGroupCard> myGroupCards = Lists.newArrayList();
-            PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
+        List<GroupRecord> groupRecords = _groupRepo.getFullMemberships(memberId);
+        List<MyGroupCard> myGroupCards = Lists.newArrayList();
+        PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
 
-            for (GroupRecord record : groupRecords) {
-                final MyGroupCard card = new MyGroupCard();
+        for (GroupRecord record : groupRecords) {
+            final MyGroupCard card = new MyGroupCard();
 
-                // collect basic info from the GroupRecord
-                card.blurb = record.blurb;
-                card.homeSceneId = record.homeSceneId;
-                if (record.toLogo() != null) {
-                    card.logo = record.toLogo();
-                }
-                card.name = record.toGroupName();
+            // collect basic info from the GroupRecord
+            card.blurb = record.blurb;
+            card.homeSceneId = record.homeSceneId;
+            if (record.toLogo() != null) {
+                card.logo = record.toLogo();
+            }
+            card.name = record.toGroupName();
 
-                // fetch thread information
-                card.numThreads = _forumRepo.loadThreadCount(record.groupId);
-                card.numPosts = _forumRepo.loadMessageCount(record.groupId);
+            // fetch thread information
+            card.numThreads = _forumRepo.loadThreadCount(record.groupId);
+            card.numPosts = _forumRepo.loadMessageCount(record.groupId);
 
-                List<ForumThreadRecord> threads = _forumRepo.loadRecentThreads(record.groupId, 1);
-                if (threads.size() > 0) {
-                    Map<Integer,GroupName> gmap =
-                        Collections.singletonMap(record.groupId, card.name);
-                    card.latestThread = _forumLogic.resolveThreads(
-                        mrec, threads, gmap, false, true).get(0);
-                }
-
-                // fetch current population from PopularPlacesSnapshot
-                PopularPlacesSnapshot.Place pcard = pps.getWhirled(card.name.getGroupId());
-                if (pcard != null) {
-                    card.population = pcard.population;
-                }
-
-                // determine our rank info
-                GroupMembershipRecord gmrec =
-                    _groupRepo.getMembership(record.groupId, mrec.memberId);
-                if (gmrec != null) {
-                    card.rank = gmrec.rank;
-                }
-
-                myGroupCards.add(card);
+            List<ForumThreadRecord> threads = _forumRepo.loadRecentThreads(record.groupId, 1);
+            if (threads.size() > 0) {
+                Map<Integer,GroupName> gmap =
+                    Collections.singletonMap(record.groupId, card.name);
+                card.latestThread = _forumLogic.resolveThreads(
+                    mrec, threads, gmap, false, true).get(0);
             }
 
-            // sort by the preferred sort method
-            if (sortMethod == MyGroupCard.SORT_BY_PEOPLE_ONLINE) {
-                Collections.sort(myGroupCards, SORT_BY_PEOPLE_ONLINE);
-            }
-            else if (sortMethod == MyGroupCard.SORT_BY_NAME) {
-                Collections.sort(myGroupCards, SORT_BY_NAME);
-            }
-            else if (sortMethod == MyGroupCard.SORT_BY_MANAGER) {
-                Collections.sort(myGroupCards, SORT_BY_MANAGER);
-            }
-            else if (sortMethod == MyGroupCard.SORT_BY_NEWEST_POST) {
-                Collections.sort(myGroupCards, SORT_BY_NEWEST_POST);
+            // fetch current population from PopularPlacesSnapshot
+            PopularPlacesSnapshot.Place pcard = pps.getWhirled(card.name.getGroupId());
+            if (pcard != null) {
+                card.population = pcard.population;
             }
 
-            return myGroupCards;
+            // determine our rank info
+            GroupMembershipRecord gmrec =
+                _groupRepo.getMembership(record.groupId, mrec.memberId);
+            if (gmrec != null) {
+                card.rank = gmrec.rank;
+            }
 
-        } catch (PersistenceException pe) {
-            log.warning("getMyGroups failed [id=" + memberId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+            myGroupCards.add(card);
         }
+
+        // sort by the preferred sort method
+        if (sortMethod == MyGroupCard.SORT_BY_PEOPLE_ONLINE) {
+            Collections.sort(myGroupCards, SORT_BY_PEOPLE_ONLINE);
+        }
+        else if (sortMethod == MyGroupCard.SORT_BY_NAME) {
+            Collections.sort(myGroupCards, SORT_BY_NAME);
+        }
+        else if (sortMethod == MyGroupCard.SORT_BY_MANAGER) {
+            Collections.sort(myGroupCards, SORT_BY_MANAGER);
+        }
+        else if (sortMethod == MyGroupCard.SORT_BY_NEWEST_POST) {
+            Collections.sort(myGroupCards, SORT_BY_NEWEST_POST);
+        }
+
+        return myGroupCards;
     }
 
     /** Compartor for sorting by population then by last post date. */
@@ -711,33 +606,27 @@ public class GroupServlet extends MsoyServiceServlet
         MemberRecord mrec = requireAuthedUser();
         final int memberId = mrec.memberId;
 
-        try {
-            MemberRecord mRec = _memberRepo.loadMember(memberId);
-            if (mRec == null) {
-                log.warning("Requested group membership for unknown member [id=" + memberId + "].");
-                return Collections.emptyList();
-            }
-
-            return _groupRepo.resolveGroupMemberships(
-                memberId, new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
-                    public boolean apply (Tuple<GroupRecord,GroupMembershipRecord> info) {
-                        // only groups the member manages
-                        if (info.right.rank < GroupMembership.RANK_MANAGER) {
-                            return false;
-                        }
-                        // exclude groups connected to other games
-                        if (info.left.gameId != 0
-                            && Math.abs(info.left.gameId) != Math.abs(gameId)) {
-                            return false;
-                        }
-                        return true;
-                    }
-                });
-
-        } catch (PersistenceException pe) {
-            log.warning("getGameGroups failed [id=" + memberId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        MemberRecord mRec = _memberRepo.loadMember(memberId);
+        if (mRec == null) {
+            log.warning("Requested group membership for unknown member [id=" + memberId + "].");
+            return Collections.emptyList();
         }
+
+        return _groupRepo.resolveGroupMemberships(
+            memberId, new Predicate<Tuple<GroupRecord,GroupMembershipRecord>>() {
+                public boolean apply (Tuple<GroupRecord,GroupMembershipRecord> info) {
+                    // only groups the member manages
+                    if (info.right.rank < GroupMembership.RANK_MANAGER) {
+                        return false;
+                    }
+                    // exclude groups connected to other games
+                    if (info.left.gameId != 0
+                        && Math.abs(info.left.gameId) != Math.abs(gameId)) {
+                        return false;
+                    }
+                    return true;
+                }
+            });
     }
 
     protected List<GroupCard> fillInPopulation (List<GroupCard> groups)
@@ -760,7 +649,6 @@ public class GroupServlet extends MsoyServiceServlet
      */
     protected List<GroupMemberCard> loadGroupMembers (
         int groupId, byte minRank, int limit, boolean sortByRank)
-        throws PersistenceException
     {
         IntMap<GroupMemberCard> members = IntMaps.newHashIntMap();
         for (GroupMembershipRecord gmrec : _groupRepo.getMembers(groupId, minRank, true)) {

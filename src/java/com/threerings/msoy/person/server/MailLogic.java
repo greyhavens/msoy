@@ -6,7 +6,6 @@ package com.threerings.msoy.person.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -51,7 +50,7 @@ public class MailLogic
      * Sends a friend invitation email from the supplied inviter to the specified member.
      */
     public void sendFriendInvite (int inviterId, int friendId)
-        throws PersistenceException, ServiceException
+        throws ServiceException
     {
         MemberRecord sender = _memberRepo.loadMember(inviterId);
         MemberRecord recip = _memberRepo.loadMember(friendId);
@@ -70,7 +69,7 @@ public class MailLogic
      */
     public void startConversation (MemberRecord sender, MemberRecord recip,
                                    String subject, String body, MailPayload attachment)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         // if the payload is an item attachment, transfer it to the recipient
         processPayload(sender.memberId, recip.memberId, attachment);
@@ -91,7 +90,7 @@ public class MailLogic
      */
     public ConvMessageRecord continueConversation (MemberRecord poster, int convoId, String body,
                                                    MailPayload attachment)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         ConversationRecord conrec = _mailRepo.loadConversation(convoId);
         if (conrec == null) {
@@ -154,7 +153,7 @@ public class MailLogic
      * item from the sender to the recipient for {@link PresentPayload}.
      */
     protected void processPayload (final int senderId, final int recipId, MailPayload attachment)
-        throws PersistenceException, ServiceException
+        throws ServiceException
     {
         if (attachment instanceof PresentPayload) {
             ItemIdent ident = ((PresentPayload)attachment).ident;

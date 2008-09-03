@@ -8,8 +8,6 @@ import java.util.Collections;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
-
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.stats.data.IntSetStat;
@@ -76,15 +74,10 @@ public class StatLogic
      */
     public void updateStat (int memberId, StatModifier<? extends Stat> modifier)
     {
-        Stat updatedStat = null;
-        try {
-            // first update the stat in the database
-            updatedStat = _statRepo.updateStat(memberId, modifier);
-            if (updatedStat != null) {
-                MemberNodeActions.statUpdated(memberId, modifier);
-            }
-        } catch (PersistenceException pe) {
-            log.warning("updateStat failed", "memberId", memberId, "type", modifier.getType(), pe);
+        // first update the stat in the database
+        Stat updatedStat = _statRepo.updateStat(memberId, modifier);
+        if (updatedStat != null) {
+            MemberNodeActions.statUpdated(memberId, modifier);
         }
 
         // if the stat was updated, find any badges that may have been affected by the stat
@@ -123,8 +116,8 @@ public class StatLogic
             EarnedBadgeRecord earnedBadge;
             try {
                 earnedBadge = _badgeRepo.loadEarnedBadge(memberId, badgeType.getCode());
-            } catch (PersistenceException pe) {
-                log.warning("loadEarnedBadge failed", "for", memberId, "type", badgeType, pe);
+            } catch (Exception e) {
+                log.warning("loadEarnedBadge failed", "for", memberId, "type", badgeType, e);
                 return;
             }
 
@@ -140,8 +133,8 @@ public class StatLogic
                 earnedBadge.whenEarned = new Timestamp(System.currentTimeMillis());
                 try {
                     _badgeLogic.awardBadge(earnedBadge, true);
-                } catch (PersistenceException pe) {
-                    log.warning("awardBadge failed", "type", badgeType,  "badge", earnedBadge, pe);
+                } catch (Exception e) {
+                    log.warning("awardBadge failed", "type", badgeType,  "badge", earnedBadge, e);
                     return;
                 }
             }
@@ -153,8 +146,8 @@ public class StatLogic
             // InProgressBadgeRecords when badges are awarded.
             try {
                 _badgeRepo.deleteInProgressBadge(memberId, badgeType.getCode());
-            } catch (PersistenceException pe) {
-                log.warning("deleteInProgressBadge failed", "for", memberId, "type", badgeType, pe);
+            } catch (Exception e) {
+                log.warning("deleteInProgressBadge failed", "for", memberId, "type", badgeType, e);
             }
 
         } else {
@@ -162,8 +155,8 @@ public class StatLogic
             InProgressBadgeRecord inProgressBadge;
             try {
                 inProgressBadge = _badgeRepo.loadInProgressBadge(memberId, badgeType.getCode());
-            } catch (PersistenceException pe) {
-                log.warning("loadInProgressBadge failed", "for", memberId, "type", badgeType, pe);
+            } catch (Exception e) {
+                log.warning("loadInProgressBadge failed", "for", memberId, "type", badgeType, e);
                 return;
             }
 
@@ -186,9 +179,9 @@ public class StatLogic
                 inProgressBadge.progress = quantizedProgress;
                 try {
                     _badgeLogic.updateInProgressBadge(inProgressBadge, true);
-                } catch (PersistenceException pe) {
+                } catch (Exception e) {
                     log.warning("updateInProgressBadge failed", "type", badgeType,
-                                "badge", inProgressBadge, pe);
+                                "badge", inProgressBadge, e);
                     return;
                 }
             }

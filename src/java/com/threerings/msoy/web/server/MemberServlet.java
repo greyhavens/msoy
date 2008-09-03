@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 
@@ -40,17 +39,11 @@ public class MemberServlet extends MsoyServiceServlet
     public MemberCard getMemberCard (int memberId)
         throws ServiceException
     {
-        try {
-            for (MemberCardRecord mcr : _memberRepo.loadMemberCards(
-                     Collections.singleton(memberId))) {
-                return mcr.toMemberCard();
-            }
-            return null;
-
-        } catch (PersistenceException pe) {
-            log.warning("getMemberCard failed [id=" + memberId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        for (MemberCardRecord mcr : _memberRepo.loadMemberCards(
+                 Collections.singleton(memberId))) {
+            return mcr.toMemberCard();
         }
+        return null;
     }
 
     // from WebMemberService
@@ -58,12 +51,7 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord memrec = requireAuthedUser();
-        try {
-            return _memberRepo.getFriendStatus(memrec.memberId, memberId);
-        } catch (PersistenceException pe) {
-            log.warning("getFriendStatus failed [for=" + memberId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        return _memberRepo.getFriendStatus(memrec.memberId, memberId);
     }
 
     // from interface WebMemberService
@@ -71,33 +59,26 @@ public class MemberServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
-
-        try {
-            MemberRecord tgtrec = _memberRepo.loadMember(memberId);
-            if (tgtrec == null) {
-                return null;
-            }
-
-            FriendsResult result = new FriendsResult();
-            result.name = tgtrec.getName();
-            IntSet friendIds = _memberRepo.loadFriendIds(memberId);
-            IntSet callerFriendIds = null;
-            if (mrec != null) {
-                if (mrec.memberId == memberId) {
-                    callerFriendIds = friendIds;
-                } else {
-                    callerFriendIds = _memberRepo.loadFriendIds(mrec.memberId);
-                }
-            }
-            List<MemberCard> list = _mhelper.resolveMemberCards(friendIds, false, callerFriendIds);
-            Collections.sort(list, MemberHelper.SORT_BY_LAST_ONLINE);
-            result.friends = list;
-            return result;
-
-        } catch (PersistenceException pe) {
-            log.warning("Failure loading friends [memId=" + memberId + "].", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        MemberRecord tgtrec = _memberRepo.loadMember(memberId);
+        if (tgtrec == null) {
+            return null;
         }
+
+        FriendsResult result = new FriendsResult();
+        result.name = tgtrec.getName();
+        IntSet friendIds = _memberRepo.loadFriendIds(memberId);
+        IntSet callerFriendIds = null;
+        if (mrec != null) {
+            if (mrec.memberId == memberId) {
+                callerFriendIds = friendIds;
+            } else {
+                callerFriendIds = _memberRepo.loadFriendIds(mrec.memberId);
+            }
+        }
+        List<MemberCard> list = _mhelper.resolveMemberCards(friendIds, false, callerFriendIds);
+        Collections.sort(list, MemberHelper.SORT_BY_LAST_ONLINE);
+        result.friends = list;
+        return result;
     }
 
     // from WebMemberService
@@ -120,40 +101,29 @@ public class MemberServlet extends MsoyServiceServlet
     public Invitation getInvitation (String inviteId, boolean viewing)
         throws ServiceException
     {
-        try {
-            InvitationRecord invRec = _memberRepo.loadInvite(inviteId, viewing);
-            if (invRec == null) {
-                return null;
-            }
-
-            // if we're viewing this invite, log that it was viewed
-            if (viewing) {
-                _eventLog.inviteViewed(inviteId);
-            }
-
-            MemberName inviter = null;
-            if (invRec.inviterId > 0) {
-                inviter = _memberRepo.loadMemberName(invRec.inviterId);
-            }
-            return invRec.toInvitation(inviter);
-
-        } catch (PersistenceException pe) {
-            log.warning("getInvitation failed [inviteId=" + inviteId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        InvitationRecord invRec = _memberRepo.loadInvite(inviteId, viewing);
+        if (invRec == null) {
+            return null;
         }
+
+        // if we're viewing this invite, log that it was viewed
+        if (viewing) {
+            _eventLog.inviteViewed(inviteId);
+        }
+
+        MemberName inviter = null;
+        if (invRec.inviterId > 0) {
+            inviter = _memberRepo.loadMemberName(invRec.inviterId);
+        }
+        return invRec.toInvitation(inviter);
     }
 
     // from WebMemberService
     public void optOut (String inviteId)
         throws ServiceException
     {
-        try {
-            if (_memberRepo.inviteAvailable(inviteId) != null) {
-                _memberRepo.optOutInvite(inviteId);
-            }
-        } catch (PersistenceException pe) {
-            log.warning("optOut failed [inviteId=" + inviteId + "]", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        if (_memberRepo.inviteAvailable(inviteId) != null) {
+            _memberRepo.optOutInvite(inviteId);
         }
     }
 
@@ -161,20 +131,14 @@ public class MemberServlet extends MsoyServiceServlet
     public List<MemberCard> getLeaderList ()
         throws ServiceException
     {
-        try {
-            // locate the members that match the supplied search
-            IntSet mids = new ArrayIntSet();
-            mids.addAll(_memberRepo.getLeadingMembers(MAX_LEADER_MATCHES));
+        // locate the members that match the supplied search
+        IntSet mids = new ArrayIntSet();
+        mids.addAll(_memberRepo.getLeadingMembers(MAX_LEADER_MATCHES));
 
-            // resolve cards for these members
-            List<MemberCard> results = _mhelper.resolveMemberCards(mids, false, null);
-            Collections.sort(results, MemberHelper.SORT_BY_LEVEL);
-            return results;
-
-        } catch (PersistenceException pe) {
-            log.warning("Failure fetching leader list", pe);
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
+        // resolve cards for these members
+        List<MemberCard> results = _mhelper.resolveMemberCards(mids, false, null);
+        Collections.sort(results, MemberHelper.SORT_BY_LEVEL);
+        return results;
     }
 
     // from WebMemberService

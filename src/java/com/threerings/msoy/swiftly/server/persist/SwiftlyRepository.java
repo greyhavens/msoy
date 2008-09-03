@@ -11,7 +11,7 @@ import java.util.Set;
 import com.google.inject.Singleton;
 import com.google.inject.Inject;
 
-import com.samskivert.io.PersistenceException;
+import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.jdbc.depot.Key;
@@ -43,7 +43,6 @@ public class SwiftlyRepository extends DepotRepository
      * TODO: this should take a limit parameter
      */
     public List<SwiftlyProjectRecord> findRemixableProjects ()
-        throws PersistenceException
     {
         return findAll(SwiftlyProjectRecord.class,
             new Where(new And(new Equals(SwiftlyProjectRecord.REMIXABLE_C, true),
@@ -56,7 +55,6 @@ public class SwiftlyRepository extends DepotRepository
      * TODO: this should take a limit parameter
      */
     public List<SwiftlyProjectRecord> findMembersProjects (final int memberId)
-        throws PersistenceException
     {
         return findAll(SwiftlyProjectRecord.class,
             new Join(SwiftlyProjectRecord.PROJECT_ID_C, SwiftlyCollaboratorsRecord.PROJECT_ID_C),
@@ -71,7 +69,6 @@ public class SwiftlyRepository extends DepotRepository
      * created for that project.
      */
     public SwiftlyProjectRecord loadProject (int projectId)
-        throws PersistenceException
     {
         return load(SwiftlyProjectRecord.class, SwiftlyProjectRecord.getKey(projectId));
     }
@@ -81,7 +78,6 @@ public class SwiftlyRepository extends DepotRepository
      * record has been created for that project and member.
      */
     public SwiftlyCollaboratorsRecord loadCollaborator (int projectId, int memberId)
-        throws PersistenceException
     {
         Key<SwiftlyCollaboratorsRecord> key =
             SwiftlyCollaboratorsRecord.getKey(projectId, memberId);
@@ -93,11 +89,10 @@ public class SwiftlyRepository extends DepotRepository
      * from the database.
      */
     public void markProjectDeleted (int projectId)
-        throws PersistenceException
     {
         SwiftlyProjectRecord project = loadProject(projectId);
         if (project == null) {
-            throw new PersistenceException(
+            throw new DatabaseException(
                 "Couldn't find swiftly project for deletion marking. [id=" + projectId + "]");
         }
         // TODO: how do we actually want delete to work? If we decide this is the way, then
@@ -111,7 +106,6 @@ public class SwiftlyRepository extends DepotRepository
      * Deletes the specified project record.
      */
     public void deleteProject (SwiftlyProjectRecord record)
-        throws PersistenceException
     {
         // delete all this project collaborators
         deleteAll(SwiftlyCollaboratorsRecord.class,
@@ -125,7 +119,6 @@ public class SwiftlyRepository extends DepotRepository
      */
     public SwiftlyProjectRecord createProject (int memberId, String projectName, byte projectType,
         int storageId, boolean remixable)
-        throws PersistenceException
     {
         SwiftlyProjectRecord record = new SwiftlyProjectRecord();
         record.projectName = projectName;
@@ -143,11 +136,10 @@ public class SwiftlyRepository extends DepotRepository
      * Updates the specified project record with supplied field/value mapping.
      */
     public void updateProject (int projectId, Map<String, Object> updates)
-        throws PersistenceException
     {
         int rows = updatePartial(SwiftlyProjectRecord.class, projectId, updates);
         if (rows == 0) {
-            throw new PersistenceException(
+            throw new DatabaseException(
                 "Couldn't find swiftly project for update [id=" + projectId + "]");
         }
     }
@@ -157,7 +149,6 @@ public class SwiftlyRepository extends DepotRepository
      *
      */
     public boolean isOwner (int projectId, int memberId)
-        throws PersistenceException
     {
         SwiftlyProjectRecord project = loadProject(projectId);
         if (project == null) {
@@ -171,7 +162,6 @@ public class SwiftlyRepository extends DepotRepository
      *
      */
     public boolean isCollaborator (int projectId, int memberId)
-        throws PersistenceException
     {
         return (getMembership(projectId, memberId) != null);
     }
@@ -180,7 +170,6 @@ public class SwiftlyRepository extends DepotRepository
      * Load the Swiftly SVN Storage record for the given project
      */
     public SwiftlySVNStorageRecord loadStorageRecordForProject (int projectId)
-        throws PersistenceException
     {
         SwiftlyProjectRecord project = loadProject(projectId);
         // we found no ProjectRecord, we are unable to locate a StorageRecord
@@ -197,7 +186,6 @@ public class SwiftlyRepository extends DepotRepository
      */
     public SwiftlySVNStorageRecord createSVNStorage (String protocol, String host, int port,
                                                      String baseDir)
-        throws PersistenceException
     {
         SwiftlySVNStorageRecord record = new SwiftlySVNStorageRecord();
         record.protocol = protocol;
@@ -233,7 +221,6 @@ public class SwiftlyRepository extends DepotRepository
      * Fetches the owner MemberRecord for a given project.
      */
     public MemberRecord loadProjectOwner (int projectId)
-        throws PersistenceException
     {
         return load(MemberRecord.class,
             new Join(MemberRecord.MEMBER_ID_C,
@@ -246,7 +233,6 @@ public class SwiftlyRepository extends DepotRepository
      */
     // TODO: sort these in a predictable manner
     public List<MemberRecord> getCollaborators (int projectId)
-        throws PersistenceException
     {
         return findAll(MemberRecord.class,
             new Join(MemberRecord.MEMBER_ID_C,
@@ -258,7 +244,6 @@ public class SwiftlyRepository extends DepotRepository
      * Fetches the projects a given member is a collaborator on.
      */
     public List<SwiftlyCollaboratorsRecord> getMemberships (int memberId)
-        throws PersistenceException
     {
         return findAll(SwiftlyCollaboratorsRecord.class,
                        new Where(SwiftlyCollaboratorsRecord.MEMBER_ID_C, memberId));
@@ -268,7 +253,6 @@ public class SwiftlyRepository extends DepotRepository
      * Fetches the membership details for a given project and member, or null.
      */
     public SwiftlyCollaboratorsRecord getMembership (int projectId, int memberId)
-        throws PersistenceException
     {
         return load(SwiftlyCollaboratorsRecord.class,
                     SwiftlyCollaboratorsRecord.getKey(projectId, memberId));
@@ -278,7 +262,6 @@ public class SwiftlyRepository extends DepotRepository
      * Adds a member to the list of collaborators for a project.
      */
     public SwiftlyCollaboratorsRecord joinCollaborators (int projectId, int memberId)
-        throws PersistenceException
     {
         SwiftlyCollaboratorsRecord record = new SwiftlyCollaboratorsRecord();
         record.projectId = projectId;
@@ -292,7 +275,6 @@ public class SwiftlyRepository extends DepotRepository
      * false if there was no membership to cancel.
      */
     public boolean leaveCollaborators (int projectId, int memberId)
-        throws PersistenceException
     {
         Key<SwiftlyCollaboratorsRecord> key =
             SwiftlyCollaboratorsRecord.getKey(projectId, memberId);
@@ -303,14 +285,13 @@ public class SwiftlyRepository extends DepotRepository
      * Updates the buildResultItemId for a SwiftlyCollaboratorRecord.
      */
     public void updateBuildResultItem (int projectId, int memberId, int buildResultItemId)
-        throws PersistenceException
     {
         Key<SwiftlyCollaboratorsRecord> key =
             SwiftlyCollaboratorsRecord.getKey(projectId, memberId);
         int rows = updatePartial(SwiftlyCollaboratorsRecord.class, key, key,
             SwiftlyCollaboratorsRecord.BUILD_RESULT_ITEM_ID, buildResultItemId);
         if (rows == 0) {
-            throw new PersistenceException(
+            throw new DatabaseException(
                 "Couldn't find swiftly collaborator record for build result update [projectId=" +
                     projectId + "memberId=" + memberId + "]");
         }

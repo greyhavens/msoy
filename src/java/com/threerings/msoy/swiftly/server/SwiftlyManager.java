@@ -17,7 +17,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ResultListener;
 import com.samskivert.util.Tuple;
@@ -381,7 +380,7 @@ public class SwiftlyManager
                         SwiftlySVNStorageRecord storageRecord =
                             _swiftlyRepo.loadStorageRecordForProject(project.projectId);
                         if (storageRecord == null) {
-                            throw new PersistenceException("Project missing storage record " +
+                            throw new Exception("Project missing storage record " +
                                 " [projectId=" + project.projectId + "].");
                         }
                         _storage = new ProjectSVNStorage(_project, storageRecord);
@@ -392,7 +391,7 @@ public class SwiftlyManager
                             _collaborators.add(mRec.getName());
                         }
                         if (_collaborators.size() <= 0) {
-                            throw new PersistenceException("No collaborators found for project " +
+                            throw new Exception("No collaborators found for project " +
                                 " [projectId=" + project.projectId + "].");
                         }
 

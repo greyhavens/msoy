@@ -18,17 +18,41 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-import com.samskivert.io.PersistenceException;
+
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
-import com.threerings.bureau.server.BureauRegistry;
+
+import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.ShutdownManager;
+import com.threerings.presents.util.PersistingUnit;
+import com.threerings.presents.util.ResultListenerList;
+
 import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 import com.threerings.crowd.server.PlaceRegistry;
+
+import com.threerings.parlor.data.Table;
+import com.threerings.parlor.game.data.GameConfig;
+import com.threerings.parlor.rating.server.persist.RatingRepository;
+import com.threerings.parlor.rating.util.Percentiler;
+
+import com.threerings.bureau.server.BureauRegistry;
+
+import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.data.GameData;
+import com.whirled.game.server.PropertySpaceDelegate;
+import com.whirled.game.server.PropertySpaceHelper;
+
 import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.server.AVRDispatcher;
@@ -72,24 +96,6 @@ import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.parlor.data.Table;
-import com.threerings.parlor.game.data.GameConfig;
-import com.threerings.parlor.rating.server.persist.RatingRepository;
-import com.threerings.parlor.rating.util.Percentiler;
-import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.InvocationManager;
-import com.threerings.presents.server.PresentsClient;
-import com.threerings.presents.server.ShutdownManager;
-import com.threerings.presents.util.PersistingUnit;
-import com.threerings.presents.util.ResultListenerList;
-import com.whirled.bureau.data.BureauTypes;
-import com.whirled.game.data.GameData;
-import com.whirled.game.server.PropertySpaceDelegate;
-import com.whirled.game.server.PropertySpaceHelper;
 
 /**
  * Manages the lobbies active on this server.
@@ -99,7 +105,7 @@ public class GameGameRegistry
     implements LobbyProvider, AVRProvider, ShutdownManager.Shutdowner,
     LobbyManager.ShutdownObserver, AVRGameManager.LifecycleObserver
 {
-    @Inject public GameGameRegistry (final ShutdownManager shutmgr, final InvocationManager invmgr)
+    @Inject public GameGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
         // register to hear when the server is shutdown
         shutmgr.registerShutdowner(this);
@@ -112,7 +118,7 @@ public class GameGameRegistry
     /**
      * Provides this registry with an injector it can use to create manager instances.
      */
-    public void init (final Injector injector)
+    public void init (Injector injector)
     {
         _injector = injector;
     }
@@ -139,7 +145,7 @@ public class GameGameRegistry
      * be modified and when the lobby for the game in question is finally unloaded, the percentiler
      * will be written back out to the database.
      */
-    public Percentiler getScoreDistribution (final int gameId, final boolean multiplayer)
+    public Percentiler getScoreDistribution (int gameId, boolean multiplayer)
     {
         return _distribs.get(multiplayer ? Math.abs(gameId) : -Math.abs(gameId));
     }
@@ -174,8 +180,8 @@ public class GameGameRegistry
                     plobj.commitTransaction();
                 }
             }
-            protected void addContent (final byte type, final List<String> idents) {
-                for (final String ident : idents) {
+            protected void addContent (byte type, List<String> idents) {
+                for (String ident : idents) {
                     plobj.addToGameContent(new GameContentOwnership(gameId, type, ident));
                 }
             }
@@ -202,7 +208,7 @@ public class GameGameRegistry
         if (lmgr != null) {
             _invoker.postUnit(new RepositoryUnit("reloadLobby") {
                 @Override
-                public void invokePersist () throws PersistenceException {
+                public void invokePersist () throws Exception {
                     // if so, recompile the game content from all its various sources
                     _content = assembleGameContent(gameId);
                 }
@@ -215,7 +221,7 @@ public class GameGameRegistry
                 }
 
                 @Override
-                public void handleFailure (final Exception e) {
+                public void handleFailure (Exception e) {
                     // if anything goes wrong, we can just fall back on what was already there
                     log.warning("Failed to resolve game [id=" + gameId + "].", e);
                 }
@@ -227,20 +233,20 @@ public class GameGameRegistry
         }
 
         // see if it's a lobby game we're currently loading...
-        final ResultListenerList list = _loadingLobbies.get(gameId);
+        ResultListenerList list = _loadingLobbies.get(gameId);
         if (list != null) {
             list.add(new InvocationService.ResultListener() {
-                public void requestProcessed (final Object result) {
+                public void requestProcessed (Object result) {
                     gameRecordUpdated(gameId);
                 }
 
-                public void requestFailed (final String cause) {/*ignore*/}
+                public void requestFailed (String cause) {/*ignore*/}
             });
             return;
         }
 
         // else is it an AVRG?
-        final AVRGameManager amgr = _avrgManagers.get(gameId);
+        AVRGameManager amgr = _avrgManagers.get(gameId);
         if (amgr != null) {
             _invoker.postUnit(new RepositoryUnit("reloadAVRGame") {
                 @Override
@@ -249,10 +255,9 @@ public class GameGameRegistry
                         log.warning("Asked to reload the tutorial. That makes no sense.");
                         return;
                     }
-                    final GameRecord gRec = _gameRepo.loadGameRecord(gameId);
+                    GameRecord gRec = _gameRepo.loadGameRecord(gameId);
                     if (gRec == null) {
-                        throw new PersistenceException(
-                            "Failed to find GameRecord [gameId=" + gameId + "]");
+                        throw new Exception("Failed to find GameRecord [gameId=" + gameId + "]");
                     }
 //                    _game = (Game) gRec.toItem();
                 }
@@ -264,7 +269,7 @@ public class GameGameRegistry
                 }
 
                 @Override
-                public void handleFailure (final Exception pe) {
+                public void handleFailure (Exception pe) {
                     log.warning("Failed to resolve AVRGame [id=" + gameId + "].", pe);
                 }
 
@@ -280,7 +285,7 @@ public class GameGameRegistry
      * Resets our in-memory percentiler for the specified game. This is triggered by a request from
      * our world server.
      */
-    public void resetScorePercentiler (final int gameId, final boolean single)
+    public void resetScorePercentiler (int gameId, boolean single)
     {
         log.info("Resetting in-memory percentiler [gameId=" + gameId + ", single=" + single + "].");
         _distribs.put(single ? -Math.abs(gameId) : Math.abs(gameId), new Percentiler());
@@ -290,8 +295,8 @@ public class GameGameRegistry
      * Awards the supplied trophy and provides a {@link Trophy} instance on success to the supplied
      * listener or failure.
      */
-    public void awardTrophy (final String gameName, final TrophyRecord trophy, final String description,
-                             final InvocationService.ResultListener listener)
+    public void awardTrophy (final String gameName, final TrophyRecord trophy, String description,
+                             InvocationService.ResultListener listener)
     {
         // create the trophy record we'll use to notify them of their award
         final Trophy trec = trophy.toTrophy();
@@ -300,7 +305,7 @@ public class GameGameRegistry
 
         _invoker.postUnit(new PersistingUnit("awardTrophy", listener) {
             @Override
-            public void invokePersistent () throws PersistenceException {
+            public void invokePersistent () throws Exception {
                 // store the trophy in the database
                 _trophyRepo.storeTrophy(trophy);
                 // publish the trophy earning event to the member's feed
@@ -327,23 +332,23 @@ public class GameGameRegistry
      * Called when a game was successfully finished with a payout.
      * Right now just logs the results for posterity.
      */
-    public void gamePayout (final int memberId, final Game game, final int payout, final int secondsPlayed)
+    public void gamePayout (int memberId, Game game, int payout, int secondsPlayed)
     {
         _eventLog.gamePlayed(
             game.genre, game.gameId, game.itemId, payout, secondsPlayed, memberId);
     }
 
     // from AVRProvider
-    public void activateGame (final ClientObject caller, final int gameId,
-                              final AVRService.AVRGameJoinListener listener)
+    public void activateGame (ClientObject caller, final int gameId,
+                              AVRService.AVRGameJoinListener listener)
         throws InvocationException
     {
         // TODO: transition
-        // final int instanceId = 1;
+        // int instanceId = 1;
 
-        final PlayerObject player = (PlayerObject) caller;
+        PlayerObject player = (PlayerObject) caller;
 
-        final InvocationService.ResultListener joinListener =
+        InvocationService.ResultListener joinListener =
             new AVRGameJoinListener(player.getMemberId(), listener);
 
         ResultListenerList list = _loadingAVRGames.get(gameId);
@@ -352,7 +357,7 @@ public class GameGameRegistry
             return;
         }
 
-        final AVRGameManager mgr = _avrgManagers.get(gameId);
+        AVRGameManager mgr = _avrgManagers.get(gameId);
         if (mgr != null) {
             joinListener.requestProcessed(mgr);
             return;
@@ -387,17 +392,17 @@ public class GameGameRegistry
                 try {
                     def = (MsoyGameDefinition)new MsoyGameParser().parseGame(_content.game);
 
-                } catch (final IOException ioe) {
+                } catch (IOException ioe) {
                     log.warning("Error parsing game config", "game", _content.game, ioe);
                     return;
 
-                } catch (final SAXException saxe) {
+                } catch (SAXException saxe) {
                     log.warning("Error parsing game config", "game", _content.game, saxe);
                     return;
 
                 }
 
-                final List<PlaceManagerDelegate> delegates = Lists.newArrayList();
+                List<PlaceManagerDelegate> delegates = Lists.newArrayList();
                 // TODO: Move AVRG event logging out of QuestDelegate and maybe into this one?
 //                delegates.add(new EventLoggingDelegate(_content));
                 // TODO: Refactor the bits of AwardDelegate that we want
@@ -407,7 +412,7 @@ public class GameGameRegistry
                 delegates.add(new AgentTraceDelegate(gameId));
 
                 final Map<String, byte[]> initialState = new HashMap<String, byte[]>();
-                for (final GameStateRecord record : _recs) {
+                for (GameStateRecord record : _recs) {
                     initialState.put(record.datumKey, record.datumValue);
                 }
                 delegates.add(new PropertySpaceDelegate() {
@@ -421,7 +426,7 @@ public class GameGameRegistry
                         _invoker.postUnit(new WriteOnlyUnit("shutdown") {
                             @Override
                             public void invokePersist () throws Exception {
-                                for (final Map.Entry<String, byte[]> entry : state.entrySet()) {
+                                for (Map.Entry<String, byte[]> entry : state.entrySet()) {
                                     _avrgRepo.storeState(new GameStateRecord(
                                         gameId, entry.getKey(), entry.getValue()));
                                 }
@@ -430,14 +435,14 @@ public class GameGameRegistry
                     }
                 });
 
-                final AVRGameConfig config = new AVRGameConfig();
+                AVRGameConfig config = new AVRGameConfig();
                 config.init(_content.game, def);
 
                 AVRGameManager mgr;
                 try {
                     mgr = (AVRGameManager)_plreg.createPlace(config, delegates);
 
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     log.warning("Failed to create AVRGameObject", "gameId", gameId, e);
                     return;
                 }
@@ -452,13 +457,13 @@ public class GameGameRegistry
             }
 
             @Override
-            public void handleFailure (final Exception pe) {
+            public void handleFailure (Exception pe) {
                 log.warning("Failed to resolve AVRGame [id=" + gameId + "].", pe);
                 reportFailure(pe.getMessage());
             }
 
-            protected void reportFailure (final String reason) {
-                final ResultListenerList list = _loadingAVRGames.remove(gameId);
+            protected void reportFailure (String reason) {
+                ResultListenerList list = _loadingAVRGames.remove(gameId);
                 if (list != null) {
                     list.requestFailed(reason);
                 } else {
@@ -473,18 +478,18 @@ public class GameGameRegistry
     }
 
     // from AVRProvider
-    public void deactivateGame (final ClientObject caller, final int gameId,
-                                final InvocationService.ConfirmListener listener)
+    public void deactivateGame (ClientObject caller, int gameId,
+                                InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        final PlayerObject player = (PlayerObject) caller;
-        final int playerId = player.getMemberId();
+        PlayerObject player = (PlayerObject) caller;
+        int playerId = player.getMemberId();
 
         // see if we are still just resolving the game
-        final ResultListenerList list = _loadingAVRGames.get(gameId);
+        ResultListenerList list = _loadingAVRGames.get(gameId);
         if (list != null) {
             // yep, so just remove our associated listener, and we're done
-            for (final InvocationService.ResultListener gameListener : list) {
+            for (InvocationService.ResultListener gameListener : list) {
                 if (((AVRGameJoinListener) gameListener).getPlayerId() == playerId) {
                     list.remove(gameListener);
                     listener.requestProcessed();
@@ -494,7 +499,7 @@ public class GameGameRegistry
         }
 
         // get the corresponding manager
-        final AVRGameManager mgr = _avrgManagers.get(gameId);
+        AVRGameManager mgr = _avrgManagers.get(gameId);
         if (mgr != null) {
             _locmgr.leavePlace(player);
             // TODO: no longer needed?
@@ -508,8 +513,8 @@ public class GameGameRegistry
     }
 
     // from LobbyProvider
-    public void identifyLobby (final ClientObject caller, final int gameId,
-                               final InvocationService.ResultListener listener)
+    public void identifyLobby (ClientObject caller, final int gameId,
+                               InvocationService.ResultListener listener)
         throws InvocationException
     {
         // if we're already resolving this lobby, add this listener to the list of those interested
@@ -521,7 +526,7 @@ public class GameGameRegistry
         }
 
         // if the lobby is already resolved, we're good
-        final LobbyManager mgr = _lobbies.get(gameId);
+        LobbyManager mgr = _lobbies.get(gameId);
         if (mgr != null) {
             listener.requestProcessed(mgr.getLobbyObject().getOid());
             return;
@@ -533,7 +538,7 @@ public class GameGameRegistry
 
         _invoker.postUnit(new RepositoryUnit("loadLobby") {
             @Override
-            public void invokePersist () throws PersistenceException {
+            public void invokePersist () throws Exception {
                 _content = assembleGameContent(gameId);
                 // load up the score distribution information for this game as well
                 _single = _ratingRepo.loadPercentile(-Math.abs(gameId));
@@ -547,12 +552,12 @@ public class GameGameRegistry
                     return;
                 }
 
-                final LobbyManager lmgr = _injector.getInstance(LobbyManager.class);
+                LobbyManager lmgr = _injector.getInstance(LobbyManager.class);
                 lmgr.init(_invmgr, GameGameRegistry.this);
                 lmgr.setGameContent(_content);
                 _lobbies.put(gameId, lmgr);
 
-                final ResultListenerList list = _loadingLobbies.remove(gameId);
+                ResultListenerList list = _loadingLobbies.remove(gameId);
                 if (list != null) {
                     list.requestProcessed(lmgr.getLobbyObject().getOid());
                 }
@@ -563,13 +568,13 @@ public class GameGameRegistry
             }
 
             @Override
-            public void handleFailure (final Exception pe) {
+            public void handleFailure (Exception pe) {
                 log.warning("Failed to resolve game [id=" + gameId + "].", pe);
                 reportFailure(InvocationCodes.E_INTERNAL_ERROR);
             }
 
-            protected void reportFailure (final String reason) {
-                final ResultListenerList list = _loadingLobbies.remove(gameId);
+            protected void reportFailure (String reason) {
+                ResultListenerList list = _loadingLobbies.remove(gameId);
                 if (list != null) {
                     list.requestFailed(reason);
                 }
@@ -586,15 +591,16 @@ public class GameGameRegistry
 
     // from LobbyProvider
     @SuppressWarnings("fallthrough")
-    public void playNow (final ClientObject caller, final int gameId, final int mode,
+    public void playNow (ClientObject caller, final int gameId, final int mode,
                          final InvocationService.ResultListener listener)
         throws InvocationException
     {
+        final PlayerObject plobj = (PlayerObject)caller;
         // we need to make sure the lobby is resolved, so route through identifyLobby
         identifyLobby(caller, gameId, new InvocationService.ResultListener() {
-            public void requestProcessed (final Object result) {
+            public void requestProcessed (Object result) {
                 // now the lobby should be resolved
-                final LobbyManager mgr = _lobbies.get(gameId);
+                LobbyManager mgr = _lobbies.get(gameId);
                 if (mgr == null) {
                     log.warning("identifyLobby() returned non-failure but lobby manager " +
                                 "disappeared [gameId=" + gameId + "].");
@@ -604,7 +610,6 @@ public class GameGameRegistry
 
                 // if we're able to get them right into a game, return zero otherwise return the
                 // lobby manager oid which will allow the client to display the lobby
-                final PlayerObject plobj = (PlayerObject)caller;
                 boolean gameCreated;
                 switch (mode) {
                 case LobbyCodes.PLAY_NOW_IF_SINGLE:
@@ -630,55 +635,55 @@ public class GameGameRegistry
                 }
                 listener.requestProcessed(gameCreated ? 0 : result);
             }
-            public void requestFailed (final String cause) {
+            public void requestFailed (String cause) {
                 listener.requestFailed(cause);
             }
         });
     }
 
     // from LobbyProvider
-    public void joinPlayerGame (final ClientObject caller, final int playerId,
-                                final InvocationService.ResultListener listener)
+    public void joinPlayerGame (ClientObject caller, int playerId,
+                                InvocationService.ResultListener listener)
         throws InvocationException
     {
-        final PlayerObject player = _locator.lookupPlayer(playerId);
+        PlayerObject player = _locator.lookupPlayer(playerId);
         if (player == null) {
             listener.requestFailed("e.player_not_found");
             return;
         }
 
         // If they're not in a location, we can send that on immediately.
-        final int placeOid = player.getPlaceOid();
+        int placeOid = player.getPlaceOid();
         if (placeOid == -1) {
             listener.requestProcessed(placeOid);
             return;
         }
 
         // Check to make sure the game that they're in is watchable
-        final PlaceManager plman = _plreg.getPlaceManager(placeOid);
+        PlaceManager plman = _plreg.getPlaceManager(placeOid);
         if (plman == null) {
             log.warning(
                 "Fetched null PlaceManager for player's current gameOid [" + placeOid + "]");
             listener.requestFailed("e.player_not_found");
             return;
         }
-        final MsoyGameConfig gameConfig = (MsoyGameConfig) plman.getConfig();
-        final MsoyMatchConfig matchConfig = (MsoyMatchConfig) gameConfig.getGameDefinition().match;
+        MsoyGameConfig gameConfig = (MsoyGameConfig) plman.getConfig();
+        MsoyMatchConfig matchConfig = (MsoyMatchConfig) gameConfig.getGameDefinition().match;
         if (matchConfig.unwatchable) {
             listener.requestFailed("e.unwatchable_game");
             return;
         }
 
         // Check to make sure the game that they're in is not private
-        final int gameId = gameConfig.getGameId();
-        final LobbyManager lmgr = _lobbies.get(gameId);
+        int gameId = gameConfig.getGameId();
+        LobbyManager lmgr = _lobbies.get(gameId);
         if (lmgr == null) {
             log.warning("No lobby manager found for existing game! [" + gameId + "]");
             listener.requestFailed("e.player_not_found");
             return;
         }
-        final LobbyObject lobj = lmgr.getLobbyObject();
-        for (final Table table : lobj.tables) {
+        LobbyObject lobj = lmgr.getLobbyObject();
+        for (Table table : lobj.tables) {
             if (table.gameOid == placeOid) {
                 if (table.tconfig.privateTable) {
                     listener.requestFailed("e.private_game");
@@ -696,17 +701,17 @@ public class GameGameRegistry
     public void shutdown ()
     {
         // shutdown our active lobbies
-        for (final LobbyManager lmgr : _lobbies.values().toArray(new LobbyManager[_lobbies.size()])) {
+        for (LobbyManager lmgr : _lobbies.values().toArray(new LobbyManager[_lobbies.size()])) {
             lobbyDidShutdown(lmgr.getGame().gameId);
         }
 
-        for (final AVRGameManager amgr : _avrgManagers.values()) {
+        for (AVRGameManager amgr : _avrgManagers.values()) {
             amgr.shutdown(); // this will also call avrGameDidShutdown
         }
     }
 
     // from interface LobbyManager.ShutdownObserver
-    public void lobbyDidShutdown (final int gameId)
+    public void lobbyDidShutdown (int gameId)
     {
         // destroy our record of that lobby
         _lobbies.remove(gameId);
@@ -724,9 +729,9 @@ public class GameGameRegistry
     }
 
     // from AVRGameManager.LifecycleObserver
-    public void avrGameDidShutdown (final AVRGameManager mgr)
+    public void avrGameDidShutdown (AVRGameManager mgr)
     {
-        final int gameId = mgr.getGameId();
+        int gameId = mgr.getGameId();
 
         // destroy our record of that avrg
         _avrgManagers.remove(gameId);
@@ -740,13 +745,13 @@ public class GameGameRegistry
     }
 
     // from AVRGameManager.LifecycleObserver
-    public void avrGameReady (final AVRGameManager mgr)
+    public void avrGameReady (AVRGameManager mgr)
     {
-        final int gameId = mgr.getGameId();
+        int gameId = mgr.getGameId();
 
         _avrgManagers.put(gameId, mgr);
 
-        final ResultListenerList list = _loadingAVRGames.remove(gameId);
+        ResultListenerList list = _loadingAVRGames.remove(gameId);
         if (list != null) {
             list.requestProcessed(mgr);
         } else {
@@ -754,30 +759,29 @@ public class GameGameRegistry
         }
     }
 
-    protected GameContent assembleGameContent (final int gameId)
-        throws PersistenceException
+    protected GameContent assembleGameContent (int gameId)
     {
-        final GameContent content = new GameContent();
+        GameContent content = new GameContent();
         content.detail = _gameRepo.loadGameDetail(gameId);
-        final GameRecord rec = _gameRepo.loadGameRecord(gameId, content.detail);
+        GameRecord rec = _gameRepo.loadGameRecord(gameId, content.detail);
         if (rec != null) {
             content.game = (Game)rec.toItem();
             // load up our level and item packs
-            for (final LevelPackRecord record :
+            for (LevelPackRecord record :
                      _lpackRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
                 content.lpacks.add((LevelPack)record.toItem());
             }
-            for (final ItemPackRecord record :
+            for (ItemPackRecord record :
                      _ipackRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
                 content.ipacks.add((ItemPack)record.toItem());
             }
             // load up our trophy source items
-            for (final TrophySourceRecord record :
+            for (TrophySourceRecord record :
                      _tsourceRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
                 content.tsources.add((TrophySource)record.toItem());
             }
             // load up our prize items
-            for (final PrizeRecord record :
+            for (PrizeRecord record :
                      _prizeRepo.loadOriginalItemsBySuite(content.game.getSuiteId())) {
                 content.prizes.add((Prize)record.toItem());
             }
@@ -796,22 +800,22 @@ public class GameGameRegistry
             }
             @Override
             public void handleSuccess () {
-                final PlayerObject player = _locator.lookupPlayer(playerId);
+                PlayerObject player = _locator.lookupPlayer(playerId);
                 if (player == null) {
                     // they left while we were resolving the game, oh well
                     return;
                 }
 
                 if (!MemberName.isGuest(player.getMemberId())) {
-                    final Map<String, byte[]> initialState = new HashMap<String, byte[]>();
-                    for (final PlayerGameStateRecord record : _stateRecs) {
+                    Map<String, byte[]> initialState = new HashMap<String, byte[]>();
+                    for (PlayerGameStateRecord record : _stateRecs) {
                         initialState.put(record.datumKey, record.datumValue);
                     }
                     PropertySpaceHelper.initWithStateFromStore(player, initialState);
 
                     player.startTransaction();
                     try {
-                        for (final QuestStateRecord rec: _questRecs) {
+                        for (QuestStateRecord rec: _questRecs) {
                             player.addToQuestState(rec.toEntry());
                         }
                     } finally {
@@ -819,12 +823,12 @@ public class GameGameRegistry
                     }
                 }
 
-                final int gameOid = mgr.getGameObject().getOid();
+                int gameOid = mgr.getGameObject().getOid();
                 // when we're ready, move the player into the AVRG 'place'
                 try {
                     _locmgr.moveTo(player, gameOid);
 
-                } catch (final InvocationException pe) {
+                } catch (InvocationException pe) {
                     log.warning("Move to AVRGameObject failed", "gameId", mgr.getGameId(), pe);
                     listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
                     return;
@@ -834,7 +838,7 @@ public class GameGameRegistry
                 listener.avrgJoined(gameOid, (AVRGameConfig) mgr.getConfig());
             }
             @Override
-            public void handleFailure (final Exception pe) {
+            public void handleFailure (Exception pe) {
                 log.warning("Unable to resolve player state [gameId=" +
                     mgr.getGameId() + ", player=" + playerId + "]", pe);
             }
@@ -856,28 +860,28 @@ public class GameGameRegistry
             public boolean invoke () {
                 try {
                     _ratingRepo.updatePercentile(gameId, tiler);
-                } catch (final PersistenceException pe) {
-                    log.warning("Failed to update score distribution " +
-                            "[game=" + gameId + ", tiler=" + tiler + "].", pe);
+                } catch (Exception e) {
+                    log.warning("Failed to update score distribution", "game", gameId,
+                                "tiler", tiler, e);
                 }
                 return false;
             }
         });
     }
 
-    protected void killBureauSession (final int gameId)
+    protected void killBureauSession (int gameId)
     {
-        final String bureauId = BureauTypes.GAME_BUREAU_ID_PREFIX + gameId;
-        final PresentsClient bureau = _bureauReg.lookupClient(bureauId);
+        String bureauId = BureauTypes.GAME_BUREAU_ID_PREFIX + gameId;
+        PresentsClient bureau = _bureauReg.lookupClient(bureauId);
         if (bureau != null) {
             bureau.endSession();
         }
     }
 
-    protected final class AVRGameJoinListener
+    protected class AVRGameJoinListener
         implements InvocationService.ResultListener
     {
-        protected AVRGameJoinListener (final int player, final AVRService.AVRGameJoinListener listener)
+        protected AVRGameJoinListener (int player, AVRService.AVRGameJoinListener listener)
         {
             _listener = listener;
             _player = player;
@@ -888,16 +892,16 @@ public class GameGameRegistry
             return _player;
         }
 
-        public void requestProcessed (final Object result) {
+        public void requestProcessed (Object result) {
             joinAVRGame(_player, (AVRGameManager) result, _listener);
         }
 
-        public void requestFailed (final String cause) {
+        public void requestFailed (String cause) {
             _listener.requestFailed(cause);
         }
 
-        protected final int _player;
-        protected final AVRService.AVRGameJoinListener _listener;
+        protected int _player;
+        protected AVRService.AVRGameJoinListener _listener;
     }
 
     /** Maps game id -> lobby. */

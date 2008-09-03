@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -70,7 +69,6 @@ public class ServletLogic
      * records.
      */
     public List<FeedMessage> resolveFeedMessages (List<FeedMessageRecord> records)
-        throws PersistenceException
     {
         // find out which member and group names we'll need
         IntSet memberIds = new ArrayIntSet(), groupIds = new ArrayIntSet();

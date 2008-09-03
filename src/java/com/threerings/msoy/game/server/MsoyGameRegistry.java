@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.HashIntMap;
@@ -141,7 +140,7 @@ public class MsoyGameRegistry
 
         // we're going to need the Game item to finish resolution
         _invoker.postUnit(new PersistingUnit("locateGame", listener) {
-            public void invokePersistent () throws PersistenceException {
+            public void invokePersistent () throws Exception {
                 if (gameId == Game.TUTORIAL_GAME_ID) {
                     _game = TUTORIAL_GAME;
                 } else {

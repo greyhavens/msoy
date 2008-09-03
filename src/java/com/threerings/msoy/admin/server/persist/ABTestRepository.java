@@ -9,7 +9,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -34,7 +33,6 @@ public class ABTestRepository extends DepotRepository
      * Loads all test information with newest tests first
      */
     public List<ABTestRecord> loadTests ()
-        throws PersistenceException
     {
         return findAll(ABTestRecord.class, OrderBy.descending(ABTestRecord.AB_TEST_ID_C));
     }
@@ -43,7 +41,6 @@ public class ABTestRepository extends DepotRepository
      * Loads all tests that are currently enabled
      */
     public List<ABTestRecord> loadRunningTests ()
-        throws PersistenceException
     {
         return findAll(ABTestRecord.class, new Where(ABTestRecord.ENABLED_C, true));
     }
@@ -52,7 +49,6 @@ public class ABTestRepository extends DepotRepository
      * Loads a single test by the unique string identifier (name)
      */
     public ABTestRecord loadTestByName (String name)
-        throws PersistenceException
     {
         return load(ABTestRecord.class, new Where(ABTestRecord.NAME_C, name));
     }
@@ -61,7 +57,6 @@ public class ABTestRepository extends DepotRepository
      * Inserts the supplied record into the database.
      */
     public void insertABTest (ABTest test)
-        throws PersistenceException
     {
         try {
             ABTestRecord record = ABTestRecord.class.newInstance();
@@ -76,7 +71,6 @@ public class ABTestRepository extends DepotRepository
      * Updates the supplied record in the database.
      */
     public void updateABTest (ABTest test)
-        throws PersistenceException
     {
         try {
             ABTestRecord record = ABTestRecord.class.newInstance();

@@ -6,7 +6,6 @@ package com.threerings.msoy.underwire.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.Invoker;
 
@@ -41,7 +40,6 @@ public class SupportLogic
      * Adds an auto-ban event record to the user.
      */
     public void reportAutoBan (OOOUser user, String reason)
-        throws PersistenceException
     {
         MemberName name = _memberRepo.loadMemberName(user.email);
         EventRecord event = new EventRecord();
@@ -56,7 +54,6 @@ public class SupportLogic
      * Adds a complaint record to the underwire event queue.
      */
     public void addComplaint (EventRecord event, int targetId)
-        throws PersistenceException
     {
         // load the target information if necessary
         if (event.target == null) {
@@ -79,7 +76,6 @@ public class SupportLogic
      */
     public void addMessageComplaint (MemberName source, int targetId, String message,
                                      String subject, String link)
-        throws PersistenceException
     {
         final EventRecord event = new EventRecord();
         event.source = Integer.toString(source.getMemberId());

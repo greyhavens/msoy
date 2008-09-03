@@ -11,7 +11,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -45,7 +44,6 @@ public class MemoryRepository extends DepotRepository
      * Loads the memory for the specified item.
      */
     public List<MemoryRecord> loadMemory (byte itemType, int itemId)
-        throws PersistenceException
     {
         return findAll(MemoryRecord.class,
                        new Where(MemoryRecord.ITEM_TYPE_C, itemType,
@@ -56,7 +54,6 @@ public class MemoryRepository extends DepotRepository
      * Loads up the all memory records for all items with the specified type and ids.
      */
     public List<MemoryRecord> loadMemories (byte itemType, Collection<Integer> itemIds)
-        throws PersistenceException
     {
         return findAll(
             MemoryRecord.class,
@@ -68,7 +65,6 @@ public class MemoryRepository extends DepotRepository
      * Loads up the all memory records for all items with the specified type and ids.
      */
     public List<MemoryRecord> loadMemories (Collection<ItemIdent> idents)
-        throws PersistenceException
     {
         HashIntMap<ArrayIntSet> types = new HashIntMap<ArrayIntSet>();
         for (ItemIdent ident : idents) {
@@ -93,7 +89,6 @@ public class MemoryRepository extends DepotRepository
      * Stores all supplied memory records.
      */
     public void storeMemories (Collection<MemoryRecord> records)
-        throws PersistenceException
     {
         // TODO: if one storeMemory() fails, should we catch that error, keep going, then
         // consolidate the errors and throw a single error?
@@ -106,7 +101,6 @@ public class MemoryRepository extends DepotRepository
      * Stores a particular memory record in the repository.
      */
     public void storeMemory (MemoryRecord record)
-        throws PersistenceException
     {
         // delete, update, or insert...
         if (record.datumValue == null) {
@@ -121,7 +115,6 @@ public class MemoryRepository extends DepotRepository
      * Deletes all memories for the specified item.
      */
     public void deleteMemories (final byte itemType, final int itemId)
-        throws PersistenceException
     {
         deleteAll(MemoryRecord.class,
                   new Where(MemoryRecord.ITEM_TYPE_C, itemType, MemoryRecord.ITEM_ID_C, itemId),

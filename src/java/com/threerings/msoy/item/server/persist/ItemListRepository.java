@@ -14,7 +14,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -47,11 +46,8 @@ public class ItemListRepository extends DepotRepository
 
     /**
      * Inserts the given list info record.
-     *
-     * @throws PersistenceException if the given record already has an id
      */
     public void createList (ItemListInfoRecord record)
-        throws PersistenceException
     {
         Preconditions.checkArgument(
             record.listId == 0, "Can't insert existing list with id [" + record.listId + "]");
@@ -64,7 +60,6 @@ public class ItemListRepository extends DepotRepository
      * @param listId the ID of the list to delete.
      */
     public void deleteList (final int listId)
-        throws PersistenceException
     {
         // delete all of the elements from the list
         deleteAll(ItemListElementRecord.class, new Where(ItemListElementRecord.LIST_ID_C, listId),
@@ -86,7 +81,6 @@ public class ItemListRepository extends DepotRepository
      * @param listId the ID of the list to size up.
      */
     public int getSize (int listId)
-        throws PersistenceException
     {
         CountRecord size = load(CountRecord.class,
             new FromOverride(ItemListElementRecord.class),
@@ -99,7 +93,6 @@ public class ItemListRepository extends DepotRepository
      * Gets the number of items of the given type in a list.
      */
     public int getSize (int listId, byte listType)
-        throws PersistenceException
     {
         Where where;
         if (listType == Item.NOT_A_TYPE) {
@@ -118,7 +111,6 @@ public class ItemListRepository extends DepotRepository
      * Load the list info with the given id.
      */
     public ItemListInfoRecord loadInfo (int listId)
-        throws PersistenceException
     {
         return load(ItemListInfoRecord.class, listId);
     }
@@ -127,7 +119,6 @@ public class ItemListRepository extends DepotRepository
      * Load all the ItemListInfos for the specified member.
      */
     public List<ItemListInfoRecord> loadInfos (int memberId)
-        throws PersistenceException
     {
         return findAll(ItemListInfoRecord.class,
                        new Where(ItemListInfoRecord.MEMBER_ID_C, memberId));
@@ -137,7 +128,6 @@ public class ItemListRepository extends DepotRepository
      * Load all of a member's lists of a particular type.
      */
     public List<ItemListInfoRecord> loadInfos (int memberId, byte type)
-        throws PersistenceException
     {
         // query by type
         Where where = new Where(ItemListInfoRecord.MEMBER_ID_C, Integer.valueOf(memberId),
@@ -149,7 +139,6 @@ public class ItemListRepository extends DepotRepository
      * Load the identifiers for the items in the list with the given id.
      */
     public ItemIdent[] loadList (int listId)
-        throws PersistenceException
     {
         List<ItemListElementRecord> list = findAll(ItemListElementRecord.class,
             new Where(ItemListElementRecord.LIST_ID_C, listId),
@@ -166,7 +155,6 @@ public class ItemListRepository extends DepotRepository
      * @return an array containing the results.
      */
     public ItemIdent[] loadList (ItemListQuery query)
-        throws PersistenceException
     {
         Where where;
         if (query.itemType == Item.NOT_A_TYPE) {
@@ -202,7 +190,6 @@ public class ItemListRepository extends DepotRepository
      * @param item the ID of the item to add.
      */
     public void addItem (int listId, ItemIdent item)
-        throws PersistenceException
     {
         ItemListElementRecord record = new ItemListElementRecord(listId, item, getSize(listId));
         insert(record);
@@ -217,7 +204,6 @@ public class ItemListRepository extends DepotRepository
      *    was not an element of the list to begin with.
      */
     public boolean removeItem (int listId, ItemIdent item)
-        throws PersistenceException
     {
         // get the item's current location in the list
         final ItemListElementRecord record = loadElement(listId, item);
@@ -246,10 +232,8 @@ public class ItemListRepository extends DepotRepository
      * @param listId identifies the list.
      * @param item identifies the inserted item.
      * @param index the list index at which to insert the item.
-     * @throws PersistenceException
      */
     public void insertItemAt (int listId, ItemIdent item, short index)
-        throws PersistenceException
     {
         // shift all of the records between the insert location and the end of the list to the right
         shiftItemsRight(listId, index);
@@ -265,16 +249,14 @@ public class ItemListRepository extends DepotRepository
      * @param listId identifies the list.
      * @param item identifies the item to move.
      * @param toIndex the location to which to move the item.
-     * @throws PersistenceException if the item is not already an element of these list, or if any
-     *    other database nastiness occurs.
+     * @throws IllegalArgumentException if the item is not already an element of these list.
      */
     public void moveItem (int listId, ItemIdent item, short toIndex)
-        throws PersistenceException
     {
         // get the item's current location in the list
         ItemListElementRecord record = loadElement(listId, item);
         if (record == null) {
-            throw new PersistenceException(
+            throw new IllegalArgumentException(
                 "Could not move item [" + item + "]. It is not an element of list [" + listId + "]");
         }
 
@@ -294,7 +276,6 @@ public class ItemListRepository extends DepotRepository
      * Checks to see if the given list contains the given item.
      */
     public boolean contains (int listId, ItemIdent item)
-        throws PersistenceException
     {
         return loadElement(listId, item) != null;
     }
@@ -307,7 +288,6 @@ public class ItemListRepository extends DepotRepository
      * @param fromIndex shift everything from this location on to the right.
      */
     protected void shiftItemsRight (final int listId, final short fromIndex)
-        throws PersistenceException
     {
         Equals findList = new Equals(ItemListElementRecord.LIST_ID_C, listId);
         Conditionals.GreaterThanEquals after =
@@ -335,7 +315,6 @@ public class ItemListRepository extends DepotRepository
      * @param fromIndex the starting point from which to shift.
      */
     protected void shiftItemsLeft (final int listId, final short fromIndex)
-        throws PersistenceException
     {
         Equals findList = new Equals(ItemListElementRecord.LIST_ID_C, listId);
         Conditionals.GreaterThan after =
@@ -364,7 +343,6 @@ public class ItemListRepository extends DepotRepository
      * @param toIndex the item's new location in the list.
      */
     protected void shiftItems (final int listId, final short fromIndex, final short toIndex)
-        throws PersistenceException
     {
         CacheInvalidator invalidator;
         SQLExpression range;
@@ -420,14 +398,12 @@ public class ItemListRepository extends DepotRepository
      * Loads a specific item list element record.
      */
     protected ItemListElementRecord loadElement (int listId, ItemIdent item)
-        throws PersistenceException
     {
         return load(ItemListElementRecord.class, new Where(ItemListElementRecord.LIST_ID_C, listId,
             ItemListElementRecord.ITEM_ID_C, item.itemId, ItemListElementRecord.TYPE_C, item.type));
     }
 
-    @Override
-    // from DepotRepository
+    @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(ItemListElementRecord.class);

@@ -9,9 +9,26 @@ import java.util.Date;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.samskivert.io.PersistenceException;
+
 import com.samskivert.util.StringUtil;
+
+import com.threerings.util.MessageBundle;
+import com.threerings.util.Name;
+
+import com.threerings.presents.net.AuthRequest;
+import com.threerings.presents.net.AuthResponse;
+import com.threerings.presents.net.AuthResponseData;
+import com.threerings.presents.server.Authenticator;
+import com.threerings.presents.server.net.AuthingConnection;
+
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.room.data.MsoySceneModel;
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.web.data.BannedException;
+import com.threerings.msoy.web.data.ServiceException;
+
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -22,23 +39,10 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MemberWarningRecord;
-import com.threerings.msoy.web.data.BannedException;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.net.AuthResponse;
-import com.threerings.presents.net.AuthResponseData;
-import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.net.AuthingConnection;
-import com.threerings.util.MessageBundle;
-import com.threerings.util.Name;
 
 /**
  * Handles authentication for the MetaSOY server. We rely on underlying authentication domain
@@ -76,14 +80,13 @@ public class MsoyAuthenticator extends Authenticator
          * Creates a new account for this authentication domain.
          */
         public Account createAccount (String accountName, String password)
-            throws ServiceException, PersistenceException;
+            throws ServiceException;
 
         /**
          * Uncreates an account that was created but needs to be deleted because of a later failure
          * in the account creation process.
          */
-        public void uncreateAccount (String accountName)
-            throws PersistenceException;
+        public void uncreateAccount (String accountName);
 
         /**
          * Notifies the authentication domain that the supplied information was modified for the
@@ -95,7 +98,7 @@ public class MsoyAuthenticator extends Authenticator
          */
         public void updateAccount (String accountName, String newAccountName, String newPermaName,
                                    String newPassword)
-            throws ServiceException, PersistenceException;
+            throws ServiceException;
 
         /**
          * Loads up account information for the specified account and checks the supplied password.
@@ -105,7 +108,7 @@ public class MsoyAuthenticator extends Authenticator
          * is invalid.
          */
         public Account authenticateAccount (String accountName, String password)
-            throws ServiceException, PersistenceException;
+            throws ServiceException;
 
         /**
          * Called with an account loaded from {@link #authenticateAccount} to check whether the
@@ -121,7 +124,7 @@ public class MsoyAuthenticator extends Authenticator
          * associated with a banned account and this is the account's first logon.
          */
         public void validateAccount (Account account, String machIdent, boolean newIdent)
-            throws ServiceException, PersistenceException;
+            throws ServiceException;
 
         /**
          * Called with an account loaded from {@link #authenticateAccount} to check whether the
@@ -132,7 +135,7 @@ public class MsoyAuthenticator extends Authenticator
          * banned.
          */
         public void validateAccount (Account account)
-            throws ServiceException, PersistenceException;
+            throws ServiceException;
 
         /**
          * Generates a secret code that can be emailed to a user and then subsequently passed to
@@ -142,7 +145,7 @@ public class MsoyAuthenticator extends Authenticator
          * @return null if no account is registered for that address, a secret code otherwise.
          */
         public String generatePasswordResetCode (String accountName)
-            throws ServiceException, PersistenceException;
+            throws ServiceException;
 
         /**
          * Validates that the supplied password reset code is the one earlier provided by a call to
@@ -151,13 +154,12 @@ public class MsoyAuthenticator extends Authenticator
          * @return true if the code is valid, false otherwise.
          */
         public boolean validatePasswordResetCode (String accountName, String code)
-            throws ServiceException, PersistenceException;
+            throws ServiceException;
 
         /**
          * Validates that this is a unique machine identifier.
          */
-        public boolean isUniqueIdent (String machIdent)
-            throws PersistenceException;
+        public boolean isUniqueIdent (String machIdent);
     }
 
     /**
@@ -225,15 +227,15 @@ public class MsoyAuthenticator extends Authenticator
             account = null;
             return mrec;
 
-        } catch (final PersistenceException pe) {
-            log.warning("Error creating member record", "for", email, pe);
+        } catch (final RuntimeException e) {
+            log.warning("Error creating member record", "for", email, e);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
 
         } finally {
             if (account != null) {
                 try {
                     domain.uncreateAccount(email);
-                } catch (final Exception e) {
+                } catch (final RuntimeException e) {
                     log.warning("Failed to rollback account creation", "email", email, e);
                 }
             }
@@ -252,10 +254,10 @@ public class MsoyAuthenticator extends Authenticator
             // make sure we're dealing with a lower cased email
             email = email.toLowerCase();
             getDomain(email).updateAccount(email, newAccountName, newPermaName, newPassword);
-        } catch (final PersistenceException pe) {
+        } catch (final RuntimeException e) {
             log.warning("Error updating account [for=" + email +
                     ", nan=" + newAccountName + ", npn=" + newPermaName +
-                    ", npass=" + newPassword + "].", pe);
+                    ", npass=" + newPassword + "].", e);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
     }
@@ -268,7 +270,7 @@ public class MsoyAuthenticator extends Authenticator
      * @return null if no account is registered for that address, a secret code otherwise.
      */
     public String generatePasswordResetCode (String email)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         // make sure we're dealing with a lower cased email
         email = email.toLowerCase();
@@ -282,7 +284,7 @@ public class MsoyAuthenticator extends Authenticator
      * @return true if the code is valid, false otherwise.
      */
     public boolean validatePasswordResetCode (String email, final String code)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         // make sure we're dealing with a lower cased email
         email = email.toLowerCase();
@@ -326,8 +328,8 @@ public class MsoyAuthenticator extends Authenticator
 
             return mrec;
 
-        } catch (final PersistenceException pe) {
-            log.warning("Error authenticating user [who=" + email + "].", pe);
+        } catch (final RuntimeException e) {
+            log.warning("Error authenticating user [who=" + email + "].", e);
             throw new ServiceException(MsoyAuthCodes.SERVER_ERROR);
         }
     }
@@ -340,7 +342,7 @@ public class MsoyAuthenticator extends Authenticator
 
     @Override // from Authenticator
     protected void processAuthentication (final AuthingConnection conn, final AuthResponse rsp)
-        throws PersistenceException
+        throws Exception
     {
         final AuthRequest req = conn.getAuthRequest();
         final MsoyAuthResponseData rdata = (MsoyAuthResponseData) rsp.getData();
@@ -402,7 +404,7 @@ public class MsoyAuthenticator extends Authenticator
 
     protected void authenticateGuest (final AuthingConnection conn, final MsoyCredentials creds,
                                       final MsoyAuthResponseData rdata, final int memberId)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         if (!RuntimeConfig.server.nonAdminsAllowed) {
             throw new ServiceException(MsoyAuthCodes.SERVER_CLOSED);
@@ -410,7 +412,7 @@ public class MsoyAuthenticator extends Authenticator
 
         // if they're a "featured whirled" client, create a unique name for them
         if (creds.featuredPlaceView) {
-            final String name = conn.getInetAddress().getHostAddress() + ":" + System.currentTimeMillis();
+            String name = conn.getInetAddress().getHostAddress() + ":" + System.currentTimeMillis();
             creds.setUsername(new LurkerName(name));
         } else {
             // if they supplied a name with their credentials, use that, otherwise generate one
@@ -423,9 +425,9 @@ public class MsoyAuthenticator extends Authenticator
         _eventLog.userLoggedIn(memberId, false, System.currentTimeMillis(), creds.sessionToken);
     }
 
-    protected Account authenticateMember (final MsoyCredentials creds, final MsoyAuthResponseData rdata,
-                                          MemberRecord member, final String accountName, final String password)
-        throws ServiceException, PersistenceException
+    protected Account authenticateMember (MsoyCredentials creds, MsoyAuthResponseData rdata,
+                                          MemberRecord member, String accountName, String password)
+        throws ServiceException
     {
         // obtain the authentication domain appropriate to their account name
         final Domain domain = getDomain(accountName);
@@ -505,7 +507,6 @@ public class MsoyAuthenticator extends Authenticator
      * authenticate user accounts.
      */
     protected Domain getDomain (final String accountName)
-        throws PersistenceException
     {
         // TODO: fancy things based on the user's email domain for our various exciting partners
         return _defaultDomain;
@@ -514,9 +515,8 @@ public class MsoyAuthenticator extends Authenticator
     /**
      * Called to create a starting member record for a first-time logger in.
      */
-    protected MemberRecord createMember (
-        final Account account, final String displayName, final InvitationRecord invite, final ReferralInfo referral)
-        throws PersistenceException
+    protected MemberRecord createMember (Account account, String displayName,
+                                         InvitationRecord invite, ReferralInfo referral)
     {
         // create their main member record
         final MemberRecord mrec = new MemberRecord();
@@ -560,7 +560,7 @@ public class MsoyAuthenticator extends Authenticator
      * Validates an account checking for possible temp bans or warning messages.
      */
     protected void validateAccount (final Account account, final int memberId)
-        throws ServiceException, PersistenceException
+        throws ServiceException
     {
         final MemberWarningRecord record = _memberRepo.loadMemberWarningRecord(memberId);
         if (record == null) {
