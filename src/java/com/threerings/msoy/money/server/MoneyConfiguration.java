@@ -9,19 +9,23 @@ import net.jcip.annotations.Immutable;
  * Configuration of the money service.
  *
  * @author Kyle Sampson <kyle@threerings.net>
+ * @author Ray Greenwell <ray@threerings.net>
  */
 @Immutable
 public class MoneyConfiguration
 {
+    /**
+     * @param securePriceDurtion in minutes.
+     */
     public MoneyConfiguration (
-        final double creatorKickback, final long securePriceDuration,
-        final double coinsToBarsWeightValue, final double blingCashoutTransactionFee,
-        final int maxSecuredPrices)
+        float creatorPercentage, float affiliatePercentage,
+        float blingCashoutTransactionFee,
+        int securePriceDuration, int maxSecuredPrices)
     {
-        _creatorKickback = creatorKickback;
-        _securePriceDuration = securePriceDuration;
-        _coinsToBarsWeightValue = coinsToBarsWeightValue;
+        _creatorPercentage = creatorPercentage;
+        _affiliatePercentage = affiliatePercentage;
         _blingCashoutTransactionFee = blingCashoutTransactionFee;
+        _securePriceDuration = securePriceDuration;
         _maxSecuredPrices = maxSecuredPrices;
     }
 
@@ -29,31 +33,32 @@ public class MoneyConfiguration
      * The percentage of the purchase price that will be awarded to the creator of an
      * item when it is bought.
      */
-    public double getCreatorKickback ()
+    public float getCreatorPercentage ()
     {
-        return _creatorKickback;
+        return _creatorPercentage;
     }
 
     /**
-     * The length of time, in milliseconds, that a secured price will remain available.
+     * The percentage of the purchase price that will be awarded to the affiliate of the
+     * user who bought the item.
      */
-    public long getSecurePriceDuration ()
+    public float getAffiliatePercentage ()
+    {
+        return _affiliatePercentage;
+    }
+
+    /**
+     * The length of time, in minutes, that a secured price will remain available.
+     */
+    public int getSecurePriceDuration ()
     {
         return _securePriceDuration;
     }
 
     /**
-     * The number of coins equal to one bar, assuming the market value of 1 bar = 1 coin.
-     */
-    public double getCoinsToBarsWeightValue ()
-    {
-        return _coinsToBarsWeightValue;
-    }
-
-    /**
      * The amount to deduct when cashing out bling into real money.
      */
-    public double getBlingCashoutTransactionFee ()
+    public float getBlingCashoutTransactionFee ()
     {
         return _blingCashoutTransactionFee;
     }
@@ -66,9 +71,9 @@ public class MoneyConfiguration
         return _maxSecuredPrices;
     }
 
-    private final double _creatorKickback;
-    private final long _securePriceDuration;
+    private final float _creatorPercentage;
+    private final float _affiliatePercentage;
+    private final float _blingCashoutTransactionFee;
+    private final int _securePriceDuration;
     private final int _maxSecuredPrices;
-    private final double _coinsToBarsWeightValue;
-    private final double _blingCashoutTransactionFee;
 }
