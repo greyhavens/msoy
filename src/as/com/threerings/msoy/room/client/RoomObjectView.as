@@ -662,7 +662,9 @@ public class RoomObjectView extends RoomView
             }
             _occupants.put(bodyOid, occupant);
             addSprite(occupant);
-            dispatchEntityEntered(occupant.getItemIdent());
+            if (occupant.getItemIdent() != null) {
+                dispatchEntityEntered(occupant.getItemIdent());
+            }
             occupant.setEntering(loc);
             occupant.roomScaleUpdated();
 
@@ -702,7 +704,9 @@ public class RoomObjectView extends RoomView
             return;
         }
 
-        dispatchEntityLeft(sprite.getItemIdent());
+        if (sprite.getItemIdent() != null) {
+            dispatchEntityLeft(sprite.getItemIdent());
+        }
         if (sprite.isMoving()) {
             _pendingRemovals.put(bodyOid, sprite);
         } else {
