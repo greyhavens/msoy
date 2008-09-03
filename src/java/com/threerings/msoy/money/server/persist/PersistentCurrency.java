@@ -8,14 +8,14 @@ import com.threerings.msoy.money.data.all.Currency;
 
 public enum PersistentCurrency implements ByteEnum
 {
+    /** Coins are awarded from actions in Whirled and can be used to purchase some items. */
+    COINS(0),
+
     /**
      * Bars are usually purchased for some real money amount and may be required to purchase some
      * items.
      */
-    BARS(0),
-
-    /** Coins are awarded from actions in Whirled and can be used to purchase some items. */
-    COINS(1),
+    BARS(1),
 
     /**
      * Bling is awarded when other players purchase or use some content created by a content
@@ -30,8 +30,8 @@ public enum PersistentCurrency implements ByteEnum
         }
         
         switch (currency) {
-        case BARS: return PersistentCurrency.BARS;
         case COINS: return PersistentCurrency.COINS;
+        case BARS: return PersistentCurrency.BARS;
         case BLING: return PersistentCurrency.BLING;
         default: throw new IllegalArgumentException("Invalid currency: " + currency);
         }
@@ -44,8 +44,8 @@ public enum PersistentCurrency implements ByteEnum
         // of places that things must be changed if we add a new currency and is generally
         // the right way to do things with enums.
         switch (value) {
-        case 0: return BARS;
-        case 1: return COINS;
+        case 0: return COINS;
+        case 1: return BARS;
         case 2: return BLING;
         default:
             throw new IllegalArgumentException(
@@ -61,8 +61,8 @@ public enum PersistentCurrency implements ByteEnum
     public Currency toCurrency ()
     {
         switch (this) {
-        case BARS: return Currency.BARS;
         case COINS: return Currency.COINS;
+        case BARS: return Currency.BARS;
         case BLING: return Currency.BLING;
         }
         throw new IllegalArgumentException("Cannot convert this to Currency: " + this);

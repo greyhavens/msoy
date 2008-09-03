@@ -13,14 +13,14 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public enum Currency
     implements IsSerializable
 {
+    /** Coins are awarded from actions in Whirled and can be used to purchase some items. */
+    COINS,
+
     /**
      * Bars are usually purchased for some real money amount and may be required to purchase some
      * items.
      */
     BARS,
-
-    /** Coins are awarded from actions in Whirled and can be used to purchase some items. */
-    COINS,
 
     /**
      * Bling is awarded when other players purchase or use some content created by a content
