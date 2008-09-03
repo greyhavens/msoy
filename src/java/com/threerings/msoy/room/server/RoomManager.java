@@ -22,6 +22,7 @@ import com.samskivert.util.ComplainingListener;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
+import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
 import com.threerings.util.Name;
 
@@ -601,15 +602,19 @@ public class RoomManager extends SpotSceneManager
                           final InvocationListener listener)
         throws InvocationException
     {
+        if (!WindowClientObject.isForGame(caller, gameId)) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+        
         Tuple<Integer, String> key = new Tuple<Integer, String>(gameId, mobId);
         if (_mobs.containsKey(key)) {
-            log.warning("Tried to spawn mob that's already present [gameId=" +
-                        gameId + ", mobId=" + mobId + "]");
+            log.warning(
+                "Tried to spawn mob that's already present", "gameId", gameId, "mobId", mobId);
             listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
             return;
         }
 
-        if (mobName == null || mobName.length() == 0) {
+        if (StringUtil.isBlank(mobName)) {
             throw new IllegalArgumentException(
                 "Mob spawn request without name [gameId=" + gameId + ", mobId=" + mobId + "]");
         }
@@ -623,8 +628,9 @@ public class RoomManager extends SpotSceneManager
         // then enter the scene like a proper scene entity
         _screg.moveTo(mobObj, getScene().getId(), -1, new SceneMoveAdapter() {
             public void requestFailed (String reason) {
-                log.warning("MOB failed to enter scene [mob=" + mobObj + ", scene=" +
-                           getScene().getId() + ", reason=" + reason + "].");
+                log.warning(
+                    "MOB failed to enter scene", "mob", mobObj, "scene", getScene().getId(), 
+                    "reason", reason);
                 listener.requestFailed(reason);
             }
         });
@@ -635,12 +641,16 @@ public class RoomManager extends SpotSceneManager
                             final InvocationListener listener)
         throws InvocationException
     {
+        if (!WindowClientObject.isForGame(caller, gameId)) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+        
         Tuple<Integer, String> key = new Tuple<Integer, String>(gameId, mobId);
 
         final MobObject mobObj = _mobs.get(key);
         if (mobObj == null) {
-            log.warning("Tried to despawn mob that's not present [gameId=" +
-                        gameId + ", mobId=" + mobId + "]");
+            log.warning(
+                "Tried to despawn mob that's not present", "gameId", gameId, "mobId", mobId);
             listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
             return;
         }
