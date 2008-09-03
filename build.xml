@@ -101,7 +101,8 @@
     <file name="${extlibs.dir}/ws-commons-util.jar"/>
     <file name="${extlibs.dir}/xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/xmlrpc-common.jar"/>
-
+    <file name="${extlibs.dir}/rabbitmq-client.jar"/>
+      
     <!-- The following are used for Panopticon -->
     <file name="${extlibs.dir}/log4j.jar"/>
     <file name="${extlibs.dir}/hessian.jar"/>

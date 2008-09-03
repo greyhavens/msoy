@@ -15,42 +15,21 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
-
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.servlet.user.UserRepository;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
-
-import com.threerings.util.Name;
-
-import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.net.AuthRequest;
-import com.threerings.presents.peer.server.PeerManager;
-import com.threerings.presents.server.Authenticator;
-import com.threerings.presents.server.ClientFactory;
-import com.threerings.presents.server.ClientResolver;
-import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.PresentsClient;
-import com.threerings.presents.server.PresentsDObjectMgr;
-import com.threerings.presents.server.PresentsServer;
-import com.threerings.presents.server.ShutdownManager;
-
 import com.threerings.admin.server.ConfigRegistry;
 import com.threerings.admin.server.PeeredDatabaseConfigRegistry;
-
 import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceRegistry;
-
-import com.threerings.parlor.game.server.GameManager;
-
-import com.threerings.whirled.server.SceneRegistry;
-import com.threerings.whirled.server.persist.SceneRepository;
-import com.threerings.whirled.util.SceneFactory;
-
+import com.threerings.messaging.DelayedMessageConnection;
+import com.threerings.messaging.MessageConnection;
+import com.threerings.messaging.amqp.AMQPMessageConfig;
+import com.threerings.messaging.amqp.AMQPMessageConnection;
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.bureau.server.WindowAuthenticator;
 import com.threerings.msoy.bureau.server.WindowClientFactory;
@@ -72,6 +51,23 @@ import com.threerings.msoy.server.persist.OOODatabase;
 import com.threerings.msoy.swiftly.server.SwiftlyManager;
 import com.threerings.msoy.web.server.MsoyHttpServer;
 import com.threerings.msoy.world.server.WorldWatcherManager;
+import com.threerings.parlor.game.server.GameManager;
+import com.threerings.presents.client.InvocationService;
+import com.threerings.presents.data.ClientObject;
+import com.threerings.presents.net.AuthRequest;
+import com.threerings.presents.peer.server.PeerManager;
+import com.threerings.presents.server.Authenticator;
+import com.threerings.presents.server.ClientFactory;
+import com.threerings.presents.server.ClientResolver;
+import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.PresentsClient;
+import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.PresentsServer;
+import com.threerings.presents.server.ShutdownManager;
+import com.threerings.util.Name;
+import com.threerings.whirled.server.SceneRegistry;
+import com.threerings.whirled.server.persist.SceneRepository;
+import com.threerings.whirled.util.SceneFactory;
 
 /**
  * Brings together all of the services needed by the World server.
@@ -102,6 +98,8 @@ public class MsoyServer extends MsoyBaseServer
             bind(MsoyAuthenticator.Domain.class).to(OOOAuthenticationDomain.class);
             bind(PersistenceContext.class).annotatedWith(OOODatabase.class).toInstance(
                 new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, _conprov, _cacher));
+            // Messaging dependencies
+            bind(MessageConnection.class).toInstance(createAMQPConnection());
         }
     }
 
@@ -142,6 +140,13 @@ public class MsoyServer extends MsoyBaseServer
         // and our policy server if one is running
         if (_policyServer != null) {
             _policyServer.unbindAll();
+        }
+        
+        // and the message connection
+        try {
+            _messageConn.close();
+        } catch (IOException ioe) {
+            log.warning("Failed to close the connection to the messaging server.", ioe);
         }
     }
 
@@ -376,6 +381,21 @@ public class MsoyServer extends MsoyBaseServer
         }
         _adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
     }
+    
+    /**
+     * Creates a connection to the AMQP server based on the configuration settings.
+     */
+    protected static MessageConnection createAMQPConnection ()
+    {
+        final DelayedMessageConnection delayedConn = new DelayedMessageConnection();
+        final AMQPMessageConfig config = ServerConfig.geAMQPMessageConfig();
+        if (config == null) {
+            log.warning("No AMQP messaging server configured - no messages will be sent or received.");
+        } else {
+            delayedConn.init(new AMQPMessageConnection(config));
+        }
+        return delayedConn;
+    }
 
     /** Manages world scene data. */
     @Inject protected MsoySceneRepository _sceneRepo;
@@ -421,7 +441,10 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides database access to the user databases. TODO: This should probably be removed. */
     @Inject protected @OOODatabase PersistenceContext _userCtx;
-
+    
+    /** Connection to the AMQP messaging server. */
+    @Inject protected MessageConnection _messageConn;
+    
     /** Used to auto-restart the development server when its code is updated. */
     protected long _codeModified;
 

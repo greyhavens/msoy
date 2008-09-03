@@ -3,11 +3,12 @@
 
 package com.threerings.msoy.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.security.Security;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.TransitionRepository;
@@ -15,7 +16,20 @@ import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.StringUtil;
-
+import com.threerings.admin.server.AdminProvider;
+import com.threerings.admin.server.ConfigRegistry;
+import com.threerings.bureau.server.BureauAuthenticator;
+import com.threerings.bureau.server.BureauRegistry;
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.bureau.data.BureauLauncherCodes;
+import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
+import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
+import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
+import com.threerings.msoy.bureau.server.BureauLauncherProvider;
+import com.threerings.msoy.bureau.server.BureauLauncherSender;
+import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyModule;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
@@ -24,30 +38,9 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
-
-import com.threerings.admin.server.AdminProvider;
-import com.threerings.admin.server.ConfigRegistry;
-import com.threerings.bureau.server.BureauAuthenticator;
-import com.threerings.bureau.server.BureauRegistry;
-
 import com.threerings.whirled.server.WhirledServer;
-
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.server.DictionaryManager;
-
-import com.threerings.msoy.data.StatType;
-
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.bureau.data.BureauLauncherCodes;
-import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
-import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
-import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
-import com.threerings.msoy.bureau.server.BureauLauncherProvider;
-import com.threerings.msoy.bureau.server.BureauLauncherSender;
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyModule;
-
-import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the set of services that are shared between the Game and World servers.
@@ -109,8 +102,6 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // initialize our dictionary services
         _dictMan.init("data/dictionary");
-
-        _moneyLogic.init();
         
         // now initialize our runtime configuration, postponing the remaining server initialization
         // until our configuration objects are available
@@ -213,6 +204,8 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         // prepare for bureau launcher connections
         _clmgr.setClientFactory(new BureauLauncherClientFactory(_clmgr.getClientFactory()));
+
+        _moneyLogic.init();
     }
 
     /** Selects a registered launcher for the next bureau. */

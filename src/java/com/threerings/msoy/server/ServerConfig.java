@@ -3,25 +3,23 @@
 
 package com.threerings.msoy.server;
 
+import static com.threerings.msoy.Log.log;
+
 import java.io.File;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
-
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
 import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
-
-import com.threerings.presents.client.Client;
-
+import com.threerings.messaging.amqp.AMQPMessageConfig;
 import com.threerings.msoy.item.data.all.Game;
-
-import static com.threerings.msoy.Log.log;
+import com.threerings.presents.client.Client;
 
 /**
  * Provides access to installation specific configuration. Properties that
@@ -227,6 +225,26 @@ public class ServerConfig
     public static int getGameGroupId (int groupId)
     {
         return (groupId == Game.NO_GROUP) ? config.getValue("default_game_group_id", 0) : groupId;
+    }
+    
+    /**
+     * Returns the configuration of the AMQP messaging server.  If no messaging server is
+     * configured, this will return null.
+     */
+    public static AMQPMessageConfig geAMQPMessageConfig ()
+    {
+        String addresses = config.getValue("messaging.server.addresses", "");
+        if ("".equals(addresses)) {
+            // No messaging server configured.
+            return null;
+        }
+        return new AMQPMessageConfig(addresses, 
+            config.getValue("messaging.server.virtualhost", ""),
+            config.getValue("messaging.server.username", ""),
+            config.getValue("messaging.server.password", ""),
+            config.getValue("messaging.server.realm", ""),
+            config.getValue("messaging.server.heartbeat", 0),
+            config.getValue("messaging.server.maxListenerThreads", 5));
     }
 
     /** The pattern via which we obtain our node id from our name. */
