@@ -7,6 +7,8 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.user.client.ui.HTML;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+
 /**
  * Displays HTML entered by the user (be sure to validate all user-supplied HTML on the server
  * using HTMLSanitizer!). Rewrites any hrefs in that HTML to properly point to the top-level frame
@@ -53,7 +55,7 @@ public class SafeHTML extends HTML
     protected static boolean isWhirledLink (String href)
     {
         return href.startsWith("#") || href.startsWith("/") ||
-            href.startsWith("http://www.whirled.com"); // TODO
+            href.startsWith(DeploymentConfig.serverURL);
     }
 
     protected static String fixLink (String href)
