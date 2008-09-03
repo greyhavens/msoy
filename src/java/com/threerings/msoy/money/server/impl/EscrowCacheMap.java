@@ -64,11 +64,6 @@ public class EscrowCacheMap
         _cache.remove(key);
     }
 
-    /** Our money configuration. */
-    @Inject protected MoneyConfiguration _config;
-
     private static final String CACHE_NAME = "secured_prices";
     private final Cache _cache;
-
-
 }
