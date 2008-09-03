@@ -10,7 +10,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-public enum MoneyType
+public enum Currency
     implements IsSerializable
 {
     /**
@@ -28,11 +28,18 @@ public enum MoneyType
      */
     BLING;
 
+    /**
+     * Used to display just the name of the currency.
+     */
     public String getLabel ()
     {
         return "l." + toString().toLowerCase();
     }
 
+    /**
+     * Used when translating a currency with a value:
+     * MessageBundle.get(currency.getKey(), amount) == "5 bars", or "1 bar"
+     */
     public String getKey ()
     {
         return "m." + toString().toLowerCase();
