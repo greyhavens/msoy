@@ -15,7 +15,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -58,74 +57,60 @@ public final class DepotMoneyRepository extends DepotRepository
 
     public void addHistory (final MemberAccountHistoryRecord history)
     {
-        try {
-            insert(history);
-        } catch (final PersistenceException pe) {
-            throw new RepositoryException(pe);
-        }
+        insert(history);
     }
 
     public MemberAccountRecord getAccountById (final int memberId)
     {
-        try {
-            return load(MemberAccountRecord.class, memberId);
-        } catch (final PersistenceException pe) {
-            throw new RepositoryException(pe);
-        }
+        return load(MemberAccountRecord.class, memberId);
     }
 
     public void saveAccount (final MemberAccountRecord account)
     {
-        try {
-            final long oldVersion = account.getVersionId();
-            // Meh...
-            account.versionId++;
-            if (account.getVersionId() == 1) {
-                insert(account);
-            } else {
-                final int count = updatePartial(MemberAccountRecord.class, new Where(
+        final long oldVersion = account.getVersionId();
+        // Meh...
+        account.versionId++;
+        if (account.getVersionId() == 1) {
+            insert(account);
+        } else {
+            final int count = updatePartial(
+                MemberAccountRecord.class, new Where(
                     MemberAccountRecord.MEMBER_ID_C, account.getMemberId(),
                     MemberAccountRecord.VERSION_ID_C, oldVersion),
-                    MemberAccountRecord.getKey(account.getMemberId()), MemberAccountRecord.BARS,
-                    account.getBars(), MemberAccountRecord.COINS, account.getCoins(),
-                    MemberAccountRecord.BLING, account.getBling(),
-                    MemberAccountRecord.DATE_LAST_UPDATED, account.dateLastUpdated,
-                    MemberAccountRecord.VERSION_ID, account.getVersionId(),
-                    MemberAccountRecord.ACC_BARS, account.getAccBars(),
-                    MemberAccountRecord.ACC_COINS, account.getAccCoins(),
-                    MemberAccountRecord.ACC_BLING, account.getAccBling());
-                if (count == 0) {
-                    throw new StaleDataException("Member account record is stale: "
-                        + account.getMemberId());
-                }
+                MemberAccountRecord.getKey(account.getMemberId()), MemberAccountRecord.BARS,
+                account.getBars(), MemberAccountRecord.COINS, account.getCoins(),
+                MemberAccountRecord.BLING, account.getBling(),
+                MemberAccountRecord.DATE_LAST_UPDATED, account.dateLastUpdated,
+                MemberAccountRecord.VERSION_ID, account.getVersionId(),
+                MemberAccountRecord.ACC_BARS, account.getAccBars(),
+                MemberAccountRecord.ACC_COINS, account.getAccCoins(),
+                MemberAccountRecord.ACC_BLING, account.getAccBling());
+            if (count == 0) {
+                throw new StaleDataException("Member account record is stale: "
+                                             + account.getMemberId());
             }
-        } catch (final PersistenceException pe) {
-            throw new RepositoryException(pe);
         }
     }
 
     public List<MemberAccountHistoryRecord> getHistory (
-        final int memberId, final PersistentMoneyType type, final EnumSet<PersistentTransactionType> 
-        transactionTypes, final int start, final int count, final boolean descending)
+        final int memberId, final PersistentMoneyType type,
+        final EnumSet<PersistentTransactionType> transactionTypes, final int start, final int count,
+        final boolean descending)
     {
-        try {
-            // select * from MemberAccountRecord where type = ? and transactionType in (?) 
-            // and memberId=? order by timestamp
-            List<QueryClause> clauses = Lists.newArrayList();
-            populateSearch(clauses, memberId, type, transactionTypes);
+        // select * from MemberAccountRecord where type = ? and transactionType in (?) 
+        // and memberId=? order by timestamp
+        List<QueryClause> clauses = Lists.newArrayList();
+        populateSearch(clauses, memberId, type, transactionTypes);
 
-            clauses.add(descending ?
-                OrderBy.descending(MemberAccountHistoryRecord.TIMESTAMP_C) :
-                OrderBy.ascending(MemberAccountHistoryRecord.TIMESTAMP_C));
+        clauses.add(descending ?
+                    OrderBy.descending(MemberAccountHistoryRecord.TIMESTAMP_C) :
+                    OrderBy.ascending(MemberAccountHistoryRecord.TIMESTAMP_C));
 
-            if (count != Integer.MAX_VALUE) {
-                clauses.add(new Limit(start, count));
-            }
-
-            return findAll(MemberAccountHistoryRecord.class, clauses);
-        } catch (final PersistenceException pe) {
-            throw new RepositoryException(pe);
+        if (count != Integer.MAX_VALUE) {
+            clauses.add(new Limit(start, count));
         }
+
+        return findAll(MemberAccountHistoryRecord.class, clauses);
     }
 
     public int deleteOldHistoryRecords (final PersistentMoneyType type, final long maxAge)
@@ -135,37 +120,36 @@ public final class DepotMoneyRepository extends DepotRepository
             new Equals(MemberAccountHistoryRecord.TYPE_C, type), new LessThan(
                 MemberAccountHistoryRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp))));
 
-        try {
-            // Delete indicated records, removing the cache entries if necessary.
-            return deleteAll(MemberAccountHistoryRecord.class, where,
-                new CacheInvalidator.TraverseWithFilter<MemberAccountHistoryRecord>(
-                    MemberAccountHistoryRecord.class) {
-                    @Override
-                    protected boolean testForEviction (final Serializable key,
-                        final MemberAccountHistoryRecord record)
-                    {
-                        return record.getTimestamp().getTime() < oldestTimestamp
-                            && record.getType() == type;
-                    }
-                });
-        } catch (final PersistenceException pe) {
-            throw new RepositoryException(pe);
-        }
+        // Delete indicated records, removing the cache entries if necessary.
+        return deleteAll(MemberAccountHistoryRecord.class, where,
+                         new CacheInvalidator.TraverseWithFilter<MemberAccountHistoryRecord>(
+                             MemberAccountHistoryRecord.class) {
+                             @Override protected boolean testForEviction (
+                                 final Serializable key, final MemberAccountHistoryRecord record) {
+                                 return record.getTimestamp().getTime() < oldestTimestamp
+                                     && record.getType() == type;
+                             }
+                         });
     }
 
     public List<MemberAccountHistoryRecord> getHistory (final Set<Integer> ids)
     {
-        try {
-            return findAll(MemberAccountHistoryRecord.class, new Where(
-                new In(MemberAccountHistoryRecord.ID_C, ids)));
-        } catch (final PersistenceException pe) {
-            throw new RepositoryException(pe);
-        }
+        return findAll(MemberAccountHistoryRecord.class,
+                       new Where(new In(MemberAccountHistoryRecord.ID_C, ids)));
+    }
+
+    public int getHistoryCount (final int memberId, final PersistentMoneyType type,
+                                final EnumSet<PersistentTransactionType> transactionTypes)
+    {
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new FromOverride(MemberAccountHistoryRecord.class));
+        populateSearch(clauses, memberId, type, transactionTypes);
+        return load(CountRecord.class, clauses).count;
     }
 
     /** Helper method to setup a query for a transaction history search. */
-    protected void populateSearch (List<QueryClause> clauses, int memberId,
-        PersistentMoneyType type, EnumSet<PersistentTransactionType> transactionTypes)
+    protected void populateSearch (List<QueryClause> clauses, int memberId, PersistentMoneyType type,
+                                   EnumSet<PersistentTransactionType> transactionTypes)
     {
         List<SQLOperator> where = Lists.newArrayList();
 
@@ -176,21 +160,6 @@ public final class DepotMoneyRepository extends DepotRepository
         where.add(new In(MemberAccountHistoryRecord.TRANSACTION_TYPE_C, transactionTypes));
 
         clauses.add(new Where(new And(where)));
-    }
-
-    public int getHistoryCount (
-        final int memberId, final PersistentMoneyType type, final EnumSet<PersistentTransactionType>
-        transactionTypes)
-    {
-        try {
-            List<QueryClause> clauses = Lists.newArrayList();
-            clauses.add(new FromOverride(MemberAccountHistoryRecord.class));
-            populateSearch(clauses, memberId, type, transactionTypes);
-            return load(CountRecord.class, clauses).count;
-
-        } catch (final PersistenceException pe) {
-            throw new RepositoryException(pe);
-        }
     }
 
     @Override
