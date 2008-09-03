@@ -7,10 +7,10 @@ import java.io.Serializable;
 
 import com.google.common.base.Preconditions;
 import com.samskivert.util.ObjectUtil;
-import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.data.all.CatalogIdent;
 
 /**
- * Key identifying a secured price.  The key is made up of the member ID and item ID.
+ * Key identifying a secured price.  The key is made up of the member id and catalog id.
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
@@ -18,12 +18,12 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 class PriceKey
     implements Serializable
 {
-    public PriceKey (final int memberId, final ItemIdent itemIdent)
+    public PriceKey (final int memberId, final CatalogIdent item)
     {
-        Preconditions.checkNotNull(itemIdent);
+        Preconditions.checkNotNull(item);
 
         _memberId = memberId;
-        _ident = itemIdent;
+        _ident = item;
     }
     
     public int getMemberId ()
@@ -31,7 +31,7 @@ class PriceKey
         return _memberId;
     }
     
-    public ItemIdent getItem ()
+    public CatalogIdent getCatalogIdent ()
     {
         return _ident;
     }
@@ -56,5 +56,5 @@ class PriceKey
     }
     
     private final int _memberId;
-    private final ItemIdent _ident;
+    private final CatalogIdent _ident;
 }

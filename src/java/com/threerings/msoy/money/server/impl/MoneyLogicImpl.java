@@ -4,6 +4,7 @@
 package com.threerings.msoy.money.server.impl;
 
 import java.math.BigDecimal;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -15,21 +16,33 @@ import java.util.Set;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.io.PersistenceException;
+
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.server.MsoyEventLogger;
+import com.threerings.msoy.server.persist.UserActionRepository;
+
+import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyHistory;
 import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
+
 import com.threerings.msoy.money.server.MoneyConfiguration;
+import com.threerings.msoy.money.server.MoneyExchange;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyResult;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 import com.threerings.msoy.money.server.NotSecuredException;
+
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
@@ -37,8 +50,6 @@ import com.threerings.msoy.money.server.persist.PersistentMoneyType;
 import com.threerings.msoy.money.server.persist.PersistentTransactionType;
 import com.threerings.msoy.money.server.persist.RepositoryException;
 import com.threerings.msoy.money.server.persist.StaleDataException;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.persist.UserActionRepository;
 
 /**
  * Default implementation of the money service.
@@ -46,6 +57,7 @@ import com.threerings.msoy.server.persist.UserActionRepository;
  * TODO: Transactional support
  *
  * @author Kyle Sampson <kyle@threerings.net>
+ * @author Ray Greenwell <ray@threerings.net>
  */
 @Singleton
 public class MoneyLogicImpl
@@ -85,8 +97,12 @@ public class MoneyLogicImpl
 
         // TODO: creator and affiliate
 
-        logUserAction(memberId, UserActionDetails.INVALID_ID, userAction, item, description);
-        final UserActionDetails info = logUserAction(memberId, 0, userAction, item, description);
+        // TODO: what the fuck is going on here, copy/paste dupe bug?
+        // TODO #2: sort out logging the catalogId
+        logUserAction(memberId, UserActionDetails.INVALID_ID, userAction, null /*item*/,
+            description);
+        final UserActionDetails info = logUserAction(memberId, 0, userAction, null /*item*/,
+            description);
         logInPanopticon(info, MoneyType.COINS, amount, account);
         
         return new MoneyResult(account.getMemberMoney(), null, null, 
@@ -115,19 +131,109 @@ public class MoneyLogicImpl
     }
 
     @Retry(exception=StaleDataException.class)
-    public MoneyResult buyItemWithBars (
-        final int memberId, final ItemIdent item, final boolean support)
+    public MoneyResult buyItem (
+        int buyerId, CatalogIdent item, MoneyType listedType, int listedAmount,
+        MoneyType buyType, int buyAmount, boolean isSupport)
         throws NotEnoughMoneyException, NotSecuredException
     {
-        return buyItem(memberId, item, MoneyType.BARS, support);
-    }
+        Preconditions.checkArgument(!MemberName.isGuest(buyerId), "Guests cannot buy items.");
+        Preconditions.checkArgument(item != null && (item.type != 0 || item.catalogId != 0),
+            "item is invalid: %s", item.toString());
+        Preconditions.checkArgument(
+            buyType == MoneyType.BARS || buyType == MoneyType.COINS,
+            "buyType is invalid: %s", buyType.toString());
 
-    @Retry(exception=StaleDataException.class)
-    public MoneyResult buyItemWithCoins (
-        final int memberId, final ItemIdent item, final boolean support)
-        throws NotEnoughMoneyException, NotSecuredException
-    {
-        return buyItem(memberId, item, MoneyType.COINS, support);
+        // Get the secured prices for the item.
+        final PriceKey key = new PriceKey(buyerId, item);
+        final Escrow escrow = _escrowCache.getEscrow(key);
+        if (escrow == null) {
+            // TODO: 
+            // What we need to do here is also have the sellerId, affiliateId, and description..
+            // so that we can secure a price. If the buyAmount is at least the priceQuote,
+            // we can go ahead and process the purchase here. Otherwise we need to throw
+            // the exception with the new PriceQuote inside it! Why not! Do the fucking thing
+            // that will need to be done anyway!
+            throw new NotSecuredException(buyerId, item);
+        }
+        final PriceQuote quote = escrow.getQuote();
+
+        if (!isSupport && !quote.isSatisfied(buyType, buyAmount)) {
+            // TODO: see TODO note above, only here we actually have a quote already secured
+            // (And we should either get a new quote, or just leave the one in the cache,
+            // but it would be an exploit to extend the lifetime of the quote)
+            throw new NotSecuredException(buyerId, item);
+        }
+
+        // Get buyer account and make sure they can afford the item.
+        final MemberAccountRecord buyer = _repo.getAccountById(buyerId);
+        if (buyer == null || (!isSupport && !buyer.canAfford(buyType, buyAmount))) {
+            int hasAmount = (buyer == null) ? 0 : buyer.getAmount(buyType);
+            throw new NotEnoughMoneyException(buyerId, buyType, buyAmount, hasAmount);
+        }
+
+        // TODO: move this until after the purchase... this WHOLE fucking method should
+        // accept a Runnable, maybe, to process the purchase
+        // Inform the exchange that we've actually made the exchange
+        MoneyExchange.processPurchase(quote, buyType);
+
+        int amount = quote.getListedAmount();
+
+        // If the creator is buying their own item, don't give them a payback, and deduct the amount
+        // they would have received.
+        int creatorId = escrow.getCreatorId();
+        boolean buyerIsCreator = (buyerId == creatorId);
+        if (buyerIsCreator) {
+            // TODO: hmmmm
+            amount -= (int)(0.3 * amount);
+        }
+
+        // Get creator.
+        MemberAccountRecord creator;
+        if (buyerIsCreator) {
+            creator = buyer;
+        } else {
+            creator = _repo.getAccountById(creatorId);
+            if (creator == null) {
+                creator = new MemberAccountRecord(creatorId);
+            }
+        }
+
+        // Update the member account
+        final MemberAccountHistoryRecord history = buyer.buyItem(buyType, amount,
+            escrow.getDescription(), item, isSupport);
+        _repo.addHistory(history);
+        _repo.saveAccount(buyer);
+        // TODO: fucking fuck, we want to change this to the CatalogIdent
+        UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID,
+            UserAction.BOUGHT_ITEM, null /*item*/, escrow.getDescription());
+        logInPanopticon(info, buyType, history.getSignedAmount(), buyer);
+
+        // Update the creator account, if they get a payment.
+        MemberAccountHistoryRecord creatorHistory;
+        if (buyerIsCreator) {
+            creatorHistory = history;
+
+        } else {
+            creatorHistory = creator.creatorPayout(quote.getListedType(), (int)history.getAmount(),
+                "Item purchased: " + escrow.getDescription(), item, 0.3f, history.id);
+            _repo.addHistory(creatorHistory);
+            _repo.saveAccount(creator);
+            // TODO: fucking fuck, we want to change this to the CatalogIdent
+            info = logUserAction(creatorId, buyerId, UserAction.RECEIVED_PAYOUT, null /*item*/,
+                escrow.getDescription());
+            logInPanopticon(info, buyType, creatorHistory.getSignedAmount(), creator);
+        }
+
+        // TODO: update affiliate with some amount of bling.
+
+        // The item no longer needs to be in the cache.
+        _escrowCache.removeEscrow(key);
+
+        final MoneyHistory mh = history.createMoneyHistory(null);
+        final MoneyHistory creatorMH = creatorHistory.createMoneyHistory(mh);
+        return new MoneyResult(buyer.getMemberMoney(),
+            buyerIsCreator ? null : creator.getMemberMoney(),
+            null, mh, buyerIsCreator ? null : creatorHistory.createMoneyHistory(mh), null);
     }
 
     public void deductBling (final int memberId, final double amount)
@@ -230,41 +336,60 @@ public class MoneyLogicImpl
         return account != null ? account.getMemberMoney() : new MemberMoney(memberId);
     }
 
-    public int secureBarPrice (
-        final int memberId, final int creatorId, final int affiliateId,
-        final ItemIdent item, final int numBars, final String description)
+    // from MoneyLogic
+    public PriceQuote securePrice (
+        int buyerId, CatalogIdent item, MoneyType listedType, int listedAmount,
+        int sellerId, int affiliateId, String description)
     {
-        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
-        Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Creators cannot be guests.");
-        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0),
+        Preconditions.checkArgument(!MemberName.isGuest(buyerId), "Guests cannot secure prices.");
+        Preconditions.checkArgument(!MemberName.isGuest(sellerId), "Creators cannot be guests.");
+        Preconditions.checkArgument(item != null && (item.type != 0 || item.catalogId != 0),
             "item is invalid: %s", item.toString());
-        Preconditions.checkArgument(numBars >= 0, "bars is invalid: %d", numBars);
+        Preconditions.checkArgument(listedAmount >= 0, "listedAmount is invalid: %d", listedAmount);
 
-        // TODO: Use exchange rate to calculate coins.
-        final PriceQuote quote = new PriceQuote(MoneyType.BARS, 0, numBars);
-        final PriceKey key = new PriceKey(memberId, item);
-        final Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
+        final PriceQuote quote = MoneyExchange.secureQuote(listedType, listedAmount);
+        final PriceKey key = new PriceKey(buyerId, item);
+        final Escrow escrow = new Escrow(sellerId, affiliateId, description, quote);
         _escrowCache.addEscrow(key, escrow);
-        return 0;
+        return quote;
     }
 
-    public int secureCoinPrice (
-        final int memberId, final int creatorId, final int affiliateId,
-        final ItemIdent item, final int numCoins, final String description)
-    {
-        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
-        Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Creators cannot be guests.");
-        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0),
-            "item is invalid: %s", item.toString());
-        Preconditions.checkArgument(numCoins >= 0, "numCoins is invalid: %d", numCoins);
-
-        // TODO: Use exchange rate to calculate bars.
-        final PriceQuote quote = new PriceQuote(MoneyType.COINS, numCoins, 0);
-        final PriceKey key = new PriceKey(memberId, item);
-        final Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
-        _escrowCache.addEscrow(key, escrow);
-        return 0;
-    }
+//    // TODO: remove
+//    public int secureBarPrice (
+//        final int memberId, final int creatorId, final int affiliateId,
+//        final ItemIdent item, final int numBars, final String description)
+//    {
+//        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
+//        Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Creators cannot be guests.");
+//        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0),
+//            "item is invalid: %s", item.toString());
+//        Preconditions.checkArgument(numBars >= 0, "bars is invalid: %d", numBars);
+//
+//        final PriceQuote quote = new PriceQuote(MoneyType.BARS, 0, numBars);
+//        final PriceKey key = new PriceKey(memberId, item);
+//        final Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
+//        _escrowCache.addEscrow(key, escrow);
+//        return 0;
+//    }
+//
+//    // TODO: remove
+//    public int secureCoinPrice (
+//        final int memberId, final int creatorId, final int affiliateId,
+//        final ItemIdent item, final int numCoins, final String description)
+//    {
+//        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot secure prices.");
+//        Preconditions.checkArgument(!MemberName.isGuest(creatorId), "Creators cannot be guests.");
+//        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0),
+//            "item is invalid: %s", item.toString());
+//        Preconditions.checkArgument(numCoins >= 0, "numCoins is invalid: %d", numCoins);
+//
+//        // TODO: Use exchange rate to calculate bars.
+//        final PriceQuote quote = new PriceQuote(MoneyType.COINS, numCoins, 0);
+//        final PriceKey key = new PriceKey(memberId, item);
+//        final Escrow escrow = new Escrow(creatorId, affiliateId, description, quote);
+//        _escrowCache.addEscrow(key, escrow);
+//        return 0;
+//    }
 
     public void updateMoneyConfiguration (final MoneyConfiguration config)
     {
@@ -274,87 +399,6 @@ public class MoneyLogicImpl
     public void init ()
     {
         _expirer.start();
-    }
-
-    private MoneyResult buyItem (
-        final int memberId, final ItemIdent item, final MoneyType purchaseType,
-        final boolean support)
-        throws NotEnoughMoneyException, NotSecuredException
-    {
-        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy items.");
-        Preconditions.checkArgument(item != null && (item.type != 0 || item.itemId != 0),
-            "item is invalid: %s", item.toString());
-        Preconditions.checkArgument(purchaseType == MoneyType.BARS ||
-            purchaseType == MoneyType.COINS, "purchaseType is invalid: %s",
-            purchaseType.toString());
-
-        // Get the secured prices for the item.
-        final PriceKey key = new PriceKey(memberId, item);
-        final Escrow escrow = _escrowCache.getEscrow(key);
-        if (escrow == null) {
-            throw new NotSecuredException(memberId, item);
-        }
-        final PriceQuote quote = escrow.getQuote();
-        // TODO: MUCH TODO
-        int amount = purchaseType == MoneyType.BARS ? quote.getBars() : quote.getCoins();
-
-        // If the creator is buying their own item, don't give them a payback, and deduct the amount
-        // they would have received.
-        boolean payCreator = true;
-        if (memberId == escrow.getCreatorId()) {
-            amount -= (int)(0.3 * amount);
-            payCreator = false;
-        }
-
-        // Get buyer account and make sure they can afford the item.
-        final MemberAccountRecord account = _repo.getAccountById(memberId);
-        if (account == null || (!support && !account.canAfford(amount, purchaseType))) {
-            final int available = (account == null ? 0 : (purchaseType == MoneyType.BARS ?
-                account.getBars() : account.getCoins()));
-            throw new NotEnoughMoneyException(available, amount, purchaseType, memberId);
-        }
-
-        // Get creator.
-        MemberAccountRecord creator;
-        if (memberId == escrow.getCreatorId()) {
-            creator = account;
-        } else {
-            creator = _repo.getAccountById(escrow.getCreatorId());
-            if (creator == null) {
-                creator = new MemberAccountRecord(escrow.getCreatorId());
-            }
-        }
-
-        // Update the member account
-        final MemberAccountHistoryRecord history = account.buyItem(amount, purchaseType,
-            escrow.getDescription(), item, support);
-        _repo.addHistory(history);
-        _repo.saveAccount(account);
-        UserActionDetails info = logUserAction(memberId, UserActionDetails.INVALID_ID,
-            UserAction.BOUGHT_ITEM, item, escrow.getDescription());
-        logInPanopticon(info, purchaseType, history.getSignedAmount(), account);
-
-        // Update the creator account, if they get a payment.
-        MemberAccountHistoryRecord creatorHistory = history;
-        if (payCreator) {
-            creatorHistory = creator.creatorPayout((int)history.getAmount(), quote.getListedType(),
-                "Item purchased: " + escrow.getDescription(), item, 0.3, history.id);
-            _repo.addHistory(creatorHistory);
-            _repo.saveAccount(creator);
-            info = logUserAction(escrow.getCreatorId(), memberId, UserAction.RECEIVED_PAYOUT, item,
-                escrow.getDescription());
-            logInPanopticon(info, purchaseType, creatorHistory.getSignedAmount(), creator);
-        }
-
-        // TODO: update affiliate with some amount of bling.
-
-        // The item no longer needs to be in the cache.
-        _escrowCache.removeEscrow(key);
-
-        final MoneyHistory mh = history.createMoneyHistory(null);
-        final MoneyHistory creatorMH = creatorHistory.createMoneyHistory(mh);
-        return new MoneyResult(account.getMemberMoney(), payCreator ? creator.getMemberMoney() :
-            null, null, mh, payCreator ? creatorMH : null, null);
     }
 
     private void logInPanopticon (

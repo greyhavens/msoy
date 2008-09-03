@@ -4,6 +4,7 @@
 package com.threerings.msoy.money.server.persist;
 
 import java.sql.Timestamp;
+
 import java.util.Date;
 
 import net.jcip.annotations.NotThreadSafe;
@@ -14,7 +15,10 @@ import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+
+import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemIdent;
+
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyType;
 
@@ -132,6 +136,31 @@ public class MemberAccountRecord extends PersistentRecord
     {}
 
     /**
+     * Get the amount of money this account has of the specified currency.
+     */
+    public int getAmount (MoneyType type)
+    {
+        switch (type) {
+        case COINS: return coins;
+        case BARS: return bars;
+        case BLING: return (int) bling;
+        default: throw new RuntimeException();
+        }
+    }
+
+    /**
+     * Returns true if the account can afford spending the amount of currency indicated.
+     * 
+     * @param type Currency to spend, either BARS or COINS.
+     * @param amount Amount to spend.
+     * @return True if the account can afford it, false otherwise.
+     */
+    public boolean canAfford (final MoneyType type, final int amount)
+    {
+        return getAmount(type) >= amount;
+    }
+
+    /**
      * Adds the given number of bars to the member's account.
      * 
      * @param bars Number of bars to add.
@@ -161,48 +190,41 @@ public class MemberAccountRecord extends PersistentRecord
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
             PersistentMoneyType.COINS, coins, PersistentTransactionType.AWARD, false, description, 
-            item);
+            // TODO: sort out the item/catalog discrepency
+            null /*item*/);
     }
 
     /**
      * Purchases an item, deducting the appropriate amount of money from this account.
      * 
-     * @param amount Amount to deduct.
      * @param type Type indicating bars or coins.
+     * @param amount Amount to deduct.
      * @param description Description that should be used in the history record.
      * @return Account history record for this transaction.
      */
     public MemberAccountHistoryRecord buyItem (
-        int amount, final MoneyType type, final String description,
-        final ItemIdent item, final boolean support)
+        MoneyType type, int amount, final String description,
+        final CatalogIdent item, final boolean isSupport)
     {
-        if (type == MoneyType.BARS) {
-            if (support) {
-                amount = Math.min(amount, bars);
-            }
-            bars -= amount;
-        } else {
-            if (support) {
-                amount = Math.min(amount, coins);
-            }
+        if (isSupport) {
+            amount = Math.min(amount, getAmount(type));
+        }
+        switch (type) {
+        case COINS:
             coins -= amount;
+            break;
+
+        case BARS:
+            bars -= amount;
+            break;
+
+        default:
+            throw new RuntimeException("Invalid purchase currency: " + type);
         }
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        return new MemberAccountHistoryRecord(memberId, dateLastUpdated, 
-            PersistentMoneyType.fromMoneyType(type), amount, 
+        return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
+            PersistentMoneyType.fromMoneyType(type), amount,
             PersistentTransactionType.ITEM_PURCHASE, true, description, item);
-    }
-
-    /**
-     * Returns true if the account can afford spending the amount of currency indicated.
-     * 
-     * @param amount Amount to spend.
-     * @param type Currency to spend, either BARS or COINS.
-     * @return True if the account can afford it, false otherwise.
-     */
-    public boolean canAfford (final int amount, final MoneyType type)
-    {
-        return type == MoneyType.BARS ? (bars >= amount) : (coins >= amount);
     }
 
     /**
@@ -214,21 +236,29 @@ public class MemberAccountRecord extends PersistentRecord
      * @param item Item that was purchased.
      * @return History record for the transaction.
      */
-    public MemberAccountHistoryRecord creatorPayout (final int amount,
-        final MoneyType listingType, final String description, final ItemIdent item,
-        final double percentage, final int referenceTxId)
+    public MemberAccountHistoryRecord creatorPayout (
+        final MoneyType listingType, final int amount, final String description,
+        final CatalogIdent item, final float percentage, final int referenceTxId)
     {
         // TODO: Determine percentage from administrator.
-        final double amountPaid = percentage * amount;
+        final float amountPaid = percentage * amount;
         final MoneyType paymentType;
-        if (listingType == MoneyType.BARS) {
+        switch (listingType) {
+        case COINS:
+            int floorAmount = (int) Math.floor(amountPaid);
+            coins += floorAmount;
+            accCoins += floorAmount;
+            paymentType = MoneyType.COINS;
+            break;
+
+        case BARS:
             bling += amountPaid;
             accBling += amountPaid;
             paymentType = MoneyType.BLING;
-        } else {
-            coins += (int)amountPaid;
-            accCoins += (int)amountPaid;
-            paymentType = MoneyType.COINS;
+            break;
+
+        default:
+            throw new RuntimeException();
         }
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         final MemberAccountHistoryRecord history = new MemberAccountHistoryRecord(memberId, 

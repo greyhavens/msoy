@@ -13,29 +13,22 @@ import com.threerings.msoy.money.data.all.MoneyType;
 public class NotEnoughMoneyException extends MoneyException
 {
     public NotEnoughMoneyException (
-        final double moneyAvailable, final double moneyRequested, final MoneyType type,
-        final int memberId)
+        int memberId, MoneyType type, int amountDesired, int amountAvailable)
     {
-        super("An attempt to secure " + moneyRequested + " currency of type " + type
-            + " from member ID " + memberId + " failed because only " + moneyAvailable
+        super("An attempt to secure " + amountDesired + " currency of type " + type
+            + " from member ID " + memberId + " failed because only " + amountAvailable
             + " is available.");
-        _moneyAvailable = moneyAvailable;
-        _moneyRequested = moneyRequested;
-        _type = type;
         _memberId = memberId;
+        _type = type;
+        _moneyRequested = amountDesired;
+        _moneyAvailable = amountAvailable;
     }
 
     public NotEnoughMoneyException (
-        final double moneyAvailable, final double moneyRequested, final MoneyType type,
-        final int memberId, final Throwable cause)
+        int memberId, MoneyType type, int amountDesired, int amountAvailable, Throwable cause)
     {
-        super("An attempt to secure " + moneyRequested + " currency of type " + type
-            + " from member ID " + memberId + " failed because only " + moneyAvailable
-            + " is available.", cause);
-        _moneyAvailable = moneyAvailable;
-        _moneyRequested = moneyRequested;
-        _type = type;
-        _memberId = memberId;
+        this(memberId, type, amountDesired, amountAvailable);
+        initCause(cause);
     }
 
     public int getMemberId ()
@@ -43,12 +36,12 @@ public class NotEnoughMoneyException extends MoneyException
         return _memberId;
     }
 
-    public double getMoneyAvailable ()
+    public int getMoneyAvailable ()
     {
         return _moneyAvailable;
     }
 
-    public double getMoneyRequested ()
+    public int getMoneyRequested ()
     {
         return _moneyRequested;
     }
@@ -58,8 +51,8 @@ public class NotEnoughMoneyException extends MoneyException
         return _type;
     }
 
-    private final double _moneyAvailable;
-    private final double _moneyRequested;
+    private final int _moneyAvailable;
+    private final int _moneyRequested;
     private final MoneyType _type;
     private final int _memberId;
 }

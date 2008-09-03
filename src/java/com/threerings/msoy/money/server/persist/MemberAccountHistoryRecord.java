@@ -4,6 +4,7 @@
 package com.threerings.msoy.money.server.persist;
 
 import java.sql.Timestamp;
+
 import java.util.Date;
 
 import net.jcip.annotations.NotThreadSafe;
@@ -17,7 +18,10 @@ import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+
+import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemIdent;
+
 import com.threerings.msoy.money.data.all.MoneyHistory;
 
 /**
@@ -145,7 +149,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     public MemberAccountHistoryRecord (
         final int memberId, final Date timestamp, final PersistentMoneyType type,
         final double amount, final PersistentTransactionType transactionType, final boolean spent, 
-        final String description, final ItemIdent item)
+        final String description, final CatalogIdent item)
     {
         this.memberId = memberId;
         this.timestamp = new Timestamp(timestamp.getTime());
@@ -155,8 +159,9 @@ public class MemberAccountHistoryRecord extends PersistentRecord
         this.description = description;
         this.transactionType = transactionType;
         if (item != null) {
-            itemId = item.itemId;
             itemType = item.type;
+            // TODO: rename itemId to catalogId
+            itemId = item.catalogId;
         }
     }
 
@@ -245,7 +250,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * ID of the item that was involved in this transaction.
      * @return
      */
-    public int getItemId ()
+    public int getCatalogId ()
     {
         return itemId;
     }
@@ -317,6 +322,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * ID of the item involved in this transaction, or 0 otherwise. Note: this is not part of the
      * API, do not use it.
      */
+    // TODO: rename this to catalogId ? ?? 
     public int itemId;
 
     /**

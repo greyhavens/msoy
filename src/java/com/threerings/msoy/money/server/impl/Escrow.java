@@ -5,6 +5,8 @@ package com.threerings.msoy.money.server.impl;
 
 import java.io.Serializable;
 
+import com.threerings.msoy.money.data.all.PriceQuote;
+
 /**
  * Contains all the information for a quoted transaction.
  *

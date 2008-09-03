@@ -27,4 +27,14 @@ public enum MoneyType
      * creator. It can be exchanged for real money.
      */
     BLING;
+
+    public String getLabel ()
+    {
+        return "l." + toString().toLowerCase();
+    }
+
+    public String getKey ()
+    {
+        return "m." + toString().toLowerCase();
+    }
 }

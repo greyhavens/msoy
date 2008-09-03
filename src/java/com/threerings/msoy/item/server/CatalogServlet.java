@@ -11,15 +11,28 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.util.CollectionUtil;
 import com.samskivert.util.RandomUtil;
 import com.samskivert.util.StringUtil;
+
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MediaDesc;
+
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.TagNameRecord;
+import com.threerings.msoy.server.persist.TagPopularityRecord;
+import com.threerings.msoy.server.persist.UserActionRepository;
+
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+
 import com.threerings.msoy.item.data.ItemCodes;
+import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.SubItem;
@@ -34,22 +47,18 @@ import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
+
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
+
 import com.threerings.msoy.money.data.all.MoneyHistory;
 import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
 import com.threerings.msoy.money.server.MoneyResult;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 import com.threerings.msoy.money.server.NotSecuredException;
-import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.persist.TagNameRecord;
-import com.threerings.msoy.server.persist.TagPopularityRecord;
-import com.threerings.msoy.server.persist.UserActionRepository;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 /**
  * Provides the server implementation of {@link CatalogService}.
@@ -167,8 +176,9 @@ public class CatalogServlet extends MsoyServiceServlet
             // Update money as appropriate.
             MoneyResult result;
             try {
-                result = _moneyLogic.buyItemWithCoins(mrec.memberId,
-                    new ItemIdent(itemType, listing.item.itemId), mrec.isSupport());
+                result = _moneyLogic.buyItem(mrec.memberId, new CatalogIdent(itemType, catalogId),
+                    MoneyType.COINS, listing.flowCost, MoneyType.COINS, authedFlowCost,
+                    mrec.isSupport());
             } catch (final NotEnoughMoneyException neme) {
                 throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
             } catch (final NotSecuredException nse) {
@@ -364,8 +374,9 @@ public class CatalogServlet extends MsoyServiceServlet
 
             // Secure the current price of the item for this member.
             if (mrec != null) {
-                _moneyLogic.secureCoinPrice(mrec.memberId, record.item.creatorId, 0,
-                    new ItemIdent(itemType, record.item.itemId), record.flowCost, record.item.name);
+                PriceQuote quote = _moneyLogic.securePrice(mrec.memberId,
+                    new CatalogIdent(itemType, catalogId), MoneyType.COINS, record.flowCost,
+                    record.item.creatorId, 0, record.item.name);
             }
 
             // finally convert the listing to a runtime record

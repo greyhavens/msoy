@@ -4,16 +4,22 @@
 package com.threerings.msoy.money.server;
 
 import java.math.BigDecimal;
+
 import java.util.EnumSet;
 import java.util.List;
 
+import com.threerings.presents.annotation.BlockingThread;
+
 import com.threerings.msoy.data.UserAction;
+
+import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemIdent;
+
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyHistory;
 import com.threerings.msoy.money.data.all.MoneyType;
+import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
-import com.threerings.presents.annotation.BlockingThread;
 
 /**
  * Facade for all money (coins, bars, and bling) transactions. This is the starting place to
@@ -25,104 +31,45 @@ import com.threerings.presents.annotation.BlockingThread;
 public interface MoneyLogic
 {
     /**
-     * Secures a price for an item in bars. This ensures the user will be able to purchase an item
+     * Secures a price for an item. This ensures the user will be able to purchase an item
      * for a set price. This price will remain available for some amount of time (specified by
      * {@link MoneyConfiguration#getSecurePriceDuration()}. The secured price may also be removed
      * if the maximum number of secured prices system-wide has been reached (specified by
      * {@link MoneyConfiguration#getMaxSecuredPrices()}. In either case, an attempt to buy the
      * item will fail with a {@link NotSecuredException}.
      *
-     * This will secure the bar price of the item as given, and it will also secure the equivalent
-     * price in coins according to the current exchange rate.
-     *
-     * @param memberId ID of the member securing the price.
-     * @param creatorId ID of the creator of the item being secured.
-     * @param affiliateId ID of the affiliate associated with this purchase. Null if no affiliate.
-     * @param item Item to secure the price for.
-     * @param numBars Number of bars
+     * @param buyerId the memberId of the buying user.
+     * @param item the identity of the catalog listing.
+     * @param listedType the currency at which the item is listed.
+     * @param listedAmount the amount at which the item is listed.
+     * @param creatorId the memberId of the seller.
+     * @param affiliateId the id of the affiliate associated with the purchase. Uhm..
      * @param description A description of the item that will appear on the member's transaction
      * history if purchased.
-     * @return Price of the item secured in coins, according to the current exchange rate.
+     * @return A full PriceQuote for the item.
      */
-    int secureBarPrice (
-        int memberId, int creatorId, int affiliateId, ItemIdent item, int numBars,
-        String description);
+    PriceQuote securePrice (
+        int buyerId, CatalogIdent item, MoneyType listedType, int listedAmount,
+        int sellerId, int affiliateId, String description);
 
     /**
-     * Secures a price for an item in coins. This ensures the user will be able to purchase an
-     * item for a set price. This price will remain available for some amount of time (specified
-     * by {@link MoneyConfiguration#getSecurePriceDuration()}. The secured price may also be
-     * removed if the maximum number of secured prices system-wide has been reached (specified by
-     * {@link MoneyConfiguration#getMaxSecuredPrices()}. In either case, an attempt to buy the
-     * item will fail with a {@link NotSecuredException}.
+     * Yeah, some shite.
+     * Purchases an item. This will only update the appropriate
+     * accounts of an exchange of money -- item fulfillment must be handled separately.
      *
-     * This will secure the coin price of the item as given, and it will also secure the
-     * equivalent price in bars according to the current exchange rate.
-     *
-     * @param memberId ID of the member securing the price.
-     * @param creatorId ID of the creator of the item being secured.
-     * @param affiliateId ID of the affiliate associated with this purchase. Zero if no affiliate.
-     * @param item Item to secure the price for.
-     * @param numCoins Number of coins.
-     * @param description A description of the item that will appear on the member's transaction
-     * history if purchased.
-     * @return Price of the item secured in bars, according to the current exchange rate.
+     * @param buyerId the memberId of the buying user.
+     * @param item the identity of the catalog listing.
+     * @param listedType the currency at which the item is listed.
+     * @param listedAmount the amount at which the item is listed.
+     * @param buyType the currency the buyer is using
+     * @param buyAmount the amount the buyer has validated to purchase the item.
+     * @param isSupport is the buyer a member of the support staff?
+     * @throws NotSecuredException iff there is no secured price for the item and the authorized
+     * buy amount is not enough money.
      */
-    int secureCoinPrice (
-        int memberId, int creatorId, int affiliateId, ItemIdent item, int numCoins,
-        String description);
-
-    /**
-     * Purchases an item using bars as the currency. This will only update the appropriate
-     * accounts of an exchange of money -- item fulfillment must be handled separately. The item
-     * must have been previously secured for some price through
-     * {@link #secureBarPrice(int, int, Integer, int, int, int) secureBarPrice} or
-     * {@link #secureCoinPrice(int, int, Integer, ItemIdent, int)}. The account balances will be
-     * updated in the following manner:
-     *
-     * <ul> <li>Member: the bar price will be deducted from their account.</li> <li>Creator: an
-     * amount of bling equivalent to some percentage of the purchase price will be added to their
-     * account, according to the current exchange rate.</li> <li>Affiliate: an amount of bling
-     * equivalent to some pre-determined percentage of the purchase price will be added to their
-     * account, according to the current exchange rate.</li> </ul>
-     *
-     * @param memberId ID of the member making the purchase.
-     * @param item Item to purchase.
-     * @param support If true, the member is an admin or support person. They will always have
-     * enough money to purchase the item, though it will drain the appropriate amount of money
-     * until they have a balance of 0.
-     * @return Results of the operation..
-     * @throws NotEnoughMoneyException The member making the purchase does not have enough bars in
-     * their account.
-     * @throws NotSecuredException The member did not secure a price for the item.
-     */
-    MoneyResult buyItemWithBars (int memberId, ItemIdent item, boolean support)
-        throws NotEnoughMoneyException, NotSecuredException;
-
-    /**
-     * Purchases an item using coins as the currency. This will only update the appropriate
-     * accounts of an exchange of money -- item fulfillment must be handled separately. The item
-     * must have been previously secured for some price through
-     * {@link #secureBarPrice(int, int, Integer, int, int, int) secureBarPrice} or
-     * {@link #secureCoinPrice(int, int, Integer, ItemIdent, int)}. The account balances will be
-     * updated in the following manner:
-     *
-     * <ul> <li>Member: the coin price will be deducted from their account.</li> <li>Creator:
-     * an amount of coins equivalent to some percentage of the purchase price will be added to
-     * their account.</li> <li>Affiliate: an amount of coins equivalent to some pre-determined
-     * percentage of the purchase price will be added to their account.</li> </ul>
-     *
-     * @param memberId ID of the member making the purchase.
-     * @param item Item to purchase.
-     * @param support If true, the member is an admin or support person. They will always have
-     * enough money to purchase the item, though it will drain the appropriate amount of money
-     * until they have a balance of 0.
-     * @return Results of the operation.
-     * @throws NotEnoughMoneyException The member making the purchase does not have enough coins
-     * in their account.
-     * @throws NotSecuredException The member did not secure a price for the item.
-     */
-    MoneyResult buyItemWithCoins (int memberId, ItemIdent item, boolean support)
+    MoneyResult buyItem (
+        int buyerId, CatalogIdent item, MoneyType listedType, int listedAmount,
+        MoneyType buyType, int buyAmount, boolean isSupport)
         throws NotEnoughMoneyException, NotSecuredException;
 
     /**
