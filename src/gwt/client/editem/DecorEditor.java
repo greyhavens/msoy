@@ -13,7 +13,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
 
-import client.shell.CShell;
 import client.util.FlashClients;
 
 /**
