@@ -175,7 +175,7 @@ public final class DepotMoneyRepository extends DepotRepository
         }
         where.add(new In(MemberAccountHistoryRecord.TRANSACTION_TYPE_C, transactionTypes));
 
-        clauses.add(new Where(new And(where.toArray(new SQLOperator[where.size()]))));
+        clauses.add(new Where(new And(where)));
     }
 
     public int getHistoryCount (
@@ -186,8 +186,8 @@ public final class DepotMoneyRepository extends DepotRepository
             List<QueryClause> clauses = Lists.newArrayList();
             clauses.add(new FromOverride(MemberAccountHistoryRecord.class));
             populateSearch(clauses, memberId, type, transactionTypes);
+            return load(CountRecord.class, clauses).count;
 
-            return load(CountRecord.class, clauses.toArray(new QueryClause[clauses.size()])).count;
         } catch (final PersistenceException pe) {
             throw new RepositoryException(pe);
         }

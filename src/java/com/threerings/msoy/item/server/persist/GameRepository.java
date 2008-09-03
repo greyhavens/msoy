@@ -147,11 +147,11 @@ public class GameRepository extends ItemRepository<GameRecord>
             whereBits.add(buildSearchStringClause(searchQuery));
         }
         if (whereBits.size() > 0) {
-            clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
+            clauses.add(new Where(new And(whereBits)));
         }
 
         // finally fetch all the game records of interest
-        return findAll(getItemClass(), clauses.toArray(new QueryClause[clauses.size()]));
+        return findAll(getItemClass(), clauses);
     }
 
     /**

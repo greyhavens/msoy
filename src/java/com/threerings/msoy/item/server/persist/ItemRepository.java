@@ -483,9 +483,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         addSearchClause(clauses, mature, search, tag, creator, minRating);
 
         // finally fetch all the catalog records of interest
-        CountRecord crec = load(
-            CountRecord.class, clauses.toArray(new QueryClause[clauses.size()]));
-        return crec.count;
+        return load(CountRecord.class, clauses).count;
     }
 
     /**
@@ -543,12 +541,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         // see if there's any where bits to turn into an actual where clause
         addSearchClause(clauses, mature, search, tag, creator, minRating);
 
-        // finally fetch all the catalog records of interest
-        List<CatalogRecord> records = findAll(
-            getCatalogClass(), clauses.toArray(new QueryClause[clauses.size()]));
-
-        // resolve their item bits
-        return resolveCatalogRecords(records);
+        // finally fetch all the catalog records of interest and resolve their item bits
+        return resolveCatalogRecords(findAll(getCatalogClass(), clauses));
     }
 
     /**
@@ -1113,7 +1107,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         whereBits.add(new Not(new Equals(getCatalogColumn(CatalogRecord.PRICING),
                                          CatalogListing.PRICING_HIDDEN)));
 
-        clauses.add(new Where(new And(whereBits.toArray(new SQLOperator[whereBits.size()]))));
+        clauses.add(new Where(new And(whereBits)));
     }
 
     protected void addOrderByListDate (List<SQLExpression> exprs, List<OrderBy.Order> orders)
