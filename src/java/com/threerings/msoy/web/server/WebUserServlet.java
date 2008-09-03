@@ -18,12 +18,17 @@ import java.util.Calendar;
 
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.io.StreamUtil;
-import com.samskivert.jdbc.DuplicateKeyException;
+import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
+
+import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.server.PresentsDObjectMgr;
+
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthCodes;
@@ -31,6 +36,16 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.FriendManager;
+import com.threerings.msoy.server.MemberLogic;
+import com.threerings.msoy.server.MsoyAuthenticator;
+import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.StatLogic;
+import com.threerings.msoy.server.persist.InvitationRecord;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.util.MailSender;
+
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
@@ -43,15 +58,7 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.person.server.persist.ProfileRepository;
-import com.threerings.msoy.server.FriendManager;
-import com.threerings.msoy.server.MemberLogic;
-import com.threerings.msoy.server.MsoyAuthenticator;
-import com.threerings.msoy.server.ServerConfig;
-import com.threerings.msoy.server.ServerMessages;
-import com.threerings.msoy.server.StatLogic;
-import com.threerings.msoy.server.persist.InvitationRecord;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.server.util.MailSender;
+
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.data.AccountInfo;
 import com.threerings.msoy.web.data.CaptchaException;
@@ -62,8 +69,6 @@ import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
-import com.threerings.presents.annotation.MainInvoker;
-import com.threerings.presents.server.PresentsDObjectMgr;
 
 /**
  * Provides the server implementation of {@link WebUserService}.

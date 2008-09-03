@@ -7,7 +7,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.DuplicateKeyException;
+import com.samskivert.jdbc.depot.DuplicateKeyException;
 
 import com.threerings.presents.annotation.BlockingThread;
 

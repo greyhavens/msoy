@@ -12,8 +12,8 @@ import com.google.inject.Singleton;
 import com.google.inject.Inject;
 
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.DuplicateKeyException;
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;

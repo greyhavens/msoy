@@ -11,8 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.inject.Inject;
+
 import com.samskivert.io.PersistenceException;
-import com.samskivert.jdbc.DuplicateKeyException;
+import com.samskivert.jdbc.depot.DuplicateKeyException;
 
 import com.threerings.presents.dobj.RootDObjectManager;
 
