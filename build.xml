@@ -465,6 +465,8 @@
             <include name="gwt-widgets.jar"/>
             <include name="underwire-gwt-0.0-SNAPSHOT.jar"/>
             <include name="threerings-gwt-0.0-SNAPSHOT.jar"/>
+            <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
+            <include name="threerings-0.0-SNAPSHOT.jar"/>
           </fileset>
           <pathelement location="${src.dir}"/>
           <pathelement location="${gsrc.dir}"/>
