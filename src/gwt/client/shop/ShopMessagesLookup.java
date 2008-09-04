@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package client.shop;
 
 import com.threerings.gwt.util.MessagesLookup;
