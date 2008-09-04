@@ -83,8 +83,8 @@ public class TrophyDelegate extends PlayManagerDelegate
             }
         }
         if (source == null) {
-            throw new InvocationException(MessageBundle.qualify(MsoyCodes.GAME_MSGS,
-                MessageBundle.tcompose(MsoyGameCodes.E_UNKNOWN_TROPHY, ident)));
+            throw new InvocationException(
+                MsoyCodes.GAME_MSGS, MessageBundle.tcompose(MsoyGameCodes.E_UNKNOWN_TROPHY, ident));
         }
 
         // if the player already has this trophy, ignore the request
@@ -158,9 +158,8 @@ public class TrophyDelegate extends PlayManagerDelegate
             }
         }
         if (prize == null) {
-            log.info("Game requested to award unknown prize", "game", where(),
-                     "who", plobj.who(), "ident", ident);
-            throw new InvocationException(MsoyGameCodes.E_INTERNAL_ERROR);
+            throw new InvocationException(
+                MsoyCodes.GAME_MSGS, MessageBundle.tcompose(MsoyGameCodes.E_UNKNOWN_PRIZE, ident));
         }
 
         // if the player has already earned this prize during this session, ignore the request

@@ -18,6 +18,8 @@ import com.samskivert.util.Tuple;
 import com.samskivert.jdbc.RepositoryListenerUnit;
 import com.samskivert.jdbc.depot.DatabaseException;
 
+import com.threerings.util.MessageBundle;
+
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
@@ -264,10 +266,12 @@ public class ItemManager
             public Item invokePersistResult () throws Exception {
                 CatalogRecord listing = repo.loadListing(prize.targetCatalogId, true);
                 if (listing == null) {
-                    throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
+                    throw new InvocationException(MsoyCodes.ITEM_MSGS, ItemCodes.E_NO_SUCH_ITEM);
                 }
                 if (listing.item.creatorId != prize.creatorId) {
-                    throw new InvocationException(MsoyGameCodes.E_PRIZE_CREATOR_MISMATCH);
+                    throw new InvocationException(
+                        MsoyCodes.GAME_MSGS,
+                        MessageBundle.tcompose(MsoyGameCodes.E_PRIZE_CREATOR_MISMATCH, prize.ident));
                 }
                 log.info("Awarding prize " + listing + " to " + memberId + ".");
                 Item item = repo.insertClone(listing.item, memberId, 0, 0).toItem();
