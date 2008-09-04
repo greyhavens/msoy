@@ -11,14 +11,16 @@ import flash.geom.Point;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
+import com.threerings.util.MessageBundle;
+
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.whirled.game.client.WhirledGameBackend;
-
 import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.data.VizMemberName;
 
+import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 /**
@@ -56,6 +58,14 @@ public class MsoyGameBackend extends WhirledGameBackend
         p.x = Math.max(p.x, 700);
         p.y = Math.max(p.y, 500);
         return p;
+    }
+
+    // from BaseGameBackend
+    override protected function reportServiceFailure (service :String, cause :String) :void
+    {
+        super.reportServiceFailure(service, cause);
+        var msg :String = MessageBundle.compose("e.game_error", cause);
+        (_ctx as GameContext).getChatDirector().displayAttention(MsoyGameCodes.GAME_BUNDLE, msg);
     }
 
     // from BaseGameBackend
