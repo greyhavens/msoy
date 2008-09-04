@@ -134,10 +134,13 @@ public class ThaneAVRGameController
 
     /** Retrieves the room for the given room id. Returns null if it is not yet available or could 
      *  not be found. */
-    public function getRoom (roomId :int) :RoomObject
+    public function getRoom (roomId :int, why :String = null) :RoomObject
     {
         var binding :SceneBinding = _bindings.get(roomId);
-        if (binding == null) {
+        if (binding == null || binding.room == null) {
+            if (why !== null) {
+                log.warning("Room not found " + why + " [roomId=" + roomId + "]");
+            }
             return null;
         }
         return binding.room;
@@ -191,6 +194,33 @@ public class ThaneAVRGameController
     public function getGameId () :int
     {
         return _gameAgentObj.gameId;
+    }
+
+    /**
+     * Returns the array of mob ids in a room.
+     */
+    public function getMobIds (roomId :int) :Array
+    {
+        var binding :SceneBinding = _bindings.get(roomId);
+        if (binding != null) {
+            return binding.mobs.keys();
+        }
+        log.warning("Room not found for getMobIds [roomId=" + roomId + "]");
+        return [];
+    }
+
+    public function getMobInfo (roomId :int, mobId :String) :MobInfo
+    {
+        var binding :SceneBinding = _bindings.get(roomId);
+        if (binding == null) {
+            log.warning("Room not found for getMobInfo [roomId=" + roomId + "]");
+            return null;
+        }
+        var mobInfo :MobInfo = binding.mobs.get(mobId) as MobInfo;
+        if (mobInfo == null) {
+            log.warning("Mob not found in room [roomId=" + roomId + ", mobId=" + mobId + "]");
+        }
+        return mobInfo;
     }
 
     protected function entryAdded (event :EntryAddedEvent) :void
@@ -375,6 +405,14 @@ public class ThaneAVRGameController
             });
         binding.room.addListener(binding.roomListener);
 
+        var occIter :Iterator = binding.room.occupantInfo.iterator();
+        while (occIter.hasNext()) {
+            var mob :MobInfo = occIter.next() as MobInfo;
+            if (mob != null && mob.getGameId() == getGameId()) {
+                binding.mobs.put(mob.getIdent(), mob);
+            }
+        }
+
         var entry :RoomPropertiesEntry;
         entry = binding.room.propertySpaces.get(_gameAgentObj.gameId) as RoomPropertiesEntry;
         if (entry != null) {
@@ -491,7 +529,7 @@ public class ThaneAVRGameController
         _players.put(obj.getMemberId(), playerBinding);
     }
 
-    protected function getMobInfo (name :String, entry :DSet_Entry ) :MobInfo
+    protected function resolveMobInfo (name :String, entry :DSet_Entry ) :MobInfo
     {
         var mobInfo :MobInfo = null;
         if (name == PlaceObject.OCCUPANT_INFO) {
@@ -508,24 +546,35 @@ public class ThaneAVRGameController
 
     protected function roomEntryAdded (binding :SceneBinding, evt :EntryAddedEvent) :void
     {
-        var mobInfo :MobInfo = getMobInfo(evt.getName(), evt.getEntry());
+        var mobInfo :MobInfo = resolveMobInfo(evt.getName(), evt.getEntry());
         if (mobInfo != null) {
+            binding.mobs.put(mobInfo.getIdent(), mobInfo);
             _backend.mobSpawned(binding.sceneId, mobInfo.getIdent());
         }
     }
 
     protected function roomEntryUpdated (binding :SceneBinding, evt :EntryUpdatedEvent) :void
     {
-        var mobInfo :MobInfo = getMobInfo(evt.getName(), evt.getEntry());
+        var mobInfo :MobInfo = resolveMobInfo(evt.getName(), evt.getEntry());
         if (mobInfo != null) {
+            if (MobInfo(evt.getOldEntry()).getIdent() != mobInfo.getIdent()) {
+                log.warning(
+                    "Mob changed idents [old=" + evt.getOldEntry() + ", new=" + mobInfo + "]");
+            }
+            binding.mobs.put(mobInfo.getIdent(), mobInfo);
             _backend.mobChanged(binding.sceneId, mobInfo.getIdent());
         }
     }
 
     protected function roomEntryRemoved (binding :SceneBinding, evt :EntryRemovedEvent) :void
     {
-        var mobInfo :MobInfo = getMobInfo(evt.getName(), evt.getOldEntry());
+        var mobInfo :MobInfo = resolveMobInfo(evt.getName(), evt.getOldEntry());
         if (mobInfo != null) {
+            if (!binding.mobs.remove(mobInfo.getIdent())) {
+                log.warning(
+                    "Removing mob not found in binding [binding=" + binding + ", mobId=" + 
+                    mobInfo.getIdent() + "]");
+            }
             _backend.mobRemoved(binding.sceneId, mobInfo.getIdent());
         }
     }
@@ -542,6 +591,7 @@ public class ThaneAVRGameController
 
 }
 
+import com.threerings.util.HashMap;
 import com.threerings.util.StringUtil;
 
 import com.threerings.presents.dobj.ChangeListener;
@@ -567,6 +617,7 @@ class SceneBinding
     public var propsSubscriber :SafeSubscriber;
     public var roomProps :RoomPropertiesObject;
     public var avatarAdapter :BackendAvatarAdapter;
+    public var mobs :HashMap = new HashMap();
 
     // from Object
     public function toString () :String

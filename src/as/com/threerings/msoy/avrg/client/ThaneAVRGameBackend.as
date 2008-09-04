@@ -23,6 +23,7 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
 
 import com.threerings.msoy.room.data.ActorInfo;
+import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
@@ -203,6 +204,8 @@ public class ThaneAVRGameBackend
         o["getAvatarInfo_v1"] = getAvatarInfo_v1;
         o["spawnMob_v1"] = spawnMob_v1;
         o["despawnMob_v1"] = despawnMob_v1;
+        o["getSpawnedMobs_v1"] = getSpawnedMobs_v1;
+        o["moveMob_v1"] = moveMob_v1;
         o["room_sendMessage_v1"] = room_sendMessage_v1;
 
         // .getRoom().props
@@ -316,7 +319,8 @@ public class ThaneAVRGameBackend
         return data;
     }
 
-    protected function spawnMob_v1 (roomId :int, mobId :String, mobName :String) :void
+    protected function spawnMob_v1 (
+        roomId :int, mobId :String, mobName :String, x :Number, y :Number, z :Number) :void
     {
         if (StringUtil.isBlank(mobId)) {
             log.warning("Blank mobId in spawnMob");
@@ -328,18 +332,17 @@ public class ThaneAVRGameBackend
             return;
         }
 
-        var roomObj :RoomObject = _controller.getRoom(roomId);
+        var roomObj :RoomObject = _controller.getRoom(roomId, "for spawnMob");
         if (roomObj == null) {
-            log.warning("Room not found in spawnMob [roomId=" + roomId + "]");
             return;
         }
 
+        // TODO: use x, y, z
         roomObj.roomService.spawnMob(
             _controller.getRoomClient(roomId), _controller.getGameId(), mobId, mobName,
             BackendUtils.loggingInvocationListener("spawnMob"));
     }
 
-    // RoomSubControl
     protected function despawnMob_v1 (roomId :int, mobId :String) :void
     {
         if (StringUtil.isBlank(mobId)) {
@@ -347,15 +350,31 @@ public class ThaneAVRGameBackend
             return;
         }
 
-        var roomObj :RoomObject = _controller.getRoom(roomId);
+        var roomObj :RoomObject = _controller.getRoom(roomId, "for despawnMob");
         if (roomObj == null) {
-            log.warning("Room not found in despawnMob [roomId=" + roomId + "]");
             return;
         }
 
         roomObj.roomService.despawnMob(
             _controller.getRoomClient(roomId), _controller.getGameId(), mobId,
             BackendUtils.loggingInvocationListener("despawnMob"));
+    }
+
+    protected function getSpawnedMobs_v1 (roomId :int) :Array
+    {
+        // Just call this to get a coherent warning
+        var roomObj :RoomObject = _controller.getRoom(roomId, "for getSpawnedMobs");
+        if (roomObj == null) {
+            return [];
+        }
+
+        return _controller.getMobIds(roomId);
+    }
+
+    protected function moveMob_v1 (roomId :int, id :String, x :Number, y :Number, z :Number) :void
+    {
+        var mobInfo :MobInfo = _controller.getMobInfo(roomId, id);
+        // TODO
     }
 
     protected function room_sendMessage_v1 (roomId :int, name :String, value :Object) :void
@@ -496,9 +515,8 @@ public class ThaneAVRGameBackend
 
         // TODO: maybe expose ThaneAVRGameController::SceneBinding instead of always doing lookup 
         // twice
-        var roomObj :RoomObject = _controller.getRoom(roomId);
+        var roomObj :RoomObject = _controller.getRoom(roomId, "");
         if (roomObj == null) {
-            log.warning("Room object is null [roomId=" + roomId + "]");
             return;
         }
 
