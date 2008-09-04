@@ -29,7 +29,6 @@ import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyModule;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;

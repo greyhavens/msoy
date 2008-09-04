@@ -5,8 +5,6 @@ package client.frame;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -16,15 +14,10 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-
-import client.shell.Args;
-import client.shell.CShell;
 import client.shell.Frame;
 import client.shell.Page;
 import client.shell.Pages;
 import client.ui.MsoyUI;
-import client.util.Link;
 
 /**
  * Displays a page title and subnavigation at the top of the page content area.
