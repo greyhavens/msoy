@@ -205,6 +205,11 @@ public class FrameEntryPoint
         if (_page != page || _page == Pages.WORLD) {
             setPage(page);
         } else {
+            // reset our navigation as we're not changing pages but need to give the current page a
+            // fresh subnavigation palette
+            if (_bar != null) {
+                _bar.resetNav();
+            }
             setPageToken(_pageToken, _iframe.getElement());
         }
 
@@ -244,6 +249,12 @@ public class FrameEntryPoint
         if (title != null && _bar != null) {
             _bar.setTitle(title);
         }
+    }
+
+    // from interface Frame
+    public void addNavLink (String label, Pages page, String args)
+    {
+        _bar.addContextLink(label, page, args);
     }
 
     // from interface Frame
@@ -641,6 +652,9 @@ public class FrameEntryPoint
         switch (call) {
         case SET_TITLE:
             setTitle(args[0]);
+            return null;
+        case ADD_NAV_LINK:
+            addNavLink(args[0], Enum.valueOf(Pages.class, args[1]), args[2]);
             return null;
         case NAVIGATE_TO:
             navigateTo(args[0]);

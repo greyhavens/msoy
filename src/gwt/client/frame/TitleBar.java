@@ -36,81 +36,7 @@ public class TitleBar extends SmartTable
      */
     public static TitleBar create (Frame.Tabs tab, ClickListener onClose)
     {
-        SubNaviPanel subnavi = new SubNaviPanel();
-        int memberId = CShell.getMemberId();
-
-        switch (tab) {
-        case ME:
-            if (CShell.isGuest()) {
-                subnavi.addLink(null, "Home", Pages.LANDING, "");
-            } else {
-                subnavi.addLink(null, "Me", Pages.ME, "");
-                subnavi.addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD,
-                                     "m" + memberId);
-                subnavi.addLink(null, "Rooms", Pages.PEOPLE, Args.compose("rooms", memberId),
-                    false);
-                subnavi.addLink(null, "Passport", Pages.ME, "passport");
-                subnavi.addLink(null, "Profile", Pages.PEOPLE, "" + memberId);
-                subnavi.addLink(null, "Mail", Pages.MAIL, "");
-                subnavi.addLink(null, "Account", Pages.ME, "account");
-                if (CShell.isSupport()) {
-                    subnavi.addLink(null, "Admin", Pages.ADMINZ, "");
-                }
-            }
-            break;
-
-        case FRIENDS:
-            if (CShell.isGuest()) {
-                subnavi.addLink(null, "Search", Pages.PEOPLE, "");
-            } else {
-                subnavi.addLink(null, "My Friends", Pages.PEOPLE, "");
-                subnavi.addLink(null, "Invite Friends", Pages.PEOPLE, "invites");
-            }
-            break;
-
-        case GAMES:
-            subnavi.addLink(null, "Games", Pages.GAMES, "");
-            if (!CShell.isGuest()) {
-                subnavi.addLink(null, "My Trophies", Pages.GAMES, Args.compose("t", memberId));
-            }
-            subnavi.addLink(null, "All Games", Pages.GAMES, "g");
-            break;
-
-        case WHIRLEDS:
-            subnavi.addLink(null, "Whirleds", Pages.WHIRLEDS, "");
-            if (!CShell.isGuest()) {
-                subnavi.addLink(null, "My Whirleds", Pages.WHIRLEDS, "mywhirleds");
-                subnavi.addLink(null, "My Discussions", Pages.WHIRLEDS, "unread");
-                if (CShell.isSupport()) {
-                    subnavi.addLink(null, "Issues", Pages.WHIRLEDS, "b");
-                    subnavi.addLink(null, "My Issues", Pages.WHIRLEDS, "owned");
-                }
-            }
-            break;
-
-        case SHOP:
-            subnavi.addLink(null, "Shop", Pages.SHOP, "");
-            subnavi.addLink(null, "My Favorites", Pages.SHOP, "f");
-
-            // TODO hiding transactions feature
-            if (DeploymentConfig.devDeployment) {
-                subnavi.addLink(null, "Transactions", Pages.SHOP, "t");
-            }
-            break;
-
-        case HELP:
-            subnavi.addLink(null, "Help", Pages.HELP, "");
-            if (CShell.isSupport()) {
-                subnavi.addLink(null, "Admin", Pages.SUPPORT, "admin");
-            }
-            break;
-
-        default:
-            // nada
-            break;
-        }
-
-        return new TitleBar(tab, Page.getDefaultTitle(tab), subnavi, onClose);
+        return new TitleBar(tab, Page.getDefaultTitle(tab), new SubNaviPanel(tab), onClose);
     }
 
     public TitleBar (Frame.Tabs tab, String title, SubNaviPanel subnavi, ClickListener onClose)
@@ -119,6 +45,7 @@ public class TitleBar extends SmartTable
 
         setWidget(0, 0, createImage(tab), 3, null);
 
+        _tab = tab;
         _titleLabel = new Label(title);
         _titleLabel.setStyleName("Title");
 
@@ -146,13 +73,25 @@ public class TitleBar extends SmartTable
     }
 
     @Override
-    public void setTitle (String title) {
+    public void setTitle (String title)
+    {
         if (title != null) {
             _titleLabel.setText(title);
         }
     }
 
-    public void setCloseVisible (boolean visible) {
+    public void resetNav ()
+    {
+        _subnavi.reset(_tab);
+    }
+
+    public void addContextLink (String label, Pages page, String args)
+    {
+        _subnavi.addContextLink(label, page, args);
+    }
+
+    public void setCloseVisible (boolean visible)
+    {
         _subnavi.remove(_closeBox);
         _subnavi.remove(_closeShim);
         if (visible) {
@@ -162,51 +101,13 @@ public class TitleBar extends SmartTable
         }
     }
 
-    protected Image createImage (Frame.Tabs tab) {
+    protected Image createImage (Frame.Tabs tab)
+    {
         String id = (tab == null) ? "solid" : tab.toString().toLowerCase();
         return new Image("/images/header/" + id + "_cap.png");
     }
 
-    protected static class SubNaviPanel extends FlowPanel
-    {
-        public void addLink (String iconPath, String label, final Pages page, final String args) {
-            addLink(iconPath, label, page, args, true);
-        }
-
-        public void addLink (
-            String iconPath, String label, final Pages page, final String args, boolean sep)
-        {
-            addSeparator(sep);
-            if (iconPath != null) {
-                add(MsoyUI.createActionImage(iconPath, new ClickListener() {
-                    public void onClick (Widget sender) {
-                        Link.go(page, args);
-                    }
-                }));
-                add(new HTML("&nbsp;"));
-            }
-            add(Link.create(label, page, args));
-        }
-
-        public Image addImageLink (String path, String tip, final Pages page, final String args) {
-            addSeparator(true);
-            Image icon = MsoyUI.createActionImage(path, new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(page, args);
-                }
-            });
-            icon.setTitle(tip);
-            add(icon);
-            return icon;
-        }
-
-        protected void addSeparator (boolean sep) {
-            if (getWidgetCount() > 0) {
-                add(new HTML("&nbsp;&nbsp;" + (sep ? "|&nbsp;&nbsp;" : "")));
-            }
-        }
-    }
-
+    protected Frame.Tabs _tab;
     protected Label _titleLabel;
     protected SubNaviPanel _subnavi;
     protected Widget _closeBox, _closeShim;
