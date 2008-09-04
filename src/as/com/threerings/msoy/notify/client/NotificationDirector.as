@@ -55,6 +55,7 @@ import com.threerings.msoy.notify.data.FollowInviteNotification;
 import com.threerings.msoy.notify.data.GameInviteNotification;
 import com.threerings.msoy.notify.data.GenericNotification;
 import com.threerings.msoy.notify.data.InviteAcceptedNotification;
+import com.threerings.msoy.notify.data.MoneyNotification;
 import com.threerings.msoy.notify.data.Notification;
 import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
@@ -83,6 +84,7 @@ public class NotificationDirector extends BasicDirector
         c = InviteAcceptedNotification;
         c = GameInviteNotification;
         c = FollowInviteNotification;
+        c = MoneyNotification;
     }
 
     // from interface AttributeChangeListener
