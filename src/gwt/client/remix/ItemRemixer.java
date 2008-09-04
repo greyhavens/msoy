@@ -140,29 +140,26 @@ public class ItemRemixer extends FlexTable
         }
 
         if (_catalogId != 0) {
-            _catalogsvc.purchaseItem(_item.getType(), _catalogId, _flowCost, _goldCost,
-                                     new AsyncCallback<Item>() {
-                    public void onSuccess (Item result) {
-                        _item = result;
-                        _catalogId = 0;
+            _catalogsvc.purchaseItem(
+                _item.getType(), _catalogId, _flowCost, _goldCost, new AsyncCallback<Item>() {
+                public void onSuccess (Item result) {
+                    _item = result;
+                    _catalogId = 0;
+                    // re-enter, to save our remix
+                    setHash(id, mediaHash, mimeType, constraint, width, height);
+                }
 
-                        // re-enter, to save our remix
-                        setHash(id, mediaHash, mimeType, constraint, width, height);
+                public void onFailure (Throwable cause) {
+                    MsoyUI.error(CShell.serverError(cause));
+                    if (cause instanceof CostUpdatedException) {
+                        CostUpdatedException cue = (CostUpdatedException) cause;
+                        _flowCost = cue.getFlowCost();
+                        _goldCost = cue.getGoldCost();
+                        _priceLabel.updatePrice(_flowCost, _goldCost);
+                        enableBuyButton();
                     }
-
-                    public void onFailure (Throwable cause) {
-                        MsoyUI.error(CShell.serverError(cause));
-
-                        if (cause instanceof CostUpdatedException) {
-                            CostUpdatedException cue = (CostUpdatedException) cause;
-                            _flowCost = cue.getFlowCost();
-                            _goldCost = cue.getGoldCost();
-                            _priceLabel.updatePrice(_flowCost, _goldCost);
-
-                            enableBuyButton();
-                        }
-                    }
-                });
+                }
+            });
             return;
         }
 
