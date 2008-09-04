@@ -67,13 +67,14 @@ public class MoneyLogicImpl
     public MoneyLogicImpl (
         final MoneyRepository repo, final EscrowCache escrowCache,
         final MoneyHistoryExpirer expirer, final UserActionRepository userActionRepo,
-        final MsoyEventLogger eventLog)
+        final MsoyEventLogger eventLog, final MoneyMessageReceiver msgReceiver)
     {
         _repo = repo;
         _escrowCache = escrowCache;
         _userActionRepo = userActionRepo;
         _eventLog = eventLog;
         _expirer = expirer;
+        _msgReceiver = msgReceiver;
     }
 
     @Retry(exception=StaleDataException.class)
@@ -352,6 +353,7 @@ public class MoneyLogicImpl
     public void init ()
     {
         _expirer.start();
+        _msgReceiver.start();
     }
 
     private void logInPanopticon (
@@ -387,4 +389,5 @@ public class MoneyLogicImpl
     private final UserActionRepository _userActionRepo;
     private final MoneyRepository _repo;
     private final EscrowCache _escrowCache;
+    private final MoneyMessageReceiver _msgReceiver;
 }

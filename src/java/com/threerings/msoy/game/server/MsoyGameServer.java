@@ -30,10 +30,14 @@ import com.threerings.crowd.server.PlaceRegistry;
 import com.threerings.parlor.game.server.GameManager;
 import com.threerings.parlor.server.ParlorManager;
 
+import com.threerings.messaging.DelayedMessageConnection;
+import com.threerings.messaging.MessageConnection;
+
 import com.whirled.game.server.GameCookieManager;
 import com.whirled.game.server.RepoCookieManager;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.money.server.MoneyModule;
 import com.threerings.msoy.server.MsoyBaseServer;
 
 import com.threerings.msoy.game.data.PlayerObject;
@@ -50,6 +54,9 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         @Override protected void configure () {
             super.configure();
+            // The game server has no message connection, though it's needed by the money service
+            bind(MessageConnection.class).toInstance(new DelayedMessageConnection());
+            install(new MoneyModule());
             // presents dependencies
             bind(Authenticator.class).to(MsoyGameAuthenticator.class);
             bind(PresentsServer.class).to(MsoyGameServer.class);

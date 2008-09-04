@@ -70,7 +70,6 @@ public abstract class MsoyBaseServer extends WhirledServer
             } catch (PersistenceException e) {
                 addError(e);
             }
-            install(new MoneyModule());
         }
 
         protected ConnectionProvider _conprov;
