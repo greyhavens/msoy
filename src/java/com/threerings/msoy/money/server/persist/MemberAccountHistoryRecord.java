@@ -132,6 +132,43 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     // AUTO-GENERATED: METHODS END
 
     public static final int SCHEMA_VERSION = 3;
+    
+    /** ID of this record. */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    public int id;
+
+    /** ID of the member this record is for. */
+    public int memberId;
+
+    /** Time this transaction was performed. */
+    public Timestamp timestamp;
+
+    /** Type of money modified. */
+    public PersistentCurrency type;
+
+    /** Amount debited/credited. */
+    public double amount;
+
+    /** True if the amount was debited, otherwise it was credited. */
+    public boolean spent;
+
+    /** Description of the transaction. */
+    public String description;
+
+    /** ID of the item involved in this transaction, or 0 otherwise. */
+    // TODO: rename this to catalogId ? ?? 
+    public int itemId;
+
+    /** Type of the item involved in this transaction, if provided. */
+    public int itemType;
+
+    /** Type of transaction this history record was for. */
+    @Column(defaultValue = "0")
+    public PersistentTransactionType transactionType;
+    
+    /** For certain types of transactions, the reference transaction this was in response to. */
+    public int referenceTxId;
 
     /**
      * Creates an account history record involving some particular item.
@@ -187,31 +224,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     /** Not part of the API. For depot's eyes only. */
     public MemberAccountHistoryRecord ()
     {}
-
-    /**
-     * ID of the member account this history is for.
-     */
-    public int getMemberId ()
-    {
-        return memberId;
-    }
-
-    /**
-     * Time the transaction was performed.
-     */
-    public Date getTimestamp ()
-    {
-        return timestamp;
-    }
-
-    /**
-     * The amount that was exchanged in the transaction.
-     */
-    public double getAmount ()
-    {
-        return amount;
-    }
-
+    
     /**
      * The amount that was exchanged in the transaction. This will be negative if spent, positive
      * otherwise.
@@ -221,124 +234,10 @@ public class MemberAccountHistoryRecord extends PersistentRecord
         return spent ? -amount : amount;
     }
 
-    /**
-     * If true, this amount was deducted from the account. Otherwise it was credited to the
-     * account.
-     */
-    public boolean isSpent ()
-    {
-        return spent;
-    }
-
-    /**
-     * Description of the transaction.
-     */
-    public String getDescription ()
-    {
-        return description;
-    }
-
-    /**
-     * Currency that was transferred.
-     */
-    public PersistentCurrency getCurrency ()
-    {
-        return type;
-    }
-
-    /**
-     * ID of the item that was involved in this transaction.
-     * @return
-     */
-    public int getCatalogId ()
-    {
-        return itemId;
-    }
-
-    /**
-     * Type of the item that was involved in this transaction.
-     */
-    public int getItemType ()
-    {
-        return itemType;
-    }
-
-    public int getId ()
-    {
-        return id;
-    }
-    
-    public PersistentTransactionType getTransactionType ()
-    {
-        return transactionType;
-    }
-    
-    public int getReferenceTxId ()
-    {
-        return referenceTxId;
-    }
-    
-    public void setReferenceTxId (final int referenceTxId)
-    {
-        this.referenceTxId = referenceTxId;
-    }
-
     public MoneyHistory createMoneyHistory (final MoneyHistory referenceTx)
     {
         return new MoneyHistory(memberId, timestamp, type.toCurrency(), amount, 
             transactionType.toTransactionType(), spent, description, 
             itemId == 0 ? null : new ItemIdent((byte)itemType, itemId), referenceTx);
     }
-
-    // These are not part of the api! They should be private (depot requirement...)
-
-    /** ID of this record. Note: this is not part of the API, do not use it. */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int id;
-
-    /** ID of the member this record is for. Note: this is not part of the API, do not use it. */
-    public int memberId;
-
-    /** Time this transaction was performed. Note: this is not part of the API, do not use it. */
-    public Timestamp timestamp;
-
-    /** Type of money modified. Note: this is not part of the API, do not use it. */
-    public PersistentCurrency type;
-
-    /** Amount debited/credited. Note: this is not part of the API, do not use it. */
-    public double amount;
-
-    /**
-     * True if the amount was debited, otherwise it was credited. Note: this is not part of the
-     * API, do not use it.
-     */
-    public boolean spent;
-
-    /** Description of the transaction. Note: this is not part of the API, do not use it. */
-    public String description;
-
-    /**
-     * ID of the item involved in this transaction, or 0 otherwise. Note: this is not part of the
-     * API, do not use it.
-     */
-    // TODO: rename this to catalogId ? ?? 
-    public int itemId;
-
-    /**
-     * Type of the item involved in this transaction, if provided. Note: this is not part of the
-     * API, do not use it.
-     */
-    public int itemType;
-
-    /**
-     * Type of transaction this history record was for.
-     */
-    @Column(defaultValue = "0")
-    public PersistentTransactionType transactionType;
-    
-    /**
-     * For certain types of transactions, the reference transaction this was in response to.
-     */
-    public int referenceTxId;
 }

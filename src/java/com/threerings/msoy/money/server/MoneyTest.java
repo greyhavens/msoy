@@ -29,6 +29,8 @@ import com.threerings.presents.annotation.EventQueue;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.PresentsDObjectMgr;
 
+import com.threerings.messaging.DelayedMessageConnection;
+import com.threerings.messaging.MessageConnection;
 import com.threerings.msoy.data.UserAction;
 
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -199,7 +201,7 @@ public class MoneyTest
 
         log = _service.getLog(2, Currency.BLING, null, 0, 30, true);
         checkMoneyHistory(log, new MoneyHistory(2, new Date(), Currency.BLING, 100.0*0.3, 
-            TransactionType.CREATOR_PAYOUT, false, "Item purchased: My bar item", null /*item*/,
+            TransactionType.CREATOR_PAYOUT, false, "My bar item", null /*item*/,
             null), 
             expectedMH, startTime, endTime, true);
 
@@ -275,7 +277,7 @@ public class MoneyTest
         log = _service.getLog(2, Currency.COINS, null, 0, 30, true);
         checkMoneyHistory(log, new MoneyHistory(2, new Date(), Currency.COINS, 30.0, 
             TransactionType.CREATOR_PAYOUT, false,
-            "Item purchased: testBuyCoinItemWithCoins - test", null /*item*/, null),
+            "testBuyCoinItemWithCoins - test", null /*item*/, null),
             expectedMH, startTime, endTime, true);
 
         checkActionLogExists(2, UserAction.RECEIVED_PAYOUT.getNumber(),
@@ -381,6 +383,7 @@ public class MoneyTest
                         new Invoker("test", new BasicRunQueue()));
                     bind(PersistenceContext.class).toInstance(
                         new PersistenceContext("msoy", connProv, null));
+                    bind(MessageConnection.class).toInstance(new DelayedMessageConnection());
                     install(new MoneyModule());
                 }
             });
@@ -397,7 +400,7 @@ public class MoneyTest
         MoneyHistory logEntry = null;
         for (final MoneyHistory history : log) {
             final long time = history.getTimestamp().getTime() / 1000;
-            if (history.getDescription().equals(expected.getDescription()) &&
+            if (history.getDescription().contains(expected.getDescription()) &&
                     time >= start && time <= end) {
                 logEntry = history;
                 break;

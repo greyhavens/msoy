@@ -264,7 +264,7 @@ public class MemberAccountRecord extends PersistentRecord
         final MemberAccountHistoryRecord history = new MemberAccountHistoryRecord(memberId, 
             dateLastUpdated, PersistentCurrency.fromCurrency(paymentCurrency), amountPaid, 
             PersistentTransactionType.CREATOR_PAYOUT, false, description, item);
-        history.setReferenceTxId(referenceTxId);
+        history.referenceTxId = referenceTxId;
         return history;
     }
 

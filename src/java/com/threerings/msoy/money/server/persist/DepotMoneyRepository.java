@@ -126,8 +126,8 @@ public final class DepotMoneyRepository extends DepotRepository
                              MemberAccountHistoryRecord.class) {
                              @Override protected boolean testForEviction (
                                  final Serializable key, final MemberAccountHistoryRecord record) {
-                                 return record.getTimestamp().getTime() < oldestTimestamp
-                                     && record.getCurrency() == currency;
+                                 return record.timestamp.getTime() < oldestTimestamp
+                                     && record.type == currency;
                              }
                          });
     }

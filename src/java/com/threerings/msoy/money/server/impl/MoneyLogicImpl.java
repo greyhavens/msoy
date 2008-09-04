@@ -125,7 +125,7 @@ public class MoneyLogicImpl
         _repo.addHistory(history);
 
         logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS, null,
-            history.getDescription());
+            history.description);
 
         return new MoneyResult(account.getMemberMoney(), null, null, 
             history.createMoneyHistory(null), null, null);
@@ -215,7 +215,7 @@ public class MoneyLogicImpl
 
         } else {
             creatorHistory = creator.creatorPayout(
-                quote.getListedCurrency(), (int)history.getAmount(),
+                quote.getListedCurrency(), (int)history.amount,
                 // TODO: fuck me friday, I'm not sure how this will actually xlate in GWT land...
                 MessageBundle.tcompose("m.item_bought", escrow.getDescription()),
                 item, _config.getCreatorPercentage(), history.id);
