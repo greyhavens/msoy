@@ -54,9 +54,6 @@ public class MsoyGameServer extends MsoyBaseServer
     {
         @Override protected void configure () {
             super.configure();
-            // The game server has no message connection, though it's needed by the money service
-            bind(MessageConnection.class).toInstance(new DelayedMessageConnection());
-            install(new MoneyModule());
             // presents dependencies
             bind(Authenticator.class).to(MsoyGameAuthenticator.class);
             bind(PresentsServer.class).to(MsoyGameServer.class);
@@ -65,6 +62,9 @@ public class MsoyGameServer extends MsoyBaseServer
             bind(PlaceRegistry.class).to(GamePlaceRegistry.class);
             // vilya game dependencies
             bind(GameCookieManager.class).to(RepoCookieManager.class);
+            // The game server has no message connection, though it's needed by the money service
+            bind(MessageConnection.class).toInstance(new DelayedMessageConnection());
+            install(new MoneyModule());
         }
     }
 

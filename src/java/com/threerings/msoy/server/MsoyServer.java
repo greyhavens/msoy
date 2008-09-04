@@ -82,10 +82,6 @@ public class MsoyServer extends MsoyBaseServer
     {
         @Override protected void configure () {
             super.configure();
-            // Messaging dependencies
-            bind(MessageConnection.class).toInstance(createAMQPConnection());
-            // money service
-            install(new MoneyModule());
             // presents dependencies
             bind(Authenticator.class).to(MsoyAuthenticator.class);
             bind(PresentsServer.class).to(MsoyServer.class);
@@ -103,6 +99,10 @@ public class MsoyServer extends MsoyBaseServer
             bind(MsoyAuthenticator.Domain.class).to(OOOAuthenticationDomain.class);
             bind(PersistenceContext.class).annotatedWith(OOODatabase.class).toInstance(
                 new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, _conprov, _cacher));
+            // Messaging dependencies
+            bind(MessageConnection.class).toInstance(createAMQPConnection());
+            // money service
+            install(new MoneyModule());
         }
     }
 
