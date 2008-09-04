@@ -69,7 +69,7 @@ public class MoneyMessageReceiver
                 });
             }
         });
-        if (!_barsBoughtListener.isClosed()) {
+        if (_barsBoughtListener != null && !_barsBoughtListener.isClosed()) {
             logger.info("Now listening for bars bought messages.");
         }
         
@@ -93,7 +93,7 @@ public class MoneyMessageReceiver
                 });
             }
         });
-        if (!_getBarCountListener.isClosed()) {
+        if (_barsBoughtListener != null && !_getBarCountListener.isClosed()) {
             logger.info("Now listening for get bar count messages.");
         }
     }
