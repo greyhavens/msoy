@@ -9,10 +9,16 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.msoy.money.data.all.Currency;
 
+
+/**
+ * Base class for money notifications.
+ */
 public class MoneyNotification extends Notification
 {
+    /** The type of money this notification is concerned with. */
     public var currency :Currency;
 
+    /** The amount that it's changed. */
     public var delta :int;
 
     public function MoneyNotification (announcement :String = null)
@@ -24,9 +30,10 @@ public class MoneyNotification extends Notification
     {
         var key :String = _msg;
         var amt :int = delta;
+
         if (key == null) {
             // generic announcement
-            if (delta < 0) {
+            if (amt < 0) {
                 key = "m.money_lost";
                 amt = -amt; // positivity!
             } else {
@@ -34,7 +41,6 @@ public class MoneyNotification extends Notification
             }
         }
 
-        // TODO: ack, mein gott, something's wrong with pluralization with composition
         return MessageBundle.compose(key, MessageBundle.tcompose(currency.getKey(), amt));
     }
 
@@ -51,6 +57,7 @@ public class MoneyNotification extends Notification
         _msg = ins.readField(String) as String;
     }
 
+    /** The translation key, or null to use a generic message. */
     protected var _msg :String;
 }
 }

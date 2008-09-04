@@ -32,9 +32,10 @@ public class MoneyNotification extends Notification
     {
         String key = _msg;
         int amt = delta;
+
         if (key == null) {
             // generic announcement
-            if (delta < 0) {
+            if (amt < 0) {
                 key = "m.money_lost";
                 amt = -amt; // positivity!
             } else {
@@ -45,5 +46,6 @@ public class MoneyNotification extends Notification
         return MessageBundle.compose(key, MessageBundle.tcompose(currency.getKey(), amt));
     }
 
+    /** The translation key, or null to use a generic message. */
     protected String _msg;
 }
