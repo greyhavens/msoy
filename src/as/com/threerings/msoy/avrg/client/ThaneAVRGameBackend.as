@@ -213,7 +213,7 @@ public class ThaneAVRGameBackend
         o["room_setProperty_v1"] = room_setProperty_v1;
 
         // .getPlayer()
-        o["getRoomId_v1"] = getRoomId_v1;
+        o["player_getRoomId_v1"] = player_getRoomId_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
         o["completeTask_v1"] = completeTask_v1;
         o["playAvatarAction_v1"] = playAvatarAction_v1;
@@ -412,7 +412,7 @@ public class ThaneAVRGameBackend
     }
 
     // -------------------- .getPlayer() --------------------
-    protected function getRoomId_v1 (playerId :int) :int
+    protected function player_getRoomId_v1 (playerId :int) :int
     {
         return getPlayerRoomId(playerId);
     }

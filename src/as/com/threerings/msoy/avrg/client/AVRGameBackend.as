@@ -210,13 +210,14 @@ public class AVRGameBackend extends ControlBackend
         // RoomSubControl
         o["room_getGameData_v1"] = room_getGameData_v1;
         o["room_getPlayerIds_v1"] = room_getPlayerIds_v1;
-        o["getRoomId_v1"] = getRoomId_v1;
+        o["room_getRoomId_v1"] = room_getRoomId_v1;
         o["isPlayerHere_v1"] = isPlayerHere_v1;
         o["getAvatarInfo_v1"] = getAvatarInfo_v1;
 
         // PlayerSubControl
         o["player_getGameData_v1"] = player_getGameData_v1;
         o["player_setProperty_v1"] = player_setProperty_v1;
+        o["player_getRoomId_v1"] = player_getRoomId_v1;
         o["getPlayerId_v1"] = getPlayerId_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
         o["completeTask_v1"] = completeTask_v1;
@@ -271,7 +272,7 @@ public class AVRGameBackend extends ControlBackend
     }
 
     // RoomSubControl
-    protected function getRoomId_v1 (targetId :int /* ignored */) :int
+    protected function room_getRoomId_v1 (targetId :int /* ignored */) :int
     {
         validateRoomTargetId(targetId);
         return getRoomId();
@@ -367,6 +368,13 @@ public class AVRGameBackend extends ControlBackend
             return;
         }
         _wctx.getGameDirector().leaveAVRGame();
+    }
+
+    // PlayerSubControl
+    protected function player_getRoomId_v1 (targetId :int /* ignored */) :int
+    {
+        validatePlayerTargetId(targetId);
+        return getRoomId();
     }
 
     // PlayerSubControl
