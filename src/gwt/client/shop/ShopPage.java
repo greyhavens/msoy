@@ -12,6 +12,8 @@ import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 
 import client.item.ShopUtil;
 import client.shell.Args;
+import client.shell.CShell;
+import client.shell.DynamicMessages;
 import client.shell.Page;
 import client.shell.Pages;
 import client.util.MsoyCallback;
@@ -40,6 +42,7 @@ public class ShopPage extends Page
                     setContent(new ListingDetailPanel(_models, listing));
                 }
             });
+            CShell.frame.addNavLink(_dmsgs.getString("pItemType" + type), Pages.SHOP, ""+type);
 
         } else if (action.equals(FAVORITES)) {
             // if no member is specified, we use the current member
@@ -89,6 +92,7 @@ public class ShopPage extends Page
     protected CatalogPanel _catalog = new CatalogPanel(_models);
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
+    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 }
