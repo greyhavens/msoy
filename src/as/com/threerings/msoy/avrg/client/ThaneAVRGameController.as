@@ -228,12 +228,10 @@ public class ThaneAVRGameController
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
             var pl :PlayerLocation = event.getEntry() as PlayerLocation;
             if (getPlayer(pl.playerId) == null) {
-                log.warning(
-                    "Player subscription not finished before player location update [playerId=" + 
-                    pl.playerId + "]");
+                // player object subscription is not yet complete, wait for that callback
+                return;
             }
-            _backend.playerJoinedGame(pl.playerId);
-            _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
+            playerDidJoinGame(pl);
 
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             bindScene(event.getEntry() as SceneInfo);
@@ -261,6 +259,12 @@ public class ThaneAVRGameController
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
             var pl :PlayerLocation = event.getOldEntry() as PlayerLocation;
+            if (getPlayer(pl.playerId) == null) {
+                // if subscription never completed, the game wasn't told the player half-way
+                // joined, so don't now confuse it by mentioning they're leaving
+                return;
+            }
+
             _backend.playerLeftRoom(pl.playerId, pl.sceneId);
             _backend.playerLeftGame(pl.playerId);
 
@@ -523,10 +527,19 @@ public class ThaneAVRGameController
 
     protected function gotPlayerObject (obj :PlayerObject) :void
     {
+        var playerId :int = obj.getMemberId();
+
         var playerBinding :PlayerBinding = new PlayerBinding();
         playerBinding.oid = obj.getOid();
         playerBinding.netAdapter = _backend.createPlayerNetAdapter(obj);
-        _players.put(obj.getMemberId(), playerBinding);
+        _players.put(playerId, playerBinding);
+
+        var pl :PlayerLocation = _gameObj.playerLocs.get(playerId) as PlayerLocation;
+        if (pl == null) {
+            // player location not yet updated, wait for that callback
+            return;
+        }
+        playerDidJoinGame(pl);
     }
 
     protected function resolveMobInfo (name :String, entry :DSet_Entry ) :MobInfo
@@ -577,6 +590,12 @@ public class ThaneAVRGameController
             }
             _backend.mobRemoved(binding.sceneId, mobInfo.getIdent());
         }
+    }
+
+    protected function playerDidJoinGame (pl :PlayerLocation) :void
+    {
+        _backend.playerJoinedGame(pl.playerId);
+        _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
     }
 
     protected var _ctx :MsoyBureauContext;
