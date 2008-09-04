@@ -159,7 +159,6 @@
     <!-- The following are used to build abc files -->
     <file name="${extlibs.dir}/asc.jar"/>
     <file name="${extlibs.dir}/flexTasks.jar"/>
-
   </filelist>
 
   <!-- fetches our library dependencies -->
@@ -192,6 +191,7 @@
       <dependency groupId="com.threerings" artifactId="whirledthanelib" version="0.0-SNAPSHOT"
                   type="swc"/>
       <dependency groupId="com.threerings" artifactId="threerings" version="0.0-SNAPSHOT"/>
+      <dependency groupId="com.threerings" artifactId="threerings-gwt" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toybox" version="0.0-SNAPSHOT"/>
       <dependency groupId="com.threerings" artifactId="toyboxlib" version="0.0-SNAPSHOT"
                   type="swc"/>
@@ -328,6 +328,7 @@
       <fileset dir="${deploy.dir}/lib">
         <include name="gwt-widgets.jar"/>
         <include name="underwire-gwt-0.0-SNAPSHOT.jar"/>
+        <include name="threerings-gwt-0.0-SNAPSHOT.jar"/>
       </fileset>
       <fileset dir="lib/gwt" includes="*.jar"/>
     </path>
@@ -463,6 +464,7 @@
             <include name="gwt-user.jar"/>
             <include name="gwt-widgets.jar"/>
             <include name="underwire-gwt-0.0-SNAPSHOT.jar"/>
+            <include name="threerings-gwt-0.0-SNAPSHOT.jar"/>
           </fileset>
           <pathelement location="${src.dir}"/>
           <pathelement location="${gsrc.dir}"/>
