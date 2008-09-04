@@ -10,8 +10,6 @@ import com.google.inject.AbstractModule;
 import com.threerings.msoy.money.server.impl.MoneyLogicImpl;
 import com.threerings.msoy.money.server.impl.Retry;
 import com.threerings.msoy.money.server.impl.RetryInterceptor;
-import com.threerings.msoy.money.server.impl.EscrowCache;
-import com.threerings.msoy.money.server.impl.EscrowCacheMap;
 import com.threerings.msoy.money.server.persist.DepotMoneyRepository;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 

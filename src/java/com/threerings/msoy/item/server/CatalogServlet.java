@@ -52,7 +52,6 @@ import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.money.data.all.MoneyHistory;
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
 import com.threerings.msoy.money.server.MoneyResult;
@@ -347,7 +346,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // Secure the current price of the item for this member.
         if (mrec != null) {
-            PriceQuote quote = _moneyLogic.securePrice(
+            _moneyLogic.securePrice(
                 mrec.memberId, new CatalogIdent(itemType, catalogId), Currency.COINS,
                 record.flowCost, record.item.creatorId, 0, record.item.name);
         }
