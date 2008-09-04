@@ -63,9 +63,10 @@ public class MsoyGameBackend extends WhirledGameBackend
     // from BaseGameBackend
     override protected function reportServiceFailure (service :String, cause :String) :void
     {
-        super.reportServiceFailure(service, cause);
-        var msg :String = MessageBundle.compose("e.game_error", cause);
-        (_ctx as GameContext).getChatDirector().displayAttention(MsoyGameCodes.GAME_BUNDLE, msg);
+        // translate the error message and report it using the standard mechanism
+        reportGameError((_ctx as GameContext).getMsoyContext().getMessageManager().
+            getBundle(MsoyGameCodes.GAME_BUNDLE).
+            xlate(MessageBundle.compose("e.game_error", cause)));
     }
 
     // from BaseGameBackend
