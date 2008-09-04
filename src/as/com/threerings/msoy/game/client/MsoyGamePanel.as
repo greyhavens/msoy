@@ -5,6 +5,8 @@ package com.threerings.msoy.game.client {
 
 import flash.display.Loader;
 
+import flash.ui.Mouse;
+
 import mx.containers.VBox;
 
 import com.threerings.crowd.data.PlaceObject;
@@ -195,6 +197,8 @@ public class MsoyGamePanel extends WhirledGamePanel
         displayGameOver(false); // shut down any gameover display
 
         // TODO: shutdown _spinner?
+
+        Mouse.show(); // re-show the mouse, in case the game hid it
     }
 
     // from WhirledGamePanel

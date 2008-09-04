@@ -13,6 +13,8 @@ import flash.events.Event;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
+import flash.ui.Mouse;
+
 import flash.utils.ByteArray;
 import flash.utils.getTimer; // function import
 
@@ -423,6 +425,8 @@ public class RoomView extends Sprite
         removeAll(_furni);
         setBackground(null);
         _scene = null;
+
+        Mouse.show(); // re-show the mouse, in case something hid it
     }
 
     /**
