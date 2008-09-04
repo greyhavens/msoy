@@ -327,8 +327,7 @@
       <pathelement location="${classes.dir}"/>
       <fileset dir="${deploy.dir}/lib">
         <include name="gwt-widgets.jar"/>
-        <include name="underwire-gwt-0.0-SNAPSHOT.jar"/>
-        <include name="threerings-gwt-0.0-SNAPSHOT.jar"/>
+        <include name="*-gwt-0.0-SNAPSHOT.jar"/>
       </fileset>
       <fileset dir="lib/gwt" includes="*.jar"/>
     </path>
@@ -463,8 +462,7 @@
           <fileset dir="${deploy.dir}/lib">
             <include name="gwt-user.jar"/>
             <include name="gwt-widgets.jar"/>
-            <include name="underwire-gwt-0.0-SNAPSHOT.jar"/>
-            <include name="threerings-gwt-0.0-SNAPSHOT.jar"/>
+            <include name="*-gwt-0.0-SNAPSHOT.jar"/>
             <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
             <include name="threerings-0.0-SNAPSHOT.jar"/>
           </fileset>
