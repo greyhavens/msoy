@@ -246,6 +246,12 @@ public class ThaneAVRGameController
     {
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
             var pl :PlayerLocation = event.getEntry() as PlayerLocation;
+            if (getPlayer(pl.playerId) == null) {
+                // if subscription never completed, don't dispatch a 'left' event, and wait
+                // for the subscription callback for the 'enter' event.
+                return;
+            }
+
             var oldPl :PlayerLocation = event.getOldEntry() as PlayerLocation;
             _backend.playerLeftRoom(oldPl.playerId, oldPl.sceneId);
             _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
