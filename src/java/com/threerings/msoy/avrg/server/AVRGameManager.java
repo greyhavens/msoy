@@ -756,11 +756,11 @@ public class AVRGameManager extends PlaceManager
     protected static final int MAX_TICKERS = 3;
 
     /** idle time before shutting down the manager. */
-    protected static final long IDLE_UNLOAD_PERIOD = 30 * 1000L; // in ms
+    protected static final long IDLE_UNLOAD_PERIOD = 5 * 60 * 1000L; // in ms
     
     /** Minimum time a scene must remain idle before unloading. */
-    protected static final long SCENE_IDLE_UNLOAD_PERIOD = 10 * 1000;
+    protected static final long SCENE_IDLE_UNLOAD_PERIOD = 60 * 1000;
     
     /** Time between checks to flush idle scenes. */
-    protected static final long SCENE_CHECK_PERIOD = 5 * 1000;
+    protected static final long SCENE_CHECK_PERIOD = 60 * 1000;
 }
