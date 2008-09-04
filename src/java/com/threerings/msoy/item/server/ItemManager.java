@@ -267,8 +267,6 @@ public class ItemManager
                     throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
                 }
                 if (listing.item.creatorId != prize.creatorId) {
-                    log.warning("Refusing request to award prize due to creator mismatch " +
-                                "[prize=" + prize + ", item=" + listing.item + "].");
                     throw new InvocationException(MsoyGameCodes.E_PRIZE_CREATOR_MISMATCH);
                 }
                 log.info("Awarding prize " + listing + " to " + memberId + ".");
