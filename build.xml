@@ -288,13 +288,12 @@
     <copy tofile="${deploy.dir}/ehcache.xml" file="${basedir}/${ehcache_config}"/>
 
     <!-- generate our index.html and crossdomain.xml -->
-    <propertyregex property="server_url_host_port" input="${server_url}"
-                   regexp="http://(.*)/" replace="\1"/>
+    <propertyregex property="server_url_host" input="${server_url}"
+                   regexp="http://([^:]*)(:[0-9]+)?/" replace="\1"/>
     <copy file="pages/index.html.in" tofile="pages/index.html" overwrite="true">
       <filterset>
         <filter token="SERVER_URL" value="${server_url}"/>
-        <filter token="SERVER_URL_HOST_PORT" value="${server_url_host_port}"/>
-        <filter token="DEV_DEPLOYMENT" value="${dev_deployment}"/>
+        <filter token="SERVER_URL_HOST" value="${server_url_host}"/>
       </filterset>
     </copy>
     <propertyregex property="server_url_host" input="${server_url}"
