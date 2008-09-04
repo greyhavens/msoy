@@ -141,7 +141,7 @@ public class MsoyServer extends MsoyBaseServer
         if (_policyServer != null) {
             _policyServer.unbindAll();
         }
-        
+
         // and the message connection
         try {
             _messageConn.close();
@@ -381,7 +381,7 @@ public class MsoyServer extends MsoyBaseServer
         }
         _adminMan.scheduleReboot(playersOnline ? 2 : 0, "codeUpdateAutoRestart");
     }
-    
+
     /**
      * Creates a connection to the AMQP server based on the configuration settings.
      */
@@ -390,12 +390,22 @@ public class MsoyServer extends MsoyBaseServer
         final DelayedMessageConnection delayedConn = new DelayedMessageConnection();
         final AMQPMessageConfig config = ServerConfig.geAMQPMessageConfig();
         if (config == null) {
-            log.warning("No AMQP messaging server configured - no messages will be sent or received.");
+            log.info("No AMQP messaging server configured.");
         } else {
             delayedConn.init(new AMQPMessageConnection(config));
         }
         return delayedConn;
     }
+
+    /** Used to auto-restart the development server when its code is updated. */
+    protected long _codeModified;
+
+    /** A policy server used on dev deployments. */
+    protected IoAcceptor _policyServer;
+
+    /** On dev deployments, we keep track of the ports on other nodes (hosted on the same machine
+     * that need to be accepted by the policy server. */
+    protected ArrayIntSet _otherNodePorts;
 
     /** Manages world scene data. */
     @Inject protected MsoySceneRepository _sceneRepo;
@@ -441,19 +451,9 @@ public class MsoyServer extends MsoyBaseServer
 
     /** Provides database access to the user databases. TODO: This should probably be removed. */
     @Inject protected @OOODatabase PersistenceContext _userCtx;
-    
+
     /** Connection to the AMQP messaging server. */
     @Inject protected MessageConnection _messageConn;
-    
-    /** Used to auto-restart the development server when its code is updated. */
-    protected long _codeModified;
-
-    /** A policy server used on dev deployments. */
-    protected IoAcceptor _policyServer;
-
-    /** On dev deployments, we keep track of the ports on other nodes (hosted on the same machine
-     * that need to be accepted by the policy server. */
-    protected ArrayIntSet _otherNodePorts;
 
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;
