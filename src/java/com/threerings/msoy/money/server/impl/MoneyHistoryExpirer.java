@@ -6,8 +6,6 @@ package com.threerings.msoy.money.server.impl;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Logger;
@@ -15,7 +13,6 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.money.server.persist.PersistentCurrency;
-import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
@@ -28,7 +25,6 @@ import com.threerings.presents.server.ShutdownManager.Shutdowner;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-@Singleton
 public class MoneyHistoryExpirer
     implements Shutdowner
 {
@@ -36,9 +32,8 @@ public class MoneyHistoryExpirer
      * Starts the expirer.  By default, it will use a single-threaded scheduled executor,
      * and check once every hour for coins history records that are at least 10 days old.
      */
-    @Inject
     public MoneyHistoryExpirer (final MoneyRepository repo, final ShutdownManager sm,
-        @MainInvoker final Invoker invoker)
+        final Invoker invoker)
     {
         this(repo, sm, Executors.newSingleThreadScheduledExecutor(), invoker);
     }

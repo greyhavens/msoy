@@ -6,7 +6,6 @@ package com.threerings.msoy.money.server.impl;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
@@ -14,7 +13,6 @@ import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.server.ServerConfig;
 
-import com.google.inject.Inject;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Logger;
 import com.threerings.messaging.ConnectedListener;
@@ -39,9 +37,8 @@ public class MoneyMessageReceiver
      * @param conn Connection to listen for messages on.
      * @param logic MoneyLogic implementation to call.
      */
-    @Inject
     public MoneyMessageReceiver (final MessageConnection conn, final MoneyLogic logic, 
-        final ShutdownManager sm, @MainInvoker final Invoker invoker)
+        final ShutdownManager sm, final Invoker invoker)
     {
         _conn = conn;
         _logic = logic;

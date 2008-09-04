@@ -15,7 +15,7 @@ import com.threerings.msoy.item.data.all.CatalogIdent;
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
  */
-class PriceKey
+public class PriceKey
     implements Serializable
 {
     public PriceKey (final int memberId, final CatalogIdent item)

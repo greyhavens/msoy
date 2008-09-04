@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -60,62 +61,7 @@ public class MoneyTest
 {
     public static void main (String[] args)
     {
-        MoneyTest test = new MoneyTest();
-        try {
-            test.setup();
-        } catch (Exception e) {
-            System.err.println("setup: " + e);
-        }
-        try {
-            test.testExpirer();
-        } catch (Exception e) {
-            System.err.println("testExpirer: " + e);
-        }
-        try {
-            test.testBuyBars();
-        } catch (Exception e) {
-            System.err.println("testBuyBars: " + e);
-        }
-        try {
-            test.testBuyBarItemWithBars();
-        } catch (Exception e) {
-            System.err.println("testBuyBarItemWithBars: " + e);
-        }
-        try {
-            test.testNotEnoughBars();
-        } catch (Exception e) {
-            System.err.println("testNotEnoughBars: " + e);
-        }
-        try {
-            test.testNotEnoughCoins();
-        } catch (Exception e) {
-            System.err.println("testNotEnoughCoins: " + e);
-        }
-        try {
-            test.testNotSecured();
-        } catch (Exception e) {
-            System.err.println("testNotSecured: " + e);
-        }
-        try {
-            test.testBuyCoinItemWithCoins();
-        } catch (Exception e) {
-            System.err.println("testBuyCoinItemWithCoins: " + e);
-        }
-        try {
-            test.testAwardCoins();
-        } catch (Exception e) {
-            System.err.println("testAwardCoins: " + e);
-        }
-        try {
-            test.testCreatorBoughtOwnItem();
-        } catch (Exception e) {
-            System.err.println("testCreatorBoughtOwnItem: " + e);
-        }
-        try {
-            test.testSupport();
-        } catch (Exception e) {
-            System.err.println("testSupport: " + e);
-        }
+        JUnitCore.main(new String[] { MoneyTest.class.getName() });
     }
 
     @Test
