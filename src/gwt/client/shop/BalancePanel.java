@@ -67,7 +67,7 @@ public class BalancePanel extends PagedGrid<MoneyHistory>
             addStyleName("Transaction");
 
             add(MsoyUI.createLabel(_format.format(entry.getTimestamp()), "Time"));
-            add(MsoyUI.createLabel(entry.getDescription(), "Description"));
+            add(MsoyUI.createLabel(_lookup.get(entry.getDescription()), "Description"));
 
             add(MsoyUI.createLabel("42", "Debit"));
             add(MsoyUI.createLabel(String.valueOf(entry.getAmount()), "Credit"));
@@ -82,5 +82,6 @@ public class BalancePanel extends PagedGrid<MoneyHistory>
     // TODO: Unify with Mail date format?
     protected static SimpleDateFormat _format = new SimpleDateFormat("MM dd YY, h:mm a");
 
+    protected static final ShopMessagesLookup _lookup = GWT.create(ShopMessagesLookup.class);
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
 }

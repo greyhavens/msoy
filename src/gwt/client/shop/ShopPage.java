@@ -25,6 +25,7 @@ public class ShopPage extends Page
     public static final String LOAD_LISTING = "l";
     public static final String FAVORITES = "f";
     public static final String TRANSACTIONS = "t";
+    public static final String SALES = "s";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -50,6 +51,10 @@ public class ShopPage extends Page
         } else if (action.equals(TRANSACTIONS)) {
             int memberId = args.get(1, CShop.getMemberId());
             setContent(CShop.msgs.transactionsTitle(), new TransactionsPanel(memberId));
+
+        } else if (action.equals(SALES)) {
+            int memberId = args.get(1, CShop.getMemberId());
+//            setContent(CShop.msgs.salesTitle(), new SalesPanel(memberId));
 
         } else {
             byte type = (byte)args.get(0, Item.NOT_A_TYPE);

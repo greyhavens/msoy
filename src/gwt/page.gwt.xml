@@ -41,4 +41,8 @@
       <when-property-is name="user.agent" value="ie6"/>
     </any>
   </replace-with>
+
+  <generate-with class="com.threerings.gwt.rebind.MessagesLookupGenerator">
+    <when-type-assignable class="com.threerings.gwt.util.MessagesLookup" />
+  </generate-with>
 </module>
