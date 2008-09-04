@@ -53,7 +53,8 @@ public class ShopPage extends Page
             setContent(CShop.msgs.transactionsTitle(), new TransactionsPanel(memberId));
 
         } else if (action.equals(SALES)) {
-            int memberId = args.get(1, CShop.getMemberId());
+// Currently disabled until ready for prime-time.
+//            int memberId = args.get(1, CShop.getMemberId());
 //            setContent(CShop.msgs.salesTitle(), new SalesPanel(memberId));
 
         } else {
