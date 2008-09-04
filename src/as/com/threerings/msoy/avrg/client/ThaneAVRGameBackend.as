@@ -231,7 +231,14 @@ public class ThaneAVRGameBackend
     // -------------------- .game --------------------
     protected function game_getPlayerIds_v1 () :Array
     {
-        return BackendUtils.getPlayerIds(_gameObj);
+        var playerIds :Array = [];
+        for each (var pl :PlayerLocation in _gameObj.playerLocs) {
+            if (_controller.getPlayer(pl.playerId) != null) {
+                // fully subscribed player: kosher to include
+                playerIds.push(pl.playerId);
+            }
+        }
+        return playerIds;
     }
 
     protected function game_sendMessage_v1 (name :String, value :Object) :void
@@ -268,7 +275,7 @@ public class ThaneAVRGameBackend
     {
         var playerIds :Array = [];
         for each (var pl :PlayerLocation in _gameObj.playerLocs) {
-            if (pl.sceneId == roomId) {
+            if (pl.sceneId == roomId && _controller.getPlayer(pl.playerId) != null) {
                 playerIds.push(pl.playerId);
             }
         }
