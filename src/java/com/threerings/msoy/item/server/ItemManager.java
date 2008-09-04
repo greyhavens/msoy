@@ -35,6 +35,7 @@ import com.threerings.whirled.server.SceneRegistry;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -266,9 +267,9 @@ public class ItemManager
                     throw new InvocationException(ItemCodes.E_NO_SUCH_ITEM);
                 }
                 if (listing.item.creatorId != prize.creatorId) {
-                    log.warning("Refusing request to award prize due to owner mismatch " +
+                    log.warning("Refusing request to award prize due to creator mismatch " +
                                 "[prize=" + prize + ", item=" + listing.item + "].");
-                    throw new InvocationException(ItemCodes.E_ACCESS_DENIED);
+                    throw new InvocationException(MsoyGameCodes.E_PRIZE_CREATOR_MISMATCH);
                 }
                 log.info("Awarding prize " + listing + " to " + memberId + ".");
                 Item item = repo.insertClone(listing.item, memberId, 0, 0).toItem();

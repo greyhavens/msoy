@@ -20,4 +20,7 @@ public interface MsoyGameCodes extends GameCodes
 
     /** An error code reported when a game tries to award an unknown trophy. */
     public static final String E_UNKNOWN_TROPHY = "e.unknown_trophy";
+
+    /** Reports to prize awarders that they're doing things wrong. */
+    public static final String E_PRIZE_CREATOR_MISMATCH = "e.prize_creator_mismatch";
 }
