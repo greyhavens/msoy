@@ -64,8 +64,21 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
+    /** The method id used to dispatch <code>moveMob</code> requests. */
+    public static const MOVE_MOB :int = 4;
+
+    // from interface RoomService
+    public function moveMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :Location, arg5 :InvocationService_InvocationListener) :void
+    {
+        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, MOVE_MOB, [
+            Integer.valueOf(arg2), arg3, arg4, listener5
+        ]);
+    }
+
     /** The method id used to dispatch <code>purchaseRoom</code> requests. */
-    public static const PURCHASE_ROOM :int = 4;
+    public static const PURCHASE_ROOM :int = 5;
 
     // from interface RoomService
     public function purchaseRoom (arg1 :Client, arg2 :InvocationService_ResultListener) :void
@@ -78,7 +91,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>requestControl</code> requests. */
-    public static const REQUEST_CONTROL :int = 5;
+    public static const REQUEST_CONTROL :int = 6;
 
     // from interface RoomService
     public function requestControl (arg1 :Client, arg2 :ItemIdent) :void
@@ -89,7 +102,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>sendSpriteMessage</code> requests. */
-    public static const SEND_SPRITE_MESSAGE :int = 6;
+    public static const SEND_SPRITE_MESSAGE :int = 7;
 
     // from interface RoomService
     public function sendSpriteMessage (arg1 :Client, arg2 :ItemIdent, arg3 :String, arg4 :ByteArray, arg5 :Boolean) :void
@@ -100,7 +113,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>sendSpriteSignal</code> requests. */
-    public static const SEND_SPRITE_SIGNAL :int = 7;
+    public static const SEND_SPRITE_SIGNAL :int = 8;
 
     // from interface RoomService
     public function sendSpriteSignal (arg1 :Client, arg2 :String, arg3 :ByteArray) :void
@@ -111,7 +124,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setActorState</code> requests. */
-    public static const SET_ACTOR_STATE :int = 8;
+    public static const SET_ACTOR_STATE :int = 9;
 
     // from interface RoomService
     public function setActorState (arg1 :Client, arg2 :ItemIdent, arg3 :int, arg4 :String) :void
@@ -121,29 +134,16 @@ public class RoomMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>setProperty</code> requests. */
-    public static const SET_PROPERTY :int = 9;
-
-    // from interface RoomService
-    public function setProperty (arg1 :Client, arg2 :String, arg3 :Object, arg4 :Integer, arg5 :Boolean, arg6 :Boolean, arg7 :Object, arg8 :InvocationService_InvocationListener) :void
-    {
-        var listener8 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener8.listener = arg8;
-        sendRequest(arg1, SET_PROPERTY, [
-            arg2, arg3, arg4, langBoolean.valueOf(arg5), langBoolean.valueOf(arg6), arg7, listener8
-        ]);
-    }
-
     /** The method id used to dispatch <code>spawnMob</code> requests. */
     public static const SPAWN_MOB :int = 10;
 
     // from interface RoomService
-    public function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :InvocationService_InvocationListener) :void
+    public function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :Location, arg6 :InvocationService_InvocationListener) :void
     {
-        var listener5 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
-        listener5.listener = arg5;
+        var listener6 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener6.listener = arg6;
         sendRequest(arg1, SPAWN_MOB, [
-            Integer.valueOf(arg2), arg3, arg4, listener5
+            Integer.valueOf(arg2), arg3, arg4, arg5, listener6
         ]);
     }
 

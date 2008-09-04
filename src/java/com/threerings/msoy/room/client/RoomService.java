@@ -36,7 +36,7 @@ public interface RoomService extends InvocationService
      * @param arg the data
      * @param isAction if the message is a "action".
      */
-    public void sendSpriteMessage (Client client, ItemIdent item, String name, byte[] arg,
+    void sendSpriteMessage (Client client, ItemIdent item, String name, byte[] arg,
                                    boolean isAction);
 
     /**
@@ -86,8 +86,15 @@ public interface RoomService extends InvocationService
      *
      * @see MobInfo
      */
-    public void spawnMob (Client caller, int gameId, String mobId, String mobName,
-                          InvocationListener listener);
+    void spawnMob (
+        Client caller, int gameId, String mobId, String mobName, Location startLoc,
+        InvocationListener listener);
+
+    /**
+     * Requests a mob be moved to a new location.
+     */
+    void moveMob (
+        Client caller, int gameId, String mobId, Location newLoc, InvocationListener listener);
 
     /**
      * Requests the removal of a MOB from the current scene location.
@@ -95,14 +102,4 @@ public interface RoomService extends InvocationService
      * @see MobInfo
      */
     void despawnMob (Client caller, int gameId, String mobId, InvocationListener listener);
-
-    /**
-     * Set a property on the room.  The owner of the property (game id) is implied by the caller.
-     * @see RoomPropertiesObject
-     * @see PropertySpaceHelper#testProperty
-     * @see PropertySpaceHelper#applyPropertySet
-     */
-    void setProperty (Client caller, String propName, Object data, Integer key,
-        boolean isArray, boolean testAndSet, Object testValue,
-        InvocationService.InvocationListener listener);
 }

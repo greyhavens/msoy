@@ -598,8 +598,9 @@ public class RoomManager extends SpotSceneManager
     }
 
     // from RoomProvider
-    public void spawnMob (ClientObject caller, int gameId, String mobId, String mobName,
-                          final InvocationListener listener)
+    public void spawnMob (
+        ClientObject caller, int gameId, String mobId, String mobName, Location startLoc,
+        final InvocationListener listener)
         throws InvocationException
     {
         if (!WindowClientObject.isForGame(caller, gameId)) {
@@ -634,6 +635,14 @@ public class RoomManager extends SpotSceneManager
                 listener.requestFailed(reason);
             }
         });
+    }
+    
+    // from RoomProvider
+    public void moveMob (
+        ClientObject caller, int gameId, String mobId, Location newLoc, InvocationListener listener)
+        throws InvocationException
+    {
+        // TODO
     }
 
     // from RoomProvider

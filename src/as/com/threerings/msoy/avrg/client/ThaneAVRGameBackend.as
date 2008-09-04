@@ -320,7 +320,7 @@ public class ThaneAVRGameBackend
     }
 
     protected function spawnMob_v1 (
-        roomId :int, mobId :String, mobName :String, x :Number, y :Number, z :Number) :void
+        roomId :int, mobId :String, mobName :String, x :Number = 0, y :Number = 0, z :Number = 0) :void
     {
         if (StringUtil.isBlank(mobId)) {
             log.warning("Blank mobId in spawnMob");
@@ -337,9 +337,9 @@ public class ThaneAVRGameBackend
             return;
         }
 
-        // TODO: use x, y, z
-        roomObj.roomService.spawnMob(
-            _controller.getRoomClient(roomId), _controller.getGameId(), mobId, mobName,
+        var loc :MsoyLocation = new MsoyLocation(x, y, z);
+        roomObj.roomService.spawnMob(  
+            _controller.getRoomClient(roomId), _controller.getGameId(), mobId, mobName, loc,
             BackendUtils.loggingInvocationListener("spawnMob"));
     }
 
@@ -362,19 +362,19 @@ public class ThaneAVRGameBackend
 
     protected function getSpawnedMobs_v1 (roomId :int) :Array
     {
-        // Just call this to get a coherent warning
-        var roomObj :RoomObject = _controller.getRoom(roomId, "for getSpawnedMobs");
-        if (roomObj == null) {
-            return [];
-        }
-
         return _controller.getMobIds(roomId);
     }
 
     protected function moveMob_v1 (roomId :int, id :String, x :Number, y :Number, z :Number) :void
     {
-        var mobInfo :MobInfo = _controller.getMobInfo(roomId, id);
-        // TODO
+        var roomObj :RoomObject = _controller.getRoom(roomId, "for moveMob");
+        if (roomObj == null) {
+            return;
+        }
+
+        roomObj.roomService.moveMob(
+            _controller.getRoomClient(roomId), _controller.getGameId(), id, 
+            new MsoyLocation(x, y, z), BackendUtils.loggingConfirmListener("moveMob"));
     }
 
     protected function room_sendMessage_v1 (roomId :int, name :String, value :Object) :void

@@ -57,6 +57,12 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
             );
             return;
 
+        case RoomMarshaller.MOVE_MOB:
+            ((RoomProvider)provider).moveMob(
+                source, ((Integer)args[0]).intValue(), (String)args[1], (Location)args[2], (InvocationService.InvocationListener)args[3]
+            );
+            return;
+
         case RoomMarshaller.PURCHASE_ROOM:
             ((RoomProvider)provider).purchaseRoom(
                 source, (InvocationService.ResultListener)args[0]
@@ -87,15 +93,9 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
             );
             return;
 
-        case RoomMarshaller.SET_PROPERTY:
-            ((RoomProvider)provider).setProperty(
-                source, (String)args[0], args[1], (Integer)args[2], ((Boolean)args[3]).booleanValue(), ((Boolean)args[4]).booleanValue(), args[5], (InvocationService.InvocationListener)args[6]
-            );
-            return;
-
         case RoomMarshaller.SPAWN_MOB:
             ((RoomProvider)provider).spawnMob(
-                source, ((Integer)args[0]).intValue(), (String)args[1], (String)args[2], (InvocationService.InvocationListener)args[3]
+                source, ((Integer)args[0]).intValue(), (String)args[1], (String)args[2], (Location)args[3], (InvocationService.InvocationListener)args[4]
             );
             return;
 

@@ -58,8 +58,21 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
+    /** The method id used to dispatch {@link #moveMob} requests. */
+    public static final int MOVE_MOB = 4;
+
+    // from interface RoomService
+    public void moveMob (Client arg1, int arg2, String arg3, Location arg4, InvocationService.InvocationListener arg5)
+    {
+        ListenerMarshaller listener5 = new ListenerMarshaller();
+        listener5.listener = arg5;
+        sendRequest(arg1, MOVE_MOB, new Object[] {
+            Integer.valueOf(arg2), arg3, arg4, listener5
+        });
+    }
+
     /** The method id used to dispatch {@link #purchaseRoom} requests. */
-    public static final int PURCHASE_ROOM = 4;
+    public static final int PURCHASE_ROOM = 5;
 
     // from interface RoomService
     public void purchaseRoom (Client arg1, InvocationService.ResultListener arg2)
@@ -72,7 +85,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #requestControl} requests. */
-    public static final int REQUEST_CONTROL = 5;
+    public static final int REQUEST_CONTROL = 6;
 
     // from interface RoomService
     public void requestControl (Client arg1, ItemIdent arg2)
@@ -83,7 +96,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendSpriteMessage} requests. */
-    public static final int SEND_SPRITE_MESSAGE = 6;
+    public static final int SEND_SPRITE_MESSAGE = 7;
 
     // from interface RoomService
     public void sendSpriteMessage (Client arg1, ItemIdent arg2, String arg3, byte[] arg4, boolean arg5)
@@ -94,7 +107,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #sendSpriteSignal} requests. */
-    public static final int SEND_SPRITE_SIGNAL = 7;
+    public static final int SEND_SPRITE_SIGNAL = 8;
 
     // from interface RoomService
     public void sendSpriteSignal (Client arg1, String arg2, byte[] arg3)
@@ -105,7 +118,7 @@ public class RoomMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setActorState} requests. */
-    public static final int SET_ACTOR_STATE = 8;
+    public static final int SET_ACTOR_STATE = 9;
 
     // from interface RoomService
     public void setActorState (Client arg1, ItemIdent arg2, int arg3, String arg4)
@@ -115,29 +128,16 @@ public class RoomMarshaller extends InvocationMarshaller
         });
     }
 
-    /** The method id used to dispatch {@link #setProperty} requests. */
-    public static final int SET_PROPERTY = 9;
-
-    // from interface RoomService
-    public void setProperty (Client arg1, String arg2, Object arg3, Integer arg4, boolean arg5, boolean arg6, Object arg7, InvocationService.InvocationListener arg8)
-    {
-        ListenerMarshaller listener8 = new ListenerMarshaller();
-        listener8.listener = arg8;
-        sendRequest(arg1, SET_PROPERTY, new Object[] {
-            arg2, arg3, arg4, Boolean.valueOf(arg5), Boolean.valueOf(arg6), arg7, listener8
-        });
-    }
-
     /** The method id used to dispatch {@link #spawnMob} requests. */
     public static final int SPAWN_MOB = 10;
 
     // from interface RoomService
-    public void spawnMob (Client arg1, int arg2, String arg3, String arg4, InvocationService.InvocationListener arg5)
+    public void spawnMob (Client arg1, int arg2, String arg3, String arg4, Location arg5, InvocationService.InvocationListener arg6)
     {
-        ListenerMarshaller listener5 = new ListenerMarshaller();
-        listener5.listener = arg5;
+        ListenerMarshaller listener6 = new ListenerMarshaller();
+        listener6.listener = arg6;
         sendRequest(arg1, SPAWN_MOB, new Object[] {
-            Integer.valueOf(arg2), arg3, arg4, listener5
+            Integer.valueOf(arg2), arg3, arg4, arg5, listener6
         });
     }
 
