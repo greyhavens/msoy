@@ -251,10 +251,6 @@ public class GameGameRegistry
             _invoker.postUnit(new RepositoryUnit("reloadAVRGame") {
                 @Override
                 public void invokePersist () throws Exception {
-                    if (gameId == Game.TUTORIAL_GAME_ID) {
-                        log.warning("Asked to reload the tutorial. That makes no sense.");
-                        return;
-                    }
                     GameRecord gRec = _gameRepo.loadGameRecord(gameId);
                     if (gRec == null) {
                         throw new Exception("Failed to find GameRecord [gameId=" + gameId + "]");
@@ -369,13 +365,7 @@ public class GameGameRegistry
         _invoker.postUnit(new RepositoryUnit("activateAVRGame") {
             @Override
             public void invokePersist () throws Exception {
-                if (gameId == Game.TUTORIAL_GAME_ID) {
-                    _content = new GameContent();
-                    _content.game = MsoyGameRegistry.TUTORIAL_GAME;
-
-                } else {
-                    _content = assembleGameContent(gameId);
-                }
+                _content = assembleGameContent(gameId);
                 if (_content.game != null) {
                     _recs = _avrgRepo.getGameState(gameId);
                 }

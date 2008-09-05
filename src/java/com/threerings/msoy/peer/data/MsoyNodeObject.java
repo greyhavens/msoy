@@ -79,8 +79,7 @@ public class MsoyNodeObject extends CrowdNodeObject
         }
 
         // don't show developer versions of games
-        if (mloc.gameId != 0 && !Game.isDeveloperVersion(mloc.gameId) &&
-            mloc.gameId != Game.TUTORIAL_GAME_ID) {
+        if (mloc.gameId != 0 && !Game.isDeveloperVersion(mloc.gameId)) {
             MemberCard.InGame status = new MemberCard.InGame();
             status.gameId = mloc.gameId;
             return status;

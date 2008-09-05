@@ -75,7 +75,6 @@ public class SearchControls extends SmartTable
     // from interface ClickListener
     public void onClick (Widget sender)
     {
-        FlashClients.tutorialEvent("friendsSought");
         Link.go(Pages.PEOPLE, Args.compose("search", "0", getQuery()));
     }
 

@@ -39,7 +39,6 @@ public class MePage extends Page
 
         } else if (!CMe.isGuest()) {
             setContent(new MyWhirled());
-            FlashClients.tutorialEvent("myWhirledVisited");
 
         } else {
             Link.go(null, ""); // redirect to landing page

@@ -184,17 +184,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _buyPanel.clear();
         _buyPanel.setStyleName("Bought");
 
-        // report to the client that we generated a tutorial event
-        if (itype == Item.DECOR) {
-            FlashClients.tutorialEvent("decorBought");
-        } else if (itype == Item.FURNITURE) {
-            FlashClients.tutorialEvent("furniBought");
-        } else if (itype == Item.PET) {
-            FlashClients.tutorialEvent("petBought");
-        } else if (itype == Item.AVATAR) {
-            FlashClients.tutorialEvent("avatarBought");
-        }
-
         // change the buy button into a "you bought it" display
         String type = _dmsgs.getString("itemType" + itype);
         _buyPanel.add(MsoyUI.createLabel(CShop.msgs.boughtTitle(type), "Title"));

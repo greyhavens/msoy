@@ -179,8 +179,9 @@ public class QuestDelegate extends PlaceManagerDelegate
     }
 
     // from AVRGameProvider
-    public void completeQuest (final ClientObject caller, final String questId, final float payoutLevel,
-                               final InvocationService.ConfirmListener listener)
+    public void completeQuest (
+        final ClientObject caller, final String questId, final float payoutLevel,
+        final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final PlayerObject player = (PlayerObject) caller;
@@ -210,15 +211,10 @@ public class QuestDelegate extends PlaceManagerDelegate
         _totalTrackedSeconds -= playerSecs;
         final int playerMins = Math.round(playerSecs / 60f);
 
-        // the tutorial pays out no flow; normal games depend on accumulated play time
-        int payoutFactor;
-        if (_gameId == Game.TUTORIAL_GAME_ID) {
-            payoutFactor = 0;
-        } else {
-            // if we've yet to accumulate enough data for a calculation, guesstimate 5 mins
-            payoutFactor = (_content.detail.payoutFactor == 0) ?
-                (5 * flowPerHour/60) : _content.detail.payoutFactor;
-        }
+        // payout factor depends on accumulated play time -- if we've yet to accumulate
+        // enough data for a calculation, guesstimate 5 mins
+        int payoutFactor = (_content.detail.payoutFactor == 0) ?
+            ((5 * flowPerHour) / 60) : _content.detail.payoutFactor;
 
         // compute our quest payout; as a sanity check, cap it at one hour of payout
         final int rawPayout = Math.round(payoutFactor * payoutLevel);
@@ -229,24 +225,20 @@ public class QuestDelegate extends PlaceManagerDelegate
                         ", wanted=" + rawPayout + ", got=" + payout + "].");
         }
 
-        final int newFlowToNextRecalc;
-        if (_content.detail == null) { // this is null if we're in the tutorial
-            newFlowToNextRecalc = 0;
-        } else {
-            // note that we've used up some of our flow budget (this same adjustment will be
-            // recorded to the database in noteGamePlayed())
-            _content.detail.flowToNextRecalc -= payout;
+        // note that we've used up some of our flow budget (this same adjustment will be
+        // recorded to the database in noteGamePlayed())
+        _content.detail.flowToNextRecalc -= payout;
 
-            // if this payout consumed the remainder of our awardable flow, queue a factor recalc
-            if (_content.detail.flowToNextRecalc <= 0) {
-                newFlowToNextRecalc = flowPerHour * recalcMins + _content.detail.flowToNextRecalc;
-                // update our in memory record immediately so that we don't encounter funny
-                // business if another quest payout is done while we're writing this to the
-                // database
-                _content.detail.flowToNextRecalc = newFlowToNextRecalc;
-            } else {
-                newFlowToNextRecalc = 0;
-            }
+        final int newFlowToNextRecalc;
+        // if this payout consumed the remainder of our awardable flow, queue a factor recalc
+        if (_content.detail.flowToNextRecalc <= 0) {
+            newFlowToNextRecalc = flowPerHour * recalcMins + _content.detail.flowToNextRecalc;
+            // update our in memory record immediately so that we don't encounter funny
+            // business if another quest payout is done while we're writing this to the
+            // database
+            _content.detail.flowToNextRecalc = newFlowToNextRecalc;
+        } else {
+            newFlowToNextRecalc = 0;
         }
 
         _invoker.postUnit(new PersistingUnit("completeQuest", listener) {

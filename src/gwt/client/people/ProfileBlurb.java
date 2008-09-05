@@ -321,7 +321,6 @@ public class ProfileBlurb extends Blurb
                 if (!name.equals(CPeople.creds.name.toString())) {
                     CPeople.frame.dispatchEvent(new NameChangeEvent(name));
                 }
-                FlashClients.tutorialEvent("profileEdited");
             }
         });
     }

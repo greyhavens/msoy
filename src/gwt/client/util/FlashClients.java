@@ -161,14 +161,6 @@ public class FlashClients
     }
 
     /**
-     * Informs the client of a tutorial event.
-     */
-    public static void tutorialEvent (String eventName)
-    {
-        tutorialEventNative(findClient(), eventName);
-    }
-
-    /**
      * Returns the element that represents the Flash client.
      */
     public static native Element findClient () /*-{
@@ -255,16 +247,6 @@ public class FlashClients
         if (client) {
             // exception from JavaScript break GWT; don't let that happen
             try { client.useAvatar(avatarId, scale); } catch (e) {}
-        }
-    }-*/;
-
-    /**
-     * Does the actual <code>tutorialEvent()</code> call.
-     */
-    protected static native void tutorialEventNative (Element client, String eventName) /*-{
-        if (client) {
-            // exception from JavaScript break GWT; don't let that happen
-            try { client.tutorialEvent(eventName); } catch (e) {}
         }
     }-*/;
 

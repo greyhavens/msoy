@@ -73,20 +73,6 @@ public class MsoyGameRegistry
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
 
-    /** A predefined game record for our tutorial game. */
-    public static final Game TUTORIAL_GAME = new Game() {
-        /* implicit constructor */ {
-            this.gameId = TUTORIAL_GAME_ID;
-            this.name = "Whirled Tutorial";
-            this.config = "<avrg/>";
-            this.gameMedia = new DefaultItemMediaDesc(
-                MediaDesc.APPLICATION_SHOCKWAVE_FLASH, Item.GAME, "tutorial");
-            // TODO: if we end up using these for AVRG's we'll want hand-crafted stuffs here
-            this.thumbMedia = getDefaultThumbnailMediaFor(GAME);
-            this.furniMedia = getDefaultFurniMediaFor(GAME);
-        }
-    };
-
     @Inject public MsoyGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
         shutmgr.registerShutdowner(this);
@@ -141,12 +127,8 @@ public class MsoyGameRegistry
         // we're going to need the Game item to finish resolution
         _invoker.postUnit(new PersistingUnit("locateGame", listener) {
             public void invokePersistent () throws Exception {
-                if (gameId == Game.TUTORIAL_GAME_ID) {
-                    _game = TUTORIAL_GAME;
-                } else {
-                    GameRecord grec = _gameRepo.loadGameRecord(gameId);
-                    _game = (grec == null) ? null : (Game)grec.toItem();
-                }
+                GameRecord grec = _gameRepo.loadGameRecord(gameId);
+                _game = (grec == null) ? null : (Game)grec.toItem();
             }
             public void handleSuccess () {
                 if (_game == null) {
