@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.money.server.impl;
+package com.threerings.msoy.server.util;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

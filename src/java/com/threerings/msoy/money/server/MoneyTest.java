@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.money.server;
 
+import static com.google.inject.matcher.Matchers.annotatedWith;
+import static com.google.inject.matcher.Matchers.any;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -39,6 +41,8 @@ import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.persist.MemberActionLogRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
+import com.threerings.msoy.server.util.Retry;
+import com.threerings.msoy.server.util.RetryInterceptor;
 
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
@@ -80,8 +84,8 @@ public class MoneyTest
         final long start2 = System.currentTimeMillis() / 1000;
         _service.awardCoins(1, 0, 0, null, 101, "testExpirer - coins2", UserAction.PLAYED_GAME);
         final long end2 = System.currentTimeMillis() / 1000;
-        _expirer.setMaxAge(3000);
-        _expirer.start();
+        _service._expirer.setMaxAge(3000);
+        _service._expirer.start();
 
         final List<MoneyHistory> log = _service.getLog(1, null, null, 0, 30, true);
         checkMoneyHistory(log, new MoneyHistory(1, new Date(), Currency.BARS, 10.0, 
@@ -330,7 +334,7 @@ public class MoneyTest
                     bind(PersistenceContext.class).toInstance(
                         new PersistenceContext("msoy", connProv, null));
                     bind(MessageConnection.class).toInstance(new DelayedMessageConnection());
-                    install(new MoneyModule());
+                    bindInterceptor(any(), annotatedWith(Retry.class), new RetryInterceptor());
                 }
             });
             injector.injectMembers(this);
@@ -408,6 +412,5 @@ public class MoneyTest
     @Inject private MoneyLogic _service;
     @Inject private UserActionRepository _userActionRepo;
     @Inject private MsoyEventLogger _eventLog;
-    @Inject private MoneyHistoryExpirer _expirer;
     private boolean initialized = false;
 }

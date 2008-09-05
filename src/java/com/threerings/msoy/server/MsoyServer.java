@@ -41,7 +41,6 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
-import com.threerings.msoy.money.server.MoneyModule;
 import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.server.MsoySceneFactory;
@@ -101,8 +100,6 @@ public class MsoyServer extends MsoyBaseServer
                 new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, _conprov, _cacher));
             // Messaging dependencies
             bind(MessageConnection.class).toInstance(createAMQPConnection());
-            // money service
-            install(new MoneyModule());
         }
     }
 

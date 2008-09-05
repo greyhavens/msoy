@@ -30,6 +30,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
+import com.threerings.msoy.server.util.Retry;
 
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
@@ -45,7 +46,6 @@ import com.threerings.msoy.money.server.impl.EscrowCache;
 import com.threerings.msoy.money.server.impl.MoneyHistoryExpirer;
 import com.threerings.msoy.money.server.impl.MoneyMessageReceiver;
 import com.threerings.msoy.money.server.impl.PriceKey;
-import com.threerings.msoy.money.server.impl.Retry;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;

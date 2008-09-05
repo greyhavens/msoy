@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.server;
 
+import static com.google.inject.matcher.Matchers.annotatedWith;
+import static com.google.inject.matcher.Matchers.any;
 import static com.threerings.msoy.Log.log;
 
 import java.security.Security;
@@ -29,6 +31,8 @@ import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.server.util.Retry;
+import com.threerings.msoy.server.util.RetryInterceptor;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
@@ -64,6 +68,7 @@ public abstract class MsoyBaseServer extends WhirledServer
             // presents dependencies
             bind(ReportManager.class).to(QuietReportManager.class);
             // msoy dependencies
+            bindInterceptor(any(), annotatedWith(Retry.class), new RetryInterceptor());
             try {
                 bind(TransitionRepository.class).toInstance(new TransitionRepository(_conprov));
             } catch (PersistenceException e) {
