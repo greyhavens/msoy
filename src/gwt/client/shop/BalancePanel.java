@@ -69,13 +69,16 @@ public class BalancePanel extends PagedGrid<MoneyHistory>
             add(MsoyUI.createLabel(_format.format(entry.getTimestamp()), "Time"));
             add(MsoyUI.createLabel(_lookup.xlate(entry.getDescription()), "Description"));
 
-            add(MsoyUI.createLabel("42", "Debit"));
-            add(MsoyUI.createLabel(String.valueOf(entry.getAmount()), "Credit"));
-            //setText(0, entry.isSpent() ? 3 : 2, String.valueOf(entry.getAmount()), 1, "");*/
-            /*setText(0, 0, _format.format(entry.getTimestamp()), 1, "Time");
-            setText(0, 1, entry.getDescription(), 1, "Description");
-            setText(0, 
-            setText(0, entry.isSpent() ? 3 : 2, String.valueOf(entry.getAmount()), 1, "");*/
+            String debit, credit;
+            if (entry.isSpent()) {
+                debit = String.valueOf(entry.getAmount());
+                credit = " ";
+            } else {
+                debit = " ";
+                credit = String.valueOf(entry.getAmount());
+            }
+            add(MsoyUI.createLabel(debit, "Debit"));
+            add(MsoyUI.createLabel(credit, "Credit"));
         }
     }
 
