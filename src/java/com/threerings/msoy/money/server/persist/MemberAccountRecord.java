@@ -21,6 +21,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.TransactionType;
 
 /**
  * Domain model for the current status of a member's account, including the amount of each money
@@ -202,8 +203,7 @@ public class MemberAccountRecord extends PersistentRecord
         accBars += bars;
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
-            PersistentCurrency.BARS, bars, PersistentTransactionType.BARS_BOUGHT, false, 
-            description);
+            Currency.BARS, bars, TransactionType.BARS_BOUGHT, false, description);
     }
 
     /**
@@ -219,7 +219,7 @@ public class MemberAccountRecord extends PersistentRecord
         accCoins += coins;
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
-            PersistentCurrency.COINS, coins, PersistentTransactionType.AWARD, false, description, 
+            Currency.COINS, coins, TransactionType.AWARD, false, description, 
             // TODO: sort out the item/catalog discrepency
             null /*item*/);
     }
@@ -236,6 +236,7 @@ public class MemberAccountRecord extends PersistentRecord
         Currency currency, int amount, final String description,
         final CatalogIdent item, final boolean isSupport)
     {
+        // TODO: goddammit, the amount should be pre-adjusted TODO
         if (isSupport) {
             amount = Math.min(amount, getAmount(currency));
         }
@@ -253,8 +254,7 @@ public class MemberAccountRecord extends PersistentRecord
         }
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
-            PersistentCurrency.fromCurrency(currency), amount,
-            PersistentTransactionType.ITEM_PURCHASE, true, description, item);
+            currency, amount, TransactionType.ITEM_PURCHASE, true, description, item);
     }
 
     /**
@@ -292,8 +292,8 @@ public class MemberAccountRecord extends PersistentRecord
         }
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         final MemberAccountHistoryRecord history = new MemberAccountHistoryRecord(memberId, 
-            dateLastUpdated, PersistentCurrency.fromCurrency(paymentCurrency), amountPaid, 
-            PersistentTransactionType.CREATOR_PAYOUT, false, description, item);
+            dateLastUpdated, paymentCurrency, amountPaid, 
+            TransactionType.CREATOR_PAYOUT, false, description, item);
         history.referenceTxId = referenceTxId;
         return history;
     }

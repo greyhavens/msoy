@@ -34,6 +34,9 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.CountRecord;
 
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.TransactionType;
+
 /**
  * Interface for retrieving and persisting entities in the money service.
  *
@@ -103,9 +106,8 @@ public class MoneyRepository extends DepotRepository
     }
 
     public List<MemberAccountHistoryRecord> getHistory (
-        final int memberId, final PersistentCurrency currency,
-        final EnumSet<PersistentTransactionType> transactionTypes, final int start, final int count,
-        final boolean descending)
+        int memberId, Currency currency, EnumSet<TransactionType> transactionTypes,
+        int start, int count, boolean descending)
     {
         // select * from MemberAccountRecord where type = ? and transactionType in (?) 
         // and memberId=? order by timestamp
@@ -123,7 +125,7 @@ public class MoneyRepository extends DepotRepository
         return findAll(MemberAccountHistoryRecord.class, clauses);
     }
 
-    public int deleteOldHistoryRecords (final PersistentCurrency currency, final long maxAge)
+    public int deleteOldHistoryRecords (final Currency currency, long maxAge)
     {
         final long oldestTimestamp = System.currentTimeMillis() - maxAge;
         final Where where = new Where(new And(
@@ -136,7 +138,7 @@ public class MoneyRepository extends DepotRepository
                     MemberAccountHistoryRecord.class)
             {
                 @Override protected boolean testForEviction (
-                    final Serializable key, final MemberAccountHistoryRecord record)
+                    Serializable key, MemberAccountHistoryRecord record)
                 {
                     return record.timestamp.getTime() < oldestTimestamp &&
                         record.type == currency;
@@ -150,8 +152,8 @@ public class MoneyRepository extends DepotRepository
             new Where(new In(MemberAccountHistoryRecord.ID_C, ids)));
     }
 
-    public int getHistoryCount (final int memberId, final PersistentCurrency currency,
-                                final EnumSet<PersistentTransactionType> transactionTypes)
+    public int getHistoryCount (int memberId, Currency currency,
+                                EnumSet<TransactionType> transactionTypes)
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(MemberAccountHistoryRecord.class));
@@ -161,8 +163,8 @@ public class MoneyRepository extends DepotRepository
 
     /** Helper method to setup a query for a transaction history search. */
     protected void populateSearch (
-        List<QueryClause> clauses, int memberId, PersistentCurrency currency,
-        EnumSet<PersistentTransactionType> transactionTypes)
+        List<QueryClause> clauses, int memberId, Currency currency,
+        EnumSet<TransactionType> transactionTypes)
     {
         List<SQLOperator> where = Lists.newArrayList();
 
@@ -170,7 +172,9 @@ public class MoneyRepository extends DepotRepository
         if (currency != null) {
             where.add(new Equals(MemberAccountHistoryRecord.TYPE_C, currency));
         }
-        where.add(new In(MemberAccountHistoryRecord.TRANSACTION_TYPE_C, transactionTypes));
+        if (transactionTypes != null) {
+            where.add(new In(MemberAccountHistoryRecord.TRANSACTION_TYPE_C, transactionTypes));
+        }
 
         clauses.add(new Where(new And(where)));
     }

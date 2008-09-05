@@ -22,7 +22,9 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.TransactionType;
 
 /**
  * Domain object representing an entry in a member's account history. The account history keeps
@@ -145,7 +147,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     public Timestamp timestamp;
 
     /** Type of money modified. */
-    public PersistentCurrency type;
+    public Currency type;
 
     /** Amount debited/credited. */
     public double amount;
@@ -165,7 +167,7 @@ public class MemberAccountHistoryRecord extends PersistentRecord
 
     /** Type of transaction this history record was for. */
     @Column(defaultValue = "0")
-    public PersistentTransactionType transactionType;
+    public TransactionType transactionType;
     
     /** For certain types of transactions, the reference transaction this was in response to. */
     public int referenceTxId;
@@ -184,9 +186,8 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * @param itemType Type of the item.
      */
     public MemberAccountHistoryRecord (
-        int memberId, Timestamp timestamp, PersistentCurrency currency, double amount,
-        PersistentTransactionType transactionType, boolean spent, 
-        String description, CatalogIdent item)
+        int memberId, Timestamp timestamp, Currency currency, double amount,
+        TransactionType transactionType, boolean spent, String description, CatalogIdent item)
     {
         this.memberId = memberId;
         this.timestamp = timestamp;
@@ -214,8 +215,8 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * @param description Description of the transaction.
      */
     public MemberAccountHistoryRecord (
-        int memberId, Timestamp timestamp, PersistentCurrency currency, double amount,
-        PersistentTransactionType transactionType, boolean spent, String description)
+        int memberId, Timestamp timestamp, Currency currency, double amount,
+        TransactionType transactionType, boolean spent, String description)
     {
         this(memberId, timestamp, currency, amount, transactionType, spent, description, null);
     }
@@ -235,8 +236,8 @@ public class MemberAccountHistoryRecord extends PersistentRecord
 
     public MoneyHistory createMoneyHistory (final MoneyHistory referenceTx)
     {
-        return new MoneyHistory(memberId, timestamp, type.toCurrency(), amount, 
-            transactionType.toTransactionType(), spent, description, 
+        return new MoneyHistory(memberId, timestamp, type, amount, 
+            transactionType, spent, description,
             itemId == 0 ? null : new ItemIdent((byte)itemType, itemId), referenceTx);
     }
 }

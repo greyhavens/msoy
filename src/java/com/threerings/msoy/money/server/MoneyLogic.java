@@ -49,8 +49,6 @@ import com.threerings.msoy.money.server.impl.PriceKey;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
-import com.threerings.msoy.money.server.persist.PersistentCurrency;
-import com.threerings.msoy.money.server.persist.PersistentTransactionType;
 import com.threerings.msoy.money.server.persist.StaleDataException;
 
 /**
@@ -335,8 +333,8 @@ public class MoneyLogic
      * @return List of requested past transactions.
      */
     public List<MoneyHistory> getLog (
-        final int memberId, final Currency currency, final EnumSet<TransactionType> transactionTypes,
-        final int start, final int count, final boolean descending)
+        int memberId, Currency currency, EnumSet<TransactionType> transactionTypes,
+        int start, int count, boolean descending)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId),
             "Cannot retrieve money log for guests.");
@@ -344,8 +342,7 @@ public class MoneyLogic
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
 
         final List<MemberAccountHistoryRecord> records = _repo.getHistory(memberId, 
-            PersistentCurrency.fromCurrency(currency), toPersist(transactionTypes), start, count, 
-            descending);
+            currency, transactionTypes, start, count, descending);
         
         // Put all records into a map by their ID.  We'll use this map to get a set of history ID's
         // that we currently have.
@@ -387,10 +384,9 @@ public class MoneyLogic
      *      transactionTypes will be counted.
      */
     public int getHistoryCount (
-        final int memberId, final Currency currency, final EnumSet<TransactionType> transactionTypes)
+        int memberId, Currency currency, EnumSet<TransactionType> transactionTypes)
     {
-        return _repo.getHistoryCount(memberId, PersistentCurrency.fromCurrency(currency),
-            toPersist(transactionTypes));
+        return _repo.getHistoryCount(memberId, currency, transactionTypes);
     }
 
     /**
@@ -458,23 +454,6 @@ public class MoneyLogic
     protected static boolean isValid (CatalogIdent ident)
     {
         return (ident != null) && (ident.type != Item.NOT_A_TYPE) && (ident.catalogId != 0);
-    }
-
-    protected static EnumSet<PersistentTransactionType> toPersist (
-        final EnumSet<TransactionType> transactionTypes)
-    {
-        if (transactionTypes == null) {
-            return EnumSet.allOf(PersistentTransactionType.class);
-        } else {
-            EnumSet<PersistentTransactionType> persistTransactionTypes =
-                EnumSet.noneOf(PersistentTransactionType.class);
-            for (TransactionType transactionType : transactionTypes) {
-                persistTransactionTypes.add(
-                    PersistentTransactionType.fromTransactionType(transactionType));
-            }
-
-            return persistTransactionTypes;
-        }
     }
 
     protected void logInPanopticon (

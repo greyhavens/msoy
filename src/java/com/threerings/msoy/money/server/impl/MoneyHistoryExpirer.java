@@ -12,7 +12,6 @@ import com.samskivert.util.Logger;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
-import com.threerings.msoy.money.server.persist.PersistentCurrency;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
@@ -60,8 +59,7 @@ public class MoneyHistoryExpirer
                 @Override
                 public void expired ()
                 {
-                    final int count = _repo.deleteOldHistoryRecords(
-                        PersistentCurrency.fromCurrency(Currency.COINS), _maxAge);
+                    final int count = _repo.deleteOldHistoryRecords(Currency.COINS, _maxAge);
                     if (count > 0) {
                         log.info("Removed old member account history records for coins",
                             "count", count);
