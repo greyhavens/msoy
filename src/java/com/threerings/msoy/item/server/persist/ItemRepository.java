@@ -514,6 +514,10 @@ public abstract class ItemRepository<T extends ItemRecord>
         case CatalogQuery.SORT_BY_NEW_AND_HOT:
             addOrderByNewAndHot(obExprs, obOrders);
             break;
+        case CatalogQuery.SORT_BY_FAVORITES:
+            addOrderByFavorites(obExprs, obOrders);
+            addOrderByRating(obExprs, obOrders);
+            break;
         default:
             throw new IllegalArgumentException(
                 "Sort method not implemented [sortBy=" + sortBy + "]");
@@ -1103,6 +1107,12 @@ public abstract class ItemRepository<T extends ItemRecord>
                 new Arithmetic.Sub(new ValueExp(nowSeconds),
                     new EpochSeconds(getCatalogColumn(CatalogRecord.LISTED_DATE))),
                 _newAndHotDropoffSeconds)));
+        orders.add(OrderBy.Order.DESC);
+    }
+
+    protected void addOrderByFavorites (List<SQLExpression> exprs, List<OrderBy.Order> orders)
+    {
+        exprs.add(getCatalogColumn(CatalogRecord.FAVORITE_COUNT));
         orders.add(OrderBy.Order.DESC);
     }
 
