@@ -55,6 +55,6 @@ public class PriceKey
         return (_memberId == that._memberId) && ObjectUtil.equals(_ident, that._ident);
     }
     
-    private final int _memberId;
-    private final CatalogIdent _ident;
+    protected final int _memberId;
+    protected final CatalogIdent _ident;
 }

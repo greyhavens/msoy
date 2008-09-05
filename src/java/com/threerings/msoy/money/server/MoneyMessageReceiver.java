@@ -119,7 +119,7 @@ public class MoneyMessageReceiver
      * Listens for messages on the destination address in the server configuration specified by
      * configKey.  When messages come in, they will execute the given message listener.
      */
-    private ConnectedListener listen (final String configKey, final MessageListener listener)
+    protected ConnectedListener listen (final String configKey, final MessageListener listener)
     {
         final String barsBoughtStr = ServerConfig.config.getValue(
             configKey, "");
@@ -133,7 +133,7 @@ public class MoneyMessageReceiver
     /**
      * Message indicating a user purchased some number of bars.
      */
-    private static final class BarsBoughtMessage
+    protected static final class BarsBoughtMessage
     {
         public final int memberId;
         public final int numBars;
@@ -158,11 +158,11 @@ public class MoneyMessageReceiver
         }
     }
     
-    private static final Logger logger = Logger.getLogger(MoneyMessageReceiver.class);
+    protected static final Logger logger = Logger.getLogger(MoneyMessageReceiver.class);
     
-    private final MessageConnection _conn;
-    private final MoneyLogic _logic;
-    private final Invoker _invoker;
-    private ConnectedListener _barsBoughtListener;
-    private ConnectedListener _getBarCountListener;
+    protected final MessageConnection _conn;
+    protected final MoneyLogic _logic;
+    protected final Invoker _invoker;
+    protected ConnectedListener _barsBoughtListener;
+    protected ConnectedListener _getBarCountListener;
 }

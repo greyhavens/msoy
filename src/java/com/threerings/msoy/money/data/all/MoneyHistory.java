@@ -112,13 +112,13 @@ public class MoneyHistory
         return _referenceTx;
     }
 
-    private int _memberId;
-    private Date _timestamp;
-    private Currency _currency;
-    private TransactionType _transactionType;
-    private double _amount;
-    private boolean _spent;
-    private String _description;
-    private ItemIdent _item;
-    private MoneyHistory _referenceTx;
+    protected int _memberId;
+    protected Date _timestamp;
+    protected Currency _currency;
+    protected TransactionType _transactionType;
+    protected double _amount;
+    protected boolean _spent;
+    protected String _description;
+    protected ItemIdent _item;
+    protected MoneyHistory _referenceTx;
 }

@@ -66,11 +66,11 @@ public class MemberMoney implements IsSerializable
         return _accBling;
     }
 
-    private final long _accBars;
-    private final long _accCoins;
-    private final double _accBling;
-    private final int _bars;
-    private final int _coins;
-    private final double _bling;
-    private final int _memberId;
+    protected final long _accBars;
+    protected final long _accCoins;
+    protected final double _accBling;
+    protected final int _bars;
+    protected final int _coins;
+    protected final double _bling;
+    protected final int _memberId;
 }

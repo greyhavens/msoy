@@ -56,5 +56,5 @@ public class MoneyNodeActions
         protected int _accCoins;
     }
 
-    private final MsoyPeerManager _peerMan;
+    protected final MsoyPeerManager _peerMan;
 }

@@ -37,7 +37,7 @@ public class MoneyHistoryExpirer
         this(repo, sm, Executors.newSingleThreadScheduledExecutor(), invoker);
     }
     
-    private MoneyHistoryExpirer (
+    protected MoneyHistoryExpirer (
         final MoneyRepository repo, final ShutdownManager sm,
         final ScheduledExecutorService service, final Invoker invoker)
     {
@@ -120,11 +120,11 @@ public class MoneyHistoryExpirer
         stop();
     }
     
-    private static final Logger log = Logger.getLogger(MoneyHistoryExpirer.class);
+    protected static final Logger log = Logger.getLogger(MoneyHistoryExpirer.class);
     
-    private final MoneyRepository _repo;
-    private final Invoker _invoker;
-    private long _maxAge;
-    private long _period;
-    private Interval _interval;
+    protected final MoneyRepository _repo;
+    protected final Invoker _invoker;
+    protected long _maxAge;
+    protected long _period;
+    protected Interval _interval;
 }

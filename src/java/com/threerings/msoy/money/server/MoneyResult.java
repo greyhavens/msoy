@@ -83,10 +83,10 @@ public class MoneyResult
         return _affiliateTransaction;
     }
     
-    private final MemberMoney _newMemberMoney;
-    private final MemberMoney _newCreatorMoney;
-    private final MemberMoney _newAffiliateMoney;
-    private final MoneyHistory _memberTransaction;
-    private final MoneyHistory _creatorTransaction;
-    private final MoneyHistory _affiliateTransaction;
+    protected final MemberMoney _newMemberMoney;
+    protected final MemberMoney _newCreatorMoney;
+    protected final MemberMoney _newAffiliateMoney;
+    protected final MoneyHistory _memberTransaction;
+    protected final MoneyHistory _creatorTransaction;
+    protected final MoneyHistory _affiliateTransaction;
 }

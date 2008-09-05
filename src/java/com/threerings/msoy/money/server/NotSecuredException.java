@@ -36,6 +36,6 @@ public class NotSecuredException extends MoneyException
         return _item;
     }
 
-    private final int _memberId;
-    private final CatalogIdent _item;
+    protected final int _memberId;
+    protected final CatalogIdent _item;
 }

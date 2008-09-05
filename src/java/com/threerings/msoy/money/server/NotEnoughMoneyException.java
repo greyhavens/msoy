@@ -51,8 +51,8 @@ public class NotEnoughMoneyException extends MoneyException
         return _currency;
     }
 
-    private final int _moneyAvailable;
-    private final int _moneyRequested;
-    private final Currency _currency;
-    private final int _memberId;
+    protected final int _moneyAvailable;
+    protected final int _moneyRequested;
+    protected final Currency _currency;
+    protected final int _memberId;
 }

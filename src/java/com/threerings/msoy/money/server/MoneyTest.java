@@ -342,7 +342,7 @@ public class MoneyTest
         }
     }
 
-    private void checkMoneyHistory (
+    protected void checkMoneyHistory (
         final List<MoneyHistory> log, final MoneyHistory expected, final MoneyHistory reference,
         final long start, final long end, final boolean isPresent)
     {
@@ -384,7 +384,7 @@ public class MoneyTest
         }
     }
 
-    private MemberRecord makeMember (final boolean isSupport)
+    protected MemberRecord makeMember (final boolean isSupport)
     {
         final MemberRecord fakerec = new MemberRecord();
         fakerec.memberId = 1;
@@ -392,7 +392,7 @@ public class MoneyTest
         return fakerec;
     }
 
-    private void checkActionLogExists (
+    protected void checkActionLogExists (
         final int memberId, final int actionId, final String data, final long start, final long end)
         throws Exception
     {
@@ -408,8 +408,8 @@ public class MoneyTest
         assertTrue("No matching action log record found.", found);
     }
 
-    @Inject private MoneyLogic _service;
-    @Inject private UserActionRepository _userActionRepo;
-    @Inject private MsoyEventLogger _eventLog;
-    private boolean initialized = false;
+    @Inject protected MoneyLogic _service;
+    @Inject protected UserActionRepository _userActionRepo;
+    @Inject protected MsoyEventLogger _eventLog;
+    protected boolean initialized = false;
 }

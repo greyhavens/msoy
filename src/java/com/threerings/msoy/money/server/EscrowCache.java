@@ -75,8 +75,8 @@ public class EscrowCache
         _cache.remove(key);
     }
 
-    private static final int SECURED_PRICE_DURATION = 10;
-    private static final int MAX_SECURED_PRICES = 10000;
-    private static final String CACHE_NAME = "secured_prices";
-    private final Cache _cache;
+    protected static final int SECURED_PRICE_DURATION = 10;
+    protected static final int MAX_SECURED_PRICES = 10000;
+    protected static final String CACHE_NAME = "secured_prices";
+    protected final Cache _cache;
 }

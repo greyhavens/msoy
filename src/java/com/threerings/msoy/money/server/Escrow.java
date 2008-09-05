@@ -44,8 +44,8 @@ public class Escrow
         return _quote;
     }
 
-    private final int _creatorId;
-    private final int _affiliateId;
-    private final String _description;
-    private final PriceQuote _quote;
+    protected final int _creatorId;
+    protected final int _affiliateId;
+    protected final String _description;
+    protected final PriceQuote _quote;
 }
