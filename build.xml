@@ -423,7 +423,8 @@
     </copy>
   </target>
 
-  <target name="gbinds" description="Builds generators used to create the gclient">
+  <!-- builds generators used to create the GWT client -->
+  <target name="gbinds">
     <javac srcdir="${gsrc.dir}" destdir="${gbinds.dir}">
       <include name="**/rebind/*.java" />
       <classpath>
@@ -669,7 +670,7 @@
     <copy file="${deploy.dir}/MediaStub.swf" todir="pages/media"/>
   </target>
 
-  <target name="remixer" depends="asprepare" description="Rebuilds the Flash game client.">
+  <target name="remixer" depends="asprepare">
     <antcall target="ascompile"><param name="astype" value="remixer"/></antcall>
   </target>
 
@@ -1007,8 +1008,8 @@
   <!-- TODO: the tutorial target has been removed from flashapps until it compiles again after a 
        the API shuffle is done, and the tutorial code has been refactored -->
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,
-                                    videoviewer,decorviewer,remixer">
+  <target name="flashapps" depends="asprepare,mediastub,videoviewer,decorviewer,remixer" 
+          description="Rebuilds all of our Flash clients and applets.">
     <antcall target="ascompile"><param name="astype" value="world"/></antcall>
     <antcall target="ascompile"><param name="astype" value="game"/></antcall>
   </target>
