@@ -184,12 +184,12 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * @param itemType Type of the item.
      */
     public MemberAccountHistoryRecord (
-        final int memberId, final Date timestamp, final PersistentCurrency currency,
-        final double amount, final PersistentTransactionType transactionType, final boolean spent, 
-        final String description, final CatalogIdent item)
+        int memberId, Timestamp timestamp, PersistentCurrency currency, double amount,
+        PersistentTransactionType transactionType, boolean spent, 
+        String description, CatalogIdent item)
     {
         this.memberId = memberId;
-        this.timestamp = new Timestamp(timestamp.getTime());
+        this.timestamp = timestamp;
         this.type = currency;
         this.amount = amount;
         this.spent = spent;
@@ -214,9 +214,8 @@ public class MemberAccountHistoryRecord extends PersistentRecord
      * @param description Description of the transaction.
      */
     public MemberAccountHistoryRecord (
-        final int memberId, final Date timestamp, final PersistentCurrency currency,
-        final double amount, final PersistentTransactionType transactionType, final boolean spent, 
-        final String description)
+        int memberId, Timestamp timestamp, PersistentCurrency currency, double amount,
+        PersistentTransactionType transactionType, boolean spent, String description)
     {
         this(memberId, timestamp, currency, amount, transactionType, spent, description, null);
     }
