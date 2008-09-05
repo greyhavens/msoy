@@ -2,6 +2,7 @@
   <inherits name="com.google.gwt.xml.XML"/>
   <inherits name="item"/>
 
+  <source path="com/samskivert/jdbc/depot"/> <!-- for ByteEnum -->
   <source path="com/threerings/msoy/comment/gwt"/>
   <source path="com/threerings/msoy/stuff/gwt"/>
   <source path="com/threerings/msoy/game/data/all"/>
