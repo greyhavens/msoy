@@ -79,13 +79,6 @@ public class AVRGamePanel extends UIComponent
         setActualSize(unscaledWidth, unscaledHeight);
     }
 
-    public function tutorialEvent (eventName :String) :void
-    {
-        if (_ctrl.backend) {
-            _ctrl.backend.tutorialEvent(eventName);
-        }
-    }
-
     // We want to give the AVRG control over what pixels it considers 'hits' and which
     // it doesn't -- thus we forward the request to the backend, where it is in turn sent
     // on to user code. This itself, however, is not enough to handle mouse clicks well;

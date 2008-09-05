@@ -46,7 +46,6 @@ public class MemberDirector extends BasicDirector
              },
              function () :void {
                  _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, "m.friend_invited");
-                 _wctx.getGameDirector().tutorialEvent("friendInvited");
              }));
     }
 

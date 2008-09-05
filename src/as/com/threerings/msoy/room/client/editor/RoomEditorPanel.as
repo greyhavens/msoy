@@ -75,7 +75,6 @@ public class RoomEditorPanel extends FloatingPanel
     {
         super.close();
         _controller.actionEditorClosed();
-        _wctx.getGameDirector().tutorialEvent("editorClosed");
     }
 
     /** Updates object data displayed on the editing panel. */

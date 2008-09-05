@@ -60,11 +60,6 @@ public class AVRGameController extends PlaceController
     {
         _wctx = wctx;
 
-        _wctx.getClient().addEventListener(
-            MsoyClient.MINI_WILL_CHANGE, function (ev :ValueEvent) :void {
-                miniWillChange(ev.value);
-        });
-
         // willEnterPlace() may have already run
         maybeStartup();
     }
@@ -90,8 +85,6 @@ public class AVRGameController extends PlaceController
     override public function didLeavePlace (plobj :PlaceObject) :void
     {
         _wctx.getWorldController().setAVRGamePanel(null);
-
-        _wctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
         gameAvailable(0);
 
@@ -125,20 +118,7 @@ public class AVRGameController extends PlaceController
     // called by the Panel when it's finished loading the AVRG media
     public function gameIsReady () :void
     {
-        // if we played a lobbied game recently, tell the tutorial code
-        if (_wctx.getGameDirector().popMostRecentLobbyGame() != 0) {
-            tutorialEvent("gamePlayed");
-        }
-
         gameAvailable(getGameId());
-    }
-
-    public function tutorialEvent (eventName :String) :void
-    {
-        // TODO: are we ready to drop all this tutorial scaffolding?
-//        if (_panel) {
-//            _panel.tutorialEvent(eventName);
-//        }
     }
 
     public function get backend () :AVRGameBackend
@@ -220,13 +200,6 @@ public class AVRGameController extends PlaceController
     override protected function setPlaceView () :void
     {
         _wctx.getWorldController().setAVRGamePanel(getPlaceView() as AVRGamePanel);
-    }
-
-    protected function miniWillChange (mini :Boolean) :void
-    {
-        if (_wctx.getGameDirector().isPlayingTutorial()) {
-            tutorialEvent(mini ? "willMinimize" : "willUnminimize");
-        }
     }
 
     protected function gameAvailable (gameId :int) :void

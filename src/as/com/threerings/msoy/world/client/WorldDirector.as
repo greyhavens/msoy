@@ -87,9 +87,6 @@ public class WorldDirector extends BasicDirector
             function (cause :String) :void {
                 log.info("Reporting failure [reason=" + cause + "].");
                 _wctx.displayFeedback(null, cause);
-            },
-            function () :void {
-                _wctx.getGameDirector().tutorialEvent("avatarInstalled");
             }));
     }
 

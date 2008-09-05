@@ -129,15 +129,6 @@ public class RoomObjectView extends RoomView
         updateEditingOverlay();
     }
 
-    override public function moveFinished (sprite :OccupantSprite) :void
-    {
-        if (sprite.getOid() == _ctx.getMemberObject().getOid()) {
-            _ctx.getGameDirector().tutorialEvent("playerMoved");
-        }
-
-        super.moveFinished(sprite);
-    }
-
     /**
      * Update the 'my' user's specified avatar's scale, non-permanently.  This is called via the
      * avatar viewer, so that scale changes they make are instantly viewable in the world.
@@ -375,9 +366,6 @@ public class RoomObjectView extends RoomView
     {
         if (msg is UserMessage && ChatChannel.typeIsForRoom(msg.localtype, _scene.getId())) {
             var umsg :UserMessage = (msg as UserMessage);
-            if (umsg.speaker.equals(_ctx.getMemberObject().memberName)) {
-                _ctx.getGameDirector().tutorialEvent("playerSpoke");
-            }
             var speaker :OccupantSprite = getOccupantByName(umsg.getSpeakerDisplayName());
             var avatar :MemberSprite = (speaker as MemberSprite);
             if (avatar != null) {

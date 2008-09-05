@@ -18,9 +18,6 @@ public class Game extends Item
     /** Identifies our lobby table background media. */
     public static const TABLE_MEDIA :String = "table";
 
-    /** We reserve a very unlikely gameId for the tutorial. */
-    public static const TUTORIAL_GAME_ID :int = int.MAX_VALUE;
-
     /** Value of groupId when there is no associated group */
     public static const NO_GROUP :int = 0;
 

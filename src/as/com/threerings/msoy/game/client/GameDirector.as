@@ -271,29 +271,6 @@ public class GameDirector extends BasicDirector
     }
 
     /**
-     * Let the caller know if the tutorial is our currently active AVRG.
-     */
-    public function isPlayingTutorial () :Boolean
-    {
-        return _liaison != null && _liaison is AVRGameLiaison &&
-            _liaison.gameId == Game.TUTORIAL_GAME_ID;
-    }
-
-    /**
-     * If we're in the tutorial, forward tutorial-specific events to the relevant game object.
-     * This should allow us to write the tutorial as an otherwise entirely external AVRG.
-     */
-    public function tutorialEvent (eventName :String) :void
-    {
-        if (isPlayingTutorial()) {
-            var ctrl :AVRGameController = AVRGameLiaison(_liaison).getAVRGameController();
-            if (ctrl != null) {
-                ctrl.tutorialEvent(eventName);
-            }
-        }
-    }
-
-    /**
      * Called by the GameLiaison when it has shutdown and gone away.
      */
     public function liaisonCleared (liaison :GameLiaison) : void
@@ -307,26 +284,6 @@ public class GameDirector extends BasicDirector
                 checkMemberAVRGame();
             }
         }
-    }
-
-    /**
-     * Remember the most recent lobbied game we play. Currently this only used to transmit
-     * a tutorial event whenever the AVRG reconnects, but we may use it in a more general
-     * AVRG setting later.
-     */
-    public function setMostRecentLobbyGame (game :int) :void
-    {
-        _mostRecentLobbyGame = game;
-    }
-
-    /**
-     * Fetch (and destroy) the ID of the most recently played lobby game, or 0 for none.
-     */
-    public function popMostRecentLobbyGame () :int
-    {
-        var game :int = _mostRecentLobbyGame;
-        _mostRecentLobbyGame = 0;
-        return game;
     }
 
     // from BasicDirector
@@ -360,8 +317,5 @@ public class GameDirector extends BasicDirector
 
     /** Handles our connection to the game server. */
     protected var _liaison :GameLiaison;
-
-    /** Remember the ID of the most recent lobbied game we played, for the tutorial. */
-    protected var _mostRecentLobbyGame :int;
 }
 }

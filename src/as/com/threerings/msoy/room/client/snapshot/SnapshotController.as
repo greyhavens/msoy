@@ -54,7 +54,6 @@ public class SnapshotController extends Controller
     public function doUpload (panel :SnapshotPanel) :void
     {
         //todo: save the ordinary file here... depends on 
-        _ctx.getGameDirector().tutorialEvent("snapshotTaken");
     }
     
     public function uploadThumbnail (data:ByteArray) :void

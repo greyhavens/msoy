@@ -84,11 +84,6 @@ public class AVRGameBackend extends ControlBackend
         MethodQueue.callLater(callUserCode, [ "panelResized_v1" ]);
     }
 
-    public function tutorialEvent (eventName :String) :void
-    {
-        callUserCode("messageReceived_v1", "tutorialEvent", eventName);
-    }
-
     public function requestMobSprite (id :String) :DisplayObject
     {
         return callUserCode("requestMobSprite_v1", id) as DisplayObject;

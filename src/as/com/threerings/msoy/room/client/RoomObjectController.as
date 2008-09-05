@@ -592,7 +592,6 @@ public class RoomObjectController extends RoomController
                     var newSceneModel :MsoySceneModel = (newScene.getSceneModel() as MsoySceneModel);
                     newSceneModel.decor = item as Decor;
                     applyUpdate(new SceneUpdateAction(_wdctx, _scene, newScene));
-                    _wdctx.getGameDirector().tutorialEvent("decorInstalled");
 
                 } else if (item.getType() == Item.AUDIO) {
                     newScene = _scene.clone() as MsoyScene;
@@ -622,7 +621,6 @@ public class RoomObjectController extends RoomController
                         furni.actionData = String(game.gameId) + ":" + game.name;
                     }
                     applyUpdate(new FurniUpdateAction(_wdctx, null, furni));
-                    _wdctx.getGameDirector().tutorialEvent("furniInstalled");
                 }
             };
 

@@ -174,9 +174,6 @@ public class LobbyGameLiaison extends GameLiaison
             _lobby.shutdown();
         }
 
-        // make a note what game we're playing, for posterity
-        _wctx.getGameDirector().setMostRecentLobbyGame(_gameId);
-
         // also leave our current world location
         if (!_wctx.getLocationDirector().leavePlace()) {
             log.warning("Uh oh, unable to leave room before entering game " +

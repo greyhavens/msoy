@@ -80,7 +80,7 @@ public class MemberSprite extends ActorSprite
             _tableIcon.shutdown();
             _tableIcon = null;
         }
-        if (_tableIcon == null && newSummary != null && newSummary.gameId != Game.TUTORIAL_GAME_ID) {
+        if (_tableIcon == null && newSummary != null) {
             _tableIcon = new TableIcon(this, newSummary);
         }
     }

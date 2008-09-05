@@ -62,24 +62,10 @@ import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 import com.threerings.msoy.room.client.RoomObjectView;
 
 /**
- * An event dispatched for tutorial-specific purposes.
- * 
- * @eventType com.threerings.msoy.client.WorldClient.TUTORIAL_EVENT
- */
-[Event(name="tutorial", type="com.threerings.util.ValueEvent")]
-
-/**
  * Handles the main services for the world and game clients.
  */
 public class WorldClient extends MsoyClient
 {
-    /**
-     * An event dispatched for tutorial-specific purposes.
-     *
-     * @eventType tutorial
-     */
-    public static const TUTORIAL_EVENT :String = "tutorial";
-
     public function WorldClient (stage :Stage)
     {
         super(stage);
@@ -295,11 +281,6 @@ public class WorldClient extends MsoyClient
         }
     }
 
-    protected function externalTutorialEvent (eventName :String) :void
-    {
-        _wctx.getGameDirector().tutorialEvent(eventName);
-    }
-
     /**
      * Exposed to JavaScript so that it may order us to open chat channels.
      */
@@ -338,7 +319,6 @@ public class WorldClient extends MsoyClient
         ExternalInterface.addCallback("updateAvatarScale", externalUpdateAvatarScale);
         ExternalInterface.addCallback("useItem", externalUseItem);
         ExternalInterface.addCallback("clearItem", externalClearItem);
-        ExternalInterface.addCallback("tutorialEvent", externalTutorialEvent);
         ExternalInterface.addCallback("openChannel", externalOpenChannel);
     }
 
