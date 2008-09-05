@@ -547,7 +547,7 @@ public class AVRGameBackend extends ControlBackend
 
     // TODO: MobControl
     protected function setMobDecoration_v1 (
-        mobId :String, decoration :DisplayObject, add :Boolean) :Boolean
+        mobId :String, decoration :DisplayObject, add :Boolean) :void
     {
         if (isPlaying()) {
             var sprite :MobSprite = getMobSprite(mobId);
@@ -557,10 +557,8 @@ public class AVRGameBackend extends ControlBackend
                 } else {
                     sprite.removeDecoration(decoration);
                 }
-                return true;
             }
         }
-        return false;
     }
 
     // TODO: MobControl
