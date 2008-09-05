@@ -54,11 +54,12 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 
 import com.threerings.msoy.data.MemberObject;
-
 import com.threerings.msoy.data.all.PeerEntry;
 import com.threerings.msoy.data.all.MemberName;
 
-public class PartyListPanel extends TitleWindow
+import com.threerings.msoy.ui.FlyingPanel;
+
+public class PartyListPanel extends FlyingPanel
     implements SetListener, AttributeChangeListener
 {
     /** The width of the popup, defined by the width of the header image. */
@@ -66,23 +67,10 @@ public class PartyListPanel extends TitleWindow
 
     public function PartyListPanel (ctx :WorldContext) :void
     {
-        _ctx = ctx;
-        _ctx.getClient().addEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
+        super(ctx);
+        _wctx = ctx;
 
-        addEventListener(CloseEvent.CLOSE, _ctx.getWorldController().handlePopPartyList);
-    }
-
-    public function show () :void
-    {
-        PopUpManager.addPopUp(this, _ctx.getTopPanel(), false);
-        systemManager.addEventListener(Event.RESIZE, stageResized);
-    }
-
-    public function shutdown () :void
-    {
-        systemManager.removeEventListener(Event.RESIZE, stageResized);
-        _ctx.getMemberObject().removeListener(this);
-        PopUpManager.removePopUp(this);
+        addEventListener(CloseEvent.CLOSE, _wctx.getWorldController().handlePopPartyList);
     }
 
     public function memberObjectUpdated (memObj :MemberObject) :void
@@ -131,16 +119,11 @@ public class PartyListPanel extends TitleWindow
     {
         super.createChildren();
 
-        // Panel provides no way to customize this, other than overriding the class and blowing
-        // away what it set these to.
-        mx_internal::closeButton.explicitWidth = 13;
-        mx_internal::closeButton.explicitHeight = 14;
-
         // styles and positioning
         styleName = "partyPopup";
         showCloseButton = true;
         width = POPUP_WIDTH;
-        var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
+        var placeBounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds(); 
         height = placeBounds.height - PADDING * 2;
         x = placeBounds.x + placeBounds.width - width - PADDING;
         y = placeBounds.y + PADDING;
@@ -179,15 +162,7 @@ public class PartyListPanel extends TitleWindow
         addChild(box);
     
         // initialize with currently online friends
-        init(_ctx.getMemberObject());
-    }
-
-    override protected function layoutChrome (unscaledWidth :Number, unscaledHeight :Number) :void
-    {
-        super.layoutChrome(unscaledWidth, unscaledHeight);
-
-        mx_internal::closeButton.x = POPUP_WIDTH - mx_internal::closeButton.width - 5;
-        mx_internal::closeButton.y = 5;
+        init(_wctx.getMemberObject());
     }
 
     protected function init (memObj :MemberObject) :void
@@ -232,7 +207,7 @@ public class PartyListPanel extends TitleWindow
 
     protected function addFriend (friend :PeerEntry) :void
     {
-        var data :Array = [ _ctx, friend ];
+        var data :Array = [ _wctx, friend ];
         _originals[friend.getMemberId()] = data;
         _friends.addItem(data);
     }
@@ -246,39 +221,14 @@ public class PartyListPanel extends TitleWindow
         delete _originals[friend.getMemberId()];
     }
 
-    protected function stageResized (...ignored) :void
-    {
-        var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds(); 
-        // fix the height
-        height = placeBounds.height - PADDING * 2;
-        // fit the popup within the new bounds, minux padding.
-        placeBounds.x += PADDING;
-        placeBounds.y += PADDING;
-        placeBounds.width -= PADDING * 2;
-        placeBounds.height -= PADDING * 2;
-        PopUpUtil.fitInRect(this, placeBounds);
-    }
-
-    protected function miniWillChange (event :ValueEvent) :void
-    {
-        if (event.value) {
-            _currentX = x;
-        } else {
-            x = _currentX;
-        }
-    }
-
-    private static const log :Log = Log.getLog(PartyListPanel);
-
     protected static const PADDING :int = 10;
 
     /** Defined in Java as com.threerings.msoy.person.data.Profile.MAX_STATUS_LENGTH */
     protected static const PROFILE_MAX_STATUS_LENGTH :int = 100;
 
-    protected var _ctx :WorldContext;
+    protected var _cwtx :WorldContext;
     protected var _friendsList :List;
     protected var _friends :ArrayCollection = new ArrayCollection();
     protected var _originals :Dictionary = new Dictionary();
-    protected var _currentX :int = 0;
 }
 }
