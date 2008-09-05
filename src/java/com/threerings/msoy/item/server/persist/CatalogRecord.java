@@ -30,7 +30,10 @@ import com.threerings.msoy.item.gwt.ListingCard;
  * Represents a catalog listing of an item.
  */
 @Entity(indices={
-    @Index(name="listedItemIndex", fields={ CatalogRecord.LISTED_ITEM_ID } )
+    @Index(name="listedItemIndex", fields={ CatalogRecord.LISTED_ITEM_ID } ),
+    @Index(name="listDateIndex", fields={ CatalogRecord.LISTED_DATE } ),
+    @Index(name="purchasesIndex", fields={ CatalogRecord.PURCHASES } ),
+    @Index(name="faveCountIndex", fields={ CatalogRecord.FAVORITE_COUNT } )
 })
 public abstract class CatalogRecord extends PersistentRecord
     implements Streamable
@@ -70,7 +73,7 @@ public abstract class CatalogRecord extends PersistentRecord
     public static final String FAVORITE_COUNT = "favoriteCount";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 9;
+    public static final int SCHEMA_VERSION = 10;
 
     /** Converts this record to a runtime record. See {@link #toListingCard} for caveats.  */
     public static final Function<CatalogRecord,ListingCard> TO_CARD =
