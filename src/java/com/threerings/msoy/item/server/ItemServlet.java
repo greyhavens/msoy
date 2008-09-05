@@ -120,6 +120,11 @@ public class ItemServlet extends MsoyServiceServlet
     public float rateItem (ItemIdent iident, byte rating, boolean isFirstRating)
         throws ServiceException
     {
+        // Ensure the rating is within bounds
+        if (rating < 1 || rating > 5) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
         MemberRecord memrec = requireAuthedUser();
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
 
