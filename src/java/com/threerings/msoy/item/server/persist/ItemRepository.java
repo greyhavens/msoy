@@ -796,14 +796,7 @@ public abstract class ItemRepository<T extends ItemRecord>
             delete(getItemClass(), itemId);
 
             // delete rating records for this item (and invalidate the cache properly)
-            deleteAll(getRatingClass(),
-                      new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId),
-                      new CacheInvalidator.TraverseWithFilter<RatingRecord>(getRatingClass()) {
-                          @Override
-                        public boolean testForEviction (Serializable key, RatingRecord record) {
-                              return record.itemId == itemId;
-                          }
-                      });
+            deleteAll(getRatingClass(), new Where(getRatingColumn(RatingRecord.ITEM_ID), itemId));
 
             // delete tag records relating to this item
             _tagRepo.deleteTags(itemId);

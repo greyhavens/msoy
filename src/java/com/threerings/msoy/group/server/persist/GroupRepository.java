@@ -396,8 +396,8 @@ public class GroupRepository extends DepotRepository
      */
     public boolean leaveGroup (int groupId, int memberId)
     {
-        Key<GroupMembershipRecord> key = GroupMembershipRecord.getKey(memberId, groupId);
-        int rows = deleteAll(GroupMembershipRecord.class, key, key);
+        int rows = delete(GroupMembershipRecord.class,
+                          GroupMembershipRecord.getKey(memberId, groupId));
         updateMemberCount(groupId);
         _eventLog.groupLeft(memberId, groupId);
         return rows > 0;

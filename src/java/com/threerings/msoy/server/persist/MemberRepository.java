@@ -29,7 +29,6 @@ import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.jdbc.depot.EntityMigration;
-import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -1036,12 +1035,8 @@ public class MemberRepository extends DepotRepository
     {
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, memberId));
         _ctx.cacheInvalidate(new SimpleCacheKey(FRIENDS_CACHE_ID, otherId));
-
-        Key<FriendRecord> key = FriendRecord.getKey(memberId, otherId);
-        deleteAll(FriendRecord.class, key, key);
-
-        key = FriendRecord.getKey(otherId, memberId);
-        deleteAll(FriendRecord.class, key, key);
+        delete(FriendRecord.class, FriendRecord.getKey(memberId, otherId));
+        delete(FriendRecord.class, FriendRecord.getKey(otherId, memberId));
     }
 
     /**

@@ -108,10 +108,9 @@ public class UserActionRepository extends DepotRepository
             }
         }
 
-        // clear their log tables -- no cache invalidation needed because these records do not
-        // define a primary key at all
+        // clear their log tables
         deleteAll(MemberActionLogRecord.class,
-                  new Where(MemberActionLogRecord.MEMBER_ID_C, memberId), null);
+                  new Where(MemberActionLogRecord.MEMBER_ID_C, memberId));
 
         // finally compute a new humanity assessment for this member (TODO: load up action summary
         // counts, pass that data in as well)

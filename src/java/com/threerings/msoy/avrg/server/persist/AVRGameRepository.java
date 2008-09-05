@@ -143,7 +143,7 @@ public class AVRGameRepository extends DepotRepository
     public void deleteQuestLogRecords (int gameId)
     {
         gameId = Math.abs(gameId); // how to handle playing the original?
-        deleteAll(QuestLogRecord.class, new Where(QuestLogRecord.GAME_ID_C, gameId), null);
+        deleteAll(QuestLogRecord.class, new Where(QuestLogRecord.GAME_ID_C, gameId));
     }
 
     @Override

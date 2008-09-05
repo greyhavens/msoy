@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.server.persist;
 
-import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -14,7 +13,6 @@ import java.util.Set;
 
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
-import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Modifier;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -268,21 +266,11 @@ public abstract class TagRepository extends DepotRepository
     public void deleteTags (final int targetId)
     {
         // invalidate and delete tag records for this target
-        deleteAll(getTagClass(), new Where(getTagColumn(TagRecord.TARGET_ID), targetId),
-                  new CacheInvalidator.TraverseWithFilter<TagRecord>(getTagClass()) {
-                      public boolean testForEviction (Serializable key, TagRecord record) {
-                          return record != null && record.targetId == targetId;
-                      }
-                  });
+        deleteAll(getTagClass(), new Where(getTagColumn(TagRecord.TARGET_ID), targetId));
 
         // invalidate and delete tag history records for this target
         deleteAll(getTagHistoryClass(),
-                  new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId),
-                  new CacheInvalidator.TraverseWithFilter<TagHistoryRecord>(getTagHistoryClass()) {
-                      public boolean testForEviction (Serializable key, TagHistoryRecord record) {
-                          return record != null && record.targetId == targetId;
-                      }
-                  });
+                  new Where(getTagHistoryColumn(TagHistoryRecord.TARGET_ID), targetId));
     }
 
     protected ColumnExp getTagColumn (String cname)

@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.person.server.persist;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
@@ -14,7 +13,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.IntSet;
 
-import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -192,41 +190,13 @@ public class FeedRepository extends DepotRepository
     {
         final Timestamp cutoff = new Timestamp(System.currentTimeMillis() - FEED_EXPIRATION_PERIOD);
         deleteAll(GlobalFeedMessageRecord.class,
-                new Where(new Conditionals.LessThan(GlobalFeedMessageRecord.POSTED_C, cutoff)),
-                new CacheInvalidator.TraverseWithFilter<GlobalFeedMessageRecord>(
-                    GlobalFeedMessageRecord.class) {
-                    public boolean testForEviction (
-                        Serializable key, GlobalFeedMessageRecord record) {
-                        return (record != null) && record.posted.before(cutoff);
-                    }
-                });
+                  new Where(new Conditionals.LessThan(GlobalFeedMessageRecord.POSTED_C, cutoff)));
         deleteAll(FriendFeedMessageRecord.class,
-                new Where(new Conditionals.LessThan(FriendFeedMessageRecord.POSTED_C, cutoff)),
-                new CacheInvalidator.TraverseWithFilter<FriendFeedMessageRecord>(
-                    FriendFeedMessageRecord.class) {
-                    public boolean testForEviction (
-                        Serializable key, FriendFeedMessageRecord record) {
-                        return (record != null) && record.posted.before(cutoff);
-                    }
-                });
+                  new Where(new Conditionals.LessThan(FriendFeedMessageRecord.POSTED_C, cutoff)));
         deleteAll(GroupFeedMessageRecord.class,
-                new Where(new Conditionals.LessThan(GroupFeedMessageRecord.POSTED_C, cutoff)),
-                new CacheInvalidator.TraverseWithFilter<GroupFeedMessageRecord>(
-                    GroupFeedMessageRecord.class) {
-                    public boolean testForEviction (
-                        Serializable key, GroupFeedMessageRecord record) {
-                        return (record != null) && record.posted.before(cutoff);
-                    }
-                });
+                  new Where(new Conditionals.LessThan(GroupFeedMessageRecord.POSTED_C, cutoff)));
         deleteAll(SelfFeedMessageRecord.class,
-                new Where(new Conditionals.LessThan(SelfFeedMessageRecord.POSTED_C, cutoff)),
-                new CacheInvalidator.TraverseWithFilter<SelfFeedMessageRecord>(
-                    SelfFeedMessageRecord.class) {
-                    public boolean testForEviction (
-                        Serializable key, SelfFeedMessageRecord record) {
-                        return (record != null) && record.posted.before(cutoff);
-                    }
-                });
+                  new Where(new Conditionals.LessThan(SelfFeedMessageRecord.POSTED_C, cutoff)));
     }
 
     /**

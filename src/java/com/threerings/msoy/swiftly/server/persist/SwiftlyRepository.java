@@ -109,7 +109,7 @@ public class SwiftlyRepository extends DepotRepository
     {
         // delete all this project collaborators
         deleteAll(SwiftlyCollaboratorsRecord.class,
-            new Where(SwiftlyCollaboratorsRecord.PROJECT_ID_C, record.projectId), null);
+                  new Where(SwiftlyCollaboratorsRecord.PROJECT_ID_C, record.projectId));
         delete(record);
     }
 
@@ -276,9 +276,8 @@ public class SwiftlyRepository extends DepotRepository
      */
     public boolean leaveCollaborators (int projectId, int memberId)
     {
-        Key<SwiftlyCollaboratorsRecord> key =
-            SwiftlyCollaboratorsRecord.getKey(projectId, memberId);
-        return deleteAll(SwiftlyCollaboratorsRecord.class, key, key) > 0;
+        return delete(SwiftlyCollaboratorsRecord.class,
+                      SwiftlyCollaboratorsRecord.getKey(projectId, memberId)) > 0;
     }
 
     /**

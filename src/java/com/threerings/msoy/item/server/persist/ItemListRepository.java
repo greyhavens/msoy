@@ -62,14 +62,7 @@ public class ItemListRepository extends DepotRepository
     public void deleteList (final int listId)
     {
         // delete all of the elements from the list
-        deleteAll(ItemListElementRecord.class, new Where(ItemListElementRecord.LIST_ID_C, listId),
-            new CacheInvalidator.TraverseWithFilter<ItemListElementRecord>(
-                ItemListElementRecord.class) {
-                public boolean testForEviction (Serializable key, ItemListElementRecord record)
-                {
-                    return record.listId == listId;
-                }
-        });
+        deleteAll(ItemListElementRecord.class, new Where(ItemListElementRecord.LIST_ID_C, listId));
 
         // delete the list info
         delete(ItemListInfoRecord.class, listId);

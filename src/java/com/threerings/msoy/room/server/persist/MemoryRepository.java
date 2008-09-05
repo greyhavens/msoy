@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.server.persist;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -11,7 +10,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -117,13 +115,7 @@ public class MemoryRepository extends DepotRepository
     public void deleteMemories (final byte itemType, final int itemId)
     {
         deleteAll(MemoryRecord.class,
-                  new Where(MemoryRecord.ITEM_TYPE_C, itemType, MemoryRecord.ITEM_ID_C, itemId),
-                  new CacheInvalidator.TraverseWithFilter<MemoryRecord>(MemoryRecord.class) {
-                      public boolean testForEviction (Serializable key, MemoryRecord record) {
-                          return record != null &&
-                              record.itemType == itemType && record.itemId == itemId;
-                      }
-                  });
+                  new Where(MemoryRecord.ITEM_TYPE_C, itemType, MemoryRecord.ITEM_ID_C, itemId));
     }
 
     @Override // from DepotRepository

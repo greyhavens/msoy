@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.money.server.persist;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.EnumSet;
 import java.util.List;
@@ -15,7 +14,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -128,22 +126,9 @@ public class MoneyRepository extends DepotRepository
     public int deleteOldHistoryRecords (final Currency currency, long maxAge)
     {
         final long oldestTimestamp = System.currentTimeMillis() - maxAge;
-        final Where where = new Where(new And(
+        return deleteAll(MemberAccountHistoryRecord.class, new Where(new And(
             new Equals(MemberAccountHistoryRecord.TYPE_C, currency), new LessThan(
-                MemberAccountHistoryRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp))));
-
-        // Delete indicated records, removing the cache entries if necessary.
-        return deleteAll(MemberAccountHistoryRecord.class, where,
-            new CacheInvalidator.TraverseWithFilter<MemberAccountHistoryRecord>(
-                    MemberAccountHistoryRecord.class)
-            {
-                @Override protected boolean testForEviction (
-                    Serializable key, MemberAccountHistoryRecord record)
-                {
-                    return record.timestamp.getTime() < oldestTimestamp &&
-                        record.type == currency;
-                }
-            });
+                MemberAccountHistoryRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp)))));
     }
 
     public List<MemberAccountHistoryRecord> getHistory (final Set<Integer> ids)

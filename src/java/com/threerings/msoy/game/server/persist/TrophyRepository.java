@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.game.server.persist;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -11,7 +10,6 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -86,12 +84,7 @@ public class TrophyRepository extends DepotRepository
      */
     public void deleteTrophies (final int memberId)
     {
-        deleteAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId),
-                  new CacheInvalidator.TraverseWithFilter<TrophyRecord>(TrophyRecord.class) {
-                      public boolean testForEviction (Serializable key, TrophyRecord record) {
-                          return (record != null) && record.memberId == memberId;
-                      }
-                  });
+        deleteAll(TrophyRecord.class, new Where(TrophyRecord.MEMBER_ID_C, memberId));
     }
 
     @Override // from DepotRepository

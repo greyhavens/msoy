@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.item.server.persist;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
@@ -15,7 +14,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
-import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -243,12 +241,7 @@ public class GameRepository extends ItemRepository<GameRecord>
         // lastly, prune old gameplay records
         final Timestamp cutoff = new Timestamp(System.currentTimeMillis() - THIRTY_DAYS);
         deleteAll(GamePlayRecord.class,
-                  new Where(new Conditionals.LessThan(GamePlayRecord.RECORDED_C, cutoff)),
-                  new CacheInvalidator.TraverseWithFilter<GamePlayRecord>(GamePlayRecord.class) {
-                      public boolean testForEviction (Serializable key, GamePlayRecord record) {
-                          return (record != null) && record.recorded.before(cutoff);
-                      }
-                  });
+                  new Where(new Conditionals.LessThan(GamePlayRecord.RECORDED_C, cutoff)));
 
         return new int[] { payoutFactor, avgSingleDuration, avgMultiDuration };
     }
@@ -361,12 +354,8 @@ public class GameRepository extends ItemRepository<GameRecord>
     {
         delete(GameDetailRecord.class, gameId);
         delete(InstructionsRecord.class, gameId);
-        // no need to invalidate the cache on these, just let them expire
-        CacheInvalidator NOOP = new CacheInvalidator() {
-            public void invalidate (PersistenceContext ctx) { /* NOOP! */ }
-        };
-        deleteAll(GamePlayRecord.class, new Where(GamePlayRecord.GAME_ID_C, gameId), NOOP);
-        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID_C, gameId), NOOP);
+        deleteAll(GamePlayRecord.class, new Where(GamePlayRecord.GAME_ID_C, gameId));
+        deleteAll(GameTraceLogRecord.class, new Where(GameTraceLogRecord.GAME_ID_C, gameId));
     }
 
     @Override // from ItemRepository

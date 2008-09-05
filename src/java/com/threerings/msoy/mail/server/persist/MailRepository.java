@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.mail.server.persist;
 
-import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import com.google.inject.Singleton;
 
 import com.samskivert.util.StringUtil;
 
-import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -251,14 +249,8 @@ public class MailRepository extends DepotRepository
         }
 
         // otherwise actually delete the contents of the conversation
-        deleteAll(
-            ConvMessageRecord.class,
-            new Where(ConvMessageRecord.CONVERSATION_ID_C, conversationId),
-            new CacheInvalidator.TraverseWithFilter<ConvMessageRecord>(ConvMessageRecord.class) {
-                protected boolean testForEviction (Serializable key, ConvMessageRecord cmr) {
-                    return cmr.conversationId == conversationId;
-                }
-            });
+        deleteAll(ConvMessageRecord.class,
+                  new Where(ConvMessageRecord.CONVERSATION_ID_C, conversationId));
         delete(conrec);
 
         return true;

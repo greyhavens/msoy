@@ -53,9 +53,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     {
         delete(OOOUserRecord.class, userId);
         delete(HistoricalUserRecord.class, userId);
-        // no need to invalidate the cache here as this user was *just* created and is not in the
-        // wild, and this userId will never be used again
-        deleteAll(UserIdentRecord.class, new Where(UserIdentRecord.USER_ID_C, userId), null);
+        deleteAll(UserIdentRecord.class, new Where(UserIdentRecord.USER_ID_C, userId));
     }
 
     // from SupportRepository
