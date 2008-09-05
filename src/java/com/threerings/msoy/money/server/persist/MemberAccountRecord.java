@@ -97,21 +97,50 @@ public class MemberAccountRecord extends PersistentRecord
         new ColumnExp(MemberAccountRecord.class, ACC_BLING);
     // AUTO-GENERATED: FIELDS END
 
-    // AUTO-GENERATED: METHODS START
-    /**
-     * Create and return a primary {@link Key} to identify a {@link #MemberAccountRecord}
-     * with the supplied key values.
-     */
-    public static Key<MemberAccountRecord> getKey (final int memberId)
-    {
-        return new Key<MemberAccountRecord>(
-                MemberAccountRecord.class,
-                new String[] { MEMBER_ID },
-                new Comparable[] { memberId });
-    }
-    // AUTO-GENERATED: METHODS END
-
     public static final int SCHEMA_VERSION = 3;
+
+    /**
+     * ID of the member this account record is for. Note: this is not part of the API, do not use
+     * it.
+     */
+    @Id
+    public int memberId;
+
+    /** Coins currently in the account. Note: this is not part of the API, do not use it. */
+    public int coins;
+
+    /** Bars currently in the account. Note: this is not part of the API, do not use it. */
+    public int bars;
+
+    /** Bling currently in the account. Note: this is not part of the API, do not use it. */
+    public double bling;
+
+    /**
+     * Date last updated. Note: this is not part of the API, do not use it. Also, why does depot
+     * force this dependency on java.sql in the entity object? :-(
+     */
+    public Timestamp dateLastUpdated;
+
+    /** ID of the version of this account. Note: this is not part of the API, do not use it. */
+    public long versionId;
+
+    /**
+     * Cumulative count of coins this member has ever received. Note: this is not part of the API,
+     * do not use it.
+     */
+    public long accCoins;
+
+    /**
+     * Cumulative count of bars this member has ever received. Note: this is not part of the API,
+     * do not use it.
+     */
+    public long accBars;
+
+    /**
+     * Cumulative count of bling this member has ever received. Note: this is not part of the API,
+     * do not use it.
+     */
+    public double accBling;
 
     /**
      * Creates a new blank record for the given member. All account balances are set to 0.
@@ -133,7 +162,8 @@ public class MemberAccountRecord extends PersistentRecord
 
     /** For depot's eyes only. Not part of the API. */
     public MemberAccountRecord ()
-    {}
+    {
+    }
 
     /**
      * Get the amount of money this account has of the specified currency.
@@ -268,51 +298,6 @@ public class MemberAccountRecord extends PersistentRecord
         return history;
     }
 
-    public int getMemberId ()
-    {
-        return memberId;
-    }
-
-    public int getCoins ()
-    {
-        return coins;
-    }
-
-    public int getBars ()
-    {
-        return bars;
-    }
-
-    public double getBling ()
-    {
-        return bling;
-    }
-
-    public Date getDateLastUpdated ()
-    {
-        return dateLastUpdated;
-    }
-
-    public long getVersionId ()
-    {
-        return versionId;
-    }
-
-    public long getAccCoins ()
-    {
-        return accCoins;
-    }
-
-    public long getAccBars ()
-    {
-        return accBars;
-    }
-
-    public double getAccBling ()
-    {
-        return accBling;
-    }
-
     /**
      * Creates a {@link MemberMoney} object from this record.
      */
@@ -321,46 +306,17 @@ public class MemberAccountRecord extends PersistentRecord
         return new MemberMoney(memberId, coins, bars, bling, accCoins, accBars, accBling);
     }
 
+    // AUTO-GENERATED: METHODS START
     /**
-     * ID of the member this account record is for. Note: this is not part of the API, do not use
-     * it.
+     * Create and return a primary {@link Key} to identify a {@link #MemberAccountRecord}
+     * with the supplied key values.
      */
-    @Id
-    public int memberId;
-
-    /** Coins currently in the account. Note: this is not part of the API, do not use it. */
-    public int coins;
-
-    /** Bars currently in the account. Note: this is not part of the API, do not use it. */
-    public int bars;
-
-    /** Bling currently in the account. Note: this is not part of the API, do not use it. */
-    public double bling;
-
-    /**
-     * Date last updated. Note: this is not part of the API, do not use it. Also, why does depot
-     * force this dependency on java.sql in the entity object? :-(
-     */
-    public Timestamp dateLastUpdated;
-
-    /** ID of the version of this account. Note: this is not part of the API, do not use it. */
-    public long versionId;
-
-    /**
-     * Cumulative count of coins this member has ever received. Note: this is not part of the API,
-     * do not use it.
-     */
-    public long accCoins;
-
-    /**
-     * Cumulative count of bars this member has ever received. Note: this is not part of the API,
-     * do not use it.
-     */
-    public long accBars;
-
-    /**
-     * Cumulative count of bling this member has ever received. Note: this is not part of the API,
-     * do not use it.
-     */
-    public double accBling;
+    public static Key<MemberAccountRecord> getKey (final int memberId)
+    {
+        return new Key<MemberAccountRecord>(
+                MemberAccountRecord.class,
+                new String[] { MEMBER_ID },
+                new Comparable[] { memberId });
+    }
+    // AUTO-GENERATED: METHODS END
 }

@@ -75,27 +75,29 @@ public class MoneyRepository extends DepotRepository
      */
     public void saveAccount (final MemberAccountRecord account)
     {
-        final long oldVersion = account.getVersionId();
-        // Meh...
+        final long oldVersion = account.versionId;
         account.versionId++;
-        if (account.getVersionId() == 1) {
+        if (oldVersion == 0) {
             insert(account);
+
         } else {
+            // TODO: we're using updatePartial, but then we're updating everything
+            // but the memberId..
             final int count = updatePartial(
                 MemberAccountRecord.class, new Where(
-                    MemberAccountRecord.MEMBER_ID_C, account.getMemberId(),
+                    MemberAccountRecord.MEMBER_ID_C, account.memberId,
                     MemberAccountRecord.VERSION_ID_C, oldVersion),
-                MemberAccountRecord.getKey(account.getMemberId()), MemberAccountRecord.BARS,
-                account.getBars(), MemberAccountRecord.COINS, account.getCoins(),
-                MemberAccountRecord.BLING, account.getBling(),
+                MemberAccountRecord.getKey(account.memberId),
+                MemberAccountRecord.COINS, account.coins,
+                MemberAccountRecord.BARS, account.bars,
+                MemberAccountRecord.BLING, account.bling,
                 MemberAccountRecord.DATE_LAST_UPDATED, account.dateLastUpdated,
-                MemberAccountRecord.VERSION_ID, account.getVersionId(),
-                MemberAccountRecord.ACC_BARS, account.getAccBars(),
-                MemberAccountRecord.ACC_COINS, account.getAccCoins(),
-                MemberAccountRecord.ACC_BLING, account.getAccBling());
+                MemberAccountRecord.VERSION_ID, account.versionId,
+                MemberAccountRecord.ACC_BARS, account.accBars,
+                MemberAccountRecord.ACC_COINS, account.accCoins,
+                MemberAccountRecord.ACC_BLING, account.accBling);
             if (count == 0) {
-                throw new StaleDataException("Member account record is stale: "
-                                             + account.getMemberId());
+                throw new StaleDataException("Member account record is stale: " + account.memberId);
             }
         }
     }
@@ -130,20 +132,22 @@ public class MoneyRepository extends DepotRepository
 
         // Delete indicated records, removing the cache entries if necessary.
         return deleteAll(MemberAccountHistoryRecord.class, where,
-                         new CacheInvalidator.TraverseWithFilter<MemberAccountHistoryRecord>(
-                             MemberAccountHistoryRecord.class) {
-                             @Override protected boolean testForEviction (
-                                 final Serializable key, final MemberAccountHistoryRecord record) {
-                                 return record.timestamp.getTime() < oldestTimestamp
-                                     && record.type == currency;
-                             }
-                         });
+            new CacheInvalidator.TraverseWithFilter<MemberAccountHistoryRecord>(
+                    MemberAccountHistoryRecord.class)
+            {
+                @Override protected boolean testForEviction (
+                    final Serializable key, final MemberAccountHistoryRecord record)
+                {
+                    return record.timestamp.getTime() < oldestTimestamp &&
+                        record.type == currency;
+                }
+            });
     }
 
     public List<MemberAccountHistoryRecord> getHistory (final Set<Integer> ids)
     {
         return findAll(MemberAccountHistoryRecord.class,
-                       new Where(new In(MemberAccountHistoryRecord.ID_C, ids)));
+            new Where(new In(MemberAccountHistoryRecord.ID_C, ids)));
     }
 
     public int getHistoryCount (final int memberId, final PersistentCurrency currency,

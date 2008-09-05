@@ -472,7 +472,7 @@ public class MoneyLogic
         final double delta, final MemberAccountRecord account)
     {
         if (currency == Currency.COINS) {
-            _eventLog.flowTransaction(info, (int)delta, account.getCoins());
+            _eventLog.flowTransaction(info, (int)delta, account.coins);
         } else if (currency == Currency.BARS) {
             // TODO
         } else {
