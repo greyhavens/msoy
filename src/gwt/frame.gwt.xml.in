@@ -3,6 +3,7 @@
   <inherits name="com.google.gwt.i18n.I18N"/>
 
   <source path="org/gwtwidgets/client"/>
+  <source path="com/samskivert/text"/>
   <source path="com/threerings/io"/>
   <source path="com/threerings/util"/>
   <source path="com/threerings/presents/dobj"/>
