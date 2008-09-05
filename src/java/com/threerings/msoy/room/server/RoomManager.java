@@ -43,9 +43,11 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
+
+import com.threerings.crowd.server.LocationManager;
+
 import com.threerings.crowd.chat.server.SpeakUtil;
 
-import com.threerings.whirled.client.SceneMoveAdapter;
 import com.threerings.whirled.data.SceneUpdate;
 import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.whirled.spot.data.Location;
@@ -626,15 +628,11 @@ public class RoomManager extends SpotSceneManager
         mobObj.setUsername(new Name(mobName));
         _mobs.put(key, mobObj);
 
-        // then enter the scene like a proper scene entity
-        _screg.moveTo(mobObj, getScene().getId(), -1, new SceneMoveAdapter() {
-            public void requestFailed (String reason) {
-                log.warning(
-                    "MOB failed to enter scene", "mob", mobObj, "scene", getScene().getId(), 
-                    "reason", reason);
-                listener.requestFailed(reason);
-            }
-        });
+        // prepare to set the starting location
+        _startingLocs.put(mobObj.getOid(), startLoc);
+
+        // then enter the place
+        _locmgr.moveTo(mobObj, _plobj.getOid());
     }
     
     // from RoomProvider
@@ -642,7 +640,21 @@ public class RoomManager extends SpotSceneManager
         ClientObject caller, int gameId, String mobId, Location newLoc, InvocationListener listener)
         throws InvocationException
     {
-        // TODO
+        if (!WindowClientObject.isForGame(caller, gameId)) {
+            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
+        }
+
+        Tuple<Integer, String> key = new Tuple<Integer, String>(gameId, mobId);
+
+        final MobObject mobObj = _mobs.get(key);
+        if (mobObj == null) {
+            log.warning(
+                "Tried to move mob that's not present", "gameId", gameId, "mobId", mobId);
+            listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
+            return;
+        }
+        
+        changeLocation(mobObj, (MsoyLocation)newLoc);
     }
 
     // from RoomProvider
@@ -664,7 +676,7 @@ public class RoomManager extends SpotSceneManager
             return;
         }
 
-        _screg.leaveOccupiedScene(mobObj);
+        _locmgr.leaveOccupiedPlace(mobObj);
         _omgr.destroyObject(mobObj.getOid());
         _mobs.remove(key);
     }
@@ -1046,6 +1058,12 @@ public class RoomManager extends SpotSceneManager
 //            memberObj.addToRecentScenes(_scene.getId(), _scene.getName());
 //        }
 
+        // If we have explicitly set the starting location for some reason, use that
+        Location loc = _startingLocs.remove(body.getOid());
+        if (loc != null) {
+            return new SceneLocation(loc, body.getOid());
+        }
+        
         // if the from portal has a destination location, use that
         if (from instanceof MsoyPortal && ((MsoyPortal)from).dest != null) {
             return new SceneLocation(((MsoyPortal)from).dest, body.getOid());
@@ -1394,6 +1412,9 @@ public class RoomManager extends SpotSceneManager
     /** Mapping to keep track of spawned mobs. */
     protected Map<Tuple<Integer, String>, MobObject> _mobs = Maps.newHashMap();
 
+    /** Mapping to keep track of starting location of added bodies. */
+    protected HashIntMap<Location> _startingLocs = new HashIntMap<Location>();
+
     /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected Map<ItemIdent,Integer> _avatarIdents = Maps.newHashMap();
 
@@ -1410,4 +1431,5 @@ public class RoomManager extends SpotSceneManager
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MemberLocator _locator;
     @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected LocationManager _locmgr;
 }
