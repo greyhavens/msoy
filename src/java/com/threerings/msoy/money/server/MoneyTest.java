@@ -52,7 +52,6 @@ import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyHistory;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
-import com.threerings.msoy.money.server.impl.MoneyHistoryExpirer;
 
 /**
  * This really should be an integration test that's executed on every build, but it's not

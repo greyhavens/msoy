@@ -10,7 +10,6 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.Pages;
-import client.util.FlashClients;
 import client.util.Link;
 
 public class MePage extends Page

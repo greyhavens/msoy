@@ -5,8 +5,6 @@ package com.threerings.msoy.money.server.persist;
 
 import java.sql.Timestamp;
 
-import java.util.Date;
-
 import net.jcip.annotations.NotThreadSafe;
 
 import com.samskivert.jdbc.depot.Key;

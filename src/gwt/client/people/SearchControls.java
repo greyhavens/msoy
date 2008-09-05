@@ -20,7 +20,6 @@ import com.threerings.gwt.ui.WidgetUtil;
 import client.shell.Args;
 import client.shell.Pages;
 import client.ui.MsoyUI;
-import client.util.FlashClients;
 import client.util.Link;
 
 /**

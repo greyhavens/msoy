@@ -37,7 +37,6 @@ import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
 import client.util.DateUtil;
-import client.util.FlashClients;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
