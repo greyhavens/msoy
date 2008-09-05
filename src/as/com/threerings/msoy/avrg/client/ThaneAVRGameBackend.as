@@ -327,7 +327,7 @@ public class ThaneAVRGameBackend
     }
 
     protected function spawnMob_v1 (
-        roomId :int, mobId :String, mobName :String, x :Number = 0, y :Number = 0, z :Number = 0) :void
+        roomId :int, mobId :String, mobName :String, x :Number, y :Number, z :Number) :void
     {
         if (StringUtil.isBlank(mobId)) {
             log.warning("Blank mobId in spawnMob");
