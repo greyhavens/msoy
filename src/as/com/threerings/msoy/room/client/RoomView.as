@@ -258,7 +258,9 @@ public class RoomView extends Sprite
             // and remove the sprite
             removeSprite(sprite);
         } else {
-            dispatchEntityMoved(sprite.getItemIdent());
+            if (sprite.getItemIdent() != null) {
+                dispatchEntityMoved(sprite.getItemIdent());
+            }
         }
     }
 
