@@ -25,11 +25,4 @@
   <stylesheet src="/css/global.css"/>
   <stylesheet src="/css/gwt.css"/>
   <stylesheet src="/css/page.css"/>
-
-  <replace-with class="com.threerings.gwt.ui.WidgetUtilImplIE6">
-    <when-type-is class="com.threerings.gwt.ui.WidgetUtilImpl"/>
-    <any>
-      <when-property-is name="user.agent" value="ie6"/>
-    </any>
-  </replace-with>
 </module>
