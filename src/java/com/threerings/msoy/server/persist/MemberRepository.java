@@ -31,6 +31,7 @@ import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.SimpleCacheKey;
@@ -343,30 +344,15 @@ public class MemberRepository extends DepotRepository
     /**
      * Returns ids for all members who's display name matches the supplied search string.
      */
-    public List<Integer> findMembersByDisplayName (
-        String search, final boolean exact, final int limit)
+    public List<Integer> findMembersByDisplayName (String search, boolean exact, int limit)
     {
         search = search.toLowerCase();
-
-        SQLOperator op;
-        if (exact) {
-            op = new Equals(new FunctionExp("LOWER", MemberRecord.NAME_C), search);
-        } else {
-            op = new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search);
-        }
-        final List<Integer> ids = Lists.newArrayList();
-
-        // TODO: turn this into a findAllKeys query
-//         for (Key<MemberRecord> key :
-//                  findAllKeys(MemberRecord.class, where, new Limit(0, limit))) {
-//             ids.add((Integer)key.condition.getValues().get(0));
-//         }
-        for (final MemberRecord mrec :
-                 findAll(MemberRecord.class, new Where(op), new Limit(0, limit))) {
-            ids.add(mrec.memberId);
-        }
-
-        return ids;
+        SQLOperator op = exact ?
+            new Equals(new FunctionExp("LOWER", MemberRecord.NAME_C), search) :
+            new FullTextMatch(MemberRecord.class, MemberRecord.FTS_NAME, search);
+        return Lists.transform(
+            findAllKeys(MemberRecord.class, false, new Where(op), new Limit(0, limit)),
+            RecordFunctions.<MemberRecord>getIntKey());
     }
 
     /**

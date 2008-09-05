@@ -21,6 +21,8 @@ import com.samskivert.jdbc.depot.operator.Conditionals.*;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.server.persist.RecordFunctions;
+
 import com.threerings.msoy.person.gwt.Interest;
 
 /**
@@ -103,18 +105,8 @@ public class ProfileRepository extends DepotRepository
     {
         Where where = new Where(
             new FullTextMatch(ProfileRecord.class, ProfileRecord.FTS_REAL_NAME, search));
-        List<Integer> ids = Lists.newArrayList();
-
-        // TODO: turn this into a findAllKeys query
-//         for (Key<ProfileRecord> key :
-//                  findAllKeys(ProfileRecord.class, where, new Limit(0, limit))) {
-//             ids.add((Integer)key.condition.getValues().get(0));
-//         }
-        for (ProfileRecord prec : findAll(ProfileRecord.class, where, new Limit(0, limit))) {
-            ids.add(prec.memberId);
-        }
-
-        return ids;
+        return Lists.transform(findAllKeys(ProfileRecord.class, false, where, new Limit(0, limit)),
+                               RecordFunctions.<ProfileRecord>getIntKey());
     }
 
     /**
