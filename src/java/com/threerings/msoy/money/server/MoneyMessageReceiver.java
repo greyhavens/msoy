@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.money.server.impl;
+package com.threerings.msoy.money.server;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -10,7 +10,6 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
-import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.samskivert.util.Invoker;

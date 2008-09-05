@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.money.server.impl;
+package com.threerings.msoy.money.server;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
