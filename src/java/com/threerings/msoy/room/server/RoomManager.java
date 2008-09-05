@@ -24,6 +24,8 @@ import com.samskivert.util.Invoker;
 import com.samskivert.util.ObjectUtil;
 import com.samskivert.util.StringUtil;
 import com.samskivert.util.Tuple;
+
+import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
 
 import com.threerings.presents.annotation.EventThread;
@@ -721,7 +723,8 @@ public class RoomManager extends SpotSceneManager
             props.postEvent(
                 new PropertySetEvent(props.getOid(), propName, data, key, isArray, oldData));
         } catch (PropertySetException pse) {
-            throw new InvocationException(RoomCodes.E_CANNOT_SET_PROPERTY);
+            throw new InvocationException(
+                MessageBundle.tcompose(RoomCodes.E_CANNOT_SET_PROPERTY, pse.getMessage()));
         }
     }
 
