@@ -104,7 +104,7 @@ import com.threerings.msoy.room.server.persist.RoomPropertyRecord;
 
 import com.whirled.bureau.data.BureauTypes;
 import com.whirled.game.data.PropertySetEvent;
-import com.whirled.game.data.PropertySpaceObject.ArrayRangeException;
+import com.whirled.game.data.PropertySpaceObject.PropertySetException;
 import com.whirled.game.server.PropertySpaceDispatcher;
 import com.whirled.game.server.PropertySpaceHandler;
 import com.whirled.game.server.PropertySpaceHelper;
@@ -720,7 +720,7 @@ public class RoomManager extends SpotSceneManager
                 props, propName, data, key, isArray);
             props.postEvent(
                 new PropertySetEvent(props.getOid(), propName, data, key, isArray, oldData));
-        } catch (ArrayRangeException are) {
+        } catch (PropertySetException pse) {
             throw new InvocationException(RoomCodes.E_CANNOT_SET_PROPERTY);
         }
     }
