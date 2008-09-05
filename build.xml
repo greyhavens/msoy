@@ -10,7 +10,7 @@
   <property name="asrc.dir"      value="src/as"/>
   <property name="deploy.dir"    value="dist"/>
   <property name="classes.dir"   value="${deploy.dir}/classes"/>
-  <property name="gbinds.dir"   value="${deploy.dir}/gbinds"/>
+  <property name="gbinds.dir"    value="${deploy.dir}/gbinds"/>
   <property name="gwtout.dir"    value="pages/gwt"/>
   <property name="flexsdk.dir"   value="lib/flex_sdk"/>
   <property name="extlibs.dir"   value="extlibs/java"/>
