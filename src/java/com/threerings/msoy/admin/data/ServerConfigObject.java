@@ -50,6 +50,15 @@ public class ServerConfigObject extends ConfigObject
 
     /** The field name of the <code>whirledwideNewsHtml</code> field. */
     public static final String WHIRLEDWIDE_NEWS_HTML = "whirledwideNewsHtml";
+
+    /** The field name of the <code>creatorPercentage</code> field. */
+    public static final String CREATOR_PERCENTAGE = "creatorPercentage";
+
+    /** The field name of the <code>affiliatePercentage</code> field. */
+    public static final String AFFILIATE_PERCENTAGE = "affiliatePercentage";
+
+    /** The field name of the <code>blingCashoutTransactionFee</code> field. */
+    public static final String BLING_CASHOUT_TRANSACTION_FEE = "blingCashoutTransactionFee";
     // AUTO-GENERATED: FIELDS END
 
     /** Whether or not to allow non-admins to log on. */
@@ -82,6 +91,21 @@ public class ServerConfigObject extends ConfigObject
     /** HTML to display in the news box for the Whirledwide page. */
     public String whirledwideNewsHtml;
 
+    /**
+     * The percentage of the purchase price that will be awarded to the creator of an
+     * item when it is bought.
+     */
+    public float creatorPercentage = 0.3f;
+    
+    /**
+     * The percentage of the purchase price that will be awarded to the affiliate of the
+     * user who bought the item.
+     */
+    public float affiliatePercentage = 0.3f;
+    
+    /** The amount to deduct when cashing out bling into real money. */
+    public float blingCashoutTransactionFee = 0f;
+    
     @Override // documentation inherited
     public JPanel getEditor (PresentsContext ctx, Field field)
     {
@@ -272,6 +296,54 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             WHIRLEDWIDE_NEWS_HTML, value, ovalue);
         this.whirledwideNewsHtml = value;
+    }
+
+    /**
+     * Requests that the <code>creatorPercentage</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setCreatorPercentage (float value)
+    {
+        float ovalue = this.creatorPercentage;
+        requestAttributeChange(
+            CREATOR_PERCENTAGE, Float.valueOf(value), Float.valueOf(ovalue));
+        this.creatorPercentage = value;
+    }
+
+    /**
+     * Requests that the <code>affiliatePercentage</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setAffiliatePercentage (float value)
+    {
+        float ovalue = this.affiliatePercentage;
+        requestAttributeChange(
+            AFFILIATE_PERCENTAGE, Float.valueOf(value), Float.valueOf(ovalue));
+        this.affiliatePercentage = value;
+    }
+
+    /**
+     * Requests that the <code>blingCashoutTransactionFee</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setBlingCashoutTransactionFee (float value)
+    {
+        float ovalue = this.blingCashoutTransactionFee;
+        requestAttributeChange(
+            BLING_CASHOUT_TRANSACTION_FEE, Float.valueOf(value), Float.valueOf(ovalue));
+        this.blingCashoutTransactionFee = value;
     }
     // AUTO-GENERATED: METHODS END
 }

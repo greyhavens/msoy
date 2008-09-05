@@ -23,6 +23,7 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.messaging.MessageConnection;
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
@@ -224,7 +225,7 @@ public class MoneyLogic
         boolean buyerIsCreator = (buyrec.memberId == creatorId);
         if (buyerIsCreator) {
             // TODO: hmmmm
-            amount -= (int)(_config.getCreatorPercentage() * amount);
+            amount -= (int)(RuntimeConfig.server.creatorPercentage * amount);
         }
 
         // Get creator.
@@ -258,7 +259,7 @@ public class MoneyLogic
                 quote.getListedCurrency(), (int)history.amount,
                 // TODO: fuck me friday, I'm not sure how this will actually xlate in GWT land...
                 MessageBundle.tcompose("m.item_bought", escrow.getDescription()),
-                item, _config.getCreatorPercentage(), history.id);
+                item, RuntimeConfig.server.creatorPercentage, history.id);
             _repo.addHistory(creatorHistory);
             _repo.saveAccount(creator);
             // TODO: fucking fuck, we want to change this to the CatalogIdent
@@ -499,8 +500,6 @@ public class MoneyLogic
         _userActionRepo.logUserAction(details);
         return details;
     }
-
-    @Inject protected MoneyConfiguration _config;
 
     protected final MoneyHistoryExpirer _expirer;
     protected final MsoyEventLogger _eventLog;

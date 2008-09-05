@@ -7,10 +7,8 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.threerings.msoy.money.server.MoneyConfiguration;
 import com.threerings.msoy.money.server.NotSecuredException;
 
 /**
@@ -26,12 +24,12 @@ public class EscrowCacheMap
      * Creates a cache with the given maximum number of escrows, whose entries will expire
      * after some amount of time.
      */
-    @Inject public EscrowCacheMap (MoneyConfiguration config)
+    public EscrowCacheMap ()
     {
         Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
         if (cache == null) {
-            int expireSeconds = config.getSecurePriceDuration() * 60;
-            cache = new Cache(CACHE_NAME, config.getMaxSecuredPrices(), false, false,
+            int expireSeconds = SECURED_PRICE_DURATION * 60;
+            cache = new Cache(CACHE_NAME, MAX_SECURED_PRICES, false, false,
                 expireSeconds, expireSeconds);
             CacheManager.getInstance().addCache(cache);
 
@@ -64,6 +62,8 @@ public class EscrowCacheMap
         _cache.remove(key);
     }
 
+    private static final int SECURED_PRICE_DURATION = 10;
+    private static final int MAX_SECURED_PRICES = 10000;
     private static final String CACHE_NAME = "secured_prices";
     private final Cache _cache;
 }
