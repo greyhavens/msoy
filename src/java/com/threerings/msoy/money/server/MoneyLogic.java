@@ -103,8 +103,9 @@ public class MoneyLogic
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot award coins to guests.");
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
-        Preconditions.checkArgument(item == null || item.itemId != 0 || item.type != 0,
-            "item is invalid: %s", (item == null ? null : item.toString()));
+        Preconditions.checkArgument(
+            (item == null) || (item.type != Item.NOT_A_TYPE && item.itemId != 0),
+            "item is invalid: %s", item);
 
         MemberAccountRecord account = _repo.getAccountById(memberId);
         if (account == null) {
@@ -177,11 +178,10 @@ public class MoneyLogic
         Currency buyCurrency, int buyAmount)
         throws NotEnoughMoneyException, NotSecuredException
     {
-        Preconditions.checkArgument(item != null && (item.type != 0 || item.catalogId != 0),
-            "item is invalid: %s", item.toString());
+        Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
         Preconditions.checkArgument(
             buyCurrency == Currency.BARS || buyCurrency == Currency.COINS,
-            "buyCurrency is invalid: %s", buyCurrency.toString());
+            "buyCurrency is invalid: %s", buyCurrency);
 
         // Get the secured prices for the item.
         final PriceKey key = new PriceKey(buyrec.memberId, item);
@@ -429,8 +429,7 @@ public class MoneyLogic
     {
         Preconditions.checkArgument(!MemberName.isGuest(buyerId), "Guests cannot secure prices.");
         Preconditions.checkArgument(!MemberName.isGuest(sellerId), "Creators cannot be guests.");
-        Preconditions.checkArgument(item != null && (item.type != 0 || item.catalogId != 0),
-            "item is invalid: %s", item.toString());
+        Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
         Preconditions.checkArgument(listedAmount >= 0, "listedAmount is invalid: %d", listedAmount);
 
         final PriceQuote quote = MoneyExchange.secureQuote(listedCurrency, listedAmount);
@@ -448,6 +447,14 @@ public class MoneyLogic
     {
         _expirer.start();
         _msgReceiver.start();
+    }
+
+    /**
+     * Is this CatalogIdent valid?
+     */
+    protected static boolean isValid (CatalogIdent ident)
+    {
+        return (ident != null) && (ident.type != Item.NOT_A_TYPE) && (ident.catalogId != 0);
     }
 
     protected static EnumSet<PersistentTransactionType> toPersist (
