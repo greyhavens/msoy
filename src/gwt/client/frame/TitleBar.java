@@ -75,7 +75,9 @@ public class TitleBar extends SmartTable
 
     public void resetNav ()
     {
+        boolean closeWasVisible = _closeBox.isAttached();
         _subnavi.reset(_tab);
+        setCloseVisible(closeWasVisible);
     }
 
     public void addContextLink (String label, Pages page, String args)
