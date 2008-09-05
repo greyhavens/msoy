@@ -241,7 +241,9 @@ public class MoneyLogic
 
         // Update the member account
         final MemberAccountHistoryRecord history = buyer.buyItem(
-            buyCurrency, amount, escrow.getDescription(), item, buyrec.isSupport());
+            buyCurrency, amount,
+            MessageBundle.tcompose("itemBought", escrow.getDescription(), item.type, item.catalogId),
+            item, buyrec.isSupport());
         _repo.addHistory(history);
         _repo.saveAccount(buyer);
         // TODO: fucking fuck, we want to change this to the CatalogIdent
@@ -257,8 +259,8 @@ public class MoneyLogic
         } else {
             creatorHistory = creator.creatorPayout(
                 quote.getListedCurrency(), (int)history.amount,
-                // TODO: fuck me friday, I'm not sure how this will actually xlate in GWT land...
-                MessageBundle.tcompose("m.item_bought", escrow.getDescription()),
+                MessageBundle.tcompose("itemSold",
+                    escrow.getDescription(), item.type, item.catalogId),
                 item, RuntimeConfig.server.creatorPercentage, history.id);
             _repo.addHistory(creatorHistory);
             _repo.saveAccount(creator);

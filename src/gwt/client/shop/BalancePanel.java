@@ -67,7 +67,7 @@ public class BalancePanel extends PagedGrid<MoneyHistory>
             addStyleName("Transaction");
 
             add(MsoyUI.createLabel(_format.format(entry.getTimestamp()), "Time"));
-            add(MsoyUI.createLabel(_lookup.get(entry.getDescription()), "Description"));
+            add(MsoyUI.createLabel(_lookup.xlate(entry.getDescription()), "Description"));
 
             add(MsoyUI.createLabel("42", "Debit"));
             add(MsoyUI.createLabel(String.valueOf(entry.getAmount()), "Credit"));
