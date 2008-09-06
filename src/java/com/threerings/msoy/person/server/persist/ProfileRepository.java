@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.person.server.persist;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
