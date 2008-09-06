@@ -13,7 +13,7 @@ import com.samskivert.jdbc.depot.DatabaseException;
  */
 public class StaleDataException extends DatabaseException
 {
-    public StaleDataException (final String message)
+    public StaleDataException (String message)
     {
         super(message);
     }

@@ -10,13 +10,13 @@ import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Logger;
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
+import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
 /**
- * Manages expiration of {@link MemberAccountHistoryRecord}s.  Coin records should
+ * Manages expiration of {@link MoneyTransactionRecord}s.  Coin records should
  * be removed from the database if they are more than 10 days old (by default).
  * 
  * This does not start automatically -- call {@link #start()} to start the background
@@ -59,7 +59,7 @@ public class MoneyHistoryExpirer
                 @Override
                 public void expired ()
                 {
-                    final int count = _repo.deleteOldHistoryRecords(Currency.COINS, _maxAge);
+                    final int count = _repo.deleteOldTransactions(Currency.COINS, _maxAge);
                     if (count > 0) {
                         log.info("Removed old member account history records for coins",
                             "count", count);

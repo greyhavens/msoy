@@ -56,7 +56,7 @@ public class MoneyRepository extends DepotRepository
      *
      * @param history History record to update.
      */
-    public void addHistory (final MemberAccountHistoryRecord history)
+    public void addTransaction (final MoneyTransactionRecord history)
     {
         insert(history);
     }
@@ -103,7 +103,7 @@ public class MoneyRepository extends DepotRepository
         }
     }
 
-    public List<MemberAccountHistoryRecord> getHistory (
+    public List<MoneyTransactionRecord> getTransactions (
         int memberId, Currency currency, EnumSet<TransactionType> transactionTypes,
         int start, int count, boolean descending)
     {
@@ -113,35 +113,35 @@ public class MoneyRepository extends DepotRepository
         populateSearch(clauses, memberId, currency, transactionTypes);
 
         clauses.add(descending ?
-                    OrderBy.descending(MemberAccountHistoryRecord.TIMESTAMP_C) :
-                    OrderBy.ascending(MemberAccountHistoryRecord.TIMESTAMP_C));
+                    OrderBy.descending(MoneyTransactionRecord.TIMESTAMP_C) :
+                    OrderBy.ascending(MoneyTransactionRecord.TIMESTAMP_C));
 
         if (count != Integer.MAX_VALUE) {
             clauses.add(new Limit(start, count));
         }
 
-        return findAll(MemberAccountHistoryRecord.class, clauses);
+        return findAll(MoneyTransactionRecord.class, clauses);
     }
 
-    public int deleteOldHistoryRecords (final Currency currency, long maxAge)
+    public int deleteOldTransactions (final Currency currency, long maxAge)
     {
         final long oldestTimestamp = System.currentTimeMillis() - maxAge;
-        return deleteAll(MemberAccountHistoryRecord.class, new Where(new And(
-            new Equals(MemberAccountHistoryRecord.TYPE_C, currency), new LessThan(
-                MemberAccountHistoryRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp)))));
+        return deleteAll(MoneyTransactionRecord.class, new Where(new And(
+            new Equals(MoneyTransactionRecord.CURRENCY_C, currency), new LessThan(
+                MoneyTransactionRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp)))));
     }
 
-    public List<MemberAccountHistoryRecord> getHistory (final Set<Integer> ids)
+    public List<MoneyTransactionRecord> getTransactions (final Set<Integer> ids)
     {
-        return findAll(MemberAccountHistoryRecord.class,
-            new Where(new In(MemberAccountHistoryRecord.ID_C, ids)));
+        return findAll(MoneyTransactionRecord.class,
+            new Where(new In(MoneyTransactionRecord.ID_C, ids)));
     }
 
     public int getHistoryCount (int memberId, Currency currency,
                                 EnumSet<TransactionType> transactionTypes)
     {
         List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new FromOverride(MemberAccountHistoryRecord.class));
+        clauses.add(new FromOverride(MoneyTransactionRecord.class));
         populateSearch(clauses, memberId, currency, transactionTypes);
         return load(CountRecord.class, clauses).count;
     }
@@ -153,12 +153,12 @@ public class MoneyRepository extends DepotRepository
     {
         List<SQLOperator> where = Lists.newArrayList();
 
-        where.add(new Equals(MemberAccountHistoryRecord.MEMBER_ID_C, memberId));
+        where.add(new Equals(MoneyTransactionRecord.MEMBER_ID_C, memberId));
         if (currency != null) {
-            where.add(new Equals(MemberAccountHistoryRecord.TYPE_C, currency));
+            where.add(new Equals(MoneyTransactionRecord.CURRENCY_C, currency));
         }
         if (transactionTypes != null) {
-            where.add(new In(MemberAccountHistoryRecord.TRANSACTION_TYPE_C, transactionTypes));
+            where.add(new In(MoneyTransactionRecord.TRANSACTION_TYPE_C, transactionTypes));
         }
 
         clauses.add(new Where(new And(where)));
@@ -168,6 +168,6 @@ public class MoneyRepository extends DepotRepository
     protected void getManagedRecords (final Set<Class<? extends PersistentRecord>> classes)
     {
         classes.add(MemberAccountRecord.class);
-        classes.add(MemberAccountHistoryRecord.class);
+        classes.add(MoneyTransactionRecord.class);
     }
 }

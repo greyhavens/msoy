@@ -5,8 +5,6 @@ package com.threerings.msoy.money.server.persist;
 
 import java.sql.Timestamp;
 
-import net.jcip.annotations.NotThreadSafe;
-
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
@@ -31,12 +29,11 @@ import com.threerings.msoy.money.data.all.TransactionType;
  * @author Kyle Sampson <kyle@threerings.net>
  */
 @Entity(indices = {
-    @Index(name = "ixMemberId", fields = { MemberAccountHistoryRecord.MEMBER_ID }),
-    @Index(name = "ixTimestamp", fields = { MemberAccountHistoryRecord.TIMESTAMP }),
-    @Index(name = "ixType", fields = { MemberAccountHistoryRecord.TYPE }), 
-    @Index(name = "ixTransactionType", fields = { MemberAccountHistoryRecord.TRANSACTION_TYPE }) })
-@NotThreadSafe
-public class MemberAccountHistoryRecord extends PersistentRecord
+    @Index(name = "ixMemberId", fields = { MoneyTransactionRecord.MEMBER_ID }),
+    @Index(name = "ixTimestamp", fields = { MoneyTransactionRecord.TIMESTAMP }),
+    @Index(name = "ixTransactionType", fields = { MoneyTransactionRecord.TRANSACTION_TYPE }),
+    @Index(name = "ixCurrency", fields = { MoneyTransactionRecord.CURRENCY }) })
+public class MoneyTransactionRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START
     /** The column identifier for the {@link #id} field. */
@@ -44,88 +41,88 @@ public class MemberAccountHistoryRecord extends PersistentRecord
 
     /** The qualified column identifier for the {@link #id} field. */
     public static final ColumnExp ID_C =
-        new ColumnExp(MemberAccountHistoryRecord.class, ID);
+        new ColumnExp(MoneyTransactionRecord.class, ID);
 
     /** The column identifier for the {@link #memberId} field. */
     public static final String MEMBER_ID = "memberId";
 
     /** The qualified column identifier for the {@link #memberId} field. */
     public static final ColumnExp MEMBER_ID_C =
-        new ColumnExp(MemberAccountHistoryRecord.class, MEMBER_ID);
+        new ColumnExp(MoneyTransactionRecord.class, MEMBER_ID);
 
     /** The column identifier for the {@link #timestamp} field. */
     public static final String TIMESTAMP = "timestamp";
 
     /** The qualified column identifier for the {@link #timestamp} field. */
     public static final ColumnExp TIMESTAMP_C =
-        new ColumnExp(MemberAccountHistoryRecord.class, TIMESTAMP);
+        new ColumnExp(MoneyTransactionRecord.class, TIMESTAMP);
 
-    /** The column identifier for the {@link #type} field. */
-    public static final String TYPE = "type";
+    /** The column identifier for the {@link #currency} field. */
+    public static final String CURRENCY = "currency";
 
-    /** The qualified column identifier for the {@link #type} field. */
-    public static final ColumnExp TYPE_C =
-        new ColumnExp(MemberAccountHistoryRecord.class, TYPE);
+    /** The qualified column identifier for the {@link #currency} field. */
+    public static final ColumnExp CURRENCY_C =
+        new ColumnExp(MoneyTransactionRecord.class, CURRENCY);
 
     /** The column identifier for the {@link #amount} field. */
     public static final String AMOUNT = "amount";
 
     /** The qualified column identifier for the {@link #amount} field. */
     public static final ColumnExp AMOUNT_C =
-        new ColumnExp(MemberAccountHistoryRecord.class, AMOUNT);
+        new ColumnExp(MoneyTransactionRecord.class, AMOUNT);
 
     /** The column identifier for the {@link #spent} field. */
     public static final String SPENT = "spent";
 
     /** The qualified column identifier for the {@link #spent} field. */
     public static final ColumnExp SPENT_C =
-        new ColumnExp(MemberAccountHistoryRecord.class, SPENT);
+        new ColumnExp(MoneyTransactionRecord.class, SPENT);
 
     /** The column identifier for the {@link #description} field. */
     public static final String DESCRIPTION = "description";
 
     /** The qualified column identifier for the {@link #description} field. */
     public static final ColumnExp DESCRIPTION_C =
-        new ColumnExp(MemberAccountHistoryRecord.class, DESCRIPTION);
+        new ColumnExp(MoneyTransactionRecord.class, DESCRIPTION);
 
     /** The column identifier for the {@link #itemId} field. */
     public static final String ITEM_ID = "itemId";
 
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(MemberAccountHistoryRecord.class, ITEM_ID);
+        new ColumnExp(MoneyTransactionRecord.class, ITEM_ID);
 
     /** The column identifier for the {@link #itemType} field. */
     public static final String ITEM_TYPE = "itemType";
 
     /** The qualified column identifier for the {@link #itemType} field. */
     public static final ColumnExp ITEM_TYPE_C =
-        new ColumnExp(MemberAccountHistoryRecord.class, ITEM_TYPE);
+        new ColumnExp(MoneyTransactionRecord.class, ITEM_TYPE);
 
     /** The column identifier for the {@link #transactionType} field. */
     public static final String TRANSACTION_TYPE = "transactionType";
 
     /** The qualified column identifier for the {@link #transactionType} field. */
     public static final ColumnExp TRANSACTION_TYPE_C =
-        new ColumnExp(MemberAccountHistoryRecord.class, TRANSACTION_TYPE);
+        new ColumnExp(MoneyTransactionRecord.class, TRANSACTION_TYPE);
 
     /** The column identifier for the {@link #referenceTxId} field. */
     public static final String REFERENCE_TX_ID = "referenceTxId";
 
     /** The qualified column identifier for the {@link #referenceTxId} field. */
     public static final ColumnExp REFERENCE_TX_ID_C =
-        new ColumnExp(MemberAccountHistoryRecord.class, REFERENCE_TX_ID);
+        new ColumnExp(MoneyTransactionRecord.class, REFERENCE_TX_ID);
     // AUTO-GENERATED: FIELDS END
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #MemberAccountHistoryRecord}
+     * Create and return a primary {@link Key} to identify a {@link #MoneyTransactionRecord}
      * with the supplied key values.
      */
-    public static Key<MemberAccountHistoryRecord> getKey (final int id)
+    public static Key<MoneyTransactionRecord> getKey (final int id)
     {
-        return new Key<MemberAccountHistoryRecord>(
-                MemberAccountHistoryRecord.class,
+        return new Key<MoneyTransactionRecord>(
+                MoneyTransactionRecord.class,
                 new String[] { ID },
                 new Comparable[] { id });
     }
@@ -144,98 +141,75 @@ public class MemberAccountHistoryRecord extends PersistentRecord
     /** Time this transaction was performed. */
     public Timestamp timestamp;
 
-    /** Type of money modified. */
-    public Currency type;
-
-    /** Amount debited/credited. */
-    public double amount;
-
-    /** True if the amount was debited, otherwise it was credited. */
-    public boolean spent;
-
-    /** Description of the transaction. */
-    public String description;
-
-    /** ID of the item involved in this transaction, or 0 otherwise. */
-    // TODO: rename this to catalogId ? ?? 
-    public int itemId;
-
-    /** Type of the item involved in this transaction, if provided. */
-    public int itemType;
-
     /** Type of transaction this history record was for. */
     @Column(defaultValue = "0")
     public TransactionType transactionType;
+
+    /** Type of money modified. */
+    public Currency currency;
+
+    /** Amount debited/credited. */
+    public int amount;
+
+    /** The member's balance of this currency after this transaction. */
+    public int balance;
+
+    /** A translatable description of the transaction. */
+    public String description;
+
+    /** A code indicating the type of the subject of this transaction. */
+    public byte subjectType;
+
+    /** An optional divider of the subjectId. */
+    public byte subjectIdType;
+
+    /** The id of the subject of this transaction. */
+    public int subjectId;
     
     /** For certain types of transactions, the reference transaction this was in response to. */
     public int referenceTxId;
 
     /**
      * Creates an account history record involving some particular item.
-     * 
-     * @param memberId ID of the member
-     * @param timestamp Time the change was made.
-     * @param currency Currency (coins/bars/bling) modified.
-     * @param amount Amount modified.
-     * @param spent True if the amount was debited from the account, false if the amount was
-     * credited.
-     * @param description Description of the transaction.
-     * @param itemId ID of the item
-     * @param itemType Type of the item.
+     * @param subject An object that is the reference object for this transaction. TODO
      */
-    public MemberAccountHistoryRecord (
-        int memberId, Timestamp timestamp, Currency currency, double amount,
-        TransactionType transactionType, boolean spent, String description, CatalogIdent item)
+    public MoneyTransactionRecord (
+        int memberId, Timestamp timestamp, TransactionType transactionType,
+        Currency currency, int amount, int balance,
+        String description, Object subject)
     {
         this.memberId = memberId;
         this.timestamp = timestamp;
-        this.type = currency;
-        this.amount = amount;
-        this.spent = spent;
-        this.description = description;
         this.transactionType = transactionType;
-        if (item != null) {
-            itemType = item.type;
-            // TODO: rename itemId to catalogId
-            itemId = item.catalogId;
+        this.currency = currency;
+        this.amount = amount;
+        this.balance = balance;
+        this.description = description;
+
+        // MUCH TODO ABOUT NOTHING
+        if (subject != null) {
+            if (subject instanceof CatalogIdent) {
+                this.subjectType = (byte)1; // TODO! TODO! TODO!
+                CatalogIdent ident = (CatalogIdent) subject;
+                this.subjectIdType = ident.type;
+                this.subjectId = ident.catalogId;
+
+            } else {
+                throw new RuntimeException("Unknown subject: " + subject);
+            }
         }
     }
 
-    /**
-     * Creates an account history record representing a generic transaction made on an account.
-     * 
-     * @param memberId ID of the member
-     * @param timestamp Time the change was made.
-     * @param type Type of money (coins/bars/bling) modified.
-     * @param amount Amount modified.
-     * @param spent True if the amount was debited from the account, false if the amount was
-     * credited.
-     * @param description Description of the transaction.
-     */
-    public MemberAccountHistoryRecord (
-        int memberId, Timestamp timestamp, Currency currency, double amount,
-        TransactionType transactionType, boolean spent, String description)
-    {
-        this(memberId, timestamp, currency, amount, transactionType, spent, description, null);
-    }
-
     /** Not part of the API. For depot's eyes only. */
-    public MemberAccountHistoryRecord ()
-    {}
-    
-    /**
-     * The amount that was exchanged in the transaction. This will be negative if spent, positive
-     * otherwise.
-     */
-    public double getSignedAmount ()
+    public MoneyTransactionRecord ()
     {
-        return spent ? -amount : amount;
     }
-
-    public MoneyHistory createMoneyHistory (final MoneyHistory referenceTx)
+    
+    // TODO: rename MoneyHistory to MoneyTransaction
+    public MoneyHistory toMoneyTransaction ()
     {
-        return new MoneyHistory(memberId, timestamp, type, amount, 
-            transactionType, spent, description,
-            itemId == 0 ? null : new ItemIdent((byte)itemType, itemId), referenceTx);
+        // TODO
+        return new MoneyHistory(memberId, timestamp, currency, amount,
+            transactionType, true, description, null, null);
     }
 }

@@ -192,16 +192,16 @@ public class MemberAccountRecord extends PersistentRecord
     /**
      * Adds the given number of bars to the member's account.
      * 
-     * @param bars Number of bars to add.
+     * @param barsToAdd Number of bars to add.
      * @return Account history record for this transaction.
      */
-    public MemberAccountHistoryRecord buyBars (final int bars, final String description)
+    public MoneyTransactionRecord buyBars (int barsToAdd, String description)
     {
-        this.bars += bars;
-        accBars += bars;
+        bars += barsToAdd;
+        accBars += barsToAdd;
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
-            Currency.BARS, bars, TransactionType.BARS_BOUGHT, false, description);
+        return new MoneyTransactionRecord(memberId, dateLastUpdated, TransactionType.BARS_BOUGHT,
+            Currency.BARS, barsToAdd, bars, description, null);
     }
 
     /**
@@ -210,14 +210,13 @@ public class MemberAccountRecord extends PersistentRecord
      * @param coins Number of coins to add.
      * @return Account history record for this transaction.
      */
-    public MemberAccountHistoryRecord awardCoins (
-        final int coins, final ItemIdent item, final String description)
+    public MoneyTransactionRecord awardCoins (int coinsToAdd, ItemIdent item, String description)
     {
-        this.coins += coins;
-        accCoins += coins;
+        coins += coinsToAdd;
+        accCoins += coinsToAdd;
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
-            Currency.COINS, coins, TransactionType.AWARD, false, description, 
+        return new MoneyTransactionRecord(memberId, dateLastUpdated, TransactionType.AWARD,
+            Currency.COINS, coinsToAdd, coins, description,
             // TODO: sort out the item/catalog discrepency
             null /*item*/);
     }
@@ -230,9 +229,8 @@ public class MemberAccountRecord extends PersistentRecord
      * @param description Description that should be used in the history record.
      * @return Account history record for this transaction.
      */
-    public MemberAccountHistoryRecord buyItem (
-        Currency currency, int amount, final String description,
-        final CatalogIdent item, final boolean isSupport)
+    public MoneyTransactionRecord buyItem (
+        Currency currency, int amount, String description, CatalogIdent item, boolean isSupport)
     {
         // TODO: goddammit, the amount should be pre-adjusted TODO
         if (isSupport) {
@@ -251,8 +249,8 @@ public class MemberAccountRecord extends PersistentRecord
             throw new RuntimeException("Invalid purchase currency: " + currency);
         }
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        return new MemberAccountHistoryRecord(memberId, dateLastUpdated,
-            currency, amount, TransactionType.ITEM_PURCHASE, true, description, item);
+        return new MoneyTransactionRecord(memberId, dateLastUpdated, TransactionType.ITEM_PURCHASE,
+            currency, -amount, getAmount(currency), description, item);
     }
 
     /**
@@ -264,12 +262,12 @@ public class MemberAccountRecord extends PersistentRecord
      * @param item Item that was purchased.
      * @return History record for the transaction.
      */
-    public MemberAccountHistoryRecord creatorPayout (
-        final Currency listingCurrency, final int amount, final String description,
-        final CatalogIdent item, final float percentage, final int referenceTxId)
+    public MoneyTransactionRecord creatorPayout (
+        Currency listingCurrency, int amount, String description,
+        CatalogIdent item, float percentage, int referenceTxId)
     {
         // TODO: Determine percentage from administrator.
-        final float amountPaid = percentage * amount;
+        final int amountPaid = (int) percentage * amount;
         final Currency paymentCurrency;
         switch (listingCurrency) {
         case COINS:
@@ -289,9 +287,9 @@ public class MemberAccountRecord extends PersistentRecord
             throw new RuntimeException();
         }
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        final MemberAccountHistoryRecord history = new MemberAccountHistoryRecord(memberId, 
-            dateLastUpdated, paymentCurrency, amountPaid, 
-            TransactionType.CREATOR_PAYOUT, false, description, item);
+        final MoneyTransactionRecord history = new MoneyTransactionRecord(
+            memberId, dateLastUpdated, TransactionType.CREATOR_PAYOUT,
+            paymentCurrency, amountPaid, getAmount(paymentCurrency), description, item);
         history.referenceTxId = referenceTxId;
         return history;
     }

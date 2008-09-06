@@ -116,7 +116,7 @@ public class MoneyHistory
     protected Date _timestamp;
     protected Currency _currency;
     protected TransactionType _transactionType;
-    protected double _amount;
+    protected double _amount; // TODO int
     protected boolean _spent;
     protected String _description;
     protected ItemIdent _item;

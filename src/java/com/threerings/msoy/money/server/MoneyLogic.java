@@ -14,12 +14,17 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.util.Invoker;
+
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.ShutdownManager;
+
 import com.threerings.util.MessageBundle;
 
 import com.threerings.messaging.MessageConnection;
@@ -41,7 +46,7 @@ import com.threerings.msoy.money.data.all.MoneyHistory;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
-import com.threerings.msoy.money.server.persist.MemberAccountHistoryRecord;
+import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.money.server.persist.StaleDataException;
@@ -105,9 +110,9 @@ public class MoneyLogic
         if (account == null) {
             account = new MemberAccountRecord(memberId);
         }
-        final MemberAccountHistoryRecord history = account.awardCoins(amount, item, description);
+        final MoneyTransactionRecord history = account.awardCoins(amount, item, description);
         _repo.saveAccount(account);
-        _repo.addHistory(history);
+        _repo.addTransaction(history);
 
         // TODO: creator and affiliate
 
@@ -120,7 +125,7 @@ public class MoneyLogic
         logInPanopticon(info, Currency.COINS, amount, account);
         
         return new MoneyResult(account.getMemberMoney(), null, null, 
-            history.createMoneyHistory(null), null, null);
+            history.toMoneyTransaction(), null, null);
     }
 
     /**
@@ -141,15 +146,15 @@ public class MoneyLogic
         if (account == null) {
             account = new MemberAccountRecord(memberId);
         }
-        final MemberAccountHistoryRecord history = account.buyBars(numBars, description);
+        final MoneyTransactionRecord history = account.buyBars(numBars, description);
         _repo.saveAccount(account);
-        _repo.addHistory(history);
+        _repo.addTransaction(history);
 
         logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS, null,
             history.description);
 
         return new MoneyResult(account.getMemberMoney(), null, null, 
-            history.createMoneyHistory(null), null, null);
+            history.toMoneyTransaction(), null, null);
     }
 
     /**
@@ -233,19 +238,19 @@ public class MoneyLogic
         }
 
         // Update the member account
-        final MemberAccountHistoryRecord history = buyer.buyItem(
+        final MoneyTransactionRecord history = buyer.buyItem(
             buyCurrency, amount,
             MessageBundle.tcompose("itemBought", escrow.getDescription(), item.type, item.catalogId),
             item, buyrec.isSupport());
-        _repo.addHistory(history);
+        _repo.addTransaction(history);
         _repo.saveAccount(buyer);
         // TODO: fucking fuck, we want to change this to the CatalogIdent
         UserActionDetails info = logUserAction(buyrec.memberId, UserActionDetails.INVALID_ID,
             UserAction.BOUGHT_ITEM, null /*item*/, escrow.getDescription());
-        logInPanopticon(info, buyCurrency, history.getSignedAmount(), buyer);
+        logInPanopticon(info, buyCurrency, history.amount, buyer);
 
         // Update the creator account, if they get a payment.
-        MemberAccountHistoryRecord creatorHistory;
+        MoneyTransactionRecord creatorHistory;
         if (buyerIsCreator) {
             creatorHistory = history;
 
@@ -255,12 +260,12 @@ public class MoneyLogic
                 MessageBundle.tcompose("itemSold",
                     escrow.getDescription(), item.type, item.catalogId),
                 item, RuntimeConfig.server.creatorPercentage, history.id);
-            _repo.addHistory(creatorHistory);
+            _repo.addTransaction(creatorHistory);
             _repo.saveAccount(creator);
             // TODO: fucking fuck, we want to change this to the CatalogIdent
             info = logUserAction(creatorId, buyrec.memberId, UserAction.RECEIVED_PAYOUT,
                                  null /*item*/, escrow.getDescription());
-            logInPanopticon(info, buyCurrency, creatorHistory.getSignedAmount(), creator);
+            logInPanopticon(info, buyCurrency, creatorHistory.amount, creator);
         }
 
         // TODO: update affiliate with some amount of bling.
@@ -268,10 +273,11 @@ public class MoneyLogic
         // The item no longer needs to be in the cache.
         _escrowCache.removeEscrow(key);
 
-        final MoneyHistory mh = history.createMoneyHistory(null);
+        // TODO: OLD: update
+        final MoneyHistory mh = history.toMoneyTransaction();
         return new MoneyResult(buyer.getMemberMoney(),
             buyerIsCreator ? null : creator.getMemberMoney(),
-            null, mh, buyerIsCreator ? null : creatorHistory.createMoneyHistory(mh), null);
+            null, mh, buyerIsCreator ? null : creatorHistory.toMoneyTransaction(), null);
     }
 
     /**
@@ -327,6 +333,7 @@ public class MoneyLogic
      * @param descending If true, the log will be sorted by transaction date descending.
      * @return List of requested past transactions.
      */
+    // TODO: rename to getTransactions
     public List<MoneyHistory> getLog (
         int memberId, Currency currency, EnumSet<TransactionType> transactionTypes,
         int start, int count, boolean descending)
@@ -336,34 +343,32 @@ public class MoneyLogic
         Preconditions.checkArgument(start >= 0, "start is invalid: %d", start);
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
 
-        final List<MemberAccountHistoryRecord> records = _repo.getHistory(memberId, 
+        List<MoneyTransactionRecord> records = _repo.getTransactions(memberId, 
             currency, transactionTypes, start, count, descending);
         
-        // Put all records into a map by their ID.  We'll use this map to get a set of history ID's
-        // that we currently have.
-        final Map<Integer, MoneyHistory> referenceMap = new HashMap<Integer, MoneyHistory>();
-        for (final MemberAccountHistoryRecord record : records) {
-            referenceMap.put(record.id, record.createMoneyHistory(null));
-        }
+//        // Put all records into a map by their ID.  We'll use this map to get a set of history ID's
+//        // that we currently have.
+//        final Map<Integer, MoneyHistory> referenceMap = new HashMap<Integer, MoneyHistory>();
+//        for (final MoneyTransactionRecord record : records) {
+//            referenceMap.put(record.id, record.createMoneyHistory(null));
+//        }
+//        
+//        // Create a set of reference transaction IDs we don't already have.  We'll look these up.
+//        final Set<Integer> lookupRefIds = new HashSet<Integer>();
+//        for (final MoneyTransactionRecord record : records) {
+//            if (record.referenceTxId != 0 && !referenceMap.keySet().contains(record.referenceTxId)) {
+//                lookupRefIds.add(record.referenceTxId);
+//            }
+//        }
+//        if (lookupRefIds.size() > 0) {
+//            for (final MoneyTransactionRecord record : _repo.getTransactions(lookupRefIds)) {
+//                referenceMap.put(record.id, record.createMoneyHistory(null));
+//            }
+//        }
         
-        // Create a set of reference transaction IDs we don't already have.  We'll look these up.
-        final Set<Integer> lookupRefIds = new HashSet<Integer>();
-        for (final MemberAccountHistoryRecord record : records) {
-            if (record.referenceTxId != 0 && !referenceMap.keySet().contains(record.referenceTxId)) {
-                lookupRefIds.add(record.referenceTxId);
-            }
-        }
-        if (lookupRefIds.size() > 0) {
-            for (final MemberAccountHistoryRecord record : _repo.getHistory(lookupRefIds)) {
-                referenceMap.put(record.id, record.createMoneyHistory(null));
-            }
-        }
-        
-        // Now create the money histories, using the reference map for the references as necessary.
-        final List<MoneyHistory> log = new ArrayList<MoneyHistory>();
-        for (final MemberAccountHistoryRecord record : records) {
-            log.add(record.createMoneyHistory(record.referenceTxId == 0 ? null : 
-                referenceMap.get(record.referenceTxId)));
+        List<MoneyHistory> log = Lists.newArrayList();
+        for (MoneyTransactionRecord record : records) {
+            log.add(record.toMoneyTransaction());
         }
         
         return log;
@@ -378,6 +383,7 @@ public class MoneyLogic
      * @param transactionTypes Set of transaction types to retrieve logs for.  If null, all
      *      transactionTypes will be counted.
      */
+    // TODO: rename to getTransactionCount
     public int getHistoryCount (
         int memberId, Currency currency, EnumSet<TransactionType> transactionTypes)
     {
