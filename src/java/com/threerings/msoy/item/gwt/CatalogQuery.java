@@ -45,6 +45,9 @@ public class CatalogQuery
     /** The member id of the creator whose listings we want exclusively to see, or 0. */
     public int creatorId;
 
+    /** An optional game suite ID */
+    public int suiteId;
+
     public CatalogQuery ()
     {
     }
@@ -56,13 +59,14 @@ public class CatalogQuery
         this.tag = source.tag;
         this.search = source.search;
         this.creatorId = source.creatorId;
+        this.suiteId = source.suiteId;
     }
 
     @Override // from Object
     public int hashCode ()
     {
         return itemType ^ sortBy ^ (tag == null ? 0 : tag.hashCode()) ^
-            (search == null ? 0 : search.hashCode()) ^ creatorId;
+            (search == null ? 0 : search.hashCode()) ^ creatorId ^ suiteId;
     }
 
     @Override // from Object
@@ -71,13 +75,14 @@ public class CatalogQuery
         CatalogQuery oquery = (CatalogQuery)other;
         return (itemType == oquery.itemType && sortBy == oquery.sortBy &&
                 (tag == null ? (oquery.tag == null) : tag.equals(oquery.tag)) &&
-                (search == null ? (oquery.search == null) : search.equals(oquery.search)));
+                (search == null ? (oquery.search == null) : search.equals(oquery.search)) &&
+                suiteId == oquery.suiteId);
     }
 
     @Override // from Object
     public String toString ()
     {
-        return "[type=" + itemType + ", sort=" + sortBy + ", tag=" + tag +
-            ", search=" + search + ", creator=" + creatorId + "]";
+        return "[type=" + itemType + ", sort=" + sortBy + ", tag=" + tag + ", search=" + search
+            + ", creator=" + creatorId + ", suiteId=" + suiteId + "]";
     }
 }

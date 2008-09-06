@@ -155,7 +155,7 @@ public class CatalogPanel extends SmartTable
         }
         _items.setModel(model, pageNo);
 
-        // configure the appropriate tab cloud
+        // configure the appropriate tag cloud
         TagCloud cloud = _clouds.get(_query.itemType);
         if (cloud == null) {
             _clouds.put(_query.itemType, cloud = new TagCloud(_query.itemType, TAG_COUNT, this));

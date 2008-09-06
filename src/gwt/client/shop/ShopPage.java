@@ -3,6 +3,9 @@
 
 package client.shop;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.core.client.GWT;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -28,6 +31,7 @@ public class ShopPage extends Page
     public static final String FAVORITES = "f";
     public static final String TRANSACTIONS = "t";
     public static final String SALES = "s";
+    public static final String SUITE = "g";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -60,6 +64,23 @@ public class ShopPage extends Page
 //            int memberId = args.get(1, CShop.getMemberId());
 //            setContent(CShop.msgs.salesTitle(), new SalesPanel(memberId));
 
+        } else if (action.equals(SUITE)) {
+            final int gameId = args.get(1, 0);
+            final byte itemType = (byte)args.get(2, Item.ITEM_PACK);
+            final byte page = (byte)args.get(3, 0);
+            if (_suite.getGameId() != gameId) {
+                // only load the suite info in the case that the game id has changed
+                _catalogsvc.loadGameSuiteInfo(gameId, new MsoyCallback<CatalogService.SuiteInfo>() {
+                    public void onSuccess (CatalogService.SuiteInfo suiteInfo) {
+                        _suite.display(gameId, suiteInfo, itemType, page);
+                        setContent(_suite.getTitle(), _suite);
+                    }
+                });
+            } else {
+                _suite.display(itemType, page);
+                setContent(_suite.getTitle(), _suite);
+            }
+
         } else {
             byte type = (byte)args.get(0, Item.NOT_A_TYPE);
             if (type == Item.NOT_A_TYPE) {
@@ -90,6 +111,8 @@ public class ShopPage extends Page
 
     protected CatalogModels _models = new CatalogModels();
     protected CatalogPanel _catalog = new CatalogPanel(_models);
+    protected SuiteCatalogPanel _suite = new SuiteCatalogPanel(_models);
+    protected Map<Integer, Integer> suiteIdMap = new HashMap<Integer, Integer>();
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);

@@ -456,7 +456,8 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Counts all items in the catalog that match the supplied query terms.
      */
-    public int countListings (boolean mature, String search, int tag, int creator, Float minRating)
+    public int countListings (boolean mature, String search, int tag, int creator, Float minRating,
+                              int suiteId)
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(getCatalogClass()));
@@ -464,7 +465,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                              getItemClass(), ItemRecord.ITEM_ID));
 
         // see if there's any where bits to turn into an actual where clause
-        addSearchClause(clauses, mature, search, tag, creator, minRating);
+        addSearchClause(clauses, mature, search, tag, creator, minRating, suiteId);
 
         // finally fetch all the catalog records of interest
         return load(CountRecord.class, clauses).count;
@@ -480,7 +481,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      *       the Item vs Catalog class hierarchies).
      */
     public List<CatalogRecord> loadCatalog (byte sortBy, boolean mature, String search, int tag,
-                                  int creator, Float minRating, int offset, int rows)
+                                  int creator, Float minRating, int suiteId, int offset, int rows)
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new Join(getCatalogClass(), CatalogRecord.LISTED_ITEM_ID,
@@ -526,7 +527,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                                 obOrders.toArray(new OrderBy.Order[obOrders.size()])));
 
         // see if there's any where bits to turn into an actual where clause
-        addSearchClause(clauses, mature, search, tag, creator, minRating);
+        addSearchClause(clauses, mature, search, tag, creator, minRating, suiteId);
 
         // finally fetch all the catalog records of interest and resolve their item bits
         return resolveCatalogRecords(findAll(getCatalogClass(), clauses));
@@ -1028,7 +1029,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Helper function for {@link #countListings} and {@link #loadCatalog}.
      */
     protected void addSearchClause (List<QueryClause> clauses, boolean mature, String search,
-                                    int tag, int creator, Float minRating)
+                                    int tag, int creator, Float minRating, int suiteId)
     {
         List<SQLOperator> whereBits = Lists.newArrayList();
 
@@ -1056,6 +1057,10 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (minRating != null) {
             whereBits.add(new Conditionals.GreaterThanEquals(
                 getItemColumn(ItemRecord.RATING), minRating));
+        }
+
+        if (suiteId > 0 && isSubItem()) {
+            whereBits.add(new Equals(getItemColumn(SubItemRecord.SUITE_ID), suiteId));
         }
 
         whereBits.add(new Not(new Equals(getCatalogColumn(CatalogRecord.PRICING),
@@ -1141,6 +1146,14 @@ public abstract class ItemRepository<T extends ItemRecord>
         classes.add(getCloneClass());
         classes.add(getCatalogClass());
         classes.add(getRatingClass());
+    }
+
+    /**
+     * Checks whether the Item class for this repository is a SubItemRecord.
+     */
+    protected boolean isSubItem ()
+    {
+        return SubItemRecord.class.isAssignableFrom(getItemClass());
     }
 
     /**

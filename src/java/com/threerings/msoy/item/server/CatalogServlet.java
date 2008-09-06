@@ -43,6 +43,8 @@ import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
@@ -117,7 +119,7 @@ public class CatalogServlet extends MsoyServiceServlet
         // fetch catalog records and loop over them
         list.addAll(Lists.transform(
                         repo.loadCatalog(query.sortBy, showMature(mrec), query.search, tagId,
-                                         query.creatorId, null, offset, rows),
+                                         query.creatorId, null, query.suiteId, offset, rows),
                         CatalogRecord.TO_CARD));
 
         // resolve the creator names for these listings
@@ -126,7 +128,7 @@ public class CatalogServlet extends MsoyServiceServlet
         // if they want the total number of matches, compute that as well
         if (includeCount) {
             result.listingCount = repo.countListings(
-                showMature(mrec), query.search, tagId, query.creatorId, null);
+                showMature(mrec), query.search, tagId, query.creatorId, null, query.suiteId);
         }
         result.listings = list;
         return result;
@@ -500,6 +502,22 @@ public class CatalogServlet extends MsoyServiceServlet
         return result;
     }
 
+    // from interface CatalogService
+    public SuiteInfo loadGameSuiteInfo (int gameId)
+        throws ServiceException
+    {
+        GameRecord record = _gameRepo.loadGameRecord(gameId);
+        if (record != null) {
+            Item gameItem = record.toItem();
+            SuiteInfo info = new SuiteInfo();
+            info.name = gameItem.name;
+            info.suiteId = gameItem.getSuiteId();
+            return info;
+        }
+        log.warning("Can't find game record with the given id.", "gameId", gameId);
+        throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+    }
+
     /**
      * Helper function for {@link #loadShopData}.
      */
@@ -509,7 +527,7 @@ public class CatalogServlet extends MsoyServiceServlet
         final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         final List<ListingCard> cards = Lists.newArrayList();
         for (final CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING,
-            showMature(mrec), null, 0, 0, null, 0, ShopData.TOP_ITEM_COUNT)) {
+            showMature(mrec), null, 0, 0, null, 0, 0, ShopData.TOP_ITEM_COUNT)) {
             cards.add(crec.toListingCard());
         }
         return cards.toArray(new ListingCard[cards.size()]);
@@ -558,5 +576,6 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MoneyNodeActions _moneyNodeActions;
     @Inject protected UserActionRepository _userActionRepo;
+    @Inject protected GameRepository _gameRepo;
     @Inject protected StatLogic _statLogic;
 }

@@ -31,16 +31,28 @@ public class SideBar extends SmartTable
     {
         super("sideBar", 0, 0);
 
+        if (showAll) {
+            init(linker, ALL_TYPES, extras);
+        } else {
+            init(linker, Item.TYPES, extras);
+        }
+    }
+
+    public SideBar (Linker linker, byte[] itemTypes, Widget extras)
+    {
+        super("sideBar", 0, 0);
+        init(linker, itemTypes, extras);
+    }
+
+    protected void init (Linker linker, byte[] itemTypes, Widget extras)
+    {
         addWidget(new Image("/images/shop/sidebar_top.png"), 1, null);
         addText(_msgs.catalogCats(), 1, "Title");
 
         FlowPanel navi = new FlowPanel();
         navi.setStyleName("NaviPanel");
-        if (showAll) {
-            navi.add(makeItem(linker, _msgs.allItems(), Item.NOT_A_TYPE));
-        }
-        for (int ii = 0; ii < Item.TYPES.length; ii++) {
-            byte type = Item.TYPES[ii];
+        for (int ii = 0; ii < itemTypes.length; ii++) {
+            byte type = itemTypes[ii];
             navi.add(makeItem(linker, _dmsgs.getString("pItemType" + type), type));
         }
         addWidget(navi, 1, "Middle");
@@ -61,6 +73,10 @@ public class SideBar extends SmartTable
             return link;
         }
     }
+
+    protected static final byte[] ALL_TYPES = new byte[] { Item.NOT_A_TYPE, Item.AVATAR,
+            Item.FURNITURE, Item.DECOR, Item.TOY, Item.PET, Item.GAME, Item.PHOTO, Item.AUDIO,
+            Item.VIDEO };
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);

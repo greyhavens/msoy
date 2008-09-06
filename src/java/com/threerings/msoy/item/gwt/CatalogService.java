@@ -42,6 +42,15 @@ public interface CatalogService extends RemoteService
         public List<ListingCard> favorites;
     }
 
+    /** Returned by {@link #loadGameSuiteInfo} */
+    public static class SuiteInfo implements IsSerializable
+    {
+        /** The name of the suite. For game suites, this is the game's name. */
+        public String name;
+
+        public int suiteId;
+    }
+
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/catalogsvc";
 
@@ -110,5 +119,12 @@ public interface CatalogService extends RemoteService
      * Loads up the favorite items of the specified member of the specified type.
      */
     FavoritesResult loadFavorites (int memberId, byte itemType)
+        throws ServiceException;
+
+    /**
+     * Gets the game suite info for the given game.
+     * @throws ServiceException
+     */
+    SuiteInfo loadGameSuiteInfo (int gameId)
         throws ServiceException;
 }
