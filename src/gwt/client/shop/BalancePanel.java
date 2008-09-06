@@ -14,12 +14,12 @@ import org.gwtwidgets.client.util.SimpleDateFormat;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 
-import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.Currency;
 
 import client.ui.MsoyUI;
 
-public class BalancePanel extends PagedGrid<MoneyHistory>
+public class BalancePanel extends PagedGrid<MoneyTransaction>
 {
     public BalancePanel (int memberId, Currency currency)
     {
@@ -38,7 +38,7 @@ public class BalancePanel extends PagedGrid<MoneyHistory>
 //    }
 
     @Override // from PagedGrid
-    protected void displayResults (int start, int count, List<MoneyHistory> list)
+    protected void displayResults (int start, int count, List<MoneyTransaction> list)
     {
         super.displayResults(start, count, list);
 
@@ -50,7 +50,7 @@ public class BalancePanel extends PagedGrid<MoneyHistory>
         add(footer);
     }
 
-    public Widget createWidget (MoneyHistory entry)
+    public Widget createWidget (MoneyTransaction entry)
     {
         return new TransactionWidget(entry);
     }
@@ -62,7 +62,7 @@ public class BalancePanel extends PagedGrid<MoneyHistory>
 
     protected static class TransactionWidget extends HorizontalPanel
     {
-        public TransactionWidget (MoneyHistory entry)
+        public TransactionWidget (MoneyTransaction entry)
         {
             addStyleName("Transaction");
 

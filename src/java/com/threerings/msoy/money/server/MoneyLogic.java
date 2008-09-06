@@ -42,7 +42,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
-import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
@@ -256,7 +256,7 @@ public class MoneyLogic
 
         } else {
             creatorHistory = creator.creatorPayout(
-                quote.getListedCurrency(), (int)history.amount,
+                quote.getListedCurrency(), history.amount,
                 MessageBundle.tcompose("itemSold",
                     escrow.getDescription(), item.type, item.catalogId),
                 item, RuntimeConfig.server.creatorPercentage, history.id);
@@ -274,7 +274,7 @@ public class MoneyLogic
         _escrowCache.removeEscrow(key);
 
         // TODO: OLD: update
-        final MoneyHistory mh = history.toMoneyTransaction();
+        final MoneyTransaction mh = history.toMoneyTransaction();
         return new MoneyResult(buyer.getMemberMoney(),
             buyerIsCreator ? null : creator.getMemberMoney(),
             null, mh, buyerIsCreator ? null : creatorHistory.toMoneyTransaction(), null);
@@ -334,7 +334,7 @@ public class MoneyLogic
      * @return List of requested past transactions.
      */
     // TODO: rename to getTransactions
-    public List<MoneyHistory> getLog (
+    public List<MoneyTransaction> getLog (
         int memberId, Currency currency, EnumSet<TransactionType> transactionTypes,
         int start, int count, boolean descending)
     {
@@ -348,9 +348,9 @@ public class MoneyLogic
         
 //        // Put all records into a map by their ID.  We'll use this map to get a set of history ID's
 //        // that we currently have.
-//        final Map<Integer, MoneyHistory> referenceMap = new HashMap<Integer, MoneyHistory>();
+//        final Map<Integer, MoneyTransaction> referenceMap = new HashMap<Integer, MoneyTransaction>();
 //        for (final MoneyTransactionRecord record : records) {
-//            referenceMap.put(record.id, record.createMoneyHistory(null));
+//            referenceMap.put(record.id, record.createMoneyTransaction(null));
 //        }
 //        
 //        // Create a set of reference transaction IDs we don't already have.  We'll look these up.
@@ -362,11 +362,11 @@ public class MoneyLogic
 //        }
 //        if (lookupRefIds.size() > 0) {
 //            for (final MoneyTransactionRecord record : _repo.getTransactions(lookupRefIds)) {
-//                referenceMap.put(record.id, record.createMoneyHistory(null));
+//                referenceMap.put(record.id, record.createMoneyTransaction(null));
 //            }
 //        }
         
-        List<MoneyHistory> log = Lists.newArrayList();
+        List<MoneyTransaction> log = Lists.newArrayList();
         for (MoneyTransactionRecord record : records) {
             log.add(record.toMoneyTransaction());
         }

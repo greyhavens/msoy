@@ -7,12 +7,12 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 public class HistoryListResult implements IsSerializable
 {
     /** The total number of logged transactions available on the server. */
     public int totalCount;
 
-    public List<MoneyHistory> history;
+    public List<MoneyTransaction> history;
 }

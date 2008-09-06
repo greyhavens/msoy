@@ -52,7 +52,7 @@ import com.threerings.msoy.item.server.persist.SubItemRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
-import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
@@ -212,7 +212,7 @@ public class CatalogServlet extends MsoyServiceServlet
         });
 
         // update their stat set, if they aren't buying something from themselves.
-        final MoneyHistory transaction = result.getMemberTransaction();
+        final MoneyTransaction transaction = result.getMemberTransaction();
         if (mrec.memberId != listing.item.creatorId &&
             transaction.getCurrency() == Currency.COINS) {
             _statLogic.incrementStat(

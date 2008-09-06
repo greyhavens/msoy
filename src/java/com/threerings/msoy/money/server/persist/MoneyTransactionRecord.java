@@ -19,7 +19,7 @@ import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.TransactionType;
 
 /**
@@ -205,11 +205,10 @@ public class MoneyTransactionRecord extends PersistentRecord
     {
     }
     
-    // TODO: rename MoneyHistory to MoneyTransaction
-    public MoneyHistory toMoneyTransaction ()
+    public MoneyTransaction toMoneyTransaction ()
     {
         // TODO
-        return new MoneyHistory(memberId, timestamp, currency, amount,
+        return new MoneyTransaction(memberId, timestamp, currency, amount,
             transactionType, true, description, null, null);
     }
 }

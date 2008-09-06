@@ -42,7 +42,7 @@ public class MoneyHistoryDataModel extends ServiceBackedDataModel<MoneyHistory, 
     }
 
     @Override
-    protected List<MoneyHistory> getRows (HistoryListResult result)
+    protected List<MoneyTransaction> getRows (HistoryListResult result)
     {
         return result.history;
     }

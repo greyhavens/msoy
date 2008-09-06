@@ -15,15 +15,16 @@ import com.threerings.msoy.item.data.all.ItemIdent;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-public class MoneyHistory
+public class MoneyTransaction
     implements IsSerializable
 {
     // Required by for serializing
-    public MoneyHistory () { }
+    public MoneyTransaction () { }
 
-    public MoneyHistory (final int memberId, final Date timestamp, final Currency currency,
-        final double amount, final TransactionType transactionType, final boolean spent, 
-        final String description, final ItemIdent item, final MoneyHistory referenceTx)
+    // TODO: change arg order, int-ify the amount
+    public MoneyTransaction (int memberId, Date timestamp, Currency currency,
+        double amount, TransactionType transactionType, boolean spent, 
+        String description, ItemIdent item, MoneyTransaction referenceTx)
     {
         _memberId = memberId;
         _timestamp = timestamp;
@@ -107,7 +108,7 @@ public class MoneyHistory
      * created.  Their reference transactions will be each other.  If there is no reference
      * transaction, this should be null.
      */
-    public MoneyHistory getReferenceTx ()
+    public MoneyTransaction getReferenceTx ()
     {
         return _referenceTx;
     }
@@ -120,5 +121,5 @@ public class MoneyHistory
     protected boolean _spent;
     protected String _description;
     protected ItemIdent _item;
-    protected MoneyHistory _referenceTx;
+    protected MoneyTransaction _referenceTx;
 }

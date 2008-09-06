@@ -4,7 +4,7 @@
 package com.threerings.msoy.money.server;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
-import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 /**
  * Result of an operation on the money service that modified a member's, creator's, or
@@ -16,8 +16,8 @@ public class MoneyResult
 {
     public MoneyResult (
         final MemberMoney newMemberMoney, final MemberMoney newCreatorMoney,
-        final MemberMoney newAffiliateMoney, final MoneyHistory memberTransaction,
-        final MoneyHistory creatorTransaction, final MoneyHistory affiliateTransaction)
+        final MemberMoney newAffiliateMoney, final MoneyTransaction memberTransaction,
+        final MoneyTransaction creatorTransaction, final MoneyTransaction affiliateTransaction)
     {
         _newMemberMoney = newMemberMoney;
         _newCreatorMoney = newCreatorMoney;
@@ -58,7 +58,7 @@ public class MoneyResult
     /**
      * The transaction that was performed on the member's account.
      */
-    public MoneyHistory getMemberTransaction ()
+    public MoneyTransaction getMemberTransaction ()
     {
         return _memberTransaction;
     }
@@ -68,7 +68,7 @@ public class MoneyResult
      * not modified.  Note that the creator account will still be modified if an operation involving
      * 0 coins was performed. 
      */
-    public MoneyHistory getCreatorTransaction ()
+    public MoneyTransaction getCreatorTransaction ()
     {
         return _creatorTransaction;
     }
@@ -78,7 +78,7 @@ public class MoneyResult
      * was not modified.  Note that the affiliate account will still be modified if an operation 
      * involving 0 coins was performed.
      */
-    public MoneyHistory getAffiliateTransaction ()
+    public MoneyTransaction getAffiliateTransaction ()
     {
         return _affiliateTransaction;
     }
@@ -86,7 +86,7 @@ public class MoneyResult
     protected final MemberMoney _newMemberMoney;
     protected final MemberMoney _newCreatorMoney;
     protected final MemberMoney _newAffiliateMoney;
-    protected final MoneyHistory _memberTransaction;
-    protected final MoneyHistory _creatorTransaction;
-    protected final MoneyHistory _affiliateTransaction;
+    protected final MoneyTransaction _memberTransaction;
+    protected final MoneyTransaction _creatorTransaction;
+    protected final MoneyTransaction _affiliateTransaction;
 }
