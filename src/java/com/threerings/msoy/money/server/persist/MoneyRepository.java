@@ -133,8 +133,7 @@ public class MoneyRepository extends DepotRepository
 
     public List<MoneyTransactionRecord> getTransactions (final Set<Integer> ids)
     {
-        return findAll(MoneyTransactionRecord.class,
-            new Where(new In(MoneyTransactionRecord.ID_C, ids)));
+        return loadAll(MoneyTransactionRecord.class, ids);
     }
 
     public int getHistoryCount (int memberId, Currency currency,

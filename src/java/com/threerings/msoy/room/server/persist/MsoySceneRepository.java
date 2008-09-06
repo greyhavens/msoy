@@ -133,8 +133,7 @@ public class MsoySceneRepository extends DepotRepository
     {
         IntMap<String> names = IntMaps.newHashIntMap();
         // TODO: use a @Computed record?
-        Where where = new Where(new In(SceneRecord.SCENE_ID_C, sceneIds));
-        for (SceneRecord scene : findAll(SceneRecord.class, where)) {
+        for (SceneRecord scene : loadAll(SceneRecord.class, sceneIds)) {
             names.put(scene.sceneId, scene.name);
         }
         return names;
@@ -224,11 +223,7 @@ public class MsoySceneRepository extends DepotRepository
      */
     public List<SceneRecord> loadScenes (Set<Integer> sceneIds)
     {
-        if (sceneIds.size() == 0) {
-            return Collections.emptyList();
-        } else {
-            return findAll(SceneRecord.class, new Where(new In(SceneRecord.SCENE_ID_C, sceneIds)));
-        }
+        return loadAll(SceneRecord.class, sceneIds);
     }
 
     /**

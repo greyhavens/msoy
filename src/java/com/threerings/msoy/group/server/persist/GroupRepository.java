@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.group.server.persist;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -199,7 +200,7 @@ public class GroupRepository extends DepotRepository
     /**
      * Fetches multiple groups by id.
      */
-    public List<GroupRecord> loadGroups (Set<Integer> groupIds)
+    public List<GroupRecord> loadGroups (Collection<Integer> groupIds)
     {
         return loadAll(GroupRecord.class, groupIds);
     }
@@ -220,9 +221,7 @@ public class GroupRepository extends DepotRepository
     {
         List<GroupName> names = Lists.newArrayList();
         if (groupIds.size() > 0) {
-            for (GroupNameRecord gnr : findAll(
-                     GroupNameRecord.class,
-                     new Where(new In(GroupRecord.GROUP_ID_C, groupIds)))) {
+            for (GroupNameRecord gnr : loadAll(GroupNameRecord.class, groupIds)) {
                 names.add(gnr.toGroupName());
             }
         }
