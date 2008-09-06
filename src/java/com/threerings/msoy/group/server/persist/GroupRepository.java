@@ -177,8 +177,7 @@ public class GroupRepository extends DepotRepository
         for (GroupTagRecord tagRec : findAll(GroupTagRecord.class, where)) {
             groupIds.add(tagRec.targetId);
         }
-        return findAll(GroupRecord.class,
-                       new Where(new In(GroupRecord.class, GroupRecord.GROUP_ID, groupIds)));
+        return loadGroups(groupIds);
     }
 
     /**
@@ -202,11 +201,7 @@ public class GroupRepository extends DepotRepository
      */
     public List<GroupRecord> loadGroups (Set<Integer> groupIds)
     {
-        if (groupIds.size() == 0) {
-            return Collections.emptyList();
-        } else {
-            return findAll(GroupRecord.class, new Where(new In(GroupRecord.GROUP_ID_C, groupIds)));
-        }
+        return loadAll(GroupRecord.class, groupIds);
     }
 
     /**

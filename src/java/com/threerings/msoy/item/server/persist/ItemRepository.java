@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
@@ -318,14 +320,9 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> loadItems (int[] itemIds)
     {
-        if (itemIds.length == 0) {
-            return new ArrayList<T>();
-        }
         Comparable<?>[] idArr = IntListUtil.box(itemIds);
-        Where cloneInClause = new Where(new In(getCloneClass(), ItemRecord.ITEM_ID, idArr));
-        List<T> items = loadClonedItems(cloneInClause);
-        Where inClause = new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr));
-        items.addAll(findAll(getItemClass(), inClause));
+        List<T> items = resolveClones(loadAll(getCloneClass(), Arrays.asList(idArr)));
+        items.addAll(loadAll(getItemClass(), Arrays.asList(idArr)));
         return items;
     }
 
@@ -538,36 +535,24 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<CatalogRecord> loadCatalog (Collection<Integer> catalogIds)
     {
-        Where where = new Where(new In(getCatalogColumn(CatalogRecord.CATALOG_ID), catalogIds));
-        return resolveCatalogRecords(findAll(getCatalogClass(), where));
+        return resolveCatalogRecords(loadAll(getCatalogClass(), catalogIds));
     }
 
     protected List<CatalogRecord> resolveCatalogRecords (List<CatalogRecord> records)
     {
-        if (records.size() == 0) {
-            return records;
-        }
-
-        // construct an array of item ids we need to load
-        Comparable<?>[] idArr = new Integer[records.size()];
-        int ii = 0;
-        for (CatalogRecord record : records) {
-            idArr[ii++] = record.listedItemId;
-        }
-
-        // load those items and map item ID's to items
-        List<T> items = findAll(
-            getItemClass(), new Where(new In(getItemClass(), ItemRecord.ITEM_ID, idArr)));
+        // load the listed items for each record and then fill them back in
         Map<Integer, T> map = Maps.newHashMap();
-        for (T iRec : items) {
+        Function<CatalogRecord, Integer> getItemId = new Function<CatalogRecord, Integer>() {
+            public Integer apply (CatalogRecord record) {
+                return record.listedItemId;
+            }
+        };
+        for (T iRec : loadAll(getItemClass(), Lists.transform(records, getItemId))) {
             map.put(iRec.itemId, iRec);
         }
-
-        // finally populate the catalog records
         for (CatalogRecord record : records) {
             record.item = map.get(record.listedItemId);
         }
-
         return records;
     }
 
@@ -940,8 +925,14 @@ public abstract class ItemRepository<T extends ItemRecord>
         Collections.addAll(clauseList, clauses);
         clauseList.add(new Join(getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID,
             getItemClass(), ItemRecord.ITEM_ID));
-        List<CloneRecord> clones = findAll(getCloneClass(), clauseList);
+        return resolveClones(findAll(getCloneClass(), clauseList));
+    }
 
+    /**
+     * Resolves clone records into full item records.
+     */
+    protected List<T> resolveClones (List<CloneRecord> clones)
+    {
         // our work here is done if we didn't find any
         if (clones.isEmpty()) {
             return new ArrayList<T>();
@@ -954,8 +945,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
 
         // find all the originals and insert them into a map
-        List<T> originals = findAll(getItemClass(),
-            new Where(new In(getItemColumn(ItemRecord.ITEM_ID), origIds)));
+        List<T> originals = loadAll(getItemClass(), origIds);
         HashIntMap<T> records = new HashIntMap<T>(originals.size(), HashIntMap.DEFAULT_LOAD_FACTOR);
         for (T record : originals) {
             records.put(record.itemId, record);

@@ -35,7 +35,6 @@ import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
-import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.SimpleCacheKey;
@@ -238,10 +237,7 @@ public class MemberRepository extends DepotRepository
      */
     public List<MemberRecord> loadMembers (final Set<Integer> memberIds)
     {
-        if (memberIds.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return findAll(MemberRecord.class, new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)));
+        return loadAll(MemberRecord.class, memberIds);
     }
 
     /**
@@ -299,12 +295,8 @@ public class MemberRepository extends DepotRepository
     public IntMap<MemberName> loadMemberNames (final Set<Integer> memberIds)
     {
         final IntMap<MemberName> names = IntMaps.newHashIntMap();
-        if (memberIds.size() > 0) {
-            for (final MemberNameRecord name : findAll(
-                     MemberNameRecord.class,
-                     new Where(new In(MemberRecord.MEMBER_ID_C, memberIds)))) {
-                names.put(name.memberId, name.toMemberName());
-            }
+        for (MemberNameRecord name : loadAll(MemberNameRecord.class, memberIds)) {
+            names.put(name.memberId, name.toMemberName());
         }
         return names;
     }

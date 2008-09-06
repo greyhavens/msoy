@@ -50,12 +50,7 @@ public class ProfileRepository extends DepotRepository
      */
     public List<ProfileRecord> loadProfiles (Set<Integer> memberIds)
     {
-        if (memberIds.size() == 0) {
-            return Collections.emptyList();
-        } else {
-            Where where = new Where(new In(ProfileRecord.MEMBER_ID_C, memberIds));
-            return findAll(ProfileRecord.class, where);
-        }
+        return loadAll(ProfileRecord.class, memberIds);
     }
 
     /**
