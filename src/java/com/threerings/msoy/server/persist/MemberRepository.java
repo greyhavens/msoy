@@ -15,10 +15,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -911,26 +915,27 @@ public class MemberRepository extends DepotRepository
      */
     public boolean getFriendStatus (final int firstId, final int secondId)
     {
-        final List<FriendRecord> friends = findAll(
-            FriendRecord.class,
+        List<Where> clauses = Collections.singletonList(
             new Where(new And(new Or(new And(new Equals(FriendRecord.INVITER_ID_C, firstId),
                                              new Equals(FriendRecord.INVITEE_ID_C, secondId)),
                                      new And(new Equals(FriendRecord.INVITER_ID_C, secondId),
                                              new Equals(FriendRecord.INVITEE_ID_C, firstId))))));
-        return friends.size() > 0;
+        return findAll(FriendRecord.class, true, clauses).size() > 0;
     }
 
     /**
      * Loads the member ids of the specified member's friends.
+     *
+     * @param limit a limit on the number of friend ids to load or 0 for all of them.
      */
-    public IntSet loadFriendIds (final int memberId)
+    public IntSet loadFriendIds (int memberId)
     {
-        final IntSet memIds = new ArrayIntSet();
-        final SQLExpression condition =
-            new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
-                   new Equals(FriendRecord.INVITEE_ID_C, memberId));
-        for (final FriendRecord record : findAll(FriendRecord.class, new Where(condition))) {
-            memIds.add(record.inviterId == memberId ? record.inviteeId : record.inviterId);
+        IntSet memIds = new ArrayIntSet();
+        List<Where> clauses = Collections.singletonList(
+            new Where(new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
+                             new Equals(FriendRecord.INVITEE_ID_C, memberId))));
+        for (FriendRecord record : findAll(FriendRecord.class, true, clauses)) {
+            memIds.add(record.getFriendId(memberId));
         }
         return memIds;
     }
@@ -944,28 +949,38 @@ public class MemberRepository extends DepotRepository
      *
      * @param limit a limit on the number of friends to load or 0 for all of them.
      */
-    public List<FriendEntry> loadFriends (final int memberId, final int limit)
+    public List<FriendEntry> loadFriends (int memberId, int limit)
     {
-        final List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new FromOverride(FriendRecord.class));
-        final SQLExpression condition = new And(
+        // load up the ids of this member's friends (ordered from most recently online to least)
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new Where(new Or(new Equals(FriendRecord.INVITER_ID_C, memberId),
+                                     new Equals(FriendRecord.INVITEE_ID_C, memberId))));
+        SQLExpression condition = new And(
             new Or(new And(new Equals(FriendRecord.INVITER_ID_C, memberId),
                            new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITEE_ID_C)),
                    new And(new Equals(FriendRecord.INVITEE_ID_C, memberId),
                            new Equals(MemberRecord.MEMBER_ID_C, FriendRecord.INVITER_ID_C))));
         clauses.add(new Join(MemberRecord.class, condition));
-        clauses.add(new Join(MemberRecord.MEMBER_ID_C, ProfileRecord.MEMBER_ID_C));
         if (limit > 0) {
             clauses.add(new Limit(0, limit));
         }
         clauses.add(OrderBy.descending(MemberRecord.LAST_SESSION_C));
-        final List<MemberCardRecord> records = findAll(MemberCardRecord.class, clauses);
-        final List<FriendEntry> list = Lists.newArrayList();
-        for (final MemberCardRecord record : records) {
-            final MemberCard card = record.toMemberCard();
-            list.add(new FriendEntry(card.name, false, card.photo, card.headline));
+
+        // prepare an ordered map of the friends in question
+        Map<Integer, FriendEntry> friends = Maps.newLinkedHashMap();
+        for (FriendRecord record : findAll(FriendRecord.class, true, clauses)) {
+            friends.put(record.getFriendId(memberId), null);
         }
-        return list;
+
+        // now load up member card records for these guys and convert them to friend entries
+        for (MemberCardRecord crec : loadMemberCards(friends.keySet())) {
+            MemberCard card = crec.toMemberCard();
+            friends.put(crec.memberId, new FriendEntry(card.name, false, card.photo, card.headline));
+        }
+
+        // we might have nulls if there are some legacy bastards with no profile record
+        return Lists.newArrayList(
+            Iterables.filter(friends.values(), Predicates.not(Predicates.isNull())));
     }
 
     /**

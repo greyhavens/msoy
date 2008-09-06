@@ -45,6 +45,14 @@ public class FriendRecord extends PersistentRecord
     @Id
     public int inviteeId;
 
+    /**
+     * Returns the member of this friendship that was not passed in as an argument.
+     */
+    public int getFriendId (int memberId)
+    {
+        return (inviterId == memberId) ? inviteeId : inviterId;
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link #FriendRecord}
