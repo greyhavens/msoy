@@ -8,7 +8,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.money.data.all.MoneyHistory;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.gwt.HistoryListResult;
@@ -20,9 +20,10 @@ import client.util.ServiceUtil;
 /**
  * Data model for service backed balance sheet widgets.
  */
-public class MoneyHistoryDataModel extends ServiceBackedDataModel<MoneyHistory, HistoryListResult>
+public class MoneyTransactionDataModel
+    extends ServiceBackedDataModel<MoneyTransaction, HistoryListResult>
 {
-    public MoneyHistoryDataModel (int memberId, Currency currency)
+    public MoneyTransactionDataModel (int memberId, Currency currency)
     {
         _memberId = memberId;
         _currency = currency;

@@ -27,7 +27,7 @@ public class BalancePanel extends PagedGrid<MoneyTransaction>
 
         addStyleName("Balance");
 
-        setModel(new MoneyHistoryDataModel(memberId, currency), 0);
+        setModel(new MoneyTransactionDataModel(memberId, currency), 0);
     }
 
 // TODO: This should work
