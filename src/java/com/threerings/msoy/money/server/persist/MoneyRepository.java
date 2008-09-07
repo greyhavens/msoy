@@ -123,6 +123,15 @@ public class MoneyRepository extends DepotRepository
         return findAll(MoneyTransactionRecord.class, clauses);
     }
 
+    public int getTransactionCount (
+        int memberId, Currency currency, EnumSet<TransactionType> transactionTypes)
+    {
+        List<QueryClause> clauses = Lists.newArrayList();
+        clauses.add(new FromOverride(MoneyTransactionRecord.class));
+        populateSearch(clauses, memberId, currency, transactionTypes);
+        return load(CountRecord.class, clauses).count;
+    }
+
     public int deleteOldTransactions (final Currency currency, long maxAge)
     {
         final long oldestTimestamp = System.currentTimeMillis() - maxAge;
@@ -134,15 +143,6 @@ public class MoneyRepository extends DepotRepository
     public List<MoneyTransactionRecord> getTransactions (final Set<Integer> ids)
     {
         return loadAll(MoneyTransactionRecord.class, ids);
-    }
-
-    public int getHistoryCount (int memberId, Currency currency,
-                                EnumSet<TransactionType> transactionTypes)
-    {
-        List<QueryClause> clauses = Lists.newArrayList();
-        clauses.add(new FromOverride(MoneyTransactionRecord.class));
-        populateSearch(clauses, memberId, currency, transactionTypes);
-        return load(CountRecord.class, clauses).count;
     }
 
     /** Helper method to setup a query for a transaction history search. */

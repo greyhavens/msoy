@@ -22,8 +22,9 @@ public class MoneyTransaction
     public MoneyTransaction () { }
 
     // TODO: change arg order, int-ify the amount
-    public MoneyTransaction (int memberId, Date timestamp, Currency currency,
-        double amount, TransactionType transactionType, boolean spent, 
+    public MoneyTransaction (
+        int memberId, Date timestamp, Currency currency,
+        int amount, TransactionType transactionType, boolean spent, 
         String description, ItemIdent item, MoneyTransaction referenceTx)
     {
         _memberId = memberId;
@@ -117,7 +118,7 @@ public class MoneyTransaction
     protected Date _timestamp;
     protected Currency _currency;
     protected TransactionType _transactionType;
-    protected double _amount; // TODO int
+    protected int _amount;
     protected boolean _spent;
     protected String _description;
     protected ItemIdent _item;

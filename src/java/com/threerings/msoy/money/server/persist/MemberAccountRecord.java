@@ -299,7 +299,8 @@ public class MemberAccountRecord extends PersistentRecord
      */
     public MemberMoney getMemberMoney ()
     {
-        return new MemberMoney(memberId, coins, bars, bling, accCoins, accBars, accBling);
+        return new MemberMoney(memberId, coins, bars, (int)bling,
+            accCoins, accBars, (long)accBling);
     }
 
     // AUTO-GENERATED: METHODS START

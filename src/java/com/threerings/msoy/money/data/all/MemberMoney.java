@@ -13,64 +13,34 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  */
 public class MemberMoney implements IsSerializable
 {
-    public MemberMoney (final int memberId)
+    public int memberId;
+    public int coins;
+    public int bars;
+    public int bling;
+    public long accBars;
+    public long accCoins;
+    public long accBling;
+
+    /** Suitable for unserialization. */
+    public MemberMoney ()
     {
-        this(memberId, 0, 0, 0.0, 0, 0, 0.0);
+    }
+
+    public MemberMoney (int memberId)
+    {
+        this.memberId = memberId;
     }
     
     public MemberMoney (
-        final int memberId, final int coins, final int bars, final double bling,
-        final long accCoins, final long accBars, final double accBling)
+        int memberId, int coins, int bars, int bling,
+        long accCoins, long accBars, long accBling)
     {
-        _memberId = memberId;
-        _coins = coins;
-        _bars = bars;
-        _bling = bling;
-        _accCoins = accCoins;
-        _accBars = accBars;
-        _accBling = accBling;
+        this.memberId = memberId;
+        this.coins = coins;
+        this.bars = bars;
+        this.bling = bling;
+        this.accCoins = accCoins;
+        this.accBars = accBars;
+        this.accBling = accBling;
     }
-
-    public int getBars ()
-    {
-        return _bars;
-    }
-
-    public int getCoins ()
-    {
-        return _coins;
-    }
-
-    public double getBling ()
-    {
-        return _bling;
-    }
-
-    public int getMemberId ()
-    {
-        return _memberId;
-    }
-
-    public long getAccBars ()
-    {
-        return _accBars;
-    }
-
-    public long getAccCoins ()
-    {
-        return _accCoins;
-    }
-
-    public double getAccBling ()
-    {
-        return _accBling;
-    }
-
-    protected final long _accBars;
-    protected final long _accCoins;
-    protected final double _accBling;
-    protected final int _bars;
-    protected final int _coins;
-    protected final double _bling;
-    protected final int _memberId;
 }

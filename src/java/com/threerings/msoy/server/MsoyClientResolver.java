@@ -136,8 +136,8 @@ public class MsoyClientResolver extends CrowdClientResolver
 
         // configure various bits directly from their member record
         memobj.homeSceneId = member.homeSceneId;
-        memobj.flow = money.getCoins();
-        memobj.accFlow = (int)money.getAccCoins();
+        memobj.flow = money.coins;
+        memobj.accFlow = (int) money.accCoins; // TODO: long? int?
         memobj.level = member.level;
 
         // load up this member's persistent stats

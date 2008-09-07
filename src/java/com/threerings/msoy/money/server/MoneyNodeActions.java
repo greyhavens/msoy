@@ -23,13 +23,12 @@ public class MoneyNodeActions
      */
     public void moneyUpdated (final MemberMoney money)
     {
-        _peerMan.invokeNodeAction(new MoneyUpdated(money.getMemberId(), money.getCoins(),
-            (int)money.getAccCoins()));
+        _peerMan.invokeNodeAction(new MoneyUpdated(money.memberId, money.coins, money.accCoins));
     }
 
     protected static class MoneyUpdated extends MemberNodeAction
     {
-        public MoneyUpdated (final int memberId, final int coins, final int accCoins)
+        public MoneyUpdated (int memberId, int coins, long accCoins)
         {
             super(memberId);
             _coins = coins;
@@ -45,7 +44,7 @@ public class MoneyNodeActions
             try {
                 memobj.setFlow(_coins);
                 if (_accCoins != memobj.accFlow) {
-                    memobj.setAccFlow(_accCoins);
+                    memobj.setAccFlow((int)_accCoins);
                 }
             } finally {
                 memobj.commitTransaction();
@@ -53,7 +52,7 @@ public class MoneyNodeActions
         }
 
         protected int _coins;
-        protected int _accCoins;
+        protected long _accCoins;
     }
 
     protected final MsoyPeerManager _peerMan;

@@ -61,15 +61,15 @@ public class MoneyLogic
 {
     @Inject
     public MoneyLogic (
-        final MoneyRepository repo, final EscrowCache escrowCache,
-        final UserActionRepository userActionRepo,final MsoyEventLogger eventLog, 
-        final MessageConnection conn, final ShutdownManager sm, @MainInvoker final Invoker invoker)
+        MoneyRepository repo, EscrowCache escrowCache, UserActionRepository userActionRepo,
+        MsoyEventLogger eventLog, MessageConnection conn, ShutdownManager sm,
+        @MainInvoker Invoker invoker)
     {
         _repo = repo;
         _escrowCache = escrowCache;
         _userActionRepo = userActionRepo;
         _eventLog = eventLog;
-        _expirer = new MoneyHistoryExpirer(repo, sm, invoker);
+        _expirer = new MoneyTransactionExpirer(repo, invoker, sm);
         _msgReceiver = new MoneyMessageReceiver(conn, this, sm, invoker);
     }
 
@@ -91,9 +91,8 @@ public class MoneyLogic
      */
     @Retry(exception=StaleDataException.class)
     public MoneyResult awardCoins (
-        final int memberId, final int creatorId, final int affiliateId,
-        final ItemIdent item, final int amount, final String description, final
-        UserAction userAction)
+        int memberId, int creatorId, int affiliateId, ItemIdent item, int amount,
+        String description, UserAction userAction)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot award coins to guests.");
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
@@ -279,7 +278,7 @@ public class MoneyLogic
      * Deducts some amount of bling from the member's account. This will be used by CSR's for
      * corrective actions or when the member chooses to cash out their bling.
      */
-    public void deductBling (final int memberId, final double amount)
+    public void deductBling (int memberId, int amount)
     {
         // TODO Auto-generated method stub
     }
@@ -293,7 +292,7 @@ public class MoneyLogic
      * @throws NotEnoughMoneyException The account does not have the specified amount of bling
      * available, aight?
      */
-    public int exchangeBlingForBars (final int memberId, final double blingAmount)
+    public int exchangeBlingForBars (int memberId, int blingAmount)
         throws NotEnoughMoneyException
     {
         // TODO Auto-generated method stub
@@ -306,10 +305,10 @@ public class MoneyLogic
      * @param memberId ID of the member to retrieve bling for.
      * @return The amount the bling is worth in American dollars.
      */
-    public BigDecimal getBlingWorth (final int memberId)
+    public int getBlingWorth (int memberId)
     {
         // TODO Auto-generated method stub
-        return null;
+        return 0;
     }
 
     /**
@@ -328,8 +327,7 @@ public class MoneyLogic
      * @param descending If true, the log will be sorted by transaction date descending.
      * @return List of requested past transactions.
      */
-    // TODO: rename to getTransactions
-    public List<MoneyTransaction> getLog (
+    public List<MoneyTransaction> getTransactions (
         int memberId, Currency currency, EnumSet<TransactionType> transactionTypes,
         int start, int count, boolean descending)
     {
@@ -378,11 +376,10 @@ public class MoneyLogic
      * @param transactionTypes Set of transaction types to retrieve logs for.  If null, all
      *      transactionTypes will be counted.
      */
-    // TODO: rename to getTransactionCount
-    public int getHistoryCount (
+    public int getTransactionCount (
         int memberId, Currency currency, EnumSet<TransactionType> transactionTypes)
     {
-        return _repo.getHistoryCount(memberId, currency, transactionTypes);
+        return _repo.getTransactionCount(memberId, currency, transactionTypes);
     }
 
     /**
@@ -440,7 +437,6 @@ public class MoneyLogic
      */
     public void init ()
     {
-        _expirer.start();
         _msgReceiver.start();
     }
 
@@ -453,11 +449,10 @@ public class MoneyLogic
     }
 
     protected void logInPanopticon (
-        final UserActionDetails info, final Currency currency,
-        final double delta, final MemberAccountRecord account)
+        UserActionDetails info, Currency currency, int delta, MemberAccountRecord account)
     {
         if (currency == Currency.COINS) {
-            _eventLog.flowTransaction(info, (int)delta, account.coins);
+            _eventLog.flowTransaction(info, delta, account.coins);
         } else if (currency == Currency.BARS) {
             // TODO
         } else {
@@ -466,10 +461,9 @@ public class MoneyLogic
     }
 
     protected UserActionDetails logUserAction (
-        final int memberId, final int otherMemberId, final UserAction userAction,
-        final ItemIdent item, final String description)
+        int memberId, int otherMemberId, UserAction userAction, ItemIdent item, String description)
     {
-        final UserActionDetails details = new UserActionDetails(
+        UserActionDetails details = new UserActionDetails(
             memberId, userAction, otherMemberId,
             (item == null) ? Item.NOT_A_TYPE : item.type,
             (item == null) ? UserActionDetails.INVALID_ID : item.itemId,
@@ -478,7 +472,7 @@ public class MoneyLogic
         return details;
     }
 
-    protected final MoneyHistoryExpirer _expirer;
+    protected final MoneyTransactionExpirer _expirer;
     protected final MsoyEventLogger _eventLog;
     protected final UserActionRepository _userActionRepo;
     protected final MoneyRepository _repo;

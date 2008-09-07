@@ -15,9 +15,9 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
 public class MoneyResult
 {
     public MoneyResult (
-        final MemberMoney newMemberMoney, final MemberMoney newCreatorMoney,
-        final MemberMoney newAffiliateMoney, final MoneyTransaction memberTransaction,
-        final MoneyTransaction creatorTransaction, final MoneyTransaction affiliateTransaction)
+        MemberMoney newMemberMoney, MemberMoney newCreatorMoney,
+        MemberMoney newAffiliateMoney, MoneyTransaction memberTransaction,
+        MoneyTransaction creatorTransaction, MoneyTransaction affiliateTransaction)
     {
         _newMemberMoney = newMemberMoney;
         _newCreatorMoney = newCreatorMoney;
@@ -83,10 +83,10 @@ public class MoneyResult
         return _affiliateTransaction;
     }
     
-    protected final MemberMoney _newMemberMoney;
-    protected final MemberMoney _newCreatorMoney;
-    protected final MemberMoney _newAffiliateMoney;
-    protected final MoneyTransaction _memberTransaction;
-    protected final MoneyTransaction _creatorTransaction;
-    protected final MoneyTransaction _affiliateTransaction;
+    protected MemberMoney _newMemberMoney;
+    protected MemberMoney _newCreatorMoney;
+    protected MemberMoney _newAffiliateMoney;
+    protected MoneyTransaction _memberTransaction;
+    protected MoneyTransaction _creatorTransaction;
+    protected MoneyTransaction _affiliateTransaction;
 }

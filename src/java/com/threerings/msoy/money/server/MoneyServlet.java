@@ -19,18 +19,18 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 public class MoneyServlet extends MsoyServiceServlet
     implements MoneyService
 {
-    public HistoryListResult getTransactionHistory (final int memberId, final Currency currency,
-                                                    final int from, final int count)
+    public HistoryListResult getTransactionHistory (
+        int memberId, Currency currency, int from, int count)
         throws ServiceException
     {
-        final MemberRecord mrec = requireAuthedUser();
+        MemberRecord mrec = requireAuthedUser();
         if (mrec.memberId != memberId && !mrec.isSupport()) {
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
 
-        final HistoryListResult result = new HistoryListResult();
-        result.history = _moneyLogic.getLog(memberId, currency, null, from, count, true);
-        result.totalCount = _moneyLogic.getHistoryCount(memberId, currency, null);
+        HistoryListResult result = new HistoryListResult();
+        result.history = _moneyLogic.getTransactions(memberId, currency, null, from, count, true);
+        result.totalCount = _moneyLogic.getTransactionCount(memberId, currency, null);
         return result;
     }
 

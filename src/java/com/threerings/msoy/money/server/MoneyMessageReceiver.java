@@ -78,8 +78,9 @@ public class MoneyMessageReceiver
                     public boolean invoke ()
                     {
                         try {
-                            final MemberMoney money = _logic.getMoneyFor(new IntMessage(message).value);
-                            replier.reply(new IntMessage(money.getBars()));
+                            final MemberMoney money = _logic.getMoneyFor(
+                                new IntMessage(message).value);
+                            replier.reply(new IntMessage(money.bars));
                             return false;
                         } catch (final IOException ioe) {
                             throw new RuntimeException(

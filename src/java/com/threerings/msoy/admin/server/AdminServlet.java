@@ -92,9 +92,9 @@ public class AdminServlet extends MsoyServiceServlet
         info.permaName = tgtrec.permaName;
         info.isSupport = tgtrec.isSupportOnly();
         info.isAdmin = tgtrec.isAdmin();
-        info.flow = money.getCoins();
-        info.accFlow = (int)money.getAccCoins();
-        // info.gold = TODO: load gold
+        info.flow = money.coins;
+        info.accFlow = (int)money.accCoins;
+        info.gold = money.bars;
         info.sessions = tgtrec.sessions;
         info.sessionMinutes = tgtrec.sessionMinutes;
         if (tgtrec.lastSession != null) {

@@ -77,7 +77,7 @@ public class MyStatsServlet extends HttpServlet
         final JSONObject result = new JSONObject();
 
         result.put("name", URLEncoder.encode(member.name, "UTF-8"));
-        result.put("coins", money.getCoins());
+        result.put("coins", money.coins);
         result.put("level", member.level);
         result.put("friendsOnline", friends.size());
 

@@ -472,8 +472,8 @@ public class WebUserServlet extends MsoyServiceServlet
         data.creds = creds;
 
         // fill in their flow, gold and level
-        data.flow = money.getCoins();
-        // data.gold = TODO
+        data.flow = money.coins;
+        data.gold = money.bars;
         data.level = mrec.level;
 
         // load up their new mail count
