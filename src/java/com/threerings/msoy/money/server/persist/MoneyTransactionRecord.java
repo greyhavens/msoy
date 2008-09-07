@@ -56,6 +56,13 @@ public class MoneyTransactionRecord extends PersistentRecord
     public static final ColumnExp TIMESTAMP_C =
         new ColumnExp(MoneyTransactionRecord.class, TIMESTAMP);
 
+    /** The column identifier for the {@link #transactionType} field. */
+    public static final String TRANSACTION_TYPE = "transactionType";
+
+    /** The qualified column identifier for the {@link #transactionType} field. */
+    public static final ColumnExp TRANSACTION_TYPE_C =
+        new ColumnExp(MoneyTransactionRecord.class, TRANSACTION_TYPE);
+
     /** The column identifier for the {@link #currency} field. */
     public static final String CURRENCY = "currency";
 
@@ -70,12 +77,12 @@ public class MoneyTransactionRecord extends PersistentRecord
     public static final ColumnExp AMOUNT_C =
         new ColumnExp(MoneyTransactionRecord.class, AMOUNT);
 
-    /** The column identifier for the {@link #spent} field. */
-    public static final String SPENT = "spent";
+    /** The column identifier for the {@link #balance} field. */
+    public static final String BALANCE = "balance";
 
-    /** The qualified column identifier for the {@link #spent} field. */
-    public static final ColumnExp SPENT_C =
-        new ColumnExp(MoneyTransactionRecord.class, SPENT);
+    /** The qualified column identifier for the {@link #balance} field. */
+    public static final ColumnExp BALANCE_C =
+        new ColumnExp(MoneyTransactionRecord.class, BALANCE);
 
     /** The column identifier for the {@link #description} field. */
     public static final String DESCRIPTION = "description";
@@ -84,26 +91,26 @@ public class MoneyTransactionRecord extends PersistentRecord
     public static final ColumnExp DESCRIPTION_C =
         new ColumnExp(MoneyTransactionRecord.class, DESCRIPTION);
 
-    /** The column identifier for the {@link #itemId} field. */
-    public static final String ITEM_ID = "itemId";
+    /** The column identifier for the {@link #subjectType} field. */
+    public static final String SUBJECT_TYPE = "subjectType";
 
-    /** The qualified column identifier for the {@link #itemId} field. */
-    public static final ColumnExp ITEM_ID_C =
-        new ColumnExp(MoneyTransactionRecord.class, ITEM_ID);
+    /** The qualified column identifier for the {@link #subjectType} field. */
+    public static final ColumnExp SUBJECT_TYPE_C =
+        new ColumnExp(MoneyTransactionRecord.class, SUBJECT_TYPE);
 
-    /** The column identifier for the {@link #itemType} field. */
-    public static final String ITEM_TYPE = "itemType";
+    /** The column identifier for the {@link #subjectIdType} field. */
+    public static final String SUBJECT_ID_TYPE = "subjectIdType";
 
-    /** The qualified column identifier for the {@link #itemType} field. */
-    public static final ColumnExp ITEM_TYPE_C =
-        new ColumnExp(MoneyTransactionRecord.class, ITEM_TYPE);
+    /** The qualified column identifier for the {@link #subjectIdType} field. */
+    public static final ColumnExp SUBJECT_ID_TYPE_C =
+        new ColumnExp(MoneyTransactionRecord.class, SUBJECT_ID_TYPE);
 
-    /** The column identifier for the {@link #transactionType} field. */
-    public static final String TRANSACTION_TYPE = "transactionType";
+    /** The column identifier for the {@link #subjectId} field. */
+    public static final String SUBJECT_ID = "subjectId";
 
-    /** The qualified column identifier for the {@link #transactionType} field. */
-    public static final ColumnExp TRANSACTION_TYPE_C =
-        new ColumnExp(MoneyTransactionRecord.class, TRANSACTION_TYPE);
+    /** The qualified column identifier for the {@link #subjectId} field. */
+    public static final ColumnExp SUBJECT_ID_C =
+        new ColumnExp(MoneyTransactionRecord.class, SUBJECT_ID);
 
     /** The column identifier for the {@link #referenceTxId} field. */
     public static final String REFERENCE_TX_ID = "referenceTxId";
@@ -118,7 +125,7 @@ public class MoneyTransactionRecord extends PersistentRecord
      * Create and return a primary {@link Key} to identify a {@link #MoneyTransactionRecord}
      * with the supplied key values.
      */
-    public static Key<MoneyTransactionRecord> getKey (final int id)
+    public static Key<MoneyTransactionRecord> getKey (int id)
     {
         return new Key<MoneyTransactionRecord>(
                 MoneyTransactionRecord.class,
