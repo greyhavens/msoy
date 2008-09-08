@@ -420,3 +420,35 @@
   padding-right: 11px;
   color: #4a7595;
 }
+
+.Balance {
+  width: 100%;
+  padding: 15px;
+  background: white;
+}
+
+.Balance .Transaction {
+  width: 100%;
+  border-bottom: 1px solid #dadada;
+  border-left: 1px solid #a1ceec;
+  border-right: 1px solid #a1ceec;
+}
+
+.Balance .Transaction .Time {
+  background: red;
+}
+
+.Balance .Transaction .Description {
+  background: #ffcc00;
+  width: 100%;
+  border-left: 1px solid #a1ceec;
+}
+
+.Balance .Transaction .Debit,
+.Balance .Transaction .Credit {
+  border-left: 1px solid #a1ceec;
+  width: 50px;
+  background: green;
+  text-align: center;
+}
+
