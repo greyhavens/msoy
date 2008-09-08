@@ -45,7 +45,7 @@ public class MoneyTransactionDataModel
     @Override
     protected List<MoneyTransaction> getRows (HistoryListResult result)
     {
-        return result.history;
+        return result.transactions;
     }
 
     protected int _memberId;

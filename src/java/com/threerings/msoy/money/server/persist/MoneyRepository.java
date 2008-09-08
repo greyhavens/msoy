@@ -104,13 +104,13 @@ public class MoneyRepository extends DepotRepository
     }
 
     public List<MoneyTransactionRecord> getTransactions (
-        int memberId, Currency currency, EnumSet<TransactionType> transactionTypes,
+        int memberId, EnumSet<TransactionType> transactionTypes, Currency currency,
         int start, int count, boolean descending)
     {
         // select * from MemberAccountRecord where type = ? and transactionType in (?) 
         // and memberId=? order by timestamp
         List<QueryClause> clauses = Lists.newArrayList();
-        populateSearch(clauses, memberId, currency, transactionTypes);
+        populateSearch(clauses, memberId, transactionTypes, currency);
 
         clauses.add(descending ?
                     OrderBy.descending(MoneyTransactionRecord.TIMESTAMP_C) :
@@ -124,11 +124,11 @@ public class MoneyRepository extends DepotRepository
     }
 
     public int getTransactionCount (
-        int memberId, Currency currency, EnumSet<TransactionType> transactionTypes)
+        int memberId, EnumSet<TransactionType> transactionTypes, Currency currency)
     {
         List<QueryClause> clauses = Lists.newArrayList();
         clauses.add(new FromOverride(MoneyTransactionRecord.class));
-        populateSearch(clauses, memberId, currency, transactionTypes);
+        populateSearch(clauses, memberId, transactionTypes, currency);
         return load(CountRecord.class, clauses).count;
     }
 
@@ -147,17 +147,17 @@ public class MoneyRepository extends DepotRepository
 
     /** Helper method to setup a query for a transaction history search. */
     protected void populateSearch (
-        List<QueryClause> clauses, int memberId, Currency currency,
-        EnumSet<TransactionType> transactionTypes)
+        List<QueryClause> clauses, int memberId,
+        EnumSet<TransactionType> transactionTypes, Currency currency)
     {
         List<SQLOperator> where = Lists.newArrayList();
 
         where.add(new Equals(MoneyTransactionRecord.MEMBER_ID_C, memberId));
-        if (currency != null) {
-            where.add(new Equals(MoneyTransactionRecord.CURRENCY_C, currency));
-        }
         if (transactionTypes != null) {
             where.add(new In(MoneyTransactionRecord.TRANSACTION_TYPE_C, transactionTypes));
+        }
+        if (currency != null) {
+            where.add(new Equals(MoneyTransactionRecord.CURRENCY_C, currency));
         }
 
         clauses.add(new Where(new And(where)));

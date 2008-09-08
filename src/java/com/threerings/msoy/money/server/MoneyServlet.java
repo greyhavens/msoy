@@ -29,8 +29,9 @@ public class MoneyServlet extends MsoyServiceServlet
         }
 
         HistoryListResult result = new HistoryListResult();
-        result.history = _moneyLogic.getTransactions(memberId, currency, null, from, count, true);
-        result.totalCount = _moneyLogic.getTransactionCount(memberId, currency, null);
+        result.transactions = _moneyLogic.getTransactions(
+            memberId, null, currency, from, count, true);
+        result.totalCount = _moneyLogic.getTransactionCount(memberId, null, currency);
         return result;
     }
 

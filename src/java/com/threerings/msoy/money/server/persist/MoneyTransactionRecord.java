@@ -213,8 +213,7 @@ public class MoneyTransactionRecord extends PersistentRecord
     
     public MoneyTransaction toMoneyTransaction ()
     {
-        // TODO
-        return new MoneyTransaction(memberId, timestamp, currency, amount,
-            transactionType, true, description, null, null);
+        return new MoneyTransaction(
+            memberId, timestamp, transactionType, currency, amount, balance, description);
     }
 }

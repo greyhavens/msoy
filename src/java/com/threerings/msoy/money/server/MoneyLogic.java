@@ -328,7 +328,7 @@ public class MoneyLogic
      * @return List of requested past transactions.
      */
     public List<MoneyTransaction> getTransactions (
-        int memberId, Currency currency, EnumSet<TransactionType> transactionTypes,
+        int memberId, EnumSet<TransactionType> transactionTypes, Currency currency,
         int start, int count, boolean descending)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId),
@@ -337,7 +337,7 @@ public class MoneyLogic
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
 
         List<MoneyTransactionRecord> records = _repo.getTransactions(memberId, 
-            currency, transactionTypes, start, count, descending);
+            transactionTypes, currency, start, count, descending);
         
 //        // Put all records into a map by their ID.  We'll use this map to get a set of history ID's
 //        // that we currently have.
@@ -377,9 +377,9 @@ public class MoneyLogic
      *      transactionTypes will be counted.
      */
     public int getTransactionCount (
-        int memberId, Currency currency, EnumSet<TransactionType> transactionTypes)
+        int memberId, EnumSet<TransactionType> transactionTypes, Currency currency)
     {
-        return _repo.getTransactionCount(memberId, currency, transactionTypes);
+        return _repo.getTransactionCount(memberId, transactionTypes, currency);
     }
 
     /**

@@ -14,5 +14,5 @@ public class HistoryListResult implements IsSerializable
     /** The total number of logged transactions available on the server. */
     public int totalCount;
 
-    public List<MoneyTransaction> history;
+    public List<MoneyTransaction> transactions;
 }

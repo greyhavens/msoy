@@ -173,7 +173,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // create the clone row in the database
         final ItemRecord newClone = repo.insertClone(
-            listing.item, mrec.memberId, (int)result.getMemberTransaction().getAmount(),
+            listing.item, mrec.memberId, result.getMemberTransaction().amount,
             listing.goldCost);
 
         // note the new purchase for the item
@@ -184,7 +184,7 @@ public class CatalogServlet extends MsoyServiceServlet
             _moneyNodeActions.moneyUpdated(result.getNewCreatorMoney());
 
             final int creatorId = listing.item.creatorId;
-            final int creatorAmount = (int)result.getCreatorTransaction().getAmount();
+            final int creatorAmount = result.getCreatorTransaction().amount;
             if (mrec.memberId != creatorId && creatorAmount > 0) {
                 _statLogic.incrementStat(
                     creatorId, StatType.COINS_EARNED_SELLING, creatorAmount);
@@ -213,10 +213,9 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // update their stat set, if they aren't buying something from themselves.
         final MoneyTransaction transaction = result.getMemberTransaction();
-        if (mrec.memberId != listing.item.creatorId &&
-            transaction.getCurrency() == Currency.COINS) {
+        if (mrec.memberId != listing.item.creatorId && transaction.currency == Currency.COINS) {
             _statLogic.incrementStat(
-                mrec.memberId, StatType.COINS_SPENT, (int)transaction.getAmount());
+                mrec.memberId, StatType.COINS_SPENT, transaction.amount);
         }
 
         return nitem;
