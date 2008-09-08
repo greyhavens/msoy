@@ -195,6 +195,12 @@ public class MoneyTransactionRecord extends PersistentRecord
                 this.subjectIdType = ident.type;
                 this.subjectId = ident.catalogId;
 
+            } else if (subject instanceof ItemIdent) {
+                this.subjectType = (byte)2; // TODO! TODO! TODO!
+                ItemIdent ident = (ItemIdent) subject;
+                this.subjectIdType = ident.type;
+                this.subjectId = ident.itemId;
+
             } else {
                 throw new RuntimeException("Unknown subject: " + subject);
             }

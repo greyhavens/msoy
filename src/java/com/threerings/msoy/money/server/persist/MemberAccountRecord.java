@@ -216,9 +216,7 @@ public class MemberAccountRecord extends PersistentRecord
         accCoins += coinsToAdd;
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         return new MoneyTransactionRecord(memberId, dateLastUpdated, TransactionType.AWARD,
-            Currency.COINS, coinsToAdd, coins, description,
-            // TODO: sort out the item/catalog discrepency
-            null /*item*/);
+            Currency.COINS, coinsToAdd, coins, description, item);
     }
 
     /**

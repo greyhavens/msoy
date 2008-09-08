@@ -246,7 +246,8 @@ public class QuestDelegate extends PlaceManagerDelegate
             public void invokePersistent () throws Exception {
                 // award the flow for this quest
                 if (payout > 0) {
-                    _moneyLogic.awardCoins(player.getMemberId(), 0, 0, new ItemIdent(Game.GAME, _gameId), 
+                    _moneyLogic.awardCoins(player.getMemberId(), 0, 0,
+                        new ItemIdent(Game.GAME, _gameId), 
                         payout, questId, UserAction.COMPLETED_QUEST);
                 }
 

@@ -21,6 +21,9 @@ public class MoneyExchange
         int exRate = (int) Math.ceil(_exchangeRate);
         switch (listedCurrency) {
         case COINS:
+            // NOTE: exchange rate is a floating point number, but we round it up to the
+            // nearest integer first and then divide, then round the result up to the nearest
+            // int to get the bar amount.
             int bars = (int) Math.ceil(amount / (float)exRate);
             return new PriceQuote(listedCurrency, amount, bars, (bars * exRate) - amount);
 
