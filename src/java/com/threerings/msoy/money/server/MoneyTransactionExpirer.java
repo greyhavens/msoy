@@ -3,9 +3,6 @@
 
 package com.threerings.msoy.money.server;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Logger;

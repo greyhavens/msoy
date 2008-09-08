@@ -6,7 +6,6 @@ package com.threerings.msoy.money.data.all;
 import java.util.Date;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
-import com.threerings.msoy.item.data.all.CatalogIdent;
 
 /**
  * Contains the history of a single transaction involving coins, bars, or bling.
