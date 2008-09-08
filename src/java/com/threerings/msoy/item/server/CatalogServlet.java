@@ -53,7 +53,6 @@ import com.threerings.msoy.item.server.persist.SubItemRecord;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
-import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
@@ -315,6 +314,9 @@ public class CatalogServlet extends MsoyServiceServlet
             _statLogic.ensureIntStatMinimum(
                 originalItem.creatorId, StatType.BACKDROPS_CREATED, StatType.ITEM_LISTED);
         }
+
+        // note that the listed item was created
+        _itemLogic.itemUpdated(null, listItem);
 
         // note in the event log that an item was listed
         _eventLog.itemListedInCatalog(listItem.creatorId, listItem.getType(), listItem.itemId,
