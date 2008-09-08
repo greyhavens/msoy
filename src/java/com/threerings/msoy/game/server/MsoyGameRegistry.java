@@ -292,7 +292,7 @@ public class MsoyGameRegistry
             log.info("Eek, handler vanished [gameId=" + gameId + "]");
             return;
         }
-        handler.postMessage(WorldServerClient.GAME_RECORD_UPDATED, gameId);
+        handler.postMessage(WorldServerClient.GAME_CONTENT_UPDATED, gameId);
     }
 
     /**

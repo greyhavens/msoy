@@ -197,11 +197,11 @@ public class GameGameRegistry
     }
 
     /**
-     * On some world server, somebody updated a game record, and eventually it was determined
-     * that this game server is hosting that game. Do what we can to refresh our notion of the
-     * game's definition.
+     * Called to inform us that our game's content (the GameRecord or any of our sub-items) has
+     * been updated. We reload the game's content and inform the lobby so that newly created games
+     * will use the new content.
      */
-    public void gameRecordUpdated (final int gameId)
+    public void gameContentUpdated (final int gameId)
     {
         // is this a lobbied game?
         final LobbyManager lmgr = _lobbies.get(gameId);
@@ -237,9 +237,8 @@ public class GameGameRegistry
         if (list != null) {
             list.add(new InvocationService.ResultListener() {
                 public void requestProcessed (Object result) {
-                    gameRecordUpdated(gameId);
+                    gameContentUpdated(gameId);
                 }
-
                 public void requestFailed (String cause) {/*ignore*/}
             });
             return;

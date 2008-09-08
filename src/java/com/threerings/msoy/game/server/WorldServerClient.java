@@ -49,8 +49,8 @@ public class WorldServerClient
     /** A message sent by our world server to let us know to shut down. */
     public static final String SHUTDOWN_MESSAGE = "shutdown";
 
-    /** A message sent by our world server to let us know a game record has been updated. */
-    public static final String GAME_RECORD_UPDATED = "gameRecordUpdated";
+    /** A message sent by our world server to let us know a game's content has been updated. */
+    public static final String GAME_CONTENT_UPDATED = "gameContentUpdated";
 
     /** A message sent by our world server to request that we reset our percentiler. */
     public static final String RESET_SCORE_PERCENTILER = "resetScorePercentiler";
@@ -183,9 +183,9 @@ public class WorldServerClient
             log.info("Got shutdown notification from world server.");
             _shutmgr.shutdown();
 
-        } else if (event.getName().equals(GAME_RECORD_UPDATED)) {
+        } else if (event.getName().equals(GAME_CONTENT_UPDATED)) {
             int gameId = (Integer)event.getArgs()[0];
-            _gameReg.gameRecordUpdated(gameId);
+            _gameReg.gameContentUpdated(gameId);
 
         } else if (event.getName().equals(RESET_SCORE_PERCENTILER)) {
             int gameId = (Integer)event.getArgs()[0];
