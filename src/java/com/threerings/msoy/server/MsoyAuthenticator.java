@@ -22,7 +22,6 @@ import com.threerings.presents.server.Authenticator;
 import com.threerings.presents.server.net.AuthingConnection;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.data.MsoySceneModel;
@@ -542,7 +541,7 @@ public class MsoyAuthenticator extends Authenticator
 
         // emit a created_account action which will grant them some starting flow
         _moneyLogic.awardCoins(mrec.memberId, 0, 0, null, CoinAwards.CREATED_ACCOUNT, "",
-            UserAction.CREATED_ACCOUNT).getNewMemberMoney();
+            UserAction.CREATED_ACCOUNT);
 
         // if they gave us a valid referral info, store it; otherwise it'll be filled in later
         if (referral != null) {
