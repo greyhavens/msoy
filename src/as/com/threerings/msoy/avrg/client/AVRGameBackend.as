@@ -164,7 +164,6 @@ public class AVRGameBackend extends ControlBackend
 
     public function gotControl () :void
     {
-        callUserCode("gotControl_v1");
     }
 
     override public function callUserCode (name :String, ... args) :*
@@ -251,7 +250,7 @@ public class AVRGameBackend extends ControlBackend
             return null;
         }
         
-        return BackendUtils.getPlayerIds(_gameObj);
+        return BackendUtils.getPlayerIds(_gameObj, 0);
     }
 
     // RoomSubControl
@@ -270,6 +269,8 @@ public class AVRGameBackend extends ControlBackend
     protected function room_getRoomId_v1 (targetId :int /* ignored */) :int
     {
         validateRoomTargetId(targetId);
+        // TODO: this should guarantee to only return a non-zero value after the room entry event 
+        // has been sent
         return getRoomId();
     }
 
@@ -280,17 +281,8 @@ public class AVRGameBackend extends ControlBackend
         if (!isPlaying() || _ctrl.getRoom() == null) {
             return null;
         }
-
-        var result :Array = new Array();
-        var iterator :Iterator = _gameObj.occupantInfo.iterator();
-        while (iterator.hasNext()) {
-            var name :MemberName = OccupantInfo(iterator.next()).username as MemberName;
-            // make sure they are also in our room
-            if (name != null && _ctrl.getRoom().getOccupantInfo(name) != null) {
-                result.push(name.getMemberId());
-            }
-        }
-        return result;
+        
+        return BackendUtils.getPlayerIds(_gameObj, getRoomId());
     }
 
     // RoomSubControl
@@ -369,6 +361,8 @@ public class AVRGameBackend extends ControlBackend
     protected function player_getRoomId_v1 (targetId :int /* ignored */) :int
     {
         validatePlayerTargetId(targetId);
+        // TODO: this should guarantee to only return a non-zero value after the room entry event 
+        // has been sent
         return getRoomId();
     }
 
@@ -540,7 +534,7 @@ public class AVRGameBackend extends ControlBackend
             _gameObj.messageService, _gctx.getClient(), SERVER_AGENT_ID, name, value, "game");
     }
 
-    // TODO: MobControl
+    // MobControl
     protected function setMobDecoration_v1 (
         mobId :String, decoration :DisplayObject, add :Boolean) :void
     {
@@ -556,7 +550,7 @@ public class AVRGameBackend extends ControlBackend
         }
     }
 
-    // TODO: MobControl
+    // MobControl
     protected function setMobHotSpot_v1 (
         mobId :String, x :Number, y :Number, height :Number = NaN) :void
     {

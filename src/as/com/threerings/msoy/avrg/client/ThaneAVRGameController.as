@@ -263,8 +263,9 @@ public class ThaneAVRGameController
 
     protected function entryRemoved (event :EntryRemovedEvent) :void
     {
+        var pl :PlayerLocation;
         if (event.getName() == AVRGameObject.PLAYER_LOCS) {
-            var pl :PlayerLocation = event.getOldEntry() as PlayerLocation;
+            pl = event.getOldEntry() as PlayerLocation;
             if (getPlayer(pl.playerId) == null) {
                 // if subscription never completed, the game wasn't told the player half-way
                 // joined, so don't now confuse it by mentioning they're leaving
@@ -272,7 +273,6 @@ public class ThaneAVRGameController
             }
 
             _backend.playerLeftRoom(pl.playerId, pl.sceneId);
-            _backend.playerLeftGame(pl.playerId);
 
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             removeBinding((event.getOldEntry() as SceneInfo).sceneId);
@@ -291,6 +291,16 @@ public class ThaneAVRGameController
                     playerBinding.netAdapter.release();
                 }
             }
+
+            // If the player is still in our locations, remove from room
+            pl = _gameObj.playerLocs.get(playerObj.getMemberId()) as PlayerLocation;
+            if (pl != null) {
+                _backend.playerLeftRoom(pl.playerId, pl.sceneId);
+            }
+
+            // remove from game
+            _backend.playerLeftGame(pl.playerId);
+
             _playerSubs.unsubscribe(occInfo.bodyOid);
         }
     }

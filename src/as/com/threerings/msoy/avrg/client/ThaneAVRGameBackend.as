@@ -231,14 +231,7 @@ public class ThaneAVRGameBackend
     // -------------------- .game --------------------
     protected function game_getPlayerIds_v1 () :Array
     {
-        var playerIds :Array = [];
-        for each (var pl :PlayerLocation in _gameObj.playerLocs) {
-            if (_controller.getPlayer(pl.playerId) != null) {
-                // fully subscribed player: kosher to include
-                playerIds.push(pl.playerId);
-            }
-        }
-        return playerIds;
+        return BackendUtils.getPlayerIds(_gameObj, 0, filterPlayer);
     }
 
     protected function game_sendMessage_v1 (name :String, value :Object) :void
@@ -273,13 +266,7 @@ public class ThaneAVRGameBackend
     // -------------------- .getRoom() --------------------
     protected function room_getPlayerIds_v1 (roomId :int) :Array
     {
-        var playerIds :Array = [];
-        for each (var pl :PlayerLocation in _gameObj.playerLocs) {
-            if (pl.sceneId == roomId && _controller.getPlayer(pl.playerId) != null) {
-                playerIds.push(pl.playerId);
-            }
-        }
-        return playerIds;
+        return BackendUtils.getPlayerIds(_gameObj, roomId, filterPlayer);
     }
 
     protected function isPlayerHere_v1 (roomId :int, playerId :int) :Boolean
@@ -551,6 +538,16 @@ public class ThaneAVRGameBackend
             log.warning("Calling user code " + name + " before connection.");
         }
         return undefined;
+    }
+
+    /**
+     * Returns true if a player should be included in getPlayerIds, for use as a callback with 
+     * <code>BackendUtils.getPlayerIds</code>.
+     * @see BackendUtils.getPlayerIds
+     */
+    protected function filterPlayer (memberId :int) :Boolean
+    {
+        return _controller.getPlayer(memberId) != null;
     }
 
     protected var _userFuncs :Object;

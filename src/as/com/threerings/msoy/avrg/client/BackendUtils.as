@@ -33,6 +33,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.data.PlayerLocation;
 
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
@@ -121,15 +122,29 @@ public class BackendUtils
         }
     }
 
-    public static function getPlayerIds (gameObj :AVRGameObject) :Array
+    /**
+     * Get all the players in a game, optionally filtered by room and an additional
+     * filtering function (this will be called with just the member id and should return
+     * true to include the member, false to exclude).
+     */
+    public static function getPlayerIds (
+        gameObj :AVRGameObject, roomId :int, extraFilter :Function=null) :Array
     {
+        // TODO: if searching a room, this could have a high miss rate, consider passing a roomObj
         var result :Array = new Array();
         var iterator :Iterator = gameObj.occupantInfo.iterator();
         while (iterator.hasNext()) {
             var name :MemberName = OccupantInfo(iterator.next()).username as MemberName;
-            if (name != null) {
-                result.push(name.getMemberId());
+            if (name == null) {
+                continue;
             }
+            var memberId :int = name.getMemberId();
+            var plLoc :PlayerLocation = gameObj.playerLocs.get(memberId) as PlayerLocation;
+            if (plLoc == null || (roomId != 0 && plLoc.sceneId != roomId) ||
+                (extraFilter != null && !extraFilter(memberId))) {
+                continue;
+            }
+            result.push(memberId);
         }
         return result;
     }
