@@ -18,8 +18,6 @@ import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.mail.gwt.Conversation;
 import com.threerings.msoy.mail.gwt.MailService;
@@ -176,7 +174,7 @@ public class MailPanel extends VerticalPanel
             getFlexCellFormatter().setRowSpan(0, 1, 2);
 
             setWidget(0, 2, name, 1, "Name");
-            setText(1, 0, _fmt.format(convo.lastSent), 1, "Sent");
+            setText(1, 0, MsoyUI.formatDateTime(convo.lastSent), 1, "Sent");
 
             Widget link = Link.create(
                 (convo.subject.length() == 0) ? CMail.msgs.mailNoSubject() : convo.subject,
@@ -186,7 +184,6 @@ public class MailPanel extends VerticalPanel
         }
     }
 
-    protected static SimpleDateFormat _fmt = new SimpleDateFormat("h:mm a MMM dd");
     protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
         ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
 }

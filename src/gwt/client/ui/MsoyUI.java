@@ -80,6 +80,14 @@ public class MsoyUI
     }
 
     /**
+     * Creates a label of the form "9:15 am"
+     */
+    public static String formatTime (Date date)
+    {
+        return _tfmt.format(date);
+    }
+
+    /**
      * Creates a label of the form "Aug 15, 2008"
      */
     public static String formatDate (Date date)
@@ -529,6 +537,7 @@ public class MsoyUI
         return text.substring(0, maxLen-3) + "...";
     }
 
+    protected static final SimpleDateFormat _tfmt = new SimpleDateFormat("h:mm aa");
     protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("MMM dd, yyyy");
     protected static final SimpleDateFormat _dtfmt = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
 

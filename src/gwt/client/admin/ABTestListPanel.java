@@ -5,8 +5,6 @@ package client.admin;
 
 import java.util.List;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -88,9 +86,9 @@ public class ABTestListPanel extends FlowPanel
             _contents.setWidget(row, col++, new Label(test.name));
             _contents.setWidget(row, col++, new Label(String.valueOf(test.enabled)));
             _contents.setWidget(row, col++, new Label(
-                                    test.started != null ? _dfmt.format(test.started) : ""));
+                                    test.started != null ? MsoyUI.formatDate(test.started) : ""));
             _contents.setWidget(row, col++, new Label(
-                                    test.ended != null ? _dfmt.format(test.ended) : ""));
+                                    test.ended != null ? MsoyUI.formatDate(test.ended) : ""));
 
             Button editButton = new Button(_cmsgs.edit());
             editButton.addClickListener(new ClickListener() {
@@ -119,7 +117,6 @@ public class ABTestListPanel extends FlowPanel
 
     protected FlexTable _contents;
 
-    protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("yyyy-MM-dd");
     protected static final AdminMessages _msgs = GWT.create(AdminMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)

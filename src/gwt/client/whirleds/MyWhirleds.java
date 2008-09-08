@@ -6,8 +6,6 @@ package client.whirleds;
 import java.util.Date;
 import java.util.List;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ChangeListener;
@@ -196,9 +194,9 @@ public class MyWhirleds extends AbsolutePanel
                         DateUtil.getYear(created) == DateUtil.getYear(now)) {
                         date.add(new InlineLabel(_msgs.myToday()));
                     } else {
-                        date.add(new InlineLabel(_dateFormat.format(created) + " "));
+                        date.add(new InlineLabel(MsoyUI.formatDate(created) + " "));
                     }
-                    InlineLabel time = new InlineLabel(" " + _timeFormat.format(created));
+                    InlineLabel time = new InlineLabel(" " + MsoyUI.formatTime(created));
                     time.addStyleName("Time");
                     date.add(time);
 
@@ -222,8 +220,6 @@ public class MyWhirleds extends AbsolutePanel
     /** Dropdown of sort methods */
     protected ListBox _sortBox;
 
-    protected static final SimpleDateFormat _dateFormat = new SimpleDateFormat("MM-dd-yy");
-    protected static final SimpleDateFormat _timeFormat = new SimpleDateFormat("hh:mm aa");
     protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);

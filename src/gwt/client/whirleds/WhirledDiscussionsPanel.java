@@ -3,8 +3,6 @@
 
 package client.whirleds;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -78,7 +76,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
         public ThreadWidget (final ForumThread thread) {
             setStyleName("Thread");
 
-            Label date = new Label(_dfmt.format(thread.mostRecentPostTime));
+            Label date = new Label(MsoyUI.formatDate(thread.mostRecentPostTime));
             date.setStyleName("Date");
             add(date);
 
@@ -105,7 +103,7 @@ public class WhirledDiscussionsPanel extends FlowPanel
             author.addStyleName("actionLabel");
             postedBy.add(author);
             postedBy.add (new InlineLabel(
-                " " + _msgs.discussionAt(_tfmt.format(thread.firstPost.created))));
+                " " + _msgs.discussionAt(MsoyUI.formatTime(thread.firstPost.created))));
             add(postedBy);
 
             final String repliesText;
@@ -126,7 +124,5 @@ public class WhirledDiscussionsPanel extends FlowPanel
     /** Infoes about the group we're in for constructing links etc */
     protected GroupDetail _detail;
 
-    protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("EEEEE, MMMMM dd, yyyy");
-    protected static final SimpleDateFormat _tfmt = new SimpleDateFormat("h:mm aa");
     protected static final WhirledsMessages _msgs = GWT.create(WhirledsMessages.class);
 }

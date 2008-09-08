@@ -7,7 +7,6 @@ import java.util.Date;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlowPanel;
-import org.gwtwidgets.client.util.SimpleDateFormat;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.msoy.web.data.MemberCard;
@@ -28,7 +27,7 @@ public class MemberStatusLabel extends FlowPanel
 
         if (status instanceof MemberCard.NotOnline) {
             long lastLogon = ((MemberCard.NotOnline)status).lastLogon;
-            add(new InlineLabel(_cmsgs.mslLastOnline(_lfmt.format(new Date(lastLogon)))));
+            add(new InlineLabel(_cmsgs.mslLastOnline(MsoyUI.formatDateTime(new Date(lastLogon)))));
 
         } else if (status instanceof MemberCard.InGame) {
             MemberCard.InGame gs = (MemberCard.InGame)status;
@@ -43,6 +42,5 @@ public class MemberStatusLabel extends FlowPanel
         }
     }
 
-    protected static final SimpleDateFormat _lfmt = new SimpleDateFormat("MMM dd h:mmaa");
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

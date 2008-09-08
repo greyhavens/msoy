@@ -5,8 +5,6 @@ package client.msgs;
 
 import java.util.List;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -135,12 +133,12 @@ public class IssueListPanel extends PagedGrid<Issue>
             VerticalPanel created = new VerticalPanel();
             Widget creator;
             if (issue.state == Issue.STATE_OPEN) {
-                created.add(new Label(_pdate.format(issue.createdTime)));
+                created.add(new Label(MsoyUI.formatDateTime(issue.createdTime)));
                 creator = Link.create(
                     issue.creator.toString(), Pages.PEOPLE, "" + issue.creator.getMemberId());
             } else {
                 if (issue.closedTime != null) {
-                    created.add(new Label(_pdate.format(issue.closedTime)));
+                    created.add(new Label(MsoyUI.formatDateTime(issue.closedTime)));
                 }
                 creator = Link.create(
                     issue.owner.toString(), Pages.PEOPLE, "" + issue.owner.getMemberId());
@@ -159,7 +157,6 @@ public class IssueListPanel extends PagedGrid<Issue>
     protected String _linkPrefix;
     protected String _linkPostfix = "";
 
-    protected static final SimpleDateFormat _pdate = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
     protected static final MsgsMessages _mmsgs = (MsgsMessages)GWT.create(MsgsMessages.class);
 
     /** The number of issues displayed per page. */

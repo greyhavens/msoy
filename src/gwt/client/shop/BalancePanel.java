@@ -9,8 +9,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import org.gwtwidgets.client.util.SimpleDateFormat;
-
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 
@@ -66,7 +64,7 @@ public class BalancePanel extends PagedGrid<MoneyTransaction>
         {
             addStyleName("Transaction");
 
-            add(MsoyUI.createLabel(_format.format(entry.timestamp), "Time"));
+            add(MsoyUI.createLabel(MsoyUI.formatDateTime(entry.timestamp), "Time"));
             add(MsoyUI.createLabel(_lookup.xlate(entry.description), "Description"));
 
             String amt = String.valueOf(Math.abs(entry.amount));
@@ -82,9 +80,6 @@ public class BalancePanel extends PagedGrid<MoneyTransaction>
             add(MsoyUI.createLabel(credit, "Credit"));
         }
     }
-
-    // TODO: Unify with Mail date format?
-    protected static SimpleDateFormat _format = new SimpleDateFormat("MM dd YY, h:mm a");
 
     protected static final ShopMessagesLookup _lookup = GWT.create(ShopMessagesLookup.class);
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
