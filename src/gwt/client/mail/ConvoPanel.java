@@ -130,7 +130,7 @@ public class ConvoPanel extends FlowPanel
 
             FlowPanel info = new FlowPanel();
             info.add(Link.memberView(msg.author.name));
-            info.add(MsoyUI.createLabel(MailPanel._fmt.format(msg.sent), "Sent"));
+            info.add(MsoyUI.createLabel(MsoyUI.formatDateTime(msg.sent), "Sent"));
             setWidget(0, 1, info);
             getFlexCellFormatter().setWidth(0, 1, "150px");
             getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
