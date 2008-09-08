@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shop;
+package client.me;
 
 import java.util.List;
 
@@ -81,6 +81,6 @@ public class BalancePanel extends PagedGrid<MoneyTransaction>
         }
     }
 
-    protected static final ShopMessagesLookup _lookup = GWT.create(ShopMessagesLookup.class);
-    protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
+    protected static final MeMessagesLookup _lookup = GWT.create(MeMessagesLookup.class);
+    protected static final MeMessages _msgs = GWT.create(MeMessages.class);
 }

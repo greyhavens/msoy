@@ -46,6 +46,12 @@ public class SubNaviPanel extends FlowPanel
                 addLink(null, "Profile", Pages.PEOPLE, "" + memberId);
                 addLink(null, "Mail", Pages.MAIL, "");
                 addLink(null, "Account", Pages.ME, "account");
+
+                // TODO hiding transactions feature
+                if (DeploymentConfig.devDeployment) {
+                    addLink(null, "Transactions", Pages.ME, "transactions");
+                }
+
                 if (CShell.isSupport()) {
                     addLink(null, "Admin", Pages.ADMINZ, "");
                 }
@@ -84,11 +90,6 @@ public class SubNaviPanel extends FlowPanel
         case SHOP:
             addLink(null, "Shop", Pages.SHOP, "");
             addLink(null, "My Favorites", Pages.SHOP, "f");
-
-            // TODO hiding transactions feature
-            if (DeploymentConfig.devDeployment) {
-                addLink(null, "Transactions", Pages.SHOP, "t");
-            }
             break;
 
         case HELP:

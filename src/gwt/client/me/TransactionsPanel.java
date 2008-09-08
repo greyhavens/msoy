@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shop;
+package client.me;
 
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -13,7 +13,7 @@ public class TransactionsPanel extends VerticalPanel
 {
     public TransactionsPanel (int memberId)
     {
-        setStyleName("shopPanel");
+        //setStyleName("mePanel");
 
         // TODO: Fixer upper
         add(MsoyUI.createLabel("Bars", ""));

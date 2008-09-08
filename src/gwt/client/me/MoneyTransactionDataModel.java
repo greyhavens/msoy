@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.shop;
+package client.me;
 
 import java.util.List;
 

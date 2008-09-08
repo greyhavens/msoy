@@ -29,8 +29,6 @@ public class ShopPage extends Page
 {
     public static final String LOAD_LISTING = "l";
     public static final String FAVORITES = "f";
-    public static final String TRANSACTIONS = "t";
-    public static final String SALES = "s";
     public static final String SUITE = "g";
 
     @Override // from Page
@@ -54,15 +52,6 @@ public class ShopPage extends Page
             byte itemType = (byte)args.get(2, Item.NOT_A_TYPE);
             int page = args.get(3, 0);
             setContent(new FavoritesPanel(_models, memberId, itemType, page));
-
-        } else if (action.equals(TRANSACTIONS)) {
-            int memberId = args.get(1, CShop.getMemberId());
-            setContent(CShop.msgs.transactionsTitle(), new TransactionsPanel(memberId));
-
-        } else if (action.equals(SALES)) {
-// Currently disabled until ready for prime-time.
-//            int memberId = args.get(1, CShop.getMemberId());
-//            setContent(CShop.msgs.salesTitle(), new SalesPanel(memberId));
 
         } else if (action.equals(SUITE)) {
             final int gameId = args.get(1, 0);

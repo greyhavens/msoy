@@ -14,6 +14,8 @@ import client.util.Link;
 
 public class MePage extends Page
 {
+    public static final String TRANSACTIONS = "transactions";
+
     @Override // from Page
     public void onPageLoad ()
     {
@@ -35,6 +37,10 @@ public class MePage extends Page
 
         } else if (DeploymentConfig.devDeployment && action.equals("passportimagetest")) {
             setContent(_msgs.titlePassportTest(), new PassportImageTestPanel());
+
+        } else if (action.equals(TRANSACTIONS)) {
+            int memberId = args.get(1, CMe.getMemberId());
+            setContent(_msgs.transactionsTitle(), new TransactionsPanel(memberId));
 
         } else if (!CMe.isGuest()) {
             setContent(new MyWhirled());
