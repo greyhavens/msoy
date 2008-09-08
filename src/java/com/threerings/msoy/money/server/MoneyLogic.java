@@ -9,6 +9,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import com.google.inject.Inject;
@@ -111,11 +112,8 @@ public class MoneyLogic
         // TODO: creator and affiliate
 
         // TODO: what the fuck is going on here, copy/paste dupe bug?
-        // TODO #2: sort out logging the catalogId
-        logUserAction(memberId, UserActionDetails.INVALID_ID, userAction, null /*item*/,
-            description);
-        final UserActionDetails info = logUserAction(memberId, 0, userAction, null /*item*/,
-            description);
+        logUserAction(memberId, UserActionDetails.INVALID_ID, userAction, description, item);
+        final UserActionDetails info = logUserAction(memberId, 0, userAction, description, item);
         logInPanopticon(info, Currency.COINS, amount, account);
         
         return new MoneyResult(account.getMemberMoney(), null, null, 
@@ -144,7 +142,7 @@ public class MoneyLogic
         _repo.saveAccount(account);
         _repo.addTransaction(history);
 
-        logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS, null,
+        logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS,
             history.description);
 
         return new MoneyResult(account.getMemberMoney(), null, null, 
@@ -238,9 +236,8 @@ public class MoneyLogic
             item, buyrec.isSupport());
         _repo.addTransaction(history);
         _repo.saveAccount(buyer);
-        // TODO: fucking fuck, we want to change this to the CatalogIdent
         UserActionDetails info = logUserAction(buyrec.memberId, UserActionDetails.INVALID_ID,
-            UserAction.BOUGHT_ITEM, null /*item*/, escrow.getDescription());
+            UserAction.BOUGHT_ITEM, escrow.getDescription(), item);
         logInPanopticon(info, buyCurrency, history.amount, buyer);
 
         // Update the creator account, if they get a payment.
@@ -256,9 +253,8 @@ public class MoneyLogic
                 item, RuntimeConfig.server.creatorPercentage, history.id);
             _repo.addTransaction(creatorHistory);
             _repo.saveAccount(creator);
-            // TODO: fucking fuck, we want to change this to the CatalogIdent
             info = logUserAction(creatorId, buyrec.memberId, UserAction.RECEIVED_PAYOUT,
-                                 null /*item*/, escrow.getDescription());
+                escrow.getDescription(), item);
             logInPanopticon(info, buyCurrency, creatorHistory.amount, creator);
         }
 
@@ -336,35 +332,14 @@ public class MoneyLogic
         Preconditions.checkArgument(start >= 0, "start is invalid: %d", start);
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
 
-        List<MoneyTransactionRecord> records = _repo.getTransactions(memberId, 
-            transactionTypes, currency, start, count, descending);
-        
-//        // Put all records into a map by their ID.  We'll use this map to get a set of history ID's
-//        // that we currently have.
-//        final Map<Integer, MoneyTransaction> referenceMap = new HashMap<Integer, MoneyTransaction>();
-//        for (final MoneyTransactionRecord record : records) {
-//            referenceMap.put(record.id, record.createMoneyTransaction(null));
-//        }
-//        
-//        // Create a set of reference transaction IDs we don't already have.  We'll look these up.
-//        final Set<Integer> lookupRefIds = new HashSet<Integer>();
-//        for (final MoneyTransactionRecord record : records) {
-//            if (record.referenceTxId != 0 && !referenceMap.keySet().contains(record.referenceTxId)) {
-//                lookupRefIds.add(record.referenceTxId);
-//            }
-//        }
-//        if (lookupRefIds.size() > 0) {
-//            for (final MoneyTransactionRecord record : _repo.getTransactions(lookupRefIds)) {
-//                referenceMap.put(record.id, record.createMoneyTransaction(null));
-//            }
-//        }
-        
-        List<MoneyTransaction> log = Lists.newArrayList();
-        for (MoneyTransactionRecord record : records) {
-            log.add(record.toMoneyTransaction());
-        }
-        
-        return log;
+        // I think this won't work, because the list returned is special..
+//        return Lists.transform(
+//            _repo.getTransactions(memberId, transactionTypes, currency, start, count, descending),
+//            MoneyTransactionRecord.TO_TRANSACTION);
+
+        return Lists.newArrayList(Iterables.transform(
+            _repo.getTransactions(memberId, transactionTypes, currency, start, count, descending),
+            MoneyTransactionRecord.TO_TRANSACTION));
     }
 
     /**
@@ -461,7 +436,14 @@ public class MoneyLogic
     }
 
     protected UserActionDetails logUserAction (
-        int memberId, int otherMemberId, UserAction userAction, ItemIdent item, String description)
+        int memberId, int otherMemberId, UserAction userAction, String description)
+    {
+        return logUserAction(memberId, otherMemberId, userAction, description, (ItemIdent)null);
+    }
+
+    protected UserActionDetails logUserAction (
+        int memberId, int otherMemberId, UserAction userAction, String description,
+        ItemIdent item)
     {
         UserActionDetails details = new UserActionDetails(
             memberId, userAction, otherMemberId,
@@ -470,6 +452,17 @@ public class MoneyLogic
             description);
         _userActionRepo.logUserAction(details);
         return details;
+    }
+
+    protected UserActionDetails logUserAction (
+        int memberId, int otherMemberId, UserAction userAction, String description,
+        CatalogIdent catIdent)
+    {
+        ItemIdent item = null;
+        if (catIdent != null) {
+            item = new ItemIdent(catIdent.type, catIdent.catalogId);
+        }
+        return logUserAction(memberId, otherMemberId, userAction, description, item);
     }
 
     protected final MoneyTransactionExpirer _expirer;

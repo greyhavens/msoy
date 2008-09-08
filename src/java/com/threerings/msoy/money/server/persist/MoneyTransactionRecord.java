@@ -5,6 +5,8 @@ package com.threerings.msoy.money.server.persist;
 
 import java.sql.Timestamp;
 
+import com.google.common.base.Function;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
@@ -120,21 +122,14 @@ public class MoneyTransactionRecord extends PersistentRecord
         new ColumnExp(MoneyTransactionRecord.class, REFERENCE_TX_ID);
     // AUTO-GENERATED: FIELDS END
 
-    // AUTO-GENERATED: METHODS START
-    /**
-     * Create and return a primary {@link Key} to identify a {@link #MoneyTransactionRecord}
-     * with the supplied key values.
-     */
-    public static Key<MoneyTransactionRecord> getKey (int id)
-    {
-        return new Key<MoneyTransactionRecord>(
-                MoneyTransactionRecord.class,
-                new String[] { ID },
-                new Comparable[] { id });
-    }
-    // AUTO-GENERATED: METHODS END
-
     public static final int SCHEMA_VERSION = 3;
+
+    public static Function<MoneyTransactionRecord, MoneyTransaction> TO_TRANSACTION =
+        new Function<MoneyTransactionRecord, MoneyTransaction>() {
+        public MoneyTransaction apply (MoneyTransactionRecord record) {
+            return record.toMoneyTransaction();
+        }
+    };
     
     /** ID of this record. */
     @Id
@@ -216,4 +211,18 @@ public class MoneyTransactionRecord extends PersistentRecord
         return new MoneyTransaction(
             memberId, timestamp, transactionType, currency, amount, balance, description);
     }
+
+    // AUTO-GENERATED: METHODS START
+    /**
+     * Create and return a primary {@link Key} to identify a {@link #MoneyTransactionRecord}
+     * with the supplied key values.
+     */
+    public static Key<MoneyTransactionRecord> getKey (int id)
+    {
+        return new Key<MoneyTransactionRecord>(
+                MoneyTransactionRecord.class,
+                new String[] { ID },
+                new Comparable[] { id });
+    }
+    // AUTO-GENERATED: METHODS END
 }
