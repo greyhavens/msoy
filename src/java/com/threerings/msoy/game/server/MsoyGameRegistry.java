@@ -282,9 +282,10 @@ public class MsoyGameRegistry
     }
 
     /**
-     * Called to update a game.
+     * Called when the persistent data for a game that we host has been updated. Notifies the game
+     * server hosting the game in question so that it can reload that game's content.
      */
-    public void gameUpdatedOnPeer (int gameId)
+    public void gameUpdated (int gameId)
     {
         GameServerHandler handler = _handmap.get(gameId);
         if (handler == null) {

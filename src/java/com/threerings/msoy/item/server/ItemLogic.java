@@ -33,10 +33,17 @@ import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
+import com.threerings.msoy.web.data.ServiceCodes;
+import com.threerings.msoy.web.data.ServiceException;
+
+import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.peer.server.GameNodeAction;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
@@ -72,9 +79,6 @@ import com.threerings.msoy.item.server.persist.SubItemRecord;
 import com.threerings.msoy.item.server.persist.ToyRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 import com.threerings.msoy.item.server.persist.VideoRepository;
-
-import com.threerings.msoy.web.data.ServiceCodes;
-import com.threerings.msoy.web.data.ServiceException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -317,6 +321,38 @@ public class ItemLogic
                         _groupRepo.updateGroup(
                             grec.groupId, GroupRecord.GAME_ID, Math.abs(grec.gameId));
                     }
+                }
+
+                // notify any server hosting this game that its data is updated
+                _peerMan.invokeNodeAction(new GameUpdatedAction(grec.gameId));
+
+            } else if (nrecord instanceof SubItemRecord &&
+                       ((SubItem)nrecord.toItem()).getSuiteMasterType() == Item.GAME) {
+                // look up the gameId of the game to which these packs belong
+                SubItemRecord srecord = (SubItemRecord)nrecord;
+                int gameId = 0;
+                if (srecord.suiteId < 0) {
+                    // listed sub-items have -catalogId as their suite id
+                    CatalogRecord crec = _gameRepo.loadListing(-srecord.suiteId, true);
+                    if (crec == null) {
+                        log.warning("Unable to find catalog record for updated sub-item",
+                                    "type", srecord.getType(), "suiteId", srecord.suiteId);
+                    } else {
+                        gameId = ((GameRecord)crec.item).gameId;
+                    }
+                } else {
+                    // original sub-items have itemId as their suite id
+                    GameRecord grec = _gameRepo.loadOriginalItem(srecord.suiteId);
+                    if (grec == null) {
+                        log.warning("Unable to find original item for updated sub-item",
+                                    "type", srecord.getType(), "suiteId", srecord.suiteId);
+                    } else {
+                        gameId = grec.gameId;
+                    }
+                }
+                if (gameId != 0) {
+                    // notify any server hosting this game that its data is updated
+                    _peerMan.invokeNodeAction(new GameUpdatedAction(gameId));
                 }
             }
 
@@ -722,13 +758,28 @@ public class ItemLogic
         return repo;
     }
 
+    /** Notifies other nodes when a game record is updated. */
+    protected static class GameUpdatedAction extends GameNodeAction
+    {
+        public GameUpdatedAction (int gameId) {
+            super(gameId);
+        }
+        public GameUpdatedAction () {
+        }
+        @Override protected void execute () {
+            _gameReg.gameUpdated(_gameId);
+        }
+        @Inject protected transient MsoyGameRegistry _gameReg;
+    }
+
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
 
-    @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MemberRepository _memberRepo;
-    @Inject protected RootDObjectManager _omgr;
     @Inject protected ServerMessages _serverMsgs;
+    @Inject protected RootDObjectManager _omgr;
+    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MemberRepository _memberRepo;
     @Inject protected ItemListRepository _listRepo;
     @Inject protected FavoritesRepository _faveRepo;
 

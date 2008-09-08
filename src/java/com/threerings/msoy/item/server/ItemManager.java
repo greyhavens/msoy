@@ -38,9 +38,7 @@ import com.threerings.whirled.server.SceneRegistry;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.game.data.MsoyGameCodes;
-import com.threerings.msoy.game.server.MsoyGameRegistry;
 import com.threerings.msoy.server.MemberManager;
-import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -48,7 +46,6 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 
-import com.threerings.msoy.peer.server.GameNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.web.data.ServiceException;
 
@@ -783,23 +780,6 @@ public class ItemManager
         });
     }
 
-    /** Notifies other nodes when a game record is updated. */
-    protected static class GameUpdatedAction extends GameNodeAction
-    {
-        public GameUpdatedAction (int gameId) {
-            super(gameId);
-        }
-
-        public GameUpdatedAction () {
-        }
-
-        @Override protected void execute () {
-            _gameReg.gameUpdatedOnPeer(_gameId);
-        }
-
-        @Inject protected transient MsoyGameRegistry _gameReg;
-    }
-
     // our dependencies
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ServerMessages _serverMsgs;
@@ -811,5 +791,4 @@ public class ItemManager
     @Inject protected ItemListRepository _listRepo;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ItemLogic _itemLogic;
-
 }
