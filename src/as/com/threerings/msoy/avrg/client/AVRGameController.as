@@ -162,6 +162,11 @@ public class AVRGameController extends PlaceController
         return _roomPropsSubs.getObj(_roomPropsOid) as RoomPropertiesObject;
     }
 
+    public function backendConnected () :void
+    {
+        maybeDispatchEnteredRoom("backend connected");
+    }
+
     // both initializeWorldContext() and willEnterPlace() contribute data that is vital to
     // the creation of the backend, and we cannot know which order they will execute in, so
     // we call this method in both; it will be executed when both have done their job.
@@ -327,9 +332,10 @@ public class AVRGameController extends PlaceController
         var placeObj :PlaceObject = _wctx.getLocationDirector().getPlaceObject();
         var placeId :int = placeObj == null ? 0 : placeObj.getOid();
         var roomOid :int = _roomObj == null ? 0 : _roomObj.getOid();
+        var connected :Boolean = _backend.isConnected();
 
         if (roomProps != null && ploc != null && sceneId == ploc.sceneId && placeId != 0 && 
-            placeId == roomOid) {
+            placeId == roomOid && connected) {
             maybeDispatchLeftRoom("entered"); // no-op if left already
             log.debug(playerIdStr(), "Entered room  [sceneId=" + sceneId + ", why=" + why + "]");
             _backend.playerEnteredRoom(sceneId, roomProps);
@@ -339,7 +345,7 @@ public class AVRGameController extends PlaceController
             log.debug(playerIdStr(), 
                 "Would dispatch but... [roomProps=" + roomProps + ", ploc=" + ploc + 
                 ", sceneId=" + sceneId + ", placeId=" + placeId + ", roomOid=" + roomOid + 
-                ", why=" + why + "]");
+                ", connected=" + connected + ", why=" + why + "]");
         }
     }
 

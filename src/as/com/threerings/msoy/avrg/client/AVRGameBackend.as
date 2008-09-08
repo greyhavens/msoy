@@ -79,6 +79,11 @@ public class AVRGameBackend extends ControlBackend
         super.shutdown();
     }
 
+    public function isConnected () :Boolean
+    {
+        return _props != null;
+    }
+
     public function panelResized () :void
     {
         MethodQueue.callLater(callUserCode, [ "panelResized_v1" ]);
@@ -164,6 +169,13 @@ public class AVRGameBackend extends ControlBackend
 
     public function gotControl () :void
     {
+    }
+
+    override protected function handleUserCodeConnect (evt :Object) :void
+    {
+        super.handleUserCodeConnect(evt);
+
+        MethodQueue.callLater(_ctrl.backendConnected);
     }
 
     override public function callUserCode (name :String, ... args) :*
