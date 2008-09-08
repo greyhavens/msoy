@@ -492,65 +492,6 @@ public class ItemManager
     }
 
     /**
-     * Informs the runtime world that an item was created and inserted into the database.
-     */
-    public void itemCreated (ItemRecord rec)
-    {
-        if (rec.getType() == Item.AVATAR) {
-            MemberNodeActions.avatarUpdated(rec.ownerId, rec.itemId);
-        }
-    }
-
-    /**
-     * Called when the user has purchased an item from the catalog, updates their runtime inventory
-     * if they are online.
-     */
-    public void itemPurchased (Item item)
-    {
-        if (item.getType() == Item.AVATAR) {
-            MemberNodeActions.avatarUpdated(item.ownerId, item.itemId);
-        }
-    }
-
-    /**
-     * Informs the runtime world that an item was updated in the database. Worn avatars will be
-     * updated, someday items being used as furni or decor in rooms will also magically be updated.
-     */
-    public void itemUpdated (ItemRecord rec)
-    {
-        itemUpdated(rec, 0);
-    }
-
-    /**
-     * Informs the runtime world that an item was updated in the database. Worn avatars will be
-     * updated, someday items being used as furni or decor in rooms will also magically be updated.
-     *
-     * @param overrideMemberId an alternate memberId to process, in case the item was removed
-     * from a member's inventory.
-     */
-    public void itemUpdated (ItemRecord rec, int overrideMemberId)
-    {
-        byte type = rec.getType();
-        if (type == Item.AVATAR) {
-            int memberId = (overrideMemberId == 0) ? rec.ownerId : overrideMemberId;
-            MemberNodeActions.avatarUpdated(memberId, rec.itemId);
-
-        } else if (type == Item.GAME) {
-            _peerMan.invokeNodeAction(new GameUpdatedAction(((GameRecord) rec).gameId));
-        }
-    }
-
-    /**
-     * Informs the runtime world that an item was deleted from the database.
-     */
-    public void itemDeleted (ItemRecord record)
-    {
-        if (record.getType() == Item.AVATAR) {
-            MemberNodeActions.avatarDeleted(record.ownerId, record.itemId);
-        }
-    }
-
-    /**
      * Load at most maxCount recently-touched items from the specified user's inventory.
      */
     public void loadRecentlyTouched (

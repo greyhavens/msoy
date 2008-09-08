@@ -21,6 +21,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MediaDesc;
 
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.StatLogic;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.TagNameRecord;
@@ -136,7 +137,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // from interface CatalogService
     public Item purchaseItem (final byte itemType, final int catalogId, final int authedFlowCost,
-        final int authedGoldCost)
+        final int authedBarsCost)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -160,21 +161,27 @@ public class CatalogServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
 
-        // Update money as appropriate.
+        // update money as appropriate
         MoneyResult result;
         try {
-            result = _moneyLogic.buyItem(mrec, new CatalogIdent(itemType, catalogId),
-                                         Currency.COINS, listing.flowCost, Currency.COINS, authedFlowCost);
+            result = _moneyLogic.buyItem(
+                mrec, new CatalogIdent(itemType, catalogId),
+                Currency.COINS, listing.flowCost, Currency.COINS, authedFlowCost);
         } catch (final NotEnoughMoneyException neme) {
             throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
         } catch (final NotSecuredException nse) {
             throw new CostUpdatedException(listing.flowCost, listing.goldCost);
         }
 
+        // note the amount of currency spent in this transaction
+        final int coinsPaid = (result.getMemberTransaction().currency == Currency.COINS) ?
+            result.getMemberTransaction().amount : 0;
+        final int barsPaid = (result.getMemberTransaction().currency == Currency.BARS) ?
+            result.getMemberTransaction().amount : 0;
+
         // create the clone row in the database
         final ItemRecord newClone = repo.insertClone(
-            listing.item, mrec.memberId, result.getMemberTransaction().amount,
-            listing.goldCost);
+            listing.item, mrec.memberId, coinsPaid, barsPaid);
 
         // note the new purchase for the item
         repo.nudgeListing(catalogId, true);
@@ -203,27 +210,21 @@ public class CatalogServlet extends MsoyServiceServlet
             }
         }
 
-        // update their runtime inventory as appropriate
-        final Item nitem = newClone.toItem();
-        postDObjectAction(new Runnable() {
-            public void run () {
-                _itemMan.itemPurchased(nitem);
-            }
-        });
+        // make any necessary notifications
+        _itemLogic.itemPurchased(newClone, coinsPaid, barsPaid);
 
         // update their stat set, if they aren't buying something from themselves.
-        final MoneyTransaction transaction = result.getMemberTransaction();
-        if (mrec.memberId != listing.item.creatorId && transaction.currency == Currency.COINS) {
-            _statLogic.incrementStat(
-                mrec.memberId, StatType.COINS_SPENT, transaction.amount);
+        if (mrec.memberId != listing.item.creatorId &&
+            result.getMemberTransaction().currency == Currency.COINS) {
+            _statLogic.incrementStat(mrec.memberId, StatType.COINS_SPENT, coinsPaid);
         }
 
-        return nitem;
+        return newClone.toItem();
     }
 
     // from interface CatalogService
     public int listItem (final ItemIdent item, final String descrip, final int pricing,
-        int salesTarget, final int flowCost, final int goldCost)
+        int salesTarget, final int flowCost, final int barsCost)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -287,7 +288,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // create & insert the catalog record
         final CatalogRecord record = repo.insertListing(
-            listItem, originalItemId, pricing, salesTarget, flowCost, goldCost, now);
+            listItem, originalItemId, pricing, salesTarget, flowCost, barsCost, now);
 
         // record the listing action and charge the flow
         final UserActionDetails info = new UserActionDetails(
@@ -314,6 +315,10 @@ public class CatalogServlet extends MsoyServiceServlet
             _statLogic.ensureIntStatMinimum(
                 originalItem.creatorId, StatType.BACKDROPS_CREATED, StatType.ITEM_LISTED);
         }
+
+        // note in the event log that an item was listed
+        _eventLog.itemListedInCatalog(listItem.creatorId, listItem.getType(), listItem.itemId,
+                                      flowCost, barsCost, pricing, salesTarget);
 
         return record.catalogId;
     }
@@ -405,17 +410,13 @@ public class CatalogServlet extends MsoyServiceServlet
             mrec.memberId, UserAction.UPDATED_LISTING, repo.getItemType(), originalItemId);
         _userActionRepo.logUserAction(info);
 
-        // kick off a notification that the list item was updated to e.g. reload game lobbies
-        postDObjectAction(new Runnable() {
-            public void run () {
-                _itemMan.itemUpdated(listItem);
-            }
-        });
+        // note that the listed item was updated
+        _itemLogic.itemUpdated(oldListItem, listItem);
     }
 
     // from interface CatalogService
     public void updatePricing (final byte itemType, final int catalogId, final int pricing,
-        int salesTarget, final int flowCost, final int goldCost)
+        int salesTarget, final int flowCost, final int barsCost)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -445,8 +446,8 @@ public class CatalogServlet extends MsoyServiceServlet
         salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
 
         // now we can update the record
-        repo.updatePricing(
-            catalogId, pricing, salesTarget, flowCost, goldCost, System.currentTimeMillis());
+        repo.updatePricing(catalogId, pricing, salesTarget, flowCost, barsCost,
+                           System.currentTimeMillis());
 
         // record the update action
         final UserActionDetails info = new UserActionDetails(
@@ -568,7 +569,7 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected ItemManager _itemMan;
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected FeedRepository _feedRepo;

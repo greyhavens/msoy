@@ -31,7 +31,6 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.CloneRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
@@ -264,12 +263,8 @@ public class StuffServlet extends MsoyServiceServlet
         }
         repo.deleteItem(iident.itemId);
 
-        // let the item manager know that we've deleted this item
-        postDObjectAction(new Runnable() {
-            public void run () {
-                _itemMan.itemDeleted(item);
-            }
-        });
+        // let the item system know that we've deleted this item
+        _itemLogic.itemDeleted(item);
     }
 
     /**
@@ -315,7 +310,6 @@ public class StuffServlet extends MsoyServiceServlet
 
     // our dependencies
     @Inject protected ItemLogic _itemLogic;
-    @Inject protected ItemManager _itemMan;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupLogic _groupLogic;
     @Inject protected GroupRepository _groupRepo;

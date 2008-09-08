@@ -8,19 +8,6 @@ import java.io.IOException;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.threerings.presents.client.InvocationService.ResultListener;
 
-import com.threerings.msoy.item.data.all.Avatar;
-import com.threerings.msoy.item.data.all.Furniture;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.Pet;
-import com.threerings.msoy.item.server.ItemManager;
-import com.threerings.msoy.item.server.persist.AvatarRecord;
-import com.threerings.msoy.item.server.persist.FurnitureRecord;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.ItemRepository;
-import com.threerings.msoy.item.server.persist.PetRecord;
-
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
@@ -28,6 +15,19 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.GenericUploadFile;
 import com.threerings.msoy.web.server.UploadFile;
 import com.threerings.msoy.web.server.UploadUtil;
+
+import com.threerings.msoy.item.data.all.Avatar;
+import com.threerings.msoy.item.data.all.Furniture;
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.Pet;
+import com.threerings.msoy.item.server.ItemLogic;
+import com.threerings.msoy.item.server.persist.AvatarRecord;
+import com.threerings.msoy.item.server.persist.FurnitureRecord;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.PetRecord;
 
 import com.threerings.msoy.swiftly.data.BuildResult;
 import com.threerings.msoy.swiftly.server.build.BuildArtifact;
@@ -38,12 +38,12 @@ import com.threerings.msoy.swiftly.server.persist.SwiftlyRepository;
 public class BuildAndExportTask extends AbstractBuildTask
 {
     public BuildAndExportTask (ProjectRoomManager manager, SwiftlyRepository swiftlyRepo,
-                               ItemManager itemMan, MemberName member, ResultListener listener)
+                               ItemLogic itemLogic, MemberName member, ResultListener listener)
     {
         super(manager, member, listener);
 
         _swiftlyRepo = swiftlyRepo;
-        _itemMan = itemMan;
+        _itemLogic = itemLogic;
 
         // snapshot the project type and name while we are on the dobject thread
         _projectName = manager.getRoomObj().project.projectName;
@@ -56,19 +56,15 @@ public class BuildAndExportTask extends AbstractBuildTask
     @Override // from CommonBuildTask
     public void publishResult (final BuildResult result)
     {
+        // inform the item system of the updated item if the build succeeded
+        if (result.buildSuccessful()) {
+            _itemLogic.itemUpdated(null, _record);
+        }
+
         _omgr.postRunnable(new Runnable() {
             public void run() {
-                // inform the item manager of the new or updated item if the build succeeded
-                if (result.buildSuccessful()) {
-                    if (_record.itemId == 0) {
-                        _itemMan.itemCreated(_record);
-                    } else {
-                        _itemMan.itemUpdated(_record);
-                    }
-                }
                 // update the build result id cache
                 _manager.getResultItems().put(_member, _resultId);
-
                 _listener.requestProcessed(result);
             }
         });
@@ -85,7 +81,7 @@ public class BuildAndExportTask extends AbstractBuildTask
         // load the correct item repository
         ItemRepository<ItemRecord> repo = null;
         try {
-            repo = _itemMan.getRepository(_itemType);
+            repo = _itemLogic.getRepository(_itemType);
         } catch (ServiceException se) {
             throw new RuntimeException("Unable to find repository for Swiftly project item type." +
                 " Aborting build process. [itemType=" + _itemType + "].");
@@ -199,6 +195,6 @@ public class BuildAndExportTask extends AbstractBuildTask
 
     protected final byte _itemType;
     protected final String _projectName;
-    protected final ItemManager _itemMan;
+    protected final ItemLogic _itemLogic;
     protected final SwiftlyRepository _swiftlyRepo;
 }

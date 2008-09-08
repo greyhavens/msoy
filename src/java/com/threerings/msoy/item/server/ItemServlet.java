@@ -64,15 +64,14 @@ public class ItemServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
 
+        // keep an unmodified copy around for our later call to itemUpdated()
+        final AvatarRecord oavatar = (AvatarRecord)avatar.clone();
+
         avatar.scale = newScale;
         repo.updateScale(avatarId, newScale);
 
-        // let the item manager know that we've updated this item
-        postDObjectAction(new Runnable() {
-            public void run () {
-                _itemMan.itemUpdated(avatar);
-            }
-        });
+        // let the item system know that we've updated this item
+        _itemLogic.itemUpdated(oavatar, avatar);
     }
 
     // TODO: this is dormant right now, but we might need something like it when we
@@ -106,12 +105,8 @@ public class ItemServlet extends MsoyServiceServlet
 //         repo.getTagRepository().copyTags(
 //             originalId, item.itemId, item.ownerId, System.currentTimeMillis());
 
-//         // let the item manager know that we've created a new item
-//         postDObjectAction(new Runnable() {
-//             public void run () {
-//                 _itemMan.itemCreated(item);
-//             }
-//         });
+//         // inform interested parties that we've created a new item
+//         _itemLogic.itemUpdated(null, item); // TODO: need original
 
 //         return item.toItem();
 //    }
@@ -276,6 +271,8 @@ public class ItemServlet extends MsoyServiceServlet
                         "[for=" + who(memrec) + ", item=" + iident + "]");
             throw new ServiceException(InvocationCodes.INTERNAL_ERROR);
         }
+
+        final ItemRecord oitem = (ItemRecord)item.clone();
         if (wrap) {
             if (item.ownerId != memrec.memberId) {
                 log.warning("Trying to wrap un-owned item [for=" + who(memrec) +
@@ -299,13 +296,8 @@ public class ItemServlet extends MsoyServiceServlet
             repo.updateOwnerId(item, memrec.memberId);
         }
 
-        // let the item manager know that we've updated this item
-        final int memId = memrec.memberId;
-        postDObjectAction(new Runnable() {
-            public void run () {
-                _itemMan.itemUpdated(item, memId);
-            }
-        });
+        // let the item system know that we've updated this item
+        _itemLogic.itemUpdated(oitem, item);
     }
 
     // from interface ItemService

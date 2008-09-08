@@ -60,7 +60,6 @@ import com.samskivert.jdbc.depot.operator.SQLOperator;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -709,10 +708,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         noteListing(record.listedItemId, record.catalogId);
         noteListing(originalItemId, record.catalogId);
 
-        _eventLog.itemListedInCatalog(
-            listItem.creatorId, _itemType, listItem.itemId,
-            flowCost, goldCost, pricing, salesTarget);
-
         return record;
     }
 
@@ -763,7 +758,6 @@ public abstract class ItemRepository<T extends ItemRecord>
         ItemRecord newClone = (ItemRecord) parent.clone();
         newClone.initFromClone(record);
 
-        _eventLog.itemPurchased(newOwnerId, _itemType, newClone.itemId, flowPaid, goldPaid);
         return newClone;
     }
 
@@ -789,7 +783,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
 
         // delete any entity memory for this item as well
-        _memRepo.deleteMemories(_itemType, itemId);
+        _memoryRepo.deleteMemories(_itemType, itemId);
     }
 
     /**
@@ -1210,8 +1204,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected TagRepository _tagRepo;
 
     // our dependencies
-    @Inject protected MemoryRepository _memRepo;
-    @Inject protected MsoyEventLogger _eventLog;
+    @Inject protected MemoryRepository _memoryRepo;
     @Inject protected MemberRepository _memberRepo;
 
     /** The number of seconds that causes an equivalent drop-off of 1 star in new & hot sorting. */

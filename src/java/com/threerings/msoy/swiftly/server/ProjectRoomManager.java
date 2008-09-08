@@ -36,7 +36,7 @@ import com.threerings.crowd.server.PlaceManager;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.web.data.ConnectConfig;
@@ -320,7 +320,7 @@ public class ProjectRoomManager extends PlaceManager
         MemberObject memobj = (MemberObject)caller;
 
         AbstractBuildTask buildTask = new BuildAndExportTask(
-            this, _swiftlyRepo, _itemMan, memobj.memberName, listener);
+            this, _swiftlyRepo, _itemLogic, memobj.memberName, listener);
         _svnExecutor.addTask(new CommitProjectTask(this, _swiftlyMan, buildTask, listener));
     }
 
@@ -586,7 +586,7 @@ public class ProjectRoomManager extends PlaceManager
     @Inject protected SwiftlyInvoker _swiftlyInvoker;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected SwiftlyManager _swiftlyMan;
-    @Inject protected ItemManager _itemMan;
+    @Inject protected ItemLogic _itemLogic;
 
     /** Server-root relative path to the Whirled SDK. */
     protected static final String WHIRLED_SDK = "/data/swiftly/whirled_sdk";

@@ -27,6 +27,8 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.dobj.RootDObjectManager;
 
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.server.MemberNodeActions;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -250,11 +252,7 @@ public class ItemLogic
         repo.insertOriginalItem(record, false);
 
         // now do any post update stuff (but don't let its failure fail our request)
-        try {
-            itemUpdated(null, record);
-        } catch (Exception e) {
-            log.warning("itemUpdated failed", "who", memrec.who(), "record", record, e);
-        }
+        itemUpdated(null, record);
 
         return record.toItem();
     }
@@ -294,32 +292,70 @@ public class ItemLogic
      */
     public void itemUpdated (ItemRecord orecord, final ItemRecord nrecord)
     {
-        // let the item manager know that we've created or updated this item
-        final boolean justCreated = (orecord == null);
-        _omgr.postRunnable(new Runnable() {
-            public void run () {
-                if (justCreated) {
-                    _itemMan.itemCreated(nrecord);
-                } else {
-                    _itemMan.itemUpdated(nrecord);
+        // note: we don't want to propagate any exceptions because we don't want to fail the action
+        // that triggered the itemUpdated since that has already completed
+        try {
+            if (nrecord.getType() == Item.AVATAR) {
+                // notify the old and new owners of the item
+                if (orecord != null && orecord.ownerId != 0) {
+                    MemberNodeActions.avatarUpdated(orecord.ownerId, orecord.itemId);
                 }
-            }
-        });
+                if ((orecord == null || orecord.ownerId != nrecord.ownerId) &&
+                    nrecord.ownerId != 0) {
+                    MemberNodeActions.avatarUpdated(nrecord.ownerId, nrecord.itemId);
+                }
 
-        // update our game <-> group binding if necessary
-        if (nrecord instanceof GameRecord) {
-            GameRecord grec = (GameRecord)nrecord;
-            if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
-                if (orecord != null && ((GameRecord)orecord).groupId != Game.NO_GROUP) {
-                    _groupRepo.updateGroup(
-                        ((GameRecord)orecord).groupId, GroupRecord.GAME_ID, 0);
-                }
-                if (grec.groupId != Game.NO_GROUP) {
-                    _groupRepo.updateGroup(grec.groupId, GroupRecord.GAME_ID,
-                                           Math.abs(grec.gameId));
+            } else if (nrecord.getType() == Item.GAME) {
+                GameRecord grec = (GameRecord)nrecord;
+                if (nrecord.ownerId != 0 && // group changes are only triggered for the original item
+                    (orecord == null || ((GameRecord)orecord).groupId != grec.groupId)) {
+                    if (orecord != null && ((GameRecord)orecord).groupId != Game.NO_GROUP) {
+                        _groupRepo.updateGroup(
+                            ((GameRecord)orecord).groupId, GroupRecord.GAME_ID, 0);
+                    }
+                    if (grec.groupId != Game.NO_GROUP) {
+                        _groupRepo.updateGroup(
+                            grec.groupId, GroupRecord.GAME_ID, Math.abs(grec.gameId));
+                    }
                 }
             }
+
+        } catch (Exception e) {
+            log.warning("itemUpdated failed", "orecord", orecord, "nrecord", nrecord, e);
         }
+    }
+
+    /**
+     * Called when an item has been deleted.
+     */
+    public void itemDeleted (ItemRecord orecord)
+    {
+        // note: we don't want to propagate any exceptions because we don't want to fail the action
+        // that triggered the itemDeleted since that has already completed
+        try {
+            if (orecord.getType() == Item.AVATAR) {
+                MemberNodeActions.avatarDeleted(orecord.ownerId, orecord.itemId);
+            }
+
+        } catch (Exception e) {
+            log.warning("itemDeleted failed", "orecord", orecord, e);
+        }
+    }
+
+    /**
+     * Called when an item has been purchased. Handles notifying any entities that need to know as
+     * well as logging the purchase.
+     *
+     * @param record the newly created item clone.
+     */
+    public void itemPurchased (ItemRecord record, int coinsPaid, int barsPaid)
+    {
+        if (record.getType() == Item.AVATAR) {
+            MemberNodeActions.avatarUpdated(record.ownerId, record.itemId);
+        }
+
+        _eventLog.itemPurchased(
+            record.ownerId, record.getType(), record.itemId, coinsPaid, barsPaid);
     }
 
     /**
@@ -395,6 +431,10 @@ public class ItemLogic
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
+        // create an unmodified version of our record for our later call to itemUpdated()
+        final ItemRecord unmod = (ItemRecord)orig.clone();
+        unmod.initFromClone(record);
+
         // do the operation
         try {
             op.doOp(record, orig, repo);
@@ -406,12 +446,8 @@ public class ItemLogic
         // create the proper ItemRecord representing the clone
         orig.initFromClone(record);
 
-        // let the item manager know that we've updated this item
-        _omgr.postRunnable(new Runnable() {
-            public void run () {
-                _itemMan.itemUpdated(orig);
-            }
-        });
+        // let everyone know that we've updated this item
+        itemUpdated(unmod, orig);
 
         return orig;
     }
@@ -689,8 +725,8 @@ public class ItemLogic
     /** Maps byte type ids to repository for all digital item types. */
     protected Map<Byte, ItemRepository<ItemRecord>> _repos = Maps.newHashMap();
 
+    @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected ItemManager _itemMan;
     @Inject protected RootDObjectManager _omgr;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected ItemListRepository _listRepo;

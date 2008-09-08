@@ -24,7 +24,6 @@ import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 
@@ -176,15 +175,11 @@ public class MailLogic
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
 
+            final ItemRecord oitem = (ItemRecord)item.clone();
             repo.updateOwnerId(item, recipId);
 
-            // notify the runtime system that the item has moved
-            _omgr.postRunnable(new Runnable() {
-                public void run () {
-                    _itemMan.itemUpdated(item, senderId); // they lose it
-                    _itemMan.itemUpdated(item, recipId); // they gain it
-                }
-            });
+            // notify the item system that the item has moved
+            _itemLogic.itemUpdated(oitem, item);
         }
     }
 
@@ -213,7 +208,6 @@ public class MailLogic
     }
 
     @Inject protected RootDObjectManager _omgr;
-    @Inject protected ItemManager _itemMan;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected ItemLogic _itemLogic;
