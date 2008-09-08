@@ -25,7 +25,7 @@
   min-height: 100%;
 }
 
-.itemPanel .TypeTitle {
+.itemPanel .Title .Type {
   background: url(/images/stuff/orange_header.png) no-repeat;
   width: 233px;
   height: 38px; /* 41 - padding */
@@ -36,6 +36,12 @@
   text-align: center;
   padding-top: 3px;
   margin-bottom: 10px;
+}
+
+.itemPanel .Title .For {
+  padding-left: 93px;
+  font-size: 13px;
+  color: white;
 }
 
 .itemPanel .Search {
@@ -56,17 +62,6 @@
 
 .itemPanel .Search select,
 .itemPanel .Search input {
-  font-size: 13px;
-}
-
-.itemPanel .Shop {
-  clear: both;
-  margin-left: 10px;
-  padding-top: 10px;
-  color: white;
-}
-
-.itemPanel .Shop .gwt-Label {
   font-size: 13px;
 }
 

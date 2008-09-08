@@ -199,9 +199,23 @@ public class ItemPanel extends FlowPanel
         // don't fiddle with things if the inventory is already showing
         if (!_contents.isAttached()) {
             clear();
+
+            HorizontalPanel tbar = new HorizontalPanel();
+            tbar.setStyleName("Title");
+            tbar.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+
             String title = _type == Item.NOT_A_TYPE ? CStuff.msgs.stuffTitleMain()
                 : CStuff.msgs.stuffTitle(_dmsgs.getString("pItemType" + _type));
-            add(MsoyUI.createLabel(title, "TypeTitle"));
+            tbar.add(MsoyUI.createLabel(title, "Type"));
+
+            // TODO replace this old image with the above shop image
+            tbar.add(MsoyUI.createLabel(CStuff.msgs.ipShopFor(), "For"));
+            tbar.add(WidgetUtil.makeShim(5, 5));
+            ClickListener onClick = Link.createListener(Pages.SHOP, "" + _type);
+            tbar.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, CStuff.msgs.ipToCatalog(), onClick));
+            tbar.add(WidgetUtil.makeShim(10, 10));
+
+            add(tbar);
 
             // TODO: this has been styled but the functionality not yet implemented
             // add(_search);
@@ -213,21 +227,6 @@ public class ItemPanel extends FlowPanel
             // Link.createListener(Pages.SHOP, ""));
             // shopImage.addStyleName("Shop");
             // add(shopImage);
-
-            // TODO replace this old image with the above shop image
-            HorizontalPanel shop = new HorizontalPanel();
-            shop.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
-            shop.add(MsoyUI.createLabel(CStuff.msgs.ipShopFor(), null));
-            shop.add(WidgetUtil.makeShim(5, 5));
-            ClickListener onClick = new ClickListener() {
-                public void onClick (Widget sender)
-                {
-                    Link.go(Pages.SHOP, "" + _type);
-                }
-            };
-            shop.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, CStuff.msgs.ipToCatalog(), onClick));
-            shop.add(WidgetUtil.makeShim(10, 10));
-            add(MsoyUI.createSimplePanel("Shop", shop));
 
             add(_contents);
             if (_upload != null) {
