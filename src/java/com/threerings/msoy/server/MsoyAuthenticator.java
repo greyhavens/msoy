@@ -541,11 +541,8 @@ public class MsoyAuthenticator extends Authenticator
         _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
         // emit a created_account action which will grant them some starting flow
-        MemberMoney money = _moneyLogic.awardCoins(
-            mrec.memberId, 0, 0, null, CoinAwards.CREATED_ACCOUNT, "",
+        _moneyLogic.awardCoins(mrec.memberId, 0, 0, null, CoinAwards.CREATED_ACCOUNT, "",
             UserAction.CREATED_ACCOUNT).getNewMemberMoney();
-        mrec.flow = money.coins;
-        mrec.accFlow = (int) money.accCoins;
 
         // if they gave us a valid referral info, store it; otherwise it'll be filled in later
         if (referral != null) {
