@@ -163,7 +163,7 @@ public class MoneyLogic
      */
     @Retry(exception=StaleDataException.class)
     public MoneyResult buyItem (
-        final MemberRecord buyrec, CatalogIdent item, Currency listedCurrency, int listedAmount,
+        final MemberRecord buyerRec, CatalogIdent item, Currency listedCurrency, int listedAmount,
         Currency buyCurrency, int buyAmount)
         throws NotEnoughMoneyException, NotSecuredException
     {
@@ -173,7 +173,7 @@ public class MoneyLogic
             "buyCurrency is invalid: %s", buyCurrency);
 
         // Get the secured prices for the item.
-        final PriceKey key = new PriceKey(buyrec.memberId, item);
+        final PriceKey key = new PriceKey(buyerRec.memberId, item);
         final Escrow escrow = _escrowCache.getEscrow(key);
         if (escrow == null) {
             // TODO: 
@@ -182,22 +182,22 @@ public class MoneyLogic
             // we can go ahead and process the purchase here. Otherwise we need to throw
             // the exception with the new PriceQuote inside it! Why not! Do the fucking thing
             // that will need to be done anyway!
-            throw new NotSecuredException(buyrec.memberId, item);
+            throw new NotSecuredException(buyerRec.memberId, item);
         }
         final PriceQuote quote = escrow.getQuote();
 
-        if (!buyrec.isSupport() && !quote.isSatisfied(buyCurrency, buyAmount)) {
+        if (!buyerRec.isSupport() && !quote.isSatisfied(buyCurrency, buyAmount)) {
             // TODO: see TODO note above, only here we actually have a quote already secured
             // (And we should either get a new quote, or just leave the one in the cache,
             // but it would be an exploit to extend the lifetime of the quote)
-            throw new NotSecuredException(buyrec.memberId, item);
+            throw new NotSecuredException(buyerRec.memberId, item);
         }
 
         // Get buyer account and make sure they can afford the item.
-        final MemberAccountRecord buyer = _repo.getAccountById(buyrec.memberId);
-        if (buyer == null || (!buyrec.isSupport() && !buyer.canAfford(buyCurrency, buyAmount))) {
+        final MemberAccountRecord buyer = _repo.getAccountById(buyerRec.memberId);
+        if (buyer == null || (!buyerRec.isSupport() && !buyer.canAfford(buyCurrency, buyAmount))) {
             int hasAmount = (buyer == null) ? 0 : buyer.getAmount(buyCurrency);
-            throw new NotEnoughMoneyException(buyrec.memberId, buyCurrency, buyAmount, hasAmount);
+            throw new NotEnoughMoneyException(buyerRec.memberId, buyCurrency, buyAmount, hasAmount);
         }
 
         // TODO: move this until after the purchase... this WHOLE fucking method should
@@ -210,7 +210,7 @@ public class MoneyLogic
         // If the creator is buying their own item, don't give them a payback, and deduct the amount
         // they would have received.
         int creatorId = escrow.getCreatorId();
-        boolean buyerIsCreator = (buyrec.memberId == creatorId);
+        boolean buyerIsCreator = (buyerRec.memberId == creatorId);
         if (buyerIsCreator) {
             // TODO: hmmmm
             amount -= (int)(RuntimeConfig.server.creatorPercentage * amount);
@@ -231,10 +231,10 @@ public class MoneyLogic
         final MoneyTransactionRecord history = buyer.buyItem(
             buyCurrency, amount,
             MessageBundle.tcompose("itemBought", escrow.getDescription(), item.type, item.catalogId),
-            item, buyrec.isSupport());
+            item, buyerRec.isSupport());
         _repo.addTransaction(history);
         _repo.saveAccount(buyer);
-        UserActionDetails info = logUserAction(buyrec.memberId, UserActionDetails.INVALID_ID,
+        UserActionDetails info = logUserAction(buyerRec.memberId, UserActionDetails.INVALID_ID,
             UserAction.BOUGHT_ITEM, escrow.getDescription(), item);
         logInPanopticon(info, buyCurrency, history.amount, buyer);
 
@@ -251,7 +251,7 @@ public class MoneyLogic
                 item, RuntimeConfig.server.creatorPercentage, history.id);
             _repo.addTransaction(creatorHistory);
             _repo.saveAccount(creator);
-            info = logUserAction(creatorId, buyrec.memberId, UserAction.RECEIVED_PAYOUT,
+            info = logUserAction(creatorId, buyerRec.memberId, UserAction.RECEIVED_PAYOUT,
                 escrow.getDescription(), item);
             logInPanopticon(info, buyCurrency, creatorHistory.amount, creator);
         }
