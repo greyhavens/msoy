@@ -36,6 +36,7 @@ import client.shell.DynamicMessages;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
+import client.util.DateUtil;
 import client.util.ServiceUtil;
 
 /**
@@ -80,27 +81,48 @@ public class MsoyUI
     }
 
     /**
-     * Creates a label of the form "9:15 am"
+     * Creates a label of the form "9:15am". TODO: support 24 hour time for people who go for that
+     * sort of thing.
      */
     public static String formatTime (Date date)
     {
-        return _tfmt.format(date);
+        return _tfmt.format(date).toLowerCase();
     }
 
     /**
-     * Creates a label of the form "Aug 15, 2008"
+     * Formats the supplied date relative to the current time: Today, Yesterday, MMM dd, and
+     * finally MMM dd, YYYY.
      */
     public static String formatDate (Date date)
     {
-        return _dfmt.format(date);
+        Date now = new Date();
+        if (DateUtil.getYear(date) != DateUtil.getYear(now)) {
+            return _yfmt.format(date);
+
+        } else if (DateUtil.getMonth(date) != DateUtil.getMonth(now)) {
+            return _mfmt.format(date);
+
+        } else if (DateUtil.getDayOfMonth(date) == DateUtil.getDayOfMonth(now)) {
+            return _cmsgs.today();
+
+        // this will break for one hour on daylight savings time and we'll instead report the date
+        // in MMM dd format or we'll call two days ago yesterday for that witching hour; we don't
+        // have excellent date services in the browser, so we're just going to be OK with that
+        } else if (DateUtil.getDayOfMonth(date) ==
+                   DateUtil.getDayOfMonth(new Date(now.getTime()-24*60*60*1000))) {
+            return _cmsgs.yesterday();
+
+        } else {
+            return _mfmt.format(date);
+        }
     }
 
     /**
-     * Creates a label of the form "Aug 15, 2008 9:15 am"
+     * Creates a label of the form "{@link #formatDate} at {@link #formatTime}".
      */
     public static String formatDateTime (Date date)
     {
-        return _dtfmt.format(date);
+        return _cmsgs.dateTime(formatDate(date), formatTime(date));
     }
 
     /**
@@ -537,9 +559,9 @@ public class MsoyUI
         return text.substring(0, maxLen-3) + "...";
     }
 
-    protected static final SimpleDateFormat _tfmt = new SimpleDateFormat("h:mm aa");
-    protected static final SimpleDateFormat _dfmt = new SimpleDateFormat("MMM dd, yyyy");
-    protected static final SimpleDateFormat _dtfmt = new SimpleDateFormat("MMM dd, yyyy h:mm aa");
+    protected static final SimpleDateFormat _tfmt = new SimpleDateFormat("h:mmaa");
+    protected static final SimpleDateFormat _mfmt = new SimpleDateFormat("MMM dd");
+    protected static final SimpleDateFormat _yfmt = new SimpleDateFormat("MMM dd, yyyy");
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
