@@ -86,7 +86,8 @@ public class StuffPage extends Page
                             // We didn't have access to that specific item, but have been given
                             // the catalog id for the prototype.
                             ItemIdent id = result.ident;
-                            Link.go(Pages.SHOP, Args.compose("l", "" + id.type, "" + id.itemId));
+                            Link.replace(
+                                Pages.SHOP, Args.compose("l", "" + id.type, "" + id.itemId));
                         }
                     }
                 });
