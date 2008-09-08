@@ -10,7 +10,6 @@
   <property name="asrc.dir"      value="src/as"/>
   <property name="deploy.dir"    value="dist"/>
   <property name="classes.dir"   value="${deploy.dir}/classes"/>
-  <property name="gbinds.dir"    value="${deploy.dir}/gbinds"/>
   <property name="gwtout.dir"    value="pages/gwt"/>
   <property name="flexsdk.dir"   value="lib/flex_sdk"/>
   <property name="extlibs.dir"   value="extlibs/java"/>
@@ -254,7 +253,6 @@
   <target name="prepare" depends="config">
     <mkdir dir="${deploy.dir}/lib"/>
     <mkdir dir="${deploy.dir}/tmp"/>
-    <mkdir dir="${gbinds.dir}"/>
     <mkdir dir="${classes.dir}"/>
     <mkdir dir="${classes.dir}/rsrc"/>
     <copy todir="${classes.dir}/rsrc">
@@ -423,23 +421,9 @@
     </copy>
   </target>
 
-  <!-- builds generators used to create the GWT client -->
-  <target name="gbinds">
-    <javac srcdir="${gsrc.dir}" destdir="${gbinds.dir}">
-      <include name="**/rebind/*.java" />
-      <classpath>
-        <fileset dir="${extlibs.dir}" includes="gwt-dev-*.jar"/>
-        <fileset dir="${deploy.dir}/lib" includes="gwt-user.jar"/>
-
-        <pathelement location="${src.dir}"/>
-        <pathelement location="${gsrc.dir}"/>
-      </classpath>
-    </javac>
-  </target>
-
   <!-- builds our numerous GWT web clients -->
   <property name="pages" value="${gpages.list}"/>
-  <target name="gclient" depends="jprepare,gmsgs,gbinds"
+  <target name="gclient" depends="jprepare,gmsgs"
           description="Rebuilds the GWT client (but only for Mozilla).">
     <property name="pageout.dir" value="${gwtout.dir}/${version}"/>
     <mkdir dir="${pageout.dir}"/>
@@ -469,7 +453,6 @@
           </fileset>
           <pathelement location="${src.dir}"/>
           <pathelement location="${gsrc.dir}"/>
-          <pathelement location="${gbinds.dir}"/>
         </classpath>
         <arg value="-style"/><arg value="${gwt_style}"/>
         <arg value="-out"/>
