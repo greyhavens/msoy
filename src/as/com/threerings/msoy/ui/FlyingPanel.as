@@ -48,13 +48,14 @@ public class FlyingPanel extends FloatingPanel
     protected function handleStageResized (...ignored) :void
     {
         var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds();
-        // fix the height
-        height = placeBounds.height - PADDING * 2;
         // fit the popup within the new bounds, minux padding.
         placeBounds.x += PADDING;
         placeBounds.y += PADDING;
         placeBounds.width -= PADDING * 2;
         placeBounds.height -= PADDING * 2;
+        // fix our height
+        height = Math.min(height, placeBounds.height);
+        // and make sure we fit inside
         PopUpUtil.fitInRect(this, placeBounds);
     }
 
@@ -62,13 +63,15 @@ public class FlyingPanel extends FloatingPanel
     {
         if (event.value) {
             _currentX = x;
-        } else {
+
+        } else if (!isNaN(_currentX)) {
             x = _currentX;
+            _currentX = NaN;
         }
     }
 
     /** Saves our x value across client minimizations. */
-    protected var _currentX :int;
+    protected var _currentX :Number = NaN;
 
     protected static const PADDING :int = 10;
 }
