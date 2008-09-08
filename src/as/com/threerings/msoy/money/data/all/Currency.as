@@ -30,6 +30,22 @@ public final class Currency extends Enum
     }
 
     /**
+     * Format a currency value.
+     */
+    public function format (value :int) :String
+    {
+        var postfix :String = "";
+        if (this == BLING) {
+            const cents :int = Math.abs(value % 100);
+            value = int(value / 100);
+            postfix = "." + int(cents / 10) + (cents % 10); // always print two decimal places
+        }
+
+        // TODO: this will change, we want commas
+        return "" + value + postfix;
+    }
+
+    /**
      * Used to display just the name of the currency.
      */
     public function getLabel () :String

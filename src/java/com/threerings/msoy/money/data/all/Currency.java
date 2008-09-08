@@ -49,6 +49,24 @@ public enum Currency
     }
 
     /**
+     * Format a currency value.
+     */
+    public String format (int value)
+    {
+        // Note: I'm doing this by hand instead of using NumberFormats because of GWT
+        // and because we pretty much have to do this same logic in actionscript, anyway
+        String postfix = "";
+        if (this == BLING) {
+            int cents = Math.abs(value % 100);
+            value /= 100;
+            postfix = "." + (cents / 10) + (cents % 10); // always print two decimal places
+        }
+
+        // TODO: this next part will change, because we want commas
+        return String.valueOf(value) + postfix;
+    }
+
+    /**
      * Used to display just the name of the currency.
      */
     public String getLabel ()
