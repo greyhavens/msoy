@@ -394,7 +394,7 @@ public class RemixControls extends HBox
         uploader.close();
 
         if (ExternalInterface.available) {
-            ExternalInterface.call("setHash", result.mediaId, result.hash, result.mimeType,
+            ExternalInterface.call("setRemixHash", result.mediaId, result.hash, result.mimeType,
                 result.constraint, result.width, result.height);
         }
     }
