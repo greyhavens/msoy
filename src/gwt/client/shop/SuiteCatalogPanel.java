@@ -111,20 +111,16 @@ public class SuiteCatalogPanel extends SmartTable
     }
 
     protected SmartTable _listings = new SmartTable();
-
     protected ListingGrid _items;
 
     protected CatalogQuery _query = new CatalogQuery();
-
     protected CatalogModels _models;
 
     protected String _suiteName;
-
     protected int _gameId;
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
     protected static final byte[] ITEM_TYPES = new byte[]{ Item.LEVEL_PACK, Item.ITEM_PACK };
-
     protected static final int HEADER_HEIGHT = 75;
 }
