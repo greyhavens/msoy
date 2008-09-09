@@ -119,7 +119,7 @@ public class SuiteCatalogPanel extends SmartTable
 
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 
-    protected static final byte[] ITEM_TYPES = new byte[]{ Item.ITEM_PACK, Item.LEVEL_PACK };
+    protected static final byte[] ITEM_TYPES = new byte[]{ Item.LEVEL_PACK, Item.ITEM_PACK };
 
     protected static final int HEADER_HEIGHT = 75;
 }
