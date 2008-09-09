@@ -5,7 +5,7 @@ package com.threerings.msoy.money.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.ReportType;
 
 /**
  * The asynchronous (client-side) version of {@link MoneyService}.
@@ -16,6 +16,6 @@ public interface MoneyServiceAsync
      * The asynchronous version of {@link MoneyService#getTransactionHistory}.
      */
     void getTransactionHistory (
-        int memberId, Currency currency, int from, int count,
+        int memberId, ReportType report, int from, int count,
         AsyncCallback<HistoryListResult> callback);
 }

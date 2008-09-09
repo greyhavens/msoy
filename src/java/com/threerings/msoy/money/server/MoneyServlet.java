@@ -4,7 +4,8 @@
 package com.threerings.msoy.money.server;
 
 import com.google.inject.Inject;
-import com.threerings.msoy.money.data.all.Currency;
+
+import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.gwt.HistoryListResult;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
@@ -20,7 +21,7 @@ public class MoneyServlet extends MsoyServiceServlet
     implements MoneyService
 {
     public HistoryListResult getTransactionHistory (
-        int memberId, Currency currency, int from, int count)
+        int memberId, ReportType report, int from, int count)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -30,8 +31,9 @@ public class MoneyServlet extends MsoyServiceServlet
 
         HistoryListResult result = new HistoryListResult();
         result.transactions = _moneyLogic.getTransactions(
-            memberId, null, currency, from, count, true);
-        result.totalCount = _moneyLogic.getTransactionCount(memberId, null, currency);
+            memberId, report.transactions, report.currency, from, count, true);
+        result.totalCount = _moneyLogic.getTransactionCount(memberId,
+            report.transactions, report.currency);
         return result;
     }
 
