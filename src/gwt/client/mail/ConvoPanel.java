@@ -98,7 +98,6 @@ public class ConvoPanel extends FlowPanel
                     MsoyUI.info(CMail.msgs.deleteNotDeleted());
                 } else {
                     _model.conversationDeleted(_convoId);
-                    MsoyUI.info(CMail.msgs.deleteDeleted());
                     History.back();
                 }
                 return !deleted;

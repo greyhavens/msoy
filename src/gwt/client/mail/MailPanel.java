@@ -149,7 +149,6 @@ public class MailPanel extends VerticalPanel
                         MsoyUI.info(_msgs.deleteNotDeleted());
                     } else {
                         grid.removeItem(convo);
-                        MsoyUI.info(_msgs.deleteDeleted());
                     }
                     return !deleted;
                 }
