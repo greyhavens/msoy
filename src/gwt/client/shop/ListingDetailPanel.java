@@ -26,6 +26,7 @@ import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
 import client.item.DoListItemPopup;
 import client.item.ItemActivator;
+import client.item.RemixableLabel;
 import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.DynamicMessages;
@@ -55,6 +56,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
 // TODO
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);
+
+        if (isRemixable()) {
+            _indeets.add(WidgetUtil.makeShim(10, 10));
+            _indeets.add(new RemixableLabel());
+        }
 
         _indeets.add(WidgetUtil.makeShim(10, 10));
         _indeets.add(_priceLabel = new PriceLabel(_listing.flowCost, _listing.goldCost));

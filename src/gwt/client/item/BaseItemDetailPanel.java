@@ -10,7 +10,6 @@ import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -93,15 +92,6 @@ public abstract class BaseItemDetailPanel extends SmartTable
         _indeets.addStyleName("Description");
         _details.add(_indeets);
         _indeets.add(MsoyUI.createRestrictedHTML(ItemUtil.getDescription(_item)));
-
-        if (isRemixable()) {
-            HorizontalPanel panel = new HorizontalPanel();
-            panel.add(new Image("/images/item/remixable_icon.png"));
-            panel.add(WidgetUtil.makeShim(10, 10));
-            panel.add(new Label(_imsgs.remixTip()));
-            _indeets.add(WidgetUtil.makeShim(10, 10));
-            _indeets.add(panel);
-        }
 
         if (_item instanceof Game) {
             _details.add(WidgetUtil.makeShim(10, 10));

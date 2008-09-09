@@ -146,3 +146,7 @@
 .itemBox .Cost {
   font-size: 12px;
 }
+
+.remixableLabel .inlineL {
+  vertical-align: top;
+}

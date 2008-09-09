@@ -27,6 +27,7 @@ import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import client.item.BaseItemDetailPanel;
 import client.item.DoListItemPopup;
 import client.item.ItemActivator;
+import client.item.RemixableLabel;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicMessages;
@@ -127,10 +128,27 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         boolean remixable = isRemixable();
         boolean used = (_item.used != Item.UNUSED);
 
-        if (_item.ownerId == memberId && FlashClients.clientExists()) {
-            _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(new ItemActivator(_item, false));
+        // add a button for deleting this item
+        RowPanel buttons = new RowPanel();
+        _deleteBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailDelete(), null);
+        createDeleteCallback(_deleteBtn);
+        buttons.add(_deleteBtn);
+
+        // add a button for editing this item, if it's an original
+        if (original) {
+            if (canEditAndList) {
+                buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailEdit(),
+                                                NaviUtil.onEditItem(_item.getType(), _item.itemId)));
+            }
+        } else {
+            // add a button for renaming
+            PushButton rename = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailRename(), null);
+            buttons.add(rename);
+            new RenameHandler(rename, _item, _model);
         }
+
+        _details.add(WidgetUtil.makeShim(10, 10));
+        _details.add(buttons);
 
         // if this item is in use, mention that
         if (used) {
@@ -138,31 +156,16 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             _details.add(MsoyUI.createHTML(getUsageMessage(), null));
         }
 
-        RowPanel buttons = new RowPanel();
-        // add a button for deleting this item
-        _deleteBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailDelete(), null);
-        createDeleteCallback(_deleteBtn);
-        buttons.add(_deleteBtn);
-
-        // add a button for renaming
-        if (!original) {
-            PushButton rename = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailRename(),
-                null);
-            buttons.add(rename);
-            new RenameHandler(rename, _item, _model);
-        }
-
-        // add a button for editing this item, if it's an original
-        if (original && canEditAndList) {
-            buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailEdit(),
-                                            NaviUtil.onEditItem(_item.getType(), _item.itemId)));
-
-        }
-
-        // add our delete/edit buttons if we have them
-        if (buttons.getWidgetCount() > 0) {
-            _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(buttons);
+        // add an activator for this item (and tuck it up next to the in-use message if we have one)
+        if (_item.ownerId == memberId && FlashClients.clientExists()) {
+            if (!used) {
+                // if we don't already have a usage message, add a not-in-use message because that
+                // nicely explains the button we're about to add
+                _details.add(WidgetUtil.makeShim(10, 10));
+                _details.add(MsoyUI.createHTML(_msgs.detailNotInUse(), null));
+            }
+            _details.add(WidgetUtil.makeShim(10, 5));
+            _details.add(new ItemActivator(_item, true));
         }
 
         // if this item is listed in the catalog or listable, add a UI for that
@@ -215,7 +218,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         // if remixable, add a button for that
         if (remixable) {
             _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(new Label(_msgs.detailRemixTip()));
+            _details.add(new RemixableLabel());
             _details.add(WidgetUtil.makeShim(10, 5));
 
             buttons = new RowPanel();
