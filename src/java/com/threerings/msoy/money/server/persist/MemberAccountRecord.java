@@ -98,50 +98,37 @@ public class MemberAccountRecord extends PersistentRecord
         new ColumnExp(MemberAccountRecord.class, ACC_BLING);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
-    /**
-     * ID of the member this account record is for. Note: this is not part of the API, do not use
-     * it.
-     */
+    /** ID of the member this account record is for. */
     @Id
     public int memberId;
 
-    /** Coins currently in the account. Note: this is not part of the API, do not use it. */
+    /** Coins currently in the account. */
     public int coins;
 
-    /** Bars currently in the account. Note: this is not part of the API, do not use it. */
+    /** Bars currently in the account. */
     public int bars;
 
-    /** Bling currently in the account. Note: this is not part of the API, do not use it. */
-    public double bling;
+    /** Bling currently in the account. As usual, this is really "centibling" since we store
+     * bling as a fixed-point number. 100 centibling == 1.00 bling. */
+    public int bling;
 
-    /**
-     * Date last updated. Note: this is not part of the API, do not use it. Also, why does depot
-     * force this dependency on java.sql in the entity object? :-(
-     */
+    /** Date last updated. */
     public Timestamp dateLastUpdated;
 
-    /** ID of the version of this account. Note: this is not part of the API, do not use it. */
+    /** ID of the version of this account. */
     public long versionId;
 
-    /**
-     * Cumulative count of coins this member has ever received. Note: this is not part of the API,
-     * do not use it.
-     */
+    /** Cumulative count of coins this member has ever received. */
     public long accCoins;
 
-    /**
-     * Cumulative count of bars this member has ever received. Note: this is not part of the API,
-     * do not use it.
-     */
+    /** Cumulative count of bars this member has ever received. */
     public long accBars;
 
-    /**
-     * Cumulative count of bling this member has ever received. Note: this is not part of the API,
-     * do not use it.
-     */
-    public double accBling;
+    /** Cumulative count of bling this member has ever received.
+     * As usual, this is "centibling". */
+    public long accBling;
 
     /**
      * Creates a new blank record for the given member. All account balances are set to 0.
@@ -153,10 +140,10 @@ public class MemberAccountRecord extends PersistentRecord
         this.memberId = memberId;
         coins = 0;
         bars = 0;
-        bling = 0.0;
+        bling = 0;
         accCoins = 0;
         accBars = 0;
-        accBling = 0.0;
+        accBling = 0;
         dateLastUpdated = new Timestamp(System.currentTimeMillis());
         versionId = 0;
     }

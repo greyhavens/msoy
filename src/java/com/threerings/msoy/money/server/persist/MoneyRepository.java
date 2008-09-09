@@ -15,6 +15,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -49,6 +50,11 @@ public class MoneyRepository extends DepotRepository
     public MoneyRepository (final PersistenceContext ctx)
     {
         super(ctx);
+
+        ctx.registerMigration(MemberAccountRecord.class,
+            new EntityMigration.Retype(4, MemberAccountRecord.BLING));
+        ctx.registerMigration(MemberAccountRecord.class,
+            new EntityMigration.Retype(4, MemberAccountRecord.ACC_BLING));
     }
 
     /**
