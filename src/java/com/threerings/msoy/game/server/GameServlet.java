@@ -162,7 +162,7 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        requireIsGameOwner(gameId, mrec);
+        requireIsGameOwner(Game.getListedId(gameId), mrec);
 
         GameLogs logs = new GameLogs();
         logs.gameId = gameId;
@@ -511,7 +511,7 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // load the source record
-        GameRecord grec = _gameRepo.loadGameRecord(-gameId);
+        GameRecord grec = _gameRepo.loadGameRecord(Game.getInProgressId(gameId));
         if (grec == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }

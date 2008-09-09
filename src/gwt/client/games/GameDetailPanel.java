@@ -158,6 +158,10 @@ public class GameDetailPanel extends SmartTable
         if (detail.listedItem != null && ((detail.sourceItem != null
                 && detail.sourceItem.ownerId == CShell.getMemberId()) || CShell.isAdmin())) {
             addTab(GameDetails.METRICS, _msgs.tabMetrics(), new GameMetricsPanel(detail));
+        }
+
+        // if we're the owner of the game or an admin, add logs tab 
+        if (detail.sourceItem.ownerId == CShell.getMemberId() || CShell.isAdmin()) {
             addTab(GameDetails.LOGS, _msgs.tabLogs(), new GameLogsPanel(gameId));
         }
     }
