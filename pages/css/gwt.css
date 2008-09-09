@@ -912,3 +912,8 @@ img, embed, applet, object {
 .complainPopup {
   width: 400px;
 }
+
+/** Place <div style="clear"/> to force a line break after floating elements */
+.clear {
+  clear: both;
+}

@@ -21,10 +21,10 @@ public class StuffNaviBar extends FlowPanel
         setStyleName("stuffNaviBar");
 
         for (byte type : Item.TYPES) {
-            // TODO: mouseovers
             add(MsoyUI.createActionImage("/images/stuff/navbar_" + type + ".png",
                 Link.createListener(Pages.STUFF, "" + type)));
         }
+        add(MsoyUI.createSimplePanel("clear", null));
     }
 }
 
