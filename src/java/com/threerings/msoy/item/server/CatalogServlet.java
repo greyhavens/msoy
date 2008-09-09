@@ -165,11 +165,11 @@ public class CatalogServlet extends MsoyServiceServlet
         try {
             result = _moneyLogic.buyItem(
                 mrec, new CatalogIdent(itemType, catalogId),
-                Currency.COINS, listing.flowCost, Currency.COINS, authedFlowCost);
+                Currency.COINS, listing.cost, Currency.COINS, authedFlowCost);
         } catch (final NotEnoughMoneyException neme) {
             throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
         } catch (final NotSecuredException nse) {
-            throw new CostUpdatedException(listing.flowCost, listing.goldCost);
+            throw new CostUpdatedException(listing.cost, 0); // TODO: Update to new standard
         }
 
         // note the amount of currency spent in this transaction
@@ -287,7 +287,8 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // create & insert the catalog record
         final CatalogRecord record = repo.insertListing(
-            listItem, originalItemId, pricing, salesTarget, flowCost, barsCost, now);
+            // TODO: Bar me
+            listItem, originalItemId, pricing, salesTarget, Currency.COINS, flowCost, now);
 
         // record the listing action and charge the flow
         final UserActionDetails info = new UserActionDetails(
@@ -356,7 +357,7 @@ public class CatalogServlet extends MsoyServiceServlet
         if (mrec != null) {
             _moneyLogic.securePrice(
                 mrec.memberId, new CatalogIdent(itemType, catalogId), Currency.COINS,
-                record.flowCost, record.item.creatorId, 0, record.item.name);
+                record.cost, record.item.creatorId, 0, record.item.name);
         }
 
         // finally convert the listing to a runtime record
@@ -448,7 +449,8 @@ public class CatalogServlet extends MsoyServiceServlet
         salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
 
         // now we can update the record
-        repo.updatePricing(catalogId, pricing, salesTarget, flowCost, barsCost,
+        // TODO: Bar me
+        repo.updatePricing(catalogId, pricing, salesTarget, Currency.COINS, flowCost,
                            System.currentTimeMillis());
 
         // record the update action

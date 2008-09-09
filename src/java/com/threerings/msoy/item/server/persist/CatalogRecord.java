@@ -25,6 +25,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.ItemDetail;
 import com.threerings.msoy.item.gwt.ListingCard;
+import com.threerings.msoy.money.data.all.Currency;
 
 /**
  * Represents a catalog listing of an item.
@@ -51,11 +52,11 @@ public abstract class CatalogRecord extends PersistentRecord
     /** The column identifier for the {@link #listedDate} field. */
     public static final String LISTED_DATE = "listedDate";
 
-    /** The column identifier for the {@link #flowCost} field. */
-    public static final String FLOW_COST = "flowCost";
+    /** The column identifier for the {@link #currency} field. */
+    public static final String CURRENCY = "currency";
 
-    /** The column identifier for the {@link #goldCost} field. */
-    public static final String GOLD_COST = "goldCost";
+    /** The column identifier for the {@link #cost} field. */
+    public static final String COST = "cost";
 
     /** The column identifier for the {@link #pricing} field. */
     public static final String PRICING = "pricing";
@@ -73,7 +74,7 @@ public abstract class CatalogRecord extends PersistentRecord
     public static final String FAVORITE_COUNT = "favoriteCount";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 10;
+    public static final int SCHEMA_VERSION = 11;
 
     /** Converts this record to a runtime record. See {@link #toListingCard} for caveats.  */
     public static final Function<CatalogRecord,ListingCard> TO_CARD =
@@ -97,11 +98,11 @@ public abstract class CatalogRecord extends PersistentRecord
     /** The time this item was listed in the catalog. */
     public Timestamp listedDate;
 
-    /** The amount of flow it costs to purchase a clone of this item. */
-    public int flowCost;
+    /** The type of currency this item is listed for. */
+    public byte currency;
 
-    /** The amount of gold it costs to purchase a clone of this item. */
-    public int goldCost;
+    /** The cost to purchase a clone of this item. */
+    public int cost;
 
     /** The pricing of this item; {@see CatalogListing#pricing}. */
     public int pricing;
@@ -135,8 +136,8 @@ public abstract class CatalogRecord extends PersistentRecord
         }
         listing.originalItemId = originalItemId;
         listing.listedDate = new Date(listedDate.getTime());
-        listing.flowCost = flowCost;
-        listing.goldCost = goldCost;
+        listing.flowCost = cost;
+        listing.goldCost = 0; // TODO
         listing.pricing = pricing;
         listing.salesTarget = salesTarget;
         listing.purchases = purchases;
@@ -161,8 +162,8 @@ public abstract class CatalogRecord extends PersistentRecord
         card.descrip = item.description;
         card.remixable = item.isRemixable();
         card.rating = item.rating;
-        card.flowCost = flowCost;
-        card.goldCost = goldCost;
+        card.currency = Currency.fromByte(currency);
+        card.cost = cost;
         return card;
     }
 

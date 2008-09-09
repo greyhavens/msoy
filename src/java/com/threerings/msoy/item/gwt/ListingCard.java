@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.money.data.all.Currency;
 
 /**
  * Contains a smidgen of information on an item.
@@ -37,11 +38,11 @@ public class ListingCard implements IsSerializable
     /** The item's rating. */
     public float rating;
 
-    /** The item's flow cost. */
-    public int flowCost;
+    /** The currency the price is in. */
+    public Currency currency;
 
-    /** The item's gold cost. */
-    public int goldCost;
+    /** The item's price. */
+    public int cost;
 
     @Override // from Object
     public boolean equals (Object other)

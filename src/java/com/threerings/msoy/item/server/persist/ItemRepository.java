@@ -70,6 +70,7 @@ import com.threerings.msoy.server.persist.TagRepository;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogQuery;
+import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.server.persist.MemoryRepository;
 
@@ -116,6 +117,10 @@ public abstract class ItemRepository<T extends ItemRecord>
                 return ItemRepository.this.createTagHistoryRecord();
             }
         };
+
+        _ctx.registerMigration(getCatalogClass(), new EntityMigration.Drop(11, "goldCost"));
+        _ctx.registerMigration(getCatalogClass(),
+            new EntityMigration.Rename(11, "flowCost", CatalogRecord.COST));
 
         // TEMP added 2008.05.15
         _ctx.registerMigration(getItemClass(), new EntityMigration(17000) {
@@ -594,10 +599,8 @@ public abstract class ItemRepository<T extends ItemRecord>
 
             case CatalogListing.PRICING_ESCALATE:
                 if (purchases == record.salesTarget) {
-                    updates.put(CatalogRecord.FLOW_COST,
-                                new LiteralExp(""+CatalogListing.escalatePrice(record.flowCost)));
-                    updates.put(CatalogRecord.GOLD_COST,
-                                new LiteralExp(""+CatalogListing.escalatePrice(record.goldCost)));
+                    updates.put(CatalogRecord.COST,
+                                new LiteralExp(""+CatalogListing.escalatePrice(record.cost)));
                 }
                 break;
             }
@@ -680,7 +683,7 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public CatalogRecord insertListing (
         ItemRecord listItem, int originalItemId, int pricing, int salesTarget,
-        int flowCost, int goldCost, long listingTime)
+        Currency currency, int cost, long listingTime)
     {
         if (listItem.ownerId != 0) {
             throw new IllegalArgumentException(
@@ -700,8 +703,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         record.pricing = pricing;
         record.salesTarget = salesTarget;
         record.purchases = record.returns = 0;
-        record.flowCost = flowCost;
-        record.goldCost = goldCost;
+        record.currency = currency.toByte();
+        record.cost = cost;
         insert(record);
 
         // wire this listed item and its original up to the catalog record
@@ -715,14 +718,14 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Updates the pricing for the specified catalog listing.
      */
     public void updatePricing (int catalogId, int pricing, int salesTarget,
-                               int flowCost, int goldCost, long updateTime)
+                               Currency currency, int cost, long updateTime)
     {
         updatePartial(getCatalogClass(), catalogId,
                       // TODO?: CatalogRecord.LISTED_DATE, new Timestamp(updateTime),
                       CatalogRecord.PRICING, pricing,
                       CatalogRecord.SALES_TARGET, salesTarget,
-                      CatalogRecord.FLOW_COST, flowCost,
-                      CatalogRecord.GOLD_COST, goldCost);
+                      CatalogRecord.CURRENCY, currency.toByte(),
+                      CatalogRecord.COST, cost);
     }
 
     /**
@@ -1068,9 +1071,10 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void addOrderByPrice (List<SQLExpression> exprs, List<OrderBy.Order> orders,
                                     OrderBy.Order order)
     {
-        exprs.add(new Arithmetic.Add(getCatalogColumn(CatalogRecord.FLOW_COST),
-                                     new Arithmetic.Mul(getCatalogColumn(CatalogRecord.GOLD_COST),
-                                                        FLOW_FOR_GOLD)));
+        // TODO: Enable
+//        exprs.add(new Arithmetic.Add(getCatalogColumn(CatalogRecord.COST),
+//                                     new Arithmetic.Mul(getCatalogColumn(CatalogRecord.GOLD_COST),
+//                                                        FLOW_FOR_GOLD)));
         orders.add(order);
     }
 

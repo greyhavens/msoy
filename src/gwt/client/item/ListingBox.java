@@ -11,6 +11,8 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.item.gwt.ListingCard;
 
+import com.threerings.msoy.money.data.all.Currency;
+
 import client.shell.Args;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -35,17 +37,12 @@ public class ListingBox extends ItemBox
         SmartTable cost = new SmartTable(0, 0);
         setWidget(row, 1, cost);
 
-        cost.setWidget(0, 0, new Image("/images/ui/coins.png"));
+        // TODO: Use PriceLabel?
+        cost.setWidget(0, 0, new Image((listing.currency == Currency.COINS) ?
+            "/images/ui/coins.png" : "/images/ui/bars.png"));
         cost.getFlexCellFormatter().setWidth(0, 0, "15px");
         cost.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
-        cost.setText(0, 1, String.valueOf(listing.flowCost), 1, "Cost");
-
-        if (listing.goldCost > 0) {
-            cost.setWidget(1, 0, new Image("/images/ui/gold.png"));
-            cost.getFlexCellFormatter().setWidth(1, 0, "15px");
-            cost.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
-            cost.setText(1, 1, String.valueOf(listing.goldCost), 1, "Cost");
-        }
+        cost.setText(0, 1, String.valueOf(listing.cost), 1, "Cost");
     }
 
     @Override // from ItemBox

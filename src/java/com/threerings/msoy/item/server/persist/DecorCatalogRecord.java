@@ -28,13 +28,13 @@ public class DecorCatalogRecord extends CatalogRecord
     public static final ColumnExp LISTED_DATE_C =
         new ColumnExp(DecorCatalogRecord.class, LISTED_DATE);
 
-    /** The qualified column identifier for the {@link #flowCost} field. */
-    public static final ColumnExp FLOW_COST_C =
-        new ColumnExp(DecorCatalogRecord.class, FLOW_COST);
+    /** The qualified column identifier for the {@link #currency} field. */
+    public static final ColumnExp CURRENCY_C =
+        new ColumnExp(DecorCatalogRecord.class, CURRENCY);
 
-    /** The qualified column identifier for the {@link #goldCost} field. */
-    public static final ColumnExp GOLD_COST_C =
-        new ColumnExp(DecorCatalogRecord.class, GOLD_COST);
+    /** The qualified column identifier for the {@link #cost} field. */
+    public static final ColumnExp COST_C =
+        new ColumnExp(DecorCatalogRecord.class, COST);
 
     /** The qualified column identifier for the {@link #pricing} field. */
     public static final ColumnExp PRICING_C =

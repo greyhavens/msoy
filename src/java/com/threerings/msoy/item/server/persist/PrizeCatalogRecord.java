@@ -28,13 +28,13 @@ public class PrizeCatalogRecord extends CatalogRecord
     public static final ColumnExp LISTED_DATE_C =
         new ColumnExp(PrizeCatalogRecord.class, LISTED_DATE);
 
-    /** The qualified column identifier for the {@link #flowCost} field. */
-    public static final ColumnExp FLOW_COST_C =
-        new ColumnExp(PrizeCatalogRecord.class, FLOW_COST);
+    /** The qualified column identifier for the {@link #currency} field. */
+    public static final ColumnExp CURRENCY_C =
+        new ColumnExp(PrizeCatalogRecord.class, CURRENCY);
 
-    /** The qualified column identifier for the {@link #goldCost} field. */
-    public static final ColumnExp GOLD_COST_C =
-        new ColumnExp(PrizeCatalogRecord.class, GOLD_COST);
+    /** The qualified column identifier for the {@link #cost} field. */
+    public static final ColumnExp COST_C =
+        new ColumnExp(PrizeCatalogRecord.class, COST);
 
     /** The qualified column identifier for the {@link #pricing} field. */
     public static final ColumnExp PRICING_C =

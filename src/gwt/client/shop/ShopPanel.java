@@ -126,7 +126,7 @@ public class ShopPanel extends HorizontalPanel
         contents.setWidget(0, 1, right);
         contents.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
         contents.setWidget(1, 0, WidgetUtil.makeShim(5, 5), 2, null);
-        contents.setWidget(2, 0, new PriceLabel(card.flowCost, card.goldCost));
+        contents.setWidget(2, 0, new PriceLabel(card.cost, 0)); // TODO: Bar me
         contents.setWidget(2, 1, new Stars(card.rating, true, false, null));
 
         String ipath = "/images/shop/icon_" + icon + ".png";
