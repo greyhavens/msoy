@@ -1071,10 +1071,11 @@ public abstract class ItemRepository<T extends ItemRecord>
     protected void addOrderByPrice (List<SQLExpression> exprs, List<OrderBy.Order> orders,
                                     OrderBy.Order order)
     {
-        // TODO: Enable
 //        exprs.add(new Arithmetic.Add(getCatalogColumn(CatalogRecord.COST),
 //                                     new Arithmetic.Mul(getCatalogColumn(CatalogRecord.GOLD_COST),
 //                                                        FLOW_FOR_GOLD)));
+        // TODO: Handle natural sorting of coins/bar prices based on the current exchange rate
+        exprs.add(getCatalogColumn(CatalogRecord.COST));
         orders.add(order);
     }
 
