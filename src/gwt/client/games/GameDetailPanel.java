@@ -25,6 +25,7 @@ import client.comment.CommentsPanel;
 import client.item.ItemRating;
 import client.shell.CShell;
 import client.shell.Pages;
+import client.ui.MsoyUI;
 import client.ui.StyledTabPanel;
 import client.ui.ThumbBox;
 import client.util.Link;
@@ -89,8 +90,19 @@ public class GameDetailPanel extends SmartTable
         setWidget(1, 0, new GameBitsPanel(
             detail.minPlayers, detail.maxPlayers, detail.averageDuration, detail.gamesPlayed,
             detail.sourceItem.itemId, game.groupId));
-        setWidget(1, 1, new PlayPanel(_gameId, detail.minPlayers, detail.maxPlayers,
-                                      detail.playingNow), 1, "Play");
+
+        VerticalPanel play = new VerticalPanel();
+        play.setStyleName("playPanel");
+        Widget playbut = new PlayButton(gameId, detail.minPlayers, detail.maxPlayers);
+        play.add(playbut);
+        play.setCellHorizontalAlignment(play, HasAlignment.ALIGN_CENTER);
+
+        if (detail.playingNow > 0) {
+            Widget online = MsoyUI.createLabel(_msgs.featuredOnline(""+detail.playingNow), "Online");
+            play.add(online);
+            play.setCellHorizontalAlignment(online, HasAlignment.ALIGN_CENTER);
+        }
+        setWidget(1, 1, play, 1, "Play");
 
         // note that they're playing the developer version if so
         if (Game.isDeveloperVersion(gameId)) {

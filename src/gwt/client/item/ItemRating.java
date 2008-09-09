@@ -12,6 +12,7 @@ import client.ui.Stars;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -75,7 +76,6 @@ public class ItemRating extends FlexTable
 
             if (writable) {
                 setWidget(0, 1, WidgetUtil.makeShim(35, 5));
-
                 setWidget(0, 2, _ratingTip);
                 setWidget(0, 3, _ratingDesc);
                 setWidget(1, 2, _playerStars);
@@ -85,6 +85,7 @@ public class ItemRating extends FlexTable
                     getFlexCellFormatter().setRowSpan(0, 4, 2);
                 }
             }
+
         } else {
             setWidget(0, 0, ratingAverage);
             setWidget(0, 1, _averageStars);
@@ -93,12 +94,11 @@ public class ItemRating extends FlexTable
             if (writable) {
                 setWidget(2, 0, _ratingTip);
                 setWidget(2, 1, _playerStars);
+                setWidget(1, 1, _ratingDesc);
+                getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_CENTER);
 
-                setWidget(3, 0, _ratingDesc);
-                setWidget(3, 1, nbsp);
-                getFlexCellFormatter().setColSpan(3, 0, 2);
                 if (item.catalogId != 0) {
-                    setWidget(4, 0, favoriteIndicator);
+                    setWidget(3, 1, favoriteIndicator);
                 }
             }
         }
