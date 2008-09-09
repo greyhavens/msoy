@@ -174,9 +174,9 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // note the amount of currency spent in this transaction
         final int coinsPaid = (result.getMemberTransaction().currency == Currency.COINS) ?
-            result.getMemberTransaction().amount : 0;
+            Math.abs(result.getMemberTransaction().amount) : 0;
         final int barsPaid = (result.getMemberTransaction().currency == Currency.BARS) ?
-            result.getMemberTransaction().amount : 0;
+            Math.abs(result.getMemberTransaction().amount) : 0;
 
         // create the clone row in the database
         final ItemRecord newClone = repo.insertClone(
