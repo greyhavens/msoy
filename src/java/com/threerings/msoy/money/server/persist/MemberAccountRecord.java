@@ -161,7 +161,7 @@ public class MemberAccountRecord extends PersistentRecord
         switch (currency) {
         case COINS: return coins;
         case BARS: return bars;
-        case BLING: return (int) bling;
+        case BLING: return bling;
         default: throw new RuntimeException();
         }
     }
@@ -269,43 +269,64 @@ public class MemberAccountRecord extends PersistentRecord
     /**
      * Pays the creator of an item purchased a certain percentage of the amount for the item.
      * 
+     * @param type either TransactionType.CREATOR_PAYOUT or TransactionType.AFFILIATE_PAYOUT
      * @param amount Amount the item was worth.
      * @param listingType Money type the item was listed with.
      * @param description Description of the item purchased.
      * @param item Item that was purchased.
      * @return History record for the transaction.
      */
-    public MoneyTransactionRecord creatorPayout (
-        Currency listingCurrency, Currency buyCurrency, int buyAmount, String description,
-        CatalogIdent item, float percentage, int referenceTxId)
+    public MoneyTransactionRecord payout (
+        TransactionType type, float percentage,
+        Currency listCurrency, Currency buyCurrency, int buyAmount,
+        String description, CatalogIdent item, int referenceTxId)
     {
-        // TODO: fuck this, the payout amount should just be passed right in
-        // TODO: Determine percentage from administrator.
-        // TODO: use accumulate
-        final int amountPaid = (int) percentage * buyAmount;
-        final Currency paymentCurrency;
-        switch (listingCurrency) {
+        int payAmount;
+        if (listCurrency == buyCurrency) {
+            payAmount = buyAmount;
+
+        } else {
+            // TODO: we need to convert this correctly, using the exchange rate, because
+            // the buyAmount could have been adjusted since the PriceQuote was retrieved.
+            // We may want to handle this back up in MoneyLogic...
+            switch (listCurrency) {
+            case COINS:
+                payAmount = 1000 * buyAmount; // like I said, TODO
+                break;
+
+            case BARS:
+                payAmount = buyAmount / 1000; // like I said, TODO
+                break;
+
+            default:
+                throw new RuntimeException();
+            }
+        }
+
+        Currency payoutCurrency;
+        int payoutAmount;
+        switch (listCurrency) {
         case COINS:
-            int floorAmount = (int) Math.floor(amountPaid);
-            coins += floorAmount;
-            accCoins += floorAmount;
-            paymentCurrency = Currency.COINS;
+            payoutCurrency = Currency.COINS;
+            payoutAmount = (int) Math.floor(payAmount * percentage);
             break;
 
         case BARS:
-            bling += amountPaid;
-            accBling += amountPaid;
-            paymentCurrency = Currency.BLING;
+            payoutCurrency = Currency.BLING;
+            payoutAmount = (int) Math.floor(payAmount * 100 * percentage); // it's really centibling 
             break;
 
         default:
             throw new RuntimeException();
         }
-        MoneyTransactionRecord history = new MoneyTransactionRecord(
-            memberId, TransactionType.CREATOR_PAYOUT,
-            paymentCurrency, amountPaid, getAmount(paymentCurrency), description, item);
-        history.referenceTxId = referenceTxId;
-        return history;
+
+        // now, do the payout
+        accumulate(payoutCurrency, payoutAmount);
+        MoneyTransactionRecord trans = new MoneyTransactionRecord(
+            memberId, type, payoutCurrency, payoutAmount, getAmount(payoutCurrency),
+            description, item);
+        trans.referenceTxId = referenceTxId;
+        return trans;
     }
 
     /**
@@ -313,8 +334,7 @@ public class MemberAccountRecord extends PersistentRecord
      */
     public MemberMoney getMemberMoney ()
     {
-        return new MemberMoney(memberId, coins, bars, (int)bling,
-            accCoins, accBars, (long)accBling);
+        return new MemberMoney(memberId, coins, bars, bling, accCoins, accBars, accBling);
     }
 
     // AUTO-GENERATED: METHODS START

@@ -45,6 +45,8 @@ import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.money.server.persist.StaleDataException;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Facade for all money (coins, bars, and bling) transactions. This is the starting place to
  * access these services.
@@ -172,8 +174,10 @@ public class MoneyLogic
             buyCurrency == Currency.BARS || buyCurrency == Currency.COINS,
             "buyCurrency is invalid: %s", buyCurrency);
 
+        int buyerId = buyerRec.memberId;
+
         // Get the secured prices for the item.
-        final PriceKey key = new PriceKey(buyerRec.memberId, item);
+        final PriceKey key = new PriceKey(buyerId, item);
         final Escrow escrow = _escrowCache.getEscrow(key);
         if (escrow == null) {
             // TODO: 
@@ -182,7 +186,7 @@ public class MoneyLogic
             // we can go ahead and process the purchase here. Otherwise we need to throw
             // the exception with the new PriceQuote inside it! Why not! Do the fucking thing
             // that will need to be done anyway!
-            throw new NotSecuredException(buyerRec.memberId, item);
+            throw new NotSecuredException(buyerId, item);
         }
         final PriceQuote quote = escrow.getQuote();
 
@@ -193,11 +197,11 @@ public class MoneyLogic
             // but it would be an exploit to extend the lifetime of the quote)
             // AND: we should return the new PriceQuote with this error, so that it can
             // make it's way to the client. Just like the note above...
-            throw new NotSecuredException(buyerRec.memberId, item);
+            throw new NotSecuredException(buyerId, item);
         }
 
         // Get buyer account...
-        final MemberAccountRecord buyer = _repo.getAccountById(buyerRec.memberId);
+        final MemberAccountRecord buyer = _repo.getAccountById(buyerId);
         int hasAmount = (buyer == null) ? 0 : buyer.getAmount(buyCurrency);
 
         // support personnel can adjust the price..
@@ -207,21 +211,16 @@ public class MoneyLogic
             buyAmount = hasAmount;
 
         } else if (buyer == null || !buyer.canAfford(buyCurrency, buyAmount)) {
-            throw new NotEnoughMoneyException(buyerRec.memberId, buyCurrency, buyAmount, hasAmount);
+            throw new NotEnoughMoneyException(buyerId, buyCurrency, buyAmount, hasAmount);
         }
 
         // TODO: we need to update PriceQuote to reflect the actual purchase price.. Right?
         // TODO: actually, below, I'm just not using it. Revisit this soon.
 
-        // TODO: move this until after the purchase... this WHOLE fucking method should
-        // accept a Runnable, maybe, to process the purchase
-        // Inform the exchange that we've actually made the exchange
-        MoneyExchange.processPurchase(quote, buyCurrency, buyAmount);
-
         // If the creator is buying their own item, don't give them a payback, and deduct the amount
         // they would have received.
         int creatorId = escrow.getCreatorId();
-        boolean buyerIsCreator = (buyerRec.memberId == creatorId);
+        boolean buyerIsCreator = (buyerId == creatorId);
 
         // Get creator.
         MemberAccountRecord creator;
@@ -234,6 +233,26 @@ public class MoneyLogic
             }
         }
 
+        // TODO: the affiliate will come from the database. It's associated with the buyer.
+        // It is a memberId. For now, it is 0.
+        int affiliateId = 0;
+        MemberAccountRecord affiliate;
+        if (affiliateId == buyerId) {
+            affiliate = buyer;
+
+        } else if (affiliateId == creatorId) {
+            affiliate = creator;
+
+        } else if (affiliateId != 0) {
+            affiliate = _repo.getAccountById(affiliateId);
+            if (affiliate == null) {
+                affiliate = new MemberAccountRecord(affiliateId);
+            }
+
+        } else {
+            affiliate = null;
+        }
+
         // add a transaction for the buyer
         MoneyTransactionRecord buyerTrans = buyer.buyItem(buyCurrency, buyAmount,
             MessageBundle.tcompose("m.itemBought",
@@ -242,36 +261,63 @@ public class MoneyLogic
         _repo.addTransaction(buyerTrans);
 
         // Extra logging bullshit
-        UserActionDetails info = logUserAction(buyerRec.memberId, UserActionDetails.INVALID_ID,
+        UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID,
             UserAction.BOUGHT_ITEM, escrow.getDescription(), item);
         logInPanopticon(info, buyCurrency, buyerTrans.amount, buyer);
 
         // add a transaction for the creator
-        MoneyTransactionRecord creatorTrans = creator.creatorPayout(
+        MoneyTransactionRecord creatorTrans = creator.payout(
+            TransactionType.CREATOR_PAYOUT, RuntimeConfig.server.creatorPercentage,
             quote.getListedCurrency(), buyCurrency, buyAmount,
             MessageBundle.tcompose("m.itemSold",
                 escrow.getDescription(), item.type, item.catalogId),
-            item, RuntimeConfig.server.creatorPercentage, buyerTrans.id);
+            item, buyerTrans.id);
         _repo.addTransaction(creatorTrans);
 
         // Extra logging bullshit
-        info = logUserAction(creatorId, buyerRec.memberId, UserAction.RECEIVED_PAYOUT,
+        info = logUserAction(creatorId, buyerId, UserAction.RECEIVED_PAYOUT,
             escrow.getDescription(), item);
         logInPanopticon(info, buyCurrency, creatorTrans.amount, creator);
 
-        // TODO: affiliate cut, as soon as affiliate ids are de-fuckola'd
+        // add a transaction for the affiliate
+        MoneyTransactionRecord affiliateTrans;
+        if (affiliate != null) {
+            affiliateTrans = affiliate.payout(
+                TransactionType.AFFILIATE_PAYOUT, RuntimeConfig.server.affiliatePercentage,
+                quote.getListedCurrency(), buyCurrency, buyAmount,
+                MessageBundle.tcompose("m.itemAffiliate",
+                    escrow.getDescription(), item.type, item.catalogId),
+                item, buyerTrans.id);
+            _repo.addTransaction(affiliateTrans);
+
+            // Extra logging bullshit
+            // TODO: do we use the same RECEIVED_PAYOUT that we used for the creator for affiliate?
+            info = logUserAction(affiliateId, buyerId, UserAction.RECEIVED_PAYOUT,
+                escrow.getDescription(), item);
+            logInPanopticon(info, buyCurrency, affiliateTrans.amount, affiliate);
+
+        } else {
+            affiliateTrans = null;
+        }
 
         // save stuff off
         _repo.saveAccount(buyer);
         if (!buyerIsCreator) {
             _repo.saveAccount(creator);
         }
+        if ((affiliateId != buyerId) && (affiliateId != creatorId)) {
+            _repo.saveAccount(affiliate);
+        }
 
         // The item no longer needs to be in the cache.
         _escrowCache.removeEscrow(key);
+        // Inform the exchange that we've actually made the exchange
+        MoneyExchange.processPurchase(quote, buyCurrency, buyAmount);
 
-        return new MoneyResult(buyer.getMemberMoney(), creator.getMemberMoney(), null /* TODO */,
-            buyerTrans.toMoneyTransaction(), creatorTrans.toMoneyTransaction(), null /* TODO */);
+        return new MoneyResult(buyer.getMemberMoney(), creator.getMemberMoney(),
+            (affiliate == null) ? null : affiliate.getMemberMoney(),
+            buyerTrans.toMoneyTransaction(), creatorTrans.toMoneyTransaction(),
+            (affiliateTrans == null) ? null : affiliateTrans.toMoneyTransaction());
     }
 
     /**
@@ -430,12 +476,18 @@ public class MoneyLogic
     protected void logInPanopticon (
         UserActionDetails info, Currency currency, int delta, MemberAccountRecord account)
     {
-        if (currency == Currency.COINS) {
+        switch (currency) {
+        case COINS:
             _eventLog.flowTransaction(info, delta, account.coins);
-        } else if (currency == Currency.BARS) {
-            // TODO
-        } else {
-            // TODO: bling
+            break;
+
+        case BARS:
+            log.info("TODO: log bars to panopticon");
+            break;
+
+        case BLING:
+            log.info("TODO: log bling to panopticon");
+            break;
         }
     }
 
