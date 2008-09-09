@@ -27,7 +27,6 @@
 }
 
 .sideBar .NaviPanel {
-  background: #C6E2F8
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 16px;
   font-weight: bold;
@@ -38,7 +37,6 @@
 
 .sideBar .NaviPanel .Cell {
   background: #C6E2F8 url(/images/shop/navi_bg_cell.png) repeat top;
-  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   padding: 3px 0px 0px 5px;
   white-space: nowrap;
 }
