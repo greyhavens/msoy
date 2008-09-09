@@ -4,16 +4,16 @@
 package client.stuff;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
@@ -22,10 +22,13 @@ import client.shell.Args;
 import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
+import client.util.ClickCallback;
 import client.util.Link;
 import client.util.ServiceUtil;
-import client.util.ClickCallback;
 
+/**
+ * Displays a dialog that handles renaming of a cloned item.
+ */
 public class RenameHandler extends ClickCallback<String>
 {
     public RenameHandler (SourcesClickEvents trigger, Item item, ItemDataModel detailListener)
@@ -60,60 +63,41 @@ public class RenameHandler extends ClickCallback<String>
     // from ClickCallback
     protected void displayPopup ()
     {
-        new BorderedDialog(false) {
-            {
-                setHeaderTitle(CStuff.msgs.renameTitle());
-
-                VerticalPanel content = new VerticalPanel();
-                content.setWidth("300px");
-                content.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-
-                Label label = new Label(CStuff.msgs.renameTip());
-                label.setStyleName("Header");
-                content.add(label);
-
-                content.add(_name);
-
-                HorizontalPanel buts = new HorizontalPanel();
-                buts.setSpacing(10);
-
-                Button noButton = new Button(_cmsgs.cancel());
-                final Button revertButton = new Button(CStuff.msgs.renameRevert());
-                final Button yesButton = new Button(_cmsgs.change());
-                ClickListener listener = new ClickListener() {
-                    public void onClick (Widget sender) {
-                        if (sender == revertButton) {
-                            _name.setText("");
-                            takeAction(true);
-                        } else if (sender == yesButton) {
-                            takeAction(true);
-                        }
-                        hide();
-                    }
-                };
-                noButton.addClickListener(listener);
-                revertButton.addClickListener(listener);
-                yesButton.addClickListener(listener);
-                buts.add(noButton);
-                buts.add(revertButton);
-                buts.add(yesButton);
-
-                content.add(buts);
-
-                setContents(content);
-                show();
-            }
-
+        BorderedDialog dialog = new BorderedDialog(false) {
             protected void onClosed (boolean autoClosed) {
                 setEnabled(true);
             }
         };
+
+        dialog.setHeaderTitle(_msgs.renameTitle());
+
+        SmartTable content = new SmartTable(0, 10);
+        content.setWidth("300px");
+        content.setText(0, 0, _msgs.renameTip());
+        content.setWidget(1, 0, _name);
+        dialog.setContents(content);
+
+        dialog.addButton(new Button(_cmsgs.cancel(), dialog.onCancel()));
+        dialog.addButton(new Button(_msgs.renameRevert(), dialog.onAction(new Command() {
+            public void execute () {
+                _name.setText("");
+                takeAction(true);
+            }
+        })));
+        dialog.addButton(new Button(_cmsgs.change(), dialog.onAction(new Command() {
+            public void execute () {
+                takeAction(true);
+            }
+        })));
+
+        dialog.show();
     }
 
     protected Item _item;
     protected ItemDataModel _listener;
     protected TextBox _name;
 
+    protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
         ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
