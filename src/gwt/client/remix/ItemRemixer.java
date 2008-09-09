@@ -220,7 +220,8 @@ public class ItemRemixer extends FlexTable
 
     protected static native void configureBridges () /*-{
         $wnd.setRemixHash = function (id, hash, type, constraint, width, height) {
-            @client.remix.ItemRemixer::bridgeSetHash(Ljava/lang/String;Ljava/lang/String;IIII)(id, hash, type, constraint, width, height);
+            @client.remix.ItemRemixer::bridgeSetHash(Ljava/lang/String;Ljava/lang/String;IIII)(
+                id, hash, type, constraint, width, height);
         };
         $wnd.cancelRemix = function () {
             @client.remix.ItemRemixer::bridgeCancelRemix()();
