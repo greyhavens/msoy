@@ -116,7 +116,7 @@ public class TrophyDelegate extends PlayManagerDelegate
         // trophy was awarded; note also that we do load the trophies earned from the catalog
         // version, so a developer will not constantly re-receive trophies once they have released
         // them and earned them permanently from the catalog version of their game
-        if (_content.game.isDeveloperVersion()) {
+        if (_content.game.isDevelopmentVersion()) {
             log.info("Awarding transient trophy to developer", "game", where(),
                      "who", plobj.who(), "ident", ident);
             plobj.postMessage(MsoyGameCodes.TROPHY_AWARDED, trophy.toTrophy());

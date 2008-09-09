@@ -67,7 +67,7 @@ public class GameDetailPanel extends SmartTable
     {
         // if we are referencing the listed item but it does not exist, switch to the development
         // (source) item which always exists, and which has a negative id.
-        if (!Game.isDeveloperVersion(gameId) && detail.listedItem == null) {
+        if (!Game.isDevelopmentVersion(gameId) && detail.listedItem == null) {
             gameId = gameId * -1;
         }
 
@@ -126,7 +126,7 @@ public class GameDetailPanel extends SmartTable
         }
 
         // note that they're playing the developer version if so
-        if (Game.isDeveloperVersion(gameId)) {
+        if (Game.isDevelopmentVersion(gameId)) {
             addText(_msgs.gdpDevVersion(), 3, "InDevTip");
         }
 

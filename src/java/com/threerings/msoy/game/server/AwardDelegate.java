@@ -353,7 +353,7 @@ public class AwardDelegate extends RatingDelegate
     protected void updatePlayerStats (final Iterable<Player> players, final int winningScore)
     {
         // we're currently not persisting any stats for in-development games
-        if (Game.isDeveloperVersion(_content.detail.gameId)) {
+        if (Game.isDevelopmentVersion(_content.detail.gameId)) {
             return;
         }
 
@@ -531,7 +531,7 @@ public class AwardDelegate extends RatingDelegate
         log.info("Awarding flow", "game", where(), "type", payoutType, "to", players.values());
 
         // finally, award the flow and report it to the player
-        final boolean actuallyAward = !_content.game.isDeveloperVersion();
+        final boolean actuallyAward = !_content.game.isDevelopmentVersion();
         for (final Player player : players.values()) {
             final FlowRecord record = _flowRecords.get(player.playerOid);
             if (record == null) {
@@ -726,7 +726,7 @@ public class AwardDelegate extends RatingDelegate
 
         // see if we even care
         if (record.awarded == 0 || MemberName.isGuest(record.memberId) ||
-                _content.game.isDeveloperVersion()) {
+                _content.game.isDevelopmentVersion()) {
             return;
         }
 
@@ -770,7 +770,8 @@ public class AwardDelegate extends RatingDelegate
     protected boolean shouldRateGame ()
     {
         // don't rate games involving guests, and don't rate non-published games
-        return !_gameInvolvedGuest && !_content.game.isDeveloperVersion() && super.shouldRateGame();
+        return !_gameInvolvedGuest && !_content.game.isDevelopmentVersion() &&
+            super.shouldRateGame();
     }
 
     /**

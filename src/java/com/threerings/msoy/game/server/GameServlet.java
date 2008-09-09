@@ -120,7 +120,7 @@ public class GameServlet extends MsoyServiceServlet
         }
 
         // determine how many players can play this game
-        int[] players = GameUtil.getMinMaxPlayers(Game.isDeveloperVersion(gameId) ?
+        int[] players = GameUtil.getMinMaxPlayers(Game.isDevelopmentVersion(gameId) ?
                                                   detail.sourceItem : detail.listedItem);
         detail.minPlayers = players[0];
         detail.maxPlayers = players[1];
@@ -511,7 +511,7 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // load the source record
-        GameRecord grec = _gameRepo.loadGameRecord(Game.getInProgressId(gameId));
+        GameRecord grec = _gameRepo.loadGameRecord(Game.getDevelopmentId(gameId));
         if (grec == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }

@@ -86,7 +86,7 @@ public class Game extends Item
      * Returns true if the specified game is a developer's in-progress original game rather than
      * one listed in the catalog.
      */
-    public static boolean isDeveloperVersion (int gameId)
+    public static boolean isDevelopmentVersion (int gameId)
     {
         return (gameId < 0);
     }
@@ -103,7 +103,7 @@ public class Game extends Item
     /**
      * Returns the id of the developement version of the given game id.
      */
-    public static int getInProgressId (int gameId)
+    public static int getDevelopmentId (int gameId)
     {
         return -getListedId(gameId);
     }
@@ -112,9 +112,9 @@ public class Game extends Item
      * Returns true if this is a developer's in-progress original game rather than one listed in
      * the catalog.
      */
-    public boolean isDeveloperVersion ()
+    public boolean isDevelopmentVersion ()
     {
-        return isDeveloperVersion(gameId);
+        return isDevelopmentVersion(gameId);
     }
 
     /**
