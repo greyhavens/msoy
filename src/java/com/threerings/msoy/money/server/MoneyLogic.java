@@ -186,35 +186,42 @@ public class MoneyLogic
         }
         final PriceQuote quote = escrow.getQuote();
 
-        if (!buyerRec.isSupport() && !quote.isSatisfied(buyCurrency, buyAmount)) {
+        // check to see if they submitted a valid buyAmount
+        if (!quote.isSatisfied(buyCurrency, buyAmount)) {
             // TODO: see TODO note above, only here we actually have a quote already secured
             // (And we should either get a new quote, or just leave the one in the cache,
             // but it would be an exploit to extend the lifetime of the quote)
+            // AND: we should return the new PriceQuote with this error, so that it can
+            // make it's way to the client. Just like the note above...
             throw new NotSecuredException(buyerRec.memberId, item);
         }
 
-        // Get buyer account and make sure they can afford the item.
+        // Get buyer account...
         final MemberAccountRecord buyer = _repo.getAccountById(buyerRec.memberId);
-        if (buyer == null || (!buyerRec.isSupport() && !buyer.canAfford(buyCurrency, buyAmount))) {
-            int hasAmount = (buyer == null) ? 0 : buyer.getAmount(buyCurrency);
+        int hasAmount = (buyer == null) ? 0 : buyer.getAmount(buyCurrency);
+
+        // support personnel can adjust the price..
+        // magically adjust for support personnel
+        if ((buyer != null) && buyerRec.isSupport() && (buyAmount > hasAmount)) {
+            // update their desired buy price to reflect the amount they have
+            buyAmount = hasAmount;
+
+        } else if (buyer == null || !buyer.canAfford(buyCurrency, buyAmount)) {
             throw new NotEnoughMoneyException(buyerRec.memberId, buyCurrency, buyAmount, hasAmount);
         }
+
+        // TODO: we need to update PriceQuote to reflect the actual purchase price.. Right?
+        // TODO: actually, below, I'm just not using it. Revisit this soon.
 
         // TODO: move this until after the purchase... this WHOLE fucking method should
         // accept a Runnable, maybe, to process the purchase
         // Inform the exchange that we've actually made the exchange
-        MoneyExchange.processPurchase(quote, buyCurrency);
-
-        int amount = quote.getListedAmount();
+        MoneyExchange.processPurchase(quote, buyCurrency, buyAmount);
 
         // If the creator is buying their own item, don't give them a payback, and deduct the amount
         // they would have received.
         int creatorId = escrow.getCreatorId();
         boolean buyerIsCreator = (buyerRec.memberId == creatorId);
-        if (buyerIsCreator) {
-            // TODO: hmmmm
-            amount -= (int)(RuntimeConfig.server.creatorPercentage * amount);
-        }
 
         // Get creator.
         MemberAccountRecord creator;
@@ -227,45 +234,44 @@ public class MoneyLogic
             }
         }
 
-        // Update the member account
-        final MoneyTransactionRecord history = buyer.buyItem(
-            buyCurrency, amount,
-            MessageBundle.tcompose("m.itemBought", escrow.getDescription(), item.type, item.catalogId),
-            item, buyerRec.isSupport());
-        _repo.addTransaction(history);
-        _repo.saveAccount(buyer);
+        // add a transaction for the buyer
+        MoneyTransactionRecord buyerTrans = buyer.buyItem(buyCurrency, buyAmount,
+            MessageBundle.tcompose("m.itemBought",
+                escrow.getDescription(), item.type, item.catalogId),
+            item);
+        _repo.addTransaction(buyerTrans);
+
+        // Extra logging bullshit
         UserActionDetails info = logUserAction(buyerRec.memberId, UserActionDetails.INVALID_ID,
             UserAction.BOUGHT_ITEM, escrow.getDescription(), item);
-        logInPanopticon(info, buyCurrency, history.amount, buyer);
+        logInPanopticon(info, buyCurrency, buyerTrans.amount, buyer);
 
-        // Update the creator account, if they get a payment.
-        MoneyTransactionRecord creatorHistory;
-        if (buyerIsCreator) {
-            creatorHistory = history;
+        // add a transaction for the creator
+        MoneyTransactionRecord creatorTrans = creator.creatorPayout(
+            quote.getListedCurrency(), buyCurrency, buyAmount,
+            MessageBundle.tcompose("m.itemSold",
+                escrow.getDescription(), item.type, item.catalogId),
+            item, RuntimeConfig.server.creatorPercentage, buyerTrans.id);
+        _repo.addTransaction(creatorTrans);
 
-        } else {
-            creatorHistory = creator.creatorPayout(
-                quote.getListedCurrency(), history.amount,
-                MessageBundle.tcompose("m.itemSold",
-                    escrow.getDescription(), item.type, item.catalogId),
-                item, RuntimeConfig.server.creatorPercentage, history.id);
-            _repo.addTransaction(creatorHistory);
+        // Extra logging bullshit
+        info = logUserAction(creatorId, buyerRec.memberId, UserAction.RECEIVED_PAYOUT,
+            escrow.getDescription(), item);
+        logInPanopticon(info, buyCurrency, creatorTrans.amount, creator);
+
+        // TODO: affiliate cut, as soon as affiliate ids are de-fuckola'd
+
+        // save stuff off
+        _repo.saveAccount(buyer);
+        if (!buyerIsCreator) {
             _repo.saveAccount(creator);
-            info = logUserAction(creatorId, buyerRec.memberId, UserAction.RECEIVED_PAYOUT,
-                escrow.getDescription(), item);
-            logInPanopticon(info, buyCurrency, creatorHistory.amount, creator);
         }
-
-        // TODO: update affiliate with some amount of bling.
 
         // The item no longer needs to be in the cache.
         _escrowCache.removeEscrow(key);
 
-        // TODO: OLD: update
-        final MoneyTransaction mh = history.toMoneyTransaction();
-        return new MoneyResult(buyer.getMemberMoney(),
-            buyerIsCreator ? null : creator.getMemberMoney(),
-            null, mh, buyerIsCreator ? null : creatorHistory.toMoneyTransaction(), null);
+        return new MoneyResult(buyer.getMemberMoney(), creator.getMemberMoney(), null /* TODO */,
+            buyerTrans.toMoneyTransaction(), creatorTrans.toMoneyTransaction(), null /* TODO */);
     }
 
     /**

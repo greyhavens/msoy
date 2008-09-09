@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import com.google.common.base.Preconditions;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -190,6 +192,51 @@ public class MemberAccountRecord extends PersistentRecord
     }
 
     /**
+     * Called when someone makes money in such a way that we track all the money they ever
+     * got. The amount must be positive, as we never deduct from the 'acc' values.
+     */
+    public void accumulate (Currency currency, int amount)
+    {
+        Preconditions.checkArgument(amount >= 0, "You may only accumulate positive wealth!");
+        switch (currency) {
+        case COINS:
+            accCoins += amount;
+            break;
+
+        case BARS:
+            accBars += amount;
+            break;
+
+        case BLING:
+            accBling += amount;
+            break;
+        }
+
+        adjust(currency, amount);
+    }
+
+    /**
+     * Adjust the amount of money that a user has by the specified delta, without touching
+     * the 'acc' values.
+     */
+    public void adjust (Currency currency, int delta)
+    {
+        switch (currency) {
+        case COINS:
+            coins += delta;
+            break;
+
+        case BARS:
+            bars += delta;
+            break;
+
+        case BLING:
+            bling += delta;
+            break;
+        }
+    }
+
+    /**
      * Adds the given number of bars to the member's account.
      * 
      * @param barsToAdd Number of bars to add.
@@ -197,10 +244,8 @@ public class MemberAccountRecord extends PersistentRecord
      */
     public MoneyTransactionRecord buyBars (int barsToAdd, String description)
     {
-        bars += barsToAdd;
-        accBars += barsToAdd;
-        dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        return new MoneyTransactionRecord(memberId, dateLastUpdated, TransactionType.BARS_BOUGHT,
+        accumulate(Currency.BARS, barsToAdd);
+        return new MoneyTransactionRecord(memberId, TransactionType.BARS_BOUGHT,
             Currency.BARS, barsToAdd, bars, description, null);
     }
 
@@ -212,10 +257,8 @@ public class MemberAccountRecord extends PersistentRecord
      */
     public MoneyTransactionRecord awardCoins (int coinsToAdd, ItemIdent item, String description)
     {
-        coins += coinsToAdd;
-        accCoins += coinsToAdd;
-        dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        return new MoneyTransactionRecord(memberId, dateLastUpdated, TransactionType.AWARD,
+        accumulate(Currency.COINS, coinsToAdd);
+        return new MoneyTransactionRecord(memberId, TransactionType.AWARD,
             Currency.COINS, coinsToAdd, coins, description, item);
     }
 
@@ -228,26 +271,11 @@ public class MemberAccountRecord extends PersistentRecord
      * @return Account history record for this transaction.
      */
     public MoneyTransactionRecord buyItem (
-        Currency currency, int amount, String description, CatalogIdent item, boolean isSupport)
+        Currency currency, int amount, String description, CatalogIdent item)
     {
-        // TODO: goddammit, the amount should be pre-adjusted TODO
-        if (isSupport) {
-            amount = Math.min(amount, getAmount(currency));
-        }
-        switch (currency) {
-        case COINS:
-            coins -= amount;
-            break;
-
-        case BARS:
-            bars -= amount;
-            break;
-
-        default:
-            throw new RuntimeException("Invalid purchase currency: " + currency);
-        }
-        dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        return new MoneyTransactionRecord(memberId, dateLastUpdated, TransactionType.ITEM_PURCHASE,
+        Preconditions.checkArgument(amount >= 0, "Buy amounts can't be negative");
+        adjust(currency, -amount);
+        return new MoneyTransactionRecord(memberId, TransactionType.ITEM_PURCHASE,
             currency, -amount, getAmount(currency), description, item);
     }
 
@@ -261,11 +289,13 @@ public class MemberAccountRecord extends PersistentRecord
      * @return History record for the transaction.
      */
     public MoneyTransactionRecord creatorPayout (
-        Currency listingCurrency, int amount, String description,
+        Currency listingCurrency, Currency buyCurrency, int buyAmount, String description,
         CatalogIdent item, float percentage, int referenceTxId)
     {
+        // TODO: fuck this, the payout amount should just be passed right in
         // TODO: Determine percentage from administrator.
-        final int amountPaid = (int) percentage * amount;
+        // TODO: use accumulate
+        final int amountPaid = (int) percentage * buyAmount;
         final Currency paymentCurrency;
         switch (listingCurrency) {
         case COINS:
@@ -284,9 +314,8 @@ public class MemberAccountRecord extends PersistentRecord
         default:
             throw new RuntimeException();
         }
-        dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        final MoneyTransactionRecord history = new MoneyTransactionRecord(
-            memberId, dateLastUpdated, TransactionType.CREATOR_PAYOUT,
+        MoneyTransactionRecord history = new MoneyTransactionRecord(
+            memberId, TransactionType.CREATOR_PAYOUT,
             paymentCurrency, amountPaid, getAmount(paymentCurrency), description, item);
         history.referenceTxId = referenceTxId;
         return history;

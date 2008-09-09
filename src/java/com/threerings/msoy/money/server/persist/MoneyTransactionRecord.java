@@ -172,6 +172,21 @@ public class MoneyTransactionRecord extends PersistentRecord
     public int referenceTxId;
 
     /**
+     * Creates an account history record involving some particular item, initialized with
+     * a timestamp of *right now*.
+     *
+     * @param subject An object that is the reference object for this transaction. TODO
+     */
+    public MoneyTransactionRecord (
+        int memberId, TransactionType transactionType,
+        Currency currency, int amount, int balance,
+        String description, Object subject)
+    {
+        this(memberId, new Timestamp(System.currentTimeMillis()), transactionType,
+            currency, amount, balance, description, subject);
+    }
+
+    /**
      * Creates an account history record involving some particular item.
      * @param subject An object that is the reference object for this transaction. TODO
      */
