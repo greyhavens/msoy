@@ -230,7 +230,7 @@ public class MoneyLogic
         // Update the member account
         final MoneyTransactionRecord history = buyer.buyItem(
             buyCurrency, amount,
-            MessageBundle.tcompose("itemBought", escrow.getDescription(), item.type, item.catalogId),
+            MessageBundle.tcompose("m.itemBought", escrow.getDescription(), item.type, item.catalogId),
             item, buyerRec.isSupport());
         _repo.addTransaction(history);
         _repo.saveAccount(buyer);
@@ -246,7 +246,7 @@ public class MoneyLogic
         } else {
             creatorHistory = creator.creatorPayout(
                 quote.getListedCurrency(), history.amount,
-                MessageBundle.tcompose("itemSold",
+                MessageBundle.tcompose("m.itemSold",
                     escrow.getDescription(), item.type, item.catalogId),
                 item, RuntimeConfig.server.creatorPercentage, history.id);
             _repo.addTransaction(creatorHistory);
