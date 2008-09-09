@@ -3,6 +3,8 @@
 
 package client.util;
 
+import com.google.gwt.user.client.ui.ClickListener;
+
 import client.shell.Args;
 import client.shell.Pages;
 
@@ -53,25 +55,26 @@ public class NaviUtil
         Link.go(Pages.STUFF, Args.compose(""+type, "-1", ""+itemId));
     }
 
-    public static void editItem (byte type, int itemId)
+    public static ClickListener onCreateItem (byte type, byte ptype, int pitemId)
     {
-        Link.go(Pages.STUFF, Args.compose("e", ""+type, ""+itemId));
+        return Link.createListener(Pages.STUFF, Args.compose(new String[] {
+                    "c", ""+type, ""+ptype, ""+pitemId }));
     }
 
-    public static void remixItem (byte type, int itemId)
+    public static ClickListener onEditItem (byte type, int itemId)
     {
-        Link.go(Pages.STUFF, Args.compose("r", ""+type, ""+itemId));
+        return Link.createListener(Pages.STUFF, Args.compose("e", ""+type, ""+itemId));
     }
 
-    public static void remixCatalogItem (
+    public static ClickListener onRemixItem (byte type, int itemId)
+    {
+        return Link.createListener(Pages.STUFF, Args.compose("r", ""+type, ""+itemId));
+    }
+
+    public static ClickListener onRemixCatalogItem (
         byte type, int itemId, int catalogId, int flowCost, int goldCost)
     {
-        Link.go(Pages.STUFF, Args.compose(new String[] {
+        return Link.createListener(Pages.STUFF, Args.compose(new String[] {
                     "r", ""+type, ""+itemId, ""+catalogId, ""+flowCost, ""+goldCost }));
-    }
-
-    public static void createItem (byte type, byte ptype, int pitemId)
-    {
-        Link.go(Pages.STUFF, Args.compose(new String[] { "c", ""+type, ""+ptype, ""+pitemId }));
     }
 }

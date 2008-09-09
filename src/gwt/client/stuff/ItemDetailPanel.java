@@ -6,11 +6,13 @@ package client.stuff;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -75,19 +77,15 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     // from DoListItemPopup.ListedListener
     public void itemListed (Item item, boolean updated)
     {
-        // if this was a first time listing, change "List..." to "Update listing..."
-        if (!updated) {
-            _listTip.setText(CStuff.msgs.detailUplistTip());
-            _listBtn.setText(CStuff.msgs.detailUplist());
-        }
+        // reload the page
+        Link.replace(Pages.STUFF, Args.compose("d", ""+_item.getType(), ""+_item.itemId));
     }
 
     // from interface ItemUsageListener
     public void itemUsageChanged (ItemUsageEvent event)
     {
         if ((event.getItemType() == _item.getType()) && (event.getItemId() == _item.itemId)) {
-            // make any changes
-            adjustButtonsBasedOnUsage();
+            adjustForUsage();
         }
     }
 
@@ -142,35 +140,23 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         RowPanel buttons = new RowPanel();
         // add a button for deleting this item
-        _deleteBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailDelete(), null);
+        _deleteBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailDelete(), null);
         createDeleteCallback(_deleteBtn);
         buttons.add(_deleteBtn);
 
+        // add a button for renaming
+        if (!original) {
+            PushButton rename = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailRename(),
+                null);
+            buttons.add(rename);
+            new RenameHandler(rename, _item, _model);
+        }
+
         // add a button for editing this item, if it's an original
         if (original && canEditAndList) {
-            String butlbl = CStuff.msgs.detailEdit();
-            buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, new ClickListener() {
-                public void onClick (Widget sender) {
-                    NaviUtil.editItem(_item.getType(), _item.itemId);
-                }
-            }));
+            buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailEdit(),
+                                            NaviUtil.onEditItem(_item.getType(), _item.itemId)));
 
-        } else if (!original && remixable) {
-            // if it's a remixed clone, add a button for reverting
-            boolean mixed = _item.isAttrSet(Item.ATTR_REMIXED_CLONE);
-            boolean newOrigAvail = _item.isAttrSet(Item.ATTR_ORIGINAL_UPDATED);
-            PushButton revert = MsoyUI.createButton(MsoyUI.LONG_THIN,
-                newOrigAvail ? CStuff.msgs.detailUpdate() : CStuff.msgs.detailRevert(), null);
-            if (!newOrigAvail && !mixed) { // if the item is up-to-date, disable the button
-                revert.setEnabled(false);
-                revert.setTitle(CStuff.msgs.detailRevertNotNeeded());
-            } else {
-                _details.add(WidgetUtil.makeShim(10, 10));
-                _details.add(new Label(newOrigAvail ? CStuff.msgs.detailUpdateTip()
-                    : CStuff.msgs.detailRevertTip()));
-            }
-            createRevertCallback(revert);
-            buttons.add(revert);
         }
 
         // add our delete/edit buttons if we have them
@@ -181,92 +167,103 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         // if this item is listed in the catalog or listable, add a UI for that
         if (canEditAndList && (catalogOriginal || _item.sourceId == 0)) {
-            String tip, butlbl;
-            if (catalogOriginal) {
-                tip = CStuff.msgs.detailUplistTip();
-                butlbl = CStuff.msgs.detailUplist();
-            } else {
-                tip = CStuff.msgs.detailListTip();
-                butlbl = CStuff.msgs.detailList();
-            }
             _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(_listTip = new Label(tip));
 
-            // add a button for listing or updating the item
-            buttons = new RowPanel();
-            ClickListener onClick = new ClickListener() {
+            // this handles both creating and updating of listings
+            ClickListener onDoList = new ClickListener() {
                 public void onClick (Widget sender) {
                     DoListItemPopup.show(_item, null, ItemDetailPanel.this);
                 }
             };
-            buttons.add(_listBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, onClick));
 
-            boolean salable = (!(_item instanceof SubItem) || ((SubItem)_item).isSalable());
-            if (catalogOriginal && salable) {
-                // add a button for repricing the listing
-                butlbl = CStuff.msgs.detailUpprice();
-                PushButton button = MsoyUI.createButton(MsoyUI.LONG_THIN, butlbl, null);
-                new ClickCallback<CatalogListing>(button) {
-                    public boolean callService () {
-                        _catalogsvc.loadListing(_item.getType(), _item.catalogId, this);
-                        return true;
-                    }
-                    public boolean gotResult (CatalogListing listing) {
-                        DoListItemPopup.show(_item, listing, ItemDetailPanel.this);
-                        return true;
-                    }
-                };
-                buttons.add(button);
+            // if the item is listed, add a biggish UI for updating the listing and pricing
+            if (catalogOriginal) {
+                String args = Args.compose("l", ""+_item.getType(), ""+_item.catalogId);
+                _details.add(createTipLink(_msgs.detailUplistTip(), _msgs.detailViewListing(),
+                                           Link.createListener(Pages.SHOP, args)));
+
+                // add a button for listing or updating the item
+                buttons = new RowPanel();
+                buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailUplist(), onDoList));
+
+                boolean salable = (!(_item instanceof SubItem) || ((SubItem)_item).isSalable());
+                if (catalogOriginal && salable) {
+                    // add a button for repricing the listing
+                    PushButton button =
+                        MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailUpprice(), null);
+                    new ClickCallback<CatalogListing>(button) {
+                        public boolean callService () {
+                            _catalogsvc.loadListing(_item.getType(), _item.catalogId, this);
+                            return true;
+                        }
+                        public boolean gotResult (CatalogListing listing) {
+                            DoListItemPopup.show(_item, listing, ItemDetailPanel.this);
+                            return true;
+                        }
+                    };
+                    buttons.add(button);
+                }
+                _details.add(WidgetUtil.makeShim(10, 5));
+                _details.add(buttons);
+
+            } else {
+                // otherwise add a subtler UI letting them know the item can be listed
+                _details.add(createTipLink(_msgs.detailListTip(), _msgs.detailList(), onDoList));
             }
+        }
+
+        // if remixable, add a button for that
+        if (remixable) {
+            _details.add(WidgetUtil.makeShim(10, 10));
+            _details.add(new Label(_msgs.detailRemixTip()));
             _details.add(WidgetUtil.makeShim(10, 5));
+
+            buttons = new RowPanel();
+            buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailRemix(),
+                                            NaviUtil.onRemixItem(_item.getType(), _item.itemId)));
+
+            // if it's a remixed clone, add a button for reverting
+            if (!original) {
+                boolean mixed = _item.isAttrSet(Item.ATTR_REMIXED_CLONE);
+                boolean newOrigAvail = _item.isAttrSet(Item.ATTR_ORIGINAL_UPDATED);
+                String lbl = newOrigAvail ? _msgs.detailUpdate() : _msgs.detailRevert();
+                PushButton revert = MsoyUI.createButton(MsoyUI.LONG_THIN, lbl, null);
+                if (!newOrigAvail && !mixed) { // if the item is up-to-date, disable the button
+                    revert.setEnabled(false);
+                    revert.setTitle(_msgs.detailRevertNotNeeded());
+                } else {
+                    _details.add(WidgetUtil.makeShim(10, 10));
+                    _details.add(new Label(newOrigAvail ? _msgs.detailUpdateTip() :
+                                           _msgs.detailRevertTip()));
+                }
+                createRevertCallback(revert);
+                buttons.add(revert);
+            }
             _details.add(buttons);
         }
 
         // if this item is giftable, add a UI for that
         if (!catalogOriginal) {
             _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(new Label(CStuff.msgs.detailGiftTip()));
-            _details.add(WidgetUtil.makeShim(10, 5));
-            String[] args = new String[] { "w", "i", ""+_item.getType(), ""+_item.itemId };
-            ClickListener onClick = Link.createListener(Pages.MAIL, Args.compose(args));
-            _giftBtn = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailGift(), onClick);
-            _details.add(_giftBtn);
+            _details.add(_giftBits = new FlowPanel());
         }
 
-        buttons = new RowPanel();
-
-        // add a button for renaming
-        if (!original) {
-            PushButton rename = MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRename(),
-                null);
-            buttons.add(rename);
-            new RenameHandler(rename, _item, _model);
-        }
-
-        // if remixable, add a button for that.
-        if (remixable) {
-            buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, CStuff.msgs.detailRemix(),
-                new ClickListener() {
-                    public void onClick (Widget sender) {
-                        NaviUtil.remixItem(_item.getType(), _item.itemId);
-                    }
-                }));
-        }
-
-        if (buttons.getWidgetCount() > 0) {
-            _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(buttons);
-        }
-
-        adjustButtonsBasedOnUsage();
+        adjustForUsage();
     }
 
-    protected void adjustButtonsBasedOnUsage ()
+    protected void adjustForUsage ()
     {
         boolean unused = (_item.used == Item.UNUSED);
         _deleteBtn.setEnabled(unused);
-        if (_giftBtn != null) {
-            _giftBtn.setEnabled(unused);
+        if (_giftBits != null) {
+            _giftBits.clear();
+            if (unused) {
+                String[] args = new String[] { "w", "i", ""+_item.getType(), ""+_item.itemId };
+                ClickListener onClick = Link.createListener(Pages.MAIL, Args.compose(args));
+                _giftBits.add(createTipLink(_msgs.detailGiftTip(), _msgs.detailGift(), onClick));
+            } else {
+                _giftBits.add(new Label(_msgs.detailGiftDisabled()));
+            }
         }
     }
 
@@ -279,10 +276,10 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         case Item.USED_AS_FURNITURE:
         case Item.USED_AS_PET:
         case Item.USED_AS_BACKGROUND:
-            return CStuff.msgs.detailInUseInRoom("" + _item.location, _detail.useLocation);
+            return _msgs.detailInUseInRoom("" + _item.location, _detail.useLocation);
 
         default:
-            return CStuff.msgs.detailInUse();
+            return _msgs.detailInUse();
         }
     }
 
@@ -291,7 +288,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
      */
     protected void createDeleteCallback (SourcesClickEvents trigger)
     {
-        new ClickCallback<Void>(trigger, CStuff.msgs.detailConfirmDelete()) {
+        new ClickCallback<Void>(trigger, _msgs.detailConfirmDelete()) {
             public boolean callService () {
                 _stuffsvc.deleteItem(_item.getIdent(), this);
                 return true;
@@ -300,7 +297,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 // remove the item from our data model
                 _model.itemDeleted(_item);
 
-                MsoyUI.info(CStuff.msgs.msgItemDeleted());
+                MsoyUI.info(_msgs.msgItemDeleted());
                 History.back(); // back up to the page that contained the item
                 return false;
             }
@@ -312,7 +309,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
      */
     protected void createRevertCallback (SourcesClickEvents trigger)
     {
-        new ClickCallback<Item>(trigger, CStuff.msgs.detailConfirmRevert()) {
+        new ClickCallback<Item>(trigger, _msgs.detailConfirmRevert()) {
             public boolean callService () {
                 _stuffsvc.revertRemixedClone(_item.getIdent(), this);
                 return true;
@@ -330,12 +327,22 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         };
     }
 
-    protected ItemDataModel _model;
-    protected Label _listTip;
-    protected PushButton _deleteBtn;
-    protected PushButton _listBtn;
-    protected PushButton _giftBtn;
+    /**
+     * Creates a line of text followed inline by a link.
+     */
+    protected FlowPanel createTipLink (String tip, String link, ClickListener onClick)
+    {
+        FlowPanel row = new FlowPanel();
+        row.add(new InlineLabel(tip, true, false, true));
+        row.add(MsoyUI.createActionLabel(link, "inline", onClick));
+        return row;
+    }
 
+    protected ItemDataModel _model;
+    protected PushButton _deleteBtn;
+    protected FlowPanel _giftBits;
+
+    protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);

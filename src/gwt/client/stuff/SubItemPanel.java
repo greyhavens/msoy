@@ -71,12 +71,9 @@ public class SubItemPanel extends PagedGrid<Item>
     @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
-        controls.setWidget(0, 0, _create = new Button(CStuff.msgs.panelCreateNew()));
-        _create.addClickListener(new ClickListener() {
-            public void onClick (Widget widget) {
-                NaviUtil.createItem(_type, _parent.getType(), _parent.itemId);
-            }
-        });
+        _create = new Button(CStuff.msgs.panelCreateNew(),
+                             NaviUtil.onCreateItem(_type, _parent.getType(), _parent.itemId));
+        controls.setWidget(0, 0, _create);
     }
 
     protected ItemDataModel _models;

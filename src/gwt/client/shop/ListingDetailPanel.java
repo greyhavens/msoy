@@ -98,13 +98,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         // if the item is remixable, also create a remix button
         if (!CShop.isGuest() && isRemixable()) {
             PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingRemix(),
-                new ClickListener() {
-                    public void onClick (Widget sender) {
-                        NaviUtil.remixCatalogItem(
-                            _item.getType(), _item.itemId, _listing.catalogId,
-                            _listing.flowCost, _listing.goldCost);
-                    }
-                });
+                NaviUtil.onRemixCatalogItem(_item.getType(), _item.itemId, _listing.catalogId,
+                                            _listing.flowCost, _listing.goldCost));
             _buyPanel.add(MsoyUI.createButtonPair(remix, purchase));
         } else {
             _buyPanel.add(purchase);

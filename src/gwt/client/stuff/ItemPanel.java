@@ -173,11 +173,8 @@ public class ItemPanel extends FlowPanel
         _upload.getFlexCellFormatter().setStyleName(1, 0, "Pitch");
 
         // add the create button
-        _upload.setWidget(1, 1, new Button(CStuff.msgs.panelCreateNew(), new ClickListener() {
-            public void onClick (Widget widget) {
-                NaviUtil.createItem(_type, (byte)0, 0);
-            }
-        }), 1, "Button");
+        _upload.setWidget(1, 1, new Button(CStuff.msgs.panelCreateNew(),
+                                           NaviUtil.onCreateItem(_type, (byte)0, 0)), 1, "Button");
         _upload.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
     }
 

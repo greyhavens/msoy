@@ -88,13 +88,6 @@ public abstract class BaseItemDetailPanel extends SmartTable
         bshop.setTitle(_imsgs.browseCatalogTip(_detail.creator.toString()));
         _creator.add(bshop);
 
-        // if we're not viewing the actual prototype item, create a link to it
-        if (_item.catalogId != 0 && _item.ownerId != 0) {
-            _details.add(WidgetUtil.makeShim(10, 10));
-            String args = Args.compose("l", "" + _item.getType(), "" + _item.catalogId);
-            _details.add(Link.create(_imsgs.viewInShop(), Pages.SHOP, args));
-        }
-
         _details.add(WidgetUtil.makeShim(10, 10));
         _indeets = new RoundBox(RoundBox.WHITE);
         _indeets.addStyleName("Description");

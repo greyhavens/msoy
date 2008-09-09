@@ -3,15 +3,16 @@
 
 package client.stuff;
 
-import client.item.DoListItemPopup;
-import client.util.NaviUtil;
-
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
+
+import client.item.DoListItemPopup;
+import client.util.NaviUtil;
 
 /**
  * Displays information on a sub-item.
@@ -32,8 +33,7 @@ public class SubItemEntry extends ItemEntry
         }
 
         int row = getRowCount();
-        String btitle = item.isCatalogOriginal() ?
-            CStuff.msgs.detailSubUplist() : CStuff.msgs.detailList();
+        String btitle = item.isCatalogOriginal() ? _msgs.detailSubUplist() : _msgs.detailList();
         _list = new Button(btitle, new ClickListener() {
             public void onClick (Widget sender) {
                 DoListItemPopup.show(item, null, SubItemEntry.this);
@@ -42,11 +42,8 @@ public class SubItemEntry extends ItemEntry
         _list.addStyleName("tinyButton");
         setWidget(row, 0, _list);
 
-        Button button = new Button(CStuff.msgs.detailSubEdit(), new ClickListener() {
-            public void onClick (Widget sender) {
-                NaviUtil.editItem(item.getType(), item.itemId);
-            }
-        });
+        Button button = new Button(
+            _msgs.detailSubEdit(), NaviUtil.onEditItem(item.getType(), item.itemId));
         button.addStyleName("tinyButton");
         setWidget(row, 1, button);
     }
@@ -56,7 +53,7 @@ public class SubItemEntry extends ItemEntry
     {
         // if this was a first time listing, change "List..." to "Update listing..."
         if (!updated && item.isCatalogOriginal()) {
-            _list.setText(CStuff.msgs.detailUplist());
+            _list.setText(_msgs.detailUplist());
         }
     }
 
@@ -67,4 +64,6 @@ public class SubItemEntry extends ItemEntry
     }
 
     protected Button _list;
+
+    protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
 }
