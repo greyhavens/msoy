@@ -27,12 +27,12 @@ public class SuiteCatalogPanel extends SmartTable
 {
     public SuiteCatalogPanel (CatalogModels models)
     {
-        // mimic the style of the catalog panel
-        super("catalogPanel", 0, 0);
+        super("catalogPanel", 0, 0); // mimic the style of the catalog panel
         _models = models;
 
         // create our listings interface
         _listings = new SmartTable("Listings", 0, 0);
+        _listings.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
         setWidget(0, 0, WidgetUtil.makeShim(10, 10));
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         setWidget(0, 1, WidgetUtil.makeShim(10, 10));
@@ -68,10 +68,10 @@ public class SuiteCatalogPanel extends SmartTable
     {
         _query.itemType = itemType;
 
-        // update the marquee with the plural name of the item type
-        String tname = _dmsgs.getString("pItemType" + _query.itemType);
-        _listings.setWidget(0, 1, new Marquee(null, tname));
-        _listings.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
+        // display our blurb and the item type
+        _listings.setText(0, 0, _dmsgs.getString("catIntro" + _query.itemType), 1, "Blurb");
+        _listings.setWidget(0, 1, new Marquee(
+                                null, _dmsgs.getString("pItemType" + _query.itemType)));
 
         // grab our data model and display it
         CatalogModels.Listings model = _models.getListingsModel(_query);

@@ -79,6 +79,9 @@ public class SideBar extends SmartTable
             itemWidget = link;
         }
         itemWidget.addStyleName("Cell");
+        if (name.length() > 10) {
+            itemWidget.addStyleName("LongCell");
+        }
         return itemWidget;
     }
 
