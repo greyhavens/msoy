@@ -268,8 +268,16 @@ public class FrameEntryPoint
     // from interface Frame
     public void navigateReplace (String token)
     {
-        History.back();
-        History.newItem(token);
+        // mysteriously, if we go back() and then newItem() our current location, nothing happens
+        // at all, no history changed event, no browser navigation, nothing; I think this might
+        // have to do with some of the weird-ass timer based hackery that GWT has to do to make the
+        // whole browser history thing work at all
+        if (token.equals(_currentToken)) {
+            onHistoryChanged(_currentToken);
+        } else {
+            History.back();
+            History.newItem(token);
+        }
     }
 
     // from interface Frame
