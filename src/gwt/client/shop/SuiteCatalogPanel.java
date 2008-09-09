@@ -110,7 +110,7 @@ public class SuiteCatalogPanel extends SmartTable
         return _gameId;
     }
 
-    protected SmartTable _listings = new SmartTable();
+    protected SmartTable _listings;
     protected ListingGrid _items;
 
     protected CatalogQuery _query = new CatalogQuery();
