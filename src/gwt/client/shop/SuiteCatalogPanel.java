@@ -95,6 +95,11 @@ public class SuiteCatalogPanel extends SmartTable
 
     }
 
+    public String getName ()
+    {
+        return _suiteName;
+    }
+
     public String getTitle ()
     {
         return CShop.msgs.suiteShopTitle(_suiteName);

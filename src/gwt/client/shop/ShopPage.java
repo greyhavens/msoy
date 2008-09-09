@@ -55,17 +55,20 @@ public class ShopPage extends Page
 
         } else if (action.equals(SUITE)) {
             final int gameId = args.get(1, 0);
-            final byte itemType = (byte)args.get(2, Item.ITEM_PACK);
+            final byte itemType = (byte)args.get(2, Item.LEVEL_PACK);
             final byte page = (byte)args.get(3, 0);
             if (_suite.getGameId() != gameId) {
                 // only load the suite info in the case that the game id has changed
                 _catalogsvc.loadGameSuiteInfo(gameId, new MsoyCallback<CatalogService.SuiteInfo>() {
                     public void onSuccess (CatalogService.SuiteInfo suiteInfo) {
+                        CShell.frame.addNavLink(
+                            suiteInfo.name, Pages.GAMES, Args.compose("d", gameId));
                         _suite.display(gameId, suiteInfo, itemType, page);
                         setContent(_suite.getTitle(), _suite);
                     }
                 });
             } else {
+                CShell.frame.addNavLink(_suite.getName(), Pages.GAMES, Args.compose("d", gameId));
                 _suite.display(itemType, page);
                 setContent(_suite.getTitle(), _suite);
             }
