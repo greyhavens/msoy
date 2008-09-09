@@ -29,6 +29,7 @@ import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.item.data.all.Item;
 
+import client.item.StuffNaviBar;
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Pages;

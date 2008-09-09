@@ -10,13 +10,6 @@
   <source path="client/person"/>
   <source path="client/me"/>
 
-  <!-- TODO: remove SOON when stuff is in its own tab and stuff bar is gone from #me --> 
-  <source path="com/threerings/msoy/stuff/gwt"/>
-  <source path="client/stuff"/>
-  <inherits name="editem"/>
-  <source path="client/remix"/>
-  <!-- END TODO remove -->
-
   <public path="public/me"/>
   <stylesheet src="/css/person.css"/>
   <stylesheet src="/css/me.css"/>

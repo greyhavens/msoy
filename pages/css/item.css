@@ -150,3 +150,15 @@
 .remixableLabel .inlineL {
   vertical-align: top;
 }
+
+/* ------------------------------------
+   NAVIGATION BAR
+-------------------------------------*/
+
+.stuffNaviBar {
+  margin-left: 7px;
+}
+
+.stuffNaviBar img {
+  float: left;
+}

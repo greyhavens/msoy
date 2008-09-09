@@ -17,13 +17,13 @@ import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.MyWhirledData;
 
-import client.stuff.StuffNaviBar;
 import client.ui.MsoyUI;
 
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 
+import client.item.StuffNaviBar;
 import client.person.FeedPanel;
 import client.person.PersonMessages;
 
