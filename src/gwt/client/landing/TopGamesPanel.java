@@ -160,7 +160,7 @@ public class TopGamesPanel extends AbsolutePanel
         }
 
         left.add(WidgetUtil.makeShim(10, 10));
-        left.add(new GameBitsPanel(game.minPlayers, game.maxPlayers, game.avgDuration, 0, 0, 0));
+        left.add(new GameBitsPanel(game.minPlayers, game.maxPlayers, game.avgDuration, 0, 0));
 
         // left and right arrows
         left.add(WidgetUtil.makeShim(10, 10));

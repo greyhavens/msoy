@@ -25,17 +25,11 @@ public class GameBitsPanel extends SmartTable
      * @param groupId If > 0 will display a link to the game's Whirled
      */
     public GameBitsPanel (int minPlayers, int maxPlayers, int avgTime, int gamesPlayed,
-                          int originalItemId, int groupId)
+                          int originalItemId)
     {
         super("gameBits", 0, 0);
 
         int row = 0;
-
-        if (groupId > 0) {
-            setWidget(row++, 0,
-                Link.create(_msgs.bitsWhirledLink(), Pages.WHIRLEDS, Args.compose("d", groupId)),
-                2, null);
-        }
 
         if (maxPlayers == Integer.MAX_VALUE) {
             setText(row, 1, _msgs.bitsPlayersParty("" + minPlayers));

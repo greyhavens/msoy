@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.SourcesTabEvents;
 import com.google.gwt.user.client.ui.TabListener;
@@ -16,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.game.gwt.GameDetail;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
@@ -23,6 +26,7 @@ import com.threerings.msoy.item.data.all.Game;
 
 import client.comment.CommentsPanel;
 import client.item.ItemRating;
+import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -87,22 +91,39 @@ public class GameDetailPanel extends SmartTable
 
         setWidget(0, 1, new GameNamePanel(
                       game.name, game.genre, detail.creator, game.description), 2, null);
+
         setWidget(1, 0, new GameBitsPanel(
             detail.minPlayers, detail.maxPlayers, detail.averageDuration, detail.gamesPlayed,
-            detail.sourceItem.itemId, game.groupId));
+            detail.sourceItem.itemId));
 
-        VerticalPanel play = new VerticalPanel();
+        FlowPanel play = new FlowPanel();
         play.setStyleName("playPanel");
         Widget playbut = new PlayButton(gameId, detail.minPlayers, detail.maxPlayers);
         play.add(playbut);
-        play.setCellHorizontalAlignment(play, HasAlignment.ALIGN_CENTER);
 
-        if (detail.playingNow > 0) {
-            Widget online = MsoyUI.createLabel(_msgs.featuredOnline(""+detail.playingNow), "Online");
-            play.add(online);
-            play.setCellHorizontalAlignment(online, HasAlignment.ALIGN_CENTER);
-        }
+        // if (detail.playingNow > 0) {
+            play.add(MsoyUI.createLabel(_msgs.featuredOnline(""+detail.playingNow), "Online"));
+        // }
         setWidget(1, 1, play, 1, "Play");
+        getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_CENTER);
+
+        // add "Discussions" and "Shop" button if appropriate
+        Widget buttons = null;
+        if (game.groupId > 0) {
+            ClickListener onClick = Link.createListener(
+                Pages.WHIRLEDS, Args.compose("f", game.groupId));
+            buttons = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gdpDiscuss(), onClick);
+        }
+        if (DeploymentConfig.devDeployment) {
+            ClickListener onClick = Link.createListener(Pages.SHOP, Args.compose("g", game.gameId));
+            Widget shop = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.gdpShop(), onClick);
+            buttons = (buttons == null) ? shop : MsoyUI.createButtonPair(buttons, shop);
+        }
+        if (buttons != null) {
+            setWidget(2, 0, buttons);
+            getFlexCellFormatter().setRowSpan(0, 0, 3);
+            getFlexCellFormatter().setRowSpan(1, 1, 2);
+        }
 
         // note that they're playing the developer version if so
         if (Game.isDeveloperVersion(gameId)) {
