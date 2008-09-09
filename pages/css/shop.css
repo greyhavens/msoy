@@ -7,7 +7,7 @@
 .shopPanel, .catalogPanel {
   width: 100%;
   height: 100%;
-  background: #1D5884;
+  background: #1D5884 url(/images/shop/background.png) repeat-x;
 }
 
 .sideBar {
@@ -27,19 +27,19 @@
 }
 
 .sideBar .NaviPanel {
-  background: url(/images/shop/navi_bg.png) no-repeat top;
+  background: #C6E2F8
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-size: 16px;
   font-weight: bold;
-  width: 89px;
-  height: 222px;
+  width: 90px;
   margin-bottom: 10px;
   padding-top: 3px;
 }
 
-.sideBar .NaviPanel div {
+.sideBar .NaviPanel .Cell {
+  background: #C6E2F8 url(/images/shop/navi_bg_cell.png) repeat top;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   padding: 3px 0px 0px 5px;
-  height: 21px;
 }
 
 .sideBar .NaviPanel .Selected {
@@ -200,9 +200,8 @@
   width: 555px;
 }
 
-.favoritesPanel .sideBar .NaviPanel {
-  background: url(/images/shop/navi_fav.png) no-repeat top;
-  height: 246px;
+.favoritesPanel {
+  background: #61A9CF url(/images/shop/background.png) repeat-x;
 }
 
 .favoritesPanel .pagedGrid {

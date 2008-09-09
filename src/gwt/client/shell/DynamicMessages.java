@@ -30,6 +30,7 @@ public interface DynamicMessages extends ConstantsWithLookup
     String itemType14 ();
     String itemType15 ();
 
+    String pItemType0 ();
     String pItemType1 ();
     String pItemType2 ();
     String pItemType3 ();

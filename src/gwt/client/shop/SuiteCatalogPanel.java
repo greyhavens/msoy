@@ -34,7 +34,6 @@ public class SuiteCatalogPanel extends SmartTable
         // create our listings interface
         _listings = new SmartTable("Listings", 0, 0);
         setWidget(0, 0, WidgetUtil.makeShim(10, 10));
-
         getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         setWidget(0, 1, WidgetUtil.makeShim(10, 10));
         setWidget(0, 2, _listings, 1, "ListingsCell");
@@ -50,6 +49,8 @@ public class SuiteCatalogPanel extends SmartTable
                 return CShop.msgs.catalogNoList(name);
             }
         };
+        // TODO add a snappy blurb for level and item packs
+        _listings.setWidget(0, 0, WidgetUtil.makeShim(10, 10));
         _listings.setWidget(1, 0, _items, 2, null);
         _listings.getFlexCellFormatter().setHeight(1, 0, "100%");
         _listings.getFlexCellFormatter().setVerticalAlignment(1, 0, HasAlignment.ALIGN_TOP);
@@ -70,6 +71,7 @@ public class SuiteCatalogPanel extends SmartTable
         // update the marquee with the plural name of the item type
         String tname = _dmsgs.getString("pItemType" + _query.itemType);
         _listings.setWidget(0, 1, new Marquee(null, tname));
+        _listings.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
 
         // grab our data model and display it
         CatalogModels.Listings model = _models.getListingsModel(_query);

@@ -51,10 +51,15 @@ public class SideBar extends SmartTable
 
         FlowPanel navi = new FlowPanel();
         navi.setStyleName("NaviPanel");
+        navi.add(new Image("/images/shop/navi_bg_top.png"));
         for (int ii = 0; ii < itemTypes.length; ii++) {
             byte type = itemTypes[ii];
+            if (ii > 0) {
+                navi.add(new Image("/images/shop/navi_bg_sep.png"));
+            }
             navi.add(makeItem(linker, _dmsgs.getString("pItemType" + type), type));
         }
+        navi.add(new Image("/images/shop/navi_bg_bottom.png"));
         addWidget(navi, 1, "Middle");
 
         if (extras != null) {
@@ -65,13 +70,16 @@ public class SideBar extends SmartTable
 
     protected Widget makeItem (Linker linker, String name, byte itemType)
     {
+        Widget itemWidget;
         if (linker.isSelected(itemType)) {
-            return MsoyUI.createLabel(name, "Selected");
+            itemWidget = MsoyUI.createLabel(name, "Selected");
         } else {
             Widget link = Link.create(name, Pages.SHOP, linker.composeArgs(itemType));
             link.removeStyleName("inline");
-            return link;
+            itemWidget = link;
         }
+        itemWidget.addStyleName("Cell");
+        return itemWidget;
     }
 
     protected static final byte[] ALL_TYPES = new byte[] { Item.NOT_A_TYPE, Item.AVATAR,
