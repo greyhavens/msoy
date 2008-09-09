@@ -321,13 +321,12 @@ public class GameGameRegistry
     }
 
     /**
-     * Called when a game was successfully finished with a payout.
-     * Right now just logs the results for posterity.
+     * Called when a game was successfully finished with a payout.  Right now just logs the results
+     * for posterity.
      */
     public void gamePayout (int memberId, Game game, int payout, int secondsPlayed)
     {
-        _eventLog.gamePlayed(
-            game.genre, game.gameId, game.itemId, payout, secondsPlayed, memberId);
+        _eventLog.gamePlayed(game.genre, game.gameId, game.itemId, payout, secondsPlayed, memberId);
     }
 
     // from AVRProvider
