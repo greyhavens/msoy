@@ -255,7 +255,7 @@ public class MoneyLogic
 
         // add a transaction for the buyer
         MoneyTransactionRecord buyerTrans = buyer.buyItem(buyCurrency, buyAmount,
-            MessageBundle.tcompose("m.itemBought",
+            MessageBundle.tcompose("m.item_bought",
                 escrow.getDescription(), item.type, item.catalogId),
             item);
         _repo.addTransaction(buyerTrans);
@@ -269,7 +269,7 @@ public class MoneyLogic
         MoneyTransactionRecord creatorTrans = creator.payout(
             TransactionType.CREATOR_PAYOUT, RuntimeConfig.server.creatorPercentage,
             quote.getListedCurrency(), buyCurrency, buyAmount,
-            MessageBundle.tcompose("m.itemSold",
+            MessageBundle.tcompose("m.item_sold",
                 escrow.getDescription(), item.type, item.catalogId),
             item, buyerTrans.id);
         _repo.addTransaction(creatorTrans);
