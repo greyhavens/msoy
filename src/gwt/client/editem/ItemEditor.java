@@ -3,6 +3,9 @@
 
 package client.editem;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
@@ -33,8 +36,6 @@ import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.util.ServiceUtil;
 import client.util.MsoyCallback;
-
-import java.util.HashMap;
 
 /**
  * The base class for an interface for creating and editing digital items.
@@ -422,7 +423,8 @@ public abstract class ItemEditor extends FlexTable
     /**
      * Creates and configures a media uploader.
      */
-    protected ItemMediaUploader createUploader (String id, String type, int mode, MediaUpdater updater)
+    protected ItemMediaUploader createUploader (
+        String id, String type, int mode, MediaUpdater updater)
     {
         ItemMediaUploader uploader = new ItemMediaUploader(id, type, mode, updater);
         _uploaders.put(id, uploader);
@@ -671,7 +673,7 @@ public abstract class ItemEditor extends FlexTable
     protected LimitedTextArea _description;
     protected Button _esubmit;
 
-    protected HashMap<String, ItemMediaUploader> _uploaders = new HashMap<String, ItemMediaUploader>();
+    protected Map<String, ItemMediaUploader> _uploaders = new HashMap<String, ItemMediaUploader>();
 
     protected static ItemEditor _singleton;
 

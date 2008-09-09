@@ -158,7 +158,8 @@ public class MediaUploader extends FormPanel
      */
     protected static native void configureBridge () /*-{
         $wnd.setHash = function (id, hash, type, constraint, width, height) {
-           @client.util.MediaUploader::mediaUploaded(Ljava/lang/String;Ljava/lang/String;IIII)(id, hash, type, constraint, width, height);
+           @client.util.MediaUploader::mediaUploaded(Ljava/lang/String;Ljava/lang/String;IIII)(
+               id, hash, type, constraint, width, height);
         };
         $wnd.uploadError = function () {
            @client.util.MediaUploader::uploadError()();
