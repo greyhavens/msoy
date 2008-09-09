@@ -32,7 +32,12 @@ public class SubItemPanel extends PagedGrid<Item>
         _parent = parent;
 
         // if our parent is an original item, allow creation of subitems
-        _create.setVisible(_parent.sourceId == 0);
+        boolean allowCreate = _parent.sourceId == 0;
+        _create.setVisible(allowCreate);
+        if (allowCreate) {
+            _create.addClickListener(
+                NaviUtil.onCreateItem(_type, _parent.getType(), _parent.itemId));
+        }
     }
 
     @Override // from UIObject
@@ -70,8 +75,7 @@ public class SubItemPanel extends PagedGrid<Item>
     @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
-        _create = new Button(CStuff.msgs.panelCreateNew(),
-                             NaviUtil.onCreateItem(_type, _parent.getType(), _parent.itemId));
+        _create = new Button(CStuff.msgs.panelCreateNew());
         controls.setWidget(0, 0, _create);
     }
 
