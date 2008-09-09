@@ -76,6 +76,18 @@ public abstract class BorderedDialog extends BorderedPopup
         _buttons.add(button);
     }
 
+    /**
+     * Creates a click listener that simply hides this dialog. Useful for cancel buttons.
+     */
+    public ClickListener onCancel ()
+    {
+        return new ClickListener() {
+            public void onClick (Widget sender) {
+                hide();
+            }
+        };
+    }
+
     /** Creates the drag listener. */
     protected MouseListenerAdapter createDragListener () {
         return new MouseListenerAdapter() {
