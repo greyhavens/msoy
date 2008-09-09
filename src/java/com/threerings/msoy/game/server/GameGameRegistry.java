@@ -29,6 +29,7 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
+import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.PresentsClient;
@@ -36,6 +37,7 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.util.PersistingUnit;
 import com.threerings.presents.util.ResultListenerList;
 
+import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
@@ -245,31 +247,26 @@ public class GameGameRegistry
         }
 
         // else is it an AVRG?
-        AVRGameManager amgr = _avrgManagers.get(gameId);
+        final AVRGameManager amgr = _avrgManagers.get(gameId);
         if (amgr != null) {
-            _invoker.postUnit(new RepositoryUnit("reloadAVRGame") {
-                @Override
-                public void invokePersist () throws Exception {
-                    GameRecord gRec = _gameRepo.loadGameRecord(gameId);
-                    if (gRec == null) {
-                        throw new Exception("Failed to find GameRecord [gameId=" + gameId + "]");
-                    }
-//                    _game = (Game) gRec.toItem();
+            // copy the occupant set as a player list, as occupancy is modified in the loop below
+            List<PlayerObject> players = Lists.newArrayList();
+            for (OccupantInfo playerInfo : amgr.getGameObject().occupantInfo) {
+                PlayerObject player = (PlayerObject) _omgr.getObject(playerInfo.bodyOid);
+                if (player != null) {
+                    players.add(player);
                 }
+            }
 
-                @Override
-                public void handleSuccess () {
-// TODO: so what do we do?
-//                    amgr.updateGame(_game);
-                }
+            log.info("AVRG updated: evicting players and shutting down manager",
+                     "gameId", gameId, "evicted", players.size());
+            // now throw the players out
+            for (PlayerObject player : players) {
+                _locmgr.leavePlace(player);
+            }
 
-                @Override
-                public void handleFailure (Exception pe) {
-                    log.warning("Failed to resolve AVRGame [id=" + gameId + "].", pe);
-                }
-
-//                protected Game _game;
-            });
+            // then immediately shut down the manager
+            amgr.shutdown();
             return;
         }
 
@@ -921,6 +918,7 @@ public class GameGameRegistry
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlayerLocator _locator;
     @Inject protected BureauRegistry _bureauReg;
+    @Inject protected RootDObjectManager _omgr;
 
     // various and sundry repositories for loading persistent data
     @Inject protected GameRepository _gameRepo;
