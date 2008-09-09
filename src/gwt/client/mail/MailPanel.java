@@ -73,7 +73,7 @@ public class MailPanel extends VerticalPanel
         @Override // from PagedGrid
         protected String getEmptyMessage ()
         {
-            return CMail.msgs.mailNoMail();
+            return _msgs.mailNoMail();
         }
 
         @Override // from PagedGrid
@@ -116,7 +116,7 @@ public class MailPanel extends VerticalPanel
         {
             super.addCustomControls(controls);
 
-            controls.setWidget(0, 0, new Button(CMail.msgs.mailCheck(), new ClickListener() {
+            controls.setWidget(0, 0, new Button(_msgs.mailCheck(), new ClickListener() {
                 public void onClick (Widget sender) {
                     if (_page == 0) {
                         ((ConvosModel)_model).reset();
@@ -136,27 +136,24 @@ public class MailPanel extends VerticalPanel
             super("Convo", 0, 0);
 
             Image delete = new Image("/images/profile/remove.png");
-            if (convo.hasUnread) {
-                delete.setTitle(CMail.msgs.mailNoDeleteTip());
-            } else {
-                delete.setTitle(CMail.msgs.mailDeleteTip());
-                delete.addStyleName("actionLabel");
-                new ClickCallback<Boolean>(delete, CMail.msgs.deleteConfirm()) {
-                    public boolean callService () {
-                        _mailsvc.deleteConversation(convo.conversationId, this);
-                        return true;
+            delete.setTitle(_msgs.mailDeleteTip());
+            delete.addStyleName("actionLabel");
+            String confirm = convo.hasUnread ? _msgs.deleteUnreadConfirm() : _msgs.deleteConfirm();
+            new ClickCallback<Boolean>(delete, confirm) {
+                public boolean callService () {
+                    _mailsvc.deleteConversation(convo.conversationId, convo.hasUnread, this);
+                    return true;
+                }
+                public boolean gotResult (Boolean deleted) {
+                    if (!deleted) {
+                        MsoyUI.info(_msgs.deleteNotDeleted());
+                    } else {
+                        grid.removeItem(convo);
+                        MsoyUI.info(_msgs.deleteDeleted());
                     }
-                    public boolean gotResult (Boolean deleted) {
-                        if (!deleted) {
-                            MsoyUI.info(CMail.msgs.deleteNotDeleted());
-                        } else {
-                            grid.removeItem(convo);
-                            MsoyUI.info(CMail.msgs.deleteDeleted());
-                        }
-                        return !deleted;
-                    }
-                };
-            }
+                    return !deleted;
+                }
+            };
             setWidget(0, 0, delete, 1, "Delete");
             getFlexCellFormatter().setRowSpan(0, 0, 2);
 
@@ -177,13 +174,14 @@ public class MailPanel extends VerticalPanel
             setText(1, 0, MsoyUI.formatDateTime(convo.lastSent), 1, "Sent");
 
             Widget link = Link.create(
-                (convo.subject.length() == 0) ? CMail.msgs.mailNoSubject() : convo.subject,
+                (convo.subject.length() == 0) ? _msgs.mailNoSubject() : convo.subject,
                 Pages.MAIL, Args.compose("c", convo.conversationId));
             setWidget(0, 3, link, 1, "Subject");
             setText(1, 1, convo.lastSnippet, 1, "Snippet");
         }
     }
 
+    protected static final MailMessages _msgs = GWT.create(MailMessages.class);
     protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
         ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
 }

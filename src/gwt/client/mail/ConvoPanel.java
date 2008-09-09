@@ -89,7 +89,7 @@ public class ConvoPanel extends FlowPanel
         Button delete = new Button(CMail.msgs.convoDelete());
         new ClickCallback<Boolean>(delete, CMail.msgs.deleteConfirm()) {
             public boolean callService () {
-                _mailsvc.deleteConversation(_convoId, this);
+                _mailsvc.deleteConversation(_convoId, false, this);
                 return true;
             }
             public boolean gotResult (Boolean deleted) {

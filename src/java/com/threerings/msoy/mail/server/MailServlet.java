@@ -170,12 +170,12 @@ public class MailServlet extends MsoyServiceServlet
     }
 
     // from interface MailService
-    public boolean deleteConversation (int convoId)
+    public boolean deleteConversation (int convoId, boolean ignoreUnread)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
         // the repository handles all the juicy goodness
-        return _mailRepo.deleteConversation(convoId, memrec.memberId);
+        return _mailRepo.deleteConversation(convoId, memrec.memberId, ignoreUnread);
     }
 
     // from interface MailService

@@ -217,9 +217,10 @@ public class MailRepository extends DepotRepository
      * Deletes the specified participant from the specified conversation.
      *
      * @return true if the participant was deleted, false if they were not due to the conversation
-     * having unread messages.
+     * having unread messages (and ignoreUnread was false).
      */
-    public boolean deleteConversation (final int conversationId, int participantId)
+    public boolean deleteConversation (final int conversationId, int participantId,
+                                       boolean ignoreUnread)
     {
         // TODO: do this in a transaction
         Key<ParticipantRecord> key = ParticipantRecord.getKey(conversationId, participantId);
@@ -236,7 +237,7 @@ public class MailRepository extends DepotRepository
         }
 
         // make sure the conversation is fully read by the participant
-        if (conrec.lastSent.getTime() > parrec.lastRead.getTime()) {
+        if (!ignoreUnread && conrec.lastSent.getTime() > parrec.lastRead.getTime()) {
             return false;
         }
 

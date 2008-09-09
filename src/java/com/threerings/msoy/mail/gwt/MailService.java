@@ -74,9 +74,9 @@ public interface MailService extends RemoteService
      * Deletes a conversation (for the calling user).
      *
      * @return true if the conversation was deleted, false if it could not be deleted because it
-     * has unread messages.
+     * has unread messages and ignoreUnread was not set to true.
      */
-    boolean deleteConversation (int convoId)
+    boolean deleteConversation (int convoId, boolean ignoreUnread)
         throws ServiceException;
 
     /**

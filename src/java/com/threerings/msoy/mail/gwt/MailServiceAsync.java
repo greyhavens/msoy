@@ -38,7 +38,7 @@ public interface MailServiceAsync
     /**
      * The asynchronous version of {@link MailService#deleteConversation}
      */
-    void deleteConversation (int convoId, AsyncCallback<Boolean> callback);
+    void deleteConversation (int convoId, boolean ignoreUnread, AsyncCallback<Boolean> callback);
 
     /**
      * The asynchronous version of {@link MailService#updatePayload}

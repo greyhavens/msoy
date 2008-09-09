@@ -17,13 +17,13 @@ public class MailPage extends Page
     {
         // if we have no creds, just display a message saying login
         if (CMail.isGuest()) {
-            setContent(MsoyUI.createLabel(CMail.msgs.logon(), "infoLabel"));
+            setContent(MsoyUI.createLabel(_msgs.logon(), "infoLabel"));
             return;
         }
 
         String action = args.get(0, "");
         if (action.equals("c")) {
-            setContent(CMail.msgs.mailTitle(), new ConvoPanel(_model, args.get(1, 0)));
+            setContent(_msgs.mailTitle(), new ConvoPanel(_model, args.get(1, 0)));
 
         } else if (action.equals("w")) {
             ComposePanel compose = new ComposePanel();
@@ -37,10 +37,10 @@ public class MailPage extends Page
                     compose.setGiftItem((byte)args.get(++ii, 0), args.get(++ii, 0));
                 }
             }
-            setContent(CMail.msgs.mailTitle(), compose);
+            setContent(_msgs.mailTitle(), compose);
 
         } else {
-            setContent(CMail.msgs.mailTitle(), new MailPanel(_model, args.get(0, 0)));
+            setContent(_msgs.mailTitle(), new MailPanel(_model, args.get(0, 0)));
         }
     }
 
@@ -60,4 +60,6 @@ public class MailPage extends Page
     }
 
     protected ConvosModel _model = new ConvosModel();
+
+    protected static final MailMessages _msgs = GWT.create(MailMessages.class);
 }
