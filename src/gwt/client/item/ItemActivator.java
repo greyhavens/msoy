@@ -36,7 +36,7 @@ public class ItemActivator extends FlowPanel
     public void setItem (Item item)
     {
         _item = item;
-        update();
+        update(_item.used);
     }
 
     // from ItemUsageListener
@@ -44,7 +44,7 @@ public class ItemActivator extends FlowPanel
     {
         if ((_item != null) && (_item.getType() == event.getItemType()) &&
                 (_item.itemId == event.getItemId())) {
-            update();
+            update(event.getUsage());
         }
     }
 
@@ -54,7 +54,7 @@ public class ItemActivator extends FlowPanel
         super.onAttach();
 
         FlashEvents.addListener(this);
-        update();
+        update(_item.used);
     }
 
     @Override // from Panel
@@ -65,15 +65,20 @@ public class ItemActivator extends FlowPanel
         FlashEvents.removeListener(this);
     }
 
-    protected void update ()
+    protected void update (byte usedAs)
     {
         // TODO: do this in one place?
         boolean hasClient = FlashClients.clientExists();
-        boolean isUsed = _item.isUsed();
+        boolean isUsed = (usedAs != Item.UNUSED);
         boolean usedHere;
-        switch (_item.used) {
+
+        switch (usedAs) {
         default:
             usedHere = false;
+            break;
+
+        case Item.USED_AS_AVATAR:
+            usedHere = isUsed;
             break;
 
         case Item.USED_AS_FURNITURE:
@@ -106,7 +111,6 @@ public class ItemActivator extends FlowPanel
                             FlashClients.useAvatar(0, 0);
                         } else {
                             FlashClients.useAvatar(_item.itemId, ((Avatar) _item).scale);
-                            // CItem.frame.closeContent();
                         }
                     }
                 };
@@ -141,7 +145,7 @@ public class ItemActivator extends FlowPanel
             add(MsoyUI.createButton(MsoyUI.LONG_THIN, tip, onClick));
         } else {
             add(MsoyUI.createActionImage(path, onClick));
-            add(MsoyUI.createLabel(tip, "Tip"));
+            add(MsoyUI.createActionLabel(tip, "Tip", onClick));
         }
     }
 
