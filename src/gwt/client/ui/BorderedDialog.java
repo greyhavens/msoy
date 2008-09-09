@@ -3,6 +3,7 @@
 
 package client.ui;
 
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -77,15 +78,26 @@ public abstract class BorderedDialog extends BorderedPopup
     }
 
     /**
+     * Creates a click listener that executes the supplied command and then hides this dialog.
+     */
+    public ClickListener onAction (final Command command)
+    {
+        return new ClickListener() {
+            public void onClick (Widget sender) {
+                if (command != null) {
+                    command.execute();
+                }
+                hide();
+            }
+        };
+    }
+
+    /**
      * Creates a click listener that simply hides this dialog. Useful for cancel buttons.
      */
     public ClickListener onCancel ()
     {
-        return new ClickListener() {
-            public void onClick (Widget sender) {
-                hide();
-            }
-        };
+        return onAction(null);
     }
 
     /** Creates the drag listener. */
