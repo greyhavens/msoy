@@ -305,7 +305,7 @@ public class MoneyLogic
         if (!buyerIsCreator) {
             _repo.saveAccount(creator);
         }
-        if ((affiliateId != buyerId) && (affiliateId != creatorId)) {
+        if ((affiliateId != buyerId) && (affiliateId != creatorId) && (affiliate != null)) {
             _repo.saveAccount(affiliate);
         }
 
