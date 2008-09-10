@@ -939,20 +939,23 @@
 
   <!-- builds the ActionScript documention -->
   <target name="asdoc">
-    <mkdir dir="${deploy.dir}/asdoc"/>
+    <mkdir dir="${deploy.dir}/asdocs"/>
     <java classpath="${flexsdk.dir}/lib/asdoc.jar" classname="flex2.tools.ASDoc" fork="true">
       <jvmarg value="-Xmx1024m"/>
       <jvmarg value="-Dsun.io.useCanonCashes=false"/>
       <jvmarg value="-Xbootclasspath/p:${flexsdk.dir}/asdoc/lib/xalan.jar"/>
       <jvmarg value="-Dos.name=Windows"/>
       <arg value="+flexlib=${flexsdk.dir}/frameworks"/>
+      <arg line="-library-path ${flexsdk.dir}/frameworks/libs/framework.swc"/>
+      <arg line="-library-path ${flexsdk.dir}/frameworks/libs/flex.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/player-env-0.0-SNAPSHOT.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
+      <arg line="-library-path ${deploy.dir}/lib/vilyalib-0.0-SNAPSHOT.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/whirledlib-0.0-SNAPSHOT.swc"/>
       <arg line="-templates-path ${flexsdk.dir}/asdoc/templates"/>
       <arg line="-doc-sources ${asrc.dir}"/>
-      <arg line="-output ${deploy.dir}/asdoc"/>
+      <arg line="-output ${deploy.dir}/asdocs"/>
     </java>
   </target>
 
@@ -1336,14 +1339,18 @@
     </move>
   </target>
 
-  <!-- builds our javadocs and packages them up (TODO: add asdocs) -->
-  <target name="package-docs" depends="distall,javadoc,prepare-package">
+  <!-- builds our javadocs and packages them up -->
+  <target name="package-docs" depends="distall,javadoc,asdoc,prepare-package">
     <property name="pkgroot.docs" value="${pkgroot.root}/msoy-docs"/>
     <property name="approot.docs" value="${pkgroot.docs}/${ooo.docs.prefix}"/>
-    <mkdir dir="${approot.docs}"/>
 
+    <!-- copy our built documentation into place -->
+    <mkdir dir="${approot.docs}"/>
     <copy todir="${approot.docs}/msoy">
       <fileset dir="${deploy.dir}/docs"/>
+    </copy>
+    <copy todir="${approot.docs}/msoy-as">
+      <fileset dir="${deploy.dir}/asdocs"/>
     </copy>
 
     <!-- Set up a version number to use for docs package. -->
