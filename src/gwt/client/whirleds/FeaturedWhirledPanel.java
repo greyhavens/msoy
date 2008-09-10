@@ -97,7 +97,7 @@ public class FeaturedWhirledPanel extends FlowPanel
                 }
             };
 
-            _flashPanel.add(LiveViewUtil.makeLiveViewWidget(group, onClick));
+            _flashPanel.add(LiveViewUtil.makeLiveViewWidget(group.homeSnapshot, onClick));
         }
 
         _infoPanel.clear();

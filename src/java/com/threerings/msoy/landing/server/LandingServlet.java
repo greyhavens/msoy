@@ -57,7 +57,7 @@ public class LandingServlet extends MsoyServiceServlet
         for (PopularPlacesSnapshot.Place card : pps.getTopWhirleds()) {
             GroupRecord group = _groupRepo.loadGroup(card.placeId);
             if (group != null) {
-                GroupCard gcard = group.toGroupCard(_sceneRepo);
+                GroupCard gcard = group.toGroupCard();
                 gcard.population = card.population;
                 popWhirleds.add(gcard);
                 if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
@@ -69,7 +69,7 @@ public class LandingServlet extends MsoyServiceServlet
         if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
             int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
             for (GroupRecord group : _groupRepo.getGroupsList(0, count)) {
-                popWhirleds.add(group.toGroupCard(_sceneRepo));
+                popWhirleds.add(group.toGroupCard());
             }
         }
         data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);

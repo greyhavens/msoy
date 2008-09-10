@@ -25,7 +25,8 @@ public interface GroupServiceAsync
     /**
      * The asynchronous version of {@link GroupService#getGroupsList}
      */
-    void getGroupsList (AsyncCallback<List<GroupCard>> callback);
+    void getGroups (int offset, int count, boolean needCount,
+                    AsyncCallback<GroupService.GroupsResult> callback);
 
     /**
      * The asynchronous version of {@link GroupService#searchGroups}

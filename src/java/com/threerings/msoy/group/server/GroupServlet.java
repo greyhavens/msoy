@@ -79,7 +79,7 @@ public class GroupServlet extends MsoyServiceServlet
         for (PopularPlacesSnapshot.Place card : pps.getTopWhirleds()) {
             GroupRecord group = _groupRepo.loadGroup(card.placeId);
             if (group != null) {
-                GroupCard gcard = group.toGroupCard(_sceneRepo);
+                GroupCard gcard = group.toGroupCard();
                 gcard.population = card.population;
                 popWhirleds.add(gcard);
                 if (popWhirleds.size() == GalaxyData.FEATURED_WHIRLED_COUNT) {
@@ -91,9 +91,12 @@ public class GroupServlet extends MsoyServiceServlet
         if (popWhirleds.size() < GalaxyData.FEATURED_WHIRLED_COUNT) {
             int count = GalaxyData.FEATURED_WHIRLED_COUNT - popWhirleds.size();
             for (GroupRecord group : _groupRepo.getGroupsList(0, count)) {
-                popWhirleds.add(group.toGroupCard(_sceneRepo));
+                popWhirleds.add(group.toGroupCard());
             }
         }
+        // resolve the snapshots for these cards
+        _groupLogic.resolveSnapshots(popWhirleds);
+        // and fill them into the result
         data.featuredWhirleds = popWhirleds.toArray(new GroupCard[popWhirleds.size()]);
 
         // load up our popular tags
@@ -108,24 +111,28 @@ public class GroupServlet extends MsoyServiceServlet
     }
 
     // from GroupService
-    public List<GroupCard> getGroupsList ()
+    public GroupsResult getGroups (int offset, int count, boolean needCount)
         throws ServiceException
     {
-        List<GroupCard> groups = Lists.newArrayList();
-        for (GroupRecord gRec : _groupRepo.getGroupsList(0, Integer.MAX_VALUE)) {
-            groups.add(gRec.toGroupCard(_sceneRepo));
-        }
+        GroupsResult result = new GroupsResult();
+        result.groups = Lists.newArrayList(
+            Iterables.transform(_groupRepo.getGroupsList(offset, count), GroupRecord.TO_CARD));
 
         // fill in the current population of these groups
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
-        for (GroupCard group : groups) {
+        for (GroupCard group : result.groups) {
             PopularPlacesSnapshot.Place card = pps.getWhirled(group.name.getGroupId());
             if (card != null) {
                 group.population = card.population;
             }
         }
 
-        return groups;
+        // if they need the total group count, load that
+        if (needCount) {
+            result.totalCount = _groupRepo.getVisibleGroupCount();
+        }
+
+        return result;
     }
 
     /**
@@ -147,7 +154,8 @@ public class GroupServlet extends MsoyServiceServlet
         // set up the detail
         GroupDetail detail = new GroupDetail();
         detail.group = grec.toGroupObject();
-        detail.extras = grec.toExtrasObject(_sceneRepo);
+        detail.extras = grec.toExtrasObject();
+        detail.homeSnapshot = _sceneRepo.loadSceneSnapshot(grec.homeSceneId);
         detail.creator = _memberRepo.loadMemberName(grec.creatorId);
         detail.memberCount = _groupRepo.countMembers(grec.groupId);
 
@@ -249,22 +257,16 @@ public class GroupServlet extends MsoyServiceServlet
     public List<GroupCard> searchGroups (String searchString)
         throws ServiceException
     {
-        List<GroupCard> groups = Lists.newArrayList();
-        for (GroupRecord grec : _groupRepo.searchGroups(searchString)) {
-            groups.add(grec.toGroupCard(_sceneRepo));
-        }
-        return fillInPopulation(groups);
+        return fillInPopulation(Lists.newArrayList(
+            Iterables.transform(_groupRepo.searchGroups(searchString), GroupRecord.TO_CARD)));
     }
 
     // from interface GroupService
     public List<GroupCard> searchForTag (String tag)
         throws ServiceException
     {
-        List<GroupCard> groups = Lists.newArrayList();
-        for (GroupRecord grec : _groupRepo.searchForTag(tag)) {
-            groups.add(grec.toGroupCard(_sceneRepo));
-        }
-        return fillInPopulation(groups);
+        return fillInPopulation(Lists.newArrayList(
+            Iterables.transform(_groupRepo.searchForTag(tag), GroupRecord.TO_CARD)));
     }
 
     // from interface GroupService
@@ -526,79 +528,6 @@ public class GroupServlet extends MsoyServiceServlet
         return myGroupCards;
     }
 
-    /** Compartor for sorting by population then by last post date. */
-    public static Comparator<MyGroupCard> SORT_BY_PEOPLE_ONLINE =
-        new Comparator<MyGroupCard>() {
-        public int compare (MyGroupCard c1, MyGroupCard c2) {
-            int rv = c2.population - c1.population;
-            if (rv != 0) {
-                return rv;
-            }
-            if (c1.latestThread != null && c2.latestThread == null) {
-                return -1;
-            } else if (c1.latestThread == null && c2.latestThread != null) {
-                return 1;
-            } else if (c1.latestThread != null && c2.latestThread != null) {
-                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
-            }
-            // if neither has a single post or active user, sort by name
-            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
-        }
-    };
-
-    /** Compartor for sorting by population then by last post date. */
-    public static Comparator<MyGroupCard> SORT_BY_NAME = new Comparator<MyGroupCard>() {
-        public int compare (MyGroupCard c1, MyGroupCard c2) {
-            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
-        }
-    };
-
-    /** Compartor for sorting by manager status then population then by last post date. */
-    public static Comparator<MyGroupCard> SORT_BY_MANAGER = new Comparator<MyGroupCard>() {
-        public int compare (MyGroupCard c1, MyGroupCard c2) {
-            if (c1.rank == GroupMembership.RANK_MANAGER && c2.rank < GroupMembership.RANK_MANAGER) {
-                return -1;
-            } else if (c2.rank == GroupMembership.RANK_MANAGER &&
-                       c1.rank < GroupMembership.RANK_MANAGER) {
-                return 1;
-            }
-
-            // from here down is the same as SORT_BY_PEOPLE_ONLINE
-            int rv = c2.population - c1.population;
-            if (rv != 0) {
-                return rv;
-            }
-            if (c1.latestThread != null && c2.latestThread == null) {
-                return -1;
-            } else if (c1.latestThread == null && c2.latestThread != null) {
-                return 1;
-            } else if (c1.latestThread != null && c2.latestThread != null) {
-                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
-            }
-            // if neither has a single post or active user, sort by name
-            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
-        }
-    };
-
-    /** Compartor for sorting by last post date then by population. */
-    public static Comparator<MyGroupCard> SORT_BY_NEWEST_POST = new Comparator<MyGroupCard>() {
-        public int compare (MyGroupCard c1, MyGroupCard c2) {
-            if (c1.latestThread != null && c2.latestThread == null) {
-                return -1;
-            } else if (c1.latestThread == null && c2.latestThread != null) {
-                return 1;
-            } else if (c1.latestThread != null && c2.latestThread != null) {
-                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
-            }
-            int rv = c2.population - c1.population;
-            if (rv != 0) {
-                return rv;
-            }
-            // if neither has a single post or active user, sort by name
-            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
-        }
-    };
-
     // from interface GroupService
     public List<GroupMembership> getGameGroups (final int gameId)
         throws ServiceException
@@ -692,4 +621,77 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected ForumRepository _forumRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupLogic _groupLogic;
+
+    /** Compartor for sorting by population then by last post date. */
+    protected static Comparator<MyGroupCard> SORT_BY_PEOPLE_ONLINE =
+        new Comparator<MyGroupCard>() {
+        public int compare (MyGroupCard c1, MyGroupCard c2) {
+            int rv = c2.population - c1.population;
+            if (rv != 0) {
+                return rv;
+            }
+            if (c1.latestThread != null && c2.latestThread == null) {
+                return -1;
+            } else if (c1.latestThread == null && c2.latestThread != null) {
+                return 1;
+            } else if (c1.latestThread != null && c2.latestThread != null) {
+                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
+            }
+            // if neither has a single post or active user, sort by name
+            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+        }
+    };
+
+    /** Compartor for sorting by population then by last post date. */
+    protected static Comparator<MyGroupCard> SORT_BY_NAME = new Comparator<MyGroupCard>() {
+        public int compare (MyGroupCard c1, MyGroupCard c2) {
+            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+        }
+    };
+
+    /** Compartor for sorting by manager status then population then by last post date. */
+    protected static Comparator<MyGroupCard> SORT_BY_MANAGER = new Comparator<MyGroupCard>() {
+        public int compare (MyGroupCard c1, MyGroupCard c2) {
+            if (c1.rank == GroupMembership.RANK_MANAGER && c2.rank < GroupMembership.RANK_MANAGER) {
+                return -1;
+            } else if (c2.rank == GroupMembership.RANK_MANAGER &&
+                       c1.rank < GroupMembership.RANK_MANAGER) {
+                return 1;
+            }
+
+            // from here down is the same as SORT_BY_PEOPLE_ONLINE
+            int rv = c2.population - c1.population;
+            if (rv != 0) {
+                return rv;
+            }
+            if (c1.latestThread != null && c2.latestThread == null) {
+                return -1;
+            } else if (c1.latestThread == null && c2.latestThread != null) {
+                return 1;
+            } else if (c1.latestThread != null && c2.latestThread != null) {
+                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
+            }
+            // if neither has a single post or active user, sort by name
+            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+        }
+    };
+
+    /** Compartor for sorting by last post date then by population. */
+    protected static Comparator<MyGroupCard> SORT_BY_NEWEST_POST = new Comparator<MyGroupCard>() {
+        public int compare (MyGroupCard c1, MyGroupCard c2) {
+            if (c1.latestThread != null && c2.latestThread == null) {
+                return -1;
+            } else if (c1.latestThread == null && c2.latestThread != null) {
+                return 1;
+            } else if (c1.latestThread != null && c2.latestThread != null) {
+                return c2.latestThread.mostRecentPostId - c1.latestThread.mostRecentPostId;
+            }
+            int rv = c2.population - c1.population;
+            if (rv != 0) {
+                return rv;
+            }
+            // if neither has a single post or active user, sort by name
+            return c1.name.toString().toLowerCase().compareTo(c2.name.toString().toLowerCase());
+        }
+    };
 }

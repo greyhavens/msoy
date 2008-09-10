@@ -8,10 +8,11 @@ import java.util.HashMap;
 
 import java.sql.Date;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Maps;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.FullTextIndex;
@@ -19,6 +20,7 @@ import com.samskivert.jdbc.depot.annotation.GeneratedValue;
 import com.samskivert.jdbc.depot.annotation.GenerationType;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
 
@@ -26,11 +28,8 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.group.data.all.Group;
-import com.threerings.msoy.group.gwt.CanonicalImageData;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupExtras;
-import com.threerings.msoy.room.server.persist.MsoySceneRepository;
-import com.threerings.msoy.room.server.persist.SceneRecord;
 
 /**
  * Contains the details of a group.
@@ -199,6 +198,14 @@ public class GroupRecord extends PersistentRecord
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 19;
 
+    /** Converts a persistent record into a {@link GroupCard}. */
+    public static final Function<GroupRecord, GroupCard> TO_CARD =
+        new Function<GroupRecord, GroupCard>() {
+        public GroupCard apply (GroupRecord record) {
+            return record.toGroupCard();
+        }
+    };
+
     /** The unique id of this group. */
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -305,14 +312,13 @@ public class GroupRecord extends PersistentRecord
     /**
      * Creates a web-safe version of the extras in this group.
      */
-    public GroupExtras toExtrasObject (MsoySceneRepository sceneRepo)
+    public GroupExtras toExtrasObject ()
     {
         GroupExtras extras = new GroupExtras();
         extras.charter = charter;
         extras.homepageUrl = homepageUrl;
         extras.catalogItemType = catalogItemType;
         extras.catalogTag = catalogTag;
-        populateCanonicalImage(sceneRepo, extras);
         return extras;
     }
 
@@ -325,9 +331,10 @@ public class GroupRecord extends PersistentRecord
     }
 
     /**
-     * Creates a card record for this group.
+     * Creates a card record for this group. Note: the canonical snapshot image will not be filled
+     * in. That must be filled in by the caller with a call to resolveSnapshots().
      */
-    public GroupCard toGroupCard (MsoySceneRepository sceneRepo)
+    public GroupCard toGroupCard ()
     {
         GroupCard card = new GroupCard();
         card.name = toGroupName();
@@ -336,7 +343,6 @@ public class GroupRecord extends PersistentRecord
         }
         card.blurb = blurb;
         card.homeSceneId = homeSceneId;
-        populateCanonicalImage(sceneRepo, card);
         return card;
     }
 
@@ -406,13 +412,4 @@ public class GroupRecord extends PersistentRecord
                 new Comparable[] { groupId });
     }
     // AUTO-GENERATED: METHODS END
-
-    protected void populateCanonicalImage (MsoySceneRepository sceneRepo, CanonicalImageData data)
-    {
-        SceneRecord scene = sceneRepo.loadScene(homeSceneId);
-        if (scene.canonicalImageHash != null) {
-            data.setCanonicalImage(new MediaDesc(scene.canonicalImageHash,
-                scene.canonicalImageType, MediaDesc.NOT_CONSTRAINED));
-        }
-    }
 }

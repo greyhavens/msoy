@@ -6,6 +6,7 @@ package client.whirleds;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -20,6 +21,7 @@ import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
+import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 
 import com.threerings.msoy.group.gwt.GalaxyData;
@@ -33,6 +35,7 @@ import client.ui.ClickBox;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 
 /**
@@ -131,9 +134,8 @@ public class GalaxyPanel extends VerticalPanel
 
         // group-p_NN or group
         setModel("p", "", page, new ModelLoader() {
-            public void loadModel (MsoyCallback<List<GroupCard>> callback) {
-                // TODO: this eventually needs to be a ServiceBackedDataModel
-                _groupsvc.getGroupsList(callback);
+            public void loadModel (MsoyCallback<DataModel<GroupCard>> callback) {
+                callback.onSuccess(_gmodel);
             }
         });
     }
@@ -173,8 +175,8 @@ public class GalaxyPanel extends VerticalPanel
         _currentTag.add(new InlineLabel(")"));
 
         setModel("tag", tag, page, new ModelLoader() {
-            public void loadModel (MsoyCallback<List<GroupCard>> callback) {
-                _groupsvc.searchForTag(tag, callback);
+            public void loadModel (MsoyCallback<DataModel<GroupCard>> callback) {
+                _groupsvc.searchForTag(tag, new ListToModel(callback));
             }
         });
         return true;
@@ -187,8 +189,8 @@ public class GalaxyPanel extends VerticalPanel
         }
         _searchInput.setText(query);
         setModel("search", query, page, new ModelLoader() {
-            public void loadModel (MsoyCallback<List<GroupCard>> callback) {
-                _groupsvc.searchGroups(query, callback);
+            public void loadModel (MsoyCallback<DataModel<GroupCard>> callback) {
+                _groupsvc.searchGroups(query, new ListToModel(callback));
             }
         });
         return true;
@@ -200,11 +202,11 @@ public class GalaxyPanel extends VerticalPanel
         if (action.equals(_action) && arg.equals(_arg)) {
             _groupGrid.displayPage(page, false);
         } else {
-            loader.loadModel(new MsoyCallback<List<GroupCard>>() {
-                public void onSuccess (List<GroupCard> list) {
+            loader.loadModel(new MsoyCallback<DataModel<GroupCard>>() {
+                public void onSuccess (DataModel<GroupCard> model) {
                     _action = action;
                     _arg = arg;
-                    _groupGrid.setModel(new SimpleDataModel<GroupCard>(list), page);
+                    _groupGrid.setModel(model, page);
                 }
             });
         }
@@ -212,7 +214,7 @@ public class GalaxyPanel extends VerticalPanel
 
     protected static interface ModelLoader
     {
-        void loadModel (MsoyCallback<List<GroupCard>> callback);
+        void loadModel (MsoyCallback<DataModel<GroupCard>> callback);
     }
 
     protected class GroupWidget extends ClickBox
@@ -229,6 +231,35 @@ public class GalaxyPanel extends VerticalPanel
             }
         }
     }
+
+    protected static class ListToModel implements AsyncCallback<List<GroupCard>>
+    {
+        public ListToModel (AsyncCallback<DataModel<GroupCard>> target) {
+            _target = target;
+        }
+        public void onSuccess (List<GroupCard> list) {
+            _target.onSuccess(new SimpleDataModel<GroupCard>(list));
+        }
+        public void onFailure (Throwable cause) {
+            _target.onFailure(cause);
+        }
+        protected AsyncCallback<DataModel<GroupCard>> _target;
+    }
+
+    /** Handles loading groups a page at a time. */
+    protected ServiceBackedDataModel<GroupCard, GroupService.GroupsResult> _gmodel =
+        new ServiceBackedDataModel<GroupCard, GroupService.GroupsResult>() {
+        protected void callFetchService (int start, int count, boolean needCount,
+                                         AsyncCallback<GroupService.GroupsResult> callback) {
+            _groupsvc.getGroups(start, count, needCount, callback);
+        }
+        protected int getCount (GroupService.GroupsResult result) {
+            return result.totalCount;
+        }
+        protected List<GroupCard> getRows (GroupService.GroupsResult result) {
+            return result.groups;
+        }
+    };
 
     protected String _action, _arg;
 

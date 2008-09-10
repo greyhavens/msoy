@@ -245,7 +245,7 @@ public class WhirledDetailPanel extends FlowPanel
                 FeaturedPlaceUtil.displayFeaturedPlace(_group.homeSceneId, _whirledViewPanel);
             }
         };
-        _whirledViewPanel.add(LiveViewUtil.makeLiveViewWidget(_extras, liveViewClick));
+        _whirledViewPanel.add(LiveViewUtil.makeLiveViewWidget(detail.homeSnapshot, liveViewClick));
 
         if (_detail.population > 0) {
             screenshot.add(MsoyUI.createHTML(_msgs.featuredOnline("" + _detail.population),

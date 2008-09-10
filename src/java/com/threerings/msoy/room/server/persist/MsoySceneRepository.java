@@ -227,6 +227,15 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
+     * Returns the canonical snapshot image for the specified scene or null if it has none.
+     */
+    public MediaDesc loadSceneSnapshot (int sceneId)
+    {
+        SceneRecord scene = loadScene(sceneId);
+        return (scene == null) ? null : scene.getSnapshot();
+    }
+
+    /**
      * Saves the specified update to the database.
      */
     protected void persistUpdate (SceneUpdate update)

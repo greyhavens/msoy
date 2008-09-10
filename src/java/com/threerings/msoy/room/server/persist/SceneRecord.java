@@ -331,6 +331,15 @@ public class SceneRecord extends PersistentRecord
         return model;
     }
 
+    /**
+     * Returns the canonical snapshot image for this scene, or null if it has none.
+     */
+    public MediaDesc getSnapshot ()
+    {
+        return (canonicalImageHash == null) ? null: 
+            new MediaDesc(canonicalImageHash, canonicalImageType, MediaDesc.NOT_CONSTRAINED);
+    }
+
     @Override // from Object
     public String toString ()
     {

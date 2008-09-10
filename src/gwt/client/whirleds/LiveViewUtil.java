@@ -12,7 +12,6 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.group.gwt.CanonicalImageData;
 
 /**
  * @author robin
@@ -20,12 +19,9 @@ import com.threerings.msoy.group.gwt.CanonicalImageData;
  */
 public class LiveViewUtil
 {
-    public static Widget makeLiveViewWidget (CanonicalImageData data, ClickListener onClick) {
-        if (data.getCanonicalImage() != null) {
-            // display the scene image here...
-            final Widget canonicalImageWidget = LiveViewUtil.makeCanonicalImageWidget(data,
-                onClick);
-            return canonicalImageWidget;
+    public static Widget makeLiveViewWidget (MediaDesc snapshot, ClickListener onClick) {
+        if (snapshot != null) {
+            return LiveViewUtil.makeCanonicalImageWidget(snapshot, onClick);
         } else {
             final Image clickToPlayImage = MsoyUI.createActionImage(
                 "/images/landing/whirled_click_here.jpg", "", onClick);
@@ -33,18 +29,12 @@ public class LiveViewUtil
         }
     }
 
-    protected static Widget makeCanonicalImageWidget (CanonicalImageData data,
-        ClickListener onClick) {
+    protected static Widget makeCanonicalImageWidget (MediaDesc snapshot, ClickListener onClick) {
         FlowPanel panel = new FlowPanel();
-        Widget image = MediaUtil.createMediaView(data.getCanonicalImage(),
-            MediaDesc.CANONICAL_IMAGE_SIZE,
-            onClick);
-
+        Widget image = MediaUtil.createMediaView(snapshot, MediaDesc.CANONICAL_IMAGE_SIZE, onClick);
         panel.add(image);
-
         Image overlay = MsoyUI.createActionImage("/images/landing/click_overlay.png", onClick);
         overlay.addStyleName("LiveViewOverlay");
-
         panel.add(overlay);
         return panel;
     }

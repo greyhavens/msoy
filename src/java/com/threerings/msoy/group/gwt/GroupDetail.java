@@ -9,6 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.fora.gwt.ForumThread;
@@ -22,11 +23,16 @@ import com.threerings.msoy.group.data.all.GroupMembership;
 public class GroupDetail
     implements Streamable, IsSerializable
 {
+    public static int NUM_TOP_MEMBERS = 10;
+
     /** The group whose details we contain. */
     public Group group;
 
     /** The extra details that are needed on the GroupView page. */
     public GroupExtras extras;
+
+    /** The canonical image from the group's home scene */
+    public MediaDesc homeSnapshot;
 
     /** The person who created the group. */
     public MemberName creator;
@@ -48,6 +54,4 @@ public class GroupDetail
 
     /** The top {@link NUM_TOP_MEMBERS} members of this group, ordered by rank */
     public List<GroupMemberCard> topMembers;
-    
-    public static int NUM_TOP_MEMBERS = 10;
 }

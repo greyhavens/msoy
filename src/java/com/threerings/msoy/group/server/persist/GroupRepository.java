@@ -138,6 +138,16 @@ public class GroupRepository extends DepotRepository
     }
 
     /**
+     * Returns the total count of visible groups (which corresponds to the number of groups
+     * available via calls to {@link #getGroupsList}).
+     */
+    public int getVisibleGroupCount ()
+    {
+        Where where = new Where(new Not(new Equals(GroupRecord.POLICY_C, Group.POLICY_EXCLUSIVE)));
+        return load(CountRecord.class, new FromOverride(GroupRecord.class), where).count;
+    }
+
+    /**
      * Returns a list of all public and inv-only groups, sorted by size, then by creation time.
      *
      * @param offset an offset into the collection of groups at which to start.
@@ -378,7 +388,7 @@ public class GroupRepository extends DepotRepository
         List<GroupCard> groups = Lists.newArrayList();
         for (GroupRecord group : loadGroups(rmap.keySet())) {
             if (group.policy != Group.POLICY_EXCLUSIVE || includeExclusive) {
-                groups.add(group.toGroupCard(_sceneRepo));
+                groups.add(group.toGroupCard());
             }
         }
         return groups;

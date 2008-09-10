@@ -43,6 +43,16 @@ public interface GroupService extends RemoteService
         public byte rank;
     }
 
+    /** Delivers the response to {@link #getGroups}. */
+    public static class GroupsResult implements IsSerializable
+    {
+        /** The total number of groups available. */
+        public int totalCount;
+
+        /** The requested slice of the total groups list. */
+        public List<GroupCard> groups;
+    }
+
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/groupsvc";
 
@@ -53,9 +63,9 @@ public interface GroupService extends RemoteService
         throws ServiceException;
 
     /**
-     * Get the list of all groups.
+     * Gets a subset of the list of all groups.
      */
-    List<GroupCard> getGroupsList ()
+    GroupsResult getGroups (int offset, int count, boolean needCount)
         throws ServiceException;
 
     /**

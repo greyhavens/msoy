@@ -3,8 +3,10 @@
 
 package com.threerings.msoy.group.server;
 
+import java.util.Collection;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -12,6 +14,8 @@ import com.samskivert.jdbc.depot.DuplicateKeyException;
 
 import com.threerings.presents.annotation.BlockingThread;
 
+import com.threerings.msoy.room.server.persist.MsoySceneRepository;
+import com.threerings.msoy.room.server.persist.SceneRecord;
 import com.threerings.msoy.server.MemberNodeActions;
 import com.threerings.msoy.server.StatLogic;
 
@@ -19,6 +23,7 @@ import com.threerings.msoy.server.persist.MemberRecord;
 
 import com.threerings.msoy.group.data.all.Group;
 import com.threerings.msoy.group.data.all.GroupMembership;
+import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.gwt.GroupCodes;
 import com.threerings.msoy.group.gwt.GroupExtras;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
@@ -119,6 +124,20 @@ public class GroupLogic
         }
     }
 
+    /**
+     * Resolves the {@link GroupCard#homeSnapshot} data for the supplied set of cards.
+     */
+    public void resolveSnapshots (Collection<GroupCard> cards)
+    {
+        Map<Integer, GroupCard> cmap = Maps.newHashMap();
+        for (GroupCard card : cards) {
+            cmap.put(card.homeSceneId, card);
+        }
+        for (SceneRecord srec : _sceneRepo.loadScenes(cmap.keySet())) {
+            cmap.get(srec.sceneId).homeSnapshot = srec.getSnapshot();
+        }
+    }
+
     protected static boolean isValidName (String name)
     {
         return Character.isLetter(name.charAt(0)) || Character.isDigit(name.charAt(0));
@@ -127,4 +146,5 @@ public class GroupLogic
     // our dependencies
     @Inject protected StatLogic _statLogic;
     @Inject protected GroupRepository _groupRepo;
+    @Inject protected MsoySceneRepository _sceneRepo;
 }
