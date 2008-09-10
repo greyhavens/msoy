@@ -889,16 +889,19 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
     }
 
-    public void incrementFavoriteCount (CatalogRecord record, int increment)
+    /**
+     * Increments the favorite count on the specified catalog record by the specified amount.
+     */
+    public void incrementFavoriteCount (int catalogId, int increment)
     {
         Map<String, SQLExpression> fieldsToValues = Maps.newHashMap();
         Arithmetic.Add add = new Arithmetic.Add(
             new ColumnExp(getCatalogClass(), CatalogRecord.FAVORITE_COUNT), increment);
         fieldsToValues.put(CatalogRecord.FAVORITE_COUNT, add);
 
-        if (updateLiteral(getCatalogClass(), record.catalogId, fieldsToValues) == 0) {
+        if (updateLiteral(getCatalogClass(), catalogId, fieldsToValues) == 0) {
             log.warning("Could not update favorite count on catalog record.",
-                        "catalogId", record.catalogId, "increment", increment);
+                        "catalogId", catalogId, "increment", increment);
         }
     }
 
