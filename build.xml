@@ -700,29 +700,6 @@
     <copy file="${deploy.dir}/tutorial.swf" todir="pages/media/static/game"/>
   </target>
 
-  <!-- builds the ActionScript documention -->
-  <target name="asdoc">
-    <mkdir dir="${deploy.dir}/asdoc"/>
-    <java classpath="${flexsdk.dir}/lib/asdoc.jar" classname="flex2.tools.ASDoc" fork="true">
-      <jvmarg value="-Xmx1024m"/>
-      <jvmarg value="-Dsun.io.useCanonCashes=false"/>
-      <jvmarg value="-Xbootclasspath/p:${flexsdk.dir}/asdoc/lib/xalan.jar"/>
-      <jvmarg value="-Dos.name=Windows"/>
-      <arg value="+flexlib=${flexsdk.dir}/frameworks"/>
-      <arg line="-library-path ${flexsdk.dir}/frameworks/libs"/>
-      <arg line="-library-path lib/corelib.swc"/>
-      <arg line="-library-path lib/flexlib.swc"/>
-      <arg line="-library-path ${deploy.dir}/ooo.swc"/>
-      <arg line="-doc-sources projects/flexlib/src"/>
-      <arg line="-templates-path ${flexsdk.dir}/asdoc/templates"/>
-      <arg line="-doc-sources projects/narya/src/as"/>
-      <arg line="-doc-sources projects/nenya/src/as"/>
-      <arg line="-doc-sources projects/vilya/src/as"/>
-      <arg line="-doc-sources src/as"/>
-      <arg line="-output ${deploy.dir}/asdoc"/>
-    </java>
-  </target>
-
   <!-- builds, runs Proguard on and signs a Java client -->
   <target name="proguard">
     <echo>Building ${ident} Java client...</echo>
@@ -959,6 +936,25 @@
 
   <!-- builds the javadoc documentation -->
   <target name="javadoc" depends="prepare,common-javadoc"/>
+
+  <!-- builds the ActionScript documention -->
+  <target name="asdoc">
+    <mkdir dir="${deploy.dir}/asdoc"/>
+    <java classpath="${flexsdk.dir}/lib/asdoc.jar" classname="flex2.tools.ASDoc" fork="true">
+      <jvmarg value="-Xmx1024m"/>
+      <jvmarg value="-Dsun.io.useCanonCashes=false"/>
+      <jvmarg value="-Xbootclasspath/p:${flexsdk.dir}/asdoc/lib/xalan.jar"/>
+      <jvmarg value="-Dos.name=Windows"/>
+      <arg value="+flexlib=${flexsdk.dir}/frameworks"/>
+      <arg line="-library-path ${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>
+      <arg line="-library-path ${deploy.dir}/lib/player-env-0.0-SNAPSHOT.swc"/>
+      <arg line="-library-path ${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
+      <arg line="-library-path ${deploy.dir}/lib/whirledlib-0.0-SNAPSHOT.swc"/>
+      <arg line="-templates-path ${flexsdk.dir}/asdoc/templates"/>
+      <arg line="-doc-sources ${asrc.dir}"/>
+      <arg line="-output ${deploy.dir}/asdoc"/>
+    </java>
+  </target>
 
   <!-- convenience targets that build specific projects and copy the results -->
   <target name="facebook">
