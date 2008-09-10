@@ -10,6 +10,9 @@ import com.threerings.presents.client.InvocationService_ConfirmListener;
 
 import com.threerings.msoy.client.MsoyContext;
 
+/**
+ * Reports service failure via a chat feedback message.
+ */
 public class ReportingListener
     implements InvocationService_ConfirmListener
 {
