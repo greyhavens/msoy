@@ -45,7 +45,6 @@ import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.notify.client.NotificationDisplay;
-import com.threerings.msoy.party.client.PartyPopup;
 
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.RoomStudioView;
@@ -152,18 +151,6 @@ public class WorldControlBar extends ControlBar
             return new FriendsListPanel(_wctx);
         }, _friendsBtn));
         _friendsBtn.styleName = "controlBarFriendButton";
-
-        // Not ready for consumption
-        if (_ctx.getTokens().isAdmin()) {
-            _partyBtn = new CommandButton();
-            _partyBtn.toolTip = Msgs.GENERAL.get("i.party");
-            _partyBtn.setCallback(FloatingPanel.createPopper(function () :FloatingPanel {
-                return new PartyPopup(_wctx);
-            }, _partyBtn));
-            _partyBtn.styleName = "controlBarPartyButton";
-            _partyBtn.enabled = true;
-            _partyBtn.focusEnabled = false;
-        }
     }
 
     // from ControlBar
@@ -296,8 +283,6 @@ public class WorldControlBar extends ControlBar
 
     /** A button for popping up the friends list. */
     protected var _friendsBtn :CommandButton;
-
-    protected var _partyBtn :CommandButton;
 
     /** The little gray area that displays incoming notifications. */
     protected var _notificationDisplay :NotificationDisplay;

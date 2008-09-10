@@ -180,8 +180,6 @@ public class ControlBar extends HBox
         _volBtn.setCommand(MsoyController.POP_VOLUME, _volBtn);
         _volBtn.styleName = "controlBarButtonVolume";
 
-        //_partyBtn = new CommandCheckBox("Party", handleJoinLeaveParty);
-
         _fullBtn = new CommandButton();
         _fullBtn.styleName = "controlBarButtonFull";
         _fullBtn.toolTip = "FullScreen: dev only"; //Msgs.GENERAL.get("i.full");
@@ -221,15 +219,6 @@ public class ControlBar extends HBox
         updateUI();
     }
 
-//    protected function handleJoinLeaveParty (state :Boolean) :void
-//    {
-//        if (state) {
-//            _ctx.getPartyDirector().joinParty();
-//        } else {
-//            _ctx.getPartyDirector().leaveParty();
-//        }
-//    }
-
     protected function setupControls () :void
     {
         removeAllChildren();
@@ -263,8 +252,6 @@ public class ControlBar extends HBox
         addButton(_instructBtn, [ UI_GAME ]);
         addButton(_shareBtn, [ UI_BASE, UI_ROOM, UI_GAME ]);
         addButton(_commentBtn, [ UI_ROOM, UI_GAME ]);
-
-        //addButton(_partyBtn, [ UI_ROOM, UI_GAME, UI_VIEWER ]);
     }
 
     /**
@@ -352,8 +339,6 @@ public class ControlBar extends HBox
 
     /** Our clientside context. */
     protected var _ctx :MsoyContext;
-
-    //protected var _partyBtn :CommandCheckBox;
 
     /** Are we currently configured to show the controls for a member? */
     protected var _isMember :Boolean;
