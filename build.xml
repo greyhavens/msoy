@@ -1341,8 +1341,8 @@
     </move>
   </target>
 
-  <!-- builds our javadocs and packages them up -->
-  <target name="package-docs" depends="distall,javadoc,asdoc,prepare-package">
+  <!-- builds our javadocs and packages them up (TODO: enable asdoc) -->
+  <target name="package-docs" depends="distall,javadoc,prepare-package">
     <property name="pkgroot.docs" value="${pkgroot.root}/msoy-docs"/>
     <property name="approot.docs" value="${pkgroot.docs}/${ooo.docs.prefix}"/>
 
@@ -1351,9 +1351,10 @@
     <copy todir="${approot.docs}/msoy">
       <fileset dir="${deploy.dir}/docs"/>
     </copy>
+    <!-- TODO: enable this when asdoc is not fucked
     <copy todir="${approot.docs}/msoy-as">
       <fileset dir="${deploy.dir}/asdocs"/>
-    </copy>
+    </copy> -->
 
     <!-- Set up a version number to use for docs package. -->
     <tstamp><format property="docsVersion" pattern="yyyyMMddHHmmss"/></tstamp>
