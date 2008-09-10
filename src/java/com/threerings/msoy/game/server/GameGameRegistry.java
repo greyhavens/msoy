@@ -394,7 +394,19 @@ public class GameGameRegistry
 //                delegates.add(new AwardDelegate(_content));
                 delegates.add(new TrophyDelegate(_content));
                 delegates.add(new QuestDelegate(_content));
-                delegates.add(new AgentTraceDelegate(gameId));
+
+                int minLogInterval, maxLogInterval;
+                if (Game.isDevelopmentVersion(gameId)) {
+                    // write dev logs at least every two minutes but at most one per minute
+                    minLogInterval = 1;
+                    maxLogInterval = 2;
+                } else {
+                    // write listed logs at least every 2 hours, but at most one per 20 minutes
+                    minLogInterval = 20;
+                    maxLogInterval = 120;
+                }
+
+                delegates.add(new AgentTraceDelegate(gameId, minLogInterval, maxLogInterval));
 
                 final Map<String, byte[]> initialState = new HashMap<String, byte[]>();
                 for (GameStateRecord record : _recs) {
