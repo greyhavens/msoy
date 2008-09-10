@@ -9,6 +9,9 @@ import com.threerings.crowd.chat.data.ChatMessage;
 
 import com.threerings.util.Log;
 
+/**
+ * Maintains chat history.
+ */
 public class HistoryList
     implements ChatDisplay
 {

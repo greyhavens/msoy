@@ -44,6 +44,9 @@ import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
 
+/**
+ * Coordinates the client side of AVRG business.
+ */
 public class AVRGameController extends PlaceController
 {
     public static const log :Log = Log.getLog(AVRGameController);

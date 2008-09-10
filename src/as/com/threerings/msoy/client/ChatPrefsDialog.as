@@ -25,6 +25,9 @@ import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
+/**
+ * Displays chat preferences.
+ */
 public class ChatPrefsDialog extends FloatingPanel
 {
     public function ChatPrefsDialog (ctx :MsoyContext)

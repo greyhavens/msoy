@@ -52,6 +52,9 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.game.client.GameChatDirector;
 
+/**
+ * Displays our chat tabs.
+ */
 public class ChatTabBar extends HBox
     implements ChatDisplay, SetListener
 {

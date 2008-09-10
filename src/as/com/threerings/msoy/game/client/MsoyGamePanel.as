@@ -40,6 +40,9 @@ import com.threerings.msoy.game.data.MsoyGameConfig;
 
 import com.threerings.msoy.item.data.all.Game;
 
+/**
+ * Coordinates the view for MSOY games.
+ */
 public class MsoyGamePanel extends WhirledGamePanel
     implements MsoyPlaceView
 {
