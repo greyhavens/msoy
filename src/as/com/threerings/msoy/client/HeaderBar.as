@@ -46,6 +46,7 @@ import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.chat.client.ChatTabBar;
 
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.world.client.WorldController;
 
@@ -212,7 +213,7 @@ public class HeaderBar extends HBox
         const cliObj :MemberObject = _ctx.getClient().getClientObject() as MemberObject;
         if (cliObj != null) {
             cliObj.addListener(new AttributeChangeAdapter(clientAttrChanged));
-            _coinLabel.text = String(cliObj.flow);
+            _coinLabel.text = Currency.COINS.format(cliObj.flow);
         }
     }
 
@@ -222,7 +223,7 @@ public class HeaderBar extends HBox
     protected function clientAttrChanged (event :AttributeChangedEvent) :void
     {
         if (event.getName() == MemberObject.FLOW) {
-            _coinLabel.text = String(event.getValue());
+            _coinLabel.text = Currency.COINS.format(int(event.getValue()));
         }
     }
 
