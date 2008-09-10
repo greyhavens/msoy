@@ -25,13 +25,8 @@ public class PriceQuote extends SimpleStreamableObject
     }
 
     /**
-     * Does the "buy" amount from the client work?
+     * Get the currency with which this item was listed.
      */
-    public boolean isSatisfied (Currency buyCurrency, int buyAmount)
-    {
-        return (buyAmount >= getAmount(buyCurrency));
-    }
-
     public Currency getListedCurrency ()
     {
         return _listedCurrency;
@@ -45,6 +40,9 @@ public class PriceQuote extends SimpleStreamableObject
         return getAmount(_listedCurrency);
     }
 
+    /**
+     * Get the amount of this quote in the specified currency.
+     */
     public int getAmount (Currency currency)
     {
         return (currency == Currency.BARS) ? _bars : _coins;
@@ -63,8 +61,7 @@ public class PriceQuote extends SimpleStreamableObject
     /**
      * Retrieve the amount of change, in coins, when bar-buying a coin-listed item.
      * If the listedType is BARS, this will always be 0.
-     * Currently, Three Rings eats this change, nom nom nom, but we could conceiveably
-     * pay it out to the user.
+     * Currently, Three Rings eats this change, nom nom nom.
      */
     public int getCoinChange ()
     {
@@ -81,5 +78,5 @@ public class PriceQuote extends SimpleStreamableObject
     protected final Currency _listedCurrency;
     protected final int _coins;
     protected final int _bars;
-    protected final int _coinChange;
+    protected final transient int _coinChange; // we don't stream this to the client
 }

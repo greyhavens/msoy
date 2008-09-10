@@ -158,7 +158,7 @@ public class MoneyLogic
      * @param listedCurrency the currency at which the item is listed.
      * @param listedAmount the amount at which the item is listed.
      * @param buyType the currency the buyer is using
-     * @param buyAmount the amount the buyer has validated to purchase the item.
+     * @param authedAmount the amount the buyer has validated to purchase the item.
      * @param isSupport is the buyer a member of the support staff?
      * @throws NotSecuredException iff there is no secured price for the item and the authorized
      * buy amount is not enough money.
@@ -166,7 +166,7 @@ public class MoneyLogic
     @Retry(exception=StaleDataException.class)
     public MoneyResult buyItem (
         final MemberRecord buyerRec, CatalogIdent item, Currency listedCurrency, int listedAmount,
-        Currency buyCurrency, int buyAmount)
+        Currency buyCurrency, int authedAmount)
         throws NotEnoughMoneyException, NotSecuredException
     {
         Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
@@ -182,16 +182,19 @@ public class MoneyLogic
         if (escrow == null) {
             // TODO: 
             // What we need to do here is also have the sellerId, affiliateId, and description..
-            // so that we can secure a price. If the buyAmount is at least the priceQuote,
+            // so that we can secure a price. If the authedAmount is at least the priceQuote,
             // we can go ahead and process the purchase here. Otherwise we need to throw
             // the exception with the new PriceQuote inside it! Why not! Do the fucking thing
             // that will need to be done anyway!
             throw new NotSecuredException(buyerId, item);
         }
         final PriceQuote quote = escrow.getQuote();
+        int buyCost = quote.getAmount(buyCurrency);
 
-        // check to see if they submitted a valid buyAmount
-        if (!quote.isSatisfied(buyCurrency, buyAmount)) {
+        // check to see if they submitted a valid authedAmount
+        // (We do this regardless of whether they're support+, because they should always
+        // see the actual cost)
+        if (buyCost > authedAmount) {
             // TODO: see TODO note above, only here we actually have a quote already secured
             // (And we should either get a new quote, or just leave the one in the cache,
             // but it would be an exploit to extend the lifetime of the quote)
@@ -199,14 +202,25 @@ public class MoneyLogic
             // make it's way to the client. Just like the note above...
             throw new NotSecuredException(buyerId, item);
         }
+        // Note that from here on, we're going to use the buyCost, which *could* be lower
+        // than what the user authorized. Good for them.
 
         // Get buyer account...
-        final MemberAccountRecord buyer = _repo.getAccountById(buyerId);
-        int hasAmount = (buyer == null) ? 0 : buyer.getAmount(buyCurrency);
-        // if support+ cannot afford the item, we let them have it for free.
-        boolean magicFreeItem = ((buyer != null) && buyerRec.isSupport() && (buyAmount > hasAmount));
-        if (!magicFreeItem && (buyer == null || !buyer.canAfford(buyCurrency, buyAmount))) {
-            throw new NotEnoughMoneyException(buyerId, buyCurrency, buyAmount, hasAmount);
+        MemberAccountRecord buyer = _repo.getAccountById(buyerId);
+        if (buyer == null) {
+            buyer = new MemberAccountRecord(buyerId);
+        }
+
+        // see if the user can afford it, or if we'll let them have it for free (support+)
+        boolean magicFreeItem;
+        if (buyCost > buyer.getAmount(buyCurrency)) {
+            magicFreeItem = buyerRec.isSupport();
+            if (!magicFreeItem) {
+                throw new NotEnoughMoneyException(
+                    buyerId, buyCurrency, buyCost, buyer.getAmount(buyCurrency));
+            }
+        } else {
+            magicFreeItem = false;
         }
 
         // If the creator is buying their own item, don't give them a payback, and deduct the amount
@@ -251,7 +265,7 @@ public class MoneyLogic
 
         // add a transaction for the buyer
         MoneyTransactionRecord buyerTrans = buyer.buyItem(
-            buyCurrency, magicFreeItem ? 0 : buyAmount,
+            buyCurrency, magicFreeItem ? 0 : buyCost,
             MessageBundle.tcompose(magicFreeItem ? "m.item_magicfree" : "m.item_bought",
                 escrow.getDescription(), item.type, item.catalogId),
             item);
@@ -269,8 +283,7 @@ public class MoneyLogic
 
         } else {
             creatorTrans = creator.payout(
-                TransactionType.CREATOR_PAYOUT, RuntimeConfig.server.creatorPercentage,
-                quote.getListedCurrency(), buyCurrency, buyAmount,
+                TransactionType.CREATOR_PAYOUT, RuntimeConfig.server.creatorPercentage, quote,
                 MessageBundle.tcompose("m.item_sold",
                     escrow.getDescription(), item.type, item.catalogId),
                 item, buyerTrans.id);
@@ -289,8 +302,7 @@ public class MoneyLogic
 
         } else {
             affiliateTrans = affiliate.payout(
-                TransactionType.AFFILIATE_PAYOUT, RuntimeConfig.server.affiliatePercentage,
-                quote.getListedCurrency(), buyCurrency, buyAmount,
+                TransactionType.AFFILIATE_PAYOUT, RuntimeConfig.server.affiliatePercentage, quote,
                 MessageBundle.tcompose("m.itemAffiliate",
                     escrow.getDescription(), item.type, item.catalogId),
                 item, buyerTrans.id);
@@ -316,7 +328,7 @@ public class MoneyLogic
         _escrowCache.removeEscrow(key);
         // Inform the exchange that we've actually made the exchange
         if (!magicFreeItem) {
-            MoneyExchange.processPurchase(quote, buyCurrency, buyAmount);
+            MoneyExchange.processPurchase(quote, buyCurrency);
         }
 
         return new MoneyResult(buyer.getMemberMoney(),

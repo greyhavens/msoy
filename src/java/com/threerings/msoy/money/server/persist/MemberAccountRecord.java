@@ -21,6 +21,7 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
 
 /**
@@ -166,17 +167,17 @@ public class MemberAccountRecord extends PersistentRecord
         }
     }
 
-    /**
-     * Returns true if the account can afford spending the amount of currency indicated.
-     * 
-     * @param currency Currency to spend, either BARS or COINS.
-     * @param amount Amount to spend.
-     * @return True if the account can afford it, false otherwise.
-     */
-    public boolean canAfford (Currency currency, int amount)
-    {
-        return getAmount(currency) >= amount;
-    }
+//    /**
+//     * Returns true if the account can afford spending the amount of currency indicated.
+//     * 
+//     * @param currency Currency to spend, either BARS or COINS.
+//     * @param amount Amount to spend.
+//     * @return True if the account can afford it, false otherwise.
+//     */
+//    public boolean canAfford (Currency currency, int amount)
+//    {
+//        return getAmount(currency) >= amount;
+//    }
 
     /**
      * Called when someone makes money in such a way that we track all the money they ever
@@ -270,50 +271,26 @@ public class MemberAccountRecord extends PersistentRecord
      * Pays the creator of an item purchased a certain percentage of the amount for the item.
      * 
      * @param type either TransactionType.CREATOR_PAYOUT or TransactionType.AFFILIATE_PAYOUT
-     * @param amount Amount the item was worth.
-     * @param listingType Money type the item was listed with.
      * @param description Description of the item purchased.
      * @param item Item that was purchased.
      * @return History record for the transaction.
      */
     public MoneyTransactionRecord payout (
-        TransactionType type, float percentage,
-        Currency listCurrency, Currency buyCurrency, int buyAmount,
+        TransactionType type, float percentage, PriceQuote quote,
         String description, CatalogIdent item, int referenceTxId)
     {
-        int payAmount;
-        if (listCurrency == buyCurrency) {
-            payAmount = buyAmount;
-
-        } else {
-            // TODO: we need to convert this correctly, using the exchange rate, because
-            // the buyAmount could have been adjusted since the PriceQuote was retrieved.
-            // We may want to handle this back up in MoneyLogic...
-            switch (listCurrency) {
-            case COINS:
-                payAmount = 1000 * buyAmount; // like I said, TODO
-                break;
-
-            case BARS:
-                payAmount = buyAmount / 1000; // like I said, TODO
-                break;
-
-            default:
-                throw new RuntimeException();
-            }
-        }
-
         Currency payoutCurrency;
         int payoutAmount;
-        switch (listCurrency) {
+        switch (quote.getListedCurrency()) {
         case COINS:
             payoutCurrency = Currency.COINS;
-            payoutAmount = (int) Math.floor(payAmount * percentage);
+            payoutAmount = (int) Math.floor(quote.getCoins() * percentage);
             break;
 
         case BARS:
             payoutCurrency = Currency.BLING;
-            payoutAmount = (int) Math.floor(payAmount * 100 * percentage); // it's really centibling 
+            // bars == bling, but we actually track "centibling"...
+            payoutAmount = (int) Math.floor(quote.getBars() * 100 * percentage);
             break;
 
         default:

@@ -41,8 +41,7 @@ public class MoneyExchange
     /**
      * The specified sale has completed, factor it into the exchange rate.
      */
-    public static void processPurchase (
-        PriceQuote quote, Currency purchaseCurrency, int actualPurchaseAmount)
+    public static void processPurchase (PriceQuote quote, Currency purchaseCurrency)
     {
         // TEMPorary implementation
         if (purchaseCurrency != quote.getListedCurrency()) {
