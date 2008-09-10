@@ -897,7 +897,8 @@ public class AwardDelegate extends RatingDelegate
     /** Returns whether or not a {@link Player} is a guest. */
     protected static final Predicate<Player> IS_GUEST = new Predicate<Player>() {
         public boolean apply (Player player) {
-            return player.name.isGuest();
+            // if we couldn't look up your name, alas we must treat you as a guest
+            return (player.name == null) || player.name.isGuest();
         }
     };
 
