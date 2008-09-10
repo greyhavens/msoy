@@ -104,7 +104,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
                 }
                 if (trophy.whenEarned != null) {
                     Date date = new Date(trophy.whenEarned.longValue());
-                    setText(2, 0, _msgs.gameTrophyEarnedOn(MsoyUI.formatDate(date)));
+                    setText(2, 0, _msgs.gameTrophyEarnedOn(MsoyUI.formatDate(date, false)));
                     getFlexCellFormatter().setStyleName(2, 0, "Earned");
                 }
             }
