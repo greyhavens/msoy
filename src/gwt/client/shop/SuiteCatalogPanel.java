@@ -49,7 +49,6 @@ public class SuiteCatalogPanel extends SmartTable
                 return CShop.msgs.catalogNoList(name);
             }
         };
-        // TODO add a snappy blurb for level and item packs
         _listings.setWidget(0, 0, WidgetUtil.makeShim(10, 10));
         _listings.setWidget(1, 0, _items, 2, null);
         _listings.getFlexCellFormatter().setHeight(1, 0, "100%");
