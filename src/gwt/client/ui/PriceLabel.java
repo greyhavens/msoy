@@ -24,19 +24,12 @@ public class PriceLabel extends FlowPanel
         updatePrice(currency, cost);
     }
 
-    public static Image createIcon (Currency currency)
-    {
-        // TODO: Handle bling?
-        String path = "/images/ui/" + (currency == Currency.COINS ? "coins.png" : "gold.png");
-        return MsoyUI.createInlineImage(path);
-    }
-
     public void updatePrice (Currency currency, int cost)
     {
         clear();
 
         add(new InlineLabel(_cmsgs.price(), false, false, true));
-        add(createIcon(currency));
+        add(MsoyUI.createInlineImage(currency.getSmallIcon()));
         add(new InlineLabel(currency.format(cost), false, false, true));
     }
 

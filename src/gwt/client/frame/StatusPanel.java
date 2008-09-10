@@ -16,9 +16,12 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
+
+import com.threerings.msoy.money.data.all.Currency;
 
 import client.shell.CShell;
 import client.shell.Pages;
@@ -57,16 +60,20 @@ public class StatusPanel extends SmartTable
                     break;
 
                 case StatusChangeEvent.FLOW:
-                    _levels.setFlow(event.getValue());
+                    _levels.setCoins(event.getValue());
                     // if we earned flow, display some fancy graphics
                     if (isIncrease(event)) {
-                        _levels.showEarnedFlowPopup();
+                        _levels.showEarnedCoinsPopup();
                     }
                     break;
 
                 case StatusChangeEvent.GOLD:
-                    _levels.setGold(event.getValue());
+                    _levels.setBars(event.getValue());
                     break;
+
+//                case StatusChangeEvent.BLING:
+//                    _levels.setBling(event.getValue());
+//                    break;
 
                 case StatusChangeEvent.MAIL:
                     _mail.setCount(event.getValue());
@@ -134,9 +141,9 @@ public class StatusPanel extends SmartTable
         return (oldLevel != 0 && oldLevel < event.getValue());
     }
 
-    protected static Image makeSymbol (String type, String tip)
+    protected static Image makeImage (String path, String tip)
     {
-        Image image = new Image("/images/header/symbol_" + type + ".png");
+        Image image = new Image(path);
         image.setTitle(tip);
         return image;
     }
@@ -177,16 +184,25 @@ public class StatusPanel extends SmartTable
 
             int idx = 0;
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            setWidget(0, idx++, makeSymbol("coins", _cmsgs.coinsTip()), 1, "Icon");
-            setText(0, _flowIdx = idx++, "0");
+            setWidget(0, idx++, makeImage(Currency.COINS.getLargeIcon(), _cmsgs.coinsTip()),
+                1, "Icon");
+            setText(0, _coinsIdx = idx++, "0");
 
-            // TODO: display once we've implemented gold!
-//             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-//             setWidget(0, idx++, makeSymbol("gold", _cmsgs.goldTip()), 1, "Icon");
-//             setText(0, _goldIdx = idx++, "0");
+            if (DeploymentConfig.barsEnabled) {
+                getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
+                setWidget(0, idx++, makeImage(Currency.BARS.getLargeIcon(), _cmsgs.barsTip()),
+                    1, "Icon");
+                setText(0, _barsIdx = idx++, "0");
+
+                getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
+                setWidget(0, idx++, makeImage(Currency.BLING.getLargeIcon(), _cmsgs.blingTip()),
+                    1, "Icon");
+                setText(0, _blingIdx = idx++, "0");
+            }
 
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            setWidget(0, idx++, makeSymbol("level", _cmsgs.levelTip()), 1, "Icon");
+            setWidget(0, idx++, makeImage("/images/header/symbol_level.png", _cmsgs.levelTip()),
+                1, "Icon");
             setText(0, _levelIdx = idx++, "0");
 
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
@@ -196,20 +212,28 @@ public class StatusPanel extends SmartTable
             setText(0, _levelIdx, String.valueOf(level));
         }
 
-        public void setFlow (int flow) {
-            setText(0, _flowIdx, String.valueOf(flow));
+        public void setCoins (int coins) {
+            setText(0, _coinsIdx, Currency.COINS.format(coins));
         }
 
-        public void setGold (int gold) {
-            //setText(0, _goldIdx, String.valueOf(gold));
+        public void setBars (int bars) {
+            if (DeploymentConfig.barsEnabled) {
+                setText(0, _barsIdx, Currency.BARS.format(bars));
+            }
+        }
+
+        public void setBling (int bling) {
+            if (DeploymentConfig.barsEnabled) {
+                setText(0, _blingIdx, Currency.BLING.format(bling));
+            }
         }
 
         public void showLevelUpPopup () {
             showPopup("/media/static/levelbling.swf", _levelIdx);
         }
 
-        public void showEarnedFlowPopup () {
-            showPopup("/media/static/levelbling.swf", _flowIdx);
+        public void showEarnedCoinsPopup () {
+            showPopup("/media/static/levelbling.swf", _coinsIdx);
         }
 
         protected void showPopup (String path, int idx) {
@@ -220,7 +244,7 @@ public class StatusPanel extends SmartTable
             bling.show();
         }
 
-        protected int _flowIdx, _goldIdx, _levelIdx;
+        protected int _coinsIdx, _barsIdx, _blingIdx, _levelIdx;
     }
 
     protected WebCreds _creds;
