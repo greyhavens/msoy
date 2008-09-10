@@ -62,8 +62,16 @@ public enum Currency
             postfix = "." + (cents / 10) + (cents % 10); // always print two decimal places
         }
 
-        // TODO: this next part will change, because we want commas
-        return String.valueOf(value) + postfix;
+        // put commas in, superhackystyle
+        String s = String.valueOf(value);
+        int length = s.length();
+        while (length > 3) {
+            length -= 3;
+            postfix = "," + s.substring(length) + postfix;
+            s = s.substring(0, length);
+        }
+
+        return s + postfix;
     }
 
     /**
