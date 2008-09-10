@@ -37,7 +37,7 @@ public class PriceLabel extends FlowPanel
 
         add(new InlineLabel(_cmsgs.price(), false, false, true));
         add(createIcon(currency));
-        add(new InlineLabel(""+cost, false, false, true));
+        add(new InlineLabel(currency.format(cost), false, false, true));
     }
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
