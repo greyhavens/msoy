@@ -1066,7 +1066,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                 getItemColumn(ItemRecord.RATING), minRating));
         }
 
-        if (suiteId > 0 && isSubItem()) {
+        if (suiteId != 0 && isSubItem()) {
             whereBits.add(new Equals(getItemColumn(SubItemRecord.SUITE_ID), suiteId));
         }
 
