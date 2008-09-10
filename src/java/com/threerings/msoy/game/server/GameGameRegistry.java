@@ -387,6 +387,8 @@ public class GameGameRegistry
 
                 }
 
+                log.info("Setting up AVRG manager", "game", _content.game);
+                
                 List<PlaceManagerDelegate> delegates = Lists.newArrayList();
                 // TODO: Move AVRG event logging out of QuestDelegate and maybe into this one?
 //                delegates.add(new EventLoggingDelegate(_content));
