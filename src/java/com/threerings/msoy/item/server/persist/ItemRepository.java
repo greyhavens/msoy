@@ -350,6 +350,16 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Returns the count of clones of the specified prototype item.
+     */
+    public int loadCloneRecordCount (int itemId)
+    {
+        return load(CountRecord.class,
+                    new FromOverride(getCloneClass()),
+                    new Where(getCloneColumn(CloneRecord.ORIGINAL_ITEM_ID), itemId)).count;
+    }
+
+    /**
      * Loads all the raw clone records associated with a given original item id. This is
      * potentially a very large dataset.
      */
@@ -738,6 +748,13 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (listing.originalItemId != 0) {
             noteListing(listing.originalItemId, 0);
         }
+        // if there are no clones of the prototype record, delete it as well
+        if (loadCloneRecordCount(listing.listedItemId) == 0) {
+            deleteItem(listing.listedItemId);
+        } else  {
+            // otherwise disassociate it from the catalog record as that is about to go away
+            noteListing(listing.listedItemId, 0);
+        }
         return delete(getCatalogClass(), listing.catalogId) > 0;
     }
 
@@ -909,9 +926,9 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Notes that the specified original item is now associated with the specified catalog listed
      * item (which may be zero to clear out a listing link).
      */
-    protected void noteListing (int originalItemId, int catalogId)
+    protected void noteListing (int itemId, int catalogId)
     {
-        updatePartial(getItemClass(), originalItemId, ItemRecord.CATALOG_ID, catalogId);
+        updatePartial(getItemClass(), itemId, ItemRecord.CATALOG_ID, catalogId);
     }
 
     /**
