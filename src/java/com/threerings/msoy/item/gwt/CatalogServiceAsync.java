@@ -6,9 +6,11 @@ package com.threerings.msoy.item.gwt;
 import java.util.Map;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.gwt.CatalogService;
+import com.threerings.msoy.money.data.all.Currency;
+
 /**
  * The asynchronous (client-side) version of {@link CatalogService}.
  */
@@ -35,7 +37,7 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#listItem}
      */
     public void listItem (ItemIdent item, String descrip, int pricing, int salesTarget,
-                          int flowCost, int goldCost, AsyncCallback<Integer> callback);
+                          Currency currency, int cost, AsyncCallback<Integer> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadListing}
@@ -51,7 +53,7 @@ public interface CatalogServiceAsync
      * The asynchronous version of {@link CatalogService#updatePricing}
      */
     public void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
-                               int flowCost, int goldCost, AsyncCallback<Void> callback);
+                               Currency currency, int cost, AsyncCallback<Void> callback);
 
     /**
      * Removes the specified catalog listing.

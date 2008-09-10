@@ -14,6 +14,7 @@ import com.threerings.msoy.web.data.ServiceException;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.money.data.all.Currency;
 
 /**
  * Provides digital items related services.
@@ -81,7 +82,7 @@ public interface CatalogService extends RemoteService
      * @return the catalog id of the newly listed item.
      */
     int listItem (ItemIdent item, String descrip, int pricing, int salesTarget,
-                  int flowCost, int goldCost)
+                  Currency currency, int cost)
         throws ServiceException;
 
     /**
@@ -100,7 +101,7 @@ public interface CatalogService extends RemoteService
      * Updates the specified catalog listing's price.
      */
     void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
-                        int flowCost, int goldCost)
+                        Currency currency, int cost)
         throws ServiceException;
 
     /**

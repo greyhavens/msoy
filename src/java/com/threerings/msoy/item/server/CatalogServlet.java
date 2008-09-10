@@ -223,7 +223,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // from interface CatalogService
     public int listItem (final ItemIdent item, final String descrip, final int pricing,
-        int salesTarget, final int flowCost, final int barsCost)
+        int salesTarget, final Currency currency, final int cost)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -287,8 +287,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // create & insert the catalog record
         final CatalogRecord record = repo.insertListing(
-            // TODO: Bar me
-            listItem, originalItemId, pricing, salesTarget, Currency.COINS, flowCost, now);
+            listItem, originalItemId, pricing, salesTarget, currency, cost, now);
 
         // record the listing action and charge the flow
         final UserActionDetails info = new UserActionDetails(
@@ -320,8 +319,9 @@ public class CatalogServlet extends MsoyServiceServlet
         _itemLogic.itemUpdated(null, listItem);
 
         // note in the event log that an item was listed
+        // TODO: Bar me
         _eventLog.itemListedInCatalog(listItem.creatorId, listItem.getType(), listItem.itemId,
-                                      flowCost, barsCost, pricing, salesTarget);
+                                      cost, 0, pricing, salesTarget);
 
         return record.catalogId;
     }
@@ -419,7 +419,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
     // from interface CatalogService
     public void updatePricing (final byte itemType, final int catalogId, final int pricing,
-        int salesTarget, final int flowCost, final int barsCost)
+        int salesTarget, final Currency currency, final int cost)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -449,8 +449,7 @@ public class CatalogServlet extends MsoyServiceServlet
         salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
 
         // now we can update the record
-        // TODO: Bar me
-        repo.updatePricing(catalogId, pricing, salesTarget, Currency.COINS, flowCost,
+        repo.updatePricing(catalogId, pricing, salesTarget, currency, cost,
                            System.currentTimeMillis());
 
         // record the update action

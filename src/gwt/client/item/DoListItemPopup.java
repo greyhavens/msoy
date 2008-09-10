@@ -19,6 +19,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
@@ -156,8 +157,9 @@ public class DoListItemPopup extends VerticalPanel
             final String resultMsg = firstTime ? _imsgs.doListListed() : _imsgs.doListUpdated();
             new ClickCallback<Integer>(_doIt) {
                 public boolean callService () {
+                    // TODO: Bar me
                     _catalogsvc.listItem(_item.getIdent(), _description.getText(), getPricing(),
-                                         getSalesTarget(), getFlowCost(), getGoldCost(), this);
+                                         getSalesTarget(), Currency.COINS, getFlowCost(), this);
                     return true;
                 }
                 public boolean gotResult (Integer result) {
@@ -178,8 +180,9 @@ public class DoListItemPopup extends VerticalPanel
                         MsoyUI.error(_imsgs.doListHitLimit(""+listing.purchases));
                         return false;
                     }
+                    // TODO: Bar me
                     _catalogsvc.updatePricing(_item.getType(), _item.catalogId, pricing,
-                                              salesTarget, getFlowCost(), getGoldCost(), this);
+                                              salesTarget, Currency.COINS, getFlowCost(), this);
                     return true;
                 }
                 public boolean gotResult (Void result) {

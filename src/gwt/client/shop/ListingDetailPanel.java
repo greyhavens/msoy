@@ -78,7 +78,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 } else {
                     // TODO: Bar me
                     _catalogsvc.purchaseItem(_item.getType(), _listing.catalogId,
-                                             _listing.cost, 666, this);
+                                             _listing.cost, 0, this);
                 }
                 return true;
             }
