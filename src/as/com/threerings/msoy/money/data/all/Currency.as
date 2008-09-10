@@ -5,6 +5,8 @@ package com.threerings.msoy.money.data.all {
 
 import com.threerings.util.Enum;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
+
 public final class Currency extends Enum
 {
     /** Coins are awarded from actions in Whirled and can be used to purchase some items. */
@@ -27,6 +29,14 @@ public final class Currency extends Enum
     public function Currency (name :String)
     {
         super(name);
+    }
+
+    /**
+     * Get the complete URL for the small icon for this currency.
+     */
+    public function getSmallIcon () :String
+    {
+        return DeploymentConfig.serverURL + "rsrc/" + toString().toLowerCase() + "_small.png";
     }
 
     /**

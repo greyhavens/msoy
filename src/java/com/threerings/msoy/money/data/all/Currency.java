@@ -49,6 +49,22 @@ public enum Currency
     }
 
     /**
+     * Get the small icon for this currency, WITH a leading /.
+     */
+    public String getSmallIcon ()
+    {
+        return "/images/ui/" + toString().toLowerCase() + "_small.png";
+    }
+
+    /**
+     * Get the large icon for this currency, WITH a leading /.
+     */
+    public String getLargeIcon ()
+    {
+        return "/images/ui/" + toString().toLowerCase() + "_large.png";
+    }
+
+    /**
      * Format a currency value.
      */
     public String format (int value)
