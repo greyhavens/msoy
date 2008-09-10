@@ -5,7 +5,7 @@ package com.threerings.msoy.money.data.all {
 
 import com.threerings.util.Enum;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.client.DeploymentConfig;
 
 public final class Currency extends Enum
 {
