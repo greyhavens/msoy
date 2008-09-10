@@ -328,7 +328,7 @@ public class MoneyLogic
         _escrowCache.removeEscrow(key);
         // Inform the exchange that we've actually made the exchange
         if (!magicFreeItem) {
-            MoneyExchange.processPurchase(quote, buyCurrency);
+            _exchange.processPurchase(quote, buyCurrency);
         }
 
         return new MoneyResult(buyer.getMemberMoney(),
@@ -468,7 +468,7 @@ public class MoneyLogic
         Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
         Preconditions.checkArgument(listedAmount >= 0, "listedAmount is invalid: %d", listedAmount);
 
-        final PriceQuote quote = MoneyExchange.secureQuote(listedCurrency, listedAmount);
+        final PriceQuote quote = _exchange.secureQuote(listedCurrency, listedAmount);
         final PriceKey key = new PriceKey(buyerId, item);
         final Escrow escrow = new Escrow(sellerId, affiliateId, description, quote);
         _escrowCache.addEscrow(key, escrow);
@@ -539,6 +539,8 @@ public class MoneyLogic
         }
         return logUserAction(memberId, otherMemberId, userAction, description, item);
     }
+
+    @Inject protected MoneyExchange _exchange;
 
     protected final MoneyTransactionExpirer _expirer;
     protected final MsoyEventLogger _eventLog;

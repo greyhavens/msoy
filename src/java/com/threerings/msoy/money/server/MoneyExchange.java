@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.money.server;
 
+import com.google.inject.Singleton;
+
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
@@ -11,12 +13,13 @@ import com.threerings.msoy.money.data.all.PriceQuote;
  */
 // TODO: this is mostly placeholder, the final service may look different.
 //
+@Singleton
 public class MoneyExchange
 {
     /**
      * Secure a price quote based on the current exchange rate.
      */
-    public static PriceQuote secureQuote (Currency listedCurrency, int amount)
+    public PriceQuote secureQuote (Currency listedCurrency, int amount)
     {
         int exRate = (int) Math.ceil(_exchangeRate);
         switch (listedCurrency) {
@@ -41,7 +44,7 @@ public class MoneyExchange
     /**
      * The specified sale has completed, factor it into the exchange rate.
      */
-    public static void processPurchase (PriceQuote quote, Currency purchaseCurrency)
+    public void processPurchase (PriceQuote quote, Currency purchaseCurrency)
     {
         // TEMPorary implementation
         if (purchaseCurrency != quote.getListedCurrency()) {
@@ -54,12 +57,12 @@ public class MoneyExchange
      * Get the current exchange rate, in terms of how many coins 1 bar is worth.
      */
     // depending on our implementation, maybe we end up exposing this..
-    protected static float getExchangeRate ()
+    protected float getExchangeRate ()
     {
         // TEMPorary implementation
         return _exchangeRate;
     }
 
     // TEMPorary implmentation: the number of coins in each bar
-    protected static float _exchangeRate = 1000;
+    protected float _exchangeRate = 1000;
 }
