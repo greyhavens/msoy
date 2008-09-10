@@ -38,8 +38,8 @@ import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
-import com.threerings.msoy.game.data.MsoyGameMarshaller;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.data.WorldGameMarshaller;
 
 /**
  * A director that manages game related bits.
@@ -55,7 +55,7 @@ public class GameDirector extends BasicDirector
 
         // let the compiler know that these must be compiled into the client
         var c :Class = MsoyGameDefinition;
-        c = MsoyGameMarshaller;
+        c = WorldGameMarshaller;
     }
 
     /**

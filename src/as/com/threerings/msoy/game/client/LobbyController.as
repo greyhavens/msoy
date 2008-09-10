@@ -32,7 +32,7 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.item.data.all.Game;
 
-import com.threerings.msoy.game.client.MsoyGameService;
+import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.LobbyObject;
@@ -136,8 +136,8 @@ public class LobbyController extends Controller implements Subscriber
 
         // if requested, send an invitation to our friends, inviting them to this game
         if (friendIds.length > 0) {
-            var gsvc :MsoyGameService =
-                (_mctx.getClient().requireService(MsoyGameService) as MsoyGameService);
+            var gsvc :WorldGameService =
+                (_mctx.getClient().requireService(WorldGameService) as WorldGameService);
             gsvc.inviteFriends(_mctx.getClient(), gcfg.getGameId(), friendIds);
         }
     }

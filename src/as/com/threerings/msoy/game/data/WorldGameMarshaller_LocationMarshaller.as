@@ -3,13 +3,13 @@
 
 package com.threerings.msoy.game.data {
 
-import com.threerings.msoy.game.client.MsoyGameService_LocationListener;
+import com.threerings.msoy.game.client.WorldGameService_LocationListener;
 import com.threerings.presents.data.InvocationMarshaller_ListenerMarshaller;
 
 /**
- * Marshalls instances of the MsoyGameService_LocationMarshaller interface.
+ * Marshalls instances of the WorldGameService_LocationMarshaller interface.
  */
-public class MsoyGameMarshaller_LocationMarshaller
+public class WorldGameMarshaller_LocationMarshaller
     extends InvocationMarshaller_ListenerMarshaller
 {
     /** The method id used to dispatch <code>gameLocated</code> responses. */
@@ -20,7 +20,7 @@ public class MsoyGameMarshaller_LocationMarshaller
     {
         switch (methodId) {
         case GAME_LOCATED:
-            (listener as MsoyGameService_LocationListener).gameLocated(
+            (listener as WorldGameService_LocationListener).gameLocated(
                 (args[0] as String), (args[1] as int));
             return;
 

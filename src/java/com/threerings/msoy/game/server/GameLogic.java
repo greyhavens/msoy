@@ -36,7 +36,7 @@ import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
-import com.threerings.msoy.game.client.MsoyGameService;
+import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.gwt.ArcadeData;
@@ -200,7 +200,7 @@ public class GameLogic
     }
 
     protected static class GameLocationWaiter extends ServletWaiter<Tuple<String,Integer>>
-        implements MsoyGameService.LocationListener
+        implements WorldGameService.LocationListener
     {
         public int gameId;
         public GameLocationWaiter (int gameId) {

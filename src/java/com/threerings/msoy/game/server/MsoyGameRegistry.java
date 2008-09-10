@@ -52,7 +52,7 @@ import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.game.client.GameServerService;
-import com.threerings.msoy.game.client.MsoyGameService;
+import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
 
@@ -66,7 +66,7 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class MsoyGameRegistry
-    implements MsoyGameProvider, GameServerProvider, ShutdownManager.Shutdowner
+    implements WorldGameProvider, GameServerProvider, ShutdownManager.Shutdowner
 {
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
@@ -74,7 +74,7 @@ public class MsoyGameRegistry
     @Inject public MsoyGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
         shutmgr.registerShutdowner(this);
-        invmgr.registerDispatcher(new MsoyGameDispatcher(this), MsoyCodes.GAME_GROUP);
+        invmgr.registerDispatcher(new WorldGameDispatcher(this), MsoyCodes.GAME_GROUP);
         invmgr.registerDispatcher(new GameServerDispatcher(this), GAME_SERVER_GROUP);
     }
 
@@ -107,7 +107,7 @@ public class MsoyGameRegistry
 
     // from interface MsoyGameProvider
     public void locateGame (ClientObject caller, final int gameId,
-                            MsoyGameService.LocationListener listener)
+                            WorldGameService.LocationListener listener)
         throws InvocationException
     {
         // if we're already hosting this game, then report back immediately
@@ -133,7 +133,7 @@ public class MsoyGameRegistry
                     log.warning("Requested to locate unknown game [id=" + gameId + "].");
                     _listener.requestFailed(GameCodes.INTERNAL_ERROR);
                 } else {
-                    lockGame(_game, (MsoyGameService.LocationListener)_listener);
+                    lockGame(_game, (WorldGameService.LocationListener)_listener);
                 }
             }
             protected Game _game;
@@ -381,7 +381,7 @@ public class MsoyGameRegistry
         return _serverRegObj;
     }
 
-    protected boolean checkAndSendToNode (int gameId, MsoyGameService.LocationListener listener)
+    protected boolean checkAndSendToNode (int gameId, WorldGameService.LocationListener listener)
     {
         Tuple<String, Integer> rhost = _peerMan.getGameHost(gameId);
         if (rhost == null) {
@@ -394,7 +394,7 @@ public class MsoyGameRegistry
         return true;
     }
 
-    protected void lockGame (final Game game, final MsoyGameService.LocationListener listener)
+    protected void lockGame (final Game game, final WorldGameService.LocationListener listener)
     {
         // otherwise obtain a lock and resolve the game ourselves
         _peerMan.acquireLock(MsoyPeerManager.getGameLock(game.gameId),
@@ -427,7 +427,7 @@ public class MsoyGameRegistry
         });
     }
 
-    protected void hostGame (Game game, MsoyGameService.LocationListener listener)
+    protected void hostGame (Game game, WorldGameService.LocationListener listener)
     {
         // TODO: load balance across our handlers if we ever have more than one
         GameServerHandler handler = _handlers[0];

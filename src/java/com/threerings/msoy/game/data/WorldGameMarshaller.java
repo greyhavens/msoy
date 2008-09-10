@@ -3,23 +3,23 @@
 
 package com.threerings.msoy.game.data;
 
-import com.threerings.msoy.game.client.MsoyGameService;
+import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.data.InvocationMarshaller;
 import com.threerings.presents.dobj.InvocationResponseEvent;
 
 /**
- * Provides the implementation of the {@link MsoyGameService} interface
+ * Provides the implementation of the {@link WorldGameService} interface
  * that marshalls the arguments and delivers the request to the provider
  * on the server. Also provides an implementation of the response listener
  * interfaces that marshall the response arguments and deliver them back
  * to the requesting client.
  */
-public class MsoyGameMarshaller extends InvocationMarshaller
-    implements MsoyGameService
+public class WorldGameMarshaller extends InvocationMarshaller
+    implements WorldGameService
 {
     /**
-     * Marshalls results to implementations of {@link MsoyGameService.LocationListener}.
+     * Marshalls results to implementations of {@link WorldGameService.LocationListener}.
      */
     public static class LocationMarshaller extends ListenerMarshaller
         implements LocationListener
@@ -56,7 +56,7 @@ public class MsoyGameMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #inviteFriends} requests. */
     public static final int INVITE_FRIENDS = 1;
 
-    // from interface MsoyGameService
+    // from interface WorldGameService
     public void inviteFriends (Client arg1, int arg2, int[] arg3)
     {
         sendRequest(arg1, INVITE_FRIENDS, new Object[] {
@@ -67,10 +67,10 @@ public class MsoyGameMarshaller extends InvocationMarshaller
     /** The method id used to dispatch {@link #locateGame} requests. */
     public static final int LOCATE_GAME = 2;
 
-    // from interface MsoyGameService
-    public void locateGame (Client arg1, int arg2, MsoyGameService.LocationListener arg3)
+    // from interface WorldGameService
+    public void locateGame (Client arg1, int arg2, WorldGameService.LocationListener arg3)
     {
-        MsoyGameMarshaller.LocationMarshaller listener3 = new MsoyGameMarshaller.LocationMarshaller();
+        WorldGameMarshaller.LocationMarshaller listener3 = new WorldGameMarshaller.LocationMarshaller();
         listener3.listener = arg3;
         sendRequest(arg1, LOCATE_GAME, new Object[] {
             Integer.valueOf(arg2), listener3

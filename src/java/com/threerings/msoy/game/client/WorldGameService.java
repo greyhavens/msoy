@@ -7,9 +7,9 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
 /**
- * Provides a mechanism for the client to resolve and obtain the connection info for a game.
+ * Game-related services provided by the World server.
  */
-public interface MsoyGameService extends InvocationService
+public interface WorldGameService extends InvocationService
 {
     /** Reports the server and port on which to connect to a requested game's server. */
     public static interface LocationListener extends InvocationListener

@@ -50,7 +50,7 @@ import com.threerings.msoy.game.data.PlayerObject;
  * that take over the view, and AVRGameLiaison, which handles in-world games.
  */
 public class GameLiaison
-    implements MsoyGameService_LocationListener, ClientObserver, MessageListener
+    implements WorldGameService_LocationListener, ClientObserver, MessageListener
 {
     public static const log :Log = Log.getLog(GameLiaison);
 
@@ -88,8 +88,8 @@ public class GameLiaison
 
         } else if (_wctx.getClient().isLoggedOn()) {
             log.info("Resolving location of game [id=" + _gameId + "].");
-            var mgsvc :MsoyGameService =
-                (_wctx.getClient().requireService(MsoyGameService) as MsoyGameService);
+            var mgsvc :WorldGameService =
+                (_wctx.getClient().requireService(WorldGameService) as WorldGameService);
             mgsvc.locateGame(_wctx.getClient(), gameId, this);
 
         } else {
@@ -146,7 +146,7 @@ public class GameLiaison
         _gctx.getClient().logoff(false);
     }
 
-    // from interface MsoyGameService_LocationListener
+    // from interface WorldGameService_LocationListener
     public function gameLocated (hostname :String, port :int) :void
     {
         log.info("Got server for " + _gameId + " [host=" + hostname + ", port=" + port + "].");
@@ -155,7 +155,7 @@ public class GameLiaison
         _gctx.getClient().logon();
     }
 
-    // from interface MsoyGameService_LocationListener
+    // from interface WorldGameService_LocationListener
     public function requestFailed (cause :String) :void
     {
         _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
