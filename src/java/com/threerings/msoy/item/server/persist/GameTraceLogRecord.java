@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import java.lang.reflect.Field;
 import java.sql.Timestamp;
 
 import com.samskivert.jdbc.depot.Key;
@@ -54,6 +55,26 @@ public class GameTraceLogRecord
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 3;
 
+    /**
+     * Returns the number of bytes that can be put into a log data row.
+     */
+    public static int getMaximumLogLength ()
+    {
+        // Dig out of annotations
+        if (_logLength == null) {
+            try {
+                Field logData = GameTraceLogRecord.class.getDeclaredField(LOG_DATA);
+                Column column = logData.getAnnotation(Column.class);
+                _logLength = column.length();
+
+            } catch (NoSuchFieldException nsfe) {
+                // stop the server so this will get fixed
+                throw new Error("logData field removed");
+            }
+        }
+        return _logLength;
+    }
+    
     /** The primary key of this log record. */
     @Id
     @GeneratedValue
@@ -93,4 +114,6 @@ public class GameTraceLogRecord
                 new Comparable[] { logId });
     }
     // AUTO-GENERATED: METHODS END
+    
+    protected static Integer _logLength;
 }
