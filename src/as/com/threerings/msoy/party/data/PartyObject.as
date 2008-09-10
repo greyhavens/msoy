@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.party.data;
+package com.threerings.msoy.party.data {
 
 import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
@@ -80,4 +80,5 @@ public class PartyObject extends DObject
         partyId = ins.readInt();
         name = ins.readField(String) as String;
     }
+}
 }
