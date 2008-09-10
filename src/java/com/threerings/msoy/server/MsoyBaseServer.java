@@ -262,6 +262,7 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         public void launchBureau (final String bureauId, final String token) {
             final ClientObject launcher = selectLauncher();
+            log.info("Launching bureau", "bureauId", bureauId, "who", launcher.who());
             BureauLauncherSender.launchThane(launcher, bureauId, token);
         }
     }
