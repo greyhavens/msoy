@@ -105,6 +105,98 @@ public class WorldGameRegistry
 
     }
 
+    /**
+     * Returns the object in which we track bureau server registration.
+     */
+    public ServerRegistryObject getServerRegistryObject ()
+    {
+        return _serverRegObj;
+    }
+
+    /**
+     * Called to update that a player is either lobbying for, playing, or no longer playing
+     * the specified game.
+     */
+    public void updatePlayerOnPeer (MemberObject memObj, GameSummary game)
+    {
+        memObj.startTransaction();
+        try {
+            // check to see if we were previously in an AVRG game
+            int avrGameId = (memObj.game != null && memObj.game.avrGame) ? memObj.game.gameId : 0;
+
+            // update our game
+            memObj.setGame(game);
+
+            // see if we need to do some extra AVRG bits
+            if (avrGameId != 0 || (game != null && game.avrGame)) {
+                PlaceManager pmgr = _placeReg.getPlaceManager(memObj.getPlaceOid());
+                RoomManager rmgr = (pmgr instanceof RoomManager) ? (RoomManager) pmgr : null;
+
+                // if we left an AVRG, let the room know
+                if (rmgr != null && avrGameId != 0 && (game == null || game.gameId != avrGameId)) {
+                    rmgr.occupantLeftAVRGame(memObj);
+                }
+
+                // if we're now in a new one, subscribe to it
+                if (game != null && game.avrGame) {
+                    memObj.setAvrGameId(game.gameId);
+
+                    // and immediately let the room manager give us of control, if needed
+                    if (rmgr != null && game.gameId != avrGameId) {
+                        rmgr.occupantEnteredAVRGame(memObj);
+                    }
+                }
+            }
+        } finally {
+            memObj.commitTransaction();
+        }
+
+        // update their occupant info if they're in a scene
+        _memberMan.updateOccupantInfo(memObj);
+
+        // update their published location in our peer object
+        _peerMan.updateMemberLocation(memObj);
+    }
+
+    /**
+     * Called when the persistent data for a game that we host has been updated. Notifies the game
+     * server hosting the game in question so that it can reload that game's content.
+     */
+    public void gameUpdated (int gameId)
+    {
+        GameServerHandler handler = _handmap.get(gameId);
+        if (handler == null) {
+            log.info("Eek, handler vanished [gameId=" + gameId + "]");
+            return;
+        }
+        handler.postMessage(WorldServerClient.GAME_CONTENT_UPDATED, gameId);
+    }
+
+    /**
+     * Forwards a request to our game server to have the specified resolved game reset its
+     * percentiler score trackers in memory.
+     */
+    public void resetGameScores (int gameId, boolean single)
+    {
+        GameServerHandler handler = _handmap.get(gameId);
+        if (handler == null) {
+            log.info("Eek, handler vanished [gameId=" + gameId + "]");
+            return;
+        }
+        handler.postMessage(WorldServerClient.RESET_SCORE_PERCENTILER, gameId, single);
+    }
+
+    /**
+     * Forwards a broadcast to the game server, so that it can be sent on all of that server's
+     * place (game) objects.
+     */
+    public void forwardBroadcast(Name from, String bundle, String msg, boolean attention)
+    {
+        for (GameServerHandler handler : _handlers) {
+            handler.postMessage(WorldServerClient.FORWARD_BROADCAST, from, bundle, msg, attention);
+        }
+    }
+
     // from interface MsoyGameProvider
     public void locateGame (ClientObject caller, final int gameId,
                             WorldGameService.LocationListener listener)
@@ -236,90 +328,6 @@ public class WorldGameRegistry
         }
     }
 
-    /**
-     * Called to update that a player is either lobbying for, playing, or no longer playing
-     * the specified game.
-     */
-    public void updatePlayerOnPeer (MemberObject memObj, GameSummary game)
-    {
-        memObj.startTransaction();
-        try {
-            // check to see if we were previously in an AVRG game
-            int avrGameId = (memObj.game != null && memObj.game.avrGame) ? memObj.game.gameId : 0;
-
-            // update our game
-            memObj.setGame(game);
-
-            // see if we need to do some extra AVRG bits
-            if (avrGameId != 0 || (game != null && game.avrGame)) {
-                PlaceManager pmgr = _placeReg.getPlaceManager(memObj.getPlaceOid());
-                RoomManager rmgr = (pmgr instanceof RoomManager) ? (RoomManager) pmgr : null;
-
-                // if we left an AVRG, let the room know
-                if (rmgr != null && avrGameId != 0 && (game == null || game.gameId != avrGameId)) {
-                    rmgr.occupantLeftAVRGame(memObj);
-                }
-
-                // if we're now in a new one, subscribe to it
-                if (game != null && game.avrGame) {
-                    memObj.setAvrGameId(game.gameId);
-
-                    // and immediately let the room manager give us of control, if needed
-                    if (rmgr != null && game.gameId != avrGameId) {
-                        rmgr.occupantEnteredAVRGame(memObj);
-                    }
-                }
-            }
-        } finally {
-            memObj.commitTransaction();
-        }
-
-        // update their occupant info if they're in a scene
-        _memberMan.updateOccupantInfo(memObj);
-
-        // update their published location in our peer object
-        _peerMan.updateMemberLocation(memObj);
-    }
-
-    /**
-     * Called when the persistent data for a game that we host has been updated. Notifies the game
-     * server hosting the game in question so that it can reload that game's content.
-     */
-    public void gameUpdated (int gameId)
-    {
-        GameServerHandler handler = _handmap.get(gameId);
-        if (handler == null) {
-            log.info("Eek, handler vanished [gameId=" + gameId + "]");
-            return;
-        }
-        handler.postMessage(WorldServerClient.GAME_CONTENT_UPDATED, gameId);
-    }
-
-    /**
-     * Forwards a request to our game server to have the specified resolved game reset its
-     * percentiler score trackers in memory.
-     */
-    public void resetGameScores (int gameId, boolean single)
-    {
-        GameServerHandler handler = _handmap.get(gameId);
-        if (handler == null) {
-            log.info("Eek, handler vanished [gameId=" + gameId + "]");
-            return;
-        }
-        handler.postMessage(WorldServerClient.RESET_SCORE_PERCENTILER, gameId, single);
-    }
-
-    /**
-     * Forwards a broadcast to the game server, so that it can be sent on all of that server's
-     * place (game) objects.
-     */
-    public void forwardBroadcast(Name from, String bundle, String msg, boolean attention)
-    {
-        for (GameServerHandler handler : _handlers) {
-            handler.postMessage(WorldServerClient.FORWARD_BROADCAST, from, bundle, msg, attention);
-        }
-    }
-
     // from interface GameServerProvider
     public void reportTrophyAward (
         ClientObject caller, int memberId, String gameName, Trophy trophy)
@@ -374,11 +382,6 @@ public class WorldGameRegistry
                 handler.shutdown();
             }
         }
-    }
-
-    public ServerRegistryObject getServerRegistryObject ()
-    {
-        return _serverRegObj;
     }
 
     protected boolean checkAndSendToNode (int gameId, WorldGameService.LocationListener listener)
