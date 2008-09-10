@@ -9,6 +9,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
+import com.threerings.msoy.money.data.all.Currency;
+
 /**
  * Represents a catalog listing of an item.
  */
@@ -51,11 +53,11 @@ public class CatalogListing
     /** The date on which the item was listed. */
     public Date listedDate;
 
-    /** The amount of flow it costs to purchase this item, if it's listed, else zero. */
-    public int flowCost;
+    /** The currency this item is listed for. */
+    public Currency currency;
 
-    /** The amount of gold it costs to purchase this item, if it's listed, else zero. */
-    public int goldCost;
+    /** The price of this item. */
+    public int cost;
 
     /** The pricing setting for this item. */
     public int pricing;

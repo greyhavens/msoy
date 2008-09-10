@@ -21,6 +21,7 @@ import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.CostUpdatedException;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
@@ -34,6 +35,7 @@ import client.ui.PriceLabel;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
+// TODO: Bar me
 public class ItemRemixer extends FlexTable
 {
     public ItemRemixer (EditorHost host)
@@ -76,7 +78,7 @@ public class ItemRemixer extends FlexTable
         if (_catalogId != 0) {
             HorizontalPanel hpan = new HorizontalPanel();
             hpan.setHorizontalAlignment(HorizontalPanel.ALIGN_RIGHT);
-            _priceLabel = new PriceLabel(_flowCost, _goldCost);
+            _priceLabel = new PriceLabel(Currency.COINS, _flowCost);
             hpan.add(_priceLabel);
             hpan.setCellWidth(_priceLabel, WIDTH + "px");
             vpan.add(hpan);
@@ -155,7 +157,7 @@ public class ItemRemixer extends FlexTable
                         CostUpdatedException cue = (CostUpdatedException) cause;
                         _flowCost = cue.getFlowCost();
                         _goldCost = cue.getGoldCost();
-                        _priceLabel.updatePrice(_flowCost, _goldCost);
+                        _priceLabel.updatePrice(Currency.COINS, _flowCost);
                         enableBuyButton();
                     }
                 }

@@ -11,6 +11,7 @@
   <source path="com/threerings/msoy/data/all"/>
   <source path="com/threerings/msoy/web/data"/>
   <source path="com/threerings/msoy/web/client"/>
+  <source path="com/threerings/msoy/money/data/all"/>
 
   <source path="client/util"/>
   <source path="client/ui"/>

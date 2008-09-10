@@ -21,6 +21,7 @@ import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.CostUpdatedException;
+import com.threerings.msoy.money.data.all.Currency;
 
 import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
@@ -63,7 +64,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
 
         _indeets.add(WidgetUtil.makeShim(10, 10));
-        _indeets.add(_priceLabel = new PriceLabel(_listing.flowCost, _listing.goldCost));
+        _indeets.add(_priceLabel = new PriceLabel(_listing.currency, _listing.cost));
 
         _details.add(WidgetUtil.makeShim(10, 10));
 
@@ -75,8 +76,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     MsoyUI.infoAction(CShop.msgs.msgMustRegister(), CShop.msgs.msgRegister(),
                                       Link.createListener(Pages.ACCOUNT, "create"));
                 } else {
+                    // TODO: Bar me
                     _catalogsvc.purchaseItem(_item.getType(), _listing.catalogId,
-                                             _listing.flowCost, _listing.goldCost, this);
+                                             _listing.cost, 666, this);
                 }
                 return true;
             }
@@ -89,11 +91,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             {
                 super.onFailure(cause);
 
+                // TODO: Bar me
                 if (cause instanceof CostUpdatedException) {
                     CostUpdatedException cue = (CostUpdatedException) cause;
-                    _listing.flowCost = cue.getFlowCost();
-                    _listing.goldCost = cue.getGoldCost();
-                    _priceLabel.updatePrice(cue.getFlowCost(), cue.getGoldCost());
+                    _listing.cost = cue.getFlowCost();
+                    _priceLabel.updatePrice(Currency.COINS, cue.getFlowCost());
                 }
             }
         };
@@ -104,8 +106,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         // if the item is remixable, also create a remix button
         if (!CShop.isGuest() && isRemixable()) {
             PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingRemix(),
+                // TODO: Bar me
                 NaviUtil.onRemixCatalogItem(_item.getType(), _item.itemId, _listing.catalogId,
-                                            _listing.flowCost, _listing.goldCost));
+                                            _listing.cost, 666));
             _buyPanel.add(MsoyUI.createButtonPair(remix, purchase));
         } else {
             _buyPanel.add(purchase);
@@ -132,7 +135,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                         public void itemListed (Item item, boolean updated) {
                             Link.replace(Pages.SHOP, Args.compose(new String[] {
                                         "l", "" + _item.getType(), "" + _listing.catalogId,
-                                        "repriced_from_" + _listing.flowCost}));
+                                        "repriced_from_" + _listing.cost}));
                         }
                     });
                 }

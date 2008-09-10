@@ -121,7 +121,7 @@ public class DoListItemPopup extends VerticalPanel
 
             row = pricing.addText(_imsgs.doListFlowCost(), 1, "rightLabel");
             pricing.setWidget(row, 1, _flowCost = new NumberTextBox(false, 5, 5), 1, null);
-            int flowCost = (listing == null) ? DEFAULT_FLOW_COST : listing.flowCost;
+            int flowCost = (listing == null) ? DEFAULT_FLOW_COST : listing.cost;
             _flowCost.setText(String.valueOf(flowCost));
 
 //             row = pricing.addText(_imsgs.doListGoldCost(), 1, "rightLabel");
