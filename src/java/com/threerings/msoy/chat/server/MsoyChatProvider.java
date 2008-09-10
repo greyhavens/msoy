@@ -12,7 +12,7 @@ import com.threerings.crowd.chat.server.ChatProvider;
 
 import com.threerings.util.Name;
 
-import com.threerings.msoy.game.server.MsoyGameRegistry;
+import com.threerings.msoy.game.server.WorldGameRegistry;
 
 /**
  * The chat provider handles the server side of the chat-related invocation services.
@@ -31,7 +31,7 @@ public class MsoyChatProvider extends ChatProvider
     /**
      * Initializes this chat provider with a reference to the game registry
      */
-    public void init (MsoyGameRegistry gameReg)
+    public void init (WorldGameRegistry gameReg)
     {
         _gameReg = gameReg;
     }
@@ -44,6 +44,6 @@ public class MsoyChatProvider extends ChatProvider
         _gameReg.forwardBroadcast(from, bundle, msg, attention);
     }
 
-    // MsoyGameRegistry cannot be injected due to a circular dependency.
-    protected MsoyGameRegistry _gameReg;
+    // WorldGameRegistry cannot be injected due to a circular dependency.
+    protected WorldGameRegistry _gameReg;
 }

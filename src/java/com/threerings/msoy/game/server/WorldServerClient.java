@@ -76,7 +76,7 @@ public class WorldServerClient
         };
         _client.setCredentials(new PeerCreds("game:" + _port, ServerConfig.sharedSecret));
         _client.setServer("localhost", new int[] { connectPort });
-        _client.addServiceGroup(MsoyGameRegistry.GAME_SERVER_GROUP);
+        _client.addServiceGroup(WorldGameRegistry.GAME_SERVER_GROUP);
         _client.addClientObserver(_clientObs);
         _client.getInvocationDirector().registerReceiver(new WatcherDecoder(_watchRec));
         _client.logon();

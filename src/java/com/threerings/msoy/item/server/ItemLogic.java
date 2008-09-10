@@ -36,7 +36,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 
-import com.threerings.msoy.game.server.MsoyGameRegistry;
+import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -769,7 +769,7 @@ public class ItemLogic
         @Override protected void execute () {
             _gameReg.gameUpdated(_gameId);
         }
-        @Inject protected transient MsoyGameRegistry _gameReg;
+        @Inject protected transient WorldGameRegistry _gameReg;
     }
 
     /** Maps byte type ids to repository for all digital item types. */

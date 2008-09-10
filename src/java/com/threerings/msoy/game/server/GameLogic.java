@@ -216,7 +216,7 @@ public class GameLogic
     }
 
     @Inject RootDObjectManager _omgr;
-    @Inject MsoyGameRegistry _gameReg;
+    @Inject WorldGameRegistry _gameReg;
     @Inject MsoyPeerManager _peerMan;
     @Inject GameRepository _gameRepo;
     @Inject MemberRepository _memberRepo;

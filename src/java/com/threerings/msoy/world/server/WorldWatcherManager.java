@@ -12,7 +12,7 @@ import com.samskivert.util.IntMap;
 import com.samskivert.util.Tuple;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.server.MsoyGameRegistry;
+import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager.RemoteMemberObserver;
@@ -43,7 +43,7 @@ public class WorldWatcherManager
     {
         shutmgr.registerShutdowner(this);
         peermgr.addRemoteMemberObserver(this);
-        invmgr.registerDispatcher(new WatcherDispatcher(this), MsoyGameRegistry.GAME_SERVER_GROUP);
+        invmgr.registerDispatcher(new WatcherDispatcher(this), WorldGameRegistry.GAME_SERVER_GROUP);
     }
 
     // from interface RemoteMemberObserver

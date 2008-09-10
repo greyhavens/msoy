@@ -614,7 +614,7 @@ public class GameServlet extends MsoyServiceServlet
         }
 
         protected boolean _single;
-        @Inject protected transient MsoyGameRegistry _gameReg;
+        @Inject protected transient WorldGameRegistry _gameReg;
     }
 
     // our dependencies

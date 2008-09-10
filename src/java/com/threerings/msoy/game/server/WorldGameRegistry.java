@@ -65,13 +65,13 @@ import static com.threerings.msoy.Log.log;
  * they host lobbies and games.
  */
 @Singleton
-public class MsoyGameRegistry
+public class WorldGameRegistry
     implements WorldGameProvider, GameServerProvider, ShutdownManager.Shutdowner
 {
     /** The invocation services group for game server services. */
     public static final String GAME_SERVER_GROUP = "game_server";
 
-    @Inject public MsoyGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
+    @Inject public WorldGameRegistry (ShutdownManager shutmgr, InvocationManager invmgr)
     {
         shutmgr.registerShutdowner(this);
         invmgr.registerDispatcher(new WorldGameDispatcher(this), MsoyCodes.GAME_GROUP);
@@ -565,7 +565,7 @@ public class MsoyGameRegistry
         }
 
         protected GameSummary _game;
-        @Inject protected transient MsoyGameRegistry _gameReg;
+        @Inject protected transient WorldGameRegistry _gameReg;
     }
 
     /** Handles leaving an AVR game. */

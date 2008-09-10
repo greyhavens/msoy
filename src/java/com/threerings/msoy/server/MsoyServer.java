@@ -67,7 +67,7 @@ import com.threerings.msoy.bureau.server.WindowClientFactory;
 import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.chat.server.JabberManager;
 import com.threerings.msoy.chat.server.MsoyChatProvider;
-import com.threerings.msoy.game.server.MsoyGameRegistry;
+import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -427,7 +427,7 @@ public class MsoyServer extends MsoyBaseServer
     @Inject protected MsoyPeerManager _peerMan;
 
     /** Manages our external game servers. */
-    @Inject protected MsoyGameRegistry _gameReg;
+    @Inject protected WorldGameRegistry _gameReg;
 
     /** Manages our parties. */
     @Inject protected PartyRegistry _partyReg;
