@@ -99,7 +99,7 @@ public abstract class CatalogRecord extends PersistentRecord
     public Timestamp listedDate;
 
     /** The type of currency this item is listed for. */
-    public byte currency;
+    public Currency currency;
 
     /** The cost to purchase a clone of this item. */
     public int cost;
@@ -162,7 +162,7 @@ public abstract class CatalogRecord extends PersistentRecord
         card.descrip = item.description;
         card.remixable = item.isRemixable();
         card.rating = item.rating;
-        card.currency = Currency.fromByte(currency);
+        card.currency = currency;
         card.cost = cost;
         return card;
     }

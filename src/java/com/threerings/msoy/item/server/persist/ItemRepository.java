@@ -703,7 +703,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         record.pricing = pricing;
         record.salesTarget = salesTarget;
         record.purchases = record.returns = 0;
-        record.currency = currency.toByte();
+        record.currency = currency;
         record.cost = cost;
         insert(record);
 
@@ -724,7 +724,7 @@ public abstract class ItemRepository<T extends ItemRecord>
                       // TODO?: CatalogRecord.LISTED_DATE, new Timestamp(updateTime),
                       CatalogRecord.PRICING, pricing,
                       CatalogRecord.SALES_TARGET, salesTarget,
-                      CatalogRecord.CURRENCY, currency.toByte(),
+                      CatalogRecord.CURRENCY, currency,
                       CatalogRecord.COST, cost);
     }
 
