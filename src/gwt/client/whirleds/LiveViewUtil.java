@@ -14,29 +14,26 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.MediaDesc;
 
 /**
- * @author robin
+ * Utilities for displaying a Whirled's canonical scene snapshot.
  *
+ * @author robin
  */
 public class LiveViewUtil
 {
-    public static Widget makeLiveViewWidget (MediaDesc snapshot, ClickListener onClick) {
-        if (snapshot != null) {
-            return LiveViewUtil.makeCanonicalImageWidget(snapshot, onClick);
-        } else {
-            final Image clickToPlayImage = MsoyUI.createActionImage(
-                "/images/landing/whirled_click_here.jpg", "", onClick);
-            return clickToPlayImage;
+    /**
+     * Creates a display of a Whirled's canonical home scene snapshot (or the default).
+     */
+    public static Widget makeLiveViewWidget (MediaDesc snapshot, ClickListener onClick)
+    {
+        if (snapshot == null) {
+            return MsoyUI.createActionImage("/images/landing/whirled_click_here.jpg", "", onClick);
         }
-    }
 
-    protected static Widget makeCanonicalImageWidget (MediaDesc snapshot, ClickListener onClick) {
         FlowPanel panel = new FlowPanel();
-        Widget image = MediaUtil.createMediaView(snapshot, MediaDesc.CANONICAL_IMAGE_SIZE, onClick);
-        panel.add(image);
+        panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.CANONICAL_IMAGE_SIZE, onClick));
         Image overlay = MsoyUI.createActionImage("/images/landing/click_overlay.png", onClick);
         overlay.addStyleName("LiveViewOverlay");
         panel.add(overlay);
         return panel;
     }
-
 }
