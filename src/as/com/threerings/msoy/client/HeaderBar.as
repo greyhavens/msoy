@@ -180,23 +180,40 @@ public class HeaderBar extends HBox
 
         // add a coins display
         if (embedded) {
-            addChild(FlexUtil.createSpacer(10));
-            const coinIcon :Image = new Image();
-            coinIcon.source = DeploymentConfig.serverURL + "rsrc/coin_14x14.png";
-            const hb :HBox = new HBox();
-            hb.setStyle("verticalAlign", "middle");
-            hb.percentHeight = 100;
-            hb.addChild(coinIcon);
-            addChild(hb);
-            _coinLabel = new Label();
-            _coinLabel.styleName = "coinLabel";
-            addChild(_coinLabel);
+            addCurrencyIcon(Currency.COINS);
+            _coinsLabel = new Label();
+            _coinsLabel.styleName = "currencyLabel";
+            addChild(_coinsLabel);
+
+            if (DeploymentConfig.barsEnabled) {
+                addCurrencyIcon(Currency.BARS);
+                _barsLabel = new Label();
+                _barsLabel.styleName = "currencyLabel";
+                addChild(_barsLabel);
+
+                addCurrencyIcon(Currency.BLING);
+                _blingLabel = new Label();
+                _blingLabel.styleName = "currencyLabel";
+                addChild(_blingLabel);
+            }
 
             // set up a listener to hear about userobject changes
             _ctx.getClient().addClientObserver(
                 new ClientAdapter(null, clientDidChange, clientDidChange));
             clientDidChange();
         }
+    }
+
+    protected function addCurrencyIcon (currency :Currency) :void
+    {
+        addChild(FlexUtil.createSpacer(10));
+        const icon :Image = new Image();
+        icon.source = currency.getSmallIcon();
+        const hb :HBox = new HBox();
+        hb.setStyle("verticalAlign", "middle");
+        hb.percentHeight = 100;
+        hb.addChild(icon);
+        addChild(hb);
     }
 
     protected function setCompVisible (comp :UIComponent, visible :Boolean) :void
@@ -213,7 +230,9 @@ public class HeaderBar extends HBox
         const cliObj :MemberObject = _ctx.getClient().getClientObject() as MemberObject;
         if (cliObj != null) {
             cliObj.addListener(new AttributeChangeAdapter(clientAttrChanged));
-            _coinLabel.text = Currency.COINS.format(cliObj.flow);
+            _coinsLabel.text = Currency.COINS.format(cliObj.flow);
+//            _barsLabel.text = Currency.BARS.format(cliObj.bars);
+//            _blingLabel.text = Currency.BLING.format(cliObj.bling);
         }
     }
 
@@ -222,8 +241,18 @@ public class HeaderBar extends HBox
      */
     protected function clientAttrChanged (event :AttributeChangedEvent) :void
     {
-        if (event.getName() == MemberObject.FLOW) {
-            _coinLabel.text = Currency.COINS.format(int(event.getValue()));
+        switch (event.getName()) {
+        case MemberObject.FLOW:
+            _coinsLabel.text = Currency.COINS.format(int(event.getValue()));
+            break;
+
+//        case MemberObject.BARS:
+//            _barsLabel.text = Currency.BARS.format(int(event.getValue()));
+//            break;
+//
+//        case MemberObject.BLING:
+//            _blingsLabel.text = Currency.BLING.format(int(event.getValue()));
+//            break;
         }
     }
 
@@ -248,8 +277,10 @@ public class HeaderBar extends HBox
     /** The go button. */
     protected var _goBtn :CommandButton;
 
-    /** The coins label, used only when embedded. */
-    protected var _coinLabel :Label;
+    /** The currency labels, used only when embedded. */
+    protected var _coinsLabel :Label;
+    protected var _barsLabel :Label;
+    protected var _blingLabel :Label;
 }
 }
 
