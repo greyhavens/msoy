@@ -185,6 +185,12 @@ public class ThaneAVRGameController
      */
     public function deactivateGame (playerId :int) :void
     {
+        var binding :PlayerBinding = _players.get(playerId);
+        if (binding == null) {
+            log.warning("Deactivating player not in game [playerId=" + playerId + "]");
+            return;
+        }
+        binding.deactivated = true;
         _gameAgentObj.agentService.leaveGame(_ctx.getClient(), playerId);
     }
 
@@ -251,10 +257,14 @@ public class ThaneAVRGameController
                 // for the subscription callback for the 'enter' event.
                 return;
             }
-
             var oldPl :PlayerLocation = event.getOldEntry() as PlayerLocation;
-            _backend.playerLeftRoom(oldPl.playerId, oldPl.sceneId);
-            _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
+            var binding :PlayerBinding = PlayerBinding(_players.get(pl.playerId));
+            if (!binding.deactivated) {
+                _backend.playerLeftRoom(oldPl.playerId, oldPl.sceneId);
+            }
+            if (!binding.deactivated) {
+                _backend.playerEnteredRoom(pl.playerId, pl.sceneId);
+            }
 
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             bindScene(event.getEntry() as SceneInfo);
@@ -272,7 +282,9 @@ public class ThaneAVRGameController
                 return;
             }
 
-            _backend.playerLeftRoom(pl.playerId, pl.sceneId);
+            if (!PlayerBinding(_players.get(pl.playerId)).deactivated) {
+                _backend.playerLeftRoom(pl.playerId, pl.sceneId);
+            }
 
         } else if (event.getName() == AVRGameAgentObject.SCENES) {
             removeBinding((event.getOldEntry() as SceneInfo).sceneId);
@@ -280,21 +292,24 @@ public class ThaneAVRGameController
         } else if (event.getName() == PlaceObject.OCCUPANT_INFO) {
             var occInfo :OccupantInfo = event.getOldEntry() as OccupantInfo;
             var playerObj :PlayerObject = _playerSubs.getObj(occInfo.bodyOid) as PlayerObject;
+            var deactivated :Boolean = false;
             if (playerObj == null) {
                 log.info("Player left game before subscription completed: " + occInfo);
+
             } else {
                 var playerBinding :PlayerBinding;
                 playerBinding = _players.remove(playerObj.getMemberId()) as PlayerBinding;
                 if (playerBinding == null) {
                     log.warning("Player leaving game has a subscriptino but no binding");
                 } else {
+                    deactivated = playerBinding.deactivated;
                     playerBinding.netAdapter.release();
                 }
             }
 
             // If the player is still in our locations, remove from room
             pl = _gameObj.playerLocs.get(playerObj.getMemberId()) as PlayerLocation;
-            if (pl != null) {
+            if (pl != null && !deactivated) {
                 _backend.playerLeftRoom(pl.playerId, pl.sceneId);
             }
 
@@ -667,4 +682,5 @@ class PlayerBinding
 {
     public var oid :int;
     public var netAdapter :BackendNetAdapter;
+    public var deactivated :Boolean;
 }
