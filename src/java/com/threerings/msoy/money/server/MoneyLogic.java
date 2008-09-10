@@ -203,19 +203,11 @@ public class MoneyLogic
         // Get buyer account...
         final MemberAccountRecord buyer = _repo.getAccountById(buyerId);
         int hasAmount = (buyer == null) ? 0 : buyer.getAmount(buyCurrency);
-
-        // support personnel can adjust the price..
-        // magically adjust for support personnel
-        if ((buyer != null) && buyerRec.isSupport() && (buyAmount > hasAmount)) {
-            // update their desired buy price to reflect the amount they have
-            buyAmount = hasAmount;
-
-        } else if (buyer == null || !buyer.canAfford(buyCurrency, buyAmount)) {
+        // if support+ cannot afford the item, we let them have it for free.
+        boolean magicFreeItem = ((buyer != null) && buyerRec.isSupport() && (buyAmount > hasAmount));
+        if (!magicFreeItem && (buyer == null || !buyer.canAfford(buyCurrency, buyAmount))) {
             throw new NotEnoughMoneyException(buyerId, buyCurrency, buyAmount, hasAmount);
         }
-
-        // TODO: we need to update PriceQuote to reflect the actual purchase price.. Right?
-        // TODO: actually, below, I'm just not using it. Revisit this soon.
 
         // If the creator is buying their own item, don't give them a payback, and deduct the amount
         // they would have received.
@@ -224,8 +216,12 @@ public class MoneyLogic
 
         // Get creator.
         MemberAccountRecord creator;
-        if (buyerIsCreator) {
+        if (magicFreeItem) {
+            creator = null;
+
+        } else if (buyerIsCreator) {
             creator = buyer;
+
         } else {
             creator = _repo.getAccountById(creatorId);
             if (creator == null) {
@@ -235,53 +231,63 @@ public class MoneyLogic
 
         // TODO: the affiliate will come from the database. It's associated with the buyer.
         // It is a memberId. For now, it is 0.
-        int affiliateId = 0;
+        int affiliateId = 0; // buyerRec.affiliateMemberId;
         MemberAccountRecord affiliate;
-        if (affiliateId == buyerId) {
+        if (affiliateId == 0 || magicFreeItem) {
+            affiliate = null;
+
+        } else if (affiliateId == buyerId) { // this would be weird, but let's handle it
             affiliate = buyer;
 
         } else if (affiliateId == creatorId) {
             affiliate = creator;
 
-        } else if (affiliateId != 0) {
+        } else {
             affiliate = _repo.getAccountById(affiliateId);
             if (affiliate == null) {
                 affiliate = new MemberAccountRecord(affiliateId);
             }
-
-        } else {
-            affiliate = null;
         }
 
         // add a transaction for the buyer
-        MoneyTransactionRecord buyerTrans = buyer.buyItem(buyCurrency, buyAmount,
-            MessageBundle.tcompose("m.item_bought",
+        MoneyTransactionRecord buyerTrans = buyer.buyItem(
+            buyCurrency, magicFreeItem ? 0 : buyAmount,
+            MessageBundle.tcompose(magicFreeItem ? "m.item_magicfree" : "m.item_bought",
                 escrow.getDescription(), item.type, item.catalogId),
             item);
         _repo.addTransaction(buyerTrans);
 
-        // Extra logging bullshit
+        // log userAction and to panopticon for the buyer
         UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID,
             UserAction.BOUGHT_ITEM, escrow.getDescription(), item);
         logInPanopticon(info, buyCurrency, buyerTrans.amount, buyer);
 
         // add a transaction for the creator
-        MoneyTransactionRecord creatorTrans = creator.payout(
-            TransactionType.CREATOR_PAYOUT, RuntimeConfig.server.creatorPercentage,
-            quote.getListedCurrency(), buyCurrency, buyAmount,
-            MessageBundle.tcompose("m.item_sold",
-                escrow.getDescription(), item.type, item.catalogId),
-            item, buyerTrans.id);
-        _repo.addTransaction(creatorTrans);
+        MoneyTransactionRecord creatorTrans;
+        if (creator == null) { // creator is null when magicFreeItem is true
+            creatorTrans = null;
 
-        // Extra logging bullshit
-        info = logUserAction(creatorId, buyerId, UserAction.RECEIVED_PAYOUT,
-            escrow.getDescription(), item);
-        logInPanopticon(info, buyCurrency, creatorTrans.amount, creator);
+        } else {
+            creatorTrans = creator.payout(
+                TransactionType.CREATOR_PAYOUT, RuntimeConfig.server.creatorPercentage,
+                quote.getListedCurrency(), buyCurrency, buyAmount,
+                MessageBundle.tcompose("m.item_sold",
+                    escrow.getDescription(), item.type, item.catalogId),
+                item, buyerTrans.id);
+            _repo.addTransaction(creatorTrans);
+
+            // log userAction and to panopticon for the creator
+            info = logUserAction(creatorId, buyerId, UserAction.RECEIVED_PAYOUT,
+                escrow.getDescription(), item);
+            logInPanopticon(info, buyCurrency, creatorTrans.amount, creator);
+        }
 
         // add a transaction for the affiliate
         MoneyTransactionRecord affiliateTrans;
-        if (affiliate != null) {
+        if (affiliate == null) { // may be null in normal cases, but also null if magicFreeItem
+            affiliateTrans = null;
+
+        } else {
             affiliateTrans = affiliate.payout(
                 TransactionType.AFFILIATE_PAYOUT, RuntimeConfig.server.affiliatePercentage,
                 quote.getListedCurrency(), buyCurrency, buyAmount,
@@ -290,33 +296,34 @@ public class MoneyLogic
                 item, buyerTrans.id);
             _repo.addTransaction(affiliateTrans);
 
-            // Extra logging bullshit
+            // log userAction and to panopticon for the affiliate
             // TODO: do we use the same RECEIVED_PAYOUT that we used for the creator for affiliate?
             info = logUserAction(affiliateId, buyerId, UserAction.RECEIVED_PAYOUT,
                 escrow.getDescription(), item);
             logInPanopticon(info, buyCurrency, affiliateTrans.amount, affiliate);
-
-        } else {
-            affiliateTrans = null;
         }
 
         // save stuff off
         _repo.saveAccount(buyer);
-        if (!buyerIsCreator) {
+        if ((creator != null) && !buyerIsCreator) {
             _repo.saveAccount(creator);
         }
-        if ((affiliateId != buyerId) && (affiliateId != creatorId) && (affiliate != null)) {
+        if ((affiliate != null) && (affiliateId != buyerId) && (affiliateId != creatorId)) {
             _repo.saveAccount(affiliate);
         }
 
         // The item no longer needs to be in the cache.
         _escrowCache.removeEscrow(key);
         // Inform the exchange that we've actually made the exchange
-        MoneyExchange.processPurchase(quote, buyCurrency, buyAmount);
+        if (!magicFreeItem) {
+            MoneyExchange.processPurchase(quote, buyCurrency, buyAmount);
+        }
 
-        return new MoneyResult(buyer.getMemberMoney(), creator.getMemberMoney(),
+        return new MoneyResult(buyer.getMemberMoney(),
+            (creator == null) ? null : creator.getMemberMoney(),
             (affiliate == null) ? null : affiliate.getMemberMoney(),
-            buyerTrans.toMoneyTransaction(), creatorTrans.toMoneyTransaction(),
+            buyerTrans.toMoneyTransaction(),
+            (creatorTrans == null) ? null : creatorTrans.toMoneyTransaction(),
             (affiliateTrans == null) ? null : affiliateTrans.toMoneyTransaction());
     }
 
