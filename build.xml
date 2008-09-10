@@ -948,6 +948,8 @@
       <arg value="+flexlib=${flexsdk.dir}/frameworks"/>
       <arg line="-library-path ${flexsdk.dir}/frameworks/libs/framework.swc"/>
       <arg line="-library-path ${flexsdk.dir}/frameworks/libs/flex.swc"/>
+      <arg line="-library-path ${deploy.dir}/lib/tweener.swc"/>
+      <arg line="-library-path ${deploy.dir}/lib/corelib.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/naryalib-0.0-SNAPSHOT.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/player-env-0.0-SNAPSHOT.swc"/>
       <arg line="-library-path ${deploy.dir}/lib/nenyalib-0.0-SNAPSHOT.swc"/>
