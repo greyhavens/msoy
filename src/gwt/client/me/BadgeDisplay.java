@@ -21,6 +21,8 @@ import com.threerings.msoy.badge.data.all.InProgressBadge;
 
 import com.threerings.msoy.item.data.all.Item;
 
+import com.threerings.msoy.money.data.all.Currency;
+
 import client.shell.DynamicMessages;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -85,8 +87,8 @@ class BadgeDisplay extends FlowPanel
     protected void addInProgressBits (InProgressBadge badge)
     {
         FlowPanel coinReward = MsoyUI.createFlowPanel("CoinReward");
-        coinReward.add(MsoyUI.createImage("/images/ui/coins.png", null));
-        coinReward.add(MsoyUI.createLabel("" + badge.coinValue, null));
+        coinReward.add(MsoyUI.createImage(Currency.COINS.getSmallIcon(), null));
+        coinReward.add(MsoyUI.createLabel(Currency.COINS.format(badge.coinValue), null));
         add(coinReward);
 
         if (badge.progress >= 0) {

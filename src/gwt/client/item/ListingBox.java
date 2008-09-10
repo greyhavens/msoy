@@ -37,12 +37,10 @@ public class ListingBox extends ItemBox
         SmartTable cost = new SmartTable(0, 0);
         setWidget(row, 1, cost);
 
-        // TODO: Use PriceLabel?
-        cost.setWidget(0, 0, new Image((listing.currency == Currency.COINS) ?
-            "/images/ui/coins.png" : "/images/ui/bars.png"));
+        cost.setWidget(0, 0, new Image(listing.currency.getSmallIcon()));
         cost.getFlexCellFormatter().setWidth(0, 0, "15px");
         cost.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
-        cost.setText(0, 1, String.valueOf(listing.cost), 1, "Cost");
+        cost.setText(0, 1, listing.currency.format(listing.cost), 1, "Cost");
     }
 
     @Override // from ItemBox
