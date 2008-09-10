@@ -62,9 +62,8 @@ public class WorldWatcherManager
     public void remoteMemberEnteredScene (MemberLocation loc, String hostname, int port)
     {
         ClientObject watcher = _memberWatchers.get(loc.memberId);
-        log.info(
-            "remoteMemberEnteredScene", "loc", loc, "hostname", hostname, "port", port, 
-            "watcher", watcher);
+        log.debug("remoteMemberEnteredScene", "loc", loc, "hostname", hostname, "port", port, 
+                  "watcher", watcher);
         if (watcher != null) {
             WatcherSender.memberMoved(watcher, loc.memberId, loc.sceneId, hostname, port);
         }
