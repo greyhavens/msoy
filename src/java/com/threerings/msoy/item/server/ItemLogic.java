@@ -329,28 +329,7 @@ public class ItemLogic
 
             } else if (nrecord instanceof SubItemRecord &&
                        ((SubItem)nrecord.toItem()).getSuiteMasterType() == Item.GAME) {
-                // look up the gameId of the game to which these packs belong
-                SubItemRecord srecord = (SubItemRecord)nrecord;
-                int gameId = 0;
-                if (srecord.suiteId < 0) {
-                    // listed sub-items have -catalogId as their suite id
-                    CatalogRecord crec = _gameRepo.loadListing(-srecord.suiteId, true);
-                    if (crec == null) {
-                        log.warning("Unable to find catalog record for updated sub-item",
-                                    "type", srecord.getType(), "suiteId", srecord.suiteId);
-                    } else {
-                        gameId = ((GameRecord)crec.item).gameId;
-                    }
-                } else {
-                    // original sub-items have itemId as their suite id
-                    GameRecord grec = _gameRepo.loadOriginalItem(srecord.suiteId);
-                    if (grec == null) {
-                        log.warning("Unable to find original item for updated sub-item",
-                                    "type", srecord.getType(), "suiteId", srecord.suiteId);
-                    } else {
-                        gameId = grec.gameId;
-                    }
-                }
+                int gameId = getGameId((SubItemRecord)nrecord);
                 if (gameId != 0) {
                     // notify any server hosting this game that its data is updated
                     _peerMan.invokeNodeAction(new GameUpdatedAction(gameId));
@@ -389,6 +368,12 @@ public class ItemLogic
     {
         if (record.getType() == Item.AVATAR) {
             MemberNodeActions.avatarUpdated(record.ownerId, record.itemId);
+
+        } else if (record instanceof SubItemRecord &&
+                   ((SubItem)record.toItem()).getSuiteMasterType() == Item.GAME) {
+            int gameId = getGameId((SubItemRecord)record);
+            // TODO notify the game (via its msoy world server) that the user has purchased some game content
+            // _peerMan.invokeNodeAction(new ContentPurchasedAction(memberId, gameId, itemIdentifier));
         }
 
         _eventLog.itemPurchased(
@@ -772,6 +757,36 @@ public class ItemLogic
             throw new MissingRepositoryException(type);
         }
         return repo;
+    }
+
+    /**
+     * Looks up the id of the game to which the supplied sub-item record belongs.
+     */
+    protected int getGameId (SubItemRecord srecord)
+    {
+        // look up the gameId of the game to which these packs belong
+        int gameId = 0;
+        if (srecord.suiteId < 0) {
+            // listed sub-items have -catalogId as their suite id
+            CatalogRecord crec = _gameRepo.loadListing(-srecord.suiteId, true);
+            if (crec == null) {
+                log.warning("Unable to find catalog record for updated sub-item",
+                            "type", srecord.getType(), "suiteId", srecord.suiteId);
+            } else {
+                gameId = ((GameRecord)crec.item).gameId;
+            }
+
+        } else {
+            // original sub-items have itemId as their suite id
+            GameRecord grec = _gameRepo.loadOriginalItem(srecord.suiteId);
+            if (grec == null) {
+                log.warning("Unable to find original item for updated sub-item",
+                            "type", srecord.getType(), "suiteId", srecord.suiteId);
+            } else {
+                gameId = grec.gameId;
+            }
+        }
+        return gameId;
     }
 
     /** Notifies other nodes when a game record is updated. */
