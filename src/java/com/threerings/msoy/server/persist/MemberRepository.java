@@ -190,9 +190,6 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Looks up members' names by id.
-     *
-     * TODO: Implement findAll(Persistent.class, Comparable... keys) or the like,
-     *       as per MDB's suggestion, say so we can cache properly.
      */
     public IntMap<MemberName> loadMemberNames (final Set<Integer> memberIds)
     {
