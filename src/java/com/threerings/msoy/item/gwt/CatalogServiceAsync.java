@@ -34,6 +34,12 @@ public interface CatalogServiceAsync
                               AsyncCallback<Item> callback);
 
     /**
+     * The asynchronous version of {@link CatalogService#purchaseGameContent}
+     */
+    public void purchaseGameContent (int gameId, byte itemType, int catalogId, int authedFlowCost,
+                                     int authedBarsCost, AsyncCallback<Item> callback);
+
+    /**
      * The asynchronous version of {@link CatalogService#listItem}
      */
     public void listItem (ItemIdent item, String descrip, int pricing, int salesTarget,

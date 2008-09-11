@@ -6,6 +6,7 @@ package client.shop;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -76,9 +77,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     MsoyUI.infoAction(CShop.msgs.msgMustRegister(), CShop.msgs.msgRegister(),
                                       Link.createListener(Pages.ACCOUNT, "create"));
                 } else {
-                    // TODO: Bar me
-                    _catalogsvc.purchaseItem(_item.getType(), _listing.catalogId,
-                                             _listing.cost, 0, this);
+                    purchaseItem(this);
                 }
                 return true;
             }
@@ -226,6 +225,17 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 Link.go(Pages.SHOP, ShopUtil.composeArgs(_item.getType(), tag, null, 0));
             }
         });
+    }
+
+    /**
+     * This callout allows the purchase to be overriden (as in the case where the purchase is for a
+     * specific game).
+     */
+    protected void purchaseItem (AsyncCallback<Item> callback)
+    {
+        // TODO: Bar me
+        _catalogsvc.purchaseItem(_item.getType(), _listing.catalogId,
+                                 _listing.cost, 0, callback);
     }
 
     protected CatalogModels _models;

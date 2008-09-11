@@ -25,6 +25,7 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.presents.dobj.RootDObjectManager;
+import com.threerings.presents.peer.data.NodeObject;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -392,6 +393,21 @@ public class ItemLogic
 
         _eventLog.itemPurchased(
             record.ownerId, record.getType(), record.itemId, coinsPaid, barsPaid);
+    }
+
+    /**
+     * Called when a game content item (such as a level pack) has been purchases. This notifies
+     * interested parties, such as the game, that the user is now entitled to use the purchased
+     * content.
+     *
+     * @param memberId the ID of the proud new game content owner.
+     * @param gameId the game that the content belongs to.
+     * @param itemIdentifier the string used by the game to identify the purchased game content.
+     */
+    public void gameContentPurchased (int memberId, int gameId, String itemIdentifier)
+    {
+        // TODO notify the game (via its msoy world server) that the user has purchased some game content
+        // _peerMan.invokeNodeAction(new ContentPurchasedAction(memberId, gameId, itemIdentifier));
     }
 
     /**
@@ -770,6 +786,32 @@ public class ItemLogic
             _gameReg.gameUpdated(_gameId);
         }
         @Inject protected transient WorldGameRegistry _gameReg;
+    }
+
+    /** Notifies other nodes when a user has purchased game content. */
+    protected static class ContentPurchasedAction extends GameNodeAction
+    {
+        public ContentPurchasedAction (int gameId, int memberId, String itemIdentifier) {
+            super(gameId);
+            _memberId = memberId;
+            _itemIdentifier = itemIdentifier;
+        }
+        public ContentPurchasedAction () {
+        }
+        @Override public boolean isApplicable (NodeObject nodeobj) {
+            if (super.isApplicable(nodeobj)) {
+                // TODO check to see if this player is playing the game on the given node
+            }
+            return false;
+        }
+        @Override protected void execute () {
+            // TODO
+            // _gameReg.gameContentPurchased(_gameId, _memberId, _itemIdentifier);
+        }
+        @Inject protected transient WorldGameRegistry _gameReg;
+
+        protected int _memberId;
+        protected String _itemIdentifier;
     }
 
     /** Maps byte type ids to repository for all digital item types. */
