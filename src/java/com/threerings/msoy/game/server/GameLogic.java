@@ -20,7 +20,6 @@ import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.InvocationException;
-import com.threerings.presents.server.PresentsDObjectMgr;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -219,7 +218,6 @@ public class GameLogic
         // the dobjmgr thread to see if they're currently in a game
         FutureTask<String> findHost = new FutureTask<String>(new Callable<String>() {
             public String call () {
-                _omgr.requireEventThread();
                 MemberLocation memloc = _peerMan.getMemberLocation(memberId);
                 if (memloc != null && memloc.gameId != 0) {
                     Tuple<String, Integer> gameHost = _peerMan.getGameHost(memloc.gameId);
@@ -296,7 +294,7 @@ public class GameLogic
         @Inject protected transient WorldGameRegistry _gameReg;
     }
 
-    @Inject PresentsDObjectMgr _omgr;
+    @Inject RootDObjectManager _omgr;
     @Inject WorldGameRegistry _gameReg;
     @Inject MsoyPeerManager _peerMan;
     @Inject MoneyLogic _moneyLogic;

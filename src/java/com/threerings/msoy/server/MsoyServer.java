@@ -16,8 +16,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.servlet.user.UserRepository;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
