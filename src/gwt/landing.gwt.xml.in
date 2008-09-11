@@ -15,6 +15,7 @@
   <source path="com/threerings/msoy/landing/gwt"/>
 
   <source path="client/comment"/>
+  <source path="client/trophy"/>
   <source path="client/games"/>
   <source path="client/msgs"/>
   <source path="client/whirleds"/>
