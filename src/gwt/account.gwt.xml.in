@@ -4,7 +4,7 @@
   <source path="client/account"/>
 
   <public path="public/account"/>
-  <stylesheet src="/css/account.css"/>
+  <stylesheet src="account.css"/>
 
   <entry-point class="client.account.AccountPage"/>
 </module>

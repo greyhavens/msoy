@@ -8,5 +8,5 @@
   <source path="client/item"/>
 
   <public path="public/item"/>
-  <stylesheet src="/css/item.css"/>
+  <stylesheet src="item.css"/>
 </module>

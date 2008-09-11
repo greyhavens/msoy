@@ -6,7 +6,7 @@
   <source path="client/admin"/>
 
   <public path="public/admin"/>
-  <stylesheet src="/css/admin.css"/>
+  <stylesheet src="admin.css"/>
 
   <entry-point class="client.admin.AdminPage"/>
 </module>

@@ -1,0 +1,7 @@
+<module>
+  <source path="com/threerings/msoy/game/data/all"/>
+  <source path="client/trophy"/>
+
+  <public path="public/trophy"/>
+  <stylesheet src="trophy.css"/>
+</module>

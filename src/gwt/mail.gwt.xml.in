@@ -10,7 +10,7 @@
   <source path="client/mail"/>
 
   <public path="public/mail"/>
-  <stylesheet src="/css/mail.css"/>
+  <stylesheet src="mail.css"/>
 
   <entry-point class="client.mail.MailPage"/>
 </module>

@@ -1,5 +1,6 @@
 <module>
   <inherits name="item"/>
+  <inherits name="trophy"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 
@@ -11,7 +12,7 @@
   <source path="client/games"/>
 
   <public path="public/games"/>
-  <stylesheet src="/css/games.css"/>
+  <stylesheet src="games.css"/>
 
   <entry-point class="client.games.GamesPage"/>
 </module>

@@ -13,6 +13,7 @@ import com.threerings.msoy.game.gwt.TrophyCase;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
+import client.trophy.TrophyGrid;
 import client.ui.TongueBox;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;

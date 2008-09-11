@@ -1,18 +1,15 @@
 <module>
-  <inherits name="item"/>
+  <inherits name="person"/>
 
   <source path="com/threerings/msoy/badge/data/all"/>
   <source path="com/threerings/msoy/badge/gwt"/>
-  <source path="com/threerings/msoy/person/gwt"/>
   <source path="com/threerings/msoy/money/data/all"/>
   <source path="com/threerings/msoy/money/gwt"/>
   
-  <source path="client/person"/>
   <source path="client/me"/>
 
   <public path="public/me"/>
-  <stylesheet src="/css/person.css"/>
-  <stylesheet src="/css/me.css"/>
+  <stylesheet src="me.css"/>
 
   <entry-point class="client.me.MePage"/>
 </module>

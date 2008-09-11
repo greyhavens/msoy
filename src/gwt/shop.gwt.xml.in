@@ -16,7 +16,7 @@
   <source path="client/remix"/>
 
   <public path="public/shop"/>
-  <stylesheet src="/css/shop.css"/>
+  <stylesheet src="shop.css"/>
 
   <entry-point class="client.shop.ShopPage"/>
 </module>

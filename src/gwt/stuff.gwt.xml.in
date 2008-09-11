@@ -7,7 +7,7 @@
   <source path="client/stuff"/>
 
   <public path="public/stuff"/>
-  <stylesheet src="/css/stuff.css"/>
+  <stylesheet src="stuff.css"/>
 
   <entry-point class="client.stuff.StuffPage"/>
 </module>

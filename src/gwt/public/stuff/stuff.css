@@ -1,0 +1,199 @@
+/**
+ * $Id$
+ *
+ * CSS styles for the Inventory interfaces.
+ */
+
+/* ------------------------------------
+   ITEM DETAIL CONTENT
+-------------------------------------*/
+
+.itemDetailContent .Status {
+  width: 125px;
+  font-size: 12px;
+}
+
+/* ------------------------------------
+   ITEM PANEL / MAIN STUFF PAGE
+-------------------------------------*/
+
+.itemPanel {
+  width: 100%;
+  background: #61a9cf url(/images/stuff/stuff_bg.png) repeat-x;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  min-height: 100%;
+}
+
+.itemPanel .Title .Type {
+  background: url(/images/stuff/orange_header.png) no-repeat;
+  width: 233px;
+  height: 38px; /* 41 - padding */
+  margin-left: 7px;
+  color: #FFFFFF;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 26px;
+  text-align: center;
+  padding-top: 3px;
+  margin-bottom: 10px;
+}
+
+.itemPanel .Title .For {
+  padding-left: 93px;
+  font-size: 13px;
+  color: white;
+}
+
+.itemPanel .Search {
+  position: absolute;
+  top: 10px;
+  left: 265px;
+  background: url(/images/stuff/search_bg.png) no-repeat;
+  width: 411px;
+  height: 31px;
+}
+
+.itemPanel .Search .SearchTitle {
+  color: #b8daf0;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-left: 5px;
+}
+
+.itemPanel .Search select,
+.itemPanel .Search input {
+  font-size: 13px;
+}
+
+.itemPanel .pagedGrid {
+  margin: 10px 0 10px 10px;
+  width: 660px;
+}
+
+.itemPanel .pagedGrid .Header .TopLeft, 
+.itemPanel .pagedGrid .Header .TopRight {
+  background-color: #29688d;
+}
+
+.itemPanel .pagedGrid .Header .Show {
+  white-space: nowrap;
+  width: 50px;
+  padding-right: 5px;
+}
+
+.itemPanel .pagedGrid .Grid,
+.itemPanel .pagedGrid .Empty {
+  background-color: #FFFFFF;
+}
+.itemPanel .pagedGrid .Empty {
+  padding: 40px 0;
+}
+	
+.itemPanel .itemDetailPanel .itemActivator .Tip {
+  color: #3776A0;
+}
+
+.itemPanel .Upload {
+  background: url(/images/item/upload_bg.png) no-repeat top;
+  margin-left: 10px;
+  width: 655px;
+  height: 89px;
+}
+
+.itemPanel .Upload .Header {
+  height: 40px;
+  color: #FFFFFF;
+  font-weight: bold;
+  padding: 2px 0px 0px 65px;
+}
+
+.itemPanel .Upload .Pitch {
+  background-image: none;
+  padding: 5px 0 10px 20px;
+  font-size: 14px;
+}
+
+.itemPanel .itemBox .Name {
+  text-align: center;
+}
+
+.itemPanel .itemBox .Activator {
+  padding-top: 3px;
+}
+
+.itemBox .Original {
+  font-style: italic;
+}
+
+.itemPanel .Upload .Button {
+  padding-right: 20px;
+}
+
+/* ------------------------------------
+   SUB INVENTORY CONTENTS
+-------------------------------------*/
+
+.subInventoryContents {
+  width: 650px;
+  margin-top: 5px;
+}
+
+.subInventoryContents .itemBox .Ident {
+  font-size: 10px;
+  padding-bottom: 3px;
+}
+
+.mediaUploader {
+}
+
+.mediaUploader td {
+  padding: 2px;
+}
+
+.mediaUploader .Preview {
+  width: 160px;
+  height: 120px;
+  border: 1px solid;
+  background-image: url(/images/item/detail_preview_bg.png);
+}
+
+.doListItem {
+  margin: 10px;
+}
+
+.doListItem .Header {
+  font-size: 13px;
+  font-weight: bold;
+  padding-top: 15px;
+}
+
+.doListItem .Blurb {
+  vertical-align: top;
+  font-size: 13px;
+}
+
+.doListItem .RarityRow {
+  margin-left: 40px;
+  margin-top: 5px;
+}
+
+.doListItem .PriceRow {
+  margin-left: 40px;
+  margin-top: 10px;
+}
+
+.PriceRow .Price {
+  display: inline;
+  font-family: Helvetica, sans-serif;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.doListItem .Status {
+  padding-top: 5px;
+}
+
+.favoritesPanel .Contents {
+  margin: 10px;
+  width: 650px;
+}

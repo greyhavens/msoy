@@ -8,7 +8,7 @@
   <source path="client/swiftly"/>
 
   <public path="public/swiftly"/>
-  <stylesheet src="/css/swiftly.css"/>
+  <stylesheet src="swiftly.css"/>
 
   <entry-point class="client.swiftly.SwiftlyPage"/>
 </module>

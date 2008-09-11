@@ -8,7 +8,7 @@
   <source path="client/whirleds"/>
 
   <public path="public/whirleds"/>
-  <stylesheet src="/css/whirleds.css"/>
+  <stylesheet src="whirleds.css"/>
 
   <entry-point class="client.whirleds.WhirledsPage"/>
 </module>

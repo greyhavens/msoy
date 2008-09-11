@@ -1,29 +1,10 @@
 <module>
-  <inherits name="com.google.gwt.user.User"/>
-  <inherits name="com.google.gwt.i18n.I18N"/>
-  <inherits name="com.threerings.gwt.Utils"/>
+  <inherits name="global"/>
 
-  <source path="org/gwtwidgets/client"/>
-  <source path="com/threerings/io"/>
-  <source path="com/threerings/util"/>
-  <source path="com/threerings/presents/dobj"/>
+  <!-- this doesn't exist, but if we don't have something GWT helpfully adds -->
+  <!-- the whole goddamned source tree from the root on up -->
+  <source path="client/page"/>
 
-  <source path="com/threerings/msoy/data/all"/>
-  <source path="com/threerings/msoy/web/data"/>
-  <source path="com/threerings/msoy/web/client"/>
-  <source path="com/threerings/msoy/money/data/all"/>
-
-  <source path="client/util"/>
-  <source path="client/ui"/>
-  <source path="client/images"/>
-  <source path="client/shell"/>
-
-  <!-- this directory doesn't exist, but if we don't specify something, GWT helpfully -->
-  <!-- decides to copy the entire directory into every single page that inherits from this -->
-  <!-- definition. Thanks guys! -->
   <public path="public/page"/>
-
-  <stylesheet src="/css/global.css"/>
-  <stylesheet src="/css/gwt.css"/>
-  <stylesheet src="/css/page.css"/>
+  <stylesheet src="page.css"/>
 </module>

@@ -8,9 +8,9 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
-import client.games.TrophyGrid;
 import client.shell.Args;
 import client.shell.Pages;
+import client.trophy.TrophyGrid;
 
 /**
  * Displays a member's recently earned trophies.

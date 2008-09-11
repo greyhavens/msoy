@@ -1,0 +1,14 @@
+/**
+ * $Id$
+ *
+ * CSS styles for the Trophy interfaces.
+ */
+
+.trophyGrid .Trophy {
+  width: 115px;
+}
+
+.trophyGrid .Name {
+  text-align: center;
+  font-size: 12px;
+}

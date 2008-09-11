@@ -1,0 +1,454 @@
+/**
+ * $Id$
+ *
+ * Styles for Me pages.
+ */
+
+/* ------------------------------------
+   NAVIGATION BAR
+   TODO: delete when nav bar is removed from #me
+-------------------------------------*/
+
+.stuffNaviBar {
+  margin-left: 7px;
+  margin-top: 10px;
+}
+
+.stuffNaviBar img {
+  float: left;
+}
+
+/* ------------------------------------
+   POPUP PAGE
+-------------------------------------*/
+
+.myWhirled .Pop {
+  text-align: right;
+  font-size: 10px;
+  padding: 5px 20px 0px 0px;
+  color: #63AAE2;
+}
+
+/* ------------------------------------
+   WHATS NEXT PAGE
+-------------------------------------*/
+
+.whatsNext {
+  width: 649px;
+  height: 341px;
+  margin: 0px auto 10px;
+  color: #216CA3;
+}
+
+.whatsNext .NoFriends, .whatsNext .Friends {
+  background: url(/images/me/next_bg.png) no-repeat top left;
+  width: 217px;
+  padding: 5px 10px 10px 10px;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.whatsNext .Friends .FriendsScroller {
+  height: 326px;
+  width: 217px;
+}
+
+.whatsNext .NoFriends .Title, .whatsNext .Friends .Title {
+  font-weight: bold;
+}
+
+.whatsNext .NoFriends img {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.whatsNext .NoFriends .NoFriendsMsg {
+  height: 60px;
+  vertical-align: bottom;
+  padding-bottom: 5px;
+}
+
+.whatsNext .NoFriends .Or {
+  height: 60px;
+  vertical-align: middle;
+}
+
+.whatsNext .NoFriends .FindTip {
+  height: 60px;
+  vertical-align: top;
+  font-size: 12px;
+  padding-top: 5px;
+}
+
+.whatsNext .Friends {
+  vertical-align: top;
+}
+
+.whatsNext .Friends .ClickTip {
+  font-size: 12px;
+  color: #FFFFFF;
+  opacity: 0.6;
+}
+
+.whatsNext .Friends .PlaceName {
+  color: #3B556E;
+  font-size: 14px;
+  padding-top: 3px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.whatsNext .Friends .Member {
+  background: #DEECF7;
+  text-align: left;
+  font-size: 14px;
+  width: 100%;
+}
+
+.whatsNext .Friends .Member .Photo {
+  padding: 2px;
+  width: 20px;
+}
+
+.whatsNext .Friends .Member .Name {
+  font-weight: bold;
+  text-align: left;
+  padding-left: 10px;
+}
+
+.whatsNext .Friends .MemberRoom .Name {
+  color: #6DA8D2;
+}
+
+.whatsNext .Friends .MemberGame .Name {
+  color: #E88436;
+}
+
+.whatsNext .LeftPanel {
+  width: 96px;
+  background: url(/images/me/me_pattern.png) no-repeat top left;
+  vertical-align: top;
+}
+
+.whatsNext .LeftPanel .PassportIcon {
+  position: relative;
+  top: -10px;
+  width: 75px;
+  height: 75px;
+}
+
+.whatsNext .LeftPanel .PassportTip {
+  color: white;
+  text-align: left;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 17px;
+}
+
+.whatsNext .NextBadges {
+  width: 100%;
+  height: 341px;
+}
+
+.whatsNext .NextBadges .NextTitle {
+  background: url(/images/me/next_tile.png);
+  height: 27px;
+  text-align: center;
+  font-weight: bold;
+  color: white;
+  font-size: 16px;
+  border-right: solid 1px #8d5e30;
+}
+
+.whatsNext .NextBadges .SeeAllLink {
+  background-color: #dbe9f4;
+  height: 28px;
+  text-align: right;
+  font-style: italic;
+  font-size: 16px;
+  padding-right: 10px;
+}
+
+.whatsNext .NextBadges .SeeAllLink a, .whatsNext .NextBadges .SeeAllLink a.visited {
+  color: #2a6c9e;
+}
+
+.whatsNext .NextBadges .SeeAllLink, .whatsNext .NextBadges .badgeDisplay,
+.whatsNext .NextBadges .Spacer, .whatsNext .NextBadges .Divider {
+  border-bottom: solid 1px #569ccd;
+}
+.whatsNext .NextBadges .badgeDisplay, .whatsNext .NextBadges .Spacer,
+.whatsNext .NextBadges .Divider {
+  background: url(/images/me/passport_box_tile.png);
+}
+
+.whatsNext .NextBadges .Spacer {
+  height: 141px;
+  width: 156px;
+}
+
+.whatsNext .NextBadges .Divider {
+  width: 3px;
+  height: 141px;
+  position: relative;
+}
+
+.whatsNext .NextBadges .Divider img {
+  position: absolute;
+  top: 4px;
+}
+
+/* ------------------------------------
+   ACCOUNTS PAGE
+-------------------------------------*/
+
+.editAccount .Header {
+  font-weight: bold;
+}
+
+.editAccount .Tip {
+  width: 400px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.editAccount .PermaName {
+  font-weight: bold;
+}
+
+.editAccount .Status {
+  width: 400px;
+}
+
+.editAccount .Error {
+  color: red;
+}
+
+/* ------------------------------------
+   ROOMS PAGE
+-------------------------------------*/
+
+.myRooms {
+  width: 100%;
+}
+
+.myRooms .Room {
+  font-size: 12px;
+  text-align: center;
+}
+
+/* ------------------------------------
+   PASSPORT PAGE
+-------------------------------------*/
+.passport {
+  background: #1d5883;
+  width: 100%;
+  min-height: 100%;
+  padding-bottom: 5px;
+}
+
+.passport .NextPanel {
+  background-image: url(/images/me/passport_header_bg.jpg);
+  height: 252px;
+  width: 678px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+}
+
+.passport .NextPanel .Description {
+  padding-top: 10px;
+  padding-right: 10px;
+  font-size: 13px;
+}
+
+.passport .NextPanel .Icon {
+  padding-top: 10px;
+  padding-right: 10px;
+}
+
+.passport .NextPanel .NextHeader {
+  padding-top: 10px;
+}
+
+.passport .NextPanel .NextHeaderContent {
+  background-image: url(/images/me/passport_header_tile.png);
+  width: 100%;
+  height: 27px;
+}
+
+.passport .NextPanel .NextHeaderText {
+  width: 100%;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  padding-left: 5px;
+}
+
+.passport .NextPanel .NextHeaderContent .gwt-Image {
+  padding-right: 5px;
+  padding-left: 5px;
+}
+
+.passport .NextPanel .NextBadgesPanel {
+  background-image: url(/images/me/passport_box_tile.png);
+  height: 144px;
+  width: 652px;
+}
+
+.passport .NextPanel .NextBadgesPanel .BadgeDivider {
+  padding-top: 5px;
+}
+
+.passport .headerBox {
+  width: 673px;
+  padding-left: 5px;
+  padding-top: 10px;
+}
+
+.passport .headerBox .Contents {
+  width: 100%;
+}
+
+.passport .headerBox .Contents .tongueBox {
+  padding-top: 10px;
+}
+
+.passport .headerBox .Contents .EmptyLabel {
+  width: 100%;
+  text-align: center;
+  font-style: italic;
+}
+
+/* ------------------------------------
+   BADGE DISPLAYS ANYWHERE
+-------------------------------------*/
+.badgeDisplay {
+  position: relative;
+  width: 156px;
+  height: 141px;
+}
+
+.badgeDisplay .StampImage {
+  position: absolute;
+  left: 7px;
+  top: 7px;
+  margin-left: 0;
+}
+
+.badgeDisplay .StampName {
+  position: absolute;
+  left: 90px;
+  top: 20px;
+  width: 57px;
+  color: #1c4c74;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: left;
+  line-height: 12px;
+}
+
+.badgeDisplay .CoinReward {
+  position: absolute;
+  left: 90px;
+  top: 48px;
+  font-size: 12px;
+  color: black;
+}
+
+.badgeDisplay .CoinReward img {
+  float: left;
+  padding-top: 1px;
+}
+
+.badgeDisplay .CoinReward div {
+  float: left;
+  padding-left: 3px;
+}
+
+.badgeDisplay .StampDescription {
+  position: absolute;
+  top: 69px;
+  left: 7px;
+  width: 142px;
+  height: 43px;
+  color: #4a7595;
+  font-size: 12px;
+  text-align: center;
+}
+
+.badgeDisplay .WhenEarned, .badgeDisplay .ProgressBar {
+  position: absolute;
+  top: 118px;
+  left: 7px;
+}
+
+.badgeDisplay .ProgressLabel {
+  position: absolute;
+  top: 118px;
+  left: 31px;
+}
+
+.badgeDisplay .WhenEarned {
+  width: 142px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.badgeDisplay .ProgressBar .Fill {
+  background-repeat: repeat;
+}
+
+.badgeDisplay .GoButton {
+  position: absolute;
+  top: 118px;
+  right: 7px;
+}
+
+.BoxedBadge {
+  border-color: #d6e8f6;
+  border-style: solid;
+  border-width: 1px;
+  float: left;
+  margin-left: 3px;
+  margin-top: 3px;
+}
+
+.badgeDisplay a.external {
+  padding-right: 11px;
+  color: #4a7595;
+}
+
+.Balance {
+  width: 100%;
+  padding: 15px;
+  background: white;
+}
+
+.Balance .Transaction {
+  width: 100%;
+  border-bottom: 1px solid #dadada;
+  border-left: 1px solid #a1ceec;
+  border-right: 1px solid #a1ceec;
+}
+
+.Balance .Transaction .Time {
+  background: red;
+}
+
+.Balance .Transaction .Description {
+  background: #ffcc00;
+  width: 100%;
+  border-left: 1px solid #a1ceec;
+}
+
+.Balance .Transaction .Debit,
+.Balance .Transaction .Credit {
+  border-left: 1px solid #a1ceec;
+  width: 50px;
+  background: green;
+  text-align: center;
+}
+

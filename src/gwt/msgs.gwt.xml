@@ -5,5 +5,5 @@
   <source path="client/msgs"/>
 
   <public path="public/msgs"/>
-  <stylesheet src="/css/msgs.css"/>
+  <stylesheet src="msgs.css"/>
 </module>

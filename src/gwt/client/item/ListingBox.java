@@ -11,8 +11,6 @@ import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.item.gwt.ListingCard;
 
-import com.threerings.msoy.money.data.all.Currency;
-
 import client.shell.Args;
 import client.shell.Pages;
 import client.ui.MsoyUI;

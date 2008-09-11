@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.games;
+package client.trophy;
 
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;

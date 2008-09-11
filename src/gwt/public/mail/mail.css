@@ -1,0 +1,152 @@
+/** 
+ * $Id$
+ *
+ * CSS styles for the Mail interfaces.
+ */
+
+.mail {
+  width: 100%;
+}
+
+.mail .MailHeader {
+  background: url(/images/mail/header_bg.png) no-repeat top left;
+  width: 678px;
+  height: 56px;
+  color: white;
+  margin-bottom: 10px;
+}
+
+.mail .Folder .Grid {
+  border-left: 1px solid #A1CEEC;
+  border-right: 1px solid #A1CEEC;
+}
+
+.mail .Folder .Grid .TopCell, .mail .Folder .Grid .MiddleCell {
+  border-bottom: 1px solid #DADADA;
+}
+
+.mail .Folder .Footer {
+  border-top: none;
+  padding-top: 0px;
+  background: url(/images/ui/grid_header_tile.png) repeat-x left;
+  color: #487999;
+  height: 29px;
+}
+
+.mail .Folder .Grid .Unread {
+  background: #F0FCFF;
+}
+
+.mail .Folder .Convo {
+  width: 650px;
+  margin: 5px 10px;
+  font-size: 14px;
+  text-align: left;
+}
+
+.mail .Folder .Convo .Delete {
+  width: 15px;
+  padding-right: 10px;
+}
+
+.mail .Folder .Convo .Photo {
+  width: 50px;
+}
+
+.mail .Folder .Convo .Name {
+  padding-right: 15px;
+  width: 130px;
+}
+
+.mail .Folder .Convo .Name a {
+  color: #194C70;
+}
+
+.mail .Folder .Convo .Subject a {
+  color: #317FB2;
+}
+
+.mail .Folder .Convo .Snippet {
+  font-size: 12px;
+  color: #89B8D7;
+}
+
+.mail .Folder .Convo .Sent, .convo .Message .Sent {
+  color: #BCBBBB;
+  font-size: 12px;
+}
+
+.convo {
+  padding: 15px;
+}
+
+.convo .Title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #FFFFFF;
+}
+
+.convo .Control {
+  padding: 3px 0px 0px 10px;
+  vertical-align: top;
+  width: 50px;
+}
+
+.convo .Message {
+  width: 100%;
+  border-left: 1px solid #A1CEEC;
+  border-right: 1px solid #A1CEEC;
+  border-bottom: 1px solid #D4D4D4;
+  font-size: 12px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.convo .Unread {
+  background: #F0FCFF;
+}
+
+.convo .Message .Thumb {
+  padding-left: 15px;
+}
+
+.convo .Message .Body {
+  padding-right: 15px;
+}
+
+.convo .Message .Subject {
+  color: #317FB2;
+  font-size: 14px;
+  font-weight: bold;
+  padding-bottom: 5px;
+}
+
+.compose {
+  padding: 15px;
+}
+
+.compose .WriteTo {
+  text-align: center;
+}
+
+.compose .Contents {
+  width: 100%;
+  background: #F0FCFF;
+  border-left: 1px solid #A1CEEC;
+  border-right: 1px solid #A1CEEC;
+}
+
+.compose .Contents .Label {
+  text-align: right;
+  color: #317FB2;
+}
+
+.convo .gwt-TextArea, .compose .gwt-TextBox, .compose .gwt-TextArea {
+  border: 1px solid #7F9DB9;
+  background: #FFFFFF;
+}
+
+.groupInvitation .JoinButton {
+  display: block;
+  margin-left: 8em;
+}

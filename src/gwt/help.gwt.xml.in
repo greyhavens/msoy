@@ -4,7 +4,7 @@
   <source path="client/help"/>
 
   <public path="public/help"/>
-  <stylesheet src="/css/help.css"/>
+  <stylesheet src="help.css"/>
 
   <entry-point class="client.help.HelpPage"/>
 </module>

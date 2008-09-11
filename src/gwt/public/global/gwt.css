@@ -1,0 +1,919 @@
+/**
+ * $Id$
+ *
+ * CSS styles shared by all GWT stuff.
+ */
+
+body {
+  background: #000000;
+}
+
+img, embed, applet, object {
+  display: block; /* no descender padding thanks */
+}
+
+/** Make GWT display some sensible defaults. */
+.gwt-TabBar .gwt-TabBarItem {
+  border: 1px solid;
+  padding: 5px;
+  background: #CCCCFF;
+}
+
+.gwt-TabBar .gwt-TabBarItem-selected {
+  border: 2px solid;
+  background: #6699CC;
+}
+
+.gwt-TabPanelBottom {
+  padding: 5px;
+}
+
+/* MenuBar styles */
+.gwt-MenuBar {
+  background-color: white;
+  border: 1px solid black;
+  cursor: default;
+  font-size: 14px;
+}
+
+.gwt-MenuItem-selected {
+  background-color: lightblue;
+}
+
+.gwt-MenuBar a {
+  text-decoration: none;
+  color: black;
+  cursor: default;
+}
+
+.gwt-MenuBar .Disabled {
+  color: gray;
+}
+
+.gwt-Image {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/** Form element styles. */
+.gwt-Button {
+  background-image: url(/images/ui/button_middle.png);
+  background-repeat: repeat-x;
+  border: 1px solid #404040;
+  font-size: 12px;
+  vertical-align: middle;
+  cursor: pointer;
+  height: 19px;
+  margin: 0px;
+  padding-bottom: 1px;
+  white-space: nowrap;
+}
+
+.tinyButton {
+  background-image: url(/images/ui/tiny_button_middle.png);
+  font-size: 8px;
+  height: 12px;
+}
+
+.orangeButton {
+  border: none;
+  color: #FFFFFF;
+  font-weight: bold;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.backButton {
+  background-image: url(/images/ui/back.png);
+  width: 29px;
+  height: 22px;
+}
+
+.backButton-hovering {
+  background-image: url(/images/ui/back_over.png);
+}
+
+.backButton-down {
+  background-image: url(/images/ui/back_down.png);
+}
+
+.shortThinOrangeButton, .mediumThinOrangeButton, .longThinOrangeButton {
+  font-size: 15px;
+  height: 25px;
+  padding-top: 4px;
+}
+
+.shortThickOrangeButton, .mediumThickOrangeButton, .longThickOrangeButton {
+  font-size: 28px;
+  height: 40px;
+  padding-top: 4px;
+}
+
+.shortThinOrangeButton {
+  background-image: url(/images/ui/orange/short_thin.png);
+  width: 78px;
+}
+.shortThinOrangeButton-up-hovering, .shortThinOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/short_thin_over.png);
+  cursor: pointer;
+}
+
+.mediumThinOrangeButton {
+  background-image: url(/images/ui/orange/medium_thin.png);
+  width: 92px;
+}
+.mediumThinOrangeButton-up-hovering, .mediumThinOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/medium_thin_over.png);
+  cursor: pointer;
+}
+
+.longThinOrangeButton {
+  background-image: url(/images/ui/orange/long_thin.png);
+  width: 120px;
+}
+.longThinOrangeButton-up-hovering, .longThinOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/long_thin_over.png);
+  cursor: pointer;
+}
+.longThinOrangeButton-up-disabled {
+  background-image: url(/images/ui/orange/long_thin_disabled.png);
+  color: #CCCCCC;
+}
+
+.shortThickOrangeButton {
+  background-image: url(/images/ui/orange/short_thick.png);
+  width: 102px;
+}
+.shortThickOrangeButton-up-hovering, .shortThickOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/short_thick_over.png);
+  cursor: pointer;
+}
+
+.mediumThickOrangeButton {
+  background-image: url(/images/ui/orange/medium_thick.png);
+  width: 120px;
+}
+.mediumThickOrangeButton-up-hovering, .mediumThickOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/medium_thick_over.png);
+  cursor: pointer;
+}
+
+.longThickOrangeButton {
+  background-image: url(/images/ui/orange/long_thick.png);
+  width: 146px;
+}
+.longThickOrangeButton-up-hovering, .longThickOrangeButton-down-hovering {
+  background-image: url(/images/ui/orange/long_thick_over.png);
+  cursor: pointer;
+}
+
+.closeButton {
+  background-image: url(/images/ui/close.png);
+  width: 13px;
+  height: 13px;
+}
+
+.closeButton-hovering {
+  background-image: url(/images/ui/close_over.png);
+}
+
+.gwt-PushButton {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.gwt-PushButton input {
+  border: none;
+}
+
+.gwt-PushButton-up-hovering, .gwt-PushButton-down-hovering {
+  cursor: pointer;
+}
+
+.gwt-ToggleButton {
+  text-align: center;
+}
+
+.gwt-ToggleButton-up {
+}
+
+.gwt-ToggleButton-up-hovering {
+  background: #CCCCCC;
+  cursor: pointer;
+}
+
+.gwt-ToggleButton-down {
+  background: #999999;
+}
+
+.gwt-ToggleButton-down-hovering {
+  background: #CCCCCC;
+  cursor: pointer;
+}
+
+.gwt-TextBox {
+  background: #E9F6FB;
+}
+
+.gwt-PasswordTextBox {
+  background: #E9F6FB;
+}
+
+.gwt-TextArea {
+  background: #E9F6FB;
+}
+
+.gwt-ListBox {
+  background: #E9F6FB;
+}
+
+.gwt-FileUpload {
+  background: #E9F6FB;
+}
+
+.gwt-RichTextToolbar {
+  margin-bottom: 5px;
+}
+
+/** Box with rounded header */
+.headerBox .Corner {
+  width: 10px;
+  height: 25px;
+}
+
+.headerBox .Title {
+  background: url(/images/ui/box/header_tile.png) repeat-x;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.headerBox .Title img, .headerBox .Title div {
+  display: inline;
+  vertical-align: middle;
+}
+
+.headerBox .Title img {
+  padding-right: 5px;
+}
+
+.headerBox .Contents {
+  background: #FFFFFF;
+}
+
+/** Box with rounded borders but no header */
+.roundBox .Corner {
+  width: 10px;
+  height: 10px;
+}
+
+.roundBox .Center {
+  padding: 0px 0px 0px 0px;
+}
+
+.roundBox .WhiteCenter, .roundBox .WhiteSide {
+  background: #FFFFFF;
+}
+
+.roundBox .BlueCenter, .roundBox .BlueSide {
+  background: #E8F5FE;
+}
+
+.roundBox .DarkBlueCenter, .roundBox .DarkBlueSide {
+  background: #3F8EBA;
+}
+
+.roundBox .MediumBlueCenter, .roundBox .MediumBlueSide {
+  background: #C9E9FE;
+}
+
+/** Misc styles. */
+.tongueBox {
+  width: 100%;
+}
+
+.tongueBox .Header {
+  width: 100%;
+}
+
+.tongueBox .Header .Base {
+  background: url(/images/ui/tongue_base.png) #49A1E7 no-repeat left;
+  padding-left: 10px;
+  height: 28px;
+}
+
+.tongueBox .Header .Base, .tongueBox .Header .Base .BaseContents .BaseText {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  white-space: nowrap;
+  color: white;
+}
+
+.tongueBox .Header .Base .BaseContents .BaseText {
+  padding-left: 10px;
+}
+
+.tongueBox .Header .Line {
+  background: url(/images/ui/tongue_tip.png) no-repeat left;
+  width: 100%;
+  padding-left: 10px;
+}
+
+.tongueBox .Content {
+  border: white solid 10px;
+}
+
+.tongueBox .Footer {
+  font-size: 12px;
+  padding: 0px 10px 10px 0px;
+}
+
+.formPanel td {
+  vertical-align: top;
+}
+
+.formPanel .Intro {
+  width: 600px;
+}
+
+.formPanel .Tip {
+  font-size: 12px;
+  width: 300px;
+}
+
+.formPanel .Status {
+  width: 600px;
+}
+
+.formPanel .Error {
+  color: red;
+}
+
+.imageChooser {
+  padding: 10px;
+  width: 670px;
+}
+
+.imageChooser .Title {
+  font-size: 16px;
+}
+
+.imageChooser .Photo {
+  padding: 5px;
+}
+
+.imageChooser .Or {
+  font-size: 18px;
+  text-align: center;
+  padding: 10px 0px;
+}
+
+.imageChooser .ItemPreview {
+  background-image: url(/images/item/detail_preview_bg.png);
+  width: 320px;
+  height: 240px;
+}
+
+/** Standard paged grid configuration. */
+.pagedGrid .Header, .pagedGrid .Footer {
+  background: url(/images/ui/grid_header_tile.png) repeat-x left;
+  color: #487999;
+  height: 29px;
+}
+
+.pagedGrid .Header .TopLeft {
+  background: white url(/images/ui/grid_header_left.png) no-repeat left;
+  width: 26px;
+}
+
+.pagedGrid .Header .TopRight {
+  background: white url(/images/ui/grid_header_right.png) no-repeat right;
+  width: 26px;
+}
+
+.pagedGrid .Footer .BottomLeft {
+  background: white url(/images/ui/grid_footer_left.png) no-repeat left;
+  width: 26px;
+}
+
+.pagedGrid .Footer .BottomRight {
+  background: white url(/images/ui/grid_footer_right.png) no-repeat right;
+  width: 26px;
+}
+
+.pagedGrid .BareFooter {
+  border-top: 1px solid #DADADA;
+  padding-top: 2px;
+}
+
+.pagedGrid .Info {
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 12px;
+}
+
+.pagedGrid .Prev, .pagedGrid .Next {
+  width: 55px;
+}
+
+.pagedGrid .Info .Page {
+  padding: 0px 2px;
+}
+
+.pagedGrid .Info .Link {
+  cursor: pointer;
+  cursor: hand;
+  text-decoration: underline;
+  padding: 0px 2px;
+}
+
+.pagedGrid .Info .Current {
+  font-weight: bold;
+}
+
+.pagedGrid .Button {
+  font-size: 12px;
+  width: 51px;
+  height: 19px;
+  vertical-align: top;
+  padding-top: 0px;
+  padding-bottom: 1px;
+  cursor: pointer;
+  border: 0px none;
+}
+
+.pagedGrid .PrevButton {
+  text-align: right;
+  padding-right: 8px;
+  background: url(/images/ui/button_prev.png) transparent;
+}
+
+.pagedGrid .NextButton {
+  text-align: left;
+  padding-left: 8px;
+  background: url(/images/ui/button_next.png) transparent;
+}
+
+.pagedGrid .Empty {
+  padding: 5px;
+  text-align: center;
+}
+
+.dottedGrid .Grid {
+  border-left: 1px solid #DADADA;
+  border-right: 1px solid #DADADA;
+}
+
+.dottedGrid .Grid .Cell {
+  background-image: url(/images/whirled/bg_gradient.png);
+  background-repeat: repeat-x;
+  background-color: #F4F3F4;
+}
+
+.dottedGrid .Grid .TopCell, .dottedGrid .Grid .MiddleCell {
+  border-bottom: 1px solid #DADADA;
+}
+
+.dottedGrid .Empty {
+  border-left: 1px solid #DADADA;
+  border-right: 1px solid #DADADA;
+}
+
+/** Configuration for our bordered popup window */
+.borderedPopup {
+  background: #FFFFFF;
+}
+
+.borderedWidget {
+  border: 1px solid #0D4163;
+}
+
+.borderedWidget .Inner {
+  border: 2px solid #357197;
+}
+
+/** First the four verticals */
+.borderedHP .westOut {
+  background-image: url(/images/ui/quads/e.png);
+  width: 2px;
+}
+
+.borderedHP .westIn {
+  background-image: url(/images/ui/quads/w.png);
+  width: 2px;
+}
+
+.borderedHP .eastOut {
+  background-image: url(/images/ui/quads/w.png);
+  width: 2px;
+}
+
+.borderedHP .eastIn {
+  background-image: url(/images/ui/quads/e.png);
+  width: 2px;
+}
+
+/** Then the four horizontals */
+.borderedHP .northOut {
+  background-image: url(/images/ui/quads/s.png);
+  height: 2px;
+}
+
+.borderedHP .northIn {
+  background-image: url(/images/ui/quads/n.png);
+  height: 2px;
+}
+
+.borderedHP .southOut {
+  background-image: url(/images/ui/quads/n.png);
+  height: 2px;
+}
+
+.borderedHP .southIn {
+  background-image: url(/images/ui/quads/s.png);
+  height: 2px;
+}
+
+/** Then eight corners */
+.borderedHP .northWestIn {
+  background-image: url(/images/ui/quads/nw_in.png);
+  width: 2px;
+  height: 2px;
+}
+
+.borderedHP .northWestOut {
+  background-image: url(/images/ui/quads/se_out.png);
+  width: 2px;
+  height: 2px;
+}
+
+.borderedHP .southWestIn {
+  background-image: url(/images/ui/quads/sw_in.png);
+  width: 2px;
+  height: 2px;
+}
+
+.borderedHP .southWestOut {
+  background-image: url(/images/ui/quads/ne_out.png);
+  width: 2px;
+  height: 2px;
+}
+
+.borderedHP .northEastIn {
+  background-image: url(/images/ui/quads/ne_in.png);
+  width: 2px;
+  height: 2px;
+}
+
+.borderedHP .northEastOut {
+  background-image: url(/images/ui/quads/sw_out.png);
+  width: 2px;
+  height: 2px;
+}
+
+.borderedHP .southEastIn {
+  background-image: url(/images/ui/quads/se_in.png);
+  width: 2px;
+  height: 2px;
+}
+
+.borderedHP .southEastOut {
+  background-image: url(/images/ui/quads/nw_out.png);
+  width: 2px;
+  height: 2px;
+}
+
+.separatorLine {
+  background-image: url(/images/ui/separator.png);
+  width: 100%;
+}
+
+.borderedDialog {
+  max-width: 600px;
+}
+
+.borderedDialog .HeaderTitle, .borderedDialog .CloseCell {
+  background: url(/images/ui/dialog_title.png) repeat-x top;
+  height: 20px;
+  font-size: 14px;
+}
+
+.borderedDialog .HeaderTitle {
+  color: #FFFFFF;
+  padding-left: 10px;
+  font-weight: bold;
+}
+
+.borderedDialog .CloseCell {
+  width: 16px;
+}
+
+.borderedDialog .Buttons {
+  padding: 10px;
+}
+
+/** General UI styles. */
+.inline {
+  display: inline;
+}
+
+.inlineL {
+  display: inline;
+  margin-left: 5px;
+}
+
+.inlineR {
+  display: inline;
+  margin-right: 5px;
+}
+
+.inlineLR {
+  display: inline;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.actionLabel {
+  cursor: pointer; /* for modern browsers */
+  cursor: hand; /* for IE5 */
+  text-decoration: underline;
+}
+
+.rightLabel {
+  text-align: right;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.nowrapLabel {
+  white-space: nowrap;
+}
+
+.infoLabel {
+  font-size: 18px;
+  padding: 25px;
+}
+
+.rowPanelCell {
+  padding-right: 5px;
+}
+
+.tipLabel {
+  font-size: 12px;
+}
+
+.infoPopup {
+  padding: 15px;
+  max-width: 500px;
+}
+
+.headerRow {
+  font-style: italic;
+  background: #6699CC;
+}
+
+.StyledTabs .gwt-TabBar {
+  background: url(/images/ui/tabs/anchor_tile.png) repeat-x bottom;
+}
+
+.StyledTabs .gwt-TabBar .inline {
+  margin-right: 5px;
+  margin-left: 5px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.StyledTabs .gwt-TabBar .gwt-TabBarItem, .StyledTabs .gwt-TabBar .gwt-TabBarItem-selected {
+  padding: 0px;
+  border-width: 0px;
+}
+
+.StyledTabs .gwt-TabBar .gwt-TabBarItem {
+  color: #CFDCE1;
+  font-size: 11px;
+  cursor: default;
+}
+
+.StyledTabs .gwt-TabBar .gwt-TabBarItem .TabLeft {
+  background: url(/images/ui/tabs/left.png) no-repeat;
+  width: 3px;
+  height: 20px;
+}
+
+.StyledTabs .gwt-TabBar .gwt-TabBarItem .TabCenter {
+  background: url(/images/ui/tabs/tile.png);
+  height: 20px;
+}
+
+.StyledTabs .gwt-TabBar .gwt-TabBarItem .TabRight {
+  background: url(/images/ui/tabs/right.png) no-repeat;
+  width: 3px;
+  height: 20px;
+}
+
+.StyledTabs .gwt-TabBar .gwt-TabBarItem-selected {
+  color: black;
+}
+
+.StyledTabs .gwt-TabBar .gwt-TabBarItem-selected .TabLeft {
+  background: url(/images/ui/tabs/selected_left.png) no-repeat;
+}
+
+.StyledTabs .gwt-TabBar .gwt-TabBarItem-selected .TabCenter {
+  border-top: 1px solid black;
+  background: white;
+}
+
+.StyledTabs .gwt-TabBar .gwt-TabBarItem-selected .TabRight {
+  background: url(/images/ui/tabs/selected_right.png) no-repeat;
+}
+
+.StyledTabs .gwt-TabPanelBottom {
+  padding: 0px;
+}
+
+.stars img {
+  display: inline;
+}
+
+.promptPopup .Header {
+  padding: 4px 0px 0px 0px;
+  background-image: url(/images/ui/popup/header_text_tile.png);
+  height: 25px;
+  color: #EAEFF1;
+  text-align: center;
+  font-weight: bold;
+  width: 100%;
+}
+
+.promptPopup .Content {
+  padding: 15px 15px 0px 15px;
+  width: 400px;
+}
+
+.contentFooterPanel {
+  width: 100%;
+  height: 100%;
+}
+
+.contentFooterPanel .Content {
+  border-left: 1px solid #DADADA;
+  border-right: 1px solid #DADADA;
+}
+
+.contentFooterPanel .Footer {
+  border-top: 1px solid #DADADA;
+  padding-top: 2px;
+  font-size: 12px;
+  height: 20px;
+}
+
+/*.contentFooterPanel .Footer .gwt-Button {
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
+}*/
+
+.contentFooterPanel .Tip {
+  font-size: 12px;
+  width: 300px;
+}
+
+.clickBox {
+  border: 1px solid #CCCCCC;
+  margin: 5px;
+  padding: 5px; /* TODO: IE won't like */
+}
+
+.clickBox .Label {
+  white-space: nowrap;
+  width: 110px;
+  overflow: hidden;
+}
+
+.clickBox .Name {
+  font-size: 14px;
+  padding-top: 5px;
+}
+
+.memberStatus {
+  font-size: 14px;
+}
+
+.flashLink {
+  color: white;
+  background-color: black;
+}
+
+.flashLink a {
+  color: white;
+  border: 0;
+}
+
+.flashLink a:visited {
+  color: white;
+  border: 0;
+}
+
+.flashLink img {
+  border: 0;
+}
+
+/** SearchBox styles */
+.searchBox {
+  border: 1px solid black;
+  background: #E9F6FB;
+  padding: 0px 2px;
+}
+
+.searchBox .gwt-TextBox {
+  border: none;
+}
+
+.searchBox .Faded {
+  color: #AAAAAA;
+}
+
+.searchBox .closeButton {
+  margin-top: 3px;
+}
+
+/** Marquee styles */
+.marquee {
+  background: url(/images/ui/marquee_tile.png) repeat-x top;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  height: 38px;
+  text-align: center;
+  padding-top: 8px;
+  white-space: nowrap;
+}
+
+/** MessagePanel styles */
+.messagePanel .Photo {
+  background: #EDEDED;
+  padding: 5px;
+}
+
+.messagePanel .Info {
+  padding-top: 5px;
+}
+
+.messagePanel .Author {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+.messagePanel .Icon, .messagePanel .ActionIcon {
+  vertical-align: middle;
+  display: inline;
+}
+
+.messagePanel .Icon {
+  margin-right: 5px;
+}
+
+.messagePanel .ActionIcon {
+  margin-left: 5px;
+}
+
+.messagePanel .Posted {
+  font-size: 12px;
+  color: #999999;
+}
+
+.messagePanel .Scroller {
+  width: 565px;
+}
+
+.messagePanel .Text {
+  padding: 5px 5px 0px 0px;
+  vertical-align: top;
+}
+
+.messagePanel .LeftPad {
+  padding-left: 10px;
+}
+
+.messagePanel .RightPad {
+  padding-right: 10px;
+}
+
+.messagePanel .BottomPad {
+  padding-bottom: 5px;
+}
+
+/** ComplainPopup styles */
+.complainPopup {
+  width: 400px;
+}
+
+/** Place <div style="clear"/> to force a line break after floating elements */
+.clear {
+  clear: both;
+}

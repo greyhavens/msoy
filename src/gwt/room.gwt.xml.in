@@ -9,7 +9,7 @@
   <source path="client/comment"/>
 
   <public path="public/room"/>
-  <stylesheet src="/css/room.css"/>
+  <stylesheet src="room.css"/>
 
   <entry-point class="client.room.RoomPage"/>
 </module>

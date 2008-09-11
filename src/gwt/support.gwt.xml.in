@@ -8,7 +8,7 @@
   <source path="client/support"/>
 
   <public path="public/support"/>
-  <stylesheet src="/css/support.css"/>
+  <stylesheet src="support.css"/>
 
   <entry-point class="client.support.SupportPage"/>
 </module>

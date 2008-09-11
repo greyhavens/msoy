@@ -1,12 +1,11 @@
 <module>
   <inherits name="com.google.gwt.xml.XML"/>
-  <inherits name="item"/>
+  <inherits name="person"/>
+  <inherits name="trophy"/>
 
   <source path="com/kisgergely/gwt/canvas/client"/>
 
   <source path="com/threerings/msoy/comment/gwt"/>
-  <source path="com/threerings/msoy/game/data/all"/>
-  <source path="com/threerings/msoy/game/gwt"/>
   <source path="com/threerings/msoy/fora/gwt"/>
   <source path="com/threerings/msoy/group/data/all"/>
   <source path="com/threerings/msoy/group/gwt"/>
@@ -14,22 +13,17 @@
   <source path="com/threerings/msoy/mail/gwt"/>
   <source path="com/threerings/msoy/badge/data/all"/>
   <source path="com/threerings/msoy/badge/gwt"/>
-  <source path="com/threerings/msoy/person/gwt"/>
+  <source path="com/threerings/msoy/game/gwt"/>
   <source path="com/threerings/msoy/profile/gwt"/>
   <source path="com/threerings/msoy/stuff/gwt"/>
   <source path="com/threerings/msoy/room/gwt"/>
 
   <source path="client/comment"/>
   <source path="client/mail"/>
-  <source path="client/games"/>
-  <source path="client/person"/>
   <source path="client/people"/>
 
   <public path="public/people"/>
-  <stylesheet src="/css/person.css"/>
-  <stylesheet src="/css/games.css"/> <!-- TODO: not sure I like this -->
-  <stylesheet src="/css/mail.css"/> <!-- this either -->
-  <stylesheet src="/css/people.css"/>
+  <stylesheet src="people.css"/>
 
   <entry-point class="client.people.PeoplePage"/>
 </module>

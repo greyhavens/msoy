@@ -1,0 +1,9 @@
+<module>
+  <inherits name="item"/>
+
+  <source path="com/threerings/msoy/person/gwt"/>
+  <source path="client/person"/>
+
+  <public path="public/person"/>
+  <stylesheet src="person.css"/>
+</module>

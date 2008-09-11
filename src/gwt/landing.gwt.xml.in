@@ -14,7 +14,6 @@
   <source path="com/threerings/msoy/group/gwt"/>
   <source path="com/threerings/msoy/landing/gwt"/>
 
-  <source path="client/account"/>
   <source path="client/comment"/>
   <source path="client/games"/>
   <source path="client/msgs"/>
@@ -22,8 +21,8 @@
   <source path="client/landing"/>
 
   <public path="public/landing"/>
-  <stylesheet src="/css/games.css"/>
-  <stylesheet src="/css/landing.css"/>
+  <stylesheet src="../games/games.css"/>
+  <stylesheet src="landing.css"/>
 
   <entry-point class="client.landing.LandingPage"/>
 </module>
