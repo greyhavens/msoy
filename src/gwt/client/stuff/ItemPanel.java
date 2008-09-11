@@ -14,12 +14,9 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
@@ -55,36 +52,6 @@ public class ItemPanel extends FlowPanel
         _models = models;
         _type = type;
         boolean isCatalogType = isCatalogItem(type);
-
-        _search = new HorizontalPanel();
-        _search.setStyleName("Search");
-        _search.setSpacing(5);
-        _search.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-        _search.add(MsoyUI.createLabel("Search", "SearchTitle"));
-        final ListBox searchTypes = new ListBox();
-        for (byte searchType : Item.TYPES) {
-            searchTypes.addItem(_dmsgs.getString("pItemType" + searchType), searchType + "");
-        }
-        _search.add(searchTypes);
-        final TextBox searchBox = new TextBox();
-        searchBox.setVisibleLength(20);
-        _search.add(searchBox);
-        // TODO show query: if (query != null) { searchBox.setText(query); }
-
-        // TODO get from somewhere.. _filters?
-        final byte sortMethod = 0;
-
-        ClickListener searchListener = new ClickListener() {
-            public void onClick (Widget sender)
-            {
-                String newQuery = searchBox.getText().trim();
-                Link.go(Pages.STUFF, Args.compose(new String[] {
-                    searchTypes.getValue(searchTypes.getSelectedIndex()), sortMethod + "",
-                    newQuery }));
-            }
-        };
-        searchBox.addKeyboardListener(new EnterClickAdapter(searchListener));
-        _search.add(MsoyUI.createImageButton("GoButton", searchListener));
 
         // a drop down for setting filters
         _filters = new ListBox();
@@ -206,7 +173,6 @@ public class ItemPanel extends FlowPanel
                 : CStuff.msgs.stuffTitle(_dmsgs.getString("pItemType" + _type));
             tbar.add(MsoyUI.createLabel(title, "Type"));
 
-            // TODO replace this old image with the above shop image
             tbar.add(MsoyUI.createLabel(CStuff.msgs.ipShopFor(), "For"));
             tbar.add(WidgetUtil.makeShim(5, 5));
             ClickListener onClick = Link.createListener(Pages.SHOP, "" + _type);
@@ -215,16 +181,7 @@ public class ItemPanel extends FlowPanel
 
             add(tbar);
 
-            // TODO: this has been styled but the functionality not yet implemented
-            // add(_search);
-
             add(new StuffNaviBar(_type));
-
-            // TODO: takes up too much room - display only on main stuff page?
-            // Image shopImage = MsoyUI.createActionImage("/images/stuff/shop.png",
-            // Link.createListener(Pages.SHOP, ""));
-            // shopImage.addStyleName("Shop");
-            // add(shopImage);
 
             add(_contents);
             if (_upload != null) {
@@ -298,7 +255,7 @@ public class ItemPanel extends FlowPanel
 
     protected static final int NAV_BAR_ETC = 80 /* item navi */ + 24 /* shop */ +
         29 /* grid navi */
-        + 20 /* margin */+ 50 /* TODO calculate this correctly */;
+        + 20 /* margin */+ 50;
     protected static final int BLURB_HEIGHT = 33 /* title */ + 71 /* contents */;
     protected static final int BOX_HEIGHT = 104;
     protected static final int ACTIVATOR_HEIGHT = 22;

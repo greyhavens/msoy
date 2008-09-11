@@ -93,7 +93,7 @@ public class MsoyGameBackend extends WhirledGameBackend
     override protected function showGameShop_v1 (itemType :String, catalogId :int = 0) :void
     {
         // hide the integer item codes from the sdk
-        var itemTypeCode :int = 0;
+        var itemTypeCode :int;
         switch (itemType) {
             case "item_packs":
                 itemTypeCode = ItemTypes.ITEM_PACK;
@@ -116,6 +116,9 @@ public class MsoyGameBackend extends WhirledGameBackend
             case "pets":
                 itemTypeCode = ItemTypes.PET;
                 break;
+            default:
+                // if code is unknown, do nothing.
+                return;
         }
         (_ctx as GameContext).showGameShop(itemTypeCode, catalogId);
     }
