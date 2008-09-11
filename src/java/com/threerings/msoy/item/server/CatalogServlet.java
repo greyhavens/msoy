@@ -141,13 +141,8 @@ public class CatalogServlet extends MsoyServiceServlet
         final int authedBarsCost)
         throws ServiceException
     {
-        return purchaseItem(requireAuthedUser(), itemType, catalogId, authedFlowCost, authedBarsCost);
-    }
+        final MemberRecord mrec = requireAuthedUser();
 
-    protected Item purchaseItem (final MemberRecord mrec, final byte itemType, final int catalogId,
-        final int authedFlowCost, final int authedBarsCost)
-        throws ServiceException
-    {
         // locate the appropriate repository
         final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
 
@@ -228,23 +223,6 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         return newClone.toItem();
-    }
-
-    // from interface CatalogService
-    public Item purchaseGameContent (final int gameId, final byte itemType, final int catalogId, final int authedFlowCost,
-        final int authedBarsCost)
-        throws ServiceException
-    {
-        final MemberRecord memberRecord = requireAuthedUser();
-        final Item purchasedItem = purchaseItem(memberRecord, itemType, catalogId, authedFlowCost,
-                                                authedBarsCost);
-        if (purchasedItem instanceof SubItem) {
-            _itemLogic.gameContentPurchased(memberRecord.memberId, gameId,
-                                            ((SubItem) purchasedItem).ident);
-        } else {
-            log.warning("The purchased item is not game content", "itemType", itemType);
-        }
-        return purchasedItem;
     }
 
     // from interface CatalogService

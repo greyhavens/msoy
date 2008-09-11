@@ -3,7 +3,6 @@
 
 package client.shop;
 
-import client.item.ListingBox;
 import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.DynamicMessages;
@@ -13,13 +12,11 @@ import client.util.Link;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HasAlignment;
-import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.item.gwt.CatalogService;
-import com.threerings.msoy.item.gwt.ListingCard;
 
 /**
  * Displays catalog items belonging to a game suite.
@@ -46,10 +43,6 @@ public class SuiteCatalogPanel extends SmartTable
         _items = new ListingGrid(HEADER_HEIGHT) {
             @Override protected void displayPageFromClick (int page) {
                 Link.go(Pages.SHOP, ShopUtil.composeArgs(_query, page));
-            }
-            @Override protected Widget createWidget (ListingCard card)
-            {
-                return new ListingBox(card, _gameId);
             }
             @Override protected String getEmptyMessage () {
                 String name = _dmsgs.getString("itemType" + _query.itemType);

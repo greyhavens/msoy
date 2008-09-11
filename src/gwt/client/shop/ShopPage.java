@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -40,14 +39,9 @@ public class ShopPage extends Page
         if (action.equals(LOAD_LISTING)) {
             byte type = (byte)args.get(1, Item.NOT_A_TYPE);
             int catalogId = args.get(2, 0);
-            final int gameId = args.get(3, 0);
             _catalogsvc.loadListing(type, catalogId, new MsoyCallback<CatalogListing>() {
                 public void onSuccess (CatalogListing listing) {
-                    if (gameId == 0) {
-                        setContent(new ListingDetailPanel(_models, listing));
-                    } else {
-                        setContent(new GameContentDetailPanel(_models, listing, gameId));
-                    }
+                    setContent(new ListingDetailPanel(_models, listing));
                 }
             });
             CShell.frame.addNavLink(_dmsgs.getString("pItemType" + type), Pages.SHOP, ""+type);
@@ -105,22 +99,6 @@ public class ShopPage extends Page
 
         // load up our translation dictionaries
         CShop.msgs = (ShopMessages)GWT.create(ShopMessages.class);
-    }
-
-    /**
-     * Custom listing panel that will send along the game id when doing a purchase.
-     */
-    protected class GameContentDetailPanel extends ListingDetailPanel {
-        public GameContentDetailPanel (CatalogModels models, CatalogListing listing, int gameId) {
-            super(models, listing);
-            _gameId = gameId;
-        }
-        protected void purchaseItem (AsyncCallback<Item> callback) {
-            // TODO: Bar me
-            _catalogsvc.purchaseGameContent(_gameId, _item.getType(), _listing.catalogId,
-                                            _listing.cost, 0, callback);
-        }
-        protected int _gameId;
     }
 
     protected CatalogModels _models = new CatalogModels();

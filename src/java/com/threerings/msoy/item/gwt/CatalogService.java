@@ -77,12 +77,6 @@ public interface CatalogService extends RemoteService
         throws ServiceException;
 
     /**
-     * Purchases game content and notifies the game of the purchase.
-     */
-    Item purchaseGameContent (int gameId, byte itemType, int catalogId, int authedFlowCost, int authedBarsCost)
-        throws ServiceException;
-
-    /**
      * Lists the specified item in the catalog.
      *
      * @return the catalog id of the newly listed item.

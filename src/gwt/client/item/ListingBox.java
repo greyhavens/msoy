@@ -23,13 +23,8 @@ public class ListingBox extends ItemBox
 {
     public ListingBox (ListingCard listing)
     {
-        this(listing, 0);
-    }
-
-    public ListingBox (ListingCard listing, int gameId)
-    {
         super(listing.thumbMedia, listing.name, Pages.SHOP,
-              Args.compose(new String[]{"l", "" + listing.itemType, "" + listing.catalogId, ""+gameId}), listing.remixable);
+              Args.compose("l", "" + listing.itemType, "" + listing.catalogId), listing.remixable);
 
         String cname = _imsgs.itemBy(listing.creator.toString());
         addLabel(MsoyUI.createLabel(cname, "Creator"));
