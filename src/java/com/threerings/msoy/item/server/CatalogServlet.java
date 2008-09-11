@@ -36,6 +36,7 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
 import com.threerings.msoy.money.server.MoneyResult;
@@ -166,10 +167,12 @@ public class CatalogServlet extends MsoyServiceServlet
         try {
             result = _moneyLogic.buyItem(
                 mrec, new CatalogIdent(itemType, catalogId),
-                Currency.COINS, listing.cost, Currency.COINS, authedFlowCost);
+                listing.item.creatorId, listing.item.name,
+                listing.currency, listing.cost, Currency.COINS, authedFlowCost);
         } catch (final NotEnoughMoneyException neme) {
             throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
         } catch (final NotSecuredException nse) {
+            // TODO: this will have a PriceQuote within it that we can pass back to the client
             throw new CostUpdatedException(listing.cost, 0); // TODO: Update to new standard
         }
 
@@ -355,11 +358,10 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // secure the current price of the item for this member
-        if (mrec != null) {
-            _moneyLogic.securePrice(
-                mrec.memberId, new CatalogIdent(itemType, catalogId), Currency.COINS,
-                record.cost, record.item.creatorId, 0, record.item.name);
+        PriceQuote quote = _moneyLogic.securePrice((mrec == null) ? 0 : mrec.memberId,
+            new CatalogIdent(itemType, catalogId), record.currency, record.cost);
 
+        if (mrec != null) {
             // if this item is for sale for coins and this member is in a game, we may also want to
             // flush their pending coin earnings to ensure that they can buy it if affording it
             // requires a combination of their real coin balance plus their pending earnings
@@ -369,6 +371,7 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // finally convert the listing to a runtime record
+        // TODO: pass back a PriceQuote in the CatalogListing
         final CatalogListing clrec = record.toListing();
         clrec.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
         clrec.detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, record.item.toItem());

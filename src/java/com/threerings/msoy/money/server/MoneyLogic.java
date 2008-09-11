@@ -165,8 +165,8 @@ public class MoneyLogic
      */
     @Retry(exception=StaleDataException.class)
     public MoneyResult buyItem (
-        final MemberRecord buyerRec, CatalogIdent item, Currency listedCurrency, int listedAmount,
-        Currency buyCurrency, int authedAmount)
+        final MemberRecord buyerRec, CatalogIdent item, int creatorId, String description,
+        Currency listedCurrency, int listedAmount, Currency buyCurrency, int authedAmount)
         throws NotEnoughMoneyException, NotSecuredException
     {
         Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
@@ -177,33 +177,24 @@ public class MoneyLogic
         int buyerId = buyerRec.memberId;
 
         // Get the secured prices for the item.
-        final PriceKey key = new PriceKey(buyerId, item);
-        final Escrow escrow = _escrowCache.getEscrow(key);
-        if (escrow == null) {
-            // TODO: 
-            // What we need to do here is also have the sellerId, affiliateId, and description..
-            // so that we can secure a price. If the authedAmount is at least the priceQuote,
-            // we can go ahead and process the purchase here. Otherwise we need to throw
-            // the exception with the new PriceQuote inside it! Why not! Do the fucking thing
-            // that will need to be done anyway!
-            throw new NotSecuredException(buyerId, item);
+        PriceKey key = new PriceKey(buyerId, item);
+        PriceQuote quote = _escrowCache.getEscrow(key);
+        if (quote == null || quote.getAmount(buyCurrency) > authedAmount) {
+            // In the unlikely scenarios that there was either no secured price (expired) or
+            // they provided an out-of-date authed amount, we go ahead and secure a new price
+            // right now and see if that works. 
+            quote = securePrice(buyerId, item, listedCurrency, listedAmount);
+            if (quote.getAmount(buyCurrency) > authedAmount) {
+                // doh, it doesn't work, so we need to tell them about this new latest price
+                // we've secured for them
+                // TODO: the PriceQuote needs to be in this exception!
+                throw new NotSecuredException(buyerId, item);
+            }
         }
-        final PriceQuote quote = escrow.getQuote();
-        int buyCost = quote.getAmount(buyCurrency);
 
-        // check to see if they submitted a valid authedAmount
-        // (We do this regardless of whether they're support+, because they should always
-        // see the actual cost)
-        if (buyCost > authedAmount) {
-            // TODO: see TODO note above, only here we actually have a quote already secured
-            // (And we should either get a new quote, or just leave the one in the cache,
-            // but it would be an exploit to extend the lifetime of the quote)
-            // AND: we should return the new PriceQuote with this error, so that it can
-            // make it's way to the client. Just like the note above...
-            throw new NotSecuredException(buyerId, item);
-        }
         // Note that from here on, we're going to use the buyCost, which *could* be lower
         // than what the user authorized. Good for them.
+        int buyCost = quote.getAmount(buyCurrency);
 
         // Get buyer account...
         MemberAccountRecord buyer = _repo.getAccountById(buyerId);
@@ -223,17 +214,12 @@ public class MoneyLogic
             magicFreeItem = false;
         }
 
-        // If the creator is buying their own item, don't give them a payback, and deduct the amount
-        // they would have received.
-        int creatorId = escrow.getCreatorId();
-        boolean buyerIsCreator = (buyerId == creatorId);
-
         // Get creator.
         MemberAccountRecord creator;
         if (magicFreeItem) {
             creator = null;
 
-        } else if (buyerIsCreator) {
+        } else if (buyerId == creatorId) {
             creator = buyer;
 
         } else {
@@ -267,13 +253,13 @@ public class MoneyLogic
         MoneyTransactionRecord buyerTrans = buyer.buyItem(
             buyCurrency, magicFreeItem ? 0 : buyCost,
             MessageBundle.tcompose(magicFreeItem ? "m.item_magicfree" : "m.item_bought",
-                escrow.getDescription(), item.type, item.catalogId),
+                description, item.type, item.catalogId),
             item);
         _repo.addTransaction(buyerTrans);
 
         // log userAction and to panopticon for the buyer
         UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID,
-            UserAction.BOUGHT_ITEM, escrow.getDescription(), item);
+            UserAction.BOUGHT_ITEM, description, item);
         logInPanopticon(info, buyCurrency, buyerTrans.amount, buyer);
 
         // add a transaction for the creator
@@ -285,13 +271,13 @@ public class MoneyLogic
             creatorTrans = creator.payout(
                 TransactionType.CREATOR_PAYOUT, RuntimeConfig.server.creatorPercentage, quote,
                 MessageBundle.tcompose("m.item_sold",
-                    escrow.getDescription(), item.type, item.catalogId),
+                    description, item.type, item.catalogId),
                 item, buyerTrans.id);
             _repo.addTransaction(creatorTrans);
 
             // log userAction and to panopticon for the creator
             info = logUserAction(creatorId, buyerId, UserAction.RECEIVED_PAYOUT,
-                escrow.getDescription(), item);
+                description, item);
             logInPanopticon(info, buyCurrency, creatorTrans.amount, creator);
         }
 
@@ -304,20 +290,20 @@ public class MoneyLogic
             affiliateTrans = affiliate.payout(
                 TransactionType.AFFILIATE_PAYOUT, RuntimeConfig.server.affiliatePercentage, quote,
                 MessageBundle.tcompose("m.itemAffiliate",
-                    escrow.getDescription(), item.type, item.catalogId),
+                    description, item.type, item.catalogId),
                 item, buyerTrans.id);
             _repo.addTransaction(affiliateTrans);
 
             // log userAction and to panopticon for the affiliate
             // TODO: do we use the same RECEIVED_PAYOUT that we used for the creator for affiliate?
             info = logUserAction(affiliateId, buyerId, UserAction.RECEIVED_PAYOUT,
-                escrow.getDescription(), item);
+                description, item);
             logInPanopticon(info, buyCurrency, affiliateTrans.amount, affiliate);
         }
 
         // save stuff off
         _repo.saveAccount(buyer);
-        if ((creator != null) && !buyerIsCreator) {
+        if ((creator != null) && (creatorId != buyerId)) {
             _repo.saveAccount(creator);
         }
         if ((affiliate != null) && (affiliateId != buyerId) && (affiliateId != creatorId)) {
@@ -447,31 +433,26 @@ public class MoneyLogic
      * {@link MoneyConfiguration#getSecurePriceDuration()}. The secured price may also be removed
      * if the maximum number of secured prices system-wide has been reached (specified by
      * {@link MoneyConfiguration#getMaxSecuredPrices()}. In either case, an attempt to buy the
-     * item will fail with a {@link NotSecuredException}.
+     * item will fail with a {@link NotSecuredException}. If a guest id is specified, the quote
+     * is returned, but not saved in the cache.
      *
      * @param buyerId the memberId of the buying user.
      * @param item the identity of the catalog listing.
      * @param listedCurrency the currency at which the item is listed.
      * @param listedAmount the amount at which the item is listed.
-     * @param creatorId the memberId of the seller.
-     * @param affiliateId the id of the affiliate associated with the purchase. Uhm..
-     * @param description A description of the item that will appear on the member's transaction
-     * history if purchased.
      * @return A full PriceQuote for the item.
      */
     public PriceQuote securePrice (
-        int buyerId, CatalogIdent item, Currency listedCurrency, int listedAmount,
-        int sellerId, int affiliateId, String description)
+        int buyerId, CatalogIdent item, Currency listedCurrency, int listedAmount)
     {
-        Preconditions.checkArgument(!MemberName.isGuest(buyerId), "Guests cannot secure prices.");
-        Preconditions.checkArgument(!MemberName.isGuest(sellerId), "Creators cannot be guests.");
         Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
         Preconditions.checkArgument(listedAmount >= 0, "listedAmount is invalid: %d", listedAmount);
 
         final PriceQuote quote = _exchange.secureQuote(listedCurrency, listedAmount);
-        final PriceKey key = new PriceKey(buyerId, item);
-        final Escrow escrow = new Escrow(sellerId, affiliateId, description, quote);
-        _escrowCache.addEscrow(key, escrow);
+        if (!MemberName.isGuest(buyerId)) {
+            final PriceKey key = new PriceKey(buyerId, item);
+            _escrowCache.addEscrow(key, quote);
+        }
         return quote;
     }
 
