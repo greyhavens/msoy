@@ -31,7 +31,9 @@ public enum Currency
      */
     BLING(2);
 
-    // Required by ByteEnum
+    /**
+     * Translate a byte back into the Currency instance- required by ByteEnum.
+     */
     public static Currency fromByte (byte value)
     {
         for (Currency cur : values()) {
@@ -102,6 +104,9 @@ public enum Currency
      * Used when translating a currency with a value:
      * MessageBundle.get(currency.getKey(), amount) == "5 bars", or "1 bar"
      */
+    // TODO: because we want to use format(), too, and that will obliterate the
+    // plurality of the argument. So I'll probably break down and have separate
+    // m.bar and m.bars translations. grumb.
     public String getKey ()
     {
         return "m." + toString().toLowerCase();
