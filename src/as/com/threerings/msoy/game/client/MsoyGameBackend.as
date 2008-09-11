@@ -85,6 +85,12 @@ public class MsoyGameBackend extends WhirledGameBackend
     {
         (_ctx as GameContext).backToWhirled(true); // always show lobby
     }
+    
+    // from WhirledGameBackend
+    override protected function showGameShop_v1 (itemType :int, catalogId :int = 0) :void
+    {
+        (_ctx as GameContext).showGameShop(itemType, catalogId);
+    }
 }
 }
 

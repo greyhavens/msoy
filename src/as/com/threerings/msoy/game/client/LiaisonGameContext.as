@@ -127,6 +127,12 @@ public class LiaisonGameContext
     }
 
     // from GameContext
+    public function showGameShop (itemType :int, catalogId :int = 0) :void
+    {
+        _wctx.getGameDirector().showGameShop(itemType, catalogId);
+    }
+
+    // from GameContext
     public function getOnlineFriends () :Array
     {
         return _wctx.getMemberObject().friends.toArray().filter(

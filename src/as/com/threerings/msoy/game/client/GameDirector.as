@@ -251,6 +251,14 @@ public class GameDirector extends BasicDirector
     }
 
     /**
+     * Open the game's shop to the appropriate section, and leave the game running.
+     */
+    public function showGameShop (itemType :int, catalogId :int = 0) :void
+    {
+        LobbyGameLiaison(_liaison).showGameShop(itemType, catalogId);
+    }
+
+    /**
      * Returns the configuration of the (non-world) game we currently occupy if we're in a game.
      * Returns null otherwise.
      */

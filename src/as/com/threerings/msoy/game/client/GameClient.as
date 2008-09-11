@@ -134,6 +134,12 @@ class GameContextImpl extends MsoyContext
     }
 
     // from GameContext
+    public function showGameShop (itemType :int, catalogId :int = 0) :void
+    {
+    	return; // TODO
+    }
+
+    // from GameContext
     public function getOnlineFriends () :Array
     {
         return []; // TODO

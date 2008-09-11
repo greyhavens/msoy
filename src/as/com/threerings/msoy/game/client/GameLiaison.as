@@ -245,6 +245,19 @@ public class GameLiaison
         }
     }
 
+    /**
+     * Displays the appropriate page of the shop for the game for which we liaise.
+     */
+    public function showGameShop (itemType :int, catalogId :int = 0) :void
+    {
+        if (catalogId == 0) {
+        	_wctx.getWorldController().displayPage("shop", "g_" + _gameId + "_" + itemType);
+        }
+        else {
+        	_wctx.getWorldController().displayPage("shop", "l_" + itemType + "_" + catalogId);
+        }
+    }
+    
     protected function getMsoyGamePanel () :MsoyGamePanel
     {
         return (_wctx.getTopPanel().getPlaceView() as MsoyGamePanel);
