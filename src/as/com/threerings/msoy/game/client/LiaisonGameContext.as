@@ -3,28 +3,22 @@
 
 package com.threerings.msoy.game.client {
 
-import com.threerings.presents.client.Client;
-import com.threerings.presents.dobj.DObjectManager;
-
 import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatFilter;
 import com.threerings.crowd.client.LocationDirector;
 import com.threerings.crowd.client.OccupantDirector;
 import com.threerings.crowd.client.PlaceView;
-
-import com.threerings.parlor.client.ParlorDirector;
-
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-
-import com.threerings.msoy.world.client.WorldContext;
-
-import com.threerings.msoy.game.client.GameChatDirector;
 import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.world.client.WorldContext;
+import com.threerings.parlor.client.ParlorDirector;
+import com.threerings.presents.client.Client;
+import com.threerings.presents.dobj.DObjectManager;
 
 /**
  * Provides context for games running in the World client via a liaison.
@@ -129,7 +123,12 @@ public class LiaisonGameContext
     // from GameContext
     public function showGameShop (itemType :int, catalogId :int = 0) :void
     {
-        _wctx.getGameDirector().showGameShop(itemType, catalogId);
+        if (catalogId == 0) {
+            var gameId :int = _wctx.getGameDirector().getGameId(); 
+            _wctx.getWorldController().displayPage("shop", "g_" + gameId + "_" + itemType);
+        } else {
+            _wctx.getWorldController().displayPage("shop", "l_" + itemType + "_" + catalogId);
+        }
     }
 
     // from GameContext

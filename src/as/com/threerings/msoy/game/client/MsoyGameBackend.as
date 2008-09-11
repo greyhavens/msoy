@@ -20,8 +20,11 @@ import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.data.VizMemberName;
 
+import com.threerings.msoy.item.data.all.ItemTypes;
+
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
+
 
 /**
  * Implements the various Msoy specific parts of the Whirled Game backend.
@@ -87,9 +90,34 @@ public class MsoyGameBackend extends WhirledGameBackend
     }
     
     // from WhirledGameBackend
-    override protected function showGameShop_v1 (itemType :int, catalogId :int = 0) :void
+    override protected function showGameShop_v1 (itemType :String, catalogId :int = 0) :void
     {
-        (_ctx as GameContext).showGameShop(itemType, catalogId);
+        // hide the integer item codes from the sdk
+        var itemTypeCode :int = 0;
+        switch (itemType) {
+            case "item_packs":
+                itemTypeCode = ItemTypes.ITEM_PACK;
+                break;
+            case "level_packs":
+                itemTypeCode = ItemTypes.LEVEL_PACK;
+                break;
+            case "avatars":
+                itemTypeCode = ItemTypes.AVATAR;
+                break;
+            case "furniture":
+                itemTypeCode = ItemTypes.FURNITURE;
+                break;
+            case "backdrops":
+                itemTypeCode = ItemTypes.DECOR;
+                break;
+            case "toys":
+                itemTypeCode = ItemTypes.TOY;
+                break;
+            case "pets":
+                itemTypeCode = ItemTypes.PET;
+                break;
+        }
+        (_ctx as GameContext).showGameShop(itemTypeCode, catalogId);
     }
 }
 }
