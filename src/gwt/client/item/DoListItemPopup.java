@@ -17,6 +17,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.money.data.all.Currency;
@@ -120,15 +121,23 @@ public class DoListItemPopup extends VerticalPanel
             int salesTarget = (listing == null) ? DEFAULT_SALES_TARGET : listing.salesTarget;
             _salesTarget.setText(String.valueOf(salesTarget));
 
-            row = pricing.addText(_imsgs.doListFlowCost(), 1, "rightLabel");
-            pricing.setWidget(row, 1, _flowCost = new NumberTextBox(false, 5, 5), 1, null);
-            int flowCost = (listing == null) ? DEFAULT_FLOW_COST : listing.cost;
-            _flowCost.setText(String.valueOf(flowCost));
+            row = pricing.addText(_imsgs.doListCost(), 1, "rightLabel");
+            pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 5, 5), 1, null);
+            int cost = (listing == null) ? DEFAULT_FLOW_COST : listing.cost;
+            _cost.setText(String.valueOf(cost));
 
-//             row = pricing.addText(_imsgs.doListGoldCost(), 1, "rightLabel");
-//             pricing.setWidget(row, 1, _goldCost = new NumberTextBox(false, 5, 5), 2, null);
-//             int goldCost = (listing == null) ? DEFAULT_GOLD_COST : listing.goldCost;
-//             _goldCost.setText(String.valueOf(goldCost));
+            // TODO: You know what this needs? A mockup
+            if (DeploymentConfig.barsEnabled) {
+                _currencyBox = new ListBox();
+                for (int i=0; i<CURRENCY_LABELS.length; ++i) {
+                    _currencyBox.addItem(CURRENCY_LABELS[i]);
+                    if (listing != null && CURRENCY_VALUES[i] == listing.currency) {
+                        _currencyBox.setSelectedIndex(i);
+                    }
+                }
+                row = pricing.addWidget(new Label("Currency:"), 1, "rightLabel");
+                pricing.setWidget(row, 1, _currencyBox);
+            }
 
             add(MsoyUI.createLabel(_imsgs.doListPricingHeader(), "Header"));
             add(pricing);
@@ -157,9 +166,8 @@ public class DoListItemPopup extends VerticalPanel
             final String resultMsg = firstTime ? _imsgs.doListListed() : _imsgs.doListUpdated();
             new ClickCallback<Integer>(_doIt) {
                 public boolean callService () {
-                    // TODO: Bar me
                     _catalogsvc.listItem(_item.getIdent(), _description.getText(), getPricing(),
-                                         getSalesTarget(), Currency.COINS, getFlowCost(), this);
+                                         getSalesTarget(), getCurrency(), getCost(), this);
                     return true;
                 }
                 public boolean gotResult (Integer result) {
@@ -180,9 +188,8 @@ public class DoListItemPopup extends VerticalPanel
                         MsoyUI.error(_imsgs.doListHitLimit(""+listing.purchases));
                         return false;
                     }
-                    // TODO: Bar me
                     _catalogsvc.updatePricing(_item.getType(), _item.catalogId, pricing,
-                                              salesTarget, Currency.COINS, getFlowCost(), this);
+                                              salesTarget, getCurrency(), getCost(), this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
@@ -224,16 +231,16 @@ public class DoListItemPopup extends VerticalPanel
         return (_salesTarget == null) ? 100 : _salesTarget.getValue().intValue();
     }
 
-    protected int getFlowCost ()
+    protected Currency getCurrency ()
     {
-        // non-salable items have no pricing interface and a default flow cost
-        return (_flowCost == null) ? 100 : _flowCost.getValue().intValue();
+        return (_currencyBox == null) ? Currency.COINS :
+            CURRENCY_VALUES[_currencyBox.getSelectedIndex()];
     }
 
-    protected int getGoldCost ()
+    protected int getCost ()
     {
-        // non-salable items have no pricing interface and a default gold cost
-        return (_goldCost == null) ? 0 : _goldCost.getValue().intValue();
+        // non-salable items have no pricing interface and a default flow cost
+        return (_cost == null) ? 100 : _cost.getValue().intValue();
     }
 
     protected Item _item;
@@ -241,8 +248,9 @@ public class DoListItemPopup extends VerticalPanel
 
     protected TextArea _description;
     protected ListBox _pricingBox;
+    protected ListBox _currencyBox;
     protected Label _pricingTip, _salesTargetLabel;
-    protected NumberTextBox _salesTarget, _flowCost, _goldCost;
+    protected NumberTextBox _salesTarget, _cost;
 
     protected Label _status;
     protected Button _doIt;
@@ -255,4 +263,9 @@ public class DoListItemPopup extends VerticalPanel
     protected static final int DEFAULT_FLOW_COST = 100;
     protected static final int DEFAULT_GOLD_COST = 0;
     protected static final int DEFAULT_SALES_TARGET = 500;
+
+    protected static final Currency[] CURRENCY_VALUES = { Currency.COINS, Currency.BARS };
+    protected static final String[] CURRENCY_LABELS = {
+        _imsgs.currencyCoins(), _imsgs.currencyBars()
+    };
 }
