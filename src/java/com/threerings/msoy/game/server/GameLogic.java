@@ -4,6 +4,8 @@
 package com.threerings.msoy.game.server;
 
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -16,8 +18,11 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.RootDObjectManager;
+import com.threerings.presents.peer.data.NodeObject;
 import com.threerings.presents.server.InvocationException;
+import com.threerings.presents.server.PresentsDObjectMgr;
 
+import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.server.PopularPlacesSnapshot;
 import com.threerings.msoy.server.ServerConfig;
@@ -35,10 +40,13 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.money.data.all.MemberMoney;
+import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
+import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.xml.MsoyGameParser;
@@ -199,6 +207,61 @@ public class GameLogic
         return info;
     }
 
+    /**
+     * If the specified member is identified as being in a game and if their current in-database
+     * coin balance is less than the specified number of required coins, sends a notification to
+     * the server hosting their game to flush any pending earnings they may have if they have
+     * enough pending earnings to afford the coin cost specified.
+     */
+    public void maybeFlushCoinEarnings (final int memberId, int requiredCoins)
+    {
+        // we want to avoid looking up their current coin count if we can, so first we pop over to
+        // the dobjmgr thread to see if they're currently in a game
+        FutureTask<String> findHost = new FutureTask<String>(new Callable<String>() {
+            public String call () {
+                _omgr.requireEventThread();
+                MemberLocation memloc = _peerMan.getMemberLocation(memberId);
+                if (memloc != null && memloc.gameId != 0) {
+                    Tuple<String, Integer> gameHost = _peerMan.getGameHost(memloc.gameId);
+                    if (gameHost != null) {
+                        return gameHost.left;
+                    }
+                }
+                return null;
+            }
+        });
+        _omgr.postRunnable(findHost);
+
+        // we'll either get null meaning they're not playing a game or the world node that is
+        // hosting the game that they're playing
+        String gameHost = null;
+        try {
+            gameHost = findHost.get();
+        } catch (Exception e) {
+            log.warning("maybeFlushCoinEarnings status lookup failure", "memberId", memberId, e);
+            return; // nothing to do here but NOOP
+        }
+        if (gameHost == null) {
+            return; // they're not playing, no problem!
+        }
+
+        // they're in a game, so let's go ahead and load up their bankbook and see if they can
+        // already afford the item in question
+        MemberMoney money = _moneyLogic.getMoneyFor(memberId);
+        if (money == null) {
+            log.warning("maybeFlushCoinEarnings can't find money for member", "memberId", memberId);
+            return;
+        }
+        if (money.coins >= requiredCoins) {
+            return; // they've got plenty of money, no problem!
+        }
+
+        // now we know they can't afford whatever they're looking at and they're playing a game, so
+        // we have to go ahead and ship an action off to the game's world host and have it tell its
+        // game server to flush this member's pending coin earnings
+        _peerMan.invokeNodeAction(new FlushCoinsAction(gameHost, memberId));
+    }
+
     protected static class GameLocationWaiter extends ServletWaiter<Tuple<String,Integer>>
         implements WorldGameService.LocationListener
     {
@@ -215,9 +278,28 @@ public class GameLogic
         }
     }
 
-    @Inject RootDObjectManager _omgr;
+    /** Helper action for {@link #maybeFlushCoinEarnings}. */
+    protected static class FlushCoinsAction extends MsoyPeerManager.NodeAction
+    {
+        public FlushCoinsAction (String nodeName, int memberId) {
+            _nodeName = nodeName;
+            _memberId = memberId;
+        }
+        public boolean isApplicable (NodeObject nodeobj) {
+            return nodeobj.nodeName.equals(_nodeName);
+        }
+        protected void execute () {
+            _gameReg.flushCoinEarnings(_memberId);
+        }
+        protected String _nodeName;
+        protected int _memberId;
+        @Inject protected transient WorldGameRegistry _gameReg;
+    }
+
+    @Inject PresentsDObjectMgr _omgr;
     @Inject WorldGameRegistry _gameReg;
     @Inject MsoyPeerManager _peerMan;
+    @Inject MoneyLogic _moneyLogic;
     @Inject GameRepository _gameRepo;
     @Inject MemberRepository _memberRepo;
 }

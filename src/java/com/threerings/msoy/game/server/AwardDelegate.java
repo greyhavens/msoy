@@ -11,6 +11,7 @@ import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
 
 import com.samskivert.jdbc.RepositoryUnit;
+import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -58,6 +59,26 @@ public class AwardDelegate extends RatingDelegate
     {
         // keep our game content around for later
         _content = content;
+    }
+
+    /**
+     * Flushes the pending coin earnings for the specified player (if they are not a player of this
+     * game or have no pending coin earnings, this method does nothing).
+     */
+    public void flushCoinEarnings (final int playerId)
+    {
+        // flow record is indexed by oid not playerId so we have to search
+        FlowRecord record = Iterables.find(_flowRecords.values(), new Predicate<FlowRecord>() {
+            public boolean apply (FlowRecord record) {
+                return record.memberId == playerId;
+            }
+        });
+        if (record != null) {
+            log.info("OMG, we're actually paying out pending earnings.", "playerId", playerId,
+                     "coins", record._unnotedAward);
+            // payout their pending earnings (this will NOOP if they have nothing pending)
+            payoutCoins(record.memberId, record.getAndNoteAward(), record.getAndNoteSecondsPlayed());
+        }
     }
 
     // from interface WhirledGameProvider
@@ -302,7 +323,7 @@ public class AwardDelegate extends RatingDelegate
             _flowRecords.put(bodyOid, record);
             // if we're currently tracking, note that they're "starting" immediately
             if (_tracking) {
-                record.beganStamp = now();
+                record.startTracking(now());
             }
         }
     }
@@ -555,7 +576,7 @@ public class AwardDelegate extends RatingDelegate
 
             // accumulate their awarded flow into their flow record; we'll pay it all out in one
             // database action when they leave the room or the game is shutdown
-            record.awarded += player.flowAward;
+            record.increaseAward(player.flowAward);
             record.played++;
         }
     }
@@ -637,7 +658,7 @@ public class AwardDelegate extends RatingDelegate
         // note the time at which we started for flow calculations
         final int startStamp = now();
         for (final FlowRecord record : _flowRecords.values()) {
-            record.beganStamp = startStamp;
+            record.startTracking(startStamp);
         }
     }
 
@@ -662,7 +683,7 @@ public class AwardDelegate extends RatingDelegate
     protected void resetTracking ()
     {
         for (final FlowRecord record : _flowRecords.values()) {
-            record.resetSecondsPlayed();
+            record.accumSecondsPlayed();
         }
     }
 
@@ -713,19 +734,19 @@ public class AwardDelegate extends RatingDelegate
         if (_tracking) {
             record.stopTracking(now());
         }
-        // move any accumulated seconds into 'totalSecondsPlayed'
-        record.resetSecondsPlayed();
+        // note any pending accumulated time
+        record.accumSecondsPlayed();
 
         // if this player earned any flow, they contribute to the game's total accumulated
         // playtime, payouts and other metrics
-        if (record.awarded > 0) {
-            _totalTrackedSeconds += record.totalSecondsPlayed;
-            _totalAwardedFlow += record.awarded;
+        if (record.getTotalAward() > 0) {
+            _totalTrackedSeconds += record.getTotalSecondsPlayed();
+            _totalAwardedFlow += record.getTotalAward();
             _totalTrackedGames += record.played;
         }
 
         // see if we even care
-        if (record.awarded == 0 || MemberName.isGuest(record.memberId) ||
+        if (record.getTotalAward() == 0 || MemberName.isGuest(record.memberId) ||
                 _content.game.isDevelopmentVersion()) {
             return;
         }
@@ -736,26 +757,14 @@ public class AwardDelegate extends RatingDelegate
             return;
         }
 
-        // see how much they actually get (also uses their totalSecondsPlayed)
-        final String details = _content.game.gameId + " " + record.totalSecondsPlayed;
+        // actually grant their flow award (this may only be partial as we may have flushed pending
+        // coins due to an earlier request)
+        payoutCoins(record.memberId, record.getAndNoteAward(), record.getAndNoteSecondsPlayed());
 
-        // actually grant their flow award; we don't need to update their in-memory flow value
-        // because we've been doing that all along
-        _invoker.postUnit(new Invoker.Unit("grantFlow") {
-            @Override
-            public boolean invoke () {
-                try {
-                    _moneyLogic.awardCoins(
-                        record.memberId, _content.game.creatorId, 0, _content.game.getIdent(),
-                        record.awarded, details, UserAction.PLAYED_GAME);
-                    _gameReg.gamePayout(
-                        record.memberId, _content.game, record.awarded, record.totalSecondsPlayed);
-                } catch (final Exception e) {
-                    log.warning("Failed to grant flow", "amount", record.awarded, e);
-                }
-                return false;
-            }
-        });
+        // and let the game registry know that we paid out this player (this will be their total
+        // award because we only do this when they finally leave the game)
+        _gameReg.gameDidPayout(record.memberId, _content.game, record.getTotalAward(),
+                               record.getTotalSecondsPlayed());
     }
 
     @Override // from RatingDelegate
@@ -772,6 +781,22 @@ public class AwardDelegate extends RatingDelegate
         // don't rate games involving guests, and don't rate non-published games
         return !_gameInvolvedGuest && !_content.game.isDevelopmentVersion() &&
             super.shouldRateGame();
+    }
+
+    protected void payoutCoins (final int memberId, final int coinAward, int secondsPlayed)
+    {
+        if (coinAward <= 0) {
+            return;
+        }
+
+        final String details = _content.game.gameId + " " + secondsPlayed;
+        _invoker.postUnit(new WriteOnlyUnit("payoutCoins(" + memberId + ", " + coinAward + ")") {
+            public void invokePersist () throws Exception {
+                _moneyLogic.awardCoins(
+                    memberId, _content.game.creatorId, 0, _content.game.getIdent(),
+                    coinAward, details, UserAction.PLAYED_GAME);
+            }
+        });
     }
 
     /**
@@ -791,14 +816,7 @@ public class AwardDelegate extends RatingDelegate
         public int memberId;
         public MemberName name;
 
-        public int beganStamp;
-        public int secondsPlayed;
-
-        /** Tracks total seconds played even after restarts. */
-        public int totalSecondsPlayed;
-
         public int played;
-        public int awarded;
 
         public FlowRecord (final MemberName name, final float humanity) {
             this.humanity = humanity;
@@ -807,27 +825,71 @@ public class AwardDelegate extends RatingDelegate
         }
 
         public int getPlayTime (final int now) {
-            int secondsOfPlay = secondsPlayed;
-            if (beganStamp != 0) {
-                secondsOfPlay += (now - beganStamp);
+            int secondsOfPlay = _sessionSecondsPlayed;
+            if (_beganStamp != 0) {
+                secondsOfPlay += (now - _beganStamp);
             }
             return secondsOfPlay;
         }
 
-        public void stopTracking (final int endStamp) {
-            if (beganStamp != 0) {
-                secondsPlayed += endStamp - beganStamp;
-                beganStamp = 0;
+        public void startTracking (int startStamp) {
+            _beganStamp = startStamp;
+        }
+
+        public void stopTracking (int endStamp) {
+            if (_beganStamp != 0) {
+                _sessionSecondsPlayed += endStamp - _beganStamp;
+                _beganStamp = 0;
             }
         }
 
         /**
-         * To be called when the game is ended or before examining totalSecondsPlayed.
+         * Called once {@link #secondsPlayed} is no longer needed to accumulate those seconds to
+         * our total second of playtime.
          */
-        public void resetSecondsPlayed () {
-            totalSecondsPlayed += secondsPlayed;
-            secondsPlayed = 0;
+        public void accumSecondsPlayed () {
+            _unnotedSecondsPlayed += _sessionSecondsPlayed;
+            _sessionSecondsPlayed = 0;
         }
+
+        public int getTotalAward () {
+            return _unnotedAward + _notedAward;
+        }
+
+        public int getTotalSecondsPlayed () {
+            return _unnotedSecondsPlayed + _notedSecondsPlayed;
+        }
+
+        public void increaseAward (int amount) {
+            _unnotedAward += amount;
+        }
+
+        public void increasePlayTime (int secondsPlayed) {
+            _unnotedSecondsPlayed += secondsPlayed;
+        }
+
+        public int getAndNoteAward () {
+            int award = _unnotedAward;
+            _notedAward += award;
+            _unnotedAward = 0;
+            return award;
+        }
+
+        public int getAndNoteSecondsPlayed () {
+            int secondsPlayed = _unnotedSecondsPlayed;
+            _notedSecondsPlayed += secondsPlayed;
+            _unnotedSecondsPlayed = 0;
+            return secondsPlayed;
+        }
+
+        protected int _unnotedAward;
+        protected int _notedAward;
+
+        protected int _beganStamp;
+        protected int _sessionSecondsPlayed;
+
+        protected int _unnotedSecondsPlayed;
+        protected int _notedSecondsPlayed;
     }
 
     protected static class Player implements Comparable<Player>

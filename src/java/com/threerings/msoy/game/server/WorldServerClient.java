@@ -59,6 +59,9 @@ public class WorldServerClient
      * chat provider */
     public static final String FORWARD_BROADCAST = "forwardBroadcast";
 
+    /** A message sent by our world server to request that we flush a player's coin earnings. */
+    public static final String FLUSH_COIN_EARNINGS = "flushCoinEarnings";
+
     /**
      * Configures our listen and connection ports and connects to our parent world server.
      */
@@ -199,6 +202,9 @@ public class WorldServerClient
             String msg = (String)args[2];
             boolean attention = (Boolean)args[3];
             _chatProv.broadcast(sender, bundle, msg, attention, false);
+
+        } else if (event.getName().equals(FLUSH_COIN_EARNINGS)) {
+            _gameReg.flushCoinEarnings((Integer)event.getArgs()[0]);
         }
     }
 

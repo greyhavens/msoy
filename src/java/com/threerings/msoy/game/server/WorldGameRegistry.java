@@ -197,6 +197,17 @@ public class WorldGameRegistry
         }
     }
 
+    /**
+     * Requests that we instruct our game server to flush any pending coin earnings for the
+     * specified member.
+     */
+    public void flushCoinEarnings (int memberId)
+    {
+        for (GameServerHandler handler : _handlers) {
+            handler.postMessage(WorldServerClient.FLUSH_COIN_EARNINGS, memberId);
+        }
+    }
+
     // from interface MsoyGameProvider
     public void locateGame (ClientObject caller, final int gameId,
                             WorldGameService.LocationListener listener)

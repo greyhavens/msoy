@@ -324,9 +324,30 @@ public class GameGameRegistry
      * Called when a game was successfully finished with a payout.  Right now just logs the results
      * for posterity.
      */
-    public void gamePayout (int memberId, Game game, int payout, int secondsPlayed)
+    public void gameDidPayout (int memberId, Game game, int payout, int secondsPlayed)
     {
         _eventLog.gamePlayed(game.genre, game.gameId, game.itemId, payout, secondsPlayed, memberId);
+    }
+
+    /**
+     * Attempts to flush any pending coin earnings for the specified player.
+     */
+    public void flushCoinEarnings (final int playerId)
+    {
+        PlayerObject plobj = _locator.lookupPlayer(playerId);
+        if (plobj == null) {
+            return; // not online or not in a game, no problem!
+        }
+
+        PlaceManager plmgr = _placeReg.getPlaceManager(plobj.getPlaceOid());
+        if (plmgr != null) {
+            // this will NOOP if their place manager has no AwardDelegate
+            plmgr.applyToDelegates(new PlaceManager.DelegateOp(AwardDelegate.class) {
+                public void apply (PlaceManagerDelegate delegate) {
+                    ((AwardDelegate)delegate).flushCoinEarnings(playerId);
+                }
+            });
+        }
     }
 
     // from AVRProvider
@@ -439,7 +460,7 @@ public class GameGameRegistry
 
                 AVRGameManager mgr;
                 try {
-                    mgr = (AVRGameManager)_plreg.createPlace(config, delegates);
+                    mgr = (AVRGameManager)_placeReg.createPlace(config, delegates);
 
                 } catch (Exception e) {
                     log.warning("Failed to create AVRGameObject", "gameId", gameId, e);
@@ -659,7 +680,7 @@ public class GameGameRegistry
         }
 
         // Check to make sure the game that they're in is watchable
-        PlaceManager plman = _plreg.getPlaceManager(placeOid);
+        PlaceManager plman = _placeReg.getPlaceManager(placeOid);
         if (plman == null) {
             log.warning(
                 "Fetched null PlaceManager for player's current gameOid [" + placeOid + "]");
@@ -926,7 +947,7 @@ public class GameGameRegistry
     @Inject protected InvocationManager _invmgr;
     @Inject protected GameWatcherManager _watchmgr;
     @Inject protected LocationManager _locmgr;
-    @Inject protected PlaceRegistry _plreg;
+    @Inject protected PlaceRegistry _placeReg;
     @Inject protected WorldServerClient _worldClient;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected PlayerLocator _locator;

@@ -31,6 +31,17 @@ import com.threerings.msoy.server.persist.UserActionRepository;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
+import com.threerings.msoy.game.server.GameLogic;
+import com.threerings.msoy.person.server.persist.FeedRepository;
+import com.threerings.msoy.person.util.FeedMessageType;
+
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.server.MoneyLogic;
+import com.threerings.msoy.money.server.MoneyNodeActions;
+import com.threerings.msoy.money.server.MoneyResult;
+import com.threerings.msoy.money.server.NotEnoughMoneyException;
+import com.threerings.msoy.money.server.NotSecuredException;
+
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
@@ -49,16 +60,6 @@ import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
-
-import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
-
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyNodeActions;
-import com.threerings.msoy.money.server.MoneyResult;
-import com.threerings.msoy.money.server.NotEnoughMoneyException;
-import com.threerings.msoy.money.server.NotSecuredException;
 
 /**
  * Provides the server implementation of {@link CatalogService}.
@@ -353,11 +354,18 @@ public class CatalogServlet extends MsoyServiceServlet
             }
         }
 
-        // Secure the current price of the item for this member.
+        // secure the current price of the item for this member
         if (mrec != null) {
             _moneyLogic.securePrice(
                 mrec.memberId, new CatalogIdent(itemType, catalogId), Currency.COINS,
                 record.cost, record.item.creatorId, 0, record.item.name);
+
+            // if this item is for sale for coins and this member is in a game, we may also want to
+            // flush their pending coin earnings to ensure that they can buy it if affording it
+            // requires a combination of their real coin balance plus their pending earnings
+            if (record.currency == Currency.COINS) {
+                _gameLogic.maybeFlushCoinEarnings(mrec.memberId, record.cost);
+            }
         }
 
         // finally convert the listing to a runtime record
@@ -579,6 +587,7 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MoneyNodeActions _moneyNodeActions;
     @Inject protected UserActionRepository _userActionRepo;
+    @Inject protected GameLogic _gameLogic;
     @Inject protected GameRepository _gameRepo;
     @Inject protected StatLogic _statLogic;
 }
