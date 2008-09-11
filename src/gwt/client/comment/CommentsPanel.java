@@ -185,7 +185,8 @@ public class CommentsPanel extends PagedGrid<Comment>
         extends ServiceBackedDataModel<Comment, CommentService.CommentResult>
     {
         @Override
-        protected void callFetchService (int start, int count, boolean needCount, AsyncCallback<CommentService.CommentResult> callback) {
+        protected void callFetchService (int start, int count, boolean needCount,
+                                         AsyncCallback<CommentService.CommentResult> callback) {
             _commentsvc.loadComments(_etype, _entityId, start, count, needCount, callback);
         }
         @Override
@@ -215,7 +216,10 @@ public class CommentsPanel extends PagedGrid<Comment>
             buttons.add(new Button(_cmsgs.send(), new ClickListener() {
                 public void onClick (Widget sender) {
                     clearPostPanel(PostPanel.this);
-                    postComment(_text.getText());
+                    String text = _text.getText();
+                    if (text.length() > 0) {
+                        postComment(text);
+                    }
                 }
             }));
             add(buttons);
