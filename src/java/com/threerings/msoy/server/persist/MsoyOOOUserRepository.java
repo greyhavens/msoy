@@ -30,8 +30,6 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.underwire.server.persist.SupportRepository;
 
-import com.threerings.msoy.server.persist.OOODatabase;
-
 /**
  * Whirled-specific table-compatible simulation of the parts of the user repository that we want.
  */
@@ -39,7 +37,7 @@ import com.threerings.msoy.server.persist.OOODatabase;
 public class MsoyOOOUserRepository extends DepotUserRepository
     implements SupportRepository
 {
-    @Inject public MsoyOOOUserRepository (@OOODatabase PersistenceContext ctx)
+    @Inject public MsoyOOOUserRepository (PersistenceContext ctx)
     {
         super(ctx);
     }

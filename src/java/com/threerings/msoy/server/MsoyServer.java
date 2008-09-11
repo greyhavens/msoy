@@ -59,7 +59,6 @@ import com.threerings.whirled.util.SceneFactory;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.server.persist.OOODatabase;
 
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.bureau.server.WindowAuthenticator;
@@ -106,8 +105,6 @@ public class MsoyServer extends MsoyBaseServer
             bind(SceneRegistry.ConfigFactory.class).to(MsoySceneFactory.class);
             // msoy auth dependencies
             bind(MsoyAuthenticator.Domain.class).to(OOOAuthenticationDomain.class);
-            bind(PersistenceContext.class).annotatedWith(OOODatabase.class).toInstance(
-                new PersistenceContext(UserRepository.USER_REPOSITORY_IDENT, _conprov, _cacher));
             // Messaging dependencies
             bind(MessageConnection.class).toInstance(createAMQPConnection());
         }
@@ -345,19 +342,9 @@ public class MsoyServer extends MsoyBaseServer
         // resolve any remaining database schemas that have not yet been loaded
         if (!ServerConfig.config.getValue("depot.lazy_init", true)) {
             _perCtx.initializeManagedRecords(true);
-            _userCtx.initializeManagedRecords(true);
         }
 
         log.info("Msoy server initialized.");
-    }
-
-    @Override // from PresentsServer
-    protected void invokerDidShutdown ()
-    {
-        super.invokerDidShutdown();
-
-        // shutdown our persistence context (cache, JDBC connections)
-        _userCtx.shutdown();
     }
 
     /**
@@ -458,9 +445,6 @@ public class MsoyServer extends MsoyBaseServer
 
     /** The member movement observation manager. */
     @Inject protected WorldWatcherManager _watcherMan;
-
-    /** Provides database access to the user databases. TODO: This should probably be removed. */
-    @Inject protected @OOODatabase PersistenceContext _userCtx;
 
     /** Connection to the AMQP messaging server. */
     @Inject protected MessageConnection _messageConn;

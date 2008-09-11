@@ -28,7 +28,6 @@ import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.MsoyOOOUserRepository;
-import com.threerings.msoy.server.persist.OOODatabase;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -57,7 +56,7 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Override // from UnderwireServlet
     protected UnderwireRepository createUnderwireRepository ()
     {
-        return new UnderwireRepository(_userCtx);
+        return new UnderwireRepository(_perCtx);
     }
 
     @Override // from UnderwireServlet
@@ -160,10 +159,10 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     }
 
     // our dependencies
+    @Inject protected PersistenceContext _perCtx;
     @Inject protected MsoyGameActionHandler _actionHandler;
     @Inject protected MsoyGameInfoProvider _infoprov;
     @Inject protected MsoyAuthenticator _author;
-    @Inject protected @OOODatabase PersistenceContext _userCtx;
     @Inject protected MsoyOOOUserRepository _authRepo;
     @Inject protected MemberRepository _memberRepo;
 }
