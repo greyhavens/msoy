@@ -283,6 +283,8 @@ public class GameLogic
             _nodeName = nodeName;
             _memberId = memberId;
         }
+        public FlushCoinsAction () {
+        }
         public boolean isApplicable (NodeObject nodeobj) {
             return nodeobj.nodeName.equals(_nodeName);
         }
