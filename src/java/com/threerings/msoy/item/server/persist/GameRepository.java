@@ -4,6 +4,8 @@
 package com.threerings.msoy.item.server.persist;
 
 import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
@@ -286,6 +288,32 @@ public class GameRepository extends ItemRepository<GameRecord>
     public void storeTraceLog (int gameId, String traceLog)
     {
         insert(new GameTraceLogRecord(gameId, traceLog));
+    }
+    
+    /**
+     * Delete all logs for a given gameId older than the given number of days.
+     * @param gameId got for which to delete
+     * @param cutoffDays age limit of logs to delete, in days 
+     */
+    public void purgeTraceLogs (int gameId, int cutoffDays)
+    {
+        // Round down to the current minute for easier reading by humans
+        GregorianCalendar cutoff = new GregorianCalendar();
+        cutoff.set(Calendar.SECOND, 0);
+        cutoff.set(Calendar.MILLISECOND, 0);
+        
+        // Subtract the cutoff days
+        cutoff.add(Calendar.DAY_OF_YEAR, -cutoffDays);
+
+        // convert to time stamp
+        Timestamp cutoffTimestamp = new Timestamp(cutoff.getTimeInMillis());
+
+        // Perform deletion
+        int rows = deleteAll(GameTraceLogRecord.class, new Where(new And(
+            new Conditionals.Equals(GameTraceLogRecord.GAME_ID_C, gameId), 
+            new Conditionals.LessThan(GameTraceLogRecord.RECORDED_C, cutoffTimestamp))));
+
+        log.debug("Deleted trace logs", "gameId", gameId, "cutoff", cutoffTimestamp, "rows", rows);
     }
 
     @Override // from ItemRepository
