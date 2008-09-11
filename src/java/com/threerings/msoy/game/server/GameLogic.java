@@ -207,12 +207,10 @@ public class GameLogic
     }
 
     /**
-     * If the specified member is identified as being in a game and if their current in-database
-     * coin balance is less than the specified number of required coins, sends a notification to
-     * the server hosting their game to flush any pending earnings they may have if they have
-     * enough pending earnings to afford the coin cost specified.
+     * Returns the node name of the world server that is hosting the game being played by the
+     * specified player. Returns null if the player is not online or not playing a game.
      */
-    public void maybeFlushCoinEarnings (final int memberId, int requiredCoins)
+    public String getPlayerWorldGameNode (final int memberId)
     {
         // we want to avoid looking up their current coin count if we can, so first we pop over to
         // the dobjmgr thread to see if they're currently in a game
@@ -230,15 +228,25 @@ public class GameLogic
         });
         _omgr.postRunnable(findHost);
 
+        try {
+            return findHost.get();
+        } catch (Exception e) {
+            log.warning("getPlayerWorldGameNode lookup failure", "memberId", memberId, e);
+            return null; // nothing to do here but NOOP
+        }
+    }
+
+    /**
+     * If the specified member is identified as being in a game and if their current in-database
+     * coin balance is less than the specified number of required coins, sends a notification to
+     * the server hosting their game to flush any pending earnings they may have if they have
+     * enough pending earnings to afford the coin cost specified.
+     */
+    public void maybeFlushCoinEarnings (int memberId, int requiredCoins)
+    {
         // we'll either get null meaning they're not playing a game or the world node that is
         // hosting the game that they're playing
-        String gameHost = null;
-        try {
-            gameHost = findHost.get();
-        } catch (Exception e) {
-            log.warning("maybeFlushCoinEarnings status lookup failure", "memberId", memberId, e);
-            return; // nothing to do here but NOOP
-        }
+        String gameHost = getPlayerWorldGameNode(memberId);
         if (gameHost == null) {
             return; // they're not playing, no problem!
         }
