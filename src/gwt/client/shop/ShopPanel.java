@@ -80,13 +80,13 @@ public class ShopPanel extends HorizontalPanel
         boxes.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
         boxes.getFlexCellFormatter().setRowSpan(0, 1, 3);
         if (data.featuredPet != null) {
-            boxes.setWidget(
-                0, 2, createFeatured("pet", CShop.msgs.shopFeatPet(), data.featuredPet));
+            boxes.setWidget(0, 2, createFeatured("pet", CShop.msgs.shopFeatPet(), data.featuredPet));
+            boxes.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         }
         boxes.setWidget(1, 0, WidgetUtil.makeShim(10, 10));
         if (data.featuredToy != null) {
-            boxes.setWidget(
-                2, 0, createFeatured("toy", CShop.msgs.shopFeatToy(), data.featuredToy));
+            boxes.setWidget(2, 0, createFeatured("toy", CShop.msgs.shopFeatToy(), data.featuredToy));
+            boxes.getFlexCellFormatter().setVerticalAlignment(2, 2, HasAlignment.ALIGN_TOP);
         }
         boxes.setWidget(0, 3, WidgetUtil.makeShim(10, 10));
         boxes.getFlexCellFormatter().setRowSpan(0, 3, 3);
