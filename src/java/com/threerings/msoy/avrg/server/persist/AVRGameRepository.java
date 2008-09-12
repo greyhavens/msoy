@@ -23,8 +23,6 @@ import com.samskivert.jdbc.depot.operator.Logic.*;
 
 import com.threerings.presents.annotation.BlockingThread;
 
-import com.threerings.msoy.game.data.QuestState;
-
 /**
  * Maintains state for AVR games.
  */
@@ -34,31 +32,6 @@ public class AVRGameRepository extends DepotRepository
     @Inject public AVRGameRepository (PersistenceContext context)
     {
         super(context);
-    }
-
-    public List<QuestStateRecord> getQuests (int memberId)
-    {
-        return findAll(QuestStateRecord.class, new Where(QuestStateRecord.MEMBER_ID_C, memberId));
-    }
-
-    public List<QuestStateRecord> getQuests (int gameId, int memberId)
-    {
-        return findAll(QuestStateRecord.class, new Where(new And(
-                new Equals(QuestStateRecord.GAME_ID_C, gameId),
-                new Equals(QuestStateRecord.MEMBER_ID_C, memberId),
-                new Not(new In(QuestStateRecord.STEP_C,
-                    QuestState.STEP_COMPLETED, QuestState.STEP_VIRGIN)))));
-    }
-
-    public void setQuestState (
-        int gameId, int memberId, String questId, int step, String status, int sceneId)
-    {
-        store(new QuestStateRecord(memberId, gameId, questId, step, status, sceneId));
-    }
-
-    public void deleteQuestState (int memberId, int gameId, String questId)
-    {
-        delete(QuestStateRecord.class, QuestStateRecord.getKey(memberId, gameId, questId));
     }
 
     public List<PlayerGameStateRecord> getPlayerGameState (int gameId, int memberId)
@@ -113,7 +86,6 @@ public class AVRGameRepository extends DepotRepository
                                     int playerMins, float payoutFactor)
     {
         gameId = Math.abs(gameId); // how to handle playing the original?
-        setQuestState(gameId, memberId, questId, QuestState.STEP_COMPLETED, null, 0);
         insert(new QuestLogRecord(gameId, memberId, questId, playerMins, payoutFactor));
     }
 
@@ -151,7 +123,6 @@ public class AVRGameRepository extends DepotRepository
     {
         classes.add(GameStateRecord.class);
         classes.add(PlayerGameStateRecord.class);
-        classes.add(QuestStateRecord.class);
         classes.add(QuestLogRecord.class);
     }
 }

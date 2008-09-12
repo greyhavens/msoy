@@ -50,9 +50,6 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>friends</code> field. */
     public static final String FRIENDS = "friends";
 
-    /** The field name of the <code>questState</code> field. */
-    public static final String QUEST_STATE = "questState";
-
     /** The field name of the <code>gameContent</code> field. */
     public static final String GAME_CONTENT = "gameContent";
 
@@ -77,9 +74,6 @@ public class PlayerObject extends WhirledPlayerObject
      * status is not filled in and this set is *not* updated if friendship is made or broken during
      * a game. */
     public DSet<FriendEntry> friends;
-
-    /** The quests of our current world game that we're currently on. */
-    public DSet<QuestState> questState = new DSet<QuestState>();
 
     /** Contains information on player's ownership of game content (populated lazily). */
     public DSet<GameContentOwnership> gameContent = new DSet<GameContentOwnership>();
@@ -264,53 +258,6 @@ public class PlayerObject extends WhirledPlayerObject
         requestAttributeChange(FRIENDS, value, this.friends);
         DSet<FriendEntry> clone = (value == null) ? null : value.typedClone();
         this.friends = clone;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>questState</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToQuestState (QuestState elem)
-    {
-        requestEntryAdd(QUEST_STATE, questState, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>questState</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromQuestState (Comparable<?> key)
-    {
-        requestEntryRemove(QUEST_STATE, questState, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>questState</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateQuestState (QuestState elem)
-    {
-        requestEntryUpdate(QUEST_STATE, questState, elem);
-    }
-
-    /**
-     * Requests that the <code>questState</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setQuestState (DSet<QuestState> value)
-    {
-        requestAttributeChange(QUEST_STATE, value, this.questState);
-        DSet<QuestState> clone = (value == null) ? null : value.typedClone();
-        this.questState = clone;
     }
 
     /**

@@ -23,34 +23,21 @@ import com.threerings.util.Integer;
 public class AVRGameMarshaller extends InvocationMarshaller
     implements AVRGameService
 {
-    /** The method id used to dispatch <code>cancelQuest</code> requests. */
-    public static const CANCEL_QUEST :int = 1;
+    /** The method id used to dispatch <code>completeTask</code> requests. */
+    public static const COMPLETE_TASK :int = 1;
 
     // from interface AVRGameService
-    public function cancelQuest (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void
-    {
-        var listener3 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener3.listener = arg3;
-        sendRequest(arg1, CANCEL_QUEST, [
-            arg2, listener3
-        ]);
-    }
-
-    /** The method id used to dispatch <code>completeQuest</code> requests. */
-    public static const COMPLETE_QUEST :int = 2;
-
-    // from interface AVRGameService
-    public function completeQuest (arg1 :Client, arg2 :String, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void
+    public function completeTask (arg1 :Client, arg2 :String, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void
     {
         var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
         listener4.listener = arg4;
-        sendRequest(arg1, COMPLETE_QUEST, [
+        sendRequest(arg1, COMPLETE_TASK, [
             arg2, Float.valueOf(arg3), listener4
         ]);
     }
 
     /** The method id used to dispatch <code>setTicker</code> requests. */
-    public static const SET_TICKER :int = 3;
+    public static const SET_TICKER :int = 2;
 
     // from interface AVRGameService
     public function setTicker (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_InvocationListener) :void
@@ -59,32 +46,6 @@ public class AVRGameMarshaller extends InvocationMarshaller
         listener4.listener = arg4;
         sendRequest(arg1, SET_TICKER, [
             arg2, Integer.valueOf(arg3), listener4
-        ]);
-    }
-
-    /** The method id used to dispatch <code>startQuest</code> requests. */
-    public static const START_QUEST :int = 4;
-
-    // from interface AVRGameService
-    public function startQuest (arg1 :Client, arg2 :String, arg3 :String, arg4 :InvocationService_ConfirmListener) :void
-    {
-        var listener4 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, START_QUEST, [
-            arg2, arg3, listener4
-        ]);
-    }
-
-    /** The method id used to dispatch <code>updateQuest</code> requests. */
-    public static const UPDATE_QUEST :int = 5;
-
-    // from interface AVRGameService
-    public function updateQuest (arg1 :Client, arg2 :String, arg3 :int, arg4 :String, arg5 :InvocationService_ConfirmListener) :void
-    {
-        var listener5 :InvocationMarshaller_ConfirmMarshaller = new InvocationMarshaller_ConfirmMarshaller();
-        listener5.listener = arg5;
-        sendRequest(arg1, UPDATE_QUEST, [
-            arg2, Integer.valueOf(arg3), arg4, listener5
         ]);
     }
 }

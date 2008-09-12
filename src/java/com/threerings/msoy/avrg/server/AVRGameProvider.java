@@ -15,32 +15,14 @@ import com.threerings.presents.server.InvocationProvider;
 public interface AVRGameProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link AVRGameService#cancelQuest} request.
+     * Handles a {@link AVRGameService#completeTask} request.
      */
-    void cancelQuest (ClientObject caller, String arg1, InvocationService.ConfirmListener arg2)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link AVRGameService#completeQuest} request.
-     */
-    void completeQuest (ClientObject caller, String arg1, float arg2, InvocationService.ConfirmListener arg3)
+    void completeTask (ClientObject caller, String arg1, float arg2, InvocationService.ConfirmListener arg3)
         throws InvocationException;
 
     /**
      * Handles a {@link AVRGameService#setTicker} request.
      */
     void setTicker (ClientObject caller, String arg1, int arg2, InvocationService.InvocationListener arg3)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link AVRGameService#startQuest} request.
-     */
-    void startQuest (ClientObject caller, String arg1, String arg2, InvocationService.ConfirmListener arg3)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link AVRGameService#updateQuest} request.
-     */
-    void updateQuest (ClientObject caller, String arg1, int arg2, String arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
 }

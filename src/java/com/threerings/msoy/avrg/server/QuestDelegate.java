@@ -6,38 +6,46 @@ package com.threerings.msoy.avrg.server;
 import static com.threerings.msoy.Log.log;
 
 import com.google.inject.Inject;
+
 import com.samskivert.jdbc.WriteOnlyUnit;
+
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Invoker;
-import com.threerings.crowd.data.PlaceObject;
-import com.threerings.crowd.server.PlaceManagerDelegate;
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
-import com.threerings.msoy.avrg.server.persist.QuestLogSummaryRecord;
-import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.data.QuestState;
-import com.threerings.msoy.game.server.GameContent;
-import com.threerings.msoy.game.server.WorldServerClient;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.server.MsoyEventLogger;
-import com.threerings.msoy.server.persist.MemberRepository;
+
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.PersistingUnit;
-import com.threerings.whirled.data.ScenePlace;
+
+import com.threerings.crowd.data.PlaceObject;
+import com.threerings.crowd.server.PlaceManagerDelegate;
+
+import com.threerings.msoy.admin.server.RuntimeConfig;
+
+import com.threerings.msoy.avrg.data.AVRGameObject;
+import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
+import com.threerings.msoy.avrg.server.persist.QuestLogSummaryRecord;
+
+import com.threerings.msoy.data.UserAction;
+import com.threerings.msoy.data.all.MemberName;
+
+import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.server.GameContent;
+import com.threerings.msoy.game.server.WorldServerClient;
+
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.item.server.persist.GameRepository;
+
+import com.threerings.msoy.money.server.MoneyLogic;
+
+import com.threerings.msoy.server.MsoyEventLogger;
 
 /**
- * Handles quest-related AVRG services, including awarding coins.
+ * Handles the completeTask service call, including awarding coins.
  * TODO: This may or may not be included in a refactor involving AwardDelegate
  */
 public class QuestDelegate extends PlaceManagerDelegate
@@ -112,93 +120,22 @@ public class QuestDelegate extends PlaceManagerDelegate
     }
 
     // from AVRGameProvider
-    public void startQuest (final ClientObject caller, final String questId, final String status,
-                            final InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        final PlayerObject player = (PlayerObject) caller;
-        if (questId == null) {
-            log.warning("Received startQuest() request with null questId [game=" + where() +
-                        ", who=" + player.who() + "]");
-            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
-        }
-
-        if (player.questState.containsKey(questId)) {
-            listener.requestProcessed(); // silently ignore
-            return;
-        }
-
-        final int sceneId = ScenePlace.getSceneId(player);
-        _invoker.postUnit(new PersistingUnit("startQuest(" + questId + ")", listener) {
-            @Override
-            public void invokePersistent () throws Exception {
-                if (!MemberName.isGuest(player.getMemberId())) {
-                    _repo.setQuestState(_gameId, player.getMemberId(), questId,
-                                        QuestState.STEP_FIRST, status, sceneId);
-                }
-            }
-            @Override
-            public void handleSuccess () {
-                player.addToQuestState(
-                    new QuestState(questId, QuestState.STEP_FIRST, status, sceneId));
-                reportRequestProcessed();
-            }
-        });
-    }
-
-    // from AVRGameProvider
-    public void updateQuest (final ClientObject caller, final String questId, final int step,
-                             final String status, final InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        final PlayerObject player = (PlayerObject) caller;
-
-        final QuestState oldState = player.questState.get(questId);
-        if (oldState == null) {
-            log.warning("Requested to update quest to which member was not subscribed " +
-                        "[game=" + where() + ", quest=" + questId + ", who=" + player.who() + "].");
-            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
-        }
-
-        final int sceneId = ScenePlace.getSceneId(player);
-
-        _invoker.postUnit(new PersistingUnit("updateQuest", listener) {
-            @Override
-            public void invokePersistent () throws Exception {
-                if (!MemberName.isGuest(player.getMemberId())) {
-                    _repo.setQuestState(_gameId, player.getMemberId(), questId, step,
-                                        status, sceneId);
-                }
-            }
-            @Override
-            public void handleSuccess () {
-                player.updateQuestState(new QuestState(questId, step, status, sceneId));
-                reportRequestProcessed();
-            }
-        });
-    }
-
-    // from AVRGameProvider
-    public void completeQuest (
+    public void completeTask (
         final ClientObject caller, final String questId, final float payoutLevel,
         final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         final PlayerObject player = (PlayerObject) caller;
-        final QuestState oldState = player.questState.get(questId);
 
-        // very little is done for guests
+        // nothing is done for guests
         if (MemberName.isGuest(player.getMemberId())) {
-            if (oldState != null) {
-                player.removeFromQuestState(questId);
-            }
             listener.requestProcessed();
             return;
         }
 
         // sanity check
         if (payoutLevel < 0 || payoutLevel > 1) {
-            log.warning("Invalid payout in completeQuest() [game=" + where() + ", quest=" + questId +
+            log.warning("Invalid payout in completeTask() [game=" + where() + ", quest=" + questId +
                         ", payout=" + payoutLevel + ", caller=" + player.who() + "].");
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
@@ -241,7 +178,7 @@ public class QuestDelegate extends PlaceManagerDelegate
             newFlowToNextRecalc = 0;
         }
 
-        _invoker.postUnit(new PersistingUnit("completeQuest", listener) {
+        _invoker.postUnit(new PersistingUnit("completeTask", listener) {
             @Override
             public void invokePersistent () throws Exception {
                 // award the flow for this quest
@@ -277,10 +214,6 @@ public class QuestDelegate extends PlaceManagerDelegate
 
             @Override
             public void handleSuccess () {
-                if (oldState != null) {
-                    player.removeFromQuestState(questId);
-                }
-
                 // if we paid out flow, let any logged-on member objects know
                 if (payout > 0) {
                     _worldClient.reportFlowAward(player.getMemberId(), payout);
@@ -297,35 +230,6 @@ public class QuestDelegate extends PlaceManagerDelegate
             }
 
             protected int _newFactor;
-        });
-    }
-
-    // from AVRGameProvider
-    public void cancelQuest (final ClientObject caller, final String questId,
-                             final InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        final PlayerObject player = (PlayerObject) caller;
-
-        final QuestState oldState = player.questState.get(questId);
-        if (oldState == null) {
-            log.warning("Member not subscribed to cancelled quest [game=" + where() +
-                        ", quest=" + questId + ", who=" + player.who() + "].");
-            throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
-        }
-
-        _invoker.postUnit(new PersistingUnit("cancelQuest", listener) {
-            @Override
-            public void invokePersistent () throws Exception {
-                if (!MemberName.isGuest(player.getMemberId())) {
-                    _repo.deleteQuestState(player.getMemberId(), _gameId, questId);
-                }
-            }
-            @Override
-            public void handleSuccess () {
-                player.removeFromQuestState(questId);
-                reportRequestProcessed();
-            }
         });
     }
 
@@ -394,7 +298,6 @@ public class QuestDelegate extends PlaceManagerDelegate
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected AVRGameRepository _repo;
-    @Inject protected MemberRepository _memberRepo;
     @Inject protected GameRepository _gameRepo;
     @Inject protected WorldServerClient _worldClient;
     @Inject protected MsoyEventLogger _eventLog;

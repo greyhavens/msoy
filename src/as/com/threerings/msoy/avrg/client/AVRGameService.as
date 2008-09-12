@@ -14,18 +14,9 @@ import com.threerings.presents.client.InvocationService_InvocationListener;
 public interface AVRGameService extends InvocationService
 {
     // from Java interface AVRGameService
-    function cancelQuest (arg1 :Client, arg2 :String, arg3 :InvocationService_ConfirmListener) :void;
-
-    // from Java interface AVRGameService
-    function completeQuest (arg1 :Client, arg2 :String, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void;
+    function completeTask (arg1 :Client, arg2 :String, arg3 :Number, arg4 :InvocationService_ConfirmListener) :void;
 
     // from Java interface AVRGameService
     function setTicker (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_InvocationListener) :void;
-
-    // from Java interface AVRGameService
-    function startQuest (arg1 :Client, arg2 :String, arg3 :String, arg4 :InvocationService_ConfirmListener) :void;
-
-    // from Java interface AVRGameService
-    function updateQuest (arg1 :Client, arg2 :String, arg3 :int, arg4 :String, arg5 :InvocationService_ConfirmListener) :void;
 }
 }

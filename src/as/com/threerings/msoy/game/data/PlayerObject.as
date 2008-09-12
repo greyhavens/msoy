@@ -45,9 +45,6 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>humanity</code> field. */
     public static const HUMANITY :String = "humanity";
 
-    /** The field name of the <code>questState</code> field. */
-    public static const QUEST_STATE :String = "questState";
-
     /** The field name of the <code>gameContent</code> field. */
     public static const GAME_CONTENT :String = "gameContent";
 
@@ -69,9 +66,6 @@ public class PlayerObject extends WhirledPlayerObject
      * a game. */
     public var friends :DSet /* FriendEntry */;
     FriendEntry; // reference to force compilation
-
-    /** The quests of our current world game that we're currently on. */
-    public var questState :DSet;
 
     /** Contains information on player's ownership of game content (populated lazily). */
     public var gameContent :DSet; /* GameContentOwnership */
@@ -181,7 +175,6 @@ public class PlayerObject extends WhirledPlayerObject
         tokens = (ins.readObject() as MsoyTokenRing);
         humanity = ins.readInt();
         friends = (ins.readObject() as DSet);
-        questState = (ins.readObject() as DSet);
         gameContent = (ins.readObject() as DSet);
         referral = (ins.readObject() as ReferralInfo);
         propertyService = (ins.readObject() as PropertySpaceMarshaller);

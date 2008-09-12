@@ -393,7 +393,7 @@ public class AVRGameBackend extends ControlBackend
             return;
         }
 
-        _gameObj.avrgService.completeQuest(
+        _gameObj.avrgService.completeTask(
             _gctx.getClient(), taskId, payout, BackendUtils.loggingConfirmListener("completeTask"));
     }
 

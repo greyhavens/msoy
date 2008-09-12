@@ -64,7 +64,6 @@ import com.threerings.msoy.avrg.server.QuestDelegate;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.GameStateRecord;
 import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
-import com.threerings.msoy.avrg.server.persist.QuestStateRecord;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -815,7 +814,6 @@ public class GameGameRegistry
         _invoker.postUnit(new RepositoryUnit("joinAVRGame") {
             @Override
             public void invokePersist () throws Exception {
-                _questRecs = _avrgRepo.getQuests(mgr.getGameId(), playerId);
                 _stateRecs = _avrgRepo.getPlayerGameState(mgr.getGameId(), playerId);
             }
             @Override
@@ -832,15 +830,6 @@ public class GameGameRegistry
                         initialState.put(record.datumKey, record.datumValue);
                     }
                     PropertySpaceHelper.initWithStateFromStore(player, initialState);
-
-                    player.startTransaction();
-                    try {
-                        for (QuestStateRecord rec: _questRecs) {
-                            player.addToQuestState(rec.toEntry());
-                        }
-                    } finally {
-                        player.commitTransaction();
-                    }
                 }
 
                 int gameOid = mgr.getGameObject().getOid();
@@ -863,7 +852,6 @@ public class GameGameRegistry
                     mgr.getGameId() + ", player=" + playerId + "]", pe);
             }
 
-            protected List<QuestStateRecord> _questRecs;
             protected List<PlayerGameStateRecord> _stateRecs;
         });
     }

@@ -35,14 +35,8 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
         throws InvocationException
     {
         switch (methodId) {
-        case AVRGameMarshaller.CANCEL_QUEST:
-            ((AVRGameProvider)provider).cancelQuest(
-                source, (String)args[0], (InvocationService.ConfirmListener)args[1]
-            );
-            return;
-
-        case AVRGameMarshaller.COMPLETE_QUEST:
-            ((AVRGameProvider)provider).completeQuest(
+        case AVRGameMarshaller.COMPLETE_TASK:
+            ((AVRGameProvider)provider).completeTask(
                 source, (String)args[0], ((Float)args[1]).floatValue(), (InvocationService.ConfirmListener)args[2]
             );
             return;
@@ -50,18 +44,6 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
         case AVRGameMarshaller.SET_TICKER:
             ((AVRGameProvider)provider).setTicker(
                 source, (String)args[0], ((Integer)args[1]).intValue(), (InvocationService.InvocationListener)args[2]
-            );
-            return;
-
-        case AVRGameMarshaller.START_QUEST:
-            ((AVRGameProvider)provider).startQuest(
-                source, (String)args[0], (String)args[1], (InvocationService.ConfirmListener)args[2]
-            );
-            return;
-
-        case AVRGameMarshaller.UPDATE_QUEST:
-            ((AVRGameProvider)provider).updateQuest(
-                source, (String)args[0], ((Integer)args[1]).intValue(), (String)args[2], (InvocationService.ConfirmListener)args[3]
             );
             return;
 

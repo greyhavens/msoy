@@ -15,6 +15,7 @@ import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.whirled.game.data.WhirledPlayerObject;
 
+import com.threerings.msoy.avrg.client.BackendUtils;
 import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.PlayerLocation;
 
@@ -418,6 +419,7 @@ public class ThaneAVRGameBackend
 
     protected function completeTask_v1 (playerId :int, taskId :String, payout :Number) :void
     {
+        
     }
 
     protected function playAvatarAction_v1 (playerId :int, action :String) :void

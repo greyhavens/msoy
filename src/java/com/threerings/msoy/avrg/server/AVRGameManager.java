@@ -42,7 +42,6 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
-import com.threerings.msoy.game.data.QuestState;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
 import com.threerings.msoy.game.server.GameWatcherManager;
 import com.threerings.msoy.game.server.PlayerLocator;
@@ -235,45 +234,12 @@ public class AVRGameManager extends PlaceManager
         _breg.startAgent(_gameAgentObj);
     }
 
-    /**
-     * The game has changed while we're hosting it; update the media, the client will reload.
-     */
-    public void updateGame (Game game)
-    {
-// TODO
-//        _gameObj.setGameMedia(game.gameMedia);
-    }
-
     // from AVRGameProvider
-    public void startQuest (ClientObject caller, final String questId, final String status,
-                            InvocationService.ConfirmListener listener)
+    public void completeTask (ClientObject caller, final String questId, final float payoutLevel,
+                              InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        _questDelegate.startQuest(caller, questId, status, listener);
-    }
-
-    // from AVRGameProvider
-    public void updateQuest (ClientObject caller, final String questId, final int step,
-                             final String status, InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        _questDelegate.updateQuest(caller, questId, step, status, listener);
-    }
-
-    // from AVRGameProvider
-    public void completeQuest (ClientObject caller, final String questId, final float payoutLevel,
-                               InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        _questDelegate.completeQuest(caller, questId, payoutLevel, listener);
-    }
-
-    // from AVRGameProvider
-    public void cancelQuest (ClientObject caller, final String questId,
-                             InvocationService.ConfirmListener listener)
-        throws InvocationException
-    {
-        _questDelegate.cancelQuest(caller, questId, listener);
+        _questDelegate.completeTask(caller, questId, payoutLevel, listener);
     }
 
     // from AVRGameAgentProvider
@@ -515,9 +481,6 @@ public class AVRGameManager extends PlaceManager
                 }
             });
         }
-        
-        // then clear out the state associated with this game
-        player.setQuestState(new DSet<QuestState>());
     }
 
     /**
