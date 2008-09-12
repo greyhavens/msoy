@@ -22,6 +22,7 @@ import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.CostUpdatedException;
+import com.threerings.msoy.money.data.all.Currency;
 
 import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
@@ -69,41 +70,20 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         _details.add(WidgetUtil.makeShim(10, 10));
 
-        // create the buy button
-        PushButton purchase = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);
-        new ClickCallback<Item>(purchase) {
-            public boolean callService () {
-                if (CShop.isGuest()) {
-                    MsoyUI.infoAction(CShop.msgs.msgMustRegister(), CShop.msgs.msgRegister(),
-                                      Link.createListener(Pages.ACCOUNT, "create"));
-                } else {
-                    // TODO: Bar me
-                    _catalogsvc.purchaseItem(_item.getType(), _listing.catalogId,
-                                             _listing.quote.getListedCurrency(),
-                                             _listing.quote.getListedAmount(), this);
-                }
-                return true;
-            }
-            public boolean gotResult (Item item) {
-                itemPurchased(item);
-                return false; // don't reenable buy button
-            }
+        // TODO: Make a BuyButton that also displays the price
+        PushButton spendBars = MsoyUI.createButton(MsoyUI.SHORT_THICK, "Bars!", null);
+        new BuyCallback(spendBars, Currency.BARS);
 
-            public void onFailure (Throwable cause)
-            {
-                super.onFailure(cause);
-
-                if (cause instanceof CostUpdatedException) {
-                    CostUpdatedException cue = (CostUpdatedException) cause;
-                    _listing.quote = cue.getQuote();
-                    _priceLabel.updatePrice(_listing.quote.getListedCurrency(),
-                        _listing.quote.getListedAmount());
-                }
-            }
-        };
+        PushButton spendCoins = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);
+        new BuyCallback(spendCoins, Currency.COINS);
+        //new BuyCallback(purchase,
 
         _buyPanel = new FlowPanel();
         _buyPanel.setStyleName("Buy");
+
+        if (DeploymentConfig.barsEnabled) {
+            _buyPanel.add(spendBars);
+        }
 
         // if the item is remixable, also create a remix button
         if (!CShop.isGuest() && isRemixable()) {
@@ -111,9 +91,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 // TODO: Bar me
                 NaviUtil.onRemixCatalogItem(_item.getType(), _item.itemId, _listing.catalogId,
                                             _listing.quote.getCoins(), _listing.quote.getBars()));
-            _buyPanel.add(MsoyUI.createButtonPair(remix, purchase));
+            _buyPanel.add(MsoyUI.createButtonPair(remix, spendCoins));
         } else {
-            _buyPanel.add(purchase);
+            _buyPanel.add(spendCoins);
         }
 
         _details.add(_buyPanel);
@@ -243,6 +223,46 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         });
     }
 
+    protected class BuyCallback extends ClickCallback<Item>
+    {
+        public BuyCallback (PushButton button, Currency currency)
+        {
+            super(button);
+            _currency = currency;
+        }
+
+        public boolean callService ()
+        {
+            if (CShop.isGuest()) {
+                MsoyUI.infoAction(CShop.msgs.msgMustRegister(), CShop.msgs.msgRegister(),
+                                  Link.createListener(Pages.ACCOUNT, "create"));
+            } else {
+                _catalogsvc.purchaseItem(_item.getType(), _listing.catalogId,
+                                         _currency, _listing.quote.getAmount(_currency), this);
+            }
+            return true;
+        }
+
+        public boolean gotResult (Item item)
+        {
+            itemPurchased(item);
+            return false; // don't reenable buy button
+        }
+
+        public void onFailure (Throwable cause)
+        {
+            super.onFailure(cause);
+
+            if (cause instanceof CostUpdatedException) {
+                CostUpdatedException cue = (CostUpdatedException) cause;
+                _listing.quote = cue.getQuote();
+                _priceLabel.updatePrice(_listing.quote.getListedCurrency(),
+                    _listing.quote.getListedAmount());
+            }
+        }
+
+        protected Currency _currency;
+    };
     
     protected native void openBillingPage() /*-{
         $wnd.open(@com.threerings.msoy.data.all.DeploymentConfig::billingURL, "_blank");
