@@ -424,46 +424,67 @@ class AvatarUpdateNotifier implements AttributeChangeListener
 
 class StatusUpdater implements AttributeChangeListener, SetListener
 {
-    public function StatusUpdater (client :MsoyClient) {
+    public function StatusUpdater (client :MsoyClient)
+    {
         _client = client;
     }
 
-    public function attributeChanged (event :AttributeChangedEvent) :void {
-        if (event.getName() == MemberObject.LEVEL) {
-            newLevel(event.getValue() as int, event.getOldValue() as int);
-        } else if (event.getName() == MemberObject.BARS) {
-            newBars(event.getValue() as int, event.getOldValue() as int);
-        } else if (event.getName() == MemberObject.COINS) {
+    public function attributeChanged (event :AttributeChangedEvent) :void
+    {
+        switch (event.getName()) {
+        case MemberObject.COINS:
             newCoins(event.getValue() as int, event.getOldValue() as int);
-        } else if (event.getName() == MemberObject.NEW_MAIL_COUNT) {
+            break;
+
+        case MemberObject.BARS:
+            newBars(event.getValue() as int, event.getOldValue() as int);
+            break;
+
+        case MemberObject.LEVEL:
+            newLevel(event.getValue() as int, event.getOldValue() as int);
+            break;
+
+        case MemberObject.NEW_MAIL_COUNT:
             newMail(event.getValue() as int, event.getOldValue() as int);
+            break;
         }
     }
 
-    public function entryAdded (event :EntryAddedEvent) :void {
-        if (event.getName() == MemberObject.FRIENDS) {
+    public function entryAdded (event :EntryAddedEvent) :void
+    {
+        switch (event.getName()) {
+        case MemberObject.FRIENDS:
             var entry :FriendEntry = (event.getEntry() as FriendEntry);
             _client.dispatchEventToGWT(
                 FRIEND_EVENT, [FRIEND_ADDED, entry.name.toString(), entry.name.getMemberId()]);
-//        } else if (event.getName() == MemberObject.OWNED_SCENES) {
+            break;
+
+//        case MemberObject.OWNED_SCENES:
 //            var scene :SceneBookmarkEntry = (event.getEntry() as SceneBookmarkEntry);
 //            _client.dispatchEventToGWT(
 //                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_ADDED, scene.sceneName, scene.sceneId]);
+//            break;
         }
     }
 
-    public function entryUpdated (event :EntryUpdatedEvent) :void {
+    public function entryUpdated (event :EntryUpdatedEvent) :void
+    {
         // nada
     }
 
-    public function entryRemoved (event :EntryRemovedEvent) :void {
-        if (event.getName() == MemberObject.FRIENDS) {
+    public function entryRemoved (event :EntryRemovedEvent) :void
+    {
+        switch (event.getName()) {
+        case MemberObject.FRIENDS:
             var memberId :int = int(event.getKey());
             _client.dispatchEventToGWT(FRIEND_EVENT, [FRIEND_REMOVED, "", memberId]);
-//        } else if (event.getName() == MemberObject.OWNED_SCENES) {
+            break;
+
+//        case MemberObject.OWNED_SCENES:
 //            var sceneId :int = int(event.getKey());
 //            _client.dispatchEventToGWT(
 //                SCENEBOOKMARK_EVENT, [SCENEBOOKMARK_REMOVED, "", sceneId]);
+//            break;
         }
     }
 
