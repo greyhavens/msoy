@@ -194,22 +194,15 @@ public class MailLogic
         if (recip.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL)) {
             return;
         }
-
-        // otherwise do the deed
-        String result = MailSender.sendEmail(
-            recip.accountName, ServerConfig.getFromAddress(), "gotMail",
-            "subject", subject,"sender", sender.name, "senderId", sender.memberId,
-            "body", body, "server_url", ServerConfig.getServerURL());
-        if (result != null) {
-            log.warning("Failed to send mail email [from=" + sender +
-                        ", to=" + recip.accountName + ", error=" + result + "].");
-            // nothing to do but keep on keepin' on
-        }
+        _mailer.sendEmail(recip.accountName, ServerConfig.getFromAddress(), "gotMail",
+                          "subject", subject,"sender", sender.name, "senderId", sender.memberId,
+                          "body", body, "server_url", ServerConfig.getServerURL());
     }
 
     @Inject protected RootDObjectManager _omgr;
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected @MainInvoker Invoker _invoker;
+    @Inject protected MailSender _mailer;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberRepository _memberRepo;

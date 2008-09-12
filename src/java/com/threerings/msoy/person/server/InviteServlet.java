@@ -13,6 +13,7 @@ import octazen.addressbook.UnexpectedFormatException;
 import octazen.http.UserInputRequiredException;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.IntIntMap;
@@ -52,9 +53,9 @@ public class InviteServlet extends MsoyServiceServlet
         try {
             // don't let someone attempt more than 5 imports in a 5 minute period
             long now = System.currentTimeMillis();
-            if (now > _waCleared + WEB_ACCESS_CLEAR_INTERVAL) {
+            if (now > _webmailCleared + WEB_ACCESS_CLEAR_INTERVAL) {
                 _webmailAccess.clear();
-                _waCleared = now;
+                _webmailCleared = now;
             }
             if (_webmailAccess.increment(memrec.memberId, 1) > MAX_WEB_ACCESS_ATTEMPTS) {
                 throw new ServiceException(ProfileCodes.E_MAX_WEBMAIL_ATTEMPTS);
@@ -224,10 +225,7 @@ public class InviteServlet extends MsoyServiceServlet
         params.set("server_url", ServerConfig.getServerURL());
 
         String from = (inviter == null) ? ServerConfig.getFromAddress() : inviter.accountName;
-        String result = MailSender.sendEmail(email, from, "memberInvite", params);
-        if (result != null) {
-            throw new ServiceException(result);
-        }
+        _mailer.sendEmail(email, from, "memberInvite", params);
 
         // record the invite and that we sent it
         _memberRepo.addInvite(email, inviterId, inviteId);
@@ -252,7 +250,9 @@ public class InviteServlet extends MsoyServiceServlet
     }
 
     protected IntIntMap _webmailAccess = new IntIntMap();
-    protected long _waCleared = System.currentTimeMillis();
+    protected long _webmailCleared = System.currentTimeMillis();
+
+    @Inject protected MailSender _mailer;
 
     protected static final int MAX_WEB_ACCESS_ATTEMPTS = 5;
     protected static final long WEB_ACCESS_CLEAR_INTERVAL = 5L * 60 * 1000;

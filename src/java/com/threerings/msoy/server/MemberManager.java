@@ -666,32 +666,21 @@ public class MemberManager
     {
         final MemberObject memObj = (MemberObject) caller;
 
-        _invoker.postUnit(new RepositoryUnit("emailShare") {
-            @Override
-            public void invokePersist () throws Exception {
-                final MemberRecord sender = _memberRepo.loadMember(memObj.getMemberId());
+        // username is their authentication username which is their email address
+        String url = ServerConfig.getServerURL();
+        if (sceneId != 0) {
+            url += "#world-s" + sceneId;
+        } else if (gameId != 0) {
+            url += "#world-game_g_" + gameId;
+        }
+        final String from = memObj.username.toString();
+        for (final String recip : emails) {
+            // this just passes the buck to an executor, so we can call it from the dobj thread
+            _mailer.sendEmail(recip, from, "shareInvite", "name", memObj.memberName,
+                              "message", message, "link", url);
+        }
 
-                // Send the email on the invoker thread... TODO?
-                final String from = (sender == null) ?
-                    "no-reply@whirled.com" : sender.accountName;
-                final String name = (sender == null) ? null : sender.name;
-                String url = ServerConfig.getServerURL();
-                if (sceneId != 0) {
-                    url += "#world-s" + sceneId;
-                } else if (gameId != 0) {
-                    url += "#world-game_g_" + gameId;
-                }
-                for (final String recip : emails) {
-                    MailSender.sendEmail(recip, from, "shareInvite", "name", name,
-                                         "message", message, "link", url);
-                }
-            }
-
-            @Override
-            public void handleSuccess () {
-                cl.requestProcessed();
-            }
-        });
+        cl.requestProcessed();
     }
 
     // from interface MemberProvider
@@ -969,6 +958,7 @@ public class MemberManager
     @Inject protected PresentsDObjectMgr _omgr;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected MailLogic _mailLogic;
+    @Inject protected MailSender _mailer;
     @Inject protected MemberLogic _memberLogic;
     @Inject protected SupportLogic _supportLogic;
     @Inject protected BodyManager _bodyMan;

@@ -262,15 +262,9 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // create and send a forgot password email
-        try {
-            MailSender.sendEmail(email, ServerConfig.getFromAddress(), "forgotPassword",
-                                 "server_url", ServerConfig.getServerURL(),
-                                 "email", mrec.accountName,
-                                 "memberId", mrec.memberId,
-                                 "code", code);
-        } catch (Exception e) {
-            throw new ServiceException(e.getMessage());
-        }
+        _mailer.sendEmail(email, ServerConfig.getFromAddress(), "forgotPassword",
+                          "server_url", ServerConfig.getServerURL(), "email", mrec.accountName,
+                          "memberId", mrec.memberId, "code", code);
     }
 
     // from interface WebUserService
@@ -534,6 +528,7 @@ public class WebUserServlet extends MsoyServiceServlet
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected FriendManager _friendMan;
     @Inject protected NotificationManager _notifyMan;
+    @Inject protected MailSender _mailer;
     @Inject protected MailLogic _mailLogic;
     @Inject protected GameLogic _gameLogic;
     @Inject protected MemberLogic _memberLogic;
