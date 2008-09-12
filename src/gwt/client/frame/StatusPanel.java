@@ -71,10 +71,6 @@ public class StatusPanel extends SmartTable
                     _levels.setBars(event.getValue());
                     break;
 
-//                case StatusChangeEvent.BLING:
-//                    _levels.setBling(event.getValue());
-//                    break;
-
                 case StatusChangeEvent.MAIL:
                     _mail.setCount(event.getValue());
                     break;
@@ -193,11 +189,6 @@ public class StatusPanel extends SmartTable
                 setWidget(0, idx++, makeImage(Currency.BARS.getLargeIcon(), _cmsgs.barsTip()),
                     1, "Icon");
                 setText(0, _barsIdx = idx++, "0");
-
-                getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-                setWidget(0, idx++, makeImage(Currency.BLING.getLargeIcon(), _cmsgs.blingTip()),
-                    1, "Icon");
-                setText(0, _blingIdx = idx++, "0");
             }
 
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
@@ -222,12 +213,6 @@ public class StatusPanel extends SmartTable
             }
         }
 
-        public void setBling (int bling) {
-            if (DeploymentConfig.barsEnabled) {
-                setText(0, _blingIdx, Currency.BLING.format(bling));
-            }
-        }
-
         public void showLevelUpPopup () {
             showPopup("/media/static/levelbling.swf", _levelIdx);
         }
@@ -244,7 +229,7 @@ public class StatusPanel extends SmartTable
             bling.show();
         }
 
-        protected int _coinsIdx, _barsIdx, _blingIdx, _levelIdx;
+        protected int _coinsIdx, _barsIdx, _levelIdx;
     }
 
     protected WebCreds _creds;
