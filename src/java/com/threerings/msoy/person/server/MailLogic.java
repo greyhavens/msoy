@@ -6,6 +6,8 @@ package com.threerings.msoy.person.server;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -148,6 +150,64 @@ public class MailLogic
     }
 
     /**
+     * Sends email to all players who have not opted out of Whirled announcements.
+     */
+    public void spamPlayers (String subject, String body, int startId, int endId)
+    {
+        // TODO: if we want to continue to use this mechanism to send mass emails to our members,
+        // we will need to farm out the mail deliver task to all nodes in the network so that we
+        // don't task one node with sending out a million email messages
+
+        // start with member 1 if we weren't given a higher starting id
+        startId = Math.max(startId, 1);
+
+        // if we don't have an endId, go all the way
+        if (endId <= 0) {
+            endId = Integer.MAX_VALUE;
+        }
+
+        // convert the body into proper-ish HTML (TODO: use velocity for this?)
+        body = "<head><base href=\"" + ServerConfig.getServerURL() + "\"></head>" +
+            "<body>" + body + "</body>";
+
+        // loop through 100 members at a time and load up their record and send emails
+        final String from = ServerConfig.getFromAddress();
+        int found;
+        do {
+            final IntSet memIds = new ArrayIntSet();
+            for (int ii = 0; ii < MEMBERS_PER_LOOP; ii++) {
+                final int memberId = ii + startId;
+                if (memberId > endId) {
+                    break;
+                }
+                memIds.add(memberId);
+            }
+            if (memIds.size() == 0) {
+                break;
+            }
+
+            found = 0;
+            for (final MemberRecord mrec : _memberRepo.loadMembers(memIds)) {
+                found++;
+
+                if (mrec.isSet(MemberRecord.Flag.NO_ANNOUNCE_EMAIL)) {
+                    continue;
+                }
+
+                try {
+                    _mailer.sendEmail(mrec.accountName, from, subject, body, true);
+                } catch (final Exception e) {
+                    log.warning("Failed to spam member [subject=" + subject +
+                                ", email=" + mrec.accountName + ", error=" + e + "].");
+                    // roll on through and try the next one
+                }
+            }
+
+            startId += MEMBERS_PER_LOOP;
+        } while (startId < endId && found > 0);
+    }
+
+    /**
      * Handles any side-effects of mail payload delivery. Currently that is only the transfer of an
      * item from the sender to the recipient for {@link PresentPayload}.
      */
@@ -206,4 +266,6 @@ public class MailLogic
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailRepository _mailRepo;
     @Inject protected MemberRepository _memberRepo;
+
+    protected static final int MEMBERS_PER_LOOP = 100;
 }

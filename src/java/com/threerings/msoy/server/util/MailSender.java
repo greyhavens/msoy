@@ -79,8 +79,6 @@ public class MailSender
     /**
      * Delivers an email using the supplied template and parameters which are used to populate a
      * {@link Parameters} instance.
-     *
-     * @return null or a string indicating the problem in the event of failure.
      */
     public void sendEmail (String recip, String sender, String template, Object ... params)
     {
@@ -94,14 +92,23 @@ public class MailSender
     /**
      * Delivers an email using the supplied template and context. The first line of the template
      * should be the subject and the remaining lines the body.
-     *
-     * @return null or a string indicating the problem in the event of failure.
      */
     public void sendEmail (String recip, String sender, String template, Parameters params)
     {
         // skip emails to placeholder addresses
         if (!isPlaceholderAddress(recip)) {
             _mailExecutor.execute(new MailTask(recip, sender, template, params));
+        }
+    }
+
+    /**
+     * Delivers a preformatted email with the supplied subject and body.
+     */
+    public void sendEmail (String recip, String sender, String subject, String body, boolean isHTML)
+    {
+        // skip emails to placeholder addresses
+        if (!isPlaceholderAddress(recip)) {
+            _mailExecutor.execute(new PreformattedMailTask(recip, sender, subject, body, isHTML));
         }
     }
 
@@ -196,6 +203,38 @@ public class MailSender
 
         protected String _recip, _sender, _template;
         protected Parameters _params;
+    }
+
+    /** Handles the delivery of an email message which is preformatted. */
+    protected static class PreformattedMailTask implements Runnable
+    {
+        public PreformattedMailTask (String recip, String sender,
+                                     String subject, String body, boolean isHTML) {
+            _recip = recip;
+            _sender = sender;
+            _subject = subject;
+            _body = body;
+            _isHTML = isHTML;
+        }
+
+        public void run () {
+            try {
+                if (_isHTML) {
+                    MimeMessage message = MailUtil.createEmptyMessage();
+                    message.setContent(_body, "text/html");
+                    MailUtil.deliverMail(new String[] { _recip }, _sender, _subject, message);
+                } else {
+                    MailUtil.deliverMail(_recip, _sender, _subject, _body);
+                }
+
+            } catch (Exception e) {
+                log.warning("Failed to send spam email", "recip", _recip, "sender", _sender,
+                            "subject", _subject, e);
+            }
+        }
+
+        protected String _recip, _sender, _subject, _body;
+        protected boolean _isHTML;
     }
 
     /** The executor on which we will dispatch mail sending tasks. */

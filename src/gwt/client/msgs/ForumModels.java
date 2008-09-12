@@ -47,6 +47,10 @@ public class ForumModels
             return _isManager;
         }
 
+        public boolean isAnnounce () {
+            return _isAnnounce;
+        }
+
         /**
          * Requests to be informed when we obtain our group name from the first batch of thread
          * results. {@link AsyncCallback#onSuccess} will be called with the {@link GroupName} when
@@ -87,6 +91,7 @@ public class ForumModels
         {
             _canStartThread = result.canStartThread;
             _isManager = result.isManager;
+            _isAnnounce = result.isAnnounce;
             // note all of our threads so that we can provide them later to non-PagedGrid consumers
             for (ForumThread thread : result.threads) {
                 mapThread(thread);
@@ -133,7 +138,7 @@ public class ForumModels
 
         protected int _groupId;
         protected GroupName _group;
-        protected boolean _canStartThread, _isManager;
+        protected boolean _canStartThread, _isManager, _isAnnounce;
 
         protected ListenerList<AsyncCallback<GroupName>> _gotNameListeners;
         protected HashMap<Integer, ForumThread> _threads = new HashMap<Integer, ForumThread>();
@@ -241,7 +246,8 @@ public class ForumModels
         }
 
         @Override // from ServiceBackedDataModel
-        protected void onSuccess (ForumService.MessageResult result, AsyncCallback<List<ForumMessage>> callback) {
+        protected void onSuccess (ForumService.MessageResult result,
+                                  AsyncCallback<List<ForumMessage>> callback) {
             // note some bits
             if (result.thread != null) {
                 _thread = result.thread;
@@ -268,7 +274,8 @@ public class ForumModels
         protected void callFetchService (int start, int count, boolean needCount,
             AsyncCallback<ForumService.MessageResult> callback)
         {
-            _forumsvc.loadMessages(_threadId, _thread.lastReadPostId, start, count, needCount, callback);
+            _forumsvc.loadMessages(
+                _threadId, _thread.lastReadPostId, start, count, needCount, callback);
         }
 
         @Override // from ServiceBackedDataModel

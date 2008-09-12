@@ -31,6 +31,7 @@ import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
+import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
@@ -47,6 +48,8 @@ import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
 import com.threerings.msoy.fora.server.persist.ReadTrackingRecord;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the server implementation of {@link ForumService}.
@@ -111,9 +114,10 @@ public class ForumServlet extends MsoyServiceServlet
         result.canStartThread = (mrec != null) &&
             group.checkAccess(groupRank, Group.ACCESS_THREAD, 0);
 
-        // fill in our manager status
+        // fill in our manager and announce status
         result.isManager = (mrec != null && mrec.isSupport()) ||
             (groupRank == GroupMembership.RANK_MANAGER);
+        result.isAnnounce = (groupId == ServerConfig.getAnnounceGroupId());
 
         // fill in our total thread count if needed
         if (needTotalCount) {
@@ -227,13 +231,19 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // from interface ForumService
-    public ForumThread createThread (int groupId, int flags, String subject, String message)
+    public ForumThread createThread (int groupId, int flags, boolean spam,
+                                     String subject, String message)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
 
         // make sure they're allowed to create a thread in this group
         Group group = checkAccess(mrec, groupId, Group.ACCESS_THREAD, flags);
+
+        // sanity check our spam argument (the client should prevent this)
+        if (spam && (groupId != ServerConfig.getAnnounceGroupId() || !mrec.isSupport())) {
+            throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
+        }
 
         // sanitize and recheck the length of the message (note: we never display the subject
         // as raw HTML so we don't need to sanitize it)
@@ -257,7 +267,13 @@ public class ForumServlet extends MsoyServiceServlet
             _feedRepo.publishGlobalMessage(
                 FeedMessageType.GLOBAL_ANNOUNCEMENT, subject + "\t" + thread.threadId);
 
-            // otherwise, if the thread is an announcement thread, post a feed message about it
+            // spam our players with this message if requested
+            if (spam) {
+                log.info("Spamming players with forum post", "for", mrec.who(), "subject", subject);
+                _mailLogic.spamPlayers(subject, message, 0, 0);
+            }
+
+        // otherwise, if the thread is an announcement thread, post a feed message about it
         } else if (thread.isAnnouncement()) {
             _feedRepo.publishGroupMessage(
                 groupId, FeedMessageType.GROUP_ANNOUNCEMENT,
@@ -480,10 +496,11 @@ public class ForumServlet extends MsoyServiceServlet
     }
 
     // dependencies
-    @Inject protected SupportLogic _supportLogic;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected ForumLogic _forumLogic;
     @Inject protected ForumRepository _forumRepo;
+    @Inject protected SupportLogic _supportLogic;
+    @Inject protected MailLogic _mailLogic;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected FeedRepository _feedRepo;
 }

@@ -16,6 +16,7 @@ import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumServiceAsync;
 import com.threerings.msoy.fora.gwt.ForumThread;
 
+import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -26,8 +27,9 @@ import client.util.ServiceUtil;
  */
 public class NewThreadPanel extends TableFooterPanel
 {
-    public NewThreadPanel (int groupId, boolean isManager)
+    public NewThreadPanel (int groupId, boolean isManager, boolean isAnnounce)
     {
+        addStyleName("newThreadPanel");
         _groupId = groupId;
 
         addRow(_mmsgs.ntpSubject(), _subject = new TextBox());
@@ -37,12 +39,23 @@ public class NewThreadPanel extends TableFooterPanel
         if (isManager) {
             RowPanel bits = new RowPanel();
             bits.add(_announce = new CheckBox());
-            bits.add(MsoyUI.createLabel(_mmsgs.ntpAnnounceTip(), "Tip"));
+            bits.add(MsoyUI.createLabel(isAnnounce ? _mmsgs.ntpMustAnnounceTip() :
+                                        _mmsgs.ntpAnnounceTip(), "FlagTip"));
             addRow(_mmsgs.ntpAnnounce(), bits);
+            // force announce to be checked for the global announce group
+            _announce.setChecked(isAnnounce);
+            _announce.setEnabled(!isAnnounce);
+
+            if (isAnnounce && CShell.isSupport()) {
+                bits = new RowPanel();
+                bits.add(_spam = new CheckBox());
+                bits.add(MsoyUI.createLabel(_mmsgs.ntpSpamTip(), "FlagTip"));
+                addRow(_mmsgs.ntpSpam(), bits);
+            }
 
             bits = new RowPanel();
             bits.add(_sticky = new CheckBox());
-            bits.add(MsoyUI.createLabel(_mmsgs.ntpStickyTip(), "Tip"));
+            bits.add(MsoyUI.createLabel(_mmsgs.ntpStickyTip(), "FlagTip"));
             addRow(_mmsgs.ntpSticky(), bits);
         }
 
@@ -63,6 +76,9 @@ public class NewThreadPanel extends TableFooterPanel
             public boolean gotResult (ForumThread result) {
                 ((ForumPanel)getParent()).newThreadPosted(result);
                 return false;
+            }
+            @Override protected String getConfirmMessage () {
+                return (_spam != null && _spam.isChecked()) ? _mmsgs.ntpSpamConfirm() : null;
             }
         };
         addFooterButton(submit);
@@ -89,13 +105,14 @@ public class NewThreadPanel extends TableFooterPanel
         if (_sticky != null && _sticky.isChecked()) {
             flags |= ForumThread.FLAG_STICKY;
         }
-        _forumsvc.createThread(_groupId, flags, subject, message, callback);
+        boolean spam = (_spam != null && _spam.isChecked());
+        _forumsvc.createThread(_groupId, flags, spam, subject, message, callback);
         return true;
     }
 
     protected int _groupId;
     protected TextBox _subject;
-    protected CheckBox _announce, _sticky;
+    protected CheckBox _announce, _sticky, _spam;
     protected MessageEditor _message;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);

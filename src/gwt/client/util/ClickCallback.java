@@ -97,7 +97,7 @@ public abstract class ClickCallback<T>
     protected void takeAction (boolean confirmed)
     {
         // if we have not yet confirmed and desire to do so, show the confirm popup
-        if (_confirmMessage != null && !confirmed) {
+        if (getConfirmMessage() != null && !confirmed) {
             setEnabled(false);
             displayPopup();
             return;
@@ -111,7 +111,7 @@ public abstract class ClickCallback<T>
 
     protected void displayPopup ()
     {
-        new PromptPopup(_confirmMessage, null) {
+        new PromptPopup(getConfirmMessage(), null) {
             public void onAffirmative () {
                 setEnabled(true);
                 takeAction(true);
@@ -120,6 +120,11 @@ public abstract class ClickCallback<T>
                 setEnabled(true);
             }
         }.setContext(getPromptContext()).prompt();
+    }
+
+    protected String getConfirmMessage ()
+    {
+        return _confirmMessage;
     }
 
     protected void setEnabled (boolean enabled)

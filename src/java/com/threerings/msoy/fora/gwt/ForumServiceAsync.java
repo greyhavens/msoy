@@ -44,7 +44,7 @@ public interface ForumServiceAsync
     /**
      * The asynchronous version of {@link ForumService#createThread}.
      */
-    void createThread (int groupId, int flags, String subject, String message,
+    void createThread (int groupId, int flags, boolean spam, String subject, String message,
                        AsyncCallback<ForumThread> callback);
 
     /**

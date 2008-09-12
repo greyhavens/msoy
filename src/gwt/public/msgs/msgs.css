@@ -187,3 +187,7 @@
 .replyPanel .Title {
   font-weight: bold;
 }
+
+.newThreadPanel .FlagTip {
+  font-size: 12px;
+}

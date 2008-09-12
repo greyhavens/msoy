@@ -24,8 +24,11 @@ public interface ForumService extends RemoteService
         /** Whether or not the caller can start a thread in this group. */
         public boolean canStartThread;
 
-        /** Returns true if we're manager of the group from which these threads came. */
+        /** True if we're manager of the group from which these threads came. */
         public boolean isManager;
+
+        /** True if this is the global announcements forum, false otherwise. */
+        public boolean isAnnounce;
 
         /** The range of threads that were requested. */
         public List<ForumThread> threads;
@@ -86,7 +89,7 @@ public interface ForumService extends RemoteService
     /**
      * Creates a new thread for the specified group.
      */
-    ForumThread createThread (int groupId, int flags, String subject, String message)
+    ForumThread createThread (int groupId, int flags, boolean spam, String subject, String message)
         throws ServiceException;
 
     /**
