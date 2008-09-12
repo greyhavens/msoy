@@ -3,6 +3,9 @@
  *
  * CSS styles shared (really) )globally. DO NOT put GWT stylings in here.
  * Global GWT stylings go in gwt.css.
+ *
+ * Note: changes to these stylings should be matched by changes to
+ * rsrc/email/wrapper/message.html's inline stylings.
  */
 
 html, body {
