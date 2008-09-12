@@ -78,6 +78,15 @@ public abstract class ClickCallback<T>
     }
 
     /**
+     * Returns additional information to be added to the confirmation prompt, if we have one. By
+     * default we don't.
+     */
+    protected String getPromptContext ()
+    {
+        return null;
+    }
+
+    /**
      * Converts an exception returned by the server into a readable message.
      */
     protected String convertError (Throwable cause)
@@ -110,7 +119,7 @@ public abstract class ClickCallback<T>
             public void onNegative () {
                 setEnabled(true);
             }
-        }.prompt();
+        }.setContext(getPromptContext()).prompt();
     }
 
     protected void setEnabled (boolean enabled)
