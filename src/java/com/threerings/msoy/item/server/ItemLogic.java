@@ -25,7 +25,6 @@ import com.samskivert.util.Tuple;
 import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.presents.dobj.RootDObjectManager;
-import com.threerings.presents.peer.data.NodeObject;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -380,7 +379,7 @@ public class ItemLogic
                 if (gameId != 0) {
                     // notify the game that the user has purchased some game content
                     _peerMan.invokeNodeAction(
-                        new ContentPurchasedAction(record.ownerId, gameId, srecord.ident));
+                        new ContentPurchasedAction(record.ownerId, gameId, srecord.getType(), srecord.ident));
                 }
             }
         }
@@ -800,17 +799,19 @@ public class ItemLogic
     /** Notifies other nodes when a user has purchased game content. */
     protected static class ContentPurchasedAction extends GameNodeAction
     {
-        public ContentPurchasedAction (int gameId, int memberId, String ident) {
+        public ContentPurchasedAction (int memberId, int gameId, byte itemType, String ident) {
             super(gameId);
             _memberId = memberId;
+            _itemType = itemType;
             _ident = ident;
         }
         public ContentPurchasedAction () {
         }
         @Override protected void execute () {
-            // TODO: _gameReg.gameContentPurchased(_gameId, _memberId, _ident);
+            _gameReg.gameContentPurchased(_memberId, _gameId, _itemType, _ident);
         }
         protected int _memberId;
+        protected byte _itemType;
         protected String _ident;
         @Inject protected transient WorldGameRegistry _gameReg;
     }

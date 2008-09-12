@@ -52,6 +52,9 @@ public class WorldServerClient
     /** A message sent by our world server to let us know a game's content has been updated. */
     public static final String GAME_CONTENT_UPDATED = "gameContentUpdated";
 
+    /** A message sent by a our world server when the player has purchased game content */
+    public static final String GAME_CONTENT_PURCHASED =  "gameContentPurchased";
+
     /** A message sent by our world server to request that we reset our percentiler. */
     public static final String RESET_SCORE_PERCENTILER = "resetScorePercentiler";
 
@@ -205,6 +208,14 @@ public class WorldServerClient
 
         } else if (event.getName().equals(FLUSH_COIN_EARNINGS)) {
             _gameReg.flushCoinEarnings((Integer)event.getArgs()[0]);
+
+        } else if (event.getName().equals(GAME_CONTENT_PURCHASED)) {
+            Object[] args = event.getArgs();
+            int playerId = (Integer) args[0];
+            int gameId = (Integer) args[1];
+            byte itemType = (Byte) args[2];
+            String contentIdentifier = (String) args[3];
+            _gameReg.gameContentPurchased(playerId, gameId, itemType, contentIdentifier);
         }
     }
 

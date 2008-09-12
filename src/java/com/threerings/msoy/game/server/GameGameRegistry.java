@@ -273,6 +273,32 @@ public class GameGameRegistry
     }
 
     /**
+     * Called when the player has purchased new game content.
+     */
+    public void gameContentPurchased (final int playerId, final int gameId, final byte itemType, final String contentIdentifier)
+    {
+        PlayerObject player = _locator.lookupPlayer(playerId);
+        if (player == null) {
+            return; // not online or not in a game, no problem!
+        }
+        player.addToGameContent(new GameContentOwnership(gameId, itemType, contentIdentifier));
+
+        PlaceManager plmgr = _placeReg.getPlaceManager(player.getPlaceOid());
+        if (plmgr != null) {
+            // this will NOOP if their place manager has no AwardDelegate
+            plmgr.applyToDelegates(new PlaceManager.DelegateOp(AwardDelegate.class) {
+                public void apply (PlaceManagerDelegate delegate) {
+                    ((AwardDelegate)delegate).flushCoinEarnings(playerId);
+                }
+            });
+        }
+
+        // TODO notify the game instance that the player has been updated
+        //log.warning("gameContentPurchased: ", "player", player, "playerId", playerId, "gameId",
+        //    gameId, "itemType", itemType, "content", contentIdentifier);
+    }
+
+    /**
      * Resets our in-memory percentiler for the specified game. This is triggered by a request from
      * our world server.
      */
@@ -408,7 +434,7 @@ public class GameGameRegistry
                 }
 
                 log.info("Setting up AVRG manager", "game", _content.game);
-                
+
                 List<PlaceManagerDelegate> delegates = Lists.newArrayList();
                 // TODO: Move AVRG event logging out of QuestDelegate and maybe into this one?
 //                delegates.add(new EventLoggingDelegate(_content));
