@@ -275,27 +275,19 @@ public class GameGameRegistry
     /**
      * Called when the player has purchased new game content.
      */
-    public void gameContentPurchased (final int playerId, final int gameId, final byte itemType, final String contentIdentifier)
+    public void gameContentPurchased (final int playerId, final int gameId, final byte itemType, final String ident)
     {
         PlayerObject player = _locator.lookupPlayer(playerId);
         if (player == null) {
             return; // not online or not in a game, no problem!
         }
-        player.addToGameContent(new GameContentOwnership(gameId, itemType, contentIdentifier));
 
+        // make sure they're actually playing the right game
         PlaceManager plmgr = _placeReg.getPlaceManager(player.getPlaceOid());
-        if (plmgr != null) {
-            // this will NOOP if their place manager has no AwardDelegate
-            plmgr.applyToDelegates(new PlaceManager.DelegateOp(AwardDelegate.class) {
-                public void apply (PlaceManagerDelegate delegate) {
-                    ((AwardDelegate)delegate).flushCoinEarnings(playerId);
-                }
-            });
+        if (plmgr != null && plmgr.getConfig() instanceof MsoyGameConfig &&
+            ((MsoyGameConfig)plmgr.getConfig()).getGameId() == gameId) {
+            player.addToGameContent(new GameContentOwnership(gameId, itemType, ident));
         }
-
-        // TODO notify the game instance that the player has been updated
-        //log.warning("gameContentPurchased: ", "player", player, "playerId", playerId, "gameId",
-        //    gameId, "itemType", itemType, "content", contentIdentifier);
     }
 
     /**
