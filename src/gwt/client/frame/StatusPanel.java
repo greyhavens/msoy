@@ -150,12 +150,9 @@ public class StatusPanel extends SmartTable
             super("Mail", 0, 0);
 
             int idx = 0;
-            String mpath = "/images/header/symbol_mail.png";
-            setWidget(0, idx++, MsoyUI.createActionImage(mpath, new ClickListener() {
-                public void onClick (Widget sender) {
-                    Link.go(Pages.MAIL, "");
-                }
-            }), 1, "Icon");
+            setWidget(0, idx++, MsoyUI.createActionImage(
+                          "/images/header/symbol_mail.png", _cmsgs.mailTip(),
+                          Link.createListener(Pages.MAIL, "")), 1, "Icon");
             _mailIx = idx; // the next cell will hold our count
             setCount(0);
         }
