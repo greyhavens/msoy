@@ -3,12 +3,18 @@
 
 package com.threerings.msoy.person.server;
 
+import java.io.StringWriter;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.Invoker;
+import com.samskivert.velocity.VelocityUtil;
+
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 
 import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.presents.annotation.MainInvoker;
@@ -166,9 +172,19 @@ public class MailLogic
             endId = Integer.MAX_VALUE;
         }
 
-        // convert the body into proper-ish HTML (TODO: use velocity for this?)
-        body = "<head><base href=\"" + ServerConfig.getServerURL() + "\"></head>" +
-            "<body>" + body + "</body>";
+        // convert the body into proper-ish HTML
+        try {
+            StringWriter swout = new StringWriter();
+            VelocityContext ctx = new VelocityContext();
+            ctx.put("base_url", ServerConfig.getServerURL());
+            ctx.put("content", body);
+            VelocityEngine ve = VelocityUtil.createEngine();
+            ve.mergeTemplate("rsrc/email/wrapper/message.html", "UTF-8", ctx, swout);
+            body = swout.toString();
+        } catch (Exception e) {
+            log.warning("Unable to format spam message", e);
+            return;
+        }
 
         // loop through 100 members at a time and load up their record and send emails
         final String from = ServerConfig.getFromAddress();

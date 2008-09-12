@@ -24,6 +24,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.net.MailUtil;
@@ -45,6 +46,7 @@ import static com.threerings.msoy.Log.log;
  */
 @Singleton
 public class MailSender
+    implements ShutdownManager.Shutdowner
 {
     /** Used to provide key/value pairs that are substituted into mail templates. */
     public static class Parameters
@@ -76,6 +78,17 @@ public class MailSender
         return false;
     }
 
+    @Inject public MailSender (ShutdownManager shutmgr)
+    {
+        shutmgr.registerShutdowner(this);
+    }
+
+    // from ShutdownManager.Shutdowner
+    public void shutdown ()
+    {
+        _executor.shutdown();
+    }
+
     /**
      * Delivers an email using the supplied template and parameters which are used to populate a
      * {@link Parameters} instance.
@@ -97,7 +110,7 @@ public class MailSender
     {
         // skip emails to placeholder addresses
         if (!isPlaceholderAddress(recip)) {
-            _mailExecutor.execute(new MailTask(recip, sender, template, params));
+            _executor.execute(new MailTask(recip, sender, template, params));
         }
     }
 
@@ -108,7 +121,7 @@ public class MailSender
     {
         // skip emails to placeholder addresses
         if (!isPlaceholderAddress(recip)) {
-            _mailExecutor.execute(new PreformattedMailTask(recip, sender, subject, body, isHTML));
+            _executor.execute(new PreformattedMailTask(recip, sender, subject, body, isHTML));
         }
     }
 
@@ -238,7 +251,7 @@ public class MailSender
     }
 
     /** The executor on which we will dispatch mail sending tasks. */
-    protected ExecutorService _mailExecutor = new ThreadPoolExecutor(
+    protected ExecutorService _executor = new ThreadPoolExecutor(
         CORE_POOL_SIZE, MAX_POOL_SIZE, IDLE_THREAD_LIFETIME, TimeUnit.MILLISECONDS,
         new LinkedBlockingQueue<Runnable>());
 
