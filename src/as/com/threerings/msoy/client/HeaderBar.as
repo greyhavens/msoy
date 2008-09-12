@@ -129,8 +129,6 @@ public class HeaderBar extends HBox
         _goBtn.toolTip = Msgs.GENERAL.get("i.go");
         _goBtn.setCommand(MsoyController.POP_GO_MENU, _goBtn);
         _goBtn.styleName = "headerBarGoButton";
-        // we lock it to the scrollbar thickness so that it matches the gutter area on the left
-        _goBtn.width = ScrollBar.THICKNESS;
         addChild(_goBtn);
 
         _loc = new Label();
@@ -190,11 +188,6 @@ public class HeaderBar extends HBox
                 _barsLabel = new Label();
                 _barsLabel.styleName = "currencyLabel";
                 addChild(_barsLabel);
-
-                addCurrencyIcon(Currency.BLING);
-                _blingLabel = new Label();
-                _blingLabel.styleName = "currencyLabel";
-                addChild(_blingLabel);
             }
 
             // set up a listener to hear about userobject changes
@@ -232,7 +225,6 @@ public class HeaderBar extends HBox
             cliObj.addListener(new AttributeChangeAdapter(clientAttrChanged));
             _coinsLabel.text = Currency.COINS.format(cliObj.flow);
 //            _barsLabel.text = Currency.BARS.format(cliObj.bars);
-//            _blingLabel.text = Currency.BLING.format(cliObj.bling);
         }
     }
 
@@ -248,10 +240,6 @@ public class HeaderBar extends HBox
 
 //        case MemberObject.BARS:
 //            _barsLabel.text = Currency.BARS.format(int(event.getValue()));
-//            break;
-//
-//        case MemberObject.BLING:
-//            _blingsLabel.text = Currency.BLING.format(int(event.getValue()));
 //            break;
         }
     }
@@ -280,7 +268,6 @@ public class HeaderBar extends HBox
     /** The currency labels, used only when embedded. */
     protected var _coinsLabel :Label;
     protected var _barsLabel :Label;
-    protected var _blingLabel :Label;
 }
 }
 
