@@ -536,7 +536,7 @@ public class CatalogServlet extends MsoyServiceServlet
     {
         final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         final List<ListingCard> cards = Lists.newArrayList();
-        for (final CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_RATING,
+        for (final CatalogRecord crec : repo.loadCatalog(CatalogQuery.SORT_BY_NEW_AND_HOT,
             showMature(mrec), null, 0, 0, null, 0, 0, ShopData.TOP_ITEM_COUNT)) {
             cards.add(crec.toListingCard());
         }
