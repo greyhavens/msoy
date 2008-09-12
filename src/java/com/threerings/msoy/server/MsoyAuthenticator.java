@@ -523,7 +523,17 @@ public class MsoyAuthenticator extends Authenticator
         mrec.accountName = account.accountName;
         mrec.name = displayName;
         if (invite != null) {
-            mrec.invitingFriendId = invite.inviterId;
+            mrec.affiliateMemberId = invite.inviterId;
+        }
+        if (referral != null) {
+            int affiliateId = 0; // TODO: translate referral.affiliate into a memberId
+            if (affiliateId != 0) {
+                if (mrec.affiliateMemberId != 0) {
+                    log.warning("New member has both an affiliate referrer and an inviter. " +
+                        "Using inviter...");
+                }
+                mrec.affiliateMemberId = affiliateId;
+            }
         }
 
         // store their member record in the repository making them a real Whirled citizen

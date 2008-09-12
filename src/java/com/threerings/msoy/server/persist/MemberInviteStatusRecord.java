@@ -72,8 +72,9 @@ public class MemberInviteStatusRecord extends PersistentRecord
     /** See {@MemberRecord#name}. */
     public String name = "";
 
-    /** See {@MemberRecord#invitingFriendId}. */
-    public int invitingFriendId;
+    // TODO: this needs fixing. You affiliate is not necessarily your inviter
+    /** See {@MemberRecord#affiliateMemberId}. */
+    public int affiliateMemberId;
 
     /** See {@InviterRecord#invitesGranted}. */
     @Computed(shadowOf=InviterRecord.class)
@@ -88,7 +89,7 @@ public class MemberInviteStatusRecord extends PersistentRecord
         MemberInviteStatus webObj = new MemberInviteStatus();
         webObj.memberId = memberId;
         webObj.name = permaName == null || permaName.equals("") ? name : permaName;
-        webObj.invitingFriendId = invitingFriendId;
+        webObj.invitingFriendId = affiliateMemberId; // TODO: not true. See note on field above.
         webObj.invitesGranted = invitesGranted;
         webObj.invitesSent = invitesSent;
         return webObj;

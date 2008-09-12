@@ -23,7 +23,7 @@ import com.threerings.msoy.web.data.WebCreds;
 @Entity(indices={
     @Index(name="ixLastSession", fields={ MemberRecord.LAST_SESSION }),
     @Index(name="ixName", fields={ MemberRecord.NAME }),
-    @Index(name="ixInvitingFriend", fields={ MemberRecord.INVITING_FRIEND_ID })
+    @Index(name="ixAffiliate", fields={ MemberRecord.AFFILIATE_MEMBER_ID })
     // Note: PERMA_NAME and ACCOUNT_NAME are automatically indexed by their uniqueness constraint
 },
 fullTextIndices={
@@ -116,20 +116,6 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp PERMA_NAME_C =
         new ColumnExp(MemberRecord.class, PERMA_NAME);
 
-    /** The column identifier for the {@link #flow} field. */
-    public static final String FLOW = "flow";
-
-    /** The qualified column identifier for the {@link #flow} field. */
-    public static final ColumnExp FLOW_C =
-        new ColumnExp(MemberRecord.class, FLOW);
-
-    /** The column identifier for the {@link #accFlow} field. */
-    public static final String ACC_FLOW = "accFlow";
-
-    /** The qualified column identifier for the {@link #accFlow} field. */
-    public static final ColumnExp ACC_FLOW_C =
-        new ColumnExp(MemberRecord.class, ACC_FLOW);
-
     /** The column identifier for the {@link #homeSceneId} field. */
     public static final String HOME_SCENE_ID = "homeSceneId";
 
@@ -200,12 +186,12 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp FLAGS_C =
         new ColumnExp(MemberRecord.class, FLAGS);
 
-    /** The column identifier for the {@link #invitingFriendId} field. */
-    public static final String INVITING_FRIEND_ID = "invitingFriendId";
+    /** The column identifier for the {@link #affiliateMemberId} field. */
+    public static final String AFFILIATE_MEMBER_ID = "affiliateMemberId";
 
-    /** The qualified column identifier for the {@link #invitingFriendId} field. */
-    public static final ColumnExp INVITING_FRIEND_ID_C =
-        new ColumnExp(MemberRecord.class, INVITING_FRIEND_ID);
+    /** The qualified column identifier for the {@link #affiliateMemberId} field. */
+    public static final ColumnExp AFFILIATE_MEMBER_ID_C =
+        new ColumnExp(MemberRecord.class, AFFILIATE_MEMBER_ID);
 
     /** The column identifier for the {@link #level} field. */
     public static final String LEVEL = "level";
@@ -220,7 +206,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 22;
+    public static final int SCHEMA_VERSION = 23;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -236,14 +222,6 @@ public class MemberRecord extends PersistentRecord
     /** This member's permanent name. Must be URL-safe; used to logon to wiki and forums. */
     @Column(nullable=true, unique=true)
     public String permaName;
-
-    /** The quantity of flow possessed by this member. */
-    @Deprecated
-    public int flow;
-
-    /** The total amount of flow ever accumulated by this member. */
-    @Deprecated
-    public int accFlow;
 
     /** The home scene for this member. */
     public int homeSceneId;
@@ -275,9 +253,9 @@ public class MemberRecord extends PersistentRecord
     /** Various one bit data. */
     public int flags;
 
-    /** The memberId of the person who invited this person. */
+    /** The memberId of this user's affiliate, or 0 if none. */
     @Column(defaultValue="0")
-    public int invitingFriendId;
+    public int affiliateMemberId;
 
     /** The currently reported level of this user. */
     @Column(defaultValue="1")

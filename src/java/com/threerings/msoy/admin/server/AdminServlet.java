@@ -101,8 +101,9 @@ public class AdminServlet extends MsoyServiceServlet
             info.lastSession = new Date(tgtrec.lastSession.getTime());
         }
         info.humanity = tgtrec.humanity;
-        if (tgtrec.invitingFriendId != 0) {
-            info.inviter = _memberRepo.loadMemberName(tgtrec.invitingFriendId);
+        if (tgtrec.affiliateMemberId != 0) {
+            // TODO: could be your inviter, but really just your affiliate
+            info.inviter = _memberRepo.loadMemberName(tgtrec.affiliateMemberId);
         }
         info.invitees = _memberRepo.loadMembersInvitedBy(memberId);
 
@@ -120,7 +121,8 @@ public class AdminServlet extends MsoyServiceServlet
             res.name = memRec.permaName == null || memRec.permaName.equals("") ?
                 memRec.name : memRec.permaName;
             res.memberId = inviterId;
-            res.invitingFriendId = memRec.invitingFriendId;
+            // TODO: your affiliate is not necessarily your inviter
+            res.invitingFriendId = memRec.affiliateMemberId;
         }
 
         final List<MemberInviteStatus> players = Lists.newArrayList();

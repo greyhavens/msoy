@@ -22,6 +22,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.CacheKey;
+import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
@@ -83,6 +84,11 @@ public class MemberRepository extends DepotRepository
     @Inject public MemberRepository (final PersistenceContext ctx)
     {
         super(ctx);
+
+        ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(23, "flow"));
+        ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(23, "accFlow"));
+        ctx.registerMigration(MemberRecord.class,
+            new EntityMigration.Rename(23, "invitingFriendId", MemberRecord.AFFILIATE_MEMBER_ID));
 
         // add a cache invalidator that listens to single FriendRecord updates
         _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
@@ -760,6 +766,7 @@ public class MemberRepository extends DepotRepository
      */
     public ReferralRecord setReferral (final int memberId, final ReferralInfo ref)
     {
+        // TODO: UPDATES?? UPDATES??? WHY WOULD WE EVER UPDATE THIS INFO? IT'S ONE-TIME!!!
         final ReferralRecord newrec = ReferralRecord.fromInfo(memberId, ref);
         if (loadReferral(memberId) == null) {
             insert(newrec);
@@ -783,9 +790,12 @@ public class MemberRepository extends DepotRepository
      */
     public List<MemberName> loadMembersInvitedBy (final int memberId)
     {
+        // TODO: this needs fixing: your affiliate is not necessarily your inviter
+        // (I mean, if you have an inviter, they will be your affiliate, and you can't have
+        // both, but we can't just look at an affiliate id and know that that's your inviter)
         final Join join = new Join(MemberRecord.MEMBER_ID_C,
                              InviterRecord.MEMBER_ID_C).setType(Join.Type.LEFT_OUTER);
-        final Where where = new Where(MemberRecord.INVITING_FRIEND_ID_C, memberId);
+        final Where where = new Where(MemberRecord.AFFILIATE_MEMBER_ID_C, memberId);
         final List<MemberName> names = Lists.newArrayList();
         for (final MemberNameRecord name : findAll(MemberNameRecord.class, join, where)) {
             names.add(name.toMemberName());
@@ -795,10 +805,13 @@ public class MemberRepository extends DepotRepository
 
     public List<MemberInviteStatusRecord> getMembersInvitedBy (final int memberId)
     {
+        // TODO: this needs fixing: your affiliate is not necessarily your inviter
+        // (I mean, if you have an inviter, they will be your affiliate, and you can't have
+        // both, but we can't just look at an affiliate id and know that that's your inviter)
         return findAll(MemberInviteStatusRecord.class,
                        new Join(MemberRecord.MEMBER_ID_C, InviterRecord.MEMBER_ID_C).
                             setType(Join.Type.LEFT_OUTER),
-                       new Where(MemberRecord.INVITING_FRIEND_ID_C, memberId));
+                       new Where(MemberRecord.AFFILIATE_MEMBER_ID_C, memberId));
     }
 
     /**
