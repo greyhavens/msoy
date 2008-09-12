@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.item.gwt;
 
+import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.web.data.ServiceException;
 
 /**
@@ -16,11 +17,10 @@ public class CostUpdatedException extends ServiceException
     /**
      * Create a CostUpdatedException.
      */
-    public CostUpdatedException (final int flowCost, final int goldCost)
+    public CostUpdatedException (PriceQuote quote)
     {
         super(E_COST_UPDATED);
-        _flowCost = flowCost;
-        _goldCost = goldCost;
+        _quote = quote;
     }
 
     /** Suitable for unserialization. */
@@ -29,21 +29,12 @@ public class CostUpdatedException extends ServiceException
     }
 
     /**
-     * Get the new flow cost.
+     * Get the new price quote.
      */
-    public int getFlowCost ()
+    public PriceQuote getQuote ()
     {
-        return _flowCost;
+        return _quote;
     }
 
-    /**
-     * Get the new gold cost.
-     */
-    public int getGoldCost ()
-    {
-        return _goldCost;
-    }
-
-    protected int _flowCost;
-    protected int _goldCost;
+    protected PriceQuote _quote;
 }

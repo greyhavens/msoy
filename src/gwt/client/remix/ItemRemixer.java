@@ -155,8 +155,8 @@ public class ItemRemixer extends FlexTable
                     MsoyUI.error(CShell.serverError(cause));
                     if (cause instanceof CostUpdatedException) {
                         CostUpdatedException cue = (CostUpdatedException) cause;
-                        _flowCost = cue.getFlowCost();
-                        _goldCost = cue.getGoldCost();
+                        _flowCost = cue.getQuote().getCoins();
+                        _goldCost = cue.getQuote().getBars();
                         _priceLabel.updatePrice(Currency.COINS, _flowCost);
                         enableBuyButton();
                     }

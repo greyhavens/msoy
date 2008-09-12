@@ -36,7 +36,7 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.money.data.all.Currency;
-// import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyNodeActions;
 import com.threerings.msoy.money.server.MoneyResult;
@@ -172,8 +172,7 @@ public class CatalogServlet extends MsoyServiceServlet
         } catch (final NotEnoughMoneyException neme) {
             throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
         } catch (final NotSecuredException nse) {
-            // TODO: this will have a PriceQuote within it that we can pass back to the client
-            throw new CostUpdatedException(listing.cost, 0); // TODO: Update to new standard
+            throw new CostUpdatedException(nse.getQuote());
         }
 
         // note the amount of currency spent in this transaction
@@ -358,7 +357,7 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // secure the current price of the item for this member
-        /* PriceQuote quote = */ _moneyLogic.securePrice((mrec == null) ? 0 : mrec.memberId,
+        PriceQuote quote = _moneyLogic.securePrice((mrec == null) ? 0 : mrec.memberId,
             new CatalogIdent(itemType, catalogId), record.currency, record.cost);
 
         if (mrec != null) {
@@ -371,10 +370,10 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // finally convert the listing to a runtime record
-        // TODO: pass back a PriceQuote in the CatalogListing
         final CatalogListing clrec = record.toListing();
         clrec.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
         clrec.detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, record.item.toItem());
+        clrec.quote = quote;
         return clrec;
     }
 

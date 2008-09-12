@@ -123,7 +123,7 @@ public class DoListItemPopup extends VerticalPanel
 
             row = pricing.addText(_imsgs.doListCost(), 1, "rightLabel");
             pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 5, 5), 1, null);
-            int cost = (listing == null) ? DEFAULT_FLOW_COST : listing.cost;
+            int cost = (listing == null) ? DEFAULT_FLOW_COST : listing.quote.getListedAmount();
             _cost.setText(String.valueOf(cost));
 
             // TODO: You know what this needs? A mockup
@@ -131,7 +131,8 @@ public class DoListItemPopup extends VerticalPanel
                 _currencyBox = new ListBox();
                 for (int i=0; i<CURRENCY_LABELS.length; ++i) {
                     _currencyBox.addItem(CURRENCY_LABELS[i]);
-                    if (listing != null && CURRENCY_VALUES[i] == listing.currency) {
+                    if (listing != null &&
+                        CURRENCY_VALUES[i] == listing.quote.getListedCurrency()) {
                         _currencyBox.setSelectedIndex(i);
                     }
                 }

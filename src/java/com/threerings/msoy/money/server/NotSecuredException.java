@@ -4,6 +4,7 @@
 package com.threerings.msoy.money.server;
 
 import com.threerings.msoy.item.data.all.CatalogIdent;
+import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
  * Occurs when a member attempts to purchase an item for which they have not secured a price.
@@ -12,17 +13,19 @@ import com.threerings.msoy.item.data.all.CatalogIdent;
  */
 public class NotSecuredException extends MoneyException
 {
-    public NotSecuredException (final int memberId, final CatalogIdent item)
+    public NotSecuredException (final int memberId, final CatalogIdent item, final PriceQuote quote)
     {
         super("The price of the item " + item + " was not secured previously by member "
             + memberId);
         _memberId = memberId;
         _item = item;
+        _quote = quote;
     }
 
-    public NotSecuredException (final int memberId, final CatalogIdent item, final Throwable cause)
+    public NotSecuredException (final int memberId, final CatalogIdent item,
+        final PriceQuote quote, final Throwable cause)
     {
-        this(memberId, item);
+        this(memberId, item, quote);
         initCause(cause);
     }
 
@@ -36,6 +39,12 @@ public class NotSecuredException extends MoneyException
         return _item;
     }
 
+    public PriceQuote getQuote ()
+    {
+        return _quote;
+    }
+
     protected final int _memberId;
     protected final CatalogIdent _item;
+    protected final PriceQuote _quote;
 }

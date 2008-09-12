@@ -64,7 +64,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
 
         _indeets.add(WidgetUtil.makeShim(10, 10));
-        _indeets.add(_priceLabel = new PriceLabel(_listing.currency, _listing.cost));
+        _indeets.add(_priceLabel = new PriceLabel(
+            _listing.quote.getListedCurrency(), _listing.quote.getListedAmount()));
 
         _details.add(WidgetUtil.makeShim(10, 10));
 
@@ -78,7 +79,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 } else {
                     // TODO: Bar me
                     _catalogsvc.purchaseItem(_item.getType(), _listing.catalogId,
-                                             _listing.cost, 0, this);
+                                             _listing.quote.getCoins(), _listing.quote.getBars(), this);
                 }
                 return true;
             }
@@ -91,11 +92,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             {
                 super.onFailure(cause);
 
-                // TODO: Bar me
                 if (cause instanceof CostUpdatedException) {
                     CostUpdatedException cue = (CostUpdatedException) cause;
-                    _listing.cost = cue.getFlowCost();
-                    _priceLabel.updatePrice(Currency.COINS, cue.getFlowCost());
+                    _listing.quote = cue.getQuote();
+                    _priceLabel.updatePrice(_listing.quote.getListedCurrency(),
+                        _listing.quote.getListedAmount());
                 }
             }
         };
@@ -108,7 +109,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingRemix(),
                 // TODO: Bar me
                 NaviUtil.onRemixCatalogItem(_item.getType(), _item.itemId, _listing.catalogId,
-                                            _listing.cost, 666));
+                                            _listing.quote.getCoins(), _listing.quote.getBars()));
             _buyPanel.add(MsoyUI.createButtonPair(remix, purchase));
         } else {
             _buyPanel.add(purchase);
@@ -135,7 +136,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                         public void itemListed (Item item, boolean updated) {
                             Link.replace(Pages.SHOP, Args.compose(new String[] {
                                         "l", "" + _item.getType(), "" + _listing.catalogId,
-                                        "repriced_from_" + _listing.cost}));
+                                        "repriced_from_" + _listing.quote.getListedAmount()}));
                         }
                     });
                 }

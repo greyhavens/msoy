@@ -9,7 +9,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.io.Streamable;
 
-import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
  * Represents a catalog listing of an item.
@@ -53,11 +53,8 @@ public class CatalogListing
     /** The date on which the item was listed. */
     public Date listedDate;
 
-    /** The currency this item is listed for. */
-    public Currency currency;
-
-    /** The price of this item. */
-    public int cost;
+    /** The reserved price of the item. */
+    public PriceQuote quote;
 
     /** The pricing setting for this item. */
     public int pricing;

@@ -187,8 +187,7 @@ public class MoneyLogic
             if (quote.getAmount(buyCurrency) > authedAmount) {
                 // doh, it doesn't work, so we need to tell them about this new latest price
                 // we've secured for them
-                // TODO: the PriceQuote needs to be in this exception!
-                throw new NotSecuredException(buyerId, item);
+                throw new NotSecuredException(buyerId, item, quote);
             }
         }
 

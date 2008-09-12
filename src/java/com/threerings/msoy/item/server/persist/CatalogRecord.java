@@ -136,8 +136,6 @@ public abstract class CatalogRecord extends PersistentRecord
         }
         listing.originalItemId = originalItemId;
         listing.listedDate = new Date(listedDate.getTime());
-        listing.currency = currency;
-        listing.cost = cost;
         listing.pricing = pricing;
         listing.salesTarget = salesTarget;
         listing.purchases = purchases;

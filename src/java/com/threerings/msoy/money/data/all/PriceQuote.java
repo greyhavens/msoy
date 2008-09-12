@@ -27,6 +27,9 @@ public class PriceQuote extends SimpleStreamableObject
         _coinChange = coinChangeForBars;
     }
 
+    /** For serialization. */
+    public PriceQuote () { }
+
     /**
      * Get the currency with which this item was listed.
      */
@@ -78,8 +81,8 @@ public class PriceQuote extends SimpleStreamableObject
             _coins + "coins, " + _bars + "bars.";
     }
 
-    protected final Currency _listedCurrency;
-    protected final int _coins;
-    protected final int _bars;
-    protected final transient int _coinChange; // we don't stream this to the client
+    protected Currency _listedCurrency;
+    protected int _coins;
+    protected int _bars;
+    protected transient int _coinChange; // we don't stream this to the client
 }

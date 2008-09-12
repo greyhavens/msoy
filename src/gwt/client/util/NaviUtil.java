@@ -71,6 +71,7 @@ public class NaviUtil
         return Link.createListener(Pages.STUFF, Args.compose("r", ""+type, ""+itemId));
     }
 
+    // TODO: This should probably be passed a PriceQuote
     public static ClickListener onRemixCatalogItem (
         byte type, int itemId, int catalogId, int flowCost, int goldCost)
     {
