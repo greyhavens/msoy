@@ -13,6 +13,9 @@ import flash.system.LoaderContext;
 
 import com.threerings.util.MessageBundle;
 
+import com.threerings.presents.dobj.EntryAddedEvent;
+import com.threerings.presents.dobj.SetAdapter;
+
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.whirled.game.client.WhirledGameBackend;
@@ -22,9 +25,10 @@ import com.threerings.msoy.data.VizMemberName;
 
 import com.threerings.msoy.item.data.all.ItemTypes;
 
+import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
-
+import com.threerings.msoy.game.data.PlayerObject;
 
 /**
  * Implements the various Msoy specific parts of the Whirled Game backend.
@@ -35,6 +39,16 @@ public class MsoyGameBackend extends WhirledGameBackend
         ctx :GameContext, gameObj :WhirledGameObject, ctrl :MsoyGameController)
     {
         super(ctx, gameObj, ctrl);
+
+        _ctx.getClient().getClientObject().addListener(_contentListener);
+    }
+
+    // from WhirledGameBackend
+    override public function shutdown () :void
+    {
+        super.shutdown();
+
+        _ctx.getClient().getClientObject().removeListener(_contentListener);
     }
 
     // from WhirledGameBackend
@@ -122,6 +136,23 @@ public class MsoyGameBackend extends WhirledGameBackend
         }
         (_ctx as GameContext).showGameShop(itemTypeCode, catalogId);
     }
+
+    protected function entryAddedOnUserObject (event :EntryAddedEvent) :void
+    {
+        var name :String = event.getName();
+        if (name == PlayerObject.GAME_CONTENT) {
+            var content :GameContentOwnership = (event.getEntry() as GameContentOwnership);
+            // it should not be possible for a player to have content dynamically added for a game
+            // other than the one they are playing, but let's be extra specially safe
+            var cfg :MsoyGameConfig = (_ctrl.getPlaceConfig() as MsoyGameConfig);
+            if (cfg.getGameId() == content.gameId) {
+                // TODO: use playerId when we switch to that from playerOid
+                notifyGameContentAdded(content.type, content.ident, event.getTargetOid());
+            }
+        }
+    }
+
+    protected var _contentListener :SetAdapter = new SetAdapter(entryAddedOnUserObject);
 }
 }
 

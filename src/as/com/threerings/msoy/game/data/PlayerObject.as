@@ -48,6 +48,9 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>questState</code> field. */
     public static const QUEST_STATE :String = "questState";
 
+    /** The field name of the <code>gameContent</code> field. */
+    public static const GAME_CONTENT :String = "gameContent";
+
     /** The field name of the <code>referral</code> field. */
     public static const REFERRAL :String = "referral";
     // AUTO-GENERATED: FIELDS END
@@ -71,7 +74,7 @@ public class PlayerObject extends WhirledPlayerObject
     public var questState :DSet;
 
     /** Contains information on player's ownership of game content (populated lazily). */
-    public var gameContent :DSet;
+    public var gameContent :DSet; /* GameContentOwnership */
 
     /** Player's referral information. */
     public var referral :ReferralInfo;
