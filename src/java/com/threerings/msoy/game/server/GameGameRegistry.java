@@ -23,6 +23,7 @@ import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+import com.samskivert.util.Interval;
 import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.MainInvoker;
@@ -122,6 +123,13 @@ public class GameGameRegistry
     public void init (Injector injector)
     {
         _injector = injector;
+
+        // periodically purge old game logs
+        new Interval(_invoker) {
+            @Override public void expired () {
+                _gameRepo.purgeTraceLogs();
+            }
+        }.schedule(LOG_DELETION_INTERVAL, LOG_DELETION_INTERVAL);
     }
 
     /**
@@ -970,4 +978,7 @@ public class GameGameRegistry
     @Inject protected ItemPackRepository _ipackRepo;
     @Inject protected TrophySourceRepository _tsourceRepo;
     @Inject protected PrizeRepository _prizeRepo;
+    
+    /** Period of game log deletion. */
+    protected static final long LOG_DELETION_INTERVAL = 6 * 60 * 60 * 1000;
 }

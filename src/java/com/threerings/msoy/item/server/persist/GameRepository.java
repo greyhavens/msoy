@@ -25,11 +25,13 @@ import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.samskivert.jdbc.depot.operator.Logic.And;
+import com.samskivert.jdbc.depot.operator.Logic.Or;
 
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -43,6 +45,14 @@ import static com.threerings.msoy.Log.log;
 @Singleton
 public class GameRepository extends ItemRepository<GameRecord>
 {
+    /** Game logs for in development games will be purged after this many days when
+     * {@link #purgeTraceLogs()} is called. */
+    public static final int DAYS_TO_KEEP_DEV_GAME_LOGS = 2;
+    
+    /** Game logs for listed development games will be purged after this many days when
+     * {@link #purgeTraceLogs()} is called. */
+    public static final int DAYS_TO_KEEP_LISTED_GAME_LOGS = 7;
+
     @Entity(name="GameTagRecord")
     public static class GameTagRecord extends TagRecord
     {
@@ -291,29 +301,53 @@ public class GameRepository extends ItemRepository<GameRecord>
     }
     
     /**
-     * Delete all logs for a given gameId older than the given number of days.
-     * @param gameId got for which to delete
-     * @param cutoffDays age limit of logs to delete, in days 
+     * Delete all old development and listed logs using the default time limits
+     * {@link #DAYS_TO_KEEP_DEV_GAME_LOGS} and {@link #DAYS_TO_KEEP_LISTED_GAME_LOGS}.
      */
-    public void purgeTraceLogs (int gameId, int cutoffDays)
+    public void purgeTraceLogs ()
+    {
+        purgeTraceLogs(DAYS_TO_KEEP_DEV_GAME_LOGS, DAYS_TO_KEEP_LISTED_GAME_LOGS);
+    }
+
+    /**
+     * Delete all development and listed game logs that are older than the given respective number
+     * of days.  
+     */
+    public void purgeTraceLogs (int developmentDaysToKeep, int listedDaysToKeep)
     {
         // Round down to the current minute for easier reading by humans
-        GregorianCalendar cutoff = new GregorianCalendar();
-        cutoff.set(Calendar.SECOND, 0);
-        cutoff.set(Calendar.MILLISECOND, 0);
+        GregorianCalendar now = new GregorianCalendar();
+        now.set(Calendar.SECOND, 0);
+        now.set(Calendar.MILLISECOND, 0);
         
-        // Subtract the cutoff days
-        cutoff.add(Calendar.DAY_OF_YEAR, -cutoffDays);
+        // Subtract the cutoff days for dev
+        GregorianCalendar devCutoff = new GregorianCalendar();
+        devCutoff.setTimeInMillis(now.getTimeInMillis());
+        devCutoff.add(Calendar.DAY_OF_YEAR, -developmentDaysToKeep);
 
-        // convert to time stamp
-        Timestamp cutoffTimestamp = new Timestamp(cutoff.getTimeInMillis());
+        // Subtract the cutoff days for listed
+        GregorianCalendar listedCutoff = new GregorianCalendar();
+        listedCutoff.setTimeInMillis(now.getTimeInMillis());
+        listedCutoff.add(Calendar.DAY_OF_YEAR, -listedDaysToKeep);
+
+        // Convert to time stamps
+        Timestamp devCutoffTimestamp = new Timestamp(devCutoff.getTimeInMillis());
+        Timestamp listedCutoffTimestamp = new Timestamp(listedCutoff.getTimeInMillis());
+
+        // Create conditionals for distinguishing dev from listed games
+        ColumnExp gameId = GameTraceLogRecord.GAME_ID_C;
+        Conditionals.LessThan isDev = new Conditionals.LessThan(gameId, 0);
+        Conditionals.GreaterThan isListed = new Conditionals.GreaterThan(gameId, 0);
 
         // Perform deletion
-        int rows = deleteAll(GameTraceLogRecord.class, new Where(new And(
-            new Conditionals.Equals(GameTraceLogRecord.GAME_ID_C, gameId), 
-            new Conditionals.LessThan(GameTraceLogRecord.RECORDED_C, cutoffTimestamp))));
+        ColumnExp recorded = GameTraceLogRecord.RECORDED_C;
+        int rows = deleteAll(GameTraceLogRecord.class, new Where(new Or(
+            new And(isDev, new Conditionals.LessThan(recorded, devCutoffTimestamp)),
+            new And(isListed, new Conditionals.LessThan(recorded, listedCutoffTimestamp)))));
 
-        log.debug("Deleted trace logs", "gameId", gameId, "cutoff", cutoffTimestamp, "rows", rows);
+        log.info(
+            "Deleted trace logs", "devCutoff", devCutoffTimestamp, "listedCutoff", 
+            listedCutoffTimestamp, "rows", rows);
     }
 
     @Override // from ItemRepository
