@@ -10,6 +10,7 @@ import java.util.Map;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import client.shell.CShell;
 import client.util.ServiceUtil;
 
 import client.util.events.FlashEvents;
@@ -124,6 +125,13 @@ public class InventoryModels
         DataModel<Item> model = getModel(item.getType(), suiteId);
         if (model != null) {
             model.removeItem(item);
+        }
+        // we may have a non-suite-specific model for subitems in addition to our per-suite models
+        if (suiteId != 0) {
+            model = getModel(item.getType(), 0);
+            if (model != null) {
+                model.removeItem(item);
+            }
         }
     }
 
