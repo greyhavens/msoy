@@ -10,6 +10,7 @@ import com.threerings.stats.data.StatModifier;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Prize;
 
 /**
@@ -38,10 +39,16 @@ public interface GameServerService extends InvocationService
     void clearGameHost (Client client, int port, int gameId);
 
     /**
-     * Reports an intermediate flow award made by a game to a player.
+     * Reports an intermediate coin award made by a game to a player.
      */
-    void reportFlowAward (Client client, int memberId, int deltaFlow);
+    void reportCoinAward (Client client, int memberId, int deltaCoins);
 
+    /**
+     * Indicates some coins should be awarded to the specified player.
+     */
+    void awardCoins (Client client, int memberId, int creatorId, int affiliateId, ItemIdent item, 
+        int amount, String description, int userActionNumber, boolean wasNotified);
+    
     /**
      * Reports a trophy award made by a game to a player.
      */

@@ -66,6 +66,7 @@ import com.threerings.msoy.chat.server.JabberManager;
 import com.threerings.msoy.chat.server.MsoyChatProvider;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.party.server.PartyRegistry;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.room.server.MsoySceneFactory;
@@ -295,7 +296,8 @@ public class MsoyServer extends MsoyBaseServer
         _petMan.init(injector);
         _gameReg.init();
         _partyReg.init();
-
+        _moneyLogic.init();
+        
         // TEMP: give a peer manager refernce to MemberNodeActions
         MemberNodeActions.init(_peerMan);
 
@@ -447,6 +449,8 @@ public class MsoyServer extends MsoyBaseServer
     /** Connection to the AMQP messaging server. */
     @Inject protected MessageConnection _messageConn;
 
+    @Inject protected MoneyLogic _moneyLogic;
+    
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;
 }

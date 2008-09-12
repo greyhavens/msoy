@@ -11,7 +11,6 @@ import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
 
 import com.samskivert.jdbc.RepositoryUnit;
-import com.samskivert.jdbc.WriteOnlyUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -40,7 +39,6 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.game.data.PlayerObject;
 
@@ -560,7 +558,7 @@ public class AwardDelegate extends RatingDelegate
 
             // update the player's member object on their world server
             if (actuallyAward && player.flowAward > 0) {
-                _worldClient.reportFlowAward(record.memberId, player.flowAward);
+                _worldClient.reportCoinAward(record.memberId, player.flowAward);
             }
 
             // report to the game that this player earned some flow
@@ -789,13 +787,9 @@ public class AwardDelegate extends RatingDelegate
         }
 
         final String details = _content.game.gameId + " " + secondsPlayed;
-        _invoker.postUnit(new WriteOnlyUnit("payoutCoins(" + memberId + ", " + coinAward + ")") {
-            public void invokePersist () throws Exception {
-                _moneyLogic.awardCoins(
-                    memberId, _content.game.creatorId, 0, _content.game.getIdent(),
-                    coinAward, details, UserAction.PLAYED_GAME);
-            }
-        });
+        _worldClient.awardCoins(
+            memberId, _content.game.creatorId, 0, _content.game.getIdent(),
+            coinAward, details, UserAction.PLAYED_GAME, true);
     }
 
     /**
@@ -953,7 +947,6 @@ public class AwardDelegate extends RatingDelegate
     @Inject protected WorldServerClient _worldClient;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected GameRepository _gameRepo;
-    @Inject protected MoneyLogic _moneyLogic;
 
     /** Returns whether or not a {@link Player} is a guest. */
     protected static final Predicate<Player> IS_GUEST = new Predicate<Player>() {

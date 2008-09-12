@@ -64,7 +64,7 @@ public class MoneyLogic
     public MoneyLogic (
         MoneyRepository repo, EscrowCache escrowCache, UserActionRepository userActionRepo,
         MsoyEventLogger eventLog, MessageConnection conn, ShutdownManager sm,
-        @MainInvoker Invoker invoker)
+        @MainInvoker Invoker invoker, MoneyNodeActions nodeActions)
     {
         _repo = repo;
         _escrowCache = escrowCache;
@@ -72,6 +72,21 @@ public class MoneyLogic
         _eventLog = eventLog;
         _expirer = new MoneyTransactionExpirer(repo, invoker, sm);
         _msgReceiver = new MoneyMessageReceiver(conn, this, sm, invoker);
+        _nodeActions = nodeActions;
+    }
+    
+    /**
+     * Indicates that a member has earned some number of coins.  This will notify interested
+     * clients that coins were earned, without actually awarding the coins yet.  Future calls to
+     * {@link #awardCoins(int, int, int, ItemIdent, int, String, UserAction, boolean)} to award
+     * the coins must use "true" for wasNotified to indicate the user was already notified of this.
+     * 
+     * @param memberId ID of the member who earned coins.
+     * @param amount Number of coins earned.
+     */
+    public void notifyCoinsEarned (int memberId, int amount)
+    {
+        _nodeActions.moneyUpdated(memberId, Currency.COINS, amount);
     }
 
     /**
@@ -87,13 +102,15 @@ public class MoneyLogic
      * @param amount Number of coins to be awarded.
      * @param description Description that will appear in the user's transaction history.
      * @param userAction The user action that caused coins to be awarded.
-     * @return Map containing member ID to the money that member has in the account. The recipient
-     * of the coins, the creator, and the affiliate will all be included, if applicable.
+     * @param wasNotified If true, an earlier call to {@link #notifyCoinsEarned(int, int)} was
+     * made, so this call should not notify the user.
+     * @return Result of the money operation.  The recipient of the coins, the creator, and the 
+     * affiliate will all be included, if applicable.
      */
     @Retry(exception=StaleDataException.class)
     public MoneyResult awardCoins (
         int memberId, int creatorId, int affiliateId, ItemIdent item, int amount,
-        String description, UserAction userAction)
+        String description, UserAction userAction, boolean wasNotified)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot award coins to guests.");
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
@@ -111,10 +128,12 @@ public class MoneyLogic
 
         // TODO: creator and affiliate
 
-        // TODO: what the fuck is going on here, copy/paste dupe bug?
-        logUserAction(memberId, UserActionDetails.INVALID_ID, userAction, description, item);
         final UserActionDetails info = logUserAction(memberId, 0, userAction, description, item);
         logInPanopticon(info, Currency.COINS, amount, account);
+
+        if (!wasNotified) {
+            _nodeActions.moneyUpdated(history);
+        }
         
         return new MoneyResult(account.getMemberMoney(), null, null, 
             history.toMoneyTransaction(), null, null);
@@ -145,6 +164,8 @@ public class MoneyLogic
         logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS,
             history.description);
 
+        _nodeActions.moneyUpdated(history);
+        
         return new MoneyResult(account.getMemberMoney(), null, null, 
             history.toMoneyTransaction(), null, null);
     }
@@ -302,11 +323,14 @@ public class MoneyLogic
 
         // save stuff off
         _repo.saveAccount(buyer);
+        _nodeActions.moneyUpdated(buyerTrans);
         if ((creator != null) && (creatorId != buyerId)) {
             _repo.saveAccount(creator);
+            _nodeActions.moneyUpdated(creatorTrans);
         }
         if ((affiliate != null) && (affiliateId != buyerId) && (affiliateId != creatorId)) {
             _repo.saveAccount(affiliate);
+            _nodeActions.moneyUpdated(affiliateTrans);
         }
 
         // The item no longer needs to be in the cache.
@@ -528,4 +552,5 @@ public class MoneyLogic
     protected final MoneyRepository _repo;
     protected final EscrowCache _escrowCache;
     protected final MoneyMessageReceiver _msgReceiver;
+    protected final MoneyNodeActions _nodeActions;
 }

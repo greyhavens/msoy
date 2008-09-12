@@ -4,12 +4,14 @@
 package com.threerings.msoy.money.server;
 
 import com.google.inject.Inject;
+
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.money.data.all.MemberMoney;
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
-public class MoneyNodeActions
+class MoneyNodeActions
 {
     @Inject
     public MoneyNodeActions (final MsoyPeerManager peerMan)
@@ -21,18 +23,23 @@ public class MoneyNodeActions
      * Dispatches a notification that a member's money count has changed to whichever server they
      * are logged into.
      */
-    public void moneyUpdated (final MemberMoney money)
+    public void moneyUpdated (final MoneyTransactionRecord tx)
     {
-        _peerMan.invokeNodeAction(new MoneyUpdated(money.memberId, money.coins, money.accCoins));
+        moneyUpdated(tx.memberId, tx.currency, tx.amount);
+    }
+    
+    public void moneyUpdated (int memberId, Currency currency, int amount) 
+    {
+        _peerMan.invokeNodeAction(new MoneyUpdated(memberId, currency, amount));
     }
 
     protected static class MoneyUpdated extends MemberNodeAction
     {
-        public MoneyUpdated (int memberId, int coins, long accCoins)
+        public MoneyUpdated (int memberId, Currency currency, int amount)
         {
             super(memberId);
-            _coins = coins;
-            _accCoins = accCoins;
+            _currency = currency;
+            _amount = amount;
         }
         
         public MoneyUpdated () { }
@@ -42,17 +49,25 @@ public class MoneyNodeActions
         {
             memobj.startTransaction();
             try {
-                memobj.setFlow(_coins);
-                if (_accCoins != memobj.accFlow) {
-                    memobj.setAccFlow((int)_accCoins);
+                switch (_currency) {
+                case COINS:
+                    memobj.setCoins(memobj.coins + _amount);
+                    memobj.setAccCoins(memobj.accCoins + _amount);
+                    break;
+                case BARS:
+                    memobj.setBars(memobj.bars + _amount);
+                    break;
+                case BLING:
+                    // Changes to bling are ignored.
+                    break;
                 }
             } finally {
                 memobj.commitTransaction();
             }
         }
 
-        protected int _coins;
-        protected long _accCoins;
+        protected Currency _currency;
+        protected int _amount;
     }
 
     protected final MsoyPeerManager _peerMan;

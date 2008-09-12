@@ -15,13 +15,13 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.CostUpdatedException;
-import com.threerings.msoy.money.data.all.Currency;
 
 import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
@@ -117,7 +117,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
 
         _details.add(_buyPanel);
-
+        
         // create a table to display miscellaneous info and admin/owner actions
         SmartTable info = new SmartTable("Info", 0, 5);
         info.setText(0, 0, CShop.msgs.listingListed(), 1, "What");
@@ -169,6 +169,19 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         _details.add(WidgetUtil.makeShim(10, 10));
         _details.add(info);
+
+        // Create a link to the billing page.
+        if (DeploymentConfig.barsEnabled) {
+            _details.add(WidgetUtil.makeShim(10, 10));
+            PushButton buyBars = MsoyUI.createButton(MsoyUI.LONG_THIN, CShop.msgs.buyBars(),
+                new ClickListener() {
+                    public void onClick (Widget sender)
+                    {
+                        openBillingPage();
+                    }
+            });
+            _details.add(buyBars);
+        }
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId), true);
@@ -229,6 +242,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             }
         });
     }
+
+    
+    protected native void openBillingPage() /*-{
+        $wnd.open(@com.threerings.msoy.data.all.DeploymentConfig::billingURL, "_blank");
+    }-*/;
 
     protected CatalogModels _models;
     protected CatalogListing _listing;

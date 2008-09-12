@@ -25,12 +25,14 @@ import com.threerings.util.Name;
 
 import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.world.client.WatcherDecoder;
 import com.threerings.msoy.world.client.WatcherReceiver;
 import com.threerings.msoy.world.client.WatcherService;
 
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.server.GameGameRegistry;
@@ -134,12 +136,24 @@ public class WorldServerClient
         }
     }
 
-    public void reportFlowAward (int memberId, int deltaFlow)
+    public void reportCoinAward (int memberId, int deltaCoins)
     {
         if (_gssvc == null) {
-            log.info("Dropping flow award [mid=" + memberId + ", df=" + deltaFlow + "].");
+            log.info("Dropping flow award [mid=" + memberId + ", df=" + deltaCoins + "].");
         } else {
-            _gssvc.reportFlowAward(_client, memberId, deltaFlow);
+            _gssvc.reportCoinAward(_client, memberId, deltaCoins);
+        }
+    }
+    
+    public void awardCoins (int memberId, int creatorId, int affiliateId, ItemIdent item, 
+        int amount, String description, UserAction userAction, boolean wasNotified)
+    {
+        if (_gssvc == null) {
+            log.warning("Dropping awrd coins.", "memberId", memberId, "amount", amount, 
+                "description", description);
+        } else {
+            _gssvc.awardCoins(_client, memberId, creatorId, affiliateId, item, amount, description, 
+                userAction.getNumber(), wasNotified);
         }
     }
 

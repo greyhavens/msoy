@@ -31,7 +31,9 @@ import com.samskivert.util.RunQueue;
 
 import com.threerings.presents.annotation.EventQueue;
 import com.threerings.presents.annotation.MainInvoker;
+import com.threerings.presents.peer.server.PeerManager;
 import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.messaging.DelayedMessageConnection;
 import com.threerings.messaging.MessageConnection;
@@ -203,7 +205,7 @@ public class MoneyTest
         final long startTime = System.currentTimeMillis() / 1000;
         final MemberMoney oldMoney = _service.getMoneyFor(1);
         final MemberMoney oldCreatorMoney = _service.getMoneyFor(2);
-        _service.awardCoins(1, 2, 3, null, 150, "150 coins awarded.", UserAction.PLAYED_GAME);
+        _service.awardCoins(1, 2, 3, null, 150, "150 coins awarded.", UserAction.PLAYED_GAME, false);
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         _service.securePrice(1, item, Currency.COINS, 100);
         final MoneyResult result = _service.buyItem(makeMember(false), item, 2,
@@ -249,7 +251,7 @@ public class MoneyTest
         final MemberMoney oldMoney = _service.getMoneyFor(1);
         final ItemIdent item = new ItemIdent(Item.GAME, 1);
         final MoneyResult result = _service.awardCoins(1, 2, 3, item, 150,
-            "150 coins awarded.  Thanks for playing!", UserAction.PLAYED_GAME);
+            "150 coins awarded.  Thanks for playing!", UserAction.PLAYED_GAME, false);
         final long endTime = System.currentTimeMillis() / 1000;
 
         final MemberMoney newMoney = result.getNewMemberMoney();
@@ -275,7 +277,7 @@ public class MoneyTest
     {
         final long startTime = System.currentTimeMillis() / 1000;
         final MemberMoney oldMoney = _service.getMoneyFor(1);
-        _service.awardCoins(1, 1, 3, null, 150, "150 coins awarded.", UserAction.PLAYED_GAME);
+        _service.awardCoins(1, 1, 3, null, 150, "150 coins awarded.", UserAction.PLAYED_GAME, false);
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         _service.securePrice(1, item, Currency.COINS, 100);
         final MoneyResult result = _service.buyItem(makeMember(false), item, 1,
@@ -302,7 +304,7 @@ public class MoneyTest
     public void testSupport () throws Exception
     {
         // First, have a support account buy an item, bringing them down to 100 coins
-        _service.awardCoins(1, 2, 3, null, 150, "150 coins awarded.", UserAction.PLAYED_GAME);
+        _service.awardCoins(1, 2, 3, null, 150, "150 coins awarded.", UserAction.PLAYED_GAME, false);
         final MemberMoney oldMoney = _service.getMoneyFor(1);
         final CatalogIdent item = new CatalogIdent(Item.AVATAR, 1);
         int coins = oldMoney.coins - 100;
@@ -351,6 +353,16 @@ public class MoneyTest
             _eventLog.init("test");
             initialized = true;
         }
+    }
+    
+    protected static class MockPeerManager extends PeerManager
+    {
+        @Inject
+        public MockPeerManager (ShutdownManager shutmgr)
+        {
+            super(shutmgr);
+        }
+        
     }
 
     protected void checkMoneyTransaction (

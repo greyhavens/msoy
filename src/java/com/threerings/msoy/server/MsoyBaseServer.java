@@ -30,7 +30,6 @@ import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
 import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
 import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.server.util.Retry;
 import com.threerings.msoy.server.util.RetryInterceptor;
 import com.threerings.presents.client.InvocationService;
@@ -207,8 +206,6 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         // prepare for bureau launcher connections
         _clmgr.setClientFactory(new BureauLauncherClientFactory(_clmgr.getClientFactory()));
-
-        _moneyLogic.init();
     }
 
     /** Selects a registered launcher for the next bureau. */
@@ -278,9 +275,6 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Handles dictionary services for games. */
     @Inject protected DictionaryManager _dictMan;
-
-    /** Handles services involving virtual money in whirled. */
-    @Inject protected MoneyLogic _moneyLogic;
     
     /** Currently logged in bureau launchers. */
     protected HashIntMap<ClientObject> _launchers = new HashIntMap<ClientObject>();

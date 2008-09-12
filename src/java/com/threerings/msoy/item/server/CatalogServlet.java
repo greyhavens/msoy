@@ -38,7 +38,6 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyNodeActions;
 import com.threerings.msoy.money.server.MoneyResult;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 import com.threerings.msoy.money.server.NotSecuredException;
@@ -188,9 +187,7 @@ public class CatalogServlet extends MsoyServiceServlet
         // note the new purchase for the item
         repo.nudgeListing(catalogId, true);
 
-        _moneyNodeActions.moneyUpdated(result.getNewMemberMoney());
         if (result.getNewCreatorMoney() != null) {
-            _moneyNodeActions.moneyUpdated(result.getNewCreatorMoney());
 
             final int creatorId = listing.item.creatorId;
             final int creatorAmount = result.getCreatorTransaction().amount;
@@ -587,7 +584,6 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected FavoritesRepository _faveRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MoneyNodeActions _moneyNodeActions;
     @Inject protected UserActionRepository _userActionRepo;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GameRepository _gameRepo;

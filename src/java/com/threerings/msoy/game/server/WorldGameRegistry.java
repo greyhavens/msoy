@@ -33,6 +33,7 @@ import com.threerings.util.Name;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberManager;
 import com.threerings.msoy.server.ServerConfig;
@@ -41,12 +42,14 @@ import com.threerings.msoy.server.StatLogic;
 
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.bureau.data.ServerRegistryObject;
+import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -331,12 +334,22 @@ public class WorldGameRegistry
     }
 
     // from interface GameServerProvider
-    public void reportFlowAward (ClientObject caller, int memberId, int deltaCoins)
+    public void reportCoinAward (ClientObject caller, int memberId, int deltaCoins)
     {
-        if (!checkCallerAccess(caller, "reportFlowAward(" + memberId + ", " + deltaCoins + ")")) {
+        if (!checkCallerAccess(caller, "reportCoinAward(" + memberId + ", " + deltaCoins + ")")) {
             return;
         }
-        _peerMan.invokeNodeAction(new ReportCoinsAwardAction(memberId, deltaCoins));
+        _moneyLogic.notifyCoinsEarned(memberId, deltaCoins);
+    }
+    
+    public void awardCoins (ClientObject caller, int memberId, int creatorId, int affiliateId, 
+        ItemIdent item, int amount, String description, int userActionNumber, boolean wasNotified)
+    {
+        if (!checkCallerAccess(caller, "awardCoins(" + memberId + ", " + amount + ", " + description)) {
+            return;
+        }
+        _moneyLogic.awardCoins(memberId, creatorId, affiliateId, item, amount, description, 
+            UserAction.getActionByNumber(userActionNumber), wasNotified);
     }
 
     // from interface GameServerProvider
@@ -613,25 +626,6 @@ public class WorldGameRegistry
         }
     }
 
-    /** Handles updating a player's coin count. */
-    protected static class ReportCoinsAwardAction extends MemberNodeAction
-    {
-        public ReportCoinsAwardAction (int memberId, int deltaCoins) {
-            super(memberId);
-            _deltaCoins = deltaCoins;
-        }
-
-        public ReportCoinsAwardAction () {
-        }
-
-        protected void execute (MemberObject memObj) {
-            memObj.setFlow(memObj.flow + _deltaCoins);
-            memObj.setAccFlow(memObj.accFlow + _deltaCoins);
-        }
-
-        protected int _deltaCoins;
-    }
-
     /** Hold distributed information about our game servers. */
     protected ServerRegistryObject _serverRegObj;
 
@@ -651,7 +645,8 @@ public class WorldGameRegistry
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected GameRepository _gameRepo;
     @Inject protected StatLogic _statLogic;
-
+    @Inject protected MoneyLogic _moneyLogic;
+    
     /** The number of delegate game servers to be started. */
     protected static final int DELEGATE_GAME_SERVERS = 1;
 }

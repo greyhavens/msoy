@@ -6,6 +6,7 @@ package com.threerings.msoy.game.server;
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -18,6 +19,11 @@ import com.threerings.stats.data.StatModifier;
  */
 public interface GameServerProvider extends InvocationProvider
 {
+    /**
+     * Handles a {@link GameServerService#awardCoins} request.
+     */
+    void awardCoins (ClientObject caller, int arg1, int arg2, int arg3, ItemIdent arg4, int arg5, String arg6, int arg7, boolean arg8);
+
     /**
      * Handles a {@link GameServerService#awardPrize} request.
      */
@@ -35,9 +41,9 @@ public interface GameServerProvider extends InvocationProvider
     void leaveAVRGame (ClientObject caller, int arg1);
 
     /**
-     * Handles a {@link GameServerService#reportFlowAward} request.
+     * Handles a {@link GameServerService#reportCoinAward} request.
      */
-    void reportFlowAward (ClientObject caller, int arg1, int arg2);
+    void reportCoinAward (ClientObject caller, int arg1, int arg2);
 
     /**
      * Handles a {@link GameServerService#reportTrophyAward} request.

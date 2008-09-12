@@ -180,9 +180,9 @@ public class QuestDelegate extends PlaceManagerDelegate
             public void invokePersistent () throws Exception {
                 // award the flow for this quest
                 if (payout > 0) {
-                    _moneyLogic.awardCoins(player.getMemberId(), 0, 0,
+                    _worldClient.awardCoins(player.getMemberId(), 0, 0,
                         new ItemIdent(Game.GAME, _gameId), 
-                        payout, questId, UserAction.COMPLETED_QUEST);
+                        payout, questId, UserAction.COMPLETED_QUEST, false);
                 }
 
                 // note that we played one game and awarded the specified flow
@@ -213,7 +213,6 @@ public class QuestDelegate extends PlaceManagerDelegate
             public void handleSuccess () {
                 // if we paid out flow, let any logged-on member objects know
                 if (payout > 0) {
-                    _worldClient.reportFlowAward(player.getMemberId(), payout);
                     // report to the game that this player earned some flow
                     player.postMessage(AVRGameObject.COINS_AWARDED_MESSAGE, payout, -1);
                 }

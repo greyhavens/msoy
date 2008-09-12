@@ -123,7 +123,6 @@ public class BadgeManager
     protected void awardBadges (final MemberObject user, final List<EarnedBadge> badges)
     {
         // award coins and add the badges to the user's badge set
-        int coinValue = 0;
         List<Notification> notes = Lists.newArrayList();
         for (EarnedBadge badge : badges) {
             BadgeType type = BadgeType.getType(badge.badgeCode);
@@ -133,11 +132,8 @@ public class BadgeManager
                             "type", type, "level", level);
             } else if (user.badgeAwarded(badge)) {
                 notes.add(new BadgeEarnedNotification(badge));
-                coinValue += coinValue;
             }
         }
-        user.setFlow(user.flow + coinValue);
-        user.setAccFlow(user.accFlow + coinValue);
 
         // dispatch any badge awarded notifications
         _notifyMan.notify(user, notes);
@@ -150,7 +146,6 @@ public class BadgeManager
         }
 
         // stick the badges in the database
-        final int totalCoinValue = coinValue;
         _invoker.postUnit(new WriteOnlyUnit("awardBadges") {
             public void invokePersist () throws Exception {
                 for (EarnedBadge badge : badges) {
@@ -172,8 +167,6 @@ public class BadgeManager
                 for (InProgressBadge badge : newInProgressBadges) {
                     user.inProgressBadges.removeBadge(badge.badgeCode);
                 }
-                user.setFlow(user.flow - totalCoinValue);
-                user.setAccFlow(user.accFlow - totalCoinValue);
                 super.handleFailure(error);
             }
             protected String getFailureMessage () {

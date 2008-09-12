@@ -223,8 +223,10 @@ public class HeaderBar extends HBox
         const cliObj :MemberObject = _ctx.getClient().getClientObject() as MemberObject;
         if (cliObj != null) {
             cliObj.addListener(new AttributeChangeAdapter(clientAttrChanged));
-            _coinsLabel.text = Currency.COINS.format(cliObj.flow);
-//            _barsLabel.text = Currency.BARS.format(cliObj.bars);
+            _coinsLabel.text = Currency.COINS.format(cliObj.coins);
+            if (DeploymentConfig.barsEnabled) {
+                _barsLabel.text = Currency.BARS.format(cliObj.bars);
+            }
         }
     }
 
@@ -234,13 +236,13 @@ public class HeaderBar extends HBox
     protected function clientAttrChanged (event :AttributeChangedEvent) :void
     {
         switch (event.getName()) {
-        case MemberObject.FLOW:
+        case MemberObject.COINS:
             _coinsLabel.text = Currency.COINS.format(int(event.getValue()));
             break;
 
-//        case MemberObject.BARS:
-//            _barsLabel.text = Currency.BARS.format(int(event.getValue()));
-//            break;
+        case MemberObject.BARS:
+            _barsLabel.text = Currency.BARS.format(int(event.getValue()));
+            break;
         }
     }
 

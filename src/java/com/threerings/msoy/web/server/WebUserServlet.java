@@ -49,8 +49,6 @@ import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.mail.server.persist.MailRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyNodeActions;
-import com.threerings.msoy.money.server.MoneyResult;
 import com.threerings.msoy.notify.server.NotificationManager;
 import com.threerings.msoy.peer.server.MemberNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
@@ -172,7 +170,7 @@ public class WebUserServlet extends MsoyServiceServlet
                     // pay out a sign up bonus to the inviter
                     _moneyLogic.awardCoins(
                         inviter.memberId, 0, 0, null, CoinAwards.INVITED_FRIEND_JOINED,
-                        "", UserAction.INVITED_FRIEND_JOINED);
+                        "", UserAction.INVITED_FRIEND_JOINED, false);
                 } catch (Exception e) {
                     log.warning("Failed to wire up friendship for created account " +
                             "[member=" + mrec.who() + ", inviter=" + inviter.who() + "].", e);
@@ -493,20 +491,19 @@ public class WebUserServlet extends MsoyServiceServlet
 
         @Override
         protected void execute (MemberObject memobj) {
-            final int flow = memobj.flow;
-            if (flow > 0) {
-                log.info("Transfering guest-accumulated flow to user [guestId=" + _memberId +
+            final int coins = memobj.coins;
+            if (coins > 0) {
+                log.info("Transfering guest-accumulated coins to user [guestId=" + _memberId +
                          ", memberId=" + _toMemberId + "].");
                 _invoker.postUnit(new Invoker.Unit() {
                     @Override public boolean invoke () {
                         try {
-                            MoneyResult res = _moneyLogic.awardCoins(
-                                _toMemberId, 0, 0, null, flow, "", UserAction.TRANSFER_FROM_GUEST);
-                            _moneyNodeActions.moneyUpdated(res.getNewMemberMoney());
+                            _moneyLogic.awardCoins(_toMemberId, 0, 0, null, coins, "", 
+                                UserAction.TRANSFER_FROM_GUEST, false);
                             return true;
                         } catch (Exception e) {
                             log.warning("Unable to grant coins", "to", _toMemberId,
-                                        "action", UserAction.TRANSFER_FROM_GUEST, "amount", flow, e);
+                                        "action", UserAction.TRANSFER_FROM_GUEST, "amount", coins, e);
                             return false;
                         }
                     }
@@ -517,7 +514,6 @@ public class WebUserServlet extends MsoyServiceServlet
         protected int _toMemberId;
 
         @Inject protected transient MoneyLogic _moneyLogic;
-        @Inject protected transient MoneyNodeActions _moneyNodeActions;
         @Inject @MainInvoker protected transient Invoker _invoker;
     }
 

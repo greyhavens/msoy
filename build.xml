@@ -417,6 +417,7 @@
         <filter token="static_media_url" value="${static_media_url}"/>
         <filter token="dev_deployment" value="${dev_deployment}"/>
         <filter token="recaptcha_public" value="${recaptcha_token}"/>
+        <filter token="billing_url" value="${billing_url}"/>
       </filterset>
     </copy>
   </target>
@@ -531,6 +532,7 @@
         <filter token="dev_deployment" value="${dev_deployment}"/>
         <filter token="static_media_url" value="${static_media_url}"/>
         <filter token="log_levels_config" value="${log_levels_config}"/>
+        <filter token="billing_url" value="${billing_url}"/>
       </filterset>
     </copy>
   </target>

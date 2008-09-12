@@ -51,9 +51,7 @@ import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyNodeActions;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
 import com.threerings.msoy.person.server.persist.FeedRepository;
@@ -156,10 +154,8 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // record that the user updated their profile
         if (nrec.modifications == 1) {
-            final MemberMoney money = _moneyLogic.awardCoins(
-                memrec.memberId, 0, 0, null, CoinAwards.CREATED_PROFILE,
-                "", UserAction.CREATED_PROFILE).getNewMemberMoney();
-            _moneyNodeActions.moneyUpdated(money);
+            _moneyLogic.awardCoins(memrec.memberId, 0, 0, null, CoinAwards.CREATED_PROFILE,
+                "", UserAction.CREATED_PROFILE, false);
         } else {
             _userActionRepo.logUserAction(
                 new UserActionDetails(memrec.memberId, UserAction.UPDATED_PROFILE));
@@ -341,7 +337,6 @@ public class ProfileServlet extends MsoyServiceServlet
     }
 
     // our dependencies
-    @Inject protected MoneyNodeActions _moneyNodeActions;
     @Inject protected ServletLogic _servletLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MoneyLogic _moneyLogic;

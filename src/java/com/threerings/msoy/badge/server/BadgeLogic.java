@@ -24,9 +24,7 @@ import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
 
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyNodeActions;
 
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
@@ -68,8 +66,8 @@ public class BadgeLogic
         _feedRepo.publishMemberMessage(brec.memberId, FeedMessageType.FRIEND_WON_BADGE,
             brec.badgeCode + "\t" + brec.level);
 
-        final MemberMoney money = _moneyLogic.awardCoins(brec.memberId, 0, 0, null,
-            levelData.coinValue, "", UserAction.EARNED_BADGE).getNewMemberMoney();
+        _moneyLogic.awardCoins(brec.memberId, 0, 0, null, levelData.coinValue, "", 
+            UserAction.EARNED_BADGE, false);
 
         if (dobjNeedsUpdate) {
             // if dobjNeedsUpdate is true, this function was called from a servlet, or other
@@ -77,7 +75,6 @@ public class BadgeLogic
             // the MemberObject initiated the badge award and does not to be updated (and also
             // will have taken care of creating new in-progress badges).
             MemberNodeActions.badgeAwarded(brec);
-            _moneyNodeActions.moneyUpdated(money);
             createNewInProgressBadges(brec.memberId, true);
         }
     }
@@ -208,5 +205,4 @@ public class BadgeLogic
     @Inject protected BadgeRepository _badgeRepo;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MoneyNodeActions _moneyNodeActions;
 }

@@ -160,7 +160,7 @@ public class WorldClient extends MsoyClient
         }
         
         if (!_featuredPlaceView) {
-            // listen for flow and gold updates
+            // listen for coins and bars updates
             _user = (clobj as MemberObject);
             var updater :StatusUpdater = new StatusUpdater(this);
             _user.addListener(updater);
@@ -168,7 +168,7 @@ public class WorldClient extends MsoyClient
             // configure our levels to start
             updater.newLevel(_user.level);
             // updater.newGold(_user.gold);
-            updater.newFlow(_user.flow);
+            updater.newCoins(_user.coins);
             updater.newMail(_user.newMailCount);
         }
     }
@@ -431,10 +431,10 @@ class StatusUpdater implements AttributeChangeListener, SetListener
     public function attributeChanged (event :AttributeChangedEvent) :void {
         if (event.getName() == MemberObject.LEVEL) {
             newLevel(event.getValue() as int, event.getOldValue() as int);
-        /*} else if (event.getName() == MemberObject.GOLD) {
-            newGold(event.getValue() as int, event.getOldValue() as int); */
-        } else if (event.getName() == MemberObject.FLOW) {
-            newFlow(event.getValue() as int, event.getOldValue() as int);
+        } else if (event.getName() == MemberObject.BARS) {
+            newBars(event.getValue() as int, event.getOldValue() as int);
+        } else if (event.getName() == MemberObject.COINS) {
+            newCoins(event.getValue() as int, event.getOldValue() as int);
         } else if (event.getName() == MemberObject.NEW_MAIL_COUNT) {
             newMail(event.getValue() as int, event.getOldValue() as int);
         }
@@ -471,12 +471,12 @@ class StatusUpdater implements AttributeChangeListener, SetListener
         sendNotification([STATUS_CHANGE_LEVEL, level, oldLevel]);
     }
 
-    public function newFlow (flow :int, oldFlow :int = 0) :void {
-        sendNotification([STATUS_CHANGE_FLOW, flow, oldFlow]);
+    public function newCoins (coins :int, oldCoins :int = 0) :void {
+        sendNotification([STATUS_CHANGE_COINS, coins, oldCoins]);
     }
 
-    public function newGold (gold :int, oldGold :int = 0) :void {
-        sendNotification([STATUS_CHANGE_GOLD, gold, oldGold]);
+    public function newBars (bars :int, oldBars :int = 0) :void {
+        sendNotification([STATUS_CHANGE_BARS, bars, oldBars]);
     }
 
     public function newMail (mail :int, oldMail :int = -1) :void {
@@ -490,8 +490,8 @@ class StatusUpdater implements AttributeChangeListener, SetListener
     /** Event dispatched to GWT when we've leveled up */
     protected static const STATUS_CHANGE_EVENT :String = "statusChange";
     protected static const STATUS_CHANGE_LEVEL :int = 1;
-    protected static const STATUS_CHANGE_FLOW :int = 2;
-    protected static const STATUS_CHANGE_GOLD :int = 3;
+    protected static const STATUS_CHANGE_COINS :int = 2;
+    protected static const STATUS_CHANGE_BARS :int = 3;
     protected static const STATUS_CHANGE_MAIL :int = 4;
 
     protected static const FRIEND_EVENT :String = "friend";

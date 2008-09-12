@@ -206,7 +206,7 @@ public class MemberManager
         // updated as necessary
         member.addListener(new AttributeChangeListener() {
             public void attributeChanged (final AttributeChangedEvent event) {
-                if (MemberObject.ACC_FLOW.equals(event.getName())) {
+                if (MemberObject.ACC_COINS.equals(event.getName())) {
                     checkCurrentLevel(member);
                 }
             }
@@ -772,7 +772,7 @@ public class MemberManager
      */
     public void checkCurrentLevel (final MemberObject member)
     {
-        int level = Arrays.binarySearch(_levelForFlow, member.accFlow);
+        int level = Arrays.binarySearch(_levelForFlow, member.accCoins);
         if (level < 0) {
             level = -1 * level - 1;
             final int length = _levelForFlow.length;

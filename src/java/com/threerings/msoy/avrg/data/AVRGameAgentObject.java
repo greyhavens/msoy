@@ -20,6 +20,9 @@ public class AVRGameAgentObject extends AgentObject
 
     /** The field name of the <code>gameId</code> field. */
     public static final String GAME_ID = "gameId";
+
+    /** The field name of the <code>agentService</code> field. */
+    public static final String AGENT_SERVICE = "agentService";
     // AUTO-GENERATED: FIELDS END
 
     /** A set of scenes containing (or having recently contained) players of this AVRG. */
@@ -112,6 +115,22 @@ public class AVRGameAgentObject extends AgentObject
         requestAttributeChange(
             GAME_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
         this.gameId = value;
+    }
+
+    /**
+     * Requests that the <code>agentService</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setAgentService (AVRGameAgentMarshaller value)
+    {
+        AVRGameAgentMarshaller ovalue = this.agentService;
+        requestAttributeChange(
+            AGENT_SERVICE, value, ovalue);
+        this.agentService = value;
     }
     // AUTO-GENERATED: METHODS END
 }

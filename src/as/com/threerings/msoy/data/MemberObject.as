@@ -28,7 +28,6 @@ import com.threerings.msoy.item.data.all.Avatar;
  */
 public class MemberObject extends MsoyBodyObject
 {
-    // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>memberName</code> field. */
     public static const MEMBER_NAME :String = "memberName";
 
@@ -44,12 +43,15 @@ public class MemberObject extends MsoyBodyObject
     /** The field name of the <code>followers</code> field. */
     public static const FOLLOWERS :String = "followers";
 
-    /** The field name of the <code>flow</code> field. */
-    public static const FLOW :String = "flow";
+    /** The field name of the <code>coins</code> field. */
+    public static const COINS :String = "coins";
 
-    /** The field name of the <code>accFlow</code> field. */
-    public static const ACC_FLOW :String = "accFlow";
+    /** The field name of the <code>accCoins</code> field. */
+    public static const ACC_COINS :String = "accCoins";
 
+    /** The field name of the <code>bars</code> field. */
+    public static const BARS :String = "bars";
+    
     /** The field name of the <code>level</code> field. */
     public static const LEVEL :String = "level";
 
@@ -94,7 +96,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>referral</code> field. */
     public static const REFERRAL :String = "referral";
-    // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to denote a notification to be displayed.
      * Format: [ Notification ]. */
@@ -115,12 +116,15 @@ public class MemberObject extends MsoyBodyObject
     /** The Game ID of the in-avr game that the user is in, if any. */
     public var avrGameId :int;
 
-    /** How much lovely flow we've got jangling around on our person. */
-    public var flow :int;
+    /** How many coins we've got jangling around on our person. */
+    public var coins :int;
 
-    /** How much total lovely flow we've jangled around on our person. */
-    public var accFlow :int;
+    /** How many coins total we've jangled around on our person. */
+    public var accCoins :int;
 
+    /** How many bars total this member has. */
+    public var bars :int;
+    
     /** This user's current level. */
     public var level :int;
 
@@ -310,8 +314,9 @@ public class MemberObject extends MsoyBodyObject
 
         memberName = (ins.readObject() as VizMemberName);
         avrGameId = ins.readInt();
-        flow = ins.readInt();
-        accFlow = ins.readInt();
+        coins = ins.readInt();
+        accCoins = ins.readInt();
+        bars = ins.readInt();
         level = ins.readInt();
         availability = ins.readInt();
         following = (ins.readObject() as MemberName);
