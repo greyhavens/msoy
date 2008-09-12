@@ -93,7 +93,7 @@ public class DoListItemPopup extends VerticalPanel
             int row = pricing.addText(_imsgs.doListStrategy(), 1, "rightLabel");
             pricing.setWidget(row, 1, _pricingBox = new ListBox(), 1, null);
             int selectedPricing = (_item instanceof SubItem && !((SubItem) _item).isSalable()) ?
-                                  CatalogListing.PRICING_HIDDEN : CatalogListing.PRICING_MANUAL;
+                                  0 /* hidden */ : 1 /* manual */;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
                 String key = "listingPricing" + CatalogListing.PRICING[ii];
                 _pricingBox.addItem(_dmsgs.getString(key));
