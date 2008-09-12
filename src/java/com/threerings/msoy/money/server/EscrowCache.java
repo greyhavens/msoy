@@ -7,7 +7,10 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
 
@@ -20,12 +23,13 @@ import com.threerings.msoy.money.data.all.PriceQuote;
  */
 @Singleton
 public class EscrowCache
+    implements ShutdownManager.Shutdowner
 {
     /**
      * Creates a cache with the given maximum number of escrows, whose entries will expire
      * after some amount of time.
      */
-    public EscrowCache ()
+    @Inject public EscrowCache (ShutdownManager shutmgr)
     {
         Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
         if (cache == null) {
@@ -38,6 +42,8 @@ public class EscrowCache
             cache.removeAll();
         }
         _cache = cache;
+
+        shutmgr.registerShutdowner(this);
     }
     
     /**
@@ -73,6 +79,12 @@ public class EscrowCache
     public void removeEscrow (final PriceKey key)
     {
         _cache.remove(key);
+    }
+
+    // from ShutdownManager.Shutdowner
+    public void shutdown ()
+    {
+        CacheManager.getInstance().shutdown();
     }
 
     protected static final int SECURED_PRICE_DURATION = 10;
