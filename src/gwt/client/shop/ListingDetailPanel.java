@@ -56,9 +56,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _models = models;
         _listing = listing;
 
-// TODO
-//         ItemUtil.addItemSpecificButtons(_item, _buttons);
-
         if (isRemixable()) {
             _indeets.add(WidgetUtil.makeShim(10, 10));
             _indeets.add(new RemixableLabel());
@@ -70,24 +67,22 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         _details.add(WidgetUtil.makeShim(10, 10));
 
-        // TODO: Make a BuyButton that also displays the price
-        PushButton spendBars = MsoyUI.createButton(MsoyUI.SHORT_THICK, "Bars!", null);
-        new BuyCallback(spendBars, Currency.BARS);
-
-        PushButton spendCoins = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingBuy(), null);
-        new BuyCallback(spendCoins, Currency.COINS);
-        //new BuyCallback(purchase,
-
         _buyPanel = new FlowPanel();
         _buyPanel.setStyleName("Buy");
 
+        // TODO: Make a BuyButton that also displays the price
+        PushButton spendBars = MsoyUI.createButton(MsoyUI.SHORT_THICK, "Bars!", null);
+        new BuyCallback(spendBars, Currency.BARS);
         if (DeploymentConfig.barsEnabled) {
-            _buyPanel.add(spendBars);
+            _buyPanel.add(spendBars));
         }
+
+        PushButton spendCoins = MsoyUI.createButton(MsoyUI.SHORT_THICK, _msgs.listingBuy(), null);
+        new BuyCallback(spendCoins, Currency.COINS);
 
         // if the item is remixable, also create a remix button
         if (!CShop.isGuest() && isRemixable()) {
-            PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, CShop.msgs.listingRemix(),
+            PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, _msgs.listingRemix(),
                 // TODO: Bar me
                 NaviUtil.onRemixCatalogItem(_item.getType(), _item.itemId, _listing.catalogId,
                                             _listing.quote.getCoins(), _listing.quote.getBars()));
@@ -100,16 +95,16 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         
         // create a table to display miscellaneous info and admin/owner actions
         SmartTable info = new SmartTable("Info", 0, 5);
-        info.setText(0, 0, CShop.msgs.listingListed(), 1, "What");
+        info.setText(0, 0, _msgs.listingListed(), 1, "What");
         info.setText(0, 1, MsoyUI.formatDate(listing.listedDate));
-        info.setText(1, 0, CShop.msgs.listingPurchases(), 1, "What");
+        info.setText(1, 0, _msgs.listingPurchases(), 1, "What");
         info.setText(1, 1, "" + listing.purchases);
-        info.setText(2, 0, CShop.msgs.favoritesCount(), 1, "What");
+        info.setText(2, 0, _msgs.favoritesCount(), 1, "What");
         info.setText(2, 1, "" + listing.favoriteCount);
 
         // if we are the creator (lister) of this item, allow us to delist it
         if (_detail.creator.getMemberId() == CShop.getMemberId() || CShop.isSupport()) {
-            Label reprice = new Label(CShop.msgs.listingReprice());
+            Label reprice = new Label(_msgs.listingReprice());
             reprice.addStyleName("actionLabel");
             reprice.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -124,14 +119,14 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             });
             info.addWidget(reprice, 2, null);
 
-            Label delist = new Label(CShop.msgs.listingDelist());
-            new ClickCallback<Void>(delist, CShop.msgs.listingDelistConfirm()) {
+            Label delist = new Label(_msgs.listingDelist());
+            new ClickCallback<Void>(delist, _msgs.listingDelistConfirm()) {
                 public boolean callService () {
                     _catalogsvc.removeListing(_item.getType(), _listing.catalogId, this);
                     return true;
                 }
                 public boolean gotResult (Void result) {
-                    MsoyUI.info(CShop.msgs.msgListingDelisted());
+                    MsoyUI.info(_msgs.msgListingDelisted());
                     _models.itemDelisted(_listing);
                     History.back();
                     return false;
@@ -142,8 +137,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             if (_listing.originalItemId != 0) {
                 // also add a link to view the original
                 String args = Args.compose("d", ""+_item.getType(), ""+_listing.originalItemId);
-                info.addWidget(Link.create(CShop.msgs.listingViewOrig(),
-                                                      Pages.STUFF, args), 2, null);
+                info.addWidget(Link.create(_msgs.listingViewOrig(), Pages.STUFF, args), 2, null);
             }
         }
 
@@ -153,12 +147,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         // Create a link to the billing page.
         if (DeploymentConfig.barsEnabled) {
             _details.add(WidgetUtil.makeShim(10, 10));
-            PushButton buyBars = MsoyUI.createButton(MsoyUI.LONG_THIN, CShop.msgs.buyBars(),
+            PushButton buyBars = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.buyBars(),
                 new ClickListener() {
-                    public void onClick (Widget sender)
-                    {
-                        openBillingPage();
-                    }
+                public void onClick (Widget sender) {
+                    openBillingPage();
+                }
             });
             _details.add(buyBars);
         }
@@ -185,31 +178,30 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // change the buy button into a "you bought it" display
         String type = _dmsgs.getString("itemType" + itype);
-        _buyPanel.add(MsoyUI.createLabel(CShop.msgs.boughtTitle(type), "Title"));
+        _buyPanel.add(MsoyUI.createLabel(_msgs.boughtTitle(type), "Title"));
 
         if (FlashClients.clientExists() && !(item instanceof SubItem)) {
             _buyPanel.add(new ItemActivator(item, true));
             _buyPanel.add(new Label(getUsageMessage(itype)));
         } else {
-            _buyPanel.add(new Label(CShop.msgs.boughtViewStuff(type)));
+            _buyPanel.add(new Label(_msgs.boughtViewStuff(type)));
             String ptype = _dmsgs.getString("pItemType" + itype);
-            _buyPanel.add(Link.create(
-                              CShop.msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
+            _buyPanel.add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
         }
     }
 
     protected static String getUsageMessage (byte itemType)
     {
         if (itemType == Item.AVATAR) {
-            return CShop.msgs.boughtAvatarUsage();
+            return _msgs.boughtAvatarUsage();
         } else if (itemType == Item.DECOR) {
-            return CShop.msgs.boughtDecorUsage();
+            return _msgs.boughtDecorUsage();
         } else if (itemType == Item.AUDIO) {
-            return CShop.msgs.boughtAudioUsage();
+            return _msgs.boughtAudioUsage();
         } else if (itemType == Item.PET) {
-            return CShop.msgs.boughtPetUsage();
+            return _msgs.boughtPetUsage();
         } else {
-            return CShop.msgs.boughtOtherUsage();
+            return _msgs.boughtOtherUsage();
         }
     }
 
@@ -234,7 +226,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         public boolean callService ()
         {
             if (CShop.isGuest()) {
-                MsoyUI.infoAction(CShop.msgs.msgMustRegister(), CShop.msgs.msgRegister(),
+                MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(),
                                   Link.createListener(Pages.ACCOUNT, "create"));
             } else {
                 _catalogsvc.purchaseItem(_item.getType(), _listing.catalogId,
@@ -273,6 +265,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected FlowPanel _buyPanel;
     protected PriceLabel _priceLabel;
 
+    protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
