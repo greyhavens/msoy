@@ -22,12 +22,12 @@ public class AVRGameMarshaller extends InvocationMarshaller
     public static final int COMPLETE_TASK = 1;
 
     // from interface AVRGameService
-    public void completeTask (Client arg1, String arg2, float arg3, InvocationService.ConfirmListener arg4)
+    public void completeTask (Client arg1, int arg2, String arg3, float arg4, InvocationService.ConfirmListener arg5)
     {
-        InvocationMarshaller.ConfirmMarshaller listener4 = new InvocationMarshaller.ConfirmMarshaller();
-        listener4.listener = arg4;
+        InvocationMarshaller.ConfirmMarshaller listener5 = new InvocationMarshaller.ConfirmMarshaller();
+        listener5.listener = arg5;
         sendRequest(arg1, COMPLETE_TASK, new Object[] {
-            arg2, Float.valueOf(arg3), listener4
+            Integer.valueOf(arg2), arg3, Float.valueOf(arg4), listener5
         });
     }
 

@@ -37,7 +37,7 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
         switch (methodId) {
         case AVRGameMarshaller.COMPLETE_TASK:
             ((AVRGameProvider)provider).completeTask(
-                source, (String)args[0], ((Float)args[1]).floatValue(), (InvocationService.ConfirmListener)args[2]
+                source, ((Integer)args[0]).intValue(), (String)args[1], ((Float)args[2]).floatValue(), (InvocationService.ConfirmListener)args[3]
             );
             return;
 

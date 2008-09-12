@@ -419,7 +419,13 @@ public class ThaneAVRGameBackend
 
     protected function completeTask_v1 (playerId :int, taskId :String, payout :Number) :void
     {
-        
+        if (StringUtil.isBlank(taskId)) {
+            return;
+        }
+
+        _gameObj.avrgService.completeTask(
+            _ctx.getClient(), playerId, taskId, Math.max(0, Math.min(payout, 1)),
+            BackendUtils.loggingConfirmListener("completeTask"));
     }
 
     protected function playAvatarAction_v1 (playerId :int, action :String) :void

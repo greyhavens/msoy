@@ -12,7 +12,7 @@ import com.threerings.presents.client.InvocationService;
 public interface AVRGameService extends InvocationService
 {
     public void completeTask (
-        Client caller, String questId, float payoutLevel, ConfirmListener listener);
+        Client caller, int playerId, String questId, float payoutLevel, ConfirmListener listener);
 
     /**
      * Start a ticker that will send out timestamp information at the interval specified.

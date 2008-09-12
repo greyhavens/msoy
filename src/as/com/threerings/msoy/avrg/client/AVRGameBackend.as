@@ -387,14 +387,9 @@ public class AVRGameBackend extends ControlBackend
             return;
         }
 
-        // sanity check payout
-        if (payout < 0 || payout > 1) {
-            _wctx.displayFeedback(null, "completeTask() payout must be between 0 and 1.");
-            return;
-        }
-
         _gameObj.avrgService.completeTask(
-            _gctx.getClient(), taskId, payout, BackendUtils.loggingConfirmListener("completeTask"));
+            _gctx.getClient(), 0, taskId, Math.max(0, Math.min(1, payout)),
+            BackendUtils.loggingConfirmListener("completeTask"));
     }
 
     // PlayerSubControl

@@ -235,11 +235,28 @@ public class AVRGameManager extends PlaceManager
     }
 
     // from AVRGameProvider
-    public void completeTask (ClientObject caller, final String questId, final float payoutLevel,
-                              InvocationService.ConfirmListener listener)
+    public void completeTask (ClientObject caller, final int playerId, final String questId,
+                              final float payoutLevel, InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        _questDelegate.completeTask(caller, questId, payoutLevel, listener);
+        PlayerObject player;
+        if (playerId == 0) {
+            player = (PlayerObject) caller;
+
+        } else if (isAgent(caller)) {
+            player = _locator.lookupPlayer(playerId);
+            if (player == null) {
+                log.warning("Agent call to completeTask for unknown player", "caller", caller,
+                            "playerId", playerId);
+                return;
+            }
+
+        } else {
+            log.warning("Non-agent calling completeTask", "caller", caller, "playerId", playerId);
+            return;
+        }
+
+        _questDelegate.completeTask(player, questId, payoutLevel, listener);
     }
 
     // from AVRGameAgentProvider

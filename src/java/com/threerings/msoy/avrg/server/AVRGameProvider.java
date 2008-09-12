@@ -17,7 +17,7 @@ public interface AVRGameProvider extends InvocationProvider
     /**
      * Handles a {@link AVRGameService#completeTask} request.
      */
-    void completeTask (ClientObject caller, String arg1, float arg2, InvocationService.ConfirmListener arg3)
+    void completeTask (ClientObject caller, int arg1, String arg2, float arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
 
     /**

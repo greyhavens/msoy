@@ -119,14 +119,11 @@ public class QuestDelegate extends PlaceManagerDelegate
         _worldClient.updatePlayer(memberId, null);
     }
 
-    // from AVRGameProvider
     public void completeTask (
-        final ClientObject caller, final String questId, final float payoutLevel,
+        final PlayerObject player, final String questId, final float payoutLevel,
         final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        final PlayerObject player = (PlayerObject) caller;
-
         // nothing is done for guests
         if (MemberName.isGuest(player.getMemberId())) {
             listener.requestProcessed();
