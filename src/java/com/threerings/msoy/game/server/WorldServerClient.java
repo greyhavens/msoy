@@ -106,7 +106,7 @@ public class WorldServerClient
     public void leaveAVRGame (int playerId)
     {
         if (_gssvc == null) {
-            log.warning("Dropping AVRGame departure [id=" + playerId + "].");
+            log.info("Dropping AVRGame departure [id=" + playerId + "].");
         } else {
             _gssvc.leaveAVRGame(_client, playerId);
         }
@@ -115,7 +115,7 @@ public class WorldServerClient
     public void updatePlayer (int playerId, Game game)
     {
         if (_gssvc == null) {
-            log.warning("Dropping update notification [id=" + playerId + ", game=" + game + "].");
+            log.info("Dropping update notification [id=" + playerId + ", game=" + game + "].");
         } else {
             _gssvc.updatePlayer(_client, playerId, game == null ? null : new GameSummary(game));
         }
@@ -125,7 +125,7 @@ public class WorldServerClient
     {
         log.info("Stopped hosting " + gameId + ".");
         if (_gssvc == null) {
-            log.warning("Dropping unhosting notification " + gameId + ".");
+            log.info("Dropping unhosting notification " + gameId + ".");
         } else {
             _gssvc.clearGameHost(_client, _port, gameId);
         }
@@ -134,7 +134,7 @@ public class WorldServerClient
     public void reportFlowAward (int memberId, int deltaFlow)
     {
         if (_gssvc == null) {
-            log.warning("Dropping flow award [mid=" + memberId + ", df=" + deltaFlow + "].");
+            log.info("Dropping flow award [mid=" + memberId + ", df=" + deltaFlow + "].");
         } else {
             _gssvc.reportFlowAward(_client, memberId, deltaFlow);
         }
@@ -143,7 +143,7 @@ public class WorldServerClient
     public void reportTrophyAward (int memberId, String gameName, Trophy trophy)
     {
         if (_gssvc == null) {
-            log.warning("Dropping trophy award [mid=" + memberId + ", trophy=" + trophy + "].");
+            log.info("Dropping trophy award [mid=" + memberId + ", trophy=" + trophy + "].");
         } else {
             _gssvc.reportTrophyAward(_client, memberId, gameName, trophy);
         }
@@ -162,7 +162,7 @@ public class WorldServerClient
     public void incrementStat (int memberId, Stat.Type type, int delta)
     {
         if (_gssvc == null) {
-            log.warning("Dropping incrementStat", "Stat.Type", type, "delta", delta);
+            log.info("Dropping incrementStat", "Stat.Type", type, "delta", delta);
         } else {
             _gssvc.updateStat(_client, memberId, new IntStatIncrementer(type, delta));
         }
@@ -171,7 +171,7 @@ public class WorldServerClient
     public void addToSetStat (int memberId, Stat.Type type, int value)
     {
         if (_gssvc == null) {
-            log.warning("Dropping addToSetStat", "Stat.Type", type, "value", value);
+            log.info("Dropping addToSetStat", "Stat.Type", type, "value", value);
         } else {
             _gssvc.updateStat(_client, memberId, new IntSetStatAdder(type, value));
         }
