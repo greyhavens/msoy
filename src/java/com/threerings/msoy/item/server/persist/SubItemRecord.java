@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.item.server.persist;
 
+import com.google.common.base.Function;
+
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Index;
 
@@ -24,6 +26,13 @@ public abstract class SubItemRecord extends ItemRecord
     /** The column identifier for the {@link #ident} field. */
     public static final String IDENT = "ident";
     // AUTO-GENERATED: FIELDS END
+
+    /** A function that extracts {@link #ident}. */
+    public static Function<SubItemRecord, String> GET_IDENT = new Function<SubItemRecord, String>() {
+        public String apply (SubItemRecord record) {
+            return record.ident;
+        }
+    };
 
     /** The identifier of the suite to which this subitem belongs. See {@link SubItem#suiteId}. */
     public int suiteId;

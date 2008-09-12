@@ -240,7 +240,7 @@ public class TrophyDelegate extends PlayManagerDelegate
 
         // if this person is a player, load up their content packs and trophies
         if (isPlayer(plobj)) {
-            _gameReg.resolveOwnedContent(Math.abs(_content.game.gameId), plobj);
+            _gameReg.resolveOwnedContent(_content.game, plobj);
         }
     }
 

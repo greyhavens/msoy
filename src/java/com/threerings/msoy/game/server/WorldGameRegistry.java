@@ -177,17 +177,19 @@ public class WorldGameRegistry
 
     /**
      * Called when the user has purchased game content.
-     * @param contentIdentifier the string that the game uses internally to identify the content.
+     *
+     * @param itemType the type of content item that was purchased (ie. {@link Item#LEVEL_PACK}).
+     * @param ident the string that the game uses internally to identify the content.
      */
-    public void gameContentPurchased (int memberId, int gameId, byte itemType, String contentIdentifier)
+    public void gameContentPurchased (int memberId, int gameId, byte itemType, String ident)
     {
         GameServerHandler handler = _handmap.get(gameId);
         if (handler == null) {
             log.info("Egad, the game handler vanished [gameId=" + gameId + "]");
             return;
         }
-        handler.postMessage(WorldServerClient.GAME_CONTENT_PURCHASED, memberId, gameId, itemType,
-                            contentIdentifier);
+        handler.postMessage(WorldServerClient.GAME_CONTENT_PURCHASED,
+                            memberId, gameId, itemType, ident);
     }
 
     /**

@@ -228,8 +228,8 @@ public class WorldServerClient
             int playerId = (Integer) args[0];
             int gameId = (Integer) args[1];
             byte itemType = (Byte) args[2];
-            String contentIdentifier = (String) args[3];
-            _gameReg.gameContentPurchased(playerId, gameId, itemType, contentIdentifier);
+            String ident = (String) args[3];
+            _gameReg.gameContentPurchased(playerId, gameId, itemType, ident);
         }
     }
 

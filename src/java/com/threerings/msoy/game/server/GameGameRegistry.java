@@ -11,10 +11,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
@@ -81,6 +83,7 @@ import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
@@ -163,20 +166,24 @@ public class GameGameRegistry
      * Resolves the item and level packs owned by the player in question for the specified game, as
      * well as trophies they have earned. This information will show up asynchronously, once the
      */
-    public void resolveOwnedContent (final int gameId, final PlayerObject plobj)
+    public void resolveOwnedContent (final Game game, final PlayerObject plobj)
     {
         // if we've already resolved content for this player, we are done
-        if (plobj.isContentResolved(gameId)) {
+        if (plobj.isContentResolved(game.gameId)) {
             return;
         }
 
         // add our "already resolved" marker and then start resolving
-        plobj.addToGameContent(new GameContentOwnership(gameId, GameData.RESOLVED_MARKER, ""));
+        plobj.addToGameContent(new GameContentOwnership(game.gameId, GameData.RESOLVED_MARKER, ""));
         _invoker.postUnit(new RepositoryUnit("resolveOwnedContent") {
             @Override
             public void invokePersist () throws Exception {
-                // TODO: load level and item pack ownership
-                _trophies = _trophyRepo.loadTrophyOwnership(gameId, plobj.getMemberId());
+                int memberId = plobj.getMemberId(), suiteId = game.getSuiteId();
+                _lpacks.addAll(Lists.transform(_lpackRepo.loadClonedItems(memberId, suiteId),
+                                               LevelPackRecord.GET_IDENT));
+                _ipacks.addAll(Lists.transform(_ipackRepo.loadClonedItems(memberId, suiteId),
+                                               ItemPackRecord.GET_IDENT));
+                _trophies = _trophyRepo.loadTrophyOwnership(game.gameId, memberId);
             }
             @Override
             public void handleSuccess () {
@@ -189,18 +196,24 @@ public class GameGameRegistry
                     plobj.commitTransaction();
                 }
             }
-            protected void addContent (byte type, List<String> idents) {
-                for (String ident : idents) {
-                    plobj.addToGameContent(new GameContentOwnership(gameId, type, ident));
+            protected void addContent (byte type, Iterable<String> idents) {
+                plobj.startTransaction();
+                try {
+                    for (String ident : idents) {
+                        plobj.addToGameContent(new GameContentOwnership(game.gameId, type, ident));
+                    }
+                } finally {
+                    plobj.commitTransaction();
                 }
             }
             @Override
             protected String getFailureMessage () {
-                return "Failed to resolve content [game=" + gameId + ", who=" + plobj.who() + "].";
+                return "Failed to resolve content [game=" + game.gameId +
+                    ", who=" + plobj.who() + "].";
             }
 
-            protected List<String> _lpacks = new ArrayList<String>();
-            protected List<String> _ipacks = new ArrayList<String>();
+            protected Set<String> _lpacks = Sets.newHashSet();
+            protected Set<String> _ipacks = Sets.newHashSet();
             protected List<String> _trophies;
         });
     }
@@ -283,18 +296,34 @@ public class GameGameRegistry
     /**
      * Called when the player has purchased new game content.
      */
-    public void gameContentPurchased (final int playerId, final int gameId, final byte itemType, final String ident)
+    public void gameContentPurchased (int playerId, int gameId, byte itemType, String ident)
     {
         PlayerObject player = _locator.lookupPlayer(playerId);
         if (player == null) {
             return; // not online or not in a game, no problem!
         }
 
+        // convert the item type to a GameData content type
+        byte contentType;
+        if (itemType == Item.LEVEL_PACK) {
+            contentType = GameData.LEVEL_DATA;
+        } else if (itemType == Item.ITEM_PACK) {
+            contentType = GameData.ITEM_DATA;
+        } else {
+            log.warning("Notified that player purchased content of unknown type",
+                        "playerId", playerId, "gameId", gameId, "itemType", itemType,
+                        "ident", ident);
+            return;
+        }
+
         // make sure they're actually playing the right game
         PlaceManager plmgr = _placeReg.getPlaceManager(player.getPlaceOid());
         if (plmgr != null && plmgr.getConfig() instanceof MsoyGameConfig &&
             ((MsoyGameConfig)plmgr.getConfig()).getGameId() == gameId) {
-            player.addToGameContent(new GameContentOwnership(gameId, itemType, ident));
+            GameContentOwnership entry = new GameContentOwnership(gameId, contentType, ident);
+            if (!player.gameContent.contains(entry)) {
+                player.addToGameContent(entry);
+            }
         }
     }
 
