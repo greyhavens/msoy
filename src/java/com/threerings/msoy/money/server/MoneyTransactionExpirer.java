@@ -58,8 +58,10 @@ public class MoneyTransactionExpirer
         // TODO: just purge all currencies together?
         for (Currency cur : Currency.values()) {
             int count = _repo.deleteOldTransactions(cur, MAX_AGE);
-            log.info("Removed old member account history records",
-                "currency", cur, "count", count);
+            if (count > 0) {
+                log.info("Removed old member account history records",
+                         "currency", cur, "count", count);
+            }
         }
     }
     
