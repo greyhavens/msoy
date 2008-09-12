@@ -239,7 +239,8 @@ public class MsoyGamePanel extends WhirledGamePanel
         menuData.push({ label: Msgs.GAME.get("b.allGames"), command: MsoyController.VIEW_GAMES });
         menuData.push({ label: Msgs.GAME.get("b.backToLobby"),
             callback: _gctx.backToWhirled, arg: true });
-//        menuData.push({ label: Msgs.GAME.get("b.shop") /* TODO */ });
+        menuData.push({ label: Msgs.GAME.get("b.shop"), command: MsoyController.VIEW_GAME_SHOP,
+            arg: [ cfg.getGameId() ] });
         if (cfg.groupId != Game.NO_GROUP) {
             menuData.push({ label: Msgs.GENERAL.get("b.group_page"),
                 command: MsoyController.VIEW_GROUP, arg: cfg.groupId });

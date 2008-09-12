@@ -123,12 +123,8 @@ public class LiaisonGameContext
     // from GameContext
     public function showGameShop (itemType :int, catalogId :int = 0) :void
     {
-        if (catalogId == 0) {
-            var gameId :int = _wctx.getGameDirector().getGameId(); 
-            _wctx.getWorldController().displayPage("shop", "g_" + gameId + "_" + itemType);
-        } else {
-            _wctx.getWorldController().displayPage("shop", "l_" + itemType + "_" + catalogId);
-        }
+        _wctx.getWorldController().handleViewGameShop(
+            _wctx.getGameDirector().getGameId(), itemType, catalogId);
     }
 
     // from GameContext

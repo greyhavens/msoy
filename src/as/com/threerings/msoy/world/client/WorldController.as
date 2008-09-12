@@ -494,6 +494,24 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles VIEW_GAME_SHOP.
+     */
+    public function handleViewGameShop (gameId :int, itemType :int = 0, catalogId :int = 0) :void
+    {
+        var args :String;
+        if (catalogId != 0) {
+            args = "l_" + itemType + "_" + catalogId;
+
+        } else {
+            args = "g_" + gameId;
+            if (itemType != 0) {
+                args += "_" + itemType;
+            }
+        }
+        displayPage("shop", args);
+    }
+
+    /**
      * Handles the VIEW_MY_AVATARS command.
      */
     public function handleViewMyAvatars () :void
