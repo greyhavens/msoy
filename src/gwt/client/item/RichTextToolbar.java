@@ -20,6 +20,7 @@ import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -45,6 +46,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.images.editor.RichTextToolbarImages;
+import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.BorderedPopup;
 import client.ui.MsoyUI;
@@ -244,11 +246,13 @@ public class RichTextToolbar extends Composite
     protected void onAttach ()
     {
         super.onAttach();
-        DeferredCommand.addCommand(new Command() {
-            public void execute () {
+        // yes, we have to wait 100ms before we configure our iframe, no you don't want to know
+        // why; just walk away and think happy thoughts
+        new Timer() {
+            public void run () {
                 configureIFrame(richText.getElement());
             }
-        });
+        }.schedule(100);
     }
 
     protected ListBox createColorList (String caption)
@@ -393,15 +397,17 @@ public class RichTextToolbar extends Composite
     }
 
     protected static native void configureIFrame (Element elem) /*-{
+        var hostport = $wnd.location.hostname + ":" + $wnd.location.port;
+        var head = elem.contentWindow.document.getElementsByTagName("head")[0];
         var ss = elem.contentWindow.document.createElement("link");
         ss.type = "text/css";
-        ss.href = "http://" + $wnd.location.hostname + ":" + $wnd.location.port + "/css/global.css";
         ss.rel = "stylesheet";
-        elem.contentWindow.document.getElementsByTagName("head")[0].appendChild(ss);
+        ss.href = "http://" + hostport + "/gwt/frame/global.css";
+        head.appendChild(ss);
         ss = elem.contentWindow.document.createElement("link");
         ss.type = "text/css";
-        ss.href = "http://" + $wnd.location.hostname + ":" + $wnd.location.port + "/css/editor.css";
         ss.rel = "stylesheet";
+        ss.href = "http://" + hostport + "/gwt/frame/editor.css";
         elem.contentWindow.document.getElementsByTagName("head")[0].appendChild(ss);
     }-*/;
 
