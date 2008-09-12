@@ -197,3 +197,7 @@ local_bureaus = true
 
 # Static log settings for action script deployments (default is to log everything, see Log.as)
 # log_levels_config = :warning;com.threerings.msoy:info
+
+#
+# URL Whirled should send the user to when they need to go to billing
+billing_url = https://billing.dev.whirled.com/billing/
