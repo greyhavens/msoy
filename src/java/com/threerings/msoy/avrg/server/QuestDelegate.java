@@ -15,7 +15,6 @@ import com.samskivert.util.Invoker;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.util.PersistingUnit;
@@ -39,8 +38,6 @@ import com.threerings.msoy.game.server.WorldServerClient;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.persist.GameRepository;
-
-import com.threerings.msoy.money.server.MoneyLogic;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 
@@ -297,5 +294,4 @@ public class QuestDelegate extends PlaceManagerDelegate
     @Inject protected GameRepository _gameRepo;
     @Inject protected WorldServerClient _worldClient;
     @Inject protected MsoyEventLogger _eventLog;
-    @Inject protected MoneyLogic _moneyLogic;
 }
