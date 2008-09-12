@@ -10,6 +10,10 @@ import com.google.gwt.i18n.client.ConstantsWithLookup;
  */
 public interface DynamicMessages extends ConstantsWithLookup
 {
+    String currency0 ();
+    String currency1 ();
+    String currency2 ();
+
     String gameType0 ();
     String gameType1 ();
     String gameType2 ();

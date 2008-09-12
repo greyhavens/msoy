@@ -185,6 +185,10 @@
   font-weight: bold;
 }
 
+.listingDetailPanel .Buy {
+  text-align: center;
+}
+
 .listingDetailPanel .Buy table {
   margin-left: auto;
   margin-right: auto;

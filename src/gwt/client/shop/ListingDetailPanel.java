@@ -6,10 +6,13 @@ package client.shop;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
@@ -62,23 +65,17 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
 
         _indeets.add(WidgetUtil.makeShim(10, 10));
-        _indeets.add(_priceLabel = new PriceLabel(
-            _listing.quote.getListedCurrency(), _listing.quote.getListedAmount()));
+        Currency listedCur = _listing.quote.getListedCurrency();
+        _indeets.add(_priceLabel = new PriceLabel(listedCur, _listing.quote.getListedAmount()));
 
-        _details.add(WidgetUtil.makeShim(10, 10));
-
+        // this will contain all of the buy-related interface and will be replaced with the
+        // "bought" interface when the buying is done
         _buyPanel = new FlowPanel();
         _buyPanel.setStyleName("Buy");
 
-        // TODO: Make a BuyButton that also displays the price
-        PushButton spendBars = MsoyUI.createButton(MsoyUI.SHORT_THICK, "Bars!", null);
-        new BuyCallback(spendBars, Currency.BARS);
-        if (DeploymentConfig.barsEnabled) {
-            _buyPanel.add(spendBars));
-        }
-
-        PushButton spendCoins = MsoyUI.createButton(MsoyUI.SHORT_THICK, _msgs.listingBuy(), null);
-        new BuyCallback(spendCoins, Currency.COINS);
+        // make the primary currency purchase button
+        PushButton buyListed = MsoyUI.createButton(MsoyUI.SHORT_THICK, _msgs.listingBuy(), null);
+        new BuyCallback(buyListed, listedCur);
 
         // if the item is remixable, also create a remix button
         if (!CShop.isGuest() && isRemixable()) {
@@ -86,13 +83,37 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 // TODO: Bar me
                 NaviUtil.onRemixCatalogItem(_item.getType(), _item.itemId, _listing.catalogId,
                                             _listing.quote.getCoins(), _listing.quote.getBars()));
-            _buyPanel.add(MsoyUI.createButtonPair(remix, spendCoins));
+            _buyPanel.add(MsoyUI.createButtonPair(remix, buyListed));
         } else {
-            _buyPanel.add(spendCoins);
+            _buyPanel.add(buyListed);
         }
 
+        if (DeploymentConfig.barsEnabled) {
+            // make a smaller interface for buying in the alternate currency
+            Currency altCur = (listedCur == Currency.COINS) ? Currency.BARS : Currency.COINS;
+            HorizontalPanel altRow = new HorizontalPanel();
+            altRow.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            String altCurName = _dmsgs.getString("currency" + altCur.toByte());
+            altRow.add(MsoyUI.createLabel(_msgs.listingAltTip(altCurName), null));
+            altRow.add(WidgetUtil.makeShim(5, 5));
+            altRow.add(MsoyUI.createInlineImage(altCur.getSmallIcon()));
+            altRow.add(MsoyUI.createLabel(altCur.format(_listing.quote.getAmount(altCur)), null));
+            altRow.add(WidgetUtil.makeShim(5, 5));
+            Button buyAlt = new Button(_msgs.listingBuyAlt());
+            altRow.add(buyAlt);
+            new BuyCallback(buyAlt, altCur);
+            _buyPanel.add(WidgetUtil.makeShim(5, 5));
+            _buyPanel.add(altRow);
+
+            // and create a link for going to the billing system to buy bars
+            _buyPanel.add(WidgetUtil.makeShim(5, 5));
+            _buyPanel.add(MsoyUI.createHTML(
+                              _msgs.listingBuyBars(DeploymentConfig.billingURL), null));
+        }
+
+        _details.add(WidgetUtil.makeShim(10, 10));
         _details.add(_buyPanel);
-        
+
         // create a table to display miscellaneous info and admin/owner actions
         SmartTable info = new SmartTable("Info", 0, 5);
         info.setText(0, 0, _msgs.listingListed(), 1, "What");
@@ -143,18 +164,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         _details.add(WidgetUtil.makeShim(10, 10));
         _details.add(info);
-
-        // Create a link to the billing page.
-        if (DeploymentConfig.barsEnabled) {
-            _details.add(WidgetUtil.makeShim(10, 10));
-            PushButton buyBars = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.buyBars(),
-                new ClickListener() {
-                public void onClick (Widget sender) {
-                    openBillingPage();
-                }
-            });
-            _details.add(buyBars);
-        }
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId), true);
@@ -217,7 +226,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected class BuyCallback extends ClickCallback<Item>
     {
-        public BuyCallback (PushButton button, Currency currency)
+        public BuyCallback (SourcesClickEvents button, Currency currency)
         {
             super(button);
             _currency = currency;
@@ -249,16 +258,13 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 CostUpdatedException cue = (CostUpdatedException) cause;
                 _listing.quote = cue.getQuote();
                 _priceLabel.updatePrice(_listing.quote.getListedCurrency(),
-                    _listing.quote.getListedAmount());
+                                        _listing.quote.getListedAmount());
+                // TODO: update the alt label as well
             }
         }
 
         protected Currency _currency;
     };
-    
-    protected native void openBillingPage() /*-{
-        $wnd.open(@com.threerings.msoy.data.all.DeploymentConfig::billingURL, "_blank");
-    }-*/;
 
     protected CatalogModels _models;
     protected CatalogListing _listing;
