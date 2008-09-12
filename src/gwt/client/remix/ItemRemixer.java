@@ -143,7 +143,8 @@ public class ItemRemixer extends FlexTable
 
         if (_catalogId != 0) {
             _catalogsvc.purchaseItem(
-                _item.getType(), _catalogId, _flowCost, _goldCost, new AsyncCallback<Item>() {
+                // TODO: This doesn't work at all for bars until we refactor this whole class
+                _item.getType(), _catalogId, Currency.COINS, _flowCost, new AsyncCallback<Item>() {
                 public void onSuccess (Item result) {
                     _item = result;
                     _catalogId = 0;

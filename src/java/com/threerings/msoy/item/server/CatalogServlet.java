@@ -137,8 +137,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public Item purchaseItem (final byte itemType, final int catalogId, final int authedFlowCost,
-        final int authedBarsCost)
+    public Item purchaseItem (final byte itemType, final int catalogId, final Currency currency,
+        final int cost)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -168,7 +168,7 @@ public class CatalogServlet extends MsoyServiceServlet
             result = _moneyLogic.buyItem(
                 mrec, new CatalogIdent(itemType, catalogId),
                 listing.item.creatorId, listing.item.name,
-                listing.currency, listing.cost, Currency.COINS, authedFlowCost);
+                listing.currency, listing.cost, currency, cost);
         } catch (final NotEnoughMoneyException neme) {
             throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
         } catch (final NotSecuredException nse) {

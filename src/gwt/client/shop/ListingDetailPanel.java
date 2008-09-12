@@ -79,7 +79,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 } else {
                     // TODO: Bar me
                     _catalogsvc.purchaseItem(_item.getType(), _listing.catalogId,
-                                             _listing.quote.getCoins(), _listing.quote.getBars(), this);
+                                             _listing.quote.getListedCurrency(),
+                                             _listing.quote.getListedAmount(), this);
                 }
                 return true;
             }
