@@ -59,7 +59,7 @@ public class MsoyGamePanel extends WhirledGamePanel
 
         const cfg :MsoyGameConfig = ctrl.getPlaceConfig() as MsoyGameConfig;
         if (cfg.groupId != Game.NO_GROUP) {
-            _goBtn = new CommandButton(Msgs.GAME.get("b.gameWhirled"),
+            _goBtn = new CommandButton(Msgs.GAME.get("b.game_whirled"),
                 MsoyController.GO_GROUP_HOME, cfg.groupId);
         } else {
             _goBtn = new CommandButton(Msgs.GENERAL.get("b.back"), MsoyController.MOVE_BACK);
