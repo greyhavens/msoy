@@ -30,7 +30,7 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#purchaseItem}
      */
-    public void purchaseItem (byte itemType, int catalogId, Currency currency, int cost,
+    public void purchaseItem (byte itemType, int catalogId, Currency currency, int authedCost,
                               AsyncCallback<Item> callback);
 
     /**
