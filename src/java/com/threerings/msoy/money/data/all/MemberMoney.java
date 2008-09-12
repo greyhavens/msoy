@@ -8,8 +8,8 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 /**
  * The amount of money a member has in their coins, bars, and bling accounts.
  *
- * @Immutable
  * @author Kyle Sampson <kyle@threerings.net>
+ * @author Ray Greenwell <ray@threerings.net>
  */
 public class MemberMoney implements IsSerializable
 {
@@ -17,8 +17,8 @@ public class MemberMoney implements IsSerializable
     public int coins;
     public int bars;
     public int bling;
-    public long accBars;
     public long accCoins;
+    public long accBars;
     public long accBling;
 
     /** Suitable for unserialization. */
@@ -42,5 +42,31 @@ public class MemberMoney implements IsSerializable
         this.accCoins = accCoins;
         this.accBars = accBars;
         this.accBling = accBling;
+    }
+
+    /**
+     * Get the current balance for the specified currency.
+     * @return one of {@link #coins}, {@link #bars}, or {@link #bling}.
+     */
+    public int getBalance (Currency currency)
+    {
+        switch (currency) {
+        case COINS: default: return coins;
+        case BARS: return bars;
+        case BLING: return bling;
+        }
+    }
+
+    /**
+     * Get the total accumulated value that has been added to this member's balance over the years.
+     * @return one of {@link #accCoins}, {@link #accBars}, or {@link #accBling}.
+     */
+    public long getAccumulated (Currency currency)
+    {
+        switch (currency) {
+        case COINS: default: return accCoins;
+        case BARS: return accBars;
+        case BLING: return accBling;
+        }
     }
 }
