@@ -231,20 +231,22 @@ public class MsoyGamePanel extends WhirledGamePanel
     /**
      * Populates any game-specific entries on the client's "go" menu.
      */
-    protected function populateGoMenu (menuData :Array) :void
+    protected function populateGoMenu () :Array
     {
         const cfg :MsoyGameConfig = _ctrl.getPlaceConfig() as MsoyGameConfig;
 
-        menuData.push({ type: "separator" });
+        const menuData :Array = [];
         menuData.push({ label: Msgs.GAME.get("b.allGames"), command: MsoyController.VIEW_GAMES });
         menuData.push({ label: Msgs.GAME.get("b.backToLobby"),
             callback: _gctx.backToWhirled, arg: true });
 //        menuData.push({ label: Msgs.GAME.get("b.shop") /* TODO */ });
         if (cfg.groupId != Game.NO_GROUP) {
-            menuData.push({ label: Msgs.GAME.get("b.gameWhirled"),
+            menuData.push({ label: Msgs.GENERAL.get("b.group_page"),
+                command: MsoyController.VIEW_GROUP, arg: cfg.groupId });
+            menuData.push({ label: Msgs.GAME.get("b.game_whirled"),
                 command: MsoyController.GO_GROUP_HOME, arg: cfg.groupId });
         }
-        menuData.push({ type: "separator" });
+        return menuData;
     }
 
     override protected function displayGameOver (gameOver :Boolean) :void

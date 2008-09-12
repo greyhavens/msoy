@@ -132,9 +132,6 @@ public class WorldController extends MsoyController
     /** Command to visit a member's current location */
     public static const VISIT_MEMBER :String = "VisitMember";
 
-    /** Command to view a groups's page, arg is [ groupId ] */
-    public static const VIEW_GROUP :String = "ViewGroup";
-
     /** Command to view the "my avatars" page. */
     public static const VIEW_MY_AVATARS :String= "ViewMyAvatars";
 

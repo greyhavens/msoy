@@ -124,6 +124,9 @@ public class MsoyController extends Controller
     /** Command to go to a running game (gameId + placeOid). */
     public static const GO_GAME :String = "GoGame";
 
+    /** Command to view a groups's page, arg is [ groupId ] */
+    public static const VIEW_GROUP :String = "ViewGroup";
+
     /** Command to go to a group's home scene. */
     public static const GO_GROUP_HOME :String = "GoGroupHome";
 
@@ -217,8 +220,8 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Add a function for populating the "go" menu.
-     * signature: function (menuData :Array) :void;
+     * Add a function for populating the "go" menu. Adds the returned menu items.
+     * signature: function () :Array;
      */
     public function addGoMenuProvider (fn :Function) :void
     {
@@ -270,7 +273,17 @@ public class MsoyController extends Controller
         }
 
         var menuData :Array = [];
+        // add standard items
         populateGoMenu(menuData);
+
+        // then, populate the menu with custom stuff from providers
+        for each (var fn :Function in _goMenuProviders) {
+            var array :Array = fn();
+            if (array != null && array.length > 0) {
+                menuData.push({ type: "separator" });
+                menuData.push.apply(null, array);
+            }
+        }
 
         var r :Rectangle = trigger.getBounds(trigger.stage);
         _goMenu = CommandMenu.createMenu(menuData, _topPanel);
@@ -678,11 +691,6 @@ public class MsoyController extends Controller
         // always put "back" first
         menuData.push({ label: Msgs.GENERAL.get("b.back"), callback: handleMoveBack,
             enabled: canMoveBack() });
-
-        // then, populate the menu with any providers
-        for each (var fn :Function in _goMenuProviders) {
-            fn(menuData);
-        }
     }
 
     /** Provides access to client-side directors and services. */

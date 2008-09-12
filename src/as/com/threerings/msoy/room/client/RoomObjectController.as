@@ -1203,16 +1203,20 @@ public class RoomObjectController extends RoomController
     /**
      * Populates any room-specific entries on the client's "go" menu.
      */
-    protected function populateGoMenu (menuData :Array) :void
+    protected function populateGoMenu () :Array
     {
         const model :MsoySceneModel = _scene.getSceneModel() as MsoySceneModel;
 
-        if (model.gameId != 0) {
-            menuData.push({ type: "separator" });
-            menuData.push({ label: Msgs.GENERAL.get("b.group_game"),
-                command: WorldController.JOIN_GAME_LOBBY, arg: model.gameId });
-            menuData.push({ type: "separator" });
+        const stuff :Array = [];
+        if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
+            stuff.push({ label: Msgs.GENERAL.get("b.group_page"),
+                command: MsoyController.VIEW_GROUP, arg: model.ownerId });
         }
+        if (model.gameId != 0) {
+            stuff.push({ label: Msgs.GENERAL.get("b.group_game"),
+                command: WorldController.JOIN_GAME_LOBBY, arg: model.gameId });
+        }
+        return stuff;
     }
     
     /** A casted version of _roomView. */
