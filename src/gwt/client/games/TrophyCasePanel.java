@@ -13,7 +13,7 @@ import com.threerings.msoy.game.gwt.TrophyCase;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
-//import client.trophy.TrophyGrid;
+import client.trophy.TrophyGrid;
 import client.ui.TongueBox;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -42,29 +42,29 @@ public class TrophyCasePanel extends VerticalPanel
 
     protected void setTrophyCase (TrophyCase tcase)
     {
-//        if (tcase == null) {
-//            setHeader(_msgs.noSuchPlayer());
-//            return;
-//        }
-//
-//        CShell.frame.setTitle(_msgs.caseTitle(tcase.owner.toString()));
-//        if (tcase.shelves.length == 0) {
-//            setHeader((CShell.getMemberId() == tcase.owner.getMemberId()) ?
-//                     _msgs.caseEmptyMe() : _msgs.caseEmpty());
-//            return;
-//        }
-//
-//        setHeader(_msgs.caseBlurb());
-//        for (int ii = 0; ii < tcase.shelves.length; ii++) {
-//            TrophyCase.Shelf shelf = tcase.shelves[ii];
-//            TongueBox box = new TongueBox(shelf.name, new TrophyGrid(shelf.trophies));
-//            int ownerId = tcase.owner.getMemberId();
-//            if (!CShell.isGuest() && CShell.getMemberId() != ownerId) {
-//                box.setFooterLink(_msgs.caseCompare(),
-//                                  Pages.GAMES, Args.compose("ct", ""+shelf.gameId, ""+ownerId));
-//            }
-//            add(box);
-//        }
+        if (tcase == null) {
+            setHeader(_msgs.noSuchPlayer());
+            return;
+        }
+
+        CShell.frame.setTitle(_msgs.caseTitle(tcase.owner.toString()));
+        if (tcase.shelves.length == 0) {
+            setHeader((CShell.getMemberId() == tcase.owner.getMemberId()) ?
+                     _msgs.caseEmptyMe() : _msgs.caseEmpty());
+            return;
+        }
+
+        setHeader(_msgs.caseBlurb());
+        for (int ii = 0; ii < tcase.shelves.length; ii++) {
+            TrophyCase.Shelf shelf = tcase.shelves[ii];
+            TongueBox box = new TongueBox(shelf.name, new TrophyGrid(shelf.trophies));
+            int ownerId = tcase.owner.getMemberId();
+            if (!CShell.isGuest() && CShell.getMemberId() != ownerId) {
+                box.setFooterLink(_msgs.caseCompare(),
+                                  Pages.GAMES, Args.compose("ct", ""+shelf.gameId, ""+ownerId));
+            }
+            add(box);
+        }
     }
 
     protected void setHeader (String title)
