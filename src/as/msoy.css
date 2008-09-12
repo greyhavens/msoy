@@ -494,7 +494,7 @@ TabNavigator, TabBar {
   backgroundAlphaOpen: .85;
 }
 
-.coinLabel {
+.currencyLabel {
   color: white;
   fontSize: 12;
   fontWeight: "bold";
