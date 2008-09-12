@@ -121,6 +121,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         _ctx.registerMigration(getCatalogClass(), new EntityMigration.Drop(11, "goldCost"));
         _ctx.registerMigration(getCatalogClass(),
             new EntityMigration.Rename(11, "flowCost", CatalogRecord.COST));
+        _ctx.registerMigration(getCatalogClass(),
+            new EntityMigration.Add(11, CatalogRecord.CURRENCY, "0"));
 
         // TEMP added 2008.05.15
         _ctx.registerMigration(getItemClass(), new EntityMigration(17000) {
