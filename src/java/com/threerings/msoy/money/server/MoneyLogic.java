@@ -62,12 +62,12 @@ public class MoneyLogic
 {
     @Inject
     public MoneyLogic (
-        MoneyRepository repo, EscrowCache escrowCache, UserActionRepository userActionRepo,
+        MoneyRepository repo, PriceQuoteCache priceCache, UserActionRepository userActionRepo,
         MsoyEventLogger eventLog, MessageConnection conn, ShutdownManager sm,
         @MainInvoker Invoker invoker, MoneyNodeActions nodeActions)
     {
         _repo = repo;
-        _escrowCache = escrowCache;
+        _priceCache = priceCache;
         _userActionRepo = userActionRepo;
         _eventLog = eventLog;
         _expirer = new MoneyTransactionExpirer(repo, invoker, sm);
@@ -199,7 +199,7 @@ public class MoneyLogic
 
         // Get the secured prices for the item.
         PriceKey key = new PriceKey(buyerId, item);
-        PriceQuote quote = _escrowCache.getEscrow(key);
+        PriceQuote quote = _priceCache.getQuote(key);
         if (quote == null || quote.getAmount(buyCurrency) > authedAmount) {
             // In the unlikely scenarios that there was either no secured price (expired) or
             // they provided an out-of-date authed amount, we go ahead and secure a new price
@@ -334,7 +334,7 @@ public class MoneyLogic
         }
 
         // The item no longer needs to be in the cache.
-        _escrowCache.removeEscrow(key);
+        _priceCache.removeQuote(key);
         // Inform the exchange that we've actually made the exchange
         if (!magicFreeItem) {
             _exchange.processPurchase(quote, buyCurrency);
@@ -474,7 +474,7 @@ public class MoneyLogic
         final PriceQuote quote = _exchange.secureQuote(listedCurrency, listedAmount);
         if (!MemberName.isGuest(buyerId)) {
             final PriceKey key = new PriceKey(buyerId, item);
-            _escrowCache.addEscrow(key, quote);
+            _priceCache.addQuote(key, quote);
         }
         return quote;
     }
@@ -550,7 +550,7 @@ public class MoneyLogic
     protected final MsoyEventLogger _eventLog;
     protected final UserActionRepository _userActionRepo;
     protected final MoneyRepository _repo;
-    protected final EscrowCache _escrowCache;
+    protected final PriceQuoteCache _priceCache;
     protected final MoneyMessageReceiver _msgReceiver;
     protected final MoneyNodeActions _nodeActions;
 }

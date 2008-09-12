@@ -22,14 +22,14 @@ import com.threerings.msoy.money.data.all.PriceQuote;
  * @author Ray Greenwell <ray@threerings.net>
  */
 @Singleton
-public class EscrowCache
+public class PriceQuoteCache
     implements ShutdownManager.Shutdowner
 {
     /**
      * Creates a cache with the given maximum number of escrows, whose entries will expire
      * after some amount of time.
      */
-    @Inject public EscrowCache (ShutdownManager shutmgr)
+    @Inject public PriceQuoteCache (ShutdownManager shutmgr)
     {
         Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
         if (cache == null) {
@@ -51,7 +51,7 @@ public class EscrowCache
      * for this PriceKey will return the quote data, unless the cache is full and the
      * quote is dropped to make room, or the quote expires.
      */
-    public void addEscrow (final PriceKey key, final PriceQuote quote)
+    public void addQuote (final PriceKey key, final PriceQuote quote)
     {
         _cache.put(new Element(key, quote));
     }
@@ -63,7 +63,7 @@ public class EscrowCache
      *
      * @return The secured quote, or null.
      */
-    public PriceQuote getEscrow (final PriceKey key)
+    public PriceQuote getQuote (final PriceKey key)
         throws NotSecuredException
     {
         final Element e = _cache.get(key);
@@ -76,7 +76,7 @@ public class EscrowCache
     /**
      * Removes the quote, so it is no longer reserved. Does nothing if the key is not present.
      */
-    public void removeEscrow (final PriceKey key)
+    public void removeQuote (final PriceKey key)
     {
         _cache.remove(key);
     }
