@@ -35,6 +35,7 @@ import client.ui.MsoyUI;
 import client.ui.PrettyTextPanel;
 import client.ui.PromptPopup;
 import client.ui.ThumbBox;
+import client.util.ClickCallback;
 import client.util.FeaturedPlaceUtil;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -167,31 +168,44 @@ public class WhirledDetailPanel extends FlowPanel
                 Pages.GAMES, Args.compose("d", "" + _detail.group.gameId))));
         }
 
-        // join this whirled
         if (_detail.myRank == GroupMembership.RANK_NON_MEMBER) {
+            // join this whirled
             if (Group.canJoin(_group.policy) && !CShell.isGuest()) {
-                actions.add(MsoyUI.createActionLabel(
-                    _msgs.detailJoin(),
-                    new PromptPopup(_msgs.detailJoinPrompt(), joinGroup()).setContext(_msgs.detailJoinContext(_group.name))));
+                Label join = MsoyUI.createLabel(_msgs.detailJoin(), null);
+                new ClickCallback<Void>(join, _msgs.detailJoinPrompt()) {
+                    public boolean callService () {
+                        _groupsvc.joinGroup(_group.groupId, this);
+                        return true;
+                    }
+                    public boolean gotResult (Void result) {
+                        loadGroup(_group.groupId);
+                        return true;
+                    }
+                    protected String getPromptContext () {
+                        return _msgs.detailJoinContext(_group.name);
+                    }
+                };
+                actions.add(join);
             }
-        }
-        // leave this whirled & invite others to it
-        else {
+
+        } else {
+            // leave this whirled
             actions.add(MsoyUI.createActionLabel(_msgs.detailLeave(), new PromptPopup(
                 _msgs.detailLeavePrompt(_group.name), removeMember(CShell.getMemberId()))));
         }
+
+        // invite others to it
         if (Group.canInvite(detail.group.policy, detail.myRank)) {
             String args = Args.compose("w", "g", "" + _detail.group.groupId);
-            actions.add(MsoyUI.createActionLabel(_msgs.detailInvite(), Link.createListener(
-                Pages.MAIL, args)));
+            actions.add(MsoyUI.createActionLabel(
+                            _msgs.detailInvite(), Link.createListener(Pages.MAIL, args)));
         }
 
         // shop
         if (_extras.catalogTag != null && !_extras.catalogTag.equals("")) {
-            String args = ShopUtil.composeArgs(_extras.catalogItemType, _extras.catalogTag, null,
-                0);
-            actions.add(MsoyUI.createActionLabel(_msgs.detailShop(), Link.createListener(
-                Pages.SHOP, args)));
+            String args = ShopUtil.composeArgs(_extras.catalogItemType, _extras.catalogTag, null, 0);
+            actions.add(MsoyUI.createActionLabel(
+                            _msgs.detailShop(), Link.createListener(Pages.SHOP, args)));
         }
 
         // read charter
