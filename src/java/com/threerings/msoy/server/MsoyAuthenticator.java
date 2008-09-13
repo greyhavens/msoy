@@ -39,6 +39,7 @@ import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.server.persist.AffiliateMapRepository;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -526,7 +527,7 @@ public class MsoyAuthenticator extends Authenticator
             mrec.affiliateMemberId = invite.inviterId;
         }
         if (referral != null) {
-            int affiliateId = 0; // TODO: translate referral.affiliate into a memberId
+            int affiliateId = _affMapRepo.getAffiliateMemberId(referral.affiliate);
             if (affiliateId != 0) {
                 if (mrec.affiliateMemberId != 0) {
                     log.warning("New member has both an affiliate referrer and an inviter. " +
@@ -613,6 +614,7 @@ public class MsoyAuthenticator extends Authenticator
     @Inject protected ServerMessages _serverMsgs;
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected AffiliateMapRepository _affMapRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected MsoyEventLogger _eventLog;
     @Inject protected MoneyLogic _moneyLogic;
