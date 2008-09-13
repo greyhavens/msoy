@@ -251,7 +251,7 @@ public class MoneyLogic
 
         // TODO: the affiliate will come from the database. It's associated with the buyer.
         // It is a memberId. For now, it is 0.
-        int affiliateId = 0; // buyerRec.affiliateMemberId;
+        int affiliateId = buyerRec.affiliateMemberId;
         MemberAccountRecord affiliate;
         if (affiliateId == 0 || magicFreeItem) {
             affiliate = null;
@@ -309,8 +309,7 @@ public class MoneyLogic
         } else {
             affiliateTrans = affiliate.payout(
                 TransactionType.AFFILIATE_PAYOUT, RuntimeConfig.server.affiliatePercentage, quote,
-                MessageBundle.tcompose("m.itemAffiliate",
-                    description, item.type, item.catalogId),
+                MessageBundle.tcompose("m.item_affiliate", buyerRec.name, buyerRec.memberId),
                 item, buyerTrans.id);
             _repo.addTransaction(affiliateTrans);
 
