@@ -40,12 +40,12 @@ public class MemberInviteStatusRecord extends PersistentRecord
     public static final ColumnExp NAME_C =
         new ColumnExp(MemberInviteStatusRecord.class, NAME);
 
-    /** The column identifier for the {@link #invitingFriendId} field. */
-    public static final String INVITING_FRIEND_ID = "invitingFriendId";
+    /** The column identifier for the {@link #affiliateMemberId} field. */
+    public static final String AFFILIATE_MEMBER_ID = "affiliateMemberId";
 
-    /** The qualified column identifier for the {@link #invitingFriendId} field. */
-    public static final ColumnExp INVITING_FRIEND_ID_C =
-        new ColumnExp(MemberInviteStatusRecord.class, INVITING_FRIEND_ID);
+    /** The qualified column identifier for the {@link #affiliateMemberId} field. */
+    public static final ColumnExp AFFILIATE_MEMBER_ID_C =
+        new ColumnExp(MemberInviteStatusRecord.class, AFFILIATE_MEMBER_ID);
 
     /** The column identifier for the {@link #invitesGranted} field. */
     public static final String INVITES_GRANTED = "invitesGranted";
