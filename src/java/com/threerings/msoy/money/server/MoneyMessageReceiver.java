@@ -11,6 +11,8 @@ import com.threerings.presents.server.ShutdownManager.Shutdowner;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.server.ServerConfig;
+import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.samskivert.util.Invoker;
 import com.samskivert.util.Logger;
@@ -37,9 +39,10 @@ public class MoneyMessageReceiver
      * @param logic MoneyLogic implementation to call.
      */
     public MoneyMessageReceiver (final MessageConnection conn, final MoneyLogic logic, 
-        final ShutdownManager sm, final Invoker invoker)
+        final MemberRepository memberRepo, final ShutdownManager sm, final Invoker invoker)
     {
         _conn = conn;
+        _memberRepo = memberRepo;
         _logic = logic;
         _invoker = invoker;
         sm.registerShutdowner(this);
@@ -59,7 +62,8 @@ public class MoneyMessageReceiver
                     public boolean invoke ()
                     {
                         final BarsBoughtMessage bbm = new BarsBoughtMessage(message);
-                        _logic.buyBars(bbm.memberId, bbm.numBars, bbm.message);
+                        final MemberRecord member = _memberRepo.loadMember(bbm.accountName);
+                        _logic.buyBars(member.memberId, bbm.numBars, bbm.message);
                         return false;
                     }
                 });
@@ -136,16 +140,18 @@ public class MoneyMessageReceiver
      */
     protected static final class BarsBoughtMessage
     {
-        public final int memberId;
+        public final String accountName;
         public final int numBars;
         public final String message;
         
         public BarsBoughtMessage (final byte[] bytes)
         {
             final ByteBuffer buf = ByteBuffer.wrap(bytes);
-            memberId = buf.getInt();
+            byte[] msgBuf = new byte[buf.getInt()];
+            buf.get(msgBuf);
+            accountName = new String(msgBuf);
             numBars = buf.getInt();
-            final byte[] msgBuf = new byte[buf.getInt()];
+            msgBuf = new byte[buf.getInt()];
             buf.get(msgBuf);
             message = new String(msgBuf);
         }
@@ -153,7 +159,7 @@ public class MoneyMessageReceiver
         @Override
         public String toString ()
         {
-            return "memberId: " + memberId +
+            return "accountName: " + accountName +
                 ", numBars: " + numBars +
                 ", message: " + message;
         }
@@ -163,6 +169,7 @@ public class MoneyMessageReceiver
     
     protected final MessageConnection _conn;
     protected final MoneyLogic _logic;
+    protected final MemberRepository _memberRepo;
     protected final Invoker _invoker;
     protected ConnectedListener _barsBoughtListener;
     protected ConnectedListener _getBarCountListener;

@@ -28,6 +28,7 @@ import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.UserActionRepository;
 import com.threerings.msoy.server.util.Retry;
 
@@ -63,15 +64,15 @@ public class MoneyLogic
     @Inject
     public MoneyLogic (
         MoneyRepository repo, PriceQuoteCache priceCache, UserActionRepository userActionRepo,
-        MsoyEventLogger eventLog, MessageConnection conn, ShutdownManager sm,
-        @MainInvoker Invoker invoker, MoneyNodeActions nodeActions)
+        MsoyEventLogger eventLog, MessageConnection conn, MemberRepository memberRepo, 
+        ShutdownManager sm, @MainInvoker Invoker invoker, MoneyNodeActions nodeActions)
     {
         _repo = repo;
         _priceCache = priceCache;
         _userActionRepo = userActionRepo;
         _eventLog = eventLog;
         _expirer = new MoneyTransactionExpirer(repo, invoker, sm);
-        _msgReceiver = new MoneyMessageReceiver(conn, this, sm, invoker);
+        _msgReceiver = new MoneyMessageReceiver(conn, this, memberRepo, sm, invoker);
         _nodeActions = nodeActions;
     }
     
