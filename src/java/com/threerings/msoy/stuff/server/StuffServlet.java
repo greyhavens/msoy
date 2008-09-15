@@ -182,11 +182,9 @@ public class StuffServlet extends MsoyServiceServlet
         List<Item> items = Lists.newArrayList();
         for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId)) {
             items.add(record.toItem());
-            cmap.put(record.itemId, record.ownerId);
         }
         for (ItemRecord record : repo.loadClonedItems(memrec.memberId, suiteId)) {
             items.add(record.toItem());
-            cmap.put(record.itemId, record.ownerId);
         }
         Collections.sort(items);
 
