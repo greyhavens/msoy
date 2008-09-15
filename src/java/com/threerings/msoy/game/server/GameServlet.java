@@ -57,6 +57,8 @@ import com.threerings.msoy.game.gwt.PlayerRating;
 import com.threerings.msoy.game.gwt.TrophyCase;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
+import com.threerings.msoy.group.server.persist.GroupRecord;
+import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -97,8 +99,23 @@ public class GameServlet extends MsoyServiceServlet
             if (item != null) {
                 detail.sourceItem = (Game)item.toItem();
                 creatorId = item.creatorId;
+
+                int groupId = detail.sourceItem.groupId;
+                if (groupId != 0) {
+                    GroupRecord grec = _groupRepo.loadGroup(groupId);
+                    if (grec != null) {
+                        detail.homeSceneId = grec.homeSceneId;
+                    } else {
+                        log.warning("Game group not found", "gameId", gameId, "groupId", groupId);
+                    }
+                }
             }
         }
+        
+        if (detail.sourceItem == null) {
+            log.warning("Game has no source item", "gameId", gameId);
+        }
+        
         detail.instructions = _gameRepo.loadInstructions(gdr.gameId);
 
         if (gdr.listedItemId != 0) {
@@ -627,6 +644,7 @@ public class GameServlet extends MsoyServiceServlet
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected ProfileRepository _profileRepo;
     @Inject protected TrophySourceRepository _trophySourceRepo;
+    @Inject protected GroupRepository _groupRepo;
 
     /** Comparator for sorting {@link GameInfo}, by gameId. */
     protected static Comparator<GameInfo> SORT_BY_NEWEST = new Comparator<GameInfo>() {

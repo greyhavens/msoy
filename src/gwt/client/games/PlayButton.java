@@ -22,4 +22,10 @@ public class PlayButton extends PushButton
             Args.compose("game", "s", "" + gameId) : Args.compose("game", "l", "" + gameId);
         addClickListener(Link.createListener(Pages.WORLD, args));
     }
+
+    public PlayButton (int sceneId)
+    {
+        setStyleName("playButton");
+        addClickListener(Link.createListener(Pages.WORLD, "s" + sceneId));
+    }
 }

@@ -68,7 +68,7 @@ public class GameDetailPanel extends SmartTable
         // if we are referencing the listed item but it does not exist, switch to the development
         // (source) item which always exists, and which has a negative id.
         if (!Game.isDevelopmentVersion(gameId) && detail.listedItem == null) {
-            gameId = gameId * -1;
+            gameId = Game.getDevelopmentId(gameId);
         }
 
         // Note: the gameId may be the negative original gameId, but GameDetail's id is never
@@ -98,7 +98,19 @@ public class GameDetailPanel extends SmartTable
 
         FlowPanel play = new FlowPanel();
         play.setStyleName("playPanel");
-        Widget playbut = new PlayButton(gameId, detail.minPlayers, detail.maxPlayers);
+        Widget playbut;
+        if (detail.sourceItem != null && detail.sourceItem.isInWorld()) {
+            if (detail.homeSceneId == 0) {
+                // For a properly set up game, the sceneId should not be zero, but this can easily
+                // occur, so at least prevent sending the user to a bad lobby or showing an
+                // unclickable button.
+                playbut = MsoyUI.createLabel(_msgs.gdpNoWhirled(), null);
+            } else {
+                playbut = new PlayButton(detail.homeSceneId);
+            }
+        } else {
+            playbut = new PlayButton(gameId, detail.minPlayers, detail.maxPlayers);
+        }
         play.add(playbut);
 
         if (detail.playingNow > 0) {
