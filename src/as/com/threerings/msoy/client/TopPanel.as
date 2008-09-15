@@ -258,11 +258,11 @@ public class TopPanel extends Canvas
      */
     public function getPlaceViewBounds () :Rectangle
     {
-        var x :Number = _placeBox.getStyle("left");
-        var y :Number = _placeBox.getStyle("top");
-        var width :Number = _ctx.getWidth() - _placeBox.getStyle("right") - x;
-        var height :Number = _ctx.getHeight() - _placeBox.getStyle("bottom") - y;
-        return new Rectangle(x, y, width, height);
+        var left :Number = _placeBox.getStyle("left");
+        var top :Number = _placeBox.getStyle("top");
+        var width :Number = _ctx.getWidth() - _placeBox.getStyle("right") - left;
+        var height :Number = _ctx.getHeight() - _placeBox.getStyle("bottom") - top;
+        return new Rectangle(left, top, width, height);
     }
 
     /**
