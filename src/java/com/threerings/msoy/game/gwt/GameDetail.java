@@ -50,10 +50,6 @@ public class GameDetail
 
     /** Contains member rating and favorite information about the game. */
     public MemberItemInfo memberItemInfo = new MemberItemInfo();
-
-    /** The id of the scene that this game is attached to. This will be the home scene of the
-     * game's group (whirled). */
-    public int homeSceneId;
     
     /** The height of a game screenshot. */
     public static final int SHOT_HEIGHT = 125;

@@ -23,9 +23,9 @@ public class PlayButton extends PushButton
         addClickListener(Link.createListener(Pages.WORLD, args));
     }
 
-    public PlayButton (int sceneId)
+    public PlayButton (int groupId)
     {
         setStyleName("playButton");
-        addClickListener(Link.createListener(Pages.WORLD, "s" + sceneId));
+        addClickListener(Link.createListener(Pages.WORLD, "g" + groupId));
     }
 }

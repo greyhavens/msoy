@@ -70,13 +70,13 @@ public class GameDetailPanel extends SmartTable
         if (!Game.isDevelopmentVersion(gameId) && detail.listedItem == null) {
             gameId = Game.getDevelopmentId(gameId);
         }
+        Game game = detail.getGame();
 
         // Note: the gameId may be the negative original gameId, but GameDetail's id is never
         // negative to match
         _gameId = gameId;
-        CShell.frame.setTitle(detail.getGame().name);
+        CShell.frame.setTitle(game.name);
 
-        Game game = detail.getGame();
         VerticalPanel shot = new VerticalPanel();
         shot.setHorizontalAlignment(HasAlignment.ALIGN_CENTER);
         shot.add(new ThumbBox(game.getShotMedia(), GameDetail.SHOT_WIDTH,
@@ -99,14 +99,14 @@ public class GameDetailPanel extends SmartTable
         FlowPanel play = new FlowPanel();
         play.setStyleName("playPanel");
         Widget playbut;
-        if (detail.sourceItem != null && detail.sourceItem.isInWorld()) {
-            if (detail.homeSceneId == 0) {
+        if (game.isInWorld()) {
+            if (game.groupId == 0) {
                 // For a properly set up game, the sceneId should not be zero, but this can easily
                 // occur, so at least prevent sending the user to a bad lobby or showing an
                 // unclickable button.
                 playbut = MsoyUI.createLabel(_msgs.gdpNoWhirled(), null);
             } else {
-                playbut = new PlayButton(detail.homeSceneId);
+                playbut = new PlayButton(game.groupId);
             }
         } else {
             playbut = new PlayButton(gameId, detail.minPlayers, detail.maxPlayers);
