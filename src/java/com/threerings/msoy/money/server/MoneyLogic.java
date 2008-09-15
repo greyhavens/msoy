@@ -220,6 +220,7 @@ public class MoneyLogic
         // Get buyer account...
         MemberAccountRecord buyer = _repo.getAccountById(buyerId);
         if (buyer == null) {
+            // TODO: when does this happen?
             buyer = new MemberAccountRecord(buyerId);
         }
 
@@ -235,9 +236,13 @@ public class MoneyLogic
             magicFreeItem = false;
         }
 
-        // Get creator.
+        // see what kind of payouts we're going pay- null means don't load, don't care
+        CurrencyAmount creatorPayout = magicFreeItem ? null : computePayout(false, quote);
+        CurrencyAmount affiliatePayout = magicFreeItem ? null : computePayout(true, quote);
+
+        // Get creator, if applicable
         MemberAccountRecord creator;
-        if (magicFreeItem) {
+        if (creatorPayout == null) {
             creator = null;
 
         } else if (buyerId == creatorId) {
@@ -250,11 +255,10 @@ public class MoneyLogic
             }
         }
 
-        // TODO: the affiliate will come from the database. It's associated with the buyer.
-        // It is a memberId. For now, it is 0.
+        // load the buyer's affiliate
         int affiliateId = buyerRec.affiliateMemberId;
         MemberAccountRecord affiliate;
-        if (affiliateId == 0 || magicFreeItem) {
+        if (affiliatePayout == null || affiliateId == 0) {
             affiliate = null;
 
         } else if (affiliateId == buyerId) { // this would be weird, but let's handle it
@@ -285,12 +289,12 @@ public class MoneyLogic
 
         // add a transaction for the creator
         MoneyTransactionRecord creatorTrans;
-        if (creator == null) { // creator is null when magicFreeItem is true
+        if (creator == null) { // creator is null when creatorPayout is null
             creatorTrans = null;
 
         } else {
             creatorTrans = creator.payout(
-                TransactionType.CREATOR_PAYOUT, RuntimeConfig.server.creatorPercentage, quote,
+                TransactionType.CREATOR_PAYOUT, creatorPayout.currency, creatorPayout.amount,
                 MessageBundle.tcompose("m.item_sold",
                     description, item.type, item.catalogId),
                 item, buyerTrans.id);
@@ -304,12 +308,12 @@ public class MoneyLogic
 
         // add a transaction for the affiliate
         MoneyTransactionRecord affiliateTrans;
-        if (affiliate == null) { // may be null in normal cases, but also null if magicFreeItem
+        if (affiliate == null) { // no affiliate or no affiliatePayout
             affiliateTrans = null;
 
         } else {
             affiliateTrans = affiliate.payout(
-                TransactionType.AFFILIATE_PAYOUT, RuntimeConfig.server.affiliatePercentage, quote,
+                TransactionType.AFFILIATE_PAYOUT, affiliatePayout.currency, affiliatePayout.amount,
                 MessageBundle.tcompose("m.item_affiliate", buyerRec.name, buyerRec.memberId),
                 item, buyerTrans.id);
             _repo.addTransaction(affiliateTrans);
@@ -328,7 +332,8 @@ public class MoneyLogic
             _repo.saveAccount(creator);
             _nodeActions.moneyUpdated(creatorTrans);
         }
-        if ((affiliate != null) && (affiliateId != buyerId) && (affiliateId != creatorId)) {
+        if ((affiliate != null) && (affiliateTrans != null) &&
+                (affiliateId != buyerId) && (affiliateId != creatorId)) {
             _repo.saveAccount(affiliate);
             _nodeActions.moneyUpdated(affiliateTrans);
         }
@@ -342,7 +347,7 @@ public class MoneyLogic
 
         return new MoneyResult(buyer.getMemberMoney(),
             (creator == null) ? null : creator.getMemberMoney(),
-            (affiliate == null) ? null : affiliate.getMemberMoney(),
+            (affiliate == null || affiliateTrans == null) ? null : affiliate.getMemberMoney(),
             buyerTrans.toMoneyTransaction(),
             (creatorTrans == null) ? null : creatorTrans.toMoneyTransaction(),
             (affiliateTrans == null) ? null : affiliateTrans.toMoneyTransaction());
@@ -494,6 +499,37 @@ public class MoneyLogic
     protected static boolean isValid (CatalogIdent ident)
     {
         return (ident != null) && (ident.type != Item.NOT_A_TYPE) && (ident.catalogId != 0);
+    }
+
+    protected CurrencyAmount computePayout (boolean affiliate, PriceQuote quote)
+    {
+        Currency currency;
+        int amount;
+        float percentage = affiliate ? RuntimeConfig.server.affiliatePercentage
+                                     : RuntimeConfig.server.creatorPercentage;
+        switch (quote.getListedCurrency()) {
+        case COINS:
+            currency = Currency.COINS;
+            amount = (int) Math.floor(quote.getCoins() * percentage);
+            break;
+
+        case BARS:
+            currency = Currency.BLING;
+            // bars are equal to bling, but we actually track "centibling"
+            amount = (int) Math.floor(quote.getBars() * 100 * percentage);
+            break;
+
+        default:
+            throw new RuntimeException();
+        }
+
+        // for creators, we pay out "0" so that they get a sales report,
+        // but we never do that for affiliates
+        if ((amount == 0) && affiliate) {
+            return null;
+        }
+
+        return new CurrencyAmount(currency, amount);
     }
 
     protected void logInPanopticon (

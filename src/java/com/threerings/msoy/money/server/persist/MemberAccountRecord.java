@@ -276,28 +276,9 @@ public class MemberAccountRecord extends PersistentRecord
      * @return History record for the transaction.
      */
     public MoneyTransactionRecord payout (
-        TransactionType type, float percentage, PriceQuote quote,
+        TransactionType type, Currency payoutCurrency, int payoutAmount,
         String description, CatalogIdent item, int referenceTxId)
     {
-        Currency payoutCurrency;
-        int payoutAmount;
-        switch (quote.getListedCurrency()) {
-        case COINS:
-            payoutCurrency = Currency.COINS;
-            payoutAmount = (int) Math.floor(quote.getCoins() * percentage);
-            break;
-
-        case BARS:
-            payoutCurrency = Currency.BLING;
-            // bars == bling, but we actually track "centibling"...
-            payoutAmount = (int) Math.floor(quote.getBars() * 100 * percentage);
-            break;
-
-        default:
-            throw new RuntimeException();
-        }
-
-        // now, do the payout
         accumulate(payoutCurrency, payoutAmount);
         MoneyTransactionRecord trans = new MoneyTransactionRecord(
             memberId, type, payoutCurrency, payoutAmount, getAmount(payoutCurrency),
