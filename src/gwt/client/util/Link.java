@@ -49,6 +49,14 @@ public class Link
     }
 
     /**
+     * Returns link that displays the transaction history of a given member.
+     */
+    public static Widget transactionsView (String label, int memberId)
+    {
+        return create(label, Pages.ME, Args.compose("transactions", "1", ""+memberId));
+    }
+
+    /**
      * Returns link that navigates to the specified application page with the specified
      * arguments. A page should use this method to pass itself arguments.
      */

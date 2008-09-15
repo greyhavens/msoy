@@ -49,6 +49,7 @@ public class MemberInfoPanel extends SmartTable
 
         int row;
         setWidget(0, 0, Link.memberView(info.name), 2, "Name");
+        setWidget(1, 0, Link.transactionsView("Transaction history", info.name.getMemberId()));
 
         row = addText("Account name:", 1, "Label");
         setText(row, 1, info.accountName);
