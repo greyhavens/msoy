@@ -81,9 +81,10 @@ public class MoneyMessageReceiver
                     @Override
                     public boolean invoke ()
                     {
+                        final GetBarCountMessage gbcm = new GetBarCountMessage(message);
+                        final MemberRecord member = _memberRepo.loadMember(gbcm.accountName);
                         try {
-                            final MemberMoney money = _logic.getMoneyFor(
-                                new IntMessage(message).value);
+                            final MemberMoney money = _logic.getMoneyFor(member.memberId);
                             replier.reply(new IntMessage(money.bars));
                             return false;
                         } catch (final IOException ioe) {
@@ -133,6 +134,28 @@ public class MoneyMessageReceiver
             return _conn.listen(addr.getRoutingKey(), addr, listener);
         }
         return null;
+    }
+    
+    /**
+     * Message to retrieve the number of bars for a particular user.
+     */
+    protected static final class GetBarCountMessage
+    {
+        public final String accountName;
+        
+        public GetBarCountMessage (final byte[] bytes)
+        {
+            final ByteBuffer buf = ByteBuffer.wrap(bytes);
+            byte[] msgBuf = new byte[buf.getInt()];
+            buf.get(msgBuf);
+            accountName = new String(msgBuf);
+        }
+        
+        @Override
+        public String toString ()
+        {
+            return "accountName: " + accountName;
+        }
     }
 
     /**
