@@ -127,7 +127,7 @@ public class MoneyLogic
         _repo.saveAccount(account);
         _repo.addTransaction(history);
 
-        // TODO: creator and affiliate
+        // TODO: creator and affiliate ? ? ?
 
         final UserActionDetails info = logUserAction(memberId, 0, userAction, description, item);
         logInPanopticon(info, Currency.COINS, amount, account);
@@ -283,7 +283,7 @@ public class MoneyLogic
         _repo.addTransaction(buyerTrans);
 
         // log userAction and to panopticon for the buyer
-        UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID,
+        UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID, // TODO?
             UserAction.BOUGHT_ITEM, description, item);
         logInPanopticon(info, buyCurrency, buyerTrans.amount, buyer);
 
@@ -332,8 +332,7 @@ public class MoneyLogic
             _repo.saveAccount(creator);
             _nodeActions.moneyUpdated(creatorTrans);
         }
-        if ((affiliate != null) && (affiliateTrans != null) &&
-                (affiliateId != buyerId) && (affiliateId != creatorId)) {
+        if ((affiliate != null) && (affiliateId != buyerId) && (affiliateId != creatorId)) {
             _repo.saveAccount(affiliate);
             _nodeActions.moneyUpdated(affiliateTrans);
         }
@@ -347,7 +346,7 @@ public class MoneyLogic
 
         return new MoneyResult(buyer.getMemberMoney(),
             (creator == null) ? null : creator.getMemberMoney(),
-            (affiliate == null || affiliateTrans == null) ? null : affiliate.getMemberMoney(),
+            (affiliate == null) ? null : affiliate.getMemberMoney(),
             buyerTrans.toMoneyTransaction(),
             (creatorTrans == null) ? null : creatorTrans.toMoneyTransaction(),
             (affiliateTrans == null) ? null : affiliateTrans.toMoneyTransaction());
