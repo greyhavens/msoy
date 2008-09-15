@@ -39,8 +39,9 @@ public class MePage extends Page
             setContent(_msgs.titlePassportTest(), new PassportImageTestPanel());
 
         } else if (action.equals(TRANSACTIONS)) {
-            int memberId = args.get(1, CMe.getMemberId());
-            setContent(_msgs.transactionsTitle(), new TransactionsPanel(memberId));
+            int report = args.get(1, 1);
+            int memberId = args.get(2, CMe.getMemberId());
+            setContent(_msgs.transactionsTitle(), new TransactionsPanel(report, memberId));
 
         } else if (!CMe.isGuest()) {
             setContent(new MyWhirled());

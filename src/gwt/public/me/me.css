@@ -421,26 +421,27 @@
   color: #4a7595;
 }
 
-.Balance {
-  width: 100%;
+.transactions {
   padding: 15px;
-  background: white;
+}
+
+.Balance {
+  width: 650px;
 }
 
 .Balance .Transaction {
-  width: 100%;
+  width: 650px;
   border-bottom: 1px solid #dadada;
   border-left: 1px solid #a1ceec;
   border-right: 1px solid #a1ceec;
 }
 
 .Balance .Transaction .Time {
-  background: red;
+  width: 130px;
 }
 
 .Balance .Transaction .Description {
-  background: #ffcc00;
-  width: 100%;
+  width: 300px;
   border-left: 1px solid #a1ceec;
 }
 
@@ -448,7 +449,11 @@
 .Balance .Transaction .Credit {
   border-left: 1px solid #a1ceec;
   width: 50px;
-  background: green;
   text-align: center;
+}
+
+.Balance .ReportFilter {
+  width: 50px;
+  padding-right: 5px;
 }
 

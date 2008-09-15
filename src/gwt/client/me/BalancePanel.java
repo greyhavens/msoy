@@ -35,27 +35,22 @@ public class BalancePanel extends PagedGrid<MoneyTransaction>
 //        return true;
 //    }
 
-    @Override // from PagedGrid
-    protected void displayResults (int start, int count, List<MoneyTransaction> list)
-    {
-        super.displayResults(start, count, list);
-
-        SmartTable footer = new SmartTable("Footer", 0, 0);
-        footer.setWidth("100%");
-        footer.setHTML(0, 0, "&nbsp;", 1, "BottomLeft");
-        footer.setHTML(0, 1, "&nbsp;");
-        footer.setHTML(0, 2, "&nbsp;", 1, "BottomRight");
-        add(footer);
-    }
-
+    @Override
     public Widget createWidget (MoneyTransaction entry)
     {
         return new TransactionWidget(entry);
     }
 
+    @Override
     public String getEmptyMessage ()
     {
         return _msgs.transactionsNone();
+    }
+
+    @Override
+    protected boolean displayNavi (int items)
+    {
+        return true;
     }
 
     protected static class TransactionWidget extends HorizontalPanel
