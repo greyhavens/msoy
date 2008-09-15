@@ -595,7 +595,7 @@ public class ItemLogic
 
         // mass-lookup items from their respective repositories
         HashMap<ItemIdent, Item> items = Maps.newHashMap();
-        for (Tuple<ItemRepository<ItemRecord>, int[]> tup : lookupList) {
+        for (Tuple<ItemRepository<ItemRecord>, Collection<Integer>> tup : lookupList) {
             for (ItemRecord rec : tup.left.loadItems(tup.right)) {
                 Item item = rec.toItem();
                 items.put(item.getIdent(), item);
@@ -616,7 +616,7 @@ public class ItemLogic
      * difference repositories.
      */
     protected class LookupList
-        implements Iterable<Tuple<ItemRepository<ItemRecord>, int[]>>
+        implements Iterable<Tuple<ItemRepository<ItemRecord>, Collection<Integer>>>
     {
         /**
          * Add the specified item id to the list.
@@ -650,16 +650,16 @@ public class ItemLogic
         }
 
         // from Iterable
-        public Iterator<Tuple<ItemRepository<ItemRecord>, int[]>> iterator ()
+        public Iterator<Tuple<ItemRepository<ItemRecord>, Collection<Integer>>> iterator ()
         {
             final Iterator<LookupType> itr = _byType.values().iterator();
-            return new Iterator<Tuple<ItemRepository<ItemRecord>, int[]>>() {
+            return new Iterator<Tuple<ItemRepository<ItemRecord>, Collection<Integer>>>() {
                 public boolean hasNext () {
                     return itr.hasNext();
                 }
-                public Tuple<ItemRepository<ItemRecord>, int[]> next () {
+                public Tuple<ItemRepository<ItemRecord>, Collection<Integer>> next () {
                     LookupType lookup = itr.next();
-                    return new Tuple<ItemRepository<ItemRecord>, int[]>(
+                    return new Tuple<ItemRepository<ItemRecord>, Collection<Integer>>(
                         lookup.repo, lookup.getItemIds());
                 }
                 public void remove () {
@@ -668,16 +668,16 @@ public class ItemLogic
             };
         }
 
-        public Iterator<Tuple<Byte, int[]>> typeIterator ()
+        public Iterator<Tuple<Byte, Collection<Integer>>> typeIterator ()
         {
             final Iterator<LookupType> itr = _byType.values().iterator();
-            return new Iterator<Tuple<Byte, int[]>>() {
+            return new Iterator<Tuple<Byte, Collection<Integer>>>() {
                 public boolean hasNext () {
                     return itr.hasNext();
                 }
-                public Tuple<Byte, int[]> next () {
+                public Tuple<Byte, Collection<Integer>> next () {
                     LookupType lookup = itr.next();
-                    return new Tuple<Byte, int[]>(lookup.type, lookup.getItemIds());
+                    return new Tuple<Byte, Collection<Integer>>(lookup.type, lookup.getItemIds());
                 }
                 public void remove () {
                     throw new UnsupportedOperationException();
@@ -718,9 +718,9 @@ public class ItemLogic
             /**
              * Get all the item ids in this list.
              */
-            public int[] getItemIds ()
+            public Collection<Integer> getItemIds ()
             {
-                return _ids.toIntArray();
+                return _ids;
             }
 
             protected ArrayIntSet _ids = new ArrayIntSet();

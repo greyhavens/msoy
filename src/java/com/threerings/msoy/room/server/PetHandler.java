@@ -4,6 +4,7 @@
 package com.threerings.msoy.room.server;
 
 import java.util.List;
+import java.util.Collections;
 
 import com.google.inject.Inject;
 import com.samskivert.jdbc.WriteOnlyUnit;
@@ -290,7 +291,7 @@ public class PetHandler
         final int itemId = _petobj.pet.itemId;
         _invoker.postUnit(new WriteOnlyUnit("updatePetUsage(" + itemId + ")") {
             public void invokePersist () throws Exception {
-                _petRepo.markItemUsage(new int[] { itemId }, usageType, location);
+                _petRepo.markItemUsage(Collections.singleton(itemId), usageType, location);
             }
         });
     }

@@ -18,13 +18,17 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.ArrayUtil;
 import com.samskivert.util.HashIntMap;
+import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntSet;
 import com.samskivert.util.QuickSort;
@@ -40,6 +44,7 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
+import com.samskivert.jdbc.depot.clause.FieldOverride;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
@@ -83,13 +88,18 @@ import static com.threerings.msoy.Log.log;
 public abstract class ItemRepository<T extends ItemRecord>
     extends DepotRepository
 {
-    @Computed
-    @Entity
+    @Entity @Computed
     public static class RatingAverageRecord extends PersistentRecord {
         @Computed(fieldDefinition="count(*)")
         public int count;
         @Computed(fieldDefinition="sum(" + RatingRecord.RATING + ")")
         public int sum;
+    }
+
+    @Entity @Computed
+    public static class OwnerIdRecord extends PersistentRecord {
+        public int itemId;
+        public int ownerId;
     }
 
     /**
@@ -324,11 +334,10 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Loads the specified items. Omits missing items from results.
      */
-    public List<T> loadItems (int[] itemIds)
+    public List<T> loadItems (Collection<Integer> itemIds)
     {
-        Comparable<?>[] idArr = IntListUtil.box(itemIds);
-        List<T> items = resolveClones(loadAll(getCloneClass(), Arrays.asList(idArr)));
-        items.addAll(loadAll(getItemClass(), Arrays.asList(idArr)));
+        List<T> items = resolveClones(loadAll(getCloneClass(), getCloneIds(itemIds)));
+        items.addAll(loadAll(getItemClass(), getOriginalIds(itemIds)));
         return items;
     }
 
@@ -389,7 +398,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Mark the specified items as being used in the specified way.
      */
-    public void markItemUsage (int[] itemIds, byte usageType, int location)
+    public void markItemUsage (Collection<Integer> itemIds, byte usageType, int location)
     {
         Class<T> iclass = getItemClass();
         Class<CloneRecord> cclass = getCloneClass();
@@ -413,6 +422,38 @@ public abstract class ItemRepository<T extends ItemRecord>
                          ", location=" + location + "].");
             }
         }
+    }
+
+    /**
+     * Loads up the owner information for the supplied set of items. The ids may include original
+     * and clone records.
+     */
+    public IntIntMap loadOwnerIds (Collection<Integer> itemIds)
+    {
+        IntIntMap ownerIds = new IntIntMap();
+        Set<Integer> origIds = getOriginalIds(itemIds);
+        if (origIds.size() > 0) {
+            // we can't use findAll() here because we're doing dynamic FromOverride magic
+            for (OwnerIdRecord oidrec : findAll(
+                     OwnerIdRecord.class, new FromOverride(getItemClass()),
+                     new FieldOverride(ItemRecord.ITEM_ID, getItemColumn(ItemRecord.ITEM_ID)),
+                     new FieldOverride(ItemRecord.OWNER_ID, getItemColumn(ItemRecord.OWNER_ID)),
+                     new Where(new In(getItemColumn(ItemRecord.ITEM_ID), origIds)))) {
+                ownerIds.put(oidrec.itemId, oidrec.ownerId);
+            }
+        }
+        Set<Integer> cloneIds = getCloneIds(itemIds);
+        if (cloneIds.size() > 0) {
+            // we can't use findAll() here because we're doing dynamic FromOverride magic
+            for (OwnerIdRecord oidrec : findAll(
+                     OwnerIdRecord.class, new FromOverride(getCloneClass()),
+                     new FieldOverride(CloneRecord.ITEM_ID, getCloneColumn(CloneRecord.ITEM_ID)),
+                     new FieldOverride(CloneRecord.OWNER_ID, getCloneColumn(CloneRecord.OWNER_ID)),
+                     new Where(new In(getCloneColumn(CloneRecord.ITEM_ID), cloneIds)))) {
+                ownerIds.put(oidrec.itemId, oidrec.ownerId);
+            }
+        }
+        return ownerIds;
     }
 
     /**
@@ -1125,6 +1166,22 @@ public abstract class ItemRepository<T extends ItemRecord>
         orders.add(OrderBy.Order.DESC);
     }
 
+    /**
+     * Extracts the ids of original items from the supplied set of mixed ids.
+     */
+    protected Set<Integer> getOriginalIds (Collection<Integer> itemIds)
+    {
+        return Sets.newHashSet(Iterables.filter(itemIds, IS_ORIGINAL_ID));
+    }
+
+    /**
+     * Extracts the ids of cloned items from the supplied set of mixed ids.
+     */
+    protected Set<Integer> getCloneIds (Collection<Integer> itemIds)
+    {
+        return Sets.newHashSet(Iterables.filter(itemIds, IS_CLONE_ID));
+    }
+
     protected ColumnExp getItemColumn (String cname)
     {
         return new ColumnExp(getItemClass(), cname);
@@ -1223,6 +1280,20 @@ public abstract class ItemRepository<T extends ItemRecord>
         @SuppressWarnings("unchecked") Class<RatingRecord> cclazz = (Class<RatingRecord>)clazz;
         return cclazz;
     }
+
+    /** A predicate that returns true for original item ids. */
+    protected static final Predicate<Integer> IS_ORIGINAL_ID = new Predicate<Integer>() {
+        public boolean apply (Integer itemId) {
+            return itemId > 0;
+        }
+    };
+
+    /** A predicate that returns true for cloned item ids. */
+    protected static final Predicate<Integer> IS_CLONE_ID = new Predicate<Integer>() {
+        public boolean apply (Integer itemId) {
+            return itemId < 0;
+        }
+    };
 
     /** The byte type of our item. */
     protected byte _itemType;

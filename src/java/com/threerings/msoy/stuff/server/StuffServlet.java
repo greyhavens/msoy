@@ -13,6 +13,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.util.IntIntMap;
 import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.StatType;
@@ -178,15 +179,23 @@ public class StuffServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
+        IntIntMap cmap = new IntIntMap();
+
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         List<Item> items = Lists.newArrayList();
         for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId)) {
             items.add(record.toItem());
+            cmap.put(record.itemId, record.ownerId);
         }
         for (ItemRecord record : repo.loadClonedItems(memrec.memberId, suiteId)) {
             items.add(record.toItem());
+            cmap.put(record.itemId, record.ownerId);
         }
         Collections.sort(items);
+
+        log.info("Real map " + cmap);
+        log.info("Loaded map " + repo.loadOwnerIds(Lists.newArrayList(cmap.keys())));
+
         return items;
     }
 

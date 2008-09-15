@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.server;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -233,7 +234,7 @@ public class ItemManager
                 // create a list to hold the results
                 List<Item> items = Lists.newArrayList();
                 // mass-lookup items, a repo at a time
-                for (Tuple<ItemRepository<ItemRecord>, int[]> tup : list) {
+                for (Tuple<ItemRepository<ItemRecord>, Collection<Integer>> tup : list) {
                     for (ItemRecord rec : tup.left.loadItems(tup.right)) {
                         items.add(rec.toItem());
                     }
@@ -333,10 +334,10 @@ public class ItemManager
         _invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemUsage", lner) {
             public Object invokePersistResult () throws Exception {
                 if (oldItemId != 0) {
-                    repo.markItemUsage(new int[] { oldItemId }, Item.UNUSED, 0);
+                    repo.markItemUsage(Collections.singleton(oldItemId), Item.UNUSED, 0);
                 }
                 if (newItemId != 0) {
-                    repo.markItemUsage(new int[] { newItemId }, itemUseType, locationId);
+                    repo.markItemUsage(Collections.singleton(newItemId), itemUseType, locationId);
                 }
                 return null;
             }
@@ -477,10 +478,10 @@ public class ItemManager
 
         _invoker.postUnit(new RepositoryListenerUnit<Object>("updateItemsUsage", lner) {
             public Object invokePersistResult () throws Exception {
-                for (Tuple<ItemRepository<ItemRecord>, int[]> tup : unused) {
+                for (Tuple<ItemRepository<ItemRecord>, Collection<Integer>> tup : unused) {
                     tup.left.markItemUsage(tup.right, Item.UNUSED, 0);
                 }
-                for (Tuple<ItemRepository<ItemRecord>, int[]> tup : scened) {
+                for (Tuple<ItemRepository<ItemRecord>, Collection<Integer>> tup : scened) {
                     tup.left.markItemUsage(tup.right, Item.USED_AS_FURNITURE, sceneId);
                 }
                 return null;
