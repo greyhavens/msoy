@@ -119,23 +119,19 @@ public class GameDetailPanel extends SmartTable
         setWidget(1, 1, play, 1, "Play");
         getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_CENTER);
 
-        // add "Discussions" and "Shop" button if appropriate
+        // add "Discussions" (if appropriate) and "Shop" button
         Widget buttons = null;
         if (game.groupId > 0) {
             ClickListener onClick = Link.createListener(
                 Pages.WHIRLEDS, Args.compose("f", game.groupId));
             buttons = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.gdpDiscuss(), onClick);
         }
-        if (DeploymentConfig.devDeployment) {
-            ClickListener onClick = Link.createListener(Pages.SHOP, Args.compose("g", game.gameId));
-            Widget shop = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.gdpShop(), onClick);
-            buttons = (buttons == null) ? shop : MsoyUI.createButtonPair(buttons, shop);
-        }
-        if (buttons != null) {
-            setWidget(2, 0, buttons);
-            getFlexCellFormatter().setRowSpan(0, 0, 3);
-            getFlexCellFormatter().setRowSpan(1, 1, 2);
-        }
+        ClickListener onClick = Link.createListener(Pages.SHOP, Args.compose("g", game.gameId));
+        Widget shop = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _msgs.gdpShop(), onClick);
+        buttons = (buttons == null) ? shop : MsoyUI.createButtonPair(buttons, shop);
+        setWidget(2, 0, buttons);
+        getFlexCellFormatter().setRowSpan(0, 0, 3);
+        getFlexCellFormatter().setRowSpan(1, 1, 2);
 
         // note that they're playing the developer version if so
         if (Game.isDevelopmentVersion(gameId)) {
