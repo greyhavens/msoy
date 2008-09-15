@@ -101,7 +101,7 @@ public class GameDetailPanel extends SmartTable
         Widget playbut;
         if (game.isInWorld()) {
             if (game.groupId == 0) {
-                // For a properly set up game, the sceneId should not be zero, but this can easily
+                // For a properly set up game, the groupId should not be zero, but this can easily
                 // occur, so at least prevent sending the user to a bad lobby or showing an
                 // unclickable button.
                 playbut = MsoyUI.createLabel(_msgs.gdpNoWhirled(), null);
