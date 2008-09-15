@@ -44,7 +44,7 @@ import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
-import com.samskivert.jdbc.depot.clause.FieldOverride;
+import com.samskivert.jdbc.depot.clause.FieldDefinition;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
@@ -58,7 +58,6 @@ import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.expression.ValueExp;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
-import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
@@ -436,8 +435,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             // we can't use findAll() here because we're doing dynamic FromOverride magic
             for (OwnerIdRecord oidrec : findAll(
                      OwnerIdRecord.class, new FromOverride(getItemClass()),
-                     new FieldOverride(ItemRecord.ITEM_ID, getItemColumn(ItemRecord.ITEM_ID)),
-                     new FieldOverride(ItemRecord.OWNER_ID, getItemColumn(ItemRecord.OWNER_ID)),
+                     new FieldDefinition(ItemRecord.ITEM_ID, getItemColumn(ItemRecord.ITEM_ID)),
+                     new FieldDefinition(ItemRecord.OWNER_ID, getItemColumn(ItemRecord.OWNER_ID)),
                      new Where(new In(getItemColumn(ItemRecord.ITEM_ID), origIds)))) {
                 ownerIds.put(oidrec.itemId, oidrec.ownerId);
             }
@@ -447,8 +446,8 @@ public abstract class ItemRepository<T extends ItemRecord>
             // we can't use findAll() here because we're doing dynamic FromOverride magic
             for (OwnerIdRecord oidrec : findAll(
                      OwnerIdRecord.class, new FromOverride(getCloneClass()),
-                     new FieldOverride(CloneRecord.ITEM_ID, getCloneColumn(CloneRecord.ITEM_ID)),
-                     new FieldOverride(CloneRecord.OWNER_ID, getCloneColumn(CloneRecord.OWNER_ID)),
+                     new FieldDefinition(CloneRecord.ITEM_ID, getCloneColumn(CloneRecord.ITEM_ID)),
+                     new FieldDefinition(CloneRecord.OWNER_ID, getCloneColumn(CloneRecord.OWNER_ID)),
                      new Where(new In(getCloneColumn(CloneRecord.ITEM_ID), cloneIds)))) {
                 ownerIds.put(oidrec.itemId, oidrec.ownerId);
             }
@@ -1105,8 +1104,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         }
 
         if (minRating != null) {
-            whereBits.add(new Conditionals.GreaterThanEquals(
-                getItemColumn(ItemRecord.RATING), minRating));
+            whereBits.add(new GreaterThanEquals(getItemColumn(ItemRecord.RATING), minRating));
         }
 
         if (suiteId != 0 && isSubItem()) {
