@@ -379,7 +379,8 @@ public class ItemLogic
                 if (gameId != 0) {
                     // notify the game that the user has purchased some game content
                     _peerMan.invokeNodeAction(
-                        new ContentPurchasedAction(record.ownerId, gameId, srecord.getType(), srecord.ident));
+                        new ContentPurchasedAction(
+                            record.ownerId, gameId, srecord.getType(), srecord.ident));
                 }
             }
         }
