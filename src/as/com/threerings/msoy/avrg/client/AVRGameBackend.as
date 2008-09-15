@@ -482,7 +482,8 @@ public class AVRGameBackend extends ControlBackend
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
             if (full) {
-                return _wctx.getTopPanel().getPlaceViewBounds();
+                var bounds :Rectangle = _wctx.getTopPanel().getPlaceViewBounds();
+                return new Rectangle(0, 0, bounds.width, bounds.height);
             }
             return view.getScrollSize();
         }
