@@ -35,10 +35,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.net</a></td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Interface</td><td class="classSignature">public interface PropertySubControl extends <a href="PropertyGetSubControl.html">PropertyGetSubControl</a></td>
+<td class="classHeaderTableLabel">Interface</td><td class="classSignature">public interface PropertySubControl extends <a href="PropertyGetSubControl.html">PropertyGetSubControl</a>, <a href="none">flash.events.IEventDispatcher</a></td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Implementors</td><td><a href="../game/NetSubControl.html">NetSubControl</a>, <a href="impl/PropertySubControlImpl.html">PropertySubControlImpl</a></td>
+<td class="classHeaderTableLabel">Implementors</td><td><a href="../game/NetSubControl.html">NetSubControl</a></td>
 </tr>
 </table>
 <p></p>
@@ -101,7 +101,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <a class="signatureLink" href="#setIn()">setIn</a>(propName:String, key:int, value:Object, immediate:Boolean = false):void</div>
 <div class="summaryTableDescription">
      Update one element of a Dictionary.<br/>
-     <b>Note</b>: Unlike setAt(), this will always work.</div>
+     <b>Note</b>: Unlike setAt(), this will usually work.</div>
 </td><td class="summaryTableOwnerCol">PropertySubControl</td>
 </tr>
 </table>
@@ -273,9 +273,11 @@ showHideInherited();
 <div class="detailBody">
 <code>public function setIn(propName:String, key:int, value:Object, immediate:Boolean = false):void</code><p>
      Update one element of a Dictionary.<br/>
-     <b>Note</b>: Unlike setAt(), this will always work. No key is out of range, and if
-     this is called on a property that doesn't currently contain a Dictionary, one will
-     be automatically created and inserted at the specified property name.
+     <b>Note</b>: Unlike setAt(), this will usually work. No key is out of range, obviously,
+     and if you set a value in a property that was previously null, a new Dictionary will
+     be created to hold your value. If a non-Dictionary property is already stored with the
+     specified name then this will fail silently on the server. But: don't do that!
+     It would be pretty bad style to store two different types of property under the same name.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>

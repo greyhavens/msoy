@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="GameControl,com.whirled.game.GameControl,game,local,net,player,services,isConnected" name="keywords">
+<meta content="GameControl,com.whirled.game.GameControl,AVATAR_SHOP,BACKDROP_SHOP,FURNITURE_SHOP,ITEM_PACK_SHOP,LEVEL_PACK_SHOP,PET_SHOP,TOY_SHOP,game,local,net,player,services,isConnected" name="keywords">
 <title>com.whirled.game.GameControl</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/whirled/game/GameControl.html&amp;com/whirled/game/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;GameControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;GameControl</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#eventSummary">Events</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class GameControl"); titleBar_setSubNav(false,true,false,false,true,false,true,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class GameControl"); titleBar_setSubNav(true,true,false,false,true,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -138,7 +138,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../AbstractControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
+<a class="signatureLink" href="../AbstractControl.html#doBatch()">doBatch</a>(fn:Function, ... args):void</div>
 <div class="summaryTableDescription">
      Execute the specified function as a batch of commands that will be sent to the server
      together.</div>
@@ -188,6 +188,43 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableDescription summaryTableCol">
  Event.UNLOAD
  Dispatched when the SWF using this control has been unloaded.</td><td class="summaryTableOwnerCol"><a href="../AbstractControl.html">AbstractControl</a></td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#AVATAR_SHOP">AVATAR_SHOP</a> : String = "avatars"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">GameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#BACKDROP_SHOP">BACKDROP_SHOP</a> : String = "backdrops"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">GameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#FURNITURE_SHOP">FURNITURE_SHOP</a> : String = "furniture"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">GameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ITEM_PACK_SHOP">ITEM_PACK_SHOP</a> : String = "item_packs"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">GameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#LEVEL_PACK_SHOP">LEVEL_PACK_SHOP</a> : String = "level_packs"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">GameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PET_SHOP">PET_SHOP</a> : String = "pets"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">GameControl</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TOY_SHOP">TOY_SHOP</a> : String = "toys"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">GameControl</td>
 </tr>
 </table>
 </div>
@@ -321,6 +358,71 @@ showHideInherited();
 <td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
+</div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="AVATAR_SHOP"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">AVATAR_SHOP</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const AVATAR_SHOP:String = "avatars"</code>
+</div>
+<a name="BACKDROP_SHOP"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">BACKDROP_SHOP</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const BACKDROP_SHOP:String = "backdrops"</code>
+</div>
+<a name="FURNITURE_SHOP"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">FURNITURE_SHOP</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const FURNITURE_SHOP:String = "furniture"</code>
+</div>
+<a name="ITEM_PACK_SHOP"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ITEM_PACK_SHOP</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const ITEM_PACK_SHOP:String = "item_packs"</code>
+</div>
+<a name="LEVEL_PACK_SHOP"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">LEVEL_PACK_SHOP</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const LEVEL_PACK_SHOP:String = "level_packs"</code>
+</div>
+<a name="PET_SHOP"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">PET_SHOP</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const PET_SHOP:String = "pets"</code>
+</div>
+<a name="TOY_SHOP"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">TOY_SHOP</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const TOY_SHOP:String = "toys"</code>
 </div>
 <br>
 <br>

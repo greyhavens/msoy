@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Log,com.threerings.util.Log,_spec,_targets,addTarget,debug,doLog,dumpStack,getLog,getTimeStamp,info,logStackTrace,removeTarget,testing,warning" name="keywords">
+<meta content="Log,com.threerings.util.Log,DEBUG,INFO,LEVEL_NAMES,OFF,WARNING,_levels,_module,_setLevels,_targets,addTarget,debug,doLog,dumpStack,getLevel,getLog,getTimeStamp,info,logStackTrace,removeTarget,setLevel,setLevels,stringToLevel,testing,warning" name="keywords">
 <title>com.threerings.util.Log</title>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <td align="left" class="titleTableTitle">Whirled API Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../all-classes.html')" href="../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../index-list.html')" href="../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../index.html?com/threerings/util/Log.html&amp;com/threerings/util/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../images/logo.jpg"></td>
 </tr>
 <tr class="titleTableRow2">
-<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;Log</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td>
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;Log</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a>&nbsp;| <a href="#constantSummary">Constants</a></td>
 </tr>
 <tr class="titleTableRow3">
 <td colspan="2">&nbsp;</td>
@@ -27,7 +27,7 @@
 </table>
 <script type="text/javascript" language="javascript">
 <!--
-if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class Log"); titleBar_setSubNav(false,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class Log"); titleBar_setSubNav(true,true,false,false,false,false,true,false,false,false,false,false,false,false);}
 --></script>
 <div class="MainContent">
 <table cellspacing="0" cellpadding="0" class="classHeaderTable">
@@ -40,6 +40,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </table>
 <p></p>
  A simple logging mechanism.
+  Log instances are created for modules, and the logging level can be configured per
+ module in a hierarchical fashion.
+  Typically, you should create a module name based on the full path to a class:
+ calling getLog() and passing an object or Class will do this. Alternattely, you
+ may create a Log to share in several classes in a package, in which case the
+ module name can be like "com.foocorp.games.bunnywar". Finally, you can just
+ create made-up module names like "mygame" or "util", but this is not recommended.
+ You really should name things based on your packages, and your packages should be
+ named according to Sun's recommendations for Java packages.
   Typical usage for creating a Log to be used by the entire class would be:
  public class MyClass
  {
@@ -63,11 +72,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_spec">_spec</a> : String<div class="summaryTableDescription"> Our log specification.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_levels">_levels</a> : Object<div class="summaryTableDescription">[static] A cache of log levels, copied from _setLevels.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_targets">_targets</a> : Array<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_module">_module</a> : String<div class="summaryTableDescription"> The module to which this log instance applies.</div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_setLevels">_setLevels</a> : Object<div class="summaryTableDescription">[static] The configured log levels.</div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_targets">_targets</a> : Array<div class="summaryTableDescription">[static] Other registered LogTargets, besides the trace log.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 </table>
@@ -107,10 +124,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getLog()">getLog</a>(spec:*):<a href="../util/Log.html">Log</a>
+<a class="signatureLink" href="#getLog()">getLog</a>(moduleSpec:*):<a href="../util/Log.html">Log</a>
 </div>
 <div class="summaryTableDescription">[static]
-     Retrieve a Log for the specififed class.</div>
+     Retrieve a Log for the specified module.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 <tr class="">
@@ -135,6 +152,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#removeTarget()">removeTarget</a>(target:<a href="LogTarget.html">LogTarget</a>):void</div>
 <div class="summaryTableDescription">[static]
      Remove a logging target.</div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setLevel()">setLevel</a>(module:String, level:int):void</div>
+<div class="summaryTableDescription">[static]
+     Set the log level for the specified module.</div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setLevels()">setLevels</a>(settingString:String):void</div>
+<div class="summaryTableDescription">[static]
+     Parses a String in the form of ":info;com.foo.game:debug;com.bar.util:warning"
+          Semicolons separate modules, colons separate a module name from the log level.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 <tr class="">
@@ -166,8 +200,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#doLog()">doLog</a>(level:String, messages:Array):void</div>
+<a class="signatureLink" href="#doLog()">doLog</a>(level:int, messages:Array):void</div>
 <div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getLevel()">getLevel</a>(module:String):int</div>
+<div class="summaryTableDescription">[static]
+     Get the logging level for the specified module.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 <tr class="">
@@ -175,6 +217,51 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#getTimeStamp()">getTimeStamp</a>():String</div>
 <div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#stringToLevel()">stringToLevel</a>(s:String):int</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+</table>
+</div>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#DEBUG">DEBUG</a> : int = 0<div class="summaryTableDescription">[static] Log level constants.</div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#INFO">INFO</a> : int = 1<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OFF">OFF</a> : int = 3<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#WARNING">WARNING</a> : int = 2<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+</table>
+</div>
+<a name="protectedConstantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Constants</div>
+<table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#LEVEL_NAMES">LEVEL_NAMES</a> : Array<div class="summaryTableDescription">[static] The names of each level.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 </table>
@@ -186,14 +273,30 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_spec"></a>
+<a name="_levels"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_spec</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_levels</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _spec:String</code><p> Our log specification. </p></div>
+<code>protected static var _levels:Object</code><p> A cache of log levels, copied from _setLevels. </p></div>
+<a name="_module"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_module</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _module:String</code><p> The module to which this log instance applies. </p></div>
+<a name="_setLevels"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_setLevels</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static var _setLevels:Object</code><p> The configured log levels. </p></div>
 <a name="_targets"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -201,8 +304,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static var _targets:Array</code>
-</div>
+<code>protected static var _targets:Array</code><p> Other registered LogTargets, besides the trace log. </p></div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
 <a name="addTarget()"></a>
@@ -244,10 +346,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function doLog(level:String, messages:Array):void</code><span class="label">Parameters</span>
+<code>protected function doLog(level:int, messages:Array):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">level</span>:String</code></td>
+<td width="20px"></td><td><code><span class="label">level</span>:int</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -268,6 +370,29 @@ showHideInherited();
      A convenience function for quickly printing a stack trace
      to the log, useful for debugging.
      </p></div>
+<a name="getLevel()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getLevel</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function getLevel(module:String):int</code><p>
+     Get the logging level for the specified module.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">module</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
 <a name="getLog()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -275,12 +400,13 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function getLog(spec:*):<a href="../util/Log.html">Log</a></code><p>
-     Retrieve a Log for the specififed class.
+<code>public static function getLog(moduleSpec:*):<a href="../util/Log.html">Log</a></code><p>
+     Retrieve a Log for the specified module.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">spec</span>:*</code> &mdash; can be any Object or Class specifier.
+<td width="20px"></td><td><code><span class="label">moduleSpec</span>:*</code> &mdash; can be a String of the module name, or any Object or Class to
+     have the module name be the full package and name of the class (recommended).
      </td>
 </tr>
 </table>
@@ -356,6 +482,71 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="setLevel()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setLevel</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function setLevel(module:String, level:int):void</code><p>
+     Set the log level for the specified module.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">module</span>:String</code> &mdash; The smallest prefix desired to configure a log level.
+     For example, you can set the global level with Log.setLevel("", Log.INFO);
+     Then you can Log.setLevel("com.foo.game", Log.DEBUG). Now, everything
+     logs at INFO level except for modules within com.foo.game, which is at DEBUG.
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">level</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="setLevels()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setLevels</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function setLevels(settingString:String):void</code><p>
+     Parses a String in the form of ":info;com.foo.game:debug;com.bar.util:warning"
+          Semicolons separate modules, colons separate a module name from the log level.
+     An empty string specifies the top-level (global) module.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">settingString</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="stringToLevel()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">stringToLevel</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static function stringToLevel(s:String):int</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">s</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
 <a name="testing()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -388,6 +579,51 @@ showHideInherited();
 <td width="20px"></td><td><code>... <span class="label">messages</span></code></td>
 </tr>
 </table>
+</div>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="DEBUG"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">DEBUG</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const DEBUG:int = 0</code><p> Log level constants. </p></div>
+<a name="INFO"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">INFO</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const INFO:int = 1</code>
+</div>
+<a name="LEVEL_NAMES"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">LEVEL_NAMES</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const LEVEL_NAMES:Array</code><p> The names of each level. The last one isn't used, it corresponds with OFF. </p></div>
+<a name="OFF"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">OFF</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const OFF:int = 3</code>
+</div>
+<a name="WARNING"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">WARNING</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const WARNING:int = 2</code>
 </div>
 <br>
 <br>

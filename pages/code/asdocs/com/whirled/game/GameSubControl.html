@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="GameSubControl,com.whirled.game.GameSubControl,CASCADING_PAYOUT,CURRENT_USER,PROPORTIONAL,SERVER_AGENT_ID,TO_EACH_THEIR_OWN,WINNERS_TAKE_ALL,seating,amInControl,amServerAgent,endGameWithScore,endGameWithScores,endGameWithWinners,endRound,getConfig,getControllerId,getItemPacks,getLevelPacks,getMyId,getOccupantIds,getOccupantName,getRound,getTurnHolderId,isInPlay,isMyTurn,playerReady,restartGameIn,startNextTurn,systemMessage" name="keywords">
+<meta content="GameSubControl,com.whirled.game.GameSubControl,CASCADING_PAYOUT,PROPORTIONAL,SERVER_AGENT_ID,TO_EACH_THEIR_OWN,WINNERS_TAKE_ALL,seating,amInControl,amServerAgent,endGameWithScore,endGameWithScores,endGameWithWinners,endRound,getConfig,getControllerId,getItemPacks,getLevelPacks,getMyId,getOccupantIds,getOccupantName,getRound,getTurnHolderId,isInPlay,isMyTurn,playerReady,restartGameIn,startNextTurn,systemMessage" name="keywords">
 <title>com.whirled.game.GameSubControl</title>
 </head>
 <body>
@@ -105,7 +105,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../AbstractSubControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
+<a class="signatureLink" href="../AbstractSubControl.html#doBatch()">doBatch</a>(fn:Function, ... args):void</div>
 <div class="summaryTableDescription">
      
      Execute the specified function as a batch of commands that will be sent to the server
@@ -180,18 +180,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getLevelPacks()">getLevelPacks</a>(playerId:int):Array</div>
+<a class="signatureLink" href="#getLevelPacks()">getLevelPacks</a>():Array</div>
 <div class="summaryTableDescription">
-     Returns the set of level packs available to this game as an array of objects with the
+     Returns the set of all level packs available to this game as an array of objects with the
      following properties:
           <pre>
-     ident - string identifier of level pack
-     name - human readable name of level pack
-     mediaURL - URL for level pack content
+     ident - string identifier of item pack
+     name - human readable name of item pack
+     mediaURL - URL for item pack content
      premium - boolean indicating that content is premium or not
      </pre>
-          This will contain all free level packs that are registered for this game as well as the
-     premium level packs owned by this client's player (the default) or a specified player.</div>
+     </div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="">
@@ -416,10 +415,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CASCADING_PAYOUT">CASCADING_PAYOUT</a> : int = 0<div class="summaryTableDescription">[static] Cascading payout skews awards toward the winners by giving 50% of last place's payout to
      first place, 25% to the next inner pair of opponents (third to second in a four player game,
      for example), and so on.</div>
-</td><td class="summaryTableOwnerCol">GameSubControl</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CURRENT_USER">CURRENT_USER</a> : int = 0<div class="summaryTableDescription">[static] ID constant passed into <code>getLevelPacks</code> to indicate the current player.</div>
 </td><td class="summaryTableOwnerCol">GameSubControl</td>
 </tr>
 <tr class="">
@@ -703,27 +698,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getLevelPacks(playerId:int):Array</code><p>
-     Returns the set of level packs available to this game as an array of objects with the
+<code>public function getLevelPacks():Array</code><p>
+     Returns the set of all level packs available to this game as an array of objects with the
      following properties:
           <pre>
-     ident - string identifier of level pack
-     name - human readable name of level pack
-     mediaURL - URL for level pack content
+     ident - string identifier of item pack
+     name - human readable name of item pack
+     mediaURL - URL for item pack content
      premium - boolean indicating that content is premium or not
      </pre>
-          This will contain all free level packs that are registered for this game as well as the
-     premium level packs owned by this client's player (the default) or a specified player. 
-          </p><p>Note: Clients may only access the level packs of the current player. Server agents do not
-     have a current player and therefore must pass in a valid player id.</p>
-          <span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">playerId</span>:int</code> &mdash; the player whose level packs to get
-     </td>
-</tr>
-</table>
-<p></p>
+     </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -739,8 +723,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getMyId():int</code><p>
-     Returns this client's player id. If this method is called from the game's server agent,
-     the result is <code>SERVER_AGENT_ID</code>. The method <code>amServerAgent</code> can be used to 
+     Returns this client's player id. If this method is called from the game's server agent, the
+     result is <code>SERVER_AGENT_ID</code>. The method <code>amServerAgent</code> can be used to
      explicitly test for this case.
      </p><p></p>
 <span class="label">Returns</span>
@@ -1093,21 +1077,6 @@ showHideInherited();
      first place, 25% to the next inner pair of opponents (third to second in a four player game,
      for example), and so on. It is very similar overall to WINNERS_TAKE_ALL, only it rewards
      everyone at least a little bit. </p></div>
-<a name="CURRENT_USER"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">CURRENT_USER</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public static const CURRENT_USER:int = 0</code><p> ID constant passed into <code>getLevelPacks</code> to indicate the current player. 
-     </p><p>
-<span class="label">See also</span>
-</p>
-<div class="seeAlso">
-<a href="../game/GameSubControl.html#getLevelPacks()" target="">getLevelPacks()</a>
-</div>
-</div>
 <a name="PROPORTIONAL"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>

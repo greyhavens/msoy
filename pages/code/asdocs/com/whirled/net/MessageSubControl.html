@@ -38,7 +38,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <td class="classHeaderTableLabel">Interface</td><td class="classSignature">public interface MessageSubControl</td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Implementors</td><td><a href="impl/MessageSubControlAdapter.html">MessageSubControlAdapter</a></td>
+<td class="classHeaderTableLabel">Implementors</td><td><a href="../avrg/AgentSubControl.html">AgentSubControl</a>, <a href="../avrg/GameServerSubControl.html">GameServerSubControl</a>, <a href="../avrg/PlayerServerSubControl.html">PlayerServerSubControl</a>, <a href="../avrg/RoomServerSubControl.html">RoomServerSubControl</a></td>
 </tr>
 </table>
 <p></p>
@@ -58,7 +58,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("In
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#sendMessage()">sendMessage</a>(name:String, value:Object):void</div>
+<a class="signatureLink" href="#sendMessage()">sendMessage</a>(name:String, value:Object = null):void</div>
 <div class="summaryTableDescription">
      Send a "message" to the listener(s) associated with this control.</div>
 </td><td class="summaryTableOwnerCol">MessageSubControl</td>
@@ -79,7 +79,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function sendMessage(name:String, value:Object):void</code><p>
+<code>public function sendMessage(name:String, value:Object = null):void</code><p>
      Send a "message" to the listener(s) associated with this control. If the recipient is
      listening for messages, they can react to it. This is similar to setting a property,
      except the value is not automatically saved -- it will just be sent along with the
@@ -94,7 +94,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">value</span>:Object</code> &mdash; The value to attach to the message.
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code> (default = <code>null</code>)<code></code> &mdash; The value to attach to the message.
      </td>
 </tr>
 </table>

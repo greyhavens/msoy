@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="LineData,com.whirled.contrib.platformer.board.LineData,D,EPSILON,ix,iy,mag,nx,ny,type,x1,x2,y1,y2,anyInside,anyOutside,clone,createFromPoints,didCross,didCrossDelta,dot,findIntersect,getDist,getLineDist,getSegmentDist2,isConnected,isInside,isIntersecting,isLineInside,isLineOutside,isOn,isOutside,normalDot,polyIntersect,polyIntersecting,relDot,toString,translate,update,xIntersecting,yIntersecting" name="keywords">
+<meta content="LineData,com.whirled.contrib.platformer.board.LineData,D,EPSILON,ix,iy,mag,nx,ny,type,x1,x2,y1,y2,anyInside,anyOutside,clone,createFromPoints,didCross,didCrossDelta,didSimpleCross,dot,findIntersect,getCircleIntersect,getDist,getLineDist,getSegmentDist2,isConnected,isInside,isIntersecting,isLineInside,isLineOutside,isOn,isOutside,normalDot,polyIntersect,polyIntersecting,relDot,toString,translate,update,xIntersecting,yIntersecting" name="keywords">
 <title>com.whirled.contrib.platformer.board.LineData</title>
 </head>
 <body>
@@ -163,6 +163,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#didSimpleCross()">didSimpleCross</a>(l1:<a href="LineData.html">LineData</a>, l2:<a href="LineData.html">LineData</a>):Boolean</div>
+<div class="summaryTableDescription">
+     Returns true if l2 is intersecting of on the opposide of the line as l1.</div>
+</td><td class="summaryTableOwnerCol">LineData</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#dot()">dot</a>(x:Number, y:Number):Number</div>
 <div class="summaryTableDescription">
      Returns the dot product of this line and the supplied point.</div>
@@ -174,6 +182,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#findIntersect()">findIntersect</a>(line:<a href="LineData.html">LineData</a>):Number</div>
 <div class="summaryTableDescription">
      Returns the distance on this line to the intersection point.</div>
+</td><td class="summaryTableOwnerCol">LineData</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getCircleIntersect()">getCircleIntersect</a>(x:Number, y:Number, rad:Number):Number</div>
+<div class="summaryTableDescription">
+     Returns the distance on the line to the near intersection between this line and the
+     supplied circle.</div>
 </td><td class="summaryTableOwnerCol">LineData</td>
 </tr>
 <tr class="">
@@ -651,6 +668,35 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="didSimpleCross()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">didSimpleCross</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function didSimpleCross(l1:<a href="LineData.html">LineData</a>, l2:<a href="LineData.html">LineData</a>):Boolean</code><p>
+     Returns true if l2 is intersecting of on the opposide of the line as l1.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">l1</span>:<a href="LineData.html">LineData</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">l2</span>:<a href="LineData.html">LineData</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
 <a name="dot()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -693,6 +739,42 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">line</span>:<a href="LineData.html">LineData</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code></td>
+</tr>
+</table>
+</div>
+<a name="getCircleIntersect()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getCircleIntersect</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getCircleIntersect(x:Number, y:Number, rad:Number):Number</code><p>
+     Returns the distance on the line to the near intersection between this line and the
+     supplied circle.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">x</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">y</span>:Number</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">rad</span>:Number</code></td>
 </tr>
 </table>
 <p></p>

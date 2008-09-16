@@ -41,7 +41,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">FurniControl <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="EntityControl.html">EntityControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> <a href="AbstractControl.html">AbstractControl</a> <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../images/inherit-arrow.gif"> flash.events.EventDispatcher</td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Subclasses</td><td><a href="../whirled/BackdropControl.html">BackdropControl</a>, <a href="../whirled/ToyControl.html">ToyControl</a></td>
+<td class="classHeaderTableLabel">Subclasses</td><td><a href="../whirled/BackdropControl.html">BackdropControl</a>, <a href="avrg/PropControl.html">PropControl</a>, <a href="../whirled/ToyControl.html">ToyControl</a></td>
 </tr>
 </table>
 <p></p>
@@ -109,7 +109,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="AbstractControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
+<a class="signatureLink" href="AbstractControl.html#doBatch()">doBatch</a>(fn:Function, ... args):void</div>
 <div class="summaryTableDescription">
      Execute the specified function as a batch of commands that will be sent to the server
      together.</div>
@@ -299,7 +299,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="EntityControl.html#setMemory()">setMemory</a>(key:String, value:Object):Boolean</div>
+<a class="signatureLink" href="EntityControl.html#setMemory()">setMemory</a>(key:String, value:Object, callback:Function = null):void</div>
 <div class="summaryTableDescription">
      Requests that this item's memory be updated with the supplied key/value pair.</div>
 </td><td class="summaryTableOwnerCol"><a href="EntityControl.html">EntityControl</a></td>

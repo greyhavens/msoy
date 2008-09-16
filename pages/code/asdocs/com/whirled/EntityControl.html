@@ -101,7 +101,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="AbstractControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
+<a class="signatureLink" href="AbstractControl.html#doBatch()">doBatch</a>(fn:Function, ... args):void</div>
 <div class="summaryTableDescription">
      Execute the specified function as a batch of commands that will be sent to the server
      together.</div>
@@ -283,7 +283,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#setMemory()">setMemory</a>(key:String, value:Object):Boolean</div>
+<a class="signatureLink" href="#setMemory()">setMemory</a>(key:String, value:Object, callback:Function = null):void</div>
 <div class="summaryTableDescription">
      Requests that this item's memory be updated with the supplied key/value pair.</div>
 </td><td class="summaryTableOwnerCol">EntityControl</td>
@@ -997,7 +997,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setMemory(key:String, value:Object):Boolean</code><p>
+<code>public function setMemory(key:String, value:Object, callback:Function = null):void</code><p>
      Requests that this item's memory be updated with the supplied key/value pair. The supplied
      value must be a simple object (Integer, Number, String) or an Array of simple objects. The
      contents of the Pet's memory (keys and values) must not exceed 4096 bytes when AMF3 encoded.
@@ -1007,7 +1007,11 @@ showHideInherited();
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">key</span>:String</code></td>
+<td width="20px"></td><td><code><span class="label">key</span>:String</code> &mdash; An optional function that is passed a Boolean indicating whether the
+     memory was successfully updated or not. True if the memory was safely persisted, or false
+     if the memory update failed due to size or other restrictions.
+          Note: any instance can update memories!
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -1015,16 +1019,11 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
 </tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Boolean</code> &mdash; true if the memory update was sent to the server, although there is no guarantee
-     that it will be applied if the server decides that memories are already too big; or false
-     if the memory update was not even sent to the server due to size or other restrictions.
-          Note: any instance can update memories!
-     </td>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>

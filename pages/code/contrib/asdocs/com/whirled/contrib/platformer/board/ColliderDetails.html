@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="ColliderDetails,com.whirled.contrib.platformer.board.ColliderDetails,acolliders,alines,colliders,fcdX,fcdY,oX,oY,rdelta,setActors" name="keywords">
+<meta content="ColliderDetails,com.whirled.contrib.platformer.board.ColliderDetails,acolliders,alines,colliders,fcdX,fcdY,oX,oY,rdelta,pushActor,reset" name="keywords">
 <title>com.whirled.contrib.platformer.board.ColliderDetails</title>
 </head>
 <body>
@@ -51,7 +51,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#acolliders">acolliders</a> : Array<div class="summaryTableDescription"> An array of SimpleActorBounds dynamic colliders.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#acolliders">acolliders</a> : Array<div class="summaryTableDescription"> An array of DynamicBounds dynamic colliders.</div>
 </td><td class="summaryTableOwnerCol">ColliderDetails</td>
 </tr>
 <tr class="">
@@ -101,7 +101,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#setActors()">setActors</a>(acols:Array):void</div>
+<a class="signatureLink" href="#pushActor()">pushActor</a>(db:<a href="DynamicBounds.html">DynamicBounds</a>):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ColliderDetails</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#reset()">reset</a>(delta:Number):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">ColliderDetails</td>
 </tr>
@@ -121,7 +128,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var acolliders:Array</code><p> An array of SimpleActorBounds dynamic colliders. </p></div>
+<code>public var acolliders:Array</code><p> An array of DynamicBounds dynamic colliders. </p></div>
 <a name="alines"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -210,17 +217,31 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="setActors()"></a>
+<a name="pushActor()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">setActors</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">pushActor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setActors(acols:Array):void</code><span class="label">Parameters</span>
+<code>public function pushActor(db:<a href="DynamicBounds.html">DynamicBounds</a>):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">acols</span>:Array</code></td>
+<td width="20px"></td><td><code><span class="label">db</span>:<a href="DynamicBounds.html">DynamicBounds</a></code></td>
+</tr>
+</table>
+</div>
+<a name="reset()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">reset</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function reset(delta:Number):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">delta</span>:Number</code></td>
 </tr>
 </table>
 </div>

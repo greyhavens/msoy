@@ -67,7 +67,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#PropertySubControlImpl()">PropertySubControlImpl</a>(ctrl:<a href="../../AbstractControl.html">AbstractControl</a>, targetId:int, fn_propertyWasSet:String, fn_getGameData:String, fn_setProperty:String)</div>
+<a class="signatureLink" href="#PropertySubControlImpl()">PropertySubControlImpl</a>(ctrl:<a href="../../AbstractControl.html">AbstractControl</a>, targetId:int, fn_getGameData:String, fn_setProperty:String)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PropertySubControlImpl</td>
 </tr>
@@ -82,7 +82,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="../../AbstractSubControl.html#doBatch()">doBatch</a>(fn:Function):void</div>
+<a class="signatureLink" href="../../AbstractSubControl.html#doBatch()">doBatch</a>(fn:Function, ... args):void</div>
 <div class="summaryTableDescription">
      
      Execute the specified function as a batch of commands that will be sent to the server
@@ -146,7 +146,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#setIn()">setIn</a>(propName:String, key:int, value:Object, immediate:Boolean = false):void</div>
 <div class="summaryTableDescription"> 
      Update one element of a Dictionary.<br/>
-     <b>Note</b>: Unlike setAt(), this will always work.</div>
+     <b>Note</b>: Unlike setAt(), this will usually work.</div>
 </td><td class="summaryTableOwnerCol">PropertySubControlImpl</td>
 </tr>
 </table>
@@ -191,7 +191,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function PropertySubControlImpl(ctrl:<a href="../../AbstractControl.html">AbstractControl</a>, targetId:int, fn_propertyWasSet:String, fn_getGameData:String, fn_setProperty:String)</code><span class="label">Parameters</span>
+<code>public function PropertySubControlImpl(ctrl:<a href="../../AbstractControl.html">AbstractControl</a>, targetId:int, fn_getGameData:String, fn_setProperty:String)</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">ctrl</span>:<a href="../../AbstractControl.html">AbstractControl</a></code></td>
@@ -201,12 +201,6 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">targetId</span>:int</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">fn_propertyWasSet</span>:String</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -305,9 +299,11 @@ showHideInherited();
 <div class="detailBody">
 <code>public function setIn(propName:String, key:int, value:Object, immediate:Boolean = false):void</code><p> 
      Update one element of a Dictionary.<br/>
-     <b>Note</b>: Unlike setAt(), this will always work. No key is out of range, and if
-     this is called on a property that doesn't currently contain a Dictionary, one will
-     be automatically created and inserted at the specified property name.
+     <b>Note</b>: Unlike setAt(), this will usually work. No key is out of range, obviously,
+     and if you set a value in a property that was previously null, a new Dictionary will
+     be created to hold your value. If a non-Dictionary property is already stored with the
+     specified name then this will fail silently on the server. But: don't do that!
+     It would be pretty bad style to store two different types of property under the same name.
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>

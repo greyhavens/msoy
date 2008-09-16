@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="BoardSprite,com.whirled.contrib.platformer.display.BoardSprite,ACTOR_LAYER,BACK_PARTICLE_LAYER,BG_LAYER,BUFFER,FRONT_LEVEL_LAYER,FRONT_PARTICLE_LAYER,LBUFFER,LEVEL_LAYER,NUM_LAYERS,PARALLAX,SHOT_LAYER,SHOW_DETAILS,Y_ADJUST,_board,_centerX,_centerY,_lastDelta,_lastY,_layers,_lowBounds,_maxX,_minX,_showBG,addParticleEffect,addPieces,centerOn,ensureVisible,handleActorAdded,handleDynamicRemoved,handleShotAdded,initBounds,initDisplay,moveDelta,tick,updateActors,updateDisplay" name="keywords">
+<meta content="BoardSprite,com.whirled.contrib.platformer.display.BoardSprite,ACTOR_LAYER,BACK_DYNAMIC_LAYER,BACK_PARTICLE_LAYER,BG_LAYER,BUFFER,FRONT_LEVEL_LAYER,FRONT_PARTICLE_LAYER,LBUFFER,LEVEL_LAYER,NUM_LAYERS,PARALLAX,SHOT_LAYER,SHOW_DETAILS,Y_ADJUST,_board,_centerX,_centerY,_lastDelta,_lastY,_layers,_lowBounds,_maxX,_minX,_showBG,addParticleEffect,addPieces,centerOn,ensureVisible,handleDynamicAdded,handleDynamicRemoved,initBounds,initDisplay,moveDelta,tick,updateActors,updateDisplay" name="keywords">
 <title>com.whirled.contrib.platformer.display.BoardSprite</title>
 </head>
 <body>
@@ -179,7 +179,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#handleActorAdded()">handleActorAdded</a>(actor:<a href="../piece/Actor.html">Actor</a>, group:String):void</div>
+<a class="signatureLink" href="#handleDynamicAdded()">handleDynamicAdded</a>(d:<a href="../piece/Dynamic.html">Dynamic</a>, group:String):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
@@ -187,13 +187,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#handleDynamicRemoved()">handleDynamicRemoved</a>(d:<a href="../piece/Dynamic.html">Dynamic</a>, group:String):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">BoardSprite</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#handleShotAdded()">handleShotAdded</a>(s:<a href="../piece/Shot.html">Shot</a>, group:String):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
@@ -234,11 +227,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ACTOR_LAYER">ACTOR_LAYER</a> : int = 3<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ACTOR_LAYER">ACTOR_LAYER</a> : int = 4<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#BACK_PARTICLE_LAYER">BACK_PARTICLE_LAYER</a> : int = 2<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#BACK_DYNAMIC_LAYER">BACK_DYNAMIC_LAYER</a> : int = 2<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">BoardSprite</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#BACK_PARTICLE_LAYER">BACK_PARTICLE_LAYER</a> : int = 3<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
 <tr class="">
@@ -250,11 +247,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#FRONT_LEVEL_LAYER">FRONT_LEVEL_LAYER</a> : int = 6<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#FRONT_LEVEL_LAYER">FRONT_LEVEL_LAYER</a> : int = 7<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#FRONT_PARTICLE_LAYER">FRONT_PARTICLE_LAYER</a> : int = 5<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#FRONT_PARTICLE_LAYER">FRONT_PARTICLE_LAYER</a> : int = 6<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
 <tr class="">
@@ -266,7 +263,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#NUM_LAYERS">NUM_LAYERS</a> : int = 7<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#NUM_LAYERS">NUM_LAYERS</a> : int = 8<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
 <tr class="">
@@ -274,7 +271,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SHOT_LAYER">SHOT_LAYER</a> : int = 4<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SHOT_LAYER">SHOT_LAYER</a> : int = 5<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">BoardSprite</td>
 </tr>
 <tr class="">
@@ -482,17 +479,17 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="handleActorAdded()"></a>
+<a name="handleDynamicAdded()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">handleActorAdded</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">handleDynamicAdded</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function handleActorAdded(actor:<a href="../piece/Actor.html">Actor</a>, group:String):void</code><span class="label">Parameters</span>
+<code>protected function handleDynamicAdded(d:<a href="../piece/Dynamic.html">Dynamic</a>, group:String):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">actor</span>:<a href="../piece/Actor.html">Actor</a></code></td>
+<td width="20px"></td><td><code><span class="label">d</span>:<a href="../piece/Dynamic.html">Dynamic</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -513,26 +510,6 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">d</span>:<a href="../piece/Dynamic.html">Dynamic</a></code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">group</span>:String</code></td>
-</tr>
-</table>
-</div>
-<a name="handleShotAdded()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">handleShotAdded</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function handleShotAdded(s:<a href="../piece/Shot.html">Shot</a>, group:String):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">s</span>:<a href="../piece/Shot.html">Shot</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -626,7 +603,16 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static const ACTOR_LAYER:int = 3</code>
+<code>protected static const ACTOR_LAYER:int = 4</code>
+</div>
+<a name="BACK_DYNAMIC_LAYER"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">BACK_DYNAMIC_LAYER</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const BACK_DYNAMIC_LAYER:int = 2</code>
 </div>
 <a name="BACK_PARTICLE_LAYER"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -635,7 +621,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static const BACK_PARTICLE_LAYER:int = 2</code>
+<code>protected static const BACK_PARTICLE_LAYER:int = 3</code>
 </div>
 <a name="BG_LAYER"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -662,7 +648,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static const FRONT_LEVEL_LAYER:int = 6</code>
+<code>protected static const FRONT_LEVEL_LAYER:int = 7</code>
 </div>
 <a name="FRONT_PARTICLE_LAYER"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -671,7 +657,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static const FRONT_PARTICLE_LAYER:int = 5</code>
+<code>protected static const FRONT_PARTICLE_LAYER:int = 6</code>
 </div>
 <a name="LBUFFER"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -698,7 +684,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static const NUM_LAYERS:int = 7</code>
+<code>protected static const NUM_LAYERS:int = 8</code>
 </div>
 <a name="PARALLAX"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -716,7 +702,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static const SHOT_LAYER:int = 4</code>
+<code>protected static const SHOT_LAYER:int = 5</code>
 </div>
 <a name="SHOW_DETAILS"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

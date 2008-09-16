@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Scoreboard,com.whirled.contrib.Scoreboard,_gameCtrl,_propName,propName,addToScore,clearAll,clearScore,getAllScores,getPlayerIds,getScore,getTopScore,getWinnerIds,handleScoreUpdate,initScores,scoreDidUpdate,setScore" name="keywords">
+<meta content="Scoreboard,com.whirled.contrib.Scoreboard,_gameCtrl,_propName,propName,addToScore,clearAll,clearScore,getAllScores,getPlayerIds,getPlayerIdsAndScores,getScore,getTopScore,getWinnerIds,handleScoreUpdate,initScores,scoreDidUpdate,setScore" name="keywords">
 <title>com.whirled.contrib.Scoreboard</title>
 </head>
 <body>
@@ -126,8 +126,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#getPlayerIds()">getPlayerIds</a>():Array</div>
 <div class="summaryTableDescription">
-     Get an array of player IDs of all the players that are
-     ranked on the scoreboard.</div>
+     Get an array of player IDs of all the players that are ranked on the scoreboard.</div>
+</td><td class="summaryTableOwnerCol">Scoreboard</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getPlayerIdsAndScores()">getPlayerIdsAndScores</a>(playerIds:Array, scores:Array):void</div>
+<div class="summaryTableDescription">
+     Fills two Arrays, one with the IDs of the players that are ranked on the scoreboard,
+     and the other with their scores.</div>
 </td><td class="summaryTableOwnerCol">Scoreboard</td>
 </tr>
 <tr class="">
@@ -305,8 +313,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getAllScores():Dictionary</code><p>
-     Get a complete copy of the scoreboard Dictionary.
-     Changes to this copy have no effect.
+     Get a complete copy of the scoreboard Dictionary. Each entry in the Dictionary is a mapping
+     from playerId to score.
+          Changes to this copy have no effect on the Scoreboard.
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -323,13 +332,35 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function getPlayerIds():Array</code><p>
-     Get an array of player IDs of all the players that are
-     ranked on the scoreboard.
+     Get an array of player IDs of all the players that are ranked on the scoreboard.
      </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="getPlayerIdsAndScores()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getPlayerIdsAndScores</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getPlayerIdsAndScores(playerIds:Array, scores:Array):void</code><p>
+     Fills two Arrays, one with the IDs of the players that are ranked on the scoreboard,
+     and the other with their scores. Useful for calling GameSubControl.endGameWithScores.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">playerIds</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">scores</span>:Array</code></td>
 </tr>
 </table>
 </div>

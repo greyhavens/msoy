@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="WalkTask,com.whirled.contrib.platformer.board.WalkTask,_attached,_lastDelta,_sab,genCD,init,runTask" name="keywords">
+<meta content="WalkTask,com.whirled.contrib.platformer.board.WalkTask,_attached,_lastDelta,_sab,adjustAttached,genCD,getBounds,init,reset,runTask,updateVector" name="keywords">
 <title>com.whirled.contrib.platformer.board.WalkTask</title>
 </head>
 <body>
@@ -132,7 +132,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#genCD()">genCD</a>():<a href="../board/ColliderDetails.html">ColliderDetails</a>
+<a class="signatureLink" href="#genCD()">genCD</a>(ct:<a href="ColliderTask.html">ColliderTask</a> = null):<a href="../board/ColliderDetails.html">ColliderDetails</a>
+</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">WalkTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getBounds()">getBounds</a>():<a href="../board/DynamicBounds.html">DynamicBounds</a>
 </div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">WalkTask</td>
@@ -174,12 +182,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="ColliderTask.html">ColliderTask</a></td>
 </tr>
-<tr class="hideInheritedMethod">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="ColliderTask.html#reset()">reset</a>():void</div>
+<a class="signatureLink" href="#reset()">reset</a>():void</div>
 <div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="ColliderTask.html">ColliderTask</a></td>
+</td><td class="summaryTableOwnerCol">WalkTask</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -200,7 +208,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#adjustAttached()">adjustAttached</a>(a:<a href="../piece/Actor.html">Actor</a>):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">WalkTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#runTask()">runTask</a>():void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">WalkTask</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#updateVector()">updateVector</a>():void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">WalkTask</td>
 </tr>
@@ -264,19 +286,54 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="genCD()"></a>
+<a name="adjustAttached()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">genCD</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">adjustAttached</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function genCD():<a href="../board/ColliderDetails.html">ColliderDetails</a></code>
+<code>protected function adjustAttached(a:<a href="../piece/Actor.html">Actor</a>):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">a</span>:<a href="../piece/Actor.html">Actor</a></code></td>
+</tr>
+</table>
+</div>
+<a name="genCD()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">genCD</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public override function genCD(ct:<a href="ColliderTask.html">ColliderTask</a> = null):<a href="../board/ColliderDetails.html">ColliderDetails</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ct</span>:<a href="ColliderTask.html">ColliderTask</a></code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code><a href="../board/ColliderDetails.html">ColliderDetails</a></code></td>
+</tr>
+</table>
+</div>
+<a name="getBounds()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getBounds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public override function getBounds():<a href="../board/DynamicBounds.html">DynamicBounds</a></code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../board/DynamicBounds.html">DynamicBounds</a></code></td>
 </tr>
 </table>
 </div>
@@ -294,6 +351,15 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="reset()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">reset</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public override function reset():void</code>
+</div>
 <a name="runTask()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -302,6 +368,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected override function runTask():void</code>
+</div>
+<a name="updateVector()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">updateVector</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function updateVector():void</code>
 </div>
 <br>
 <br>

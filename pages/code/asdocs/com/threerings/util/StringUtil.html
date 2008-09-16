@@ -61,10 +61,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#fieldsToString()">fieldsToString</a>(buf:<a href="StringBuilder.html">StringBuilder</a>, obj:Object):void</div>
+<a class="signatureLink" href="#fieldsToString()">fieldsToString</a>(buf:<a href="StringBuilder.html">StringBuilder</a>, obj:Object, fieldNames:Array = null):void</div>
 <div class="summaryTableDescription">[static]
      Return a string containing all the public fields of the object
-     </div>
+          </div>
 </td><td class="summaryTableOwnerCol">StringUtil</td>
 </tr>
 <tr class="">
@@ -200,7 +200,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#simpleToString()">simpleToString</a>(obj:Object):String</div>
+<a class="signatureLink" href="#simpleToString()">simpleToString</a>(obj:Object, fieldNames:Array = null):String</div>
 <div class="summaryTableDescription">[static]
      Return a pretty basic toString of the supplied Object.</div>
 </td><td class="summaryTableOwnerCol">StringUtil</td>
@@ -377,18 +377,27 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function fieldsToString(buf:<a href="StringBuilder.html">StringBuilder</a>, obj:Object):void</code><p>
+<code>public static function fieldsToString(buf:<a href="StringBuilder.html">StringBuilder</a>, obj:Object, fieldNames:Array = null):void</code><p>
      Return a string containing all the public fields of the object
-     </p><span class="label">Parameters</span>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">buf</span>:<a href="StringBuilder.html">StringBuilder</a></code></td>
+<td width="20px"></td><td><code><span class="label">buf</span>:<a href="StringBuilder.html">StringBuilder</a></code> &mdash; the StringBuilder to which to append
+     </td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">obj</span>:Object</code></td>
+<td width="20px"></td><td><code><span class="label">obj</span>:Object</code> &mdash; the object to be inspected
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">fieldNames</span>:Array</code> (default = <code>null</code>)<code></code> &mdash; the names of fields to print, or null to print all.
+     </td>
 </tr>
 </table>
 </div>
@@ -841,12 +850,20 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function simpleToString(obj:Object):String</code><p>
+<code>public static function simpleToString(obj:Object, fieldNames:Array = null):String</code><p>
      Return a pretty basic toString of the supplied Object.
-     </p><span class="label">Parameters</span>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">obj</span>:Object</code></td>
+<td width="20px"></td><td><code><span class="label">obj</span>:Object</code> &mdash; the object to be string'd
+     </td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">fieldNames</span>:Array</code> (default = <code>null</code>)<code></code> &mdash; the names of fields to print, or null to print all.
+     </td>
 </tr>
 </table>
 <p></p>

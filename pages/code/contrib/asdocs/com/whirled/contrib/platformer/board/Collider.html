@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="Collider,com.whirled.contrib.platformer.board.Collider,MAX_DX,MAX_DY,MIN_DELTA,_actorBounds,_actors,_lines,_sindex,_tasks,addActor,addBoundedPiece,addLine,addShot,flyActor,getActorBounds,getActorBoundsByType,getLines,getLinesFromLine,jumpActor,removeDynamic,tick,translateActor,updateInter,walkActor" name="keywords">
+<meta content="Collider,com.whirled.contrib.platformer.board.Collider,DEBUG,MAX_DX,MAX_DY,MIN_DELTA,_dynamicBounds,_dynamics,_lines,_sindex,_tasks,_tickCounter,addBoundedPiece,addDynamic,addLine,addShot,closeIndices,collide,debug,doesInteract,getBounds,getDynamicBounds,getDynamicBoundsByType,getLines,getLinesFromLine,getLinesPt,getStartDelta,isInteresting,numBounds,numTasks,removeDynamic,tick,translateDynamic,updateInter" name="keywords">
 <title>com.whirled.contrib.platformer.board.Collider</title>
 </head>
 <body>
@@ -51,11 +51,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_actorBounds">_actorBounds</a> : Array<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_dynamicBounds">_dynamicBounds</a> : Array<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_actors">_actors</a> : HashMap<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_dynamics">_dynamics</a> : HashMap<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
 <tr class="">
@@ -69,6 +69,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_tasks">_tasks</a> : Array<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Collider</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_tickCounter">_tickCounter</a> : int<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
 </table>
@@ -90,14 +94,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#addActor()">addActor</a>(ac:<a href="../game/ActorController.html">ActorController</a>):void</div>
+<a class="signatureLink" href="#addBoundedPiece()">addBoundedPiece</a>(p:<a href="../piece/BoundedPiece.html">BoundedPiece</a>):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#addBoundedPiece()">addBoundedPiece</a>(p:<a href="../piece/BoundedPiece.html">BoundedPiece</a>):void</div>
+<a class="signatureLink" href="#addDynamic()">addDynamic</a>(dc:<a href="../game/DynamicController.html">DynamicController</a>):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
@@ -118,14 +122,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#flyActor()">flyActor</a>(a:<a href="../piece/Actor.html">Actor</a>, delta:Number):void</div>
+<a class="signatureLink" href="#collide()">collide</a>(source:<a href="DynamicBounds.html">DynamicBounds</a>, target:<a href="DynamicBounds.html">DynamicBounds</a>):Array</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getActorBounds()">getActorBounds</a>(a:<a href="../piece/Actor.html">Actor</a>):<a href="../board/SimpleActorBounds.html">SimpleActorBounds</a>
+<a class="signatureLink" href="#doesInteract()">doesInteract</a>(sinter:int, tinter:int):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Collider</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getDynamicBounds()">getDynamicBounds</a>(d:<a href="../piece/Dynamic.html">Dynamic</a>):<a href="../board/DynamicBounds.html">DynamicBounds</a>
 </div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
@@ -133,7 +144,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getActorBoundsByType()">getActorBoundsByType</a>(type:int):Array</div>
+<a class="signatureLink" href="#getDynamicBoundsByType()">getDynamicBoundsByType</a>(type:int):Array</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
@@ -154,7 +165,35 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#jumpActor()">jumpActor</a>(ac:<a href="../game/ActorController.html">ActorController</a>, dX:Number, delta:Number):void</div>
+<a class="signatureLink" href="#getLinesPt()">getLinesPt</a>(x:Number, y:Number):Array</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Collider</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getStartDelta()">getStartDelta</a>():Number</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Collider</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#isInteresting()">isInteresting</a>(source:<a href="DynamicBounds.html">DynamicBounds</a>, target:<a href="DynamicBounds.html">DynamicBounds</a>):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Collider</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#numBounds()">numBounds</a>():int</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Collider</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#numTasks()">numTasks</a>():int</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
@@ -168,14 +207,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#tick()">tick</a>(delta:Number):void</div>
+<a class="signatureLink" href="#tick()">tick</a>(delta:int):Boolean</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#translateActor()">translateActor</a>(a:<a href="../piece/Actor.html">Actor</a>, dX:Number, dY:Number):void</div>
+<a class="signatureLink" href="#translateDynamic()">translateDynamic</a>(d:<a href="../piece/Dynamic.html">Dynamic</a>, dX:Number, dY:Number):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
@@ -186,10 +225,34 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#walkActor()">walkActor</a>(ac:<a href="../game/ActorController.html">ActorController</a>, dX:Number, delta:Number):void</div>
+<a class="signatureLink" href="#closeIndices()">closeIndices</a>(rect1:<a href="../piece/Rect.html">Rect</a>, rect2:<a href="../piece/Rect.html">Rect</a>):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Collider</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#debug()">debug</a>(str:String):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Collider</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getBounds()">getBounds</a>(dc:<a href="../game/DynamicController.html">DynamicController</a>):<a href="../board/DynamicBounds.html">DynamicBounds</a>
+</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
@@ -201,6 +264,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#DEBUG">DEBUG</a> : Boolean = false<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Collider</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MAX_DX">MAX_DX</a> : Number = 6<div class="summaryTableDescription">[static]</div>
@@ -232,23 +299,23 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_actorBounds"></a>
+<a name="_dynamicBounds"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_actorBounds</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_dynamicBounds</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _actorBounds:Array</code>
+<code>protected var _dynamicBounds:Array</code>
 </div>
-<a name="_actors"></a>
+<a name="_dynamics"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_actors</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_dynamics</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _actors:HashMap</code>
+<code>protected var _dynamics:HashMap</code>
 </div>
 <a name="_lines"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -277,6 +344,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _tasks:Array</code>
 </div>
+<a name="_tickCounter"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_tickCounter</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _tickCounter:int</code>
+</div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
 <a name="Collider()"></a>
@@ -301,24 +377,10 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="addActor()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">addActor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function addActor(ac:<a href="../game/ActorController.html">ActorController</a>):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">ac</span>:<a href="../game/ActorController.html">ActorController</a></code></td>
-</tr>
-</table>
-</div>
 <a name="addBoundedPiece()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">addBoundedPiece</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">addBoundedPiece</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -326,6 +388,20 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">p</span>:<a href="../piece/BoundedPiece.html">BoundedPiece</a></code></td>
+</tr>
+</table>
+</div>
+<a name="addDynamic()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addDynamic</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function addDynamic(dc:<a href="../game/DynamicController.html">DynamicController</a>):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">dc</span>:<a href="../game/DynamicController.html">DynamicController</a></code></td>
 </tr>
 </table>
 </div>
@@ -369,55 +445,151 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="flyActor()"></a>
+<a name="closeIndices()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">flyActor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">closeIndices</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function flyActor(a:<a href="../piece/Actor.html">Actor</a>, delta:Number):void</code><span class="label">Parameters</span>
+<code>protected function closeIndices(rect1:<a href="../piece/Rect.html">Rect</a>, rect2:<a href="../piece/Rect.html">Rect</a>):Boolean</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">a</span>:<a href="../piece/Actor.html">Actor</a></code></td>
+<td width="20px"></td><td><code><span class="label">rect1</span>:<a href="../piece/Rect.html">Rect</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">delta</span>:Number</code></td>
-</tr>
-</table>
-</div>
-<a name="getActorBounds()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">getActorBounds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function getActorBounds(a:<a href="../piece/Actor.html">Actor</a>):<a href="../board/SimpleActorBounds.html">SimpleActorBounds</a></code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">a</span>:<a href="../piece/Actor.html">Actor</a></code></td>
+<td width="20px"></td><td><code><span class="label">rect2</span>:<a href="../piece/Rect.html">Rect</a></code></td>
 </tr>
 </table>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code><a href="../board/SimpleActorBounds.html">SimpleActorBounds</a></code></td>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
-<a name="getActorBoundsByType()"></a>
+<a name="collide()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">getActorBoundsByType</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">collide</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getActorBoundsByType(type:int):Array</code><span class="label">Parameters</span>
+<code>public function collide(source:<a href="DynamicBounds.html">DynamicBounds</a>, target:<a href="DynamicBounds.html">DynamicBounds</a>):Array</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">source</span>:<a href="DynamicBounds.html">DynamicBounds</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">target</span>:<a href="DynamicBounds.html">DynamicBounds</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="debug()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">debug</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function debug(str:String):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">str</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="doesInteract()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">doesInteract</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function doesInteract(sinter:int, tinter:int):Boolean</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">sinter</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">tinter</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="getBounds()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getBounds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function getBounds(dc:<a href="../game/DynamicController.html">DynamicController</a>):<a href="../board/DynamicBounds.html">DynamicBounds</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">dc</span>:<a href="../game/DynamicController.html">DynamicController</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../board/DynamicBounds.html">DynamicBounds</a></code></td>
+</tr>
+</table>
+</div>
+<a name="getDynamicBounds()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getDynamicBounds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getDynamicBounds(d:<a href="../piece/Dynamic.html">Dynamic</a>):<a href="../board/DynamicBounds.html">DynamicBounds</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">d</span>:<a href="../piece/Dynamic.html">Dynamic</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../board/DynamicBounds.html">DynamicBounds</a></code></td>
+</tr>
+</table>
+</div>
+<a name="getDynamicBoundsByType()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getDynamicBoundsByType</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getDynamicBoundsByType(type:int):Array</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">type</span>:int</code></td>
@@ -473,29 +645,105 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="jumpActor()"></a>
+<a name="getLinesPt()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">jumpActor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">getLinesPt</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function jumpActor(ac:<a href="../game/ActorController.html">ActorController</a>, dX:Number, delta:Number):void</code><span class="label">Parameters</span>
+<code>public function getLinesPt(x:Number, y:Number):Array</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">ac</span>:<a href="../game/ActorController.html">ActorController</a></code></td>
+<td width="20px"></td><td><code><span class="label">x</span>:Number</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">dX</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">y</span>:Number</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Array</code></td>
+</tr>
+</table>
+</div>
+<a name="getStartDelta()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getStartDelta</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getStartDelta():Number</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Number</code></td>
+</tr>
+</table>
+</div>
+<a name="isInteresting()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isInteresting</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function isInteresting(source:<a href="DynamicBounds.html">DynamicBounds</a>, target:<a href="DynamicBounds.html">DynamicBounds</a>):Boolean</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">source</span>:<a href="DynamicBounds.html">DynamicBounds</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">delta</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">target</span>:<a href="DynamicBounds.html">DynamicBounds</a></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="numBounds()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">numBounds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function numBounds():int</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="numTasks()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">numTasks</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function numTasks():int</code>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
 </tr>
 </table>
 </div>
@@ -520,24 +768,31 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function tick(delta:Number):void</code><span class="label">Parameters</span>
+<code>public function tick(delta:int):Boolean</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">delta</span>:Number</code></td>
+<td width="20px"></td><td><code><span class="label">delta</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Boolean</code></td>
 </tr>
 </table>
 </div>
-<a name="translateActor()"></a>
+<a name="translateDynamic()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">translateActor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">translateDynamic</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function translateActor(a:<a href="../piece/Actor.html">Actor</a>, dX:Number, dY:Number):void</code><span class="label">Parameters</span>
+<code>public function translateDynamic(d:<a href="../piece/Dynamic.html">Dynamic</a>, dX:Number, dY:Number):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">a</span>:<a href="../piece/Actor.html">Actor</a></code></td>
+<td width="20px"></td><td><code><span class="label">d</span>:<a href="../piece/Dynamic.html">Dynamic</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -573,38 +828,21 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="walkActor()"></a>
+<a name="constantDetail"></a>
+<div class="detailSectionHeader">Constant detail</div>
+<a name="DEBUG"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">walkActor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">DEBUG</td><td class="detailHeaderType">constant</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function walkActor(ac:<a href="../game/ActorController.html">ActorController</a>, dX:Number, delta:Number):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">ac</span>:<a href="../game/ActorController.html">ActorController</a></code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">dX</span>:Number</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">delta</span>:Number</code></td>
-</tr>
-</table>
+<code>public static const DEBUG:Boolean = false</code>
 </div>
-<a name="constantDetail"></a>
-<div class="detailSectionHeader">Constant detail</div>
 <a name="MAX_DX"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">MAX_DX</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">MAX_DX</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
