@@ -343,18 +343,14 @@ public class ThaneAVRGameController
 
         var info :String = "scene=" + scene;
 
-        // Open the window to the server hosting the player's scene
-        var resultListener :ResultAdapter = new ResultAdapter(
-            function (cause :String) :void {
+        log.debug("Opening window ["  + info + "]");
+        _ctx.getWindowDirector().openWindow(scene.hostname, scene.port,
+            new com.threerings.util.ResultAdapter(function (cause :Error) :void {
                 log.warning("Failed to open window [" + info + ", cause=\"" + cause + "\"]");
             },
             function (wnd :Window) :void {
                 gotWindow(binding, wnd);
-            }
-        );
-
-        log.debug("Opening window ["  + info + "]");
-        _ctx.getWindowDirector().openWindow(scene.hostname, scene.port, resultListener);
+            }));
     }
 
     protected function gotWindow (binding :SceneBinding, window :Window) :void

@@ -1,10 +1,10 @@
 package com.threerings.msoy.bureau.client {
 
 import com.threerings.msoy.bureau.data.WindowClientObject;
-import com.threerings.presents.client.InvocationService_ResultListener;
-import com.threerings.presents.client.ResultAdapter;
 import com.threerings.util.Assert;
 import com.threerings.util.HashMap;
+import com.threerings.util.ResultAdapter;
+import com.threerings.util.ResultListener;
 
 /**
  * Manages a set of {@link Window} objects, keyed by host name and port.
@@ -36,8 +36,7 @@ public class WindowDirector
      * <p>NOTE: Since windows are ref-coutned, it is VERY important that the {@link #closeWindow}
      * function is also called, regardless of whether the agent still requires it.</p>
      */
-    public function openWindow (
-        host :String, port :int, listener :InvocationService_ResultListener) :void
+    public function openWindow (host :String, port :int, listener :ResultListener) :void
     {
         var key :String = host + ":" + port;
         var window :WindowImpl = _windows.get(key) as WindowImpl;
@@ -51,16 +50,16 @@ public class WindowDirector
         window.addRef();
 
         if (window.isLoggedOn()) {
-            listener.requestProcessed(window);
+            listener.requestCompleted(window);
             return;
         }
 
         window.addListener(new ResultAdapter(
-            function (cause :String) :void {
+            function (cause :Error) :void {
                 if (window.releaseRef()) {
                     _windows.remove(key);
                 }
-            }));
+            }, null)); // either arg may be null in a util.ResultAdapter
         window.addListener(listener);
     }
 
@@ -95,9 +94,9 @@ import com.threerings.msoy.bureau.data.WindowCredentials;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationService;
-import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.util.Assert;
+import com.threerings.util.ResultListener;
 import com.threerings.bureau.Log;
 
 /**
@@ -164,7 +163,7 @@ class WindowImpl implements Window
     /**
      * Adds a listener to the list that will be notified when the window succeeds in opening.
      */
-    public function addListener (listener :InvocationService_ResultListener) :void
+    public function addListener (listener :ResultListener) :void
     {
         _listeners.push(listener);
     }
@@ -227,22 +226,16 @@ class WindowImpl implements Window
 
     protected function clientDidLogon (evt :ClientEvent) :void
     {
-        for each (var listener :InvocationService_ResultListener in _listeners) {
-            listener.requestProcessed(this);
+        for each (var listener :ResultListener in _listeners) {
+            listener.requestCompleted(this);
         }
         _listeners = null;
     }
 
     protected function clientFailedToLogon (evt :ClientEvent) :void
     {
-        var cause :String = "";
-        if (evt.getCause() != null) {
-            cause = evt.getCause().getTrace();
-            if (cause == null) {
-                cause = evt.getCause().toString();
-            }
-        }
-        for each (var listener :InvocationService_ResultListener in _listeners) {
+        const cause :Error = evt.getCause();
+        for each (var listener :ResultListener in _listeners) {
             listener.requestFailed(cause);
         }
         _listeners = null;
