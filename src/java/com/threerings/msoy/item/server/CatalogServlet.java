@@ -44,6 +44,7 @@ import com.threerings.msoy.money.server.NotSecuredException;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.CatalogIdent;
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.SubItem;
@@ -521,10 +522,12 @@ public class CatalogServlet extends MsoyServiceServlet
             log.warning("Can't load suite info for non-existent game.", "gameId", gameId);
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-        Item game = record.toItem();
+        Game game = (Game)record.toItem();
         SuiteInfo info = new SuiteInfo();
         info.name = game.name;
         info.suiteId = game.getSuiteId();
+        info.creatorId = game.creatorId;
+        info.suiteTag = game.shopTag;
         return info;
     }
 

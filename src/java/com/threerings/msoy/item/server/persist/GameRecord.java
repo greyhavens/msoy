@@ -14,6 +14,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.TagCodes;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.server.GameUtil;
@@ -98,6 +99,13 @@ public class GameRecord extends ItemRecord
     public static final ColumnExp GROUP_ID_C =
         new ColumnExp(GameRecord.class, GROUP_ID);
 
+    /** The column identifier for the {@link #shopTag} field. */
+    public static final String SHOP_TAG = "shopTag";
+
+    /** The qualified column identifier for the {@link #shopTag} field. */
+    public static final ColumnExp SHOP_TAG_C =
+        new ColumnExp(GameRecord.class, SHOP_TAG);
+
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
         new ColumnExp(GameRecord.class, ITEM_ID);
@@ -179,7 +187,7 @@ public class GameRecord extends ItemRecord
         new ColumnExp(GameRecord.class, FURNI_CONSTRAINT);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 16;
+    public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER + 17;
 
     /** This game's genre. */
     public byte genre;
@@ -214,6 +222,10 @@ public class GameRecord extends ItemRecord
 
     /** Group associated with this game, required */
     public int groupId;
+
+    /** The tag used to identify (non-pack) items in this game's shop. */
+    @Column(length=TagCodes.MAX_TAG_LENGTH, nullable=true)
+    public String shopTag;
 
     /**
      * Returns true if the specified game is in development.
@@ -308,6 +320,7 @@ public class GameRecord extends ItemRecord
             serverMimeType = game.serverMedia.mimeType;
         }
         groupId = game.groupId;
+        shopTag = game.shopTag;
     }
 
     @Override // from ItemRecord
@@ -342,6 +355,7 @@ public class GameRecord extends ItemRecord
         object.serverMedia = (serverMediaHash == null) ? null :
             new MediaDesc(serverMediaHash, serverMimeType);
         object.groupId = groupId;
+        object.shopTag = shopTag;
         return object;
     }
 

@@ -82,6 +82,9 @@ public class Game extends Item
     /** Optional group associated with this game; 0 means no group */
     public int groupId;
 
+    /** The tag used to identify items in this game's shop. */
+    public String shopTag;
+
     /**
      * Returns true if the specified game is a developer's in-progress original game rather than
      * one listed in the catalog.

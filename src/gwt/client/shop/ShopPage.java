@@ -60,10 +60,9 @@ public class ShopPage extends Page
             if (_suite.getGameId() != gameId) {
                 // only load the suite info in the case that the game id has changed
                 _catalogsvc.loadGameSuiteInfo(gameId, new MsoyCallback<CatalogService.SuiteInfo>() {
-                    public void onSuccess (CatalogService.SuiteInfo suiteInfo) {
-                        CShell.frame.addNavLink(
-                            suiteInfo.name, Pages.GAMES, Args.compose("d", gameId));
-                        _suite.display(gameId, suiteInfo, itemType, page);
+                    public void onSuccess (CatalogService.SuiteInfo suite) {
+                        CShell.frame.addNavLink(suite.name, Pages.GAMES, Args.compose("d", gameId));
+                        _suite.display(gameId, suite, itemType, page);
                         setContent(_suite.getTitle(), _suite);
                     }
                 });

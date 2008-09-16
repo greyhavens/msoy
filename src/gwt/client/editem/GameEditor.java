@@ -56,6 +56,9 @@ public class GameEditor extends ItemEditor
             }
         });
 
+        // configure our shop tag
+        _shopTag.setText(_game.shopTag);
+
         // if we have no game configuration, leave everything as default
         if (_game.config == null || _game.config.length() == 0) {
             return;
@@ -187,8 +190,10 @@ public class GameEditor extends ItemEditor
         // add a tab for uploading the game screenshot
         ItemMediaUploader shotter = createAuxUploader(TYPE_IMAGE, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                if (width != GameDetail.SHOT_WIDTH || height != GameDetail.SHOT_HEIGHT || !desc.isImage()) {
-                    return _emsgs.errInvalidShot(""+GameDetail.SHOT_WIDTH, ""+GameDetail.SHOT_HEIGHT);
+                if (width != GameDetail.SHOT_WIDTH || height != GameDetail.SHOT_HEIGHT ||
+                    !desc.isImage()) {
+                    return _emsgs.errInvalidShot(
+                        ""+GameDetail.SHOT_WIDTH, ""+GameDetail.SHOT_HEIGHT);
                 }
                 _game.shotMedia = desc;
                 return null;
@@ -200,45 +205,34 @@ public class GameEditor extends ItemEditor
 
         super.addExtras();
 
+        // list of whirleds this player is a member of
+        _whirled = new ListBox();
+        addRow(_emsgs.gameWhirledLabel(), _whirled, _emsgs.gameWhirledTip());
+
+        // allow them to specify their shop tag
+        addSpacer();
+        addRow(_emsgs.gameShopTag(), _shopTag = new TextBox());
+        addTip(_emsgs.gameShopTagTip());
+
         addSpacer();
         addRow(_emsgs.gameDefinition(), _extras = new TextArea());
         _extras.setCharacterWidth(60);
         _extras.setVisibleLines(5);
         addRow(_emsgs.gameAVRG(), _avrg = new CheckBox());
-        addSpacer();
-
-        // list of whirleds this player is a member of
-        _whirled = new ListBox();
-        addRow(_emsgs.gameWhirledLabel(), _whirled, _emsgs.gameWhirledTip());
-        addSpacer();
 
         // add a tab for uploading the game server code
         addSpacer();
         addTip(_emsgs.gameServerHeadingTip());
         MediaUpdater serverMediaUpdater = new MediaUpdater() {
-            public String updateMedia (
-                String name,
-                MediaDesc desc,
-                int width,
-                int height) {
-                // TODO: validate media type
-                _game.serverMedia = desc;
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
+                _game.serverMedia = desc; // TODO: validate media type
                 return null;
             }
         };
         ItemMediaUploader serverMediaUploader = createUploader(
-            Game.SERVER_CODE_MEDIA,
-            TYPE_CODE,
-            ItemMediaUploader.NORMAL,
-            serverMediaUpdater);
-        addRow(
-            _emsgs.gameServerMediaLabel(),
-            serverMediaUploader,
-            _emsgs.gameServerMediaTip());
-        addRow(
-            _emsgs.gameServerClass(),
-            _serverClass = new TextBox(),
-            _emsgs.gameServerClassTip());
+            Game.SERVER_CODE_MEDIA, TYPE_CODE, ItemMediaUploader.NORMAL, serverMediaUpdater);
+        addRow(_emsgs.gameServerMediaLabel(), serverMediaUploader, _emsgs.gameServerMediaTip());
+        addRow(_emsgs.gameServerClass(), _serverClass = new TextBox(), _emsgs.gameServerClassTip());
         _serverClass.setVisibleLength(40);
     }
 
@@ -312,6 +306,13 @@ public class GameEditor extends ItemEditor
         // show a notice that a new Whirled will be created
         _game.groupId = new Integer(_whirled.getValue(_whirled.getSelectedIndex()));
 
+        // configure our shop tag
+        String shopTag = _shopTag.getText().trim();
+        if (shopTag.equals("")) {
+            shopTag = null;
+        }
+        _game.shopTag = shopTag;
+
         String extras = _extras.getText();
         if (extras.length() > 0) {
             try {
@@ -366,6 +367,7 @@ public class GameEditor extends ItemEditor
     protected CheckBox _avrg;
     protected TextArea _extras;
     protected ListBox _whirled;
+    protected TextBox _shopTag;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
     protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);

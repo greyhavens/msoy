@@ -49,7 +49,14 @@ public interface CatalogService extends RemoteService
         /** The name of the suite. For game suites, this is the game's name. */
         public String name;
 
+        /** The id of the suite in question. */
         public int suiteId;
+
+        /** The id of the creator of the items in this suite. */
+        public int creatorId;
+
+        /** The tag that identifies non-sub-items in this suite. */
+        public String suiteTag;
     }
 
     /** The entry point for this service. */
