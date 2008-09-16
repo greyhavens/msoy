@@ -39,14 +39,15 @@ public interface GalleryService
      *
      * @return the new gallery.
      */
-    public Gallery createGallery (String name, List<Integer> photoItemIds)
+    public Gallery createGallery (String name, String description, List<Integer> photoItemIds)
         throws ServiceException;
 
     /**
      * Updates the name and photo IDs for the indicated gallery.
      */
-    public void updateGallery (int galleryId, String name, List<Integer> photoItemIds)
-        throws ServiceException;
+    public void updateGallery (int galleryId, String name, String description,
+                               List<Integer> photoItemIds)
+                               throws ServiceException;
 
     /**
      * Deletes the specified gallery.

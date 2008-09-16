@@ -11,6 +11,7 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+import com.sun.jmx.snmp.Timestamp;
 
 import com.threerings.msoy.person.gwt.Gallery;
 
@@ -62,7 +63,7 @@ public class GalleryInfoRecord extends PersistentRecord
     public String name;
 
     /** The last modified time of the gallery in question. */
-    public Date lastModified;
+    public Timestamp lastModified;
 
     /**
      * Creates a runtime record from this persistent record.
@@ -72,7 +73,7 @@ public class GalleryInfoRecord extends PersistentRecord
         Gallery gallery = new Gallery();
         gallery.galleryId = galleryId;
         gallery.name = name;
-        gallery.lastModified = new Date(lastModified.getTime());
+        gallery.lastModified = new Date(lastModified.getDateTime());
         return gallery;
     }
 

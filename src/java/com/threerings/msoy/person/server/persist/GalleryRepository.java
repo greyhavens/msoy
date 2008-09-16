@@ -63,13 +63,15 @@ public class GalleryRepository extends DepotRepository
     /**
      * Creates a new gallery.
      */
-    public GalleryRecord insertGallery (int ownerId, String name, int[] photoItemIds)
+    public GalleryRecord insertGallery (int ownerId, String name, String description,
+                                        int[] photoItemIds)
     {
         GalleryRecord gallery = new GalleryRecord();
         gallery.ownerId = ownerId;
         gallery.name = name;
+        gallery.description = description;
         gallery.photoItemIds = photoItemIds;
-        gallery.lastModified = currentTime();
+        gallery.lastModified = currentTimestamp();
         insert(gallery);
         return gallery;
     }
@@ -77,11 +79,13 @@ public class GalleryRepository extends DepotRepository
     /**
      * Updates the specified gallery.
      */
-    public void updateGallery (int galleryId, String name, int[] photoItemIds)
+    public void updateGallery (int galleryId, String name, String description, int[] photoItemIds)
     {
-        updatePartial(GalleryRecord.getKey(galleryId), GalleryRecord.NAME, name,
+        updatePartial(GalleryRecord.getKey(galleryId),
+                      GalleryRecord.NAME, name,
+                      GalleryRecord.DESCRIPTION, description,
                       GalleryRecord.PHOTO_ITEM_IDS, photoItemIds,
-                      GalleryRecord.LAST_MODIFIED, currentTime());
+                      GalleryRecord.LAST_MODIFIED, currentTimestamp());
     }
 
     /**
@@ -95,7 +99,7 @@ public class GalleryRepository extends DepotRepository
     /**
      * Returns the current time as a {@link Timestamp}.
      */
-    protected static Timestamp currentTime ()
+    protected static Timestamp currentTimestamp ()
     {
        return new Timestamp(System.currentTimeMillis());
     }

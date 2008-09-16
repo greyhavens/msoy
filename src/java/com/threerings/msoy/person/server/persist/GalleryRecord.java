@@ -49,6 +49,13 @@ public class GalleryRecord extends PersistentRecord
     public static final ColumnExp NAME_C =
         new ColumnExp(GalleryRecord.class, NAME);
 
+    /** The column identifier for the {@link #description} field. */
+    public static final String DESCRIPTION = "description";
+
+    /** The qualified column identifier for the {@link #description} field. */
+    public static final ColumnExp DESCRIPTION_C =
+        new ColumnExp(GalleryRecord.class, DESCRIPTION);
+
     /** The column identifier for the {@link #photoItemIds} field. */
     public static final String PHOTO_ITEM_IDS = "photoItemIds";
 
@@ -66,7 +73,7 @@ public class GalleryRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
 
     /** A unique identifier for this gallery. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -78,6 +85,10 @@ public class GalleryRecord extends PersistentRecord
     /** The name of this gallery or null if it is the "Photos of Me" gallery. */
     @Column(length=Gallery.MAX_NAME_LENGTH, nullable=true)
     public String name;
+
+    /** A brief description of the gallery */
+    @Column(length=Gallery.MAX_DESCRIPTION_LENGTH, nullable=true)
+    public String description;
 
     /** An ordered list of photo item ids that make up this gallery. */
     @Column(length=2048) // results in maximum gallery size of 512 images
@@ -94,6 +105,7 @@ public class GalleryRecord extends PersistentRecord
         Gallery gallery = new Gallery();
         gallery.galleryId = galleryId;
         gallery.name = name;
+        gallery.description = description;
         gallery.lastModified = new Date(lastModified.getTime());
         return gallery;
     }
