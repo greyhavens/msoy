@@ -28,6 +28,8 @@ import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.annotation.Computed;
 
 import com.threerings.msoy.server.ServerConfig;
@@ -40,38 +42,39 @@ import com.threerings.msoy.server.ServerConfig;
 public class DatabaseMover
 {
     public static void main (String[] args)
+        throws Exception
     {
         if (args.length < 2) {
             System.err.println(USAGE);
             System.exit(255);
+        }
 
-        } else if (args[0].equals("dump")) {
-            try {
-                new DatabaseMover().dump(new File(args[1]));
-            } catch (Exception e) {
-                System.err.println("Failed to dump database: " + e);
-                e.printStackTrace(System.err);
+        DatabaseMover mover = new DatabaseMover();
+        try {
+            if (args[0].equals("dump")) {
+                mover.dump(new File(args[1]));
+            } else if (args[0].equals("restore")) {
+                mover.restore(new File(args[1]), false);
+            } else if (args[0].equals("wipe_restore")) {
+                mover.restore(new File(args[1]), true);
+            } else {
+                System.err.println(USAGE);
+                System.exit(255);
             }
-
-        } else if (args[0].equals("restore")) {
-            try {
-                new DatabaseMover().restore(new File(args[1]));
-            } catch (Exception e) {
-                System.err.println("Failed to restore database: " + e);
-                e.printStackTrace(System.err);
-            }
-
-        } else {
-            System.err.println(USAGE);
-            System.exit(255);
+        } finally {
+            mover.shutdown();
         }
     }
 
     protected DatabaseMover ()
         throws Exception
     {
-        _repo = new MoverRepository(
-            new PersistenceContext("msoy", ServerConfig.createConnectionProvider()));
+        _perCtx = new PersistenceContext("msoy", ServerConfig.createConnectionProvider());
+        _repo = new MoverRepository(_perCtx);
+    }
+
+    protected void shutdown () {
+        _perCtx.shutdown();
     }
 
     protected void dump (File target)
@@ -126,7 +129,7 @@ public class DatabaseMover
         oout.close();
     }
 
-    protected void restore (File target)
+    protected void restore (File target, boolean wipe)
         throws Exception
     {
         ObjectInputStream oin = new ObjectInputStream(
@@ -137,7 +140,9 @@ public class DatabaseMover
             while (true) {
                 PersistentRecord record = (PersistentRecord)oin.readObject();
                 if (!classes.contains(record.getClass())) {
-                    if (_repo.slurp(record.getClass()).size() > 0) {
+                    if (wipe) {
+                        _repo.clear(record.getClass());
+                    } else if (_repo.slurp(record.getClass()).size() > 0) {
                         System.err.println("Refusing to restore to a database that has contents: " +
                                            record.getClass());
                         System.exit(255);
@@ -163,10 +168,14 @@ public class DatabaseMover
         public <T extends PersistentRecord> void add (T record) throws DatabaseException {
             insert(record);
         }
+        public <T extends PersistentRecord> void clear (Class<T> type) throws DatabaseException {
+            deleteAll(type, new Where(new LiteralExp("true")), null);
+        }
         protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes) {
         }
     }
 
+    protected PersistenceContext _perCtx;
     protected MoverRepository _repo;
 
     protected static final String USAGE = "Usage: DatabaseMover [dump|restore] dbdata.dat";
