@@ -34,11 +34,17 @@ public class MsoyPortal extends Portal
 
         // parse our destination location if we have one
         if (vals.length > 5) {
-            dest = new MsoyLocation();
-            dest.x = Float.parseFloat(vals[1]);
-            dest.y = Float.parseFloat(vals[2]);
-            dest.z = Float.parseFloat(vals[3]);
-            dest.orient = Short.parseShort(vals[4]);
+            try {
+                MsoyLocation tdest = new MsoyLocation();
+                tdest.x = Float.parseFloat(vals[1]);
+                tdest.y = Float.parseFloat(vals[2]);
+                tdest.z = Float.parseFloat(vals[3]);
+                tdest.orient = Short.parseShort(vals[4]);
+                dest = tdest;
+            } catch (Exception e) {
+                // maybe someone just named their room -:¦:-Emotions-:¦:-'s Living Room; just
+                // silently assume we have no target info
+            }
         }
     }
 }

@@ -35,11 +35,16 @@ public class MsoyPortal extends Portal
 
         // parse our destination location if we have one
         if (vals.length > 5) {
-            dest = new MsoyLocation();
-            dest.x = Number(vals[1]);
-            dest.y = Number(vals[2]);
-            dest.z = Number(vals[3]);
-            dest.orient = int(vals[4]);
+            var tdest :MsoyLocation = new MsoyLocation();
+            tdest.x = Number(vals[1]);
+            tdest.y = Number(vals[2]);
+            tdest.z = Number(vals[3]);
+            tdest.orient = int(vals[4]);
+            // it's possible that someone named their room something wacky and fooled our parser,
+            // so validate the data before we actually use it
+            if (tdest.x != 0 || tdest.y != 0 || tdest.z != 0 || tdest.orient != 0) {
+                dest = tdest;
+            }
         }
     }
 
