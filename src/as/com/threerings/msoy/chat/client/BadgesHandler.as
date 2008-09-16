@@ -6,7 +6,7 @@ package com.threerings.msoy.chat.client {
 import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.chat.client.CommandHandler;
 import com.threerings.crowd.chat.client.SpeakService;
@@ -29,7 +29,7 @@ public class BadgesHandler extends CommandHandler
     {
         var client :Client = ctx.getClient();
         var msvc :MemberService = client.requireService(MemberService) as MemberService;
-        msvc.loadAllBadges(client, new ResultWrapper(function (cause :String) :void {
+        msvc.loadAllBadges(client, new ResultAdapter(function (cause :String) :void {
                 log.warning("Unable load badges [cause=" + cause + "].");
             }, function (badges :Array /* of EarnedBadge */) :void {
                 (new BadgeListPanel(ctx as MsoyContext, badges)).open();

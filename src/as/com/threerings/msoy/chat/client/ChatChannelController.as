@@ -12,7 +12,7 @@ import com.threerings.util.Name;
 import com.threerings.util.Util;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
@@ -97,7 +97,7 @@ public class ChatChannelController
 
         if (!_isConnected) {
             _ccsvc.joinChannel(
-                _ctx.getClient(), _channel, new ResultWrapper(failed, gotChannelOid));
+                _ctx.getClient(), _channel, new ResultAdapter(failed, gotChannelOid));
             _isConnecting = true;
         }
     }

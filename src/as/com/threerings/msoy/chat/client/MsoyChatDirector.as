@@ -9,7 +9,7 @@ import mx.events.CloseEvent;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationAdapter;
-import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.client.ResultAdapter;
 import com.threerings.presents.dobj.MessageEvent;
 
 import com.whirled.ui.PlayerList;
@@ -194,7 +194,7 @@ public class MsoyChatDirector extends ChatDirector
     public function requestJabber (target :JabberName, msg :String, feedbackLocaltype :String) :void
     {
         var svc :JabberService = (_wctx.getClient().requireService(JabberService) as JabberService);
-        svc.sendMessage(_wctx.getClient(), target, msg, new ResultWrapper(
+        svc.sendMessage(_wctx.getClient(), target, msg, new ResultAdapter(
             function (cause :String) :void {
                 var msg :String = MessageBundle.compose(
                     "e.im_tell_failed", MessageBundle.taint(cause));

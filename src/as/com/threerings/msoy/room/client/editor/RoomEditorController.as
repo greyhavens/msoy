@@ -17,7 +17,7 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.presents.client.ConfirmAdapter;
-import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.HashMap;
@@ -508,7 +508,7 @@ public class RoomEditorController
         // now ask the server for ids
         var svc :ItemService = _ctx.getClient().requireService(ItemService) as ItemService;
         svc.getItemNames(
-            _ctx.getClient(), idents, new ResultWrapper(function (cause :String) :void {
+            _ctx.getClient(), idents, new ResultAdapter(function (cause :String) :void {
                 // do nothing
                 log.warning("Unable to get item names [cause=" + cause + "].");
             }, function (names :Array /* of String */) :void {

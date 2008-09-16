@@ -10,7 +10,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.InvocationService_ResultListener;
-import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.client.LocationAdapter;
 
@@ -69,7 +69,7 @@ public class WorldDirector extends BasicDirector
             return;
         } 
 
-        _msvc.getCurrentMemberLocation(_wctx.getClient(), memberId, new ResultWrapper(
+        _msvc.getCurrentMemberLocation(_wctx.getClient(), memberId, new ResultAdapter(
             function (cause :String) :void {
                 _wctx.displayFeedback(null, cause);
             },
@@ -104,7 +104,7 @@ public class WorldDirector extends BasicDirector
             _wctx.getClient().addClientObserver(waiter);
             return;
         }
-        _msvc.getHomeId(_wctx.getClient(), ownerType, ownerId, new ResultWrapper(
+        _msvc.getHomeId(_wctx.getClient(), ownerType, ownerId, new ResultAdapter(
             function (cause :String) :void {
                 log.warning("Unable to go to home [type=" + ownerType + ", id=" + ownerId +
                             ", cause=" + cause);

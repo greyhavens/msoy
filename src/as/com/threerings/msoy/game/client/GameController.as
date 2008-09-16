@@ -6,7 +6,7 @@ package com.threerings.msoy.game.client {
 import com.threerings.util.Log;
 
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.HeaderBar;
@@ -57,7 +57,7 @@ public class GameController extends MsoyController
     protected function joinGameLobby (gameId :int) :void
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
+        var cb :ResultAdapter = new ResultAdapter(function (cause :String) :void {
             _mctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             // TODO
         }, gotLobbyOid);

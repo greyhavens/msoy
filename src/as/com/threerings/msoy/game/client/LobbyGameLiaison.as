@@ -7,7 +7,7 @@ import com.threerings.util.Log;
 
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
-import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.client.LocationAdapter;
 import com.threerings.crowd.client.PlaceController;
@@ -69,7 +69,7 @@ public class LobbyGameLiaison extends GameLiaison
         }
 
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
+        var cb :ResultAdapter = new ResultAdapter(function (cause :String) :void {
             _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             // some failure cases are innocuous, and should be followed up by a display of the 
             // lobby; if we really are hosed, joinLobby() will cause the liaison to shut down
@@ -123,7 +123,7 @@ public class LobbyGameLiaison extends GameLiaison
     public function playNow (mode :int) :void
     {
         var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
+        var cb :ResultAdapter = new ResultAdapter(function (cause :String) :void {
             _enterNextGameDirect = false;
             _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
             shutdown();
@@ -245,7 +245,7 @@ public class LobbyGameLiaison extends GameLiaison
     protected function joinLobby () :void
     {
 //        var lsvc :LobbyService = (_gctx.getClient().requireService(LobbyService) as LobbyService);
-//        var cb :ResultWrapper = new ResultWrapper(function (cause :String) :void {
+//        var cb :ResultAdapter = new ResultAdapter(function (cause :String) :void {
 //            _wctx.displayFeedback(MsoyCodes.GAME_MSGS, cause);
 //            shutdown();
 //        }, gotLobbyOid);

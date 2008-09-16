@@ -37,7 +37,6 @@ import com.threerings.flex.PopUpUtil;
 
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ConfirmAdapter;
-import com.threerings.presents.client.ResultWrapper;
 
 import com.threerings.presents.dobj.ChangeListener;
 import com.threerings.presents.dobj.MessageAdapter;

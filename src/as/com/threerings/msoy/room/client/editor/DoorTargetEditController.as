@@ -14,7 +14,7 @@ import com.threerings.util.Log;
 
 import com.threerings.io.TypedArray;
 
-import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.flex.CommandButton;
 
@@ -186,7 +186,7 @@ public class DoorTargetEditController
     protected function purchase () :void
     {
         var roomObj :RoomObject = (_ctx.getLocationDirector().getPlaceObject() as RoomObject);
-        roomObj.roomService.purchaseRoom(_ctx.getClient(), new ResultWrapper (
+        roomObj.roomService.purchaseRoom(_ctx.getClient(), new ResultAdapter (
             function (cause :String) :void { // failure handler
                 Log.getLog(this).info("Room purchase failure: " + cause);
                 _ctx.displayFeedback(null, cause);

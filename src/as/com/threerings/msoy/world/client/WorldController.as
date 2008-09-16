@@ -20,7 +20,7 @@ import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.client.ResultAdapter;
 import com.threerings.presents.net.Credentials;
 
 import com.threerings.crowd.client.PlaceView;
@@ -332,7 +332,7 @@ public class WorldController extends MsoyController
     public function handleViewItem (ident :ItemIdent) :void
     {
         var isvc :ItemService = _wctx.getClient().requireService(ItemService) as ItemService;
-        isvc.getCatalogId(_wctx.getClient(), ident, new ResultWrapper(
+        isvc.getCatalogId(_wctx.getClient(), ident, new ResultAdapter(
             function (cause :String) :void {
                 _wctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
             },
@@ -586,7 +586,7 @@ public class WorldController extends MsoyController
     {
         var msvc :MemberService =
             (_wctx.getClient().requireService(MemberService) as MemberService);
-        msvc.getCurrentMemberLocation(_wctx.getClient(), memberId, new ResultWrapper(
+        msvc.getCurrentMemberLocation(_wctx.getClient(), memberId, new ResultAdapter(
             function (cause :String) :void {
                 _wctx.displayFeedback(null, cause);
             },

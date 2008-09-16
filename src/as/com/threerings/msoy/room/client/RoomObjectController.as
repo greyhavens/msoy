@@ -35,7 +35,7 @@ import com.threerings.flex.PopUpUtil;
 
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ConfirmAdapter;
-import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.presents.dobj.ChangeListener;
 import com.threerings.presents.dobj.MessageAdapter;
@@ -323,7 +323,7 @@ public class RoomObjectController extends RoomController
             cancelRoomEditing();
         }
 
-        _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultWrapper(
+        _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultAdapter(
             function (cause :String) :void {
                 _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
             },
@@ -346,7 +346,7 @@ public class RoomObjectController extends RoomController
             cancelRoomEditing();
             return;
         }
-        _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultWrapper(
+        _roomObj.roomService.editRoom(_wdctx.getClient(), new ResultAdapter(
             function (cause :String) :void {
                 _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
             },
@@ -643,7 +643,7 @@ public class RoomObjectController extends RoomController
             }
         };
 
-        isvc.peepItem(_wdctx.getClient(), ident, new ResultWrapper(
+        isvc.peepItem(_wdctx.getClient(), ident, new ResultAdapter(
             function (cause :String) :void {
                 _wdctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
             }, gotItem));
@@ -995,7 +995,7 @@ public class RoomObjectController extends RoomController
     {
         // ship the update request off to the server
         _roomObj.roomService.updateMemory(_wdctx.getClient(),
-            new EntityMemoryEntry(ident, key, data), new ResultWrapper(
+            new EntityMemoryEntry(ident, key, data), new ResultAdapter(
                 function (cause :String) :void {
                     _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
                 },

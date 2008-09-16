@@ -22,7 +22,7 @@ import com.threerings.flex.CommandButton;
 
 import com.threerings.util.Log;
 
-import com.threerings.presents.client.ResultWrapper;
+import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MemberService;
@@ -109,7 +109,7 @@ public class RoomPanel extends BasePanel
                 var svc :MemberService = 
                     _controller.ctx.getClient().requireService(MemberService) as MemberService;
                 svc.getGroupHomeSceneId(_controller.ctx.getClient(), sceneModel.ownerId,
-                    new ResultWrapper(
+                    new ResultAdapter(
                         // failed function
                         function (cause :String) :void {
                             _controller.ctx.displayFeedback(MsoyCodes.EDITING_MSGS, cause);
