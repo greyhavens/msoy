@@ -328,12 +328,6 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
-    public void ensureVisible (Widget widget)
-    {
-        // TEMP: not used, will go away
-    }
-
-    // from interface Frame
     public void showDialog (String title, Widget dialog)
     {
         // remove any existing content

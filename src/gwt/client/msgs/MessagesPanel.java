@@ -136,7 +136,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
         if (_scrollToPanel != null) {
             DeferredCommand.addCommand(new Command() {
                 public void execute () {
-                    CShell.frame.ensureVisible(_scrollToPanel);
+                    _scrollToPanel.getElement().scrollIntoView();
                     _scrollToPanel = null;
                 }
             });

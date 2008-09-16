@@ -73,11 +73,6 @@ public interface Frame
     void closeContent ();
 
     /**
-     * Requests that the specified widget be scrolled into view.
-     */
-    void ensureVisible (Widget widget);
-
-    /**
      * Displays the supplied dialog.
      */
     void showDialog (String title, Widget dialog);

@@ -337,8 +337,6 @@ public abstract class Page
             CShell.log("Would close content.");
         }
 
-        public void ensureVisible (Widget widget) {
-        }
         public void showDialog (String title, Widget dialog) {
             clearDialog();
             _dialog = new BorderedDialog(false, false, false) {
