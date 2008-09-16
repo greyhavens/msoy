@@ -9,7 +9,6 @@ import java.io.StringWriter;
 import java.net.URL;
 
 import java.util.Set;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -35,8 +34,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 
 import com.threerings.presents.server.ShutdownManager;
-
-import com.threerings.msoy.web.data.ServiceCodes;
 
 import static com.threerings.msoy.Log.log;
 

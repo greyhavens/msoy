@@ -12,10 +12,7 @@ import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.jdbc.depot.PersistenceContext;
-import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
-import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser; 
 import com.samskivert.jdbc.depot.PersistentRecord;
 
 import com.threerings.presents.annotation.BlockingThread;

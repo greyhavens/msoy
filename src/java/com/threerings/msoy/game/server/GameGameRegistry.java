@@ -6,7 +6,6 @@ package com.threerings.msoy.game.server;
 import static com.threerings.msoy.Log.log;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;

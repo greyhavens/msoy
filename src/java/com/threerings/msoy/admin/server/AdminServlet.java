@@ -16,7 +16,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.MsoyAuthCodes;
-import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;

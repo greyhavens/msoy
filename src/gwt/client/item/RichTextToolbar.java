@@ -46,7 +46,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.images.editor.RichTextToolbarImages;
-import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.BorderedPopup;
 import client.ui.MsoyUI;
