@@ -19,6 +19,7 @@ import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.group.gwt.GroupCard;
 import com.threerings.msoy.item.gwt.ListingCard;
 import com.threerings.msoy.person.gwt.FeedMessage;
+import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.Interest;
 
 /**
@@ -68,6 +69,11 @@ public interface ProfileService extends RemoteService
          * This user's game ratings.
          */
         public List<GameRating> ratings;
+
+        /**
+         * This user's list of galleries
+         */
+        public List<Gallery> galleries;
 
         /**
          * This user's recently earned trophies.

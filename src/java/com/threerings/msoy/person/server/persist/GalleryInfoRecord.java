@@ -4,6 +4,7 @@
 package com.threerings.msoy.person.server.persist;
 
 import java.util.Date;
+import java.sql.Timestamp;
 
 import com.google.common.base.Function;
 
@@ -11,7 +12,6 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.sun.jmx.snmp.Timestamp;
 
 import com.threerings.msoy.person.gwt.Gallery;
 
@@ -73,10 +73,7 @@ public class GalleryInfoRecord extends PersistentRecord
         Gallery gallery = new Gallery();
         gallery.galleryId = galleryId;
         gallery.name = name;
-        gallery.lastModified = new Date(lastModified.getDateTime());
+        gallery.lastModified = new Date(lastModified.getTime());
         return gallery;
     }
-
 }
-
-

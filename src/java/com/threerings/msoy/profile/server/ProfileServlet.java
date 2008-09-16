@@ -54,6 +54,7 @@ import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
+import com.threerings.msoy.person.server.GalleryLogic;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.server.persist.InterestRecord;
 import com.threerings.msoy.person.server.persist.ProfileRecord;
@@ -104,6 +105,9 @@ public class ProfileServlet extends MsoyServiceServlet
             Lists.transform(
                 _badgeRepo.loadRecentEarnedBadges(tgtrec.memberId, ProfileResult.MAX_STAMPS),
                 EarnedBadgeRecord.TO_BADGE));
+
+        // load gallery info
+        result.galleries = _galleryLogic.loadGalleries(tgtrec.memberId);
 
         // load rating and trophy info
         result.trophies = resolveTrophyData(memrec, tgtrec);
@@ -340,6 +344,7 @@ public class ProfileServlet extends MsoyServiceServlet
     @Inject protected ServletLogic _servletLogic;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected GalleryLogic _galleryLogic;
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ProfileRepository _profileRepo;

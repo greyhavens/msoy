@@ -21,7 +21,6 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryService;
-import com.threerings.msoy.person.server.persist.GalleryInfoRecord;
 import com.threerings.msoy.person.server.persist.GalleryRecord;
 import com.threerings.msoy.person.server.persist.GalleryRepository;
 
@@ -80,9 +79,7 @@ public class GalleryServlet extends MsoyServiceServlet
     public List<Gallery> loadGalleries (int memberId)
         throws ServiceException
     {
-        // load records and convert them to Gallery instances
-        return Lists.newArrayList(Lists.transform(_galleryRepo.loadGalleries(memberId),
-                                                  GalleryInfoRecord.TO_GALLERY));
+        return _galleryLogic.loadGalleries(memberId);
     }
 
     // from GalleryService
@@ -145,4 +142,5 @@ public class GalleryServlet extends MsoyServiceServlet
 
     @Inject protected GalleryRepository _galleryRepo;
     @Inject protected PhotoRepository _photoRepo;
+    @Inject protected GalleryLogic _galleryLogic;
 }

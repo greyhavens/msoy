@@ -35,9 +35,9 @@ public class GalleryRepository extends DepotRepository
     /**
      * Loads metadata on all galleries owned by the specified member.
      */
-    public List<GalleryInfoRecord> loadGalleries (int memberId)
+    public List<GalleryRecord> loadGalleries (int memberId)
     {
-        return findAll(GalleryInfoRecord.class,
+        return findAll(GalleryRecord.class,
                        new Where(new Equals(GalleryRecord.OWNER_ID_C, memberId)));
     }
 
