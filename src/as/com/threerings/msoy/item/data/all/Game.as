@@ -44,6 +44,9 @@ public class Game extends Item
     /** Optional group associated with this game; values < 0 mean no group */
     public var groupId :int;
 
+    /** The tag used to identify items in this game's shop. */
+    public var shopTag :String;
+
     override public function getType () :int
     {
         return GAME;
@@ -69,6 +72,7 @@ public class Game extends Item
         shotMedia = (ins.readObject() as MediaDesc);
         serverMedia = (ins.readObject() as MediaDesc);
         groupId = (ins.readInt());
+        shopTag = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -82,6 +86,7 @@ public class Game extends Item
         out.writeObject(shotMedia);
         out.writeObject(serverMedia);
         out.writeInt(groupId);
+        out.writeField(shopTag);
     }
 }
 }
