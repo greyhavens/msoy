@@ -60,7 +60,9 @@ public class BalancePanel extends PagedGrid<MoneyTransaction>
             addStyleName("Transaction");
 
             add(MsoyUI.createLabel(MsoyUI.formatDateTime(entry.timestamp), "Time"));
-            add(MsoyUI.createLabel(_lookup.xlate(entry.description), "Description"));
+
+            String description = _lookup.xlate(MsoyUI.escapeHTML(entry.description));
+            add(MsoyUI.createHTML(description, "Description"));
 
             String amt = String.valueOf(Math.abs(entry.amount));
             String debit, credit;

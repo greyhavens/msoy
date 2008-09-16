@@ -212,13 +212,19 @@ public class MsoyUI
         return label;
     }
 
+    /** Escapes an HTML/XML string. */
+    public static String escapeHTML (String html)
+    {
+        return html.replaceAll("&", "&amp;")
+                   .replaceAll("<", "&lt;")
+                   .replaceAll(">", "&gt;")
+                   .replaceAll("\"", "&quot;");
+    }
+
     /** Creates a safe, restricted HTML from user input. */
     public static HTML createRestrictedHTML (String html)
     {
-        html = html.replaceAll("&", "&amp;");
-        html = html.replaceAll("<", "&lt;");
-        html = html.replaceAll(">", "&gt;");
-        html = html.replaceAll("\"", "&quot;");
+        html = escapeHTML(html);
         html = html.replaceAll("(http://(.*?\\.)?whirled.com/([^ ]+))", "<a href=\"$1\">$3</a>");
         return createHTML(html, null);
     }
