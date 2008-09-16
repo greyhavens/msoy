@@ -72,7 +72,11 @@ public class MoneyRepository extends DepotRepository
      */
     public MemberAccountRecord getAccountById (final int memberId)
     {
-        return load(MemberAccountRecord.class, memberId);
+        MemberAccountRecord account = load(MemberAccountRecord.class, memberId);
+        if (account == null) {
+            account = new MemberAccountRecord(memberId);
+        }
+        return account;
     }
 
     /**

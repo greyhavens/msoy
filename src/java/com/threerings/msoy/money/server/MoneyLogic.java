@@ -52,7 +52,7 @@ import static com.threerings.msoy.Log.log;
  * Facade for all money (coins, bars, and bling) transactions. This is the starting place to
  * access these services.
  *
- * TODO: transactional support
+ * TODO: transactional support- database transactions for proper rollback??
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
@@ -120,14 +120,9 @@ public class MoneyLogic
             "item is invalid: %s", item);
 
         MemberAccountRecord account = _repo.getAccountById(memberId);
-        if (account == null) {
-            account = new MemberAccountRecord(memberId);
-        }
         final MoneyTransactionRecord history = account.awardCoins(amount, item, description);
         _repo.saveAccount(account);
         _repo.addTransaction(history);
-
-        // TODO: creator and affiliate ? ? ?
 
         final UserActionDetails info = logUserAction(memberId, 0, userAction, description, item);
         logInPanopticon(info, Currency.COINS, amount, account);
@@ -155,9 +150,6 @@ public class MoneyLogic
         Preconditions.checkArgument(numBars >= 0, "numBars is invalid: %d", numBars);
 
         MemberAccountRecord account = _repo.getAccountById(memberId);
-        if (account == null) {
-            account = new MemberAccountRecord(memberId);
-        }
         final MoneyTransactionRecord history = account.buyBars(numBars, description);
         _repo.saveAccount(account);
         _repo.addTransaction(history);
@@ -219,10 +211,6 @@ public class MoneyLogic
 
         // Get buyer account...
         MemberAccountRecord buyer = _repo.getAccountById(buyerId);
-        if (buyer == null) {
-            // TODO: when does this happen?
-            buyer = new MemberAccountRecord(buyerId);
-        }
 
         // see if the user can afford it, or if we'll let them have it for free (support+)
         boolean magicFreeItem;
@@ -250,9 +238,6 @@ public class MoneyLogic
 
         } else {
             creator = _repo.getAccountById(creatorId);
-            if (creator == null) {
-                creator = new MemberAccountRecord(creatorId);
-            }
         }
 
         // load the buyer's affiliate
@@ -269,9 +254,6 @@ public class MoneyLogic
 
         } else {
             affiliate = _repo.getAccountById(affiliateId);
-            if (affiliate == null) {
-                affiliate = new MemberAccountRecord(affiliateId);
-            }
         }
 
         // add a transaction for the buyer
@@ -283,7 +265,7 @@ public class MoneyLogic
         _repo.addTransaction(buyerTrans);
 
         // log userAction and to panopticon for the buyer
-        UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID, // TODO?
+        UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID,
             UserAction.BOUGHT_ITEM, description, item);
         logInPanopticon(info, buyCurrency, buyerTrans.amount, buyer);
 
@@ -301,8 +283,8 @@ public class MoneyLogic
             _repo.addTransaction(creatorTrans);
 
             // log userAction and to panopticon for the creator
-            info = logUserAction(creatorId, buyerId, UserAction.RECEIVED_PAYOUT,
-                description, item);
+            info = logUserAction(creatorId, buyerId,
+                UserAction.RECEIVED_PAYOUT, description, item);
             logInPanopticon(info, buyCurrency, creatorTrans.amount, creator);
         }
 
@@ -319,9 +301,8 @@ public class MoneyLogic
             _repo.addTransaction(affiliateTrans);
 
             // log userAction and to panopticon for the affiliate
-            // TODO: do we use the same RECEIVED_PAYOUT that we used for the creator for affiliate?
-            info = logUserAction(affiliateId, buyerId, UserAction.RECEIVED_PAYOUT,
-                description, item);
+            info = logUserAction(affiliateId, buyerId,
+                UserAction.RECEIVED_PAYOUT, description, item);
             logInPanopticon(info, buyCurrency, affiliateTrans.amount, affiliate);
         }
 
@@ -450,8 +431,7 @@ public class MoneyLogic
         Preconditions.checkArgument(!MemberName.isGuest(memberId),
             "Cannot retrieve money info for guests.");
 
-        final MemberAccountRecord account = _repo.getAccountById(memberId);
-        return account != null ? account.getMemberMoney() : new MemberMoney(memberId);
+        return _repo.getAccountById(memberId).getMemberMoney();
     }
 
     /**
