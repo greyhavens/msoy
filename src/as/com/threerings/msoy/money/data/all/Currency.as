@@ -32,11 +32,11 @@ public final class Currency extends Enum
     }
 
     /**
-     * Get the complete URL for the small icon for this currency.
+     * Get the complete URL for the "embed header" icon for this currency.
      */
-    public function getSmallIcon () :String
+    public function getEmbedHeaderIcon () :String
     {
-        return DeploymentConfig.serverURL + "rsrc/" + toString().toLowerCase() + "_small.png";
+        return DeploymentConfig.serverURL + "rsrc/" + toString().toLowerCase() + "_embedheader.png";
     }
 
     /**

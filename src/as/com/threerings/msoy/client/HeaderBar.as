@@ -201,7 +201,7 @@ public class HeaderBar extends HBox
     {
         addChild(FlexUtil.createSpacer(10));
         const icon :Image = new Image();
-        icon.source = currency.getSmallIcon();
+        icon.source = currency.getEmbedHeaderIcon();
         const hb :HBox = new HBox();
         hb.setStyle("verticalAlign", "middle");
         hb.percentHeight = 100;
