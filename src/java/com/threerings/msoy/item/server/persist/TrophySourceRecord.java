@@ -155,7 +155,7 @@ public class TrophySourceRecord extends SubItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #TrophySourceRecord}
+     * Create and return a primary {@link Key} to identify a {@link TrophySourceRecord}
      * with the supplied key values.
      */
     public static Key<TrophySourceRecord> getKey (int itemId)

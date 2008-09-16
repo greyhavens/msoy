@@ -59,7 +59,7 @@ public class AvatarCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #AvatarCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link AvatarCatalogRecord}
      * with the supplied key values.
      */
     public static Key<AvatarCatalogRecord> getKey (int catalogId)

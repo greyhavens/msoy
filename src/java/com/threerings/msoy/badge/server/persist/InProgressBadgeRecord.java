@@ -124,7 +124,7 @@ public class InProgressBadgeRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #InProgressBadgeRecord}
+     * Create and return a primary {@link Key} to identify a {@link InProgressBadgeRecord}
      * with the supplied key values.
      */
     public static Key<InProgressBadgeRecord> getKey (int memberId, int badgeCode)

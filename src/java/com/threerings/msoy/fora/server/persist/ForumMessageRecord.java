@@ -146,7 +146,7 @@ public class ForumMessageRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ForumMessageRecord}
+     * Create and return a primary {@link Key} to identify a {@link ForumMessageRecord}
      * with the supplied key values.
      */
     public static Key<ForumMessageRecord> getKey (int messageId)

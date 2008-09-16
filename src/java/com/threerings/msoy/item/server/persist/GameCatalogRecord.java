@@ -59,7 +59,7 @@ public class GameCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #GameCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link GameCatalogRecord}
      * with the supplied key values.
      */
     public static Key<GameCatalogRecord> getKey (int catalogId)

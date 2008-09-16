@@ -124,7 +124,7 @@ public class TrophyRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #TrophyRecord}
+     * Create and return a primary {@link Key} to identify a {@link TrophyRecord}
      * with the supplied key values.
      */
     public static Key<TrophyRecord> getKey (int gameId, int memberId, String ident)

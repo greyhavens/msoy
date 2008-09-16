@@ -69,7 +69,7 @@ public class InterestRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #InterestRecord}
+     * Create and return a primary {@link Key} to identify a {@link InterestRecord}
      * with the supplied key values.
      */
     public static Key<InterestRecord> getKey (int memberId, int type)

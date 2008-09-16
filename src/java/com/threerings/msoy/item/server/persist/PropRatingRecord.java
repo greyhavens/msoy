@@ -25,7 +25,7 @@ public class PropRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PropRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link PropRatingRecord}
      * with the supplied key values.
      */
     public static Key<PropRatingRecord> getKey (int itemId, int memberId)

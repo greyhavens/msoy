@@ -25,7 +25,7 @@ public class LevelPackRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #LevelPackRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link LevelPackRatingRecord}
      * with the supplied key values.
      */
     public static Key<LevelPackRatingRecord> getKey (int itemId, int memberId)

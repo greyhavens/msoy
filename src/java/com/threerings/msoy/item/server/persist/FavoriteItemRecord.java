@@ -63,7 +63,7 @@ public class FavoriteItemRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #FavoriteItemRecord}
+     * Create and return a primary {@link Key} to identify a {@link FavoriteItemRecord}
      * with the supplied key values.
      */
     public static Key<FavoriteItemRecord> getKey (int memberId, byte itemType, int catalogId)

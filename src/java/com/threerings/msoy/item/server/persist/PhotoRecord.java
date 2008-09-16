@@ -205,7 +205,7 @@ public class PhotoRecord extends ItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PhotoRecord}
+     * Create and return a primary {@link Key} to identify a {@link PhotoRecord}
      * with the supplied key values.
      */
     public static Key<PhotoRecord> getKey (int itemId)

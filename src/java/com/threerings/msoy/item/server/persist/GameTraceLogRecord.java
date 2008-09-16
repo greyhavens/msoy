@@ -103,7 +103,7 @@ public class GameTraceLogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #GameTraceLogRecord}
+     * Create and return a primary {@link Key} to identify a {@link GameTraceLogRecord}
      * with the supplied key values.
      */
     public static Key<GameTraceLogRecord> getKey (int logId)

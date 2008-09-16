@@ -63,7 +63,7 @@ public class PetCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PetCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link PetCloneRecord}
      * with the supplied key values.
      */
     public static Key<PetCloneRecord> getKey (int itemId)

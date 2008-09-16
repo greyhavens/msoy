@@ -64,7 +64,7 @@ public class ReadTrackingRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ReadTrackingRecord}
+     * Create and return a primary {@link Key} to identify a {@link ReadTrackingRecord}
      * with the supplied key values.
      */
     public static Key<ReadTrackingRecord> getKey (int memberId, int threadId)

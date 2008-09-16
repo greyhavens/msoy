@@ -59,7 +59,7 @@ public class TrophySourceCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #TrophySourceCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link TrophySourceCatalogRecord}
      * with the supplied key values.
      */
     public static Key<TrophySourceCatalogRecord> getKey (int catalogId)

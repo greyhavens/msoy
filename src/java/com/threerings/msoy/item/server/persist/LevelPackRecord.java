@@ -143,7 +143,7 @@ public class LevelPackRecord extends SubItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #LevelPackRecord}
+     * Create and return a primary {@link Key} to identify a {@link LevelPackRecord}
      * with the supplied key values.
      */
     public static Key<LevelPackRecord> getKey (int itemId)

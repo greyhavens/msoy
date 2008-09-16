@@ -99,7 +99,7 @@ public class ReferralRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ReferralRecord}
+     * Create and return a primary {@link Key} to identify a {@link ReferralRecord}
      * with the supplied key values.
      */
     public static Key<ReferralRecord> getKey (int memberId)

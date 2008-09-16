@@ -58,7 +58,7 @@ public class ExternalMapRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ExternalMapRecord}
+     * Create and return a primary {@link Key} to identify a {@link ExternalMapRecord}
      * with the supplied key values.
      */
     public static Key<ExternalMapRecord> getKey (int partnerId, String externalId)

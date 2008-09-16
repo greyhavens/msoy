@@ -55,7 +55,7 @@ public class FriendRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #FriendRecord}
+     * Create and return a primary {@link Key} to identify a {@link FriendRecord}
      * with the supplied key values.
      */
     public static Key<FriendRecord> getKey (int inviterId, int inviteeId)

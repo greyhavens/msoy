@@ -47,7 +47,7 @@ public class InstructionsRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #InstructionsRecord}
+     * Create and return a primary {@link Key} to identify a {@link InstructionsRecord}
      * with the supplied key values.
      */
     public static Key<InstructionsRecord> getKey (int gameId)

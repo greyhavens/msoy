@@ -25,7 +25,7 @@ public class ToyRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ToyRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link ToyRatingRecord}
      * with the supplied key values.
      */
     public static Key<ToyRatingRecord> getKey (int itemId, int memberId)

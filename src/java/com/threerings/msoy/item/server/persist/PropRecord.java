@@ -160,7 +160,7 @@ public class PropRecord extends SubItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PropRecord}
+     * Create and return a primary {@link Key} to identify a {@link PropRecord}
      * with the supplied key values.
      */
     public static Key<PropRecord> getKey (int itemId)

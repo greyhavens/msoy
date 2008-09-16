@@ -59,7 +59,7 @@ public class ItemPackCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ItemPackCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link ItemPackCatalogRecord}
      * with the supplied key values.
      */
     public static Key<ItemPackCatalogRecord> getKey (int catalogId)

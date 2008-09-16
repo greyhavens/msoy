@@ -25,7 +25,7 @@ public class PrizeRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PrizeRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link PrizeRatingRecord}
      * with the supplied key values.
      */
     public static Key<PrizeRatingRecord> getKey (int itemId, int memberId)

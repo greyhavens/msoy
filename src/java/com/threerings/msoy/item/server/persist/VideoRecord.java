@@ -169,7 +169,7 @@ public class VideoRecord extends ItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #VideoRecord}
+     * Create and return a primary {@link Key} to identify a {@link VideoRecord}
      * with the supplied key values.
      */
     public static Key<VideoRecord> getKey (int itemId)

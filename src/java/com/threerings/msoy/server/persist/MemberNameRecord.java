@@ -60,7 +60,7 @@ public class MemberNameRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #MemberNameRecord}
+     * Create and return a primary {@link Key} to identify a {@link MemberNameRecord}
      * with the supplied key values.
      */
     public static Key<MemberNameRecord> getKey (int memberId)

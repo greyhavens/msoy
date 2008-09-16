@@ -401,7 +401,7 @@ public class GroupRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #GroupRecord}
+     * Create and return a primary {@link Key} to identify a {@link GroupRecord}
      * with the supplied key values.
      */
     public static Key<GroupRecord> getKey (int groupId)

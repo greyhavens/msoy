@@ -25,7 +25,7 @@ public class AvatarRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #AvatarRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link AvatarRatingRecord}
      * with the supplied key values.
      */
     public static Key<AvatarRatingRecord> getKey (int itemId, int memberId)

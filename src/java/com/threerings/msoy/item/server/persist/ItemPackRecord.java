@@ -133,7 +133,7 @@ public class ItemPackRecord extends SubItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ItemPackRecord}
+     * Create and return a primary {@link Key} to identify a {@link ItemPackRecord}
      * with the supplied key values.
      */
     public static Key<ItemPackRecord> getKey (int itemId)

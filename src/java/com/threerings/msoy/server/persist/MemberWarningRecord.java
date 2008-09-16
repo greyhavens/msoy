@@ -58,7 +58,7 @@ public class MemberWarningRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #MemberWarningRecord}
+     * Create and return a primary {@link Key} to identify a {@link MemberWarningRecord}
      * with the supplied key values.
      */
     public static Key<MemberWarningRecord> getKey (int memberId)

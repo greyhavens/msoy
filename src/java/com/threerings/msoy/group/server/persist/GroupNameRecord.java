@@ -49,7 +49,7 @@ public class GroupNameRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #GroupNameRecord}
+     * Create and return a primary {@link Key} to identify a {@link GroupNameRecord}
      * with the supplied key values.
      */
     public static Key<GroupNameRecord> getKey (int groupId)

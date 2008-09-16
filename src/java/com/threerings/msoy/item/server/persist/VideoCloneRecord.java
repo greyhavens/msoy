@@ -63,7 +63,7 @@ public class VideoCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #VideoCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link VideoCloneRecord}
      * with the supplied key values.
      */
     public static Key<VideoCloneRecord> getKey (int itemId)

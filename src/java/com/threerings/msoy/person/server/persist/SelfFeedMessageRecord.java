@@ -69,7 +69,7 @@ public class SelfFeedMessageRecord extends FeedMessageRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #SelfFeedMessageRecord}
+     * Create and return a primary {@link Key} to identify a {@link SelfFeedMessageRecord}
      * with the supplied key values.
      */
     public static Key<SelfFeedMessageRecord> getKey (int messageId)

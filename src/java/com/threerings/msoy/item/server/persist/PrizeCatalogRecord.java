@@ -59,7 +59,7 @@ public class PrizeCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PrizeCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link PrizeCatalogRecord}
      * with the supplied key values.
      */
     public static Key<PrizeCatalogRecord> getKey (int catalogId)

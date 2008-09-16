@@ -25,7 +25,7 @@ public class PhotoRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PhotoRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link PhotoRatingRecord}
      * with the supplied key values.
      */
     public static Key<PhotoRatingRecord> getKey (int itemId, int memberId)

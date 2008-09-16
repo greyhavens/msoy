@@ -97,7 +97,7 @@ public class MemoryRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #MemoryRecord}
+     * Create and return a primary {@link Key} to identify a {@link MemoryRecord}
      * with the supplied key values.
      */
     public static Key<MemoryRecord> getKey (byte itemType, int itemId, String datumKey)

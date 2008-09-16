@@ -127,7 +127,7 @@ public class ToyRecord extends ItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ToyRecord}
+     * Create and return a primary {@link Key} to identify a {@link ToyRecord}
      * with the supplied key values.
      */
     public static Key<ToyRecord> getKey (int itemId)

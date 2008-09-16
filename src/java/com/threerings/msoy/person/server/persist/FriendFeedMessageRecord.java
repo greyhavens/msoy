@@ -59,7 +59,7 @@ public class FriendFeedMessageRecord extends FeedMessageRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #FriendFeedMessageRecord}
+     * Create and return a primary {@link Key} to identify a {@link FriendFeedMessageRecord}
      * with the supplied key values.
      */
     public static Key<FriendFeedMessageRecord> getKey (int messageId)

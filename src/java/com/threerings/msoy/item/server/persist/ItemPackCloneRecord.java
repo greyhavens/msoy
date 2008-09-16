@@ -73,7 +73,7 @@ public class ItemPackCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ItemPackCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link ItemPackCloneRecord}
      * with the supplied key values.
      */
     public static Key<ItemPackCloneRecord> getKey (int itemId)

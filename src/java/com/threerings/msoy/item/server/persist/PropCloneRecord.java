@@ -73,7 +73,7 @@ public class PropCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PropCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link PropCloneRecord}
      * with the supplied key values.
      */
     public static Key<PropCloneRecord> getKey (int itemId)

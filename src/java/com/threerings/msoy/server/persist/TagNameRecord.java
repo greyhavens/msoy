@@ -68,7 +68,7 @@ public class TagNameRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #TagNameRecord}
+     * Create and return a primary {@link Key} to identify a {@link TagNameRecord}
      * with the supplied key values.
      */
     public static Key<TagNameRecord> getKey (int tagId)

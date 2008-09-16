@@ -63,7 +63,7 @@ public class DecorCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #DecorCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link DecorCloneRecord}
      * with the supplied key values.
      */
     public static Key<DecorCloneRecord> getKey (int itemId)

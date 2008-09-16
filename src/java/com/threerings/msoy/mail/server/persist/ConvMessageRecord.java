@@ -149,7 +149,7 @@ public class ConvMessageRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ConvMessageRecord}
+     * Create and return a primary {@link Key} to identify a {@link ConvMessageRecord}
      * with the supplied key values.
      */
     public static Key<ConvMessageRecord> getKey (int conversationId, Timestamp sent)

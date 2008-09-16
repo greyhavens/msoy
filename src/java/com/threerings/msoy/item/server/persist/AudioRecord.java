@@ -169,7 +169,7 @@ public class AudioRecord extends ItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #AudioRecord}
+     * Create and return a primary {@link Key} to identify a {@link AudioRecord}
      * with the supplied key values.
      */
     public static Key<AudioRecord> getKey (int itemId)

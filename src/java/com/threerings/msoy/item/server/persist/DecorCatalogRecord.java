@@ -59,7 +59,7 @@ public class DecorCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #DecorCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link DecorCatalogRecord}
      * with the supplied key values.
      */
     public static Key<DecorCatalogRecord> getKey (int catalogId)

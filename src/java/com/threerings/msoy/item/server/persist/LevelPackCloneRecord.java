@@ -73,7 +73,7 @@ public class LevelPackCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #LevelPackCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link LevelPackCloneRecord}
      * with the supplied key values.
      */
     public static Key<LevelPackCloneRecord> getKey (int itemId)

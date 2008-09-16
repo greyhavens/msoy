@@ -78,7 +78,7 @@ public class RoomPropertyRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #RoomPropertyRecord}
+     * Create and return a primary {@link Key} to identify a {@link RoomPropertyRecord}
      * with the supplied key values.
      */
     public static Key<RoomPropertyRecord> getKey (int ownerId, int sceneId, String name)

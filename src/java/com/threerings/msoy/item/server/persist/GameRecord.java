@@ -361,7 +361,7 @@ public class GameRecord extends ItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #GameRecord}
+     * Create and return a primary {@link Key} to identify a {@link GameRecord}
      * with the supplied key values.
      */
     public static Key<GameRecord> getKey (int itemId)

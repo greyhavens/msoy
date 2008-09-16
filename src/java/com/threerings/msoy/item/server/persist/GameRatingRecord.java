@@ -25,7 +25,7 @@ public class GameRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #GameRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link GameRatingRecord}
      * with the supplied key values.
      */
     public static Key<GameRatingRecord> getKey (int itemId, int memberId)

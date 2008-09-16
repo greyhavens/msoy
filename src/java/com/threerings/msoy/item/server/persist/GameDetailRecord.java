@@ -153,7 +153,7 @@ public class GameDetailRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #GameDetailRecord}
+     * Create and return a primary {@link Key} to identify a {@link GameDetailRecord}
      * with the supplied key values.
      */
     public static Key<GameDetailRecord> getKey (int gameId)

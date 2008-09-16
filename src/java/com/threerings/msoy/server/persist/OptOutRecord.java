@@ -52,7 +52,7 @@ public class OptOutRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #OptOutRecord}
+     * Create and return a primary {@link Key} to identify a {@link OptOutRecord}
      * with the supplied key values.
      */
     public static Key<OptOutRecord> getKey (String email)

@@ -126,7 +126,7 @@ public class PetRecord extends ItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PetRecord}
+     * Create and return a primary {@link Key} to identify a {@link PetRecord}
      * with the supplied key values.
      */
     public static Key<PetRecord> getKey (int itemId)

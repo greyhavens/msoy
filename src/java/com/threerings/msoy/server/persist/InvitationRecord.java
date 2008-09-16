@@ -132,7 +132,7 @@ public class InvitationRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #InvitationRecord}
+     * Create and return a primary {@link Key} to identify a {@link InvitationRecord}
      * with the supplied key values.
      */
     public static Key<InvitationRecord> getKey (String inviteId)

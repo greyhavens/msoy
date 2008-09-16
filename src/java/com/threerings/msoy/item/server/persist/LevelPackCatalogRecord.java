@@ -59,7 +59,7 @@ public class LevelPackCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #LevelPackCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link LevelPackCatalogRecord}
      * with the supplied key values.
      */
     public static Key<LevelPackCatalogRecord> getKey (int catalogId)

@@ -25,7 +25,7 @@ public class AudioRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #AudioRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link AudioRatingRecord}
      * with the supplied key values.
      */
     public static Key<AudioRatingRecord> getKey (int itemId, int memberId)

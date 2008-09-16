@@ -25,7 +25,7 @@ public class FurnitureRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #FurnitureRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link FurnitureRatingRecord}
      * with the supplied key values.
      */
     public static Key<FurnitureRatingRecord> getKey (int itemId, int memberId)

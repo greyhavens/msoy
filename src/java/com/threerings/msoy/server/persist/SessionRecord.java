@@ -68,7 +68,7 @@ public class SessionRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #SessionRecord}
+     * Create and return a primary {@link Key} to identify a {@link SessionRecord}
      * with the supplied key values.
      */
     public static Key<SessionRecord> getKey (String token)

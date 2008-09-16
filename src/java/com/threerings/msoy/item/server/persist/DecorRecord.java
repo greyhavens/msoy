@@ -221,7 +221,7 @@ public class DecorRecord extends ItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #DecorRecord}
+     * Create and return a primary {@link Key} to identify a {@link DecorRecord}
      * with the supplied key values.
      */
     public static Key<DecorRecord> getKey (int itemId)

@@ -117,7 +117,7 @@ public class NeighborFriendRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #NeighborFriendRecord}
+     * Create and return a primary {@link Key} to identify a {@link NeighborFriendRecord}
      * with the supplied key values.
      */
     public static Key<NeighborFriendRecord> getKey (int memberId)

@@ -59,7 +59,7 @@ public class DocumentCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #DocumentCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link DocumentCatalogRecord}
      * with the supplied key values.
      */
     public static Key<DocumentCatalogRecord> getKey (int catalogId)

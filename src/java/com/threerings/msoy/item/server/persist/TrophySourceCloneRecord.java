@@ -73,7 +73,7 @@ public class TrophySourceCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #TrophySourceCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link TrophySourceCloneRecord}
      * with the supplied key values.
      */
     public static Key<TrophySourceCloneRecord> getKey (int itemId)

@@ -59,7 +59,7 @@ public class ToyCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ToyCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link ToyCatalogRecord}
      * with the supplied key values.
      */
     public static Key<ToyCatalogRecord> getKey (int catalogId)

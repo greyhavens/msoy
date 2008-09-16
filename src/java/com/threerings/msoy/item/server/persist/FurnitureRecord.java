@@ -161,7 +161,7 @@ public class FurnitureRecord extends ItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #FurnitureRecord}
+     * Create and return a primary {@link Key} to identify a {@link FurnitureRecord}
      * with the supplied key values.
      */
     public static Key<FurnitureRecord> getKey (int itemId)

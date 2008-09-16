@@ -275,7 +275,7 @@ public class ProfileRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ProfileRecord}
+     * Create and return a primary {@link Key} to identify a {@link ProfileRecord}
      * with the supplied key values.
      */
     public static Key<ProfileRecord> getKey (int memberId)

@@ -164,7 +164,7 @@ public class IssueRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #IssueRecord}
+     * Create and return a primary {@link Key} to identify a {@link IssueRecord}
      * with the supplied key values.
      */
     public static Key<IssueRecord> getKey (int issueId)

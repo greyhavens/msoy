@@ -249,7 +249,7 @@ public class SceneFurniRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #SceneFurniRecord}
+     * Create and return a primary {@link Key} to identify a {@link SceneFurniRecord}
      * with the supplied key values.
      */
     public static Key<SceneFurniRecord> getKey (int sceneId, short furniId)

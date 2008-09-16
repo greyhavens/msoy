@@ -59,7 +59,7 @@ public class PropCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PropCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link PropCatalogRecord}
      * with the supplied key values.
      */
     public static Key<PropCatalogRecord> getKey (int catalogId)

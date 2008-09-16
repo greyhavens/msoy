@@ -63,7 +63,7 @@ public class GameCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #GameCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link GameCloneRecord}
      * with the supplied key values.
      */
     public static Key<GameCloneRecord> getKey (int itemId)

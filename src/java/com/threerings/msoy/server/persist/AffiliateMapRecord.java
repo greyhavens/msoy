@@ -45,7 +45,7 @@ public class AffiliateMapRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #AffiliateMapRecord}
+     * Create and return a primary {@link Key} to identify a {@link AffiliateMapRecord}
      * with the supplied key values.
      */
     public static Key<AffiliateMapRecord> getKey (String affiliate)

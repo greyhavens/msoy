@@ -105,7 +105,7 @@ public class ItemListInfoRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ItemListInfoRecord}
+     * Create and return a primary {@link Key} to identify a {@link ItemListInfoRecord}
      * with the supplied key values.
      */
     public static Key<ItemListInfoRecord> getKey (int listId)

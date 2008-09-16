@@ -348,7 +348,7 @@ public class SceneRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #SceneRecord}
+     * Create and return a primary {@link Key} to identify a {@link SceneRecord}
      * with the supplied key values.
      */
     public static Key<SceneRecord> getKey (int sceneId)

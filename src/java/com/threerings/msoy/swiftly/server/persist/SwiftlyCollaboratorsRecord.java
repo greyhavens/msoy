@@ -50,7 +50,7 @@ public class SwiftlyCollaboratorsRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #SwiftlyCollaboratorsRecord}
+     * Create and return a primary {@link Key} to identify a {@link SwiftlyCollaboratorsRecord}
      * with the supplied key values.
      */
     public static Key<SwiftlyCollaboratorsRecord> getKey (int projectId, int memberId)

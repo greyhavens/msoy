@@ -25,7 +25,7 @@ public class VideoRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #VideoRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link VideoRatingRecord}
      * with the supplied key values.
      */
     public static Key<VideoRatingRecord> getKey (int itemId, int memberId)

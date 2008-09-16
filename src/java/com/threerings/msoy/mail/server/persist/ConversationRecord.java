@@ -127,7 +127,7 @@ public class ConversationRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ConversationRecord}
+     * Create and return a primary {@link Key} to identify a {@link ConversationRecord}
      * with the supplied key values.
      */
     public static Key<ConversationRecord> getKey (int conversationId)

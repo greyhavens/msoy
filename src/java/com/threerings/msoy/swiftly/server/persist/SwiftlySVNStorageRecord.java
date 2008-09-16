@@ -106,7 +106,7 @@ public class SwiftlySVNStorageRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #SwiftlySVNStorageRecord}
+     * Create and return a primary {@link Key} to identify a {@link SwiftlySVNStorageRecord}
      * with the supplied key values.
      */
     public static Key<SwiftlySVNStorageRecord> getKey (int storageId)

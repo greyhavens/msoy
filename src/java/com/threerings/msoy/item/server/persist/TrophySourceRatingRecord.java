@@ -25,7 +25,7 @@ public class TrophySourceRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #TrophySourceRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link TrophySourceRatingRecord}
      * with the supplied key values.
      */
     public static Key<TrophySourceRatingRecord> getKey (int itemId, int memberId)

@@ -59,7 +59,7 @@ public class VideoCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #VideoCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link VideoCatalogRecord}
      * with the supplied key values.
      */
     public static Key<VideoCatalogRecord> getKey (int catalogId)

@@ -54,7 +54,7 @@ public class DailyFlowRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #DailyFlowRecord}
+     * Create and return a primary {@link Key} to identify a {@link DailyFlowRecord}
      * with the supplied key values.
      */
     public static Key<DailyFlowRecord> getKey (String type, Date date)

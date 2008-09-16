@@ -59,7 +59,7 @@ public class PhotoCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PhotoCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link PhotoCatalogRecord}
      * with the supplied key values.
      */
     public static Key<PhotoCatalogRecord> getKey (int catalogId)

@@ -63,7 +63,7 @@ public class AudioCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #AudioCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link AudioCloneRecord}
      * with the supplied key values.
      */
     public static Key<AudioCloneRecord> getKey (int itemId)

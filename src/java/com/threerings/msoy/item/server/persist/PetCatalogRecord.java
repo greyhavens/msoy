@@ -59,7 +59,7 @@ public class PetCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PetCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link PetCatalogRecord}
      * with the supplied key values.
      */
     public static Key<PetCatalogRecord> getKey (int catalogId)

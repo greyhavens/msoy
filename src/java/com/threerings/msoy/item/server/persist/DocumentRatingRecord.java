@@ -25,7 +25,7 @@ public class DocumentRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #DocumentRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link DocumentRatingRecord}
      * with the supplied key values.
      */
     public static Key<DocumentRatingRecord> getKey (int itemId, int memberId)

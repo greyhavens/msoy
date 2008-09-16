@@ -45,7 +45,7 @@ public class GlobalFeedMessageRecord extends FeedMessageRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #GlobalFeedMessageRecord}
+     * Create and return a primary {@link Key} to identify a {@link GlobalFeedMessageRecord}
      * with the supplied key values.
      */
     public static Key<GlobalFeedMessageRecord> getKey (int messageId)

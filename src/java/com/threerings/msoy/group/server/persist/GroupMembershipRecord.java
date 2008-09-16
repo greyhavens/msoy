@@ -107,7 +107,7 @@ public class GroupMembershipRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #GroupMembershipRecord}
+     * Create and return a primary {@link Key} to identify a {@link GroupMembershipRecord}
      * with the supplied key values.
      */
     public static Key<GroupMembershipRecord> getKey (int memberId, int groupId)

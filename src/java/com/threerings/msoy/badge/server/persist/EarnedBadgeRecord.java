@@ -118,7 +118,7 @@ public class EarnedBadgeRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #EarnedBadgeRecord}
+     * Create and return a primary {@link Key} to identify a {@link EarnedBadgeRecord}
      * with the supplied key values.
      */
     public static Key<EarnedBadgeRecord> getKey (int memberId, int badgeCode)

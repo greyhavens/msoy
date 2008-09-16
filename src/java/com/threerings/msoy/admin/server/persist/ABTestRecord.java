@@ -193,7 +193,7 @@ public class ABTestRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ABTestRecord}
+     * Create and return a primary {@link Key} to identify a {@link ABTestRecord}
      * with the supplied key values.
      */
     public static Key<ABTestRecord> getKey (int abTestId)

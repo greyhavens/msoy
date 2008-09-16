@@ -25,7 +25,7 @@ public class PetRatingRecord extends RatingRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PetRatingRecord}
+     * Create and return a primary {@link Key} to identify a {@link PetRatingRecord}
      * with the supplied key values.
      */
     public static Key<PetRatingRecord> getKey (int itemId, int memberId)

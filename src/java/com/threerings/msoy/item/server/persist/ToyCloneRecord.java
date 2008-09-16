@@ -63,7 +63,7 @@ public class ToyCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #ToyCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link ToyCloneRecord}
      * with the supplied key values.
      */
     public static Key<ToyCloneRecord> getKey (int itemId)

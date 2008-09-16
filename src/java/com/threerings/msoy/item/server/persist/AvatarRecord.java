@@ -191,7 +191,7 @@ public class AvatarRecord extends ItemRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #AvatarRecord}
+     * Create and return a primary {@link Key} to identify a {@link AvatarRecord}
      * with the supplied key values.
      */
     public static Key<AvatarRecord> getKey (int itemId)

@@ -107,7 +107,7 @@ public class CommentRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #CommentRecord}
+     * Create and return a primary {@link Key} to identify a {@link CommentRecord}
      * with the supplied key values.
      */
     public static Key<CommentRecord> getKey (int entityType, int entityId, Timestamp posted)

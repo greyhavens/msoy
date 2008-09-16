@@ -87,7 +87,7 @@ public class AvatarCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #AvatarCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link AvatarCloneRecord}
      * with the supplied key values.
      */
     public static Key<AvatarCloneRecord> getKey (int itemId)

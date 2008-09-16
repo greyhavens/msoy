@@ -63,7 +63,7 @@ public class PhotoCloneRecord extends CloneRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #PhotoCloneRecord}
+     * Create and return a primary {@link Key} to identify a {@link PhotoCloneRecord}
      * with the supplied key values.
      */
     public static Key<PhotoCloneRecord> getKey (int itemId)

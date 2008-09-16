@@ -236,7 +236,7 @@ public class MoneyTransactionRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #MoneyTransactionRecord}
+     * Create and return a primary {@link Key} to identify a {@link MoneyTransactionRecord}
      * with the supplied key values.
      */
     public static Key<MoneyTransactionRecord> getKey (int id)

@@ -59,7 +59,7 @@ public class FurnitureCatalogRecord extends CatalogRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #FurnitureCatalogRecord}
+     * Create and return a primary {@link Key} to identify a {@link FurnitureCatalogRecord}
      * with the supplied key values.
      */
     public static Key<FurnitureCatalogRecord> getKey (int catalogId)
