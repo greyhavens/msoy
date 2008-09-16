@@ -39,9 +39,8 @@ public class GalleryServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        GalleryRecord record = _galleryRepo.insertGallery(memrec.memberId, name,
-            PrimitiveArrays.toIntArray(photoItemIds));
-        return record.toGallery();
+        return _galleryRepo.insertGallery(
+            memrec.memberId, name, PrimitiveArrays.toIntArray(photoItemIds)).toGallery();
     }
 
     // from GalleryService
@@ -62,28 +61,26 @@ public class GalleryServlet extends MsoyServiceServlet
     public List<Gallery> loadGalleries (int memberId)
         throws ServiceException
     {
-        List<Gallery> list = Lists.newArrayList();
         // load records and convert them to their pojo form
-        list.addAll(Lists.transform(_galleryRepo.loadGalleries(memberId),
-                                    GalleryInfoRecord.TO_GALLERY));
-        return list;
+        return Lists.newArrayList(Lists.transform(_galleryRepo.loadGalleries(memberId),
+                                                  GalleryInfoRecord.TO_GALLERY));
     }
 
     // from GalleryService
     public List<Photo> loadGallery (int galleryId)
         throws ServiceException
     {
-        return loadGallery(_galleryRepo.loadGallery(galleryId));
+        return loadPhotos(_galleryRepo.loadGallery(galleryId));
     }
 
     // from GalleryService
     public List<Photo> loadMeGallery (int memberId)
         throws ServiceException
     {
-        return loadGallery(_galleryRepo.loadMeGallery(memberId));
+        return loadPhotos(_galleryRepo.loadMeGallery(memberId));
     }
 
-    protected List<Photo> loadGallery (GalleryRecord gallery)
+    protected List<Photo> loadPhotos (GalleryRecord gallery)
         throws ServiceException
     {
         return Lists.transform(_photoRepo.loadItems(PrimitiveArrays.asList(gallery.photoItemIds)),
