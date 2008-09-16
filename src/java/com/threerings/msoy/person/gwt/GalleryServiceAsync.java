@@ -35,7 +35,7 @@ public interface GalleryServiceAsync
      * The asynchronous version of {@link GalleryService#createGallery}.
      */
     void createGallery (String name, List<Integer> photoItemIds,
-                        AsyncCallback<Integer> callback);
+                        AsyncCallback<Gallery> callback);
 
     /**
      * The asynchronous version of {@link GalleryService#updateGallery}.

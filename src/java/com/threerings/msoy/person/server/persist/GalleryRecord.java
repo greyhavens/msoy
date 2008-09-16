@@ -80,6 +80,15 @@ public class GalleryRecord extends PersistentRecord
 
     public Timestamp lastModified;
 
+    public Gallery toGallery ()
+    {
+        Gallery gallery = new Gallery();
+        gallery.galleryId = galleryId;
+        gallery.name = name;
+        gallery.lastModified = new Date(lastModified.getTime());
+        return gallery;
+    }
+    
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link #GalleryRecord}

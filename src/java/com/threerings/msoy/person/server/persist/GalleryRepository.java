@@ -32,6 +32,17 @@ public class GalleryRepository extends DepotRepository
         super(context);
     }
 
+    public GalleryRecord insertGallery(int ownerId, String name, int[] photoItemIds)
+    {
+        GalleryRecord gallery = new GalleryRecord();
+        gallery.ownerId = ownerId;
+        gallery.name = name;
+        gallery.photoItemIds = photoItemIds;
+        gallery.lastModified = timestamp();
+        insert(gallery);
+        return gallery;
+    }
+    
     public List<GalleryInfoRecord> loadGalleries (int memberId)
     {
         return findAll(GalleryInfoRecord.class,
@@ -58,7 +69,7 @@ public class GalleryRepository extends DepotRepository
     {
         updatePartial(GalleryRecord.getKey(galleryId), GalleryRecord.NAME, name,
                       GalleryRecord.PHOTO_ITEM_IDS, photoItemIds,
-                      GalleryRecord.LAST_MODIFIED, new Timestamp(System.currentTimeMillis()));
+                      GalleryRecord.LAST_MODIFIED, timestamp());
     }
 
     public int deleteGallery (int galleryId)
@@ -66,6 +77,11 @@ public class GalleryRepository extends DepotRepository
         return delete(GalleryRecord.class, galleryId);
     }
 
+    protected static Timestamp timestamp ()
+    {
+       return new Timestamp(System.currentTimeMillis());
+    }
+    
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {

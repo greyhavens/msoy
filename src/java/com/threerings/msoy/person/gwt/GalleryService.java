@@ -37,9 +37,9 @@ public interface GalleryService
     /**
      * Creates a new gallery for the current user and adds the given photo IDs to the gallery.
      *
-     * @return the galleryID for the new gallery.
+     * @return the new gallery.
      */
-    public int createGallery (String name, List<Integer> photoItemIds)
+    public Gallery createGallery (String name, List<Integer> photoItemIds)
         throws ServiceException;
 
     /**

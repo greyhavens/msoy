@@ -19,6 +19,7 @@ import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.server.persist.GalleryInfoRecord;
 import com.threerings.msoy.person.server.persist.GalleryRecord;
 import com.threerings.msoy.person.server.persist.GalleryRepository;
+import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
@@ -31,13 +32,22 @@ public class GalleryServlet extends MsoyServiceServlet
     implements GalleryService
 {
     // from GalleryService
-    public int createGallery (String name, List<Integer> photoItemIds)
+    public Gallery createGallery (String name, List<Integer> photoItemIds)
         throws ServiceException
     {
-        // TODO Auto-generated method stub
-        return 0; // return the ID of the new gallery
+        MemberRecord memrec = requireAuthedUser();
+        GalleryRecord record = _galleryRepo.insertGallery(memrec.memberId, name, 
+            PrimitiveArrays.toIntArray(photoItemIds));
+        return record.toGallery();
     }
 
+    // from GalleryService
+    public void updateGallery (int galleryId, String name, List<Integer> photoItemIds)
+        throws ServiceException
+    {
+        _galleryRepo.updateGallery(galleryId, name, PrimitiveArrays.toIntArray(photoItemIds));
+    }
+    
     // from GalleryService
     public void deleteGallery (int galleryId)
         throws ServiceException
@@ -75,14 +85,6 @@ public class GalleryServlet extends MsoyServiceServlet
         ItemRepository<ItemRecord> photoRepo = _itemLogic.getRepository(Item.PHOTO);
         return Lists.transform(photoRepo.loadItems(PrimitiveArrays.asList(gallery.photoItemIds)),
                                new ItemRecord.ToItem<Photo>());
-    }
-
-    // from GalleryService
-    public void updateGallery (int galleryId, String name, List<Integer> photoItemIds)
-        throws ServiceException
-    {
-        // TODO Auto-generated method stub
-
     }
 
     @Inject protected ItemLogic _itemLogic;
