@@ -64,6 +64,10 @@ public class GalleryRecord extends PersistentRecord
         new ColumnExp(GalleryRecord.class, LAST_MODIFIED);
     // AUTO-GENERATED: FIELDS END
 
+    /** Increment this value if you modify the definition of this persistent object in a way that
+     * will result in a change to its SQL counterpart. */
+    public static final int SCHEMA_VERSION = 1;
+
     /** A unique identifier for this gallery. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int galleryId;
