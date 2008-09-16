@@ -14,12 +14,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.util.IntIntMap;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.GroupBy;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
@@ -29,9 +32,9 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals;
-import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.operator.Logic.Or;
+import com.samskivert.jdbc.depot.operator.SQLOperator;
 
 import com.threerings.msoy.server.persist.CountRecord;
 import com.threerings.msoy.server.persist.TagHistoryRecord;
@@ -61,6 +64,18 @@ public class GameRepository extends ItemRepository<GameRecord>
     @Entity(name="GameTagHistoryRecord")
     public static class GameTagHistoryRecord extends TagHistoryRecord
     {
+    }
+
+    /** Used by {@link #loadGenreCounts}. */
+    @Entity @Computed(shadowOf=GameRecord.class)
+    public static class GenreCountRecord extends PersistentRecord
+    {
+        /** The genre in question. */
+        public byte genre;
+
+        /** The number of games in that genre .*/
+        @Computed(fieldDefinition="count(*)")
+        public int count;
     }
 
     @Inject public GameRepository (PersistenceContext ctx)
@@ -105,6 +120,21 @@ public class GameRepository extends ItemRepository<GameRecord>
             return null;
         }
         return loadItem(GameRecord.isDeveloperVersion(gameId) ? gdr.sourceItemId : gdr.listedItemId);
+    }
+
+    /**
+     * Loads the count of how many listed games we have in each genre.
+     */
+    public IntIntMap loadGenreCounts ()
+    {
+        IntIntMap counts = new IntIntMap();
+        for (GenreCountRecord gcr : findAll(
+                 GenreCountRecord.class, new Join(getItemClass(), ItemRecord.ITEM_ID,
+                                                  getCatalogClass(), CatalogRecord.LISTED_ITEM_ID),
+                 new GroupBy(getItemColumn(GameRecord.GENRE)))) {
+            counts.put(gcr.genre, gcr.count);
+        }
+        return counts;
     }
 
     /**
