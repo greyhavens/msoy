@@ -517,15 +517,15 @@ public class CatalogServlet extends MsoyServiceServlet
         throws ServiceException
     {
         GameRecord record = _gameRepo.loadGameRecord(gameId);
-        if (record != null) {
-            Item gameItem = record.toItem();
-            SuiteInfo info = new SuiteInfo();
-            info.name = gameItem.name;
-            info.suiteId = gameItem.getSuiteId();
-            return info;
+        if (record == null) {
+            log.warning("Can't load suite info for non-existent game.", "gameId", gameId);
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-        log.warning("Can't find game record with the given id.", "gameId", gameId);
-        throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+        Item game = record.toItem();
+        SuiteInfo info = new SuiteInfo();
+        info.name = game.name;
+        info.suiteId = game.getSuiteId();
+        return info;
     }
 
     /**
