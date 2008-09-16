@@ -449,8 +449,8 @@ public class ItemLogic
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
 
-        // make sure they own it (or are admin)
-        if (record.ownerId != memrec.memberId && !memrec.isAdmin()) {
+        // make sure they own it (or are support+)
+        if (record.ownerId != memrec.memberId && !memrec.isSupport()) {
             throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
         }
 

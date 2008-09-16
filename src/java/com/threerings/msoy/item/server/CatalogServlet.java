@@ -336,7 +336,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // if we're not the creator of the listing (who has to download it to update it) do
         // some access control checks
-        if (mrec == null || (record.item.creatorId != mrec.memberId && !mrec.isAdmin())) {
+        if (mrec == null || (record.item.creatorId != mrec.memberId && !mrec.isSupport())) {
             // if the type in question is not salable, reject the request
             if (!isSalable(itemType)) {
                 throw new ServiceException(ItemCodes.E_ACCESS_DENIED);

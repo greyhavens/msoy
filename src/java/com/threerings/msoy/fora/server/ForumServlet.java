@@ -478,7 +478,7 @@ public class ForumServlet extends MsoyServiceServlet
     {
         byte rank = GroupMembership.RANK_NON_MEMBER;
         if (mrec != null) {
-            if (mrec.isAdmin()) { // admins are always treated as managers
+            if (mrec.isSupport()) { // support+ is always treated as managers
                 return GroupMembership.RANK_MANAGER;
             }
             GroupMembershipRecord grm = _groupRepo.getMembership(groupId, mrec.memberId);
