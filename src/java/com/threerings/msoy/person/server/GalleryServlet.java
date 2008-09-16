@@ -11,10 +11,8 @@ import com.google.inject.Inject;
 
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 
 import com.threerings.msoy.web.data.ServiceException;

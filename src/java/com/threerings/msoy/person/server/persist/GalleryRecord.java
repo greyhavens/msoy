@@ -6,8 +6,6 @@ package com.threerings.msoy.person.server.persist;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import com.google.common.base.Function;
-
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
@@ -95,7 +93,7 @@ public class GalleryRecord extends PersistentRecord
         gallery.lastModified = new Date(lastModified.getTime());
         return gallery;
     }
-    
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link #GalleryRecord}
