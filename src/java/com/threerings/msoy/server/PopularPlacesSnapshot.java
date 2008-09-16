@@ -13,17 +13,18 @@ import com.samskivert.util.Comparators;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
 
-import com.threerings.msoy.data.MemberLocation;
-
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.peer.data.NodeObject;
+
+import com.threerings.msoy.data.MemberLocation;
 
 import com.threerings.msoy.peer.data.HostedPlace;
 import com.threerings.msoy.peer.data.HostedRoom;
 import com.threerings.msoy.peer.data.MsoyNodeObject;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.room.data.MsoySceneModel;
 
 /**
@@ -158,7 +159,7 @@ public class PopularPlacesSnapshot
                             increment(_scenes, _sclist, room.placeId, room);
                         }
                     }
-                    if (memloc.gameId > 0) {
+                    if (memloc.gameId != 0 && !Game.isDevelopmentVersion(memloc.gameId)) {
                         HostedPlace game = hostedGames.get(memloc.gameId);
                         if (game != null) {
                             // map games by game id
