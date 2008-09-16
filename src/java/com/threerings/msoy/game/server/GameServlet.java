@@ -18,6 +18,8 @@ import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.Comparators;
+import com.samskivert.util.IntIntMap;
 import com.samskivert.util.IntListUtil;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -362,20 +364,32 @@ public class GameServlet extends MsoyServiceServlet
         ArcadeData data = new ArcadeData();
         PopularPlacesSnapshot pps = _memberMan.getPPSnapshot();
 
+        // load the top N (where N is large) games and build everything from that list
+        Map<Integer, GameRecord> games = Maps.newLinkedHashMap();
+        for (GameRecord grec : _gameRepo.loadGenre((byte)-1, ARCADE_RAW_COUNT)) {
+            games.put(grec.gameId, grec);
+        }
+
         // determine the "featured" games
         List<FeaturedGameInfo> featured = Lists.newArrayList();
         ArrayIntSet have = new ArrayIntSet();
         for (PopularPlacesSnapshot.Place card : pps.getTopGames()) {
             GameDetailRecord detail = _gameRepo.loadGameDetail(card.placeId);
-            GameRecord game = _gameRepo.loadGameRecord(card.placeId, detail);
+            // popular places never has in-development games
+            GameRecord game = games.get(detail.listedItemId);
+            if (game == null) {
+                game = _gameRepo.loadItem(detail.listedItemId);
+            }
             if (game != null) {
                 featured.add(_gameLogic.toFeaturedGameInfo(game, detail, card.population));
                 have.add(game.gameId);
             }
+            if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
+                break;
+            }
         }
         if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
-            for (GameRecord game :
-                     _gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
+            for (GameRecord game : games.values()) {
                 if (!have.contains(game.gameId)) {
                     GameDetailRecord detail = _gameRepo.loadGameDetail(game.gameId);
                     featured.add(_gameLogic.toFeaturedGameInfo(game, detail, 0));
@@ -387,9 +401,9 @@ public class GameServlet extends MsoyServiceServlet
         }
         data.featuredGames = featured.toArray(new FeaturedGameInfo[featured.size()]);
 
-        // list of all games alphabetically (only include name and id)
+        // list of the top-200 games alphabetically (only include name and id)
         data.allGames = Lists.newArrayList();
-        for (GameRecord game : _gameRepo.loadGenre((byte)-1, -1)) {
+        for (GameRecord game : games.values()) {
             GameInfo gameInfo = new GameInfo();
             gameInfo.gameId = game.gameId;
             gameInfo.name = game.name;
@@ -399,49 +413,56 @@ public class GameServlet extends MsoyServiceServlet
 
         // list of top 10 games by ranking (include name, id & media)
         data.topGames = Lists.newArrayList();
-        for (GameRecord game : _gameRepo.loadGenre((byte)-1, ArcadeData.TOP_GAME_COUNT)) {
+        for (GameRecord game : games.values()) {
             GameInfo gameInfo = new GameInfo();
             // we only want some of the game info here, so we don't use GameRecord.toGameInfo
             gameInfo.gameId = game.gameId;
             gameInfo.name = game.name;
             gameInfo.thumbMedia = game.getThumbMediaDesc();
             data.topGames.add(gameInfo);
+            if (data.topGames.size() == ArcadeData.TOP_GAME_COUNT) {
+                break;
+            }
         }
+
+        // load up our genre counts
+        IntIntMap genreCounts = _gameRepo.loadGenreCounts();
 
         // load information about the genres
         List<ArcadeData.Genre> genres = Lists.newArrayList();
         for (byte gcode : Game.GENRES) {
             ArcadeData.Genre genre = new ArcadeData.Genre();
             genre.genre = gcode;
-            List<GameRecord> games = _gameRepo.loadGenre(gcode, -1);
-            genre.gameCount = games.size();
+            genre.gameCount = Math.max(0, genreCounts.get(gcode));
             if (genre.gameCount == 0) {
                 continue;
             }
 
-            // select random N from the top 3N games ranked 3+ after at least 10 votes
-            List<GameRecord> goodGames = Lists.newArrayList();
-            for (GameRecord game : games) {
-                if (game.rating >= 3 || game.ratingCount < 10) {
-                    goodGames.add(game);
-                    if (goodGames.size() == 3*ArcadeData.Genre.HIGHLIGHTED_GAMES) {
-                        break;
+            // filter out all the games in this genre
+            List<GameInfo> ggames = Lists.newArrayList();
+            for (GameRecord grec : games.values()) {
+                if (grec.genre == gcode) {
+                    GameInfo info = grec.toGameInfo();
+                    PopularPlacesSnapshot.Place ppg = pps.getGame(grec.gameId);
+                    if (ppg != null) {
+                        info.playersOnline = ppg.population;
                     }
+                    ggames.add(info);
                 }
             }
-            Collections.shuffle(goodGames);
 
-            // then take N from that shuffled list as the games to show
-            goodGames = goodGames.subList(
-                0, Math.min(goodGames.size(), ArcadeData.Genre.HIGHLIGHTED_GAMES));
-            genre.games = new GameInfo[goodGames.size()];
-            for (int ii = 0; ii < genre.games.length; ii++) {
-                genre.games[ii] = goodGames.get(ii).toGameInfo();
-                PopularPlacesSnapshot.Place ppg = pps.getGame(genre.games[ii].gameId);
-                if (ppg != null) {
-                    genre.games[ii].playersOnline = ppg.population;
+            // shuffle those and then sort them by players online
+            Collections.shuffle(ggames);
+            Collections.sort(ggames, new Comparator<GameInfo>() {
+                public int compare (GameInfo one, GameInfo two) {
+                    return Comparators.compare(two.playersOnline, one.playersOnline);
                 }
-            }
+            });
+
+            // finally take N from that shuffled list as the games to show
+            List<GameInfo> hgames = ggames.subList(
+                0, Math.min(ggames.size(), ArcadeData.Genre.HIGHLIGHTED_GAMES));
+            genre.games = hgames.toArray(new GameInfo[hgames.size()]);
 
             genres.add(genre);
         }
@@ -688,6 +709,7 @@ public class GameServlet extends MsoyServiceServlet
     };
 
     protected static final int MAX_RANKINGS = 10;
+    protected static final int ARCADE_RAW_COUNT = 200;
 
     /** Players that haven't played a rated game in 14 days are not included in top-ranked. */
     protected static final long RATING_CUTOFF = 14 * 24*60*60*1000L;
