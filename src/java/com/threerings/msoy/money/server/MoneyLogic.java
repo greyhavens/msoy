@@ -241,7 +241,7 @@ public class MoneyLogic
         }
 
         // load the buyer's affiliate
-        int affiliateId = buyerRec.affiliateMemberId;
+        int affiliateId = 0; // TODO: buyerRec.affiliateMemberId;
         MemberAccountRecord affiliate;
         if (affiliatePayout == null || affiliateId == 0) {
             affiliate = null;
