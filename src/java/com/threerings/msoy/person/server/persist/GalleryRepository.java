@@ -7,6 +7,9 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Photo;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -35,10 +38,11 @@ public class GalleryRepository extends DepotRepository
     /**
      * Loads metadata on all galleries owned by the specified member.
      */
-    public List<GalleryRecord> loadGalleries (int memberId)
+    public List<GalleryInfoRecord> loadGalleries (int memberId)
     {
-        return findAll(GalleryRecord.class,
-                       new Where(new Equals(GalleryRecord.OWNER_ID_C, memberId)));
+        return findAll(GalleryInfoRecord.class, new Where(new Equals(
+            GalleryRecord.OWNER_ID_C,
+            memberId)));
     }
 
     /**
@@ -64,7 +68,7 @@ public class GalleryRepository extends DepotRepository
      * Creates a new gallery.
      */
     public GalleryRecord insertGallery (int ownerId, String name, String description,
-                                        int[] photoItemIds)
+                                        int[] photoItemIds, MediaDesc thumbMedia)
     {
         GalleryRecord gallery = new GalleryRecord();
         gallery.ownerId = ownerId;
@@ -72,6 +76,9 @@ public class GalleryRepository extends DepotRepository
         gallery.description = description;
         gallery.photoItemIds = photoItemIds;
         gallery.lastModified = currentTimestamp();
+        gallery.thumbMediaHash = thumbMedia.hash;
+        gallery.thumbMimeType = thumbMedia.mimeType;
+        gallery.thumbConstraint = thumbMedia.constraint;
         insert(gallery);
         return gallery;
     }
@@ -79,13 +86,18 @@ public class GalleryRepository extends DepotRepository
     /**
      * Updates the specified gallery.
      */
-    public void updateGallery (int galleryId, String name, String description, int[] photoItemIds)
+    public void updateGallery (int galleryId, String name, String description,
+        int[] photoItemIds, MediaDesc thumbMedia)
     {
         updatePartial(GalleryRecord.getKey(galleryId),
                       GalleryRecord.NAME, name,
                       GalleryRecord.DESCRIPTION, description,
                       GalleryRecord.PHOTO_ITEM_IDS, photoItemIds,
-                      GalleryRecord.LAST_MODIFIED, currentTimestamp());
+                      GalleryRecord.LAST_MODIFIED, currentTimestamp(),
+                      GalleryRecord.THUMB_MEDIA_HASH, thumbMedia.hash,
+                      GalleryRecord.THUMB_MIME_TYPE, thumbMedia.mimeType,
+                      GalleryRecord.THUMB_CONSTRAINT, thumbMedia.constraint
+                      );
     }
 
     /**

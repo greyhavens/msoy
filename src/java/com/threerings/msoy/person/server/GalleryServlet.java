@@ -12,8 +12,10 @@ import com.google.inject.Inject;
 import com.samskivert.util.IntIntMap;
 import com.threerings.msoy.server.persist.MemberRecord;
 
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.server.persist.ItemRecord;
+import com.threerings.msoy.item.server.persist.PhotoRecord;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 
 import com.threerings.msoy.web.data.ServiceException;
@@ -41,8 +43,18 @@ public class GalleryServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser();
         // only add photos that the member owns
         validateOwnership(memrec, photoItemIds);
-        return _galleryRepo.insertGallery(memrec.memberId, name, description,
-                                          PrimitiveArrays.toIntArray(photoItemIds)).toGallery();
+
+        // fetch the thumbnail media from the first image
+        MediaDesc thumbMedia = null;
+        if (photoItemIds.size() > 0) {
+            PhotoRecord firstPhoto = _photoRepo.loadItem(photoItemIds.get(0));
+            thumbMedia = new MediaDesc(firstPhoto.thumbMediaHash, firstPhoto.thumbMimeType,
+                firstPhoto.thumbConstraint);
+        }
+
+        return _galleryRepo.insertGallery(
+            memrec.memberId, name, description,
+            PrimitiveArrays.toIntArray(photoItemIds), thumbMedia).toGallery();
     }
 
     // from GalleryService
@@ -66,8 +78,16 @@ public class GalleryServlet extends MsoyServiceServlet
         // remove any rejects
         photoItemIds.removeAll(validateOwnership(newPhotoIds));
 
+        // fetch the thumbnail media from the first image
+        MediaDesc thumbMedia = null;
+        if (photoItemIds.size() > 0) {
+            PhotoRecord firstPhoto = _photoRepo.loadItem(photoItemIds.get(0));
+            thumbMedia = new MediaDesc(firstPhoto.thumbMediaHash, firstPhoto.thumbMimeType,
+                firstPhoto.thumbConstraint);
+        }
+
         _galleryRepo.updateGallery(galleryId, description, name,
-                                   PrimitiveArrays.toIntArray(photoItemIds));
+            PrimitiveArrays.toIntArray(photoItemIds), thumbMedia);
     }
 
     // from GalleryService
