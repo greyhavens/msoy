@@ -9,19 +9,22 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.PrimitiveArrays;
 import com.google.inject.Inject;
 
+import com.threerings.msoy.server.persist.MemberRecord;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
-import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
+import com.threerings.msoy.item.server.persist.PhotoRepository;
+
+import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.web.server.MsoyServiceServlet;
+
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.server.persist.GalleryInfoRecord;
 import com.threerings.msoy.person.server.persist.GalleryRecord;
 import com.threerings.msoy.person.server.persist.GalleryRepository;
-import com.threerings.msoy.server.persist.MemberRecord;
-import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 /**
  * Implements the {@link GalleryService}.
@@ -36,7 +39,7 @@ public class GalleryServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        GalleryRecord record = _galleryRepo.insertGallery(memrec.memberId, name, 
+        GalleryRecord record = _galleryRepo.insertGallery(memrec.memberId, name,
             PrimitiveArrays.toIntArray(photoItemIds));
         return record.toGallery();
     }
@@ -47,7 +50,7 @@ public class GalleryServlet extends MsoyServiceServlet
     {
         _galleryRepo.updateGallery(galleryId, name, PrimitiveArrays.toIntArray(photoItemIds));
     }
-    
+
     // from GalleryService
     public void deleteGallery (int galleryId)
         throws ServiceException
@@ -61,7 +64,8 @@ public class GalleryServlet extends MsoyServiceServlet
     {
         List<Gallery> list = Lists.newArrayList();
         // load records and convert them to their pojo form
-        list.addAll(Lists.transform(_galleryRepo.loadGalleries(memberId), GalleryInfoRecord.TO_GALLERY));
+        list.addAll(Lists.transform(_galleryRepo.loadGalleries(memberId),
+                                    GalleryInfoRecord.TO_GALLERY));
         return list;
     }
 
@@ -82,11 +86,10 @@ public class GalleryServlet extends MsoyServiceServlet
     protected List<Photo> loadGallery (GalleryRecord gallery)
         throws ServiceException
     {
-        ItemRepository<ItemRecord> photoRepo = _itemLogic.getRepository(Item.PHOTO);
-        return Lists.transform(photoRepo.loadItems(PrimitiveArrays.asList(gallery.photoItemIds)),
+        return Lists.transform(_photoRepo.loadItems(PrimitiveArrays.asList(gallery.photoItemIds)),
                                new ItemRecord.ToItem<Photo>());
     }
 
-    @Inject protected ItemLogic _itemLogic;
+    @Inject protected PhotoRepository _photoRepo;
     @Inject protected GalleryRepository _galleryRepo;
 }

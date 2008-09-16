@@ -66,20 +66,27 @@ public class GalleryRecord extends PersistentRecord
         new ColumnExp(GalleryRecord.class, LAST_MODIFIED);
     // AUTO-GENERATED: FIELDS END
 
+    /** A unique identifier for this gallery. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int galleryId;
 
+    /** The member id of the owner of this gallery. */
     public int ownerId;
 
     /** The name of this gallery or null if it is the "Photos of Me" gallery. */
     @Column(length=Gallery.MAX_NAME_LENGTH, nullable=true)
     public String name;
 
+    /** An ordered list of photo item ids that make up this gallery. */
     @Column(length=2048) // results in maximum gallery size of 512 images
     public int[] photoItemIds;
 
+    /** The time at which this gallery was last modified. */
     public Timestamp lastModified;
 
+    /**
+     * Converts this persistent record to a runtime record.
+     */
     public Gallery toGallery ()
     {
         Gallery gallery = new Gallery();

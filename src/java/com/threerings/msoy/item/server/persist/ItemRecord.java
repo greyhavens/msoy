@@ -106,10 +106,11 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     public static final int BASE_SCHEMA_VERSION = 17;
     public static final int BASE_MULTIPLIER = 1000;
 
+    /** A function for converting this persistent record into a runtime record. */
     public static class ToItem<T extends Item> implements Function<ItemRecord, T> {
-        @SuppressWarnings("unchecked")
         public T apply (ItemRecord record) {
-            return (T) record.toItem();
+            @SuppressWarnings("unchecked") T item = (T) record.toItem();
+            return item;
         }
     }
 

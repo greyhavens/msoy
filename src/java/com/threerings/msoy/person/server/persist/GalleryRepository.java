@@ -32,17 +32,9 @@ public class GalleryRepository extends DepotRepository
         super(context);
     }
 
-    public GalleryRecord insertGallery(int ownerId, String name, int[] photoItemIds)
-    {
-        GalleryRecord gallery = new GalleryRecord();
-        gallery.ownerId = ownerId;
-        gallery.name = name;
-        gallery.photoItemIds = photoItemIds;
-        gallery.lastModified = timestamp();
-        insert(gallery);
-        return gallery;
-    }
-    
+    /**
+     * Loads metadata on all galleries owned by the specified member.
+     */
     public List<GalleryInfoRecord> loadGalleries (int memberId)
     {
         return findAll(GalleryInfoRecord.class,
@@ -50,38 +42,64 @@ public class GalleryRepository extends DepotRepository
     }
 
     /**
-     * Returns the gallery id of this member's "Photos of Me" gallery. A null gallery name indicates
-     * the "Me" gallery.
+     * Returns this member's "Photos of Me" gallery.
      */
     public GalleryRecord loadMeGallery (int memberId)
     {
         return load(GalleryRecord.class,
                     new Where(new And(new Equals(GalleryRecord.OWNER_ID_C, memberId),
+                                      // a null gallery name indicates the "Me" gallery
                                       new IsNull(GalleryRecord.NAME_C))));
     }
 
+    /**
+     * Loads the specified gallery.
+     */
     public GalleryRecord loadGallery (int galleryId)
     {
         return load(GalleryRecord.class, GalleryRecord.GALLERY_ID, galleryId);
     }
 
+    /**
+     * Creates a new gallery.
+     */
+    public GalleryRecord insertGallery (int ownerId, String name, int[] photoItemIds)
+    {
+        GalleryRecord gallery = new GalleryRecord();
+        gallery.ownerId = ownerId;
+        gallery.name = name;
+        gallery.photoItemIds = photoItemIds;
+        gallery.lastModified = currentTime();
+        insert(gallery);
+        return gallery;
+    }
+
+    /**
+     * Updates the specified gallery.
+     */
     public void updateGallery (int galleryId, String name, int[] photoItemIds)
     {
         updatePartial(GalleryRecord.getKey(galleryId), GalleryRecord.NAME, name,
                       GalleryRecord.PHOTO_ITEM_IDS, photoItemIds,
-                      GalleryRecord.LAST_MODIFIED, timestamp());
+                      GalleryRecord.LAST_MODIFIED, currentTime());
     }
 
+    /**
+     * Deletes the specified gallery.
+     */
     public int deleteGallery (int galleryId)
     {
         return delete(GalleryRecord.class, galleryId);
     }
 
-    protected static Timestamp timestamp ()
+    /**
+     * Returns the current time as a {@link Timestamp}.
+     */
+    protected static Timestamp currentTime ()
     {
        return new Timestamp(System.currentTimeMillis());
     }
-    
+
     @Override // from DepotRepository
     protected void getManagedRecords (Set<Class<? extends PersistentRecord>> classes)
     {

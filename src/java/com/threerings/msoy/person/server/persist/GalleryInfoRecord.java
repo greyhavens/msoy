@@ -15,7 +15,8 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.person.gwt.Gallery;
 
 /**
- * This represents just the gallery meta data, id and name, needed by GalleryRepository.loadGalleries, etc.
+ * This represents just the gallery meta data, id and name, needed by {@link
+ * GalleryRepository#loadGalleries}, etc.
  *
  * @author mdb
  * @author mjensen
@@ -46,6 +47,7 @@ public class GalleryInfoRecord extends PersistentRecord
         new ColumnExp(GalleryInfoRecord.class, LAST_MODIFIED);
     // AUTO-GENERATED: FIELDS END
 
+    /** Converts persistent records into runtime records. */
     public static final Function<GalleryInfoRecord, Gallery> TO_GALLERY =
         new Function<GalleryInfoRecord, Gallery>() {
             public Gallery apply (GalleryInfoRecord record) {
@@ -53,12 +55,18 @@ public class GalleryInfoRecord extends PersistentRecord
             }
         };
 
+    /** The id of the gallery in question. */
     public int galleryId;
 
+    /** The name of the gallery in question. */
     public String name;
 
+    /** The last modified time of the gallery in question. */
     public Date lastModified;
 
+    /**
+     * Creates a runtime record from this persistent record.
+     */
     public Gallery toGallery ()
     {
         Gallery gallery = new Gallery();
