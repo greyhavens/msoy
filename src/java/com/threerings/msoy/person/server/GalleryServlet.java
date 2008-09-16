@@ -41,12 +41,13 @@ public class GalleryServlet extends MsoyServiceServlet
         MemberRecord memrec = requireAuthedUser();
         // only add photos that the member owns
         validateOwnership(memrec, photoItemIds);
-        return _galleryRepo.insertGallery(
-            memrec.memberId, name, description, PrimitiveArrays.toIntArray(photoItemIds)).toGallery();
+        return _galleryRepo.insertGallery(memrec.memberId, name, description,
+                                          PrimitiveArrays.toIntArray(photoItemIds)).toGallery();
     }
 
     // from GalleryService
-    public void updateGallery (int galleryId, String name, String description, List<Integer> photoItemIds)
+    public void updateGallery (int galleryId, String name, String description,
+                               List<Integer> photoItemIds)
         throws ServiceException
     {
         // load the existing gallery record
@@ -65,7 +66,8 @@ public class GalleryServlet extends MsoyServiceServlet
         // remove any rejects
         photoItemIds.removeAll(validateOwnership(newPhotoIds));
 
-        _galleryRepo.updateGallery(galleryId, description, name, PrimitiveArrays.toIntArray(photoItemIds));
+        _galleryRepo.updateGallery(galleryId, description, name,
+                                   PrimitiveArrays.toIntArray(photoItemIds));
     }
 
     // from GalleryService

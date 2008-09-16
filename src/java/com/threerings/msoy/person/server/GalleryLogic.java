@@ -4,6 +4,8 @@
 package com.threerings.msoy.person.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import com.google.inject.Inject;
@@ -41,6 +43,13 @@ public class GalleryLogic
                 firstPhoto.thumbMimeType, firstPhoto.thumbConstraint);
             galleries.add(gallery);
         }
+
+        // return the galleries in order of the most recent modification
+        Collections.sort(galleries, new Comparator<Gallery>() {
+            public int compare (Gallery gallery1, Gallery gallery2) {
+                return gallery2.lastModified.compareTo(gallery1.lastModified);
+            }
+        });
 
         return galleries;
     }
