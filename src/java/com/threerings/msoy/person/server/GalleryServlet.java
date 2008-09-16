@@ -90,6 +90,6 @@ public class GalleryServlet extends MsoyServiceServlet
                                new ItemRecord.ToItem<Photo>());
     }
 
-    @Inject protected PhotoRepository _photoRepo;
     @Inject protected GalleryRepository _galleryRepo;
+    @Inject protected PhotoRepository _photoRepo;
 }
