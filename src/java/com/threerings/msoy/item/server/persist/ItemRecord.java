@@ -5,6 +5,8 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Timestamp;
 
+import com.google.common.base.Function;
+
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Computed;
@@ -103,6 +105,13 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
 
     public static final int BASE_SCHEMA_VERSION = 17;
     public static final int BASE_MULTIPLIER = 1000;
+
+    public static class ToItem<T extends Item> implements Function<ItemRecord, T> {
+        @SuppressWarnings("unchecked")
+        public T apply (ItemRecord record) {
+            return (T) record.toItem();
+        }
+    }
 
     /** This item's unique identifier. <em>Note:</em> this identifier is not globally unique among
      * all digital items. Each type of item has its own identifier space. */
