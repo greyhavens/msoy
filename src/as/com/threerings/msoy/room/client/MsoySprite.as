@@ -773,10 +773,13 @@ public class MsoySprite extends DataPackMediaContainer
     /**
      * Update a memory datum. Called by our backend in response to a request from usercode.
      */
-    internal function updateMemory (key :String, value: Object) :Boolean
+    internal function updateMemory (key :String, value: Object, callback :Function) :void
     {
         var ctrl :RoomController = getController(true);
-        return (ctrl != null) && ctrl.updateMemory(_ident, key, value); // false if ctrl is null
+
+        if (ctrl != null) {
+            ctrl.updateMemory(_ident, key, value, callback); // false if ctrl is null
+        }
     }
 
     protected function getSpecialProperty (name :String) :Object

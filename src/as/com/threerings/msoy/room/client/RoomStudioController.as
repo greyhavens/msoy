@@ -188,7 +188,8 @@ public class RoomStudioController extends RoomController
     }
 
     // documentation inherited
-    override protected function updateMemory2 (ident :ItemIdent, key :String, data :ByteArray) :void
+    override protected function updateMemory2 (
+        ident :ItemIdent, key :String, data :ByteArray, callback :Function) :void
     {
         var dict :Dictionary = _memories.get(ident) as Dictionary;
         if (dict == null) {
@@ -202,6 +203,7 @@ public class RoomStudioController extends RoomController
         }
 
         MethodQueue.callLater(_studioView.dispatchMemoryChanged, [ ident, key, data ]);
+        MethodQueue.callLater(callback, [ true ]);
     }
 
     protected var _studioView :RoomStudioView;

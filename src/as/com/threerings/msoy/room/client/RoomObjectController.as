@@ -990,11 +990,20 @@ public class RoomObjectController extends RoomController
     }
 
     // documentation inherited
-    override protected function updateMemory2 (ident :ItemIdent, key :String, data: ByteArray) :void
+    override protected function updateMemory2 (
+        ident :ItemIdent, key :String, data: ByteArray, callback :Function) :void
     {
         // ship the update request off to the server
         _roomObj.roomService.updateMemory(_wdctx.getClient(),
-            new EntityMemoryEntry(ident, key, data));
+            new EntityMemoryEntry(ident, key, data), new ResultWrapper(
+                function (cause :String) :void {
+                    _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
+                },
+                function (success :Boolean) :void {
+                    try {
+                        callback(success);
+                    } catch (error :Error) { }
+                }));
     }
 
     // documentation inherited

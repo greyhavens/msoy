@@ -101,7 +101,7 @@ public class RoomDispatcher extends InvocationDispatcher<RoomMarshaller>
 
         case RoomMarshaller.UPDATE_MEMORY:
             ((RoomProvider)provider).updateMemory(
-                source, (EntityMemoryEntry)args[0]
+                source, (EntityMemoryEntry)args[0], (InvocationService.ResultListener)args[1]
             );
             return;
 

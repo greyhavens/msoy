@@ -49,7 +49,7 @@ public interface RoomService extends InvocationService
     function spawnMob (arg1 :Client, arg2 :int, arg3 :String, arg4 :String, arg5 :Location, arg6 :InvocationService_InvocationListener) :void;
 
     // from Java interface RoomService
-    function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry) :void;
+    function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry, arg3 :InvocationService_ResultListener) :void;
 
     // from Java interface RoomService
     function updateRoom (arg1 :Client, arg2 :SceneUpdate, arg3 :InvocationService_InvocationListener) :void;

@@ -261,7 +261,8 @@ public class RoomController extends SceneController
     /**
      * Handles a request by an item in our room to update its memory.
      */
-    public function updateMemory (ident :ItemIdent, key :String, value: Object) :Boolean
+    public function updateMemory (ident :ItemIdent, key :String, value: Object,
+            callback :Function) :void
     {
         // TODO: I want to know wtf is requesting to up-mem after it's been shut down...
 //        if (_roomObj == null) {
@@ -277,8 +278,7 @@ public class RoomController extends SceneController
         // safely added to the memory set such that combined they're all under the maximum.
         var data :ByteArray = ObjectMarshaller.validateAndEncode(value,
                 EntityMemoryEntry.MAX_ENCODED_MEMORY_LENGTH);
-        updateMemory2(ident, key, data);
-        return true;
+        updateMemory2(ident, key, data, callback);
     }
 
     /**
@@ -748,7 +748,8 @@ public class RoomController extends SceneController
     /**
      * Once a memory update is validated and ready to go, it is sent here.
      */
-    protected function updateMemory2 (ident :ItemIdent, key :String, data :ByteArray) :void
+    protected function updateMemory2 (
+        ident :ItemIdent, key :String, data :ByteArray, callback :Function) :void
     {
         // see subclasses
     }

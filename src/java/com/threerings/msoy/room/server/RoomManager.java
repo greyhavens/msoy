@@ -551,8 +551,11 @@ public class RoomManager extends SpotSceneManager
     }
 
     // documentation inherited from RoomProvider
-    public void updateMemory (ClientObject caller, final EntityMemoryEntry entry)
+    public void updateMemory (
+        ClientObject caller, final EntityMemoryEntry entry, RoomService.ResultListener listener)
     {
+        // TODO: Validate that the client is at least in the same room?
+ 
 // NOTE: I've disabled the need to be in control to update memory (Ray July 6, 2007)
 //        // if this client does not currently control this entity; ignore the request; if no one
 //        // controls it, this will assign this client as controller
@@ -574,7 +577,9 @@ public class RoomManager extends SpotSceneManager
         if (totalSize + entry.getSize() > EntityMemoryEntry.MAX_ENCODED_MEMORY_LENGTH) {
             log.info("Rejecting memory update as too large [otherSize=" + totalSize +
                      ", newEntrySize=" + entry.getSize() + "].");
-            return; // no feedback, just don't update it
+            // Let the client know we looked at the memory, but didn't actually store it
+            listener.requestProcessed(Boolean.FALSE);
+            return;
         }
 
         // mark it as modified and update the room object; we'll save it when we unload the room
@@ -584,6 +589,7 @@ public class RoomManager extends SpotSceneManager
         } else {
             _roomObj.addToMemories(entry);
         }
+        listener.requestProcessed(Boolean.TRUE);
     }
 
     // from interface RoomProvider

@@ -73,7 +73,7 @@ public interface RoomService extends InvocationService
      * Issues a request to update the memory of the specified entity (which is associated with a
      * particular item).
      */
-    void updateMemory (Client client, EntityMemoryEntry entry);
+    void updateMemory (Client client, EntityMemoryEntry entry, ResultListener listener);
 
     /**
      * Issues a request to update the current scene location of the specified item. This is called

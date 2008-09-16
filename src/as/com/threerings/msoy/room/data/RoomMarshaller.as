@@ -151,10 +151,12 @@ public class RoomMarshaller extends InvocationMarshaller
     public static const UPDATE_MEMORY :int = 11;
 
     // from interface RoomService
-    public function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry) :void
+    public function updateMemory (arg1 :Client, arg2 :EntityMemoryEntry, arg3 :InvocationService_ResultListener) :void
     {
+        var listener3 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener3.listener = arg3;
         sendRequest(arg1, UPDATE_MEMORY, [
-            arg2
+            arg2, listener3
         ]);
     }
 

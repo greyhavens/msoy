@@ -76,7 +76,8 @@ public interface RoomProvider extends InvocationProvider
     /**
      * Handles a {@link RoomService#updateMemory} request.
      */
-    void updateMemory (ClientObject caller, EntityMemoryEntry arg1);
+    void updateMemory (ClientObject caller, EntityMemoryEntry arg1, InvocationService.ResultListener arg2)
+        throws InvocationException;
 
     /**
      * Handles a {@link RoomService#updateRoom} request.
