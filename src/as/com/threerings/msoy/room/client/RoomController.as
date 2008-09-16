@@ -261,8 +261,8 @@ public class RoomController extends SceneController
     /**
      * Handles a request by an item in our room to update its memory.
      */
-    public function updateMemory (ident :ItemIdent, key :String, value: Object,
-            callback :Function) :void
+    public function updateMemory (
+        ident :ItemIdent, key :String, value: Object, callback :Function) :void
     {
         // TODO: I want to know wtf is requesting to up-mem after it's been shut down...
 //        if (_roomObj == null) {

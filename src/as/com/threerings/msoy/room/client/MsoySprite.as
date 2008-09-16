@@ -776,9 +776,9 @@ public class MsoySprite extends DataPackMediaContainer
     internal function updateMemory (key :String, value: Object, callback :Function) :void
     {
         var ctrl :RoomController = getController(true);
-
         if (ctrl != null) {
-            ctrl.updateMemory(_ident, key, value, callback); // false if ctrl is null
+            // the controller will validate the key/value when it encodes them
+            ctrl.updateMemory(_ident, key, value, callback);
         }
     }
 

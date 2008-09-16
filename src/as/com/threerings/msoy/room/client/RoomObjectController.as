@@ -1001,8 +1001,12 @@ public class RoomObjectController extends RoomController
                 },
                 function (success :Boolean) :void {
                     try {
-                        callback(success);
-                    } catch (error :Error) { }
+                        if (callback != null) {
+                            callback(success);
+                        }
+                    } catch (error :Error) {
+                        // ignored- error in usercode
+                    }
                 }));
     }
 

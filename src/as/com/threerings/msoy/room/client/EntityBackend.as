@@ -49,7 +49,7 @@ public class EntityBackend extends ControlBackend
         // we can easily disconnect the sprite from the usercode
         o["requestControl_v1"] = requestControl_v1;
         o["lookupMemory_v1"] = lookupMemory_v1;
-        o["updateMemory_v2"] = updateMemory_v2;
+        o["updateMemory_v1"] = updateMemory_v1;
         o["getRoomProperty_v1"] = getRoomProperty_v1;
         o["setRoomProperty_v1"] = setRoomProperty_v1;
         o["getInstanceId_v1"] = getInstanceId_v1;
@@ -73,7 +73,6 @@ public class EntityBackend extends ControlBackend
 
         // deprecated methods
         o["triggerEvent_v1"] = triggerEvent_v1;
-        o["updateMemory_v1"] = updateMemory_v1;
     }
 
     override protected function populateControlInitProperties (o :Object) :void
@@ -144,17 +143,25 @@ public class EntityBackend extends ControlBackend
         return (_sprite == null) ? null : _sprite.lookupMemory(key);
     }
 
-    protected function updateMemory_v1 (key :String, value :Object) :Boolean
-    {
-        _sprite.updateMemory(key, value, null);
-        return true; // Yeah sure... it updated...
-    }
-
-    protected function updateMemory_v2 (key :String, value :Object, callback :Function) :void
+    /**
+     * Original signature: updateMemory(key, value) :Boolean
+     * New signature: updateMemory(key, value, callback = null) :void
+     *
+     * So: callback needs to be optional in case older EntityControl code calls this, and for
+     * the same reason we should still return a boolean, it will be safely ignored by newer
+     * EntityControls.
+     */
+    protected function updateMemory_v1 (
+        key :String, value :Object, callback :Function = null) :Boolean
     {
         if (_sprite != null) {
             _sprite.updateMemory(key, value, callback);
+            return true; // uh, yeah, sure it updated (ignored by newer impls of EntityControl)
         }
+        // else: if callback is non-null, we don't call back, because this sprite
+        // is now unloaded and usercode should be ignored. We do return false, for compatibility
+        // with the original signature
+        return false;
     }
 
     protected function getRoomProperties_v1 () :Object
