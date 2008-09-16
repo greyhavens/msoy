@@ -212,7 +212,8 @@ public class MemberHelper
                 MemberCard.Status status = statuses.get(mcr.memberId);
                 if (status != null) {
                     // game names are not filled in by MsoyNodeObject.getMemberCard so we have to
-                    // get those from the popular places snapshot
+                    // get those from the popular places snapshot. Note this also includes subclass
+                    // MemberCard.InAVRGame
                     if (status instanceof MemberCard.InGame) {
                         MemberCard.InGame gstatus = (MemberCard.InGame)status;
                         PopularPlacesSnapshot.Place place = pps.getGame(gstatus.gameId);

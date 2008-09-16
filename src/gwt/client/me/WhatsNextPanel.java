@@ -147,6 +147,15 @@ public class WhatsNextPanel extends TongueBox
                 member.addStyleName("MemberRoom");
                 room.add(member);
 
+            } else if (card.status instanceof MemberCard.InAVRGame) {
+                int sceneId = ((MemberCard.InAVRGame)card.status).sceneId;
+                FlowPanel room = getPlacePanel(
+                    rooms, sceneId, ((MemberCard.InAVRGame)card.status).gameName);
+                ClickListener onClick = Link.createListener(Pages.WORLD, "s"+sceneId);
+                Widget member = makeMemberWidget(card, size, onClick);
+                member.addStyleName("MemberGame");
+                room.add(member);
+
             } else if (card.status instanceof MemberCard.InGame) {
                 int gameId = ((MemberCard.InGame)card.status).gameId;
                 FlowPanel game = getPlacePanel(

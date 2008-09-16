@@ -51,6 +51,13 @@ public class MemberCard
         }
     }
 
+    /** The status of a member who is currently playing an AVR game. */
+    public static class InAVRGame extends InGame
+    {
+        /** The id of the scene occupied by this member. */
+        public int sceneId;
+    }
+
     /** The status of a member who is not online. */
     public static class NotOnline extends Status
     {
