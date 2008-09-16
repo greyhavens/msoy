@@ -30,12 +30,12 @@ public class TransactionsPanel extends VerticalPanel
         reportBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
                 Link.go(Pages.ME, Args.compose("transactions",
-                        ""+REPORT_VALUES[reportBox.getSelectedIndex()+1].ordinal(), ""+memberId));
+                        String.valueOf(REPORT_VALUES[reportBox.getSelectedIndex()].ordinal()+1),
+                        String.valueOf(memberId)));
             }
         });
         reportBox.setSelectedIndex(report-1);
 
-        add(MsoyUI.createLabel("Your #" + report + " report, sir", ""));
         add(new BalancePanel(memberId, ReportType.values()[report-1]) {
             @Override protected void addCustomControls (FlexTable controls) {
                 controls.setText(0, 0, _msgs.reportFilter());
