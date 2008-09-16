@@ -413,6 +413,17 @@ public class ForumServlet extends MsoyServiceServlet
             ServerConfig.getServerURL() + "#whirleds-t_" + fmr.threadId);
     }
 
+    // from interface ForumService
+    public void sendPreviewEmail (String subject, String message)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        if (!mrec.isSupport()) {
+            throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
+        }
+        _mailLogic.previewSpam(mrec.accountName, subject, message);
+    }
+
     protected List<ForumMessage> resolveMessages (List<ForumMessageRecord> msgrecs)
     {
         // enumerate the posters and create member cards for them

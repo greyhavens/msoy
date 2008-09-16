@@ -77,4 +77,9 @@ public interface ForumServiceAsync
      * The asynchronous version of {@link ForumService#complainMessage}.
      */
     void complainMessage (String complaint, int messageId, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link ForumService#sendPreviewEmail}.
+     */
+    void sendPreviewEmail (String subject, String message, AsyncCallback<Void> callback);
 }

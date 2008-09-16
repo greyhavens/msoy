@@ -173,16 +173,8 @@ public class MailLogic
         }
 
         // convert the body into proper-ish HTML
-        try {
-            StringWriter swout = new StringWriter();
-            VelocityContext ctx = new VelocityContext();
-            ctx.put("base_url", ServerConfig.getServerURL());
-            ctx.put("content", body);
-            VelocityEngine ve = VelocityUtil.createEngine();
-            ve.mergeTemplate("rsrc/email/wrapper/message.html", "UTF-8", ctx, swout);
-            body = swout.toString();
-        } catch (Exception e) {
-            log.warning("Unable to format spam message", e);
+        body = formatSpam(body);
+        if (body == null) {
             return;
         }
 
@@ -224,6 +216,19 @@ public class MailLogic
     }
 
     /**
+     * Sends a spam preview mailing to the specified address.
+     */
+    public void previewSpam (String recip, String subject, String body)
+    {
+        // convert the body into proper-ish HTML
+        body = formatSpam(body);
+        if (body == null) {
+            return;
+        }
+        _mailer.sendEmail(recip, ServerConfig.getFromAddress(), subject, body, true);
+    }
+
+    /**
      * Handles any side-effects of mail payload delivery. Currently that is only the transfer of an
      * item from the sender to the recipient for {@link PresentPayload}.
      */
@@ -256,6 +261,27 @@ public class MailLogic
 
             // notify the item system that the item has moved
             _itemLogic.itemUpdated(oitem, item);
+        }
+    }
+
+    /**
+     * Wraps the supplied (HTML) spam body in some basic necessaries.
+     */
+    protected String formatSpam (String body)
+    {
+        // convert the body into proper-ish HTML
+        try {
+            StringWriter swout = new StringWriter();
+            VelocityContext ctx = new VelocityContext();
+            ctx.put("base_url", ServerConfig.getServerURL());
+            ctx.put("content", body);
+            VelocityEngine ve = VelocityUtil.createEngine();
+            ve.mergeTemplate("rsrc/email/wrapper/message.html", "UTF-8", ctx, swout);
+            return swout.toString();
+
+        } catch (Exception e) {
+            log.warning("Unable to format spam message", e);
+            return null;
         }
     }
 

@@ -127,4 +127,12 @@ public interface ForumService extends RemoteService
      */
     void complainMessage (String complaint, int messageId)
         throws ServiceException;
+
+    /**
+     * Formats the supplied subject and message into an email and delivers it to the caller. This
+     * allows admins and support to preview their in-progress newsletter posts before they pull the
+     * trigger and spam the entire userbase with them.
+     */
+    void sendPreviewEmail (String subject, String message)
+        throws ServiceException;
 }
