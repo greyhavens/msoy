@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.avrg.client {
 
 import com.threerings.util.Log;
