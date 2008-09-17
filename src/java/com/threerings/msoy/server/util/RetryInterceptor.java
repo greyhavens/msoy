@@ -22,29 +22,28 @@ public class RetryInterceptor
     public Object invoke (final MethodInvocation invocation)
         throws Throwable
     {
-        // The required annotation contains the exception on which we should retry
-        // and the max times to retry.
-        final Retry retryAnn = invocation.getMethod().getAnnotation(Retry.class);
-        
+        Retry retryAnn = null;
         int retries = 0;
-        Throwable lastException = null;
         do {
             try {
                 return invocation.proceed();
             } catch (final Throwable t) {
-                if (retryAnn.exception().isInstance(t)) {
-                    retries++;
+                if (retryAnn == null) {
+                    retryAnn = invocation.getMethod().getAnnotation(Retry.class);
+                }
+                if (!retryAnn.exception().isInstance(t)) {
+                    throw t; // not our exception, just throw it
+                }
+                retries++;
+                if (retries < retryAnn.attempts()) {
                     _log.info("Retrying method: " + invocation.getMethod().toString() + 
                         ", exception: " + t.getMessage() + ", attempts: " + retries);
-                    lastException = t;
                 } else {
-                    throw t;
+                    throw new IllegalStateException("Cannot continue retrying method:" + 
+                        invocation.getMethod().toString(), t);
                 }
             }
-        } while (retries < retryAnn.attempts());
-        
-        throw new IllegalStateException("Cannot continue retrying method:" + 
-            invocation.getMethod().toString(), lastException);
+        } while (true);
     }
 
     private static final Logger _log = Logger.getLogger(RetryInterceptor.class);
