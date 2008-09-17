@@ -70,7 +70,7 @@ public class AVRGameController extends PlaceController
     // from PlaceController
     override protected function createPlaceView (ctx :CrowdContext) :PlaceView
     {
-        return new AVRGamePanel(this);
+        return new AVRGamePanel(ctx as GameContext, this);
     }
 
     // from PlaceController

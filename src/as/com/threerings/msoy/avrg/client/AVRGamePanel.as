@@ -16,8 +16,10 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.flash.MediaContainer;
 import com.threerings.util.Log;
 
+import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.client.Msgs;
+import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.TopPanel;
 
@@ -33,22 +35,35 @@ public class AVRGamePanel extends UIComponent
 {
     public static const log :Log = Log.getLog(AVRGamePanel);
 
-    public function AVRGamePanel (ctrl :AVRGameController)
+    public function AVRGamePanel (ctx :GameContext, ctrl :AVRGameController)
     {
         super();
 
         _ctrl = ctrl;
+        _gctx = ctx;
     }
 
     // from PlaceView
     public function willEnterPlace (plobj :PlaceObject) :void
     {
         _gameObj = (plobj as AVRGameObject);
+
+        log.info("Entering AVRG [plobj=" + plobj + "]");
+
+        const mctx :MsoyContext = _gctx.getMsoyContext();
+        const bar :ControlBar = mctx.getTopPanel().getControlBar();
+        bar.setInAVRGame(true);
     }
 
     // from PlaceView
     public function didLeavePlace (plobj :PlaceObject) :void
     {
+        log.info("Leaving AVRG [plobj=" + plobj + "]");
+
+        const mctx :MsoyContext = _gctx.getMsoyContext();
+        const bar :ControlBar = mctx.getTopPanel().getControlBar();
+        bar.setInAVRGame(false);
+
         // null gameObj for mediaComplete to find if it should run after us
         _gameObj = null;
     }
@@ -119,6 +134,7 @@ public class AVRGamePanel extends UIComponent
         }
     }
 
+    protected var _gctx :GameContext;
     protected var _ctrl :AVRGameController;
     protected var _mediaHolder :MediaContainer;
     protected var _gameObj :AVRGameObject;
