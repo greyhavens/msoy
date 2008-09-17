@@ -162,6 +162,9 @@ public class WorldController extends MsoyController
     /** Command to view the passport page. */
     public static const VIEW_PASSPORT :String = "ViewPassport";
 
+    /** Command to display the avrg menu. */
+    public static const POP_AVRG_MENU :String = "PopAVRGMenu";
+
     public function WorldController (ctx :WorldContext, topPanel :TopPanel)
     {
         super(ctx, topPanel);
@@ -750,6 +753,13 @@ public class WorldController extends MsoyController
         } else {
             log.warning("Can't access GWT to handleToggleHeight");
         }
+    }
+
+    /**
+     * Handles the POP_AVRG_MENU command.
+     */
+    public function handlePopAVRGMenu () :void
+    {
     }
 
     /**

@@ -620,6 +620,13 @@ TabNavigator, TabBar {
   /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/scale_disabled.png"); */
 }
 
+.controlBarAVRGButton {
+  upSkin: Embed(source="../../rsrc/media/skins/controlbar/avrg.png");
+  overSkin: Embed(source="../../rsrc/media/skins/controlbar/avrg_over.png");
+  downSkin: Embed(source="../../rsrc/media/skins/controlbar/avrg_down.png");
+  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/avrg_disabled.png"); */
+}
+
 .tickButton {
   upSkin: Embed(source="../../rsrc/media/skins/controlbar/tick.png");
   overSkin: Embed(source="../../rsrc/media/skins/controlbar/tick_over.png");

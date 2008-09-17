@@ -209,6 +209,11 @@ public class ControlBar extends HBox
         _instructBtn = new CommandButton(null, MsoyController.VIEW_GAME_INSTRUCTIONS);
         _instructBtn.styleName = "controlBarButtonInstructions";
         _instructBtn.toolTip = Msgs.GENERAL.get("i.instructions");
+
+        _avrgBtn = new CommandButton();
+        _avrgBtn.toolTip = Msgs.GENERAL.get("i.avrg");
+        _avrgBtn.setCommand(WorldController.POP_AVRG_MENU, _avrgBtn);
+        _avrgBtn.styleName = "controlBarAVRGButton";
     }
 
     /**
@@ -265,6 +270,7 @@ public class ControlBar extends HBox
         addButton(_instructBtn, [ UI_GAME, UI_AVRGAME ]);
         addButton(_shareBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ]);
         addButton(_commentBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
+        addButton(_avrgBtn, [ UI_AVRGAME ]);
     }
 
     /**
@@ -395,5 +401,8 @@ public class ControlBar extends HBox
 
     /** Handles bringing up a share dialog. */
     protected var _shareBtn :CommandButton;
+
+    /** Indicates AVRG media loading and handles AVRG menu. */
+    protected var _avrgBtn :CommandButton;
 }
 }
