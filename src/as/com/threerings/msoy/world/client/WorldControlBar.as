@@ -158,21 +158,23 @@ public class WorldControlBar extends ControlBar
     {
         super.addControls(); 
 
-        addButton(_hotZoneBtn, [ UI_ROOM ], PLACE_PRIORITY);
-        addButton(_zoomBtn, [ UI_ROOM, UI_VIEWER ], PLACE_PRIORITY);
+        addButton(_hotZoneBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
+        addButton(_zoomBtn, [ UI_ROOM, UI_VIEWER, UI_AVRGAME ], PLACE_PRIORITY);
 
-        addButton(_snapBtn, [ UI_ROOM ], PLACE_PRIORITY);
-        addButton(_roomeditBtn, [ UI_ROOM ], PLACE_PRIORITY);
+        addButton(_snapBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
+        addButton(_roomeditBtn, [ UI_ROOM, UI_AVRGAME ], PLACE_PRIORITY);
 
         // TODO: notifications are global, yes? They should be in ControlBar
         if (_notificationDisplay != null) {
-            addControl(_notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME ], NOTIFICATION_SECTION);
+            addControl(
+                _notificationDisplay, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ],
+                NOTIFICATION_SECTION);
         }
 
         // TODO: enable friends for guests, even if it just goads them into signup
         // TODO: friends are global, yes? They should be in ControlBar
         if (_friendsBtn != null && _isMember) {
-            addButton(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME ], GLOBAL_PRIORITY);
+            addButton(_friendsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], GLOBAL_PRIORITY);
         }
     }
 

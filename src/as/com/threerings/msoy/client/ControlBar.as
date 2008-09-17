@@ -64,9 +64,11 @@ public class ControlBar extends HBox
     public static const UI_BASE :String = "Base UI"; // when in neither a game nor a room
     public static const UI_ROOM :String = "Room UI";
     public static const UI_GAME :String = "Game UI";
+    public static const UI_AVRGAME :String = "AVR Game UI";
     public static const UI_VIEWER :String = "Room Entity Viewer UI";
 
-    public static const ALL_UI_GROUPS :Array = [ UI_ALL, UI_BASE, UI_ROOM, UI_GAME, UI_VIEWER ];
+    public static const ALL_UI_GROUPS :Array = [ 
+        UI_ALL, UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ];
 
     public function ControlBar (ctx :MsoyContext)
     {
@@ -145,6 +147,15 @@ public class ControlBar extends HBox
     public function setInGame (inGame :Boolean) :void
     {
         _inGame = inGame;
+        updateUI();
+    }
+
+    /**
+     * Called to tell us when we're in avr game mode.
+     */
+    public function setInAVRGame (inAVRGame :Boolean) :void
+    {
+        _inAVRGame = inAVRGame;
         updateUI();
     }
 
@@ -236,22 +247,24 @@ public class ControlBar extends HBox
     protected function addControls () :void
     {
         // add our standard control bar features
-        addControl(_chatOptsBtn, [ UI_BASE, UI_ROOM, UI_GAME ], CHAT_SECTION);
+        addControl(_chatOptsBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], CHAT_SECTION);
         _chatControl = new ChatControl(_ctx, null);
         _chatControl.chatInput.height = HEIGHT - 8;
         _chatControl.sendButton.styleName = "controlBarButtonSend";
-        addControl(_chatControl, [ UI_BASE, UI_ROOM, UI_GAME ], CHAT_SECTION);
-        addControl(_buttons, [ UI_BASE, UI_ROOM, UI_GAME, UI_VIEWER ], BUTTON_SECTION);
+        addControl(_chatControl, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ], CHAT_SECTION);
+        addControl(_buttons, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], BUTTON_SECTION);
 
         // add buttons
-        addButton(_volBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_VIEWER ], VOLUME_PRIORITY);
+        addButton(
+            _volBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], VOLUME_PRIORITY);
         if (false && DeploymentConfig.devDeployment) {
-            addButton(_fullBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_VIEWER ], GLOBAL_PRIORITY);
+            addButton(
+                _fullBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], GLOBAL_PRIORITY);
         }
 
-        addButton(_instructBtn, [ UI_GAME ]);
-        addButton(_shareBtn, [ UI_BASE, UI_ROOM, UI_GAME ]);
-        addButton(_commentBtn, [ UI_ROOM, UI_GAME ]);
+        addButton(_instructBtn, [ UI_GAME, UI_AVRGAME ]);
+        addButton(_shareBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ]);
+        addButton(_commentBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
     }
 
     /**
@@ -314,6 +327,8 @@ public class ControlBar extends HBox
     {
         if (_inGame) {
             return UI_GAME;
+        } else if (_inAVRGame) {
+            return UI_AVRGAME;
         } else if (_inRoom) {
             return UI_ROOM;
         } else {
@@ -345,6 +360,9 @@ public class ControlBar extends HBox
 
     /** Are we in a game? */
     protected var _inGame :Boolean;
+
+    /** Are we in alternate reality game? */
+    protected var _inAVRGame :Boolean;
 
     /** Are we in a room? */
     protected var _inRoom :Boolean;
