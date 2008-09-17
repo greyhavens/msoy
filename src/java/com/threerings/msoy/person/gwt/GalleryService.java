@@ -5,7 +5,6 @@ package com.threerings.msoy.person.gwt;
 
 import java.util.List;
 
-import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.web.data.ServiceException;
 
 /**
@@ -25,13 +24,13 @@ public interface GalleryService
     /**
      * Gets the special "Photos of Me" gallery for the given member ID.
      */
-    public List<Photo> loadMeGallery (int memberId)
+    public GalleryData loadMeGallery (int memberId)
         throws ServiceException;
 
     /**
      * Gets all of the photos in the given gallery.
      */
-    public List<Photo> loadGallery (int galleryId)
+    public GalleryData loadGallery (int galleryId)
         throws ServiceException;
 
     /**
@@ -39,15 +38,14 @@ public interface GalleryService
      *
      * @return the new gallery.
      */
-    public Gallery createGallery (String name, String description, List<Integer> photoItemIds)
+    public Gallery createGallery (Gallery gallery, List<Integer> photoItemIds)
         throws ServiceException;
 
     /**
      * Updates the name and photo IDs for the indicated gallery.
      */
-    public void updateGallery (int galleryId, String name, String description,
-                               List<Integer> photoItemIds)
-                               throws ServiceException;
+    public void updateGallery (Gallery gallery, List<Integer> photoItemIds)
+        throws ServiceException;
 
     /**
      * Deletes the specified gallery.

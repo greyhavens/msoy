@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
@@ -71,8 +72,21 @@ public class ProfileBlurb extends Blurb
 
         // create our photo section with various buttons
         SmartTable photo = new SmartTable("Photo", 0, 5);
-        photo.addWidget(
-            MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE), 2, null);
+        ClickListener thumbClickListener = new ClickListener() {
+            public void onClick (Widget sender)
+            {
+                Link.go(Pages.PEOPLE, Args.compose("profileGallery", _name.getMemberId()));
+            }
+        };
+        // TODO - make public - link to the member's profile gallery in DEV only
+        if (DeploymentConfig.devDeployment) {
+            photo.addWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE,
+                thumbClickListener), 2, null);
+        } else {
+            photo.addWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE),
+                2, null);
+        }
+
         if (!CPeople.isGuest() && !_pdata.isOurFriend && !isMe) {
             addButton(photo, "/images/profile/addfriend.png", CPeople.msgs.inviteFriend(),
                       InviteFriendPopup.createListener(_name));

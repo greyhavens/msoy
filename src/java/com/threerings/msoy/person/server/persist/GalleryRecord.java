@@ -143,6 +143,26 @@ public class GalleryRecord extends PersistentRecord
         return gallery;
     }
 
+    /**
+     * Converts this persistent record to a runtime record.
+     */
+    public static GalleryRecord fromGallery (Gallery gallery)
+    {
+        GalleryRecord record = new GalleryRecord();
+        record.galleryId = gallery.galleryId;
+        record.name = gallery.name;
+        record.description = gallery.description;
+        if (gallery.lastModified != null) {
+            record.lastModified = new Timestamp(gallery.lastModified.getTime());
+        }
+        if (gallery.thumbMedia != null) {
+            record.thumbMediaHash = gallery.thumbMedia.hash;
+            record.thumbMimeType = gallery.thumbMedia.mimeType;
+            record.thumbConstraint = gallery.thumbMedia.constraint;
+        }
+        return record;
+    }
+
     // AUTO-GENERATED: METHODS START
     /**
      * Create and return a primary {@link Key} to identify a {@link #GalleryRecord}

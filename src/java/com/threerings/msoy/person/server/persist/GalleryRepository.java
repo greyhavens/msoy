@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
-import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.person.gwt.Gallery;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -67,36 +67,29 @@ public class GalleryRepository extends DepotRepository
     /**
      * Creates a new gallery.
      */
-    public GalleryRecord insertGallery (int ownerId, String name, String description,
-                                        int[] photoItemIds, MediaDesc thumbMedia)
+    public GalleryRecord insertGallery (int ownerId, Gallery gallery, int[] photoItemIds)
     {
-        GalleryRecord gallery = new GalleryRecord();
-        gallery.ownerId = ownerId;
-        gallery.name = name;
-        gallery.description = description;
-        gallery.photoItemIds = photoItemIds;
-        gallery.lastModified = currentTimestamp();
-        gallery.thumbMediaHash = thumbMedia.hash;
-        gallery.thumbMimeType = thumbMedia.mimeType;
-        gallery.thumbConstraint = thumbMedia.constraint;
-        insert(gallery);
-        return gallery;
+        GalleryRecord galleryRecord = GalleryRecord.fromGallery(gallery);
+        galleryRecord.lastModified = currentTimestamp();
+        galleryRecord.photoItemIds = photoItemIds;
+        galleryRecord.ownerId = ownerId;
+        insert(galleryRecord);
+        return galleryRecord;
     }
 
     /**
      * Updates the specified gallery.
      */
-    public void updateGallery (int galleryId, String name, String description,
-        int[] photoItemIds, MediaDesc thumbMedia)
+    public void updateGallery (Gallery gallery, int[] photoItemIds)
     {
-        updatePartial(GalleryRecord.getKey(galleryId),
-                      GalleryRecord.NAME, name,
-                      GalleryRecord.DESCRIPTION, description,
+        updatePartial(GalleryRecord.getKey(gallery.galleryId),
+                      GalleryRecord.NAME, gallery.name,
+                      GalleryRecord.DESCRIPTION, gallery.description,
                       GalleryRecord.PHOTO_ITEM_IDS, photoItemIds,
                       GalleryRecord.LAST_MODIFIED, currentTimestamp(),
-                      GalleryRecord.THUMB_MEDIA_HASH, thumbMedia.hash,
-                      GalleryRecord.THUMB_MIME_TYPE, thumbMedia.mimeType,
-                      GalleryRecord.THUMB_CONSTRAINT, thumbMedia.constraint
+                      GalleryRecord.THUMB_MEDIA_HASH, gallery.thumbMedia.hash,
+                      GalleryRecord.THUMB_MIME_TYPE, gallery.thumbMedia.mimeType,
+                      GalleryRecord.THUMB_CONSTRAINT, gallery.thumbMedia.constraint
                       );
     }
 

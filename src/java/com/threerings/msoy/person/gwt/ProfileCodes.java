@@ -21,4 +21,7 @@ public interface ProfileCodes extends ServiceCodes
 
     /** An error core returned by the profile service. */
     public static final String E_MAX_WEBMAIL_ATTEMPTS = "e.max_webmail_attempts";
+
+    /** An error core returned by the profile service. */
+    public static final String E_GALLERY_DOES_NOT_EXIST = "e.gallery_does_not_exist";
 }

@@ -12,10 +12,8 @@ import com.google.inject.Inject;
 import com.samskivert.util.IntIntMap;
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.server.persist.ItemRecord;
-import com.threerings.msoy.item.server.persist.PhotoRecord;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 
 import com.threerings.msoy.web.data.ServiceCodes;
@@ -23,7 +21,9 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.person.gwt.Gallery;
+import com.threerings.msoy.person.gwt.GalleryData;
 import com.threerings.msoy.person.gwt.GalleryService;
+import com.threerings.msoy.person.gwt.ProfileCodes;
 import com.threerings.msoy.person.server.persist.GalleryRecord;
 import com.threerings.msoy.person.server.persist.GalleryRepository;
 
@@ -38,62 +38,42 @@ public class GalleryServlet extends MsoyServiceServlet
     implements GalleryService
 {
     // from GalleryService
-    public Gallery createGallery (String name, String description, List<Integer> photoItemIds)
+    public Gallery createGallery (Gallery gallery, List<Integer> photoItemIds)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
         // only add photos that the member owns
         photoItemIds.removeAll(validateOwnership(memrec.memberId, photoItemIds));
 
-        // fetch the thumbnail media from the first image
-        MediaDesc thumbMedia = null;
-        if (photoItemIds.size() > 0) {
-            PhotoRecord firstPhoto = _photoRepo.loadItem(photoItemIds.get(0));
-            thumbMedia = new MediaDesc(firstPhoto.thumbMediaHash, firstPhoto.thumbMimeType,
-                firstPhoto.thumbConstraint);
-        }
-
         return _galleryRepo.insertGallery(
-            memrec.memberId, name, description,
-            PrimitiveArrays.toIntArray(photoItemIds), thumbMedia).toGallery();
+            memrec.memberId, gallery, PrimitiveArrays.toIntArray(photoItemIds)).toGallery();
     }
 
     // from GalleryService
-    public void updateGallery (int galleryId, String name, String description,
-                               List<Integer> photoItemIds)
+    public void updateGallery (Gallery gallery, List<Integer> photoItemIds)
         throws ServiceException
     {
         // load the existing gallery record
-        GalleryRecord gallery = _galleryRepo.loadGallery(galleryId);
+        GalleryRecord existingGallery = _galleryRepo.loadGallery(gallery.galleryId);
 
         // check whether gallery exists
-        if (gallery == null) {
-            log.warning("Gallery does not exist.", "galleryId", galleryId);
-            // TODO add i18n "not exist" message or go ahead and create a new gallery?
-            throw new ServiceException();
+        if (existingGallery == null) {
+            log.warning("Gallery does not exist.", "galleryId", gallery.galleryId);
+            throw new ServiceException(ProfileCodes.E_GALLERY_DOES_NOT_EXIST);
         }
 
         MemberRecord member = requireAuthedUser();
-        if (gallery.ownerId != member.memberId) {
+        if (existingGallery.ownerId != member.memberId) {
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
 
         // photos already added to the gallery are known to be valid
         List<Integer> newPhotoIds = Lists.newArrayList(photoItemIds);
-        newPhotoIds.removeAll(PrimitiveArrays.asList(gallery.photoItemIds));
+        newPhotoIds.removeAll(PrimitiveArrays.asList(existingGallery.photoItemIds));
         // remove any rejects
         photoItemIds.removeAll(validateOwnership(member.memberId, newPhotoIds));
 
-        // fetch the thumbnail media from the first image
-        MediaDesc thumbMedia = null;
-        if (photoItemIds.size() > 0) {
-            PhotoRecord firstPhoto = _photoRepo.loadItem(photoItemIds.get(0));
-            thumbMedia = new MediaDesc(firstPhoto.thumbMediaHash, firstPhoto.thumbMimeType,
-                firstPhoto.thumbConstraint);
-        }
-
-        _galleryRepo.updateGallery(galleryId, description, name,
-            PrimitiveArrays.toIntArray(photoItemIds), thumbMedia);
+        _galleryRepo.updateGallery(gallery, PrimitiveArrays.toIntArray(photoItemIds));
     }
 
     // from GalleryService
@@ -111,27 +91,34 @@ public class GalleryServlet extends MsoyServiceServlet
     }
 
     // from GalleryService
-    public List<Photo> loadGallery (int galleryId)
+    public GalleryData loadGallery (int galleryId)
         throws ServiceException
     {
-        return loadPhotos(_galleryRepo.loadGallery(galleryId));
+        return loadGalleryData(_galleryRepo.loadGallery(galleryId));
     }
 
     // from GalleryService
-    public List<Photo> loadMeGallery (int memberId)
+    public GalleryData loadMeGallery (int memberId)
         throws ServiceException
     {
-        return loadPhotos(_galleryRepo.loadMeGallery(memberId));
+        return loadGalleryData(_galleryRepo.loadMeGallery(memberId));
     }
 
-    protected List<Photo> loadPhotos (GalleryRecord gallery)
+    /**
+     * Build and return the GalleryData object containing both gallery details and photos
+     */
+    protected GalleryData loadGalleryData (GalleryRecord galleryRecord)
         throws ServiceException
     {
-        if (gallery == null) {
+        if (galleryRecord == null) {
             return null;
         }
-        return Lists.transform(_photoRepo.loadItems(PrimitiveArrays.asList(gallery.photoItemIds)),
-                               new ItemRecord.ToItem<Photo>());
+        GalleryData data = new GalleryData();
+        data.gallery = galleryRecord.toGallery();
+        data.photos = Lists.transform(
+            _photoRepo.loadItems(PrimitiveArrays.asList(galleryRecord.photoItemIds)),
+            new ItemRecord.ToItem<Photo>());
+        return data;
     }
 
     /**

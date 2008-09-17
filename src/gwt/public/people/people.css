@@ -97,7 +97,16 @@
   width: 400px;
 }
 
-.profile .Friend, .profile .Group {
+.profile .Gallery {
+  width: 100px;
+  float: left;
+}
+
+.profile .Gallery .thumbBox {
+  margin: auto;
+}
+
+.profile .Friend, .profile .Group, .profile .Gallery {
   text-align: center;
   font-size: 12px;
   padding: 5px;
