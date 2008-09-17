@@ -1220,8 +1220,7 @@ public class WorldController extends MsoyController
      */
     protected function getCurrentGameId () :int
     {
-        const cfg :MsoyGameConfig = _wctx.getGameDirector().getGameConfig();
-        return (cfg == null) ? 0 : cfg.getGameId();
+        return _wctx.getGameDirector().getGameId();
     }
 
     protected function addRecentScene (scene :Scene) :void
