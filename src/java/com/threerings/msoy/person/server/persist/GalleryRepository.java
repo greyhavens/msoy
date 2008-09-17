@@ -15,6 +15,7 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.IsNull;
@@ -39,9 +40,9 @@ public class GalleryRepository extends DepotRepository
      */
     public List<GalleryInfoRecord> loadGalleries (int memberId)
     {
-        return findAll(GalleryInfoRecord.class, new Where(new Equals(
-            GalleryRecord.OWNER_ID_C,
-            memberId)));
+        return findAll(GalleryInfoRecord.class,
+            new Where(new Equals(GalleryRecord.OWNER_ID_C, memberId)),
+                      OrderBy.descending(GalleryRecord.LAST_MODIFIED_C));
     }
 
     /**
