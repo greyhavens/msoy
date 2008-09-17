@@ -18,6 +18,7 @@ import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.PhotoRecord;
 import com.threerings.msoy.item.server.persist.PhotoRepository;
 
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
@@ -42,7 +43,7 @@ public class GalleryServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser();
         // only add photos that the member owns
-        validateOwnership(memrec, photoItemIds);
+        photoItemIds.removeAll(validateOwnership(memrec.memberId, photoItemIds));
 
         // fetch the thumbnail media from the first image
         MediaDesc thumbMedia = null;
@@ -72,11 +73,16 @@ public class GalleryServlet extends MsoyServiceServlet
             throw new ServiceException();
         }
 
+        MemberRecord member = requireAuthedUser();
+        if (gallery.ownerId != member.memberId) {
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+
         // photos already added to the gallery are known to be valid
         List<Integer> newPhotoIds = Lists.newArrayList(photoItemIds);
         newPhotoIds.removeAll(PrimitiveArrays.asList(gallery.photoItemIds));
         // remove any rejects
-        photoItemIds.removeAll(validateOwnership(newPhotoIds));
+        photoItemIds.removeAll(validateOwnership(member.memberId, newPhotoIds));
 
         // fetch the thumbnail media from the first image
         MediaDesc thumbMedia = null;
@@ -129,33 +135,19 @@ public class GalleryServlet extends MsoyServiceServlet
     }
 
     /**
-     * Finds Photo item IDs that the current member does not own. Any invalid IDs will be removed
-     * from the given list.
-     *
+     * Finds Photo item IDs that the given member does not own.
      * @return the list of rejected photo IDs that the member does not own.
      */
-    protected List<Integer> validateOwnership (List<Integer> photoItemIds)
-        throws ServiceException
-    {
-        return validateOwnership(requireAuthedUser(), photoItemIds);
-    }
-
-    /**
-     * Finds out Photo item IDs that the given member does not own. Any invalid IDs will be removed
-     * from the given list.
-     * @return the list of rejected photo IDs that the member does not own.
-     */
-    protected List<Integer> validateOwnership (MemberRecord member, List<Integer> photoItemIds)
+    protected List<Integer> validateOwnership (int memberId, List<Integer> photoItemIds)
     {
         List<Integer> rejects = Lists.newArrayList();
         if (!photoItemIds.isEmpty()) {
             IntIntMap ownerMap = _photoRepo.loadOwnerIds(photoItemIds);
             for (int photoId : ownerMap.getKeys()) {
-                if (member.memberId != ownerMap.get(photoId)) {
-                    photoItemIds.remove(Integer.valueOf(photoId));
+                if (memberId != ownerMap.get(photoId)) {
                     rejects.add(photoId);
                     log.warning("Member tried to add a photo that they do not own to a gallery.",
-                                "member", member, "photoItemId", photoId);
+                                "memberId", memberId, "photoItemId", photoId);
                 }
             }
         }
