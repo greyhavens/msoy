@@ -11,6 +11,7 @@ import flash.utils.getTimer;
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
+import com.threerings.util.ResultAdapter;
 
 import com.threerings.presents.util.SafeObjectManager;
 import com.threerings.presents.util.SafeSubscriber;
@@ -344,13 +345,16 @@ public class ThaneAVRGameController
         var info :String = "scene=" + scene;
 
         log.debug("Opening window ["  + info + "]");
-        _ctx.getWindowDirector().openWindow(scene.hostname, scene.port,
-            new com.threerings.util.ResultAdapter(function (cause :Error) :void {
-                log.warning("Failed to open window [" + info + ", cause=\"" + cause + "\"]");
-            },
-            function (wnd :Window) :void {
-                gotWindow(binding, wnd);
-            }));
+        var resultListener :com.threerings.util.ResultAdapter = 
+            new com.threerings.util.ResultAdapter(
+                function (wnd :Window) :void {
+                    gotWindow(binding, wnd);
+                },
+                function (cause :Error) :void {
+                    log.warning("Failed to open window [" + info + ", cause=\"" + cause + "\"]");
+                });
+
+        _ctx.getWindowDirector().openWindow(scene.hostname, scene.port, resultListener);
     }
 
     protected function gotWindow (binding :SceneBinding, window :Window) :void
@@ -370,14 +374,14 @@ public class ThaneAVRGameController
         binding.window = window;
 
         // locate the room oid
-        var resultListener :ResultAdapter = new ResultAdapter(
-            function (cause :String) :void {
-                log.warning("Failed to get room oid [" + info + ", cause=\"" + cause + "\"]");
-            },
-            function (roomOid :int) :void {
-                gotRoomOid(binding, roomOid);
-            }
-        );
+        var resultListener :com.threerings.presents.client.ResultAdapter = 
+            new com.threerings.presents.client.ResultAdapter(
+                function (cause :String) :void {
+                    log.warning("Failed to get room oid [" + info + ", cause=\"" + cause + "\"]");
+                },
+                function (roomOid :int) :void {
+                    gotRoomOid(binding, roomOid);
+                });
 
         var thaneSvc :ThaneWorldService = 
             window.requireService(ThaneWorldService) as ThaneWorldService;

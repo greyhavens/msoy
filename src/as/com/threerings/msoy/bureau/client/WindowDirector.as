@@ -54,12 +54,12 @@ public class WindowDirector
             return;
         }
 
-        window.addListener(new ResultAdapter(
+        window.addListener(new ResultAdapter(null,
             function (cause :Error) :void {
                 if (window.releaseRef()) {
                     _windows.remove(key);
                 }
-            }, null)); // either arg may be null in a util.ResultAdapter
+            })); // either arg may be null in a util.ResultAdapter
         window.addListener(listener);
     }
 
