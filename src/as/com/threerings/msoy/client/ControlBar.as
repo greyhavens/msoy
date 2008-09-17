@@ -5,10 +5,15 @@ package com.threerings.msoy.client {
 
 import flash.events.Event;
 import flash.events.MouseEvent;
+import flash.events.ProgressEvent;
 
 import flash.display.StageDisplayState;
+import flash.display.LoaderInfo;
 
 import flash.utils.Dictionary;
+import flash.utils.setInterval;
+import flash.utils.clearInterval;
+import flash.utils.getTimer;
 
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
@@ -174,6 +179,43 @@ public class ControlBar extends HBox
     public function setChatColor (color :int) :void
     {
         _chatControl.setChatColor(color);
+    }
+
+    /**
+     * Sets up the load progress feedback for an AVRG.
+     */
+    public function setAVRGameLoaderInfo (info :LoaderInfo) :void
+    {
+        const PI :Number = 3.1415;
+        const PERIOD :Number = 1.5 * 1000;
+        const DELAY :Number = 3.0 * 1000;
+
+        var start :Number = getTimer() + DELAY;
+        var intervalId :uint = 0;
+
+        // animate the alpha based on time
+        function updateAlpha () :void {
+            var t :Number = getTimer() - start;
+            if (t > 0) {
+                var cos :Number = Math.cos(t * 2 * PI / PERIOD);
+                _avrgBtn.alpha = 0.7 + 0.3 * cos; // 0.4 .. 1.0
+            }
+        }
+
+        function progress (evt :ProgressEvent) :void {
+            // TODO: update text field in menu
+        }
+
+        function complete (evt :Event) :void {
+            _avrgBtn.alpha = 1.0;
+            clearInterval(intervalId);
+            info.removeEventListener(ProgressEvent.PROGRESS, progress);
+            info.removeEventListener(Event.COMPLETE, complete);
+        }
+
+        intervalId = setInterval(updateAlpha, 1);
+        info.addEventListener(ProgressEvent.PROGRESS, progress);
+        info.addEventListener(Event.COMPLETE, complete);
     }
 
     /**

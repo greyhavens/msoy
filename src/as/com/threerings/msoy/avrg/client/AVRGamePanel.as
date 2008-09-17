@@ -50,9 +50,7 @@ public class AVRGamePanel extends UIComponent
 
         log.info("Entering AVRG [plobj=" + plobj + "]");
 
-        const mctx :MsoyContext = _gctx.getMsoyContext();
-        const bar :ControlBar = mctx.getTopPanel().getControlBar();
-        bar.setInAVRGame(true);
+        getControlBar().setInAVRGame(true);
     }
 
     // from PlaceView
@@ -60,9 +58,7 @@ public class AVRGamePanel extends UIComponent
     {
         log.info("Leaving AVRG [plobj=" + plobj + "]");
 
-        const mctx :MsoyContext = _gctx.getMsoyContext();
-        const bar :ControlBar = mctx.getTopPanel().getControlBar();
-        bar.setInAVRGame(false);
+        getControlBar().setInAVRGame(false);
 
         // null gameObj for mediaComplete to find if it should run after us
         _gameObj = null;
@@ -83,6 +79,9 @@ public class AVRGamePanel extends UIComponent
 
         // set ourselves up properly once the media is loaded
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, mediaComplete);
+
+        // let the control bar do its load feedback
+        getControlBar().setAVRGameLoaderInfo(loader.contentLoaderInfo);
 
         addEventListener(ResizeEvent.RESIZE, handleResize);
     }
@@ -132,6 +131,12 @@ public class AVRGamePanel extends UIComponent
         if (stage != null && _ctrl.backend != null) {
             _ctrl.backend.panelResized();
         }
+    }
+
+    protected function getControlBar () :ControlBar
+    {
+        const mctx :MsoyContext = _gctx.getMsoyContext();
+        return mctx.getTopPanel().getControlBar();
     }
 
     protected var _gctx :GameContext;
