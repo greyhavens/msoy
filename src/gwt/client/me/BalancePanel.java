@@ -22,6 +22,7 @@ public class BalancePanel extends PagedGrid<MoneyTransaction>
 
         addStyleName("Balance");
 
+        _report = report;
         setModel(new MoneyTransactionDataModel(memberId, report), 0);
     }
 
@@ -50,7 +51,7 @@ public class BalancePanel extends PagedGrid<MoneyTransaction>
         return true;
     }
 
-    protected static class TransactionWidget extends HorizontalPanel
+    protected class TransactionWidget extends HorizontalPanel
     {
         public TransactionWidget (MoneyTransaction entry)
         {
@@ -61,19 +62,26 @@ public class BalancePanel extends PagedGrid<MoneyTransaction>
             String description = _lookup.xlate(MsoyUI.escapeHTML(entry.description));
             add(MsoyUI.createHTML(description, "Description"));
 
-            String amt = String.valueOf(Math.abs(entry.amount));
-            String debit, credit;
-            if (entry.amount < 0) {
-                debit = amt;
-                credit = " ";
+            if (_report == ReportType.CREATOR) {
+                add(MsoyUI.createInlineImage(entry.currency.getSmallIcon()));
+                add(MsoyUI.createLabel(entry.currency.format(entry.amount), ""));
             } else {
-                debit = " ";
-                credit = amt;
+                String amt = entry.currency.format(Math.abs(entry.amount));
+                String debit, credit;
+                if (entry.amount < 0) {
+                    debit = amt;
+                    credit = " ";
+                } else {
+                    debit = " ";
+                    credit = amt;
+                }
+                add(MsoyUI.createLabel(debit, "Debit"));
+                add(MsoyUI.createLabel(credit, "Credit"));
             }
-            add(MsoyUI.createLabel(debit, "Debit"));
-            add(MsoyUI.createLabel(credit, "Credit"));
         }
     }
+
+    protected ReportType _report;
 
     protected static final MeMessagesLookup _lookup = GWT.create(MeMessagesLookup.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
