@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.item.data.all.Photo;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
