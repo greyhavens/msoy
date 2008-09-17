@@ -422,7 +422,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
      */
     public boolean isConsistent ()
     {
-        return true;
+        return getPrimaryMedia() != null;
     }
 
     // from DSet.Entry
