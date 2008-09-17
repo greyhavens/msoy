@@ -192,6 +192,7 @@ public class ThaneAVRGameController
             return;
         }
         binding.deactivated = true;
+        _transactions.addClient(_ctx.getClient());
         _gameAgentObj.agentService.leaveGame(_ctx.getClient(), playerId);
     }
 
@@ -216,6 +217,9 @@ public class ThaneAVRGameController
         return [];
     }
 
+    /**
+     * Retrieves the info structure for the mob in the given room and with the given id.
+     */
     public function getMobInfo (roomId :int, mobId :String) :MobInfo
     {
         var binding :SceneBinding = _bindings.get(roomId);
@@ -228,6 +232,16 @@ public class ThaneAVRGameController
             log.warning("Mob not found in room [roomId=" + roomId + ", mobId=" + mobId + "]");
         }
         return mobInfo;
+    }
+
+    /**
+     * Retrieves the current set of transactions so that clients may be added. The backend should
+     * always add any client that is about to be used in a service method call. The
+     * <code>Transactions</code> class will start a transaction if necessary.
+     */
+    public function getTransactions () :Transactions
+    {
+        return _transactions;
     }
 
     protected function entryAdded (event :EntryAddedEvent) :void
@@ -641,6 +655,7 @@ public class ThaneAVRGameController
     protected var _setAdapter :SetAdapter = new SetAdapter(entryAdded, entryUpdated, entryRemoved);
     protected var _playerSubs :SafeObjectManager;
     protected var _players :HashMap = new HashMap();
+    protected var _transactions :Transactions = new Transactions();
 }
 
 }

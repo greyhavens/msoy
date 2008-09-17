@@ -190,6 +190,10 @@ public class ThaneAVRGameBackend
 
     protected function populateProperties (o :Object) :void
     {
+        // .*
+        o["startTransaction"] = startTransaction_v1;
+        o["commitTransaction"] = commitTransaction_v1;
+
         // .game
         o["game_getPlayerIds_v1"] = game_getPlayerIds_v1;
         o["game_sendMessage_v1"] = game_sendMessage_v1;
@@ -229,6 +233,17 @@ public class ThaneAVRGameBackend
         o["player_setProperty_v1"] = player_setProperty_v1;
     }
 
+    // -------------------- .* --------------------
+    protected function startTransaction_v1 () :void
+    {
+        _controller.getTransactions().start();
+    }
+
+    protected function commitTransaction_v1 () :void
+    {
+        _controller.getTransactions().commit();
+    }
+
     // -------------------- .game --------------------
     protected function game_getPlayerIds_v1 () :Array
     {
@@ -237,7 +252,7 @@ public class ThaneAVRGameBackend
 
     protected function game_sendMessage_v1 (name :String, value :Object) :void
     {
-        BackendUtils.sendMessage(_gameObj.messageService, _ctx.getClient(), name, value, "game");
+        BackendUtils.sendMessage(_gameObj.messageService, ensureGameClient(), name, value, "game");
     }
 
     protected function isRoomLoaded_v1 (roomId :int) :Boolean
@@ -261,7 +276,8 @@ public class ThaneAVRGameBackend
         if (targetId != 0) {
             throw new Error("Internal error: unexpected target id");
         }
-        BackendUtils.encodeAndSet(_ctx.getClient(), _gameObj, name, value, key, isArray, immediate);
+        BackendUtils.encodeAndSet(
+            ensureGameClient(), _gameObj, name, value, key, isArray, immediate);
     }
     
     // -------------------- .getRoom() --------------------
@@ -333,8 +349,8 @@ public class ThaneAVRGameBackend
         }
 
         var loc :MsoyLocation = new MsoyLocation(x, y, z);
-        roomObj.roomService.spawnMob(  
-            _controller.getRoomClient(roomId), _controller.getGameId(), mobId, mobName, loc,
+        roomObj.roomService.spawnMob(
+            ensureRoomClient(roomId), _controller.getGameId(), mobId, mobName, loc,
             BackendUtils.loggingInvocationListener("spawnMob"));
     }
 
@@ -351,7 +367,7 @@ public class ThaneAVRGameBackend
         }
 
         roomObj.roomService.despawnMob(
-            _controller.getRoomClient(roomId), _controller.getGameId(), mobId,
+            ensureRoomClient(roomId), _controller.getGameId(), mobId,
             BackendUtils.loggingInvocationListener("despawnMob"));
     }
 
@@ -368,7 +384,7 @@ public class ThaneAVRGameBackend
         }
 
         roomObj.roomService.moveMob(
-            _controller.getRoomClient(roomId), _controller.getGameId(), id, 
+            ensureRoomClient(roomId), _controller.getGameId(), id, 
             new MsoyLocation(x, y, z), BackendUtils.loggingConfirmListener("moveMob"));
     }
 
@@ -379,7 +395,7 @@ public class ThaneAVRGameBackend
             throw new Error("Room not loaded [roomId=" + roomId + "]");
         }
         BackendUtils.sendMessage(
-            roomProps.messageService, _controller.getRoomClient(roomId), name, value, "room");
+            roomProps.messageService, ensureRoomClient(roomId), name, value, "room");
     }
 
     
@@ -403,7 +419,7 @@ public class ThaneAVRGameBackend
             throw new Error("Room not loaded [roomId=" + roomId + "]");
         }
         BackendUtils.encodeAndSet(
-            _controller.getRoomClient(roomId), roomProps, name, value, key, isArray, immediate);
+            ensureRoomClient(roomId), roomProps, name, value, key, isArray, immediate);
     }
 
     // -------------------- .getPlayer() --------------------
@@ -423,8 +439,9 @@ public class ThaneAVRGameBackend
             return;
         }
 
+        payout = Math.max(0, Math.min(payout, 1));
         _gameObj.avrgService.completeTask(
-            _ctx.getClient(), playerId, taskId, Math.max(0, Math.min(payout, 1)),
+            ensureGameClient(), playerId, taskId, payout,
             BackendUtils.loggingConfirmListener("completeTask"));
     }
 
@@ -467,7 +484,7 @@ public class ThaneAVRGameBackend
     protected function player_sendMessage_v1 (playerId :int, name :String, value :Object) :void
     {
         BackendUtils.sendPrivateMessage(
-            _gameObj.messageService, _ctx.getClient(), playerId, name, value, "room");
+            _gameObj.messageService, ensureGameClient(), playerId, name, value, "room");
     }
 
     // -------------------- .getPlayer().props --------------------
@@ -489,7 +506,7 @@ public class ThaneAVRGameBackend
             throw new Error("Player not found [playerId=" + playerId + "]");
         }
         BackendUtils.encodeAndSet(
-            _ctx.getClient(), player, name, value, key, isArray, immediate);
+            ensureGameClient(), player, name, value, key, isArray, immediate);
     }
 
     // -------------------- end of versioned methods --------------------
@@ -522,7 +539,7 @@ public class ThaneAVRGameBackend
             return;
         }
 
-        fn(roomObj, _controller.getRoomClient(roomId));
+        fn(roomObj, ensureRoomClient(roomId));
     }
 
     /**
@@ -556,6 +573,28 @@ public class ThaneAVRGameBackend
     protected function filterPlayer (memberId :int) :Boolean
     {
         return _controller.getPlayer(memberId) != null;
+    }
+
+    /**
+     * Accesses the game server client, making sure that a transaction is started for it if
+     * <code>startTransaction_v1</code> was previously called.
+     */
+    protected function ensureGameClient () :Client
+    {
+        var gameClient :Client = _ctx.getClient();
+        _controller.getTransactions().addClient(gameClient);
+        return gameClient;
+    }
+
+    /**
+     * Accesses the world server client for a given room, making sure that a transaction is started
+     * for it if <code>startTransaction_v1</code> was previously called.
+     */
+    protected function ensureRoomClient (roomId :int) :Client
+    {
+        var roomClient :Client = _controller.getRoomClient(roomId);
+        _controller.getTransactions().addClient(roomClient);
+        return roomClient;
     }
 
     protected var _userFuncs :Object;
