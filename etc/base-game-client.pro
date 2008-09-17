@@ -6,6 +6,7 @@
 -injars ../dist/lib/commons-collections.jar(!META-INF/*)
 -injars ../dist/lib/commons-io.jar(!META-INF/*)
 -injars ../dist/lib/commons-digester.jar(!META-INF/*)
+-injars ../dist/lib/google-collect.jar(!META-INF/*)
 -injars ../dist/lib/samskivert-0.0-SNAPSHOT.jar(
     com/samskivert/Log.class,**/io/**,**/net/**,**/swing/**,**/text/**,**/util/**,**/xml/**,
     **/servlet/user/Password.class,**/servlet/user/User.class,**/servlet/user/UserUtil.class)
