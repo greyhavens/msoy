@@ -83,6 +83,7 @@ public class MoneyMessageReceiver
                     {
                         final GetBarCountMessage gbcm = new GetBarCountMessage(message);
                         final MemberRecord member = _memberRepo.loadMember(gbcm.accountName);
+                        
                         try {
                             final MemberMoney money = _logic.getMoneyFor(member.memberId);
                             replier.reply(new IntMessage(money.bars));

@@ -17,6 +17,7 @@ import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.threerings.msoy.item.data.all.CatalogIdent;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
@@ -284,6 +285,22 @@ public class MemberAccountRecord extends PersistentRecord
             description, item);
         trans.referenceTxId = referenceTxId;
         return trans;
+    }
+    
+    /**
+     * Pays a creator for their games having been played.
+     * 
+     * @param description Description of the transaction.
+     * @param gameId ID of the game that was played.
+     * @param amount Amount of centibling that should be rewarded.
+     * @return Transaction for this change.
+     */
+    public MoneyTransactionRecord gamePlaysPayout (String description, int gameId, int amount)
+    {
+        Preconditions.checkArgument(amount >= 0, "Payout amounts can't be negative.");
+        accumulate(Currency.BLING, amount);
+        return new MoneyTransactionRecord(memberId, TransactionType.GAME_PLAYS, Currency.BLING,
+            amount, this.bling, description, new ItemIdent(Item.GAME, gameId));
     }
 
     /**

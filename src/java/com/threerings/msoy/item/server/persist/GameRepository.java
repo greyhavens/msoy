@@ -5,6 +5,7 @@ package com.threerings.msoy.item.server.persist;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,7 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals;
+import com.samskivert.jdbc.depot.operator.Logic;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.operator.Logic.Or;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
@@ -230,6 +232,24 @@ public class GameRepository extends ItemRepository<GameRecord>
 
         // update our games played and flow to next recalc in the detail record
         noteGamePlayed(gameId, playerGames, flowAwarded);
+    }
+    
+    /**
+     * Gets all game plays that occurred between the start and end dates given.
+     * 
+     * @param start Start of the date range, inclusive, in milliseconds since 1/1/1970
+     * @param end End of the data range, exclusive, in milliseconds since 1/1/1970
+     * @return All found game plays.
+     */
+    public Collection<GamePlayRecord> getGamePlaysBetween (long start, long end)
+    {
+        // where recorded >= {start} and recorded < {end}
+        Where where = new Where(new Logic.And(
+            new Conditionals.GreaterThanEquals(GamePlayRecord.RECORDED_C, new Timestamp(start)),
+            new Conditionals.LessThan(GamePlayRecord.RECORDED_C, new Timestamp(end))
+        ));
+        
+        return findAll(GamePlayRecord.class, where);
     }
 
     /**

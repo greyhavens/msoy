@@ -15,6 +15,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.depot.DepotRepository;
+import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -154,6 +155,33 @@ public class MoneyRepository extends DepotRepository
     {
         return loadAll(MoneyTransactionRecord.class, ids);
     }
+    
+    /**
+     * Loads the current money configuration record, optionally locking on the record.
+     * 
+     * @param lock If true, the record will be selected using SELECT ... FOR UPDATE to grab
+     * a pessimistic lock, preventing other threads calling this method from continuing until the
+     * lock is released.
+     * @return The money configuration.
+     */
+    public MoneyConfigRecord getMoneyConfig (final boolean lock)
+    {
+        // TODO: Locking
+        
+        MoneyConfigRecord confRecord = load(MoneyConfigRecord.class);
+        if (confRecord == null) {
+            // Create a new money config record with the current date for the last time bling
+            // was distributed and save it.  If something else slips in and adds it, this will
+            // throw an exception -- just attempt to retrieve it at that point.
+            confRecord = new MoneyConfigRecord();
+            try {
+                store(confRecord);
+            } catch (DuplicateKeyException dke) {
+                confRecord = load(MoneyConfigRecord.class);
+            }
+        }
+        return confRecord;
+    }
 
     /** Helper method to setup a query for a transaction history search. */
     protected void populateSearch (
@@ -178,5 +206,6 @@ public class MoneyRepository extends DepotRepository
     {
         classes.add(MemberAccountRecord.class);
         classes.add(MoneyTransactionRecord.class);
+        classes.add(MoneyConfigRecord.class);
     }
 }
