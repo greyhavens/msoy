@@ -26,6 +26,10 @@ import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 
+import com.threerings.crowd.client.PlaceController;
+
+import com.threerings.crowd.data.PlaceConfig;
+
 import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
 
@@ -131,11 +135,29 @@ public class GameLiaison
     }
 
     /**
+     * Returns the config of our active game if we're in an active game.
+     */
+    public function get gameConfig () :PlaceConfig
+    {
+        var ctrl :PlaceController = _gctx.getLocationDirector().getPlaceController();
+        return (ctrl == null) ? null : ctrl.getPlaceConfig();
+    }
+
+    /**
      * Returns the ID of the game we're match-making for.
      */
     public function get gameId () :int
     {
         return _gameId;
+    }
+
+    /**
+     * Returns the name of the game we are playing or lobbying for.
+     */
+    public function get gameName () :String
+    {
+        // Subclasses have to do this because AVRGameConfig does not share with MsoyGameConfig
+        return null;
     }
 
     /**

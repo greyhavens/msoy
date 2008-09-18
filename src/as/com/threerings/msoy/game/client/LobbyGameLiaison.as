@@ -9,7 +9,6 @@ import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.client.LocationAdapter;
-import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.client.GameReadyObserver;
@@ -87,15 +86,6 @@ public class LobbyGameLiaison extends GameLiaison
         } else {
             _lobby.joinPlayerTable(playerId);
         }
-    }
-
-    /**
-     * Returns the config of our active game if we're in an active game.
-     */
-    public function getGameConfig () :MsoyGameConfig
-    {
-        var ctrl :PlaceController = _gctx.getLocationDirector().getPlaceController();
-        return (ctrl == null) ? null : (ctrl.getPlaceConfig() as MsoyGameConfig);
     }
 
     /**
@@ -237,6 +227,17 @@ public class LobbyGameLiaison extends GameLiaison
             _wctx.getWorldController().handleGoGame(_gameId, gameOid);
         }
         return true;
+    }
+
+    /** @inheritDoc */
+    // from GameLiaison
+    override public function get gameName () :String
+    {
+        var config :MsoyGameConfig = gameConfig as MsoyGameConfig;
+        if (config != null) {
+            return config.name;
+        }
+        return super.gameName;
     }
 
     protected function joinLobby () :void

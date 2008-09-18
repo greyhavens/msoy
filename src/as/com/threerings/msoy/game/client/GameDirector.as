@@ -241,8 +241,8 @@ public class GameDirector extends BasicDirector
      */
     public function getGameConfig () :MsoyGameConfig
     {
-        if (_liaison != null && _liaison is LobbyGameLiaison) {
-            return LobbyGameLiaison(_liaison).getGameConfig();
+        if (_liaison != null) {
+            return _liaison.gameConfig as MsoyGameConfig;
         }
         return null;
     }
@@ -253,6 +253,14 @@ public class GameDirector extends BasicDirector
     public function getGameId () :int
     {
         return (_liaison != null) ? _liaison.gameId : 0;
+    }
+
+    /**
+     * Returns the name of the game we're currently connected to, or null if we're not.
+     */
+    public function getGameName () :String
+    {
+        return (_liaison != null) ? _liaison.gameName : null;
     }
 
     /**

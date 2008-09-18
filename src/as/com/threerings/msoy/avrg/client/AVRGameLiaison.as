@@ -126,5 +126,16 @@ public class AVRGameLiaison extends GameLiaison
         var ctrl :PlaceController = _gctx.getLocationDirector().getPlaceController();
         return (ctrl != null) ? (ctrl as AVRGameController) : null;
     }
+
+    /** @inheritDoc */
+    // from GameLiaison
+    override public function get gameName () :String
+    {
+        var config :AVRGameConfig = gameConfig as AVRGameConfig;
+        if (config != null) {
+            return config.name;
+        }
+        return super.gameName;
+    }
 }
 }
