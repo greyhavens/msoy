@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.server.persist;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,6 +15,9 @@ import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.clause.FromOverride;
+import com.samskivert.jdbc.depot.clause.Limit;
+import com.samskivert.jdbc.depot.clause.OrderBy;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -57,6 +61,23 @@ public class AffiliateMapRepository extends DepotRepository
     }
 
     /**
+     * Get the specified page of mappings.
+     */
+    public List<AffiliateMapRecord> getMappings (int start, int count)
+    {
+        return findAll(AffiliateMapRecord.class,
+            OrderBy.ascending(AffiliateMapRecord.AFFILIATE_C), new Limit(start, count));
+    }
+
+    /**
+     * Get the total number of mappings in the database.
+     */
+    public int getMappingCount ()
+    {
+        return load(CountRecord.class, new FromOverride(AffiliateMapRecord.class)).count;
+    }
+
+    /**
      * Update or insert a new mapping.
      */
     public void storeMapping (String affiliate, int memberId)
@@ -67,17 +88,17 @@ public class AffiliateMapRepository extends DepotRepository
         store(rec);
     }
 
-    /**
-     * Oh god, load all the current mappings. TODO: pagination, someday, brah.
-     */
-    public Map<String, Integer> getAll ()
-    {
-        Map<String, Integer> map = Maps.newHashMap();
-        for (AffiliateMapRecord rec : findAll(AffiliateMapRecord.class)) {
-            map.put(rec.affiliate, rec.memberId);
-        }
-        return map;
-    }
+//    /**
+//     * Oh god, load all the current mappings. TODO: pagination, someday, brah.
+//     */
+//    public Map<String, Integer> getAll ()
+//    {
+//        Map<String, Integer> map = Maps.newHashMap();
+//        for (AffiliateMapRecord rec : findAll(AffiliateMapRecord.class)) {
+//            map.put(rec.affiliate, rec.memberId);
+//        }
+//        return map;
+//    }
 
     @Override // from DepotRepository
     protected void getManagedRecords (final Set<Class<? extends PersistentRecord>> classes)

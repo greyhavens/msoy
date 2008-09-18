@@ -20,27 +20,32 @@ public class AdminPage extends Page
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
+        String action = args.get(0, "");
+
         if (CShell.isGuest()) {
             setContent(MsoyUI.createLabel(_msgs.indexLogon(), "infoLabel"));
 
         } else if (!CShell.isSupport()) {
             setContent(MsoyUI.createLabel(_msgs.lackPrivileges(), "infoLabel"));
 
-        } else if (args.get(0, "").equals("browser")) {
+        } else if (action.equals("browser")) {
             if (_playerBrowser == null) {
                 _playerBrowser = new PlayerBrowserPanel();
             }
             setContent(_msgs.browserTitle(), _playerBrowser);
             _playerBrowser.displayPlayersInvitedBy(args.get(1, 0));
 
-        } else if (args.get(0, "").equals("review")) {
+        } else if (action.equals("review")) {
             setContent(_msgs.reviewTitle(), new ReviewPanel());
 
-        } else if (args.get(0, "").equals("info")) {
+        } else if (action.equals("info")) {
             setContent(_msgs.infoTitle(), new MemberInfoPanel(args.get(1, 0)));
 
-        } else if (args.get(0, "").equals("testlist")) {
+        } else if (action.equals("testlist")) {
             setContent(_msgs.abTestListTitle(), new ABTestListPanel());
+
+        } else if (action.equals("affmap")) {
+            setContent("Fuck off", new AffiliateMapPanel());
 
         } else {
             setContent(_msgs.title(), new DashboardPanel());

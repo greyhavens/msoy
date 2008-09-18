@@ -3,10 +3,14 @@
 
 package com.threerings.msoy.server.persist;
 
+import com.google.common.base.Function;
+
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
+
+import com.threerings.msoy.admin.gwt.AffiliateMapping;
 
 /**
  * Maintains a mapping from an affiliate to a memberId.
@@ -35,6 +39,13 @@ public class AffiliateMapRecord extends PersistentRecord
      * will result in a change to its SQL counterpart. */
     public static final int SCHEMA_VERSION = 1;
 
+    public static Function<AffiliateMapRecord, AffiliateMapping> TO_MAPPING =
+        new Function<AffiliateMapRecord, AffiliateMapping>() {
+        public AffiliateMapping apply (AffiliateMapRecord record) {
+            return record.toMapping();
+        }
+    };
+
     /** The affiliate name as submitted by a registering user. {@link ReferralRecord#affiliate} */
     @Id
     public String affiliate;
@@ -56,4 +67,12 @@ public class AffiliateMapRecord extends PersistentRecord
                 new Comparable[] { affiliate });
     }
     // AUTO-GENERATED: METHODS END
+
+    /**
+     * Convert this record into an AffiliateMapping record.
+     */
+    public AffiliateMapping toMapping ()
+    {
+        return new AffiliateMapping(affiliate, memberId);
+    }
 }

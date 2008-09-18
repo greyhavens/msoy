@@ -8,6 +8,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.web.data.ServiceException;
 
 import com.threerings.msoy.item.data.all.ItemIdent;
@@ -20,6 +22,18 @@ public interface AdminService extends RemoteService
 {
     /** The entry point for this service. */
     public static final String ENTRY_POINT = "/adminsvc";
+
+    /**
+     * Get the specified page of affiliate mappings.
+     */
+    PagedResult<AffiliateMapping> getAffiliateMappings (int start, int count, boolean needTotal)
+        throws ServiceException;
+
+    /**
+     * Set the specified affiliate to map to the specified memberId.
+     */
+    void mapAffiliate (String affiliate, int memberId)
+        throws ServiceException;
 
     /**
      * Grants the given number of invitations to the indicated user set.

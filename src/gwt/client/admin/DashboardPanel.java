@@ -36,14 +36,14 @@ public class DashboardPanel extends FlexTable
         setCellPadding(0);
 
         int row = 0;
+        HorizontalPanel controls;
 
-        // add various controls
-        HorizontalPanel controls = new HorizontalPanel();
-        controls.setSpacing(10);
-        setWidget(row++, 0, controls);
-
-        controls.add(new Label(_msgs.adminControls()));
+        // admin-only controls
         if (CShell.isAdmin()) {
+            controls = new HorizontalPanel();
+            controls.setSpacing(10);
+            setWidget(row++, 0, controls);
+            controls.add(new Label(_msgs.adminControls()));
             controls.add(new Button(_msgs.displayDashboard(), new ClickListener() {
                 public void onClick (Widget sender) {
                     ((Button)sender).setEnabled(false);
@@ -58,8 +58,16 @@ public class DashboardPanel extends FlexTable
                 }
             }));
         }
-        controls.add(new Button(_msgs.reviewButton(), Link.createListener(Pages.ADMINZ, "review")));
 
+        // support controls
+        controls = new HorizontalPanel();
+        controls.setSpacing(10);
+        setWidget(row++, 0, controls);
+        controls.add(new Label(_msgs.supportControls()));
+        controls.add(new Button(_msgs.reviewButton(), Link.createListener(Pages.ADMINZ, "review")));
+        controls.add(new Button(_msgs.affMapButton(), Link.createListener(Pages.ADMINZ, "affmap")));
+
+        // invitation controls
         controls = new HorizontalPanel();
         controls.setSpacing(10);
         setWidget(row++, 0, controls);

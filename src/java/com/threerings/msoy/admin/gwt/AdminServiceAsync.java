@@ -8,6 +8,8 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.ItemDetail;
 
@@ -16,6 +18,18 @@ import com.threerings.msoy.item.gwt.ItemDetail;
  */
 public interface AdminServiceAsync
 {
+    /**
+     * The asynchronous version of {@link AdminService#getAffiliateMappings}.
+     */
+    void getAffiliateMappings (
+        int start, int count, boolean needTotal,
+        AsyncCallback<PagedResult<AffiliateMapping>> callback);
+
+    /**
+     * The asynchronous version of {@link AdminService#mapAffiliate}.
+     */
+    void mapAffiliate (String affiliate, int memberId, AsyncCallback<Void> callback);
+
     /**
      * The asynchronous version of {@link AdminService#grantInvitations}.
      */

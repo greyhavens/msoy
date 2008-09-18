@@ -9,14 +9,19 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.server.ServerMessages;
+import com.threerings.msoy.server.persist.AffiliateMapRecord;
+import com.threerings.msoy.server.persist.AffiliateMapRepository;
 import com.threerings.msoy.server.persist.MemberInviteStatusRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
 
@@ -41,6 +46,7 @@ import com.threerings.msoy.person.server.MailLogic;
 import com.threerings.msoy.admin.data.MsoyAdminCodes;
 import com.threerings.msoy.admin.gwt.ABTest;
 import com.threerings.msoy.admin.gwt.AdminService;
+import com.threerings.msoy.admin.gwt.AffiliateMapping;
 import com.threerings.msoy.admin.gwt.MemberAdminInfo;
 import com.threerings.msoy.admin.gwt.MemberInviteResult;
 import com.threerings.msoy.admin.gwt.MemberInviteStatus;
@@ -77,10 +83,7 @@ public class AdminServlet extends MsoyServiceServlet
     public MemberAdminInfo getMemberInfo (final int memberId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAuthedUser();
-        if (!memrec.isSupport()) {
-            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-        }
+        requireSupport();
 
         final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
         if (tgtrec == null) {
@@ -117,6 +120,7 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         requireAdmin();
+
         final MemberInviteResult res = new MemberInviteResult();
         final MemberRecord memRec = inviterId == 0 ? null : _memberRepo.loadMember(inviterId);
         if (memRec != null) {
@@ -198,13 +202,35 @@ public class AdminServlet extends MsoyServiceServlet
     }
 
     // from interface AdminService
+    public PagedResult<AffiliateMapping> getAffiliateMappings (
+        int start, int count, boolean needTotal)
+        throws ServiceException
+    {
+        requireSupport();
+
+        PagedResult<AffiliateMapping> result = new PagedResult<AffiliateMapping>();
+        result.page = Lists.newArrayList(Iterables.transform(
+            _affMapRepo.getMappings(start, count), AffiliateMapRecord.TO_MAPPING));
+        if (needTotal) {
+            result.total = _affMapRepo.getMappingCount();
+        }
+        return result;
+    }
+
+    // from interface AdminService
+    public void mapAffiliate (String affiliate, int memberId)
+        throws ServiceException
+    {
+        requireSupport();
+
+        // TODO
+    }
+
+    // from interface AdminService
     public List<ItemDetail> getFlaggedItems (final int count)
         throws ServiceException
     {
-        final MemberRecord mRec = requireAuthedUser();
-        if (!mRec.isSupport()) {
-            throw new ServiceException(ItemCodes.ACCESS_DENIED);
-        }
+        requireSupport();
 
         // it'd be nice to round-robin the item types or something, so the first items in the queue
         // aren't always from the same type... perhaps we'll just do something clever in the UI
@@ -233,10 +259,7 @@ public class AdminServlet extends MsoyServiceServlet
     public Integer deleteItemAdmin (final ItemIdent iident, final String subject, final String body)
         throws ServiceException
     {
-        final MemberRecord admin = requireAuthedUser();
-        if (!admin.isSupport()) {
-            throw new ServiceException(ItemCodes.ACCESS_DENIED);
-        }
+        final MemberRecord memrec = requireSupport();
 
         final byte type = iident.type;
         final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
@@ -268,12 +291,12 @@ public class AdminServlet extends MsoyServiceServlet
 
         // notify the owners of the deletion
         for (final int ownerId : owners) {
-            if (ownerId == admin.memberId) {
+            if (ownerId == memrec.memberId) {
                 continue; // admin deleting their own item? sure, whatever!
             }
             final MemberRecord owner = _memberRepo.loadMember(ownerId);
             if (owner != null) {
-                _mailLogic.startConversation(admin, owner, subject, body, null);
+                _mailLogic.startConversation(memrec, owner, subject, body, null);
             }
         }
 
@@ -285,6 +308,16 @@ public class AdminServlet extends MsoyServiceServlet
     {
         final MemberRecord memrec = requireAuthedUser();
         if (!memrec.isAdmin()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+        return memrec;
+    }
+
+    protected MemberRecord requireSupport ()
+        throws ServiceException
+    {
+        final MemberRecord memrec = requireAuthedUser();
+        if (!memrec.isSupport()) {
             throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
         }
         return memrec;
@@ -304,5 +337,6 @@ public class AdminServlet extends MsoyServiceServlet
     @Inject protected ItemLogic _itemLogic;
     @Inject protected MailLogic _mailLogic;
     @Inject protected MoneyLogic _moneyLogic;
+    @Inject protected AffiliateMapRepository _affMapRepo;
     
 }
