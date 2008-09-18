@@ -26,8 +26,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
-import static com.threerings.msoy.Log.log;
-
 /**
  * Customizes the Crowd chat channel services for Whirled.
  */

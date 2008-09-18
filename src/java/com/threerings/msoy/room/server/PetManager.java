@@ -34,7 +34,6 @@ import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.RoomName;
 
 import com.threerings.msoy.item.data.all.Pet;
 import com.threerings.msoy.item.server.persist.PetRecord;
@@ -42,7 +41,6 @@ import com.threerings.msoy.item.server.persist.PetRepository;
 
 import com.threerings.msoy.room.client.PetService;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
-import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.PetCodes;
 import com.threerings.msoy.room.data.PetInfo;
 import com.threerings.msoy.room.data.PetObject;

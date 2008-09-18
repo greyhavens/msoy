@@ -14,7 +14,6 @@ import com.threerings.msoy.money.data.all.ReportType;
 
 import client.shell.Args;
 import client.shell.Pages;
-import client.ui.MsoyUI;
 import client.util.Link;
 
 public class TransactionsPanel extends VerticalPanel

@@ -11,8 +11,6 @@ import com.threerings.gwt.ui.PagedGrid;
 
 import com.threerings.msoy.admin.gwt.AffiliateMapping;
 
-import client.ui.MsoyUI;
-
 public class AffiliateMapPanel extends PagedGrid<AffiliateMapping>
 {
     public AffiliateMapPanel ()

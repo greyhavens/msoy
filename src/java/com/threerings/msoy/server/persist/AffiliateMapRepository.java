@@ -4,10 +4,8 @@
 package com.threerings.msoy.server.persist;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
