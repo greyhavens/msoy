@@ -25,30 +25,34 @@ import com.threerings.msoy.ui.MsoyNameLabelCreator;
 public class RoomOccupantList extends PlayerList
     implements SetListener
 {
-    public function RoomOccupantList (ctx :MsoyContext, plobj :PlaceObject)
+    public function RoomOccupantList (ctx :MsoyContext)
     {
         super(new MsoyNameLabelCreator(ctx, true));
 
         _list.mouseEnabled = false;
         _list.mx_internal::getListContentHolder().mouseEnabled = false;
         mouseEnabled = false;
-
-        // listen for changes on our place object
-        _plobj = plobj;
-        _plobj.addListener(this);
-
-        // set up our current occupants
-        for each (var occInfo :OccupantInfo in plobj.occupantInfo.toArray()) {
-            trace("adding " + occInfo.username);
-            addItem(occInfo.username);
-        }
     }
 
-    public function shutdown () :void
+    public function setPlaceObject (plobj: PlaceObject) :void
     {
         if (_plobj != null) {
+            // clear out our old place
             _plobj.removeListener(this);
             _plobj = null;
+            // clear out any occupants in our list
+            clear();
+        }
+
+        if (plobj != null) {
+            // listen for changes on our place object
+            _plobj = plobj;
+            _plobj.addListener(this);
+
+            // set up our current occupants
+            for each (var occInfo :OccupantInfo in plobj.occupantInfo.toArray()) {
+                addItem(occInfo.username);
+            }
         }
     }
 
@@ -56,7 +60,6 @@ public class RoomOccupantList extends PlayerList
     public function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-            trace("adding " + (event.getEntry() as OccupantInfo).username);
             addItem((event.getEntry() as OccupantInfo).username);
         }
     }

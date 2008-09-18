@@ -66,6 +66,9 @@ public class MsoyChatDirector extends ChatDirector
         }
 
         addChatDisplay(_chatHistory = new HistoryList());
+
+        // create our room occupant list
+        _roomOccList = new RoomOccupantList(_mctx);
     }
 
     /**
@@ -174,6 +177,9 @@ public class MsoyChatDirector extends ChatDirector
         _csservice.speak(_mctx.getClient(), channel, msg, 0); // TODO: mode?
     }
 
+    /**
+     * Returns a list containing the chat participants for the specified local type.
+     */
     public function getPlayerList (ltype :String) :PlayerList
     {
         return (ltype == ChatCodes.PLACE_CHAT_TYPE) ? _roomOccList : null;
@@ -223,15 +229,8 @@ public class MsoyChatDirector extends ChatDirector
     {
         super.locationDidChange(place);
 
-        // clear out our old room occupant list
-        if (_roomOccList != null) {
-            _roomOccList.shutdown();
-            _roomOccList = null;
-        }
-        // create a new one if appropriate
-        if (place != null) {
-            _roomOccList = new RoomOccupantList(_mctx, place);
-        }
+        // let our occupant list know about our new location
+        _roomOccList.setPlaceObject(place);
     }
 
     // from ChatDirector

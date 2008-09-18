@@ -211,6 +211,10 @@ public class ChatOverlay
         return false;
     }
 
+    /**
+     * Switches the overlay to the specified local type. All currently displayed messages will be
+     * cleared and displayable messages of the specified local type will be shown.
+     */
     public function setLocalType (localtype :String) :void
     {
         // avoid fooling around if we didn't change our localtype, except for place chat where we
@@ -234,7 +238,7 @@ public class ChatOverlay
                 _chatContainer.clearOccupantList();
             }
         }
-        occListShowing = _occupantList != null ? occListShowing : Prefs.getShowingOccupantList();
+        occListShowing = (_occupantList != null) ? occListShowing : Prefs.getShowingOccupantList();
         _occupantList = _ctx.getMsoyChatDirector().getPlayerList(localtype);
         setOccupantListShowing(occListShowing);
 
@@ -516,6 +520,7 @@ public class ChatOverlay
             for each (var glyph :ChatGlyph in _showingHistory) {
                 glyph.setClickable(true);
             }
+
         } else {
             for each (glyph in _showingHistory) {
                 glyph.setClickable(false);
@@ -745,14 +750,8 @@ public class ChatOverlay
             var format :String = msg.getFormat();
             if (format != null) {
                 var umsg :UserMessage = (msg as UserMessage);
-                var prefix :String = _msgMan.getBundle(MsoyCodes.CHAT_MSGS).get(
-                    format, umsg.getSpeakerDisplayName()) + " ";
-
-                if (useQuotes(msg, type)) {
-                    prefix += "\"";
-                    texts.push("\"");
-                }
-                texts.unshift(prefix);
+                texts.unshift(_msgMan.getBundle(MsoyCodes.CHAT_MSGS).get(
+                        format, umsg.getSpeakerDisplayName()) + " ");
             }
         }
 
@@ -797,16 +796,7 @@ public class ChatOverlay
     }
 
     /**
-     * Should we be using quotes with the specified format?
-     */
-    protected function useQuotes (msg: ChatMessage, type :int) :Boolean
-    {
-        return (modeOf(type) != EMOTE) /* TODO: && !(msg is ChannelMessage) */;
-    }
-
-    /**
-     * Should we force the use of the speaker in the formatting of
-     * the message?
+     * Should we force the use of the speaker in the formatting of the message?
      */
     protected function alwaysUseSpeaker (type :int) :Boolean
     {
@@ -1255,8 +1245,7 @@ public class ChatOverlay
      * glyphs. */
     protected var _historyOverlay :Sprite = new Sprite();
 
-    /** The list that contains names and headshots of everyone current subscribed to the currently
-     * shown channel */
+    /** The list that contains names and headshots of everyone in the current room. */
     protected var _occupantList :PlayerList;
 
     /** The target container over which we're overlaying chat. */
