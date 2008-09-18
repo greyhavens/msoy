@@ -8,12 +8,17 @@ import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
+import com.samskivert.util.Invoker;
 
 import com.threerings.util.Name;
 
+import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.InvocationManager;
+import com.threerings.presents.server.PresentsDObjectMgr;
+import com.threerings.presents.server.ShutdownManager;
 
 import com.threerings.crowd.chat.data.ChatChannel;
+import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.server.ChatChannelManager;
 import com.threerings.crowd.data.BodyObject;
 
@@ -32,9 +37,10 @@ import com.threerings.msoy.chat.data.MsoyChatChannel;
 @Singleton
 public class MsoyChatChannelManager extends ChatChannelManager
 {
-    @Inject public MsoyChatChannelManager (InvocationManager invmgr)
+    @Inject public MsoyChatChannelManager (PresentsDObjectMgr omgr, InvocationManager invmgr,
+                                           ShutdownManager shutmgr)
     {
-        super(invmgr);
+        super(omgr, invmgr, shutmgr);
     }
 
     @Override // from ChatChannelManager
@@ -71,6 +77,12 @@ public class MsoyChatChannelManager extends ChatChannelManager
         }
     }
 
+    @Override // from ChatChannelManager
+    protected boolean shouldDeliverSpeak (ChatChannel channel, UserMessage message, BodyObject body)
+    {
+        return true; // TODO: implement channel suppression
+    }
+
     protected void finishResolveGroupChannel (final MsoyChatChannel channel)
     {
         _invoker.postUnit(new RepositoryUnit("resolveGroup(" + channel + ")") {
@@ -95,6 +107,7 @@ public class MsoyChatChannelManager extends ChatChannelManager
         resolutionFailed(channel, new Exception("Private channels not yet implemented"));
     }
 
+    @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected MemberLocator _locator;
     @Inject protected GroupRepository _groupRepo;
 }
