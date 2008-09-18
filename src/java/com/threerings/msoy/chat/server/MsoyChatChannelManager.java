@@ -83,7 +83,6 @@ public class MsoyChatChannelManager extends ChatChannelManager
                 }
             }
             public void handleSuccess () {
-                log.info("Resolved group channel " + channel + " " + _memberIds + ".");
                 resolutionComplete(channel, _memberIds);
             }
             public void handleFailure (Exception e) {
