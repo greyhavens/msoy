@@ -111,6 +111,9 @@ public class MsoyController extends Controller
     /** Command to display the comment page for the current scene or game. */
     public static const VIEW_COMMENT_PAGE :String = "ViewCommentPage";
 
+    /** Command to display the comment page for the current game, if any. */
+    public static const VIEW_GAME_COMMENT_PAGE :String = "ViewGameCommentPage";
+
     /** Command to display game instructions. */
     public static const VIEW_GAME_INSTRUCTIONS :String = "ViewGameInstructions";
 

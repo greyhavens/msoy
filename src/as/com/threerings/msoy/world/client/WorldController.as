@@ -401,6 +401,20 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the VIEW_GAME_COMMENT_PAGE command.
+     */
+    public function handleViewGameCommentPage () :void
+    {
+        const gameId :int = getCurrentGameId();
+        if (gameId != 0) {
+            handleViewGameComments(gameId);
+            return;
+        }
+
+        log.warning("Unable to comment.");
+    }
+
+    /**
      * Handles the VIEW_FULL_VERSION command, used in embedded clients.
      */
     public function handleViewFullVersion () :void
@@ -753,8 +767,24 @@ public class WorldController extends MsoyController
     /**
      * Handles the POP_AVRG_MENU command.
      */
-    public function handlePopAVRGMenu () :void
+    public function handlePopAVRGMenu (trigger :Button) :void
     {
+        if (_avrGamePanel == null) {
+            return;
+        }
+
+        var menuData :Array = [];
+        menuData.push({label: _wctx.getGameDirector().getGameName()});
+        menuData.push({type: "separator"});
+        menuData.push({label: Msgs.GENERAL.get("b.avrgComment"), command: VIEW_GAME_COMMENT_PAGE});
+        menuData.push({label: Msgs.GENERAL.get("b.avrgInvite"), enabled: false});
+        menuData.push({label: Msgs.GENERAL.get("b.avrgExit"), command :LEAVE_AVR_GAME});
+
+        var r :Rectangle = trigger.getBounds(trigger.stage);
+        var menu :CommandMenu = CommandMenu.createMenu(menuData, _topPanel);
+        menu.variableRowHeight = true;
+        menu.setBounds(_wctx.getTopPanel().getMainAreaBounds());
+        menu.popUpAt(r.left, r.top, true);
     }
 
     /**
