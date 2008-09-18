@@ -616,7 +616,6 @@ public class DecorViewerComp extends Canvas
 }
 }
 
-
 import com.threerings.msoy.room.client.DecorViewerComp;
 import com.threerings.flash.MediaContainer;
 
@@ -637,5 +636,4 @@ internal class DecorMediaContainer extends MediaContainer
 
     public var _viewer :DecorViewerComp;
 }
-
 

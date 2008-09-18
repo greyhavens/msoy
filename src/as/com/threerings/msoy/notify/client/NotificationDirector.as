@@ -23,15 +23,12 @@ import com.threerings.msoy.ui.AwardPanel;
 
 import com.threerings.msoy.client.MemberService;
 
-
-
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldControlBar;
-
 
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.notify.data.EntityCommentedNotification;

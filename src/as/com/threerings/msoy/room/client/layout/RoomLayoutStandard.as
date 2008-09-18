@@ -224,7 +224,6 @@ public class RoomLayoutStandard implements RoomLayout
     }
     */
 
-
     /**
      * Determine the location of the projected coordinate.
      *
@@ -294,7 +293,6 @@ public class RoomLayoutStandard implements RoomLayout
 
         adjustZOrder(target as DisplayObject);
     }
-
 
     /**
      * Adjust the z order of the specified sprite so that it is drawn according to its logical Z
