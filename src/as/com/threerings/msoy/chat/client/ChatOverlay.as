@@ -31,11 +31,12 @@ import com.whirled.ui.PlayerList;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
-import com.threerings.util.ExpiringSet;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
 import com.threerings.util.ValueEvent;
+
+import com.threerings.flash.ColorUtil;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
@@ -43,19 +44,15 @@ import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.crowd.chat.data.TellFeedbackMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
-import com.threerings.flash.ColorUtil;
-
-
 import com.threerings.msoy.utils.TextUtil;
-
-import com.threerings.msoy.chat.data.MsoyChatChannel;
 
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
-
 import com.threerings.msoy.data.MsoyCodes;
+
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.world.client.WorldContext;
@@ -87,7 +84,7 @@ public class ChatOverlay
         return fmt;
     }
 
-    public function ChatOverlay (ctx :MsoyContext, target :LayeredContainer, 
+    public function ChatOverlay (ctx :MsoyContext, target :LayeredContainer,
         scrollBarSide :int = SCROLL_BAR_LEFT, includeOccupantList :Boolean = true)
     {
         _ctx = ctx;
@@ -104,9 +101,6 @@ public class ChatOverlay
         _target = target;
         layout();
         displayChat(true);
-
-        _closedTabs = new ExpiringSet(LOCALTYPE_EXPIRE_TIME);
-        _closedTabs.addEventListener(ExpiringSet.ELEMENT_EXPIRED, localtypeExpired);
 
         // listen for preferences changes, update history mode
         Prefs.config.addEventListener(ConfigValueSetEvent.CONFIG_VALUE_SET,
@@ -127,43 +121,33 @@ public class ChatOverlay
     {
         clearGlyphs(_subtitles);
         clearGlyphs(_showingHistory);
-        _lastExpire = 0;
         _filteredMessages = [];
     }
 
     // from ChatDisplay
     public function displayMessage (msg :ChatMessage, alreadyDisp :Boolean) :Boolean
     {
-        if (shouldDisplayMessage(msg)) {
-            if (isHistoryMode()) { 
-                _filteredMessages.push(msg);
-                var val :int = _historyBar.scrollPosition;
-                updateHistoryBar();
-                if (val != _historyBar.scrollPosition || !_histOffsetFinal) {
-                    showCurrentHistory();
-                }
-            } else {
-                addSubtitle(createSubtitle(msg, getType(msg, false), true));
+        if (!shouldDisplayMessage(msg)) {
+            return false;
+        }
+
+        if (isHistoryMode()) {
+            _filteredMessages.push(msg);
+            var val :int = _historyBar.scrollPosition;
+            updateHistoryBar();
+            if (val != _historyBar.scrollPosition || !_histOffsetFinal) {
+                showCurrentHistory();
             }
-            return true;
+        } else {
+            addSubtitle(createSubtitle(msg, getType(msg, false), true));
         }
-
-        // if a member/jabber tell tab gets popped open behind the scenes, pretend that we just
-        // saw it so that the messages will get displayed in subtitle mode when we switch to it.
-        var channelType :int = MsoyChatChannel.typeOf(msg.localtype);
-        if ((channelType == MsoyChatChannel.MEMBER_CHANNEL || 
-             channelType == MsoyChatChannel.JABBER_CHANNEL) &&
-            !_localtypeDisplayTimes.containsKey(msg.localtype)) {
-            _localtypeDisplayTimes.put(msg.localtype, getTimer());
-        }
-
-        return false;
+        return true;
     }
 
     // from TabbedChatDisplay
     public function tabClosed (localtype :String) :void
     {
-        _closedTabs.add(localtype);
+        // TODO: remove?
     }
 
     public function displayChat (display :Boolean) :void
@@ -190,7 +174,7 @@ public class ChatOverlay
 
             if (_target.containsOverlay(_historyOverlay)) {
                 _target.removeOverlay(_historyOverlay);
-            } 
+            }
             if (_historyBar != null && _target.contains(_historyBar)) {
                 _target.removeChild(_historyBar);
             }
@@ -237,14 +221,9 @@ public class ChatOverlay
         }
 
         if (_localtype != null) {
-            // note when we stopped looking at the given localtype
-            _localtypeDisplayTimes.put(_localtype, getTimer());
+            // note the time at which this localtype became non-visible
+            _lastHidden.put(_localtype, getTimer());
         }
-
-        if (_closedTabs.contains(localtype)) {
-            _closedTabs.remove(localtype);
-        }
-
         _localtype = localtype;
 
         // remove old occ list.
@@ -267,9 +246,8 @@ public class ChatOverlay
             updateHistoryBar();
             showCurrentHistory();
         } else {
-            _lastExpire = 0;
             clearGlyphs(_subtitles);
-            showCurrentSubtitles();
+            showCurrentSubtitles(true);
         }
     }
 
@@ -410,26 +388,29 @@ public class ChatOverlay
         }
     }
 
-    protected function showCurrentSubtitles () :void
+    protected function showCurrentSubtitles (useLastHidden :Boolean) :void
     {
-        var lastDisplayed :int = int(_localtypeDisplayTimes.get(_localtype));
-        if (lastDisplayed == 0) {
-            // nothing to show here
-            return;
-        }
+        // if we are being shown after previously not having been shown, then we want to use our
+        // last hidden time to determine which messages we haven't seen yet; if we're just fiddling
+        // with chat history or are redrawing for some other reason, then we were showng and we're
+        // still showing, so don't do the lastHidden fiddly business
+        var minExpire :int = useLastHidden ? int(_lastHidden.get(_localtype)) : getTimer();
 
-        var history :HistoryList = _ctx.getMsoyChatDirector().getHistoryList();
         var messages :Array = [];
         var glyphs :Array = [];
         var totalHeight :int = 0;
+
+        // go through the history from most recent to oldest message and figure out which messages
+        // should be displayed based on their unmodified expiration time and the time the user was
+        // last viewing messages in this tab
+        var history :HistoryList = _ctx.getMsoyChatDirector().getHistoryList();
         for (var ii :int = history.size() - 1; ii >= 0; ii--) {
             var msg :ChatMessage = history.get(ii) as ChatMessage;
             if (shouldDisplayMessage(msg)) {
-                // let it calculate the expire date from the timestamp
-                _lastExpire = 0;
+                _lastExpire = 0; // we don't want an adjusted expiry time here
                 var expire :int = getChatExpire(msg.timestamp, msg.message);
-                if (expire < lastDisplayed) { 
-                    break;
+                if (expire < minExpire) {
+                    break; // we hit a message that is older than we should display; stop
                 }
 
                 var glyph :SubtitleGlyph = createSubtitle(msg, getType(msg, false), false);
@@ -446,7 +427,10 @@ public class ChatOverlay
             return;
         }
 
+        // now render the messages from oldest to newest and compute a proper expire time cascading
+        // from the expiration time of the top message in the list of messages to display
         _lastExpire = 0;
+
         var time :int = getTimer();
         for (ii = 0; ii < messages.length; ii++) {
             msg = messages[ii] as ChatMessage;
@@ -454,11 +438,6 @@ public class ChatOverlay
             glyph.setLifetime(getChatExpire(time, msg.message) - time);
             addSubtitle(glyph);
         }
-    }
-
-    protected function localtypeExpired (event :ValueEvent) :void
-    {
-        _localtypeDisplayTimes.remove(event.value as String);
     }
 
     protected function getOverlays () :Array
@@ -488,8 +467,7 @@ public class ChatOverlay
         }
     }
 
-    protected function setHistoryEnabled (historyEnabled :Boolean, 
-        forceClear :Boolean = false) :void
+    protected function setHistoryEnabled (historyEnabled :Boolean, forceClear :Boolean = false) :void
     {
         if (!(_target is PlaceBox)) {
             // always show history on a non-PlaceBox
@@ -509,9 +487,7 @@ public class ChatOverlay
             updateHistoryBar();
             showCurrentHistory();
         } else {
-            _lastExpire = 0;
-            _localtypeDisplayTimes.put(_localtype, getTimer());
-            showCurrentSubtitles();
+            showCurrentSubtitles(false);
         }
     }
 
@@ -610,7 +586,7 @@ public class ChatOverlay
 
     protected function occupantListShowing () :Boolean
     {
-        return _occupantList != null && 
+        return _occupantList != null &&
             (_target.containsOverlay(_occupantList) ||
             (_chatContainer != null && _chatContainer.containsOccupantList()));
     }
@@ -624,7 +600,7 @@ public class ChatOverlay
     {
         if (_targetBounds == null) {
             _targetBounds = getDefaultTargetBounds();
-        } 
+        }
 
         _historyExtent = (_targetBounds.height - PAD) / SUBTITLE_HEIGHT_GUESS;
 
@@ -649,12 +625,10 @@ public class ChatOverlay
         if (redraw) {
             clearGlyphs(_subtitles);
             clearGlyphs(_showingHistory);
-            _lastExpire = 0;
-            _localtypeDisplayTimes.put(_localtype, getTimer());
             if (isHistoryMode()) {
                 showCurrentHistory();
             } else {
-                showCurrentSubtitles();
+                showCurrentSubtitles(false);
             }
         }
     }
@@ -677,7 +651,7 @@ public class ChatOverlay
         // TODO: this would be cleaner if game user chat and usercode generated info were using
         // the same localtype - this special case would be unneccessary then, as game chat would
         // go to a tab with that localtype specified instead of PLACE_CHAT_TYPE
-        if (_localtype == ChatCodes.PLACE_CHAT_TYPE && 
+        if (_localtype == ChatCodes.PLACE_CHAT_TYPE &&
                 (msg.localtype == WhirledGameCodes.USERGAME_CHAT_TYPE ||
                  msg.localtype == ChatCodes.USER_CHAT_TYPE)) {
             return true;
@@ -688,9 +662,9 @@ public class ChatOverlay
             (msg is SystemMessage && msg.localtype == ChatCodes.PLACE_CHAT_TYPE)) {
             // in WorldContext we pull out the scene and check the id against the current localtype
             if (_ctx is WorldContext) {
-                var currentScene :MsoyScene = 
+                var currentScene :MsoyScene =
                     (_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene;
-                if (currentScene != null && 
+                if (currentScene != null &&
                     MsoyChatChannel.typeIsForRoom(_localtype, currentScene.getId())) {
                     return true;
                 }
@@ -764,7 +738,7 @@ public class ChatOverlay
         msg :ChatMessage, type :int, forceSpeaker :Boolean, userSpeakFmt :TextFormat) :Array
     {
         // first parse the message text into plain and links
-        var texts :Array = 
+        var texts :Array =
             TextUtil.parseLinks(msg.message, userSpeakFmt, shouldParseSpecialLinks(type));
 
         // possibly insert the formatting
@@ -786,7 +760,6 @@ public class ChatOverlay
         return texts;
     }
 
-    
     /**
      * (Re)create the standard formats.
      */
@@ -805,28 +778,22 @@ public class ChatOverlay
         _userSpeakFmt = createChatFormat();
     }
 
-
     /**
      * Get the expire time for the specified chat.
      */
     protected function getChatExpire (stamp :int, text :String) :int
     {
         // load the configured durations
-        var durations :Array =
-            (DISPLAY_DURATION_PARAMS[getDisplayDurationIndex()] as Array);
+        var durations :Array = (DISPLAY_DURATION_PARAMS[getDisplayDurationIndex()] as Array);
 
-        // start the computation from the maximum of the timestamp
-        // or our last expire time.
+        // start the computation from the maximum of the timestamp or our last expire time
         var start :int = Math.max(stamp, _lastExpire);
 
-        // set the next expire to a time proportional to the text length.
-        _lastExpire = start + Math.min(text.length * int(durations[0]),
-                                       int(durations[2]));
+        // set the next expire to a time proportional to the text length but don't let it be longer
+        // than the maximum display time
+        _lastExpire = start + Math.min(text.length * int(durations[0]), int(durations[2]));
 
-        // but don't let it be longer than the maximum display time.
-        _lastExpire = Math.min(start + int(durations[2]), _lastExpire);
-
-        // and be sure to pop up the returned time so that it is above the min.  
+        // and be sure to pop up the returned time so that it is above the min
         return Math.max(stamp + int(durations[1]), _lastExpire);
     }
 
@@ -985,7 +952,7 @@ public class ChatOverlay
             var type :int;
             var channelType :int = MsoyChatChannel.typeOf(localtype);
             // TODO: jabber messages should probably have their own format
-            if (channelType == MsoyChatChannel.MEMBER_CHANNEL || 
+            if (channelType == MsoyChatChannel.MEMBER_CHANNEL ||
                 channelType == MsoyChatChannel.JABBER_CHANNEL) {
                 type = TELL;
             } else if (channelType != MsoyChatChannel.ROOM_CHANNEL) {
@@ -1056,7 +1023,7 @@ public class ChatOverlay
     }
 
     /**
-     * Extract the place constant from the type value. 
+     * Extract the place constant from the type value.
      */
     protected function placeOf (type :int) :int
     {
@@ -1145,7 +1112,7 @@ public class ChatOverlay
     protected function getMinHistY () :int
     {
         return _targetBounds.y +
-            ((_occupantList != null && _includeOccList && Prefs.getShowingOccupantList()) ? 
+            ((_occupantList != null && _includeOccList && Prefs.getShowingOccupantList()) ?
               _occupantList.y + _occupantList.height : 0);
     }
 
@@ -1220,10 +1187,10 @@ public class ChatOverlay
 
     /** Our internal code for tell feedback chat. */
     protected static const TELLFEEDBACK :int = 3 << 4;
-    
+
     /** Our internal code for info system messges. */
     protected static const INFO :int = 4 << 4;
-    
+
     /** Our internal code for feedback system messages. */
     protected static const FEEDBACK :int = 5 << 4;
 
@@ -1244,7 +1211,7 @@ public class ChatOverlay
     /** Type code for game chat. */
     protected static const GAME :int = 10 << 4;
 
-    /** Our internal code for channel chat. This is currently unused, as all channel chat is 
+    /** Our internal code for channel chat. This is currently unused, as all channel chat is
      * associated with a place.  If we have private, non-place channels in the future, this will
      * be used again. */
     protected static const CHANNEL :int = 12 << 4;
@@ -1267,9 +1234,6 @@ public class ChatOverlay
     /** The font for all chat. */
     protected static const FONT :String = "Arial";
 
-    /** Expire localtype display time rememberings after a minute. */
-    protected static const LOCALTYPE_EXPIRE_TIME :Number = 60;
-
     protected var _ctx :MsoyContext;
 
     /** Contains chat when we're in sidebar mode. */
@@ -1277,9 +1241,10 @@ public class ChatOverlay
 
     protected var _includeOccList :Boolean;
     protected var _localtype :String;
-    protected var _localtypeDisplayTimes :HashMap = new HashMap();
-    protected var _closedTabs :ExpiringSet;
     protected var _filteredMessages :Array = [];
+
+    /** Maps localtype to the time we last hid the tab for that localtype. */
+    protected var _lastHidden :HashMap = new HashMap();
 
     /** If true, the sidebar is being suppressed and we shouldn't show it. */
     protected var _suppressSidebar :Boolean;
@@ -1365,7 +1330,7 @@ import com.threerings.msoy.chat.client.ChatOverlay;
  */
 class ChatContainer extends Container
 {
-    public function ChatContainer (scrollBar :ScrollBar, chat :Sprite) 
+    public function ChatContainer (scrollBar :ScrollBar, chat :Sprite)
     {
         styleName = "chatContainer";
         autoLayout = false;
