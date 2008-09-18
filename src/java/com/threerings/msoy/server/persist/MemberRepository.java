@@ -25,6 +25,8 @@ import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.EntityMigration;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
+import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.KeySet;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -775,6 +777,35 @@ public class MemberRepository extends DepotRepository
         }
 
         return newrec;
+    }
+
+    /**
+     * For every ReferralRecord with a matching affiliate, update the associated MemberRecords
+     * to have the specified affiliateMemberId.
+     */
+    public void updateAffiliateMemberId (String affiliate, int affiliateMemberId)
+    {
+        // get all the memberIds that have the specified affiliate in their ReferralRecord
+        List<Key<ReferralRecord>> refKeys = findAllKeys(ReferralRecord.class, false,
+            new Where(ReferralRecord.AFFILIATE_C, affiliate));
+
+        // then transform the ReferralRecord keys to MemberRecord keys
+        // (we make a new ArrayList so that we only transform each key once, instead
+        // of just creating a "view" list and potentially re-transforming on every iteration,
+        // since this collection is used in the KeySet for both querying and cache invalidating.)
+        List<Key<MemberRecord>> memKeys = Lists.newArrayList(Iterables.transform(refKeys,
+            new Function<Key<ReferralRecord>, Key<MemberRecord>>() {
+                public Key<MemberRecord> apply (Key<ReferralRecord> key) {
+                    return MemberRecord.getKey((Integer) key.getValues().get(0));
+                }
+            }));
+
+        // create a KeySet representing these keys
+        KeySet<MemberRecord> keySet = new KeySet<MemberRecord>(MemberRecord.class, memKeys);
+
+        // then update all those members to have the new affiliateMemberId
+        updatePartial(MemberRecord.class, keySet, keySet,
+            MemberRecord.AFFILIATE_MEMBER_ID, affiliateMemberId);
     }
 
     /**

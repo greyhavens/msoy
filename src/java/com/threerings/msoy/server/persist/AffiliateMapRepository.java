@@ -77,6 +77,8 @@ public class AffiliateMapRepository extends DepotRepository
 
     /**
      * Update or insert a new mapping.
+     * Note: this should be done in conjunction with
+     * {@link MemberRepository#updateAffiliateMemberId}.
      */
     public void storeMapping (String affiliate, int memberId)
     {
@@ -85,18 +87,6 @@ public class AffiliateMapRepository extends DepotRepository
         rec.memberId = memberId;
         store(rec);
     }
-
-//    /**
-//     * Oh god, load all the current mappings. TODO: pagination, someday, brah.
-//     */
-//    public Map<String, Integer> getAll ()
-//    {
-//        Map<String, Integer> map = Maps.newHashMap();
-//        for (AffiliateMapRecord rec : findAll(AffiliateMapRecord.class)) {
-//            map.put(rec.affiliate, rec.memberId);
-//        }
-//        return map;
-//    }
 
     @Override // from DepotRepository
     protected void getManagedRecords (final Set<Class<? extends PersistentRecord>> classes)
