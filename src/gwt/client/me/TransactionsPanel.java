@@ -30,13 +30,13 @@ public class TransactionsPanel extends VerticalPanel
         reportBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
                 Link.go(Pages.ME, Args.compose("transactions",
-                        String.valueOf(REPORT_VALUES[reportBox.getSelectedIndex()].ordinal()+1),
+                        String.valueOf(reportBox.getSelectedIndex()+1),
                         String.valueOf(memberId)));
             }
         });
         reportBox.setSelectedIndex(report-1);
 
-        add(new BalancePanel(memberId, ReportType.values()[report-1]) {
+        add(new BalancePanel(memberId, REPORT_VALUES[report-1]) {
             @Override protected void addCustomControls (FlexTable controls) {
                 controls.setText(0, 0, _msgs.reportFilter());
                 controls.getFlexCellFormatter().setStyleName(0, 0, "ReportFilter");
