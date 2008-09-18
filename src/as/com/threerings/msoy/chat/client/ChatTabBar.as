@@ -35,7 +35,6 @@ import com.threerings.crowd.chat.client.ChatDisplay;
 
 import com.threerings.msoy.client.MsoyContext;
 
-
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
 import com.threerings.msoy.data.MemberObject;
@@ -44,7 +43,6 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
-
 
 /**
  * Displays our chat tabs.

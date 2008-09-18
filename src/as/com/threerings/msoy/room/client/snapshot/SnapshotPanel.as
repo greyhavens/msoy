@@ -14,7 +14,6 @@ import mx.controls.Label;
 
 import mx.containers.HBox;
 
-
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;

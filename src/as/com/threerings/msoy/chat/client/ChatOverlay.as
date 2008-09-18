@@ -34,7 +34,6 @@ import com.threerings.util.ConfigValueSetEvent;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
-import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.ColorUtil;
 

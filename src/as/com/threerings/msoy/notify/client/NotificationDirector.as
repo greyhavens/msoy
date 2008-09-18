@@ -7,7 +7,6 @@ import com.threerings.util.ExpiringSet;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;
 
-
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 
@@ -19,7 +18,6 @@ import com.threerings.presents.dobj.EntryUpdatedEvent;
 import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
-
 
 import com.threerings.msoy.ui.AwardPanel;
 

@@ -11,7 +11,6 @@ import mx.containers.Grid;
 
 import mx.events.ValidationResultEvent;
 
-
 import com.threerings.flex.GridUtil;
 
 public class PopupRectangleEditor extends PopupPointEditor

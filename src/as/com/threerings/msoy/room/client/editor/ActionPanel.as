@@ -375,7 +375,6 @@ public class ActionPanel extends BasePanel
         return (def != null) && (! Boolean(def.supportOnly));
     }
 
-
     /** Definitions of different action types and how they affect the preferences panel. */
     protected const ACTIONS :Array = [
         { data: FurniData.ACTION_NONE,

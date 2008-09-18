@@ -85,7 +85,6 @@ public class EditCanvas extends DisplayCanvas
     public static const SCALE_CHANGED :String = "ScaleChanged";
     public static const ROTATION_CHANGED :String = "RotationChanged";
 
-
     /** Formatting constants. */
     public static const IMAGE_FORMAT_JPG :String = "jpg";
     public static const IMAGE_FORMAT_PNG :String = "png";

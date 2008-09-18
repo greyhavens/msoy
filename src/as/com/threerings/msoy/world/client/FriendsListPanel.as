@@ -16,7 +16,6 @@ import mx.containers.VBox;
 import mx.controls.Label;
 import mx.controls.TextInput;
 
-
 import mx.events.FlexEvent;
 
 import com.threerings.presents.client.InvocationAdapter;

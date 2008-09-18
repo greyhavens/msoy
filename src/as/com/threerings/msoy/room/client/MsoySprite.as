@@ -17,8 +17,6 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-
-
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 

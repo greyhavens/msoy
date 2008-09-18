@@ -486,7 +486,6 @@ public class RoomMetrics
         return axis.intersection(anchor, sweepAnchor, sweepNormal);
     }
 
-
     /** Initial focal length of our perspective rendering. */
     public static const DEFAULT_FOCAL :Number = 488;
 
@@ -505,7 +504,6 @@ public class RoomMetrics
     public static const N_AWAY :Vector3   = new Vector3( 0, 0, 1);
 }
 }
-
 
 import com.threerings.flash.Vector3;
 

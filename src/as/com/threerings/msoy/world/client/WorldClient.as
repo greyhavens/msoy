@@ -45,7 +45,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
-
 import com.threerings.msoy.room.client.RoomObjectView;
 
 /**

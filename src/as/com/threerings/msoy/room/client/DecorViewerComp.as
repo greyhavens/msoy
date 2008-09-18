@@ -137,7 +137,6 @@ public class DecorViewerComp extends Canvas
         _preview.addChild(_backdropCanvas);
         _preview.addChild(_scaleLabel);
 
-
         // container for mouse options
 
         var mouseopts :Grid = new Grid();
@@ -153,7 +152,6 @@ public class DecorViewerComp extends Canvas
 
         GridUtil.addRow(mouseopts, Msgs.EDITING.get("l.move_selection"),
                         _horizonMode, _offsetMode);
-
 
         // container for standard options
         

@@ -7,8 +7,6 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
 
-
-
 /**
  * Notification from the server to the client.  Notifications are sent as messages on the 
  * MemberObject.

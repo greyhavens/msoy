@@ -17,7 +17,6 @@ import flash.utils.Dictionary;
 
 import caurina.transitions.Tweener;
 
-
 import mx.events.ResizeEvent;
 
 import com.threerings.msoy.client.PlaceBox;

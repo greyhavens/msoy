@@ -15,7 +15,6 @@ import mx.containers.HBox;
 import mx.controls.Image;
 import mx.controls.Label;
 
-
 import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.flex.CommandButton;
@@ -29,7 +28,6 @@ import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
-
 
 import com.threerings.msoy.data.MemberObject;
 

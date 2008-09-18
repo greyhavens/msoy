@@ -31,7 +31,6 @@ import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
 
-
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.data.MsoyScene;

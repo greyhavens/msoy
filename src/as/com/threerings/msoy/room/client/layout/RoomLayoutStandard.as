@@ -19,7 +19,6 @@ import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomCodes;
 
-
 /**
  * This class factors out room layout math that converts between 3D room coordinate space
  * and screen coordinates.
@@ -169,7 +168,6 @@ public class RoomLayoutStandard implements RoomLayout
         cloc.loc.y = Math.min(Math.max(cloc.loc.y, 0), 1);
         cloc.loc.z = Math.min(Math.max(cloc.loc.z, 0), 1);
     }
-
 
     // Perspectivization
     // Disabled for now, until we settle on new room layout logic

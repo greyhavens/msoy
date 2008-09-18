@@ -11,7 +11,6 @@ import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.crowd.client.PlaceController;
 
-
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 
@@ -158,7 +157,6 @@ public class GameDirector extends BasicDirector
         }
         return null;
     }
-
 
     /**
      * Called when we first login and then every time we leave a game or a lobby;

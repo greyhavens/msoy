@@ -19,7 +19,6 @@ import mx.containers.VBox;
 
 import mx.events.ValidationResultEvent;
 
-
 import mx.managers.PopUpManager;
 
 import mx.validators.NumberValidator;

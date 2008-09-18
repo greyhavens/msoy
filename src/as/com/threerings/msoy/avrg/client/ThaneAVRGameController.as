@@ -25,7 +25,6 @@ import com.threerings.presents.client.ResultAdapter;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-
 import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.room.data.MobInfo;

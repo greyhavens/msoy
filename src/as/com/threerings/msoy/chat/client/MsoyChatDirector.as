@@ -146,7 +146,6 @@ public class MsoyChatDirector extends ChatDirector
             }));
     }
 
-
     /**
      * Requests that a tell message be delivered to the specified jabber user.
      */

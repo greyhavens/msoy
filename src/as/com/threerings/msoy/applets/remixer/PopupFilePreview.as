@@ -38,7 +38,6 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.PopUpUtil;
 
-
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.applets.image.CameraSnapshotControl;

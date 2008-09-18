@@ -5,7 +5,6 @@ package com.threerings.msoy.applets.image {
 
 import flash.events.Event;
 
-
 import flash.system.Capabilities;
 
 import flash.ui.Keyboard;
