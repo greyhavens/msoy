@@ -487,9 +487,9 @@ public class MsoyEvents
     {
         @Index @Field final public Date timestamp;
         @Field final public String tracker;
-        @Field final public String actionName;
+        @Index @Field final public String actionName;
         /** Additional information such as which game's button was clicked */
-        @Index @Field final public String details;
+        @Field final public String details;
 
         public ClientAction (String tracker, String actionName, String details)
         {
@@ -509,7 +509,7 @@ public class MsoyEvents
     {
         @Index @Field final public Date timestamp;
         @Field final public String tracker;
-        @Field final public String actionName;
+        @Index @Field final public String actionName;
         @Index @Field final public String testName;
         @Field final public int testGroup;
 
