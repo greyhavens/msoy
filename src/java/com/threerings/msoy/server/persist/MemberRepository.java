@@ -769,10 +769,13 @@ public class MemberRepository extends DepotRepository
     public ReferralRecord setReferral (final int memberId, final ReferralInfo ref)
     {
         // TODO: UPDATES?? UPDATES??? WHY WOULD WE EVER UPDATE THIS INFO? IT'S ONE-TIME!!!
+        // (and, if we do decide to keep this madness, there is store())
         final ReferralRecord newrec = ReferralRecord.fromInfo(memberId, ref);
         if (loadReferral(memberId) == null) {
             insert(newrec);
         } else {
+            log.warning("Holy cow, why are we updating someone's ReferralRecord?",
+                "memberId", memberId, "ref", ref);
             update(newrec);
         }
 
@@ -785,6 +788,9 @@ public class MemberRepository extends DepotRepository
      */
     public void updateAffiliateMemberId (String affiliate, int affiliateMemberId)
     {
+        // Note: apparently we do not want to do this with a join, as one day the MemberRecord
+        // may live on a different database than the AffiliateRecord.
+
         // get all the memberIds that have the specified affiliate in their ReferralRecord
         List<Key<ReferralRecord>> refKeys = findAllKeys(ReferralRecord.class, false,
             new Where(ReferralRecord.AFFILIATE_C, affiliate));
