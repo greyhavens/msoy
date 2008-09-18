@@ -4,7 +4,6 @@
 package com.threerings.msoy.avrg.client {
 
 import com.threerings.util.Log;
-import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.StringUtil;
 
 import com.threerings.presents.client.Client;
@@ -24,7 +23,6 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
 
 import com.threerings.msoy.room.data.ActorInfo;
-import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesObject;

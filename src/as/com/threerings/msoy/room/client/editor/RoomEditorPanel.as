@@ -3,24 +3,15 @@
 
 package com.threerings.msoy.room.client.editor {
 
-import flash.display.Bitmap;
 import flash.display.DisplayObject;
-import flash.display.Graphics;
-import flash.display.Shape;
-import flash.events.IEventDispatcher;
 import flash.events.Event;
-import flash.events.MouseEvent;
-import flash.geom.Point;
-import flash.geom.Rectangle;
 
 import mx.containers.Box;
 import mx.containers.Grid;
 import mx.containers.HBox;
-import mx.containers.TabNavigator;
 import mx.containers.VBox;
 import mx.controls.ComboBox;
 import mx.controls.HRule;
-import mx.controls.Label;
 import mx.controls.Text;
 import mx.core.Container;
 import mx.core.UIComponent;
@@ -35,7 +26,6 @@ import com.threerings.msoy.ui.SkinnableImage;
 
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.TopPanel;
 
 import com.threerings.msoy.world.client.WorldContext;
@@ -422,7 +412,6 @@ public class RoomEditorPanel extends FloatingPanel
             removeDoor, "roomRemoveDoor", "remove_door", _actionButtons, true);
         _removeLinkButton = makeActionButton(
             removeUrl, "roomRemoveLink", "remove_link", _actionButtons, true);
-
 
         // generic actions
         right.addChild(makeActionButton(displayFurnitureInventory, "roomEditAdd",

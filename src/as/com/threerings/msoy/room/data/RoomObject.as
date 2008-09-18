@@ -4,7 +4,6 @@
 package com.threerings.msoy.room.data {
 
 import com.threerings.io.ObjectInputStream;
-import com.threerings.io.ObjectOutputStream;
 import com.threerings.presents.dobj.DSet;
 
 import com.threerings.whirled.spot.data.SpotSceneObject;
@@ -13,7 +12,6 @@ import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EffectData;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
-
 
 /**
  * Contains the distributed state of a virtual world room.

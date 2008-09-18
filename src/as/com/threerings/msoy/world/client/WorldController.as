@@ -5,13 +5,10 @@ package com.threerings.msoy.world.client {
 
 import flash.geom.Rectangle;
 
-import flash.events.Event;
 import flash.external.ExternalInterface;
-import flash.net.URLRequest;
 import flash.system.Capabilities;
 
 import mx.controls.Button;
-import mx.core.UIComponent;
 
 import com.threerings.flex.CommandMenu;
 import com.threerings.util.Log;
@@ -26,7 +23,6 @@ import com.threerings.presents.net.Credentials;
 import com.threerings.crowd.client.PlaceView;
 
 import com.threerings.whirled.data.Scene;
-import com.threerings.whirled.data.SceneObject;
 
 import com.threerings.msoy.chat.client.IMRegisterDialog;
 import com.threerings.msoy.chat.client.ReportingListener;
@@ -41,7 +37,6 @@ import com.threerings.msoy.game.client.MsoyGamePanel;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 
 import com.threerings.msoy.client.BootablePlaceController;
-import com.threerings.msoy.client.ChatPrefsDialog;
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.HeaderBar;
@@ -69,7 +64,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
-import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
 
 /**

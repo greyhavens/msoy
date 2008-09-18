@@ -6,7 +6,6 @@ package com.threerings.msoy.game.client {
 import com.threerings.util.Log;
 
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.ClientObserver;
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.client.LocationAdapter;
@@ -15,9 +14,7 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.parlor.client.GameReadyObserver;
 
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.world.client.WorldContext;
 

@@ -5,7 +5,6 @@ package com.threerings.msoy.client {
 
 import mx.binding.utils.BindingUtils;
 
-import mx.controls.CheckBox;
 import mx.controls.ComboBox;
 import mx.controls.Label;
 import mx.controls.RadioButton;

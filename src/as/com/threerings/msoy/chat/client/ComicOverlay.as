@@ -13,8 +13,6 @@ import flash.geom.Rectangle;
 import flash.text.TextFormat;
 import flash.text.TextFormatAlign;
 
-import mx.core.Container;
-
 import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
@@ -33,7 +31,6 @@ import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
 
-import com.threerings.msoy.data.all.RoomName;
 
 import com.threerings.msoy.world.client.WorldContext;
 

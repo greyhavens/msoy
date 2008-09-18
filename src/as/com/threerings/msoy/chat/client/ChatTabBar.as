@@ -3,14 +3,11 @@
 
 package com.threerings.msoy.chat.client {
 
-import flash.display.DisplayObject;
 import flash.display.MovieClip;
 
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.events.TimerEvent;
-
-import flash.geom.Rectangle;
 
 import flash.utils.Timer;
 
@@ -34,13 +31,10 @@ import com.threerings.crowd.chat.data.ChatCodes;
 import com.threerings.crowd.chat.data.UserMessage;
 import com.threerings.crowd.chat.data.SystemMessage;
 
-import com.threerings.crowd.chat.client.ChatDirector;
 import com.threerings.crowd.chat.client.ChatDisplay;
 
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.HeaderBar;
 
-import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
@@ -51,7 +45,6 @@ import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
 
-import com.threerings.msoy.game.client.GameChatDirector;
 
 /**
  * Displays our chat tabs.

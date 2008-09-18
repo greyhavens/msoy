@@ -9,7 +9,6 @@ import flash.events.TimerEvent;
 import flash.utils.Timer;
 import com.threerings.bureau.Log;
 import com.threerings.bureau.client.Agent;
-import com.threerings.crowd.data.ManagerCaller;
 import com.threerings.io.TypedArray;
 import com.threerings.msoy.avrg.client.ThaneAVRGameController;
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
@@ -19,7 +18,6 @@ import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.dobj.SubscriberAdapter;
 import com.threerings.presents.util.SafeSubscriber;
-import com.threerings.util.StringUtil;
 import com.whirled.bureau.client.UserCode;
 
 /** The container for a user's avr game control code. */

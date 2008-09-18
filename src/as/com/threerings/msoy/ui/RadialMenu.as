@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.ui {
 
-import flash.events.Event;
 import flash.events.MouseEvent;
 
 import flash.display.DisplayObject;
@@ -14,8 +13,6 @@ import mx.containers.Canvas;
 import mx.controls.MenuBar;
 
 import mx.core.Application;
-
-import mx.events.MenuEvent;
 
 import mx.managers.PopUpManager;
 

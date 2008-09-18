@@ -23,8 +23,6 @@ import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.crowd.data.OccupantInfo;
 
-import com.threerings.msoy.data.MsoyBodyObject;
-
 import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;

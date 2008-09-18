@@ -17,7 +17,6 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.client.LayeredContainer;
 
-import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.client.RoomView;

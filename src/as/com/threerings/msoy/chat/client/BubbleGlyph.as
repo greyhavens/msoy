@@ -4,9 +4,6 @@
 package com.threerings.msoy.chat.client {
 
 import flash.display.BlendMode;
-import flash.display.Shape;
-
-import flash.events.TimerEvent;
 
 import flash.filters.BevelFilter;
 import flash.filters.BitmapFilterQuality;

@@ -3,21 +3,15 @@
 
 package com.threerings.msoy.room.client.editor {
 
-import flash.display.DisplayObject;
 import flash.display.Graphics;
-import flash.display.Shape;
-import flash.events.MouseEvent;
 import flash.geom.Point;
-import flash.geom.Rectangle;
 
 import com.threerings.flash.GraphicsUtil;
 
 import com.threerings.msoy.room.client.FurniSprite;
-import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
-
 
 /**
  * Tracks the furni sprite that's currently being edited, and decorates it with draggable hotspots.

@@ -4,7 +4,6 @@
 package com.threerings.msoy.applets.remixer {
 
 import flash.events.Event;
-import flash.events.IEventDispatcher;
 
 import flash.display.DisplayObject;
 

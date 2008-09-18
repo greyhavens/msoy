@@ -7,8 +7,6 @@ import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
-import flash.system.Security;
-
 import flash.utils.ByteArray;
 import flash.utils.Dictionary;
 
@@ -25,7 +23,6 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.UberClient;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.UberClientModes;
 
 import com.threerings.msoy.item.data.all.Decor;
@@ -36,7 +33,6 @@ import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneModel;
-import com.threerings.msoy.room.data.RoomConfig;
 
 public class RoomStudioController extends RoomController
 {

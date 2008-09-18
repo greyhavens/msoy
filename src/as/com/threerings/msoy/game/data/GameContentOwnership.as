@@ -9,7 +9,6 @@ import com.threerings.io.SimpleStreamableObject;
 import com.threerings.util.Comparable;
 import com.threerings.util.Equalable;
 
-import com.threerings.presents.dobj.DSet;
 import com.threerings.presents.dobj.DSet_Entry;
 
 import com.whirled.game.data.GameData;

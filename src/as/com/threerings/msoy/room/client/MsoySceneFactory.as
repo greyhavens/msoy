@@ -6,7 +6,6 @@ package com.threerings.msoy.room.client {
 import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.whirled.data.Scene;
-import com.threerings.whirled.data.SceneImpl;
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.util.SceneFactory;
 

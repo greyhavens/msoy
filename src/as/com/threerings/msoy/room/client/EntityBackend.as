@@ -12,7 +12,6 @@ import com.threerings.msoy.client.ControlBackend;
 import com.threerings.msoy.room.data.MsoyLocation;
 
 import com.threerings.util.Log;
-import com.threerings.util.ObjectMarshaller;
 
 public class EntityBackend extends ControlBackend
 {

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 import flash.display.Stage;
 
 import com.threerings.util.MessageBundle;
@@ -21,7 +19,6 @@ import com.threerings.crowd.util.CrowdContext;
 
 import com.threerings.crowd.chat.client.ChatDirector;
 
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.MemberName;

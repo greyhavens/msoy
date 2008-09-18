@@ -8,22 +8,8 @@ import flash.display.BlendMode;
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Loader;
-import flash.display.LoaderInfo;
-import flash.display.Shape;
-import flash.display.Sprite;
 
-import flash.errors.IOError;
-
-import flash.events.Event;
-import flash.events.EventDispatcher;
-import flash.events.IEventDispatcher;
-import flash.events.IOErrorEvent;
 import flash.events.MouseEvent;
-import flash.events.NetStatusEvent;
-import flash.events.ProgressEvent;
-import flash.events.SecurityErrorEvent;
-import flash.events.StatusEvent;
-import flash.events.TextEvent;
 
 import flash.filters.GlowFilter;
 
@@ -31,34 +17,21 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import flash.net.LocalConnection;
-import flash.net.NetConnection;
-import flash.net.NetStream;
-import flash.net.URLRequest;
 
-import flash.system.ApplicationDomain;
-import flash.system.LoaderContext;
-import flash.system.SecurityDomain;
 
-import com.threerings.util.CommandEvent;
-import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.FilterUtil;
-import com.threerings.flash.VideoDisplayer;
 
 import com.threerings.msoy.client.MsoyContext;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.RoomCodes;
-import com.threerings.msoy.room.data.RoomObject;
 
 /**
  * A base sprite that concerns itself with the mundane details of loading and communication with

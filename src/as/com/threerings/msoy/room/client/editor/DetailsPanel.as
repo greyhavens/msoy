@@ -6,12 +6,10 @@ package com.threerings.msoy.room.client.editor {
 import flash.events.Event;
 
 import mx.containers.Grid;
-import mx.containers.VBox;
 import mx.controls.CheckBox;
 import mx.controls.TextInput;
 import mx.events.FlexEvent;
 
-import com.threerings.flash.MathUtil;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.GridUtil;
 import com.threerings.msoy.client.Msgs;

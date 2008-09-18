@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.whirled.client.SceneDirector;
-
 import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.data.all.MemberName;
 

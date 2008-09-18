@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.client.editor {
 
-import flash.events.MouseEvent;
-
 import mx.core.ScrollPolicy;
 
 import mx.containers.HBox;

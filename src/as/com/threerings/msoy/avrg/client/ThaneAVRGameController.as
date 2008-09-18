@@ -3,11 +3,6 @@
 
 package com.threerings.msoy.avrg.client {
 
-import flash.events.TimerEvent;
-import flash.utils.Dictionary;
-import flash.utils.Timer;
-import flash.utils.getTimer;
-
 import com.threerings.util.HashMap;
 import com.threerings.util.Iterator;
 import com.threerings.util.Log;
@@ -25,13 +20,11 @@ import com.threerings.presents.dobj.SetAdapter;
 import com.threerings.presents.dobj.SubscriberAdapter;
 
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.whirled.game.client.PropertySpaceHelper;
 
 import com.threerings.msoy.game.data.PlayerObject;
 

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.data.all {
 
-import flash.geom.Point;
-
 import flash.utils.ByteArray;
 
 import com.threerings.util.Hashable;

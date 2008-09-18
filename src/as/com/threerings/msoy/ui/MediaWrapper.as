@@ -27,7 +27,6 @@ public class MediaWrapper extends Container
 
     // ---- End: static methods
 
-
     /**
      * @param cont the container to wrap
      * @param altReportedWidth a width to report when the media width is 0.

@@ -11,13 +11,11 @@ import mx.controls.TextArea;
 import mx.controls.TextInput;
 
 import mx.containers.Grid;
-import mx.containers.HBox;
 
 import mx.events.FlexEvent;
 import mx.events.ValidationResultEvent;
 
 import mx.validators.Validator;
-import mx.validators.ValidationResult;
 
 import com.threerings.flex.GridUtil;
 

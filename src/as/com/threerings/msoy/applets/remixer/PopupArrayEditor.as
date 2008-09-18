@@ -4,19 +4,10 @@
 package com.threerings.msoy.applets.remixer {
 
 import flash.events.Event;
-import flash.events.IEventDispatcher;
-import flash.events.TextEvent;
 
 import mx.controls.Label;
 
 import mx.containers.Grid;
-import mx.containers.HBox;
-
-import mx.events.FlexEvent;
-import mx.events.ValidationResultEvent;
-
-import mx.validators.Validator;
-import mx.validators.ValidationResult;
 
 import com.threerings.flex.GridUtil;
 

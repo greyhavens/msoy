@@ -5,13 +5,10 @@ package com.threerings.msoy.room.client.editor {
 
 import flash.display.DisplayObject;
 import flash.events.MouseEvent;
-import flash.geom.Point;
 
 import com.threerings.flash.MathUtil;
 import com.threerings.msoy.room.client.ClickLocation;
-import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.RoomMetrics;
-import com.threerings.msoy.room.data.MsoyLocation;
 
 /**
  * Hotspot that moves the target object along the Y axis.

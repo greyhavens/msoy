@@ -10,8 +10,6 @@ import flash.events.MouseEvent;
 import flash.events.TextEvent;
 import flash.events.TimerEvent;
 
-import flash.external.ExternalInterface;
-
 import flash.display.Stage;
 
 import flash.geom.Rectangle;
@@ -22,13 +20,10 @@ import flash.text.TextField;
 
 import flash.ui.Keyboard;
 
-import flash.net.URLRequest;
 import flash.utils.Timer;
-import flash.utils.getTimer; // function import
 
 import mx.controls.Button;
 import mx.controls.TextArea;
-import mx.controls.TextInput;
 
 import mx.events.MenuEvent;
 
@@ -41,7 +36,6 @@ import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.NetUtil;
 import com.threerings.util.StringUtil;
-import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.net.Credentials;
 
@@ -63,7 +57,6 @@ import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.client.MsoyGamePanel;
 
 import com.threerings.msoy.ui.SliderPopup;
 

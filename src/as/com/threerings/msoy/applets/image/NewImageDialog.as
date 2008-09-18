@@ -7,10 +7,6 @@ import flash.display.BitmapData;
 
 import flash.events.Event;
 
-import flash.geom.Point;
-
-import flash.utils.ByteArray;
-
 import mx.controls.ButtonBar;
 import mx.controls.ColorPicker;
 import mx.controls.RadioButton;
@@ -23,12 +19,10 @@ import mx.containers.VBox;
 
 import mx.events.ValidationResultEvent;
 
-import mx.core.UIComponent;
 
 import mx.managers.PopUpManager;
 
 import mx.validators.NumberValidator;
-import mx.validators.ValidationResult;
 
 import com.threerings.util.ValueEvent;
 

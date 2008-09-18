@@ -5,15 +5,10 @@ package com.threerings.msoy.client {
 
 import flash.display.DisplayObjectContainer;
 
-import flash.errors.IOError;
-
-import flash.text.TextField;
-
 import mx.containers.VBox;
 
 import mx.controls.Text;
 
-import com.threerings.util.ClassUtil;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.ClientAdapter;

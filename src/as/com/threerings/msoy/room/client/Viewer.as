@@ -92,8 +92,6 @@ public class Viewer extends Sprite
 }
 }
 
-import flash.events.IEventDispatcher;
-
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.PetSprite;
 

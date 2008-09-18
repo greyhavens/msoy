@@ -21,7 +21,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.RoomObject;
 
-
 /**
  * Tracks player movement within a room and dispatches notifications to user code functions.
  */

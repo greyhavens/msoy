@@ -3,18 +3,6 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
-import flash.display.Stage;
-
-import mx.managers.ISystemManager;
-
-import com.threerings.util.MessageBundle;
-
-import com.threerings.presents.client.Client;
-
-import com.threerings.crowd.chat.client.ChatDirector;
-
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.spot.client.SpotSceneDirector;
 import com.threerings.whirled.util.WhirledContext;

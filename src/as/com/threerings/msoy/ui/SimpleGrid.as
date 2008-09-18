@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.ui {
 
-import flash.display.DisplayObject;
-
 import mx.containers.Grid;
 import mx.containers.GridItem;
 import mx.containers.GridRow;

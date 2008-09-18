@@ -5,7 +5,6 @@ package com.threerings.msoy.room.data {
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
-import com.threerings.io.TypedArray;
 
 import com.threerings.whirled.data.SceneModel;
 import com.threerings.whirled.data.SceneUpdate;

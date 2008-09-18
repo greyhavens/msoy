@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import flash.events.Event;
 import flash.events.EventDispatcher;
 
 import flash.display.Loader;

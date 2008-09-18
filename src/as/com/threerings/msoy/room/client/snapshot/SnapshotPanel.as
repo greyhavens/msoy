@@ -3,37 +3,27 @@
 
 package com.threerings.msoy.room.client.snapshot {
 
-import flash.display.BitmapData;
-import flash.display.DisplayObject;
-
-import flash.geom.Matrix;
 import flash.geom.Rectangle;
 
 import mx.core.BitmapAsset;
 import mx.core.Container;
 import mx.core.UIComponent;
 import mx.controls.Image;
-import mx.controls.Text;
 import mx.controls.ProgressBar;
 import mx.controls.Label;
 
 import mx.containers.HBox;
-import mx.containers.VBox;
 
-import com.threerings.util.Log;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.room.client.MsoySprite;
-import com.threerings.msoy.room.client.OccupantSprite;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoyScene;
 

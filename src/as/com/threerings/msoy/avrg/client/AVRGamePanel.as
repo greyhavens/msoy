@@ -4,7 +4,6 @@
 package com.threerings.msoy.avrg.client {
 
 import flash.events.Event;
-import flash.events.MouseEvent;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 
@@ -17,14 +16,8 @@ import com.threerings.flash.MediaContainer;
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.ControlBar;
-import com.threerings.msoy.client.ControlBackend;
-import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceLayer;
-import com.threerings.msoy.client.TopPanel;
-
-import com.threerings.msoy.world.client.WorldContext;
-import com.threerings.msoy.room.client.RoomView;
 
 import com.threerings.msoy.game.client.GameContext;
 import com.threerings.msoy.avrg.data.AVRGameConfig;

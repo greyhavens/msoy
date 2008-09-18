@@ -5,18 +5,14 @@ package com.threerings.msoy.room.client.editor {
 
 import flash.events.Event;
 
-import mx.binding.utils.BindingUtils;
-
 import mx.containers.HBox;
 
-import mx.controls.HSlider;
 import mx.controls.Spacer;
 import mx.controls.TextInput;
 import mx.controls.ToggleButtonBar;
 
 import mx.events.FlexEvent;
 import mx.events.ItemClickEvent;
-import mx.events.SliderEvent;
 
 import com.threerings.flex.CommandButton;
 

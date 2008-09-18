@@ -3,29 +3,19 @@
 
 package com.threerings.msoy.room.client {
 
-import flash.display.BitmapData;
-import flash.display.BitmapDataChannel;
 import flash.display.DisplayObject;
 import flash.display.LoaderInfo;
 
-import flash.events.EventDispatcher;
 import flash.events.MouseEvent;
-import flash.events.TextEvent;
-
-import flash.filters.DisplacementMapFilter;
-import flash.filters.DisplacementMapFilterMode;
 
 import flash.geom.Point;
 
 import com.threerings.util.CommandEvent;
 
-import com.threerings.flash.MenuUtil;
 
 import com.threerings.msoy.client.LoadingWatcher;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
 
-import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.data.FurniData;

@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.data {
 
-import flash.utils.ByteArray;
-
 import com.threerings.util.Cloneable;
 import com.threerings.util.Equalable;
 
@@ -17,7 +15,6 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Audio;
 import com.threerings.msoy.item.data.all.DefaultItemMediaDesc;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
 
 /**
  * Contains information on background audio in a scene.

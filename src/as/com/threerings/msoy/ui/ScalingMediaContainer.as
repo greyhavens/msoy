@@ -21,7 +21,6 @@ public class ScalingMediaContainer extends MsoyMediaContainer
 
     // -- End: static methods
 
-
     /** Publicly available, but do not change. */
     public var maxW :int;
     public var maxH :int;

@@ -12,8 +12,6 @@ import com.threerings.msoy.room.client.ClickLocation;
 import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoyLocation;
-import com.threerings.msoy.room.data.MsoyScene;
-
 
 /**
  * This class factors out room layout math that converts between 3D room coordinate space

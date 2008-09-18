@@ -5,10 +5,6 @@ package com.threerings.msoy.room.data {
 
 import flash.utils.ByteArray;
 
-import nochump.util.zip.ZipEntry;
-import nochump.util.zip.ZipFile;
-import nochump.util.zip.ZipOutput;
-
 import com.whirled.DataPack;
 
 /**

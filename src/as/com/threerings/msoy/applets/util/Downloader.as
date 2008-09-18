@@ -7,14 +7,11 @@ import flash.events.Event;
 import flash.events.ErrorEvent;
 import flash.events.HTTPStatusEvent;
 import flash.events.IOErrorEvent;
-import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 
 import flash.net.URLLoader;
 import flash.net.URLLoaderDataFormat;
 import flash.net.URLRequest;
-
-import flash.utils.ByteArray;
 
 import mx.controls.ProgressBar;
 import mx.controls.TextArea;

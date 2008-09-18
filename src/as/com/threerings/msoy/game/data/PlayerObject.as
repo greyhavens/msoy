@@ -14,7 +14,6 @@ import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.data.GameData;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
-import com.whirled.game.data.WhirledGameObject;
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.data.MsoyTokenRing;
@@ -23,8 +22,6 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
-
-import com.threerings.msoy.item.data.all.Item;
 
 /**
  * Contains information on a player logged on to an MSOY Game server.

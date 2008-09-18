@@ -24,7 +24,6 @@ import com.threerings.msoy.chat.data.MsoyChatChannel
 
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.data.all.MemberName;
 
 [Style(name="buttonSkin", type="Class", inherit="no")]

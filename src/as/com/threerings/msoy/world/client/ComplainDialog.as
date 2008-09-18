@@ -6,10 +6,8 @@ package com.threerings.msoy.world.client {
 import mx.controls.Label;
 import mx.controls.Text;
 import mx.controls.TextInput;
-import mx.containers.Grid;
 import mx.containers.VBox;
 
-import com.threerings.flex.GridUtil;
 import com.threerings.util.MessageBundle;
 
 import com.threerings.msoy.client.MemberService;

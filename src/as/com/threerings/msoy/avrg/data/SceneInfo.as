@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.avrg.data {
 
-import com.threerings.io.SimpleStreamableObject;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.presents.dobj.DSet_Entry;

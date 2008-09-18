@@ -4,21 +4,15 @@
 package com.threerings.msoy.applets.remixer {
 
 import flash.events.Event;
-import flash.events.TextEvent;
-
-import flash.geom.Point;
-import flash.geom.Rectangle;
 
 import mx.controls.CheckBox;
 import mx.controls.ColorPicker;
 import mx.controls.HSlider;
 import mx.controls.Label;
 import mx.controls.Spacer;
-import mx.controls.TextInput;
 
 import mx.validators.NumberValidator;
 import mx.validators.Validator;
-import mx.validators.ValidationResult;
 
 import com.threerings.util.ValueEvent;
 

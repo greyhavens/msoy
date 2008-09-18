@@ -3,42 +3,27 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.events.Event;
-
 import com.threerings.util.Log;
-import com.threerings.util.MessageBundle;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.dobj.DObject;
-import com.threerings.presents.dobj.MessageAdapter;
-import com.threerings.presents.dobj.MessageEvent;
-import com.threerings.presents.dobj.ObjectAccessError;
 
 import com.threerings.crowd.client.PlaceController;
 
-import com.threerings.parlor.game.client.GameController;
-import com.threerings.parlor.game.data.GameObject;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.avrg.client.AVRGameBackend;
-import com.threerings.msoy.avrg.client.AVRGameController;
 import com.threerings.msoy.avrg.client.AVRGameLiaison;
 
-import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyCodes;
-import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
-import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.WorldGameMarshaller;
 
 /**

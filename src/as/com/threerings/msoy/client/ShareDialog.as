@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import flash.events.Event;
 import flash.events.MouseEvent;
 
 import mx.events.FlexEvent;
@@ -11,7 +10,6 @@ import mx.events.FlexEvent;
 import mx.containers.Accordion;
 import mx.containers.HBox;
 import mx.containers.VBox;
-import mx.containers.TitleWindow;
 
 import mx.controls.RadioButton;
 import mx.controls.RadioButtonGroup;

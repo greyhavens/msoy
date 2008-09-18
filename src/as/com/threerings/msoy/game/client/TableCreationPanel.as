@@ -4,7 +4,6 @@
 package com.threerings.msoy.game.client {
 
 import mx.core.Container;
-import mx.core.ScrollPolicy;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
@@ -15,7 +14,6 @@ import mx.controls.TextInput;
 import flash.events.Event;
 
 import com.threerings.io.TypedArray;
-import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 
 import com.threerings.flex.CommandButton;

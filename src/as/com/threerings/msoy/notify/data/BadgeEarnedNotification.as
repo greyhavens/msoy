@@ -5,8 +5,6 @@ package com.threerings.msoy.notify.data {
 
 import com.threerings.io.ObjectInputStream;
 
-import com.threerings.util.MessageBundle;
-
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 
 import com.threerings.msoy.badge.ui.BadgeNotificationDisplay;

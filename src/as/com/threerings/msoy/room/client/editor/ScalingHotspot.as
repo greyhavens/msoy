@@ -11,8 +11,6 @@ import com.threerings.util.Log;
 
 import com.threerings.msoy.client.Msgs;
 
-import com.threerings.msoy.room.client.FurniSprite;
-
 /**
  * Hotspot that scales the object based on user's mouse movement.
  */

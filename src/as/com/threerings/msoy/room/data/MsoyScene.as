@@ -7,15 +7,12 @@ import flash.errors.IllegalOperationError;
 
 import com.threerings.util.Iterator;
 import com.threerings.util.Cloneable;
-import com.threerings.util.Log;
 
 import com.threerings.crowd.data.PlaceConfig;
 
 import com.threerings.msoy.data.MemberObject;
 
-import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneImpl;
-import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotScene;

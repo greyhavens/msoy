@@ -7,7 +7,6 @@ import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.display.StageQuality;
 import flash.events.Event;
-import flash.events.MouseEvent;
 import flash.external.ExternalInterface;
 import flash.geom.Point;
 import flash.net.URLLoader;
@@ -18,14 +17,8 @@ import flash.utils.Dictionary;
 
 import com.adobe.crypto.MD5;
 
-import com.threerings.util.Command;
-import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
-import com.threerings.util.StringUtil;
-import com.threerings.util.ValueEvent;
-
-import com.threerings.flash.MenuUtil;
 
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.DObjectManager;
@@ -37,18 +30,14 @@ import com.threerings.whirled.data.Scene;
 import com.threerings.msoy.client.ContextMenuProvider;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.EmbedHeader;
-import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 
-import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
-import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
@@ -56,8 +45,6 @@ import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
-import com.threerings.msoy.notify.data.LevelUpNotification;
-import com.threerings.msoy.notify.data.ReleaseNotesNotification;
 
 import com.threerings.msoy.room.client.RoomObjectView;
 

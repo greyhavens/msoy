@@ -10,9 +10,6 @@ import flash.events.MouseEvent;
 import flash.geom.Point;
 
 import com.threerings.msoy.room.client.ClickLocation;
-import com.threerings.msoy.room.client.FurniSprite;
-import com.threerings.msoy.room.client.RoomMetrics;
-import com.threerings.msoy.room.data.MsoyLocation;
 
 /**
  * Hotspot that covers the entire furni, and projects it onto the nearest wall.

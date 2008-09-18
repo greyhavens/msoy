@@ -4,8 +4,6 @@
 package com.threerings.msoy.room.client {
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
-import flash.display.Shape;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -16,7 +14,6 @@ import flash.geom.Rectangle;
 import flash.ui.Mouse;
 
 import flash.utils.ByteArray;
-import flash.utils.getTimer; // function import
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.ConfigValueSetEvent;
@@ -25,15 +22,8 @@ import com.threerings.util.Iterator;
 import com.threerings.util.Log;
 import com.threerings.util.ObjectMarshaller;
 
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.SetListener;
-
-import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.flash.DisplayUtil;
 import com.threerings.flash.MenuUtil;
 
 import com.threerings.whirled.spot.data.Location;
@@ -56,11 +46,9 @@ import com.threerings.msoy.world.client.WorldControlBar;
 
 import com.threerings.msoy.room.client.layout.RoomLayout;
 import com.threerings.msoy.room.client.layout.RoomLayoutFactory;
-import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
-import com.threerings.msoy.room.data.MsoySceneModel;
 import com.threerings.msoy.room.data.RoomObject;
 
 /**

@@ -5,14 +5,9 @@ package com.threerings.msoy.chat.client {
 
 import flash.display.BlendMode;
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.InteractiveObject;
 import flash.display.Sprite;
-import flash.display.Stage;
-
-import flash.events.Event;
-import flash.events.MouseEvent;
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -22,11 +17,9 @@ import flash.text.TextFormat;
 import flash.utils.getTimer; // function import
 
 import mx.events.FlexEvent;
-import mx.events.ResizeEvent;
 import mx.events.ScrollEvent;
 
 import mx.core.Container;
-import mx.core.IRawChildrenContainer;
 import mx.core.UIComponent;
 
 import mx.controls.scrollClasses.ScrollBar;
@@ -42,8 +35,6 @@ import com.threerings.util.ExpiringSet;
 import com.threerings.util.HashMap;
 import com.threerings.util.Log;
 import com.threerings.util.MessageManager;
-import com.threerings.util.Name;
-import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.chat.data.ChatCodes;
@@ -54,22 +45,18 @@ import com.threerings.crowd.chat.data.UserMessage;
 
 import com.threerings.flash.ColorUtil;
 
-import com.threerings.whirled.spot.data.SpotCodes;
 
 import com.threerings.msoy.utils.TextUtil;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 
-import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 
 import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.VizMemberName;
 
-import com.threerings.msoy.game.client.MsoyGamePanel;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.world.client.WorldContext;
 
@@ -1369,7 +1356,6 @@ import com.whirled.ui.PlayerList;
 
 import com.threerings.util.Log;
 
-import com.threerings.msoy.client.PlaceLayer;
 import com.threerings.msoy.client.TopPanel;
 
 import com.threerings.msoy.chat.client.ChatOverlay;

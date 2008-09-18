@@ -22,7 +22,6 @@ import mx.managers.PopUpManager;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
-import com.threerings.util.Log;
 
 import com.threerings.flex.CommandButton;
 

@@ -77,7 +77,6 @@ public class RoomMetrics
     /** Wall definition objects, mapping from wall type IDs to anchor points and normals. */
     protected var walldefs :Array;
 
-
     /** Read and update metrics. */
     public function update (decor :Decor) :void
     {

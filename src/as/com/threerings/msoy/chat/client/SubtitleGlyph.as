@@ -7,8 +7,6 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
-import com.threerings.util.Log;
-
 import com.threerings.msoy.utils.TextUtil;
 
 public class SubtitleGlyph extends ChatGlyph

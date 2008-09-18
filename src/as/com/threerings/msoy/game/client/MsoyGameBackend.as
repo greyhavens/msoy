@@ -4,12 +4,8 @@
 package com.threerings.msoy.game.client {
 
 import flash.display.DisplayObject;
-import flash.display.Loader;
 
 import flash.geom.Point;
-
-import flash.system.ApplicationDomain;
-import flash.system.LoaderContext;
 
 import com.threerings.util.MessageBundle;
 
@@ -161,7 +157,6 @@ import flash.display.Sprite;
 
 import flash.geom.Point;
 
-import com.threerings.util.Log;
 
 import com.threerings.msoy.ui.ScalingMediaContainer;
 

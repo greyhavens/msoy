@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.client {
 
-import flash.display.DisplayObject;
 import flash.display.Stage;
 import flash.ui.ContextMenu;
 
@@ -16,8 +15,6 @@ import flash.media.SoundMixer;
 import flash.media.SoundTransform;
 
 import com.threerings.util.Log;
-import com.threerings.util.Name;
-import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.MenuUtil;
@@ -25,8 +22,6 @@ import com.threerings.flash.MenuUtil;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationService_ResultListener;
-import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.dobj.DSet;
 
 import com.threerings.presents.dobj.DObjectManager;
 
@@ -35,8 +30,6 @@ import com.threerings.presents.net.BootstrapData;
 
 import com.threerings.crowd.client.CrowdClient;
 
-import com.threerings.msoy.chat.client.MsoyChatDirector;
-import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.client.MsoyLogConfig;
 import com.threerings.msoy.client.TrackingCookie;
 
@@ -44,9 +37,6 @@ import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
-import com.threerings.msoy.data.all.ChannelName;
-import com.threerings.msoy.data.all.GroupName;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
 
 /**

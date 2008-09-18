@@ -3,13 +3,10 @@
 
 package com.threerings.msoy.applets.remixer {
 
-import flash.geom.Point;
-
 import mx.containers.VBox;
 
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.applets.image.ImageManipulator;
 import com.threerings.msoy.applets.image.SizeRestriction;

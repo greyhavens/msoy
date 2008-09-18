@@ -9,12 +9,10 @@ import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ConfirmAdapter;
-import com.threerings.presents.client.InvocationService_ResultListener;
 import com.threerings.presents.client.ResultAdapter;
 
 import com.threerings.crowd.client.LocationAdapter;
 
-import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MsoyCodes;

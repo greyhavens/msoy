@@ -9,8 +9,6 @@ import flash.external.ExternalInterface;
 
 import flash.events.Event;
 
-import flash.geom.Point;
-
 import flash.net.FileFilter;
 
 import flash.utils.ByteArray;
@@ -32,7 +30,6 @@ import mx.validators.Validator;
 
 import com.adobe.images.PNGEncoder;
 
-import com.threerings.util.ArrayUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.CameraSnapshotter;
@@ -41,7 +38,6 @@ import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.PopUpUtil;
 
-import com.whirled.remix.data.EditableDataPack;
 
 import com.threerings.msoy.data.all.MediaDesc;
 

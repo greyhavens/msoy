@@ -8,7 +8,6 @@ import flash.geom.Rectangle;
 
 import mx.containers.VBox;
 
-import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
 import mx.core.ScrollPolicy;

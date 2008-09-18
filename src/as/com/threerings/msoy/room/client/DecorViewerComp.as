@@ -3,14 +3,12 @@
 
 package com.threerings.msoy.room.client {
 
-import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.external.ExternalInterface;
 import flash.events.Event;
 import flash.events.MouseEvent;
 import flash.geom.Point;
 import flash.ui.Mouse;
-import flash.utils.ByteArray;
 
 import mx.containers.Canvas;
 import mx.containers.Grid;
@@ -21,14 +19,11 @@ import mx.controls.Image;
 import mx.controls.HSlider;
 import mx.controls.TextInput;
 import mx.core.Application;
-import mx.core.BitmapAsset;
 import mx.core.Container;
 import mx.core.UIComponent;
 import mx.core.ScrollPolicy;
 
 import mx.events.SliderEvent;
-
-import mx.utils.ObjectUtil;
 
 import com.threerings.util.Log;
 import com.threerings.util.MessageManager;

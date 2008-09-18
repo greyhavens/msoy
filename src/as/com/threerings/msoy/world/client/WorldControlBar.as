@@ -7,38 +7,23 @@ import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.SimpleButton;
 
-import flash.events.Event;
-import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
-import flash.events.TimerEvent;
 
 import flash.text.TextField;
-
-import flash.utils.Timer;
-
-import mx.core.UIComponent;
-import mx.core.ScrollPolicy;
-
-import mx.containers.HBox;
 
 import caurina.transitions.Tweener;
 
 import com.threerings.flex.CommandButton;
-import com.threerings.flex.FlexUtil;
 
-import com.threerings.util.Log;
 import com.threerings.util.MultiLoader;
 
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.SliderPopup;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.MsoyParameters;
 import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.UberClient;

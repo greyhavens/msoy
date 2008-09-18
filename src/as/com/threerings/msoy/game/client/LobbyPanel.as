@@ -8,7 +8,6 @@ import flash.display.DisplayObject;
 import mx.effects.Resize;
 import mx.effects.easing.Cubic;
 import mx.events.EffectEvent;
-import mx.managers.PopUpManager;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
@@ -33,16 +32,11 @@ import com.threerings.parlor.game.data.GameConfig;
 
 import com.whirled.game.data.GameDefinition;
 
-import com.threerings.parlor.data.TableConfig;
-import com.whirled.game.client.WhirledGameConfigurator;
-import com.threerings.io.TypedArray;
-
 import com.threerings.msoy.ui.CopyableText;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.ui.MediaWrapper;
 
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MemberName;

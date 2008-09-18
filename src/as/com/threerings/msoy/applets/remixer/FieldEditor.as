@@ -17,8 +17,6 @@ import mx.core.UIComponent;
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
 
-import com.whirled.remix.data.EditableDataPack;
-
 public class FieldEditor extends VBox
 {
     /**

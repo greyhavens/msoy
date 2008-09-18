@@ -65,7 +65,6 @@ public class MemberInfo extends ActorInfo
         return that;
     }
 
-
     // from ActorInfo
     override public function readObject (ins :ObjectInputStream) :void
     {

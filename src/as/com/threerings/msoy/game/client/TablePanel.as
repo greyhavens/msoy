@@ -3,19 +3,14 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.events.Event;
-
 import mx.containers.HBox;
 import mx.containers.VBox;
 
 import mx.core.ScrollPolicy;
-import mx.core.UIComponent;
 
 import mx.controls.Label;
 import mx.controls.Text;
 
-import com.threerings.util.Log;
-import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;

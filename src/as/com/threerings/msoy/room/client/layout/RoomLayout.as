@@ -12,7 +12,6 @@ import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.client.RoomMetrics;
 import com.threerings.msoy.room.data.MsoyLocation;
 
-
 /**
  * Interface for classes that encapsulate different kinds of layout math for rooms.
  */

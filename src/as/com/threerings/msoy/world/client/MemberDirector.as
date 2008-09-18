@@ -7,9 +7,6 @@ import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ConfirmAdapter;
 
-import com.threerings.presents.dobj.MessageAdapter;
-import com.threerings.presents.dobj.MessageEvent;
-
 import com.threerings.util.Log;
 
 import com.threerings.msoy.client.MemberService;

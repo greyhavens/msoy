@@ -5,14 +5,11 @@ package com.threerings.msoy.room.client.editor {
 
 import mx.containers.Canvas;
 import mx.containers.HBox;
-import mx.containers.VBox;
 import mx.controls.Text;
 import mx.core.Container;
 import mx.core.ScrollPolicy;
 
 import com.threerings.util.Log;
-
-import com.threerings.io.TypedArray;
 
 import com.threerings.presents.client.ResultAdapter;
 
@@ -20,12 +17,10 @@ import com.threerings.flex.CommandButton;
 
 import com.threerings.whirled.client.SceneDirector;
 import com.threerings.whirled.data.Scene;
-import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.Msgs;
 
-import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.ui.FloatingPanel;
 import com.threerings.msoy.world.client.WorldContext;
 

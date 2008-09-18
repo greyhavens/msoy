@@ -3,17 +3,11 @@
 
 package com.threerings.msoy.avrg.data {
 
-import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.io.ObjectInputStream;
 
-import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.DSet;
-import com.threerings.presents.dobj.OidList;
-
-import com.threerings.util.Iterator;
-import com.threerings.util.Name;
 
 import com.threerings.msoy.avrg.data.PlayerLocation;
 

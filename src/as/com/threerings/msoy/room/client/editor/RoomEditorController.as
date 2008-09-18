@@ -3,12 +3,7 @@
 
 package com.threerings.msoy.room.client.editor {
 
-import flash.events.Event;
-import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
-import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.ui.Keyboard;
 
 import com.threerings.io.TypedArray;
 
@@ -36,7 +31,6 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.MsoySprite;
-import com.threerings.msoy.room.client.RoomObjectController;
 import com.threerings.msoy.room.client.RoomObjectView;
 import com.threerings.msoy.room.client.updates.FurniUpdateAction;
 import com.threerings.msoy.room.client.updates.SceneUpdateAction;

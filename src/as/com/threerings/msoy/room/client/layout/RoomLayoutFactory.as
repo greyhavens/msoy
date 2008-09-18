@@ -5,7 +5,6 @@ package com.threerings.msoy.room.client.layout {
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.room.client.RoomView;
-import com.threerings.util.ClassUtil;
 
 /**
  * Collection of static classes for testing and creating layout instances.

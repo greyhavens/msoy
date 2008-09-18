@@ -3,18 +3,8 @@
 
 package com.threerings.msoy.applets.image {
 
-import flash.display.Bitmap;
-import flash.display.BitmapData;
-import flash.display.Graphics;
-import flash.display.LoaderInfo;
-import flash.display.Sprite;
-
-import flash.events.ErrorEvent;
 import flash.events.Event;
-import flash.events.IOErrorEvent;
-import flash.events.TextEvent;
 
-import flash.geom.Point;
 
 import flash.system.Capabilities;
 
@@ -29,7 +19,6 @@ import mx.controls.Text;
 import mx.controls.TextInput;
 
 import mx.containers.Canvas;
-import mx.containers.Grid;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
@@ -40,15 +29,12 @@ import mx.events.ColorPickerEvent;
 import mx.events.FlexEvent;
 import mx.events.SliderEvent;
 
-import com.threerings.util.StringUtil;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
-import com.threerings.flex.GridUtil;
 import com.threerings.flex.KeyboardManager;
-import com.threerings.flex.ScrollBox;
 import com.threerings.flex.FlexUtil;
 
 /**

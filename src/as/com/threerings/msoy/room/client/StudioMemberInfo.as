@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 

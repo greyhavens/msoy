@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.applets.image {
 
-import flash.display.Bitmap;
 import flash.display.BitmapData;
 import flash.display.BlendMode;
 import flash.display.CapsStyle;
@@ -21,13 +20,6 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import flash.net.URLRequest;
-
-import flash.system.ApplicationDomain;
-import flash.system.LoaderContext;
-
-import flash.utils.ByteArray;
-
 import mx.core.ScrollPolicy;
 
 import mx.controls.scrollClasses.ScrollBar;
@@ -41,7 +33,6 @@ import com.adobe.images.PNGEncoder;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.GraphicsUtil;
-import com.threerings.flash.MathUtil;
 
 /** 
  * Dispatched when a color is selected.

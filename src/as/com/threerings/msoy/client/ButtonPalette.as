@@ -11,7 +11,6 @@ import flash.events.Event;
 import flash.geom.Point;
 
 import mx.core.Application;
-import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import mx.containers.Canvas;

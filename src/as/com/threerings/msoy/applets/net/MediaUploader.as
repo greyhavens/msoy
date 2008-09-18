@@ -6,7 +6,6 @@ package com.threerings.msoy.applets.net {
 import flash.errors.IllegalOperationError;
 
 import flash.events.Event;
-import flash.events.EventDispatcher;
 import flash.events.HTTPStatusEvent;
 import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
@@ -19,11 +18,8 @@ import flash.net.URLRequestMethod;
 import flash.utils.ByteArray;
 
 import mx.controls.ProgressBar;
-import mx.controls.TextArea;
 
 import mx.containers.TitleWindow;
-
-import mx.events.CloseEvent;
 
 import mx.managers.PopUpManager;
 

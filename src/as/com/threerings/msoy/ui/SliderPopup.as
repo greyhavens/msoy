@@ -9,7 +9,6 @@ import mx.binding.utils.BindingUtils;
 import mx.containers.Canvas;
 import mx.controls.VSlider;
 import mx.core.Application;
-import mx.core.IFlexDisplayObject;
 import mx.core.ScrollPolicy;
 import mx.events.SliderEvent;
 
@@ -18,7 +17,6 @@ import com.threerings.util.Util;
 import com.threerings.flex.CommandButton;
 
 import com.threerings.msoy.client.Msgs;
-import com.threerings.msoy.client.UberClient;
 
 /** Background skin to be loaded from the style sheet. */
 [Style(name="backgroundSkin", type="Class", inherit="no")]

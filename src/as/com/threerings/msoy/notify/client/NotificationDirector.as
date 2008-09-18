@@ -3,15 +3,10 @@
 
 package com.threerings.msoy.notify.client {
 
-import flash.utils.Dictionary;
-
-import com.threerings.io.TypedArray;
-
 import com.threerings.util.ExpiringSet;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flex.CommandButton;
 
 import com.threerings.presents.client.BasicDirector;
 import com.threerings.presents.client.Client;
@@ -25,26 +20,20 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.presents.dobj.SetListener;
 
-import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.ui.AwardPanel;
 
 import com.threerings.msoy.client.MemberService;
 
-import com.threerings.msoy.chat.client.ChatTabBar;
-import com.threerings.msoy.chat.client.ReportingListener;
 
-import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.MemberObject;
-import com.threerings.msoy.data.MsoyCodes;
 
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldControlBar;
 
-import com.threerings.msoy.badge.data.all.EarnedBadge;
 
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
 import com.threerings.msoy.notify.data.EntityCommentedNotification;

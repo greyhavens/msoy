@@ -9,7 +9,6 @@ import com.threerings.io.ObjectInputStream;
 
 import com.threerings.msoy.money.data.all.Currency;
 
-
 /**
  * Base class for money notifications.
  */

@@ -8,7 +8,6 @@ import mx.events.CloseEvent;
 
 import com.threerings.io.TypedArray;
 import com.threerings.util.Command;
-import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
@@ -30,14 +29,11 @@ import com.threerings.msoy.client.NoPlaceView;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.item.data.all.Game;
-
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
-import com.threerings.msoy.game.data.MsoyMatchConfig;
 
 public class LobbyController extends Controller implements Subscriber
 {

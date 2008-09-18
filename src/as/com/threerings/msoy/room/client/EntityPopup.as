@@ -4,9 +4,7 @@
 package com.threerings.msoy.room.client {
 
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 import flash.display.Shape;
-import flash.display.Sprite;
 
 import mx.containers.Canvas;
 

@@ -4,18 +4,13 @@
 package com.threerings.msoy.game.client {
 
 import com.threerings.crowd.chat.client.ChatDirector;
-import com.threerings.crowd.chat.client.ChatDisplay;
 import com.threerings.crowd.chat.client.SpeakService;
 
-import com.threerings.crowd.chat.data.ChatMessage;
 import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.client.MsoyContext;
 
 import com.threerings.msoy.data.MsoyCodes;
-
-import com.threerings.msoy.chat.client.ChatOverlay;
-import com.threerings.msoy.chat.client.HistoryList;
 
 /**
  * Does some special business for handling chat on the game server side of things.

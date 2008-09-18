@@ -10,10 +10,7 @@ import flash.system.Security;
 
 import flash.utils.ByteArray;
 
-import mx.containers.HBox;
-
 import com.threerings.util.Log;
-import com.threerings.util.MethodQueue;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.data.OccupantInfo;

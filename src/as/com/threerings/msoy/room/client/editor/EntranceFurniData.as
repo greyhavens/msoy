@@ -6,7 +6,6 @@ package com.threerings.msoy.room.client.editor {
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.data.FurniData;
-import com.threerings.util.ClassUtil;
 
 /**
  * This class is a version of furni data used by "fake" entrance furnis. It's only used to

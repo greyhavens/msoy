@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.msoy.room.data.MsoyLocation;
-
 public class PetBackend extends ActorBackend
 {
     override protected function populateControlProperties (o :Object) :void

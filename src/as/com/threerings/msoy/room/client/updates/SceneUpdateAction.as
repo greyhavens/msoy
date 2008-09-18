@@ -5,13 +5,10 @@ package com.threerings.msoy.room.client.updates {
 
 import com.threerings.util.Log;
 
-import com.threerings.io.TypedArray;
-
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.room.client.RoomController;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 

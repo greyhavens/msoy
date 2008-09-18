@@ -4,7 +4,6 @@
 package com.threerings.msoy.notify.client {
 
 import flash.display.DisplayObject;
-import flash.display.DisplayObjectContainer;
 
 import flash.events.MouseEvent;
 import flash.events.TextEvent;

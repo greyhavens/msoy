@@ -20,14 +20,10 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.util.Command;
-import com.threerings.util.CommandEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.whirled.data.Scene;
-
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.ui.MediaWrapper;
 

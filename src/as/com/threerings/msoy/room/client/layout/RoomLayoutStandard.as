@@ -4,11 +4,6 @@
 package com.threerings.msoy.room.client.layout {
 
 import flash.display.DisplayObject;
-import flash.display.Graphics;
-import flash.display.Shape;
-import flash.display.Sprite;
-
-import flash.events.Event;
 
 import flash.geom.Point;
 import flash.geom.Rectangle;
@@ -22,7 +17,6 @@ import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.client.RoomMetrics;
 import com.threerings.msoy.room.client.RoomView;
 import com.threerings.msoy.room.data.MsoyLocation;
-import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.RoomCodes;
 
 

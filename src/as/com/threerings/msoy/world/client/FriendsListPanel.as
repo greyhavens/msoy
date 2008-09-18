@@ -3,29 +3,19 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.events.Event;
 import flash.events.FocusEvent;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 
-import flash.geom.Point;
 import flash.geom.Rectangle;
 
 import flash.ui.Keyboard;
 
-import flash.utils.Dictionary;
-
-import mx.collections.ArrayCollection;
-import mx.collections.Sort;
-
 import mx.containers.VBox;
-import mx.containers.TitleWindow;
 
 import mx.controls.Label;
-import mx.controls.List;
 import mx.controls.TextInput;
 
-import mx.core.ScrollPolicy;
 
 import mx.events.FlexEvent;
 
@@ -34,23 +24,16 @@ import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.presents.dobj.AttributeChangedEvent;
 import com.threerings.presents.dobj.AttributeChangeListener;
-import com.threerings.presents.dobj.EntryAddedEvent;
-import com.threerings.presents.dobj.EntryUpdatedEvent;
-import com.threerings.presents.dobj.EntryRemovedEvent;
-import com.threerings.presents.dobj.SetListener;
 
 import com.threerings.util.Log;
-import com.threerings.util.ValueEvent;
 
 import com.threerings.msoy.ui.FlyingPanel;
 
-import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.PeerList;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
-import com.threerings.msoy.data.all.MemberName;
 
 public class FriendsListPanel extends FlyingPanel
     implements AttributeChangeListener

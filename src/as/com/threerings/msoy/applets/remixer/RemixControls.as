@@ -6,7 +6,6 @@ package com.threerings.msoy.applets.remixer {
 import flash.events.Event;
 import flash.events.ErrorEvent;
 import flash.events.IOErrorEvent;
-import flash.events.MouseEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 
@@ -20,29 +19,20 @@ import mx.core.Application;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
-import mx.containers.Grid;
-import mx.containers.GridRow;
 import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.containers.ViewStack;
 
-import mx.controls.HRule;
 import mx.controls.Image;
 import mx.controls.Label;
-import mx.controls.Spacer;
 import mx.controls.SWFLoader;
-import mx.controls.Text;
-
-import com.adobe.images.JPGEncoder;
 
 import com.whirled.remix.data.EditableDataPack;
 
 import com.threerings.util.ParameterUtil;
-import com.threerings.util.StringUtil;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
-import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.applets.net.MediaUploader;
 

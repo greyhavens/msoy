@@ -3,21 +3,14 @@
 
 package com.threerings.msoy.chat.client {
 
-import mx.core.UIComponent;
-
-import mx.events.CloseEvent;
-
 import com.threerings.util.ClassUtil;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.Name;
-import com.threerings.util.StringUtil;
 
 import com.threerings.presents.client.Client;
-import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.ResultAdapter;
-import com.threerings.presents.dobj.MessageEvent;
 
 import com.threerings.crowd.data.PlaceObject;
 
@@ -35,11 +28,8 @@ import com.threerings.crowd.chat.data.UserMessage;
 
 import com.whirled.ui.PlayerList;
 
-import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.DeploymentConfig;
-import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
-import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;

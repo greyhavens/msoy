@@ -69,7 +69,6 @@ public class WarningDialog extends FloatingPanel
         super.buttonClicked(buttonId);
     }
 
-
     protected var _wText :Text;
     protected var _waitLabel :Label;
     protected var _waitTimer :Timer;

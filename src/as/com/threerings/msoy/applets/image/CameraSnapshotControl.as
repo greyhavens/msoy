@@ -7,7 +7,6 @@ import flash.media.Camera;
 
 import mx.controls.ButtonBar;
 import mx.controls.ComboBox;
-import mx.controls.Label;
 
 import mx.containers.HBox;
 import mx.containers.TitleWindow;

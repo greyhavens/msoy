@@ -11,7 +11,6 @@ import com.threerings.util.CommandEvent;
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
-import com.threerings.msoy.item.data.all.Game;
 
 import com.threerings.msoy.world.client.WorldContext;
 

@@ -8,16 +8,10 @@ import flash.events.Event;
 import flash.utils.ByteArray;
 
 import mx.controls.ButtonBar;
-import mx.controls.Label;
 
 import mx.containers.Grid;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
-
-import mx.core.Application;
-import mx.core.UIComponent;
-
-import mx.events.ListEvent;
 
 import mx.managers.PopUpManager;
 

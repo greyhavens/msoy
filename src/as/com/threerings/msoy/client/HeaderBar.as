@@ -3,10 +3,7 @@
 
 package com.threerings.msoy.client {
 
-import flash.display.DisplayObject;
-
 import flash.events.Event;
-import flash.events.MouseEvent;
 
 import flash.utils.Dictionary;
 
@@ -14,33 +11,25 @@ import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import mx.containers.HBox;
-import mx.containers.VBox;
 
 import mx.controls.Image;
 import mx.controls.Label;
-import mx.controls.scrollClasses.ScrollBar;
 
-import flexlib.containers.ButtonScrollingCanvas;
 
 import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
-import com.threerings.flex.FlexWrapper;
 
-import com.threerings.util.Command;
-import com.threerings.util.CommandEvent;
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
 
-import com.threerings.msoy.ui.FloatingPanel;
 
 import com.threerings.msoy.data.MemberObject;
 

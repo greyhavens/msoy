@@ -6,7 +6,6 @@ import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.MessageListener;
 import com.threerings.util.Integer;
 import com.threerings.util.ObjectMarshaller;
-import com.threerings.util.StringUtil;
 import com.whirled.game.data.PropertySetEvent;
 import com.whirled.game.data.PropertySetListener;
 

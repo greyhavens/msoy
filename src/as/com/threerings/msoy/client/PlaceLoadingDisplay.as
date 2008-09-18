@@ -3,9 +3,7 @@
 
 package com.threerings.msoy.client {
 
-import flash.display.DisplayObject;
 import flash.display.LoaderInfo;
-import flash.display.MovieClip;
 import flash.display.Sprite;
 
 import flash.events.Event;
@@ -15,15 +13,10 @@ import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 
-import flash.text.TextField;
-import flash.text.TextFormat;
-import flash.text.TextFormatAlign;
-
 import flash.utils.Dictionary;
 
 import caurina.transitions.Tweener;
 
-import com.threerings.util.Log;
 
 import mx.events.ResizeEvent;
 

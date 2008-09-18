@@ -9,13 +9,10 @@ import flash.geom.Point;
 
 import com.threerings.flash.MathUtil;
 import com.threerings.flash.Vector2;
-import com.threerings.util.Log;
 
 import com.threerings.msoy.client.Msgs;
 
-import com.threerings.msoy.room.client.ClickLocation;
 import com.threerings.msoy.room.client.MsoySprite;
-import com.threerings.msoy.room.client.RoomMetrics;
 
 /**
  * Hotspot that rotates the object.

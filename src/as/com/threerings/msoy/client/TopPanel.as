@@ -4,38 +4,28 @@
 package com.threerings.msoy.client {
 
 import flash.events.Event;
-import flash.events.MouseEvent;
 import flash.geom.Rectangle;
 import flash.system.Capabilities;
 
 import mx.core.Application;
-import mx.core.Container;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import mx.containers.Canvas;
-import mx.containers.HBox;
 
 import mx.controls.Label;
 import mx.controls.scrollClasses.ScrollBar;
 
-import com.threerings.util.ConfigValueSetEvent;
-import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
-import com.threerings.util.MethodQueue;
-import com.threerings.util.ValueEvent;
 
 import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.client.LocationObserver;
 import com.threerings.crowd.data.PlaceObject;
 
-import com.threerings.flash.DisplayUtil;
-
 import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.chat.client.ChatOverlay;
 import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.chat.client.GameChatContainer;
-import com.threerings.msoy.chat.client.MsoyChatDirector;
 
 public class TopPanel extends Canvas
     implements LocationObserver

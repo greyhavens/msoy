@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.item.data.all {
 
-import com.threerings.util.StringUtil;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 

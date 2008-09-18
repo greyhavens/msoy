@@ -6,10 +6,8 @@ package com.threerings.msoy.client {
 import flash.display.DisplayObject;
 import flash.display.InteractiveObject;
 import flash.display.Shape;
-import flash.events.MouseEvent;
 import flash.geom.Point;
 
-import mx.containers.Canvas;
 import mx.core.UIComponent;
 
 import com.threerings.util.Log;

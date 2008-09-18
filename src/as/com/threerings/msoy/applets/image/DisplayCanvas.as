@@ -25,7 +25,6 @@ import flash.utils.ByteArray;
 import mx.core.UIComponent;
 
 import mx.containers.Canvas;
-import mx.containers.VBox;
 
 import com.threerings.util.ValueEvent;
 
@@ -203,8 +202,6 @@ import flash.display.Graphics;
 import flash.display.Shape;
 
 import mx.core.UIComponent;
-
-import com.threerings.util.Log;
 
 class ImageHolder extends UIComponent
 {

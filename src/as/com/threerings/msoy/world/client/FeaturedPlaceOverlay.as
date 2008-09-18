@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.world.client {
 
-import flash.display.DisplayObject;
 import flash.display.Sprite;
 
 import flash.events.MouseEvent;

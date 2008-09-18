@@ -6,7 +6,6 @@ package com.threerings.msoy.game.client {
 import mx.controls.TextInput;
 
 import com.threerings.parlor.client.DefaultFlexTableConfigurator;
-import com.threerings.parlor.client.TableConfigurator;
 import com.threerings.parlor.data.RangeParameter;
 import com.threerings.parlor.data.TableConfig;
 import com.threerings.parlor.data.ToggleParameter;

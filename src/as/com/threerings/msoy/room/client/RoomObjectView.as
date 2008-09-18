@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import flash.display.DisplayObject;
-
 import flash.events.Event;
 
 import flash.geom.Point;
@@ -13,9 +11,7 @@ import flash.geom.Rectangle;
 import flash.utils.ByteArray;
 
 import com.threerings.util.HashMap;
-import com.threerings.util.Iterator;
 import com.threerings.util.Name;
-import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
@@ -37,18 +33,14 @@ import com.threerings.flash.MenuUtil;
 
 import com.threerings.whirled.data.SceneUpdate;
 
-import com.threerings.whirled.spot.data.Location;
-import com.threerings.whirled.spot.data.Portal;
 import com.threerings.whirled.spot.data.SpotSceneObject;
 import com.threerings.whirled.spot.data.SceneLocation;
 
 import com.threerings.msoy.avrg.client.AVRGameBackend;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.data.all.Decor;
 
 import com.threerings.msoy.client.MsoyClient;
-import com.threerings.msoy.client.MsoyContext;
 import com.threerings.msoy.client.PlaceLoadingDisplay;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyController;
@@ -63,14 +55,12 @@ import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.editor.DoorTargetEditController;
 
-import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.ControllableAVRGame;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EffectData;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
-import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.FurniUpdate_Remove;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MobInfo;

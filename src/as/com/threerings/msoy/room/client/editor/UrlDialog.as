@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.client.editor {
 
-import mx.controls.Button;
 import mx.controls.Label;
 import mx.controls.TextInput;
 

@@ -3,9 +3,7 @@
 
 package com.threerings.msoy.client {
 
-import flash.display.DisplayObjectContainer;
 import flash.events.Event;
-import flash.events.MouseEvent;
 
 import mx.containers.HBox;
 import mx.containers.VBox;
@@ -31,7 +29,6 @@ import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ClientEvent;
 
 import com.threerings.msoy.data.MsoyCredentials;
-import com.threerings.msoy.data.MemberObject;
 
 import com.threerings.msoy.ui.FloatingPanel;
 

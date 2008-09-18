@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.game.client {
 
-import flash.display.DisplayObject;
 import flash.display.Graphics;
 import flash.display.Sprite;
 

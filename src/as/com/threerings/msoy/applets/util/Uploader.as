@@ -11,7 +11,6 @@ import flash.events.IOErrorEvent;
 import flash.events.ProgressEvent;
 import flash.events.SecurityErrorEvent;
 
-import flash.net.FileFilter;
 import flash.net.FileReference;
 import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
@@ -19,7 +18,6 @@ import flash.net.URLRequestMethod;
 import mx.controls.Label;
 import mx.controls.ProgressBar;
 
-import mx.containers.HBox;
 import mx.containers.TitleWindow;
 import mx.containers.VBox;
 
@@ -29,8 +27,6 @@ import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
-
-import com.threerings.msoy.utils.Base64Decoder;
 
 import com.threerings.msoy.applets.AppletContext;
 

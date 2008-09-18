@@ -10,7 +10,6 @@ import flash.geom.Point;
 import com.threerings.flash.MathUtil;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.room.client.ClickLocation;
-import com.threerings.msoy.room.client.FurniSprite;
 import com.threerings.msoy.room.client.RoomMetrics;
 import com.threerings.msoy.room.data.MsoyLocation;
 

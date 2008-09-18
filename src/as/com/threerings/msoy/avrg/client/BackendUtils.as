@@ -17,15 +17,12 @@ import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.InvocationAdapter;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
-import com.threerings.presents.dobj.DObject;
 
 import com.threerings.crowd.data.OccupantInfo;
 
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.client.WhirledGameMessageService;
 
-import com.whirled.game.data.PropertySetEvent;
-import com.whirled.game.data.PropertySetAdapter;
 import com.whirled.game.data.PropertySpaceObject;
 
 import com.threerings.msoy.data.all.MemberName;

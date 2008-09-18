@@ -4,7 +4,6 @@
 package com.threerings.msoy.client {
 
 import flash.events.Event;
-import flash.events.MouseEvent;
 import flash.events.ProgressEvent;
 
 import flash.display.StageDisplayState;
@@ -18,26 +17,17 @@ import flash.utils.getTimer;
 import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
-import mx.containers.Canvas;
 import mx.containers.HBox;
-
-import mx.controls.Spacer;
-
-import mx.events.FlexEvent;
 
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.Integer;
-import com.threerings.util.Log;
-import com.threerings.util.ValueEvent;
 
 import com.threerings.flash.DisplayUtil;
 
 import com.threerings.flex.ChatControl;
 import com.threerings.flex.CommandButton;
-import com.threerings.flex.CommandCheckBox;
 import com.threerings.flex.FlexUtil;
 
-import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientAdapter;
 
 import com.threerings.crowd.chat.client.ChatDirector;
@@ -46,7 +36,6 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.msoy.client.MsoyController;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.FloatingPanel;
-import com.threerings.msoy.ui.SkinnableImage;
 
 import com.threerings.msoy.world.client.WorldController;
 

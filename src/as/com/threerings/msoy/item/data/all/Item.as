@@ -7,7 +7,6 @@ import com.threerings.util.Comparable;
 import com.threerings.util.HashMap;
 import com.threerings.util.Hashable;
 import com.threerings.util.MethodQueue;
-import com.threerings.util.StringUtil;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;

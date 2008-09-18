@@ -3,37 +3,21 @@
 
 package com.threerings.msoy.room.client {
 
-import flash.display.DisplayObject;
-import flash.display.InteractiveObject;
 import flash.events.Event;
 import flash.events.KeyboardEvent;
 import flash.events.MouseEvent;
 import flash.geom.Point;
-import flash.geom.Rectangle;
-import flash.ui.ContextMenuItem;
 import flash.ui.Keyboard;
 import flash.utils.ByteArray;
 
 import mx.controls.Button;
-import mx.core.IChildList;
-import mx.core.IToolTip;
-import mx.core.UIComponent;
-import mx.managers.ISystemManager;
-import mx.managers.ToolTipManager;
 
 import com.threerings.util.ArrayUtil;
-import com.threerings.util.ClassUtil;
-import com.threerings.util.Integer;
 import com.threerings.util.Log;
 import com.threerings.util.MessageBundle;
 import com.threerings.util.ObjectMarshaller;
 import com.threerings.util.ValueEvent;
 
-import com.threerings.flash.MenuUtil;
-import com.threerings.flex.CommandMenu;
-import com.threerings.flex.PopUpUtil;
-
-import com.threerings.presents.client.ClientAdapter;
 import com.threerings.presents.client.ConfirmAdapter;
 import com.threerings.presents.client.ResultAdapter;
 
@@ -42,24 +26,18 @@ import com.threerings.presents.dobj.MessageAdapter;
 import com.threerings.presents.dobj.MessageEvent;
 
 import com.threerings.crowd.client.PlaceView;
-import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
 
-import com.threerings.whirled.client.SceneController;
-import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneUpdate;
 
 import com.threerings.msoy.client.BootablePlaceController;
-import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyClient;
 import com.threerings.msoy.client.MsoyController;
-import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
-import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.UberClient;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
@@ -76,11 +54,9 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Pet;
 
-import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldControlBar;
 import com.threerings.msoy.world.client.WorldController;
 
-import com.threerings.msoy.room.client.MsoySprite;
 import com.threerings.msoy.room.client.editor.DoorTargetEditController;
 import com.threerings.msoy.room.client.editor.ItemUsedDialog;
 import com.threerings.msoy.room.client.editor.RoomEditorController;
@@ -91,7 +67,6 @@ import com.threerings.msoy.room.client.updates.UpdateStack;
 
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.AudioData;
-import com.threerings.msoy.room.data.Controllable;
 import com.threerings.msoy.room.data.ControllableAVRGame;
 import com.threerings.msoy.room.data.ControllableEntity;
 import com.threerings.msoy.room.data.EffectData;
@@ -109,10 +84,8 @@ import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.SceneAttrsUpdate;
 
 import com.threerings.msoy.ui.MediaWrapper;
-import com.threerings.msoy.ui.RadialMenu;
 
 import com.threerings.msoy.chat.client.ChatOverlay;
-import com.threerings.msoy.chat.client.MsoyChatDirector;
 import com.threerings.msoy.chat.client.ReportingListener;
 
 /**

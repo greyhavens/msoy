@@ -8,12 +8,10 @@ import flash.events.MouseEvent;
 
 import mx.binding.utils.BindingUtils;
 import mx.containers.Grid;
-import mx.containers.HBox;
 import mx.containers.VBox;
 import mx.containers.ViewStack;
 import mx.controls.CheckBox;
 import mx.controls.ComboBox;
-import mx.controls.Label;
 import mx.controls.TextInput;
 import mx.core.UIComponent;
 import mx.events.FlexEvent;
@@ -170,8 +168,6 @@ public class ActionPanel extends BasePanel
             _debug.text = "";
         }
     }
-
-
 
     // FurniData.ACTION_NONE functions
 

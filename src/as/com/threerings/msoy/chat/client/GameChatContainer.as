@@ -9,13 +9,9 @@ import flash.geom.Rectangle;
 
 import mx.containers.HBox;
 
-import mx.core.ScrollPolicy;
 import mx.core.UIComponent;
 
 import com.threerings.crowd.chat.client.ChatDirector;
-import com.threerings.crowd.chat.data.ChatCodes;
-
-import com.threerings.util.Log;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;

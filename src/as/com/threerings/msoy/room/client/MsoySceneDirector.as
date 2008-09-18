@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import com.threerings.io.TypedArray;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.dobj.MessageAdapter;
@@ -25,7 +24,6 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.world.client.WorldContext;
 import com.threerings.msoy.world.client.WorldController;
 
-import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyPortal;
 import com.threerings.msoy.room.data.MsoyScene;
 import com.threerings.msoy.room.data.MsoySceneMarshaller;

@@ -7,7 +7,6 @@ import flash.display.LoaderInfo;
 import flash.display.Sprite;
 
 import flash.events.Event;
-import flash.events.IOErrorEvent;
 
 import flash.geom.Matrix;
 import flash.geom.Rectangle;

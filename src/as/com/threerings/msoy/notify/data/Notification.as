@@ -3,15 +3,11 @@
 
 package com.threerings.msoy.notify.data {
 
-import com.threerings.util.Comparable;
-
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.presents.dobj.DSet_Entry;
 
-import mx.core.UIComponent;
 
 /**
  * Notification from the server to the client.  Notifications are sent as messages on the 

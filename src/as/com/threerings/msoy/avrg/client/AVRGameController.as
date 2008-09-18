@@ -5,7 +5,6 @@ package com.threerings.msoy.avrg.client {
 
 import com.threerings.util.Log;
 import com.threerings.util.Name;
-import com.threerings.util.ValueEvent;
 
 import com.threerings.presents.dobj.EntryAddedEvent;
 import com.threerings.presents.dobj.EntryRemovedEvent;
@@ -25,8 +24,6 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
-
-import com.threerings.msoy.client.MsoyClient;
 
 import com.threerings.msoy.data.all.MemberName;
 

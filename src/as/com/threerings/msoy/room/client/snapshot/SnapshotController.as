@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.room.client.snapshot {
 
-import flash.display.BitmapData;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
@@ -12,11 +11,8 @@ import flash.net.URLRequest;
 import flash.net.URLRequestMethod;
 import flash.utils.ByteArray;
 
-import com.threerings.flash.JPGEncoder;
-
 import com.threerings.util.Controller;
 import com.threerings.util.StringUtil;
-import com.threerings.util.Log;
 
 import com.threerings.whirled.data.Scene;
 
@@ -25,7 +21,6 @@ import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.data.MsoyCodes;
 
-import com.threerings.msoy.world.client.WorldClient;
 import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.room.client.RoomView;

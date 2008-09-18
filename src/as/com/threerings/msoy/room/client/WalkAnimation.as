@@ -3,11 +3,6 @@
 
 package com.threerings.msoy.room.client {
 
-import flash.events.TimerEvent;
-
-import flash.utils.Timer;
-import flash.utils.getTimer; // function import
-
 import com.threerings.flash.AnimationImpl;
 
 import com.threerings.msoy.room.data.MsoyLocation;

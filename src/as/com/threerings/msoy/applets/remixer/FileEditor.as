@@ -9,8 +9,6 @@ import mx.controls.Label;
 
 import com.threerings.flex.CommandButton;
 
-import com.whirled.remix.data.EditableDataPack;
-
 public class FileEditor extends FieldEditor
 {
     public function FileEditor (ctx :RemixContext, name :String, serverURL :String)
