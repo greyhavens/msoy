@@ -8,20 +8,20 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.gwt.MoneyService;
-import com.threerings.msoy.money.gwt.HistoryListResult;
 import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 
-import client.util.ServiceBackedDataModel;
+import client.util.PagedServiceDataModel;
 import client.util.ServiceUtil;
 
 /**
  * Data model for service backed balance sheet widgets.
  */
-public class MoneyTransactionDataModel
-    extends ServiceBackedDataModel<MoneyTransaction, HistoryListResult>
+public class MoneyTransactionDataModel extends PagedServiceDataModel<MoneyTransaction>
 {
     public MoneyTransactionDataModel (int memberId, ReportType report)
     {
@@ -30,22 +30,11 @@ public class MoneyTransactionDataModel
     }
 
     @Override
-    protected void callFetchService (int start, int count, boolean needCount,
-        AsyncCallback<HistoryListResult> callback)
+    protected void callFetchService (
+        int start, int count, boolean needCount,
+        AsyncCallback<PagedResult<MoneyTransaction>> callback)
     {
-        _moneysvc.getTransactionHistory(_memberId, _report, start, count, callback);
-    }
-
-    @Override
-    protected int getCount (HistoryListResult result)
-    {
-        return result.totalCount;
-    }
-
-    @Override
-    protected List<MoneyTransaction> getRows (HistoryListResult result)
-    {
-        return result.transactions;
+        _moneysvc.getTransactionHistory(_memberId, _report, start, count, /*needCount,*/ callback);
     }
 
     protected int _memberId;

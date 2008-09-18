@@ -5,7 +5,10 @@ package com.threerings.msoy.money.gwt;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
+import com.threerings.gwt.util.PagedResult;
+
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 
 /**
@@ -19,6 +22,7 @@ public interface MoneyService extends RemoteService
     /**
      * Fetches a player's complete income and spending history.
      */
-    HistoryListResult getTransactionHistory (int memberId, ReportType report, int from, int count)
+    PagedResult<MoneyTransaction> getTransactionHistory (
+        int memberId, ReportType report, int from, int count)
         throws ServiceException;
 }
