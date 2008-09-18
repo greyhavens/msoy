@@ -45,7 +45,7 @@ public class AdminPage extends Page
             setContent(_msgs.abTestListTitle(), new ABTestListPanel());
 
         } else if (action.equals("affmap")) {
-            setContent("Fuck off", new AffiliateMapPanel());
+            setContent(_msgs.affMapTitle(), new AffiliateMapPanel());
 
         } else {
             setContent(_msgs.title(), new DashboardPanel());

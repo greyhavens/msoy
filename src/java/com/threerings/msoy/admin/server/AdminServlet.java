@@ -222,7 +222,8 @@ public class AdminServlet extends MsoyServiceServlet
     {
         requireSupport();
 
-        // TODO
+        _affMapRepo.storeMapping(affiliate, memberId);
+        // TODO: update anybody with the old affiliate...
     }
 
     // from interface AdminService

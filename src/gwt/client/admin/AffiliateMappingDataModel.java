@@ -3,7 +3,6 @@
 
 package client.admin;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.PagedResult;
@@ -17,8 +16,9 @@ import client.util.ServiceUtil;
 
 public class AffiliateMappingDataModel extends PagedServiceDataModel<AffiliateMapping>
 {
-    public AffiliateMappingDataModel ()
+    public AffiliateMappingDataModel (AdminServiceAsync adminSvc)
     {
+        _adminSvc = adminSvc;
     }
 
     @Override
@@ -26,9 +26,8 @@ public class AffiliateMappingDataModel extends PagedServiceDataModel<AffiliateMa
         int start, int count, boolean needCount,
         AsyncCallback<PagedResult<AffiliateMapping>> callback)
     {
-        _adminsvc.getAffiliateMappings(start, count, needCount, callback);
+        _adminSvc.getAffiliateMappings(start, count, needCount, callback);
     }
 
-    protected static final AdminServiceAsync _adminsvc = (AdminServiceAsync)
-        ServiceUtil.bind(GWT.create(AdminService.class), AdminService.ENTRY_POINT);
+    protected AdminServiceAsync _adminSvc;
 }
