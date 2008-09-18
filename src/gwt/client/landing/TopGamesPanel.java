@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -188,18 +189,17 @@ public class TopGamesPanel extends AbsolutePanel
         right.add(gameName);
 
         // play button
-        PushButton playButton = new PlayButton(game.gameId, game.minPlayers, game.maxPlayers);
-        playButton.setStyleName("playButtonSmall");
-        playButton.addClickListener(
-            MsoyUI.createTrackingListener("landingGamePlayClicked", game.gameId+""));
-        right.add(playButton);
+        Widget play = PlayButton.create(game, "", PlayButton.Size.MEDIUM);
+        if (play instanceof SourcesClickEvents) {
+            ((SourcesClickEvents)play).addClickListener(
+                MsoyUI.createTrackingListener("landingGamePlayClicked", ""+game.gameId));
+        }
+        right.add(play);
 
         // more games button
-        PushButton moreGamesButton = makePlayButton(
-            "MoreGames", Link.createListener(Pages.GAMES, ""));
-        moreGamesButton.addClickListener(
-            MsoyUI.createTrackingListener("landingMoreGamesClicked", null));
-        right.add(moreGamesButton);
+        PushButton moreGames = makePlayButton("MoreGames", Link.createListener(Pages.GAMES, ""));
+        moreGames.addClickListener(MsoyUI.createTrackingListener("landingMoreGamesClicked", null));
+        right.add(moreGames);
 
         gameInfoTable.setWidget(0, 2, right);
         gameInfoTable.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);

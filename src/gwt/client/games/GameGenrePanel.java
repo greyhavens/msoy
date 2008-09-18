@@ -26,6 +26,7 @@ import com.threerings.msoy.game.gwt.GameInfo;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
+import client.games.PlayButton;
 import client.shell.Args;
 import client.shell.DynamicMessages;
 import client.shell.Pages;
@@ -200,52 +201,8 @@ public class GameGenrePanel extends FlowPanel
                 setText(0, col++, _dmsgs.getString("genre" + game.genre), 1, "Category");
                 setText(0, col++, game.playersOnline+"", 1, "NowPlaying");
 
-                FlowPanel playButtonsPanel = new FlowPanel();
-                playButtonsPanel.setStyleName("PlayButtonsPanel");
-                if (game.isInWorld) {
-                    if (game.groupId != 0) {
-                        ClickListener singleClick = new ClickListener() {
-                            public void onClick (Widget sender) {
-                                Link.go(Pages.WORLD, "g" + game.groupId);
-                            }
-                        };
-                        PushButton gotoWhirled = MsoyUI.createButton(
-                            MsoyUI.MEDIUM_THIN, "Go To Whirled", singleClick);
-                        gotoWhirled.addStyleName("PlaySingleButton");
-                        playButtonsPanel.add(gotoWhirled);
-                    } else {
-                        // Just leave a blank area if there is no whirled.
-                        playButtonsPanel.add(MsoyUI.createLabel("", null));
-                    }
-                } else {
-                    if (game.minPlayers == 1) {
-                        ClickListener singleClick = new ClickListener() {
-                            public void onClick (Widget sender) {
-                                Link.go(Pages.WORLD, Args.compose("game", "s", "" + game.gameId));
-                            }
-                        };
-                        PushButton single = MsoyUI.createButton(
-                            MsoyUI.MEDIUM_THIN, "Play Just Me", singleClick);
-                        single.addStyleName("PlaySingleButton");
-                        playButtonsPanel.add(single);
-                        if (game.maxPlayers > 1) {
-                            playButtonsPanel.add(WidgetUtil.makeShim(5, 5));
-                        }
-                    }
-                    // add multiplayer button
-                    if (game.maxPlayers > 1) {
-                        ClickListener multiClick = new ClickListener() {
-                            public void onClick (Widget sender) {
-                                Link.go(Pages.WORLD, Args.compose("game", "l", "" + game.gameId));
-                            }
-                        };
-                        PushButton multi = MsoyUI.createButton(
-                            MsoyUI.MEDIUM_THIN, "Play With Friends", multiClick);
-                        multi.addStyleName("PlayMultiButton");
-                        playButtonsPanel.add(multi);
-                    }
-                }
-                setWidget(0, col++, playButtonsPanel, 1, "PlayButtons");
+                setWidget(0, col++, PlayButton.create(game, "", PlayButton.Size.SMALL),
+                          1, "PlayButtons");
             }
         }
     }

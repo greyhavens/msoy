@@ -63,19 +63,7 @@ public class FeaturedGamePanel extends AbsolutePanel
                 MsoyUI.truncateParagraph(game.description, 100), "Description"), 200, 105);
 
         add(new Stars(game.rating, true, false, null), 210, 180);
-        Widget play;
-        if (game.isInWorld) {
-            if (game.groupId != 0) {
-                play = new PlayButton(game.groupId);
-            } else {
-                // Just leave blank if there is no associated whirled
-                play = MsoyUI.createLabel("", null);
-            }
-        } else {
-            play = new PlayButton(game.gameId, game.minPlayers, game.maxPlayers);
-        }
-        play.setStyleName("playButtonSmall");
-        add(play, 307, 160);
+        add(PlayButton.create(game, "", PlayButton.Size.MEDIUM), 307, 160);
     }
 
     protected FeaturedGameInfo[] _games;

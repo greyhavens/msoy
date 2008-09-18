@@ -97,21 +97,9 @@ public class GameDetailPanel extends SmartTable
 
         FlowPanel play = new FlowPanel();
         play.setStyleName("playPanel");
-        Widget playbut;
-        if (game.isInWorld()) {
-            if (game.groupId == 0) {
-                // For a properly set up game, the groupId should not be zero, but this can easily
-                // occur, so at least prevent sending the user to a bad lobby or showing an
-                // unclickable button.
-                playbut = MsoyUI.createLabel(_msgs.gdpNoWhirled(), null);
-            } else {
-                playbut = new PlayButton(game.groupId);
-            }
-        } else {
-            playbut = new PlayButton(gameId, detail.minPlayers, detail.maxPlayers);
-        }
-        play.add(playbut);
-
+        play.add(PlayButton.create(game.gameId, detail.minPlayers, detail.maxPlayers,
+                                   game.isInWorld(), game.groupId, _msgs.gdpNoWhirled(),
+                                   PlayButton.Size.LARGE));
         if (detail.playingNow > 0) {
             play.add(MsoyUI.createLabel(_msgs.featuredOnline(""+detail.playingNow), "Online"));
         }

@@ -806,7 +806,7 @@
    PLAY BUTTON
 -------------------------------------*/
 
-.playButton {
+.playButtonLarge {
   width: 182px;
   height: 74px;
   border: none;
@@ -815,26 +815,27 @@
   background: transparent url(/images/game/play_button.png);
 }
 
-.playButton-down-hovering {
+.playButtonLarge-down-hovering {
   background: transparent url(/images/game/play_button_down.png);
 }
 
-.playButton-up-hovering {
+.playButtonLarge-up-hovering {
   background: transparent url(/images/game/play_button_over.png);
 }
 
-.playButtonSmall {
+.playButtonMedium {
   width: 120px;
   height: 44px;
   cursor: pointer;
   background: transparent url(/images/game/play_button_small.png);
 }
 
-.playButtonSmall-down-hovering {
+.playButtonMedium-down-hovering {
   background: transparent url(/images/game/play_button_small_down.png);
 }
 
-.playButtonSmall-up-hovering {
+.playButtonMedium-up-hovering {
   background: transparent url(/images/game/play_button_small_over.png);
 }
 
+/** .playButtonSmall is a normal button */

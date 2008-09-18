@@ -3,29 +3,65 @@
 
 package client.games;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.msoy.game.gwt.GameInfo;
 
 import client.shell.Args;
 import client.shell.Pages;
+import client.ui.MsoyUI;
 import client.util.Link;
 
 /**
- * Displays a single play button.  If multiplayer exists, show a Play with friends button,
- * otherwise show a Play just me button.
+ * Displays a play button that does the right thing in for all of the myriad modalities a game
+ * might represent.
  */
-public class PlayButton extends PushButton
+public class PlayButton
 {
-    public PlayButton (final int gameId, int minPlayers, int maxPlayers)
+    public enum Size { SMALL, MEDIUM, LARGE };
+
+    public static Widget create (GameInfo info, String noGroupMessage, Size size)
     {
-        setStyleName("playButton");
-        String args = (minPlayers == 1 && maxPlayers == 1) ?
-            Args.compose("game", "s", "" + gameId) : Args.compose("game", "l", "" + gameId);
-        addClickListener(Link.createListener(Pages.WORLD, args));
+        return create(info.gameId, info.minPlayers, info.maxPlayers,
+                      info.isInWorld, info.groupId, noGroupMessage, size);
     }
 
-    public PlayButton (int groupId)
+    public static Widget create (int gameId, int minPlayers, int maxPlayers,
+                                 boolean inWorld, int groupId, String noGroupMessage, Size size)
     {
-        setStyleName("playButton");
-        addClickListener(Link.createListener(Pages.WORLD, "g" + groupId));
+        String args;
+        if (inWorld) {
+            if (groupId == 0) {
+                return MsoyUI.createLabel(noGroupMessage, null);
+            }
+            args = "g" + groupId;
+        } else if (minPlayers == 1 && maxPlayers == 1) {
+            args = Args.compose("game", "s", "" + gameId);
+        } else {
+            args = Args.compose("game", "l", "" + gameId);
+        }
+
+        PushButton play;
+        switch (size) {
+        default:
+        case SMALL:
+            play = MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.playPlay(), null);
+            break;
+        case MEDIUM:
+            play = new PushButton();
+            play.setStyleName("playButtonMedium");
+            break;
+        case LARGE:
+            play = new PushButton();
+            play.setStyleName("playButtonLarge");
+            break;
+        }
+        play.addClickListener(Link.createListener(Pages.WORLD, args));
+        return play;
     }
+
+    protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
 }
