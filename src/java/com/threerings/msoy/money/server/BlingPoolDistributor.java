@@ -3,12 +3,15 @@
 
 package com.threerings.msoy.money.server;
 
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.google.inject.Inject;
+import com.samskivert.util.CalendarUtil;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.item.server.persist.GamePlayRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
@@ -36,26 +39,25 @@ public class BlingPoolDistributor
     
     protected void run ()
     {
-        // TODO: Transaction / lock
-        
         // If no bling should be awarded, exit outta here
-        int blingPool = RuntimeConfig.server.blingPoolSize;
+        int blingPool = RuntimeConfig.server.blingPoolSize * 100;
         if (blingPool == 0) {
             return;
         }
         
         // Get the last time we ran this and calculate the number of days since that time
-        // has passed
+        // has passed.
         MoneyConfigRecord confRecord = _repo.getMoneyConfig(true);
-        int days = (int)(System.currentTimeMillis() - confRecord.lastDistributedBling.getTime()) /
-            MILLISECONDS_PER_DAY;
+        Calendar calLastRun = toCal(confRecord.lastDistributedBling);
+        int days = CalendarUtil.getDaysBetween(calLastRun, Calendar.getInstance());
         
         // We'll repeat this for the number of days since we last executed it.
+        Calendar cal2 = toCal(confRecord.lastDistributedBling);
+        cal2.add(1, Calendar.DATE);
         for (int i = 0; i < days; i++) {
             // Get all the game play sessions for this day.
             Collection<GamePlayRecord> gamePlays = _gameRepo.getGamePlaysBetween(
-                confRecord.lastDistributedBling.getTime() + i * MILLISECONDS_PER_DAY,
-                confRecord.lastDistributedBling.getTime() + (i + 1) * MILLISECONDS_PER_DAY);
+                calLastRun.getTimeInMillis(), cal2.getTimeInMillis());
             
             // Calculate a total and a map of game ID to the total minutes spent in the game
             long totalMinutes = 0;
@@ -84,13 +86,14 @@ public class BlingPoolDistributor
                     awardBling(gameMap.get(entry.getKey()), awardedBling);
                 }
             }
+            
+            // Increment the day to use when retrieving game play records
+            calLastRun.add(1, Calendar.DATE);
+            cal2.add(1, Calendar.DATE);
         }
         
-        // TODO
-        // Update the money config with the new last executed, which will be the previous date
-        // plus some number of days.
-        //_repo.setLastDistributedBling(confRecord.lastDistributedBling.getTime() + 
-        //    days * MILLISECONDS_PER_DAY);
+        // Update the money config with the new last executed
+        _repo.completeBlingDistribution(new java.sql.Date(calLastRun.getTimeInMillis()));
     }
     
     protected void awardBling (GameRecord game, int amount)
@@ -106,7 +109,13 @@ public class BlingPoolDistributor
         _repo.addTransaction(tx);
     }
     
-    protected final static int MILLISECONDS_PER_DAY = 1000*60*60*24;
+    protected Calendar toCal (Date date)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        CalendarUtil.zeroTime(cal);
+        return cal;
+    }
     
     protected final MoneyRepository _repo;
     protected final GameRepository _gameRepo;

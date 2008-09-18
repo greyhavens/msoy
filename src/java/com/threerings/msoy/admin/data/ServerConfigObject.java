@@ -106,7 +106,7 @@ public class ServerConfigObject extends ConfigObject
     /** The amount to deduct when cashing out bling into real money. */
     public float blingCashoutTransactionFee = 0f;
     
-    /** The amount of bling (or rather, hundredths of bling) to grant daily to game creators. */
+    /** The amount of bling (NOT centibling) to grant daily to game creators. */
     public int blingPoolSize = 0;
     
     @Override // documentation inherited

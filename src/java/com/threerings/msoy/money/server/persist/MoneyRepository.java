@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.money.server.persist;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.EnumSet;
 import java.util.List;
@@ -160,13 +161,24 @@ public class MoneyRepository extends DepotRepository
      * Loads the current money configuration record, optionally locking on the record.
      * 
      * @param lock If true, the record will be selected using SELECT ... FOR UPDATE to grab
-     * a pessimistic lock, preventing other threads calling this method from continuing until the
-     * lock is released.
-     * @return The money configuration.
+     * a lock on the record.  If another process has already locked this record, this will return
+     * null.
+     * @return The money configuration, or null if we tried locking the record, but it was already
+     * locked.
      */
     public MoneyConfigRecord getMoneyConfig (final boolean lock)
     {
-        // TODO: Locking
+        if (lock) {
+            // Update the record, setting locked = true, but only if locked = false currently.
+            int count = updatePartial(MoneyConfigRecord.class, 
+                new Where(MoneyConfigRecord.LOCKED_C, false),
+                MoneyConfigRecord.getKey(MoneyConfigRecord.RECORD_ID),
+                MoneyConfigRecord.LOCKED, true);
+            if (count == 0) {
+                // Record is already locked, bail out.
+                return null;
+            }
+        }
         
         MoneyConfigRecord confRecord = load(MoneyConfigRecord.class);
         if (confRecord == null) {
@@ -181,6 +193,19 @@ public class MoneyRepository extends DepotRepository
             }
         }
         return confRecord;
+    }
+    
+    /**
+     * Sets the last time bling was distributed to the given date.  This will also unlock the
+     * record; this should only be called if we have the lock on the record and wish to release it.
+     * 
+     * @param lastDistributedBling Date the bling was last distributed.
+     */
+    public void completeBlingDistribution (Date lastDistributedBling)
+    {
+        updatePartial(MoneyConfigRecord.getKey(MoneyConfigRecord.RECORD_ID), 
+            MoneyConfigRecord.LOCKED, false,
+            MoneyConfigRecord.LAST_DISTRIBUTED_BLING, lastDistributedBling);
     }
 
     /** Helper method to setup a query for a transaction history search. */
