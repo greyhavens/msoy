@@ -372,8 +372,8 @@ public class AVRGameController extends PlaceController
     protected var _playerListener :MessageAdapter = new MessageAdapter(
         function (event :MessageEvent) :void {
             var name :String = event.getName();
-            if (name == AVRGameObject.COINS_AWARDED_MESSAGE) {
-                _backend.coinsAwarded(int(event.getArgs()[0]));
+            if (name == AVRGameObject.TASK_COMPLETED_MESSAGE) {
+                _backend.taskCompleted(String(event.getArgs()[0]), int(event.getArgs()[1]));
             }
         });
 

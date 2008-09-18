@@ -208,11 +208,8 @@ public class QuestDelegate extends PlaceManagerDelegate
 
             @Override
             public void handleSuccess () {
-                // if we paid out flow, let any logged-on member objects know
-                if (payout > 0) {
-                    // report to the game that this player earned some flow
-                    player.postMessage(AVRGameObject.COINS_AWARDED_MESSAGE, payout, -1);
-                }
+                // report task completion to the game
+                player.postMessage(AVRGameObject.TASK_COMPLETED_MESSAGE, questId, payout);
 
                 // if we updated the payout factor in the db, do it in dobj land too
                 if (newFlowToNextRecalc > 0) {

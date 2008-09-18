@@ -32,8 +32,8 @@ public class AVRGameObject extends PlaceObject
     /** The identifier for a MessageEvent containing ticker notifications. */
     public static final String TICKER = "Utick";
 
-    /** A message dispatched to each player's client object when coins are awarded. */
-    public static final String COINS_AWARDED_MESSAGE = "FlowAwarded";
+    /** A message dispatched to each player's client object when a task is completed. */
+    public static final String TASK_COMPLETED_MESSAGE = "TaskCompleted";
 
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>playerLocs</code> field. */
