@@ -221,6 +221,12 @@ public class WorldController extends MsoyController
      */
     public function handlePopChannelMenu (trigger :Button) :void
     {
+        // if we don't yet have a member object, it's too early to pop!
+        const me :MemberObject = _wctx.getMemberObject();
+        if (me == null) {
+            return;
+        }
+
         var menuData :Array = [];
         menuData.push({ label: Msgs.GENERAL.get("b.chatPrefs"), command: CHAT_PREFS });
         menuData.push({ label: Msgs.GENERAL.get("b.clearChat"),
@@ -247,7 +253,6 @@ public class WorldController extends MsoyController
             menuData.push({ type: "separator" });
         }
 
-        const me :MemberObject = _wctx.getMemberObject();
         // slap your friends in a menu
         var friends :Array = new Array();
         for each (var fe :FriendEntry in me.getSortedEstablishedFriends()) {
