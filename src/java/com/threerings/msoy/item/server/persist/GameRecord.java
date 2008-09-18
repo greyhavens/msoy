@@ -269,6 +269,8 @@ public class GameRecord extends ItemRecord
         info.maxPlayers = players[1];
         info.rating = rating;
         info.ratingCount = ratingCount;
+        info.isInWorld = Game.detectIsInWorld(config);
+        info.groupId = groupId;
         return info;
     }
 

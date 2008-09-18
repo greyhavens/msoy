@@ -112,6 +112,14 @@ public class Game extends Item
     }
 
     /**
+     * For the given {@link GameRecord#config} string, checks if the game takes place in the world.
+     */
+    public static boolean detectIsInWorld (String config)
+    {
+        return (config != null) && (config.indexOf("<avrg/>") >= 0);
+    }
+    
+    /**
      * Returns true if this is a developer's in-progress original game rather than one listed in
      * the catalog.
      */
@@ -171,7 +179,7 @@ public class Game extends Item
      */
     public boolean isInWorld ()
     {
-        return (config != null) && (config.indexOf("<avrg/>") >= 0);
+        return detectIsInWorld(config);
     }
 
     @Override
