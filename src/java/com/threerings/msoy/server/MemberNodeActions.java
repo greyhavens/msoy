@@ -24,7 +24,6 @@ import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.badge.data.all.InProgressBadge;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.badge.server.persist.InProgressBadgeRecord;
-import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.item.server.ItemManager;
 import com.threerings.msoy.notify.data.BadgeEarnedNotification;
@@ -174,7 +173,6 @@ public class MemberNodeActions
             memobj.updateDisplayName(_displayName, _photo);
             memobj.setHeadline(_status);
             _memberMan.updateOccupantInfo(memobj);
-            _channelMan.updateMemberOnChannels(memobj.memberName);
 
             // Update FriendEntrys on friend's member objects.  Rather than preparing a
             // MemberNodeAction for every friend, we use a custom NodeAction to check for servers
@@ -188,7 +186,6 @@ public class MemberNodeActions
         protected MediaDesc _photo;
         protected String _status;
 
-        @Inject protected transient ChatChannelManager _channelMan;
         @Inject protected transient MemberManager _memberMan;
     }
 

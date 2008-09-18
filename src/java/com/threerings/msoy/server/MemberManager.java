@@ -51,8 +51,6 @@ import com.threerings.crowd.server.PlaceRegistry;
 
 import com.threerings.stats.data.StatSet;
 
-import com.threerings.msoy.chat.data.ChannelMessage;
-import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
@@ -589,13 +587,13 @@ public class MemberManager
         for (ChatMessage msg : SpeakUtil.getChatHistory(source.memberName)) {
             UserMessage umsg = (UserMessage)msg;
             chatHistory.append(df.format(new Date(umsg.timestamp))).append(' ');
-            if (umsg instanceof ChannelMessage) {
-                ChannelMessage cmsg = (ChannelMessage)umsg;
-                chatHistory.append('[').append(ChatChannel.XLATE_TYPE[cmsg.channel.type]);
-                chatHistory.append(':').append(cmsg.channel.ident).append("] ");
-            } else {
+//             if (umsg instanceof ChannelMessage) {
+//                 ChannelMessage cmsg = (ChannelMessage)umsg;
+//                 chatHistory.append('[').append(ChatChannel.XLATE_TYPE[cmsg.channel.type]);
+//                 chatHistory.append(':').append(cmsg.channel.ident).append("] ");
+//             } else {
                 chatHistory.append(StringUtil.pad(ChatCodes.XLATE_MODES[umsg.mode], 10)).append(' ');
-            }
+//             }
             chatHistory.append(umsg.speaker);
             if (umsg.speaker instanceof MemberName) {
                 chatHistory.append('(').append(((MemberName)umsg.speaker).getMemberId()).append(')');

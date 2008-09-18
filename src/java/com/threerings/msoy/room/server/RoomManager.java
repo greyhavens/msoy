@@ -70,7 +70,6 @@ import com.threerings.msoy.server.MemberLocator;
 import com.threerings.msoy.server.MsoyEventLogger;
 
 import com.threerings.msoy.bureau.data.WindowClientObject;
-import com.threerings.msoy.chat.server.ChatChannelManager;
 
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.item.data.all.Item;
@@ -299,12 +298,6 @@ public class RoomManager extends SpotSceneManager
             MessageUtil.tcompose("m.booted", _scene.getName()));
         _screg.moveBody(bootee, bootSceneId);
         SpeakUtil.sendFeedback(user, MsoyCodes.GENERAL_MSGS, "m.boot_success");
-
-        // and from the chat channel
-// TODO: this doesn't work. It ends up removing the user from the list of chatters, but they
-// are still subscribed to the channel. Fuck if I know.
-//        _channelMan.leaveChannel(bootee,
-//            ChatChannel.makeRoomChannel(new RoomName(_scene.getName(), _scene.getId())));
 
         return null; // indicates success
     }
@@ -1124,13 +1117,6 @@ public class RoomManager extends SpotSceneManager
                                                msoyScene.getOwnerId(), msoyScene.getOwnerType(),
                                                up.accessControl);
             }
-
-            // if the name was modified, we need to notify the chat channel manager so it can
-            // update the channel name.
-            if (nameChange) {
-                _channelMan.updateRoomChannelName(
-                    new RoomName(up.name, msoyScene.getId()));
-            }
         }
 
         // furniture modification updates require us to mark item usage
@@ -1431,7 +1417,6 @@ public class RoomManager extends SpotSceneManager
     protected short _nextEffectId;
 
     @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected ChatChannelManager _channelMan;
     @Inject protected ItemManager _itemMan;
     @Inject protected PetManager _petMan;
     @Inject protected SceneRegistry _screg;

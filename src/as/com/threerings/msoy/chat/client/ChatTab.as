@@ -20,7 +20,7 @@ import com.threerings.util.Log;
 
 import com.threerings.crowd.chat.data.ChatCodes;
 
-import com.threerings.msoy.chat.data.ChatChannel
+import com.threerings.msoy.chat.data.MsoyChatChannel
 
 import com.threerings.msoy.client.HeaderBar;
 import com.threerings.msoy.client.MsoyContext;
@@ -43,7 +43,7 @@ public class ChatTab extends HBox
     public static const UNSELECTED :int = 2;
     public static const ATTENTION :int = 3;
 
-    public function ChatTab (ctx :MsoyContext, bar :ChatTabBar, channel :ChatChannel, 
+    public function ChatTab (ctx :MsoyContext, bar :ChatTabBar, channel :MsoyChatChannel,
         roomName :String = null)
     {
         _ctx = ctx;
@@ -60,13 +60,6 @@ public class ChatTab extends HBox
         _closeButton.width = 10;
         _closeButton.height = 10;
 
-        // check box is not added until displayCheckBox(true) is called
-        _checkBox = new Canvas();
-        _checkBox.width = 10;
-        _checkBox.height = 10; 
-        _checkBoxChecked = false;
-        _checkBox.toolTip = Msgs.CHAT.get("i.keep_channel");
-
         height = HeaderBar.HEIGHT;
 
         setStyle("paddingRight", PADDING);
@@ -76,9 +69,6 @@ public class ChatTab extends HBox
 
         addEventListener(MouseEvent.CLICK, tabClicked);
         _closeButton.addEventListener(MouseEvent.CLICK, closeClicked);
-        _checkBox.addEventListener(MouseEvent.CLICK, checkClicked);
-        _checkBox.addEventListener(MouseEvent.MOUSE_OVER, checkMouseOver);
-        _checkBox.addEventListener(MouseEvent.MOUSE_OUT, checkMouseOut);
 
         _shine = new Shine();
         _shine.includeInLayout = false;
@@ -94,16 +84,16 @@ public class ChatTab extends HBox
         return _label.text;
     }
 
-    public function get checked () :Boolean
+    public function get channel () :MsoyChatChannel
     {
-        return _checkBoxChecked;
+        return _channel;
     }
 
     public function get localtype () :String
     {
         return _channel != null ? _channel.toLocalType() : ChatCodes.PLACE_CHAT_TYPE;
     }
-    
+
     /**
      * Returns to the member id of the person that this tab is a tell tab for, if it is.  If it's
      * not, returns 0.
@@ -113,8 +103,8 @@ public class ChatTab extends HBox
     	if (_channel == null) {
     		return 0;
     	}
-    	
-    	return _channel.type != ChatChannel.MEMBER_CHANNEL ? 0 : 
+
+    	return _channel.type != MsoyChatChannel.MEMBER_CHANNEL ? 0 :
     	   (_channel.ident as MemberName).getMemberId();
     }
 
@@ -124,15 +114,6 @@ public class ChatTab extends HBox
             removeChild(_closeButton);
         } else if (display && !contains(_closeButton)) {
             addChild(_closeButton);
-        }
-    }
-
-    public function displayCheckBox (display :Boolean) :void
-    {
-        if (!display && contains(_checkBox)) {
-            removeChild(_checkBox);
-        } else if (display && !contains(_checkBox)) {
-            addChildAt(_checkBox, 0);
         }
     }
 
@@ -158,22 +139,18 @@ public class ChatTab extends HBox
             style = "selected";
             displayShine(false);
             displayCloseBox(_bar.chatTabIndex(this) != 0);
-            displayCheckBox(_bar.chatTabIndex(this) == 0 && _channel != null && 
-                            _channel.type == ChatChannel.ROOM_CHANNEL);
             break;
 
         case UNSELECTED:
             style = "unselected";
             displayShine(false);
             displayCloseBox(false);
-            displayCheckBox(false);
             break;
 
         case ATTENTION:
             style = "attention";
             displayShine(true);
             displayCloseBox(false);
-            displayCheckBox(false);
             break;
 
         default:
@@ -181,24 +158,24 @@ public class ChatTab extends HBox
             return;
         }
 
-        if (_channel == null || _channel.type == ChatChannel.ROOM_CHANNEL) {
+        if (_channel == null || _channel.type == MsoyChatChannel.ROOM_CHANNEL) {
             style += "RoomTab";
             if (state == SELECTED) {
                 _ctx.getTopPanel().getControlBar().setChatColor(COLOR_ROOM);
             }
-        } else if (_channel.type == ChatChannel.GROUP_CHANNEL) {
+        } else if (_channel.type == MsoyChatChannel.GROUP_CHANNEL) {
             style += "GroupTab";
             if (state == SELECTED) {
                 _ctx.getTopPanel().getControlBar().setChatColor(COLOR_GROUP);
             }
-        } else if (_channel.type == ChatChannel.MEMBER_CHANNEL ||
-                   _channel.type == ChatChannel.JABBER_CHANNEL) {
+        } else if (_channel.type == MsoyChatChannel.MEMBER_CHANNEL ||
+                   _channel.type == MsoyChatChannel.JABBER_CHANNEL) {
             style += "TellTab";
             if (state == SELECTED) {
                 _ctx.getTopPanel().getControlBar().setChatColor(COLOR_TELL);
             }
         } else {
-            log.warning("Unkown channel type for skinning [" + _channel.type + "]");
+            log.warning("Unknown channel type for skinning [" + _channel.type + "]");
             return;
         }
 
@@ -218,68 +195,6 @@ public class ChatTab extends HBox
         dispatchEvent(new Event(TAB_CLOSE_CLICK));
     }
 
-    protected function checkClicked (event :MouseEvent) :void
-    {
-        _checkBoxChecked = !_checkBoxChecked;
-        if (_checkBoxChecked) {
-            if (_checkUpSkin != null && _checkUpSkin.parent == _checkBox) {
-                _checkBox.rawChildren.removeChild(_checkUpSkin);
-            }
-
-            if (_checkOverSkin != null && _checkOverSkin.parent == _checkBox) {
-                _checkBox.rawChildren.removeChild(_checkOverSkin);
-            }
-
-            if (_checkSelectedSkin != null) {
-                _checkBox.rawChildren.addChild(_checkSelectedSkin);
-                (_checkSelectedSkin as IFlexDisplayObject).setActualSize(_checkBox.width,
-                                                                         _checkBox.height);
-            }
-        } else {
-            if (_checkSelectedSkin != null && _checkSelectedSkin.parent == _checkBox) {
-                _checkBox.rawChildren.removeChild(_checkSelectedSkin);
-            }
-
-            if (_checkUpSkin != null) {
-                _checkBox.rawChildren.addChild(_checkUpSkin);
-                (_checkUpSkin as IFlexDisplayObject).setActualSize(_checkBox.width, 
-                                                                   _checkBox.height);
-            }
-        }
-    }
-
-    protected function checkMouseOver (event :MouseEvent) :void
-    {
-        if (_checkBoxChecked) {
-            return;
-        }
-
-        if (_checkUpSkin != null && _checkUpSkin.parent == _checkBox) {
-            _checkBox.rawChildren.removeChild(_checkUpSkin);
-        }
-
-        if (_checkOverSkin != null) {
-            _checkBox.rawChildren.addChild(_checkOverSkin);
-            (_checkOverSkin as IFlexDisplayObject).setActualSize(_checkBox.width, _checkBox.height);
-        }
-    }
-
-    protected function checkMouseOut (event :MouseEvent) :void
-    {
-        if (_checkBoxChecked) {
-            return;
-        }
-
-        if (_checkOverSkin != null && _checkOverSkin.parent == _checkBox) {
-            _checkBox.rawChildren.removeChild(_checkOverSkin);
-        }
-
-        if (_checkUpSkin != null) {
-            _checkBox.rawChildren.addChild(_checkUpSkin);
-            (_checkUpSkin as IFlexDisplayObject).setActualSize(_checkBox.width, _checkBox.height);
-        }
-    }
-
     protected function displayShine (show :Boolean) :void
     {
         if (show && _shine.parent != this) {
@@ -297,7 +212,6 @@ public class ChatTab extends HBox
         updateShine(uw, uh);
         updateButtonSkin(uw, uh);
         updateCloseSkin();
-        updateCheckSkin();
     }
 
     protected function updateShine (uw :Number, uh :Number) :void
@@ -355,77 +269,10 @@ public class ChatTab extends HBox
         }
     }
 
-    protected function updateCheckSkin () :void
-    {
-        var newUpSkin :Class = getStyle(CHECK_UP_SKIN) as Class;
-        var newOverSkin :Class = getStyle(CHECK_OVER_SKIN) as Class;
-        var newSelectedSkin :Class = getStyle(CHECK_SELECTED_SKIN) as Class;
-
-        var selected :Boolean = false;
-        if (newSelectedSkin != _checkSelectedSkinClass) {
-            if (_checkSelectedSkin != null && _checkSelectedSkin.parent == _checkBox) {
-                _checkBox.rawChildren.removeChild(_checkSelectedSkin);
-                selected = true;
-            }
-
-            _checkSelectedSkinClass = newSelectedSkin;
-            if (_checkSelectedSkinClass != null) {
-                _checkSelectedSkin = new _checkSelectedSkinClass() as DisplayObject;
-            }
-
-            if (_checkSelectedSkin != null && (selected || _checkBoxChecked)) {
-                _checkBox.rawChildren.addChild(_checkSelectedSkin);
-                (_checkSelectedSkin as IFlexDisplayObject).setActualSize(_checkBox.width,
-                                                                         _checkBox.height);
-            }
-        }
-
-        var over :Boolean = false;
-        if (newOverSkin != _checkOverSkinClass) {
-            if (_checkOverSkin != null && _checkOverSkin.parent == _checkBox) {
-                _checkBox.rawChildren.removeChild(_checkOverSkin);
-                over = true;
-            }
-
-            _checkOverSkinClass = newOverSkin;
-            if (_checkOverSkinClass != null) {
-                _checkOverSkin = new _checkOverSkinClass() as DisplayObject;
-            }
-
-            if (_checkOverSkin != null && over) {
-                _checkBox.rawChildren.addChild(_checkOverSkin);
-                (_checkOverSkin as IFlexDisplayObject).setActualSize(_checkBox.width,
-                                                                     _checkBox.height);
-            }
-        }
-
-        var up :Boolean = false;
-        if (newUpSkin != _checkUpSkinClass) {
-            if (_checkUpSkin != null && _checkUpSkin.parent == _checkBox) {
-                _checkBox.rawChildren.removeChild(_checkUpSkin);
-                up = true;
-            }
-
-            _checkUpSkinClass = newUpSkin;
-            if (_checkUpSkinClass != null) {
-                _checkUpSkin = new _checkUpSkinClass() as DisplayObject;
-            }
-
-            if (_checkUpSkin != null && (up || (!_checkBoxChecked && !over))) {
-                _checkBox.rawChildren.addChild(_checkUpSkin);
-                (_checkUpSkin as IFlexDisplayObject).setActualSize(_checkBox.width,
-                                                                   _checkBox.height);
-            }
-        }
-    }
-
     private static const log :Log = Log.getLog(ChatTab);
 
     protected static const BUTTON_SKIN :String = "buttonSkin";
     protected static const CLOSE_SKIN :String = "closeSkin";
-    protected static const CHECK_UP_SKIN :String = "checkboxUpSkin";
-    protected static const CHECK_OVER_SKIN :String = "checkboxOverSkin";
-    protected static const CHECK_SELECTED_SKIN :String = "checkboxSelectedSkin";
 
     protected static const PADDING :int = 5;
 
@@ -434,23 +281,15 @@ public class ChatTab extends HBox
     protected static const COLOR_GROUP :int = 0xC7DAEA;
 
     protected var _label :Label;
-    protected var _channel :ChatChannel;
+    protected var _channel :MsoyChatChannel;
     protected var _ctx :MsoyContext;
     protected var _bar :ChatTabBar;
     protected var _currentSkin :DisplayObject;
     protected var _buttonSkinClass :Class;
-    protected var _checkBox :Canvas;
     protected var _closeSkin :DisplayObject;
     protected var _closeButton :Canvas;
     protected var _closeSkinClass :Class;
     protected var _shine :UIComponent;
-    protected var _checkUpSkinClass :Class;
-    protected var _checkUpSkin :DisplayObject;
-    protected var _checkOverSkinClass :Class;
-    protected var _checkOverSkin :DisplayObject;
-    protected var _checkSelectedSkinClass :Class;
-    protected var _checkSelectedSkin :DisplayObject;
-    protected var _checkBoxChecked :Boolean;
 }
 }
 

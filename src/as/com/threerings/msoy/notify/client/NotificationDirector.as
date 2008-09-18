@@ -34,8 +34,6 @@ import com.threerings.msoy.client.MemberService;
 import com.threerings.msoy.chat.client.ChatTabBar;
 import com.threerings.msoy.chat.client.ReportingListener;
 
-import com.threerings.msoy.chat.data.ChatChannel;
-
 import com.threerings.msoy.client.Msgs;
 
 import com.threerings.msoy.data.all.FriendEntry;

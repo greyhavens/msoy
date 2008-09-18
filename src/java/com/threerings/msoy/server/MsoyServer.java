@@ -40,8 +40,10 @@ import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.PresentsServer;
 import com.threerings.presents.server.ShutdownManager;
 
+import com.threerings.crowd.chat.server.ChatChannelManager;
 import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.crowd.data.BodyObject;
+import com.threerings.crowd.peer.server.CrowdPeerManager;
 import com.threerings.crowd.server.BodyLocator;
 import com.threerings.crowd.server.PlaceRegistry;
 
@@ -61,8 +63,8 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.admin.server.MsoyAdminManager;
 import com.threerings.msoy.bureau.server.WindowAuthenticator;
 import com.threerings.msoy.bureau.server.WindowClientFactory;
-import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.chat.server.JabberManager;
+import com.threerings.msoy.chat.server.MsoyChatChannelManager;
 import com.threerings.msoy.chat.server.MsoyChatProvider;
 import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.item.server.ItemManager;
@@ -97,6 +99,8 @@ public class MsoyServer extends MsoyBaseServer
             bind(BodyLocator.class).to(MemberLocator.class);
             bind(ChatProvider.class).to(MsoyChatProvider.class);
             bind(PlaceRegistry.class).to(RoomRegistry.class);
+            bind(CrowdPeerManager.class).to(MsoyPeerManager.class);
+            bind(ChatChannelManager.class).to(MsoyChatChannelManager.class);
             // vilya whirled dependencies
             bind(SceneRepository.class).to(MsoySceneRepository.class);
             bind(SceneFactory.class).to(MsoySceneFactory.class);
@@ -289,7 +293,6 @@ public class MsoyServer extends MsoyBaseServer
         _adminMan.init();
         _memberMan.init();
         _friendMan.init();
-        _channelMan.init();
         _jabberMan.init();
         _itemMan.init();
         _swiftlyMan.init(_invmgr);
@@ -434,11 +437,11 @@ public class MsoyServer extends MsoyBaseServer
     /** Handles management of member's friends lists. */
     @Inject protected FriendManager _friendMan;
 
+    /** Handles management of chat channels. */
+    @Inject protected MsoyChatChannelManager _channelMan;
+
     /** Handles item-related services. */
     @Inject protected ItemManager _itemMan;
-
-    /** Handles chat channel-related services. */
-    @Inject protected ChatChannelManager _channelMan;
 
     /** Handles our cuddly little pets. */
     @Inject protected PetManager _petMan;

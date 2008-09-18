@@ -56,7 +56,7 @@ import com.threerings.msoy.client.UberClient;
 
 import com.threerings.msoy.chat.client.ChatInfoProvider;
 import com.threerings.msoy.chat.client.ComicOverlay;
-import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 
 import com.threerings.msoy.world.client.WorldClient;
 import com.threerings.msoy.world.client.WorldContext;
@@ -364,7 +364,7 @@ public class RoomObjectView extends RoomView
     // from ChatDisplay
     public function displayMessage (msg :ChatMessage, alreadyDisplayed :Boolean) :Boolean
     {
-        if (msg is UserMessage && ChatChannel.typeIsForRoom(msg.localtype, _scene.getId())) {
+        if (msg is UserMessage && MsoyChatChannel.typeIsForRoom(msg.localtype, _scene.getId())) {
             var umsg :UserMessage = (msg as UserMessage);
             var speaker :OccupantSprite = getOccupantByName(umsg.getSpeakerDisplayName());
             var avatar :MemberSprite = (speaker as MemberSprite);

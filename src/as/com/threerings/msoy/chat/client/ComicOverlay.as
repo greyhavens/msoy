@@ -27,7 +27,7 @@ import com.threerings.util.Name;
 
 import com.threerings.flash.ColorUtil;
 
-import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 
 import com.threerings.msoy.client.LayeredContainer;
 import com.threerings.msoy.client.MsoyContext;
@@ -110,7 +110,7 @@ public class ComicOverlay extends ChatOverlay
         } else if (_ctx is WorldContext) {
             var scene :MsoyScene = 
                 (_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene;
-            if (scene != null && ChatChannel.typeIsForRoom(msg.localtype, scene.getId())) {
+            if (scene != null && MsoyChatChannel.typeIsForRoom(msg.localtype, scene.getId())) {
                 if (type != IGNORECHAT) {
                     displayed = displayBubble(msg, type);
                 }

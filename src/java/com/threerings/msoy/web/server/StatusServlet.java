@@ -83,7 +83,7 @@ public class StatusServlet extends HttpServlet
         info.name = mnobj.nodeName;
         info.rooms = mnobj.hostedScenes.size();
         info.games = mnobj.hostedGames.size();
-        info.channels = mnobj.hostedChannelz.size();
+        info.channels = mnobj.hostedChannels.size();
 
         for (ClientInfo cinfo : mnobj.clients) {
             if (MemberName.isGuest(((MsoyClientInfo)cinfo).getMemberId())) {

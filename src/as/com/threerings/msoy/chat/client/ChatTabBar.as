@@ -42,7 +42,7 @@ import com.threerings.msoy.client.HeaderBar;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
 
-import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 
 import com.threerings.msoy.data.MemberObject;
 
@@ -173,32 +173,34 @@ public class ChatTabBar extends HBox
     {
         // NOOP
     }
-    
-    public function selectChannelTab (channel :ChatChannel, inFront :Boolean = false) :void
+
+    public function openChannelTab (channel :MsoyChatChannel, andSelect :Boolean) :void
     {
         var index :int = getLocalTypeIndex(channel.toLocalType());
         if (index != -1) {
-            if (inFront) {
-                moveTabToFront(channel.toLocalType());
-                selectedIndex = 0;
-            } else {
+            // update our name (when a room tab is selected, it may have a new name)
+            _tabs[index].text = channel.ident.toString();
+            if (andSelect) {
                 selectedIndex = index;
             }
             return;
         }
 
         // this tab hasn't been created yet.
-        if (inFront) {
-            addTab(new ChatTab(_ctx, this, channel, "" + channel.ident), 0);
-            selectedIndex = 0;
-        } else {
-            addAndSelect(new ChatTab(_ctx, this, channel, "" + channel.ident));
+        addTab(new ChatTab(_ctx, this, channel, "" + channel.ident));
+        if (andSelect) {
+            selectedIndex = _tabs.length - 1;
         }
     }
 
-    public function containsTab (channel :ChatChannel) :Boolean
+    public function containsTab (channel :MsoyChatChannel) :Boolean
     {
         return getLocalTypeIndex(channel.toLocalType()) != -1;
+    }
+
+    public function getCurrentChannel () :MsoyChatChannel
+    {
+        return _tabs.length > 0 ? (_tabs[_selectedIndex] as ChatTab).channel : null;
     }
 
     public function getCurrentLocalType () :String
@@ -210,49 +212,6 @@ public class ChatTabBar extends HBox
     public function chatTabIndex (tab :ChatTab) :int
     {
         return _tabs.indexOf(tab);
-    }
-
-    public function tabChecked (channel :ChatChannel) :Boolean
-    {
-        var index :int = getLocalTypeIndex(channel.toLocalType());
-        if (index == -1) {
-            log.debug("asked for checked on a tab we don't appear to have [" + channel + "]");
-            return false;
-        }
-
-        return (_tabs[index] as ChatTab).checked;
-    }
-
-    public function shouldReconnectChannel (channel :ChatChannel) :Boolean
-    {
-        // if this is anything but a room channel, it should be reconnected.
-        if (channel.type != ChatChannel.ROOM_CHANNEL) {
-            return true;
-        }
-
-        // if we don't have a tab for this channel, assume the caller knows what its doing and say
-        // yes.  We also tell them to reconnect the first tab - if the player is logging in, but
-        // not changing rooms, the first tab needs to be reconnected.
-        var index :int = getLocalTypeIndex(channel.toLocalType());
-        if (index < 1) {
-            return true;
-        }
-
-        // if this room channel does not have its check box checked, it should not be reconnected
-        return (_tabs[index] as ChatTab).checked;
-    }
-
-    public function clearUncheckedRooms (keep :Array) :void
-    {
-        for (var ii :int = 0; ii < _tabs.length; ii++) {
-            var tab :ChatTab = _tabs[ii] as ChatTab;
-            var roomOrGame :Boolean = 
-                ChatChannel.typeOf(tab.localtype) == ChatChannel.ROOM_CHANNEL ||
-                tab.localtype == ChatCodes.PLACE_CHAT_TYPE;
-            if (roomOrGame && !tab.checked && keep.indexOf(tab.localtype) < 0) {
-                removeTabAt(ii);
-            }
-        }
     }
 
     // from ChatDisplay
@@ -304,13 +263,14 @@ public class ChatTabBar extends HBox
         // if this is a message from a member or from jabber, we can pop up a new tab, and set it 
         // to ATTENTION
         var umsg :UserMessage = msg as UserMessage;
-        if (ChatChannel.typeOf(umsg.localtype) == ChatChannel.MEMBER_CHANNEL) {
+        if (MsoyChatChannel.typeOf(umsg.localtype) == MsoyChatChannel.MEMBER_CHANNEL) {
             var member :MemberName = umsg.getSpeakerDisplayName() as MemberName;
-            addTab(new ChatTab(_ctx, this, ChatChannel.makeMemberChannel(member), "" + member));
+            addTab(new ChatTab(_ctx, this, MsoyChatChannel.makeMemberChannel(member), "" + member));
             (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
-        } else if (ChatChannel.typeOf(umsg.localtype) == ChatChannel.JABBER_CHANNEL) {
+        } else if (MsoyChatChannel.typeOf(umsg.localtype) == MsoyChatChannel.JABBER_CHANNEL) {
             var jabberer :JabberName = umsg.getSpeakerDisplayName() as JabberName;
-            addTab(new ChatTab(_ctx, this, ChatChannel.makeJabberChannel(jabberer), "" + jabberer));
+            addTab(new ChatTab(_ctx, this,
+                    MsoyChatChannel.makeJabberChannel(jabberer), "" + jabberer));
             (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
         } else {
             log.info("Dropping unknown user message [msg=" + msg + ", localtype=" + 
@@ -474,12 +434,6 @@ public class ChatTabBar extends HBox
         }
 
         checkScrollTabs();
-    }
-
-    protected function addAndSelect (tab :ChatTab) :void
-    {
-        addTab(tab);
-        selectedIndex = _tabs.length - 1;
     }
 
     protected function selectTab (event :Event) :void

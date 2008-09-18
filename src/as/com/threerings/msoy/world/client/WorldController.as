@@ -28,7 +28,6 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.whirled.data.Scene;
 import com.threerings.whirled.data.SceneObject;
 
-import com.threerings.msoy.chat.client.ChatChannelController;
 import com.threerings.msoy.chat.client.IMRegisterDialog;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.group.data.all.GroupMembership;
@@ -56,8 +55,6 @@ import com.threerings.msoy.client.PlaceBox;
 import com.threerings.msoy.client.Prefs;
 import com.threerings.msoy.client.TopPanel;
 import com.threerings.msoy.client.UberClient;
-
-import com.threerings.msoy.chat.data.ChatChannel;
 
 import com.threerings.msoy.data.MemberLocation;
 import com.threerings.msoy.data.MemberObject;
@@ -1182,13 +1179,10 @@ public class WorldController extends MsoyController
         if (scene != null) {
             _wctx.getMsoyClient().setWindowTitle(scene.getName());
             headerBar.setLocationName(scene.getName());
-            var roomChannel :ChatChannel =
-                ChatChannel.makeRoomChannel(new RoomName(scene.getName(), scene.getId()));
-            headerBar.getChatTabs().clearUncheckedRooms([roomChannel.toLocalType()]);
 
             // subscribe to the new scene's channel, if we haven't already
             var roomName :RoomName = new RoomName(scene.getName(), scene.getId());
-            _wctx.getMsoyChatDirector().openChannel(roomName, true);
+            _wctx.getMsoyChatDirector().openChannel(roomName);
 
             // update the owner link
             var model :MsoySceneModel = scene.getSceneModel() as MsoySceneModel;

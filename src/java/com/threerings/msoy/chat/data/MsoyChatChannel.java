@@ -3,8 +3,11 @@
 
 package com.threerings.msoy.chat.data;
 
-import com.threerings.io.SimpleStreamableObject;
+import com.google.common.collect.Comparators;
+
 import com.threerings.util.Name;
+
+import com.threerings.crowd.chat.data.ChatChannel;
 
 import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
@@ -15,9 +18,9 @@ import com.threerings.msoy.data.all.RoomName;
 import static com.threerings.msoy.Log.log;
 
 /**
- * Defines a particular chat channel.
+ * Defines Whirled's chat channel types.
  */
-public class ChatChannel extends SimpleStreamableObject
+public class MsoyChatChannel extends ChatChannel
 {
     /** A chat channel between two players. Implemented using tells. */
     public static final int MEMBER_CHANNEL = 1;
@@ -51,7 +54,7 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public static ChatChannel makeMemberChannel (MemberName member)
     {
-        return new ChatChannel(MEMBER_CHANNEL, member);
+        return new MsoyChatChannel(MEMBER_CHANNEL, member);
     }
 
     /**
@@ -59,7 +62,7 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public static ChatChannel makeGroupChannel (GroupName group)
     {
-        return new ChatChannel(GROUP_CHANNEL, group);
+        return new MsoyChatChannel(GROUP_CHANNEL, group);
     }
 
     /**
@@ -67,7 +70,7 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public static ChatChannel makePrivateChannel (ChannelName channel)
     {
-        return new ChatChannel(PRIVATE_CHANNEL, channel);
+        return new MsoyChatChannel(PRIVATE_CHANNEL, channel);
     }
 
     /**
@@ -75,7 +78,7 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public static ChatChannel makeRoomChannel (RoomName room)
     {
-        return new ChatChannel(ROOM_CHANNEL, room);
+        return new MsoyChatChannel(ROOM_CHANNEL, room);
     }
 
     /**
@@ -83,11 +86,11 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public static ChatChannel makeJabberChannel (JabberName channel)
     {
-        return new ChatChannel(JABBER_CHANNEL, channel);
+        return new MsoyChatChannel(JABBER_CHANNEL, channel);
     }
 
     /** Used for unserialization. */
-    public ChatChannel ()
+    public MsoyChatChannel ()
     {
     }
 
@@ -99,14 +102,16 @@ public class ChatChannel extends SimpleStreamableObject
         return type + ":" + getId(ident);
     }
 
-    @Override // from Object
-    public boolean equals (Object other)
+    @Override // from ChatChannel
+    public String getLockName ()
     {
-        if (!(other instanceof ChatChannel)) {
-            return false;
-        }
-        ChatChannel oc = (ChatChannel)other;
-        return type == oc.type && ident.equals(oc.ident);
+        return toLocalType();
+    }
+
+    @Override // from ChatChannel
+    public int compareTo (ChatChannel other)
+    {
+        return toString().compareTo(other.toString());
     }
 
     @Override // from Object
@@ -121,7 +126,7 @@ public class ChatChannel extends SimpleStreamableObject
         return toLocalType();
     }
 
-    protected ChatChannel (int type, Name ident)
+    protected MsoyChatChannel (int type, Name ident)
     {
         this.type = type;
         this.ident = ident;
@@ -150,5 +155,4 @@ public class ChatChannel extends SimpleStreamableObject
             return null;
         }
     }
-
 }

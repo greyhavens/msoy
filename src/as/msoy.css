@@ -428,9 +428,6 @@ TabNavigator, TabBar {
   fontFamily: Arial;
   fontWeight: bold;
   closeSkin: Embed(source="../../rsrc/media/skins/tab/close_small.png");
-  checkboxUpSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small.png");
-  checkboxOverSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small_over.png");
-  checkboxSelectedSkin: Embed(source="../../rsrc/media/skins/tab/checkbox_small_selected.png");
 }
 
 .unselectedRoomTab, .attentionRoomTab {
@@ -461,13 +458,6 @@ TabNavigator, TabBar {
 .selectedGroupTab {
   buttonSkin: Embed(source="../../rsrc/media/skins/tab/tab_group_selected.png",
     scaleGridTop="3", scaleGridBottom="17", scaleGridLeft="3", scaleGridRight="17");
-}
-
-.tabCheckBox {
-  downSkin: Embed(source="../../rsrc/media/skins/checkbox/tab_down.png");
-  upSkin: Embed(source="../../rsrc/media/skins/checkbox/tab.png");
-  overSkin: Embed(source="../../rsrc/media/skins/checkbox/tab_over.png");
-  selectedUpSkin: Embed(source="../../rsrc/media/skins/checkbox/tab_selected.png");
 }
 
 .controlBar, .headerBar { 

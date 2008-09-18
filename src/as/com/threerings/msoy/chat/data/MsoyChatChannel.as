@@ -7,10 +7,12 @@ import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 import com.threerings.io.SimpleStreamableObject;
 
-import com.threerings.util.Hashable;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 import com.threerings.util.StringUtil;
+
+import com.threerings.crowd.chat.data.ChatChannel;
+import com.threerings.crowd.chat.data.ChatCodes;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.GroupName;
@@ -21,8 +23,7 @@ import com.threerings.msoy.data.all.JabberName;
 /**
  * Defines a particular chat channel.
  */
-public class ChatChannel extends SimpleStreamableObject
-    implements Hashable
+public class MsoyChatChannel extends ChatChannel
 {
     /** A chat channel between two players. Implemented using tells. */
     public static const MEMBER_CHANNEL :int = 1;
@@ -49,41 +50,41 @@ public class ChatChannel extends SimpleStreamableObject
     /**
      * Creates a channel identifier for a channel communicating with the specified member.
      */
-    public static function makeMemberChannel (member :MemberName) :ChatChannel
+    public static function makeMemberChannel (member :MemberName) :MsoyChatChannel
     {
-        return new ChatChannel(MEMBER_CHANNEL, member);
+        return new MsoyChatChannel(MEMBER_CHANNEL, member);
     }
 
     /**
      * Creates a channel identifier for the specified group's channel.
      */
-    public static function makeGroupChannel (group :GroupName) :ChatChannel
+    public static function makeGroupChannel (group :GroupName) :MsoyChatChannel
     {
-        return new ChatChannel(GROUP_CHANNEL, group);
+        return new MsoyChatChannel(GROUP_CHANNEL, group);
     }
 
     /**
      * Creates a channel identifier for the specified named private channel.
      */
-    public static function makePrivateChannel (channel :ChannelName) :ChatChannel
+    public static function makePrivateChannel (channel :ChannelName) :MsoyChatChannel
     {
-        return new ChatChannel(PRIVATE_CHANNEL, channel);
+        return new MsoyChatChannel(PRIVATE_CHANNEL, channel);
     }
 
     /**
      * Creates a channel identifier for the specified room.
      */
-    public static function makeRoomChannel (room :RoomName) :ChatChannel
+    public static function makeRoomChannel (room :RoomName) :MsoyChatChannel
     {
-        return new ChatChannel(ROOM_CHANNEL, room);
+        return new MsoyChatChannel(ROOM_CHANNEL, room);
     }
 
     /**
      * Creates a channel identifier for the specified named jabber channel.
      */
-    public static function makeJabberChannel (contact :JabberName) :ChatChannel
+    public static function makeJabberChannel (contact :JabberName) :MsoyChatChannel
     {
-        return new ChatChannel(JABBER_CHANNEL, contact);
+        return new MsoyChatChannel(JABBER_CHANNEL, contact);
     }
 
     /**
@@ -94,6 +95,10 @@ public class ChatChannel extends SimpleStreamableObject
         if (localtype == null) {
             log.warning("asked to determine typeOf a null localtype");
             return -1;
+        }
+
+        if (localtype == ChatCodes.PLACE_CHAT_TYPE) {
+            return ROOM_CHANNEL;
         }
 
         try {
@@ -110,7 +115,7 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public static function infoOf (localtype :String) :String
     {
-        return localtype.substring(2);
+        return (localtype.charAt(1) == ':') ? localtype.substring(2) : "";
     }
 
     /**
@@ -118,26 +123,33 @@ public class ChatChannel extends SimpleStreamableObject
      */
     public static function typeIsForRoom (localType :String, sceneId :int) :Boolean
     {
-        return localType == ROOM_CHANNEL + ":" + getId(new RoomName(null, sceneId));
+        return localType == ChatCodes.PLACE_CHAT_TYPE;
     }
 
-    public function ChatChannel (type :int = 0, ident :Name = null)
+    public function MsoyChatChannel (type :int = 0, ident :Name = null)
     {
         this.type = type;
         this.ident = ident;
     }
 
-    // from Object
-    public function hashCode () :int
+    /**
+     * Returns a string we can use to register this channel with the ChatDirector.
+     */
+    public function toLocalType () :String
     {
-        return type ^ ident.hashCode();
+        return (type == ROOM_CHANNEL) ? ChatCodes.PLACE_CHAT_TYPE : (type + ":" + getId(ident));
     }
 
-    // from Object
-    public function equals (other :Object) :Boolean
+    // from ChatChannel
+    override public function compareTo (other :Object) :int
     {
-        var oc :ChatChannel = (other as ChatChannel);
-        return (oc != null) && type == oc.type && ident.equals(oc.ident);
+        return toString().localeCompare(other.toString());
+    }
+
+    // from ChatChannel
+    override public function hashCode () :int
+    {
+        return type ^ ident.hashCode();
     }
 
     // from Object
@@ -146,12 +158,20 @@ public class ChatChannel extends SimpleStreamableObject
         return toLocalType();
     }
 
-    /**
-     * Returns a string we can use to register this channel with the ChatDirector.
-     */
-    public function toLocalType () :String
+    // from interface Streamable
+    override public function readObject (ins :ObjectInputStream) :void
     {
-        return type + ":" + getId(ident);
+        super.readObject(ins);
+        type = ins.readInt();
+        ident = (ins.readObject() as Name);
+    }
+
+    // from interface Streamable
+    override public function writeObject (out :ObjectOutputStream) :void
+    {
+        super.writeObject(out);
+        out.writeInt(type);
+        out.writeObject(ident);
     }
 
     protected static function getId (name :Name) :String
@@ -176,22 +196,6 @@ public class ChatChannel extends SimpleStreamableObject
             log.warning("ChatChannel unable to determine id! [" + name + "]");
             return null;
         }
-    }
-
-    // from interface Streamable
-    override public function readObject (ins :ObjectInputStream) :void
-    {
-        super.readObject(ins);
-        type = ins.readInt();
-        ident = (ins.readObject() as Name);
-    }
-
-    // from interface Streamable
-    override public function writeObject (out :ObjectOutputStream) :void
-    {
-        super.writeObject(out);
-        out.writeInt(type);
-        out.writeObject(ident);
     }
 
     private static const log :Log = Log.getLog(ChatChannel);

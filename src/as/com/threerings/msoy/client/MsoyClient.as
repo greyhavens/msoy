@@ -36,7 +36,7 @@ import com.threerings.presents.net.BootstrapData;
 import com.threerings.crowd.client.CrowdClient;
 
 import com.threerings.msoy.chat.client.MsoyChatDirector;
-import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.client.MsoyLogConfig;
 import com.threerings.msoy.client.TrackingCookie;
 

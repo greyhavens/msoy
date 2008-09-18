@@ -36,7 +36,6 @@ import com.threerings.crowd.peer.server.CrowdPeerManager;
 
 import com.threerings.whirled.data.ScenePlace;
 
-import com.threerings.msoy.chat.data.ChatChannel;
 import com.threerings.msoy.web.data.ConnectConfig;
 
 import com.threerings.msoy.bureau.server.BureauLauncherServerClient;
@@ -51,7 +50,6 @@ import com.threerings.msoy.server.MsoyServer;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 
-import com.threerings.msoy.peer.data.HostedChannel;
 import com.threerings.msoy.peer.data.HostedGame;
 import com.threerings.msoy.peer.data.HostedProject;
 import com.threerings.msoy.peer.data.HostedRoom;
@@ -112,12 +110,6 @@ public class MsoyPeerManager extends CrowdPeerManager
     public static NodeObject.Lock getProjectLock (int projectId)
     {
         return new NodeObject.Lock("ProjectHost", projectId);
-    }
-
-    /** Returns a lock used to claim resolution of the specified chat channel. */
-    public static NodeObject.Lock getChannelLock (ChatChannel channel)
-    {
-        return new NodeObject.Lock("ChannelHost", HostedChannel.getKey(channel));
     }
 
     /**
@@ -223,21 +215,6 @@ public class MsoyPeerManager extends CrowdPeerManager
             public ConnectConfig apply (NodeObject nodeobj) {
                 HostedProject info = ((MsoyNodeObject) nodeobj).hostedProjects.get(projectId);
                 return (info == null) ? null : info.createConnectConfig();
-            }
-        });
-    }
-
-    /**
-     * Returns the node of the peer that is hosting the specified chat channel, or null if no peer
-     * has published that they are hosting the channel.
-     */
-    public MsoyNodeObject getChannelHost (final ChatChannel channel)
-    {
-        final Comparable<?> channelKey = HostedChannel.getKey(channel);
-        return lookupNodeDatum(new Function<NodeObject,MsoyNodeObject>() {
-            public MsoyNodeObject apply (NodeObject nodeobj) {
-                MsoyNodeObject node = (MsoyNodeObject) nodeobj;
-                return node.hostedChannelz.get(channelKey) == null ? null : node;
             }
         });
     }

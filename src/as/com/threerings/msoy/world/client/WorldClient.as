@@ -54,7 +54,7 @@ import com.threerings.msoy.data.all.ChannelName;
 import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.MemberName;
 
-import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 
 import com.threerings.msoy.notify.data.LevelUpNotification;
 import com.threerings.msoy.notify.data.ReleaseNotesNotification;
@@ -287,11 +287,11 @@ public class WorldClient extends MsoyClient
     protected function externalOpenChannel (type :int, name :String, id :int) :void
     {
         var nameObj :Name;
-        if (type == ChatChannel.MEMBER_CHANNEL) {
+        if (type == MsoyChatChannel.MEMBER_CHANNEL) {
             nameObj = new MemberName(name, id);
-        } else if (type == ChatChannel.GROUP_CHANNEL) {
+        } else if (type == MsoyChatChannel.GROUP_CHANNEL) {
             nameObj = new GroupName(name, id);
-        } else if (type == ChatChannel.PRIVATE_CHANNEL) {
+        } else if (type == MsoyChatChannel.PRIVATE_CHANNEL) {
             nameObj = new ChannelName(name, id);
         } else {
             throw new Error("Unknown channel type: " + type);

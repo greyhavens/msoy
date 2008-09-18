@@ -25,12 +25,11 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.crowd.chat.data.ChatCodes;
+import com.threerings.crowd.chat.server.SpeakUtil;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceRegistry;
 
-import com.threerings.msoy.chat.data.ChatChannel;
-import com.threerings.msoy.chat.server.ChatChannelManager;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
 import com.threerings.msoy.data.MemberObject;
@@ -275,12 +274,8 @@ public class PetManager
             }
 
             // it's in the room, let's chat
-            MsoyScene scene = (MsoyScene) mgr.getScene();
-            ChatChannel channel = ChatChannel.makeRoomChannel(
-                new RoomName(scene.getName(), scene.getId()));
-            _channelMan.forwardSpeak(
-                caller, petInfo.username, channel, message, ChatCodes.DEFAULT_MODE, listener);
-            return;
+            SpeakUtil.sendSpeak(
+                mgr.getPlaceObject(), petInfo.username, null, message, ChatCodes.DEFAULT_MODE);
         }
 
         listener.requestProcessed();
@@ -357,7 +352,6 @@ public class PetManager
     protected Injector _injector;
 
     @Inject protected MsoyPeerManager _peerMan;
-    @Inject protected ChatChannelManager _channelMan;
     @Inject protected PlaceRegistry _placeReg;
     @Inject protected SceneRegistry _sceneReg;
     @Inject protected PetRepository _petRepo;

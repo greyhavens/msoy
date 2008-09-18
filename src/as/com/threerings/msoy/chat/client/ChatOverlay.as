@@ -58,8 +58,7 @@ import com.threerings.whirled.spot.data.SpotCodes;
 
 import com.threerings.msoy.utils.TextUtil;
 
-import com.threerings.msoy.chat.data.ChannelMessage;
-import com.threerings.msoy.chat.data.ChatChannel;
+import com.threerings.msoy.chat.data.MsoyChatChannel;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.LayeredContainer;
@@ -164,9 +163,9 @@ public class ChatOverlay
 
         // if a member/jabber tell tab gets popped open behind the scenes, pretend that we just
         // saw it so that the messages will get displayed in subtitle mode when we switch to it.
-        var channelType :int = ChatChannel.typeOf(msg.localtype);
-        if ((channelType == ChatChannel.MEMBER_CHANNEL || 
-             channelType == ChatChannel.JABBER_CHANNEL) &&
+        var channelType :int = MsoyChatChannel.typeOf(msg.localtype);
+        if ((channelType == MsoyChatChannel.MEMBER_CHANNEL || 
+             channelType == MsoyChatChannel.JABBER_CHANNEL) &&
             !_localtypeDisplayTimes.containsKey(msg.localtype)) {
             _localtypeDisplayTimes.put(msg.localtype, getTimer());
         }
@@ -244,7 +243,9 @@ public class ChatOverlay
 
     public function setLocalType (localtype :String) :void
     {
-        if (_localtype == localtype) {
+        // avoid fooling around if we didn't change our localtype, except for place chat where we
+        // need to refresh things when we switch rooms which doesn't change the localtype
+        if (_localtype == localtype && localtype != ChatCodes.PLACE_CHAT_TYPE) {
             return;
         }
 
@@ -703,7 +704,7 @@ public class ChatOverlay
                 var currentScene :MsoyScene = 
                     (_ctx as WorldContext).getSceneDirector().getScene() as MsoyScene;
                 if (currentScene != null && 
-                    ChatChannel.typeIsForRoom(_localtype, currentScene.getId())) {
+                    MsoyChatChannel.typeIsForRoom(_localtype, currentScene.getId())) {
                     return true;
                 }
 
@@ -847,7 +848,7 @@ public class ChatOverlay
      */
     protected function useQuotes (msg: ChatMessage, type :int) :Boolean
     {
-        return (modeOf(type) != EMOTE) && !(msg is ChannelMessage);
+        return (modeOf(type) != EMOTE) /* TODO: && !(msg is ChannelMessage) */;
     }
 
     /**
@@ -995,13 +996,12 @@ public class ChatOverlay
 
         } else if (msg is UserMessage) {
             var type :int;
-            var channelType :int = ChatChannel.typeOf(localtype);
+            var channelType :int = MsoyChatChannel.typeOf(localtype);
             // TODO: jabber messages should probably have their own format
-            if (channelType == ChatChannel.MEMBER_CHANNEL || 
-                channelType == ChatChannel.JABBER_CHANNEL) {
+            if (channelType == MsoyChatChannel.MEMBER_CHANNEL || 
+                channelType == MsoyChatChannel.JABBER_CHANNEL) {
                 type = TELL;
-            } else if (msg is ChannelMessage && 
-                ChatChannel.typeOf(localtype) != ChatChannel.ROOM_CHANNEL) {
+            } else if (channelType != MsoyChatChannel.ROOM_CHANNEL) {
                 type = CHANNEL;
             } else {
                 type = PLACE;
