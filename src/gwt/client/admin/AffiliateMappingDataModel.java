@@ -7,12 +7,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.PagedResult;
 
-import com.threerings.msoy.admin.gwt.AdminService;
 import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.admin.gwt.AffiliateMapping;
 
 import client.util.PagedServiceDataModel;
-import client.util.ServiceUtil;
 
 public class AffiliateMappingDataModel extends PagedServiceDataModel<AffiliateMapping>
 {

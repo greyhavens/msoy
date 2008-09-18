@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
@@ -68,7 +67,7 @@ public class BalancePanel extends PagedTable<MoneyTransaction>
         header.add(MsoyUI.createLabel("How", null));
         header.add(MsoyUI.createLabel("Debit", null));
         header.add(MsoyUI.createLabel("Credit", null));
-        
+
         return header;
     }
 
