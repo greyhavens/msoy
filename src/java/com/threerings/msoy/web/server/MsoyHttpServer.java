@@ -58,7 +58,9 @@ import com.threerings.msoy.landing.gwt.LandingService;
 import com.threerings.msoy.landing.server.LandingServlet;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.server.MailServlet;
+import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.InviteService;
+import com.threerings.msoy.person.server.GalleryServlet;
 import com.threerings.msoy.person.server.InviteServlet;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.server.MeServlet;
@@ -128,7 +130,7 @@ public class MsoyHttpServer extends Server
     {
         protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
             throws ServletException, IOException {
-            
+
             // TODO: handle this for more than just world-client.swf?
             if (req.getRequestURI().equals("/clients/world-client.swf")) {
                 rsp.setContentLength(0);
@@ -146,7 +148,7 @@ public class MsoyHttpServer extends Server
         protected void addReferralCookie (HttpServletRequest req, HttpServletResponse rsp) {
             // do we already know the referer? if so, we're done
             if (HttpReferrerCookie.exists(req)) {
-                return; 
+                return;
             }
             // otherwise, this is the first time we got loaded - store the HTTP referer
             Object ref = req.getHeader("Referer");
@@ -175,7 +177,7 @@ public class MsoyHttpServer extends Server
                         }
                         return _out;
                     }
-                    // We explicitly mirror our parent class' deprecation of these methods to 
+                    // We explicitly mirror our parent class' deprecation of these methods to
                     // prevent the compiler from complaining.
                     @Deprecated
                     public String encodeRedirectUrl (String arg0) {
@@ -274,6 +276,7 @@ public class MsoyHttpServer extends Server
         SERVLETS.put(CatalogService.ENTRY_POINT, CatalogServlet.class);
         SERVLETS.put(CommentService.ENTRY_POINT, CommentServlet.class);
         SERVLETS.put(ForumService.ENTRY_POINT, ForumServlet.class);
+        SERVLETS.put(GalleryService.ENTRY_POINT, GalleryServlet.class);
         SERVLETS.put(GameService.ENTRY_POINT, GameServlet.class);
         SERVLETS.put(GroupService.ENTRY_POINT, GroupServlet.class);
         SERVLETS.put(InviteService.ENTRY_POINT, InviteServlet.class);
