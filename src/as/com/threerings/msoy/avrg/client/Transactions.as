@@ -66,7 +66,6 @@ public class Transactions
             var idx :int = current.indexOf(client);
             if (idx < 0) {
                 current.push(client);
-                log.debug("Entering transaction [client=" + client + "]");
                 client.getInvocationDirector().startTransaction();
             }
         }
