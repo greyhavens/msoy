@@ -33,8 +33,6 @@ import com.threerings.crowd.chat.data.SystemMessage;
 import com.threerings.crowd.chat.data.TellFeedbackMessage;
 import com.threerings.crowd.chat.data.UserMessage;
 
-import com.threerings.whirled.data.Scene;
-
 import com.whirled.ui.PlayerList;
 
 import com.threerings.msoy.client.ControlBar;
@@ -48,8 +46,6 @@ import com.threerings.msoy.data.all.GroupName;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.RoomName;
-
-import com.threerings.msoy.world.client.WorldContext;
 
 import com.threerings.msoy.chat.data.MsoyChatChannel;
 import com.threerings.msoy.chat.data.JabberMarshaller;
@@ -66,7 +62,7 @@ public class MsoyChatDirector extends ChatDirector
     public function MsoyChatDirector (ctx :MsoyContext)
     {
         super(ctx, ctx.getMessageManager(), MsoyCodes.CHAT_MSGS);
-        _wctx = ctx;
+        _mctx = ctx;
 
         // let the compiler know that these must be compiled into the client
         var c :Class = JabberMarshaller;
@@ -137,12 +133,12 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function registerIM (gateway :String, username :String, password :String) :void
     {
-        var svc :JabberService = (_wctx.getClient().requireService(JabberService) as JabberService);
-        svc.registerIM(_wctx.getClient(), gateway, username, password, new InvocationAdapter(
+        var svc :JabberService = (_mctx.getClient().requireService(JabberService) as JabberService);
+        svc.registerIM(_mctx.getClient(), gateway, username, password, new InvocationAdapter(
             function (cause :String) :void {
                 var msg :String = MessageBundle.compose(
                     "e.im_register_failed", "m." + gateway, cause);
-                _wctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
+                _mctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
             }));
     }
 
@@ -151,12 +147,12 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function unregisterIM (gateway :String) :void
     {
-        var svc :JabberService = (_wctx.getClient().requireService(JabberService) as JabberService);
-        svc.unregisterIM(_wctx.getClient(), gateway, new InvocationAdapter(
+        var svc :JabberService = (_mctx.getClient().requireService(JabberService) as JabberService);
+        svc.unregisterIM(_mctx.getClient(), gateway, new InvocationAdapter(
             function (cause :String) :void {
                 var msg :String = MessageBundle.compose(
                     "e.im_unregister_failed", "m." + gateway, MessageBundle.taint(cause));
-                _wctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
+                _mctx.displayFeedback(MsoyCodes.CHAT_MSGS, msg);
             }));
     }
 
@@ -166,7 +162,7 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function requestJabber (target :JabberName, msg :String, feedbackLocaltype :String) :void
     {
-        _jservice.sendMessage(_wctx.getClient(), target, msg, new ResultAdapter(
+        _jservice.sendMessage(_mctx.getClient(), target, msg, new ResultAdapter(
             function (cause :String) :void {
                 var msg :String = MessageBundle.compose(
                     "e.im_tell_failed", MessageBundle.taint(cause));
@@ -186,7 +182,7 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function requestChannelSpeak (channel :MsoyChatChannel, msg :String) :void
     {
-        _csservice.speak(_wctx.getClient(), channel, msg, 0); // TODO: mode?
+        _csservice.speak(_mctx.getClient(), channel, msg, 0); // TODO: mode?
     }
 
     public function getPlayerList (ltype :String) :PlayerList
@@ -245,7 +241,7 @@ public class MsoyChatDirector extends ChatDirector
         }
         // create a new one if appropriate
         if (place != null) {
-            _roomOccList = new RoomOccupantList(_wctx, place);
+            _roomOccList = new RoomOccupantList(_mctx, place);
         }
     }
 
@@ -303,7 +299,7 @@ public class MsoyChatDirector extends ChatDirector
         }
     }
 
-    protected var _wctx :MsoyContext;
+    protected var _mctx :MsoyContext;
     protected var _chatTabs :ChatTabBar;
     protected var _chatHistory :HistoryList;
     protected var _roomOccList :RoomOccupantList;

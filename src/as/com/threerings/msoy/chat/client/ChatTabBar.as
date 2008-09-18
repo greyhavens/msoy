@@ -49,6 +49,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.JabberName;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.RoomName;
 
 import com.threerings.msoy.game.client.GameChatDirector;
 
@@ -112,8 +113,8 @@ public class ChatTabBar extends HBox
         return (_tabs[0] as ChatTab).text;
     }
 
-    /** 
-     * Will make sure the first tab in the list is a non-channel based tab (currently just games), 
+    /**
+     * Will make sure the first tab in the list is a non-channel based tab (currently just games),
      * and titles it with the given name.
      */
     public function set locationName (name :String) :void
@@ -129,7 +130,7 @@ public class ChatTabBar extends HBox
                 }
             }
         } else if (name != null) {
-            if (_tabs.length == 0 || 
+            if (_tabs.length == 0 ||
                 ((_tabs[0] as ChatTab).localtype != ChatCodes.PLACE_CHAT_TYPE)) {
                 addTab(new ChatTab(_ctx, this, null, name), 0);
             } else {
@@ -138,18 +139,18 @@ public class ChatTabBar extends HBox
             selectedIndex = 0;
         }
     }
-    
+
     public function memberObjectUpdated (obj :MemberObject) :void
     {
         obj.addListener(this);
     }
-    
+
     // from SetListener
     public function entryAdded (event :EntryAddedEvent) :void
     {
         // NOOP
     }
-    
+
     // from SetListener
     public function entryUpdated (event :EntryUpdatedEvent) :void
     {
@@ -164,10 +165,10 @@ public class ChatTabBar extends HBox
                         break;
                     }
                 }
-            }   
+            }
         }
     }
-    
+
     // from SetListener
     public function entryRemoved (event :EntryRemovedEvent) :void
     {
@@ -178,8 +179,6 @@ public class ChatTabBar extends HBox
     {
         var index :int = getLocalTypeIndex(channel.toLocalType());
         if (index != -1) {
-            // update our name (when a room tab is selected, it may have a new name)
-            _tabs[index].text = channel.ident.toString();
             if (andSelect) {
                 selectedIndex = index;
             }
@@ -187,7 +186,7 @@ public class ChatTabBar extends HBox
         }
 
         // this tab hasn't been created yet.
-        addTab(new ChatTab(_ctx, this, channel, "" + channel.ident));
+        addTab(new ChatTab(_ctx, this, channel, ""+channel.ident));
         if (andSelect) {
             selectedIndex = _tabs.length - 1;
         }
@@ -198,6 +197,27 @@ public class ChatTabBar extends HBox
         return getLocalTypeIndex(channel.toLocalType()) != -1;
     }
 
+    /**
+     * Called by the chat director to let us know when we enter a room.
+     */
+    public function locationDidChange (name :RoomName) :void
+    {
+        // update our name (when a room tab is selected, it may have a new name)
+        if (name != null) {
+            if (_tabs.length == 0) {
+                // create our room chat tab
+                addTab(new ChatTab(_ctx, this, MsoyChatChannel.makeRoomChannel(name), ""+name));
+                selectedIndex = 0;
+            } else {
+                // update our room's chat tab name
+                _tabs[0].text = name.toString();
+                // and clear out pending chat if we're not in history mode
+            }
+        } else if (_tabs.length > 0) {
+            _tabs[0].text = "";
+        }
+    }
+
     public function getCurrentChannel () :MsoyChatChannel
     {
         return _tabs.length > 0 ? (_tabs[_selectedIndex] as ChatTab).channel : null;
@@ -205,8 +225,8 @@ public class ChatTabBar extends HBox
 
     public function getCurrentLocalType () :String
     {
-        return _tabs.length > 0 ? (_tabs[_selectedIndex] as ChatTab).localtype : 
-            ChatCodes.PLACE_CHAT_TYPE; 
+        return _tabs.length > 0 ? (_tabs[_selectedIndex] as ChatTab).localtype :
+            ChatCodes.PLACE_CHAT_TYPE;
     }
 
     public function chatTabIndex (tab :ChatTab) :int
@@ -234,7 +254,7 @@ public class ChatTabBar extends HBox
         }
 
         var index :int = -1;
-        // If this is a SystemMessage, broadcast with PLACE_CHAT_TYPE localtype, 
+        // If this is a SystemMessage, broadcast with PLACE_CHAT_TYPE localtype,
         // it's aimed for the first tab, regardless of that tab's actual localtype
         if (msg.localtype == ChatCodes.PLACE_CHAT_TYPE &&
             (msg is SystemMessage ||
@@ -260,7 +280,7 @@ public class ChatTabBar extends HBox
             return false;
         }
 
-        // if this is a message from a member or from jabber, we can pop up a new tab, and set it 
+        // if this is a message from a member or from jabber, we can pop up a new tab, and set it
         // to ATTENTION
         var umsg :UserMessage = msg as UserMessage;
         if (MsoyChatChannel.typeOf(umsg.localtype) == MsoyChatChannel.MEMBER_CHANNEL) {
@@ -273,48 +293,11 @@ public class ChatTabBar extends HBox
                     MsoyChatChannel.makeJabberChannel(jabberer), "" + jabberer));
             (_tabs[_tabs.length - 1] as ChatTab).setVisualState(ChatTab.ATTENTION);
         } else {
-            log.info("Dropping unknown user message [msg=" + msg + ", localtype=" + 
+            log.info("Dropping unknown user message [msg=" + msg + ", localtype=" +
                       msg.localtype + ", mode=" + umsg.mode + "]");
         }
 
         return false;
-    }
-
-    public function getName (localtype :String) :String
-    {
-        var index :int = getLocalTypeIndex(localtype);
-        if (index < 0) {
-            return null;
-        }
-
-        return (_tabs[index] as ChatTab).text;
-    }
-
-    public function setName (localtype :String, name :String) :void
-    {
-        var index :int = getLocalTypeIndex(localtype);
-        if (index < 0) {
-            return;
-        }
-
-        (_tabs[index] as ChatTab).text = name;
-    }
-
-    protected function moveTabToFront (localtype :String) :void
-    {
-        var index :int = getLocalTypeIndex(localtype);
-        if (index == -1) {
-            log.debug("asked to move unknown tab to front [" + localtype + "]");
-            return;
-        }
-
-        var selected :Boolean = _selectedIndex == index;
-        var tab :ChatTab = _tabs[index];
-        removeTabAt(index, false);
-        addTab(tab, 0);
-        if (selected) {
-            selectedIndex = 0;
-        }
     }
 
     override protected function createChildren () :void
@@ -375,7 +358,7 @@ public class ChatTabBar extends HBox
     {
         callLater(function () :void {
             _leftScroll.visible = display && horizontalScrollPosition > 0;
-            _rightScroll.visible = 
+            _rightScroll.visible =
                 display && horizontalScrollPosition < maxHorizontalScrollPosition;
         });
         if (!display) {
