@@ -202,32 +202,48 @@ public class GameGenrePanel extends FlowPanel
 
                 FlowPanel playButtonsPanel = new FlowPanel();
                 playButtonsPanel.setStyleName("PlayButtonsPanel");
-                // add single player button
-                if (game.minPlayers == 1) {
-                    ClickListener singleClick = new ClickListener() {
-                        public void onClick (Widget sender) {
-                            Link.go(Pages.WORLD, Args.compose("game", "s", "" + game.gameId));
-                        }
-                    };
-                    PushButton single = MsoyUI.createButton(
-                        MsoyUI.MEDIUM_THIN, "Play Just Me", singleClick);
-                    single.addStyleName("PlaySingleButton");
-                    playButtonsPanel.add(single);
-                    if (game.maxPlayers > 1) {
-                        playButtonsPanel.add(WidgetUtil.makeShim(5, 5));
+                if (game.isInWorld) {
+                    if (game.groupId != 0) {
+                        ClickListener singleClick = new ClickListener() {
+                            public void onClick (Widget sender) {
+                                Link.go(Pages.WORLD, "g" + game.groupId);
+                            }
+                        };
+                        PushButton gotoWhirled = MsoyUI.createButton(
+                            MsoyUI.MEDIUM_THIN, "Go To Whirled", singleClick);
+                        gotoWhirled.addStyleName("PlaySingleButton");
+                        playButtonsPanel.add(gotoWhirled);
+                    } else {
+                        // Just leave a blank area if there is no whirled.
+                        playButtonsPanel.add(MsoyUI.createLabel("", null));
                     }
-                }
-                // add multiplayer button
-                if (game.maxPlayers > 1) {
-                    ClickListener multiClick = new ClickListener() {
-                        public void onClick (Widget sender) {
-                            Link.go(Pages.WORLD, Args.compose("game", "l", "" + game.gameId));
+                } else {
+                    if (game.minPlayers == 1) {
+                        ClickListener singleClick = new ClickListener() {
+                            public void onClick (Widget sender) {
+                                Link.go(Pages.WORLD, Args.compose("game", "s", "" + game.gameId));
+                            }
+                        };
+                        PushButton single = MsoyUI.createButton(
+                            MsoyUI.MEDIUM_THIN, "Play Just Me", singleClick);
+                        single.addStyleName("PlaySingleButton");
+                        playButtonsPanel.add(single);
+                        if (game.maxPlayers > 1) {
+                            playButtonsPanel.add(WidgetUtil.makeShim(5, 5));
                         }
-                    };
-                    PushButton multi = MsoyUI.createButton(
-                        MsoyUI.MEDIUM_THIN, "Play With Friends", multiClick);
-                    multi.addStyleName("PlayMultiButton");
-                    playButtonsPanel.add(multi);
+                    }
+                    // add multiplayer button
+                    if (game.maxPlayers > 1) {
+                        ClickListener multiClick = new ClickListener() {
+                            public void onClick (Widget sender) {
+                                Link.go(Pages.WORLD, Args.compose("game", "l", "" + game.gameId));
+                            }
+                        };
+                        PushButton multi = MsoyUI.createButton(
+                            MsoyUI.MEDIUM_THIN, "Play With Friends", multiClick);
+                        multi.addStyleName("PlayMultiButton");
+                        playButtonsPanel.add(multi);
+                    }
                 }
                 setWidget(0, col++, playButtonsPanel, 1, "PlayButtons");
             }
