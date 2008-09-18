@@ -41,6 +41,9 @@ import com.threerings.msoy.web.data.TagHistory;
 import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
+import com.threerings.msoy.chat.data.MsoyChatChannel;
+import com.threerings.msoy.chat.server.MsoyChatChannelManager;
+
 import com.threerings.msoy.fora.server.ForumLogic;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
@@ -351,6 +354,10 @@ public class GroupServlet extends MsoyServiceServlet
 
         // let the dobj world know that this member has been removed
         MemberNodeActions.leftGroup(memberId, groupId);
+
+        // also let the chat channel manager know that this group lost member
+        _channelMan.bodyRemovedFromChannel(
+            MsoyChatChannel.makeGroupChannel(GroupName.makeKey(groupId)), memberId);
     }
 
     // from interface GroupService
@@ -378,6 +385,10 @@ public class GroupServlet extends MsoyServiceServlet
         gm.group = grec.toGroupName();
         gm.rank = GroupMembership.RANK_MEMBER;
         MemberNodeActions.joinedGroup(mrec.memberId, gm);
+
+        // also let the chat channel manager know that this group has a new member
+        _channelMan.bodyAddedToChannel(
+            MsoyChatChannel.makeGroupChannel(grec.toGroupName()), mrec.memberId);
     }
 
     // from interface GroupService
@@ -621,6 +632,7 @@ public class GroupServlet extends MsoyServiceServlet
     @Inject protected ForumRepository _forumRepo;
     @Inject protected MsoySceneRepository _sceneRepo;
     @Inject protected GroupLogic _groupLogic;
+    @Inject protected MsoyChatChannelManager _channelMan;
 
     /** Compartor for sorting by population then by last post date. */
     protected static Comparator<MyGroupCard> SORT_BY_PEOPLE_ONLINE =
