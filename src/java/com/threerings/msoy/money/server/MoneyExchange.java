@@ -64,5 +64,5 @@ public class MoneyExchange
     }
 
     // TEMPorary implmentation: the number of coins in each bar
-    protected float _exchangeRate = 1000;
+    protected float _exchangeRate = 288;
 }
