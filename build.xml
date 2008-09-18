@@ -83,6 +83,7 @@
     <file name="${extlibs.dir}/mysql-connector-java.jar"/>
     <file name="${extlibs.dir}/postgresql-jdbc.jar"/>
     <file name="${extlibs.dir}/proguard.jar"/>
+    <file name="${extlibs.dir}/quartz.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/redstone-xmlrpc.jar"/>
     <file name="${extlibs.dir}/retroweaver-all-1.2.2.jar"/>

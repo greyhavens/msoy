@@ -25,6 +25,7 @@ import com.threerings.messaging.MessageConnection;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -65,7 +66,8 @@ public class MoneyLogic
     public MoneyLogic (
         MoneyRepository repo, PriceQuoteCache priceCache, UserActionRepository userActionRepo,
         MsoyEventLogger eventLog, MessageConnection conn, MemberRepository memberRepo, 
-        ShutdownManager sm, @MainInvoker Invoker invoker, MoneyNodeActions nodeActions)
+        ShutdownManager sm, @MainInvoker Invoker invoker, MoneyNodeActions nodeActions,
+        BlingPoolDistributor blingDistributor, MoneyExchange exchange)
     {
         _repo = repo;
         _priceCache = priceCache;
@@ -74,6 +76,8 @@ public class MoneyLogic
         _expirer = new MoneyTransactionExpirer(repo, invoker, sm);
         _msgReceiver = new MoneyMessageReceiver(conn, this, memberRepo, sm, invoker);
         _nodeActions = nodeActions;
+        _exchange = exchange;
+        _blingDistributor = blingDistributor;
     }
     
     /**
@@ -470,6 +474,11 @@ public class MoneyLogic
     public void init ()
     {
         _msgReceiver.start();
+        
+        // Bling distributor should only be started if bars are enabled.
+        if (DeploymentConfig.barsEnabled) {
+            _blingDistributor.start();
+        }
     }
 
     /**
@@ -559,8 +568,7 @@ public class MoneyLogic
         return logUserAction(memberId, otherMemberId, userAction, description, item);
     }
 
-    @Inject protected MoneyExchange _exchange;
-
+    protected final MoneyExchange _exchange;
     protected final MoneyTransactionExpirer _expirer;
     protected final MsoyEventLogger _eventLog;
     protected final UserActionRepository _userActionRepo;
@@ -568,4 +576,5 @@ public class MoneyLogic
     protected final PriceQuoteCache _priceCache;
     protected final MoneyMessageReceiver _msgReceiver;
     protected final MoneyNodeActions _nodeActions;
+    protected final BlingPoolDistributor _blingDistributor;
 }

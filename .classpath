@@ -113,5 +113,6 @@
 	<classpathentry kind="lib" path="etc"/>
 	<classpathentry kind="lib" path="extlibs/java/aopalliance.jar"/>
 	<classpathentry kind="lib" path="extlibs/java/rabbitmq-client.jar"/>
+	<classpathentry kind="lib" path="extlibs/java/quartz.jar"/>
 	<classpathentry kind="output" path="dist/classes"/>
 </classpath>
