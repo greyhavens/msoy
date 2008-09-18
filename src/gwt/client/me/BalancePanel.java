@@ -3,22 +3,25 @@
 
 package client.me;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.PagedGrid;
+import com.threerings.gwt.ui.PagedTable;
 
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 
 import client.ui.MsoyUI;
 
-public class BalancePanel extends PagedGrid<MoneyTransaction>
+public class BalancePanel extends PagedTable<MoneyTransaction>
 {
     public BalancePanel (int memberId, ReportType report)
     {
-        super(10, 1, PagedGrid.NAV_ON_TOP);
+        super(10, NAV_ON_TOP);
 
         addStyleName("Balance");
 
@@ -26,17 +29,47 @@ public class BalancePanel extends PagedGrid<MoneyTransaction>
         setModel(new MoneyTransactionDataModel(memberId, report), 0);
     }
 
-// TODO: This should work
-//    @Override
-//    public boolean padToFullPage ()
-//    {
-//        return true;
-//    }
+    @Override
+    public List<Widget> createRow (MoneyTransaction entry)
+    {
+        List<Widget> row = new ArrayList<Widget>();
+
+        row.add(MsoyUI.createLabel(MsoyUI.formatDateTime(entry.timestamp), "Time"));
+
+        String description = _lookup.xlate(MsoyUI.escapeHTML(entry.description));
+        row.add(MsoyUI.createHTML(description, "Description"));
+
+        if (_report == ReportType.CREATOR) {
+            row.add(MsoyUI.createInlineImage(entry.currency.getSmallIcon()));
+            row.add(MsoyUI.createLabel(entry.currency.format(entry.amount), ""));
+        } else {
+            String amt = entry.currency.format(Math.abs(entry.amount));
+            String debit, credit;
+            if (entry.amount < 0) {
+                debit = amt;
+                credit = " ";
+            } else {
+                debit = " ";
+                credit = amt;
+            }
+            row.add(MsoyUI.createLabel(debit, "Debit"));
+            row.add(MsoyUI.createLabel(credit, "Credit"));
+        }
+
+        return row;
+    }
 
     @Override
-    public Widget createWidget (MoneyTransaction entry)
+    public List<Widget> createHeader ()
     {
-        return new TransactionWidget(entry);
+        List<Widget> header = new ArrayList<Widget>();
+
+        header.add(MsoyUI.createLabel("When", null));
+        header.add(MsoyUI.createLabel("How", null));
+        header.add(MsoyUI.createLabel("Debit", null));
+        header.add(MsoyUI.createLabel("Credit", null));
+        
+        return header;
     }
 
     @Override
@@ -49,36 +82,6 @@ public class BalancePanel extends PagedGrid<MoneyTransaction>
     protected boolean displayNavi (int items)
     {
         return true;
-    }
-
-    protected class TransactionWidget extends HorizontalPanel
-    {
-        public TransactionWidget (MoneyTransaction entry)
-        {
-            addStyleName("Transaction");
-
-            add(MsoyUI.createLabel(MsoyUI.formatDateTime(entry.timestamp), "Time"));
-
-            String description = _lookup.xlate(MsoyUI.escapeHTML(entry.description));
-            add(MsoyUI.createHTML(description, "Description"));
-
-            if (_report == ReportType.CREATOR) {
-                add(MsoyUI.createInlineImage(entry.currency.getSmallIcon()));
-                add(MsoyUI.createLabel(entry.currency.format(entry.amount), ""));
-            } else {
-                String amt = entry.currency.format(Math.abs(entry.amount));
-                String debit, credit;
-                if (entry.amount < 0) {
-                    debit = amt;
-                    credit = " ";
-                } else {
-                    debit = " ";
-                    credit = amt;
-                }
-                add(MsoyUI.createLabel(debit, "Debit"));
-                add(MsoyUI.createLabel(credit, "Credit"));
-            }
-        }
     }
 
     protected ReportType _report;

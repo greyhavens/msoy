@@ -423,32 +423,33 @@
 
 .transactions {
   padding: 15px;
+  width: 100%;
 }
 
 .Balance {
-  width: 650px;
+  width: 100%;
 }
 
-.Balance .Transaction {
-  width: 650px;
-  border-bottom: 1px solid #dadada;
-  border-left: 1px solid #a1ceec;
-  border-right: 1px solid #a1ceec;
+.Balance .row1 {
+  background: #dadada;
 }
 
-.Balance .Transaction .Time {
-  width: 130px;
+.Balance .header {
+  background: #3A86B7;
+  color: white;
+  text-align: center;
+  font-weight: bold;
 }
 
-.Balance .Transaction .Description {
-  width: 300px;
-  border-left: 1px solid #a1ceec;
+.Balance .col0 { /* Date */
+  width: 50%;
 }
 
-.Balance .Transaction .Debit,
-.Balance .Transaction .Credit {
-  border-left: 1px solid #a1ceec;
-  width: 50px;
+.Balance .col1 { /* Description */
+  width: 50%;
+}
+
+.Balance .col2, .Balance .col3 { /* Debit, credit */
   text-align: center;
 }
 
