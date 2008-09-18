@@ -151,7 +151,7 @@ public class GalleryRecord extends PersistentRecord
         GalleryRecord record = new GalleryRecord();
         record.galleryId = gallery.galleryId;
         record.name = gallery.name;
-        record.description = gallery.description;
+        record.description = gallery.description == null ? "" : gallery.description;
         if (gallery.lastModified != null) {
             record.lastModified = new Timestamp(gallery.lastModified.getTime());
         }

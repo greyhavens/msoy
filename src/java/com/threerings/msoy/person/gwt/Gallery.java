@@ -27,5 +27,16 @@ public class Gallery implements IsSerializable
 
     /** The media used to display the gallery's thumbnail representation. */
     public MediaDesc thumbMedia;
+
+    public boolean isProfileGallery ()
+    {
+        return name == null;
+    }
+
+    public String toString ()
+    {
+        return "[galleryId=" + galleryId + ", name=" + name + ", description=" + description +
+            ", lastModified=" + lastModified + ", thumbMedia=" + thumbMedia + "]";
+    }
 }
 

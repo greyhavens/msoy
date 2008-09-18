@@ -58,3 +58,31 @@
   width: 30px;
   height: 20px;
 }
+
+/* ------------------------------------
+   GALLERIES
+-------------------------------------*/
+
+.Gallery {
+  width: 100%;
+  height: 100%;
+}
+
+.GalleryDetail {
+  width: 225px;
+  height: 400px;
+  overflow-y: scroll;
+  text-align: left;
+}
+
+.GalleryDetail .Name {
+  width: 200px;
+  height: 32px;
+  align: center;
+}
+
+.GalleryDetail .Description {
+  width: 200px;
+  height: 275px;
+  align: center;
+}

@@ -3,7 +3,6 @@
 
 package client.people;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -14,6 +13,9 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
+import client.person.GalleryEditPanel;
+import client.person.GalleryPanel;
+import client.person.GalleryViewPanel;
 import client.shell.Args;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -32,8 +34,7 @@ public class GalleriesBlurb extends Blurb
         if (pdata.galleries != null && pdata.galleries.size() > 0) {
             return true;
         }
-        Window.alert("is true?" + (CPeople.getMemberId() == _name.getMemberId()));
-        return (CPeople.getMemberId() == _name.getMemberId());
+        return (CPeople.getMemberId() == pdata.name.getMemberId());
     }
 
     @Override // from Blurb
@@ -57,12 +58,12 @@ public class GalleriesBlurb extends Blurb
         FlowPanel footerLinks = new FlowPanel();
         if (CPeople.getMemberId() == _name.getMemberId()) {
             footerLinks.add(Link.create(CPeople.msgs.createGallery(), Pages.PEOPLE,
-                "createGallery"));
+                GalleryEditPanel.CREATE_ACTION));
         }
         if (pdata.galleries != null && pdata.galleries.size() > NUM_GALLERIES) {
             footerLinks.add(WidgetUtil.makeShim(10, 10));
             footerLinks.add(Link.create(CPeople.msgs.seeAll(), Pages.PEOPLE, Args.compose(
-                "galleries", _name.getMemberId())));
+                GalleryPanel.GALLERIES_ACTION, _name.getMemberId())));
         }
         setFooter(footerLinks);
     }
@@ -77,7 +78,8 @@ public class GalleriesBlurb extends Blurb
 
             ClickListener clickListener = new ClickListener() {
                 public void onClick (Widget sender) {
-                    Link.go(Pages.PEOPLE, Args.compose("g", gallery.galleryId));
+                    Link.go(Pages.PEOPLE, Args.compose(GalleryViewPanel.VIEW_ACTION,
+                        gallery.galleryId));
                 }
             };
             add(new ThumbBox(gallery.thumbMedia, clickListener));

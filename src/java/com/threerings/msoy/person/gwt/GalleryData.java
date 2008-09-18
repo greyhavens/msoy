@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.person.gwt;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
@@ -16,4 +17,19 @@ public class GalleryData implements IsSerializable
 {
     public Gallery gallery;
     public List<Photo> photos;
+    public int ownerId;
+
+    public List<Integer> getPhotoIds ()
+    {
+        List<Integer> ids = new ArrayList<Integer>();
+        for (Photo photo : photos) {
+            ids.add(photo.itemId);
+        }
+        return ids;
+    }
+
+    public String toString ()
+    {
+        return "[gallery=" + gallery + ", photos=" + photos + ", ownerId=" + ownerId + "]";
+    }
 }

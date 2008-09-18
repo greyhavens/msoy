@@ -5,7 +5,11 @@ package client.people;
 
 import com.google.gwt.core.client.GWT;
 
+import client.person.GalleryEditPanel;
+import client.person.GalleryViewPanel;
+import client.person.GalleryPanel;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
 import client.shell.Pages;
 
@@ -39,6 +43,21 @@ public class PeoplePage extends Page
 
         } else if (action.equals("invites")) { // !guest
             setContent(CPeople.msgs.inviteTitle(), new InvitePanel());
+
+        } else if (action.equals(GalleryPanel.GALLERIES_ACTION)) {
+            int memberId = args.get(1, CShell.getMemberId());
+            setContent(CPeople.msgs.galleriesTitle(), new GalleryPanel(memberId));
+
+        } else if (action.equals(GalleryViewPanel.VIEW_ACTION)) {
+            int galleryId = args.get(1, -1);
+            setContent(CPeople.msgs.galleriesTitle(), new GalleryViewPanel(galleryId));
+
+        } else if (action.equals(GalleryEditPanel.CREATE_ACTION)) {
+            setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel());
+
+        } else if (action.equals(GalleryEditPanel.EDIT_ACTION)) {
+            int galleryId = args.get(1, -1);
+            setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel(galleryId));
 
         } else { // !guest
             setContent(new FriendsPanel(CPeople.getMemberId()));

@@ -115,9 +115,11 @@ public class GalleryServlet extends MsoyServiceServlet
         }
         GalleryData data = new GalleryData();
         data.gallery = galleryRecord.toGallery();
-        data.photos = Lists.transform(
+        // the photos list must be an ArrayList otherwise it gets cranky when serialized
+        data.photos = Lists.newArrayList(Lists.transform(
             _photoRepo.loadItems(PrimitiveArrays.asList(galleryRecord.photoItemIds)),
-            new ItemRecord.ToItem<Photo>());
+            new ItemRecord.ToItem<Photo>()));
+        data.ownerId = galleryRecord.ownerId;
         return data;
     }
 
