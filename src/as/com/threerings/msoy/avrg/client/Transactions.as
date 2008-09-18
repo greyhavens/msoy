@@ -32,8 +32,6 @@ public class Transactions
      */
     public function start () :void
     {
-        log.debug("Starting transaction");
-
         // Prepare to receive transactions
         _transactionStack.push([]);
     }
@@ -46,8 +44,6 @@ public class Transactions
         if (_transactionStack.length == 0) {
             throw new Error("No batch started, cannot commit");
         }
-
-        log.debug("Committing transaction");
 
         var transactions :Array = _transactionStack.pop() as Array;
 
