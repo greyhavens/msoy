@@ -19,8 +19,7 @@ public class ServerStatSet extends StatSet
     public ServerStatSet (Iterator<Stat> contents, BadgeManager badgeMan, MemberObject memObj)
     {
         super(contents);
-        _badgeMan = badgeMan;
-        _memObj = memObj;
+        init(badgeMan, memObj);
     }
 
     /** Creates an empty stat set (for deserialization purposes). */
@@ -28,6 +27,9 @@ public class ServerStatSet extends StatSet
     {
     }
 
+    /**
+     * Called to initialize an instance unserlialized from the network.
+     */
     public void init (BadgeManager badgeMan, MemberObject memObj)
     {
         _badgeMan = badgeMan;
