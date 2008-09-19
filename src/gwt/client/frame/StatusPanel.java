@@ -27,6 +27,7 @@ import client.shell.CShell;
 import client.shell.Pages;
 import client.shell.Session;
 import client.shell.ShellMessages;
+import client.shell.AffiliateCookie;
 import client.shell.TrackingCookie;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -99,6 +100,7 @@ public class StatusPanel extends SmartTable
     {
         _creds = data.creds;
         CookieUtil.set("/", Session.SESSION_DAYS, "who", _creds.accountName);
+        AffiliateCookie.clear();
 
         // configure our levels
         int idx = 0;
