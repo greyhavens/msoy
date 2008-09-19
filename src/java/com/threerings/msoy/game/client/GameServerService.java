@@ -7,6 +7,7 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.stats.data.StatModifier;
 
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.item.data.all.Item;
@@ -46,8 +47,8 @@ public interface GameServerService extends InvocationService
     /**
      * Indicates some coins should be awarded to the specified player.
      */
-    void awardCoins (Client client, int memberId, int creatorId, int affiliateId, ItemIdent item, 
-        int amount, String description, int userActionNumber, boolean wasNotified);
+    void awardCoins (Client client, int memberId, int gameId, String gameName,
+                     int secondsPlayed, int amount, UserAction action);
     
     /**
      * Reports a trophy award made by a game to a player.

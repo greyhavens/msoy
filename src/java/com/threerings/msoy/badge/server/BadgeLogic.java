@@ -66,8 +66,8 @@ public class BadgeLogic
         _feedRepo.publishMemberMessage(brec.memberId, FeedMessageType.FRIEND_WON_BADGE,
             brec.badgeCode + "\t" + brec.level);
 
-        _moneyLogic.awardCoins(brec.memberId, 0, 0, null, levelData.coinValue, "", 
-            UserAction.EARNED_BADGE, false);
+        _moneyLogic.awardCoins(brec.memberId, 0, 0, null, levelData.coinValue,
+            false, UserAction.EARNED_BADGE); // TODO: Gee, would be nice to include the name somehow
 
         if (dobjNeedsUpdate) {
             // if dobjNeedsUpdate is true, this function was called from a servlet, or other

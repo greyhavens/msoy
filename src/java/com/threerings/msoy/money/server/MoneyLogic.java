@@ -115,7 +115,7 @@ public class MoneyLogic
     @Retry(exception=StaleDataException.class)
     public MoneyResult awardCoins (
         int memberId, int creatorId, int affiliateId, ItemIdent item, int amount,
-        String description, UserAction userAction, boolean wasNotified)
+        boolean wasNotified, UserAction userAction, Object... args)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot award coins to guests.");
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
@@ -123,12 +123,19 @@ public class MoneyLogic
             (item == null) || (item.type != Item.NOT_A_TYPE && item.itemId != 0),
             "item is invalid: %s", item);
 
+        final String description = MessageBundle.tcompose(userAction.getMessage(), args);
+
         MemberAccountRecord account = _repo.getAccountById(memberId);
         final MoneyTransactionRecord history = account.awardCoins(amount, item, description);
         _repo.saveAccount(account);
         _repo.addTransaction(history);
 
-        final UserActionDetails info = logUserAction(memberId, 0, userAction, description, item);
+        final UserActionDetails info = logUserAction(memberId, 0, userAction,
+            // Handle the mystical case where games need to be logged specially for
+            // humanity assessment
+            // TODO: Handle AVRG's COMPLETED_QUEST here too?
+            (userAction == UserAction.PLAYED_GAME) ? args[1].toString() + args[2].toString() :
+            description, item);
         logInPanopticon(info, Currency.COINS, amount, account);
 
         if (!wasNotified) {

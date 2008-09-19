@@ -177,9 +177,10 @@ public class QuestDelegate extends PlaceManagerDelegate
             public void invokePersistent () throws Exception {
                 // award the flow for this quest
                 if (payout > 0) {
-                    _worldClient.awardCoins(player.getMemberId(), 0, 0,
-                        new ItemIdent(Game.GAME, _gameId), 
-                        payout, questId, UserAction.COMPLETED_QUEST, false);
+                    // TODO: Pass the real minutesPlayed, I assume we need to do humanity
+                    // assessment for avrgs as well
+                    _worldClient.awardCoins(player.getMemberId(), _gameId, _content.game.name,
+                        -1, payout, UserAction.COMPLETED_QUEST);
                 }
 
                 // note that we played one game and awarded the specified flow

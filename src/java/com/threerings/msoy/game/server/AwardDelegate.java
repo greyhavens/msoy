@@ -786,10 +786,9 @@ public class AwardDelegate extends RatingDelegate
             return;
         }
 
-        final String details = _content.game.gameId + " " + secondsPlayed;
         _worldClient.awardCoins(
-            memberId, _content.game.creatorId, 0, _content.game.getIdent(),
-            coinAward, details, UserAction.PLAYED_GAME, true);
+            memberId, _content.game.gameId, _content.game.name, secondsPlayed,
+            coinAward, UserAction.PLAYED_GAME);
     }
 
     /**

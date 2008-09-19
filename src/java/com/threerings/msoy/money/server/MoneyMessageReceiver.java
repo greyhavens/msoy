@@ -166,7 +166,7 @@ public class MoneyMessageReceiver
     {
         public final String accountName;
         public final int numBars;
-        public final String message;
+        public final String message; // TODO: Just use UserAction.BOUGHT_BARS.getMessage()?
         
         public BarsBoughtMessage (final byte[] bytes)
         {

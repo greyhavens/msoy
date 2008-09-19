@@ -3,9 +3,9 @@
 
 package com.threerings.msoy.game.data;
 
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
@@ -26,10 +26,10 @@ public class GameServerMarshaller extends InvocationMarshaller
     public static final int AWARD_COINS = 1;
 
     // from interface GameServerService
-    public void awardCoins (Client arg1, int arg2, int arg3, int arg4, ItemIdent arg5, int arg6, String arg7, int arg8, boolean arg9)
+    public void awardCoins (Client arg1, int arg2, int arg3, String arg4, int arg5, int arg6, UserAction arg7)
     {
         sendRequest(arg1, AWARD_COINS, new Object[] {
-            Integer.valueOf(arg2), Integer.valueOf(arg3), Integer.valueOf(arg4), arg5, Integer.valueOf(arg6), arg7, Integer.valueOf(arg8), Boolean.valueOf(arg9)
+            Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, Integer.valueOf(arg5), Integer.valueOf(arg6), arg7
         });
     }
 

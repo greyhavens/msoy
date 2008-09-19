@@ -3,10 +3,10 @@
 
 package com.threerings.msoy.game.server;
 
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.game.data.GameServerMarshaller;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
@@ -42,7 +42,7 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
         switch (methodId) {
         case GameServerMarshaller.AWARD_COINS:
             ((GameServerProvider)provider).awardCoins(
-                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), ((Integer)args[2]).intValue(), (ItemIdent)args[3], ((Integer)args[4]).intValue(), (String)args[5], ((Integer)args[6]).intValue(), ((Boolean)args[7]).booleanValue()
+                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (String)args[2], ((Integer)args[3]).intValue(), ((Integer)args[4]).intValue(), (UserAction)args[5]
             );
             return;
 

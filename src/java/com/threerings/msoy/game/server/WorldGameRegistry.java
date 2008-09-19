@@ -344,14 +344,14 @@ public class WorldGameRegistry
         _moneyLogic.notifyCoinsEarned(memberId, deltaCoins);
     }
     
-    public void awardCoins (ClientObject caller, int memberId, int creatorId, int affiliateId, 
-        ItemIdent item, int amount, String description, int userActionNumber, boolean wasNotified)
+    public void awardCoins (ClientObject caller, int memberId, int gameId,
+        String gameName, int secondsPlayed, int amount, UserAction action)
     {
-        if (!checkCallerAccess(caller, "awardCoins(" + memberId + ", " + amount + ", " + description)) {
+        if (!checkCallerAccess(caller, "awardCoins(" + memberId + ", " + amount + ", " + gameId)) {
             return;
         }
-        _moneyLogic.awardCoins(memberId, creatorId, affiliateId, item, amount, description, 
-            UserAction.getActionByNumber(userActionNumber), wasNotified);
+        _moneyLogic.awardCoins(memberId, 0, 0, new ItemIdent(Game.GAME, gameId), amount, false, 
+            action, gameName, gameId, secondsPlayed);
     }
 
     // from interface GameServerProvider

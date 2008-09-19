@@ -145,15 +145,14 @@ public class WorldServerClient
         }
     }
     
-    public void awardCoins (int memberId, int creatorId, int affiliateId, ItemIdent item, 
-        int amount, String description, UserAction userAction, boolean wasNotified)
+    public void awardCoins (int memberId, int gameId, String gameName,
+        int secondsPlayed, int amount, UserAction action)
     {
         if (_gssvc == null) {
-            log.warning("Dropping awrd coins.", "memberId", memberId, "amount", amount, 
-                "description", description);
+            log.warning("Dropping award coins.", "memberId", memberId, "amount", amount, 
+                "gameId", gameId);
         } else {
-            _gssvc.awardCoins(_client, memberId, creatorId, affiliateId, item, amount, description, 
-                userAction.getNumber(), wasNotified);
+            _gssvc.awardCoins(_client, memberId, gameId, gameName, secondsPlayed, amount, action);
         }
     }
 

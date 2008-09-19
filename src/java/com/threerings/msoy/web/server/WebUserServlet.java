@@ -170,7 +170,7 @@ public class WebUserServlet extends MsoyServiceServlet
                     // pay out a sign up bonus to the inviter
                     _moneyLogic.awardCoins(
                         inviter.memberId, 0, 0, null, CoinAwards.INVITED_FRIEND_JOINED,
-                        "", UserAction.INVITED_FRIEND_JOINED, false);
+                        false, UserAction.INVITED_FRIEND_JOINED, displayName, mrec.memberId);
                 } catch (Exception e) {
                     log.warning("Failed to wire up friendship for created account " +
                             "[member=" + mrec.who() + ", inviter=" + inviter.who() + "].", e);
@@ -503,8 +503,8 @@ public class WebUserServlet extends MsoyServiceServlet
                 _invoker.postUnit(new Invoker.Unit() {
                     @Override public boolean invoke () {
                         try {
-                            _moneyLogic.awardCoins(_toMemberId, 0, 0, null, coins, "", 
-                                UserAction.TRANSFER_FROM_GUEST, false);
+                            _moneyLogic.awardCoins(_toMemberId, 0, 0, null, coins, false, 
+                                UserAction.TRANSFER_FROM_GUEST);
                             return true;
                         } catch (Exception e) {
                             log.warning("Unable to grant coins", "to", _toMemberId,
