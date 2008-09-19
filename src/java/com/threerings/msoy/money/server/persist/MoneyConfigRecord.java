@@ -47,7 +47,7 @@ public class MoneyConfigRecord extends PersistentRecord
         new ColumnExp(MoneyConfigRecord.class, LOCKED);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 2;
     
     /** The ID of the record, always. */
     public static final int RECORD_ID = 1;
