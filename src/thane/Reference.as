@@ -6,13 +6,19 @@ import com.threerings.msoy.bureau.client.MsoyBureauClient;
 import com.threerings.msoy.client.DeploymentConfig;
 import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.room.data.ControllableAVRGame;
 import com.threerings.msoy.room.data.ControllableEntity;
+import com.threerings.msoy.room.data.FurniUpdate_Add;
+import com.threerings.msoy.room.data.FurniUpdate_Change;
+import com.threerings.msoy.room.data.FurniUpdate_Remove;
 import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.room.data.MobInfo;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.ObserverInfo;
 import com.threerings.msoy.room.data.PetInfo;
+import com.threerings.msoy.room.data.SceneAttrsUpdate;
+
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
@@ -43,5 +49,6 @@ public class Reference
     MobInfo;
     ObserverInfo;
     PetInfo;
+    FurniUpdate_Change;
 }
 }
