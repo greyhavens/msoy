@@ -204,7 +204,8 @@ public class FacebookServlet extends HttpServlet
             String password = ""; // TODO?
 
             log.info("Creating Facebook account [name=" + name + ", id=" + fbUserId + "].");
-            mrec = _author.createAccount(email, password, name, true, null, null);
+            mrec = _author.createAccount(email, password, name, true, null, null,
+                null /* TODO: blingAffiliate: "facebook"? */);
             _memberRepo.mapExternalAccount(
                 ExternalMapRecord.FACEBOOK, String.valueOf(fbUserId), mrec.memberId);
 

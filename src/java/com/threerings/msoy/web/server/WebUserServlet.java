@@ -16,6 +16,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Calendar;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
@@ -24,6 +26,8 @@ import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
+
+import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.PresentsDObjectMgr;
@@ -125,8 +129,8 @@ public class WebUserServlet extends MsoyServiceServlet
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         final MemberRecord mrec = _author.createAccount(
-            info.email, info.password, info.displayName, ignoreRestrict, invite,
-            info.referral);
+            info.email, info.password, info.displayName, ignoreRestrict, invite, info.referral,
+            getAffiliateCookie());
 
         // store the user's birthday and realname in their profile
         ProfileRecord prec = new ProfileRecord();
@@ -449,9 +453,14 @@ public class WebUserServlet extends MsoyServiceServlet
         }
     }
 
+    /**
+     * Called when we login or register.
+     */
     protected SessionData startSession (MemberRecord mrec, int expireDays)
         throws ServiceException
     {
+        clearAffiliateCookie();
+
         // if they made it through that gauntlet, create or update their session token
         WebCreds creds = mrec.toCreds(_memberRepo.startOrJoinSession(mrec.memberId, expireDays));
         _mhelper.mapMemberId(creds.token, mrec.memberId);
@@ -476,6 +485,23 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         return data;
+    }
+
+    protected String getAffiliateCookie ()
+    {
+        HttpServletRequest req = getThreadLocalRequest();
+        String affiliate = req.getParameter("aff");
+        if (affiliate == null) {
+            affiliate = CookieUtil.getCookieValue(
+                req, MsoyHttpServer.MsoyDefaultServlet.AFFILIATE_COOKIE);
+        }
+        return affiliate;
+    }
+
+    protected void clearAffiliateCookie ()
+    {
+        CookieUtil.clearCookie(getThreadLocalResponse(),
+            MsoyHttpServer.MsoyDefaultServlet.AFFILIATE_COOKIE);
     }
 
     protected static class TransferGuestFlowAction extends MemberNodeAction

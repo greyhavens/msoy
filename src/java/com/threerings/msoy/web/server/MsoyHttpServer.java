@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import com.google.common.collect.Maps;
@@ -31,6 +32,8 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
+
+import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.server.ServerConfig;
 
@@ -128,17 +131,46 @@ public class MsoyHttpServer extends Server
      * fiddling we want. */
     protected static class MsoyDefaultServlet extends DefaultServlet
     {
+        /** The affiliate cookie name. */
+        public static final String AFFILIATE_COOKIE = "baff";
+
         protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
             throws ServletException, IOException {
+            checkCookies(req, rsp); // we want to check cookies even before we do the redirect
 
             // TODO: handle this for more than just world-client.swf?
             if (req.getRequestURI().equals("/clients/world-client.swf")) {
                 rsp.setContentLength(0);
                 rsp.sendRedirect("/clients/" + DeploymentConfig.version + "/world-client.swf");
             } else {
-                addReferralCookie(req, rsp);
                 super.doGet(req, rsp);
             }
+        }
+
+        protected void checkCookies (HttpServletRequest req, HttpServletResponse rsp)
+        {
+            checkAffiliateCookie(req, rsp);
+            addReferralCookie(req, rsp);
+        }
+
+        /**
+         * Maybe set the affiliate cookie.
+         */
+        protected void checkAffiliateCookie (HttpServletRequest req, HttpServletResponse rsp)
+        {
+            String affiliate = req.getParameter("aff"); // "aff" is the parameter name ?aff=foo
+            if (affiliate == null) {
+                return;
+            }
+
+            if (false /* FIRST WINS */ && CookieUtil.getCookie(req, AFFILIATE_COOKIE) != null) {
+                return;
+            }
+            // LAST WINS, or FIRST WINS but this is the first!
+            Cookie affCookie = new Cookie(AFFILIATE_COOKIE, affiliate);
+            affCookie.setMaxAge(365 * 24 * 60 * 60); // one year
+            affCookie.setPath("/");
+            rsp.addCookie(affCookie); // nom nom nom
         }
 
         /**
@@ -161,8 +193,12 @@ public class MsoyHttpServer extends Server
                 }
             }
         }
-    }
+    } // end: MsoyDefaultServlet
 
+    /**
+     * Used only for testing, this fakey slows-down the transmission of data to clients.
+     * It can be configured with -Dthrottle=true or -DthrottleMedia=true.
+     */
     protected static class MsoyThrottleServlet extends MsoyDefaultServlet
     {
         protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
@@ -196,8 +232,11 @@ public class MsoyHttpServer extends Server
             }
             super.doGet(req, rsp);
         }
-    }
+    } // end: MsoyThrottleServlet
 
+    /**
+     * Caaaaan youuuuuu heeeeaaaaaaaaarrrrrrrrrr mmmmmeeeee??
+     */
     protected static class ThrottleOutputStream extends ServletOutputStream
     {
         public ThrottleOutputStream (ServletOutputStream out) {
