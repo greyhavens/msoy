@@ -165,7 +165,7 @@ public class GalleryRecord extends PersistentRecord
 
     // AUTO-GENERATED: METHODS START
     /**
-     * Create and return a primary {@link Key} to identify a {@link #GalleryRecord}
+     * Create and return a primary {@link Key} to identify a {@link GalleryRecord}
      * with the supplied key values.
      */
     public static Key<GalleryRecord> getKey (int galleryId)
