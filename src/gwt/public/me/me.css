@@ -458,3 +458,9 @@
   padding-right: 5px;
 }
 
+/* ------------------------------------
+   BADGE DISPLAYS ANYWHERE
+-------------------------------------*/
+.bling .header {
+	font-weight: bold;
+}

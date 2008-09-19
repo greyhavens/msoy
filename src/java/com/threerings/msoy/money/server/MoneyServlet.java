@@ -7,6 +7,8 @@ import com.google.inject.Inject;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.money.data.all.BlingInfo;
+import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.gwt.MoneyService;
@@ -38,6 +40,14 @@ public class MoneyServlet extends MsoyServiceServlet
         result.total = _moneyLogic.getTransactionCount(memberId,
             report.transactions, report.currency);
         return result;
+    }
+
+    public BlingInfo getBlingInfo (int memberId)
+        throws ServiceException
+    {
+        MemberMoney money = _moneyLogic.getMoneyFor(memberId);
+        int blingWorth = _moneyLogic.getBlingWorth(money.bling);
+        return new BlingInfo(money.bling, blingWorth);
     }
 
     @Inject protected MoneyLogic _moneyLogic;

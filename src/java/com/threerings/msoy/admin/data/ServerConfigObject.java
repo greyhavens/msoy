@@ -109,6 +109,9 @@ public class ServerConfigObject extends ConfigObject
     /** The amount of bling (NOT centibling) to grant daily to game creators. */
     public int blingPoolSize = 0;
     
+    /** The amount in USD each bling (NOT centibling) is worth.  TODO: BigDecimal? */
+    public float blingWorth = 0.05f;
+    
     @Override // documentation inherited
     public JPanel getEditor (PresentsContext ctx, Field field)
     {

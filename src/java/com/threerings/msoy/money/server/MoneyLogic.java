@@ -377,13 +377,14 @@ public class MoneyLogic
     /**
      * Retrieves the amount that a member's current bling is worth in American dollars.
      *
-     * @param memberId ID of the member to retrieve bling for.
-     * @return The amount the bling is worth in American dollars.
+     * @param bling The amount of bling (NOT centibling) to get the worth of.
+     * @return The amount the bling is worth in USD cents.
      */
-    public int getBlingWorth (int memberId)
+    public int getBlingWorth (int bling)
     {
-        // TODO Auto-generated method stub
-        return 0;
+        // Bling is 100x the actual bling value, and since we're returning pennies, blingWorth
+        // (measured in dollars) is 0.01x the value we want.  So it balances out.
+        return (int)(bling * RuntimeConfig.server.blingWorth);
     }
 
     /**

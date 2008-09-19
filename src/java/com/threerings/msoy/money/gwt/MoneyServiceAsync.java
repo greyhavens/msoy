@@ -7,6 +7,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.gwt.util.PagedResult;
 
+import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 
@@ -21,4 +22,6 @@ public interface MoneyServiceAsync
     void getTransactionHistory (
         int memberId, ReportType report, int from, int count,
         AsyncCallback<PagedResult<MoneyTransaction>> callback);
+    
+    void getBlingInfo (int memberId, AsyncCallback<BlingInfo> callback);
 }
