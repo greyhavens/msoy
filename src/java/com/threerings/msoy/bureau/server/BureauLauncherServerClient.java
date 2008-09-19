@@ -5,10 +5,20 @@ package com.threerings.msoy.bureau.server;
 
 import com.threerings.presents.server.PresentsClient;
 
+import com.threerings.msoy.bureau.data.BureauLauncherClientObject;
+
 /**
  * Represents a bureau launcher connection.
- * NOTE: this is only needed to distinguish bureau launchers from peers and normal users.
  */
 public class BureauLauncherServerClient extends PresentsClient
 {
+    @Override
+    protected void sessionWillStart ()
+    {
+        super.sessionWillStart();
+        
+        // Stuff the name of the host into the client object
+        BureauLauncherClientObject clobj = (BureauLauncherClientObject)getClientObject();
+        clobj.hostname = getInetAddress().getHostName();
+    }
 }
