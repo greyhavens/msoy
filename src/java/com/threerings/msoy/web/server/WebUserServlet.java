@@ -16,8 +16,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Calendar;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
@@ -26,8 +24,6 @@ import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.net.MailUtil;
 import com.samskivert.util.Invoker;
 import com.samskivert.util.StringUtil;
-
-import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.server.PresentsDObjectMgr;
