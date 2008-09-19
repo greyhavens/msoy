@@ -38,7 +38,7 @@ public class GameTrophyPanel extends PagedGrid<Trophy>
         addStyleName("gameTrophyPanel");
         addStyleName("dottedGrid");
         add(new Label(_msgs.gameTrophyLoading()));
-        setCellAlignment(ALIGN_LEFT, ALIGN_TOP);
+        setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_TOP);
     }
 
     @Override // from UIObject

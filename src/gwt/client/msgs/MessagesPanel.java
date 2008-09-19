@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -45,7 +46,7 @@ public class MessagesPanel extends PagedGrid<ForumMessage>
                           int page, int scrollToId)
     {
         super(MESSAGES_PER_PAGE, 1, NAV_ON_BOTTOM);
-        setCellAlignment(ALIGN_LEFT, ALIGN_TOP);
+        setCellAlignment(HasAlignment.ALIGN_LEFT, HasAlignment.ALIGN_TOP);
         addStyleName("dottedGrid");
         setWidth("100%");
         setHeight("100%");
