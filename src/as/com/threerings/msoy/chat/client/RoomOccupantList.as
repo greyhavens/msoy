@@ -84,7 +84,7 @@ public class RoomOccupantList extends PlayerList
     protected function addOccupant (occInfo :OccupantInfo) :void
     {
         // only members get to be in the occupant list (sorry pets...)
-        if (occInfo instanceof MemberInfo) {
+        if (occInfo is MemberInfo) {
             addItem(occInfo.username);
         }
     }
