@@ -18,6 +18,10 @@ public class AffiliateCookie
 
     public static void check (HttpServletRequest req, HttpServletResponse rsp)
     {
+        if (true) { // TODO: remove
+            return
+        }
+
         String affiliate = req.getParameter("aff"); // "aff" is the parameter name ?aff=foo
         if (affiliate == null) {
             return;
