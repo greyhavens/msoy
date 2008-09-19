@@ -529,13 +529,14 @@ public class MsoyAuthenticator extends Authenticator
         if (invite != null) {
             mrec.affiliateMemberId = invite.inviterId;
         }
-        if (blingAffiliate != null) {
-            if (mrec.affiliateMemberId != 0) {
+        //if (blingAffiliate != null) {
+        if (referral != null && referral.affiliate != null) {
+            if (mrec.affiliateMemberId == 0) {
+                mrec.affiliateMemberId = _affMapRepo.getAffiliateMemberId(referral.affiliate);
+            } else {
                 log.warning("New member has both an affiliate referrer and an inviter. " +
                     "Using inviter...");
             }
-            mrec.blingAffiliate = blingAffiliate;
-            mrec.affiliateMemberId = _affMapRepo.getAffiliateMemberId(blingAffiliate);
         }
 
         // store their member record in the repository making them a real Whirled citizen

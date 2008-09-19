@@ -91,6 +91,7 @@ public class MemberRepository extends DepotRepository
         ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(23, "accFlow"));
         ctx.registerMigration(MemberRecord.class,
             new EntityMigration.Rename(23, "invitingFriendId", MemberRecord.AFFILIATE_MEMBER_ID));
+        ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(25, "blingAffiliate"));
 
         // add a cache invalidator that listens to single FriendRecord updates
         _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
