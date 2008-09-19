@@ -57,6 +57,9 @@ public class MoneyRepository extends DepotRepository
             new EntityMigration.Retype(4, MemberAccountRecord.BLING));
         ctx.registerMigration(MemberAccountRecord.class,
             new EntityMigration.Retype(4, MemberAccountRecord.ACC_BLING));
+        
+        ctx.registerMigration(MoneyConfigRecord.class, 
+            new EntityMigration.Retype(3, MoneyConfigRecord.LAST_DISTRIBUTED_BLING));
     }
 
     /**
