@@ -28,11 +28,6 @@ public class LandingPage extends Page
     public static String CREATORS_LINKS = "creatorslinks";
 
     @Override // from Page
-    public void onPageLoad ()
-    {
-    }
-
-    @Override // from Page
     public void onHistoryChanged (Args args)
     {
         String action = args.get(0, "");

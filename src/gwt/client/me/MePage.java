@@ -17,11 +17,6 @@ public class MePage extends Page
     public static final String TRANSACTIONS = "transactions";
 
     @Override // from Page
-    public void onPageLoad ()
-    {
-    }
-
-    @Override // from Page
     public void onHistoryChanged (Args args)
     {
         String action = args.get(0, "");
