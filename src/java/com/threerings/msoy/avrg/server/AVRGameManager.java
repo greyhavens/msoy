@@ -25,6 +25,8 @@ import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.DObjectManager;
 import com.threerings.presents.dobj.MessageEvent;
+import com.threerings.presents.dobj.ObjectDeathListener;
+import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;
 import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.InvocationManager;
@@ -81,6 +83,10 @@ public class AVRGameManager extends PlaceManager
 
         /** Informs the observer a shutdown has happened. */
         void avrGameDidShutdown (AVRGameManager mgr);
+
+        /** Informs the observer that our agent has died abnormally. This could happen for example
+         * if the bureau process that owns the agent stops responding. */
+        void avrGameAgentDestroyed (AVRGameManager mgr);
     }
 
     public void setLifecycleObserver (LifecycleObserver obs)
@@ -216,6 +222,11 @@ public class AVRGameManager extends PlaceManager
 
     public void startAgent ()
     {
+        if (_gameAgentObj != null) {
+            log.warning("AVRG already has started agent", "agent", _gameAgentObj);
+            return;
+        }
+        
         AVRGameConfig cfg = (AVRGameConfig)_config;
         MsoyGameDefinition def = (MsoyGameDefinition) cfg.getGameDefinition();
 
@@ -229,6 +240,18 @@ public class AVRGameManager extends PlaceManager
         // else ask the bureau to start it and wait for its initialization
         _gameAgentObj.gameOid = _gameObj.getOid();
         _breg.startAgent(_gameAgentObj);
+
+        // inform the observer if the agent dies and we didn't kill it
+        _gameAgentObj.addListener(new ObjectDeathListener() {
+            public void objectDestroyed (ObjectDestroyedEvent event) {
+                if (_gameAgentObj != null) {
+                    log.info("Game agent destroyed", "gameId", getGameId(), "agent", _gameAgentObj);
+                    if (_lifecycleObserver != null) {
+                        _lifecycleObserver.avrGameAgentDestroyed(AVRGameManager.this);
+                    }
+                }
+            }
+        });
     }
 
     // from AVRGameProvider
@@ -309,7 +332,8 @@ public class AVRGameManager extends PlaceManager
      */
     public void agentReady (ClientObject caller)
     {
-        log.info("AVRG Agent ready for " + caller);
+        log.info(
+            "AVRG Agent ready", "clientOid", caller.getOid(), "agentOid", _gameAgentObj.getOid());
         _lifecycleObserver.avrGameReady(this);
     }
 
@@ -370,6 +394,7 @@ public class AVRGameManager extends PlaceManager
         if (_gameAgentObj != null) {
             _invmgr.clearDispatcher(_gameAgentObj.agentService);
             _breg.destroyAgent(_gameAgentObj);
+            _gameAgentObj = null;
         }
 
         if (_lifecycleObserver != null) {

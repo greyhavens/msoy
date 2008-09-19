@@ -73,6 +73,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyObject;
+import com.threerings.msoy.game.data.MsoyGameCodes;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
@@ -268,24 +269,7 @@ public class GameGameRegistry
         // else is it an AVRG?
         final AVRGameManager amgr = _avrgManagers.get(gameId);
         if (amgr != null) {
-            // copy the occupant set as a player list, as occupancy is modified in the loop below
-            List<PlayerObject> players = Lists.newArrayList();
-            for (OccupantInfo playerInfo : amgr.getGameObject().occupantInfo) {
-                PlayerObject player = (PlayerObject) _omgr.getObject(playerInfo.bodyOid);
-                if (player != null) {
-                    players.add(player);
-                }
-            }
-
-            log.info("AVRG updated: evicting players and shutting down manager",
-                     "gameId", gameId, "evicted", players.size());
-            // now throw the players out
-            for (PlayerObject player : players) {
-                _locmgr.leavePlace(player);
-            }
-
-            // then immediately shut down the manager
-            amgr.shutdown();
+            forciblyShutdownAVRG(amgr, "content updated");
             return;
         }
 
@@ -443,7 +427,8 @@ public class GameGameRegistry
             @Override
             public void handleSuccess () {
                 if (_content.game == null) {
-                    reportFailure("m.no_such_game");
+                    log.warning("Content has no game", "gameId", gameId);
+                    reportFailure(MsoyGameCodes.E_NO_SUCH_GAME);
                     return;
                 }
 
@@ -453,10 +438,12 @@ public class GameGameRegistry
 
                 } catch (IOException ioe) {
                     log.warning("Error parsing game config", "game", _content.game, ioe);
+                    reportFailure(MsoyGameCodes.E_BAD_GAME_CONTENT);
                     return;
 
                 } catch (SAXException saxe) {
                     log.warning("Error parsing game config", "game", _content.game, saxe);
+                    reportFailure(MsoyGameCodes.E_BAD_GAME_CONTENT);
                     return;
 
                 }
@@ -517,6 +504,7 @@ public class GameGameRegistry
 
                 } catch (Exception e) {
                     log.warning("Failed to create AVRGameObject", "gameId", gameId, e);
+                    reportFailure(MsoyGameCodes.E_INTERNAL_ERROR);
                     return;
                 }
 
@@ -831,6 +819,13 @@ public class GameGameRegistry
             log.warning("No listeners when done activating AVRGame", "gameId", gameId);
         }
     }
+    
+    // from AVRGameManager.LifecycleObserver
+    public void avrGameAgentDestroyed (AVRGameManager mgr)
+    {
+        // we don't like to run AVRGs with no agents, shut 'er down
+        forciblyShutdownAVRG(mgr, "agent destroyed");
+    }
 
     protected GameContent assembleGameContent (int gameId)
     {
@@ -904,6 +899,7 @@ public class GameGameRegistry
             public void handleFailure (Exception pe) {
                 log.warning("Unable to resolve player state [gameId=" +
                     mgr.getGameId() + ", player=" + playerId + "]", pe);
+                listener.requestFailed(InvocationCodes.E_INTERNAL_ERROR);
             }
 
             protected List<PlayerGameStateRecord> _stateRecs;
@@ -931,6 +927,33 @@ public class GameGameRegistry
         });
     }
 
+    /**
+     * Evict all the players in an avrg then shut it down.
+     */
+    protected void forciblyShutdownAVRG (AVRGameManager amgr, String why)
+    {
+        // copy the occupant set as a player list, as occupancy is modified in the loop below
+        List<PlayerObject> players = Lists.newArrayList();
+        for (OccupantInfo playerInfo : amgr.getGameObject().occupantInfo) {
+            PlayerObject player = (PlayerObject) _omgr.getObject(playerInfo.bodyOid);
+            if (player != null) {
+                players.add(player);
+            }
+        }
+
+        log.info(
+            "AVRG " + why + ": evicting players and shutting down manager", "gameId", amgr.getGameId(),
+            "evicted", players.size());
+
+        // now throw the players out
+        for (PlayerObject player : players) {
+            _locmgr.leavePlace(player);
+        }
+
+        // then immediately shut down the manager
+        amgr.shutdown();
+    }
+    
     protected void killBureauSession (int gameId)
     {
         String bureauId = BureauTypes.GAME_BUREAU_ID_PREFIX + gameId;
