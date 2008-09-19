@@ -193,6 +193,13 @@ public class MemberRecord extends PersistentRecord
     public static final ColumnExp AFFILIATE_MEMBER_ID_C =
         new ColumnExp(MemberRecord.class, AFFILIATE_MEMBER_ID);
 
+    /** The column identifier for the {@link #blingAffiliate} field. */
+    public static final String BLING_AFFILIATE = "blingAffiliate";
+
+    /** The qualified column identifier for the {@link #blingAffiliate} field. */
+    public static final ColumnExp BLING_AFFILIATE_C =
+        new ColumnExp(MemberRecord.class, BLING_AFFILIATE);
+
     /** The column identifier for the {@link #level} field. */
     public static final String LEVEL = "level";
 
@@ -206,7 +213,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 23;
+    public static final int SCHEMA_VERSION = 24;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -256,6 +263,10 @@ public class MemberRecord extends PersistentRecord
     /** The memberId of this user's affiliate, or 0 if none. */
     @Column(defaultValue="0")
     public int affiliateMemberId;
+
+    /** The affiliate. */
+    @Column(nullable=true)
+    public String blingAffiliate;
 
     /** The currently reported level of this user. */
     @Column(defaultValue="1")
