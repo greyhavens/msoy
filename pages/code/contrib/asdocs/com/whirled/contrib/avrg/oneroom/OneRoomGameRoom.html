@@ -1,0 +1,355 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
+<link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
+<meta content="OneRoomGameRoom,com.whirled.contrib.avrg.oneroom.OneRoomGameRoom,_gameCtrl,_roomCtrl,_server,log,finishInit,init,messageReceived,playerEntered,playerLeft,shutdown" name="keywords">
+<title>com.whirled.contrib.avrg.oneroom.OneRoomGameRoom</title>
+</head>
+<body>
+<script type="text/javascript" language="javascript" src="../../../../../asdoc.js"></script><script type="text/javascript" language="javascript" src="../../../../../cookies.js"></script><script type="text/javascript" language="javascript">
+<!--
+				asdocTitle = 'OneRoomGameRoom - Whirled "contrib" Documentation';
+				var baseRef = '../../../../../';
+				window.onload = configPage;
+			--></script>
+<table style="display:none" id="titleTable" cellspacing="0" cellpadding="0" class="titleTable">
+<tr>
+<td align="left" class="titleTableTitle">Whirled "contrib" Documentation</td><td align="right" class="titleTableTopNav"><a onclick="loadClassListFrame('../../../../../all-classes.html')" href="../../../../../package-summary.html">All&nbsp;Packages</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../../all-classes.html')" href="../../../../../class-summary.html">All&nbsp;Classes</a>&nbsp;|&nbsp;<a onclick="loadClassListFrame('../../../../../index-list.html')" href="../../../../../all-index-A.html">Index</a>&nbsp;|&nbsp;<a href="../../../../../index.html?com/whirled/contrib/avrg/oneroom/OneRoomGameRoom.html&amp;com/whirled/contrib/avrg/oneroom/class-list.html" id="framesLink1">Frames</a><a onclick="parent.location=document.location" href="" style="display:none" id="noFramesLink1">No&nbsp;Frames</a></td><td rowspan="3" align="right" class="titleTableLogo"><img alt="Adobe Logo" title="Adobe Logo" class="logoImage" src="../../../../../images/logo.jpg"></td>
+</tr>
+<tr class="titleTableRow2">
+<td align="left" id="subTitle" class="titleTableSubTitle">Class&nbsp;OneRoomGameRoom</td><td align="right" id="subNav" class="titleTableSubNav"><a href="#propertySummary">Properties</a>&nbsp;| <a href="#methodSummary">Methods</a></td>
+</tr>
+<tr class="titleTableRow3">
+<td colspan="2">&nbsp;</td>
+</tr>
+</table>
+<script type="text/javascript" language="javascript">
+<!--
+if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Class OneRoomGameRoom"); titleBar_setSubNav(false,true,false,false,false,false,true,false,false,false,false,false,false,false);}
+--></script>
+<div class="MainContent">
+<table cellspacing="0" cellpadding="0" class="classHeaderTable">
+<tr>
+<td class="classHeaderTableLabel">Package</td><td><a onclick="javascript:loadClassListFrame('class-list.html')" href="package-detail.html">com.whirled.contrib.avrg.oneroom</a></td>
+</tr>
+<tr>
+<td class="classHeaderTableLabel">Class</td><td class="classSignature">public class OneRoomGameRoom</td>
+</tr>
+</table>
+<p></p>
+ Room type superclass for games that take place in exactly one room. To use this class, games
+ should create a subclass and set it as the roomType in the server agent. The subclass just
+ needs to handle game logic in the given hooks, something like this:
+  <div class='listing'><pre>
+ import com.whirled.contrib.avrg.oneroom.OneRoomGameRoom;<br>
+ public class MyRoom extends OneRoomGameRoom
+ {
+     override public function finishInit ()
+     {
+         super.finishInit();
+         // game initialization code
+     } <br>
+     override public function shutdown ()
+     {
+         // game shutdown code
+         super.shutdown();
+     } <br>
+     override protected function messageReceived (
+         senderId :int, name :String, value :Object) :void
+     {
+         // game logic for when a message is received from a player, for example:
+         if (name == MOVE) {
+             _myState.applyChange(value as Move);
+             _roomCtrl.props.set(GAMESTATE, _myState.toObject());
+         }
+     } <br>
+     override public function playerEntered (playerId :int)
+     {
+         // game logic for when a new player comes in the room
+     } <br>
+     override public function playerLeft (playerId :int)
+     {
+         // game logic for when a new player leaves the room
+     }
+ }
+ </pre></div>
+ <p></p>
+<p>
+<span class="classHeaderTableLabel">See also</span>
+</p>
+<div class="seeAlso">
+<a href="OneRoomGameServer.html" target="">OneRoomGameServer</a>
+</div>
+<br>
+<hr>
+</div>
+<a name="propertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Properties</div>
+<table id="summaryTableProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#log">log</a> : Log<div class="summaryTableDescription"> The log associated with this room.</div>
+</td><td class="summaryTableOwnerCol">OneRoomGameRoom</td>
+</tr>
+</table>
+</div>
+<a name="protectedPropertySummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Properties</div>
+<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_gameCtrl">_gameCtrl</a> : AVRServerGameControl<div class="summaryTableDescription"> The game control for the agent.</div>
+</td><td class="summaryTableOwnerCol">OneRoomGameRoom</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_roomCtrl">_roomCtrl</a> : RoomServerSubControl<div class="summaryTableDescription"> The room control for this room.</div>
+</td><td class="summaryTableOwnerCol">OneRoomGameRoom</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_server">_server</a> : <a href="../oneroom/OneRoomGameServer.html">OneRoomGameServer</a>
+<div class="summaryTableDescription"> The agent that spawned this room.</div>
+</td><td class="summaryTableOwnerCol">OneRoomGameRoom</td>
+</tr>
+</table>
+</div>
+<a name="methodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Methods</div>
+<table id="summaryTableMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#init()">init</a>(server:<a href="OneRoomGameServer.html">OneRoomGameServer</a>, roomId:int):void</div>
+<div class="summaryTableDescription"> 
+     Intializes the game room.</div>
+</td><td class="summaryTableOwnerCol">OneRoomGameRoom</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#shutdown()">shutdown</a>():void</div>
+<div class="summaryTableDescription">
+     Shuts down the game room.</div>
+</td><td class="summaryTableOwnerCol">OneRoomGameRoom</td>
+</tr>
+</table>
+</div>
+<a name="protectedMethodSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Protected Methods</div>
+<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#finishInit()">finishInit</a>():void</div>
+<div class="summaryTableDescription">
+     Called once the room is initialized.</div>
+</td><td class="summaryTableOwnerCol">OneRoomGameRoom</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#messageReceived()">messageReceived</a>(senderId:int, name:String, value:Object):void</div>
+<div class="summaryTableDescription">
+     Called whan a game player in this room sends a message to the server agent.</div>
+</td><td class="summaryTableOwnerCol">OneRoomGameRoom</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#playerEntered()">playerEntered</a>(playerId:int):void</div>
+<div class="summaryTableDescription">
+     Called whan a game player enters the room.</div>
+</td><td class="summaryTableOwnerCol">OneRoomGameRoom</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#playerLeft()">playerLeft</a>(playerId:int):void</div>
+<div class="summaryTableDescription">
+     Called whan a game player leaves the room.</div>
+</td><td class="summaryTableOwnerCol">OneRoomGameRoom</td>
+</tr>
+</table>
+</div>
+<script type="text/javascript" language="javascript">
+<!--
+showHideInherited();
+--></script>
+<div class="MainContent">
+<a name="propertyDetail"></a>
+<div class="detailSectionHeader">Property detail</div>
+<a name="_gameCtrl"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_gameCtrl</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _gameCtrl:AVRServerGameControl</code><p> The game control for the agent. </p></div>
+<a name="log"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">log</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var log:Log</code><p> The log associated with this room. Includes a time stamp and a prefix with the id of the
+     room. </p></div>
+<a name="_roomCtrl"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_roomCtrl</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _roomCtrl:RoomServerSubControl</code><p> The room control for this room. </p></div>
+<a name="_server"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_server</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _server:<a href="../oneroom/OneRoomGameServer.html">OneRoomGameServer</a></code><p> The agent that spawned this room. </p></div>
+<a name="methodDetail"></a>
+<div class="detailSectionHeader">Method detail</div>
+<a name="finishInit()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">finishInit</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function finishInit():void</code><p>
+     Called once the room is initialized. Callers should override and set up game-specific state
+     and objects etc., ensuring that <code>super.finishInit</code> is called first.
+     </p></div>
+<a name="init()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">init</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function init(server:<a href="OneRoomGameServer.html">OneRoomGameServer</a>, roomId:int):void</code><p> 
+     Intializes the game room. Subclasses should not need to override this, but should initialize
+     game specific members in <code>finishInit</code>.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">server</span>:<a href="OneRoomGameServer.html">OneRoomGameServer</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">roomId</span>:int</code></td>
+</tr>
+</table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../oneroom/OneRoomGameRoom.html#finishInit" target="">finishInit</a>
+</div>
+</div>
+<a name="messageReceived()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">messageReceived</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function messageReceived(senderId:int, name:String, value:Object):void</code><p>
+     Called whan a game player in this room sends a message to the server agent. Subclasses should
+     override and perform handling for game messages.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">senderId</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">value</span>:Object</code></td>
+</tr>
+</table>
+</div>
+<a name="playerEntered()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">playerEntered</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function playerEntered(playerId:int):void</code><p>
+     Called whan a game player enters the room. Subclasses should override and update their
+     internal state for the addition of the player.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="playerLeft()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">playerLeft</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function playerLeft(playerId:int):void</code><p>
+     Called whan a game player leaves the room. Subclasses should override and update their
+     internal state for the removal of the player.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="shutdown()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">shutdown</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function shutdown():void</code><p>
+     Shuts down the game room. Subclasses should override and remove listeners and clear state
+     variables etc., ensuring that <code>super.shutdown</code> is called at the end.
+     </p></div>
+<br>
+<br>
+<hr>
+<br>
+<p></p>
+<center class="copyright">
+</center>
+</div>
+</body>
+</html>
+<!---->

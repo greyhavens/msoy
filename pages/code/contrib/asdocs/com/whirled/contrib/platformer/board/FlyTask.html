@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="FlyTask,com.whirled.contrib.platformer.board.FlyTask,DRAG,MAX_DEAD_DY,MAX_DX,MAX_DY,_lastDelta,_sab,genCD,getBounds,init,runTask,updateVector" name="keywords">
+<meta content="FlyTask,com.whirled.contrib.platformer.board.FlyTask,DRAG,MAX_DEAD_DY,_lastDelta,_maxDx,_maxDy,_sab,genCD,getBounds,init,runTask,updateVector" name="keywords">
 <title>com.whirled.contrib.platformer.board.FlyTask</title>
 </head>
 <body>
@@ -93,11 +93,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">FlyTask</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MAX_DX">MAX_DX</a> : Number = 3<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_maxDx">_maxDx</a> : Number<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">FlyTask</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MAX_DY">MAX_DY</a> : Number = 1<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_maxDy">_maxDy</a> : Number<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">FlyTask</td>
 </tr>
 <tr class="hideInheritedProtectedProperty">
@@ -129,7 +129,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#FlyTask()">FlyTask</a>(ac:<a href="../game/ActorController.html">ActorController</a>, col:<a href="Collider.html">Collider</a>)</div>
+<a class="signatureLink" href="#FlyTask()">FlyTask</a>(ac:<a href="../game/ActorController.html">ActorController</a>, col:<a href="Collider.html">Collider</a>, maxDx:Number = 3, maxDy:Number = 1)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">FlyTask</td>
 </tr>
@@ -266,23 +266,23 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var MAX_DEAD_DY:Number = 3</code>
 </div>
-<a name="MAX_DX"></a>
+<a name="_maxDx"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">MAX_DX</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_maxDx</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var MAX_DX:Number = 3</code>
+<code>protected var _maxDx:Number</code>
 </div>
-<a name="MAX_DY"></a>
+<a name="_maxDy"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">MAX_DY</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_maxDy</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var MAX_DY:Number = 1</code>
+<code>protected var _maxDy:Number</code>
 </div>
 <a name="_sab"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -302,7 +302,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function FlyTask(ac:<a href="../game/ActorController.html">ActorController</a>, col:<a href="Collider.html">Collider</a>)</code><span class="label">Parameters</span>
+<code>public function FlyTask(ac:<a href="../game/ActorController.html">ActorController</a>, col:<a href="Collider.html">Collider</a>, maxDx:Number = 3, maxDy:Number = 1)</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">ac</span>:<a href="../game/ActorController.html">ActorController</a></code></td>
@@ -312,6 +312,18 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">col</span>:<a href="Collider.html">Collider</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">maxDx</span>:Number</code> (default = <code>3</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">maxDy</span>:Number</code> (default = <code>1</code>)<code></code></td>
 </tr>
 </table>
 </div>

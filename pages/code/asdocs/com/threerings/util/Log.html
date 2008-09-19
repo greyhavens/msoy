@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Log,com.threerings.util.Log,DEBUG,INFO,LEVEL_NAMES,OFF,WARNING,_levels,_module,_setLevels,_targets,addTarget,debug,doLog,dumpStack,getLevel,getLog,getTimeStamp,info,logStackTrace,removeTarget,setLevel,setLevels,stringToLevel,testing,warning" name="keywords">
+<meta content="Log,com.threerings.util.Log,DEBUG,INFO,LEVEL_NAMES,OFF,WARNING,_levels,_module,_setLevels,_targets,addTarget,debug,doLog,dumpStack,formatMessage,getLevel,getLog,getTimeStamp,info,logStackTrace,removeTarget,setLevel,setLevels,stringToLevel,testing,warning" name="keywords">
 <title>com.threerings.util.Log</title>
 </head>
 <body>
@@ -57,8 +57,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
   OR, if you just need a one-off Log:
      protected function doStuff (thingy :Thingy) :void
      {
-          if (thingy == null) {
-              Log.getLog(this).warn("thiny is null!");
+          if (!isValid(thingy)) {
+              Log.getLog(this).warn("Invalid thingy specified", "thingy", thingy);
               ....
  <p></p>
 <br>
@@ -107,7 +107,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#debug()">debug</a>(... messages):void</div>
+<a class="signatureLink" href="#debug()">debug</a>(... args):void</div>
 <div class="summaryTableDescription">
      Log a message with 'debug' priority.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
@@ -133,7 +133,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#info()">info</a>(... messages):void</div>
+<a class="signatureLink" href="#info()">info</a>(... args):void</div>
 <div class="summaryTableDescription">
      Log a message with 'info' priority.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
@@ -143,7 +143,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#logStackTrace()">logStackTrace</a>(error:Error):void</div>
 <div class="summaryTableDescription">
-     Log a message with 'debug' priority.</div>
+     Log just a stack trace with 'warning' priority.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 <tr class="">
@@ -183,9 +183,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#warning()">warning</a>(... messages):void</div>
+<a class="signatureLink" href="#warning()">warning</a>(... args):void</div>
 <div class="summaryTableDescription">
-     Log a message with 'debug' priority.</div>
+     Log a message with 'warning' priority.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 </table>
@@ -200,7 +200,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#doLog()">doLog</a>(level:int, messages:Array):void</div>
+<a class="signatureLink" href="#doLog()">doLog</a>(level:int, args:Array):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#formatMessage()">formatMessage</a>(level:int, args:Array):String</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
@@ -330,14 +337,24 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function debug(... messages):void</code><p>
+<code>public function debug(... args):void</code><p>
      Log a message with 'debug' priority.
-     </p><span class="label">Parameters</span>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code>... <span class="label">messages</span></code></td>
+<td width="20px"></td><td><code>... <span class="label">args</span></code> &mdash; The first argument is the actual message to log. After that, each pair
+     of parameters is printed in key/value form, the benefit being that if no log
+     message is generated then toString() will not be called on the values.
+     A final parameter may be an Error, in which case the stack trace is printed.
+          </td>
 </tr>
 </table>
+<br>
+<span class="label">Example</span>
+<br>     <div class='listing'><pre>
+        log.debug("Message", "key1", value1, "key2", value2, optionalError);
+     </pre></div>
+     <p></p>
 </div>
 <a name="doLog()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -346,7 +363,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function doLog(level:int, messages:Array):void</code><span class="label">Parameters</span>
+<code>protected function doLog(level:int, args:Array):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">level</span>:int</code></td>
@@ -355,7 +372,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">messages</span>:Array</code></td>
+<td width="20px"></td><td><code><span class="label">args</span>:Array</code></td>
 </tr>
 </table>
 </div>
@@ -370,6 +387,33 @@ showHideInherited();
      A convenience function for quickly printing a stack trace
      to the log, useful for debugging.
      </p></div>
+<a name="formatMessage()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">formatMessage</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function formatMessage(level:int, args:Array):String</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">level</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">args</span>:Array</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
 <a name="getLevel()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -441,14 +485,24 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function info(... messages):void</code><p>
+<code>public function info(... args):void</code><p>
      Log a message with 'info' priority.
-     </p><span class="label">Parameters</span>
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code>... <span class="label">messages</span></code></td>
+<td width="20px"></td><td><code>... <span class="label">args</span></code> &mdash; The first argument is the actual message to log. After that, each pair
+     of parameters is printed in key/value form, the benefit being that if no log
+     message is generated then toString() will not be called on the values.
+     A final parameter may be an Error, in which case the stack trace is printed.
+          </td>
 </tr>
 </table>
+<br>
+<span class="label">Example</span>
+<br>     <div class='listing'><pre>
+        log.info("Message", "key1", value1, "key2", value2, optionalError);
+     </pre></div>
+     <p></p>
 </div>
 <a name="logStackTrace()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -458,7 +512,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function logStackTrace(error:Error):void</code><p>
-     Log a message with 'debug' priority.
+     Log just a stack trace with 'warning' priority.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -571,14 +625,24 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function warning(... messages):void</code><p>
-     Log a message with 'debug' priority.
-     </p><span class="label">Parameters</span>
+<code>public function warning(... args):void</code><p>
+     Log a message with 'warning' priority.
+          </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code>... <span class="label">messages</span></code></td>
+<td width="20px"></td><td><code>... <span class="label">args</span></code> &mdash; The first argument is the actual message to log. After that, each pair
+     of parameters is printed in key/value form, the benefit being that if no log
+     message is generated then toString() will not be called on the values.
+     A final parameter may be an Error, in which case the stack trace is printed.
+          </td>
 </tr>
 </table>
+<br>
+<span class="label">Example</span>
+<br>     <div class='listing'><pre>
+        log.warning("Message", "key1", value1, "key2", value2, optionalError);
+     </pre></div>
+     <p></p>
 </div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
