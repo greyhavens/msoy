@@ -131,9 +131,6 @@ public class MsoyHttpServer extends Server
      * fiddling we want. */
     protected static class MsoyDefaultServlet extends DefaultServlet
     {
-        /** The affiliate cookie name. */
-        public static final String AFFILIATE_COOKIE = "baff";
-
         protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
             throws ServletException, IOException {
             checkCookies(req, rsp); // we want to check cookies even before we do the redirect
@@ -149,28 +146,8 @@ public class MsoyHttpServer extends Server
 
         protected void checkCookies (HttpServletRequest req, HttpServletResponse rsp)
         {
-            checkAffiliateCookie(req, rsp);
+            AffiliateCookie.check(req, rsp);
             addReferralCookie(req, rsp);
-        }
-
-        /**
-         * Maybe set the affiliate cookie.
-         */
-        protected void checkAffiliateCookie (HttpServletRequest req, HttpServletResponse rsp)
-        {
-            String affiliate = req.getParameter("aff"); // "aff" is the parameter name ?aff=foo
-            if (affiliate == null) {
-                return;
-            }
-
-            if (false /* FIRST WINS */ && CookieUtil.getCookie(req, AFFILIATE_COOKIE) != null) {
-                return;
-            }
-            // LAST WINS, or FIRST WINS but this is the first!
-            Cookie affCookie = new Cookie(AFFILIATE_COOKIE, affiliate);
-            affCookie.setMaxAge(365 * 24 * 60 * 60); // one year
-            affCookie.setPath("/");
-            rsp.addCookie(affCookie); // nom nom nom
         }
 
         /**

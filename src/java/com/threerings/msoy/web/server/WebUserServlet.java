@@ -130,7 +130,7 @@ public class WebUserServlet extends MsoyServiceServlet
         // directly as it is thread safe (and it blocks) and we are allowed to block
         final MemberRecord mrec = _author.createAccount(
             info.email, info.password, info.displayName, ignoreRestrict, invite, info.referral,
-            getAffiliateCookie());
+            AffiliateCookie.get(getThreadLocalRequest()));
 
         // store the user's birthday and realname in their profile
         ProfileRecord prec = new ProfileRecord();
@@ -459,7 +459,7 @@ public class WebUserServlet extends MsoyServiceServlet
     protected SessionData startSession (MemberRecord mrec, int expireDays)
         throws ServiceException
     {
-        clearAffiliateCookie();
+        AffiliateCookie.clear(getThreadLocalResponse());
 
         // if they made it through that gauntlet, create or update their session token
         WebCreds creds = mrec.toCreds(_memberRepo.startOrJoinSession(mrec.memberId, expireDays));
@@ -485,23 +485,6 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         return data;
-    }
-
-    protected String getAffiliateCookie ()
-    {
-        HttpServletRequest req = getThreadLocalRequest();
-        String affiliate = req.getParameter("aff");
-        if (affiliate == null) {
-            affiliate = CookieUtil.getCookieValue(
-                req, MsoyHttpServer.MsoyDefaultServlet.AFFILIATE_COOKIE);
-        }
-        return affiliate;
-    }
-
-    protected void clearAffiliateCookie ()
-    {
-        CookieUtil.clearCookie(getThreadLocalResponse(),
-            MsoyHttpServer.MsoyDefaultServlet.AFFILIATE_COOKIE);
     }
 
     protected static class TransferGuestFlowAction extends MemberNodeAction
