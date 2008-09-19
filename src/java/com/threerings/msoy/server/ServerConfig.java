@@ -28,6 +28,9 @@ import com.threerings.presents.client.Client;
  */
 public class ServerConfig
 {
+    /** Provides access to our config properties. */
+    public static final Config config = new Config("msoy-server");
+
     /** The name assigned to this server node. */
     public static String nodeName;
 
@@ -100,9 +103,6 @@ public class ServerConfig
     /** The ReCaptcha private key. */
     public static String recaptchaPrivateKey;
 
-    /** Provides access to our config properties. */
-    public static Config config = new Config("msoy-server");
-
     /** The secret used to authenticate the bureau launching client. */
     public static String bureauSharedSecret;
 
@@ -172,7 +172,7 @@ public class ServerConfig
     {
         return config.getValue(nodeName + ".http_port", httpPort);
     }
-    
+
     /**
      * Returns the server and game ports the specified node should be using.  This is only used on
      * individual developers servers where they're running multiple nodes on one machine.
@@ -226,7 +226,7 @@ public class ServerConfig
     {
         return (groupId == Game.NO_GROUP) ? config.getValue("default_game_group_id", 0) : groupId;
     }
-    
+
     /**
      * Returns the configuration of the AMQP messaging server.  If no messaging server is
      * configured, this will return null.
@@ -238,7 +238,7 @@ public class ServerConfig
             // No messaging server configured.
             return null;
         }
-        return new AMQPMessageConfig(addresses, 
+        return new AMQPMessageConfig(addresses,
             config.getValue("messaging.server.virtualhost", ""),
             config.getValue("messaging.server.username", ""),
             config.getValue("messaging.server.password", ""),
