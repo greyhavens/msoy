@@ -17,6 +17,7 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.room.data.MemberInfo;
 import com.threerings.msoy.ui.MsoyNameLabelCreator;
 
 /**
@@ -51,7 +52,7 @@ public class RoomOccupantList extends PlayerList
 
             // set up our current occupants
             for each (var occInfo :OccupantInfo in plobj.occupantInfo.toArray()) {
-                addItem(occInfo.username);
+                addOccupant(occInfo);
             }
         }
     }
@@ -60,7 +61,7 @@ public class RoomOccupantList extends PlayerList
     public function entryAdded (event :EntryAddedEvent) :void
     {
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
-            addItem((event.getEntry() as OccupantInfo).username);
+            addOccupant((event.getEntry() as OccupantInfo));
         }
     }
 
@@ -77,6 +78,14 @@ public class RoomOccupantList extends PlayerList
     {
         if (event.getName() == PlaceObject.OCCUPANT_INFO) {
             removeItem((event.getOldEntry() as OccupantInfo).username);
+        }
+    }
+
+    protected function addOccupant (occInfo :OccupantInfo) :void
+    {
+        // only members get to be in the occupant list (sorry pets...)
+        if (occInfo instanceof MemberInfo) {
+            addItem(occInfo.username);
         }
     }
 
