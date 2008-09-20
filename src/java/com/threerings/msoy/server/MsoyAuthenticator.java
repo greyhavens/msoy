@@ -202,7 +202,7 @@ public class MsoyAuthenticator extends Authenticator
      */
     public MemberRecord createAccount (
         String email, final String password, final String displayName, boolean ignoreRestrict,
-        final InvitationRecord invite, final ReferralInfo referral, String blingAffiliate)
+        final InvitationRecord invite, final ReferralInfo referral, String affiliate)
         throws ServiceException
     {
         if (!RuntimeConfig.server.registrationEnabled && !ignoreRestrict) {
@@ -223,7 +223,7 @@ public class MsoyAuthenticator extends Authenticator
 
             // create a new member record for the account
             final MemberRecord mrec = createMember(
-                account, displayName, invite, referral, blingAffiliate);
+                account, displayName, invite, referral, affiliate);
             // clear out our account reference to let the finally block know that all went well and
             // we need not roll back the domain account creation
             account = null;
@@ -316,7 +316,7 @@ public class MsoyAuthenticator extends Authenticator
             MemberRecord mrec = _memberRepo.loadMember(account.accountName);
             if (mrec == null) {
                 // if this is their first logon, insert a skeleton member record
-                mrec = createMember(account, email, null, null, null /* TODO blingAffiliate? */);
+                mrec = createMember(account, email, null, null, null /* TODO affiliate? */);
                 account.firstLogon = true;
             } else {
                 account.firstLogon = (mrec.sessions == 0);
@@ -460,7 +460,7 @@ public class MsoyAuthenticator extends Authenticator
             // if this is their first logon, create them a member record
             if (member == null) {
                 member = createMember(
-                    account, account.accountName, null, null, null /* TODO blingAffiliate */);
+                    account, account.accountName, null, null, null /* TODO affiliate */);
                 account.firstLogon = true;
             } else {
                 account.firstLogon = (member.sessions == 0);
@@ -520,7 +520,7 @@ public class MsoyAuthenticator extends Authenticator
      */
     protected MemberRecord createMember (
         Account account, String displayName, InvitationRecord invite, ReferralInfo referral,
-        String blingAffiliate)
+        String affiliate)
     {
         // create their main member record
         final MemberRecord mrec = new MemberRecord();
@@ -529,14 +529,16 @@ public class MsoyAuthenticator extends Authenticator
         if (invite != null) {
             mrec.affiliateMemberId = invite.inviterId;
         }
-        //if (blingAffiliate != null) {
-        if (referral != null && referral.affiliate != null) {
+        if (affiliate != null) {
             if (mrec.affiliateMemberId == 0) {
-                mrec.affiliateMemberId = _affMapRepo.getAffiliateMemberId(referral.affiliate);
+                mrec.affiliateMemberId = _affMapRepo.getAffiliateMemberId(affiliate);
             } else {
                 log.warning("New member has both an affiliate referrer and an inviter. " +
                     "Using inviter...");
             }
+
+            // TODO: create the new AffiliateRecord and store it.
+            // TODO: also for inviters??
         }
 
         // store their member record in the repository making them a real Whirled citizen
