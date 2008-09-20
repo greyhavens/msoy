@@ -5,8 +5,6 @@ package com.threerings.msoy.web.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -143,29 +141,7 @@ public class MsoyHttpServer extends Server
 
         protected void checkCookies (HttpServletRequest req, HttpServletResponse rsp)
         {
-            AffiliateCookie.check(req, rsp);
-            addReferralCookie(req, rsp);
-        }
-
-        /**
-         * Adds a session cookie, with which we'll communicate the original http referer
-         * over to the GWT side (which will then use it to construct the ReferralInfo)
-         */
-        protected void addReferralCookie (HttpServletRequest req, HttpServletResponse rsp) {
-            // do we already know the referer? if so, we're done
-            if (HttpReferrerCookie.exists(req)) {
-                return;
-            }
-            // otherwise, this is the first time we got loaded - store the HTTP referer
-            Object ref = req.getHeader("Referer");
-            if (ref instanceof String) {
-                try {
-                    URL url = new URL((String) ref);
-                    HttpReferrerCookie.set(rsp, url.getHost());
-                } catch (MalformedURLException mue) {
-                    // ignore - we just won't add this cookie
-                }
-            }
+            HttpReferrerCookie.check(req, rsp);
         }
     } // end: MsoyDefaultServlet
 

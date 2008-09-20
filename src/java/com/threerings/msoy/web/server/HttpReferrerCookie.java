@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.web.server;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,12 +21,26 @@ import com.samskivert.servlet.util.CookieUtil;
  */
 public class HttpReferrerCookie
 {
+    /** The name of this cookie. */
+    public static final String NAME = "ref";
+
     /**
-     * Is referrer information already stored?
+     * Check to see if they have the cookie, if not, store it if we can.
      */
-    public static boolean exists (HttpServletRequest req)
+    public static void check (HttpServletRequest req, HttpServletResponse rsp)
     {
-        return (CookieUtil.getCookie(req, REFERRAL_FIELD) != null);
+        if (null != CookieUtil.getCookie(req, NAME)) {
+            return; // we already got one!
+        }
+
+        String req = req.getHeader("Referer");
+        if (!StringUtil.isBlank(req)) {
+            try {
+                set(rsp, new URL(req).getHost());
+            } catch (MalformedURLException mue) {
+                // don't create the cookie..
+            }
+        }
     }
 
     /**
@@ -31,9 +48,9 @@ public class HttpReferrerCookie
      */
     public static void set (HttpServletResponse rsp, String referrer)
     {
-        // TODO: obfuscate the referrer
+        // TODO: obfuscate the referrer?
         
-        Cookie cookie = new Cookie(REFERRAL_FIELD, referrer);
+        Cookie cookie = new Cookie(NAME, referrer);
         cookie.setMaxAge(365 * 24 * 60 * 60); // leave it there for a year
         cookie.setPath("/");
         rsp.addCookie(cookie);
