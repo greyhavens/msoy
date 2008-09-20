@@ -25,7 +25,6 @@ import com.threerings.util.Name;
 
 import com.threerings.crowd.chat.server.ChatProvider;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.server.ServerConfig;
 import com.threerings.msoy.world.client.WatcherDecoder;

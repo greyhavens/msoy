@@ -35,8 +35,6 @@ import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameContent;
 import com.threerings.msoy.game.server.WorldServerClient;
 
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.server.MsoyEventLogger;
