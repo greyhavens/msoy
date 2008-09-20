@@ -14,6 +14,8 @@ import java.util.Set;
 
 import org.xml.sax.SAXException;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
@@ -179,10 +181,24 @@ public class GameGameRegistry
             @Override
             public void invokePersist () throws Exception {
                 int memberId = plobj.getMemberId(), suiteId = game.getSuiteId();
-                _lpacks.addAll(Lists.transform(_lpackRepo.loadClonedItems(memberId, suiteId),
-                                               LevelPackRecord.GET_IDENT));
-                _ipacks.addAll(Lists.transform(_ipackRepo.loadClonedItems(memberId, suiteId),
-                                               ItemPackRecord.GET_IDENT));
+                Iterable<LevelPackRecord> lrecords;
+                Iterable<ItemPackRecord> irecords;
+                if (game.isDevelopmentVersion()) {
+                    // this will only work for the game developer, but we can dig it
+                    lrecords = _lpackRepo.loadOriginalItems(memberId, suiteId);
+                    irecords = _ipackRepo.loadOriginalItems(memberId, suiteId);
+                    // filter out non-premium level packs since those normally wouldn't be owned
+                    lrecords = Iterables.filter(lrecords, new Predicate<LevelPackRecord>() {
+                        public boolean apply (LevelPackRecord record) {
+                            return !record.premium;
+                        }
+                    });
+                } else {
+                    lrecords = _lpackRepo.loadClonedItems(memberId, suiteId);
+                    irecords = _ipackRepo.loadClonedItems(memberId, suiteId);
+                }
+                Iterables.addAll(_lpacks, Iterables.transform(lrecords, LevelPackRecord.GET_IDENT));
+                Iterables.addAll(_ipacks, Iterables.transform(irecords, ItemPackRecord.GET_IDENT));
                 _trophies = _trophyRepo.loadTrophyOwnership(game.gameId, memberId);
             }
             @Override
