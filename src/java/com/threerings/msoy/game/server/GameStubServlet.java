@@ -35,7 +35,8 @@ public class GameStubServlet extends HttpServlet
             return;
         }
 
-        String affiliate = StringUtil.deNull(req.getParameter("aff"));
+        // TODO: massage the referer to just be "bla.com"
+        String site = StringUtil.deNull(req.getHeader("Referer"));
 
         String response;
 //        if (needToSendError) {
@@ -47,9 +48,7 @@ public class GameStubServlet extends HttpServlet
                 "/clients/" + DeploymentConfig.version + "/world-client.swf</url>" +
                 "<params>" +
                     //"guest=t" + SEP +
-                    "aff=" + affiliate + SEP +
-                    "vec=games" + SEP +
-                    "cre=" + gameId + SEP +
+                    "vec=gamestub:" + gameId + ":" + site + SEP +
                     "gameLobby=" + gameId +
                 "</params>";
 //        }
