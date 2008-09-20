@@ -11,15 +11,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
+
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.StaticConnectionProvider;
-import com.samskivert.jdbc.depot.CacheAdapter;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.Config;
 import com.samskivert.util.StringUtil;
-import com.threerings.messaging.amqp.AMQPMessageConfig;
-import com.threerings.msoy.item.data.all.Game;
+
 import com.threerings.presents.client.Client;
+
+import com.threerings.messaging.amqp.AMQPMessageConfig;
+
+import com.threerings.msoy.item.data.all.Game;
 
 /**
  * Provides access to installation specific configuration. Properties that
@@ -122,29 +125,6 @@ public class ServerConfig
         throws Exception
     {
         return new StaticConnectionProvider(config.getSubProperties("db"));
-    }
-
-    /**
-     * Creates the Depot cache that should be used by this server and its tools. May return null,
-     * in which case no caching is used.
-     */
-    public static CacheAdapter createCacheAdapter ()
-        throws Exception
-    {
-        CacheAdapter cacheAdapter = null;
-        String adapterName = config.getValue("depot.cache.adapter", "");
-        if (adapterName.length() > 0) {
-            Class<?> adapterClass = Class.forName(adapterName);
-            if (adapterClass != null) {
-                if (CacheAdapter.class.isAssignableFrom(adapterClass)) {
-                    log.info("Using cache manager: " + adapterClass);
-                    cacheAdapter = (CacheAdapter) adapterClass.newInstance();
-                } else {
-                    log.warning("Configured with invalid CacheAdapter: " + adapterName + ".");
-                }
-            }
-        }
-        return cacheAdapter;
     }
 
     /**

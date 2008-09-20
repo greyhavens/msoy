@@ -3,35 +3,25 @@
 
 package com.threerings.msoy.server;
 
-import static com.google.inject.matcher.Matchers.annotatedWith;
-import static com.google.inject.matcher.Matchers.any;
-import static com.threerings.msoy.Log.log;
-
 import java.security.Security;
 
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.matcher.Matchers;
+
+import net.sf.ehcache.CacheManager;
+
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.TransitionRepository;
-import com.samskivert.jdbc.depot.CacheAdapter;
+import com.samskivert.jdbc.depot.EHCacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.StringUtil;
-import com.threerings.admin.server.AdminProvider;
-import com.threerings.admin.server.ConfigRegistry;
-import com.threerings.bureau.server.BureauAuthenticator;
-import com.threerings.bureau.server.BureauRegistry;
-import com.threerings.msoy.admin.server.RuntimeConfig;
-import com.threerings.msoy.bureau.data.BureauLauncherCodes;
-import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
-import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
-import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
-import com.threerings.msoy.bureau.server.BureauLauncherProvider;
-import com.threerings.msoy.bureau.server.BureauLauncherSender;
-import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.server.util.Retry;
-import com.threerings.msoy.server.util.RetryInterceptor;
+
+import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.server.DictionaryManager;
+
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.dobj.ObjectDeathListener;
@@ -40,9 +30,28 @@ import com.threerings.presents.server.InvocationException;
 import com.threerings.presents.server.PresentsDObjectMgr;
 import com.threerings.presents.server.ReportManager;
 import com.threerings.presents.server.ShutdownManager;
+
+import com.threerings.admin.server.AdminProvider;
+import com.threerings.admin.server.ConfigRegistry;
+
 import com.threerings.whirled.server.WhirledServer;
-import com.whirled.bureau.data.BureauTypes;
-import com.whirled.game.server.DictionaryManager;
+
+import com.threerings.bureau.server.BureauAuthenticator;
+import com.threerings.bureau.server.BureauRegistry;
+
+import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.server.util.Retry;
+import com.threerings.msoy.server.util.RetryInterceptor;
+
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.bureau.data.BureauLauncherCodes;
+import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
+import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
+import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
+import com.threerings.msoy.bureau.server.BureauLauncherProvider;
+import com.threerings.msoy.bureau.server.BureauLauncherSender;
+
+import static com.threerings.msoy.Log.log;
 
 /**
  * Provides the set of services that are shared between the Game and World servers.
@@ -55,28 +64,28 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         @Override protected void configure () {
             super.configure();
+            CacheManager cacheMgr = CacheManager.getInstance();
+            ConnectionProvider conprov = null;
             try {
-                _conprov = ServerConfig.createConnectionProvider();
-                _cacher = ServerConfig.createCacheAdapter();
+                conprov = ServerConfig.createConnectionProvider();
             } catch (Exception e) {
                 addError(e);
             }
             // depot dependencies
             bind(PersistenceContext.class).toInstance(
-                new PersistenceContext("msoy", _conprov, _cacher));
+                new PersistenceContext("msoy", conprov, new EHCacheAdapter(cacheMgr)));
             // presents dependencies
             bind(ReportManager.class).to(QuietReportManager.class);
             // msoy dependencies
-            bindInterceptor(any(), annotatedWith(Retry.class), new RetryInterceptor());
+            bind(CacheManager.class).toInstance(cacheMgr);
+            bindInterceptor(Matchers.any(), Matchers.annotatedWith(Retry.class),
+                            new RetryInterceptor());
             try {
-                bind(TransitionRepository.class).toInstance(new TransitionRepository(_conprov));
+                bind(TransitionRepository.class).toInstance(new TransitionRepository(conprov));
             } catch (PersistenceException e) {
                 addError(e);
             }
         }
-
-        protected ConnectionProvider _conprov;
-        protected CacheAdapter _cacher;
     }
 
     @Override // from WhirledServer
@@ -191,8 +200,9 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         super.invokerDidShutdown();
 
-        // shutdown our persistence context (cache, JDBC connections)
+        // shutdown our persistence context (JDBC connections) and the cache manager
         _perCtx.shutdown();
+        _cacheMgr.shutdown();
 
         // and shutdown our event logger now that everything else is done shutting down
         _eventLog.shutdown();
@@ -264,6 +274,9 @@ public abstract class MsoyBaseServer extends WhirledServer
         }
     }
 
+    /** Used for caching things. */
+    @Inject protected CacheManager _cacheMgr;
+
     /** Provides database access to all of our repositories. */
     @Inject protected PersistenceContext _perCtx;
 
@@ -275,7 +288,7 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Handles dictionary services for games. */
     @Inject protected DictionaryManager _dictMan;
-    
+
     /** Currently logged in bureau launchers. */
     protected HashIntMap<ClientObject> _launchers = new HashIntMap<ClientObject>();
 
