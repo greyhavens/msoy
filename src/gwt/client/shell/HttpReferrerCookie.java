@@ -14,12 +14,14 @@ import com.threerings.gwt.util.CookieUtil;
  */
 public class HttpReferrerCookie
 {
+    public static final String NAME = "ref";
+
     /**
      * Is referrer information already stored?
      */
     public static boolean exists ()
     {
-        return (CookieUtil.get(REFERRAL_FIELD) != null);
+        return (CookieUtil.get(NAME) != null);
     }
 
     /**
@@ -27,7 +29,7 @@ public class HttpReferrerCookie
      */
     public static String get ()
     {
-        String ref = CookieUtil.get(REFERRAL_FIELD);
+        String ref = CookieUtil.get(NAME);
         CShell.log("Loaded referrer: " + ref);
         return ref;
     }
@@ -38,11 +40,9 @@ public class HttpReferrerCookie
      */
     public static void disable ()
     {
-        CookieUtil.set("/", 365, REFERRAL_FIELD, REFERRER_DISABLED_VALUE);
+        CookieUtil.set("/", 365, NAME, REFERRER_DISABLED_VALUE);
         CShell.log("Referrer disabled.");
     }
-
-    private static final String REFERRAL_FIELD = "ref";
     
     /** 
      * Some value that's not null (so the existence check passes), but
