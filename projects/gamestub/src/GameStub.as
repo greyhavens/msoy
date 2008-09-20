@@ -48,9 +48,6 @@ public class GameStub extends Sprite
     /** The id of the game we'd like to load. */
     public static const GAME_ID :int = 8;
 
-    /** The affiliate we're building this for. */
-    public static const AFFILIATE :String = "newgrounds";
-
     /** The server we're connecting with, with a trailing slash. */
     public static const SERVER :String = "http://www.whirled.com/";
     //public static const SERVER :String = "http://tasman.sea.earth.threerings.net:8080/";
@@ -160,7 +157,6 @@ public class GameStub extends Sprite
 
     protected static const URL :String = SERVER + "gamestubsvc" + 
         "?gameId=" + GAME_ID +
-        "&aff=" + AFFILIATE +
         "&v=" + STUB_VERSION;
 }
 }
