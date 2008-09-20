@@ -10,6 +10,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.servlet.util.CookieUtil;
 
 /**
@@ -33,10 +35,10 @@ public class HttpReferrerCookie
             return; // we already got one!
         }
 
-        String req = req.getHeader("Referer");
-        if (!StringUtil.isBlank(req)) {
+        String ref = req.getHeader("Referer");
+        if (!StringUtil.isBlank(ref)) {
             try {
-                set(rsp, new URL(req).getHost());
+                set(rsp, new URL(ref).getHost());
             } catch (MalformedURLException mue) {
                 // don't create the cookie..
             }
@@ -55,6 +57,4 @@ public class HttpReferrerCookie
         cookie.setPath("/");
         rsp.addCookie(cookie);
     }
-
-    private static final String REFERRAL_FIELD = "ref";
 }
