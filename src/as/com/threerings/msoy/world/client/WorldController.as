@@ -446,7 +446,7 @@ public class WorldController extends MsoyController
         if (_wctx.getMsoyClient().isEmbedded()) {
             handleViewFullVersion();
         } else {
-            var sceneId :int = int(getSceneAndGame()[0]);
+            var sceneId :int = getCurrentSceneId();
             if (sceneId == 0) {
                 // TODO: before falling back to the initial scene, we should try
                 // any pending scene...
@@ -821,6 +821,23 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Returns the current sceneId, or 0 if none.
+     */
+    public function getCurrentSceneId () :int
+    {
+        const scene :Scene = _wctx.getSceneDirector().getScene();
+        return (scene == null) ? 0 : scene.getId();
+    }
+
+    /**
+     * Returns the game id, or 0 if none.
+     */
+    public function getCurrentGameId () :int
+    {
+        return _wctx.getGameDirector().getGameId();
+    }
+
+    /**
      * Called by the scene director when we've traveled to a new scene.
      */
     public function wentToScene (sceneId :int) :void
@@ -977,9 +994,18 @@ public class WorldController extends MsoyController
     }
 
     // from MsoyController
-    override public function getSceneAndGame () :Array
+    override public function getPlaceInfo () :Array
     {
-        return [ getCurrentSceneId(), getCurrentGameId() ];
+        if (getCurrentGameId() != 0) {
+            return [ true, _wctx.getGameDirector().getGameName(), getCurrentGameId() ];
+        } else {
+            const scene :Scene = _wctx.getSceneDirector().getScene();
+            if (scene != null) {
+                return [ false, scene.getName(), scene.getId() ];
+            } else {
+                return [ false, null, 0 ];
+            }
+        }
     }
 
     // from MsoyController
@@ -1232,23 +1258,6 @@ public class WorldController extends MsoyController
             headerBar.setLocationName(cfg.name);
             headerBar.setOwnerLink("");
         }
-    }
-
-    /**
-     * Returns the current sceneId, or 0 if none.
-     */
-    protected function getCurrentSceneId () :int
-    {
-        const scene :Scene = _wctx.getSceneDirector().getScene();
-        return (scene == null) ? 0 : scene.getId();
-    }
-
-    /**
-     * Returns the game id, or 0 if none.
-     */
-    protected function getCurrentGameId () :int
-    {
-        return _wctx.getGameDirector().getGameId();
     }
 
     protected function addRecentScene (scene :Scene) :void

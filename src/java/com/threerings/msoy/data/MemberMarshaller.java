@@ -65,12 +65,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static final int EMAIL_SHARE = 5;
 
     // from interface MemberService
-    public void emailShare (Client arg1, int arg2, int arg3, String[] arg4, String arg5, InvocationService.ConfirmListener arg6)
+    public void emailShare (Client arg1, boolean arg2, String arg3, int arg4, String[] arg5, String arg6, InvocationService.ConfirmListener arg7)
     {
-        InvocationMarshaller.ConfirmMarshaller listener6 = new InvocationMarshaller.ConfirmMarshaller();
-        listener6.listener = arg6;
+        InvocationMarshaller.ConfirmMarshaller listener7 = new InvocationMarshaller.ConfirmMarshaller();
+        listener7.listener = arg7;
         sendRequest(arg1, EMAIL_SHARE, new Object[] {
-            Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, arg5, listener6
+            Boolean.valueOf(arg2), arg3, Integer.valueOf(arg4), arg5, arg6, listener7
         });
     }
 

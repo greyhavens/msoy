@@ -112,9 +112,8 @@ public interface MemberService extends InvocationService
     /**
      * Shares a scene by emailing offsite friends.
      */
-    void emailShare (
-        Client client, int sceneId, int gameId, String[] emails, String message,
-        ConfirmListener listener);
+    void emailShare (Client client, boolean isGame, String placeName, int placeId,
+                     String[] emails, String message, ConfirmListener listener);
 
     /**
      * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.

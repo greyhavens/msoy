@@ -657,25 +657,24 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void emailShare (
-        final ClientObject caller, final int sceneId, final int gameId, final String[] emails,
-        final String message, final InvocationService.ConfirmListener cl)
+    public void emailShare (ClientObject caller, boolean isGame, String placeName, int placeId,
+                            String[] emails, String message, InvocationService.ConfirmListener cl)
     {
         final MemberObject memObj = (MemberObject) caller;
+        String url = ServerConfig.getServerURL();
+        if (isGame) {
+            url += "#world-game_g_" + placeId;
+        } else {
+            url += "#world-s" + placeId;
+        }
+        final String template = isGame ? "shareGameInvite" : "shareRoomInvite";
 
         // username is their authentication username which is their email address
-        String url = ServerConfig.getServerURL();
-        if (sceneId != 0) {
-            url += "#world-s" + sceneId;
-        } else if (gameId != 0) {
-            url += "#world-game_g_" + gameId;
-        }
-        final String template = (gameId != 0) ? "shareGameInvite" : "shareRoomInvite";
         final String from = memObj.username.toString();
         for (final String recip : emails) {
             // this just passes the buck to an executor, so we can call it from the dobj thread
-            _mailer.sendEmail(recip, from, template, "name", memObj.memberName,
-                              "message", message, "link", url);
+            _mailer.sendEmail(recip, from, template, "inviter", memObj.memberName,
+                              "name", placeName, "message", message, "link", url);
         }
 
         cl.requestProcessed();

@@ -196,13 +196,12 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Returns an array containing [ currentSceneId, currentGameId ], either or both
-     * might be 0.
-     * This is total hackery, but it's better than the ubertotalhackery that it used to be.
+     * Returns an array containing [ isGame, name, id ] for either our current room or our current
+     * game.
      */
-    public function getSceneAndGame () :Array
+    public function getPlaceInfo () :Array
     {
-        return [ 0, 0 ];
+        return [ false, null, 0 ];
     }
 
     /**

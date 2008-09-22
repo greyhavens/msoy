@@ -39,7 +39,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#emailShare} request.
      */
-    void emailShare (ClientObject caller, int arg1, int arg2, String[] arg3, String arg4, InvocationService.ConfirmListener arg5)
+    void emailShare (ClientObject caller, boolean arg1, String arg2, int arg3, String[] arg4, String arg5, InvocationService.ConfirmListener arg6)
         throws InvocationException;
 
     /**

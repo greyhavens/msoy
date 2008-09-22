@@ -137,8 +137,8 @@ public class LobbyGameLiaison extends GameLiaison
      */
     public function lobbyLoaded (groupId :int) :void
     {
-    	// TODO check for current scene
-        if (groupId > 0 && int(_wctx.getWorldController().getSceneAndGame()[0]) == 0) {
+        // TODO: check that we're not already where we're about to go
+        if (groupId > 0 && _wctx.getWorldController().getCurrentSceneId() == 0) {
         	_wctx.getWorldController().handleGoGroupHome(groupId);
         }
     }
