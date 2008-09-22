@@ -20,9 +20,12 @@ import mx.controls.TextInput;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
+import com.threerings.io.TypedArray;
 import com.threerings.util.MailUtil;
 
+import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.data.MemberObject;
+import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.ui.CopyableText;
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -116,6 +119,7 @@ public class ShareDialog extends FloatingPanel
         row.percentWidth = 100;
 
         row.addChild(_status = new Text());
+        _status.percentWidth = 100;
 
         var send :CommandButton = new CommandButton(null, function () :void {
             sendShareEmail(emails.text, message.text);
@@ -240,7 +244,7 @@ public class ShareDialog extends FloatingPanel
 
     protected function sendShareEmail (emailText :String, message :String) :void
     {
-        var emails :Array = [];
+        var emails :TypedArray = TypedArray.create(String);
         for each (var email :String in emailText.split(/[ ,]/)) {
             if (email.length == 0) {
                 // skip it
@@ -250,11 +254,17 @@ public class ShareDialog extends FloatingPanel
                 _status.text = Msgs.GENERAL.get("e.invalid_addr", email);
             }
         }
-
-        if (emails.length > 0) {
-            _ctx.getMsoyController().handleEmailShare(emails, message);
-            close();
+        if (emails.length == 0) {
+            return; // we either have no email addresses or bogus addresses, so stop here
         }
+
+        // send the emails and messages off to the server for delivery
+        const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
+        (_ctx.getClient().requireService(MemberService) as MemberService).emailShare(
+            _ctx.getClient(), int(sceneAndGame[0]), int(sceneAndGame[1]),
+            emails, message, new ReportingListener(_ctx, MsoyCodes.GENERAL_MSGS));
+
+        close(); // and make like the proverbial audi 5000
     }
 
     protected var _memObj :MemberObject;

@@ -123,9 +123,6 @@ public class MsoyController extends Controller
     /** Command to go to a group's home scene. */
     public static const GO_GROUP_HOME :String = "GoGroupHome";
 
-    /** Command to share the current scene with email contacts. */
-    public static const EMAIL_SHARE :String = "EmailShare";
-
     // NOTE:
     // Any commands defined in this class should be handled in this class.
     // Currently, this is not the case. Some commands are here without even an abstract or
@@ -394,18 +391,6 @@ public class MsoyController extends Controller
         };
         SliderPopup.toggle(trigger, Prefs.getSoundVolume(), Prefs.setSoundVolume,
             { styleName: "volumeSlider", tickValues: [ 0, 1 ], dataTipFormatFunction: dfmt });
-    }
-
-    /**
-     * Handles the EMAIL_SHARE command.
-     */
-    public function handleEmailShare (emails :Array, message :String) :void
-    {
-        const sceneAndGame :Array = getSceneAndGame();
-        (_mctx.getClient().requireService(MemberService) as MemberService).emailShare(
-            _mctx.getClient(), int(sceneAndGame[0]), int(sceneAndGame[1]),
-            TypedArray.create(String).addAll(emails), message,
-            new ReportingListener(_mctx, MsoyCodes.GENERAL_MSGS));
     }
 
     /**
