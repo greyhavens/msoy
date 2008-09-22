@@ -20,8 +20,6 @@ import flash.utils.Timer;
 import mx.controls.Button;
 import mx.events.MenuEvent;
 
-import com.threerings.io.TypedArray;
-
 import com.threerings.util.ArrayUtil;
 import com.threerings.util.CommandEvent;
 import com.threerings.util.Controller;
@@ -44,11 +42,9 @@ import com.threerings.flex.CommandMenu;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.ClientEvent;
 import com.threerings.presents.client.ClientObserver;
-import com.threerings.presents.client.ConfirmAdapter;
 
 import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
-import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.SliderPopup;
