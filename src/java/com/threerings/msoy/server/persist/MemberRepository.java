@@ -41,6 +41,7 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.FullTextMatch;
 import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThan;
@@ -92,6 +93,28 @@ public class MemberRepository extends DepotRepository
         ctx.registerMigration(MemberRecord.class,
             new EntityMigration.Rename(23, "invitingFriendId", MemberRecord.AFFILIATE_MEMBER_ID));
         ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(25, "blingAffiliate"));
+
+//        // Convert existing invitations into AffiliateRecords
+//        ctx.registerMigration(AffiliateRecord.class, new EntityMigration(1) {
+//            @Override public boolean runBeforeDefault ()
+//            {
+//                return false;
+//            }
+//
+//            @Override public int invoke (
+//                java.sql.Connection conn, com.samskivert.jdbc.DatabaseLiaison liaison)
+//                throws java.sql.SQLException
+//            {
+//                // find "fulfilled" invitations
+//                List<InvitationRecord> invites = findAll(InvitationRecord.class,
+//                    new Where(new Conditionals.NotEquals(InvitationRecord.INVITEE_ID_C, 0)));
+//                // store 'em as affiliate records
+//                for (InvitationRecord rec : invites) {
+//                    setAffiliate(rec.inviteeId, String.valueOf(rec.inviterId));
+//                }
+//                return invites.size();
+//            }
+//        });
 
         // add a cache invalidator that listens to single FriendRecord updates
         _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
@@ -756,6 +779,17 @@ public class MemberRepository extends DepotRepository
     }
 
     /**
+     * Set the affiliate for a newly registered user.
+     */
+    public void setAffiliate (int memberId, String affiliate)
+    {
+//        AffiliateRecord affRec = new AffiliateRecord();
+//        affRec.memberId = memberId;
+//        affRec.affiliate = affiliate;
+//        insert(affRec);
+    }
+
+    /**
      * Loads up a referral record by member record id.
      * Returns null if no record exists for that member.
      */
@@ -767,6 +801,7 @@ public class MemberRepository extends DepotRepository
     /**
      * Adds or updates the referral record for a member with the given id.
      */
+    // TODO: deprecate?
     public ReferralRecord setReferral (final int memberId, final ReferralInfo ref)
     {
         // TODO: UPDATES?? UPDATES??? WHY WOULD WE EVER UPDATE THIS INFO? IT'S ONE-TIME!!!
@@ -789,30 +824,30 @@ public class MemberRepository extends DepotRepository
      */
     public void updateAffiliateMemberId (String affiliate, int affiliateMemberId)
     {
-        // Note: apparently we do not want to do this with a join, as one day the MemberRecord
-        // may live on a different database than the ReferralRecord.
-
-        // get all the memberIds that have the specified affiliate in their ReferralRecord
-        List<Key<ReferralRecord>> refKeys = findAllKeys(ReferralRecord.class, false,
-            new Where(ReferralRecord.AFFILIATE_C, affiliate));
-
-        // then transform the ReferralRecord keys to MemberRecord keys
-        // (we make a new ArrayList so that we only transform each key once, instead
-        // of just creating a "view" list and potentially re-transforming on every iteration,
-        // since this collection is used in the KeySet for both querying and cache invalidating.)
-        List<Key<MemberRecord>> memKeys = Lists.newArrayList(Iterables.transform(refKeys,
-            new Function<Key<ReferralRecord>, Key<MemberRecord>>() {
-                public Key<MemberRecord> apply (Key<ReferralRecord> key) {
-                    return MemberRecord.getKey((Integer) key.getValues().get(0));
-                }
-            }));
-
-        // create a KeySet representing these keys
-        KeySet<MemberRecord> keySet = new KeySet<MemberRecord>(MemberRecord.class, memKeys);
-
-        // then update all those members to have the new affiliateMemberId
-        updatePartial(MemberRecord.class, keySet, keySet,
-            MemberRecord.AFFILIATE_MEMBER_ID, affiliateMemberId);
+//        // Note: apparently we do not want to do this with a join, as one day the MemberRecord
+//        // may live on a different database than the AffiliateRecord.
+//
+//        // get all the memberIds that have the specified affiliate in their AffiliateRecord
+//        List<Key<AffiliateRecord>> affKeys = findAllKeys(AffiliateRecord.class, false,
+//            new Where(AffiliateRecord.AFFILIATE_C, affiliate));
+//
+//        // then transform the AffiliateRecord keys to MemberRecord keys
+//        // (we make a new ArrayList so that we only transform each key once, instead
+//        // of just creating a "view" list and re-transforming on every iteration,
+//        // since this collection is used in the KeySet for both querying and cache invalidating.)
+//        List<Key<MemberRecord>> memKeys = Lists.newArrayList(Iterables.transform(affKeys,
+//            new Function<Key<AffiliateRecord>, Key<MemberRecord>>() {
+//                public Key<MemberRecord> apply (Key<AffiliateRecord> key) {
+//                    return MemberRecord.getKey((Integer) key.getValues().get(0));
+//                }
+//            }));
+//
+//        // create a KeySet representing these keys
+//        KeySet<MemberRecord> keySet = new KeySet<MemberRecord>(MemberRecord.class, memKeys);
+//
+//        // then update all those members to have the new affiliateMemberId
+//        updatePartial(MemberRecord.class, keySet, keySet,
+//            MemberRecord.AFFILIATE_MEMBER_ID, affiliateMemberId);
     }
 
     /**
@@ -1127,6 +1162,7 @@ public class MemberRepository extends DepotRepository
         classes.add(OptOutRecord.class);
         classes.add(ExternalMapRecord.class);
         classes.add(MemberWarningRecord.class);
+        classes.add(AffiliateRecord.class);
         classes.add(ReferralRecord.class);
     }
 

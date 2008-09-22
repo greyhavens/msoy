@@ -522,23 +522,26 @@ public class MsoyAuthenticator extends Authenticator
         Account account, String displayName, InvitationRecord invite, ReferralInfo referral,
         String affiliate)
     {
+        // normalize blank affiliates to null
+        if (StringUtil.isBlank(affiliate)) {
+            affiliate = null;
+        }
+
         // create their main member record
         final MemberRecord mrec = new MemberRecord();
         mrec.accountName = account.accountName;
         mrec.name = displayName;
         if (invite != null) {
-            mrec.affiliateMemberId = invite.inviterId;
+            String inviterStr = String.valueOf(invite.inviterId);
+            if (affiliate != null && !affiliate.equals(inviterStr)) {
+                log.warning("New member has both an inviter and an affiliate. Using inviter.",
+                    "inviter", inviterStr, "affiliate", affiliate);
+            }
+            affiliate = inviterStr; // turn the inviter into an affiliate
         }
         if (affiliate != null) {
-            if (mrec.affiliateMemberId == 0) {
-                mrec.affiliateMemberId = _affMapRepo.getAffiliateMemberId(affiliate);
-            } else {
-                log.warning("New member has both an affiliate referrer and an inviter. " +
-                    "Using inviter...");
-            }
-
-            // TODO: create the new AffiliateRecord and store it.
-            // TODO: also for inviters??
+            // look up their affiliate's memberId, if any
+            mrec.affiliateMemberId = _affMapRepo.getAffiliateMemberId(affiliate);
         }
 
         // store their member record in the repository making them a real Whirled citizen
@@ -557,6 +560,11 @@ public class MsoyAuthenticator extends Authenticator
         // emit a created_account action which will grant them some starting flow
         _moneyLogic.awardCoins(mrec.memberId, 0, 0, null, CoinAwards.CREATED_ACCOUNT, false,
             UserAction.CREATED_ACCOUNT);
+
+        // store their affiliate, if any (may also be the inviter's memberId)
+        if (affiliate != null) {
+            _memberRepo.setAffiliate(mrec.memberId, affiliate);
+        }
 
         // if they gave us a valid referral info, store it; otherwise it'll be filled in later
         if (referral != null) {
