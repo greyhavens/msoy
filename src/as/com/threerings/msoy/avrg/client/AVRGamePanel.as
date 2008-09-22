@@ -4,8 +4,14 @@
 package com.threerings.msoy.avrg.client {
 
 import flash.events.Event;
+import flash.events.ProgressEvent;
+
 import flash.display.Loader;
 import flash.display.LoaderInfo;
+
+import flash.utils.setInterval;
+import flash.utils.clearInterval;
+import flash.utils.getTimer;
 
 import mx.core.UIComponent;
 import mx.events.ResizeEvent;
@@ -73,8 +79,8 @@ public class AVRGamePanel extends UIComponent
         // set ourselves up properly once the media is loaded
         loader.contentLoaderInfo.addEventListener(Event.COMPLETE, mediaComplete);
 
-        // let the control bar do its load feedback
-        getControlBar().setAVRGameLoaderInfo(loader.contentLoaderInfo);
+        // do loading feedback on the avrg button
+        provideLoadingFeedback(loader.contentLoaderInfo);
 
         addEventListener(ResizeEvent.RESIZE, handleResize);
     }
@@ -130,6 +136,40 @@ public class AVRGamePanel extends UIComponent
     {
         const mctx :MsoyContext = _gctx.getMsoyContext();
         return mctx.getTopPanel().getControlBar();
+    }
+
+    protected function provideLoadingFeedback (info :LoaderInfo) :void
+    {
+        const avrgBtn :UIComponent = getControlBar().avrgBtn;
+        const PERIOD :Number = 1.5 * 1000;
+        const DELAY :Number = 3.0 * 1000;
+
+        var start :Number = getTimer() + DELAY;
+        var intervalId :uint = 0;
+
+        // animate the alpha based on time
+        function updateAlpha () :void {
+            var t :Number = getTimer() - start;
+            if (t > 0) {
+                var cos :Number = Math.cos(t * 2 * Math.PI / PERIOD);
+                avrgBtn.alpha = 0.7 + 0.3 * cos; // 0.4 .. 1.0
+            }
+        }
+
+        function progress (evt :ProgressEvent) :void {
+            // TODO: update text field in menu
+        }
+
+        function complete (evt :Event) :void {
+            avrgBtn.alpha = 1.0;
+            clearInterval(intervalId);
+            info.removeEventListener(ProgressEvent.PROGRESS, progress);
+            info.removeEventListener(Event.COMPLETE, complete);
+        }
+
+        intervalId = setInterval(updateAlpha, 1);
+        info.addEventListener(ProgressEvent.PROGRESS, progress);
+        info.addEventListener(Event.COMPLETE, complete);
     }
 
     protected var _gctx :GameContext;
