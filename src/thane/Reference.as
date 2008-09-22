@@ -50,5 +50,8 @@ public class Reference
     ObserverInfo;
     PetInfo;
     FurniUpdate_Change;
+    FurniUpdate_Add;
+    FurniUpdate_Remove;
+    SceneAttrsUpdate;
 }
 }
