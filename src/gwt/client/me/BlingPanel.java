@@ -4,11 +4,11 @@
 package client.me;
 
 import client.shell.ShellMessages;
-import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.Currency;
@@ -17,12 +17,15 @@ import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 
 public class BlingPanel extends SmartTable
 {
-    public BlingPanel (int memberId)
+    public BlingPanel (MoneyTransactionDataModel model)
     {
         setCellSpacing(10);
         setStyleName("bling");
         
-        _moneysvc.getBlingInfo(memberId, new MsoyCallback<BlingInfo>() {
+        model.setBlingCallback(new AsyncCallback<BlingInfo>() {
+            public void onFailure (Throwable caught) {
+                // Ignore
+            }
             public void onSuccess (BlingInfo result) {
                 init(result);
             }
@@ -43,7 +46,7 @@ public class BlingPanel extends SmartTable
      * Converts the amount of pennies into a string to display to the user as a valid currency.
      * Note: there are some other utilities around to do this, but they're either in a different
      * project (and there's some concern about exposing them directly), or they don't properly
-     * take into accound floating-point round off errors.  This may get replaced or expanded
+     * take into account floating-point round off errors.  This may get replaced or expanded
      * later on.
      */
     protected static String formatUSD (int pennies)

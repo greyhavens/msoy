@@ -5,12 +5,9 @@ package com.threerings.msoy.money.gwt;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 
-import com.threerings.gwt.util.PagedResult;
-
 import com.threerings.msoy.web.data.ServiceException;
-import com.threerings.msoy.money.data.all.BlingInfo;
-import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
+import com.threerings.msoy.money.data.all.TransactionPageResult;
 
 /**
  * Provides currency related services.
@@ -21,12 +18,9 @@ public interface MoneyService extends RemoteService
     public static final String ENTRY_POINT = "/moneysvc";
 
     /**
-     * Fetches a player's complete income and spending history.
+     * Fetches a player's complete income and spending history, one page at a time.
      */
-    PagedResult<MoneyTransaction> getTransactionHistory (
+    TransactionPageResult getTransactionHistory (
         int memberId, ReportType report, int from, int count)
-        throws ServiceException;
-    
-    BlingInfo getBlingInfo (int memberId)
-        throws ServiceException;
+        throws ServiceException;   
 }

@@ -34,15 +34,18 @@ public class TransactionsPanel extends VerticalPanel
             }
         });
         reportBox.setSelectedIndex(report-1);
-
-        add(new BalancePanel(memberId, REPORT_VALUES[report-1]) {
+        
+        // The data model is used in both the balance panel and the bling panel.
+        MoneyTransactionDataModel model = new MoneyTransactionDataModel(memberId, 
+            REPORT_VALUES[report-1]);
+        add(new BalancePanel(model) {
             @Override protected void addCustomControls (FlexTable controls) {
                 controls.setText(0, 0, _msgs.reportFilter());
                 controls.getFlexCellFormatter().setStyleName(0, 0, "ReportFilter");
                 controls.setWidget(0, 1, reportBox);
             }
         });
-        add(new BlingPanel(memberId));
+        add(new BlingPanel(model));
     }
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);

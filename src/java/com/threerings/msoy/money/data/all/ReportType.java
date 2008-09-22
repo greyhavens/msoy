@@ -5,8 +5,10 @@ package com.threerings.msoy.money.data.all;
 
 import java.util.EnumSet;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /** The format of a transaction report. */
-public enum ReportType
+public enum ReportType implements IsSerializable
 {
     COINS(null, Currency.COINS),
     BARS(null, Currency.BARS),

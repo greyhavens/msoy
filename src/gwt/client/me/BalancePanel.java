@@ -18,14 +18,14 @@ import client.ui.MsoyUI;
 
 public class BalancePanel extends PagedTable<MoneyTransaction>
 {
-    public BalancePanel (int memberId, ReportType report)
+    public BalancePanel (MoneyTransactionDataModel model)
     {
         super(10, NAV_ON_TOP);
 
         addStyleName("Balance");
 
-        _report = report;
-        setModel(new MoneyTransactionDataModel(memberId, report), 0);
+        _report = model.report;
+        setModel(model, 0);
     }
 
     @Override

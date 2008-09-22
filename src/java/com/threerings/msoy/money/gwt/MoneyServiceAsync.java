@@ -5,11 +5,8 @@ package com.threerings.msoy.money.gwt;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.gwt.util.PagedResult;
-
-import com.threerings.msoy.money.data.all.BlingInfo;
-import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
+import com.threerings.msoy.money.data.all.TransactionPageResult;
 
 /**
  * The asynchronous (client-side) version of {@link MoneyService}.
@@ -21,7 +18,6 @@ public interface MoneyServiceAsync
      */
     void getTransactionHistory (
         int memberId, ReportType report, int from, int count,
-        AsyncCallback<PagedResult<MoneyTransaction>> callback);
-    
-    void getBlingInfo (int memberId, AsyncCallback<BlingInfo> callback);
+        AsyncCallback<TransactionPageResult> callback);
 }
+
