@@ -54,7 +54,7 @@ public class PartyRegistry
 
         // TODO: Validate permission to join party
 
-        member.setPartyId(partyId);
+//        member.setPartyId(partyId);
 
         rl.requestProcessed(pobj.getOid());
     }
@@ -63,19 +63,19 @@ public class PartyRegistry
     public void leaveParty (ClientObject caller, InvocationService.ConfirmListener cl)
         throws InvocationException
     {
-        MemberObject member = (MemberObject)caller;
-
-        if (member.partyId == 0) {
-            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-
-        PartyObject pobj = _parties.get(member.partyId);
-
-        if (pobj == null) {
-            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
-        }
-
-        member.setPartyId(0);
+//        MemberObject member = (MemberObject)caller;
+//
+//        if (member.partyId == 0) {
+//            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+//        }
+//
+//        PartyObject pobj = _parties.get(member.partyId);
+//
+//        if (pobj == null) {
+//            throw new InvocationException(InvocationCodes.E_INTERNAL_ERROR);
+//        }
+//
+//        member.setPartyId(0);
 
         cl.requestProcessed();
     }
@@ -109,7 +109,9 @@ public class PartyRegistry
             if (PresentsClient.class.isInstance(sub)) {
                 MemberObject mobj = (MemberObject)PresentsClient.class.cast(sub).getClientObject();
                 PartyObject pobj = (PartyObject)object;
-                return mobj.partyId == pobj.partyId;
+//                return mobj.partyId == pobj.partyId;
+
+                return true;
             }
             return true;
         }

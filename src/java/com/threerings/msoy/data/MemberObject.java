@@ -117,9 +117,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>referral</code> field. */
     public static final String REFERRAL = "referral";
-
-    /** The field name of the <code>partyId</code> field. */
-    public static final String PARTY_ID = "partyId";
     // AUTO-GENERATED: FIELDS END
 
     /** A message sent by the server to denote a notification to be displayed.
@@ -216,9 +213,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** Player's referral information. */
     public ReferralInfo referral;
-
-    /** Player's current party, or 0 if no party. */
-    public int partyId;
 
     /** The number of non-idle seconds that have elapsed in this member's session. When the member
      * is forwarded between servers, this value is incremented by the time they spent on the server
@@ -1086,22 +1080,6 @@ public class MemberObject extends MsoyBodyObject
         requestAttributeChange(
             REFERRAL, value, ovalue);
         this.referral = value;
-    }
-
-    /**
-     * Requests that the <code>partyId</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setPartyId (int value)
-    {
-        int ovalue = this.partyId;
-        requestAttributeChange(
-            PARTY_ID, Integer.valueOf(value), Integer.valueOf(ovalue));
-        this.partyId = value;
     }
     // AUTO-GENERATED: METHODS END
 
