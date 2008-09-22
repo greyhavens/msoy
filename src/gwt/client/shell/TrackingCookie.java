@@ -8,6 +8,8 @@ import client.util.StringUtil;
 import com.threerings.gwt.util.CookieUtil;
 import com.threerings.msoy.data.all.ReferralInfo;
 
+import com.threerings.msoy.web.data.TrackingCookieUtil;
+
 /**
  * Wrapper that stores and loads up tracking information: parameters from the
  * external referral, and the unique tracking number.
@@ -110,7 +112,7 @@ public class TrackingCookie
     private static void saveCookie (String name, String value)
     {
         // always save the new, obfuscated version
-        String encoded = VERSION_2_HEADER + StringUtil.hexlate(obfuscate(value));
+        String encoded = VERSION_2_HEADER + StringUtil.hexlate(TrackingCookieUtil.encode(value));
         CookieUtil.set("/", 365, name, encoded);
     }
     
@@ -126,64 +128,12 @@ public class TrackingCookie
         if (value.startsWith(VERSION_2_HEADER)) {
             // it's the new obfuscated format! let's read it in and decode
             String encoded = value.substring(VERSION_2_HEADER.length());
-            return deobfuscate(StringUtil.unhexlate(encoded));
+            return TrackingCookieUtil.decode(StringUtil.unhexlate(encoded));
         }
         
         // otherwise it was a plaintext cookie - just return it untouched
         return value;
     }
-    
-    /** 
-     * Trivially simple string obfuscation scheme, via XOR plus a checksum. 
-     * 
-     * Since GWT JRE library doesn't have any string encoding routines, we roll our own, 
-     * but it's easy because HTTP headers can only contain ASCII values. 
-     */
-    private static byte[] obfuscate (String input) 
-    {
-        int total = 0;
-        byte[] bytes = new byte[input.length() + 1];
-        char[] chars = input.toCharArray();
-        
-        for (int ii = 0; ii < chars.length; ii++) {
-            int num = chars[ii];
-            if (num < -128 || num > 127) {
-                num = '_'; // just in case, although this shouldn't happen
-            }
-            total += num; 
-            bytes[ii] = (byte)(num ^ OBFUSCATION_MASK);
-        }
-        
-        bytes[input.length()] = (byte)(total % 128);
-        return bytes; 
-    }
-    
-    /** Trivially simple ASCII decoder. */
-    private static String deobfuscate (byte[] bytes)
-    {
-        int total = 0;
-        StringBuilder sb = new StringBuilder();
-        
-        for (int ii = 0; ii < bytes.length - 1; ii++) {
-            byte fixed = (byte)(bytes[ii] ^ OBFUSCATION_MASK);
-            total += fixed;
-            sb.append((char) fixed);
-        }
-        
-        total = (byte)(total % 128);
-        byte check = bytes[bytes.length - 1];
-        // CShell.log("CRC check: " + total + ", expected: " + check);
-        
-        // if the checksum doesn't check out, someone has been tampering with our cookies!
-        // let's just return an empty string.
-        if (total != check) {
-            return "";
-        }
-        
-        return sb.toString();
-    }
-    
-    private static final byte OBFUSCATION_MASK = 90; // 01011010
     
     private static final String VERSION_2_HEADER = "V2";
     

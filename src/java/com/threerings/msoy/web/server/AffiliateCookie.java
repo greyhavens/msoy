@@ -5,7 +5,11 @@ package com.threerings.msoy.web.server;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.samskivert.util.StringUtil;
+
 import com.samskivert.servlet.util.CookieUtil;
+
+import com.threerings.msoy.web.data.TrackingCookieUtil;
 
 /**
  * The server-side of {@link client.shell.AffiliateCookie}.
@@ -20,6 +24,10 @@ public class AffiliateCookie
      */
     public static String get (HttpServletRequest req)
     {
-        return CookieUtil.getCookieValue(req, NAME);
+        String cook = CookieUtil.getCookieValue(req, NAME);
+        if (cook != null) {
+            cook = TrackingCookieUtil.decode(StringUtil.unhexlate(cook));
+        }
+        return cook;
     }
 }

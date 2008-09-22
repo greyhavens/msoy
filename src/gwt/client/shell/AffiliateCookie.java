@@ -7,6 +7,8 @@ import com.threerings.gwt.util.CookieUtil;
 
 import client.util.StringUtil;
 
+import com.threerings.msoy.web.data.TrackingCookieUtil;
+
 /**
  * Client-side of {@link com.threerings.msoy.web.server.AffiliateCookie}.
  */
@@ -37,7 +39,8 @@ public class AffiliateCookie
         // set it, as long as it's not blank
         if (!StringUtil.isBlank(affiliate)) {
             // set the cookie
-            CookieUtil.set("/", 365, NAME, affiliate);
+            String encoded = StringUtil.hexlate(TrackingCookieUtil.encode(affiliate));
+            CookieUtil.set("/", 365, NAME, encoded);
         }
     }
 
