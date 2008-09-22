@@ -192,7 +192,8 @@ public class PetManager
                     throw new Exception("callPet() on non-existent pet");
                 }
                 if (petrec.ownerId != user.getMemberId()) {
-                    throw new Exception("Pet handling by non-owner [who=" + user.who() + "].");
+                    throw new Exception("Pet handling by non-owner [who=" + user.who() +
+                                        ", ownerId=" + petrec.ownerId + "]");
                 }
                 _pet = (Pet)petrec.toItem();
 
