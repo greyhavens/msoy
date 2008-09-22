@@ -38,13 +38,14 @@ import com.threerings.crowd.server.LocationManager;
 import com.threerings.crowd.server.PlaceManager;
 import com.threerings.crowd.server.PlaceManagerDelegate;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
 import com.threerings.msoy.game.server.GameWatcherManager;
-import com.threerings.msoy.game.server.PlayerLocator;
 import com.threerings.msoy.game.server.GameWatcherManager.Observer;
+import com.threerings.msoy.game.server.PlayerLocator;
 
 import com.threerings.msoy.avrg.data.AVRGameAgentObject;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
@@ -211,7 +212,7 @@ public class AVRGameManager extends PlaceManager
                     }
                 }
             })));
-        
+
         _sceneCheck = new Interval(_omgr) {
             public void expired () {
                 checkScenes();
@@ -226,7 +227,7 @@ public class AVRGameManager extends PlaceManager
             log.warning("AVRG already has started agent", "agent", _gameAgentObj);
             return;
         }
-        
+
         AVRGameConfig cfg = (AVRGameConfig)_config;
         MsoyGameDefinition def = (MsoyGameDefinition) cfg.getGameDefinition();
 
@@ -286,7 +287,7 @@ public class AVRGameManager extends PlaceManager
             log.warning("Unknown client completing room subscription?", "caller", caller);
             return;
         }
-        
+
         roomSubscriptionComplete(sceneId);
     }
 
@@ -346,7 +347,7 @@ public class AVRGameManager extends PlaceManager
         }
         PlayerObject player = _locator.lookupPlayer(playerId);
         if (player == null) {
-            log.warning("Agent requested non-player to leave", "caller", caller, 
+            log.warning("Agent requested non-player to leave", "caller", caller,
                 "playerId", playerId);
             return;
         }
@@ -359,19 +360,19 @@ public class AVRGameManager extends PlaceManager
     public void roomSubscriptionComplete (int sceneId)
     {
         Scene scene = _scenes.get(sceneId);
-        
+
         if (scene == null) {
             log.warning("Subscription completed to removed scene", "sceneId", sceneId);
             return;
         }
-        
+
         scene.subscribed = true;
-        
+
         for (int memberId : scene.players) {
             postPlayerMove(memberId, scene.sceneId);
         }
     }
-    
+
     /**
      * Post the given member's movement to the game object for all to see.
      */
@@ -400,11 +401,11 @@ public class AVRGameManager extends PlaceManager
         if (_lifecycleObserver != null) {
             _lifecycleObserver.avrGameDidShutdown(this);
         }
-        
+
         _invmgr.clearDispatcher(_gameObj.avrgService);
         _invmgr.clearDispatcher(_gameObj.messageService);
         _invmgr.clearDispatcher(_gameObj.propertiesService);
-        
+
         _sceneCheck.cancel();
 
         super.didShutdown();
@@ -417,14 +418,14 @@ public class AVRGameManager extends PlaceManager
 
         PlayerObject player = (PlayerObject) _omgr.getObject(bodyOid);
         _watchmgr.addWatch(player.getMemberId(), _observer);
-        
+
         PropertySpaceHandler handler = new PropertySpaceHandler(player) {
             @Override protected void validateUser (ClientObject caller)
                 throws InvocationException {
                 AVRGameManager.this.validateUser(caller);
             }
         };
-        
+
         player.setPropertyService(_invmgr.registerDispatcher(new PropertySpaceDispatcher(handler)));
     }
 
@@ -436,7 +437,7 @@ public class AVRGameManager extends PlaceManager
         PlayerObject player = (PlayerObject) _omgr.getObject(bodyOid);
 
         _invmgr.clearDispatcher(player.propertyService);
-        
+
         int memberId = player.getMemberId();
         // stop watching this player's movements
         _watchmgr.clearWatch(memberId);
@@ -451,9 +452,9 @@ public class AVRGameManager extends PlaceManager
             // remove from player locations
             if (_gameObj.playerLocs.containsKey(memberId)) {
                 _gameObj.removeFromPlayerLocs(memberId);
-            
+
             } else if (scene.subscribed) {
-                log.warning("Player leaving subscribed scene not in playerLocs?", 
+                log.warning("Player leaving subscribed scene not in playerLocs?",
                     "scene", scene, "memberId", memberId);
             }
         }
@@ -477,7 +478,7 @@ public class AVRGameManager extends PlaceManager
         SceneInfo existing = _gameAgentObj.scenes.get(info.getKey());
         if (existing != null) {
             if (!info.equals(existing)) {
-                // this should not happen in normal operation, but is feasible if a server goes 
+                // this should not happen in normal operation, but is feasible if a server goes
                 // down abruptly
                 log.warning("Updating stale SceneInfo", "old", existing, "new", info);
                 _gameAgentObj.updateScenes(info);
@@ -564,10 +565,10 @@ public class AVRGameManager extends PlaceManager
         }
         return agent;
     }
-    
-    /** 
+
+    /**
      * Eliminate any scenes that have been empty for a while. This is to prevent a large buildup
-     * for games that visit a lot of rooms. 
+     * for games that visit a lot of rooms.
      */
     protected void checkScenes ()
     {
@@ -597,7 +598,7 @@ public class AVRGameManager extends PlaceManager
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
     }
-    
+
     /**
      * A timer that fires message events to an AVRG. This is a precise copy of the same class
      * in WhirledGameManager. Perhaps one day we can avoid this duplication.
@@ -655,7 +656,7 @@ public class AVRGameManager extends PlaceManager
         public long modTime;
         public boolean subscribed;
         public ArrayIntSet players = new ArrayIntSet();
-        
+
         public Scene (int sceneId)
         {
             this.sceneId = sceneId;
@@ -665,19 +666,19 @@ public class AVRGameManager extends PlaceManager
         /** Sets the last modification time to the current time. */
         public void touch ()
         {
-            modTime = System.currentTimeMillis(); 
+            modTime = System.currentTimeMillis();
         }
-        
+
         /** Test if the scene has been empty for a while. */
         public boolean shouldFlush (long now)
         {
             if (players.size() > 0) {
                 return false;
             }
-            
+
             return (now - modTime > SCENE_IDLE_UNLOAD_PERIOD);
         }
-        
+
         /** Add a player to the scene, automatically calling {@link #touch} as well. */
         public void addPlayer (int id)
         {
@@ -686,7 +687,7 @@ public class AVRGameManager extends PlaceManager
             }
             touch();
         }
-        
+
         /** Remove a player from the scene, automatically calling {@link #touch} as well. */
         public void removePlayer (int id)
         {
@@ -695,7 +696,7 @@ public class AVRGameManager extends PlaceManager
             }
             touch();
         }
-        
+
         public String toString ()
         {
             StringBuilder buf = new StringBuilder();
@@ -728,7 +729,7 @@ public class AVRGameManager extends PlaceManager
 
     /** The map of player ids to scenes, many to one. */
     protected HashIntMap<Scene> _players = new HashIntMap<Scene>();
-    
+
     /** Interval to run our scene checker. */
     protected Interval _sceneCheck;
 
@@ -758,11 +759,14 @@ public class AVRGameManager extends PlaceManager
     protected static final int MAX_TICKERS = 3;
 
     /** idle time before shutting down the manager. */
-    protected static final long IDLE_UNLOAD_PERIOD = 5 * 60 * 1000L; // in ms
-    
+    protected static final long IDLE_UNLOAD_PERIOD =
+        DeploymentConfig.devDeployment ? 30*1000L : 5*60*1000L; // in ms
+
     /** Minimum time a scene must remain idle before unloading. */
-    protected static final long SCENE_IDLE_UNLOAD_PERIOD = 60 * 1000;
-    
+    protected static final long SCENE_IDLE_UNLOAD_PERIOD =
+        DeploymentConfig.devDeployment ? 10*1000L : 60*1000L; // in ms
+
     /** Time between checks to flush idle scenes. */
-    protected static final long SCENE_CHECK_PERIOD = 60 * 1000;
+    protected static final long SCENE_CHECK_PERIOD =
+        DeploymentConfig.devDeployment ? 5*1000L : 60*1000L; // in ms
 }
