@@ -243,7 +243,7 @@ public class ShareDialog extends FloatingPanel
     {
         var emails :TypedArray = TypedArray.create(String);
         for each (var email :String in emailText.split(/[ ,]/)) {
-            if (email.length == 0) {
+            if (email.length == 0 || emails.indexOf(email) >= 0) {
                 // skip it
             } else if (MailUtil.isValidAddress(email)) {
                 emails.push(email);
