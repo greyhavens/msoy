@@ -535,7 +535,7 @@ public class MsoyAuthenticator extends Authenticator
             String inviterStr = String.valueOf(invite.inviterId);
             if (affiliate != null && !affiliate.equals(inviterStr)) {
                 log.warning("New member has both an inviter and an affiliate. Using inviter.",
-                    "inviter", inviterStr, "affiliate", affiliate);
+                    "email", mrec.accountName, "inviter", inviterStr, "affiliate", affiliate);
             }
             affiliate = inviterStr; // turn the inviter into an affiliate
         }
