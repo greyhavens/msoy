@@ -670,10 +670,11 @@ public class MemberManager
         } else if (gameId != 0) {
             url += "#world-game_g_" + gameId;
         }
+        final String template = (gameId != 0) ? "shareGameInvite" : "shareRoomInvite";
         final String from = memObj.username.toString();
         for (final String recip : emails) {
             // this just passes the buck to an executor, so we can call it from the dobj thread
-            _mailer.sendEmail(recip, from, "shareInvite", "name", memObj.memberName,
+            _mailer.sendEmail(recip, from, template, "name", memObj.memberName,
                               "message", message, "link", url);
         }
 

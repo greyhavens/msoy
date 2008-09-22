@@ -35,7 +35,11 @@ public class ShareDialog extends FloatingPanel
     {
         super(ctx);
 
-        title = Msgs.GENERAL.get("t.share");
+        const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
+        _sceneId = int(sceneAndGame[0]);
+        _gameId = int(sceneAndGame[1]);
+
+        title = Msgs.GENERAL.get(_gameId == 0 ? "t.share_room" : "t.share_game");
         showCloseButton = true;
         styleName = "sexyWindow";
         setStyle("paddingTop", 0);
@@ -76,15 +80,13 @@ public class ShareDialog extends FloatingPanel
         
         var affiliate :String = _memObj.isGuest() ? "" : String(_memObj.getMemberId());
         var flashVars :String = "";
-        const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
         var vector :String;
-        if (sceneAndGame[0] != 0) {
-            flashVars += "sceneId=" + sceneAndGame[0];
+        if (_sceneId != 0) {
+            flashVars += "sceneId=" + _sceneId;
             vector = TrackingCookie.ROOM_VECTOR;
 
-        } else if (sceneAndGame[1] != 0) {
-            // TODO: go to the game's whirled, not just the lobby
-            flashVars += "gameLobby=" + sceneAndGame[1];
+        } else if (_gameId != 0) {
+            flashVars += "gameLobby=" + _gameId;
             vector = TrackingCookie.GAME_VECTOR;
 
         } else {
@@ -152,19 +154,15 @@ public class ShareDialog extends FloatingPanel
     protected function createLinkBox () :VBox
     {
         var box :VBox = createContainer("t.grab_link");
-
         box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.link_instruction")));
 
         var url :String = DeploymentConfig.serverURL;
         url = url.replace(/(http:\/\/[^\/]*).*/, "$1/");
-        const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
-        if (sceneAndGame[0] != 0) {
-            url += "#world-s" + sceneAndGame[0];
-
-        } else if (sceneAndGame[1] != 0) {
-            url += "#world-game_g_" + sceneAndGame[1];
+        if (_gameId != 0) {
+            url += "#world-game_l_" + _gameId;
+        } else if (_sceneId != 0) {
+            url += "#world-s" + _sceneId;
         }
-
         box.addChild(new CopyableText(url));
 
         return box;
@@ -215,8 +213,7 @@ public class ShareDialog extends FloatingPanel
 
         // TODO: review once we figure some shit out
         // the small scenes cannot host non-rooms, at least for now
-        const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
-        if (sceneAndGame[0] != 0) {
+        if (_sceneId != 0) {
             for (var ii :int = 0; ii < EMBED_SIZES.length; ii++) {
                 checks.addChild(createSizeControl(ii));
             }
@@ -259,15 +256,16 @@ public class ShareDialog extends FloatingPanel
         }
 
         // send the emails and messages off to the server for delivery
-        const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
         (_ctx.getClient().requireService(MemberService) as MemberService).emailShare(
-            _ctx.getClient(), int(sceneAndGame[0]), int(sceneAndGame[1]),
-            emails, message, new ReportingListener(_ctx, MsoyCodes.GENERAL_MSGS));
+            _ctx.getClient(), _sceneId, _gameId, emails, message,
+            new ReportingListener(_ctx, MsoyCodes.GENERAL_MSGS, null, "m.share_email_sent"));
 
         close(); // and make like the proverbial audi 5000
     }
 
     protected var _memObj :MemberObject;
+    protected var _sceneId :int;
+    protected var _gameId :int;
     protected var _sizeGroup :RadioButtonGroup = new RadioButtonGroup();
     protected var _status :Text;
 

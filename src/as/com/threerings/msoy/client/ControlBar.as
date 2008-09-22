@@ -291,15 +291,14 @@ public class ControlBar extends HBox
         addControl(_buttons, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], BUTTON_SECTION);
 
         // add buttons
-        addButton(
-            _volBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], VOLUME_PRIORITY);
+        addButton(_volBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], VOLUME_PRIORITY);
         if (false && DeploymentConfig.devDeployment) {
-            addButton(
-                _fullBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ], GLOBAL_PRIORITY);
+            addButton(_fullBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME, UI_VIEWER ],
+                GLOBAL_PRIORITY);
         }
 
         addButton(_instructBtn, [ UI_GAME, UI_AVRGAME ]);
-        addButton(_shareBtn, [ UI_BASE, UI_ROOM, UI_GAME, UI_AVRGAME ]);
+        addButton(_shareBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
         addButton(_commentBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
         addButton(_avrgBtn, [ UI_AVRGAME ]);
     }
