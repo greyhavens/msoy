@@ -15,12 +15,15 @@ import com.threerings.msoy.data.all.VisitorInfo;
  */
 public class VisitorCookie
 {
+    /** Cookie name. */
+    public static final String NAME = "vis";
+
     /**
      * Is the visitor information stored anywhere?
      */
     public static boolean exists ()
     {
-        return CookieUtil.get(VISITOR_ID) != null;
+        return CookieUtil.get(NAME) != null;
     }
 
     /**
@@ -32,7 +35,7 @@ public class VisitorCookie
             return null;
         }
 
-        VisitorInfo info = new VisitorInfo(CookieUtil.get(VISITOR_ID));
+        VisitorInfo info = new VisitorInfo(CookieUtil.get(NAME));
         CShell.log("Loaded " + info.toString());
         return info;
     }
@@ -44,7 +47,7 @@ public class VisitorCookie
     public static void save (VisitorInfo info, boolean overwrite)
     {
         if (!exists() || overwrite) {
-            CookieUtil.set("/", 365, VISITOR_ID, info.tracker);
+            CookieUtil.set("/", 365, NAME, info.tracker);
             CShell.log("Saved " + info);
         }
     }
@@ -54,10 +57,7 @@ public class VisitorCookie
      */
     public static void clear ()
     {
-        CookieUtil.clear("/", VISITOR_ID);
+        CookieUtil.clear("/", NAME);
         CShell.log("Cleared referral info.");
     }
-
-    /** Cookie name. */
-    private static final String VISITOR_ID = "vis";
 }

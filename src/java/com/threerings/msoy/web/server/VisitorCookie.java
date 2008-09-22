@@ -14,12 +14,15 @@ import com.threerings.msoy.data.all.VisitorInfo;
  */
 public class VisitorCookie
 {
+    /** Cookie name. */
+    public static final String NAME = "vis";
+
     /**
      * Is the visitor information stored anywhere?
      */
     public static boolean exists (HttpServletRequest req)
     {
-        return CookieUtil.getCookie(req, VISITOR_ID) != null;
+        return CookieUtil.getCookie(req, NAME) != null;
     }
 
     /**
@@ -31,10 +34,7 @@ public class VisitorCookie
             return null;
         }
 
-        VisitorInfo info = new VisitorInfo(CookieUtil.getCookieValue(req, VISITOR_ID));
+        VisitorInfo info = new VisitorInfo(CookieUtil.getCookieValue(req, NAME));
         return info;
     }
-
-    /** Cookie name. */
-    private static final String VISITOR_ID = "vis";
 }
