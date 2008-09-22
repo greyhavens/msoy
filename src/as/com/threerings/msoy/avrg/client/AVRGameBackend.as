@@ -234,7 +234,8 @@ public class AVRGameBackend extends ControlBackend
 
         // LocalSubControl
         o["localChat_v1"] = localChat_v1;
-        o["getStageSize_v1"] = getStageSize_v1;
+        o["getStageSize_v1"] = getPaintableArea_v1; // backwards compat.
+        o["getPaintableArea_v1"] = getPaintableArea_v1;
         o["getRoomBounds_v1"] = getRoomBounds_v1;
         o["stageToRoom_v1"] = stageToRoom_v1;
         o["roomToStage_v1"] = roomToStage_v1;
@@ -476,7 +477,7 @@ public class AVRGameBackend extends ControlBackend
     }
 
     // LocalSubControl
-    protected function getStageSize_v1 (full :Boolean) :Rectangle
+    protected function getPaintableArea_v1 (full :Boolean) :Rectangle
     {
         var view :RoomView = _wctx.getTopPanel().getPlaceView() as RoomView;
         if (view != null) {
