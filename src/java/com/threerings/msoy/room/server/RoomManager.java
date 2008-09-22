@@ -1315,6 +1315,12 @@ public class RoomManager extends SpotSceneManager
         });
     }
 
+    @Override
+    protected long idleUnloadPeriod ()
+    {
+        return 1 * 60 * 1000L;
+    }
+
     /** Listens to the room. */
     protected class RoomListener
         implements SetListener<OccupantInfo>

@@ -44,6 +44,7 @@ import com.threerings.msoy.server.util.Retry;
 import com.threerings.msoy.server.util.RetryInterceptor;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.bureau.data.BureauLauncherClientObject;
 import com.threerings.msoy.bureau.data.BureauLauncherCodes;
 import com.threerings.msoy.bureau.server.BureauLauncherAuthenticator;
 import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
@@ -158,7 +159,7 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         // this launcher is now available to take sender requests
         log.info("Launcher initialized", "client", launcher);
-        _launchers.put(launcher.getOid(), launcher);
+        _launchers.put(launcher.getOid(), (BureauLauncherClientObject)launcher);
         launcher.addListener(new ObjectDeathListener () {
             public void objectDestroyed (final ObjectDestroyedEvent event) {
                 launcherDestroyed(event.getTargetOid());
@@ -219,14 +220,14 @@ public abstract class MsoyBaseServer extends WhirledServer
     }
 
     /** Selects a registered launcher for the next bureau. */
-    protected ClientObject selectLauncher ()
+    protected BureauLauncherClientObject selectLauncher ()
     {
         // select one at random
         // TODO: select the one with the lowest current load. this should involve some measure
         // of the actual machine load since some bureaus may have more game instances than others
         // and some instances may produce more load than others.
         final int size = _launchers.size();
-        final ClientObject[] launchers = new ClientObject[size];
+        final BureauLauncherClientObject[] launchers = new BureauLauncherClientObject[size];
         _launchers.values().toArray(launchers);
         return launchers[(new java.util.Random()).nextInt(size)];
     }
@@ -268,8 +269,10 @@ public abstract class MsoyBaseServer extends WhirledServer
         implements BureauRegistry.Launcher
     {
         public void launchBureau (final String bureauId, final String token) {
-            final ClientObject launcher = selectLauncher();
-            log.info("Launching bureau", "bureauId", bureauId, "who", launcher.who());
+            final BureauLauncherClientObject launcher = selectLauncher();
+            log.info(
+                "Launching bureau", "bureauId", bureauId, "who", launcher.who(), "hostname",
+                launcher.hostname);
             BureauLauncherSender.launchThane(launcher, bureauId, token);
         }
     }
@@ -290,7 +293,8 @@ public abstract class MsoyBaseServer extends WhirledServer
     @Inject protected DictionaryManager _dictMan;
 
     /** Currently logged in bureau launchers. */
-    protected HashIntMap<ClientObject> _launchers = new HashIntMap<ClientObject>();
+    protected HashIntMap<BureauLauncherClientObject> _launchers = 
+        new HashIntMap<BureauLauncherClientObject>();
 
     /** This is needed to ensure that the StatType enum's static initializer runs before anything
      * else in the server that might rely on stats runs. */
