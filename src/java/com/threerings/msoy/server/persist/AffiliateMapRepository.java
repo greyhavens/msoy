@@ -40,6 +40,20 @@ public class AffiliateMapRepository extends DepotRepository
     {
         AffiliateMapRecord rec = load(AffiliateMapRecord.class, affiliate);
         if (rec == null) {
+            // try parsing the affiliate as a memberId.
+            try {
+                int memberId = Integer.parseInt(affiliate);
+                // oh hey, that parsed. We do not presently create a mapping record
+                // for the String -> int, but in the future we may allow such mappings to be
+                // made to reassign affiliations to a different memberId.
+                if (memberId > 0) {
+                    return memberId;
+                }
+            } catch (NumberFormatException nfe) {
+                // that didn't work, fall through and create a new record...
+            }
+
+            // store a new blank mapping from this affiliate to 0
             rec = new AffiliateMapRecord();
             rec.affiliate = affiliate;
             try {
@@ -47,10 +61,11 @@ public class AffiliateMapRepository extends DepotRepository
             } catch (DatabaseException e) {
                 // try to load again...
                 AffiliateMapRecord newRec = load(AffiliateMapRecord.class, affiliate);
-                if (newRec == null) {
-                    log.warning("Trouble inserting new affiliate", "affiliate", affiliate);
-                } else {
+                if (newRec != null) {
                     rec = newRec;
+
+                } else {
+                    log.warning("Trouble inserting new affiliate", "affiliate", affiliate, e);
                 }
             }
         }
