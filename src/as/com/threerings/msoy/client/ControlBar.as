@@ -175,7 +175,6 @@ public class ControlBar extends HBox
      */
     public function setAVRGameLoaderInfo (info :LoaderInfo) :void
     {
-        const PI :Number = 3.1415;
         const PERIOD :Number = 1.5 * 1000;
         const DELAY :Number = 3.0 * 1000;
 
@@ -186,7 +185,7 @@ public class ControlBar extends HBox
         function updateAlpha () :void {
             var t :Number = getTimer() - start;
             if (t > 0) {
-                var cos :Number = Math.cos(t * 2 * PI / PERIOD);
+                var cos :Number = Math.cos(t * 2 * Math.PI / PERIOD);
                 _avrgBtn.alpha = 0.7 + 0.3 * cos; // 0.4 .. 1.0
             }
         }
