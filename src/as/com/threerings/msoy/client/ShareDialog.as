@@ -11,14 +11,16 @@ import mx.containers.Accordion;
 import mx.containers.HBox;
 import mx.containers.VBox;
 
+import mx.controls.Label;
 import mx.controls.RadioButton;
 import mx.controls.RadioButtonGroup;
-import mx.controls.Label;
+import mx.controls.Text;
 import mx.controls.TextArea;
 import mx.controls.TextInput;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.FlexUtil;
+import com.threerings.util.MailUtil;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.ui.CopyableText;
@@ -100,29 +102,28 @@ public class ShareDialog extends FloatingPanel
         var box :VBox = createContainer("t.email_share");
 
         box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.email_addresses")));
-
         var emails :TextInput = new TextInput();
         emails.percentWidth = 100;
         box.addChild(emails);
 
         box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.email_message")));
-
         var message :TextArea = new TextArea();
         message.percentWidth = 100;
         box.addChild(message);
 
-        var send :HBox = new HBox();
-        send.setStyle("horizontalAlign", "right");
-        send.percentWidth = 100;
+        var row :HBox = new HBox();
+        row.setStyle("horizontalAlign", "right");
+        row.percentWidth = 100;
 
-        var button :CommandButton = new CommandButton(null, function () :void {
-            _ctx.getMsoyController().handleEmailShare(emails.text, message);
-            close();
+        row.addChild(_status = new Text());
+
+        var send :CommandButton = new CommandButton(null, function () :void {
+            sendShareEmail(emails.text, message.text);
         });
-        button.styleName = "sendButton";
-        send.addChild(button);
+        send.styleName = "sendButton";
+        row.addChild(send);
 
-        box.addChild(send);
+        box.addChild(row);
         box.defaultButton = send;
 
         return box;
@@ -201,30 +202,27 @@ public class ShareDialog extends FloatingPanel
     protected function createEmbedBox () :VBox
     {
         var box :VBox = createContainer("t.embed");
-
         box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.embed_choose_size")));
 
         var code :TextInput = new TextInput();
-
         var checks :HBox = new HBox();
         checks.percentWidth = 100;
+        box.addChild(checks);
 
         // TODO: review once we figure some shit out
         // the small scenes cannot host non-rooms, at least for now
         const sceneAndGame :Array = _ctx.getMsoyController().getSceneAndGame();
         if (sceneAndGame[0] != 0) {
-            for (var i:int=0; i<EMBED_SIZES.length; ++i) {
-                checks.addChild(createSizeControl(i));
+            for (var ii :int = 0; ii < EMBED_SIZES.length; ii++) {
+                checks.addChild(createSizeControl(ii));
             }
 
         } else {
             // Games don't have all the options
-            for (var j:int=2; j<EMBED_SIZES.length; ++j) {
-                checks.addChild(createSizeControl(j));
+            for (var jj :int = 2; jj < EMBED_SIZES.length; jj++) {
+                checks.addChild(createSizeControl(jj));
             }
         }
-
-        box.addChild(checks);
 
         _sizeGroup.addEventListener(FlexEvent.VALUE_COMMIT, function (... ignored) :void {
             code.text = getEmbedCode(_sizeGroup.selectedValue as int);
@@ -240,14 +238,34 @@ public class ShareDialog extends FloatingPanel
         return box;
     }
 
+    protected function sendShareEmail (emailText :String, message :String) :void
+    {
+        var emails :Array = [];
+        for each (var email :String in emailText.split(/[ ,]/)) {
+            if (email.length == 0) {
+                // skip it
+            } else if (MailUtil.isValidAddress(email)) {
+                emails.push(email);
+            } else {
+                _status.text = Msgs.GENERAL.get("e.invalid_addr", email);
+            }
+        }
+
+        if (emails.length > 0) {
+            _ctx.getMsoyController().handleEmailShare(emails, message);
+            close();
+        }
+    }
+
+    protected var _memObj :MemberObject;
+    protected var _sizeGroup :RadioButtonGroup = new RadioButtonGroup();
+    protected var _status :Text;
+
     protected static const EMBED_SIZES :Array = [
         [350, 200], [400, 415], [700, 575], ["100%", 575]
     ];
 
     // Default to full 100% size
     protected static const DEFAULT_SIZE :int = 3;
-
-    protected var _memObj :MemberObject;
-    protected var _sizeGroup :RadioButtonGroup = new RadioButtonGroup();
 }
 }

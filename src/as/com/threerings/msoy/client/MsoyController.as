@@ -11,20 +11,13 @@ import flash.events.TextEvent;
 import flash.events.TimerEvent;
 
 import flash.display.Stage;
-
 import flash.geom.Rectangle;
-
 import flash.system.Capabilities;
-
 import flash.text.TextField;
-
 import flash.ui.Keyboard;
-
 import flash.utils.Timer;
 
 import mx.controls.Button;
-import mx.controls.TextArea;
-
 import mx.events.MenuEvent;
 
 import com.threerings.io.TypedArray;
@@ -55,9 +48,9 @@ import com.threerings.presents.client.ConfirmAdapter;
 
 import com.threerings.crowd.chat.client.ChatCantStealFocus;
 
+import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
-
 import com.threerings.msoy.ui.SliderPopup;
 
 public class MsoyController extends Controller
@@ -392,7 +385,7 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the POP_VOLUME command.
+     * Handles the POP_VOLUME command.
      */
     public function handlePopVolume (trigger :Button) :void
     {
@@ -404,24 +397,15 @@ public class MsoyController extends Controller
     }
 
     /**
-     * Handle the EMAIL_SHARE command.
+     * Handles the EMAIL_SHARE command.
      */
-    public function handleEmailShare (emails :String, message :TextArea) :void
+    public function handleEmailShare (emails :Array, message :String) :void
     {
-        var msvc :MemberService =
-            _mctx.getClient().requireService(MemberService) as MemberService;
-
-        var out :TypedArray = TypedArray.create(String);
-        for each (var email :String in emails.split(/[ ,]/)) {
-            out.push(email);
-        }
-
         const sceneAndGame :Array = getSceneAndGame();
-        msvc.emailShare(_mctx.getClient(), int(sceneAndGame[0]), int(sceneAndGame[1]), out,
-            message.text, new ConfirmAdapter(function (cause :String) :void {
-                trace("failure"); // TODO
-            }
-        ));
+        (_mctx.getClient().requireService(MemberService) as MemberService).emailShare(
+            _mctx.getClient(), int(sceneAndGame[0]), int(sceneAndGame[1]),
+            TypedArray.create(String).addAll(emails), message,
+            new ReportingListener(_mctx, MsoyCodes.GENERAL_MSGS));
     }
 
     /**
