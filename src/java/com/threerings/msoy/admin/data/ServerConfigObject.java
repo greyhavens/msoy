@@ -59,6 +59,12 @@ public class ServerConfigObject extends ConfigObject
 
     /** The field name of the <code>blingCashoutTransactionFee</code> field. */
     public static final String BLING_CASHOUT_TRANSACTION_FEE = "blingCashoutTransactionFee";
+
+    /** The field name of the <code>blingPoolSize</code> field. */
+    public static final String BLING_POOL_SIZE = "blingPoolSize";
+
+    /** The field name of the <code>blingWorth</code> field. */
+    public static final String BLING_WORTH = "blingWorth";
     // AUTO-GENERATED: FIELDS END
 
     /** Whether or not to allow non-admins to log on. */
@@ -350,6 +356,38 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             BLING_CASHOUT_TRANSACTION_FEE, Float.valueOf(value), Float.valueOf(ovalue));
         this.blingCashoutTransactionFee = value;
+    }
+
+    /**
+     * Requests that the <code>blingPoolSize</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setBlingPoolSize (int value)
+    {
+        int ovalue = this.blingPoolSize;
+        requestAttributeChange(
+            BLING_POOL_SIZE, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.blingPoolSize = value;
+    }
+
+    /**
+     * Requests that the <code>blingWorth</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setBlingWorth (float value)
+    {
+        float ovalue = this.blingWorth;
+        requestAttributeChange(
+            BLING_WORTH, Float.valueOf(value), Float.valueOf(ovalue));
+        this.blingWorth = value;
     }
     // AUTO-GENERATED: METHODS END
 }
