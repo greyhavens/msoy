@@ -11,6 +11,7 @@ import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -266,6 +267,24 @@ public class MsoyUI
     }
 
     /**
+     * Creates a text area with a listener and style instead of width/height
+     */
+    public static TextArea createTextArea (String text, String style, ChangeListener listener)
+    {
+        TextArea area = new TextArea();
+        if (text != null) {
+            area.setText(text);
+        }
+        if (style != null) {
+            area.addStyleName(style);
+        }
+        if (listener != null) {
+            area.addChangeListener(listener);
+        }
+        return area;
+    }
+
+    /**
      * Creates an orange button of the specified size with the supplied text.
      */
     public static PushButton createButton (String size, String label, ClickListener listener)
@@ -297,16 +316,20 @@ public class MsoyUI
     {
         final Label widget = createActionLabel("", style, listener);
         widget.addMouseListener(new MouseListenerAdapter() {
+            @Override
             public void onMouseEnter (Widget sender) {
                 widget.addStyleDependentName("hovering");
             }
+            @Override
             public void onMouseLeave (Widget sender) {
                 widget.removeStyleDependentName("hovering");
                 widget.removeStyleDependentName("down");
             }
+            @Override
             public void onMouseDown (Widget sender, int x, int y) {
                 widget.addStyleDependentName("down");
             }
+            @Override
             public void onMouseUp (Widget sender, int x, int y) {
                 widget.removeStyleDependentName("down");
             }

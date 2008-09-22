@@ -31,6 +31,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
     public static final String EDIT_ACTION = "editgallery";
 
     public static final String CREATE_ACTION = "creategallery";
+    public static final String CREATE_PROFILE_ACTION = "createprofilegallery";
 
     public GalleryEditPanel ()
     {
@@ -57,10 +58,10 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
     protected void display (GalleryData galleryData)
     {
         _galleryData = galleryData;
-        addStyleName("Gallery");
+        addStyleName("galleryEditPanel");
 
         // add editable gallery detail panel
-        add(new GalleryDetailPanel(_galleryData.gallery, false), 0, 0);
+        add(new GalleryDetailPanel(_galleryData, false), 0, 0);
 
         // add "save" button
         PushButton saveButton = MsoyUI.createButton(MsoyUI.LONG_THIN, _pmsgs.saveButton(),

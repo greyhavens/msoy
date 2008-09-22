@@ -3,79 +3,80 @@
 
 package client.person;
 
+import client.shell.Args;
+import client.shell.CShell;
+import client.shell.Pages;
 import client.ui.MsoyUI;
+import client.util.Link;
 import client.util.MediaUtil;
 
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ChangeListener;
-import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
-import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.Gallery;
+import com.threerings.msoy.person.gwt.GalleryData;
 
 /**
  * Displays the Gallery meta data: name, description, thumbnail, yada yada.
  *
  * @author mjensen
  */
-public class GalleryDetailPanel extends SmartTable
+public class GalleryDetailPanel extends AbsolutePanel
 {
-    public GalleryDetailPanel (Gallery gallery, boolean readOnly)
+    public GalleryDetailPanel (GalleryData galleryData, boolean readOnly)
     {
-        _gallery = gallery;
-
-        addStyleName("GalleryDetail");
+        _gallery = galleryData.gallery;
+        setStyleName("galleryDetailPanel");
 
         // Thumbnail
-        if (gallery.thumbMedia != null) {
-            setWidget(0, 0, MediaUtil.createMediaView(gallery.thumbMedia, MediaDesc.THUMBNAIL_SIZE));
+        if (_gallery.thumbMedia != null) {
+            add(MsoyUI.createSimplePanel("Thumbnail", MediaUtil.createMediaView(
+                _gallery.thumbMedia, MediaDesc.THUMBNAIL_SIZE)), 10, 50);
         } else {
-            setWidget(0, 0, MsoyUI.createLabel("TODO", "Thumb"));
+            add(MsoyUI.createLabel("no image", "Thumbnail"), 10, 50);
         }
 
-        // TODO # of photos - plus needs to listen for changes to count
-        setWidget(0, 1, MsoyUI.createLabel("TODO", "Count"));
+        // TODO needs to listen for changes to count
+        add(MsoyUI.createLabel(_pmsgs.photoCount(galleryData.photos.size() + ""), "Count"), 110,
+            70);
 
         if (readOnly) {
             // add name and description labels
-            setWidget(1, 0, MsoyUI.createLabel(GalleryPanel.getGalleryLabel(gallery), "Name"));
-            setWidget(2, 0, MsoyUI.createLabel(gallery.description, "Description"));
+            add(MsoyUI.createLabel(GalleryPanel.getGalleryLabel(_gallery), "Name"), 10, 10);
+            add(MsoyUI.createLabel(_gallery.description, "Description"), 10, 140);
 
         } else {
             // do not allow profile gallery name to be edited
-            if (gallery.isProfileGallery()) {
-                setWidget(1, 0, MsoyUI.createLabel(GalleryPanel.getGalleryLabel(gallery), "Name"));
+            if (_gallery.isProfileGallery()) {
+                add(MsoyUI.createLabel(GalleryPanel.getGalleryLabel(_gallery), "Name"), 10, 10);
             } else {
-                TextBox name = MsoyUI.createTextBox(gallery.name, Gallery.MAX_NAME_LENGTH,
-                    VISIBLE_WIDTH);
-                name.addChangeListener(new ChangeListener() {
+                add(MsoyUI.createTextArea(_gallery.name, "Name", new ChangeListener() {
                     public void onChange (Widget sender) {
-                        _gallery.name = ((TextBox) sender).getText();
+                        _gallery.name = ((TextArea) sender).getText();
                     }
-                });
-                name.addStyleName("Name");
-                setWidget(1, 0, name);
+                }), 10, 10);
             }
 
-            TextArea description = MsoyUI.createTextArea(gallery.description, VISIBLE_WIDTH,
-                VISIBLE_HEIGHT);
-            description.addChangeListener(new ChangeListener() {
+            add(MsoyUI.createTextArea(_gallery.description, "Description", new ChangeListener() {
                 public void onChange (Widget sender) {
                     _gallery.description = ((TextArea) sender).getText();
                 }
-            });
-            description.addStyleName("Description");
-            setWidget(2, 0, description);
+            }), 10, 140);
         }
 
-        // let the name and description fields stretch their feet a bit
-        getFlexCellFormatter().setColSpan(1, 0, 2);
-        getFlexCellFormatter().setColSpan(2, 0, 2);
+        // if the current member owns this read-only gallery, add an edit button
+        if (readOnly && galleryData.ownerId == CShell.getMemberId()) {
+            final String args = Args.compose(GalleryEditPanel.EDIT_ACTION, _gallery.galleryId);
+            final ClickListener listener = Link.createListener(Pages.PEOPLE, args);
+            add(MsoyUI.createButton(MsoyUI.LONG_THIN, _pmsgs.editButton(), listener), 40, 270);
+        }
     }
 
     protected Gallery _gallery;
 
-    protected static final int VISIBLE_WIDTH = 30;
-    protected static final int VISIBLE_HEIGHT = 12;
+    protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
 }

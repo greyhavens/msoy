@@ -50,7 +50,14 @@ public class PeoplePage extends Page
 
         } else if (action.equals(GalleryViewPanel.VIEW_ACTION)) {
             int galleryId = args.get(1, -1);
-            setContent(CPeople.msgs.galleriesTitle(), new GalleryViewPanel(galleryId));
+            setContent(CPeople.msgs.galleriesTitle(), new GalleryViewPanel(galleryId, 0));
+
+        } else if (action.equals(GalleryViewPanel.VIEW_PROFILE_ACTION)) {
+            int memberId = args.get(1, -1);
+            setContent(CPeople.msgs.galleriesTitle(), new GalleryViewPanel(0, memberId));
+
+        } else if (action.equals(GalleryEditPanel.CREATE_PROFILE_ACTION)) {
+            setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel());
 
         } else if (action.equals(GalleryEditPanel.CREATE_ACTION)) {
             setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel());
