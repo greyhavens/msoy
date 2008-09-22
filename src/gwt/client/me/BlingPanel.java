@@ -22,7 +22,7 @@ public class BlingPanel extends SmartTable
         setCellSpacing(10);
         setStyleName("bling");
         
-        model.setBlingCallback(new AsyncCallback<BlingInfo>() {
+        model.addBlingCallback(new AsyncCallback<BlingInfo>() {
             public void onFailure (Throwable caught) {
                 // Ignore
             }
