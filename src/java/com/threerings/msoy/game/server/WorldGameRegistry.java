@@ -138,6 +138,7 @@ public class WorldGameRegistry
                 // if we left an AVRG, let the room know
                 if (rmgr != null && avrGameId != 0 && (game == null || game.gameId != avrGameId)) {
                     rmgr.occupantLeftAVRGame(memObj);
+                    memObj.setAvrGameId(0);
                 }
 
                 // if we're now in a new one, subscribe to it
