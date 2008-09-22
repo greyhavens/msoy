@@ -3,9 +3,7 @@
 
 package com.threerings.msoy.web.server;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.samskivert.servlet.util.CookieUtil;
 

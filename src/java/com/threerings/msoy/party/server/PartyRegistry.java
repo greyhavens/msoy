@@ -10,7 +10,6 @@ import com.samskivert.util.HashIntMap;
 
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
-import com.threerings.presents.data.InvocationCodes;
 import com.threerings.presents.dobj.AccessController;
 import com.threerings.presents.dobj.DEvent;
 import com.threerings.presents.dobj.DObject;
@@ -22,7 +21,7 @@ import com.threerings.presents.server.InvocationManager;
 
 import com.threerings.msoy.party.data.PartyObject;
 
-import com.threerings.msoy.data.MemberObject;
+// import com.threerings.msoy.data.MemberObject;
 
 @Singleton
 public class PartyRegistry
@@ -42,7 +41,7 @@ public class PartyRegistry
     public void joinParty (ClientObject caller, int partyId, InvocationService.ResultListener rl)
         throws InvocationException
     {
-        MemberObject member = (MemberObject)caller;
+//         MemberObject member = (MemberObject)caller;
 
         PartyObject pobj = _parties.get(partyId);
 
@@ -107,10 +106,9 @@ public class PartyRegistry
         {
             // if the subscriber is a client, ensure that they are this same user
             if (PresentsClient.class.isInstance(sub)) {
-                MemberObject mobj = (MemberObject)PresentsClient.class.cast(sub).getClientObject();
-                PartyObject pobj = (PartyObject)object;
-//                return mobj.partyId == pobj.partyId;
-
+//                 MemberObject mobj = (MemberObject)PresentsClient.class.cast(sub).getClientObject();
+//                 PartyObject pobj = (PartyObject)object;
+//                 return mobj.partyId == pobj.partyId;
                 return true;
             }
             return true;
