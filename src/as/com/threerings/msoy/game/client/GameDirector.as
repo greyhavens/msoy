@@ -164,7 +164,9 @@ public class GameDirector extends BasicDirector
      */
     public function checkMemberAVRGame () :void
     {
-        if (_liaison == null) {
+        // Re-entering an AVRG after leaving a game lobby is a bit strange but was thought to be a
+        // cool feature at one point. TODO: get rid of this completely if it isn't needed anymore.
+        if (false && _liaison == null) {
             var memberObj :MemberObject = _wctx.getMemberObject();
             // we might not yet be logged onto our world server; freak not out if so
             if (memberObj != null && memberObj.avrGameId > 0) {

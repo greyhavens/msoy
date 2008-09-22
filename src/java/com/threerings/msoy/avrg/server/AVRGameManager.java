@@ -44,6 +44,7 @@ import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
 import com.threerings.msoy.game.server.GameWatcherManager;
+import com.threerings.msoy.game.server.WorldServerClient;
 import com.threerings.msoy.game.server.GameWatcherManager.Observer;
 import com.threerings.msoy.game.server.PlayerLocator;
 
@@ -352,6 +353,10 @@ public class AVRGameManager extends PlaceManager
             return;
         }
         _locmgr.leavePlace(player);
+
+        // Make sure we notify the world server too, since we are officially deactivating this
+        // game as opposed to just leaving it tempoararily.
+        _worldClient.leaveAVRGame(playerId);
     }
 
     /**
@@ -751,6 +756,7 @@ public class AVRGameManager extends PlaceManager
     @Inject protected RootDObjectManager _omgr;
     @Inject protected PlayerLocator _locator;
     @Inject protected LocationManager _locmgr;
+    @Inject protected WorldServerClient _worldClient;
 
     /** The minimum delay a ticker can have. */
     protected static final int MIN_TICKER_DELAY = 50;

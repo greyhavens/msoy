@@ -113,7 +113,11 @@ public class MemberObject extends MsoyBodyObject
     /** The member name and id for this user. */
     public var memberName :VizMemberName;
 
-    /** The Game ID of the in-avr game that the user is in, if any. */
+    /** The id of the currently active AVR game for this user, or 0 for none. Fun fact: this field
+     * actually records the *most recent* avrg for the user and therefore is not always equal
+     * to <code>(game != null && game.avrGame) ? game.gameId : 0</code>. The reason for this is
+     * that the client may wish to rejoin a game after an involuntary disconnect.
+     * TODO: Decide if this functionality is still needed. */
     public var avrGameId :int;
 
     /** How many coins we've got jangling around on our person. */

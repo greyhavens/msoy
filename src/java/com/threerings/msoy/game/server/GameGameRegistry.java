@@ -579,8 +579,10 @@ public class GameGameRegistry
         AVRGameManager mgr = _avrgManagers.get(gameId);
         if (mgr != null) {
             _locmgr.leavePlace(player);
-            // TODO: no longer needed?
-            // _worldClient.leaveAVRGame(playerId);
+            
+            // Make sure we notify the world server too, since we are officially deactivating this
+            // game as opposed to just leaving it tempoararily.
+            _worldClient.leaveAVRGame(playerId);
 
         } else {
             log.warning("Tried to deactivate AVRG without manager [gameId=" + gameId + "]");

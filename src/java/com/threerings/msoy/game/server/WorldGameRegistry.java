@@ -138,7 +138,11 @@ public class WorldGameRegistry
                 // if we left an AVRG, let the room know
                 if (rmgr != null && avrGameId != 0 && (game == null || game.gameId != avrGameId)) {
                     rmgr.occupantLeftAVRGame(memObj);
-                    memObj.setAvrGameId(0);
+                    
+                    // Note we do not clear the MemberObject.avrGameId here because if the player
+                    // has not chosen to leave the game (e.g. logged off and on again), we want to
+                    // keep it around for the client to decide whether to rejoin
+                    // memObj.setAvrGameId(0);
                 }
 
                 // if we're now in a new one, subscribe to it
