@@ -553,7 +553,7 @@ public class MsoyUI
     public static void showSessionExpired (String message)
     {
         final BorderedPopup popup = new BorderedPopup();
-        popup.addStyleName("passwordExpired");
+        popup.addStyleName("sessionExpired");
         FlowPanel content = new FlowPanel();
         content.add(MsoyUI.createLabel(message, "Message"));
         content.add(new LogonPanel(true) {

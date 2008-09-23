@@ -4,10 +4,10 @@
  * CSS styles used by individual pages.
  */
 
-.passwordExpired .Message {
+.sessionExpired .Message {
   margin: 10px 10px 0px 10px;
 }
 
-.passwordExpired .logonPanel {
+.sessionExpired .logonPanel {
   margin: 10px;
 }
