@@ -38,11 +38,7 @@ public class ControlBackend
                 }
 
             } catch (err :*) {
-                var log :Log = Log.getLog(this);
-                log.warning("Error in user-code: " + err);
-                if (err is Error) {
-                    log.logStackTrace(err as Error);
-                }
+                Log.getLog(this).warning("Error in usercode", err);
             }
         }
         return undefined;
