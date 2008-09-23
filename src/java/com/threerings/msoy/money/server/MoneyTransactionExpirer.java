@@ -55,13 +55,12 @@ public class MoneyTransactionExpirer
      */
     protected void doPurge ()
     {
-        // TODO: just purge all currencies together?
-        for (Currency cur : Currency.values()) {
-            int count = _repo.deleteOldTransactions(cur, MAX_AGE);
-            if (count > 0) {
-                log.info("Removed old member account history records",
-                         "currency", cur, "count", count);
-            }
+        int coins = _repo.deleteOldTransactions(Currency.COINS, COIN_MAX_AGE);
+        int bars = _repo.deleteOldTransactions(Currency.BARS, BAR_MAX_AGE);
+        int bling = _repo.deleteOldTransactions(Currency.BLING, BAR_MAX_AGE);
+        if (coins > 0 || bars > 0 || bling > 0) {
+            log.info("Removed old money transacion records.",
+                 "coins", coins, "bars", bars, "bling", bling);
         }
     }
     
@@ -71,7 +70,8 @@ public class MoneyTransactionExpirer
 
     protected Interval _interval;
 
-    protected static final long MAX_AGE = 10 * 24 * 60 * 60 * 1000; // 10 days
+    protected static final long COIN_MAX_AGE = 10L * 24 * 60 * 60 * 1000L; // 10 days
+    protected static final long BAR_MAX_AGE = 3L * COIN_MAX_AGE; // 30 days
 
     protected static final long PURGE_INTERVAL = 60 * 60 * 1000; // 1 hour
 }
