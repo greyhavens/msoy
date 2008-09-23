@@ -494,20 +494,25 @@ public class AVRGameManager extends PlaceManager
         }
 
         // Update our internal records
-        Scene scene = _scenes.get(sceneId);
         Scene oldScene = _players.get(memberId);
-        if (scene == null) {
-            _scenes.put(sceneId, scene = new Scene(sceneId));
-        }
-        _players.put(memberId, scene);
-        scene.addPlayer(memberId);
-        if (oldScene != null) {
-            oldScene.removePlayer(memberId);
-        }
+        if (oldScene != null && sceneId == oldScene.sceneId) {
+            log.warning("Player entered scene twice", "memberId", memberId, "scene", oldScene);
 
-        // Expose the transfer to dobj (or else wait until agent calls roomSubscriptionComplete)
-        if (scene.subscribed || _gameAgentObj==null) {
-            postPlayerMove(memberId, sceneId);
+        } else {
+            Scene scene = _scenes.get(sceneId);
+            if (scene == null) {
+                _scenes.put(sceneId, scene = new Scene(sceneId));
+            }
+            _players.put(memberId, scene);
+            scene.addPlayer(memberId);
+            if (oldScene != null) {
+                oldScene.removePlayer(memberId);
+            }
+
+            // Expose the transfer to dobj (or else wait until agent calls roomSubscriptionComplete)
+            if (scene.subscribed || _gameAgentObj==null) {
+                postPlayerMove(memberId, sceneId);
+            }
         }
     }
 
