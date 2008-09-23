@@ -13,6 +13,9 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.Anchor;
+
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 
 import client.shell.Args;
@@ -54,6 +57,18 @@ public class Link
     public static Widget transactionsView (String label, int memberId)
     {
         return create(label, Pages.ME, Args.compose("transactions", "1", ""+memberId));
+    }
+
+    /**
+     * Returns link that pops up the billing page.
+     */
+    public static Anchor buyBars (String label)
+    {
+        String href = DeploymentConfig.billingURL;
+        if (CShell.creds != null) {
+            href += "?initUsername=" + CShell.creds.accountName;
+        }
+        return new Anchor(href, label, "_blank");
     }
 
     /**

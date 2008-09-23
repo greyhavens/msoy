@@ -107,14 +107,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
             // and create a link for going to the billing system to buy bars
             _buyPanel.add(WidgetUtil.makeShim(5, 5));
-            if (CShop.creds != null) {
-                _buyPanel.add(MsoyUI.createHTML(
-                    _msgs.listingBuyBars(DeploymentConfig.billingURL + "?initUsername=" + 
-                     CShop.creds.accountName), null));
-            } else {
-                _buyPanel.add(MsoyUI.createHTML(
-                    _msgs.listingBuyBars(DeploymentConfig.billingURL), null));
-            }
+            _buyPanel.add(Link.buyBars(_msgs.listingBuyBars()));
         }
 
         _details.add(WidgetUtil.makeShim(10, 10));
