@@ -479,6 +479,11 @@ public class AVRGameManager extends PlaceManager
             "Player entered scene [memberId=" + memberId + ", sceneId=" + sceneId +
             ", hostname=" + hostname + ", port=" + port + "]");
 
+        if (sceneId == 0) {
+            log.info("Ignoring entry of scene 0", "memberId", memberId);
+            return;
+        }
+        
         SceneInfo info = new SceneInfo(sceneId, hostname, port);
         SceneInfo existing = _gameAgentObj.scenes.get(info.getKey());
         if (existing != null) {
