@@ -83,6 +83,6 @@ NOW=`date "+%F-%H:%M"`
 mv $LOGFILE $LOGFILE.$NOW
 
 # Prune old logs
-find $MSOY_HOME/log -name 'stdout-b$BUREAU_ID.log*' -a -mtime +7 | xargs rm -f
+find $MSOY_HOME/log -name "stdout-b$BUREAU_ID.log*" -a -mtime +7 | xargs rm -f
 
 exit $EXIT_CODE
