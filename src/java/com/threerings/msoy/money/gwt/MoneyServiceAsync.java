@@ -19,5 +19,10 @@ public interface MoneyServiceAsync
     void getTransactionHistory (
         int memberId, ReportType report, int from, int count,
         AsyncCallback<TransactionPageResult> callback);
+    
+    /**
+     * The asynchronous version of {@link MoneyService#exchangeBlingForBars}.
+     */
+    void exchangeBlingForBars (int memberId, int blingAmount, AsyncCallback<Void> callback);
 }
 

@@ -361,16 +361,39 @@ public class MoneyLogic
      * Converts some amount of bling in a member's account into bars.
      *
      * @param memberId ID of the member.
-     * @param blingAmount Amount of bling to convert to bars.
+     * @param blingAmount Amount of bling (NOT centibling) to convert to bars.
      * @return Number of bars added to the account.
      * @throws NotEnoughMoneyException The account does not have the specified amount of bling
      * available, aight?
      */
-    public int exchangeBlingForBars (int memberId, int blingAmount)
+    public void exchangeBlingForBars (int memberId, int blingAmount)
         throws NotEnoughMoneyException
     {
-        // TODO Auto-generated method stub
-        return 0;
+        // Update the account record, adding the amount amount specified to bars, while subtracting
+        // the amount (after converting it to centibling) from the bling column.
+        int rows = _repo.exchangeBlingForBars(memberId, blingAmount);
+        int centibling = blingAmount * 100;
+        
+        // Get the newly updated account record.  If the above did not update any rows, this will
+        // have the old values.
+        MemberAccountRecord account = _repo.getAccountById(memberId);
+        
+        // If no rows updated, assume that they never had enough bling in their account.  Could
+        // also be the member account wasn't found, which means they don't have any bling anyway.
+        if (rows == 0) {
+            throw new NotEnoughMoneyException(memberId, Currency.BLING, centibling, 
+                account.bling);
+        }
+        
+        // Create two transaction records, one for the amount deducted, and one for the amount added.
+        MoneyTransactionRecord tx1 = new MoneyTransactionRecord(memberId, 
+            TransactionType.SPENT_FOR_EXCHANGE, Currency.BLING, -centibling, account.bling, 
+            MessageBundle.tcompose("m.exchange_spent", blingAmount), null);
+        MoneyTransactionRecord tx2 = new MoneyTransactionRecord(memberId, 
+            TransactionType.RECEIVED_FROM_EXCHANGE, Currency.BARS, blingAmount, account.bars, 
+            MessageBundle.tcompose("m.exchange_added", blingAmount), null);
+        _repo.addTransaction(tx1);
+        _repo.addTransaction(tx2);
     }
 
     /**

@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.inject.Inject;
 
+import com.threerings.msoy.money.data.MoneyCodes;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
@@ -40,6 +41,20 @@ public class MoneyServlet extends MsoyServiceServlet
         int total = _moneyLogic.getTransactionCount(memberId,
             report.transactions, report.currency);
         return new TransactionPageResult(total, page, getBlingInfo(memberId));
+    }
+    
+    public void exchangeBlingForBars (int memberId, int blingAmount)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        if (mrec.memberId != memberId) {
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+        try {
+            _moneyLogic.exchangeBlingForBars(memberId, blingAmount);
+        } catch (NotEnoughMoneyException neme) {
+            throw new ServiceException(MoneyCodes.E_INSUFFICIENT_BLING);
+        }
     }
     
     protected BlingInfo getBlingInfo (int memberId)

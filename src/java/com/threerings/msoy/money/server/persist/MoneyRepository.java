@@ -6,7 +6,9 @@ package com.threerings.msoy.money.server.persist;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.jcip.annotations.NotThreadSafe;
@@ -25,10 +27,13 @@ import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
 import com.samskivert.jdbc.depot.operator.Conditionals.LessThan;
+import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -209,6 +214,33 @@ public class MoneyRepository extends DepotRepository
         updatePartial(MoneyConfigRecord.getKey(MoneyConfigRecord.RECORD_ID), 
             MoneyConfigRecord.LOCKED, false,
             MoneyConfigRecord.LAST_DISTRIBUTED_BLING, lastDistributedBling);
+    }
+    
+    /**
+     * Exchanges some amount of bling for an equal amount of bars in a member's account.
+     * 
+     * @param memberId ID of the member to perform the exchange for.
+     * @param amount The amount of bling (NOT centibling) to exchange for bars.
+     * @return The number of records modified by this method.  If 0, indicates there is either
+     * not enough bling in the member's account, or the member has no account.
+     */
+    public int exchangeBlingForBars (int memberId, int amount)
+    {
+        // update MemberAccountRecord set bars = bars + ?, bling = bling - ? where
+        // memberId = ? and bling >= ?
+        Where where = new Where(new And(
+            new Equals(MemberAccountRecord.MEMBER_ID_C, memberId),
+            new GreaterThanEquals(MemberAccountRecord.BLING_C, amount * 100)
+            ));
+        Map<String, SQLExpression> fieldValues = new HashMap<String, SQLExpression>();
+        fieldValues.put(MemberAccountRecord.BARS, 
+            new Arithmetic.Add(MemberAccountRecord.BARS_C, amount));
+        fieldValues.put(MemberAccountRecord.BLING, 
+            new Arithmetic.Sub(MemberAccountRecord.BLING_C, amount * 100));
+        return updateLiteral(
+            MemberAccountRecord.class, where,
+            MemberAccountRecord.getKey(memberId),
+            fieldValues);
     }
 
     /** Helper method to setup a query for a transaction history search. */

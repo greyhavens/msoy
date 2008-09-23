@@ -22,5 +22,11 @@ public interface MoneyService extends RemoteService
      */
     TransactionPageResult getTransactionHistory (
         int memberId, ReportType report, int from, int count)
-        throws ServiceException;   
+        throws ServiceException;
+    
+    /**
+     * Exchanges some amount of bling for bars.
+     */
+    void exchangeBlingForBars (int memberId, int blingAmount)
+        throws ServiceException;
 }

@@ -17,6 +17,8 @@ public enum TransactionType
     AWARD(4),
     GAME_PLAYS(5),
     BARS_BOUGHT(6),
+    SPENT_FOR_EXCHANGE(7),
+    RECEIVED_FROM_EXCHANGE(8)
     ;
 
     // Required by ByteEnum

@@ -464,6 +464,18 @@
   padding-right: 5px;
 }
 
+/* ------------------------------------
+   BLING
+-------------------------------------*/
+
 .bling .header {
 	font-weight: bold;
+}
+
+.bling .Error {
+    color: red;
+}
+
+.bling .Success {
+    color: green;
 }
