@@ -22,6 +22,8 @@ public class TransactionsPanel extends VerticalPanel
     {
         setStyleName("transactions");
 
+        add(Link.buyBars("Buy some bars!")); // TODO: i18n
+
         final ListBox reportBox = new ListBox();
         for (String name : REPORT_NAMES) {
             reportBox.addItem(name);
