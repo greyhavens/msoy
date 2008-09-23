@@ -34,10 +34,10 @@ public class GalleryDetailPanel extends AbsolutePanel
 
         // Thumbnail
         if (_gallery.thumbMedia != null) {
-            add(MsoyUI.createSimplePanel("Thumbnail", MediaUtil.createMediaView(
-                _gallery.thumbMedia, MediaDesc.THUMBNAIL_SIZE)), 10, 50);
+            add(MsoyUI.createSimplePanel("GalleryThumbnail", MediaUtil.createMediaView(
+                _gallery.thumbMedia, MediaDesc.THUMBNAIL_SIZE)), 10, 60);
         } else {
-            add(MsoyUI.createLabel("no image", "Thumbnail"), 10, 50);
+            add(MsoyUI.createLabel("no image", "GalleryThumbnail"), 10, 60);
         }
 
         // TODO needs to listen for changes to count

@@ -63,24 +63,32 @@
    GALLERIES
 -------------------------------------*/
 
-/* TODO rename .Gallery */
 .galleryViewPanel, .galleryEditPanel {
   width: 100%;
   height: 100%;
-  min-height: 500px;
+  min-height: 550px;
   background: #509BD2 url(/images/group/detail_bg.png) repeat-x;
 }
 
 .galleryViewPanel .Thumbnail,
 .galleryEditPanel .Thumbnail {
-  width: 80px;
-  height: 60px;
   margin: 10px 10px 0 0;
   float: left;
   border: 1px solid #000000;
   background-color: #FFFFFF;
   padding: 5px;
   text-align: center;
+}
+
+.galleryViewPanel .Thumbnail .Name,
+.galleryEditPanel .Thumbnail .Name {
+  font-size: 9px;
+  width: 80px;
+  height: 15px;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-top: 5px;
 }
 
 .galleryViewPanel .CurrentPhoto {
@@ -97,15 +105,29 @@
   opacity: .50;
 }
 
-.galleryViewPanel .FullSizeContainer {
+.galleryViewPanel .FullSize {
   width: 100%;
   height: 100%;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: #FFFFFF;
+  text-align: center;
 }
-    
-.galleryViewPanel .FullSize {
+
+.galleryViewPanel .FullSize .Photo {
   margin: 30px auto 0 auto;
   background-color: #000000;
   border: solid #000000 10px;
+}
+
+.galleryViewPanel .FullSize .Name {
+  margin-top: 10px;
+  font-size: 20px;
+}
+   
+.galleryViewPanel .FullSize .Description {
+  margin-top: 7px;
+  font-size: 15px;
 }
 
 .galleryDetailPanel {
@@ -116,8 +138,13 @@
   padding: 5px;
 }
 
-.galleryDetailPanel .Thumbnail {
+.galleryDetailPanel .GalleryThumbnail {
+  margin: 0;
   float: none;
+  border: 1px solid #000000;
+  background-color: #FFFFFF;
+  padding: 5px;
+  text-align: center;
 }
 
 /* Styles both static divs and input boxes */
@@ -139,18 +166,3 @@
   height: 120px;
   font-size: 15px;
 }
-
-/*
-.galleryDetailPanel input.Name,
-.galleryDetailPanel input.Description {
-  width: 180px;
-}
-
-.galleryDetailPanel input.Name {
-  height: 30px;
-}
-
-.galleryDetailPanel input.Description {
-  height: 200px;
-}
-*/
