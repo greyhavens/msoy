@@ -188,7 +188,6 @@ public class MoneyLogic
      * @throws NotSecuredException iff there is no secured price for the item and the authorized
      * buy amount is not enough money.
      */
-    @Retry(exception=StaleDataException.class)
     public MoneyResult buyItem (
         final MemberRecord buyerRec, CatalogIdent item, int creatorId, String description,
         Currency listedCurrency, int listedAmount, Currency buyCurrency, int authedAmount)
