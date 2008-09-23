@@ -973,12 +973,13 @@ public class RoomObjectController extends RoomController
                     _wdctx.displayFeedback(MsoyCodes.GENERAL_MSGS, cause);
                 },
                 function (success :Boolean) :void {
-                    try {
-                        if (callback != null) {
+                    if (callback != null) {
+                        try {
                             callback(success);
                         }
-                    } catch (error :Error) {
-                        // ignored- error in usercode
+                        catch (error :*) {
+                            // ignored- error in usercode
+                        }
                     }
                 }));
     }
