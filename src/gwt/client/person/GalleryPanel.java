@@ -29,9 +29,7 @@ public class GalleryPanel extends FlowPanel
 
     public GalleryPanel (final int memberId)
     {
-        addStyleName("Galleries");
-
-        // TODO Add link to create new gallery
+        addStyleName("galleryPanel");
 
         _gallerysvc.loadGalleries(memberId, new MsoyCallback<List<Gallery>>(){
             public void onSuccess (List<Gallery> result) {

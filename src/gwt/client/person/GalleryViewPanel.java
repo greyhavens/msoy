@@ -68,34 +68,41 @@ public class GalleryViewPanel extends AbsolutePanel
         }
     }
 
+    /**
+     * If galleryData contains a list of images, display the gallery details and thumbnails for
+     * those images, otherwise display an error and/or edit button.
+     */
     protected void displayGallery (GalleryData galleryData)
     {
+        FlowPanel error = MsoyUI.createFlowPanel("Error");
         if (galleryData == null) {
             if (_profileMemberId > 0) {
                 if (_profileMemberId == CShell.getMemberId()) {
-                    add(new HTML("You don't have any pictures in your profile gallery yet!"));
+                    error.add(new HTML(_pmsgs.galleryProfileNoPhotosSelf()));
                     final String args = Args.compose(GalleryEditPanel.CREATE_PROFILE_ACTION,
                         _profileMemberId);
                     final ClickListener listener = Link.createListener(Pages.PEOPLE, args);
-                    add(MsoyUI.createButton(MsoyUI.LONG_THIN, _pmsgs.editButton(), listener));
+                    error.add(MsoyUI.createActionLabel(_pmsgs.galleryAddPhotos(), listener));
                 } else {
-                    add(new HTML("This person doesn't have any pictures in their gallery yet!"));
+                    error.add(new HTML(_pmsgs.galleryNoPhotosOther()));
                 }
             } else {
-                add(new HTML("Could not find gallery."));
+                error.add(new HTML(_pmsgs.galleryNotFound()));
             }
-            return;
 
         } else if (galleryData.photos == null || galleryData.photos.size() == 0) {
             if (galleryData.ownerId == CShell.getMemberId()) {
-                add(new HTML("You don't have any pictures in this gallery yet!"));
+                error.add(new HTML(_pmsgs.galleryNoPhotosSelf()));
                 final String args = Args.compose(GalleryEditPanel.EDIT_ACTION,
                     galleryData.gallery.galleryId);
                 final ClickListener listener = Link.createListener(Pages.PEOPLE, args);
-                add(MsoyUI.createButton(MsoyUI.LONG_THIN, _pmsgs.editButton(), listener));
+                error.add(MsoyUI.createActionLabel(_pmsgs.galleryAddPhotos(), listener));
             } else {
-                add(new HTML("There are no pictures in this gallery!"));
+                error.add(new HTML(_pmsgs.galleryNoPhotosOther()));
             }
+        }
+        if (error.getWidgetCount() > 0) {
+            add(error);
             return;
         }
         _galleryData = galleryData;

@@ -63,6 +63,10 @@
    GALLERIES
 -------------------------------------*/
 
+.galleryPanel .clickBox {
+  float: left;
+}
+
 .galleryViewPanel, .galleryEditPanel {
   width: 100%;
   height: 100%;
@@ -89,6 +93,12 @@
   overflow: hidden;
   white-space: nowrap;
   margin-top: 5px;
+}
+
+.galleryViewPanel .Error {
+  color: #FFFFFF;
+  padding-top: 30px;
+  text-align: center;
 }
 
 .galleryViewPanel .CurrentPhoto {

@@ -35,15 +35,6 @@ public class PeoplePage extends Page
         } else if (action.equals("rooms")) {
             setContent(new RoomsPanel(args.get(1, 0)));
 
-        } else if (CPeople.isGuest()) {
-            setContent(new PeoplePanel());
-
-        } else if (action.equals("me")) { // !guest
-            setContent(new ProfilePanel(CPeople.getMemberId()));
-
-        } else if (action.equals("invites")) { // !guest
-            setContent(CPeople.msgs.inviteTitle(), new InvitePanel());
-
         } else if (action.equals(GalleryPanel.GALLERIES_ACTION)) {
             int memberId = args.get(1, CShell.getMemberId());
             setContent(CPeople.msgs.galleriesTitle(), new GalleryPanel(memberId));
@@ -56,13 +47,22 @@ public class PeoplePage extends Page
             int memberId = args.get(1, -1);
             setContent(CPeople.msgs.galleriesTitle(), new GalleryViewPanel(0, memberId));
 
-        } else if (action.equals(GalleryEditPanel.CREATE_PROFILE_ACTION)) {
+        } else if (CPeople.isGuest()) {
+            setContent(new PeoplePanel());
+
+        } else if (action.equals("me")) { // !guest
+            setContent(new ProfilePanel(CPeople.getMemberId()));
+
+        } else if (action.equals("invites")) { // !guest
+            setContent(CPeople.msgs.inviteTitle(), new InvitePanel());
+
+        } else if (action.equals(GalleryEditPanel.CREATE_PROFILE_ACTION)) { // !guest
             setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel());
 
-        } else if (action.equals(GalleryEditPanel.CREATE_ACTION)) {
+        } else if (action.equals(GalleryEditPanel.CREATE_ACTION)) { // !guest
             setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel());
 
-        } else if (action.equals(GalleryEditPanel.EDIT_ACTION)) {
+        } else if (action.equals(GalleryEditPanel.EDIT_ACTION)) { // !guest
             int galleryId = args.get(1, -1);
             setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel(galleryId));
 
