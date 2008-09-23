@@ -18,8 +18,34 @@ import com.threerings.presents.data.InvocationMarshaller;
 public class AVRGameMarshaller extends InvocationMarshaller
     implements AVRGameService
 {
+    /** The method id used to dispatch {@link #awardPrize} requests. */
+    public static final int AWARD_PRIZE = 1;
+
+    // from interface AVRGameService
+    public void awardPrize (Client arg1, String arg2, int arg3, InvocationService.InvocationListener arg4)
+    {
+        ListenerMarshaller listener4 = new ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, AWARD_PRIZE, new Object[] {
+            arg2, Integer.valueOf(arg3), listener4
+        });
+    }
+
+    /** The method id used to dispatch {@link #awardTrophy} requests. */
+    public static final int AWARD_TROPHY = 2;
+
+    // from interface AVRGameService
+    public void awardTrophy (Client arg1, String arg2, int arg3, InvocationService.InvocationListener arg4)
+    {
+        ListenerMarshaller listener4 = new ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, AWARD_TROPHY, new Object[] {
+            arg2, Integer.valueOf(arg3), listener4
+        });
+    }
+
     /** The method id used to dispatch {@link #completeTask} requests. */
-    public static final int COMPLETE_TASK = 1;
+    public static final int COMPLETE_TASK = 3;
 
     // from interface AVRGameService
     public void completeTask (Client arg1, int arg2, String arg3, float arg4, InvocationService.ConfirmListener arg5)
@@ -32,7 +58,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch {@link #setTicker} requests. */
-    public static final int SET_TICKER = 2;
+    public static final int SET_TICKER = 4;
 
     // from interface AVRGameService
     public void setTicker (Client arg1, String arg2, int arg3, InvocationService.InvocationListener arg4)

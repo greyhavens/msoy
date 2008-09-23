@@ -21,10 +21,10 @@ import com.threerings.crowd.data.PlaceObject;
 import com.threerings.parlor.server.PlayManagerDelegate;
 
 import com.whirled.game.data.GameData;
+import com.whirled.game.data.GameDataObject;
 import com.whirled.game.data.ItemData;
 import com.whirled.game.data.LevelData;
 import com.whirled.game.data.TrophyData;
-import com.whirled.game.data.WhirledGameObject;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;
@@ -194,8 +194,8 @@ public class TrophyDelegate extends PlayManagerDelegate
         super.didStartup(plobj);
 
         // wire up our WhirledGameService
-        if (plobj instanceof WhirledGameObject) {
-            WhirledGameObject gobj = (WhirledGameObject)plobj;
+        if (plobj instanceof GameDataObject) {
+            GameDataObject gobj = (GameDataObject)plobj;
 
             // let the client know what game content is available
             List<GameData> gdata = Lists.newArrayList();

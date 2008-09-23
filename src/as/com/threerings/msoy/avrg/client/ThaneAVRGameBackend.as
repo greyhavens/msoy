@@ -12,6 +12,7 @@ import com.threerings.crowd.data.OccupantInfo;
 
 import com.threerings.whirled.spot.data.SceneLocation;
 
+import com.whirled.game.data.GameData;
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.msoy.avrg.client.BackendUtils;
@@ -196,6 +197,8 @@ public class ThaneAVRGameBackend
         o["game_getPlayerIds_v1"] = game_getPlayerIds_v1;
         o["game_sendMessage_v1"] = game_sendMessage_v1;
         o["isRoomLoaded_v1"] = isRoomLoaded_v1
+        o["getLevelPacks_v2"] = getLevelPacks_v2;
+        o["getItemPacks_v1"] = getItemPacks_v1;
 
         // .game.props
         o["game_getGameData_v1"] = game_getGameData_v1;
@@ -217,6 +220,11 @@ public class ThaneAVRGameBackend
 
         // .getPlayer()
         o["player_getRoomId_v1"] = player_getRoomId_v1;
+        o["holdsTrophy_v1"] = holdsTrophy_v1;
+        o["awardTrophy_v1"] = awardTrophy_v1;
+        o["awardPrize_v1"] = awardPrize_v1;
+        o["getPlayerItemPacks_v1"] = getPlayerItemPacks_v1;
+        o["getPlayerLevelPacks_v1"] = getPlayerLevelPacks_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
         o["completeTask_v1"] = completeTask_v1;
         o["playAvatarAction_v1"] = playAvatarAction_v1;
@@ -257,7 +265,17 @@ public class ThaneAVRGameBackend
     {
         return _controller.getRoomProps(roomId) != null;
     }
-    
+
+    protected function getLevelPacks_v2 (filter :Function = null) :Array
+    {
+        return BackendUtils.getLevelPacks(_gameObj.gameData, filter);
+    }
+
+    protected function getItemPacks_v1 (filter :Function = null) :Array
+    {
+        return BackendUtils.getItemPacks(_gameObj.gameData, filter);
+    }
+
     // -------------------- .game.props --------------------
     protected function game_getGameData_v1 (targetId :int) :Object
     {
@@ -431,6 +449,43 @@ public class ThaneAVRGameBackend
         _controller.deactivateGame(playerId);
     }
 
+    protected function holdsTrophy_v1 (targetId :int /* ignored */, ident :String) :Boolean
+    {
+        return BackendUtils.holdsTrophy(targetId, ident, playerOwnsData);
+    }
+
+    protected function awardTrophy_v1 (targetId :int, ident :String) :Boolean
+    {
+        if (playerOwnsData(GameData.TROPHY_DATA, ident, targetId)) {
+            return false;
+        }
+
+        _gameObj.avrgService.awardTrophy(
+            _ctx.getClient(), ident, targetId,
+            BackendUtils.loggingConfirmListener("awardTrophy"));
+
+        return true;
+    }
+
+    protected function awardPrize_v1 (targetId :int, ident :String) :void
+    {
+        if (!playerOwnsData(GameData.PRIZE_MARKER, ident, targetId)) {
+            _gameObj.avrgService.awardPrize(
+                _ctx.getClient(), ident, targetId,
+                BackendUtils.loggingConfirmListener("awardPrize"));
+        }
+    }
+
+    protected function getPlayerItemPacks_v1 (targetId :int /* ignored */) :Array
+    {
+        return BackendUtils.getPlayerItemPacks(_gameObj.gameData, targetId, playerOwnsData);
+    }
+
+    protected function getPlayerLevelPacks_v1 (targetId :int /* ignored */) :Array
+    {
+        return BackendUtils.getPlayerLevelPacks(_gameObj.gameData, targetId, playerOwnsData);
+    }
+
     protected function completeTask_v1 (playerId :int, taskId :String, payout :Number) :void
     {
         if (StringUtil.isBlank(taskId)) {
@@ -538,6 +593,18 @@ public class ThaneAVRGameBackend
         }
 
         fn(roomObj, ensureRoomClient(roomId));
+    }
+
+    /**
+     * Determine whether or not the specified player has access to some item or level pack.
+     */
+    protected function playerOwnsData (type :int, ident :String, playerId :int) :Boolean
+    {
+        var player :PlayerObject = _controller.getPlayer(playerId);
+        if (player == null) {
+            throw new Error("Player not found [playerId=" + playerId + "]");
+        }
+        return player.ownsGameContent(_controller.getGameId(), type, ident)
     }
 
     /**

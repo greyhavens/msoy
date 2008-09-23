@@ -23,6 +23,8 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.whirled.game.client.PropertySpaceHelper;
 import com.whirled.game.client.WhirledGameMessageService;
 
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.LevelData;
 import com.whirled.game.data.PropertySpaceObject;
 
 import com.threerings.msoy.data.all.MemberName;
@@ -146,6 +148,35 @@ public class BackendUtils
         return result;
     }
 
+    public static function getLevelPacks (gameData :TypedArray, filter :Function) :Array
+    {
+        var packs :Array = [];
+        for each (var data :GameData in gameData) {
+            if (data.getType() != GameData.LEVEL_DATA || (filter != null && !filter(data))) {
+                continue;
+            }
+            packs.unshift({ ident: data.ident,
+                            name: data.name,
+                            mediaURL: data.mediaURL,
+                            premium: (data as LevelData).premium });
+        }
+        return packs;
+    }
+
+    public static function getItemPacks (gameData :TypedArray, filter :Function) :Array
+    {
+        var packs :Array = [];
+        for each (var data :GameData in gameData) {
+            if (data.getType() != GameData.ITEM_DATA || (filter != null && !filter(data))) {
+                continue;
+            }
+            packs.unshift({ ident: data.ident,
+                            name: data.name,
+                            mediaURL: data.mediaURL });
+        }
+        return packs;
+    }
+
     public static function sendMessage (
         svc :WhirledGameMessageService, client :Client, msgName :String, msgValue :Object, 
         svcName :String) :void
@@ -165,6 +196,28 @@ public class BackendUtils
         svc.sendPrivateMessage(
             client, msgName, encoded, targets, 
             loggingInvocationListener(svcName + " sendPrivateMessage"));
+    }
+
+    public static function holdsTrophy (
+        playerId :int, ident :String, playerOwnsData :Function) :Boolean
+    {
+        return playerOwnsData(GameData.TROPHY_DATA, ident, playerId);
+    }
+
+    public static function getPlayerItemPacks (
+        gameData :TypedArray, playerId :int, playerOwnsData :Function) :Array
+    {
+        return getItemPacks(gameData, function (data :GameData) :Boolean {
+            return playerOwnsData(data.getType(), data.ident, playerId);
+        });
+    }
+
+    public static function getPlayerLevelPacks (
+        gameData :TypedArray, playerId :int, playerOwnsData :Function) :Array
+    {
+        return getLevelPacks(gameData, function (data :GameData) :Boolean {
+            return playerOwnsData(data.getType(), data.ident, playerId);
+        });
     }
 
     /**

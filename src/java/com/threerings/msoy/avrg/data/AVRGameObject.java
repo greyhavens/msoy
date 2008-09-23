@@ -15,6 +15,8 @@ import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.GameDataObject;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameMessageMarshaller;
@@ -24,7 +26,7 @@ import com.whirled.game.server.PropertySpaceHelper;
  * The data shared between server, clients and agent for an AVR game.
  */
 public class AVRGameObject extends PlaceObject
-    implements PropertySpaceObject
+    implements PropertySpaceObject, GameDataObject
 {
     /** The identifier for a MessageEvent containing a user message. */
     public static final String USER_MESSAGE = "Umsg";
@@ -38,6 +40,9 @@ public class AVRGameObject extends PlaceObject
     // AUTO-GENERATED: FIELDS START
     /** The field name of the <code>playerLocs</code> field. */
     public static final String PLAYER_LOCS = "playerLocs";
+
+    /** The field name of the <code>gameData</code> field. */
+    public static final String GAME_DATA = "gameData";
 
     /** The field name of the <code>avrgService</code> field. */
     public static final String AVRG_SERVICE = "avrgService";
@@ -55,6 +60,9 @@ public class AVRGameObject extends PlaceObject
      * requests.
      */
     public DSet<PlayerLocation> playerLocs = new DSet<PlayerLocation>();
+
+    /** The various game data available to this game. */
+    public GameData[] gameData;
 
     /** Used to communicate with the AVRGameManager. */
     public AVRGameMarshaller avrgService;
@@ -123,6 +131,39 @@ public class AVRGameObject extends PlaceObject
         requestAttributeChange(PLAYER_LOCS, value, this.playerLocs);
         DSet<PlayerLocation> clone = (value == null) ? null : value.typedClone();
         this.playerLocs = clone;
+    }
+
+    /**
+     * Requests that the <code>gameData</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setGameData (GameData[] value)
+    {
+        GameData[] ovalue = this.gameData;
+        requestAttributeChange(
+            GAME_DATA, value, ovalue);
+        this.gameData = (value == null) ? null : value.clone();
+    }
+
+    /**
+     * Requests that the <code>index</code>th element of
+     * <code>gameData</code> field be set to the specified value.
+     * The local value will be updated immediately and an event will be
+     * propagated through the system to notify all listeners that the
+     * attribute did change. Proxied copies of this object (on clients)
+     * will apply the value change when they received the attribute
+     * changed notification.
+     */
+    public void setGameDataAt (GameData value, int index)
+    {
+        GameData ovalue = this.gameData[index];
+        requestElementUpdate(
+            GAME_DATA, index, value, ovalue);
+        this.gameData[index] = value;
     }
 
     /**

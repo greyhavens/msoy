@@ -6,6 +6,7 @@ package com.threerings.msoy.avrg.data {
 import com.threerings.crowd.data.PlaceObject;
 
 import com.threerings.io.ObjectInputStream;
+import com.threerings.io.TypedArray;
 
 import com.threerings.presents.dobj.DSet;
 
@@ -48,6 +49,9 @@ public class AVRGameObject extends PlaceObject
     public var playerLocs :DSet = new DSet();
     PlayerLocation; // no-op reference to force link
 
+    /** The various game data available to this game. */
+    public var gameData :TypedArray;
+
     /** Used to communicate with the AVRGameManager. */
     public var avrgService :AVRGameMarshaller;
 
@@ -86,6 +90,7 @@ public class AVRGameObject extends PlaceObject
     protected function readDefaultFields (ins :ObjectInputStream) :void
     {
         playerLocs = (ins.readObject() as DSet);
+        gameData = (ins.readObject() as TypedArray);
         avrgService = (ins.readObject() as AVRGameMarshaller);
         messageService = (ins.readObject() as WhirledGameMessageMarshaller);
         propertiesService = (ins.readObject() as PropertySpaceMarshaller);

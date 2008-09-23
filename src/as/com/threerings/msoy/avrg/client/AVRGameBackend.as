@@ -12,6 +12,8 @@ import com.threerings.util.MessageBundle;
 import com.threerings.util.MethodQueue;
 import com.threerings.util.StringUtil;
 
+import com.whirled.game.data.GameData;
+import com.whirled.game.data.LevelData;
 import com.whirled.game.data.WhirledPlayerObject;
 
 import com.threerings.crowd.chat.data.ChatCodes;
@@ -211,6 +213,8 @@ public class AVRGameBackend extends ControlBackend
         // GameSubControl
         o["game_getGameData_v1"] = game_getGameData_v1;
         o["game_getPlayerIds_v1"] = game_getPlayerIds_v1;
+        o["getLevelPacks_v2"] = getLevelPacks_v2;
+        o["getItemPacks_v1"] = getItemPacks_v1;
 
         // RoomSubControl
         o["room_getGameData_v1"] = room_getGameData_v1;
@@ -224,6 +228,9 @@ public class AVRGameBackend extends ControlBackend
         o["player_setProperty_v1"] = player_setProperty_v1;
         o["player_getRoomId_v1"] = player_getRoomId_v1;
         o["getPlayerId_v1"] = getPlayerId_v1;
+        o["holdsTrophy_v1"] = holdsTrophy_v1;
+        o["getPlayerItemPacks_v1"] = getPlayerItemPacks_v1;
+        o["getPlayerLevelPacks_v1"] = getPlayerLevelPacks_v1;
         o["deactivateGame_v1"] = deactivateGame_v1;
         o["completeTask_v1"] = completeTask_v1;
         o["playAvatarAction_v1"] = playAvatarAction_v1;
@@ -263,6 +270,18 @@ public class AVRGameBackend extends ControlBackend
         }
         
         return BackendUtils.getPlayerIds(_gameObj, 0);
+    }
+
+    // GameSubControl
+    protected function getLevelPacks_v2 (filter :Function = null) :Array
+    {
+        return BackendUtils.getLevelPacks(_gameObj.gameData, filter);
+    }
+
+    // GameSubControl
+    protected function getItemPacks_v1 (filter :Function = null) :Array
+    {
+        return BackendUtils.getItemPacks(_gameObj.gameData, filter);
     }
 
     // RoomSubControl
@@ -376,6 +395,27 @@ public class AVRGameBackend extends ControlBackend
         // TODO: this should guarantee to only return a non-zero value after the room entry event 
         // has been sent
         return getRoomId();
+    }
+
+    // PlayerSubControl
+    protected function holdsTrophy_v1 (targetId :int /* ignored */, ident :String) :Boolean
+    {
+        validatePlayerTargetId(targetId);
+        return BackendUtils.holdsTrophy(targetId, ident, playerOwnsData);
+    }
+
+    // PlayerSubControl
+    protected function getPlayerItemPacks_v1 (targetId :int /* ignored */) :Array
+    {
+        validatePlayerTargetId(targetId);
+        return BackendUtils.getPlayerItemPacks(_gameObj.gameData, targetId, playerOwnsData);
+    }
+
+    // PlayerSubControl
+    protected function getPlayerLevelPacks_v1 (targetId :int /* ignored */) :Array
+    {
+        validatePlayerTargetId(targetId);
+        return BackendUtils.getPlayerLevelPacks(_gameObj.gameData, targetId, playerOwnsData);
     }
 
     // PlayerSubControl
@@ -673,6 +713,14 @@ public class AVRGameBackend extends ControlBackend
         if (targetId != 0) {
             throw new Error("Unexpected room target [id=" + targetId + "]");
         }
+    }
+
+    /**
+     * Determine whether or not this player has access to some item or level pack.
+     */
+    protected function playerOwnsData (type :int, ident :String, playerId :int) :Boolean
+    {
+        return _playerObj.ownsGameContent(_ctrl.getGameId(), type, ident)
     }
 
     protected function getMemberId () :int

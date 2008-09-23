@@ -44,6 +44,7 @@ import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.AgentTraceDelegate;
 import com.threerings.msoy.game.server.GameWatcherManager;
+import com.threerings.msoy.game.server.TrophyDelegate;
 import com.threerings.msoy.game.server.WorldServerClient;
 import com.threerings.msoy.game.server.GameWatcherManager.Observer;
 import com.threerings.msoy.game.server.PlayerLocator;
@@ -118,9 +119,11 @@ public class AVRGameManager extends PlaceManager
 
         if (delegate instanceof QuestDelegate) {
             _questDelegate = (QuestDelegate) delegate;
-        }
 
-        if (delegate instanceof AgentTraceDelegate) {
+        } else if (delegate instanceof TrophyDelegate) {
+            _trophyDelegate = (TrophyDelegate) delegate;
+
+        } else if (delegate instanceof AgentTraceDelegate) {
             _traceDelegate = (AgentTraceDelegate) delegate;
         }
     }
@@ -254,6 +257,22 @@ public class AVRGameManager extends PlaceManager
                 }
             }
         });
+    }
+
+    // from interface WhirledGameProvider
+    public void awardTrophy (ClientObject caller, String ident, int playerId,
+                             InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        _trophyDelegate.awardTrophy(caller, ident, playerId, listener);
+    }
+
+    // from interface WhirledGameProvider
+    public void awardPrize (ClientObject caller, String ident, int playerId,
+                            InvocationService.InvocationListener listener)
+        throws InvocationException
+    {
+        _trophyDelegate.awardPrize(caller, ident, playerId, listener);
     }
 
     // from AVRGameProvider
@@ -753,6 +772,9 @@ public class AVRGameManager extends PlaceManager
 
     /** The delegate that handles quest completion and coin payouts. */
     protected QuestDelegate _questDelegate;
+
+    /** A delegate that takes care of awarding trophies and prizes.. */
+    protected TrophyDelegate _trophyDelegate;
 
     /** A delegate that handles agent traces.. */
     protected AgentTraceDelegate _traceDelegate;

@@ -23,8 +23,34 @@ import com.threerings.util.Integer;
 public class AVRGameMarshaller extends InvocationMarshaller
     implements AVRGameService
 {
+    /** The method id used to dispatch <code>awardPrize</code> requests. */
+    public static const AWARD_PRIZE :int = 1;
+
+    // from interface AVRGameService
+    public function awardPrize (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_InvocationListener) :void
+    {
+        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, AWARD_PRIZE, [
+            arg2, Integer.valueOf(arg3), listener4
+        ]);
+    }
+
+    /** The method id used to dispatch <code>awardTrophy</code> requests. */
+    public static const AWARD_TROPHY :int = 2;
+
+    // from interface AVRGameService
+    public function awardTrophy (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_InvocationListener) :void
+    {
+        var listener4 :InvocationMarshaller_ListenerMarshaller = new InvocationMarshaller_ListenerMarshaller();
+        listener4.listener = arg4;
+        sendRequest(arg1, AWARD_TROPHY, [
+            arg2, Integer.valueOf(arg3), listener4
+        ]);
+    }
+
     /** The method id used to dispatch <code>completeTask</code> requests. */
-    public static const COMPLETE_TASK :int = 1;
+    public static const COMPLETE_TASK :int = 3;
 
     // from interface AVRGameService
     public function completeTask (arg1 :Client, arg2 :int, arg3 :String, arg4 :Number, arg5 :InvocationService_ConfirmListener) :void
@@ -37,7 +63,7 @@ public class AVRGameMarshaller extends InvocationMarshaller
     }
 
     /** The method id used to dispatch <code>setTicker</code> requests. */
-    public static const SET_TICKER :int = 2;
+    public static const SET_TICKER :int = 4;
 
     // from interface AVRGameService
     public function setTicker (arg1 :Client, arg2 :String, arg3 :int, arg4 :InvocationService_InvocationListener) :void
