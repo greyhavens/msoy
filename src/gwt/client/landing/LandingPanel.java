@@ -20,7 +20,6 @@ import com.threerings.msoy.landing.gwt.LandingData;
 import com.threerings.msoy.landing.gwt.LandingService;
 import com.threerings.msoy.landing.gwt.LandingServiceAsync;
 
-import client.images.landing.LandingImages;
 import client.shell.LogonPanel;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -134,7 +133,6 @@ public class LandingPanel extends SimplePanel
     protected FeaturedWhirledPanel _featuredWhirled;
     protected AvatarPanel _avatarPanel;
 
-    protected static final LandingImages _images = GWT.create(LandingImages.class);
     protected static final LandingMessages _msgs = GWT.create(LandingMessages.class);
     protected static final LandingServiceAsync _landingsvc = (LandingServiceAsync)
         ServiceUtil.bind(GWT.create(LandingService.class), LandingService.ENTRY_POINT);
