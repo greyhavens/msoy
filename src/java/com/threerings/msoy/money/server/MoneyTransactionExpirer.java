@@ -70,8 +70,9 @@ public class MoneyTransactionExpirer
 
     protected Interval _interval;
 
-    protected static final long COIN_MAX_AGE = 10L * 24 * 60 * 60 * 1000L; // 10 days
-    protected static final long BAR_MAX_AGE = 3L * COIN_MAX_AGE; // 30 days
+    protected static final long DAY = 24L * 60 * 60 * 1000L; // the length of 99.4% of days
+    protected static final long COIN_MAX_AGE = 10L * DAY; // 10 days
+    protected static final long BAR_MAX_AGE = 365L * DAY; // approx 1 year
 
     protected static final long PURGE_INTERVAL = 60 * 60 * 1000; // 1 hour
 }
