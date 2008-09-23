@@ -6,7 +6,7 @@ package com.threerings.msoy.web.server;
 import static com.threerings.msoy.Log.log;
 
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -104,6 +104,7 @@ public class UploadUtil
             this.type = type;
         }
 
+        @Override
         public String toString () {
             return "SnapshotInfo: hash=" + hash + ", mimeType = " + type;
         }
@@ -555,10 +556,9 @@ public class UploadUtil
         // generate the scaled image
         timage = new BufferedImage(newWidth, newHeight, samplingModelForFormat(format));
         final Graphics2D gfx = timage.createGraphics();
-        gfx.setRenderingHint(
-            RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         try {
-            gfx.drawImage(image, 0, 0, newWidth, newHeight, null);
+            Image scaledImg = image.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+            gfx.drawImage(scaledImg, 0, 0, null);
         } finally {
             gfx.dispose();
         }
