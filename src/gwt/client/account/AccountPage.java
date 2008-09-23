@@ -24,8 +24,8 @@ public class AccountPage extends Page
         if (action.equals("create") && CShell.isGuest()) {
             setContent(_msgs.createTitle(), new CreateAccountPanel());
 
-        } else if (action.equals("login") && CShell.isGuest()) {
-            setContent(_msgs.loginPageTitle(), new LoginPagePanel());
+        } else if (action.equals("logon") && CShell.isGuest()) {
+            setContent(_msgs.logonPageTitle(), new LogonPagePanel());
 
         } else if (action.equals("optout")) {
             setContent(new OptOutPanel(args.get(1, "")));

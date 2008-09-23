@@ -51,7 +51,7 @@ public class StuffPage extends Page
     public void onHistoryChanged (Args args)
     {
         if (CStuff.isGuest()) {
-            // if we have no creds, just display a message saying login
+            // if we have no creds, just display a message saying logon
             setContent(MsoyUI.createLabel(CStuff.msgs.logon(), "infoLabel"));
             return;
         }

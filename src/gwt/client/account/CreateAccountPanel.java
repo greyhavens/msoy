@@ -60,15 +60,15 @@ public class CreateAccountPanel extends FlowPanel
     {
         setStyleName("createAccount");
 
-        FlowPanel loginLink = MsoyUI.createFlowPanel("Login");
-        add(loginLink);
-        loginLink.add(new Label(_msgs.createAlreadyMember()));
-        PushButton loginButton = MsoyUI.createButton(
-            MsoyUI.SHORT_THIN, _msgs.createLoginLink(),
-            Link.createListener(Pages.ACCOUNT, "login"));
-        loginButton.addClickListener(
-            MsoyUI.createTrackingListener("signupLoginButtonClicked", null));
-        loginLink.add(loginButton);
+        FlowPanel logonLink = MsoyUI.createFlowPanel("Logon");
+        add(logonLink);
+        logonLink.add(new Label(_msgs.createAlreadyMember()));
+        PushButton logonButton = MsoyUI.createButton(
+            MsoyUI.SHORT_THIN, _msgs.createLogonLink(),
+            Link.createListener(Pages.ACCOUNT, "logon"));
+        logonButton.addClickListener(
+            MsoyUI.createTrackingListener("signupLogonButtonClicked", null));
+        logonLink.add(logonButton);
 
         add(MsoyUI.createLabel(_msgs.createIntro(), "Intro"));
         add(MsoyUI.createLabel(_msgs.createCoins(), "Coins"));

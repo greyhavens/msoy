@@ -11,11 +11,11 @@ import com.google.gwt.user.client.ui.ImageBundle;
  */
 public interface LandingImages extends ImageBundle
 {
-    @Resource("login.png")
-    AbstractImagePrototype login ();
+    @Resource("logon.png")
+    AbstractImagePrototype logon ();
 
-    @Resource("login_over.png")
-    AbstractImagePrototype login_over ();
+    @Resource("logon_over.png")
+    AbstractImagePrototype logon_over ();
 
     @Resource("signup.png")
     AbstractImagePrototype signup ();

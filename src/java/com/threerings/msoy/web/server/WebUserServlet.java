@@ -74,7 +74,7 @@ public class WebUserServlet extends MsoyServiceServlet
     implements WebUserService
 {
     // from interface WebUserService
-    public SessionData login (
+    public SessionData logon (
         String clientVersion, String username, String password, int expireDays)
         throws ServiceException
     {
@@ -450,7 +450,7 @@ public class WebUserServlet extends MsoyServiceServlet
     }
 
     /**
-     * Called when we login or register.
+     * Called when we logon or register.
      */
     protected SessionData startSession (MemberRecord mrec, int expireDays)
         throws ServiceException

@@ -21,13 +21,13 @@ public interface WebUserService extends RemoteService
     public static final String ENTRY_POINT = "/usersvc";
 
     /**
-     * Requests that the client be logged in as the specified user with the supplied (MD5-encoded)
+     * Requests that the client be logged on as the specified user with the supplied (MD5-encoded)
      * password.
      *
      * @return a set of credentials including a session cookie that should be provided to
      * subsequent remote service calls that require authentication.
      */
-    SessionData login (String clientVersion, String email, String password, int expireDays)
+    SessionData logon (String clientVersion, String email, String password, int expireDays)
         throws ServiceException;
 
     /**

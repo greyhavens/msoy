@@ -17,9 +17,9 @@ import com.threerings.msoy.web.data.SessionData;
 public interface WebUserServiceAsync
 {
     /**
-     * The asynchronous version of {@link WebUserService#login}.
+     * The asynchronous version of {@link WebUserService#logon}.
      */
-    void login (String clientVersion, String username, String password, int expireDays,
+    void logon (String clientVersion, String username, String password, int expireDays,
                        AsyncCallback<SessionData> callback);
 
     /**

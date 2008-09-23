@@ -29,16 +29,16 @@
   padding: 10px;
 }
 
-.createAccount .Login {
+.createAccount .Logon {
   float: right;
   padding: 10px;
 }
 
-.createAccount .Login .orangeButton {
+.createAccount .Logon .orangeButton {
   margin: 5px 0 0 20px;
 }
 
-.createAccount .Login .actionLabel {
+.createAccount .Logon .actionLabel {
   margin-left: 5px;
 }
 
@@ -111,10 +111,10 @@
 }
 
 /* ------------------------------------
-   LOGIN PAGE
+   LOGON PAGE
 -------------------------------------*/
 
-.loginPagePanel {
+.logonPagePanel {
   background: url(/images/ui/gradient_dark_bg.png) repeat-x top #3283aa;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 13px;
@@ -123,21 +123,21 @@
   min-height: 520px;
 }
 
-.loginPagePanel,
-.loginPagePanel a {
+.logonPagePanel,
+.logonPagePanel a {
   color: #d0e6f7;
 }
 
-.loginPagePanel .logonPanel {
+.logonPagePanel .logonPanel {
   margin: 25px 0 10px 25px;
 }
 
-.loginPagePanel .rightLabel {
+.logonPagePanel .rightLabel {
   padding: 3px 3px 0 0;
 }
 
-.loginPagePanel .gwt-TextBox,
-.loginPagePanel .gwt-PasswordTextBox {
+.logonPagePanel .gwt-TextBox,
+.logonPagePanel .gwt-PasswordTextBox {
   width: 175px;
   height: 20px;
   margin-bottom: 5px;
@@ -147,7 +147,7 @@
   border: solid #5c5d61 1px;
 }
 
-.loginPagePanel .LoginButton {
+.logonPagePanel .LogonButton {
   margin-left: 200px;
 }
 

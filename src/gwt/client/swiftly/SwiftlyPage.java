@@ -49,7 +49,7 @@ public class SwiftlyPage extends Page
 
     protected void updateInterface (final Args args)
     {
-        // if we have no creds, just display a message saying login
+        // if we have no creds, just display a message saying logon
         if (CSwiftly.isGuest()) {
             setContent(MsoyUI.createLabel(CSwiftly.msgs.indexLogon(), "infoLabel"));
             return;

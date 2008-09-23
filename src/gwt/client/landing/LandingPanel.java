@@ -60,13 +60,13 @@ public class LandingPanel extends SimplePanel
             MsoyUI.createTrackingListener("landingJoinButtonClicked", null));
         content.add(joinButton, 475, 0);
 
-        // login box
-        final FlowPanel login = new FlowPanel();
-        PushButton loginButton = new PushButton(_msgs.landingLogin());
-        loginButton.addStyleName("LoginButton");
-        login.add(new LogonPanel(true, false, loginButton));
-        login.add(loginButton);
-        content.add(login, 590, 0);
+        // logon box
+        final FlowPanel logon = new FlowPanel();
+        PushButton logonButton = new PushButton(_msgs.landingLogon());
+        logonButton.addStyleName("LogonButton");
+        logon.add(new LogonPanel(true, false, logonButton));
+        logon.add(logonButton);
+        content.add(logon, 590, 0);
 
         // intro video with click-to-play button
         final AbsolutePanel video = new AbsolutePanel();
