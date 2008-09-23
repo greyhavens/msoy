@@ -266,6 +266,12 @@ public class ThaneAVRGameController
             }
             var oldPl :PlayerLocation = event.getOldEntry() as PlayerLocation;
             var binding :PlayerBinding = PlayerBinding(_players.get(pl.playerId));
+            if (binding == null) {
+                log.warning(
+                    "playerLocations entry updated prior to addition [pl=" + pl + ", oldPl=" +
+                    oldPl + "]");
+                return;
+            }
             if (!binding.suppressRoomTransitions) {
                 _backend.playerLeftRoom(oldPl.playerId, oldPl.sceneId);
                 if (binding.deactivated) {
@@ -300,34 +306,37 @@ public class ThaneAVRGameController
         } else if (event.getName() == PlaceObject.OCCUPANT_INFO) {
             var occInfo :OccupantInfo = event.getOldEntry() as OccupantInfo;
             var playerObj :PlayerObject = _playerSubs.getObj(occInfo.bodyOid) as PlayerObject;
-            var doRoomTransition :Boolean = true;
             if (playerObj == null) {
-                log.info("Player left game before subscription completed: " + occInfo);
+                // TODO: downgrade to info if this is happening frequently
+                log.warning("Player left game before subscription completed: " + occInfo);
 
             } else {
+                var doRoomTransition :Boolean = true;
                 var playerBinding :PlayerBinding;
                 playerBinding = _players.get(playerObj.getMemberId()) as PlayerBinding;
                 if (playerBinding == null) {
-                    log.warning("Player leaving game has a subscriptino but no binding");
+                    // This is very weird since we create the binding when the PlayerObject is
+                    // available
+                    log.warning("Player leaving game has a subscription but no binding");
+
                 } else {
                     doRoomTransition = !playerBinding.suppressRoomTransitions;
                     playerBinding.netAdapter.release();
                 }
-            }
 
-            // If the player is still in our locations, remove from room
-            pl = _gameObj.playerLocs.get(playerObj.getMemberId()) as PlayerLocation;
-            if (pl != null && doRoomTransition) {
-                _backend.playerLeftRoom(pl.playerId, pl.sceneId);
-            }
+                // If the player is still in our locations, remove from room
+                pl = _gameObj.playerLocs.get(playerObj.getMemberId()) as PlayerLocation;
+                if (pl != null) {
+                    if (doRoomTransition) {
+                        _backend.playerLeftRoom(pl.playerId, pl.sceneId);
+                    }
+                    _backend.playerLeftGame(pl.playerId);
+                }
 
-            // remove from game
-            _backend.playerLeftGame(pl.playerId);
-
-            _playerSubs.unsubscribe(occInfo.bodyOid);
-            if (playerObj != null) {
                 _players.remove(playerObj.getMemberId());
             }
+
+            _playerSubs.unsubscribe(occInfo.bodyOid);
         }
     }
 
