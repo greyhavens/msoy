@@ -14,16 +14,17 @@ import com.threerings.msoy.money.data.all.ReportType;
 
 import client.shell.Args;
 import client.shell.Pages;
+import client.ui.MsoyUI;
 import client.util.Link;
 
 public class TransactionsPanel extends VerticalPanel
 {
-    public TransactionsPanel (int report, final int memberId)
+    public TransactionsPanel (int reportIndex, final int memberId)
     {
         setStyleName("transactions");
 
-        add(Link.buyBars("Buy some bars!")); // TODO: i18n
-
+        ReportType report = REPORT_VALUES[reportIndex-1];
+        final Widget icon = MsoyUI.createImage(report.icon, null);
         final ListBox reportBox = new ListBox();
         for (String name : REPORT_NAMES) {
             reportBox.addItem(name);
@@ -35,16 +36,18 @@ public class TransactionsPanel extends VerticalPanel
                         String.valueOf(memberId)));
             }
         });
-        reportBox.setSelectedIndex(report-1);
+        reportBox.setSelectedIndex(reportIndex-1);
         
         // The data model is used in both the balance panel and the bling panel.
-        MoneyTransactionDataModel model = new MoneyTransactionDataModel(memberId, 
-            REPORT_VALUES[report-1]);
+        MoneyTransactionDataModel model = new MoneyTransactionDataModel(memberId, report);
+
+        add(Link.buyBars("Buy some bars!")); // TODO: i18n
         add(new BalancePanel(model) {
             @Override protected void addCustomControls (FlexTable controls) {
                 controls.setText(0, 0, _msgs.reportFilter());
                 controls.getFlexCellFormatter().setStyleName(0, 0, "ReportFilter");
-                controls.setWidget(0, 1, reportBox);
+                controls.setWidget(0, 1, icon);
+                controls.setWidget(0, 2, reportBox);
             }
         });
         add(new BlingPanel(model));

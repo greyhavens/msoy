@@ -11,18 +11,20 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public enum ReportType
     implements IsSerializable
 {
-    COINS(null, Currency.COINS),
-    BARS(null, Currency.BARS),
-    BLING(null, Currency.BLING),
-    CREATOR(EnumSet.of(TransactionType.CREATOR_PAYOUT), null),
+    COINS(null, Currency.COINS, Currency.COINS.getSmallIcon()),
+    BARS(null, Currency.BARS, Currency.BARS.getSmallIcon()),
+    BLING(null, Currency.BLING, Currency.BLING.getSmallIcon()),
+    CREATOR(EnumSet.of(TransactionType.CREATOR_PAYOUT), null, "/images/profile/browseitems.png"),
     ;
 
-    private ReportType (EnumSet<TransactionType> transactions, Currency currency)
+    private ReportType (EnumSet<TransactionType> transactions, Currency currency, String icon)
     {
         this.transactions = transactions;
         this.currency = currency;
+        this.icon = icon;
     }
 
     public transient EnumSet<TransactionType> transactions;
     public transient Currency currency;
+    public transient String icon;
 }
