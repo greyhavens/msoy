@@ -102,7 +102,9 @@ public class MemberRepository extends DepotRepository
             {
                 // find "fulfilled" invitations
                 List<InvitationRecord> invites = findAll(InvitationRecord.class,
-                    new Where(new Conditionals.NotEquals(InvitationRecord.INVITEE_ID_C, 0)));
+                    new Where(new And(
+                        new Conditionals.NotEquals(InvitationRecord.INVITER_ID_C, 0),
+                        new Conditionals.NotEquals(InvitationRecord.INVITEE_ID_C, 0))));
                 // store 'em as affiliate records
                 for (InvitationRecord rec : invites) {
                     setAffiliate(rec.inviteeId, String.valueOf(rec.inviterId));
