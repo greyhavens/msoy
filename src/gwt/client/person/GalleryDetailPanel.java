@@ -14,8 +14,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
@@ -40,7 +42,9 @@ public class GalleryDetailPanel extends AbsolutePanel
             add(MsoyUI.createLabel("no image", "GalleryThumbnail"), 10, 60);
         }
 
-        // TODO needs to listen for changes to count
+        // TODO create a listener for count changes
+        _countLabel = MsoyUI.createLabel("", "Count");
+        setCount(galleryData.photos.size());
         add(MsoyUI.createLabel(_pmsgs.photoCount(galleryData.photos.size() + ""), "Count"), 110,
             70);
 
@@ -48,7 +52,6 @@ public class GalleryDetailPanel extends AbsolutePanel
             // add name and description labels
             add(MsoyUI.createLabel(GalleryPanel.getGalleryLabel(_gallery), "Name"), 10, 10);
             add(MsoyUI.createLabel(_gallery.description, "Description"), 10, 140);
-
         } else {
             // do not allow profile gallery name to be edited
             if (_gallery.isProfileGallery()) {
@@ -76,7 +79,14 @@ public class GalleryDetailPanel extends AbsolutePanel
         }
     }
 
+    public void setCount (int count)
+    {
+        String text = count == 1 ? _pmsgs.onePhoto() : _pmsgs.photoCount(""+count);
+        _countLabel.setText(text);
+    }
+
     protected Gallery _gallery;
+    protected Label _countLabel;
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
 }

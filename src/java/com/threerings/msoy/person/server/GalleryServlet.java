@@ -42,6 +42,16 @@ public class GalleryServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
+
+        // TODO REMOVE TEST
+        photoItemIds.add(1);
+        photoItemIds.add(2);
+        photoItemIds.add(3);
+        photoItemIds.add(4);
+        photoItemIds.add(5);
+        photoItemIds.add(6);
+        photoItemIds.add(7);
+
         // only add photos that the member owns
         photoItemIds.removeAll(validateOwnership(memrec.memberId, photoItemIds));
 

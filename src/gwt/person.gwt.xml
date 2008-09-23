@@ -1,5 +1,6 @@
 <module>
   <inherits name="item"/>
+  <inherits name="gwt-dnd"/>
 
   <source path="com/threerings/msoy/person/gwt"/>
   <source path="client/person"/>

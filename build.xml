@@ -70,6 +70,7 @@
     <file name="${extlibs.dir}/google-collect.jar"/>
     <file name="${extlibs.dir}/guice.jar"/>
     <file name="${extlibs.dir}/gwt-user.jar"/>
+    <file name="${extlibs.dir}/gwt-dnd.jar"/>
     <file name="${extlibs.dir}/gwt-widgets.jar"/>
     <file name="${extlibs.dir}/javassist.jar"/>
     <file name="${extlibs.dir}/jcip-annotations.jar"/>
@@ -103,7 +104,7 @@
     <file name="${extlibs.dir}/xmlrpc-client.jar"/>
     <file name="${extlibs.dir}/xmlrpc-common.jar"/>
     <file name="${extlibs.dir}/rabbitmq-client.jar"/>
-      
+
     <!-- The following are used for Panopticon -->
     <file name="${extlibs.dir}/log4j.jar"/>
     <file name="${extlibs.dir}/hessian.jar"/>
@@ -452,6 +453,7 @@
             <include name="*-gwt-0.0-SNAPSHOT.jar"/>
             <!-- this is needed to run our custom i18n bindings in the GWT compiler -->
             <include name="threerings-0.0-SNAPSHOT.jar"/>
+            <include name="gwt-dnd.jar"/>
           </fileset>
           <pathelement location="${src.dir}"/>
           <pathelement location="${gsrc.dir}"/>
@@ -586,7 +588,7 @@
 
   <!-- builds our thane game client -->
   <target name="thane-client" depends="asprepare" description="Rebuilds the thane game client.">
-    <dirname property="abs.flexsdk.dir" file="${flexsdk.dir}/somefile.txt"/> 
+    <dirname property="abs.flexsdk.dir" file="${flexsdk.dir}/somefile.txt"/>
     <copy file="etc/thane-config.xml.in" tofile="${deploy.dir}/thane-config.xml">
       <filterset>
         <filter token="flex_sdk_dir" value="${abs.flexsdk.dir}"/>
@@ -922,7 +924,7 @@
   </target>
 
   <!-- build the java class files -->
-  <target name="compile" depends="jprepare,facebook,qcompile" 
+  <target name="compile" depends="jprepare,facebook,qcompile"
     description="Builds java class files."/>
 
   <!-- builds the java class files only, without preparing the build directories etc. -->
@@ -992,10 +994,10 @@
     </copy>
   </target>
 
-  <!-- TODO: the tutorial target has been removed from flashapps until it compiles again after a 
+  <!-- TODO: the tutorial target has been removed from flashapps until it compiles again after a
        the API shuffle is done, and the tutorial code has been refactored -->
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,videoviewer,decorviewer,remixer" 
+  <target name="flashapps" depends="asprepare,mediastub,videoviewer,decorviewer,remixer"
           description="Rebuilds all of our Flash clients and applets.">
     <antcall target="ascompile"><param name="astype" value="world"/></antcall>
     <antcall target="ascompile"><param name="astype" value="game"/></antcall>

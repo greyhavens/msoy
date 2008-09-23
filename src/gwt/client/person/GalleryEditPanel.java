@@ -4,16 +4,21 @@
 package client.person;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import client.shell.CShell;
 import client.ui.MsoyUI;
+import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
+import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
@@ -23,6 +28,7 @@ import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.GalleryServiceAsync;
 
 /**
+ * Allows a user to edit one of their galleries.
  *
  * @author mjensen
  */
@@ -39,7 +45,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         _newGallery = true;
         GalleryData galleryData = new GalleryData();
         galleryData.gallery = new Gallery();
-        galleryData.gallery.name = ""; // TODO a decent new gallery name default
+        galleryData.gallery.name = _pmsgs.newGallery();
         galleryData.gallery.description = "";
         galleryData.photos = new ArrayList<Photo>();
         display(galleryData);
@@ -57,6 +63,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
 
     protected void display (GalleryData galleryData)
     {
+
         _galleryData = galleryData;
         addStyleName("galleryEditPanel");
 
@@ -80,6 +87,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                             }
                         );
                     } else {
+CShell.log("Saving: "+_galleryData);
                         _gallerysvc.updateGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
                             new MsoyCallback<Void>() {
                                 public void onSuccess (Void result) {
@@ -91,14 +99,28 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                 }
             }
         );
+        saveButton.addStyleName("Save");
+        add(saveButton, 45, 350);
 
-         saveButton.addStyleName("Save");
-         add(saveButton, 25, 400);
+        // add drop panel for adding to and organizing this gallery
+        PickupDragController dragController = new PickupDragController(this, false);
+        dragController.setBehaviorDragProxy(false);
+        // dragController.setBehaviorMultipleSelection(true);
+        DropPanel<Photo> dropPanel = new DropPanel<Photo>(dragController) {
+            @Override protected Widget createWidget (Photo photo) {
+                return MediaUtil.createMediaView(photo.photoMedia, MediaDesc.THUMBNAIL_SIZE);
+            }
+        };
+        add(dropPanel, 225, 10);
+        dropPanel.setModel(new SimpleDropModel<Photo>(galleryData.photos));
 
-        // TODO add drop panel for organizing this gallery, pass in List of Photos
-
-        // TODO show photos that the member owns
-
+        // show photos that the member owns
+        _itemsvc.loadPhotos(new MsoyCallback<List<Photo>>() {
+            public void onSuccess (List<Photo> result) {
+                // TODO display photos and allow them to be dropped into gallery
+                CShell.log("Loaded photos: "+result);
+            }
+        });
     }
 
     protected boolean _newGallery;

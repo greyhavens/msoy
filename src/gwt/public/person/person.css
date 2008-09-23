@@ -134,7 +134,7 @@
   margin-top: 10px;
   font-size: 20px;
 }
-   
+
 .galleryViewPanel .FullSize .Description {
   margin-top: 7px;
   font-size: 15px;
@@ -158,7 +158,7 @@
 }
 
 /* Styles both static divs and input boxes */
-.galleryDetailPanel .Name, 
+.galleryDetailPanel .Name,
 .galleryDetailPanel .Description {
   width: 180px;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
@@ -175,4 +175,35 @@
 .galleryDetailPanel .Description {
   height: 120px;
   font-size: 15px;
+}
+
+.galleryEditPanel .dropPanel {
+  background: #AACCFF;
+  width: 425px;
+  height: 375px;
+  padding: 5px;
+  overflow-y: scroll;
+}
+
+.payload,
+.payload  DIV {
+  background: #FFFFFF;
+  float: left;
+  height: 80px;
+  width: 80px;
+  margin: 10px 10px 0 10px;
+  padding: 5px;
+  text-align: center;
+  border: 1px solid #000000;
+}
+
+.galleryEditPanel .dropPanel .payload  IMG {
+  display: inline;
+  vertical-align: top;
+}
+
+.dragdrop-movable-panel DIV,
+.dragdrop-movable-panel IMG {
+  filter: alpha(opacity = 60);
+  opacity: 0.6;
 }

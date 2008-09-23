@@ -89,8 +89,7 @@ public class GalleryRepository extends DepotRepository
                       GalleryRecord.LAST_MODIFIED, currentTimestamp(),
                       GalleryRecord.THUMB_MEDIA_HASH, gallery.thumbMedia.hash,
                       GalleryRecord.THUMB_MIME_TYPE, gallery.thumbMedia.mimeType,
-                      GalleryRecord.THUMB_CONSTRAINT, gallery.thumbMedia.constraint
-                      );
+                      GalleryRecord.THUMB_CONSTRAINT, gallery.thumbMedia.constraint);
     }
 
     /**
