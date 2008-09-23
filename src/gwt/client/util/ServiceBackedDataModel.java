@@ -104,7 +104,7 @@ public abstract class ServiceBackedDataModel<T, R> implements DataModel<T>
     protected void onFailure (Throwable caught, AsyncCallback<List<T>> callback)
     {
         if (GwtAuthCodes.SESSION_EXPIRED.equals(caught.getMessage())) {
-            MsoyUI.showPasswordExpired(CShell.serverError(caught));
+            MsoyUI.showSessionExpired(CShell.serverError(caught));
         } else {
             MsoyUI.error(CShell.serverError(caught));
         }

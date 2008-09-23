@@ -64,8 +64,8 @@ public class LogonPanel extends SmartTable
         // create the widgets we'll use in our layout
         _email = new TextBox();
         if (!displayLabels) {
-            String defaultText =
-                CookieUtil.get("who") != null ? CookieUtil.get("who") : _cmsgs.logonEmailDefault();
+            String defaultText = (CookieUtil.get("who") != null) ?
+                CookieUtil.get("who") : _cmsgs.logonEmailDefault();
             _email.setText(defaultText);
             _email.addFocusListener(new FocusListener() {
                 public void onFocus (Widget sender) {

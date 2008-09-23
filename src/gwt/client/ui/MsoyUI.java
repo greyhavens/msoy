@@ -23,7 +23,6 @@ import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.Anchor;
@@ -547,19 +546,22 @@ public class MsoyUI
         popup.show();
     }
 
-    public static void showPasswordExpired (String message)
+    /**
+     * Displays a dialogin explaining that the user's session has expired and that they need to
+     * login anew.
+     */
+    public static void showSessionExpired (String message)
     {
         final BorderedPopup popup = new BorderedPopup();
-        VerticalPanel content = new VerticalPanel();
-
-        content.add(MsoyUI.createLabel(message, "Content"));
+        popup.addStyleName("passwordExpired");
+        FlowPanel content = new FlowPanel();
+        content.add(MsoyUI.createLabel(message, "Message"));
         content.add(new LogonPanel(true) {
-                    @Override public void onSuccess(SessionData result) {
-                        popup.hide();
-                        super.onSuccess(result);
-                    }
-                });
-
+            @Override public void onSuccess(SessionData result) {
+                popup.hide();
+                super.onSuccess(result);
+            }
+        });
         popup.setWidget(content);
         popup.show();
     }
