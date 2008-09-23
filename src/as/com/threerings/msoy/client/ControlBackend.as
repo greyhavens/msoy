@@ -37,10 +37,12 @@ public class ControlBackend
                     return func.apply(null, args);
                 }
 
-            } catch (err :Error) {
+            } catch (err :*) {
                 var log :Log = Log.getLog(this);
                 log.warning("Error in user-code: " + err);
-                log.logStackTrace(err);
+                if (err is Error) {
+                    log.logStackTrace(err as Error);
+                }
             }
         }
         return undefined;
