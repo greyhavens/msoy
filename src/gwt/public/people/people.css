@@ -23,11 +23,11 @@
 }
 
 .profile .Profile .Info {
-  margin: 10px 0px;
+  margin: 10px 0px 0px 0px;
 }
 
 .profile .Profile .Details {
-  padding: 0px 10px 10px 0px;
+  padding: 0px 10px 0px 0px;
 }
 
 .profile .Profile .Details .Level {
@@ -49,15 +49,29 @@
   font-size: 18px;
 }
 
-.profile .Profile .Photo .actionLabel, .profile .Profile .Photo a {
+.profile .Profile .Buttons {
+  margin: 2px 0px 10px 0px;
+}
+
+.profile .Profile .Buttons .actionLabel, .profile .Profile .Buttons a {
   font-size: 12px;
   text-decoration: none;
   color: #3382AD;
   white-space: nowrap;
 }
 
-.profile .Profile .Photo .actionLabel:hover, .profile .Profile .Photo a:hover {
+.profile .Profile .Buttons .actionLabel:hover, .profile .Profile .Buttons a:hover {
   text-decoration: underline;
+}
+
+.profile .Profile .Buttons img {
+  display: inline;
+  padding-right: 2px;
+}
+
+.profile .Profile .Buttons .Link {
+  margin-right: 15px;
+  display: inline;
 }
 
 .profile .Profile .Name {

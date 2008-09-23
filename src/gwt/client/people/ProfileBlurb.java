@@ -87,21 +87,6 @@ public class ProfileBlurb extends Blurb
                 2, null);
         }
 
-        if (!CPeople.isGuest() && !_pdata.isOurFriend && !isMe) {
-            addButton(photo, "/images/profile/addfriend.png", CPeople.msgs.inviteFriend(),
-                      InviteFriendPopup.createListener(_name));
-        }
-        if (!CPeople.isGuest() && !isMe) {
-            addButton(photo, "/images/profile/sendmail.png", CPeople.msgs.sendMail(),
-                      Pages.MAIL, Args.compose("w", "m", ""+_name.getMemberId()));
-        }
-        addButton(photo, "/images/profile/visithome.png", CPeople.msgs.visitHome(),
-                  Pages.WORLD, "m" + _name.getMemberId());
-        addButton(photo, "/images/profile/viewrooms.png", CPeople.msgs.seeRooms(),
-                  Pages.PEOPLE, Args.compose("rooms", _name.getMemberId()));
-        addButton(photo, "/images/profile/browseitems.png", CPeople.msgs.browseItems(),
-                  Pages.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
-
         // create the info section with their name, a/s/l, etc.
         SmartTable info = new SmartTable("Info", 0, 5);
         info.addText(_name.toString(), 1, "Name");
@@ -165,13 +150,33 @@ public class ProfileBlurb extends Blurb
         }
         details.add(dbits);
 
-        // display all of our sections in a nice little row
-        HorizontalPanel content = new HorizontalPanel();
-        content.setStyleName("Profile");
-        content.setVerticalAlignment(HasAlignment.ALIGN_TOP);
-        content.add(photo);
-        content.add(info);
-        content.add(details);
+        // create our action buttons
+        FlowPanel buttons = new FlowPanel();
+        buttons.setStyleName("Buttons");
+        if (!CPeople.isGuest() && !_pdata.isOurFriend && !isMe) {
+            addButton(buttons, "/images/profile/addfriend.png", CPeople.msgs.inviteFriend(),
+                      InviteFriendPopup.createListener(_name));
+        }
+        if (!CPeople.isGuest() && !isMe) {
+            addButton(buttons, "/images/profile/sendmail.png", CPeople.msgs.sendMail(),
+                      Pages.MAIL, Args.compose("w", "m", ""+_name.getMemberId()));
+        }
+        addButton(buttons, "/images/profile/visithome.png", CPeople.msgs.visitHome(),
+                  Pages.WORLD, "m" + _name.getMemberId());
+        addButton(buttons, "/images/profile/viewrooms.png", CPeople.msgs.seeRooms(),
+                  Pages.PEOPLE, Args.compose("rooms", _name.getMemberId()));
+        addButton(buttons, "/images/profile/browseitems.png", CPeople.msgs.browseItems(),
+                  Pages.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
+
+        // display all of our sections in a nice little layout
+        SmartTable content = new SmartTable("Profile", 0, 0);
+        content.setWidget(0, 0, photo);
+        content.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
+        content.setWidget(0, 1, info);
+        content.getFlexCellFormatter().setVerticalAlignment(0, 1, HasAlignment.ALIGN_TOP);
+        content.setWidget(0, 2, details);
+        content.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
+        content.setWidget(1, 1, buttons, 2, null);
         setContent(content);
 
         // display the edit button if this is our profile
@@ -184,16 +189,18 @@ public class ProfileBlurb extends Blurb
         }
     }
 
-    protected void addButton (SmartTable table, String path, String text, Pages page, String args)
+    protected void addButton (FlowPanel buttons, String path, String text, Pages page, String args)
     {
-        int row = table.addWidget(Link.createImage(path, text, page, args), 1, null);
-        table.setWidget(row, 1, Link.create(text, page, args), 1, null);
+        buttons.add(Link.createImage(path, text, page, args));
+        Widget link = Link.create(text, page, args);
+        link.addStyleName("Link");
+        buttons.add(link);
     }
 
-    protected void addButton (SmartTable table, String path, String text, ClickListener listener)
+    protected void addButton (FlowPanel buttons, String path, String text, ClickListener listener)
     {
-        int row = table.addWidget(MsoyUI.createActionImage(path, text, listener), 1, null);
-        table.setWidget(row, 1, MsoyUI.createActionLabel(text, listener), 1, null);
+        buttons.add(MsoyUI.createActionImage(path, text, listener));
+        buttons.add(MsoyUI.createActionLabel(text, "Link", listener));
     }
 
     protected void addDetail (SmartTable details, String label, String text)
