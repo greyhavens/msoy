@@ -11,7 +11,6 @@ import com.google.inject.matcher.Matchers;
 
 import net.sf.ehcache.CacheManager;
 
-import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.EHCacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;

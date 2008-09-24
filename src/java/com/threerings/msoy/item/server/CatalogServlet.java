@@ -413,7 +413,6 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // we will modify the original item (it's a clone, no need to worry) to create the new
         // catalog listing prototype item
-        int originalItemId = originalItem.itemId;
         ItemRecord listItem = originalItem;
         listItem.prepareForListing(oldListItem);
 
