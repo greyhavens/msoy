@@ -35,45 +35,18 @@ import com.threerings.msoy.ui.SimpleGrid;
 
 import com.threerings.msoy.item.data.all.Game;
 
+import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 
 public class TableCreationPanel extends VBox
 {
-    public function TableCreationPanel (ctx :GameContext, panel :LobbyPanel)
+    public function TableCreationPanel (ctx :GameContext, ctrl :LobbyController, lobj :LobbyObject)
     {
         _ctx = ctx;
-        _game = panel.getGame();
-        _gameDef = panel.getGameDefinition();
-        _panel = panel;
-    }
-
-    // I could spend hours figuring out how Flex notifies us when we're added to and removed from
-    // the heirarchy and then discover bugs in that and spend more hours debugging it, or I can
-    // just call this manually...
-    public function updateOnlineFriends () :void
-    {
-        _friendsBox.removeAllChildren();
-        var onlineFriends :Array = _ctx.getOnlineFriends();
-        if (onlineFriends.length ==  0) {
-            _friendsBox.addChild(FlexUtil.createLabel(Msgs.GAME.get("l.invite_no_friends")));
-        } else {
-            // Only show Invite All if you have more than one friend to invite
-            if (onlineFriends.length > 1) {
-                _inviteAll.selected = false;
-                _friendsBox.addChild(_inviteAll);
-            }
-
-            var columns :int = Math.min(FRIENDS_GRID_COLUMNS, onlineFriends.length);
-            _friendsGrid = new SimpleGrid(columns);
-            _friendsGrid.setStyle("horizontalGap", 5);
-            for each (var friend :FriendEntry in onlineFriends) {
-                var fcb :FriendCheckBox = new FriendCheckBox(friend);
-                fcb.check.addEventListener(Event.CHANGE, friendToggled);
-                _friendsGrid.addCell(fcb);
-            }
-            _friendsBox.addChild(_friendsGrid);
-        }
+        _ctrl = ctrl;
+        _game = lobj.game;
+        _gameDef = lobj.gameDef;
     }
 
     protected function friendToggled (event :Event) :void
@@ -105,9 +78,21 @@ public class TableCreationPanel extends VBox
         styleName = "tableCreationPanel";
         percentWidth = 100;
 
-        var row :HBox = new HBox();
-        row.percentWidth = 100;
-        addChild(row);
+        // add a configuration for the table name
+        var titleBox :VBox = new VBox();
+        titleBox.percentWidth = 100;
+        titleBox.setStyle("verticalGap", 0);
+        titleBox.addChild(FlexUtil.createLabel(Msgs.GAME.get("l.table")));
+//         label.styleName = "lobbyLabel";
+
+//         label.toolTip = Msgs.GAME.get("i.table");
+
+        var title :TextInput = new TextInput();
+        // title.styleName = "sexyTextInput";
+        title.text = Msgs.GAME.get("l.default_table", _ctx.getPlayerObject().getVisibleName());
+        title.percentWidth = 100;
+        titleBox.addChild(title);
+        addChild(titleBox);
 
         // create our various game configuration bits but do not add them
         var rparam :ToggleParameter = new ToggleParameter();
@@ -154,68 +139,55 @@ public class TableCreationPanel extends VBox
             return;
         }
 
-        var title :TextInput = new TextInput();
-        title.styleName = "sexyTextInput";
-        title.text = Msgs.GAME.get("l.default_table", _ctx.getPlayerObject().getVisibleName());
-        title.percentWidth = 100;
-
-        var tconfigger :TableConfigurator = new MsoyTableConfigurator(
-            plparam, wparam, pvparam, title);
+        var tconfigger :TableConfigurator =
+            new MsoyTableConfigurator(plparam, wparam, pvparam, title);
         tconfigger.init(_ctx, gconf);
 
         var config :MsoyGameConfig = new MsoyGameConfig();
         config.init(_game, _gameDef);
         gconf.setGameConfig(config);
 
+        // wrapBox(Msgs.GAME.get("l.config_game"),
         _configBox = gconf.getContainer();
-        _configBox.styleName = "configBox";
-        row.addChild(wrapBox(Msgs.GAME.get("l.config_game"), _configBox));
+        _configBox.percentWidth = 100;
+//         _configBox.styleName = "configBox";
+        addChild(_configBox);
 
         // add an interface for inviting friends to play
-        _friendsBox = new VBox();
-        _friendsBox.styleName = "friendsBox";
-        _friendsBox.percentWidth = 100;
-        _friendsBox.percentHeight = 100;
-        _friendsBox.setStyle("verticalGap", 0);
-        row.addChild(wrapBox(Msgs.GAME.get("l.invite_friends"), _friendsBox, true));
-
+        addChild(FlexUtil.createLabel(Msgs.GAME.get("l.invite_friends"), "lobbyTitle"));
+        // TODO: turn this into an action label
         _inviteAll = new CommandCheckBox(Msgs.GAME.get("l.invite_all"), inviteAllToggled);
         _inviteAll.styleName = "lobbyLabel";
+        // TODO: add with label to HBox
 
-        var box :HBox = new HBox();
-        box.styleName = "configBox";
-        box.percentWidth = 100;
+        var onlineFriends :Array = _ctx.getOnlineFriends();
+        if (onlineFriends.length ==  0) {
+            addChild(FlexUtil.createLabel(Msgs.GAME.get("l.invite_no_friends")));
 
-        var label :Label = new Label();
-        label.text = Msgs.GAME.get("l.table");
-        label.toolTip = Msgs.GAME.get("i.table");
-        label.styleName = "lobbyLabel";
+        } else {
+            var columns :int = Math.min(FRIENDS_GRID_COLUMNS, onlineFriends.length);
+            _friendsGrid = new SimpleGrid(columns);
+            _friendsGrid.setStyle("horizontalGap", 5);
+            for each (var friend :FriendEntry in onlineFriends) {
+                var fcb :FriendCheckBox = new FriendCheckBox(friend);
+                fcb.check.addEventListener(Event.CHANGE, friendToggled);
+                _friendsGrid.addCell(fcb);
+            }
+            addChild(_friendsGrid);
+        }
 
-        box.addChild(label);
-        box.addChild(title);
-        addChild(box);
+        // only show invite all if we have more than one friend to invite
+        _inviteAll.visible = (onlineFriends.length > 1);
 
         // finally add buttons for create and cancel
         var bottomRow :HBox = new HBox();
         bottomRow.percentWidth = 100;
         bottomRow.setStyle("horizontalAlign", "right");
-        bottomRow.addChild(new CommandButton(Msgs.GAME.get("b.cancel"), _panel.showTables));
-        bottomRow.addChild(
-            new CommandButton(Msgs.GAME.get("b.create"), createGame, [ tconfigger, gconf ]));
+        bottomRow.addChild(new CommandButton(Msgs.GAME.get("b.cancel"),
+            _ctrl.panel.setMode, [ LobbyController.MODE_MATCH ]));
+        bottomRow.addChild(new CommandButton(Msgs.GAME.get("b.create"),
+            createGame, [ tconfigger, gconf ]));
         addChild(bottomRow);
-    }
-
-    protected function wrapBox (title :String, contents :Container, hstretch :Boolean = false) :VBox
-    {
-        var wrapper :VBox = new VBox();
-        wrapper.setStyle("verticalGap", 0);
-        wrapper.addChild(FlexUtil.createLabel(title));
-        wrapper.addChild(contents);
-        if (hstretch) {
-            wrapper.percentWidth = 100;
-        }
-        wrapper.percentHeight = 100;
-        return wrapper;
     }
 
     protected function createGame (tconf :TableConfigurator, gconf :GameConfigurator) :void
@@ -229,10 +201,11 @@ public class TableCreationPanel extends VBox
                 }
             }
         }
-        _panel.controller.handleSubmitTable(tconf.getTableConfig(), gconf.getGameConfig(), invIds);
+        _ctrl.handleSubmitTable(tconf.getTableConfig(), gconf.getGameConfig(), invIds);
     }
 
     protected var _ctx :GameContext;
+    protected var _ctrl :LobbyController;
 
     /** The game item, for configuration reference. */
     protected var _game :Game;
@@ -240,11 +213,7 @@ public class TableCreationPanel extends VBox
     /** The game item, for configuration reference. */
     protected var _gameDef :GameDefinition;
 
-    /** The lobby panel we're in. */
-    protected var _panel :LobbyPanel;
-
     protected var _configBox :Container;
-    protected var _friendsBox :VBox;
     protected var _friendsGrid :SimpleGrid;
     protected var _inviteAll :CommandCheckBox;
 

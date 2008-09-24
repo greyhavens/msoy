@@ -1081,6 +1081,8 @@ BasePanel {
   verticalAlign: bottom;
 }
 
+/** Lobby UI styles */
+
 .lobbyLink {
   fontSize: 14px;
   verticalAlign: middle;
@@ -1101,23 +1103,24 @@ BasePanel {
   fontWeight: bold;
 }
 
-.lobbyTableList {
-  borderThickness: 1px;
-  borderStyle: "solid";
-  borderColor: #408FD9;
-  /*borderSides: "left right bottom";*/
-
-  paddingLeft: 5px;
-  paddingRight: 5px;
-  paddingTop: 0px;
-  paddingBottom: 5px;
-  borderAlpha: 1;
-  borderThicknessTop: 0;
-  verticalGap: 0;
+.lobbyTitle {
+  fontSize: 18px;
+  color: #A1D3EE;
 }
 
-.pendingTableList, .runningTableList {
-  verticalGap: 5;
+/** Lobby splash panel */
+.lobbySplashPanel {
+  horizontalAlign: center;
+  horizontalGap: 0;
+  verticalGap: 20;
+}
+
+.lobbySplashButton {
+  fontFamily: Helvetica;
+  fontSize: 24px;
+}
+
+.lobbyMatchPanel {
 }
 
 .tablesTitle {
@@ -1131,11 +1134,79 @@ BasePanel {
   horizontalAlign: center;
 }
 
-.lobbyCloseBox {
-  paddingLeft: 3px;
-  paddingTop: 4px;
-  paddingRight: 3px;
+.tableHeader {
+  paddingTop: 5px;
 }
+
+.tableMessage {
+  fontWeight: "normal";
+  paddingLeft: 10px;
+  paddingTop: 10px;
+  paddingRight: 10px;
+  paddingBottom: 5px;
+}
+
+.pendingTableList, .runningTableList {
+  verticalGap: 5;
+}
+
+.tableSummaryPanel {
+  verticalAlign: middle;
+}
+
+.tablePanel {
+  /*backgroundImage: Embed(source="../../rsrc/media/skins/lobby/pending_game_bg.png",
+          scaleGridTop="10", scaleGridBottom="67",
+          scaleGridLeft="10", scaleGridRight="67");
+  backgroundSize: "100%";*/
+}
+
+.runningTablePanel {
+  backgroundImage: Embed(source="../../rsrc/media/skins/lobby/running_game_bg.png",
+          scaleGridTop="10", scaleGridBottom="67",
+          scaleGridLeft="10", scaleGridRight="67");
+  backgroundSize: "100%";
+}
+
+.tableCreationPanel {
+  verticalAlign: middle;
+  paddingTop: 5px;
+  paddingLeft: 5px;
+  paddingRight: 5px;
+  paddingBottom: 5px;
+  fontSize: 10px;
+  fontWeight: bold;
+}
+
+/*.lobbyLabel {
+  fontWeight: bold;
+}*/
+
+.lobbyTablePanel {
+  verticalGap: 10;
+}
+
+.seatsGrid {
+  backgroundColor: #233C50;
+  backgroundAlpha: 1;
+  paddingLeft: 5px;
+  paddingRight: 5px;
+  paddingTop: 10px;
+  paddingBottom: 10px;
+  horizontalGap: 5;
+  verticalGap: 20;
+  borderAlpha: 0;
+  cornerRadius: 4;
+}
+
+.seatPanel {
+  horizontalAlign: "center";
+  verticalGap: 0;
+  borderThickness: 0;
+  borderStyle: "none";
+}
+
+/** Header styles */
 
 .headerCloseBox {
   paddingLeft: 3px;
@@ -1157,10 +1228,6 @@ BasePanel {
   selectedDownSkin: Embed(source="../../rsrc/media/skins/button/embed_down.png");
   selectedUpSkin: Embed(source="../../rsrc/media/skins/button/embed.png");
 }
-
-/*.lobbyLabel {
-  fontWeight: bold;
-}*/
 
 .friendCheckBox {
   horizontalAlign: center;
@@ -1184,99 +1251,6 @@ BasePanel {
   selectedDisabledSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
   selectedDownSkin: Embed(source="../../rsrc/media/skins/button/backtolobby_down.png");
   selectedUpSkin: Embed(source="../../rsrc/media/skins/button/backtolobby.png");
-}
-
-.runningTablePanel, .tablePanel {
-  /* horizontalGap: set programmatically */
-  verticalGap: 0;
-  paddingTop: 5px;
-  paddingLeft: 10px;
-  paddingRight: 10px;
-  borderAlpha: 0;
-  cornerRadius: 4;
-  horizontalAlign: center;
-}
-
-.tablePanel, .configBox, .friendsBox {
-  /*backgroundImage: Embed(source="../../rsrc/media/skins/lobby/pending_game_bg.png",
-          scaleGridTop="10", scaleGridBottom="67",
-          scaleGridLeft="10", scaleGridRight="67");
-  backgroundSize: "100%";*/
-}
-
-.runningTablePanel {
-  backgroundImage: Embed(source="../../rsrc/media/skins/lobby/running_game_bg.png",
-          scaleGridTop="10", scaleGridBottom="67",
-          scaleGridLeft="10", scaleGridRight="67");
-  backgroundSize: "100%";
-}
-
-.seatsGrid {
-  verticalGap: 4;
-  verticalAlign: middle;
-}
-
-.tableHeader {
-  paddingTop: 5px;
-}
-
-.tableMessage {
-  fontWeight: "normal";
-  paddingLeft: 10px;
-  paddingTop: 10px;
-  paddingRight: 10px;
-  paddingBottom: 5px;
-}
-
-.seatPanel {
-  horizontalAlign: "center";
-  verticalGap: 0;
-  borderThickness: 0;
-  borderStyle: "none";
-}
-
-.tableStatusLabel {
-  fontWeight: bold;
-  color: #6A859A;
-}
-
-.tableTitleLabel {
-  fontWeight: bold;
-}
-
-.createBtnBox {
-  verticalAlign: middle;
-  horizontalAlign: center;
-  paddingRight: 0px;
-  paddingLeft: 6px;
-  paddingTop: 5px;
-  paddingBottom: 5px;
-}
-
-.tableCreationPanel {
-  verticalAlign: middle;
-  /*backgroundColor: #E0E7EE;*/
-  /*borderThickness: 0;
-  borderStyle: "none";*/
-  paddingTop: 5px;
-  paddingLeft: 5px;
-  paddingRight: 5px;
-  paddingBottom: 5px;
-}
-
-.configBox, .friendsBox {
-  borderThickness: 1px;
-  borderStyle: "solid";
-  borderColor: #408FD9;
-  verticalGap: 4;
-  paddingLeft: 5px;
-  paddingRight: 5px;
-  paddingTop: 5px;
-  paddingBottom: 5px;
-}
-
-.configBox {
-fontWeight: bold;
 }
 
 .chatContainer {

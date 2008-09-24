@@ -1,3 +1,6 @@
+//
+// $Id$
+
 package com.threerings.msoy.ui {
 
 import flash.system.System;
@@ -8,7 +11,9 @@ import mx.controls.TextInput;
 
 import com.threerings.flex.CommandButton;
 
-/** A handy group of widgets for stuffing something into your clipboard. */
+/**
+ * A handy group of widgets for stuffing something into your clipboard.
+ */
 public class CopyableText extends HBox
 {
     /**
@@ -16,17 +21,17 @@ public class CopyableText extends HBox
      */
     public function CopyableText (maybeTextInput :Object)
     {
-        var field :TextInput;
+        setStyle("verticalAlign", "middle");
+        percentWidth = 100;
 
         // Overloaded constructors for AS4?
+        var field :TextInput;
         if (maybeTextInput is TextInput) {
             field = maybeTextInput as TextInput;
         } else {
             field = new TextInput();
             field.text = String(maybeTextInput);
         }
-
-        percentWidth = 100;
 
         field.editable = false;
         field.percentWidth = 100;
@@ -50,5 +55,4 @@ public class CopyableText extends HBox
         defaultButton = button;
     }
 }
-
 }

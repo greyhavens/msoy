@@ -17,6 +17,7 @@ import com.threerings.presents.dobj.DObject;
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.util.SafeSubscriber;
 
+import com.threerings.parlor.client.SeatednessObserver;
 import com.threerings.parlor.client.TableDirector;
 import com.threerings.parlor.data.Table;
 import com.threerings.parlor.data.TableConfig;
@@ -34,8 +35,10 @@ import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
+import com.threerings.msoy.game.data.PlayerObject;
 
-public class LobbyController extends Controller implements Subscriber
+public class LobbyController extends Controller
+    implements Subscriber, SeatednessObserver
 {
     /** A command to submit a configured table configuration for creation. */
     public static const SUBMIT_TABLE :String = "SubmitTable";
@@ -57,6 +60,12 @@ public class LobbyController extends Controller implements Subscriber
 
     /** A command to start a single player game immediately. */
     public static const PLAY_SOLO :String = "PlaySolo";
+
+    // modes for our user interface
+    public static const MODE_SPLASH :int = 0;
+    public static const MODE_MATCH :int = 1;
+    public static const MODE_CREATE :int = 2;
+    public static const MODE_SEATED :int = 3;
 
     public function LobbyController (
         gctx :GameContext, mode :int, onClear :Function, playNow :Function, lobbyLoaded :Function)
@@ -112,6 +121,62 @@ public class LobbyController extends Controller implements Subscriber
     public function get tableDir () :TableDirector
     {
         return _tableDir;
+    }
+
+    /**
+     * Returns the main lobby display container.
+     */
+    public function get panel () :LobbyPanel
+    {
+        return _panel;
+    }
+
+    /**
+     * Returns true if we're seated at ANY table, even in another lobby.
+     */
+    public function isSeated () :Boolean
+    {
+        // if we know we're seated, just return that
+        if (_isSeated) {
+            return true;
+        }
+
+        // otherwise look at the data
+        var ourName :MemberName = _gctx.getPlayerObject().memberName;
+        for each (var table :Table in _lobj.tables.toArray()) {
+            if (table.players != null && -1 != table.players.indexOf(ourName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the count of friends of the specified member that are seated at this table.
+     */
+    public function countFriends (table :Table) :int
+    {
+        var plobj :PlayerObject = _gctx.getPlayerObject();
+        var friends :int = 0, ourId :int = plobj.memberName.getMemberId();
+        for (var ii :int; ii < table.players.length; ii++) {
+            var name :MemberName = (table.players[ii] as MemberName);
+            if (name == null) {
+                continue;
+            }
+            var friendId :int = name.getMemberId();
+            if (plobj.friends.containsKey(friendId) || friendId == ourId) {
+                friends++;
+            }
+        }
+        return friends;
+    }
+
+    /**
+     * Returns true if there are tables that we might join, or watch or otherwies interact with.
+     */
+    public function haveActionableTables () :Boolean
+    {
+        return (_lobj.tables.size() > 0); // TODO
     }
 
     /**
@@ -188,7 +253,7 @@ public class LobbyController extends Controller implements Subscriber
             var currentTable :Table = _tableDir.getSeatedTable();
             if (currentTable != null) {
                 _tableDir.leaveTable(currentTable.tableId);
-                _panel.seatednessDidChange(false);
+                seatednessDidChange(false);
             }
         }
         shutdown();
@@ -209,8 +274,7 @@ public class LobbyController extends Controller implements Subscriber
         }
         if (_tableDir != null) {
             _tableDir.clearTableObject();
-            _tableDir.removeTableObserver(_panel);
-            _tableDir.removeSeatednessObserver(_panel);
+            _tableDir.removeSeatednessObserver(this);
         }
 
         // finally let whoever cares know that we're gone
@@ -282,11 +346,11 @@ public class LobbyController extends Controller implements Subscriber
     {
         _lobj = obj as LobbyObject;
         _panel.init(_lobj, _mode == LobbyCodes.PLAY_NOW_FRIENDS);
+        _panel.setMode(_lobj.gameDef.match.getMinimumPlayers() <= 1 ? MODE_SPLASH : MODE_MATCH);
 
-        _tableDir = new TableDirector(_gctx, LobbyObject.TABLES);
+        _tableDir = new TableDirector(_gctx, LobbyObject.TABLES, MsoyCodes.GAME_MSGS);
         _tableDir.setTableObject(obj);
-        _tableDir.addTableObserver(_panel);
-        _tableDir.addSeatednessObserver(_panel);
+        _tableDir.addSeatednessObserver(this);
 
         _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
 
@@ -316,14 +380,20 @@ public class LobbyController extends Controller implements Subscriber
         Log.getLog(this).warning("Request for the LobbyObject failed: " + cause);
     }
 
+    // from SeatednessObserver
+    public function seatednessDidChange (nowSeated :Boolean) :void
+    {
+        _isSeated = nowSeated;
+        _panel.setMode(nowSeated ? MODE_SEATED : MODE_MATCH);
+    }
+
     /**
      * Looks for a table that we can join and joins it.
      */
     protected function joinSomeTable (friendsOnly :Boolean) :Boolean
     {
         for each (var table :Table in _lobj.tables.toArray()) {
-            if (table.inPlay() ||
-                (friendsOnly && LobbyPanel.countFriends(table, _gctx.getPlayerObject()) == 0)) {
+            if (table.inPlay() || (friendsOnly && countFriends(table) == 0)) {
                 continue;
             }
             for (var ii :int; ii < table.players.length; ii++) {
@@ -371,5 +441,8 @@ public class LobbyController extends Controller implements Subscriber
 
     /** The player whose pending table we'd like to join. */
     protected var _playerId :int = 0;
+
+    /** Are we seated? */
+    protected var _isSeated :Boolean;
 }
 }
