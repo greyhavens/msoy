@@ -32,8 +32,8 @@ public enum ReportType
         return COINS; // Fall back to default
     }
 
-    private ReportType (int index, EnumSet<TransactionType> transactions,
-        Currency currency, String icon)
+    private ReportType (
+        int index, EnumSet<TransactionType> transactions, Currency currency, String icon)
     {
         _index = index;
         this.transactions = transactions;
