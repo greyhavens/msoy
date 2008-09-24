@@ -222,8 +222,9 @@ public class CatalogServlet extends MsoyServiceServlet
                          Currency currency, int cost)
         throws ServiceException
     {
-        if (cost < 0) {
-            log.warning("Requested to list an item for negative cost", "item", item);
+        if ( ! currency.isValidListingCost(cost)) {
+            log.warning("Requested to list an item for invalid price", "item", item,
+                "currency", currency.toString(), "cost", cost);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 

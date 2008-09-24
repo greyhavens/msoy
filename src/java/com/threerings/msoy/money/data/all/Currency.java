@@ -17,19 +17,34 @@ public enum Currency
     implements ByteEnum, IsSerializable
 {
     /** Coins are awarded from actions in Whirled and can be used to purchase some items. */
-    COINS(0),
+    COINS(0) {
+        public boolean isValidCost (int cost) {
+            return (cost >= 0);
+        }
+    },
 
     /**
      * Bars are usually purchased for some real money amount and may be required to purchase some
      * items.
      */
-    BARS(1),
+    BARS(1) {
+        public boolean isValidCost (int cost) {
+            return (cost > 0);
+        }
+    },
 
     /**
      * Bling is awarded when other players purchase or use some content created by a content
      * creator. It can be exchanged for real money.
      */
-    BLING(2);
+    BLING(2) {
+        public boolean isValidCost (int cost) {
+            return false; // Can't ever list in bling
+        }
+    };
+
+    /** Returns whether or not some cost is a valid amount to be listed with this currency. */
+    public abstract boolean isValidCost (int cost);
 
     /**
      * Translate a byte back into the Currency instance- required by ByteEnum.
