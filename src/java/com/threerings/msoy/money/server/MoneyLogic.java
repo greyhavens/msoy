@@ -50,9 +50,7 @@ import static com.threerings.msoy.Log.log;
 /**
  * Facade for all money (coins, bars, and bling) transactions. This is the starting place to
  * access these services.
- *
- * TODO: transactional support- database transactions for proper rollback??
- *
+ * 
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
  */
@@ -149,20 +147,17 @@ public class MoneyLogic
      *
      * @param memberId ID of the member receiving bars.
      * @param numBars Number of bars to add to their account.
-     * @param description a translatable string that will be recorded along with the money
-     * transaction.
+     * @param payment a String like "$2.95".
      * @return a result Transaction
      */
-    public MoneyTransaction boughtBars (int memberId, int numBars, String description)
+    public MoneyTransaction boughtBars (int memberId, int numBars, String payment)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy bars.");
         Preconditions.checkArgument(numBars >= 0, "numBars is invalid: %d", numBars);
 
-        // TODO: description should be filled in here... wtf external entity knows how
-        // to make a sensible description for internal money juju?
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
             memberId, Currency.BARS, numBars, TransactionType.BARS_BOUGHT,
-            description, null);
+            MessageBundle.tcompose("m.bought_bars", payment), null);
         _nodeActions.moneyUpdated(tx);
 
         logAction(UserAction.boughtBars(memberId), tx);
@@ -284,7 +279,7 @@ public class MoneyLogic
             _priceCache.removeQuote(key);
             // Inform the exchange that we've actually made the exchange
             if (!magicFreeItem) {
-                // TODO: possibly pass results
+                // TODO: possibly pass detailed info into the exchange
                 _exchange.processPurchase(quote, buyCurrency);
             }
 
@@ -304,13 +299,16 @@ public class MoneyLogic
 
     /**
      * Called to effect the removal of bling from a member's account for cash-out purposes.
+     *
+     * @param payment a pre-translated String indicating the amount the user will receive for
+     * the cashout. Something like "$30" or "$30 USD".
      */
-    public void cashOutBling (int memberId, int amount)
+    public void cashOutBling (int memberId, int amount, String payment)
         throws NotEnoughMoneyException
     {
         MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
             memberId, Currency.BLING, amount * 100,
-            TransactionType.CASHED_OUT, MessageBundle.tcompose("m.cashed_out", amount), null);
+            TransactionType.CASHED_OUT, MessageBundle.tcompose("m.cashed_out", payment), null);
         // if that didn't throw a NotEnoughMoneyException, we're good to go.
         _nodeActions.moneyUpdated(deductTx);
     }
@@ -329,14 +327,13 @@ public class MoneyLogic
     {
         MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
             memberId, Currency.BLING, blingAmount * 100,
-            TransactionType.SPENT_FOR_EXCHANGE,
-            MessageBundle.tcompose("m.exchange_spent", blingAmount), null);
+            TransactionType.SPENT_FOR_EXCHANGE, "m.exchanged_for_bars", null);
         // if that didn't throw a NotEnoughMoneyException, we're good to go.
         _nodeActions.moneyUpdated(deductTx);
 
         MoneyTransactionRecord accumTx = _repo.accumulateAndStoreTransaction(
-            memberId, Currency.BARS, blingAmount, TransactionType.RECEIVED_FROM_EXCHANGE,
-            MessageBundle.tcompose("m.exchange_added", blingAmount), null);
+            memberId, Currency.BARS, blingAmount,
+            TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null);
         _nodeActions.moneyUpdated(accumTx);
     }
 
@@ -496,11 +493,11 @@ public class MoneyLogic
             _eventLog.flowTransaction(action, tx.amount, tx.balance);
             break;
 
-        case BARS:
+        case BARS: // TODO
             log.info("TODO: log bars to panopticon");
             break;
 
-        case BLING:
+        case BLING: // TODO
             log.info("TODO: log bling to panopticon");
             break;
         }

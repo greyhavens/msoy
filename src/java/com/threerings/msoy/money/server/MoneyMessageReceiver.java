@@ -63,7 +63,7 @@ public class MoneyMessageReceiver
                     {
                         final BarsBoughtMessage bbm = new BarsBoughtMessage(message);
                         final MemberRecord member = _memberRepo.loadMember(bbm.accountName);
-                        _logic.boughtBars(member.memberId, bbm.numBars, bbm.message);
+                        _logic.boughtBars(member.memberId, bbm.numBars, bbm.payment);
                         return false;
                     }
                 });
@@ -166,8 +166,8 @@ public class MoneyMessageReceiver
     {
         public final String accountName;
         public final int numBars;
-        public final String message; // TODO: Just use UserAction.BOUGHT_BARS.getMessage()?
-        
+        public final String payment; // something like "$2.95", I'm hoping
+
         public BarsBoughtMessage (final byte[] bytes)
         {
             final ByteBuffer buf = ByteBuffer.wrap(bytes);
@@ -177,7 +177,7 @@ public class MoneyMessageReceiver
             numBars = buf.getInt();
             msgBuf = new byte[buf.getInt()];
             buf.get(msgBuf);
-            message = new String(msgBuf);
+            payment = new String(msgBuf);
         }
         
         @Override
@@ -185,7 +185,7 @@ public class MoneyMessageReceiver
         {
             return "accountName: " + accountName +
                 ", numBars: " + numBars +
-                ", message: " + message;
+                ", payment: " + payment;
         }
     }
     
