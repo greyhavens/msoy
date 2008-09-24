@@ -49,10 +49,13 @@ import com.threerings.msoy.money.data.all.TransactionType;
 
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Interface for retrieving and persisting entities in the money service.
  *
  * @author Kyle Sampson <kyle@threerings.net>
+ * @author Ray Greenwell <ray@threerings.net>
  */
 @Singleton
 @BlockingThread
@@ -60,7 +63,8 @@ import com.threerings.msoy.money.server.NotEnoughMoneyException;
 public class MoneyRepository extends DepotRepository
 {
     @Inject
-    public MoneyRepository (final PersistenceContext ctx)
+    public MoneyRepository (final PersistenceContext ctx,
+        /* TODO REMOVE */ final com.threerings.msoy.server.persist.MemberRepository mrepo)
     {
         super(ctx);
 
@@ -73,6 +77,28 @@ public class MoneyRepository extends DepotRepository
         ctx.registerMigration(MemberAccountRecord.class, new EntityMigration.Drop(5, "versionId"));
         ctx.registerMigration(MemberAccountRecord.class,
             new EntityMigration.Drop(5, "dateLastUpdated"));
+        ctx.registerMigration(MemberAccountRecord.class, new EntityMigration(6) {
+            @Override public int invoke (
+                java.sql.Connection conn, com.samskivert.jdbc.DatabaseLiaison liaison)
+                throws java.sql.SQLException
+            {
+                try {
+                return mrepo.runMemberMigration(
+                new com.threerings.msoy.server.persist.MemberRepository.MemberMigration() {
+                    public void apply (com.threerings.msoy.server.persist.MemberRecord mrec)
+                        throws Exception
+                    {
+                        if (null == load(mrec.memberId)) {
+                            create(mrec.memberId);
+                            log.info("Created MemberAccountRecord", "member", mrec.memberId);
+                        }
+                    }
+                });
+                } catch (Exception e) {
+                    throw new java.sql.SQLException(e);
+                }
+            }
+        });
     }
 
     /**

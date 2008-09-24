@@ -85,7 +85,7 @@ public class MemberAccountRecord extends PersistentRecord
         new ColumnExp(MemberAccountRecord.class, ACC_BLING);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 5;
+    public static final int SCHEMA_VERSION = 6;
 
     /** ID of the member this account record is for. */
     @Id
