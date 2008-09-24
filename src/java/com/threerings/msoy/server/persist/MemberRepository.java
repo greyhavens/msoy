@@ -99,11 +99,9 @@ public class MemberRepository extends DepotRepository
             new EntityMigration.Rename(23, "invitingFriendId", MemberRecord.AFFILIATE_MEMBER_ID));
         ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(25, "blingAffiliate"));
 
-        // First, load up the member record, which will add our new column
-        load(MemberRecord.class, 1);
-        // Now convert existing tracking numbers from the ReferralRecord, or create new ones
+        // Converts existing tracking numbers from the ReferralRecord, or creates new ones
         // for those members who didn't get their tracking numbers yet.
-        ctx.registerMigration(ReferralRecord.class, new EntityMigration(2) {
+        ctx.registerMigration(MemberRecord.class, new EntityMigration(26) {
             @Override
             public int invoke (Connection conn, DatabaseLiaison liaison)
                 throws SQLException
@@ -140,9 +138,12 @@ public class MemberRepository extends DepotRepository
                     converted, created));
                 return converted + created;
             }
+            @Override
+            public boolean runBeforeDefault ()
+            {
+                return false; // run this migration after we've added our column
+            }
         });
-        // ... and force the migration right away.
-        load(ReferralRecord.class, 1);
 
         // Convert existing fulfilled InvitationRecords into AffiliateRecords
         ctx.registerMigration(InvitationRecord.class, new EntityMigration(5) {
@@ -197,6 +198,16 @@ public class MemberRepository extends DepotRepository
                 return "MemberRecord -> MemberNameRecord";
             }
         });
+    }
+
+    @Override
+    protected void init ()
+        throws DatabaseException
+    {
+        super.init();
+
+        // Force our ReferralRecord->MemberRecord migration
+        load(MemberRecord.class, 1);
     }
 
     /**
