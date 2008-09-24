@@ -90,11 +90,11 @@ img, embed, applet, object {
   height: 22px;
 }
 
-.backButton-hovering {
+.backButton-up-hovering {
   background-image: url(/images/ui/back_over.png);
 }
 
-.backButton-down {
+.backButton-down-hovering {
   background-image: url(/images/ui/back_down.png);
 }
 
@@ -925,10 +925,10 @@ img, embed, applet, object {
   background-image: url(/images/ui/go_up.png);
 }
 
-.GoButton-hovering {
+.GoButton-up-hovering {
   background-image: url(/images/ui/go_over.png);
 }
 
-.GoButton-down {
+.GoButton-down-hovering {
   background-image: url(/images/ui/go_down.png);
 }

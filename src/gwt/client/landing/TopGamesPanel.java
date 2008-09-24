@@ -197,7 +197,8 @@ public class TopGamesPanel extends AbsolutePanel
         right.add(play);
 
         // more games button
-        PushButton moreGames = makePlayButton("MoreGames", Link.createListener(Pages.GAMES, ""));
+        PushButton moreGames = MsoyUI.createImageButton("MoreGames",
+            Link.createListener(Pages.GAMES, ""));
         moreGames.addClickListener(MsoyUI.createTrackingListener("landingMoreGamesClicked", null));
         right.add(moreGames);
 
@@ -211,17 +212,6 @@ public class TopGamesPanel extends AbsolutePanel
             _gameInfo.remove(_gameInfo.getWidget());
         }
         _gameInfo.add(gameInfoTable);
-    }
-
-    /**
-     * Create a new play button with the given style and onclick event
-     */
-    protected PushButton makePlayButton (String styleName, ClickListener onClick)
-    {
-        PushButton play = new PushButton("", onClick);
-        play.setStyleName(styleName);
-        play.addStyleName("PlayButton");
-        return play;
     }
 
     /** Game data */

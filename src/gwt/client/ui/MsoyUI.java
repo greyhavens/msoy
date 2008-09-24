@@ -310,30 +310,14 @@ public class MsoyUI
     /**
      * Creates an image button that changes appearance when you click and hover over it.
      */
-    // TODO: PushButton, anyone???
-    public static Widget createImageButton (String style, ClickListener listener)
+    public static PushButton createImageButton (String style, ClickListener listener)
     {
-        final Label widget = createActionLabel("", style, listener);
-        widget.addMouseListener(new MouseListenerAdapter() {
-            @Override
-            public void onMouseEnter (Widget sender) {
-                widget.addStyleDependentName("hovering");
-            }
-            @Override
-            public void onMouseLeave (Widget sender) {
-                widget.removeStyleDependentName("hovering");
-                widget.removeStyleDependentName("down");
-            }
-            @Override
-            public void onMouseDown (Widget sender, int x, int y) {
-                widget.addStyleDependentName("down");
-            }
-            @Override
-            public void onMouseUp (Widget sender, int x, int y) {
-                widget.removeStyleDependentName("down");
-            }
-        });
-        return widget;
+        PushButton button = new PushButton();
+        button.setStyleName(style);
+        if (listener != null) {
+            button.addClickListener(listener);
+        }
+        return button;
     }
 
     /**
