@@ -228,7 +228,7 @@ public class GameDirector extends BasicDirector
     {
         if (showLobby) {
             LobbyGameLiaison(_liaison).clearGame();
-            LobbyGameLiaison(_liaison).showLobby();
+            _wctx.getWorldController().handleJoinGameLobby(getGameId());
         } else {
             // go back to our previous location
             _wctx.getMsoyController().handleMoveBack(true);

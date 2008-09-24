@@ -461,11 +461,14 @@ public class WorldController extends MsoyController
      */
     public function handleViewGame (gameId :int) :void
     {
-        // when a player clicks a game in the whirled, we try to display that game's detail page,
-        // but if we can't do that, then fall back to displaying the game lobby
-        if (!inGWTApp() || !displayPage("games", "d_" + gameId)) {
+// (MDB) for now we're always sending players right into the lobby; we can link to the detail from
+// there if we like
+//
+//         // when a player clicks a game in the whirled, we try to display that game's detail page,
+//         // but if we can't do that, then fall back to displaying the game lobby
+//         if (!inGWTApp() || !displayPage("games", "d_" + gameId)) {
             handleJoinGameLobby(gameId);
-        }
+//         }
     }
 
     /**
@@ -657,21 +660,15 @@ public class WorldController extends MsoyController
      */
     public function handleJoinGameLobby (gameId :int, ghost :String = null, gport :int = 0) :void
     {
-//        // if we're not running in the GWT app, we need to display a page externally
-//        if (!inGWTApp() && displayPage("world", "game_l_" + gameId)) {
-//            return;
-//        }
+        // if we're running in the GWT app, we need to route through GWT to keep the URL valid
+        if (inGWTApp() && displayPage("world", "game_l_" + gameId)) {
+            log.info("Routed join lobby through URL", "game", gameId, "ghost", ghost,
+                "gport", gport);
 
-//         // if we're not in a scene, go to our home scene while we're displaying the lobby (but not
-//         // if we're in the standalone client because it's just pointless slowdown)
-//         if (Capabilities.playerType != "StandAlone") {
-//             if (_wctx.getSceneDirector().getScene() == null) {
-//                 _wctx.getSceneDirector().moveTo(_wctx.getMemberObject().getHomeSceneId());
-//             }
-//         }
-
-        // now display the lobby interface
-        _wctx.getGameDirector().displayLobby(gameId, ghost, gport);
+        } else {
+            // otherwise, display the lobby interface directly
+            _wctx.getGameDirector().displayLobby(gameId, ghost, gport);
+        }
     }
 
     /**
@@ -916,7 +913,7 @@ public class WorldController extends MsoyController
             _wctx.getTopPanel().setPlaceView(new NoPlaceView());
 
         } else if (null != params["gameLobby"]) {
-            handleJoinGameLobby(
+            _wctx.getGameDirector().displayLobby(
                 int(params["gameLobby"]), String(params["ghost"]), int(params["gport"]));
 
         } else if (null != params["playNow"]) {
