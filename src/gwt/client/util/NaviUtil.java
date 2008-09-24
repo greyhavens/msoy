@@ -5,6 +5,8 @@ package client.util;
 
 import com.google.gwt.user.client.ui.ClickListener;
 
+import com.threerings.msoy.money.data.all.ReportType;
+
 import client.shell.Args;
 import client.shell.Pages;
 
@@ -47,35 +49,39 @@ public class NaviUtil
 
     public static String gameDetail (int gameId, GameDetails tab)
     {
-        return Args.compose("d", ""+gameId, tab.code());
+        return Args.compose("d", gameId, tab.code());
     }
 
     public static void viewItem (byte type, int itemId)
     {
-        Link.go(Pages.STUFF, Args.compose(""+type, "-1", ""+itemId));
+        Link.go(Pages.STUFF, Args.compose(type, -1, itemId));
     }
 
     public static ClickListener onCreateItem (byte type, byte ptype, int pitemId)
     {
-        return Link.createListener(Pages.STUFF, Args.compose(new String[] {
-                    "c", ""+type, ""+ptype, ""+pitemId }));
+        return Link.createListener(Pages.STUFF, Args.compose("c", type, ptype, pitemId));
     }
 
     public static ClickListener onEditItem (byte type, int itemId)
     {
-        return Link.createListener(Pages.STUFF, Args.compose("e", ""+type, ""+itemId));
+        return Link.createListener(Pages.STUFF, Args.compose("e", type, itemId));
     }
 
     public static ClickListener onRemixItem (byte type, int itemId)
     {
-        return Link.createListener(Pages.STUFF, Args.compose("r", ""+type, ""+itemId));
+        return Link.createListener(Pages.STUFF, Args.compose("r", type, itemId));
+    }
+
+    public static ClickListener onViewTransactions (ReportType report)
+    {
+        return Link.createListener(Pages.ME, Args.compose("transactions", report.toIndex()));
     }
 
     // TODO: This should probably be passed a PriceQuote
     public static ClickListener onRemixCatalogItem (
         byte type, int itemId, int catalogId, int flowCost, int goldCost)
     {
-        return Link.createListener(Pages.STUFF, Args.compose(new String[] {
-                    "r", ""+type, ""+itemId, ""+catalogId, ""+flowCost, ""+goldCost }));
+        return Link.createListener(Pages.STUFF, Args.compose(
+                    "r", type, itemId, catalogId, flowCost, goldCost));
     }
 }

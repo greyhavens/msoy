@@ -22,6 +22,7 @@ import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.ReportType;
 
 import client.shell.CShell;
 import client.shell.Pages;
@@ -31,6 +32,7 @@ import client.shell.AffiliateCookie;
 import client.shell.TrackingCookie;
 import client.ui.MsoyUI;
 import client.util.Link;
+import client.util.NaviUtil;
 import client.util.events.FlashEvents;
 import client.util.events.NameChangeEvent;
 import client.util.events.NameChangeListener;
@@ -139,13 +141,6 @@ public class StatusPanel extends SmartTable
         return (oldLevel != 0 && oldLevel < event.getValue());
     }
 
-    protected static Image makeImage (String path, String tip)
-    {
-        Image image = new Image(path);
-        image.setTitle(tip);
-        return image;
-    }
-
     protected static class MailDisplay extends SmartTable
     {
         public MailDisplay () {
@@ -179,19 +174,20 @@ public class StatusPanel extends SmartTable
 
             int idx = 0;
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            setWidget(0, idx++, makeImage(Currency.COINS.getLargeIcon(), _cmsgs.coinsTip()),
-                1, "Icon");
+            setWidget(0, idx++, MsoyUI.createActionImage(Currency.COINS.getLargeIcon(),
+                _cmsgs.coinsTip(), NaviUtil.onViewTransactions(ReportType.COINS)), 1, "Icon");
             setText(0, _coinsIdx = idx++, "0");
 
             if (DeploymentConfig.barsEnabled) {
                 getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-                setWidget(0, idx++, makeImage(Currency.BARS.getLargeIcon(), _cmsgs.barsTip()),
-                    1, "Icon");
+                setWidget(0, idx++, MsoyUI.createActionImage(Currency.BARS.getLargeIcon(), _cmsgs.barsTip(),
+                    NaviUtil.onViewTransactions(ReportType.BARS)), 1, "Icon");
                 setText(0, _barsIdx = idx++, "0");
             }
 
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            setWidget(0, idx++, makeImage("/images/header/symbol_level.png", _cmsgs.levelTip()),
+            setWidget(0, idx++, MsoyUI.createActionImage(
+                "/images/header/symbol_level.png", _cmsgs.levelTip(), null),
                 1, "Icon");
             setText(0, _levelIdx = idx++, "0");
 
