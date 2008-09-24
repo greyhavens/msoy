@@ -330,8 +330,13 @@ public class MoneyLogic
      * corrective actions or when the member chooses to cash out their bling.
      */
     public void deductBling (int memberId, int amount)
+        throws NotEnoughMoneyException
     {
-        // TODO Auto-generated method stub
+        MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
+            memberId, Currency.BLING, amount * 100,
+            TransactionType.CASHED_OUT, MessageBundle.tcompose("m.cashed_out", amount), null);
+        // if that didn't throw a NotEnoughMoneyException, we're good to go.
+        _nodeActions.moneyUpdated(deductTx);
     }
 
     /**
@@ -346,12 +351,11 @@ public class MoneyLogic
     public void exchangeBlingForBars (int memberId, int blingAmount)
         throws NotEnoughMoneyException
     {
-        MoneyTransactionRecord deductTx = _repo.deduct(memberId, Currency.BLING, blingAmount * 100,
-            false);
-        // if that didn't throw a NotEnoughMoneyException, we're good to go.
-        deductTx.fill(TransactionType.SPENT_FOR_EXCHANGE,
+        MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
+            memberId, Currency.BLING, blingAmount * 100,
+            TransactionType.SPENT_FOR_EXCHANGE,
             MessageBundle.tcompose("m.exchange_spent", blingAmount), null);
-        _repo.storeTransaction(deductTx);
+        // if that didn't throw a NotEnoughMoneyException, we're good to go.
         _nodeActions.moneyUpdated(deductTx);
 
         MoneyTransactionRecord accumTx = _repo.accumulateAndStoreTransaction(

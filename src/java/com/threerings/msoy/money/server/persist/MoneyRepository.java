@@ -154,6 +154,24 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
+     * Deduct money from the specified member's money. Return a MoneyTransaction that
+     * is partially filled-out, but will have the amount set to 0 if amount could not be
+     * deducted. It's important that you check this.
+     * If the money is kept
+     * out, the transaction should be committed later by calling storeTransaction.
+     */
+    public MoneyTransactionRecord deductAndStoreTransaction (
+        int memberId, Currency currency, int amount,
+        TransactionType type, String description, Object subject)
+        throws NotEnoughMoneyException
+    {
+        MoneyTransactionRecord tx = deduct(memberId, currency, amount, false);
+        tx.fill(type, description, subject);
+        storeTransaction(tx);
+        return tx;
+    }
+
+    /**
      * Accumulate money, return a partially-populated MoneyTransactionRecord for
      * storing.
      */
