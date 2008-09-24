@@ -236,8 +236,8 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // validate the listing cost
         if (!currency.isValidCost(cost)) {
-            log.warning("Requested to list an item for invalid price", "item", item,
-                        "currency", currency.toString(), "cost", cost);
+            log.warning("Requested to list an item for invalid price",
+                        "item", item, "currency", currency, "cost", cost);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
