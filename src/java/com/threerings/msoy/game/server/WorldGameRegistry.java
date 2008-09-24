@@ -355,7 +355,7 @@ public class WorldGameRegistry
         if (!checkCallerAccess(caller, "awardCoins(" + memberId + ", " + amount + ", " + gameId)) {
             return;
         }
-        _moneyLogic.awardCoins(memberId, amount, true, new ItemIdent(Game.GAME, gameId),
+        _moneyLogic.awardCoins(memberId, amount, false, new ItemIdent(Game.GAME, gameId),
             action, gameName, gameId, secondsPlayed);
     }
 
