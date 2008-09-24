@@ -50,7 +50,10 @@ public class TransactionsPanel extends VerticalPanel
                 controls.setWidget(0, 2, reportBox);
             }
         });
-        add(new BlingPanel(model));
+
+        if (report == ReportType.BLING) {
+            add(new BlingPanel(model));
+        }
     }
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
