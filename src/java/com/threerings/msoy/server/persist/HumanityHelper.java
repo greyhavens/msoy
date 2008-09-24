@@ -21,7 +21,12 @@ public class HumanityHelper
      */
     public void noteRecord (MemberActionLogRecord record)
     {
-        switch (UserAction.getActionByNumber(record.actionId)) {
+        UserAction.Type type = UserAction.getActionByNumber(record.actionId);
+        if (type == null) {
+            return; // ignore legacy actions that we've nixed
+        }
+
+        switch (type) {
         // most actions we don't care about
         default:
             return;
