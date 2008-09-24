@@ -26,10 +26,10 @@ public class GameServerMarshaller extends InvocationMarshaller
     public static final int AWARD_COINS = 1;
 
     // from interface GameServerService
-    public void awardCoins (Client arg1, int arg2, int arg3, String arg4, int arg5, int arg6, UserAction arg7)
+    public void awardCoins (Client arg1, int arg2, UserAction arg3, int arg4)
     {
         sendRequest(arg1, AWARD_COINS, new Object[] {
-            Integer.valueOf(arg2), Integer.valueOf(arg3), arg4, Integer.valueOf(arg5), Integer.valueOf(arg6), arg7
+            Integer.valueOf(arg2), arg3, Integer.valueOf(arg4)
         });
     }
 

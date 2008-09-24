@@ -27,7 +27,6 @@ import com.threerings.parlor.rating.server.persist.RatingRepository;
 
 import com.threerings.msoy.data.CoinAwards;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MemberNodeActions;
@@ -158,11 +157,10 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // record that the user updated their profile
         if (nrec.modifications == 1) {
-            _moneyLogic.awardCoins(memrec.memberId, CoinAwards.CREATED_PROFILE, true, null,
-                UserAction.CREATED_PROFILE);
+            _moneyLogic.awardCoins(memrec.memberId, CoinAwards.CREATED_PROFILE, true,
+                                   UserAction.createdProfile(memrec.memberId));
         } else {
-            _userActionRepo.logUserAction(
-                new UserActionDetails(memrec.memberId, UserAction.UPDATED_PROFILE));
+            _userActionRepo.logUserAction(UserAction.updatedProfile(memrec.memberId));
         }
         _eventLog.profileUpdated(memrec.memberId);
 

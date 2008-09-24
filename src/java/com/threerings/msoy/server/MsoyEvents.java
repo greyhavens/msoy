@@ -111,19 +111,14 @@ public class MsoyEvents
         @Index @Field final public Date timestamp;
         @Field final public int memberId;
         @Field final public int actionType;
-        @Field final public int itemId;
-        @Field final public byte itemType;
         @Field final public int deltaFlow;
         @Field final public int newtotal;
 
-        public FlowTransaction (int memberId, int actionType, int itemId,
-            byte itemType, int deltaFlow, int newtotal)
+        public FlowTransaction (int memberId, int actionType, int deltaFlow, int newtotal)
         {
             this.timestamp = new Date();
             this.memberId = memberId;
             this.actionType = actionType;
-            this.itemId = itemId;
-            this.itemType = itemType;
             this.deltaFlow = deltaFlow;
             this.newtotal = newtotal;
         }

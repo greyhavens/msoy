@@ -24,7 +24,6 @@ import com.threerings.util.MessageBundle;
 import com.threerings.messaging.MessageConnection;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -35,7 +34,6 @@ import com.threerings.msoy.server.util.Retry;
 
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
@@ -87,7 +85,7 @@ public class MoneyLogic
     {
         _repo.create(memberId);
         if (creationAwardCoins > 0) {
-            awardCoins(memberId, creationAwardCoins, false, null, UserAction.CREATED_ACCOUNT);
+            awardCoins(memberId, creationAwardCoins, false, UserAction.createdAccount(memberId));
         }
     }
 
@@ -108,7 +106,7 @@ public class MoneyLogic
     /**
      * Indicates that a member has earned some number of coins.  This will notify interested
      * clients that coins were earned, without actually awarding the coins yet.  Future calls to
-     * {@link #awardCoins(int, int, boolean, ItemIdent, UserAction)} to award
+     * {@link #awardCoins(int, int, boolean, UserAction)} to award
      * the coins must use "false" for notify to indicate the user was already notified of this.
      *
      * @param memberId ID of the member who earned coins.
@@ -126,38 +124,21 @@ public class MoneyLogic
      *
      * @param memberId ID of the member to receive the coins.
      * @param amount Number of coins to be awarded.
-     * @param notify If false, an earlier call to {@link #notifyCoinsEarned(int, int)} was
-     * made, so this call should not notify the user.
-     * @param item Optional item that coins were awarded for (i.e. a game)
-     * @param userAction The user action that caused coins to be awarded.
-     * @param args free form arguments that will be composed into a translation string and recorded
-     * with the user action; note that the PLAYED_GAME action requires a specific set of arguments
-     * (gameName, gameId, secondsPlayed).
+     * @param notify If false, an earlier call to {@link #notifyCoinsEarned(int, int)} was made, so
+     * this call should not notify the user.
+     * @param action The user action that caused coins to be awarded.
      */
-    public MoneyTransaction awardCoins (
-        int memberId, int amount, boolean notify, ItemIdent item, UserAction userAction,
-        Object... args)
+    public MoneyTransaction awardCoins (int memberId, int amount, boolean notify, UserAction action)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot award coins to guests.");
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
-        Preconditions.checkArgument(
-            (item == null) || (item.type != Item.NOT_A_TYPE && item.itemId != 0),
-            "item is invalid: %s", item);
-
-        // handle PLAYED_GAME which needs to be logged specially for humanity assessment
-        // TODO: Handle AVRG's COMPLETED_QUEST here too?
-        final String description = (userAction == UserAction.PLAYED_GAME) ?
-            (args[1].toString() + " " + args[2].toString()) :
-            MessageBundle.tcompose(userAction.getMessage(), args);
 
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
-            memberId, Currency.COINS, amount, TransactionType.AWARD, description, item);
+            memberId, Currency.COINS, amount, TransactionType.AWARD, action.description, null);
         if (notify) {
             _nodeActions.moneyUpdated(tx);
         }
-
-        final UserActionDetails info = logUserAction(memberId, 0, userAction, description, item);
-        logInPanopticon(info, tx);
+        logAction(action, tx);
 
         return tx.toMoneyTransaction();
     }
@@ -168,6 +149,8 @@ public class MoneyLogic
      *
      * @param memberId ID of the member receiving bars.
      * @param numBars Number of bars to add to their account.
+     * @param description a translatable string that will be recorded along with the money
+     * transaction.
      * @return a result Transaction
      */
     public MoneyTransaction boughtBars (int memberId, int numBars, String description)
@@ -182,8 +165,7 @@ public class MoneyLogic
             description, null);
         _nodeActions.moneyUpdated(tx);
 
-        logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS,
-            description);
+        logAction(UserAction.boughtBars(memberId), tx);
 
         return tx.toMoneyTransaction();
     }
@@ -280,19 +262,13 @@ public class MoneyLogic
                 affiliateTx = null;
             }
 
-            // Log a bunch of panopticon and useraction bullshite
-            UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID,
-                UserAction.BOUGHT_ITEM, description, item);
-            logInPanopticon(info, buyerTx);
+            // log this!
+            logAction(UserAction.boughtItem(buyerId), buyerTx);
             if (creatorTx != null) {
-                info = logUserAction(creatorId, buyerId,
-                    UserAction.RECEIVED_PAYOUT, description, item);
-                logInPanopticon(info, creatorTx);
+                logAction(UserAction.receivedPayout(creatorId), creatorTx);
             }
             if (affiliateTx != null) {
-                info = logUserAction(affiliateId, buyerId,
-                    UserAction.RECEIVED_PAYOUT, description, item);
-                logInPanopticon(info, affiliateTx);
+                logAction(UserAction.receivedPayout(affiliateId), affiliateTx);
             }
 
             // notify affected members of their money changes
@@ -509,12 +485,15 @@ public class MoneyLogic
         return new CurrencyAmount(currency, amount);
     }
 
-    protected void logInPanopticon (
-        UserActionDetails info, MoneyTransactionRecord tx)
+    protected void logAction (UserAction action, MoneyTransactionRecord tx)
     {
+        // record this to the user action repository for later processing by the humanity helper
+        _userActionRepo.logUserAction(action);
+
+        // record this to panopticon for the greater glory of our future AI overlords
         switch (tx.currency) {
         case COINS:
-            _eventLog.flowTransaction(info, tx.amount, tx.balance);
+            _eventLog.flowTransaction(action, tx.amount, tx.balance);
             break;
 
         case BARS:
@@ -525,36 +504,6 @@ public class MoneyLogic
             log.info("TODO: log bling to panopticon");
             break;
         }
-    }
-
-    protected UserActionDetails logUserAction (
-        int memberId, int otherMemberId, UserAction userAction, String description)
-    {
-        return logUserAction(memberId, otherMemberId, userAction, description, (ItemIdent)null);
-    }
-
-    protected UserActionDetails logUserAction (
-        int memberId, int otherMemberId, UserAction userAction, String description,
-        ItemIdent item)
-    {
-        UserActionDetails details = new UserActionDetails(
-            memberId, userAction, otherMemberId,
-            (item == null) ? Item.NOT_A_TYPE : item.type,
-            (item == null) ? UserActionDetails.INVALID_ID : item.itemId,
-            description);
-        _userActionRepo.logUserAction(details);
-        return details;
-    }
-
-    protected UserActionDetails logUserAction (
-        int memberId, int otherMemberId, UserAction userAction, String description,
-        CatalogIdent catIdent)
-    {
-        ItemIdent item = null;
-        if (catIdent != null) {
-            item = new ItemIdent(catIdent.type, catIdent.catalogId);
-        }
-        return logUserAction(memberId, otherMemberId, userAction, description, item);
     }
 
     protected final MoneyExchange _exchange;

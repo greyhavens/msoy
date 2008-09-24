@@ -46,9 +46,8 @@ public interface GameServerService extends InvocationService
     /**
      * Indicates some coins should be awarded to the specified player.
      */
-    void awardCoins (Client client, int memberId, int gameId, String gameName,
-                     int secondsPlayed, int amount, UserAction action);
-    
+    void awardCoins (Client client, int gameId, UserAction action, int amount);
+
     /**
      * Reports a trophy award made by a game to a player.
      */
@@ -59,7 +58,7 @@ public interface GameServerService extends InvocationService
      * caller via the supplied result listener.
      */
     void awardPrize (Client client, int memberId, int gameId, String gameName, Prize prize,
-                            ResultListener listener);
+                     ResultListener listener);
 
     /**
      * Applies a stat update for the specified player.

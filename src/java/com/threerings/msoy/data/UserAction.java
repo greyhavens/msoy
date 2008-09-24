@@ -5,81 +5,190 @@ package com.threerings.msoy.data;
 
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
+
+import com.threerings.io.SimpleStreamableObject;
 import com.threerings.util.ActionScript;
+import com.threerings.util.MessageBundle;
 
 /**
- * Represent an action taken by a user; used in logs for humanity assessment and conversion
- * analysis purposes.
+ * Represent an action taken by a user; used for humanity assessment and to tag money earning and
+ * spending transactions.
  */
 @ActionScript(omit=true)
-public enum UserAction
+public class UserAction extends SimpleStreamableObject
 {
-    CREATED_PROFILE(1, "m.created_profile"),
-    UPDATED_PROFILE(2),
-    CREATED_ACCOUNT(3, "m.created_account"),
+    /** Represents our various action types. */
+    public enum Type {
+        // general actions
+        CREATED_PROFILE(1), UPDATED_PROFILE(2), CREATED_ACCOUNT(3),
 
-    SENT_FRIEND_INVITE(10),
-    ACCEPTED_FRIEND_INVITE(11),
-    TRANSFER_FROM_GUEST(12, "m.transfer_from_guest"),
-    INVITED_FRIEND_JOINED(13, "m.invited_friend_joined"),
+        // friend related actions
+        SENT_FRIEND_INVITE(10), ACCEPTED_FRIEND_INVITE(11), INVITED_FRIEND_JOINED(13),
 
-    PLAYED_GAME(20, "m.played_game"),
-    COMPLETED_QUEST(21, "m.completed_quest"),
+        // game related actions
+        PLAYED_GAME(20), COMPLETED_QUEST(21),
 
-    CREATED_ITEM(30),
-    BOUGHT_ITEM(31),
-    LISTED_ITEM(32),
-    RETURNED_ITEM(33),
-    RECEIVED_PAYOUT(34),
-    UPDATED_LISTING(35),
-    UPDATED_PRICING(36),
+        // item and shop related actions
+        CREATED_ITEM(30), BOUGHT_ITEM(31), LISTED_ITEM(32),
 
-    EARNED_BADGE(40, "m.earned_badge"),
-    
-    BOUGHT_BARS(50, "m.bought_bars");
+        // metagame related actions
+        EARNED_BADGE(40),
+
+        // (purely) money related actions
+        BOUGHT_BARS(50), RECEIVED_PAYOUT(51), TRANSFER_FROM_GUEST(52),
+
+        UNUSED(255);
+
+        /** Fetch the numerical representation of this type. */
+        public int getNumber () {
+            return _num;
+        }
+
+        /** Returns the message key that can be used to describe this action. */
+        public String getMessage () {
+            return _message;
+        }
+
+        Type (final int num) {
+            this(num, "m.unknown");
+        }
+
+        Type (final int num, final String message) {
+            _num = num;
+            _message = message;
+        }
+
+        protected final int _num;
+        protected final String _message;
+    }
+
+    /** The type of action taken. */
+    public final Type type;
+
+    /** The id of the member that took the action in question. */
+    public final int memberId;
+
+    /** A translatable string describing this action. Used by the money services. */
+    public final String description;
+
+    /** Additional machine readable data. Used by the humanity helper. */
+    public final String data;
 
     /**
      * Look up an {@link UserAction} by its numerical representation and return it.
      */
-    public static UserAction getActionByNumber (final int num)
+    public static Type getActionByNumber (final int num)
     {
         return _reverse.get(num);
     }
 
-    /**
-     * Fetch the numerical representation of this {@link UserAction}.
-     */
-    public int getNumber ()
+    public static UserAction createdProfile (int memberId)
     {
-        return _num;
+        return new UserAction(Type.CREATED_PROFILE, memberId, "m.created_profile");
+    }
+
+    public static UserAction updatedProfile (int memberId)
+    {
+        return new UserAction(Type.UPDATED_PROFILE, memberId, null);
+    }
+
+    public static UserAction createdAccount (int memberId)
+    {
+        return new UserAction(Type.CREATED_ACCOUNT, memberId, "m.created_account");
+    }
+
+    public static UserAction sentFriendInvite (int memberId)
+    {
+        return new UserAction(Type.SENT_FRIEND_INVITE, memberId, null);
+    }
+
+    public static UserAction acceptedFriendInvite (int memberId)
+    {
+        return new UserAction(Type.ACCEPTED_FRIEND_INVITE, memberId, null);
+    }
+
+    public static UserAction invitedFriendJoined (int inviterId)
+    {
+        return new UserAction(Type.INVITED_FRIEND_JOINED, inviterId, "m.invited_friend_joined");
+    }
+
+    public static UserAction playedGame (int memberId, String gameName, int gameId, int seconds)
+    {
+        String descrip = MessageBundle.tcompose("m.played_game", gameName, gameId, seconds);
+        return new UserAction(Type.PLAYED_GAME, memberId, descrip, gameId + " " + seconds);
+    }
+
+    public static UserAction completedQuest (int memberId, String gameName, int gameId, int seconds)
+    {
+        String descrip = MessageBundle.tcompose("m.completed_quest", gameName, gameId, seconds);
+        return new UserAction(Type.COMPLETED_QUEST, memberId, descrip, gameId + " " + seconds);
+    }
+
+    public static UserAction createdItem (int memberId)
+    {
+        return new UserAction(Type.CREATED_ITEM, memberId, null);
+    }
+
+    public static UserAction boughtItem (int memberId)
+    {
+        return new UserAction(Type.BOUGHT_ITEM, memberId, null);
+    }
+
+    public static UserAction listedItem (int memberId)
+    {
+        return new UserAction(Type.LISTED_ITEM, memberId, null);
+    }
+
+    public static UserAction earnedBadge (int memberId, int badgeCode, int level)
+    {
+        String descrip = MessageBundle.compose(
+            "m.earned_badge", "badge_" + Integer.toHexString(badgeCode), "badgelevel_" + level);
+        return new UserAction(Type.EARNED_BADGE, memberId, descrip);
+    }
+
+    public static UserAction boughtBars (int memberId)
+    {
+        return new UserAction(Type.BOUGHT_BARS, memberId, null);
+    }
+
+    public static UserAction receivedPayout (int memberId)
+    {
+        return new UserAction(Type.RECEIVED_PAYOUT, memberId, null);
+    }
+
+    public static UserAction transferFromGuest (int memberId)
+    {
+        return new UserAction(Type.TRANSFER_FROM_GUEST, memberId, "m.transfer_from_guest");
+    }
+
+    /** Used for unserialization. */
+    public UserAction ()
+    {
+        this(Type.UNUSED, 0, null, null);
     }
 
     /**
-     * Get the message key that can be used to describe this action.
+     * Creates a configured user action.
      */
-    public String getMessage ()
+    protected UserAction (Type type, int memberId, String description)
     {
-        return _message;
+        this(type, memberId, description, null);
     }
 
-    UserAction (final int num)
+    /**
+     * Creates a configured user action.
+     */
+    protected UserAction (Type type, int memberId, String description, String data)
     {
-        this(num, "m.unknown");
+        this.type = type;
+        this.memberId = memberId;
+        this.description = description;
+        this.data = data;
     }
 
-    UserAction (final int num, final String message)
-    {
-        _num = num;
-        _message = message;
-    }
-
-    protected final int _num;
-    protected final String _message;
-
-    protected static IntMap<UserAction> _reverse;
+    protected static IntMap<Type> _reverse = new HashIntMap<Type>();
     static {
-        _reverse = new HashIntMap<UserAction>();
-        for (final UserAction type : UserAction.values()) {
+        for (Type type : Type.values()) {
             _reverse.put(type.getNumber(), type);
         }
     }

@@ -12,7 +12,7 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
-import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
@@ -91,10 +91,10 @@ public class MsoyEventLogger
         post(new MsoyEvents.CurrentMemberStats(serverName, total, active, guests, viewers));
     }
 
-    public void flowTransaction (UserActionDetails info, int deltaFlow, int newTotal)
+    public void flowTransaction (UserAction action, int deltaFlow, int newTotal)
     {
-        post(new MsoyEvents.FlowTransaction(info.memberId, info.action.getNumber(), info.itemId,
-                                            info.itemType, deltaFlow, newTotal));
+        post(new MsoyEvents.FlowTransaction(action.memberId, action.type.getNumber(),
+                                            deltaFlow, newTotal));
     }
 
     public void itemPurchased (int memberId, byte itemType, int itemId, int flowCost, int goldCost)

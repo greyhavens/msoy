@@ -598,13 +598,13 @@ public class MemberRepository extends DepotRepository
         // reassess their humanity if the time has come
         final int secsSinceLast = (int)((now - record.lastHumanityAssessment.getTime())/1000);
         if (humanityReassessFreq > 0 && humanityReassessFreq < secsSinceLast) {
-            record.humanity = _flowRepo.assessHumanity(memberId, record.humanity, secsSinceLast);
+            record.humanity = _actionRepo.assessHumanity(memberId, record.humanity, secsSinceLast);
             record.lastHumanityAssessment = nowStamp;
         }
 
 // TEMP: disabled
 //         // expire flow without updating MemberObject, since we're dropping session anyway
-//         _flowRepo.expireFlow(record, minutes);
+//         _actionRepo.expireFlow(record, minutes);
 // END TEMP
 
         record.sessions++;
@@ -1229,7 +1229,7 @@ public class MemberRepository extends DepotRepository
         classes.add(ReferralRecord.class);
     }
 
-    @Inject protected UserActionRepository _flowRepo;
+    @Inject protected UserActionRepository _actionRepo;
 
     protected static final int INVITE_ID_LENGTH = 10;
     protected static final String INVITE_ID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890";

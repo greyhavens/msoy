@@ -138,7 +138,7 @@ public class WorldGameRegistry
                 // if we left an AVRG, let the room know
                 if (rmgr != null && avrGameId != 0 && (game == null || game.gameId != avrGameId)) {
                     rmgr.occupantLeftAVRGame(memObj);
-                    
+
                     // Note we do not clear the MemberObject.avrGameId here because if the player
                     // has not chosen to leave the game (e.g. logged off and on again), we want to
                     // keep it around for the client to decide whether to rejoin
@@ -348,15 +348,14 @@ public class WorldGameRegistry
         }
         _moneyLogic.notifyCoinsEarned(memberId, deltaCoins);
     }
-    
-    public void awardCoins (ClientObject caller, int memberId, int gameId,
-        String gameName, int secondsPlayed, int amount, UserAction action)
+
+    // from interface GameServerProvider
+    public void awardCoins (ClientObject caller, int gameId, UserAction action, int amount)
     {
-        if (!checkCallerAccess(caller, "awardCoins(" + memberId + ", " + amount + ", " + gameId)) {
+        if (!checkCallerAccess(caller, "awardCoins(" + gameId + ", " + action + ", " + amount)) {
             return;
         }
-        _moneyLogic.awardCoins(memberId, amount, false, new ItemIdent(Game.GAME, gameId),
-            action, gameName, gameId, secondsPlayed);
+        _moneyLogic.awardCoins(action.memberId, amount, false, action);
     }
 
     // from interface GameServerProvider
@@ -653,7 +652,7 @@ public class WorldGameRegistry
     @Inject protected GameRepository _gameRepo;
     @Inject protected StatLogic _statLogic;
     @Inject protected MoneyLogic _moneyLogic;
-    
+
     /** The number of delegate game servers to be started. */
     protected static final int DELEGATE_GAME_SERVERS = 1;
 }

@@ -177,8 +177,9 @@ public class QuestDelegate extends PlaceManagerDelegate
                 if (payout > 0) {
                     // TODO: Pass the real minutesPlayed, I assume we need to do humanity
                     // assessment for avrgs as well
-                    _worldClient.awardCoins(player.getMemberId(), _gameId, _content.game.name,
-                        -1, payout, UserAction.COMPLETED_QUEST);
+                    UserAction action = UserAction.completedQuest(
+                        player.getMemberId(), _content.game.name, _gameId, -1);
+                    _worldClient.awardCoins(_gameId, action, payout);
                 }
 
                 // note that we played one game and awarded the specified flow

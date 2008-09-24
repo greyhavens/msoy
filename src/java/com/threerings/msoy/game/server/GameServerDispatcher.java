@@ -42,7 +42,7 @@ public class GameServerDispatcher extends InvocationDispatcher<GameServerMarshal
         switch (methodId) {
         case GameServerMarshaller.AWARD_COINS:
             ((GameServerProvider)provider).awardCoins(
-                source, ((Integer)args[0]).intValue(), ((Integer)args[1]).intValue(), (String)args[2], ((Integer)args[3]).intValue(), ((Integer)args[4]).intValue(), (UserAction)args[5]
+                source, ((Integer)args[0]).intValue(), (UserAction)args[1], ((Integer)args[2]).intValue()
             );
             return;
 

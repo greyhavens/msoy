@@ -22,7 +22,7 @@ public interface GameServerProvider extends InvocationProvider
     /**
      * Handles a {@link GameServerService#awardCoins} request.
      */
-    void awardCoins (ClientObject caller, int arg1, int arg2, String arg3, int arg4, int arg5, UserAction arg6);
+    void awardCoins (ClientObject caller, int arg1, UserAction arg2, int arg3);
 
     /**
      * Handles a {@link GameServerService#awardPrize} request.

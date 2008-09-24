@@ -18,7 +18,6 @@ import com.samskivert.util.StringUtil;
 
 import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.MediaDesc;
 
 import com.threerings.msoy.server.MsoyEventLogger;
@@ -300,10 +299,8 @@ public class CatalogServlet extends MsoyServiceServlet
         CatalogRecord record = repo.insertListing(
             listItem, originalItemId, pricing, salesTarget, currency, cost, now);
 
-        // record the listing action and charge the flow
-        UserActionDetails info = new UserActionDetails(
-            mrec.memberId, UserAction.LISTED_ITEM, repo.getItemType(), originalItemId);
-        _userActionRepo.logUserAction(info);
+        // note in the user action system that they listed an item
+        _userActionRepo.logUserAction(UserAction.listedItem(mrec.memberId));
 
         // publish to the member's feed if it's not hidden
         if (pricing != CatalogListing.PRICING_HIDDEN) {
@@ -426,11 +423,6 @@ public class CatalogServlet extends MsoyServiceServlet
         // update our catalog prototype item
         repo.updateOriginalItem(listItem);
 
-        // record the listing action
-        UserActionDetails info = new UserActionDetails(
-            mrec.memberId, UserAction.UPDATED_LISTING, repo.getItemType(), originalItemId);
-        _userActionRepo.logUserAction(info);
-
         // note that the listed item was updated
         _itemLogic.itemUpdated(oldListItem, listItem);
     }
@@ -476,11 +468,6 @@ public class CatalogServlet extends MsoyServiceServlet
         // now we can update the record
         repo.updatePricing(catalogId, pricing, salesTarget, currency, cost,
                            System.currentTimeMillis());
-
-        // record the update action
-        UserActionDetails info = new UserActionDetails(
-            mrec.memberId, UserAction.UPDATED_PRICING, itemType, catalogId);
-        _userActionRepo.logUserAction(info);
     }
 
     // from interface CatalogService

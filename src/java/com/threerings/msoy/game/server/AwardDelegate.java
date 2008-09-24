@@ -780,15 +780,13 @@ public class AwardDelegate extends RatingDelegate
             super.shouldRateGame();
     }
 
-    protected void payoutCoins (final int memberId, final int coinAward, int secondsPlayed)
+    protected void payoutCoins (int memberId, int coinAward, int secondsPlayed)
     {
-        if (coinAward <= 0) {
-            return;
+        if (coinAward > 0) {
+            UserAction action = UserAction.playedGame(
+                memberId, _content.game.name, _content.game.gameId, secondsPlayed);
+            _worldClient.awardCoins(_content.game.gameId, action, coinAward);
         }
-
-        _worldClient.awardCoins(
-            memberId, _content.game.gameId, _content.game.name, secondsPlayed,
-            coinAward, UserAction.PLAYED_GAME);
     }
 
     /**

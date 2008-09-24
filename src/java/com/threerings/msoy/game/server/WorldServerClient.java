@@ -143,15 +143,13 @@ public class WorldServerClient
             _gssvc.reportCoinAward(_client, memberId, deltaCoins);
         }
     }
-    
-    public void awardCoins (int memberId, int gameId, String gameName,
-        int secondsPlayed, int amount, UserAction action)
+
+    public void awardCoins (int gameId, UserAction action, int amount)
     {
         if (_gssvc == null) {
-            log.warning("Dropping award coins.", "memberId", memberId, "amount", amount, 
-                "gameId", gameId);
+            log.warning("Dropping coin award", "gameId", gameId, "action", action, "amount", amount);
         } else {
-            _gssvc.awardCoins(_client, memberId, gameId, gameName, secondsPlayed, amount, action);
+            _gssvc.awardCoins(_client, gameId, action, amount);
         }
     }
 

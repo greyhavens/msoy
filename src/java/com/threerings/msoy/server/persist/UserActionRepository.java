@@ -20,7 +20,7 @@ import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.util.IntIntMap;
 
-import com.threerings.msoy.data.UserActionDetails;
+import com.threerings.msoy.data.UserAction;
 import com.threerings.presents.annotation.BlockingThread;
 
 /**
@@ -40,13 +40,13 @@ public class UserActionRepository extends DepotRepository
     /**
      * Logs an action for a member with optional action-specific data.
      */
-    public void logUserAction (final UserActionDetails info)
+    public void logUserAction (final UserAction action)
     {
         final MemberActionLogRecord record = new MemberActionLogRecord();
-        record.memberId = info.memberId;
-        record.actionId = info.action.getNumber();
+        record.memberId = action.memberId;
+        record.actionId = action.type.getNumber();
         record.actionTime = new Timestamp(System.currentTimeMillis());
-        record.data = info.misc;
+        record.data = action.data;
         insert(record);
     }
 
