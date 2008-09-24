@@ -141,7 +141,7 @@ public class MemberRepository extends DepotRepository
             @Override
             public boolean runBeforeDefault ()
             {
-                return false; // run this migration after we've added our column
+                return false; // run this migration after we've updated MemberRecord
             }
         });
 
@@ -198,16 +198,6 @@ public class MemberRepository extends DepotRepository
                 return "MemberRecord -> MemberNameRecord";
             }
         });
-    }
-
-    @Override
-    protected void init ()
-        throws DatabaseException
-    {
-        super.init();
-
-        // Force our ReferralRecord->MemberRecord migration
-        load(MemberRecord.class, 1);
     }
 
     /**
