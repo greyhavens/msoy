@@ -41,16 +41,14 @@ public class FavoritesPanel extends HorizontalPanel
                 return type == itemType;
             }
             public String composeArgs (byte type) {
-                return Args.compose(new String[] { ShopPage.FAVORITES, ""+memberId, ""+type });
+                return Args.compose(ShopPage.FAVORITES, memberId, type);
             }
         }, true, null));
         add(WidgetUtil.makeShim(10, 10));
 
         ListingGrid faves = new ListingGrid(HEADER_HEIGHT) {
             @Override protected void displayPageFromClick (int page) {
-                Link.go(Pages.SHOP, Args.compose(new String[] {
-                            ShopPage.FAVORITES, ""+memberId, ""+itemType, ""+page
-                        }));
+                Link.go(Pages.SHOP, Args.compose(ShopPage.FAVORITES, memberId, itemType, page));
             }
             @Override protected String getEmptyMessage () {
                 return _msgs.noFavorites();

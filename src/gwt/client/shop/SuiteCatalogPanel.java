@@ -107,7 +107,7 @@ public class SuiteCatalogPanel extends SmartTable
                 return type == _curquery.itemType;
             }
             public String composeArgs (byte type) {
-                return Args.compose(new String[] { ShopPage.SUITE, ""+_gameId, ""+type });
+                return Args.compose(ShopPage.SUITE, _gameId, type);
             }
         }, _types, null));
     }

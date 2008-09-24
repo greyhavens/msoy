@@ -79,7 +79,7 @@ public class ItemPanel extends FlowPanel
         _contents = new PagedGrid<Item>(rows, COLUMNS) {
             @Override protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
-                Link.go(Pages.STUFF, Args.compose(new String[] { ""+_type, ""+page }));
+                Link.go(Pages.STUFF, Args.compose(_type, page));
             }
             @Override protected Widget createWidget (Item item) {
                 return new ItemEntry(item);

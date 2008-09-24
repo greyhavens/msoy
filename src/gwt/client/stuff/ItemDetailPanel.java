@@ -79,7 +79,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     public void itemListed (Item item, boolean updated)
     {
         // reload the page
-        Link.replace(Pages.STUFF, Args.compose("d", ""+_item.getType(), ""+_item.itemId));
+        Link.replace(Pages.STUFF, Args.compose("d", _item.getType(), _item.itemId));
     }
 
     // from interface ItemUsageListener
@@ -181,7 +181,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
             // if the item is listed, add a biggish UI for updating the listing and pricing
             if (catalogOriginal) {
-                String args = Args.compose("l", ""+_item.getType(), ""+_item.catalogId);
+                String args = Args.compose("l", _item.getType(), _item.catalogId);
                 _details.add(createTipLink(_msgs.detailUplistTip(), _msgs.detailViewListing(),
                                            Link.createListener(Pages.SHOP, args)));
 
@@ -261,8 +261,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         if (_giftBits != null) {
             _giftBits.clear();
             if (unused) {
-                String[] args = new String[] { "w", "i", ""+_item.getType(), ""+_item.itemId };
-                ClickListener onClick = Link.createListener(Pages.MAIL, Args.compose(args));
+                String args = Args.compose("w", "i", _item.getType(), _item.itemId);
+                ClickListener onClick = Link.createListener(Pages.MAIL, args);
                 _giftBits.add(createTipLink(_msgs.detailGiftTip(), _msgs.detailGift(), onClick));
             } else {
                 _giftBits.add(new Label(_msgs.detailGiftDisabled()));
@@ -323,8 +323,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 _detail.item = item;
 
                 // redisplay the item detail with the reverted version.
-                Link.replace(Pages.STUFF, Args.compose(new String[] {
-                            "d", "" + item.getType(), "" + item.itemId, "revert" }));
+                Link.replace(Pages.STUFF, Args.compose("d", item.getType(), item.itemId, "revert"));
                 return false;
             }
         };
