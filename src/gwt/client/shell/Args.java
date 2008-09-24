@@ -15,14 +15,14 @@ public class Args
      * Composes multiple arguments into a single string argument that can be properly handled by
      * the Args class.
      */
-    public static String compose (String[] args)
+    public static String compose (Object... args)
     {
         StringBuffer builder = new StringBuffer();
         for (int ii = 0; ii < args.length; ii++) {
             if (ii > 0) {
                 builder.append(ARG_SEP);
             }
-            builder.append(escape(args[ii]));
+            builder.append(escape(args[ii].toString()));
         }
         return builder.toString();
     }
@@ -41,30 +41,6 @@ public class Args
             builder.append(escape(args.get(ii).toString()));
         }
         return builder.toString();
-    }
-
-    /**
-     * Convenience function.
-     */
-    public static String compose (String action, int arg)
-    {
-        return compose(new String[] { action, ""+arg });
-    }
-
-    /**
-     * Convenience function.
-     */
-    public static String compose (String action, String arg)
-    {
-        return compose(new String[] { action, arg });
-    }
-
-    /**
-     * Convenience function.
-     */
-    public static String compose (String action, String arg1, String arg2)
-    {
-        return compose(new String[] { action, arg1, arg2 });
     }
 
     /**
