@@ -16,6 +16,7 @@ import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.data.all.MediaDesc;
@@ -87,7 +88,6 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                             }
                         );
                     } else {
-CShell.log("Saving: "+_galleryData);
                         _gallerysvc.updateGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
                             new MsoyCallback<Void>() {
                                 public void onSuccess (Void result) {
@@ -103,22 +103,58 @@ CShell.log("Saving: "+_galleryData);
         add(saveButton, 45, 350);
 
         // add drop panel for adding to and organizing this gallery
-        PickupDragController dragController = new PickupDragController(this, false);
+        final PickupDragController dragController = new PickupDragController(this, false);
         dragController.setBehaviorDragProxy(false);
         // dragController.setBehaviorMultipleSelection(true);
-        DropPanel<Photo> dropPanel = new DropPanel<Photo>(dragController) {
+        DropPanel<Photo> dropPanel = new DropPanel<Photo>(dragController,
+            new SimpleDropModel<Photo>(galleryData.photos)) {
             @Override protected Widget createWidget (Photo photo) {
-                return MediaUtil.createMediaView(photo.photoMedia, MediaDesc.THUMBNAIL_SIZE);
+                return MediaUtil.createMediaView(photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE);
             }
         };
         add(dropPanel, 225, 10);
-        dropPanel.setModel(new SimpleDropModel<Photo>(galleryData.photos));
 
         // show photos that the member owns
         _itemsvc.loadPhotos(new MsoyCallback<List<Photo>>() {
             public void onSuccess (List<Photo> result) {
                 // TODO display photos and allow them to be dropped into gallery
                 CShell.log("Loaded photos: "+result);
+                FlowPanel photoPanel = new FlowPanel();
+                photoPanel.addStyleName("Contents");
+                for (Photo photo : result) {
+                    PayloadWidget<Photo> payload = new PayloadWidget<Photo>(MediaUtil.createMediaView(
+                        photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE), photo);
+                    dragController.makeDraggable(payload);
+                    photoPanel.add(payload);
+                }
+                GalleryEditPanel.this.add(photoPanel, 10, 425);
+
+                /*
+                _photoGrid = new ItemGrid(Pages.PEOPLE, 1, 5) {
+                    @Override protected String getEmptyMessage () {
+                        return "Empty";
+                    }
+                    @Override public String getTitle () {
+                        return "My Photos";
+                    }
+                    @Override protected Widget createWidget (Item item) {
+                        if (item instanceof Photo) {
+                            Photo photo = (Photo) item;
+                            return new PayloadWidget<Photo>(MediaUtil.createMediaView(
+                                photo.photoMedia, MediaDesc.THUMBNAIL_SIZE), photo);
+                        }
+                        return null;
+                    }
+                };
+                _photoGrid.setPrefixArgs(new String[]{EDIT_ACTION, ""+_galleryData.gallery.galleryId});
+                List<Item> list = new ArrayList<Item>(result.size());
+                for (Photo photo : result) {
+                    list.add(photo);
+                }
+                // TODO set page
+                GalleryEditPanel.this.add(_photoGrid, 10, 425);
+                _photoGrid.setModel(new SimpleDataModel<Item>(list), 0);
+                */
             }
         });
     }

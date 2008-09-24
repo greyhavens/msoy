@@ -18,7 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class DropPanel<T> extends FlowPanel
 {
-    public DropPanel (PickupDragController dragController)
+    public DropPanel (PickupDragController dragController, DropModel<T> model)
     {
         addStyleName("dropPanel");
 
@@ -43,20 +43,13 @@ public abstract class DropPanel<T> extends FlowPanel
             }
         };
         _dragController.registerDropController(_dropController);
-    }
 
-    /**
-     * Creates widgets for the given contents and adds them to the drop panel.
-     */
-    public void setModel (DropModel<T> model)
-    {
-        clear();
+        // add existing content
         _model = model;
         for (T element : _model.getContents()) {
             add(createPayloadWidget(element));
         }
     }
-
 
     public boolean canDrop (Widget widget)
     {

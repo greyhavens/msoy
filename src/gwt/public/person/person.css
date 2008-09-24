@@ -178,7 +178,7 @@
 }
 
 .galleryEditPanel .dropPanel {
-  background: #AACCFF;
+  background: #BBDDFF;
   width: 425px;
   height: 375px;
   padding: 5px;
@@ -199,11 +199,16 @@
 
 .galleryEditPanel .dropPanel .payload  IMG {
   display: inline;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .dragdrop-movable-panel DIV,
 .dragdrop-movable-panel IMG {
   filter: alpha(opacity = 60);
   opacity: 0.6;
+}
+
+.galleryEditPanel .Contents {
+  height: 80px;
+  width: 625px;
 }
