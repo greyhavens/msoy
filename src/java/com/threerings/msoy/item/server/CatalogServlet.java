@@ -161,6 +161,12 @@ public class CatalogServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
 
+        // make sure they can't cross-buy their own item
+        if ((mrec.memberId == listing.item.creatorId) && (listing.currency != currency) &&
+                (authedCost != 0)) {
+            throw new ServiceException(ItemCodes.E_CANT_SELF_CROSSBUY);
+        }
+
         // update money as appropriate
         MoneyResult result;
         try {
