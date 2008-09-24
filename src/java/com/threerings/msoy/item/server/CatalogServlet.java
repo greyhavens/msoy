@@ -222,13 +222,18 @@ public class CatalogServlet extends MsoyServiceServlet
                          Currency currency, int cost)
         throws ServiceException
     {
+        if (cost < 0) {
+            log.warning("Requested to list an item for negative cost", "item", item);
+            throw new ServiceException(ItemCodes.INTERNAL_ERROR);
+        }
+
         MemberRecord mrec = requireAuthedUser();
 
         // load a copy of the original item
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
         ItemRecord originalItem = repo.loadOriginalItem(item.itemId);
         if (originalItem == null) {
-            log.warning("Can't find item to list [item= " + item + "]");
+            log.warning("Can't find item to list", "item", item);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
@@ -238,8 +243,7 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // make sure this item is not already listed
         if (originalItem.catalogId != 0) {
-            log.warning("Requested to list already listed item [who=" + mrec.who() +
-                        ", item=" + item + "].");
+            log.warning("Requested to list already listed item", "who", mrec.who(), "item", item);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
 
@@ -257,7 +261,7 @@ public class CatalogServlet extends MsoyServiceServlet
             ItemRecord suiteMaster = mrepo.loadOriginalItem(
                 ((SubItemRecord)originalItem).suiteId);
             if (suiteMaster == null) {
-                log.warning("Failed to locate suite master item [item=" + item + "].");
+                log.warning("Failed to locate suite master item", "item", item);
                 throw new ServiceException(ItemCodes.INTERNAL_ERROR);
             }
             if (suiteMaster.catalogId == 0) {
