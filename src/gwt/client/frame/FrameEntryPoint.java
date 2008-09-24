@@ -138,9 +138,11 @@ public class FrameEntryPoint
     {
         _currentToken = token;
 
+        String pagename = "";
         Pages page;
         try {
-            page = Enum.valueOf(Pages.class, token.split("-")[0].toUpperCase());
+            pagename = token.split("-")[0];
+            page = Enum.valueOf(Pages.class, pagename.toUpperCase());
         } catch (Exception e) {
             page = getLandingPage();
         }
@@ -173,25 +175,22 @@ public class FrameEntryPoint
         String vector = null;
         VisitorInfo info = (CShell.visitor != null) ? CShell.visitor : VisitorCookie.get();
 
-        // pull out the new vector from the URL. it will be of the form: "vec_VECTOR" or
-        // "vec_VECTOR_VISITORID", and has to be the last element on the URL
-        int vecIdx = args.indexOf("vec");
-        if (vecIdx != -1) {
-            // remember the vector
-            vector = args.get(vecIdx + 1, null);
+        // pull out the vector and visitor id from the URL.
+        // they will be of the form: "vec_VECTOR" and "vis_VISITORID" respectively.
+        ExtractedParam afterVector = extractParams("vec", pagename, token, args);
+        if (afterVector != null) {
+            vector = afterVector.value;
+            token = afterVector.newToken;
+            args = afterVector.newArgs;
+        }
 
-            // apply the visitor id, if we don't have an authoritative one from the server
-            String visitorId = args.get(vecIdx + 2, null);
-            if (visitorId != null && (info == null || !info.isAuthoritative)) {
-                info = new VisitorInfo(visitorId, false);
-                VisitorCookie.save(info, true);
+        ExtractedParam afterVisitor = extractParams("vid", pagename, token, args);
+        if (afterVisitor != null) {
+            if (info == null || !info.isAuthoritative) { // only override client-side info
+                info = new VisitorInfo(afterVisitor.value, false);
             }
-
-            // remove the "vec" tag and its values
-            int end = Math.min(args.getArgCount(), vecIdx + 3);
-            token = Args.compose(args.remove(vecIdx, end));
-            args = new Args();
-            args.setToken(token);
+            token = afterVisitor.newToken;
+            args = afterVisitor.newArgs;
         }
 
         // START LEGACY CODE - to be removed after all of our ads and embeds are transitioned
@@ -223,8 +222,10 @@ public class FrameEntryPoint
             final VisitorInfo constInfo = info;
             _membersvc.trackVectorAssociation(info, vector, new AsyncCallback<Void>() {
                 public void onSuccess (Void result) {
-                    CShell.log("Saved vector association for " + constInfo.id);
-                    VisitorCookie.save(constInfo, true);
+                    CShell.log("Saved vector association for " + constInfo);
+                    if (! constInfo.isAuthoritative) {
+                        VisitorCookie.save(constInfo, true);
+                    }
                 }
                 public void onFailure (Throwable caught) {
                     CShell.log("Failed to send vector creation to server.", caught);
@@ -433,6 +434,32 @@ public class FrameEntryPoint
     public Invitation getActiveInvitation ()
     {
         return _activeInvite;
+    }
+
+    public static class ExtractedParam
+    {
+        public String value;
+        public String newToken;
+        public Args newArgs;
+    }
+
+    protected ExtractedParam extractParams (String key, String pagename, String token, Args args)
+    {
+        int idx = args.indexOf(key);
+
+        if (idx == -1 || args.getArgCount() < idx + 2) {
+            return null; // we have no key, or no value
+        }
+
+        ExtractedParam result = new ExtractedParam();
+
+        // get the result
+        result.value = args.get(idx + 1, null);
+        // remove the key tag and its value from the URL
+        String shortened = Args.compose(args.remove(idx, idx + 2));
+        result.newArgs = Args.fromToken(shortened);
+        result.newToken = pagename + "-" + shortened;
+        return result;
     }
 
     protected void setPage (Pages page)

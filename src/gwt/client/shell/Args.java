@@ -44,6 +44,16 @@ public class Args
     }
 
     /**
+     * Convenience function.
+     */
+    public static Args fromToken (String token)
+    {
+        Args args = new Args();
+        args.setToken(token);
+        return args;
+    }
+
+    /**
      * Returns the number of arguments available.
      */
     public int getArgCount ()
