@@ -35,6 +35,7 @@ import com.threerings.msoy.data.StatType;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.MsoyAuthenticator;
@@ -470,6 +471,9 @@ public class WebUserServlet extends MsoyServiceServlet
         data.flow = money.coins;
         data.gold = money.bars;
         data.level = mrec.level;
+
+        // load up their visitor info
+        data.visitor = new VisitorInfo(mrec.visitorId, true);
 
         // load up their new mail count
         try {

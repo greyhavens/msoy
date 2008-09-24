@@ -4,6 +4,7 @@
 package com.threerings.msoy.server;
 
 import java.io.File;
+import java.lang.reflect.Field;
 
 import com.google.inject.Singleton;
 
@@ -13,6 +14,7 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserActionDetails;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
 
 import com.threerings.panopticon.client.net.EventLogger;
@@ -46,8 +48,8 @@ public class MsoyEventLogger
         if (!StringUtil.isBlank(host) && port > 0) {
             try {
                 final String eventstore = "eventspool_" + ident;
-                EventLoggerConfig config = 
-                    new EventLoggerConfig(host, port, ServerConfig.eventLogUsername, 
+                EventLoggerConfig config =
+                    new EventLoggerConfig(host, port, ServerConfig.eventLogUsername,
                                           ServerConfig.eventLogPassword, eventstore);
 
                 // if our spool directory is not an absolute path, prefix it with the server root
@@ -56,6 +58,9 @@ public class MsoyEventLogger
                     spoolDir = new File(ServerConfig.serverRoot, ServerConfig.eventLogSpoolDir);
                 }
                 config.setPersistPath(spoolDir.getAbsolutePath());
+
+                // do we want local debug?
+                _debugDisplayEnabled = ServerConfig.eventLogDebugDisplay;
 
                 log.info("Events logged remotely to: " + host + ":" + port);
                 _remote = EventLoggerFactory.createLogger(config);
@@ -150,7 +155,7 @@ public class MsoyEventLogger
     }
 
     public void roomLeft (
-        int playerId, int sceneId, boolean isWhirled, int secondsInRoom, 
+        int playerId, int sceneId, boolean isWhirled, int secondsInRoom,
         int occupantsLeft, String tracker)
     {
         post(new MsoyEvents.RoomExit(
@@ -158,20 +163,20 @@ public class MsoyEventLogger
     }
 
     public void avrgLeft (
-        int playerId, int gameId, int seconds, int playersLeft, String tracker) 
+        int playerId, int gameId, int seconds, int playersLeft, String tracker)
     {
         post(new MsoyEvents.AVRGExit(playerId, gameId, seconds, playersLeft, tracker));
     }
 
     public void gameLeft (
-        int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer, 
-        String tracker) 
+        int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer,
+        String tracker)
     {
         post(new MsoyEvents.GameExit(playerId, gameGenre, gameId, seconds, multiplayer, tracker));
     }
 
     public void gamePlayed (
-        int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId) 
+        int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId)
     {
         post(new MsoyEvents.GamePlayed(
             gameGenre, gameId, itemId, payout, secondsPlayed, playerId));
@@ -197,7 +202,8 @@ public class MsoyEventLogger
         post(new MsoyEvents.InviteViewed(inviteId));
     }
 
-    public void referralCreated (ReferralInfo info) 
+    // @Deprecated
+    public void referralCreated (ReferralInfo info)
     {
         if (info != null) {
             post(new MsoyEvents.ReferralCreated(
@@ -206,7 +212,17 @@ public class MsoyEventLogger
             post(new MsoyEvents.ReferralCreated());
         }
     }
-    
+
+    public void referralCreated (VisitorInfo info, String vector)
+    {
+        if (info != null) {
+            post(new MsoyEvents.ReferralCreated("", vector, "", info.id));
+        } else {
+            log.warning("Unexpected null VisitorInfo for vector: " + vector);
+            post(new MsoyEvents.ReferralCreated());
+        }
+    }
+
     public void accountCreated (int newMemberId, String inviteId, String tracker)
     {
         post(new MsoyEvents.AccountCreated(newMemberId, inviteId, tracker));
@@ -255,7 +271,7 @@ public class MsoyEventLogger
     {
         post(new MsoyEvents.TestAction(tracker, actionName, testName, abTestGroup));
     }
-    
+
     /** Posts a log message to the appropriate place. */
     protected void post (MsoyEvent message)
     {
@@ -266,7 +282,37 @@ public class MsoyEventLogger
         if (_remote != null) {
             _remote.log(message);
         }
+
+        // display, perhaps
+        if (_debugDisplayEnabled) {
+            dumpMessage(message);
+        }
     }
+
+    /** Dump a message to logs. */
+    protected void dumpMessage (MsoyEvent message)
+    {
+        StringBuffer sb = new StringBuffer();
+        sb.append(message.getClass().getSimpleName());
+        sb.append(" [ ");
+
+        for (Field field : message.getClass().getFields()) {
+            sb.append(field.getName());
+            sb.append("=");
+            try {
+                sb.append(field.get(message).toString());
+            } catch (Exception e) {
+                // skip this one
+            }
+            sb.append(" ");
+        }
+        sb.append("]");
+
+        log.info("MsoyEventLogger posting event: " + sb.toString());
+    }
+
+    /** Should we display debug info about what's being logged? */
+    protected boolean _debugDisplayEnabled;
 
     /** The connection via which we deliver our log messages. */
     protected EventLogger _remote;

@@ -29,6 +29,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
@@ -45,6 +46,7 @@ import client.shell.Pages;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
+import client.shell.VisitorCookie;
 import client.ui.BorderedDialog;
 import client.util.ArrayUtil;
 import client.util.FlashClients;
@@ -168,14 +170,40 @@ public class FrameEntryPoint
             return;
         }
 
+        String vector = null;
+        VisitorInfo info = (CShell.visitor != null) ? CShell.visitor : VisitorCookie.get();
+
+        // pull out the new vector from the URL. it will be of the form: "vec_VECTOR" or
+        // "vec_VECTOR_VISITORID", and has to be the last element on the URL
+        int vecIdx = args.indexOf("vec");
+        if (vecIdx != -1) {
+            // remember the vector
+            vector = args.get(vecIdx + 1, null);
+
+            // apply the visitor id, if we don't have an authoritative one from the server
+            String visitorId = args.get(vecIdx + 2, null);
+            if (visitorId != null && (info == null || !info.isAuthoritative)) {
+                info = new VisitorInfo(visitorId, false);
+                VisitorCookie.save(info, true);
+            }
+
+            // remove the "vec" tag and its values
+            int end = Math.min(args.getArgCount(), vecIdx + 3);
+            token = Args.compose(args.remove(vecIdx, end));
+            args = new Args();
+            args.setToken(token);
+        }
+
+        // START LEGACY CODE - to be removed after all of our ads and embeds are transitioned
+        //
         // pull the affiliate id out of the URL. it will be of the form: "aid_A_V_C", consisting of
         // three components: the affiliate ID, the entry vector ID, and the creative (ad) ID.
         int aidIdx = args.indexOf("aid");
         int lastIdx = aidIdx + 3;
         if (aidIdx != -1 && args.getArgCount() > lastIdx) {
-            String affiliate = args.get(aidIdx + 1, "");
-            String vector = args.get(aidIdx + 2, "");
-            String creative = args.get(aidIdx + 3, "");
+            String aff = args.get(aidIdx + 1, "");
+            String vec = args.get(aidIdx + 2, "");
+            String cre = args.get(aidIdx + 3, "");
 
             // remove the "aid" tag and its three values
             token = Args.compose(args.remove(aidIdx, aidIdx + 4));
@@ -183,8 +211,26 @@ public class FrameEntryPoint
             args.setToken(token);
 
             // save our tracking info, but don't overwrite old values
-            maybeCreateReferral(affiliate, vector, creative);
-        } 
+            maybeCreateReferral(aff, vec, cre);
+
+            // save our info
+            vector = aff + ":" + vec + ":" + cre;
+        }
+        // END LEGACY CODE
+
+        // if we got a new vector from the URL, record it in Panopticon
+        if (vector != null) {
+            final VisitorInfo constInfo = info;
+            _membersvc.trackVectorAssociation(info, vector, new AsyncCallback<Void>() {
+                public void onSuccess (Void result) {
+                    CShell.log("Saved vector association for " + constInfo.id);
+                    VisitorCookie.save(constInfo, true);
+                }
+                public void onFailure (Throwable caught) {
+                    CShell.log("Failed to send vector creation to server.", caught);
+                }
+            });
+        }
 
         // if we still don't have a tracking cookie, try to manufacture one from the HTTP Referer
         // header, which the server should have saved for us.
@@ -195,7 +241,7 @@ public class FrameEntryPoint
             } else {
                 maybeCreateReferral("", "", "");
             }
-        }  
+        }
 
         // recreate the page token which we'll pass through to the page (or if it's being loaded
         // for the first time, it will request in a moment with a call to getPageToken)
@@ -733,6 +779,7 @@ public class FrameEntryPoint
      * with the supplied referral info and a brand new tracking number.
      * Also tells the server to log this as an event.
      */
+    // FIXME ROBERT: delete me
     protected void maybeCreateReferral (String affiliate, String vector, String creative)
     {
         if (! TrackingCookie.exists()) {

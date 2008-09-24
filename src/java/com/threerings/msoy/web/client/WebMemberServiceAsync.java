@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
@@ -79,5 +80,12 @@ public interface WebMemberServiceAsync
     /**
      * The asynchronous version of {@link WebMemberService#trackReferral}.
      */
+    // @Deprecated
     void trackReferralCreation (ReferralInfo info, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of
+     * {@link WebMemberService#trackVectorAssociation(VisitorInfo, String)}.
+     */
+    void trackVectorAssociation (VisitorInfo info, String vector, AsyncCallback<Void> callback);
 }

@@ -14,6 +14,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.SessionData;
@@ -102,6 +103,10 @@ public class Session
         // fill in our global creds info
         CShell.creds = data.creds;
 
+        // we're logged in! clear out any leftover cookie, and load up visitor info from the server
+        VisitorCookie.clear();
+        CShell.visitor = data.visitor;
+
         // let our observers know that we've just logged on
         for (Observer observer : _observers) {
             try {
@@ -123,6 +128,17 @@ public class Session
 
         // clear out our global creds info
         CShell.creds = null;
+
+        // we're logged out, or maybe we're just a guest player.
+        // if we don't already have a visitor token, create a brand new shiny one
+        if (! VisitorCookie.exists()) {
+            VisitorInfo info = new VisitorInfo();
+            VisitorCookie.save(info, false);
+            CShell.visitor = info;
+        } else {
+            // we already have one, just load it back in
+            CShell.visitor = VisitorCookie.get();
+        }
 
         // let our observers know that we've just logged off
         for (Observer observer : _observers) {

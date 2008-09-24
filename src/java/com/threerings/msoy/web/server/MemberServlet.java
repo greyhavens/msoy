@@ -13,6 +13,7 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
 import com.threerings.msoy.server.persist.InvitationRecord;
@@ -177,9 +178,17 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
+    @Deprecated
     public void trackReferralCreation(ReferralInfo info)
     {
         _eventLog.referralCreated(info);
+    }
+
+    // from WebMemberService
+    public void trackVectorAssociation (VisitorInfo info, String vector)
+        throws ServiceException
+    {
+        _eventLog.referralCreated(info, vector);
     }
 
     // our dependencies

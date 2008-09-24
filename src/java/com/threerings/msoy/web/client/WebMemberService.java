@@ -10,6 +10,7 @@ import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.MemberCard;
@@ -107,6 +108,13 @@ public interface WebMemberService extends RemoteService
     /**
      * Tracks the creation of a new referral info structure, for a new visitor.
      */
+    @Deprecated
     void trackReferralCreation (ReferralInfo info)
+        throws ServiceException;
+
+    /**
+     * Records that a new entry vector has been recorded.
+     */
+    void trackVectorAssociation (VisitorInfo info, String vector)
         throws ServiceException;
 }

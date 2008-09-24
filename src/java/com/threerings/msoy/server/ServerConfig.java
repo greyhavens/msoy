@@ -97,6 +97,9 @@ public class ServerConfig
     /** Event logging server spooling directory. */
     public static String eventLogSpoolDir;
 
+    /** True if we want to display events in the log files as well. */
+    public static boolean eventLogDebugDisplay;
+
     /** The port on which we listen to socket policy requests. */
     public static int socketPolicyPort;
 
@@ -338,6 +341,7 @@ public class ServerConfig
         eventLogUsername = config.getValue("event_log_username", "");
         eventLogPassword = config.getValue("event_log_password", "");
         eventLogSpoolDir = config.getValue("event_log_spool_dir", "");
+        eventLogDebugDisplay = config.getValue("event_log_debug", false);
         recaptchaPublicKey = config.getValue("recaptcha_public", "");
         recaptchaPrivateKey = config.getValue("recaptcha_private", "");
         bureauSharedSecret = config.getValue("bureau_secret", "");

@@ -4,7 +4,9 @@
 package com.threerings.msoy.server.persist;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
@@ -20,6 +22,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.EntityMigration;
@@ -65,6 +68,7 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
 import com.threerings.msoy.web.data.MemberCard;
@@ -94,6 +98,51 @@ public class MemberRepository extends DepotRepository
         ctx.registerMigration(MemberRecord.class,
             new EntityMigration.Rename(23, "invitingFriendId", MemberRecord.AFFILIATE_MEMBER_ID));
         ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(25, "blingAffiliate"));
+
+        // First, load up the member record, which will add our new column
+        load(MemberRecord.class, 1);
+        // Now convert existing tracking numbers from the ReferralRecord, or create new ones
+        // for those members who didn't get their tracking numbers yet.
+        ctx.registerMigration(ReferralRecord.class, new EntityMigration(2) {
+            @Override
+            public int invoke (Connection conn, DatabaseLiaison liaison)
+                throws SQLException
+            {
+                int converted = 0, created = 0;
+
+                // first, copy all referral trackers over to member records
+                List<ReferralRecord> todos = findAll(ReferralRecord.class);
+                for (ReferralRecord referral : todos) {
+                    final String visitorId = VisitorInfo.normalizeVisitorId(referral.tracker);
+                    updatePartial(MemberRecord.class, referral.memberId,
+                        MemberRecord.VISITOR_ID, visitorId);
+                    if (++converted % 100 == 0) {
+                        log.info("ReferralRecord conversion: " + converted + " processed...");
+                    }
+                }
+
+                // now fill in all missing trackers
+                List<MemberRecord> missing = findAll(
+                    MemberRecord.class, new Where(
+                        new Conditionals.IsNull(MemberRecord.VISITOR_ID_C)));
+
+                for (MemberRecord member : missing) {
+                    // default visitorId will be based on registration time
+                    String visitorId = VisitorInfo.timestampToVisitorId(member.created);
+                    updatePartial(MemberRecord.class, member.memberId,
+                        MemberRecord.VISITOR_ID, visitorId);
+                    if (++created % 100 == 0) {
+                        log.info("VisitorID creation: " + converted + " processed...");
+                    }
+                }
+
+                log.info(String.format("Converted %d old ReferralRecords, created %d new ones",
+                    converted, created));
+                return converted + created;
+            }
+        });
+        // ... and force the migration right away.
+        load(ReferralRecord.class, 1);
 
         // Convert existing fulfilled InvitationRecords into AffiliateRecords
         ctx.registerMigration(InvitationRecord.class, new EntityMigration(5) {

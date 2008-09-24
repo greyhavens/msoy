@@ -18,7 +18,7 @@ import com.threerings.io.Streamable;
 public class VisitorInfo
     implements Streamable
 {
-    /** Creates a new, unique visitor info. */
+    /** Creates a new, not authoritative visitor info. */
     public VisitorInfo ()
     {
         // take current system time in milliseconds, shift left by eight bits,
@@ -31,20 +31,26 @@ public class VisitorInfo
         var rand :Number = Math.floor(Math.random() * 256);
         var total :Number = now + rand;
         this.tracker = total.toString(16);
+        this.isAuthoritative = false;
     }
 
     /** Creates a new instance with the given tracking id. */
-    public VisitorInfo (tracker :String)
+    public VisitorInfo (tracker :String, isAuthoritative :Boolean)
     {
         this.tracker = tracker;
+        this.isAuthoritative = isAuthoritative;
     }
 
     /** Player's tracking number, used to assign them to test groups. */
     public var tracker :String;
 
+    /** Did this visitor info come from the server during a login? */
+    public var isAuthoritative :Boolean;
+
     public function toString() :String
     {
-        return "VisitorInfo [" + tracker  + "]";
+        var auth :String = isAuthoritative ? " (server)" : " (client)";
+        return "VisitorInfo [" + tracker + auth + "]";
     }
 
     // from interface Streamable

@@ -199,6 +199,13 @@ public class MemberRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #level} field. */
     public static final ColumnExp LEVEL_C =
         new ColumnExp(MemberRecord.class, LEVEL);
+
+    /** The column identifier for the {@link #visitorId} field. */
+    public static final String VISITOR_ID = "visitorId";
+
+    /** The qualified column identifier for the {@link #visitorId} field. */
+    public static final ColumnExp VISITOR_ID_C =
+        new ColumnExp(MemberRecord.class, VISITOR_ID);
     // AUTO-GENERATED: FIELDS END
 
     /** The identifer for the full text index on the display name. */
@@ -206,7 +213,7 @@ public class MemberRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 25;
+    public static final int SCHEMA_VERSION = 26;
 
     /** This member's unique id. */
     @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -260,6 +267,10 @@ public class MemberRecord extends PersistentRecord
     /** The currently reported level of this user. */
     @Column(defaultValue="1")
     public int level = 1;
+
+    /** Visitor ID of this player, used to correlate their actions before they registered. */
+    @Column(nullable=true, defaultValue="")
+    public String visitorId;
 
     /** A blank constructor used when loading records from the database. */
     public MemberRecord ()
