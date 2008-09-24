@@ -23,6 +23,7 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.EntityMigration;
+import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.jdbc.depot.Key;
@@ -95,7 +96,7 @@ public class MemberRepository extends DepotRepository
         ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(25, "blingAffiliate"));
 
         // Convert existing fulfilled InvitationRecords into AffiliateRecords
-        ctx.registerMigration(InvitationRecord.class, new EntityMigration(4) {
+        ctx.registerMigration(InvitationRecord.class, new EntityMigration(5) {
             @Override public int invoke (
                 java.sql.Connection conn, com.samskivert.jdbc.DatabaseLiaison liaison)
                 throws java.sql.SQLException
@@ -107,7 +108,12 @@ public class MemberRepository extends DepotRepository
                         new Conditionals.NotEquals(InvitationRecord.INVITEE_ID_C, 0))));
                 // store 'em as affiliate records
                 for (InvitationRecord rec : invites) {
-                    setAffiliate(rec.inviteeId, String.valueOf(rec.inviterId));
+                    try {
+                        setAffiliate(rec.inviteeId, String.valueOf(rec.inviterId));
+                    } catch (DatabaseException de) {
+                        log.warning("Unable to insert affiliate",
+                            "invitee", rec.inviteeId, "inviter", rec.inviterId, de);
+                    }
                 }
                 return invites.size();
             }

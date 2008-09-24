@@ -71,7 +71,7 @@ public class InvitationRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /** The email address we're sending this invitation to. */
     public String inviteeEmail;
