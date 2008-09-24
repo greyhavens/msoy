@@ -35,7 +35,6 @@ import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
-import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
@@ -557,15 +556,15 @@ public class MsoyAuthenticator extends Authenticator
             MsoySceneModel.OWNER_TYPE_MEMBER, mrec.memberId, name, null, true);
         _memberRepo.setHomeSceneId(mrec.memberId, mrec.homeSceneId);
 
-        // emit a created_account action which will grant them some starting flow
-        _moneyLogic.awardCoins(mrec.memberId, 0, 0, null, CoinAwards.CREATED_ACCOUNT, false,
-            UserAction.CREATED_ACCOUNT);
+        // create their money account, granting them some starting flow
+        _moneyLogic.createMoneyAccount(mrec.memberId, CoinAwards.CREATED_ACCOUNT);
 
         // store their affiliate, if any (may also be the inviter's memberId)
         if (affiliate != null) {
             _memberRepo.setAffiliate(mrec.memberId, affiliate);
         }
 
+        // TODO
         // if they gave us a valid referral info, store it; otherwise it'll be filled in later
         if (referral != null) {
             _memberRepo.setReferral(mrec.memberId, referral);

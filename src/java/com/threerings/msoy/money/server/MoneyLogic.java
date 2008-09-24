@@ -79,12 +79,37 @@ public class MoneyLogic
         _exchange = exchange;
         _blingDistributor = blingDistributor;
     }
+
+    /**
+     * Create the a money account for the specified user.
+     */
+    public void createMoneyAccount (int memberId, int creationAwardCoins)
+    {
+        _repo.create(memberId);
+        if (creationAwardCoins > 0) {
+            awardCoins(memberId, creationAwardCoins, false, null, UserAction.CREATED_ACCOUNT);
+        }
+    }
+
+    /**
+     * Retrieves the current account balance (coins, bars, and bling) for the given member.
+     *
+     * @param memberId ID of the member to retrieve money for.
+     * @return The money in their account.
+     */
+    public MemberMoney getMoneyFor (int memberId)
+    {
+        Preconditions.checkArgument(!MemberName.isGuest(memberId),
+            "Cannot retrieve money info for guests.");
+
+        return _repo.load(memberId).getMemberMoney();
+    }
     
     /**
      * Indicates that a member has earned some number of coins.  This will notify interested
      * clients that coins were earned, without actually awarding the coins yet.  Future calls to
-     * {@link #awardCoins(int, int, int, ItemIdent, int, String, UserAction, boolean)} to award
-     * the coins must use "true" for wasNotified to indicate the user was already notified of this.
+     * {@link #awardCoins(int, int, boolean, ItemIdent, UserAction)} to award
+     * the coins must use "false" for notify to indicate the user was already notified of this.
      * 
      * @param memberId ID of the member who earned coins.
      * @param amount Number of coins earned.
@@ -100,22 +125,16 @@ public class MoneyLogic
      * receive bling when people play their games.
      *
      * @param memberId ID of the member to receive the coins.
-     * @param creatorId ID of the creator of the item that caused the coins to be awarded.
-     * @param affiliateId ID of the affiliate associated with the transaction. Zero if no
-     * affiliate.
-     * @param item Optional item that coins were awarded for (i.e. a game)
      * @param amount Number of coins to be awarded.
-     * @param description Description that will appear in the user's transaction history.
-     * @param userAction The user action that caused coins to be awarded.
-     * @param wasNotified If true, an earlier call to {@link #notifyCoinsEarned(int, int)} was
+     * @param notify If false, an earlier call to {@link #notifyCoinsEarned(int, int)} was
      * made, so this call should not notify the user.
-     * @return Result of the money operation.  The recipient of the coins, the creator, and the 
-     * affiliate will all be included, if applicable.
+     * @param item Optional item that coins were awarded for (i.e. a game)
+     * @param userAction The user action that caused coins to be awarded.
+     * @return a MoneyTransaction
      */
-    @Retry(exception=StaleDataException.class)
-    public MoneyResult awardCoins (
-        int memberId, int creatorId, int affiliateId, ItemIdent item, int amount,
-        boolean wasNotified, UserAction userAction, Object... args)
+    public MoneyTransaction awardCoins (
+        int memberId, int amount, boolean notify, ItemIdent item, UserAction userAction,
+        Object... args)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Cannot award coins to guests.");
         Preconditions.checkArgument(amount >= 0, "amount is invalid: %d", amount);
@@ -125,10 +144,11 @@ public class MoneyLogic
 
         final String description = MessageBundle.tcompose(userAction.getMessage(), args);
 
-        MemberAccountRecord account = _repo.getAccountById(memberId);
-        final MoneyTransactionRecord history = account.awardCoins(amount, item, description);
-        _repo.saveAccount(account);
-        _repo.addTransaction(history);
+        MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
+            memberId, Currency.COINS, amount, TransactionType.AWARD, description, item, 0);
+        if (notify) {
+            _nodeActions.moneyUpdated(tx);
+        }
 
         final UserActionDetails info = logUserAction(memberId, 0, userAction,
             // Handle the mystical case where games need to be logged specially for
@@ -136,14 +156,9 @@ public class MoneyLogic
             // TODO: Handle AVRG's COMPLETED_QUEST here too?
             (userAction == UserAction.PLAYED_GAME) ? args[1].toString() + args[2].toString() :
             description, item);
-        logInPanopticon(info, Currency.COINS, amount, account);
-
-        if (!wasNotified) {
-            _nodeActions.moneyUpdated(history);
-        }
+        logInPanopticon(info, tx);
         
-        return new MoneyResult(account.getMemberMoney(), null, null, 
-            history.toMoneyTransaction(), null, null);
+        return tx.toMoneyTransaction();
     }
 
     /**
@@ -152,26 +167,24 @@ public class MoneyLogic
      *
      * @param memberId ID of the member receiving bars.
      * @param numBars Number of bars to add to their account.
-     * @return The money the member now has in their account.
+     * @return a result Transaction
      */
-    @Retry(exception=StaleDataException.class)
-    public MoneyResult buyBars (final int memberId, final int numBars, final String description)
+    public MoneyTransaction boughtBars (int memberId, int numBars, String description)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy bars.");
         Preconditions.checkArgument(numBars >= 0, "numBars is invalid: %d", numBars);
 
-        MemberAccountRecord account = _repo.getAccountById(memberId);
-        final MoneyTransactionRecord history = account.buyBars(numBars, description);
-        _repo.saveAccount(account);
-        _repo.addTransaction(history);
+        // TODO: description should be filled in here... wtf external entity knows how
+        // to make a sensible description for internal money juju?
+        MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
+            memberId, Currency.BARS, numBars, TransactionType.BARS_BOUGHT,
+            description, null, 0);
+        _nodeActions.moneyUpdated(tx);
 
         logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS,
-            history.description);
+            description);
 
-        _nodeActions.moneyUpdated(history);
-        
-        return new MoneyResult(account.getMemberMoney(), null, null, 
-            history.toMoneyTransaction(), null, null);
+        return tx.toMoneyTransaction();
     }
 
     /**
@@ -219,133 +232,97 @@ public class MoneyLogic
         // than what the user authorized. Good for them.
         int buyCost = quote.getAmount(buyCurrency);
 
-        // Get buyer account...
-        MemberAccountRecord buyer = _repo.getAccountById(buyerId);
+        // deduct from the buyer (but don't yet save the transaction)
+        // (This will throw a NotEnoughMoneyException if applicable)
+        MoneyTransactionRecord buyerTx = _repo.deduct(
+            buyerId, buyCurrency, buyCost, buyerRec.isSupport());
+        try {
+            // TODO: right here: effect the purchase of the item
 
-        // see if the user can afford it, or if we'll let them have it for free (support+)
-        boolean magicFreeItem;
-        if (buyCost > buyer.getAmount(buyCurrency)) {
-            magicFreeItem = buyerRec.isSupport();
-            if (!magicFreeItem) {
-                throw new NotEnoughMoneyException(
-                    buyerId, buyCurrency, buyCost, buyer.getAmount(buyCurrency));
-            }
-        } else {
-            magicFreeItem = false;
-        }
+            // Did we give a support+ user a free item?
+            boolean magicFreeItem = (buyerTx.amount == 0) && (buyCost != 0);
 
-        // see what kind of payouts we're going pay- null means don't load, don't care
-        CurrencyAmount creatorPayout = magicFreeItem ? null : computePayout(false, quote);
-        CurrencyAmount affiliatePayout = magicFreeItem ? null : computePayout(true, quote);
-
-        // Get creator, if applicable
-        MemberAccountRecord creator;
-        if (creatorPayout == null) {
-            creator = null;
-
-        } else if (buyerId == creatorId) {
-            creator = buyer;
-
-        } else {
-            creator = _repo.getAccountById(creatorId);
-        }
-
-        // load the buyer's affiliate
-        int affiliateId;
-        if (DeploymentConfig.barsEnabled) {
-            affiliateId = buyerRec.affiliateMemberId;
-        } else {
-            affiliateId = 0;
-        }
-        MemberAccountRecord affiliate;
-        if (affiliatePayout == null || affiliateId == 0) {
-            affiliate = null;
-
-        } else if (affiliateId == buyerId) { // this would be weird, but let's handle it
-            affiliate = buyer;
-
-        } else if (affiliateId == creatorId) {
-            affiliate = creator;
-
-        } else {
-            affiliate = _repo.getAccountById(affiliateId);
-        }
-
-        // add a transaction for the buyer
-        MoneyTransactionRecord buyerTrans = buyer.buyItem(
-            buyCurrency, magicFreeItem ? 0 : buyCost,
-            MessageBundle.tcompose(magicFreeItem ? "m.item_magicfree" : "m.item_bought",
-                description, item.type, item.catalogId),
-            item);
-        _repo.addTransaction(buyerTrans);
-
-        // log userAction and to panopticon for the buyer
-        UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID,
-            UserAction.BOUGHT_ITEM, description, item);
-        logInPanopticon(info, buyCurrency, buyerTrans.amount, buyer);
-
-        // add a transaction for the creator
-        MoneyTransactionRecord creatorTrans;
-        if (creator == null) { // creator is null when creatorPayout is null
-            creatorTrans = null;
-
-        } else {
-            creatorTrans = creator.payout(
-                TransactionType.CREATOR_PAYOUT, creatorPayout.currency, creatorPayout.amount,
-                MessageBundle.tcompose("m.item_sold",
+            // let's go ahead and insert the buyer transaction
+            buyerTx.fill(
+                TransactionType.ITEM_PURCHASE,
+                MessageBundle.tcompose(magicFreeItem ? "m.item_magicfree" : "m.item_bought",
                     description, item.type, item.catalogId),
-                item, buyerTrans.id);
-            _repo.addTransaction(creatorTrans);
+                item);
+            _repo.storeTransaction(buyerTx);
 
-            // log userAction and to panopticon for the creator
-            info = logUserAction(creatorId, buyerId,
-                UserAction.RECEIVED_PAYOUT, description, item);
-            logInPanopticon(info, buyCurrency, creatorTrans.amount, creator);
+            // see what kind of payouts we're going pay- null means don't load, don't care
+            CurrencyAmount creatorPayout = magicFreeItem ? null : computePayout(false, quote);
+            CurrencyAmount affiliatePayout = magicFreeItem ? null : computePayout(true, quote);
+
+            MoneyTransactionRecord creatorTx;
+            if (creatorPayout != null) {
+                creatorTx = _repo.accumulateAndStoreTransaction(creatorId,
+                    creatorPayout.currency, creatorPayout.amount,
+                    TransactionType.CREATOR_PAYOUT,
+                    MessageBundle.tcompose("m.item_sold",
+                        description, item.type, item.catalogId),
+                    item, buyerTx.id);
+            } else {
+                creatorTx = null;
+            }
+
+            // load the buyer's affiliate
+            int affiliateId = (DeploymentConfig.barsEnabled) ? buyerRec.affiliateMemberId : 0;
+            MoneyTransactionRecord affiliateTx;
+            if (affiliateId != 0 && affiliatePayout != null) {
+                affiliateTx = _repo.accumulateAndStoreTransaction(affiliateId,
+                    affiliatePayout.currency, affiliatePayout.amount,
+                    TransactionType.AFFILIATE_PAYOUT,
+                    MessageBundle.tcompose("m.item_affiliate", buyerRec.name, buyerRec.memberId),
+                    item, buyerTx.id);
+            } else {
+                affiliateTx = null;
+            }
+
+            // Log a bunch of panopticon and useraction bullshite
+            UserActionDetails info = logUserAction(buyerId, UserActionDetails.INVALID_ID,
+                UserAction.BOUGHT_ITEM, description, item);
+            logInPanopticon(info, buyerTx);
+            if (creatorTx != null) {
+                info = logUserAction(creatorId, buyerId,
+                    UserAction.RECEIVED_PAYOUT, description, item);
+                logInPanopticon(info, creatorTx);
+            }
+            if (affiliateTx != null) {
+                info = logUserAction(affiliateId, buyerId,
+                    UserAction.RECEIVED_PAYOUT, description, item);
+                logInPanopticon(info, affiliateTx);
+            }
+
+            // notify affected members of their money changes
+            _nodeActions.moneyUpdated(buyerTx);
+            if (creatorTx != null) {
+                _nodeActions.moneyUpdated(creatorTx);
+            }
+            if (affiliateTx != null) {
+                _nodeActions.moneyUpdated(affiliateTx);
+            }
+
+            // The price no longer needs to be in the cache.
+            _priceCache.removeQuote(key);
+            // Inform the exchange that we've actually made the exchange
+            if (!magicFreeItem) {
+                // TODO: possibly pass results
+                _exchange.processPurchase(quote, buyCurrency);
+            }
+
+            return new MoneyResult(
+                buyerTx.toMoneyTransaction(),
+                (creatorTx == null) ? null : creatorTx.toMoneyTransaction(),
+                (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction());
+
+        } finally {
+            // if we never inserted the buyerTrans, well that means we fucked-up, and need
+            // to roll it back
+            if (buyerTx.id == 0) {
+                _repo.rollbackDeduction(buyerTx);
+            }
         }
-
-        // add a transaction for the affiliate
-        MoneyTransactionRecord affiliateTrans;
-        if (affiliate == null) { // no affiliate or no affiliatePayout
-            affiliateTrans = null;
-
-        } else {
-            affiliateTrans = affiliate.payout(
-                TransactionType.AFFILIATE_PAYOUT, affiliatePayout.currency, affiliatePayout.amount,
-                MessageBundle.tcompose("m.item_affiliate", buyerRec.name, buyerRec.memberId),
-                item, buyerTrans.id);
-            _repo.addTransaction(affiliateTrans);
-
-            // log userAction and to panopticon for the affiliate
-            info = logUserAction(affiliateId, buyerId,
-                UserAction.RECEIVED_PAYOUT, description, item);
-            logInPanopticon(info, buyCurrency, affiliateTrans.amount, affiliate);
-        }
-
-        // save stuff off
-        _repo.saveAccount(buyer);
-        _nodeActions.moneyUpdated(buyerTrans);
-        if ((creator != null) && (creatorId != buyerId)) {
-            _repo.saveAccount(creator);
-            _nodeActions.moneyUpdated(creatorTrans);
-        }
-        if ((affiliate != null) && (affiliateId != buyerId) && (affiliateId != creatorId)) {
-            _repo.saveAccount(affiliate);
-            _nodeActions.moneyUpdated(affiliateTrans);
-        }
-
-        // The item no longer needs to be in the cache.
-        _priceCache.removeQuote(key);
-        // Inform the exchange that we've actually made the exchange
-        if (!magicFreeItem) {
-            _exchange.processPurchase(quote, buyCurrency);
-        }
-
-        return new MoneyResult(buyer.getMemberMoney(),
-            (creator == null) ? null : creator.getMemberMoney(),
-            (affiliate == null) ? null : affiliate.getMemberMoney(),
-            buyerTrans.toMoneyTransaction(),
-            (creatorTrans == null) ? null : creatorTrans.toMoneyTransaction(),
-            (affiliateTrans == null) ? null : affiliateTrans.toMoneyTransaction());
     }
 
     /**
@@ -369,35 +346,22 @@ public class MoneyLogic
     public void exchangeBlingForBars (int memberId, int blingAmount)
         throws NotEnoughMoneyException
     {
-        // Update the account record, adding the amount amount specified to bars, while subtracting
-        // the amount (after converting it to centibling) from the bling column.
-        int rows = _repo.exchangeBlingForBars(memberId, blingAmount);
-        int centibling = blingAmount * 100;
-        
-        // Get the newly updated account record.  If the above did not update any rows, this will
-        // have the old values.
-        MemberAccountRecord account = _repo.getAccountById(memberId);
-        
-        // If no rows updated, assume that they never had enough bling in their account.  Could
-        // also be the member account wasn't found, which means they don't have any bling anyway.
-        if (rows == 0) {
-            throw new NotEnoughMoneyException(memberId, Currency.BLING, centibling, 
-                account.bling);
-        }
-        
-        // Create two transaction records, one for the amount deducted, and one for the amount added.
-        MoneyTransactionRecord tx1 = new MoneyTransactionRecord(memberId, 
-            TransactionType.SPENT_FOR_EXCHANGE, Currency.BLING, -centibling, account.bling, 
+        MoneyTransactionRecord deductTx = _repo.deduct(memberId, Currency.BLING, blingAmount * 100,
+            false);
+        // if that didn't throw a NotEnoughMoneyException, we're good to go.
+        deductTx.fill(TransactionType.SPENT_FOR_EXCHANGE,
             MessageBundle.tcompose("m.exchange_spent", blingAmount), null);
-        MoneyTransactionRecord tx2 = new MoneyTransactionRecord(memberId, 
-            TransactionType.RECEIVED_FROM_EXCHANGE, Currency.BARS, blingAmount, account.bars, 
-            MessageBundle.tcompose("m.exchange_added", blingAmount), null);
-        _repo.addTransaction(tx1);
-        _repo.addTransaction(tx2);
+        _repo.storeTransaction(deductTx);
+        _nodeActions.moneyUpdated(deductTx);
+
+        MoneyTransactionRecord accumTx = _repo.accumulateAndStoreTransaction(
+            memberId, Currency.BARS, blingAmount, TransactionType.RECEIVED_FROM_EXCHANGE,
+            MessageBundle.tcompose("m.exchange_added", blingAmount), null, 0);
+        _nodeActions.moneyUpdated(accumTx);
     }
 
     /**
-     * Retrieves the amount that a member's current bling is worth in American dollars.
+     * Retrieves the amount that a member's current bling is worth in US pennies.
      *
      * @param bling The amount of bling (NOT centibling) to get the worth of.
      * @return The amount the bling is worth in USD cents.
@@ -415,10 +379,10 @@ public class MoneyLogic
      * at a time for pagination.
      *
      * @param memberId ID of the member to retrieve money for.
-     * @param currency Money type to retrieve logs for. If null, then records for all money types are
-     * returned.
      * @param transactionTypes Set of transaction types to retrieve logs for.  If null, all
      *      transactionTypes will be retrieved.
+     * @param currency Money type to retrieve logs for. If null, then records for all money types are
+     * returned.
      * @param start Zero-based index of the first log item to return.
      * @param count The number of log items to return. If Integer.MAX_VALUE, this will return all
      * records.
@@ -434,11 +398,7 @@ public class MoneyLogic
         Preconditions.checkArgument(start >= 0, "start is invalid: %d", start);
         Preconditions.checkArgument(count > 0, "count is invalid: %d", count);
 
-        // I think this won't work, because the list returned is special..
-//        return Lists.transform(
-//            _repo.getTransactions(memberId, transactionTypes, currency, start, count, descending),
-//            MoneyTransactionRecord.TO_TRANSACTION);
-
+        // we can't just use Lists.transform because it returns a non-serializable list
         return Lists.newArrayList(Iterables.transform(
             _repo.getTransactions(memberId, transactionTypes, currency, start, count, descending),
             MoneyTransactionRecord.TO_TRANSACTION));
@@ -448,29 +408,15 @@ public class MoneyLogic
      * Retrieves the total number of transaction history entries we have stored for this query.
      *
      * @param memberId ID of the member to count transactions for.
-     * @param currency Currency to retrieve logs for. If null, then records for all money types are
-     * counted.
      * @param transactionTypes Set of transaction types to retrieve logs for.  If null, all
      *      transactionTypes will be counted.
+     * @param currency Currency to retrieve logs for. If null, then records for all money types are
+     * counted.
      */
     public int getTransactionCount (
         int memberId, EnumSet<TransactionType> transactionTypes, Currency currency)
     {
         return _repo.getTransactionCount(memberId, transactionTypes, currency);
-    }
-
-    /**
-     * Retrieves the current account balance (coins, bars, and bling) for the given member.
-     *
-     * @param memberId ID of the member to retrieve money for.
-     * @return The money in their account.
-     */
-    public MemberMoney getMoneyFor (final int memberId)
-    {
-        Preconditions.checkArgument(!MemberName.isGuest(memberId),
-            "Cannot retrieve money info for guests.");
-
-        return _repo.getAccountById(memberId).getMemberMoney();
     }
 
     /**
@@ -524,6 +470,9 @@ public class MoneyLogic
         return (ident != null) && (ident.type != Item.NOT_A_TYPE) && (ident.catalogId != 0);
     }
 
+    /**
+     * Compute an affiliate or creator payout.
+     */
     protected CurrencyAmount computePayout (boolean affiliate, PriceQuote quote)
     {
         Currency currency;
@@ -556,11 +505,11 @@ public class MoneyLogic
     }
 
     protected void logInPanopticon (
-        UserActionDetails info, Currency currency, int delta, MemberAccountRecord account)
+        UserActionDetails info, MoneyTransactionRecord tx)
     {
-        switch (currency) {
+        switch (tx.currency) {
         case COINS:
-            _eventLog.flowTransaction(info, delta, account.coins);
+            _eventLog.flowTransaction(info, tx.amount, tx.balance);
             break;
 
         case BARS:

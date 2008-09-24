@@ -158,8 +158,8 @@ public class ProfileServlet extends MsoyServiceServlet
 
         // record that the user updated their profile
         if (nrec.modifications == 1) {
-            _moneyLogic.awardCoins(memrec.memberId, 0, 0, null, CoinAwards.CREATED_PROFILE,
-                false, UserAction.CREATED_PROFILE);
+            _moneyLogic.awardCoins(memrec.memberId, CoinAwards.CREATED_PROFILE, true, null,
+                UserAction.CREATED_PROFILE);
         } else {
             _userActionRepo.logUserAction(
                 new UserActionDetails(memrec.memberId, UserAction.UPDATED_PROFILE));

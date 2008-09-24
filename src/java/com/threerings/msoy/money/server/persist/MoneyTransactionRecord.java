@@ -172,35 +172,24 @@ public class MoneyTransactionRecord extends PersistentRecord
     public int referenceTxId;
 
     /**
-     * Creates an account history record involving some particular item, initialized with
-     * a timestamp of *right now*.
-     *
-     * @param subject An object that is the reference object for this transaction. TODO
+     * Create a new MoneyTransactionRecord.
      */
     public MoneyTransactionRecord (
-        int memberId, TransactionType transactionType,
-        Currency currency, int amount, int balance,
-        String description, Object subject)
-    {
-        this(memberId, new Timestamp(System.currentTimeMillis()), transactionType,
-            currency, amount, balance, description, subject);
-    }
-
-    /**
-     * Creates an account history record involving some particular item.
-     * @param subject An object that is the reference object for this transaction. TODO
-     */
-    public MoneyTransactionRecord (
-        int memberId, Timestamp timestamp, TransactionType transactionType,
-        Currency currency, int amount, int balance,
-        String description, Object subject)
+        int memberId, Currency currency, int amount, int balance)
     {
         this.memberId = memberId;
-        this.timestamp = timestamp;
-        this.transactionType = transactionType;
+        this.timestamp = new Timestamp(System.currentTimeMillis());
         this.currency = currency;
         this.amount = amount;
         this.balance = balance;
+    }
+
+    /**
+     * A convenience method to fill in the specified fields.
+     */
+    public void fill (TransactionType transType, String description, Object subject)
+    {
+        this.transactionType = transType;
         this.description = description;
 
         // MUCH TODO ABOUT NOTHING
@@ -223,7 +212,7 @@ public class MoneyTransactionRecord extends PersistentRecord
         }
     }
 
-    /** Not part of the API. For depot's eyes only. */
+    /** Suitable for unserialization. */
     public MoneyTransactionRecord ()
     {
     }

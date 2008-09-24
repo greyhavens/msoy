@@ -11,48 +11,16 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
  * affiliate's accounts.
  * 
  * @author Kyle Sampson <kyle@threerings.net>
+ * @author Ray Greenwell <ray@threerings.net>
  */
 public class MoneyResult
 {
     public MoneyResult (
-        MemberMoney newMemberMoney, MemberMoney newCreatorMoney,
-        MemberMoney newAffiliateMoney, MoneyTransaction memberTransaction,
-        MoneyTransaction creatorTransaction, MoneyTransaction affiliateTransaction)
+        MoneyTransaction memberTx, MoneyTransaction creatorTx, MoneyTransaction affiliateTx)
     {
-        _newMemberMoney = newMemberMoney;
-        _newCreatorMoney = newCreatorMoney;
-        _newAffiliateMoney = newAffiliateMoney;
-        _memberTransaction = memberTransaction;
-        _creatorTransaction = creatorTransaction;
-        _affiliateTransaction = affiliateTransaction;
-    }
-
-    /**
-     * The new amount of money in the member's account. 
-     */
-    public MemberMoney getNewMemberMoney ()
-    {
-        return _newMemberMoney;
-    }
-    
-    /**
-     * The new amount of money in the creator's account.  Null if the creator account was not 
-     * modified.  Note that the creator account will still be modified if an operation involving
-     * 0 coins was performed. 
-     */
-    public MemberMoney getNewCreatorMoney ()
-    {
-        return _newCreatorMoney;
-    }
-
-    /**
-     * The new amount of money in the affiliate's account.  Null if the affiliate was not
-     * modified.  Note that the affiliate account will still be modified if an operation involving
-     * 0 coins was performed.
-     */
-    public MemberMoney getNewAffiliateMoney ()
-    {
-        return _newAffiliateMoney;
+        _memberTransaction = memberTx;
+        _creatorTransaction = creatorTx;
+        _affiliateTransaction = affiliateTx;
     }
 
     /**
@@ -83,9 +51,6 @@ public class MoneyResult
         return _affiliateTransaction;
     }
     
-    protected MemberMoney _newMemberMoney;
-    protected MemberMoney _newCreatorMoney;
-    protected MemberMoney _newAffiliateMoney;
     protected MoneyTransaction _memberTransaction;
     protected MoneyTransaction _creatorTransaction;
     protected MoneyTransaction _affiliateTransaction;

@@ -8,8 +8,11 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public class BlingInfo
     implements IsSerializable
 {
-    public /* final */ int bling;
-    public /* final */ int blingWorth;
+    /** An amount of centibling. */
+    public int bling;
+
+    /** The worth in US pennies. */
+    public int blingWorth;
     
     public BlingInfo (int bling, int blingWorth)
     {

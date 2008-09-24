@@ -23,20 +23,29 @@ import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
 
 import com.google.inject.Inject;
+
 import com.samskivert.util.CalendarUtil;
 import com.samskivert.util.Logger;
+
+import com.threerings.util.MessageBundle;
+
+import com.threerings.presents.server.ShutdownManager;
+
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
+
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.server.persist.GamePlayRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
+
+import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyConfigRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
-import com.threerings.presents.server.ShutdownManager;
-import com.threerings.presents.server.ShutdownManager.Shutdowner;
-import com.threerings.util.MessageBundle;
 
 /**
  * Responsible for distributing bling to creators of games that players have played on a daily
@@ -52,7 +61,7 @@ import com.threerings.util.MessageBundle;
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class BlingPoolDistributor
-    implements Shutdowner
+    implements ShutdownManager.Shutdowner
 {
     @Inject
     public BlingPoolDistributor (MoneyRepository repo, GameRepository gameRepo, ShutdownManager sm)
@@ -202,14 +211,12 @@ public class BlingPoolDistributor
     protected void awardBling (GameRecord game, int amount)
     {
         // Update account with the awarded bling.
-        MemberAccountRecord account = _repo.getAccountById(game.creatorId);
-        String description = MessageBundle.tcompose("m.game_plays_bling_awarded", amount,
-            game.itemId, game.description);
-        MoneyTransactionRecord tx = account.gamePlaysPayout(description, game.itemId, amount);
-
-        // Save the account and new transaction records.
-        _repo.saveAccount(account);
-        _repo.addTransaction(tx);
+        MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
+            game.creatorId, Currency.BLING, amount, TransactionType.GAME_PLAYS,
+            MessageBundle.tcompose("m.game_plays_bling_awarded", amount,
+                game.itemId, game.description),
+            new ItemIdent(Item.GAME, game.itemId), 0);
+        // TODO: post the transaction as a node action
     }
 
     /** Necessary because DistributorJob is not a static class. */

@@ -5,6 +5,7 @@ package com.threerings.msoy.money.server.persist;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -13,13 +14,18 @@ import java.util.Set;
 
 import net.jcip.annotations.NotThreadSafe;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.jdbc.depot.EntityMigration;
+import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FromOverride;
@@ -27,13 +33,11 @@ import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
-import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
-import com.samskivert.jdbc.depot.operator.Conditionals.In;
-import com.samskivert.jdbc.depot.operator.Conditionals.LessThan;
-import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThanEquals;
+import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 
 import com.threerings.presents.annotation.BlockingThread;
@@ -42,6 +46,8 @@ import com.threerings.msoy.server.persist.CountRecord;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
+
+import com.threerings.msoy.money.server.NotEnoughMoneyException;
 
 /**
  * Interface for retrieving and persisting entities in the money service.
@@ -62,65 +68,141 @@ public class MoneyRepository extends DepotRepository
             new EntityMigration.Retype(4, MemberAccountRecord.BLING));
         ctx.registerMigration(MemberAccountRecord.class,
             new EntityMigration.Retype(4, MemberAccountRecord.ACC_BLING));
-        
         ctx.registerMigration(MoneyConfigRecord.class, 
             new EntityMigration.Retype(3, MoneyConfigRecord.LAST_DISTRIBUTED_BLING));
+        ctx.registerMigration(MemberAccountRecord.class, new EntityMigration.Drop(5, "versionId"));
+        ctx.registerMigration(MemberAccountRecord.class,
+            new EntityMigration.Drop(5, "dateLastUpdated"));
     }
 
     /**
-     * Adds a history record for an account.
-     *
-     * @param history History record to update.
+     * Create a MemberAccountRecord when we create an account.
      */
-    public void addTransaction (final MoneyTransactionRecord history)
+    public MemberAccountRecord create (int memberId)
     {
-        insert(history);
+        MemberAccountRecord rec = new MemberAccountRecord(memberId);
+        insert(rec);
+        return rec;
     }
 
     /**
      * Retrieves a member's account info by member ID.
      */
-    public MemberAccountRecord getAccountById (final int memberId)
+    public MemberAccountRecord load (int memberId)
     {
-        MemberAccountRecord account = load(MemberAccountRecord.class, memberId);
-        if (account == null) {
-            account = new MemberAccountRecord(memberId);
-        }
-        return account;
+        return load(MemberAccountRecord.class, memberId);
     }
 
     /**
-     * Adds or updates the given account.
-     *
-     * @param account Account to update.
+     * Deduct money from the specified member's money. Return a MoneyTransaction that
+     * is partially filled-out, but will have the amount set to 0 if amount could not be
+     * deducted. It's important that you check this.
+     * If the money is kept
+     * out, the transaction should be committed later by calling storeTransaction.
      */
-    public void saveAccount (final MemberAccountRecord account)
+    public MoneyTransactionRecord deduct (
+        int memberId, Currency currency, int amount, boolean allowFree)
+        throws NotEnoughMoneyException
     {
-        final long oldVersion = account.versionId;
-        account.versionId++;
-        if (oldVersion == 0) {
-            insert(account);
+        Preconditions.checkArgument(amount >= 0, "Amount to deduct must be 0 or greater.");
 
-        } else {
-            // TODO: we're using updatePartial, but then we're updating everything
-            // but the memberId..
-            final int count = updatePartial(
-                MemberAccountRecord.class, new Where(
-                    MemberAccountRecord.MEMBER_ID_C, account.memberId,
-                    MemberAccountRecord.VERSION_ID_C, oldVersion),
-                MemberAccountRecord.getKey(account.memberId),
-                MemberAccountRecord.COINS, account.coins,
-                MemberAccountRecord.BARS, account.bars,
-                MemberAccountRecord.BLING, account.bling,
-                MemberAccountRecord.DATE_LAST_UPDATED, account.dateLastUpdated,
-                MemberAccountRecord.VERSION_ID, account.versionId,
-                MemberAccountRecord.ACC_BARS, account.accBars,
-                MemberAccountRecord.ACC_COINS, account.accCoins,
-                MemberAccountRecord.ACC_BLING, account.accBling);
-            if (count == 0) {
-                throw new StaleDataException("Member account record is stale: " + account.memberId);
-            }
+        ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
+        Map<String, SQLExpression> fieldValues = new ImmutableMap.Builder<String, SQLExpression>()
+            .put(currencyCol.getField(), new Arithmetic.Sub(currencyCol, amount))
+            .build();
+        Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
+        Where where = new Where(new And(
+            new Conditionals.Equals(MemberAccountRecord.MEMBER_ID_C, memberId),
+            new Conditionals.GreaterThanEquals(currencyCol, amount)));
+
+        // TODO: be able to get the balance at the same time as the update, pending Depot changes
+        int count = updateLiteral(MemberAccountRecord.class, where, key, fieldValues);
+        int balance = load(MemberAccountRecord.class, key).getAmount(currency);
+        // TODO: count may be 0 if the MAR is missing, in which case the load will NPE..
+        if (count == 0 && !allowFree) {
+            throw new NotEnoughMoneyException(memberId, currency, amount, balance);
         }
+
+        // Return the amount reserved, or 0 if it didn't work, but allowFree==true
+        return new MoneyTransactionRecord(memberId, currency, (count == 0) ? 0 : -amount, balance);
+    }
+
+    /**
+     * Accumulate money, return a partially-populated MoneyTransactionRecord for
+     * storing.
+     */
+    public MoneyTransactionRecord accumulate (int memberId, Currency currency, int amount)
+    {
+        Preconditions.checkArgument(amount >= 0, "Amount to accumulate must be 0 or greater.");
+
+        ColumnExp currencyCol = MemberAccountRecord.getColumn(currency);
+        ColumnExp currencyAccCol = MemberAccountRecord.getAccColumn(currency);
+        Map<String, SQLExpression> fieldValues = new ImmutableMap.Builder<String, SQLExpression>()
+            .put(currencyCol.getField(), new Arithmetic.Add(currencyCol, amount))
+            .put(currencyAccCol.getField(), new Arithmetic.Add(currencyAccCol, amount))
+            .build();
+        Key<MemberAccountRecord> key = MemberAccountRecord.getKey(memberId);
+
+        int count = updateLiteral(MemberAccountRecord.class, key, key, fieldValues);
+        if (count == 0) {
+            // TODO: do something sensible if no MAR for the user
+        }
+        // TODO: be able to get the balance at the same time as the update, pending Depot changes
+        int balance = load(MemberAccountRecord.class, key).getAmount(currency);
+
+        return new MoneyTransactionRecord(memberId, currency, amount, balance);
+    }
+
+    /**
+     * Accumulate and store the specified MoneyTransaction.
+     */
+    public MoneyTransactionRecord accumulateAndStoreTransaction (
+        int memberId, Currency currency, int amount,
+        TransactionType type, String description, Object subject, int referenceTxId)
+    {
+        MoneyTransactionRecord trans = accumulate(memberId, currency, amount);
+        trans.fill(type, description, subject);
+        trans.referenceTxId = referenceTxId;
+        storeTransaction(trans);
+        return trans;
+    }
+
+    /**
+     * Rollback a deduction. The transaction is not saved, it is merely used to reference
+     * the values.
+     */
+    public void rollbackDeduction (MoneyTransactionRecord deduction)
+    {
+        Preconditions.checkArgument(deduction.amount <= 0,
+            "Only deductions can be rolled back.");
+        Preconditions.checkArgument(deduction.id == 0,
+            "Transaction has already been inserted!");
+
+        ColumnExp currencyCol = MemberAccountRecord.getColumn(deduction.currency);
+        Map<String, SQLExpression> fieldValues = new ImmutableMap.Builder<String, SQLExpression>()
+            .put(currencyCol.getField(), new Arithmetic.Add(currencyCol, -deduction.amount))
+            .build();
+        Key<MemberAccountRecord> key = MemberAccountRecord.getKey(deduction.memberId);
+
+        int count = updateLiteral(MemberAccountRecord.class, key, key, fieldValues);
+        if (count == 0) {
+            // TODO: do something sensible if no MAR
+        }
+    }
+
+    /**
+     * Store a fully-populated transaction that has come from deduct or accumulate.
+     */
+    public void storeTransaction (MoneyTransactionRecord transaction)
+    {
+        Preconditions.checkArgument(transaction.id == 0,
+            "Transaction has already been inserted!");
+        Preconditions.checkArgument(transaction.transactionType != null,
+            "TransactionType must be populated.");
+        Preconditions.checkArgument(transaction.description != null,
+            "Description must be populated.");
+
+        insert(transaction);
     }
 
     public List<MoneyTransactionRecord> getTransactions (
@@ -156,7 +238,8 @@ public class MoneyRepository extends DepotRepository
     {
         final long oldestTimestamp = System.currentTimeMillis() - maxAge;
         return deleteAll(MoneyTransactionRecord.class, new Where(new And(
-            new Equals(MoneyTransactionRecord.CURRENCY_C, currency), new LessThan(
+            new Conditionals.Equals(MoneyTransactionRecord.CURRENCY_C, currency),
+            new Conditionals.LessThan(
                 MoneyTransactionRecord.TIMESTAMP_C, new Timestamp(oldestTimestamp)))));
     }
 
@@ -216,33 +299,6 @@ public class MoneyRepository extends DepotRepository
             MoneyConfigRecord.LAST_DISTRIBUTED_BLING, lastDistributedBling);
     }
     
-    /**
-     * Exchanges some amount of bling for an equal amount of bars in a member's account.
-     * 
-     * @param memberId ID of the member to perform the exchange for.
-     * @param amount The amount of bling (NOT centibling) to exchange for bars.
-     * @return The number of records modified by this method.  If 0, indicates there is either
-     * not enough bling in the member's account, or the member has no account.
-     */
-    public int exchangeBlingForBars (int memberId, int amount)
-    {
-        // update MemberAccountRecord set bars = bars + ?, bling = bling - ? where
-        // memberId = ? and bling >= ?
-        Where where = new Where(new And(
-            new Equals(MemberAccountRecord.MEMBER_ID_C, memberId),
-            new GreaterThanEquals(MemberAccountRecord.BLING_C, amount * 100)
-            ));
-        Map<String, SQLExpression> fieldValues = new HashMap<String, SQLExpression>();
-        fieldValues.put(MemberAccountRecord.BARS, 
-            new Arithmetic.Add(MemberAccountRecord.BARS_C, amount));
-        fieldValues.put(MemberAccountRecord.BLING, 
-            new Arithmetic.Sub(MemberAccountRecord.BLING_C, amount * 100));
-        return updateLiteral(
-            MemberAccountRecord.class, where,
-            MemberAccountRecord.getKey(memberId),
-            fieldValues);
-    }
-
     /** Helper method to setup a query for a transaction history search. */
     protected void populateSearch (
         List<QueryClause> clauses, int memberId,
@@ -250,12 +306,13 @@ public class MoneyRepository extends DepotRepository
     {
         List<SQLOperator> where = Lists.newArrayList();
 
-        where.add(new Equals(MoneyTransactionRecord.MEMBER_ID_C, memberId));
+        where.add(new Conditionals.Equals(MoneyTransactionRecord.MEMBER_ID_C, memberId));
         if (transactionTypes != null) {
-            where.add(new In(MoneyTransactionRecord.TRANSACTION_TYPE_C, transactionTypes));
+            where.add(
+                new Conditionals.In(MoneyTransactionRecord.TRANSACTION_TYPE_C, transactionTypes));
         }
         if (currency != null) {
-            where.add(new Equals(MoneyTransactionRecord.CURRENCY_C, currency));
+            where.add(new Conditionals.Equals(MoneyTransactionRecord.CURRENCY_C, currency));
         }
 
         clauses.add(new Where(new And(where)));

@@ -30,7 +30,7 @@ import com.threerings.msoy.money.data.all.TransactionType;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-@Entity(indices = { @Index(name = "ixVersion", fields = { MemberAccountRecord.VERSION_ID }) })
+@Entity
 @NotThreadSafe
 public class MemberAccountRecord extends PersistentRecord
 {
@@ -63,20 +63,6 @@ public class MemberAccountRecord extends PersistentRecord
     public static final ColumnExp BLING_C =
         new ColumnExp(MemberAccountRecord.class, BLING);
 
-    /** The column identifier for the {@link #dateLastUpdated} field. */
-    public static final String DATE_LAST_UPDATED = "dateLastUpdated";
-
-    /** The qualified column identifier for the {@link #dateLastUpdated} field. */
-    public static final ColumnExp DATE_LAST_UPDATED_C =
-        new ColumnExp(MemberAccountRecord.class, DATE_LAST_UPDATED);
-
-    /** The column identifier for the {@link #versionId} field. */
-    public static final String VERSION_ID = "versionId";
-
-    /** The qualified column identifier for the {@link #versionId} field. */
-    public static final ColumnExp VERSION_ID_C =
-        new ColumnExp(MemberAccountRecord.class, VERSION_ID);
-
     /** The column identifier for the {@link #accCoins} field. */
     public static final String ACC_COINS = "accCoins";
 
@@ -99,7 +85,7 @@ public class MemberAccountRecord extends PersistentRecord
         new ColumnExp(MemberAccountRecord.class, ACC_BLING);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 4;
+    public static final int SCHEMA_VERSION = 5;
 
     /** ID of the member this account record is for. */
     @Id
@@ -115,12 +101,6 @@ public class MemberAccountRecord extends PersistentRecord
      * bling as a fixed-point number. 100 centibling == 1.00 bling. */
     public int bling;
 
-    /** Date last updated. */
-    public Timestamp dateLastUpdated;
-
-    /** ID of the version of this account. */
-    public long versionId;
-
     /** Cumulative count of coins this member has ever received. */
     public long accCoins;
 
@@ -132,11 +112,37 @@ public class MemberAccountRecord extends PersistentRecord
     public long accBling;
 
     /**
+     * Return the column name for the specified currency.
+     */
+    public static ColumnExp getColumn (Currency currency)
+    {
+        switch (currency) {
+        case COINS: return COINS_C;
+        case BARS: return BARS_C;
+        case BLING: return BLING_C;
+        default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * Return the column name for the specified currency.
+     */
+    public static ColumnExp getAccColumn (Currency currency)
+    {
+        switch (currency) {
+        case COINS: return ACC_COINS_C;
+        case BARS: return ACC_BARS_C;
+        case BLING: return ACC_BLING_C;
+        default: throw new IllegalArgumentException();
+        }
+    }
+
+    /**
      * Creates a new blank record for the given member. All account balances are set to 0.
      * 
      * @param memberId ID of the member to create the record for.
      */
-    public MemberAccountRecord (final int memberId)
+    public MemberAccountRecord (int memberId)
     {
         this.memberId = memberId;
         coins = 0;
@@ -145,8 +151,6 @@ public class MemberAccountRecord extends PersistentRecord
         accCoins = 0;
         accBars = 0;
         accBling = 0;
-        dateLastUpdated = new Timestamp(System.currentTimeMillis());
-        versionId = 0;
     }
 
     /** For depot's eyes only. Not part of the API. */
@@ -163,144 +167,8 @@ public class MemberAccountRecord extends PersistentRecord
         case COINS: return coins;
         case BARS: return bars;
         case BLING: return bling;
-        default: throw new RuntimeException();
+        default: throw new IllegalArgumentException();
         }
-    }
-
-//    /**
-//     * Returns true if the account can afford spending the amount of currency indicated.
-//     * 
-//     * @param currency Currency to spend, either BARS or COINS.
-//     * @param amount Amount to spend.
-//     * @return True if the account can afford it, false otherwise.
-//     */
-//    public boolean canAfford (Currency currency, int amount)
-//    {
-//        return getAmount(currency) >= amount;
-//    }
-
-    /**
-     * Called when someone makes money in such a way that we track all the money they ever
-     * got. The amount must be positive, as we never deduct from the 'acc' values.
-     */
-    public void accumulate (Currency currency, int amount)
-    {
-        Preconditions.checkArgument(amount >= 0, "You may only accumulate positive wealth!");
-        switch (currency) {
-        case COINS:
-            accCoins += amount;
-            break;
-
-        case BARS:
-            accBars += amount;
-            break;
-
-        case BLING:
-            accBling += amount;
-            break;
-        }
-
-        adjust(currency, amount);
-    }
-
-    /**
-     * Adjust the amount of money that a user has by the specified delta, without touching
-     * the 'acc' values.
-     */
-    public void adjust (Currency currency, int delta)
-    {
-        switch (currency) {
-        case COINS:
-            coins += delta;
-            break;
-
-        case BARS:
-            bars += delta;
-            break;
-
-        case BLING:
-            bling += delta;
-            break;
-        }
-    }
-
-    /**
-     * Adds the given number of bars to the member's account.
-     * 
-     * @param barsToAdd Number of bars to add.
-     * @return Account history record for this transaction.
-     */
-    public MoneyTransactionRecord buyBars (int barsToAdd, String description)
-    {
-        accumulate(Currency.BARS, barsToAdd);
-        return new MoneyTransactionRecord(memberId, TransactionType.BARS_BOUGHT,
-            Currency.BARS, barsToAdd, bars, description, null);
-    }
-
-    /**
-     * Adds the given number of coins to the member's account.
-     * 
-     * @param coins Number of coins to add.
-     * @return Account history record for this transaction.
-     */
-    public MoneyTransactionRecord awardCoins (int coinsToAdd, ItemIdent item, String description)
-    {
-        accumulate(Currency.COINS, coinsToAdd);
-        return new MoneyTransactionRecord(memberId, TransactionType.AWARD,
-            Currency.COINS, coinsToAdd, coins, description, item);
-    }
-
-    /**
-     * Purchases an item, deducting the appropriate amount of money from this account.
-     * 
-     * @param type Type indicating bars or coins.
-     * @param amount Amount to deduct.
-     * @param description Description that should be used in the history record.
-     * @return Account history record for this transaction.
-     */
-    public MoneyTransactionRecord buyItem (
-        Currency currency, int amount, String description, CatalogIdent item)
-    {
-        Preconditions.checkArgument(amount >= 0, "Buy amounts can't be negative");
-        adjust(currency, -amount);
-        return new MoneyTransactionRecord(memberId, TransactionType.ITEM_PURCHASE,
-            currency, -amount, getAmount(currency), description, item);
-    }
-
-    /**
-     * Pays the creator of an item purchased a certain percentage of the amount for the item.
-     * 
-     * @param type either TransactionType.CREATOR_PAYOUT or TransactionType.AFFILIATE_PAYOUT
-     * @param description Description of the item purchased.
-     * @param item Item that was purchased.
-     * @return History record for the transaction.
-     */
-    public MoneyTransactionRecord payout (
-        TransactionType type, Currency payoutCurrency, int payoutAmount,
-        String description, CatalogIdent item, int referenceTxId)
-    {
-        accumulate(payoutCurrency, payoutAmount);
-        MoneyTransactionRecord trans = new MoneyTransactionRecord(
-            memberId, type, payoutCurrency, payoutAmount, getAmount(payoutCurrency),
-            description, item);
-        trans.referenceTxId = referenceTxId;
-        return trans;
-    }
-    
-    /**
-     * Pays a creator for their games having been played.
-     * 
-     * @param description Description of the transaction.
-     * @param gameId ID of the game that was played.
-     * @param amount Amount of centibling that should be rewarded.
-     * @return Transaction for this change.
-     */
-    public MoneyTransactionRecord gamePlaysPayout (String description, int gameId, int amount)
-    {
-        Preconditions.checkArgument(amount >= 0, "Payout amounts can't be negative.");
-        accumulate(Currency.BLING, amount);
-        return new MoneyTransactionRecord(memberId, TransactionType.GAME_PLAYS, Currency.BLING,
-            amount, this.bling, description, new ItemIdent(Item.GAME, gameId));
     }
 
     /**

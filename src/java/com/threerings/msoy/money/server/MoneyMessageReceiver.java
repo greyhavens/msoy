@@ -53,7 +53,7 @@ public class MoneyMessageReceiver
      */
     public void start ()
     {
-        // Start listening on buy bars queue.  If bars are purchased, call MoneyLogic.buyBars().
+        // Start listening on buy bars queue.  If bars are purchased, call MoneyLogic.boughtBars().
         _barsBoughtListener = listen("messaging.whirled.barsBought.address", new MessageListener() {
             public void received (final byte[] message, final Replier replier)
             {
@@ -63,7 +63,7 @@ public class MoneyMessageReceiver
                     {
                         final BarsBoughtMessage bbm = new BarsBoughtMessage(message);
                         final MemberRecord member = _memberRepo.loadMember(bbm.accountName);
-                        _logic.buyBars(member.memberId, bbm.numBars, bbm.message);
+                        _logic.boughtBars(member.memberId, bbm.numBars, bbm.message);
                         return false;
                     }
                 });

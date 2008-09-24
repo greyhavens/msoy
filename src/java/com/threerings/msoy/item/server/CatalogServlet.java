@@ -36,6 +36,7 @@ import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.MoneyResult;
@@ -168,16 +169,16 @@ public class CatalogServlet extends MsoyServiceServlet
                 listing.item.creatorId, listing.item.name,
                 listing.currency, listing.cost, currency, authedCost);
         } catch (NotEnoughMoneyException neme) {
+            // TODO: return a better exception, containing their updated balance 
             throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
         } catch (NotSecuredException nse) {
             throw new CostUpdatedException(nse.getQuote());
         }
 
+        MoneyTransaction memberTx = result.getMemberTransaction();
         // note the amount of currency spent in this transaction
-        int coinsPaid = (result.getMemberTransaction().currency == Currency.COINS) ?
-            Math.abs(result.getMemberTransaction().amount) : 0;
-        int barsPaid = (result.getMemberTransaction().currency == Currency.BARS) ?
-            Math.abs(result.getMemberTransaction().amount) : 0;
+        int coinsPaid = (memberTx.currency == Currency.COINS) ? -memberTx.amount : 0;
+        int barsPaid = (memberTx.currency == Currency.BARS) ? -memberTx.amount : 0;
 
         // create the clone row in the database
         ItemRecord newClone = repo.insertClone(listing.item, mrec.memberId, coinsPaid, barsPaid);
@@ -185,11 +186,15 @@ public class CatalogServlet extends MsoyServiceServlet
         // note the new purchase for the item
         repo.nudgeListing(catalogId, true);
 
-        if (result.getNewCreatorMoney() != null) {
-            int creatorId = listing.item.creatorId;
-            int creatorAmount = result.getCreatorTransaction().amount;
-            if (mrec.memberId != creatorId && creatorAmount > 0) {
-                _statLogic.incrementStat(creatorId, StatType.COINS_EARNED_SELLING, creatorAmount);
+        MoneyTransaction creatorTx = result.getCreatorTransaction();
+        if (creatorTx != null) {
+            int creatorId = creatorTx.memberId;
+            if (mrec.memberId != creatorId && creatorTx.amount > 0) {
+                // TODO: what if they earned bling?
+                if (creatorTx.currency == Currency.COINS) {
+                    _statLogic.incrementStat(
+                        creatorId, StatType.COINS_EARNED_SELLING, creatorTx.amount);
+                }
 
                 // Some items have a stat that may need updating
                 if (itemType == Item.AVATAR) {
@@ -209,8 +214,7 @@ public class CatalogServlet extends MsoyServiceServlet
         _itemLogic.itemPurchased(newClone, coinsPaid, barsPaid);
 
         // update their stat set, if they aren't buying something from themselves.
-        if (mrec.memberId != listing.item.creatorId &&
-            result.getMemberTransaction().currency == Currency.COINS) {
+        if (mrec.memberId != listing.item.creatorId && memberTx.currency == Currency.COINS) {
             _statLogic.incrementStat(mrec.memberId, StatType.COINS_SPENT, coinsPaid);
         }
 

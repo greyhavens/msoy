@@ -35,7 +35,6 @@ public class MoneyServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
 
-        // TODO: consider putting these queries together, since they use all the same search params
         List<MoneyTransaction> page = _moneyLogic.getTransactions(
             memberId, report.transactions, report.currency, from, count, true);
         int total = _moneyLogic.getTransactionCount(memberId,
@@ -47,16 +46,21 @@ public class MoneyServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
+        // TODO: I guess someday we'll allow support+ to exchange for others
         if (mrec.memberId != memberId) {
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
         try {
             _moneyLogic.exchangeBlingForBars(memberId, blingAmount);
         } catch (NotEnoughMoneyException neme) {
+            // TODO: return new balance, brah
             throw new ServiceException(MoneyCodes.E_INSUFFICIENT_BLING);
         }
     }
     
+    /**
+     * Not a public service method, Called by getTransactionHistory
+     */
     protected BlingInfo getBlingInfo (int memberId)
         throws ServiceException
     {
