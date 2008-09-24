@@ -168,8 +168,10 @@ public class DoListItemPopup extends VerticalPanel
             final String resultMsg = firstTime ? _imsgs.doListListed() : _imsgs.doListUpdated();
             new ClickCallback<Integer>(_doIt) {
                 public boolean callService () {
+                    int cost = getCost();
+                    Currency currency = (cost == 0) ? Currency.COINS : getCurrency();
                     _catalogsvc.listItem(_item.getIdent(), _description.getText(), getPricing(),
-                                         getSalesTarget(), getCurrency(), getCost(), this);
+                                         getSalesTarget(), currency, cost, this);
                     return true;
                 }
                 public boolean gotResult (Integer result) {
