@@ -167,9 +167,6 @@ public class MemberRepository extends DepotRepository
                 return invites.size();
             }
         });
-        // prod this conversion to happen right away, because on many developer machines
-        // it won't otherwise happen for a very long time.
-        load(InvitationRecord.class, 0);
 
         // add a cache invalidator that listens to single FriendRecord updates
         _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {

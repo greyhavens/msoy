@@ -16,6 +16,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
@@ -86,10 +87,18 @@ import com.threerings.msoy.room.server.WebRoomServlet;
 @Singleton
 public class MsoyHttpServer extends Server
 {
+    @Inject public MsoyHttpServer (Injector injector)
+    {
+        // turn our servlet classes into instances with fully resolved dependencies
+        for (Map.Entry<String, Class<? extends HttpServlet>> entry : SERVLETS.entrySet()) {
+            _servlets.put(entry.getKey(), injector.getInstance(entry.getValue()));
+        }
+    }
+
     /**
      * Prepares our HTTP server for operation but does not yet start listening on the HTTP port.
      */
-    public void init (Injector injector, File logdir)
+    public void init (File logdir)
         throws IOException
     {
         SelectChannelConnector conn = new SelectChannelConnector();
@@ -99,9 +108,8 @@ public class MsoyHttpServer extends Server
         // wire up our various servlets
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         Context context = new Context(contexts, "/", Context.NO_SESSIONS);
-        for (Map.Entry<String, Class<? extends HttpServlet>> entry : SERVLETS.entrySet()) {
-            HttpServlet servlet = injector.getInstance(entry.getValue());
-            context.addServlet(new ServletHolder(servlet), entry.getKey());
+        for (Map.Entry<String, HttpServlet> entry : _servlets.entrySet()) {
+            context.addServlet(new ServletHolder(entry.getValue()), entry.getKey());
         }
 
         // wire up serving of static content
@@ -258,6 +266,9 @@ public class MsoyHttpServer extends Server
 
         protected ServletOutputStream _out;
     }
+
+    /** Populated during {@link #preInit} with dependency resolved servlet instances. */
+    protected Map<String, HttpServlet> _servlets = Maps.newHashMap();
 
     protected static final Map<String, Class<? extends HttpServlet>> SERVLETS = Maps.newHashMap();
     static {

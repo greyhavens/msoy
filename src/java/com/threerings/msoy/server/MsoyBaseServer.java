@@ -13,7 +13,6 @@ import net.sf.ehcache.CacheManager;
 
 import com.samskivert.io.PersistenceException;
 import com.samskivert.jdbc.ConnectionProvider;
-import com.samskivert.jdbc.TransitionRepository;
 import com.samskivert.jdbc.depot.EHCacheAdapter;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.HashIntMap;
@@ -65,27 +64,16 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         @Override protected void configure () {
             super.configure();
-            CacheManager cacheMgr = CacheManager.getInstance();
-            ConnectionProvider conprov = null;
-            try {
-                conprov = ServerConfig.createConnectionProvider();
-            } catch (Exception e) {
-                addError(e);
-            }
-            // depot dependencies
-            bind(PersistenceContext.class).toInstance(
-                new PersistenceContext("msoy", conprov, new EHCacheAdapter(cacheMgr)));
+            // depot dependencies (we will initialize this persistence context later when the
+            // server is ready to do database operations; not initializing it now ensures that no
+            // one sneaks any database manipulations into the dependency resolution phase)
+            bind(PersistenceContext.class).toInstance(new PersistenceContext());
             // presents dependencies
             bind(ReportManager.class).to(QuietReportManager.class);
             // msoy dependencies
-            bind(CacheManager.class).toInstance(cacheMgr);
+            bind(CacheManager.class).toInstance(CacheManager.getInstance());
             bindInterceptor(Matchers.any(), Matchers.annotatedWith(Retry.class),
                             new RetryInterceptor());
-            try {
-                bind(TransitionRepository.class).toInstance(new TransitionRepository(conprov));
-            } catch (PersistenceException e) {
-                addError(e);
-            }
         }
     }
 
@@ -102,6 +90,13 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         super.init(injector);
 
+        // initialize our persistence context
+        ConnectionProvider conprov = ServerConfig.createConnectionProvider();
+        _perCtx.init("msoy", conprov, new EHCacheAdapter(_cacheMgr));
+
+        // initialize our depot repositories; running all of our schema and data migrations
+        _perCtx.initializeRepositories(true);
+
         // set up our default object access controller
         _omgr.setDefaultAccessController(MsoyObjectAccess.DEFAULT);
 
@@ -114,21 +109,8 @@ public abstract class MsoyBaseServer extends WhirledServer
 
         // initialize our dictionary services
         _dictMan.init("data/dictionary");
-        
-        // now initialize our runtime configuration, postponing the remaining server initialization
-        // until our configuration objects are available
-        RuntimeConfig.init(_omgr, confReg);
-        _omgr.postRunnable(new PresentsDObjectMgr.LongRunnable () {
-            public void run () {
-                try {
-                    finishInit(injector);
-                } catch (final Exception e) {
-                    log.warning("Server initialization failed.", e);
-                    System.exit(-1);
-                }
-            }
-        });
 
+        // configure some bureau related business
         if (ServerConfig.localBureaus) {
             // hook up thane as a local command
             log.info("Running thane bureaus locally");
@@ -150,8 +132,22 @@ public abstract class MsoyBaseServer extends WhirledServer
                 }
             });
         }
-
         _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
+        _clmgr.setClientFactory(new BureauLauncherClientFactory(_clmgr.getClientFactory()));
+
+        // now initialize our runtime configuration, postponing the remaining server initialization
+        // until our configuration objects are available
+        RuntimeConfig.init(_omgr, confReg);
+        _omgr.postRunnable(new PresentsDObjectMgr.LongRunnable () {
+            public void run () {
+                try {
+                    finishInit(injector);
+                } catch (final Exception e) {
+                    log.warning("Server initialization failed.", e);
+                    System.exit(-1);
+                }
+            }
+        });
     }
 
     // from BureauLauncherProvider
@@ -215,8 +211,6 @@ public abstract class MsoyBaseServer extends WhirledServer
     protected void finishInit (final Injector injector)
         throws Exception
     {
-        // prepare for bureau launcher connections
-        _clmgr.setClientFactory(new BureauLauncherClientFactory(_clmgr.getClientFactory()));
     }
 
     /** Selects a registered launcher for the next bureau. */
@@ -260,7 +254,7 @@ public abstract class MsoyBaseServer extends WhirledServer
             final String token) {
             final String windowToken = StringUtil.md5hex(ServerConfig.windowSharedSecret);
             return new String[] {
-                ServerConfig.serverRoot + "/bin/runthaneclient", "msoy", bureauId, token, 
+                ServerConfig.serverRoot + "/bin/runthaneclient", "msoy", bureauId, token,
                 "localhost", String.valueOf(getListenPorts()[0]), windowToken};
         }
     }
@@ -277,6 +271,10 @@ public abstract class MsoyBaseServer extends WhirledServer
         }
     }
 
+    /** Currently logged in bureau launchers. */
+    protected HashIntMap<BureauLauncherClientObject> _launchers =
+        new HashIntMap<BureauLauncherClientObject>();
+
     /** Used for caching things. */
     @Inject protected CacheManager _cacheMgr;
 
@@ -291,10 +289,6 @@ public abstract class MsoyBaseServer extends WhirledServer
 
     /** Handles dictionary services for games. */
     @Inject protected DictionaryManager _dictMan;
-
-    /** Currently logged in bureau launchers. */
-    protected HashIntMap<BureauLauncherClientObject> _launchers = 
-        new HashIntMap<BureauLauncherClientObject>();
 
     /** This is needed to ensure that the StatType enum's static initializer runs before anything
      * else in the server that might rely on stats runs. */

@@ -133,11 +133,6 @@ static_media_url = http://localhost:8080/media/static/
 toybox.resource_dir = /export/msoy/pages/media
 
 #
-# Whether or not to lazily initialize our persistent records.
-
-# depot.lazy_init = true
-
-#
 # The default database mapping; all other definitions will inherit from
 # this and need only be specified in cases where they differ from the
 # defaults

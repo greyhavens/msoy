@@ -190,7 +190,7 @@ public class MsoyServer extends MsoyBaseServer
         mailInvoker.start();
 
         // initialize our HTTP server
-        _httpServer.init(injector, new File(ServerConfig.serverRoot, "log"));
+        _httpServer.init(new File(ServerConfig.serverRoot, "log"));
 
         // Due to a circular dependency, this instance cannot be injected into MsoyChatProvider.
         // This is also temporary to support broadcasts in games.  When you maintain a subscription
@@ -268,7 +268,7 @@ public class MsoyServer extends MsoyBaseServer
     protected ConfigRegistry createConfigRegistry ()
         throws Exception
     {
-        return new PeeredDatabaseConfigRegistry(_perCtx, _invoker, _peerMan);
+        return _peerConfReg;
     }
 
     @Override // from PresentsServer
@@ -300,7 +300,7 @@ public class MsoyServer extends MsoyBaseServer
         _gameReg.init();
         _partyReg.init();
         _moneyLogic.init();
-        
+
         // TEMP: give a peer manager refernce to MemberNodeActions
         MemberNodeActions.init(_peerMan);
 
@@ -340,11 +340,6 @@ public class MsoyServer extends MsoyBaseServer
                     return "checkAutoRestart interval";
                 }
             }.schedule(AUTO_RESTART_CHECK_INTERVAL, true);
-        }
-
-        // resolve any remaining database schemas that have not yet been loaded
-        if (!ServerConfig.config.getValue("depot.lazy_init", true)) {
-            _perCtx.initializeManagedRecords(true);
         }
 
         log.info("Msoy server initialized.");
@@ -452,8 +447,12 @@ public class MsoyServer extends MsoyBaseServer
     /** Connection to the AMQP messaging server. */
     @Inject protected MessageConnection _messageConn;
 
+    /** Provides money services. */
     @Inject protected MoneyLogic _moneyLogic;
-    
+
+    /** Provides our peer-aware runtime configuration. */
+    @Inject protected PeeredDatabaseConfigRegistry _peerConfReg;
+
     /** Check for modified code every 30 seconds. */
     protected static final long AUTO_RESTART_CHECK_INTERVAL = 30 * 1000L;
 }
