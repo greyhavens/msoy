@@ -53,6 +53,7 @@ public class BalancePanel extends PagedTable<MoneyTransaction>
             }
             row.add(MsoyUI.createLabel(debit, "Debit"));
             row.add(MsoyUI.createLabel(credit, "Credit"));
+            row.add(MsoyUI.createLabel(entry.currency.format(entry.balance), "Balance"));
         }
 
         return row;
@@ -67,6 +68,7 @@ public class BalancePanel extends PagedTable<MoneyTransaction>
         header.add(MsoyUI.createLabel("How", null));
         header.add(MsoyUI.createLabel("Debit", null));
         header.add(MsoyUI.createLabel("Credit", null));
+        header.add(MsoyUI.createLabel("Balance", null));
 
         return header;
     }
