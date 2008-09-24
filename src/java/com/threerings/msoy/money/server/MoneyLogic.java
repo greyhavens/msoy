@@ -326,10 +326,9 @@ public class MoneyLogic
     }
 
     /**
-     * Deducts some amount of bling from the member's account. This will be used by CSR's for
-     * corrective actions or when the member chooses to cash out their bling.
+     * Called to effect the removal of bling from a member's account for cash-out purposes.
      */
-    public void deductBling (int memberId, int amount)
+    public void cashOutBling (int memberId, int amount)
         throws NotEnoughMoneyException
     {
         MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
