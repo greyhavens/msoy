@@ -54,7 +54,7 @@ import static com.threerings.msoy.Log.log;
  * access these services.
  *
  * TODO: transactional support- database transactions for proper rollback??
- * 
+ *
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
  */
@@ -65,7 +65,7 @@ public class MoneyLogic
     @Inject
     public MoneyLogic (
         MoneyRepository repo, PriceQuoteCache priceCache, UserActionRepository userActionRepo,
-        MsoyEventLogger eventLog, MessageConnection conn, MemberRepository memberRepo, 
+        MsoyEventLogger eventLog, MessageConnection conn, MemberRepository memberRepo,
         ShutdownManager sm, @MainInvoker Invoker invoker, MoneyNodeActions nodeActions,
         BlingPoolDistributor blingDistributor, MoneyExchange exchange)
     {
@@ -104,13 +104,13 @@ public class MoneyLogic
 
         return _repo.load(memberId).getMemberMoney();
     }
-    
+
     /**
      * Indicates that a member has earned some number of coins.  This will notify interested
      * clients that coins were earned, without actually awarding the coins yet.  Future calls to
      * {@link #awardCoins(int, int, boolean, ItemIdent, UserAction)} to award
      * the coins must use "false" for notify to indicate the user was already notified of this.
-     * 
+     *
      * @param memberId ID of the member who earned coins.
      * @param amount Number of coins earned.
      */
@@ -120,9 +120,9 @@ public class MoneyLogic
     }
 
     /**
-     * Awards some number of coins to a member for some activity, such as playing a game. This
-     * will also keep track of coins spent awarded for each creator, so that the creators can
-     * receive bling when people play their games.
+     * Awards some number of coins to a member for some activity, such as playing a game. This will
+     * also keep track of coins spent awarded for each creator, so that the creators can receive
+     * bling when people play their games.
      *
      * @param memberId ID of the member to receive the coins.
      * @param amount Number of coins to be awarded.
@@ -130,7 +130,9 @@ public class MoneyLogic
      * made, so this call should not notify the user.
      * @param item Optional item that coins were awarded for (i.e. a game)
      * @param userAction The user action that caused coins to be awarded.
-     * @return a MoneyTransaction
+     * @param args free form arguments that will be composed into a translation string and recorded
+     * with the user action; note that the PLAYED_GAME action requires a specific set of arguments
+     * (gameName, gameId, secondsPlayed).
      */
     public MoneyTransaction awardCoins (
         int memberId, int amount, boolean notify, ItemIdent item, UserAction userAction,
@@ -142,7 +144,11 @@ public class MoneyLogic
             (item == null) || (item.type != Item.NOT_A_TYPE && item.itemId != 0),
             "item is invalid: %s", item);
 
-        final String description = MessageBundle.tcompose(userAction.getMessage(), args);
+        // handle PLAYED_GAME which needs to be logged specially for humanity assessment
+        // TODO: Handle AVRG's COMPLETED_QUEST here too?
+        final String description = (userAction == UserAction.PLAYED_GAME) ?
+            (args[1].toString() + " " + args[2].toString()) :
+            MessageBundle.tcompose(userAction.getMessage(), args);
 
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
             memberId, Currency.COINS, amount, TransactionType.AWARD, description, item);
@@ -150,14 +156,9 @@ public class MoneyLogic
             _nodeActions.moneyUpdated(tx);
         }
 
-        final UserActionDetails info = logUserAction(memberId, 0, userAction,
-            // Handle the mystical case where games need to be logged specially for
-            // humanity assessment
-            // TODO: Handle AVRG's COMPLETED_QUEST here too?
-            (userAction == UserAction.PLAYED_GAME) ? args[1].toString() + args[2].toString() :
-            description, item);
+        final UserActionDetails info = logUserAction(memberId, 0, userAction, description, item);
         logInPanopticon(info, tx);
-        
+
         return tx.toMoneyTransaction();
     }
 
@@ -219,7 +220,7 @@ public class MoneyLogic
         if (quote == null || quote.getAmount(buyCurrency) > authedAmount) {
             // In the unlikely scenarios that there was either no secured price (expired) or
             // they provided an out-of-date authed amount, we go ahead and secure a new price
-            // right now and see if that works. 
+            // right now and see if that works.
             quote = securePrice(buyerId, item, listedCurrency, listedAmount);
             if (quote.getAmount(buyCurrency) > authedAmount) {
                 // doh, it doesn't work, so we need to tell them about this new latest price
@@ -459,7 +460,7 @@ public class MoneyLogic
     public void init ()
     {
         _msgReceiver.start();
-        
+
         // Bling distributor should only be started if bars are enabled.
         if (DeploymentConfig.barsEnabled) {
             _blingDistributor.start();
