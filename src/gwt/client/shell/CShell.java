@@ -102,11 +102,11 @@ public class CShell
     public static String serverError (Throwable error)
     {
         if (error instanceof IncompatibleRemoteServiceException) {
-            return _smsgs.getString("version_mismatch");
+            return _smsgs.xlate("version_mismatch");
         } else if (error instanceof ServiceException) {
             return serverError(error.getMessage());
         } else {
-            return _smsgs.getString("internal_error");
+            return _smsgs.xlate("internal_error");
         }
     }
 
@@ -120,7 +120,7 @@ public class CShell
             error = error.substring(2);
         }
         try {
-            return _smsgs.getString(error);
+            return _smsgs.xlate(error);
         } catch (MissingResourceException e) {
             // looking up a missing translation message throws an exception, yay!
             return "[" + error + "]";
@@ -164,5 +164,5 @@ public class CShell
         }
     }-*/;
 
-    protected static final ServerMessages _smsgs = GWT.create(ServerMessages.class);
+    protected static final ServerLookup _smsgs = GWT.create(ServerLookup.class);
 }
