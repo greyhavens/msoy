@@ -184,13 +184,28 @@ public class MoneyRepository extends DepotRepository
      */
     public MoneyTransactionRecord accumulateAndStoreTransaction (
         int memberId, Currency currency, int amount,
-        TransactionType type, String description, Object subject, int referenceTxId)
+        TransactionType type, String description, Object subject)
     {
-        MoneyTransactionRecord trans = accumulate(memberId, currency, amount);
-        trans.fill(type, description, subject);
-        trans.referenceTxId = referenceTxId;
-        storeTransaction(trans);
-        return trans;
+        MoneyTransactionRecord tx = accumulate(memberId, currency, amount);
+        tx.fill(type, description, subject);
+        storeTransaction(tx);
+        return tx;
+    }
+
+    /**
+     * Accumulate and store the specified MoneyTransaction.
+     */
+    public MoneyTransactionRecord accumulateAndStoreTransaction (
+        int memberId, Currency currency, int amount,
+        TransactionType type, String description, Object subject,
+        int referenceTxId, int referenceMemberId)
+    {
+        MoneyTransactionRecord tx = accumulate(memberId, currency, amount);
+        tx.fill(type, description, subject);
+        tx.referenceTxId = referenceTxId;
+        tx.referenceMemberId = referenceMemberId;
+        storeTransaction(tx);
+        return tx;
     }
 
     /**

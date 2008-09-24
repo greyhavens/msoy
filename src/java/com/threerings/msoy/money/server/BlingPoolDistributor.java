@@ -215,7 +215,7 @@ public class BlingPoolDistributor
             game.creatorId, Currency.BLING, amount, TransactionType.GAME_PLAYS,
             MessageBundle.tcompose("m.game_plays_bling_awarded", amount,
                 game.itemId, game.description),
-            new ItemIdent(Item.GAME, game.itemId), 0);
+            new ItemIdent(Item.GAME, game.itemId));
         // TODO: post the transaction as a node action
     }
 

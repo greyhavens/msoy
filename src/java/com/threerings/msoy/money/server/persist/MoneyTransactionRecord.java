@@ -123,12 +123,26 @@ public class MoneyTransactionRecord extends PersistentRecord
         new ColumnExp(MoneyTransactionRecord.class, REFERENCE_TX_ID);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
+    /**
+     * A Function for transforming a MoneyTransactionRecord into a MoneyTransaction.
+     */
     public static Function<MoneyTransactionRecord, MoneyTransaction> TO_TRANSACTION =
         new Function<MoneyTransactionRecord, MoneyTransaction>() {
         public MoneyTransaction apply (MoneyTransactionRecord record) {
             return record.toMoneyTransaction();
+        }
+    };
+
+    /**
+     * A Function for transforming a MoneyTransactionRecord into a MoneyTransaction, for
+     * support personell.
+     */
+    public static Function<MoneyTransactionRecord, MoneyTransaction> TO_TRANSACTION_SUPPORT =
+        new Function<MoneyTransactionRecord, MoneyTransaction>() {
+        public MoneyTransaction apply (MoneyTransactionRecord record) {
+            return record.toMoneyTransaction(true);
         }
     };
     
@@ -170,6 +184,9 @@ public class MoneyTransactionRecord extends PersistentRecord
     
     /** For certain types of transactions, the reference transaction this was in response to. */
     public int referenceTxId;
+
+    /** For some transactions, there may be a memberId of the other member. */
+    public int referenceMemberId;
 
     /**
      * Create a new MoneyTransactionRecord.
@@ -221,6 +238,16 @@ public class MoneyTransactionRecord extends PersistentRecord
     {
         return new MoneyTransaction(
             memberId, timestamp, transactionType, currency, amount, balance, description);
+    }
+
+    public MoneyTransaction toMoneyTransaction (boolean forSupport)
+    {
+        MoneyTransaction mtx = toMoneyTransaction();
+        if (forSupport) {
+            mtx.referenceTxId = referenceTxId;
+            mtx.referenceMemberId = referenceMemberId;
+        }
+        return mtx;
     }
 
     // AUTO-GENERATED: METHODS START

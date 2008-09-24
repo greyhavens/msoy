@@ -36,7 +36,7 @@ public class MoneyServlet extends MsoyServiceServlet
         }
 
         List<MoneyTransaction> page = _moneyLogic.getTransactions(
-            memberId, report.transactions, report.currency, from, count, true);
+            memberId, report.transactions, report.currency, from, count, true, mrec.isSupport());
         int total = _moneyLogic.getTransactionCount(memberId,
             report.transactions, report.currency);
         return new TransactionPageResult(total, page, getBlingInfo(memberId));

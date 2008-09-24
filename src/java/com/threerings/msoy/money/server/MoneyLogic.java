@@ -145,7 +145,7 @@ public class MoneyLogic
         final String description = MessageBundle.tcompose(userAction.getMessage(), args);
 
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
-            memberId, Currency.COINS, amount, TransactionType.AWARD, description, item, 0);
+            memberId, Currency.COINS, amount, TransactionType.AWARD, description, item);
         if (notify) {
             _nodeActions.moneyUpdated(tx);
         }
@@ -178,7 +178,7 @@ public class MoneyLogic
         // to make a sensible description for internal money juju?
         MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
             memberId, Currency.BARS, numBars, TransactionType.BARS_BOUGHT,
-            description, null, 0);
+            description, null);
         _nodeActions.moneyUpdated(tx);
 
         logUserAction(memberId, UserActionDetails.INVALID_ID, UserAction.BOUGHT_BARS,
@@ -261,7 +261,7 @@ public class MoneyLogic
                     TransactionType.CREATOR_PAYOUT,
                     MessageBundle.tcompose("m.item_sold",
                         description, item.type, item.catalogId),
-                    item, buyerTx.id);
+                    item, buyerTx.id, buyerId);
             } else {
                 creatorTx = null;
             }
@@ -274,7 +274,7 @@ public class MoneyLogic
                     affiliatePayout.currency, affiliatePayout.amount,
                     TransactionType.AFFILIATE_PAYOUT,
                     MessageBundle.tcompose("m.item_affiliate", buyerRec.name, buyerRec.memberId),
-                    item, buyerTx.id);
+                    item, buyerTx.id, buyerId);
             } else {
                 affiliateTx = null;
             }
@@ -356,7 +356,7 @@ public class MoneyLogic
 
         MoneyTransactionRecord accumTx = _repo.accumulateAndStoreTransaction(
             memberId, Currency.BARS, blingAmount, TransactionType.RECEIVED_FROM_EXCHANGE,
-            MessageBundle.tcompose("m.exchange_added", blingAmount), null, 0);
+            MessageBundle.tcompose("m.exchange_added", blingAmount), null);
         _nodeActions.moneyUpdated(accumTx);
     }
 
@@ -391,7 +391,7 @@ public class MoneyLogic
      */
     public List<MoneyTransaction> getTransactions (
         int memberId, EnumSet<TransactionType> transactionTypes, Currency currency,
-        int start, int count, boolean descending)
+        int start, int count, boolean descending, boolean support)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId),
             "Cannot retrieve money log for guests.");
@@ -401,7 +401,8 @@ public class MoneyLogic
         // we can't just use Lists.transform because it returns a non-serializable list
         return Lists.newArrayList(Iterables.transform(
             _repo.getTransactions(memberId, transactionTypes, currency, start, count, descending),
-            MoneyTransactionRecord.TO_TRANSACTION));
+            support ? MoneyTransactionRecord.TO_TRANSACTION_SUPPORT
+                    : MoneyTransactionRecord.TO_TRANSACTION));
     }
 
     /**

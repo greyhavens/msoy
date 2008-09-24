@@ -22,6 +22,10 @@ public class MoneyTransaction
     public String description;
 //    public Object subject; // maybe someday we'll want to return this..
 
+    public int referenceTxId;
+    public int referenceMemberId;
+
+
     // Required by for serializing
     public MoneyTransaction () { }
 
