@@ -95,7 +95,7 @@ public class MoneyRepository extends DepotRepository
                     }
                 });
                 } catch (Exception e) {
-                    throw new java.sql.SQLException(e);
+                    throw new java.sql.SQLException(e.getMessage());
                 }
             }
         });
