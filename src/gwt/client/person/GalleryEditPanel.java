@@ -122,8 +122,9 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                 FlowPanel photoPanel = new FlowPanel();
                 photoPanel.addStyleName("Contents");
                 for (Photo photo : result) {
-                    PayloadWidget<Photo> payload = new PayloadWidget<Photo>(MediaUtil.createMediaView(
-                        photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE), photo);
+                    PayloadWidget<Photo> payload = new PayloadWidget<Photo>(
+                        MediaUtil.createMediaView(photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE),
+                        photo);
                     dragController.makeDraggable(payload);
                     photoPanel.add(payload);
                 }
@@ -146,7 +147,8 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                         return null;
                     }
                 };
-                _photoGrid.setPrefixArgs(new String[]{EDIT_ACTION, ""+_galleryData.gallery.galleryId});
+                _photoGrid.setPrefixArgs(new String[]{EDIT_ACTION, ""+
+                    _galleryData.gallery.galleryId});
                 List<Item> list = new ArrayList<Item>(result.size());
                 for (Photo photo : result) {
                     list.add(photo);
