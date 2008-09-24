@@ -205,7 +205,7 @@ public class FrameEntryPoint
             String cre = args.get(aidIdx + 3, "");
 
             // remove the "aid" tag and its three values
-            token = Args.compose(args.remove(aidIdx, aidIdx + 4));
+            token = Args.compose((Object[])args.remove(aidIdx, aidIdx + 4));
             args = new Args();
             args.setToken(token);
 
@@ -246,7 +246,7 @@ public class FrameEntryPoint
 
         // recreate the page token which we'll pass through to the page (or if it's being loaded
         // for the first time, it will request in a moment with a call to getPageToken)
-        _pageToken = Args.compose(args.splice(0));
+        _pageToken = Args.compose((Object[])args.splice(0));
 
         // replace the page if necessary
         if (_page != page || _page == Pages.WORLD) {
@@ -456,7 +456,7 @@ public class FrameEntryPoint
         // get the result
         result.value = args.get(idx + 1, null);
         // remove the key tag and its value from the URL
-        String shortened = Args.compose(args.remove(idx, idx + 2));
+        String shortened = Args.compose((Object[])args.remove(idx, idx + 2));
         result.newArgs = Args.fromToken(shortened);
         result.newToken = pagename + "-" + shortened;
         return result;
@@ -506,7 +506,7 @@ public class FrameEntryPoint
                 } else {
                     // if we have sNN-extra-args we want the close button to use just "sNN"
                     displayWorldClient(
-                        "sceneId=" + sceneId + "&page=" + Args.compose(args.splice(1)),
+                        "sceneId=" + sceneId + "&page=" + Args.compose((Object[])args.splice(1)),
                         Pages.WORLD.getPath() + "-s" + sceneId);
                 }
 

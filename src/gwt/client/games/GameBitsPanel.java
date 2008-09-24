@@ -49,7 +49,7 @@ public class GameBitsPanel extends SmartTable
         }
 
         if (originalItemId != 0 && CShell.isSupport()) {
-            String args = Args.compose(new String[] { "d", ""+Item.GAME, ""+originalItemId });
+            String args = Args.compose("d", Item.GAME, originalItemId);
             setWidget(row++, 0, Link.create(_msgs.bitsSeeOriginal(), Pages.STUFF, args), 2, null);
         }
     }

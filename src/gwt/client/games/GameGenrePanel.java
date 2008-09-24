@@ -57,12 +57,10 @@ public class GameGenrePanel extends FlowPanel
             public void onChange (Widget widget) {
                 byte newSortMethod = SORT_VALUES[((ListBox)widget).getSelectedIndex()];
                 if (query == null) {
-                    Link.go(Pages.GAMES, Args.compose(
-                        new String[] {"g", genre+"", newSortMethod+""}));
+                    Link.go(Pages.GAMES, Args.compose("g", genre, newSortMethod));
                 }
                 else {
-                    Link.go(Pages.GAMES, Args.compose(
-                        new String[] {"g", genre+"", newSortMethod+"", query}));
+                    Link.go(Pages.GAMES, Args.compose("g", genre, newSortMethod, query));
                 }
 
             }
@@ -151,7 +149,7 @@ public class GameGenrePanel extends FlowPanel
          */
         protected Widget createTitle (String text, String styleName, byte sortMethod) {
             Widget link = Link.create(
-                text, Pages.GAMES, Args.compose(new String[] {"g", _genre+"", sortMethod+""}));
+                text, Pages.GAMES, Args.compose("g", _genre, sortMethod));
             link.addStyleName(styleName);
             return link;
         }

@@ -54,7 +54,7 @@ public class GameHeaderPanel extends FlowPanel
                 ListBox listBox = (ListBox) widget;
                 String selectedValue = listBox.getValue(listBox.getSelectedIndex());
                 if (!selectedValue.equals("")) {
-                    Link.go(Pages.GAMES, Args.compose(new String[] {"d", selectedValue}));
+                    Link.go(Pages.GAMES, Args.compose("d", selectedValue));
                 }
             }
         });
@@ -72,8 +72,7 @@ public class GameHeaderPanel extends FlowPanel
         ClickListener searchListener = new ClickListener() {
             public void onClick (Widget sender) {
                 String newQuery = searchBox.getText().trim();
-                Link.go(Pages.GAMES, Args.compose(
-                    new String[] {"g", genre+"", sortMethod+"", newQuery}));
+                Link.go(Pages.GAMES, Args.compose("g", genre, sortMethod, newQuery));
             }
         };
         searchBox.addKeyboardListener(new EnterClickAdapter(searchListener));

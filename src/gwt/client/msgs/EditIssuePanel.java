@@ -120,8 +120,8 @@ public class EditIssuePanel extends TableFooterPanel
                     return true;
                 }
                 public boolean gotResult (Void result) {
-                    Link.go(Pages.WHIRLEDS, Args.compose(new String[] {
-                                "t", ""+_message.threadId, ""+_page, ""+_messageId }));
+                    Link.go(Pages.WHIRLEDS, 
+                        Args.compose("t", _message.threadId, _page, _messageId));
                     return false;
                 }
             };

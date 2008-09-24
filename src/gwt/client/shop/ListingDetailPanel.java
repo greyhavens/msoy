@@ -130,9 +130,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                 public void onClick (Widget sender) {
                     DoListItemPopup.show(_item, _listing, new DoListItemPopup.ListedListener() {
                         public void itemListed (Item item, boolean updated) {
-                            Link.replace(Pages.SHOP, Args.compose(new String[] {
-                                        "l", "" + _item.getType(), "" + _listing.catalogId,
-                                        "repriced_from_" + _listing.quote.getListedAmount()}));
+                            Link.replace(Pages.SHOP, Args.compose(
+                                "l", _item.getType(), _listing.catalogId,
+                                "repriced_from_" + _listing.quote.getListedAmount()));
                         }
                     });
                 }

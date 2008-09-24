@@ -10,7 +10,6 @@ import client.shell.Args;
 import client.shell.Pages;
 import client.util.Link;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Label;
 import com.threerings.gwt.ui.PagedGrid;
