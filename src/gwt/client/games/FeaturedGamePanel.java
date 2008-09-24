@@ -12,7 +12,7 @@ import com.threerings.msoy.game.gwt.FeaturedGameInfo;
 import com.threerings.msoy.game.gwt.GameDetail;
 
 import client.shell.Args;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.CreatorLabel;
 import client.ui.MsoyUI;
@@ -57,7 +57,7 @@ public class FeaturedGamePanel extends AbsolutePanel
         }));
 
         add(MsoyUI.createLabel(game.name, "Name"), 200, 40);
-        add(MsoyUI.createLabel(_dmsgs.getString("genre" + game.genre), "Genre"), 200, 65);
+        add(MsoyUI.createLabel(_dmsgs.xlate("genre" + game.genre), "Genre"), 200, 65);
         add(new CreatorLabel(game.creator), 200, 85);
         add(MsoyUI.createLabel(
                 MsoyUI.truncateParagraph(game.description, 100), "Description"), 200, 105);
@@ -69,5 +69,5 @@ public class FeaturedGamePanel extends AbsolutePanel
     protected FeaturedGameInfo[] _games;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

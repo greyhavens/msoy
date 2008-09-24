@@ -25,7 +25,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.gwt.CatalogQuery;
 
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.item.ShopUtil;
 import client.item.TagCloud;
 import client.shell.Pages;
@@ -90,7 +90,7 @@ public class CatalogPanel extends SmartTable
                 Link.go(Pages.SHOP, ShopUtil.composeArgs(_query, page));
             }
             @Override protected String getEmptyMessage () {
-                String name = _dmsgs.getString("itemType" + _query.itemType);
+                String name = _dmsgs.xlate("itemType" + _query.itemType);
                 if (_query.tag != null) {
                     return CShop.msgs.catalogNoTag(name, _query.tag);
                 } else if (_query.search != null) {
@@ -123,7 +123,7 @@ public class CatalogPanel extends SmartTable
     {
         _query = query;
 
-        String tname = _dmsgs.getString("pItemType" + _query.itemType);
+        String tname = _dmsgs.xlate("pItemType" + _query.itemType);
         // TODO: add logo image
         _listings.setWidget(0, 1, new Marquee(null, tname));
 
@@ -163,7 +163,7 @@ public class CatalogPanel extends SmartTable
         setWidget(0, 0, new SideBar(new CatalogQueryLinker(_query), false, cloud));
 
         // set up our page title
-        CShop.frame.setTitle(_dmsgs.getString("pItemType" + _query.itemType));
+        CShop.frame.setTitle(_dmsgs.xlate("pItemType" + _query.itemType));
     }
 
     // from interface TagCloud.TagListener
@@ -175,7 +175,7 @@ public class CatalogPanel extends SmartTable
     protected void setFilteredBy (String text)
     {
         if (text == null) {
-            String blurb = _dmsgs.getString("catIntro" + _query.itemType);
+            String blurb = _dmsgs.xlate("catIntro" + _query.itemType);
             _listings.setText(0, 0, blurb, 1, "Blurb");
 
         } else {
@@ -199,7 +199,7 @@ public class CatalogPanel extends SmartTable
     protected ListBox _sortBox;
     protected ListingGrid _items;
 
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
     protected static final int TAG_COUNT = 10;
 

@@ -18,7 +18,7 @@ import client.editem.EditorHost;
 import client.editem.ItemEditor;
 import client.remix.ItemRemixer;
 import client.shell.Args;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Page;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -66,7 +66,7 @@ public class StuffPage extends Page
             // otherwise we're display a particular item's details
             ItemIdent ident = new ItemIdent(type, itemId);
 
-            final String title = CStuff.msgs.stuffTitle(_dmsgs.getString("pItemType" + type));
+            final String title = CStuff.msgs.stuffTitle(_dmsgs.xlate("pItemType" + type));
             if (_detail != null && _detail.item.getIdent().equals(ident)) {
                 // update the detail with the one in our models
                 Item item = _models.findItem(type, itemId);
@@ -183,7 +183,7 @@ public class StuffPage extends Page
     protected HashMap<Byte, ItemPanel> _itemPanels = new HashMap<Byte, ItemPanel>();
     protected ItemDetail _detail;
 
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
         ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
 }

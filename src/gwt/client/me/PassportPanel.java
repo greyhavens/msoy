@@ -23,7 +23,7 @@ import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
 import com.threerings.msoy.person.gwt.PassportData;
 
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.ui.HeaderBox;
 import client.ui.Marquee;
 import client.ui.MsoyUI;
@@ -59,7 +59,7 @@ public class PassportPanel extends FlowPanel
         add(contents);
         for (StampCategory category : StampCategory.values()) {
             String catNameLower = category.toString().toLowerCase();
-            String catName = _dmsgs.getString("passportCategory_" + catNameLower);
+            String catName = _dmsgs.xlate("passportCategory_" + catNameLower);
             FlowPanel stamps = new FlowPanel();
             contents.add(new TongueBox(MsoyUI.createImage(
                 "/images/me/icon_" + catNameLower + ".png", null), catName, stamps));
@@ -153,7 +153,7 @@ public class PassportPanel extends FlowPanel
     protected static final int MAX_NEXT_BADGES = 4;
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final MeServiceAsync _mesvc = (MeServiceAsync)
         ServiceUtil.bind(GWT.create(MeService.class), MeService.ENTRY_POINT);
 }

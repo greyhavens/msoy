@@ -6,7 +6,7 @@ package client.editem;
 import java.util.List;
 
 import client.shell.CShell;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -149,7 +149,7 @@ public class GameEditor extends ItemEditor
     {
         _genre = new ListBox();
         for (byte genre : Game.GENRES) {
-            _genre.addItem(_dmsgs.getString("genre" + genre));
+            _genre.addItem(_dmsgs.xlate("genre" + genre));
         }
         addRow(_emsgs.gameGenre(), _genre);
 
@@ -160,8 +160,8 @@ public class GameEditor extends ItemEditor
                 // TODO: disable or hide min/max players and watchable if this is a party game
             }
         }));
-        _matchType.addItem(_dmsgs.getString("gameType0"));
-        _matchType.addItem(_dmsgs.getString("gameType2"));
+        _matchType.addItem(_dmsgs.xlate("gameType0"));
+        _matchType.addItem(_dmsgs.xlate("gameType2"));
 
         // TODO: it'd be nice to force-format this text field for integers, or something
         addRow(_emsgs.gameMinPlayers(), _minPlayers = new TextBox());
@@ -370,7 +370,7 @@ public class GameEditor extends ItemEditor
     protected TextBox _shopTag;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
     // connection to fetching list of the player's Whirleds
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)

@@ -25,7 +25,7 @@ import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.game.gwt.GameInfo;
 
 import client.shell.Args;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -100,7 +100,7 @@ public class GameHeaderPanel extends FlowPanel
         add(genreLinks);
         for (int i = 0; i < Game.GENRES.length; i++) {
             byte genreCode = Game.GENRES[i];
-            genreLinks.add(Link.create(_dmsgs.getString("genre" + genreCode),
+            genreLinks.add(Link.create(_dmsgs.xlate("genre" + genreCode),
                 Pages.GAMES, Args.compose("g", genreCode)));
             if (i+1 < Game.GENRES.length) {
                 genreLinks.add(new InlineLabel("|"));
@@ -123,5 +123,5 @@ public class GameHeaderPanel extends FlowPanel
     protected byte _genre;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

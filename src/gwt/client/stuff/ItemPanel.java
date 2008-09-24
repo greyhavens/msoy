@@ -28,7 +28,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.item.StuffNaviBar;
 import client.shell.Args;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.FlashClients;
@@ -85,7 +85,7 @@ public class ItemPanel extends FlowPanel
                 return new ItemEntry(item);
             }
             @Override protected String getEmptyMessage () {
-                return CStuff.msgs.panelNoItems(_dmsgs.getString("itemType" + _type));
+                return CStuff.msgs.panelNoItems(_dmsgs.xlate("itemType" + _type));
             }
             @Override protected boolean displayNavi (int items) {
                 return true;
@@ -133,7 +133,7 @@ public class ItemPanel extends FlowPanel
     {
         // this will allow us to create new items
         _upload = new SmartTable("Upload", 0, 0);
-        _upload.setText(0, 0, _dmsgs.getString("itemUploadTitle" + _type), 2, "Header");
+        _upload.setText(0, 0, _dmsgs.xlate("itemUploadTitle" + _type), 2, "Header");
 
         // add the various "why to upload" pitches
         String why = getPitch("a") + "<br>" + getPitch("b") + "<br>" + getPitch("c");
@@ -148,7 +148,7 @@ public class ItemPanel extends FlowPanel
 
     protected String getPitch (String postfix)
     {
-        String pitch = _dmsgs.getString("itemUploadPitch" + _type + postfix);
+        String pitch = _dmsgs.xlate("itemUploadPitch" + _type + postfix);
         if (-1 != pitch.indexOf("@MEMBER_ID@")) {
             return pitch.replaceAll("@MEMBER_ID@", "" + CStuff.getMemberId());
         }
@@ -170,7 +170,7 @@ public class ItemPanel extends FlowPanel
             tbar.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
 
             String title = _type == Item.NOT_A_TYPE ? CStuff.msgs.stuffTitleMain()
-                : CStuff.msgs.stuffTitle(_dmsgs.getString("pItemType" + _type));
+                : CStuff.msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type));
             tbar.add(MsoyUI.createLabel(title, "Type"));
 
             tbar.add(MsoyUI.createLabel(CStuff.msgs.ipShopFor(), "For"));
@@ -219,7 +219,7 @@ public class ItemPanel extends FlowPanel
     protected SmartTable _upload;
     protected HorizontalPanel _search;
 
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
     protected static final String[] FLABELS = {
         CStuff.msgs.ipfAll(),

@@ -33,7 +33,7 @@ import com.threerings.msoy.person.gwt.SelfFeedMessage;
 
 import client.shell.Args;
 import client.shell.CShell;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
@@ -283,7 +283,7 @@ public class FeedPanel extends TongueBox
 
             case 103: // FRIEND_LISTED_ITEM
                 return _pmsgs.descCombine(
-                            _dmsgs.getString("itemType" + message.data[1]),
+                    _dmsgs.xlate("itemType" + message.data[1]),
                             Link.createHtml(message.data[0], Pages.SHOP,
                                 Args.compose("l", message.data[1], message.data[2])));
 
@@ -296,7 +296,7 @@ public class FeedPanel extends TongueBox
                 int badgeCode = Integer.parseInt(message.data[0]);
                 try {
                     String badgeHexCode = Integer.toHexString(badgeCode);
-                    badgeName = _dmsgs.getString("badge_" + badgeHexCode);
+                    badgeName = _dmsgs.xlate("badge_" + badgeHexCode);
                 } catch (MissingResourceException e) {
                     badgeName = "MISSING NAME (code=" + badgeCode + ")";
                 }
@@ -304,7 +304,7 @@ public class FeedPanel extends TongueBox
                 String badgeLevelName;
                 int badgeLevel = Integer.parseInt(message.data[1]);
                 try {
-                    badgeLevelName = _dmsgs.getString("badgelevel_" + badgeLevel);
+                    badgeLevelName = _dmsgs.xlate("badgelevel_" + badgeLevel);
                 } catch (MissingResourceException e) {
                     badgeLevelName = "MISSING LEVEL NAME (level=" + badgeLevel + ")";
                 }
@@ -764,7 +764,7 @@ public class FeedPanel extends TongueBox
     protected FeedLoader _feedLoader;
 
     protected static final DateTimeFormat _dateFormater = DateTimeFormat.getFormat("MMMM d:");
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
 
     /** The default number of days of feed information to show. */

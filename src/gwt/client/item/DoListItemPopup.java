@@ -26,7 +26,7 @@ import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 
 import client.shell.CShell;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
 import client.util.ClickCallback;
@@ -96,7 +96,7 @@ public class DoListItemPopup extends VerticalPanel
                                         0 /* hidden */ : 1 /* manual */;
             for (int ii = 0; ii < CatalogListing.PRICING.length; ii++) {
                 String key = "listingPricing" + CatalogListing.PRICING[ii];
-                _pricingBox.addItem(_dmsgs.getString(key));
+                _pricingBox.addItem(_dmsgs.xlate(key));
                 if (listing != null && listing.pricing == CatalogListing.PRICING[ii]) {
                     selectedPricingIndex = ii;
                 }
@@ -104,7 +104,7 @@ public class DoListItemPopup extends VerticalPanel
             ChangeListener tipper = new ChangeListener() {
                 public void onChange (Widget sender) {
                     int pricing = getPricing();
-                    _pricingTip.setText(_dmsgs.getString("listingPricingTip" + pricing));
+                    _pricingTip.setText(_dmsgs.xlate("listingPricingTip" + pricing));
                     boolean showSalesTarget = (pricing == CatalogListing.PRICING_ESCALATE ||
                                                pricing == CatalogListing.PRICING_LIMITED_EDITION);
                     _salesTargetLabel.setVisible(showSalesTarget);
@@ -260,7 +260,7 @@ public class DoListItemPopup extends VerticalPanel
     protected Button _doIt;
 
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 

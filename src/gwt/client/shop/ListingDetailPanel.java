@@ -34,7 +34,7 @@ import client.item.ItemActivator;
 import client.item.RemixableLabel;
 import client.item.ShopUtil;
 import client.shell.Args;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
@@ -93,7 +93,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             Currency altCur = (listedCur == Currency.COINS) ? Currency.BARS : Currency.COINS;
             HorizontalPanel altRow = new HorizontalPanel();
             altRow.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            String altCurName = _dmsgs.getString("currency" + altCur.toByte());
+            String altCurName = _dmsgs.xlate("currency" + altCur.toByte());
             altRow.add(MsoyUI.createLabel(_msgs.listingAltTip(altCurName), null));
             altRow.add(WidgetUtil.makeShim(5, 5));
             altRow.add(MsoyUI.createInlineImage(altCur.getSmallIcon()));
@@ -171,7 +171,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 //         byte[] types = _item.getSalableSubTypes();
 //         if (types.length > 0) {
 //             for (int ii = 0; ii < types.length; ii++) {
-//                 addTabBelow(_dmsgs.getString("pItemType" + types[ii]), new Label("TBD"));
+//                 addTabBelow(_dmsgs.xlate("pItemType" + types[ii]), new Label("TBD"));
 //             }
 //         }
     }
@@ -185,7 +185,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _buyPanel.setStyleName("Bought");
 
         // change the buy button into a "you bought it" display
-        String type = _dmsgs.getString("itemType" + itype);
+        String type = _dmsgs.xlate("itemType" + itype);
         _buyPanel.add(MsoyUI.createLabel(_msgs.boughtTitle(type), "Title"));
 
         if (FlashClients.clientExists() && !(item instanceof SubItem)) {
@@ -193,7 +193,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             _buyPanel.add(new Label(getUsageMessage(itype)));
         } else {
             _buyPanel.add(new Label(_msgs.boughtViewStuff(type)));
-            String ptype = _dmsgs.getString("pItemType" + itype);
+            String ptype = _dmsgs.xlate("pItemType" + itype);
             _buyPanel.add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
         }
     }
@@ -272,7 +272,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 }

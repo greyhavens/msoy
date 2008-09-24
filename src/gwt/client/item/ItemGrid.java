@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import client.shell.Args;
-import client.shell.DynamicMessages;
 import client.shell.Pages;
 import client.util.Link;
 
@@ -125,6 +124,4 @@ public abstract class ItemGrid extends PagedGrid<Item>
     protected ItemListDataModel _listDataModel;
 
     protected Label _titleLabel;
-
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
 }

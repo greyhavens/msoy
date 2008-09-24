@@ -26,7 +26,7 @@ import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.games.PlayButton;
 import client.shell.Args;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.Stars;
@@ -70,7 +70,7 @@ public class GameGenrePanel extends FlowPanel
 
         String titleText;
         if (genre >= 0) {
-            String genreTitle = _dmsgs.getString("genre" + genre);
+            String genreTitle = _dmsgs.xlate("genre" + genre);
             if (genreTitle.length() > 8) {
                 titleText = genreTitle;
             }
@@ -196,7 +196,7 @@ public class GameGenrePanel extends FlowPanel
                 ratingPanel.add(MsoyUI.createLabel(_msgs.genreNumRatings(game.ratingCount+""),
                                 "NumRatings"));
                 setWidget(0, col++, ratingPanel, 1, "Rating");
-                setText(0, col++, _dmsgs.getString("genre" + game.genre), 1, "Category");
+                setText(0, col++, _dmsgs.xlate("genre" + game.genre), 1, "Category");
                 setText(0, col++, game.playersOnline+"", 1, "NowPlaying");
 
                 setWidget(0, col++, PlayButton.create(game, "", PlayButton.Size.SMALL),
@@ -215,7 +215,7 @@ public class GameGenrePanel extends FlowPanel
     protected byte _genre;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 

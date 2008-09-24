@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Prize;
 
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.ui.NumberTextBox;
 
 /**
@@ -51,7 +51,7 @@ public class PrizeEditor extends SubItemEditor
         _targetType.addItem(_emsgs.prizeSelectType(), "0");
         for (int ii = 0; ii < Item.GIFT_TYPES.length; ii++) {
             byte type = Item.GIFT_TYPES[ii];
-            _targetType.addItem(_dmsgs.getString("itemType" + type), ""+type);
+            _targetType.addItem(_dmsgs.xlate("itemType" + type), ""+type);
         }
 
         // TODO: display a UI where they can select an item from their inventory that has a
@@ -97,5 +97,5 @@ public class PrizeEditor extends SubItemEditor
     protected NumberTextBox _targetCatalogId;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

@@ -15,7 +15,7 @@ import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
 import client.shell.Args;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 
@@ -54,7 +54,7 @@ public class StampsBlurb extends Blurb
             add(MsoyUI.createImage(badge.imageUrl(), "BadgeImage"));
             String badgeName =  Integer.toHexString(badge.badgeCode);
             try {
-                badgeName = _dmsgs.getString("badge_" + badgeName);
+                badgeName = _dmsgs.xlate("badge_" + badgeName);
             } catch (MissingResourceException mre) {
                 // displaying the hex code is the failure case - make sure to test all new badges
                 // before letting them out to production.
@@ -64,5 +64,5 @@ public class StampsBlurb extends Blurb
     }
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

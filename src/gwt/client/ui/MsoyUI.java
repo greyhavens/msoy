@@ -32,7 +32,6 @@ import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.data.SessionData;
 
-import client.shell.DynamicMessages;
 import client.shell.LogonPanel;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
@@ -592,7 +591,6 @@ public class MsoyUI
     protected static final SimpleDateFormat _yfmt = new SimpleDateFormat("MMM dd, yyyy");
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

@@ -12,7 +12,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.gwt.ui.SmartTable;
 
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -57,7 +57,7 @@ public class SideBar extends SmartTable
             if (ii > 0) {
                 navi.add(new Image("/images/shop/navi_bg_sep.png"));
             }
-            navi.add(makeItem(linker, _dmsgs.getString("pItemType" + type), type));
+            navi.add(makeItem(linker, _dmsgs.xlate("pItemType" + type), type));
         }
         navi.add(new Image("/images/shop/navi_bg_bottom.png"));
         addWidget(navi, 1, "Middle");
@@ -90,5 +90,5 @@ public class SideBar extends SmartTable
             Item.VIDEO };
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

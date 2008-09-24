@@ -14,7 +14,7 @@ import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.GameServiceAsync;
 
 import client.shell.Args;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
@@ -85,7 +85,7 @@ public class ArcadePanel extends FlowPanel
             FlowPanel header = MsoyUI.createFlowPanel("Header");
             add(header);
             header.add(MsoyUI.createImage("/images/game/genre/" + genre.genre + ".png", "Icon"));
-            header.add(MsoyUI.createActionLabel(_dmsgs.getString("genre" + genre.genre), onClick));
+            header.add(MsoyUI.createActionLabel(_dmsgs.xlate("genre" + genre.genre), onClick));
 
             // display 1-3 games
             for (int i = 0; i < genre.games.length; i++) {
@@ -139,7 +139,7 @@ public class ArcadePanel extends FlowPanel
     protected GameHeaderPanel _header;
 
     protected static final GamesMessages _msgs = GWT.create(GamesMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final GameServiceAsync _gamesvc = (GameServiceAsync)
         ServiceUtil.bind(GWT.create(GameService.class), GameService.ENTRY_POINT);
 }

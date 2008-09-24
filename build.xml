@@ -213,7 +213,7 @@
   <property name="msgs2.list" value="games.Games,whirleds.Whirleds,stuff.Stuff,editem.Editem"/>
   <property name="msgs3.list" value="item.Item,mail.Mail,msgs.Msgs,people.People,swiftly.Swiftly"/>
   <property name="msgs4.list" value="room.Room,me.Me,remix.Remix,help.Help,support.Support"/>
-  <property name="msgs5.list" value="landing.Landing,person.Person"/>
+  <property name="msgs5.list" value="landing.Landing,person.Person,shell.Dynamic"/>
   <property name="msgsN.list" value="${msgs1.list},${msgs2.list},${msgs3.list},${msgs4.list}"/>
   <property name="gmsgs.list" value="${msgsN.list},${msgs5.list}"/>
 
@@ -372,7 +372,6 @@
     <uptodate property="gmsgs.uptodate">
       <srcfiles dir= "${gsrc.dir}" includes="client/*/*Messages.properties">
         <exclude name="**/ServerMessages.properties"/>
-        <exclude name="**/DynamicMessages.properties"/>
       </srcfiles>
       <mapper type="glob" from="*.properties" to="*.java"/>
     </uptodate>

@@ -37,7 +37,7 @@ public abstract class Page
     public static String getDefaultTitle (Frame.Tabs tab)
     {
         try {
-            return _dmsgs.getString(tab.toString().toLowerCase()+ "Title");
+            return _dmsgs.xlate(tab.toString().toLowerCase()+ "Title");
         } catch (Exception e) {
             return null;
         }
@@ -361,5 +361,5 @@ public abstract class Page
     protected BorderedDialog _dialog;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

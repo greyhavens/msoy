@@ -22,7 +22,7 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
 import client.shell.Args;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
@@ -57,7 +57,7 @@ public class InterestsBlurb extends Blurb
         SmartTable contents = new SmartTable("Interests", 0, 5);
         for (int ii = 0; ii < _interests.size(); ii++) {
             Interest interest = _interests.get(ii);
-            contents.setText(ii, 0, _dmsgs.getString("interest" + interest.type), 1, "Type");
+            contents.setText(ii, 0, _dmsgs.xlate("interest" + interest.type), 1, "Type");
             if (Interest.isLinkedType(interest.type)) {
                 contents.setWidget(ii, 1, linkify(interest.interests), 1, "Text");
             } else {
@@ -87,7 +87,7 @@ public class InterestsBlurb extends Blurb
         int row = 0;
         for (int ii = 0; ii < _iEditors.length; ii++) {
             int type = Interest.TYPES[ii];
-            editor.setText(row, 0, _dmsgs.getString("interest" + type), 1, "Type");
+            editor.setText(row, 0, _dmsgs.xlate("interest" + type), 1, "Type");
             _iEditors[ii] = MsoyUI.createTextBox(
                 getCurrentInterest(type), Interest.MAX_INTEREST_LENGTH, -1);
             _iEditors[ii].addStyleName("Editor");
@@ -175,7 +175,7 @@ public class InterestsBlurb extends Blurb
     protected TextBox[] _iEditors;
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
         ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
 }

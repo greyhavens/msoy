@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.swiftly.data.all.SwiftlyProject;
 
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.PromptPopup;
@@ -81,7 +81,7 @@ public class ProjectSelectionPanel extends FlexTable
         });
         for (int i = 0; i < SwiftlyProject.PROJECT_TYPES.length; i++) {
             byte type = SwiftlyProject.PROJECT_TYPES[i];
-            _projectTypes.addItem(_dmsgs.getString("itemType" + type),
+            _projectTypes.addItem(_dmsgs.xlate("itemType" + type),
                 String.valueOf(type));
         }
         updateSelectedProjectType();
@@ -258,5 +258,5 @@ public class ProjectSelectionPanel extends FlexTable
     protected CheckBox _remixable;
     protected byte _selectedProjectType;
 
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

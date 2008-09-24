@@ -23,7 +23,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import com.threerings.msoy.money.data.all.Currency;
 
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -49,7 +49,7 @@ class BadgeDisplay extends FlowPanel
         String hexCode = Integer.toHexString(badge.badgeCode);
         String badgeName = hexCode;
         try {
-            badgeName = _dmsgs.getString("badge_" + hexCode);
+            badgeName = _dmsgs.xlate("badge_" + hexCode);
         } catch (MissingResourceException mre) {
             // displaying the hex code is the failure case - make sure to test all new badges
             // before letting them out to production.
@@ -59,7 +59,7 @@ class BadgeDisplay extends FlowPanel
         String badgeDesc = null;
         try {
             // first look for a specific message for this level
-            badgeDesc = _dmsgs.getString("badgeDesc" + badge.level + "_" + hexCode);
+            badgeDesc = _dmsgs.xlate("badgeDesc" + badge.level + "_" + hexCode);
         } catch (MissingResourceException mre) {
             // No big deal, we'll check for the dynamic version next
         }
@@ -67,7 +67,7 @@ class BadgeDisplay extends FlowPanel
         if (badgeDesc == null) {
             try {
                 badgeDesc =
-                    _dmsgs.getString("badgeDescN_" + hexCode).replace("{0}", badge.levelUnits);
+                    _dmsgs.xlate("badgeDescN_" + hexCode).replace("{0}", badge.levelUnits);
             } catch (MissingResourceException mre) {
                 // again, this is a testing failure case - never let a badge make it to production
                 // with this in the description field.
@@ -240,7 +240,7 @@ class BadgeDisplay extends FlowPanel
     protected VerticalPanel _nameColumn;
 
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
     protected static final int PROGRESS_WIDTH = 90;
     protected static final int END_CAP_WIDTH = 9;

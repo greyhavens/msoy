@@ -10,7 +10,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.MemberName;
 
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.ui.CreatorLabel;
 import client.ui.MsoyUI;
 
@@ -23,11 +23,11 @@ public class GameNamePanel extends VerticalPanel
     {
         setStyleName("gameName");
         add(MsoyUI.createLabel(name, "Name"));
-        add(MsoyUI.createLabel(_dmsgs.getString("genre" + genre), "Genre"));
+        add(MsoyUI.createLabel(_dmsgs.xlate("genre" + genre), "Genre"));
         add(WidgetUtil.makeShim(5, 5));
         add(new CreatorLabel(creator));
         add(MsoyUI.createLabel(descrip, "Descrip"));
     }
 
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

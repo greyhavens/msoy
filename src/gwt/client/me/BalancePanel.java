@@ -14,6 +14,7 @@ import com.threerings.gwt.ui.PagedTable;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 
+import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 
 public class BalancePanel extends PagedTable<MoneyTransaction>
@@ -35,7 +36,7 @@ public class BalancePanel extends PagedTable<MoneyTransaction>
 
         row.add(MsoyUI.createLabel(MsoyUI.formatDateTime(entry.timestamp), "Time"));
 
-        String description = _lookup.xlate(MsoyUI.escapeHTML(entry.description));
+        String description = _dmsgs.xlate(MsoyUI.escapeHTML(entry.description));
         row.add(MsoyUI.createHTML(description, "Description"));
 
         if (_report == ReportType.CREATOR) {
@@ -87,6 +88,6 @@ public class BalancePanel extends PagedTable<MoneyTransaction>
 
     protected ReportType _report;
 
-    protected static final MeMessagesLookup _lookup = GWT.create(MeMessagesLookup.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }

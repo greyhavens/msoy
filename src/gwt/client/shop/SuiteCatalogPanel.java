@@ -17,7 +17,7 @@ import com.threerings.msoy.item.gwt.CatalogService;
 
 import client.item.ShopUtil;
 import client.shell.Args;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.Marquee;
 import client.util.Link;
@@ -49,7 +49,7 @@ public class SuiteCatalogPanel extends SmartTable
                 Link.go(Pages.SHOP, ShopUtil.composeArgs(_curquery, page));
             }
             @Override protected String getEmptyMessage () {
-                String name = _dmsgs.getString("pItemType" + _curquery.itemType);
+                String name = _dmsgs.xlate("pItemType" + _curquery.itemType);
                 return _msgs.suiteNoItems(_suiteName, name);
             }
         };
@@ -87,9 +87,9 @@ public class SuiteCatalogPanel extends SmartTable
         _curquery.itemType = itemType;
 
         // display our blurb and the item type
-        _listings.setText(0, 0, _dmsgs.getString("catIntro" + _curquery.itemType), 1, "Blurb");
+        _listings.setText(0, 0, _dmsgs.xlate("catIntro" + _curquery.itemType), 1, "Blurb");
         _listings.setWidget(0, 1, new Marquee(
-                                null, _dmsgs.getString("pItemType" + _curquery.itemType)));
+                                null, _dmsgs.xlate("pItemType" + _curquery.itemType)));
 
         // grab our data model and display it
         CatalogModels.Listings model = _models.getListingsModel(_curquery);
@@ -139,7 +139,7 @@ public class SuiteCatalogPanel extends SmartTable
     protected int _gameId;
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
     protected static final byte[] NOTAG_ITEM_TYPES = new byte[] {
         Item.LEVEL_PACK, Item.ITEM_PACK };

@@ -30,7 +30,7 @@ import client.item.ItemActivator;
 import client.item.RemixableLabel;
 import client.shell.Args;
 import client.shell.CShell;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -70,7 +70,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             if (_item.sourceId != 0 && !types[ii].isSalable()) {
                 continue;
             }
-            addTabBelow(_dmsgs.getString("pItemType" + types[ii].getType()),
+            addTabBelow(_dmsgs.xlate("pItemType" + types[ii].getType()),
                         new SubItemPanel(_model, types[ii].getType(), _item), false);
         }
     }
@@ -345,7 +345,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     protected FlowPanel _giftBits;
 
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)

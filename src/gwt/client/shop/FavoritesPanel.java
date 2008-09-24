@@ -18,7 +18,7 @@ import com.threerings.msoy.item.gwt.ListingCard;
 
 import client.shell.Args;
 import client.shell.CShell;
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.util.Link;
 
@@ -34,7 +34,7 @@ public class FavoritesPanel extends HorizontalPanel
         setVerticalAlignment(HasAlignment.ALIGN_TOP);
 
         final String header = (itemType == Item.NOT_A_TYPE) ? _msgs.allFavorites() :
-            _msgs.favoriteTitle(_dmsgs.getString("pItemType" + itemType));
+            _msgs.favoriteTitle(_dmsgs.xlate("pItemType" + itemType));
 
         add(new SideBar(new SideBar.Linker() {
             public boolean isSelected (byte type) {
@@ -85,7 +85,7 @@ public class FavoritesPanel extends HorizontalPanel
     protected CatalogModels.Favorites _model;
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
     protected static final int HEADER_HEIGHT = 15 /* gap */;
 }

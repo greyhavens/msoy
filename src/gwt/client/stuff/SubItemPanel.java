@@ -13,7 +13,7 @@ import com.threerings.msoy.item.data.all.Item;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.util.DataModel;
 
-import client.shell.DynamicMessages;
+import client.shell.DynamicLookup;
 import client.util.MsoyCallback;
 import client.util.NaviUtil;
 
@@ -61,7 +61,7 @@ public class SubItemPanel extends PagedGrid<Item>
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return CStuff.msgs.panelNoItems(_dmsgs.getString("itemType" + _type));
+        return CStuff.msgs.panelNoItems(_dmsgs.xlate("itemType" + _type));
     }
 
     @Override // from PagedGrid
@@ -82,7 +82,7 @@ public class SubItemPanel extends PagedGrid<Item>
     protected Item _parent;
     protected Button _create;
 
-    protected static final DynamicMessages _dmsgs = GWT.create(DynamicMessages.class);
+    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
     protected static final int ROWS = 2;
 }
