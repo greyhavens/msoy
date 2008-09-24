@@ -232,13 +232,14 @@ public class CatalogServlet extends MsoyServiceServlet
                          Currency currency, int cost)
         throws ServiceException
     {
-        if ( ! currency.isValidCost(cost)) {
+        MemberRecord mrec = requireAuthedUser();
+
+        // validate the listing cost
+        if (!currency.isValidCost(cost)) {
             log.warning("Requested to list an item for invalid price", "item", item,
-                "currency", currency.toString(), "cost", cost);
+                        "currency", currency.toString(), "cost", cost);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
-
-        MemberRecord mrec = requireAuthedUser();
 
         // load a copy of the original item
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(item.type);
@@ -439,13 +440,14 @@ public class CatalogServlet extends MsoyServiceServlet
                                Currency currency, int cost)
         throws ServiceException
     {
-        if ( ! currency.isValidCost(cost)) {
+        MemberRecord mrec = requireAuthedUser();
+
+        // validate the listing cost
+        if (!currency.isValidCost(cost)) {
             log.warning("Requested to update listing with an invalid price", "type", itemType,
-                "catId", catalogId, "currency", currency.toString(), "cost", cost);
+                        "catId", catalogId, "currency", currency.toString(), "cost", cost);
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
-
-        MemberRecord mrec = requireAuthedUser();
 
         // load up the listing we're updating
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
