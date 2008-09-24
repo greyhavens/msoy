@@ -36,8 +36,10 @@ public class RetryInterceptor
                 }
                 retries++;
                 if (retries < retryAnn.attempts()) {
-                    _log.info("Retrying method: " + invocation.getMethod().toString() + 
-                        ", exception: " + t.getMessage() + ", attempts: " + retries);
+                    _log.info("Retrying method.",
+                        "method", invocation.getMethod(),
+                        "attempts", retries,
+                        "exception", t.getMessage());
                 } else {
                     throw new IllegalStateException("Cannot continue retrying method:" + 
                         invocation.getMethod().toString(), t);
