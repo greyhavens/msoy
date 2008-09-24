@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.inject.Inject;
 
 import com.threerings.msoy.money.data.MoneyCodes;
+import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
@@ -42,7 +43,7 @@ public class MoneyServlet extends MsoyServiceServlet
         return new TransactionPageResult(total, page, getBlingInfo(memberId));
     }
     
-    public void exchangeBlingForBars (int memberId, int blingAmount)
+    public BlingExchangeResult exchangeBlingForBars (int memberId, int blingAmount)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -51,7 +52,7 @@ public class MoneyServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
         try {
-            _moneyLogic.exchangeBlingForBars(memberId, blingAmount);
+            return _moneyLogic.exchangeBlingForBars(memberId, blingAmount);
         } catch (NotEnoughMoneyException neme) {
             // TODO: return new balance, brah
             throw new ServiceException(MoneyCodes.E_INSUFFICIENT_BLING);

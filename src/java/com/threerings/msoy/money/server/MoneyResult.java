@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.money.server;
 
-import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 /**

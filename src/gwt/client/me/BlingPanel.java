@@ -5,6 +5,7 @@ package client.me;
 
 import client.shell.ShellMessages;
 import client.util.ServiceUtil;
+import client.util.events.StatusChangeEvent;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
@@ -15,6 +16,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.gwt.MoneyService;
@@ -32,30 +34,47 @@ public class BlingPanel extends SmartTable
                 // Ignore
             }
             public void onSuccess (BlingInfo result) {
-                init(result, model.memberId);
+                update(result);
             }
         });
+        init(model.memberId);
     }
     
-    protected void init (BlingInfo result, final int memberId)
+    protected void init (final int memberId)
     {
         int row = 0;
         setText(row++, 0, _msgs.blingHeader(), 3, "header");
         setText(row, 0, _msgs.blingBalance(), 1, "rightLabel");
-        setText(row++, 1, Currency.BLING.format(result.bling));
+        setWidget(row++, 1, _blingBalance = new Label());
         setText(row, 0, _msgs.blingWorth(), 1, "rightLabel");
-        setText(row++, 1, formatUSD(result.blingWorth));
+        setWidget(row++, 1, _blingWorth = new Label());
         setText(row++, 1, " ", 3, null);
         setText(row++, 0, _msgs.exchangeBlingForBars(), 3, "header");
         setText(row++, 0, _msgs.exchangeBlingDescription(), 3, null);
         setText(row, 0, _msgs.exchangeAmount(), 1, "rightLabel");
-        setWidget(row, 1, _amountBox = new TextBox());
+        setWidget(row, 1, _exchangeBox = new TextBox());
         setWidget(row++, 2, _exchangeBtn = new Button(_msgs.exchangeButton(), new ClickListener() {
             public void onClick (Widget sender) {
                 doExchange(memberId);
             }
         }));
-        setWidget(row, 1, _exchangeStatus = new Label(""));
+        setWidget(row++, 1, _exchangeStatus = new Label(""), 2, null);
+        setText(row++, 0, _msgs.blingCashOutHeader(), 3, "header");
+        setText(row++, 0, _msgs.blingCashOutDescription(), 3, null);
+        setText(row, 0, _msgs.blingCashOutAmount(), 1, "rightLabel");
+        setWidget(row, 1, _cashOutBox = new TextBox());
+        setWidget(row++, 2, _cashOutBtn = new Button(_msgs.blingCashOutButton(), new ClickListener() {
+            public void onClick (Widget sender) {
+                doCashOut(memberId);
+            }
+        }));
+        setWidget(row++, 1, _cashOutStatus = new Label(""), 2, null);
+    }
+    
+    protected void update (BlingInfo result)
+    {
+        _blingBalance.setText(Currency.BLING.format(result.bling));
+        _blingWorth.setText(formatUSD(result.blingWorth));
     }
     
     protected void doExchange (int memberId)
@@ -63,7 +82,7 @@ public class BlingPanel extends SmartTable
         // Ensure the amount is valid.
         final int blingAmount;
         try {
-            blingAmount = Integer.parseInt(_amountBox.getText());
+            blingAmount = Integer.parseInt(_exchangeBox.getText());
         } catch (Exception e) {
             setError(_exchangeStatus, _msgs.blingInvalidAmount());
             return;
@@ -75,18 +94,27 @@ public class BlingPanel extends SmartTable
         
         _exchangeBtn.setEnabled(false);
         try {
-            _moneysvc.exchangeBlingForBars(memberId, blingAmount, new AsyncCallback<Void>() {
+            _moneysvc.exchangeBlingForBars(memberId, blingAmount, 
+                    new AsyncCallback<BlingExchangeResult>() {
                 public void onFailure (Throwable cause) {
                     setError(_exchangeStatus, CMe.serverError(cause));
                 }
-                public void onSuccess (Void result) {
+                public void onSuccess (BlingExchangeResult result) {
                     setSuccess(_exchangeStatus, _msgs.blingExchangeSuccessful());
-                    _amountBox.setText("");
+                    _exchangeBox.setText("");
+                    update(result.blingInfo);
+                    CMe.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.GOLD, 
+                        result.barBalance, 0));
                 }
             });
         } finally {
             _exchangeBtn.setEnabled(true);
         }
+    }
+    
+    protected void doCashOut (int memberId)
+    {
+        
     }
     
     protected void setSuccess (Label label, String message)
@@ -116,9 +144,15 @@ public class BlingPanel extends SmartTable
             (cents < 10 ? '0' : "") + cents;
     }
 
-    protected TextBox _amountBox;
+    protected Label _blingBalance;
+    protected Label _blingWorth;
+    
+    protected TextBox _exchangeBox;
     protected Button _exchangeBtn;
     protected Label _exchangeStatus;
+    protected TextBox _cashOutBox;
+    protected Button _cashOutBtn;
+    protected Label _cashOutStatus;
     
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);

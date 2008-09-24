@@ -30,20 +30,19 @@ import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.UserActionRepository;
-import com.threerings.msoy.server.util.Retry;
 
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
 
+import com.threerings.msoy.money.data.all.BlingExchangeResult;
+import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
-import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
-import com.threerings.msoy.money.server.persist.StaleDataException;
 
 import static com.threerings.msoy.Log.log;
 
@@ -322,7 +321,7 @@ public class MoneyLogic
      * @throws NotEnoughMoneyException The account does not have the specified amount of bling
      * available, aight?
      */
-    public void exchangeBlingForBars (int memberId, int blingAmount)
+    public BlingExchangeResult exchangeBlingForBars (int memberId, int blingAmount)
         throws NotEnoughMoneyException
     {
         MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
@@ -335,6 +334,9 @@ public class MoneyLogic
             memberId, Currency.BARS, blingAmount,
             TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null);
         _nodeActions.moneyUpdated(accumTx);
+        
+        return new BlingExchangeResult(accumTx.balance, 
+            new BlingInfo(deductTx.balance, getBlingWorth(deductTx.balance)));
     }
 
     /**

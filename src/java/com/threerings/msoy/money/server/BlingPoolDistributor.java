@@ -42,7 +42,6 @@ import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
-import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyConfigRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;

@@ -3,26 +3,16 @@
 
 package com.threerings.msoy.money.server.persist;
 
-import java.sql.Timestamp;
-
 import net.jcip.annotations.NotThreadSafe;
-
-import com.google.common.base.Preconditions;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
-import com.samskivert.jdbc.depot.annotation.Index;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-
-import com.threerings.msoy.item.data.all.CatalogIdent;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
 
 import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.TransactionType;
 
 /**
  * Domain model for the current status of a member's account, including the amount of each money

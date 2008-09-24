@@ -7,7 +7,6 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,7 +16,6 @@ import net.jcip.annotations.NotThreadSafe;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

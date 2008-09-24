@@ -6,6 +6,7 @@ package com.threerings.msoy.money.gwt;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 
@@ -27,6 +28,6 @@ public interface MoneyService extends RemoteService
     /**
      * Exchanges some amount of bling for bars.
      */
-    void exchangeBlingForBars (int memberId, int blingAmount)
+    BlingExchangeResult exchangeBlingForBars (int memberId, int blingAmount)
         throws ServiceException;
 }
