@@ -68,7 +68,7 @@ public class DatabaseMover
     protected DatabaseMover ()
         throws Exception
     {
-        _perCtx = new PersistenceContext("msoy", ServerConfig.createConnectionProvider());
+        _perCtx = new PersistenceContext("msoy", ServerConfig.createConnectionProvider(), null);
         _repo = new MoverRepository(_perCtx);
     }
 

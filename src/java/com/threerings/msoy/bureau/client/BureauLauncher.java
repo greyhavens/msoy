@@ -43,7 +43,8 @@ public class BureauLauncher
                 addError(e);
             }
 
-            bind(PersistenceContext.class).toInstance(new PersistenceContext("msoy", provider));
+            bind(PersistenceContext.class).toInstance(
+                new PersistenceContext("msoy", provider, null));
             bind(RunQueue.class).annotatedWith(EventQueue.class).toInstance(_runner);
             bind(Runner.class).toInstance(_runner);
         }
