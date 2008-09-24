@@ -32,6 +32,7 @@ public interface ServerMessages extends ConstantsWithLookup
     String item_listed ();
 
     String hit_sales_limit ();
+    String cant_self_crossbuy ();
     String insufficient_flow ();
     String insufficient_gold ();
     String insufficient_bling ();
