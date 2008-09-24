@@ -23,7 +23,7 @@ public class TransactionsPanel extends VerticalPanel
     {
         setStyleName("transactions");
 
-        ReportType report = REPORT_VALUES[reportIndex-1];
+        ReportType report = ReportType.fromIndex(reportIndex);
         final Widget icon = MsoyUI.createImage(report.icon, null);
         final ListBox reportBox = new ListBox();
         for (String name : REPORT_NAMES) {
@@ -57,9 +57,5 @@ public class TransactionsPanel extends VerticalPanel
 
     protected static final String[] REPORT_NAMES = {
         _msgs.reportCoins(), _msgs.reportBars(), _msgs.reportBling(), _msgs.reportCreator()
-    };
-
-    protected static final ReportType[] REPORT_VALUES = {
-        ReportType.COINS, ReportType.BARS, ReportType.BLING, ReportType.CREATOR
     };
 }
