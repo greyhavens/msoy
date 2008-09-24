@@ -6,20 +6,30 @@ package com.threerings.msoy.money.server;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 /**
- * Result of an operation on the money service that modified a member's, creator's, or
- * affiliate's accounts.
+ * The result of a purchase, this returns the member, creator, and affiliate transactions.
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>
  */
-public class MoneyResult
+public class BuyResult
 {
-    public MoneyResult (
-        MoneyTransaction memberTx, MoneyTransaction creatorTx, MoneyTransaction affiliateTx)
+    /**
+     * @param magicFreeBuy should be true if the item was magic'd up for support
+     * personnel and we shouldn't increment the stat of the purchase.
+     */
+    public BuyResult (
+        boolean magicFreeBuy, MoneyTransaction memberTx,
+        MoneyTransaction creatorTx, MoneyTransaction affiliateTx)
     {
+        _magicFree = magicFreeBuy;
         _memberTransaction = memberTx;
         _creatorTransaction = creatorTx;
         _affiliateTransaction = affiliateTx;
+    }
+
+    public boolean wasMagicFreeBuy ()
+    {
+        return _magicFree;
     }
 
     /**
@@ -50,6 +60,7 @@ public class MoneyResult
         return _affiliateTransaction;
     }
     
+    protected boolean _magicFree;
     protected MoneyTransaction _memberTransaction;
     protected MoneyTransaction _creatorTransaction;
     protected MoneyTransaction _affiliateTransaction;

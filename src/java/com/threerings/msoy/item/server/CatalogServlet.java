@@ -37,8 +37,8 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyLogic;
-import com.threerings.msoy.money.server.MoneyResult;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
 import com.threerings.msoy.money.server.NotSecuredException;
 
@@ -148,18 +148,15 @@ public class CatalogServlet extends MsoyServiceServlet
         if (listing == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-
         // make sure we haven't hit our limited edition count
         if (listing.pricing == CatalogListing.PRICING_LIMITED_EDITION &&
-            listing.purchases >= listing.salesTarget) {
+                listing.purchases >= listing.salesTarget) {
             throw new ServiceException(ItemCodes.E_HIT_SALES_LIMIT);
         }
-
         // make sure they're not seeing a stale record for a hidden item
         if (listing.pricing == CatalogListing.PRICING_HIDDEN) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
-
         // make sure they can't cross-buy their own item
         if ((mrec.memberId == listing.item.creatorId) && (listing.currency != currency) &&
                 (authedCost != 0)) {
@@ -167,7 +164,7 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // update money as appropriate
-        MoneyResult result;
+        BuyResult result;
         try {
             result = _moneyLogic.buyItem(
                 mrec, new CatalogIdent(itemType, catalogId),
@@ -184,15 +181,18 @@ public class CatalogServlet extends MsoyServiceServlet
         // note the amount of currency spent in this transaction
         int coinsPaid = (memberTx.currency == Currency.COINS) ? -memberTx.amount : 0;
         int barsPaid = (memberTx.currency == Currency.BARS) ? -memberTx.amount : 0;
+        boolean magicFree = result.wasMagicFreeBuy();
 
         // create the clone row in the database
         ItemRecord newClone = repo.insertClone(listing.item, mrec.memberId, coinsPaid, barsPaid);
 
-        // note the new purchase for the item
-        repo.nudgeListing(catalogId, true);
+        // note the new purchase for the item, but only if we didn't do a magicFreeItem
+        if (!magicFree) {
+            repo.nudgeListing(catalogId, true);
+        }
 
         MoneyTransaction creatorTx = result.getCreatorTransaction();
-        if (creatorTx != null) {
+        if (!magicFree && creatorTx != null) {
             int creatorId = creatorTx.memberId;
             if (mrec.memberId != creatorId && creatorTx.amount > 0) {
                 // TODO: what if they earned bling?
@@ -219,7 +219,8 @@ public class CatalogServlet extends MsoyServiceServlet
         _itemLogic.itemPurchased(newClone, coinsPaid, barsPaid);
 
         // update their stat set, if they aren't buying something from themselves.
-        if (mrec.memberId != listing.item.creatorId && memberTx.currency == Currency.COINS) {
+        if (!magicFree && (mrec.memberId != listing.item.creatorId) &&
+                (memberTx.currency == Currency.COINS)) {
             _statLogic.incrementStat(mrec.memberId, StatType.COINS_SPENT, coinsPaid);
         }
 

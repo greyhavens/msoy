@@ -57,6 +57,12 @@ import static com.threerings.msoy.Log.log;
 @BlockingThread
 public class MoneyLogic
 {
+    public static interface BuyOperation
+    {
+        void create ()
+            throws Exception;
+    }
+
     @Inject
     public MoneyLogic (
         MoneyRepository repo, PriceQuoteCache priceCache, UserActionRepository userActionRepo,
@@ -158,7 +164,6 @@ public class MoneyLogic
             memberId, Currency.BARS, numBars, TransactionType.BARS_BOUGHT,
             MessageBundle.tcompose("m.bought_bars", payment), null);
         _nodeActions.moneyUpdated(tx);
-
         logAction(UserAction.boughtBars(memberId), tx);
 
         return tx.toMoneyTransaction();
@@ -178,8 +183,8 @@ public class MoneyLogic
      * @throws NotSecuredException iff there is no secured price for the item and the authorized
      * buy amount is not enough money.
      */
-    public MoneyResult buyItem (
-        final MemberRecord buyerRec, CatalogIdent item, int creatorId, String description,
+    public BuyResult buyItem (
+        final MemberRecord buyerRec, CatalogIdent item, int creatorId, String itemDescription,
         Currency listedCurrency, int listedAmount, Currency buyCurrency, int authedAmount)
         throws NotEnoughMoneyException, NotSecuredException
     {
@@ -223,7 +228,7 @@ public class MoneyLogic
             buyerTx.fill(
                 TransactionType.ITEM_PURCHASE,
                 MessageBundle.tcompose(magicFreeItem ? "m.item_magicfree" : "m.item_bought",
-                    description, item.type, item.catalogId),
+                    itemDescription, item.type, item.catalogId),
                 item);
             _repo.storeTransaction(buyerTx);
 
@@ -237,7 +242,7 @@ public class MoneyLogic
                     creatorPayout.currency, creatorPayout.amount,
                     TransactionType.CREATOR_PAYOUT,
                     MessageBundle.tcompose("m.item_sold",
-                        description, item.type, item.catalogId),
+                        itemDescription, item.type, item.catalogId),
                     item, buyerTx.id, buyerId);
             } else {
                 creatorTx = null;
@@ -282,8 +287,7 @@ public class MoneyLogic
                 _exchange.processPurchase(quote, buyCurrency);
             }
 
-            return new MoneyResult(
-                buyerTx.toMoneyTransaction(),
+            return new BuyResult(magicFreeItem, buyerTx.toMoneyTransaction(),
                 (creatorTx == null) ? null : creatorTx.toMoneyTransaction(),
                 (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction());
 
