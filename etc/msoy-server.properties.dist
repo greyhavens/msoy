@@ -169,6 +169,9 @@ oooauth.access_denied_url = /register/access_denied.wm
 # event_log_password = password
 # event_log_spool_dir = run
 
+# Set the following to true, to display Panopticon messages as they're being logged
+# event_log_debug = false
+
 #
 # Jabber component configuration
 #
