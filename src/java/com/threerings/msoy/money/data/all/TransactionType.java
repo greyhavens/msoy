@@ -20,6 +20,8 @@ public enum TransactionType
     SPENT_FOR_EXCHANGE(7),
     RECEIVED_FROM_EXCHANGE(8),
     CASHED_OUT(9),
+    REQUEST_CASH_OUT(10),
+    CANCEL_CASH_OUT(11)
     ;
 
     // Required by ByteEnum

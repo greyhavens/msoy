@@ -73,9 +73,23 @@ public class MemberAccountRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #accBling} field. */
     public static final ColumnExp ACC_BLING_C =
         new ColumnExp(MemberAccountRecord.class, ACC_BLING);
+
+    /** The column identifier for the {@link #cashOutBling} field. */
+    public static final String CASH_OUT_BLING = "cashOutBling";
+
+    /** The qualified column identifier for the {@link #cashOutBling} field. */
+    public static final ColumnExp CASH_OUT_BLING_C =
+        new ColumnExp(MemberAccountRecord.class, CASH_OUT_BLING);
+
+    /** The column identifier for the {@link #cashOutBlingWorth} field. */
+    public static final String CASH_OUT_BLING_WORTH = "cashOutBlingWorth";
+
+    /** The qualified column identifier for the {@link #cashOutBlingWorth} field. */
+    public static final ColumnExp CASH_OUT_BLING_WORTH_C =
+        new ColumnExp(MemberAccountRecord.class, CASH_OUT_BLING_WORTH);
     // AUTO-GENERATED: FIELDS END
 
-    public static final int SCHEMA_VERSION = 6;
+    public static final int SCHEMA_VERSION = 7;
 
     /** ID of the member this account record is for. */
     @Id
@@ -101,6 +115,12 @@ public class MemberAccountRecord extends PersistentRecord
      * As usual, this is "centibling". */
     public long accBling;
 
+    /** The amount of bling the user has requested to cash out, or 0 if no cash out. */
+    public int cashOutBling;
+    
+    /** The worth of each bling when the user requested a cash out. */
+    public float cashOutBlingWorth;
+    
     /**
      * Return the column name for the specified currency.
      */

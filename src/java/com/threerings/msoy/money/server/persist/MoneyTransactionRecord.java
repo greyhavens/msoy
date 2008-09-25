@@ -121,6 +121,13 @@ public class MoneyTransactionRecord extends PersistentRecord
     /** The qualified column identifier for the {@link #referenceTxId} field. */
     public static final ColumnExp REFERENCE_TX_ID_C =
         new ColumnExp(MoneyTransactionRecord.class, REFERENCE_TX_ID);
+
+    /** The column identifier for the {@link #referenceMemberId} field. */
+    public static final String REFERENCE_MEMBER_ID = "referenceMemberId";
+
+    /** The qualified column identifier for the {@link #referenceMemberId} field. */
+    public static final ColumnExp REFERENCE_MEMBER_ID_C =
+        new ColumnExp(MoneyTransactionRecord.class, REFERENCE_MEMBER_ID);
     // AUTO-GENERATED: FIELDS END
 
     public static final int SCHEMA_VERSION = 4;

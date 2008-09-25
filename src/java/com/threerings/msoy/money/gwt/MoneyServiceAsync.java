@@ -24,6 +24,12 @@ public interface MoneyServiceAsync
     /**
      * The asynchronous version of {@link MoneyService#exchangeBlingForBars}.
      */
-    void exchangeBlingForBars (int memberId, int blingAmount, AsyncCallback<BlingExchangeResult> callback);
+    void exchangeBlingForBars (int memberId, int blingAmount, 
+        AsyncCallback<BlingExchangeResult> callback);
+
+    /**
+     * The asynchronous version of {@link MoneyService#requestCashOutBling}.
+     */
+    void requestCashOutBling (int memberId, int blingAmount, AsyncCallback<Void> callback);
 }
 

@@ -44,7 +44,6 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
 import com.threerings.msoy.money.server.persist.MoneyConfigRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
-import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 
 /**
  * Responsible for distributing bling to creators of games that players have played on a daily
@@ -211,7 +210,7 @@ public class BlingPoolDistributor
     {
         // Update account with the awarded bling.
         try {
-            MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
+            _repo.accumulateAndStoreTransaction(
                 game.creatorId, Currency.BLING, amount, TransactionType.GAME_PLAYS,
                 MessageBundle.tcompose("m.game_plays_bling_awarded", amount,
                     game.itemId, game.description),

@@ -7,8 +7,6 @@ import java.util.List;
 
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.PagedTable;
-
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 import client.ui.MsoyUI;

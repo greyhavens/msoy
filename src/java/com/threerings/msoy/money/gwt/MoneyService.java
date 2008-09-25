@@ -30,4 +30,10 @@ public interface MoneyService extends RemoteService
      */
     BlingExchangeResult exchangeBlingForBars (int memberId, int blingAmount)
         throws ServiceException;
+    
+    /**
+     * Request a cashout of some amount of bling.
+     */
+    void requestCashOutBling (int memberId, int blingAmount)
+        throws ServiceException;
 }

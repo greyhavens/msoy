@@ -79,19 +79,12 @@ public class BlingPanel extends SmartTable
     
     protected void doExchange (int memberId)
     {
-        // Ensure the amount is valid.
-        final int blingAmount;
-        try {
-            blingAmount = Integer.parseInt(_exchangeBox.getText());
-        } catch (Exception e) {
-            setError(_exchangeStatus, _msgs.blingInvalidAmount());
-            return;
-        }
-        if (blingAmount < 1) {
-            setError(_exchangeStatus, _msgs.blingInvalidAmount());
+        int blingAmount = getValidAmount(_exchangeBox, _exchangeStatus, _msgs.blingInvalidAmount());
+        if (blingAmount == 0) {
             return;
         }
         
+        // Ensure the amount is valid.
         _exchangeBtn.setEnabled(false);
         try {
             _moneysvc.exchangeBlingForBars(memberId, blingAmount, 
@@ -114,19 +107,56 @@ public class BlingPanel extends SmartTable
     
     protected void doCashOut (int memberId)
     {
+        int blingAmount = getValidAmount(_cashOutBox, _cashOutStatus, _msgs.blingInvalidAmount());
+        if (blingAmount == 0) {
+            return;
+        }
         
+        // Ensure the amount is valid.
+        _cashOutBtn.setEnabled(false);
+        try {
+            _moneysvc.requestCashOutBling(memberId, blingAmount, new AsyncCallback<Void>() {
+                public void onFailure (Throwable cause) {
+                    setError(_cashOutStatus, CMe.serverError(cause));
+                }
+                public void onSuccess (Void result) {
+                    setSuccess(_cashOutStatus, _msgs.cashOutRequestSuccessful());
+                    _cashOutBox.setText("");
+                }
+            });
+        } finally {
+            _cashOutBtn.setEnabled(true);
+        }
     }
     
     protected void setSuccess (Label label, String message)
     {
         label.setText(message);
+        label.removeStyleName("Error");
         label.addStyleName("Success");
     }
     
     protected void setError (Label label, String message)
     {
         label.setText(message);
+        label.removeStyleName("Success");
         label.addStyleName("Error");
+    }
+    
+    protected int getValidAmount (TextBox box, Label status, String invalidMessage)
+    {
+        final int blingAmount;
+        try {
+            blingAmount = Integer.parseInt(box.getText());
+        } catch (Exception e) {
+            setError(status, invalidMessage);
+            return 0;
+        }
+        if (blingAmount < 1) {
+            setError(status, invalidMessage);
+            return 0;
+        }
+        return blingAmount;
     }
     
     /**

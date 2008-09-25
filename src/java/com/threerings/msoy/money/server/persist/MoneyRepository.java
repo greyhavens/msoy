@@ -371,6 +371,40 @@ public class MoneyRepository extends DepotRepository
             MoneyConfigRecord.LAST_DISTRIBUTED_BLING, lastDistributedBling);
     }
     
+    /**
+     * Sets the amount of bling the user has requested to cash out.  They must currently have that
+     * amount of bling, and they must not already be in the process of cashing out bling.
+     * 
+     * @param memberId ID of the member who is making the request.
+     * @param amount Amount of bling to cash out.
+     * @param blingWorth The amount each bling is worth in USD at this time.
+     * @return The number of records updated.  If 0, there was some error in cashing out.
+     */
+    public int setBlingCashOutRequested (int memberId, int amount, float blingWorth)
+    {
+        Where where = new Where(new And(
+            new Conditionals.Equals(MemberAccountRecord.MEMBER_ID_C, memberId),
+            new Conditionals.GreaterThanEquals(MemberAccountRecord.BLING_C, amount),
+            new Conditionals.Equals(MemberAccountRecord.CASH_OUT_BLING_C, 0)
+        ));
+        return updatePartial(MemberAccountRecord.class, where,
+            MemberAccountRecord.getKey(memberId),
+            MemberAccountRecord.CASH_OUT_BLING, amount,
+            MemberAccountRecord.CASH_OUT_BLING_WORTH, blingWorth);
+    }
+    
+    /**
+     * Indicates the bling has been cashed out, so we're no longer requesting it.
+     * 
+     * @param memberId ID of the member whose bling has been cashed out.
+     */
+    public void resetBlingCashOutRequest (int memberId)
+    {
+        updatePartial(MemberAccountRecord.getKey(memberId),
+            MemberAccountRecord.CASH_OUT_BLING, 0,
+            MemberAccountRecord.CASH_OUT_BLING_WORTH, 0f);
+    }
+    
     /** Helper method to setup a query for a transaction history search. */
     protected void populateSearch (
         List<QueryClause> clauses, int memberId,

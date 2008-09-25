@@ -59,6 +59,18 @@ public class MoneyServlet extends MsoyServiceServlet
         }
     }
     
+    public void requestCashOutBling (int memberId, int blingAmount)
+        throws ServiceException
+    {
+        try {
+            _moneyLogic.requestCashOutBling(memberId, blingAmount);
+        } catch (NotEnoughMoneyException neme) {
+            throw new ServiceException(MoneyCodes.E_INSUFFICIENT_BLING);
+        } catch (AlreadyCashedOutException acoe) {
+            throw new ServiceException(MoneyCodes.E_ALREADY_CASHED_OUT);
+        }
+    }
+    
     /**
      * Not a public service method, Called by getTransactionHistory
      */

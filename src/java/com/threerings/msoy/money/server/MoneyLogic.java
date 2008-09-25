@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.money.server;
 
+import java.text.NumberFormat;
 import java.util.EnumSet;
 import java.util.List;
 
@@ -41,6 +42,7 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
+import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
 
@@ -335,17 +337,80 @@ public class MoneyLogic
     /**
      * Called to effect the removal of bling from a member's account for cash-out purposes.
      *
-     * @param payment a pre-translated String indicating the amount the user will receive for
-     * the cashout. Something like "$30" or "$30 USD".
+     * @param memberId ID of the member whose bling will be cashed out.
+     * @param amount Amount of the bling to actually cash out.  This may be different than the
+     * amount requested, at the discretion of the support person handling this request.
      */
-    public void cashOutBling (int memberId, int amount, String payment)
+    public void cashOutBling (int memberId, int amount)
         throws NotEnoughMoneyException
     {
+        MemberAccountRecord account = _repo.load(memberId);
+        String payment = formatUSD((int)(amount * account.cashOutBlingWorth));
         MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
             memberId, Currency.BLING, amount * 100,
             TransactionType.CASHED_OUT, MessageBundle.tcompose("m.cashed_out", payment), null);
+        _repo.resetBlingCashOutRequest(memberId);
+        
         // if that didn't throw a NotEnoughMoneyException, we're good to go.
         _nodeActions.moneyUpdated(deductTx);
+    }
+    
+    /**
+     * Cancels a request to cash out bling.  This is done by support / admins only when there are
+     * cases when they cannot cash out or suspect illicit activity.
+     * 
+     * @param memberId The member whose request should be canceled.
+     * @param reason A reason for canceling the request, to be included on the transaction log for
+     * the user.
+     */
+    public void cancelCashOutBling (int memberId, String reason)
+    {
+        // Reset cash out amount, to indicate they no longer are requesting
+        _repo.resetBlingCashOutRequest(memberId);
+        
+        // Create a transaction containing the reason.
+        MemberAccountRecord account = _repo.load(memberId);
+        MoneyTransactionRecord tx = new MoneyTransactionRecord(memberId, Currency.BLING, 
+            0, account.bling);
+        tx.fill(TransactionType.CANCEL_CASH_OUT, 
+            MessageBundle.tcompose("m.cancel_cash_out", reason), null);
+        _repo.storeTransaction(tx);
+    }
+    
+    /**
+     * Requests a bling cash out for a particular user.  This will not immediately deduct any bling.
+     * Instead, a zero-amount transaction will be created to indicate the request was made.
+     * The user must have the specified amount of bling currently in their account, and they must
+     * not already be waiting for a cash out request to be fulfilled.
+     * 
+     * @param memberId ID of the member making the request.
+     * @param amount Amount of bling (NOT centibling) to cash out.
+     * @throws NotEnoughMoneyException The user does not currently have the amount of bling in their
+     * account.
+     * @throws AlreadyCashedOutException The user has already requested a bling cash out that has
+     * not yet been fulfilled.
+     */
+    public void requestCashOutBling (int memberId, int amount)
+        throws NotEnoughMoneyException, AlreadyCashedOutException
+    {
+        MemberAccountRecord account = _repo.load(memberId);
+        
+        // Set the amount we wish to cash out.  An error occurred if no rows were updated.
+        int rowCount = _repo.setBlingCashOutRequested(memberId, amount * 100, 
+            RuntimeConfig.server.blingWorth);
+        if (rowCount == 0) {
+            if (account.bling < amount) {
+                throw new NotEnoughMoneyException(memberId, Currency.BLING, amount, account.bling);
+            }
+            throw new AlreadyCashedOutException(memberId, account.cashOutBling);
+        }
+        
+        // Create a no-amount transaction to indicate the request was made.
+        MoneyTransactionRecord tx = new MoneyTransactionRecord(memberId, Currency.BLING, 
+            0, account.bling);
+        tx.fill(TransactionType.REQUEST_CASH_OUT, 
+            MessageBundle.tcompose("m.request_cash_out", amount), null);
+        _repo.storeTransaction(tx);
     }
 
     /**
@@ -539,6 +604,21 @@ public class MoneyLogic
             log.info("TODO: log bling to panopticon");
             break;
         }
+    }
+    
+    /**
+     * Converts the amount of pennies into a string to display to the user as a valid currency.
+     * Note: there are some other utilities around to do this, but they're either in a different
+     * project (and there's some concern about exposing them directly), or they don't properly
+     * take into account floating-point round off errors.  This may get replaced or expanded
+     * later on.
+     */
+    protected static String formatUSD (int pennies)
+    {
+        int dollars = pennies / 100;
+        int cents = pennies % 100;
+        return "USD $" + NumberFormat.getNumberInstance().format(dollars) + '.' +
+            (cents < 10 ? '0' : "") + cents;
     }
 
     protected final MoneyExchange _exchange;
