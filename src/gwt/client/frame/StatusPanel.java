@@ -174,13 +174,15 @@ public class StatusPanel extends SmartTable
             int idx = 0;
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
             setWidget(0, idx++, MsoyUI.createActionImage(Currency.COINS.getLargeIcon(),
-                _cmsgs.coinsTip(), NaviUtil.onViewTransactions(ReportType.COINS)), 1, "Icon");
+                _cmsgs.coinsTip(), DeploymentConfig.barsEnabled ?
+                    NaviUtil.onViewTransactions(ReportType.COINS) : null), 1, "Icon");
             setText(0, _coinsIdx = idx++, "0");
 
             if (DeploymentConfig.barsEnabled) {
                 getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-                setWidget(0, idx++, MsoyUI.createActionImage(Currency.BARS.getLargeIcon(), _cmsgs.barsTip(),
-                    NaviUtil.onViewTransactions(ReportType.BARS)), 1, "Icon");
+                setWidget(0, idx++, MsoyUI.createActionImage(Currency.BARS.getLargeIcon(),
+                    _cmsgs.barsTip(), DeploymentConfig.barsEnabled ?
+                        NaviUtil.onViewTransactions(ReportType.BARS) : null), 1, "Icon");
                 setText(0, _barsIdx = idx++, "0");
             }
 
