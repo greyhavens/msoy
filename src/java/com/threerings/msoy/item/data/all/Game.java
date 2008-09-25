@@ -39,8 +39,8 @@ public class Game extends Item
 
     /** All game genres, in display order. */
     public static final byte[] GENRES = {
-        GENRE_WORD, GENRE_STRATEGY, GENRE_ACTION_ARCADE, GENRE_CARD_BOARD, GENRE_PUZZLE,
-        GENRE_ADVENTURE_RPG, GENRE_SPORTS_RACING, GENRE_MMO_WHIRLED, GENRE_OTHER
+        GENRE_ACTION_ARCADE, GENRE_MMO_WHIRLED, GENRE_STRATEGY, GENRE_PUZZLE, GENRE_ADVENTURE_RPG, 
+        GENRE_WORD, GENRE_CARD_BOARD, GENRE_SPORTS_RACING, GENRE_OTHER
     };
 
     /** Identifies our lobby background table media. */
@@ -118,7 +118,7 @@ public class Game extends Item
     {
         return (config != null) && (config.indexOf("<avrg/>") >= 0);
     }
-    
+
     /**
      * Returns true if this is a developer's in-progress original game rather than one listed in
      * the catalog.
