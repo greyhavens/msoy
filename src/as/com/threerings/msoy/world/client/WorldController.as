@@ -91,9 +91,6 @@ public class WorldController extends MsoyController
     /** Command to join a member's current game. */
     public static const JOIN_PLAYER_GAME :String = "JoinPlayerGame";
 
-    /** Command to join a member's currently pending game table. */
-    public static const JOIN_PLAYER_TABLE :String = "JoinPlayerTable";
-
     /** Command to join a game lobby. */
     public static const JOIN_GAME_LOBBY :String = "JoinGameLobby";
 
@@ -597,30 +594,6 @@ public class WorldController extends MsoyController
     }
 
     /**
-     * Handles the JOIN_PLAYER_TABLE command.
-     */
-    public function handleJoinPlayerTable (memberId :int) :void
-    {
-        var msvc :MemberService =
-            (_wctx.getClient().requireService(MemberService) as MemberService);
-        msvc.getCurrentMemberLocation(_wctx.getClient(), memberId, new ResultAdapter(
-            function (cause :String) :void {
-                _wctx.displayFeedback(null, cause);
-            },
-            function (location :MemberLocation) :void {
-                if (location.gameId == 0) {
-                    _wctx.displayFeedback(MsoyCodes.GAME_MSGS, "e.no_longer_lobbying");
-                } else if (location.sceneId == 0) {
-                    // if the game already started, take them straight into it.
-                    _wctx.getWorldDirector().goToMemberLocation(location.memberId, location);
-                } else {
-                    _wctx.getGameDirector().joinPlayerTable(location.gameId, location.memberId);
-                }
-            }));
-        restoreSceneURL();
-    }
-
-    /**
      * Handles the GO_GROUP_HOME command.
      */
     public function handleGoGroupHome (groupId :int) :void
@@ -911,7 +884,9 @@ public class WorldController extends MsoyController
 
         } else if (null != params["playerTable"]) {
             _oldCrustyShit = false;
-            handleJoinPlayerTable(int(params["playerTable"]));
+            _wctx.getGameDirector().joinPlayerTable(
+                int(params["gameLobby"]), int(params["playerTable"]),
+                String(params["ghost"]), int(params["gport"]));
 
         } else if (null != params["gameLocation"]) {
             _oldCrustyShit = false;

@@ -67,10 +67,9 @@ public class LobbyPanel extends FloatingPanel
         showCloseButton = true;
     }
 
-    public function init (lobbyObj :LobbyObject, friendsOnly :Boolean) :void
+    public function init (lobbyObj :LobbyObject) :void
     {
         _lobbyObj = lobbyObj;
-        _friendsOnly = friendsOnly;
     }
 
     /**
@@ -143,8 +142,5 @@ public class LobbyPanel extends FloatingPanel
 
     /** Our lobby object. */
     protected var _lobbyObj :LobbyObject;
-
-    /** Are we showing only our friends' tables? */
-    protected var _friendsOnly :Boolean;
 }
 }

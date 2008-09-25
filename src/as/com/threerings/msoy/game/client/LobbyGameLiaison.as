@@ -95,9 +95,8 @@ public class LobbyGameLiaison extends GameLiaison
     public function showLobby () :void
     {
         if (_lobby == null) {
-            _lobby = 
-                new LobbyController(_gctx, _mode = LobbyCodes.SHOW_LOBBY, lobbyCleared, playNow, 
-                lobbyLoaded);
+            _lobby = new LobbyController(
+                _gctx, _mode = LobbyCodes.SHOW_LOBBY, lobbyCleared, playNow, lobbyLoaded);
             joinLobby();
         } // otherwise it's already showing
     }

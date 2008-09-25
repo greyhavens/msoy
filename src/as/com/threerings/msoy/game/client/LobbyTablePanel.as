@@ -106,7 +106,8 @@ public class LobbyTablePanel extends VBox
         var ititle :Label = FlexUtil.createLabel(Msgs.GAME.get("t.invite_link"), "lobbyTitle");
         var isubtitle :Label = FlexUtil.createLabel(Msgs.GAME.get("l.invite_link"));
         var ilink :TextInput = new TextInput();
-        ilink.text = DeploymentConfig.serverURL + "#world-game_l_" + _lobj.game.gameId;
+        ilink.text = DeploymentConfig.serverURL + "#world-game_l_" + _lobj.game.gameId + "_" +
+            _gctx.getPlayerObject().memberName.getMemberId();
         addChild(makeVBox(ititle, isubtitle, new CopyableText(ilink)));
 
         // create our seats grid

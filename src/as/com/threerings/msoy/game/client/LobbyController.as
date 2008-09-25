@@ -385,8 +385,7 @@ public class LobbyController extends Controller
     public function objectAvailable (obj :DObject) :void
     {
         _lobj = obj as LobbyObject;
-        _panel.init(_lobj, _mode == LobbyCodes.PLAY_NOW_FRIENDS);
-
+        _panel.init(_lobj);
         _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
 
         // create our table director
@@ -397,24 +396,24 @@ public class LobbyController extends Controller
         // set up our starting panel mode
         _panel.setMode(getStartMode());
 
+        // pass group back to the caller now that the lobby has loaded
+        _lobbyLoaded(_lobj.groupId);
+
         // if we have a player table to join, do that now, otherwise
         if (_playerId != 0) {
             joinPlayerTable(_playerId);
-            return;
-        }
 
-        // otherwise do something appropriate based on our mode
-        switch (_mode) {
-        case LobbyCodes.PLAY_NOW_FRIENDS:
-            joinSomeTable(true);
-            break;
-        case LobbyCodes.PLAY_NOW_ANYONE:
-            joinSomeTable(false);
-            break;
+        } else {
+            // otherwise do something appropriate based on our mode
+            switch (_mode) {
+            case LobbyCodes.PLAY_NOW_FRIENDS:
+                joinSomeTable(true);
+                break;
+            case LobbyCodes.PLAY_NOW_ANYONE:
+                joinSomeTable(false);
+                break;
+            }
         }
-
-        // pass group back to the caller once lobby has loaded
-        _lobbyLoaded(_lobj.groupId);
     }
 
     // from Subscriber

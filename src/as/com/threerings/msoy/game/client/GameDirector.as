@@ -135,7 +135,8 @@ public class GameDirector extends BasicDirector
     /**
      * Requests that we join the given player at his pending game table.
      */
-    public function joinPlayerTable (gameId :int, memberId :int) :void
+    public function joinPlayerTable (
+        gameId :int, memberId :int, ghost :String = null, gport :int = 0) :void
     {
         if (_liaison != null) {
             if (_liaison is AVRGameLiaison || _liaison.gameId != gameId) {
@@ -143,7 +144,7 @@ public class GameDirector extends BasicDirector
                 _liaison = null;
             }
         }
-        displayLobby(gameId, null, 0); // game host/port is not known here
+        displayLobby(gameId, ghost, gport);
         LobbyGameLiaison(_liaison).joinPlayerTable(memberId);
     }
 
