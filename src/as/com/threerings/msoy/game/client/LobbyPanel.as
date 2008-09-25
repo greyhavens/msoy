@@ -78,6 +78,7 @@ public class LobbyPanel extends FloatingPanel
      */
     public function setMode (mode :int) :void
     {
+        var padding :int = 10;
         switch (mode) {
         case LobbyController.MODE_SPLASH:
             this.title = _lobbyObj.game.name;
@@ -86,6 +87,7 @@ public class LobbyPanel extends FloatingPanel
         case LobbyController.MODE_MATCH:
             this.title = _lobbyObj.game.name;
             setContents(new LobbyMatchPanel(_gctx, _ctrl, _lobbyObj));
+            padding = 0; // yay!
             break;
         case LobbyController.MODE_CREATE:
             this.title = Msgs.GAME.get("t.create_game", _lobbyObj.game.name);
@@ -96,6 +98,11 @@ public class LobbyPanel extends FloatingPanel
             setContents(new LobbyTablePanel(_gctx, _ctrl, _lobbyObj));
             break;
         }
+
+        // one of our panels requires custom padding, thanks Bill!
+        setStyle("paddingLeft", padding);
+        setStyle("paddingRight", padding);
+        setStyle("paddingBottom", padding);
     }
 
     // overridden so we can redefine center's default to false, since we force layout..

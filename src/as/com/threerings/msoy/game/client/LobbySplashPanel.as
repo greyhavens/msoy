@@ -10,6 +10,10 @@ import mx.containers.VBox;
 import mx.controls.Text;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.FlexUtil;
+import com.threerings.util.Name;
+
+import com.threerings.parlor.data.Table;
 
 import com.whirled.game.data.GameDefinition;
 
@@ -40,31 +44,34 @@ public class LobbySplashPanel extends VBox
     {
         super.createChildren();
 
-        var headerBox :HBox = new HBox();
-        headerBox.percentWidth = 100;
-        headerBox.styleName = "descriptionBox";
-        addChild(headerBox);
-
-        headerBox.addChild(MediaWrapper.createView(_lobj.game.getThumbnailMedia()));
-
         var infoBox :HBox = new HBox();
-        infoBox.styleName = "infoBox";
         infoBox.percentWidth = 100;
-        infoBox.percentHeight = 100;
+        infoBox.styleName = "infoBox";
+        addChild(infoBox);
+
+        infoBox.addChild(MediaWrapper.createView(_lobj.game.getThumbnailMedia()));
+
         var info :Text = new Text();
         info.styleName = "lobbyInfo";
         info.percentWidth = 100;
         info.percentHeight = 100;
         info.text = _lobj.game.description;
         infoBox.addChild(info);
-        headerBox.addChild(infoBox);
+
+        var babBox :VBox = new VBox();
+        babBox.percentWidth = 100;
+        babBox.percentHeight = 100;
+        babBox.setStyle("verticalGap", 30);
+        babBox.setStyle("horizontalAlign", "center");
+        babBox.setStyle("verticalAlign", "middle");
+        addChild(babBox);
 
         if (_lobj.gameDef.match.getMinimumPlayers() <= 1) {
             var soloBtn :CommandButton =
                 new CommandButton(Msgs.GAME.get("b.start_solo"), LobbyController.PLAY_SOLO);
             soloBtn.styleName = "lobbySplashButton";
             soloBtn.width = 220;
-            addChild(soloBtn);
+            babBox.addChild(soloBtn);
         }
 
         if (_lobj.gameDef.match.getMaximumPlayers() > 1) {
@@ -75,18 +82,29 @@ public class LobbySplashPanel extends VBox
                 });
             multiBtn.styleName = "lobbySplashButton";
             multiBtn.width = 220;
-            addChild(multiBtn);
 
-            // TODO: add "playing now" label
+            // count up how many players are "playing" this game now
+            var count :int = 0;
+            for each (var table :Table in _lobj.tables.toArray()) {
+                count += table.players.filter(function (pname :Name, ii :int, a :Array) :Boolean {
+                    return (pname != null);
+                }).length;
+                count += table.watchers.length;
+            }
+
+            // if we have none, show nothing, otherwise show "XX playing now!"
+            if (count == 0) {
+                babBox.addChild(multiBtn);
+            } else {
+                var yaBox :VBox = new VBox();
+                yaBox.setStyle("horizontalAlign", "center");
+                yaBox.setStyle("verticalGap", 2);
+                yaBox.addChild(multiBtn);
+                var msg :String = Msgs.GAME.get("m.lsp_playing", count);
+                yaBox.addChild(FlexUtil.createLabel(msg, "lobbySplashPlaying"));
+                babBox.addChild(yaBox);
+            }
         }
-    }
-
-    override public function parentChanged (parent :DisplayObjectContainer) :void
-    {
-        super.parentChanged(parent);
-
-        trace("Parent changed " + this + " -> " + parent);
-        // TODO: register as observer
     }
 
     protected var _gctx :GameContext;

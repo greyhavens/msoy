@@ -44,18 +44,14 @@ public class TableSummaryPanel extends HBox
     public var gctx :GameContext;
     public var lobj :LobbyObject;
 
-    public function TableSummaryPanel ()
-    {
-    }
-
     // from Container
     override public function set data (value :Object) :void
     {
         super.data = value;
 
+        // better safe than sorry
         if (value == null) {
-            trace("ZOMG! Pants!");
-            return; // why god? why?
+            return;
         }
 
         var table :Table = (value as Table);
@@ -77,14 +73,14 @@ public class TableSummaryPanel extends HBox
         // set up the game info
         var info :String;
         if (table.gameOid != -1) {
-            _info.text = "In progress...";
+            _info.text = Msgs.GAME.get("m.tsp_in_progress");
         } else if (table.players != null) {
             var open :int = table.players.filter(function (pname :Name, ii :int, a :Array) :Boolean {
                 return (pname == null);
             }).length;
-            _info.text = table.players.length + " players, " + open + " openings";
+            _info.text = Msgs.GAME.get("m.tsp_players", table.players.length, open);
         } else {
-            _info.text = "Partay...";
+            _info.text = Msgs.GAME.get("m.tsp_in_progress"); // can't happen?
         }
         _info.toolTip = createInfoTip(table);
 
@@ -124,15 +120,18 @@ public class TableSummaryPanel extends HBox
     {
         super.createChildren();
 
-        // styleName = "tableSummary";
+        // we can't set a style name because we're a list renderer
         percentWidth = 100;
+        setStyle("verticalAlign", "middle");
+        setStyle("paddingLeft", 10);
+        setStyle("paddingRight", 10);
 
         addChild(_icon = MediaWrapper.createView(null, MediaDesc.HALF_THUMBNAIL_SIZE));
         var bits :VBox = new VBox();
         bits.percentWidth = 100;
         bits.setStyle("verticalGap", 0);
-        bits.addChild(_title = FlexUtil.createLabel("", "tableTitle"));
-        bits.addChild(_info = FlexUtil.createLabel("", "tableStatus"));
+        bits.addChild(_title = FlexUtil.createLabel("", "tableSummaryTitle"));
+        bits.addChild(_info = FlexUtil.createLabel("", "tableSummaryStatus"));
         addChild(bits);
         addChild(_action = new CommandButton());
     }

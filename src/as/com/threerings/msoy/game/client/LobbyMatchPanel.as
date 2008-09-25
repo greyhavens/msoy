@@ -100,18 +100,30 @@ public class LobbyMatchPanel extends VBox
     {
         super.createChildren();
 
+        // this contains the things that are actually left and right padded
+        var padded :VBox = new VBox();
+        padded.percentWidth = 100;
+        padded.setStyle("verticalGap", 0);
+        padded.setStyle("paddingLeft", 10);
+        padded.setStyle("paddingRight", 10);
+        addChild(padded);
+
         var hbox :HBox = new HBox();
         hbox.percentWidth = 100;
+        hbox.setStyle("verticalAlign", "middle");
+        hbox.setStyle("paddingBottom", 10);
         var createTip :Text = new Text();
+        createTip.styleName = "createTip";
         createTip.text = Msgs.GAME.get("i.create_multi");
         createTip.percentWidth = 100;
         hbox.addChild(createTip);
         var createBtn :CommandButton = new CommandButton(Msgs.GAME.get("b.create_multi"),
             _ctrl.panel.setMode, LobbyController.MODE_CREATE);
+        createBtn.styleName = "blueButton";
         hbox.addChild(createBtn);
-        addChild(hbox);
+        padded.addChild(hbox);
 
-        addChild(FlexUtil.createLabel(Msgs.GAME.get("t.lmp_games"), "lobbyTitle"));
+        padded.addChild(FlexUtil.createLabel(Msgs.GAME.get("t.lmp_games"), "lobbyTitle"));
 
         // determine our informational messages
         var noPendersMsg :String = (GameConfig.SEATED_GAME == _lobj.gameDef.match.getMatchType()) ?
@@ -121,13 +133,15 @@ public class LobbyMatchPanel extends VBox
         _noTablesLabel.styleName = "tableMessage";
         _noTablesLabel.text = noPendersMsg;
         _noTablesLabel.percentWidth = 100;
-        addChild(_noTablesLabel);
+        padded.addChild(_noTablesLabel);
 
-        addChild(_tableList = new List());
+        // and the table list has no padding, right up to the borders baby!
+        addChild(_tableList = new TableList());
         _tableList.styleName = "tableList";
         _tableList.dataProvider = new ArrayCollection();
         _tableList.horizontalScrollPolicy = ScrollPolicy.OFF;
         _tableList.percentWidth = 100;
+        _tableList.percentHeight = 100;
         _tableList.selectable = false;
 
         var cf :ClassFactory = new ClassFactory(TableSummaryPanel);
@@ -193,4 +207,20 @@ public class LobbyMatchPanel extends VBox
     protected var _noTablesLabel :Text;
     protected var _tableList :List;
 }
+}
+
+import flash.display.Sprite;
+import mx.controls.List;
+
+class TableList extends List
+{
+    override protected function drawRowBackground(
+        s :Sprite, rowIndex :int, y :Number, height :Number, color :uint, dataIndex :int) :void
+    {
+        if (rowIndex % 2 == 1) {
+            return;
+        } else {
+            super.drawRowBackground(s, rowIndex, y, height, color, dataIndex);
+        }
+    }
 }

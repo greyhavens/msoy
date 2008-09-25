@@ -1,3 +1,9 @@
+/**
+ * $Id$
+ *
+ * Our Flash client style sheet. Abandon hope all ye who enter here.
+ */
+
 Application {
   backgroundColor: #b98c3b;
   backgroundGradientColors: #d7c39d, #403323;
@@ -1054,13 +1060,9 @@ BasePanel {
   backgroundColor: #000000;
 }
 
-.contentsBox, .descriptionBox, .titleBox, .infoBox {
+.contentsBox, .titleBox, .infoBox {
   horizontalGap: 0;
   verticalGap: 0;
-}
-
-.descriptionBox {
-  paddingBottom: 10px;
 }
 
 .titleBox {
@@ -1110,14 +1112,17 @@ BasePanel {
 
 /** Lobby splash panel */
 .lobbySplashPanel {
-  horizontalAlign: center;
-  horizontalGap: 0;
-  verticalGap: 20;
+  verticalGap: 0;
 }
 
 .lobbySplashButton {
   fontFamily: Helvetica;
   fontSize: 24px;
+}
+
+.lobbySplashPlaying {
+  fontSize: 14px;
+  fontWeight: bold;
 }
 
 .lobbyMatchPanel {
@@ -1147,31 +1152,21 @@ BasePanel {
 }
 
 .tableList {
-  backgroundAlpha: 0;
   borderStyle: none;
-  alternatingItemColors: #FFCC99, #CCCCCC;
+  alternatingItemColors: #233C50, #000000; /* second color is not used; see TableList code */
+}
+
+.tableSummaryTitle, .createTip {
+  fontWeight: "bold";
+  fontSize: 11px;
+}
+
+.tableSummaryStatus {
+  color: #999999;
 }
 
 .pendingTableList, .runningTableList {
   verticalGap: 5;
-}
-
-.tableSummaryPanel {
-  verticalAlign: middle;
-}
-
-.tablePanel {
-  /*backgroundImage: Embed(source="../../rsrc/media/skins/lobby/pending_game_bg.png",
-          scaleGridTop="10", scaleGridBottom="67",
-          scaleGridLeft="10", scaleGridRight="67");
-  backgroundSize: "100%";*/
-}
-
-.runningTablePanel {
-  backgroundImage: Embed(source="../../rsrc/media/skins/lobby/running_game_bg.png",
-          scaleGridTop="10", scaleGridBottom="67",
-          scaleGridLeft="10", scaleGridRight="67");
-  backgroundSize: "100%";
 }
 
 .tableCreationPanel {
