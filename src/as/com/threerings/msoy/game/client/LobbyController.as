@@ -35,6 +35,7 @@ import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyMarshaller;
 import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
+import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 
 public class LobbyController extends Controller
@@ -176,7 +177,27 @@ public class LobbyController extends Controller
      */
     public function haveActionableTables () :Boolean
     {
-        return (_lobj.tables.size() > 0); // TODO
+        for each (var table :Table in _lobj.tables.toArray()) {
+            if (isActionableTable(table)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns true if this table is "actionable" (we can do something with it like watch the game,
+     * play the game or join the table).
+     */
+    public function isActionableTable (table :Table) :Boolean
+    {
+        // if it's a running unwatchable seated game, no action is possible
+        var inPlayUnwatchable :Boolean = (table.config.getMatchType() != GameConfig.PARTY) &&
+            table.inPlay() && (_lobj.gameDef.match as MsoyMatchConfig).unwatchable;
+
+        // if it's a private table, it's not actionable (TODO: what does private table really mean,
+        // how does anyone ever join a private table?)
+        return !(inPlayUnwatchable || table.tconfig.privateTable);
     }
 
     /**

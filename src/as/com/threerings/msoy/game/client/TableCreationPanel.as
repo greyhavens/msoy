@@ -39,6 +39,9 @@ import com.threerings.msoy.game.data.LobbyObject;
 import com.threerings.msoy.game.data.MsoyGameConfig;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 
+/**
+ * Displays an interface for creating a new game table.
+ */
 public class TableCreationPanel extends VBox
 {
     public function TableCreationPanel (ctx :GameContext, ctrl :LobbyController, lobj :LobbyObject)
@@ -78,21 +81,7 @@ public class TableCreationPanel extends VBox
         styleName = "tableCreationPanel";
         percentWidth = 100;
 
-        // add a configuration for the table name
-        var titleBox :VBox = new VBox();
-        titleBox.percentWidth = 100;
-        titleBox.setStyle("verticalGap", 0);
-        titleBox.addChild(FlexUtil.createLabel(Msgs.GAME.get("l.table")));
-//         label.styleName = "lobbyLabel";
-
-//         label.toolTip = Msgs.GAME.get("i.table");
-
-        var title :TextInput = new TextInput();
-        // title.styleName = "sexyTextInput";
-        title.text = Msgs.GAME.get("l.default_table", _ctx.getPlayerObject().getVisibleName());
-        title.percentWidth = 100;
-        titleBox.addChild(title);
-        addChild(titleBox);
+        addChild(FlexUtil.createLabel(Msgs.GAME.get("t.create_table"), "lobbyTitle"));
 
         // create our various game configuration bits but do not add them
         var rparam :ToggleParameter = new ToggleParameter();
@@ -102,6 +91,13 @@ public class TableCreationPanel extends VBox
         var gconf :WhirledGameConfigurator = new WhirledGameConfigurator(rparam);
         gconf.setColumns(1);
         gconf.init(_ctx);
+
+        // add a configuration for the table name (before we give the game 
+        var tableName :TextInput = new TextInput();
+        tableName.text = Msgs.GAME.get("l.default_table", _ctx.getPlayerObject().getVisibleName());
+        tableName.percentWidth = 100;
+        gconf.addControl(FlexUtil.createTipLabel(Msgs.GAME.get("l.table"), Msgs.GAME.get("i.table")),
+                         tableName);
 
         var plparam :RangeParameter = new RangeParameter();
         plparam.name = Msgs.GAME.get("l.players");
@@ -140,17 +136,15 @@ public class TableCreationPanel extends VBox
         }
 
         var tconfigger :TableConfigurator =
-            new MsoyTableConfigurator(plparam, wparam, pvparam, title);
+            new MsoyTableConfigurator(plparam, wparam, pvparam, tableName);
         tconfigger.init(_ctx, gconf);
 
         var config :MsoyGameConfig = new MsoyGameConfig();
         config.init(_game, _gameDef);
         gconf.setGameConfig(config);
 
-        // wrapBox(Msgs.GAME.get("l.config_game"),
         _configBox = gconf.getContainer();
         _configBox.percentWidth = 100;
-//         _configBox.styleName = "configBox";
         addChild(_configBox);
 
         // add an interface for inviting friends to play
@@ -183,8 +177,10 @@ public class TableCreationPanel extends VBox
         var bottomRow :HBox = new HBox();
         bottomRow.percentWidth = 100;
         bottomRow.setStyle("horizontalAlign", "right");
-        bottomRow.addChild(new CommandButton(Msgs.GAME.get("b.cancel"),
-            _ctrl.panel.setMode, [ LobbyController.MODE_MATCH ]));
+        bottomRow.addChild(new CommandButton(Msgs.GAME.get("b.cancel"), function () : void {
+            _ctrl.panel.setMode(_ctrl.haveActionableTables() ?
+                LobbyController.MODE_MATCH : LobbyController.MODE_SPLASH);
+        }));
         bottomRow.addChild(new CommandButton(Msgs.GAME.get("b.create"),
             createGame, [ tconfigger, gconf ]));
         addChild(bottomRow);

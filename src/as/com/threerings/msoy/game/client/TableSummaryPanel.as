@@ -35,36 +35,34 @@ import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.MsoyTableConfig;
 
 /**
- * Displays a summary of a table for use in the match panel.
+ * Displays a summary of a table for use in a TableList.
  */
 public class TableSummaryPanel extends HBox
 {
     public var tableId :int;
 
-    public function TableSummaryPanel (gctx :GameContext, lobj :LobbyObject)
+    public var gctx :GameContext;
+    public var lobj :LobbyObject;
+
+    public function TableSummaryPanel ()
     {
-        _gctx = gctx;
-        _lobj = lobj;
-
-        styleName = "tableSummary";
-        percentWidth = 100;
-
-        addChild(_icon = MediaWrapper.createView(null, MediaDesc.HALF_THUMBNAIL_SIZE));
-        var bits :VBox = new VBox();
-        bits.percentWidth = 100;
-        bits.setStyle("verticalGap", 0);
-        bits.addChild(_title = FlexUtil.createLabel("", "tableTitle"));
-        bits.addChild(_info = FlexUtil.createLabel("", "tableStatus"));
-        addChild(bits);
-        addChild(_action = new CommandButton());
     }
 
-    public function update (table :Table) :void
+    // from Container
+    override public function set data (value :Object) :void
     {
+        super.data = value;
+
+        if (value == null) {
+            trace("ZOMG! Pants!");
+            return; // why god? why?
+        }
+
+        var table :Table = (value as Table);
         this.tableId = table.tableId;
 
 // TODO: highlight tables iwth friends
-//             var count :int = _ctrl.countFriends(table, _gctx.getPlayerObject());
+//             var count :int = _ctrl.countFriends(table, gctx.getPlayerObject());
 
         // set up the icon of the first player
         var player :VizMemberName = (table.players[0] as VizMemberName);
@@ -96,32 +94,50 @@ public class TableSummaryPanel extends HBox
             switch (table.config.getMatchType()) {
             case GameConfig.PARTY:
                 if (!table.tconfig.privateTable) {
-                    key = "b.join";
+                    key = "b.tsp_play";
                 }
                 break;
 
             default:
-                if (!(_lobj.gameDef.match as MsoyMatchConfig).unwatchable &&
+                if (!(lobj.gameDef.match as MsoyMatchConfig).unwatchable &&
                     !table.tconfig.privateTable) {
-                    key = "b.watch";
+                    key = "b.tsp_watch";
                 }
                 break;
             }
 
             if (key != null) {
                 _action.label = Msgs.GAME.get(key);
-                _action.setCommand(MsoyController.GO_GAME, [ _lobj.game.gameId, table.gameOid ]);
+                _action.setCommand(MsoyController.GO_GAME, [ lobj.game.gameId, table.gameOid ]);
             }
             _action.visible = (key != null);
             _action.enabled = (key != null);
 
-        } else /* TODO: if party game, then just play! */ {
-            _action.label = Msgs.GAME.get("b.join");
+        } else {
+            _action.label = Msgs.GAME.get("b.tsp_join");
             _action.setCommand(LobbyController.JOIN_TABLE, [ table.tableId, Table.ANY_POSITION ]);
         }
     }
 
-    protected function createInfoTip (table :Table) :String
+    // from HBox
+    override protected function createChildren () :void
+    {
+        super.createChildren();
+
+        // styleName = "tableSummary";
+        percentWidth = 100;
+
+        addChild(_icon = MediaWrapper.createView(null, MediaDesc.HALF_THUMBNAIL_SIZE));
+        var bits :VBox = new VBox();
+        bits.percentWidth = 100;
+        bits.setStyle("verticalGap", 0);
+        bits.addChild(_title = FlexUtil.createLabel("", "tableTitle"));
+        bits.addChild(_info = FlexUtil.createLabel("", "tableStatus"));
+        addChild(bits);
+        addChild(_action = new CommandButton());
+    }
+
+    protected static function createInfoTip (table :Table) :String
     {
         // display whether this game is rated
         var info :String = Msgs.GAME.get(table.config.rated ? "l.is_rated" : "l.not_rated");
@@ -146,9 +162,6 @@ public class TableSummaryPanel extends HBox
 
         return info;
     }
-
-    protected var _gctx :GameContext;
-    protected var _lobj :LobbyObject;
 
     protected var _icon :MediaWrapper;
     protected var _title :Label;

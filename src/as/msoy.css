@@ -1146,6 +1146,12 @@ BasePanel {
   paddingBottom: 5px;
 }
 
+.tableList {
+  backgroundAlpha: 0;
+  borderStyle: none;
+  alternatingItemColors: #FFCC99, #CCCCCC;
+}
+
 .pendingTableList, .runningTableList {
   verticalGap: 5;
 }
