@@ -70,7 +70,7 @@ EXIT_CODE=$?
 # If any stdout or stderr logs were generated, send those via email (all normal
 # logs should be redirected to a separate file)
 if [ -s $LOGFILE ]; then
-    cat $LOGFILE | $MAIL -s "$HOSTNAME: $MSOY_HOME stray log output" $LOG_EMAIL
+    cat $LOGFILE | $MAIL -s "$HOSTNAME: bureau launcher stray log output" $LOG_EMAIL
 fi
 rm -f $LOGFILE
 
