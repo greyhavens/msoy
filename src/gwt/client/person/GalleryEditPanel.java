@@ -13,7 +13,10 @@ import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
+import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.allen_sauer.gwt.dnd.client.VetoDragException;
+import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -36,7 +39,7 @@ import com.threerings.msoy.person.gwt.GalleryServiceAsync;
  *
  * @author mjensen
  */
-public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to support dnd
+public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to support drag-n-drop
 {
     public static final String EDIT_ACTION = "editgallery";
     public static final String CREATE_ACTION = "creategallery";
@@ -134,16 +137,35 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         };
         add(dropPanel, 225, 10);
 
-        // show photos that the member owns
+        // show all photos that the member owns
         _itemsvc.loadPhotos(new MsoyCallback<List<Photo>>() {
             public void onSuccess (List<Photo> result) {
-                add( new PagedPanel(new SimpleDataModel<Photo>(result), 5), 10, 415);
+                final PagedPanel myPhotos = new PagedPanel(new SimpleDataModel<Photo>(result), 5);
+                add(myPhotos, 10, 415);
+                // allow photos to get dropped onto this panel (to remove them from a gallery)
+                _dragController.registerDropController(
+                    new SimpleDropController(GalleryEditPanel.this) {
+                        @Override public void onPreviewDrop(DragContext context)
+                            throws VetoDragException {
+                            super.onPreviewDrop(context);
+                            if (context.draggable instanceof PayloadWidget) {
+                                PayloadWidget<?> payload = (PayloadWidget<?>) context.draggable;
+                                // Veto any attempts to drop photos that came from the "my photos"
+                                // panel. This will position them back where they came from rather
+                                // than having them vanish into the ether.
+                                if (payload.getSource() == myPhotos) {
+                                    throw new VetoDragException();
+                                }
+                            }
+                        }
+                    }
+                );
             }
         });
     }
 
     /**
-     * Like a PageGrid, but more AJAXy.
+     * A paginated list of Photos.
      */
     protected class PagedPanel extends FlowPanel {
         public PagedPanel (DataModel<Photo> model, int count) {
@@ -199,7 +221,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         }
 
         protected Widget createWidget (Photo photo) {
-            PayloadWidget<Photo> payload = new PayloadWidget<Photo>(
+            PayloadWidget<Photo> payload = new PayloadWidget<Photo>(this,
                 MediaUtil.createMediaView(photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE), photo);
             _dragController.makeDraggable(payload);
             return payload;
@@ -213,7 +235,6 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
 
     protected boolean _newGallery;
     protected GalleryData _galleryData;
-    // protected GalleryDetailPanel _detailPanel;
     protected PickupDragController _dragController;
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);

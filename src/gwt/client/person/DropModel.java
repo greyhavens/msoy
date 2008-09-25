@@ -29,6 +29,11 @@ public interface DropModel<T>
     public List<T> getContents ();
 
     /**
+     * Indicates whether this model allows duplicate entries (whether it is a set of items).
+     */
+    public boolean allowsDuplicates ();
+
+    /**
      * Adds a listener interested in getting notified when the model contents change.
      */
     public void addDropListener (DropListener<T> listener);

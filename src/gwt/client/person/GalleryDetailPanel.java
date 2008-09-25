@@ -43,7 +43,6 @@ public class GalleryDetailPanel extends AbsolutePanel
             add(MsoyUI.createLabel("no image", "GalleryThumbnail"), 10, 60);
         }
 
-        // TODO create a listener for count changes
         _countLabel = MsoyUI.createLabel("", "Count");
         setCount(galleryData.photos.size());
         add(_countLabel, 110, 70);
@@ -62,7 +61,7 @@ public class GalleryDetailPanel extends AbsolutePanel
                 name.addStyleName("Name");
                 name.addChangeListener(new ChangeListener() {
                     public void onChange (Widget sender) {
-                        _gallery.name = ((TextArea) sender).getText();
+                        _gallery.name = ((TextBox) sender).getText();
                     }
                 });
                 add(name, 10, 10);
@@ -83,6 +82,9 @@ public class GalleryDetailPanel extends AbsolutePanel
         }
     }
 
+    /**
+     * Updates the count label with the current number of gallery photos.
+     */
     public void setCount (int count)
     {
         String text = count == 1 ? _pmsgs.onePhoto() : _pmsgs.photoCount(""+count);

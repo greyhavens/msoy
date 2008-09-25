@@ -14,11 +14,12 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class PayloadWidget<T> extends FocusPanel
 {
-    public PayloadWidget (Widget realWidget, T payload)
+    public PayloadWidget (Widget source, Widget realWidget, T payload)
     {
         addStyleName("payload");
         add(realWidget);
         _payload = payload;
+        _source = source;
     }
 
     public T getPayload ()
@@ -42,6 +43,19 @@ public class PayloadWidget<T> extends FocusPanel
     }
 
     /**
+     * Gets the panel from which this widget was dragged.
+     */
+    public Widget getSource ()
+    {
+        return _source;
+    }
+
+    public void setSource (Widget source)
+    {
+        _source = source;
+    }
+
+    /**
      * The data object that this widget is lugging around.
      */
     protected T _payload;
@@ -51,4 +65,9 @@ public class PayloadWidget<T> extends FocusPanel
      * when added to a DropPanel.
      */
     protected boolean _positioner;
+
+    /**
+     * This is a reference to the parent widget where this widget originated.
+     */
+    protected Widget _source;
 }

@@ -22,6 +22,7 @@ public class SimpleDropModel<T> implements DropModel<T>
         _contents = contents;
     }
 
+    // from DropModel
     public void insert (T content, int index)
     {
         // check to see if the dropped content is already in the list
@@ -31,12 +32,14 @@ public class SimpleDropModel<T> implements DropModel<T>
         fireContentInserted(content, index);
     }
 
+    // from DropModel
     public void remove (T content)
     {
         _contents.remove(content);
         fireContentRemoved(content);
     }
 
+    // from DropModel
     public List<T> getContents ()
     {
         return _contents;
@@ -52,6 +55,12 @@ public class SimpleDropModel<T> implements DropModel<T>
     public void removeDropListener (DropListener<T> listener)
     {
         _listeners.remove(listener);
+    }
+
+    // from DropModel
+    public boolean allowsDuplicates ()
+    {
+        return _allowsDuplicates;
     }
 
     @Override
@@ -76,4 +85,5 @@ public class SimpleDropModel<T> implements DropModel<T>
 
     protected List<T> _contents;
     protected List<DropListener<T>> _listeners = new ArrayList<DropListener<T>>();
+    protected boolean _allowsDuplicates;
 }

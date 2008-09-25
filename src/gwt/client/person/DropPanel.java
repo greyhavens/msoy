@@ -14,6 +14,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
+ * A panel that allows PayloadWidgets to get dropped and dragged around in order to add, remove,
+ * and rearrange the contents of a model.
  *
  * @author mjensen
  */
@@ -22,21 +24,19 @@ public abstract class DropPanel<T> extends FlowPanel
     public DropPanel (PickupDragController dragController, DropModel<T> model)
     {
         addStyleName("dropPanel");
-        contentToWidget = new HashMap<T, Widget>();
+        _contentToWidget = new HashMap<T, Widget>();
 
         _dragController = dragController;
         _dropController = new FlowPanelDropController(this) {
             @Override protected void insert(Widget widget, int beforeIndex) {
                 super.insert(widget, beforeIndex);
-                try {
-                    @SuppressWarnings("unchecked")
-                    PayloadWidget<T> payloadWidget = (PayloadWidget<T>) widget;
-                    if (!payloadWidget.isPositioner()) {
-                        _model.insert(payloadWidget.getPayload(), beforeIndex);
-                    }
-                } catch (ClassCastException ccex) {
-                    // the dropped widget wasn't of type PayloadWidget<T>
+                PayloadWidget<T> payloadWidget = getPayloadWidget(widget);
+                if (payloadWidget != null && !payloadWidget.isPositioner()) {
+                    T payload = payloadWidget.getPayload();
+                    _model.insert(payload, beforeIndex);
+                    payloadWidget.setSource(DropPanel.this);
                 }
+
             }
             @Override protected Widget newPositioner(DragContext context) {
                 return DropPanel.this.createPositioner(context);
@@ -56,61 +56,97 @@ public abstract class DropPanel<T> extends FlowPanel
 
     public PayloadWidget<T> createPayloadWidget (T payload)
     {
-        PayloadWidget<T> payloadWidget = new PayloadWidget<T>(createWidget(payload), payload);
+        PayloadWidget<T> payloadWidget = new PayloadWidget<T>(this, createWidget(payload), payload);
         _dragController.makeDraggable(payloadWidget);
         return payloadWidget;
     }
 
     @Override
-    public void add(Widget w)
+    public void add(Widget widget)
     {
-        super.add(w);
-        checkForDuplicates(w);
+        super.add(widget);
+        checkForDuplicates(widget);
     }
 
     @Override
-    public void insert(Widget w, int beforeIndex)
+    public void insert(Widget widget, int beforeIndex)
     {
-        super.insert(w, beforeIndex);
-        checkForDuplicates(w);
+        super.insert(widget, beforeIndex);
+        checkForDuplicates(widget);
     }
 
-    protected void checkForDuplicates (Widget widget) {
-        // check whether there is already a widget for this content on the panel
-        try {
-            @SuppressWarnings("unchecked")
-            PayloadWidget<T> payloadWidget = (PayloadWidget<T>) widget;
+    @Override
+    public boolean remove(Widget widget)
+    {
+        PayloadWidget<T> payloadWidget = getPayloadWidget(widget);
+        if (payloadWidget != null && !payloadWidget.isPositioner()) {
             T payload = payloadWidget.getPayload();
-            if (!payloadWidget.isPositioner()) {
-                Widget existing = contentToWidget.get(payload);
-                if (existing != null && existing != payloadWidget) {
-                    remove(existing);
+            _model.remove(payload);
+            _contentToWidget.remove(payload);
+        }
+        return super.remove(widget);
+    }
+
+    /**
+     * This checks with the model to see if it allows duplicate entries. If not, this makes sure
+     * that more than one Widget representing the same item is added to this panel.
+     */
+    protected void checkForDuplicates (Widget widget)
+    {
+        if (!_model.allowsDuplicates()) {
+            // check whether there is already a widget for this content on the panel
+            PayloadWidget<T> payloadWidget = getPayloadWidget(widget);
+            if (payloadWidget != null) {
+                T payload = payloadWidget.getPayload();
+                if (!payloadWidget.isPositioner()) {
+                    Widget existing = _contentToWidget.get(payload);
+                    if (existing != null && existing != payloadWidget) {
+                        remove(existing);
+                    }
+                    _contentToWidget.put(payload, payloadWidget);
                 }
-                contentToWidget.put(payload, payloadWidget);
             }
-        } catch (ClassCastException lame) {
-            // lame version of instanceof
         }
     }
 
+    /**
+     * Creates the positioner widget used to indicate where the draggable widget will get dropped.
+     */
     protected Widget createPositioner (DragContext context)
     {
-        try {
-            @SuppressWarnings("unchecked")
-            PayloadWidget<T> payload = (PayloadWidget<T>) context.draggable;
+        PayloadWidget<T> payload = getPayloadWidget(context.draggable);
+        if (payload != null) {
             payload = createPayloadWidget(payload.getPayload());
             payload.setPositioner(true);
             return payload;
-        } catch (ClassCastException ccex) {
-            // lame version of instanceof
         }
         return context.draggable;
     }
 
-    protected abstract Widget createWidget (T element);
+    /**
+     * Attempts to get the given widget cast as a PayloadWidget<T>. Returns null if the given
+     * widget is not a PayloadWidget<T>.
+     */
+    protected PayloadWidget<T> getPayloadWidget (Widget widget)
+    {
+        try {
+            @SuppressWarnings("unchecked")
+            PayloadWidget<T> payload = (PayloadWidget<T>) widget;
+            return payload;
+        } catch (ClassCastException ccex) {
+            // lame version of instanceof
+        }
+        return null;
+    }
+
+    /**
+     * Creates the widget used to display the given content. This will get added to a PayloadWidget
+     * to be dragged around.
+     */
+    protected abstract Widget createWidget (T content);
 
     protected DropModel<T> _model;
     protected FlowPanelDropController _dropController;
     protected PickupDragController _dragController;
-    protected Map<T, Widget> contentToWidget;
+    protected Map<T, Widget> _contentToWidget;
 }
