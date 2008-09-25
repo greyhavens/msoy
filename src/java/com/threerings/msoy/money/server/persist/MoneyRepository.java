@@ -110,6 +110,10 @@ public class MoneyRepository extends DepotRepository
                     throw sqle;
                 }
             }
+            
+            @Override public boolean runBeforeDefault () {
+                return false;
+            }
         });
     }
 
