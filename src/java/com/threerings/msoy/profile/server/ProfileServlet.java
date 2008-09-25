@@ -11,10 +11,6 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
-import com.threerings.msoy.badge.server.persist.BadgeRepository;
-import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
-
 import com.google.inject.Inject;
 
 import com.samskivert.util.ArrayIntSet;
@@ -40,6 +36,8 @@ import com.threerings.msoy.web.server.MemberHelper;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 import com.threerings.msoy.web.server.ServletLogic;
 
+import com.threerings.msoy.badge.server.persist.BadgeRepository;
+import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
