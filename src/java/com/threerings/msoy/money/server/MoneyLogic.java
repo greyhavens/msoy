@@ -57,10 +57,24 @@ import static com.threerings.msoy.Log.log;
 @BlockingThread
 public class MoneyLogic
 {
+    /**
+     * An operation to complete a purchase.
+     * Right now only used in buyItem, but we may generalize that a bit to buy
+     * other things.
+     */
     public static interface BuyOperation
     {
-        void create ()
-            throws Exception;
+        /**
+         * Create the thing that is being purchased.
+         * You may throw a RuntimeException or return false on failure.
+         *
+         * @param magicFree indicates that the product was received for free.
+         * @param currency the currency used to make the purchase.
+         * @param price the price paid (May be 0 even if !magicFree).
+         *
+         * @return true on success.
+         */
+        boolean create (boolean magicFree, Currency currency, int price);
     }
 
     @Inject
@@ -182,10 +196,12 @@ public class MoneyLogic
      * @param isSupport is the buyer a member of the support staff?
      * @throws NotSecuredException iff there is no secured price for the item and the authorized
      * buy amount is not enough money.
+     * @return a BuyResult, or null if the BuyOperation returned false.
      */
     public BuyResult buyItem (
         final MemberRecord buyerRec, CatalogIdent item, int creatorId, String itemDescription,
-        Currency listedCurrency, int listedAmount, Currency buyCurrency, int authedAmount)
+        Currency listedCurrency, int listedAmount, Currency buyCurrency, int authedAmount,
+        BuyOperation buyOp)
         throws NotEnoughMoneyException, NotSecuredException
     {
         Preconditions.checkArgument(isValid(item), "item is invalid: %s", item);
@@ -219,22 +235,26 @@ public class MoneyLogic
         MoneyTransactionRecord buyerTx = _repo.deduct(
             buyerId, buyCurrency, buyCost, buyerRec.isSupport());
         try {
-            // TODO: right here: effect the purchase of the item
+            // Are we giving a support+ user a free item?
+            boolean magicFree = (buyerTx.amount == 0) && (buyCost != 0);
 
-            // Did we give a support+ user a free item?
-            boolean magicFreeItem = (buyerTx.amount == 0) && (buyCost != 0);
+            // actually create the item!
+            boolean creationSuccess = buyOp.create(magicFree, buyerTx.currency, -buyerTx.amount);
+            if (!creationSuccess) {
+                return null; // stop now
+            }
 
             // let's go ahead and insert the buyer transaction
             buyerTx.fill(
                 TransactionType.ITEM_PURCHASE,
-                MessageBundle.tcompose(magicFreeItem ? "m.item_magicfree" : "m.item_bought",
+                MessageBundle.tcompose(magicFree ? "m.item_magicfree" : "m.item_bought",
                     itemDescription, item.type, item.catalogId),
                 item);
             _repo.storeTransaction(buyerTx);
 
             // see what kind of payouts we're going pay- null means don't load, don't care
-            CurrencyAmount creatorPayout = magicFreeItem ? null : computePayout(false, quote);
-            CurrencyAmount affiliatePayout = magicFreeItem ? null : computePayout(true, quote);
+            CurrencyAmount creatorPayout = magicFree ? null : computePayout(false, quote);
+            CurrencyAmount affiliatePayout = magicFree ? null : computePayout(true, quote);
 
             MoneyTransactionRecord creatorTx = null;
             if (creatorPayout != null) {
@@ -294,18 +314,18 @@ public class MoneyLogic
             // The price no longer needs to be in the cache.
             _priceCache.removeQuote(key);
             // Inform the exchange that we've actually made the exchange
-            if (!magicFreeItem) {
+            if (!magicFree) {
                 // TODO: possibly pass detailed info into the exchange
                 _exchange.processPurchase(quote, buyCurrency);
             }
 
-            return new BuyResult(magicFreeItem, buyerTx.toMoneyTransaction(),
+            return new BuyResult(magicFree, buyerTx.toMoneyTransaction(),
                 (creatorTx == null) ? null : creatorTx.toMoneyTransaction(),
                 (affiliateTx == null) ? null : affiliateTx.toMoneyTransaction());
 
         } finally {
-            // if we never inserted the buyerTrans, well that means we fucked-up, and need
-            // to roll it back
+            // We may have never inserted the buyerTx if the creation failed or
+            // threw a RuntimeException
             if (buyerTx.id == 0) {
                 _repo.rollbackDeduction(buyerTx);
             }

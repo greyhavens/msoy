@@ -27,6 +27,7 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagPopularityRecord;
 import com.threerings.msoy.server.persist.UserActionRepository;
 
+import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
@@ -139,12 +140,12 @@ public class CatalogServlet extends MsoyServiceServlet
     public Item purchaseItem (byte itemType, int catalogId, Currency currency, int authedCost)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
+        final MemberRecord mrec = requireAuthedUser();
 
         // locate the appropriate repository
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
+        final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
 
-        CatalogRecord listing = repo.loadListing(catalogId, true);
+        final CatalogRecord listing = repo.loadListing(catalogId, true);
         if (listing == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
@@ -163,13 +164,39 @@ public class CatalogServlet extends MsoyServiceServlet
             throw new ServiceException(ItemCodes.E_CANT_SELF_CROSSBUY);
         }
 
+        // Create the operation that will actually take care of creating the item.
+        final int fCatalogId = catalogId;
+        ItemBuyOperation buyOp = new ItemBuyOperation() {
+            public boolean create (boolean magicFree, Currency currency, int price)
+            {
+                int coinsPaid = (currency == Currency.COINS) ? price : 0;
+                int barsPaid = (currency == Currency.BARS) ? price : 0;
+                // create the clone row in the database
+                _newClone = repo.insertClone(listing.item, mrec.memberId, coinsPaid, barsPaid);
+                // note the new purchase for the item, but only if we didn't do a magicFreeItem
+                if (!magicFree) {
+                    repo.nudgeListing(fCatalogId, true);
+                }
+                // make any necessary notifications
+                _itemLogic.itemPurchased(_newClone, coinsPaid, barsPaid);
+                return true;
+            }
+
+            public Item getItem ()
+            {
+                return _newClone.toItem();
+            }
+
+            protected ItemRecord _newClone;
+        };
+
         // update money as appropriate
         BuyResult result;
         try {
             result = _moneyLogic.buyItem(
                 mrec, new CatalogIdent(itemType, catalogId),
                 listing.item.creatorId, listing.item.name,
-                listing.currency, listing.cost, currency, authedCost);
+                listing.currency, listing.cost, currency, authedCost, buyOp);
         } catch (NotEnoughMoneyException neme) {
             // TODO: return a better exception, containing their updated balance 
             throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
@@ -177,54 +204,53 @@ public class CatalogServlet extends MsoyServiceServlet
             throw new CostUpdatedException(nse.getQuote());
         }
 
-        MoneyTransaction memberTx = result.getMemberTransaction();
-        // note the amount of currency spent in this transaction
-        int coinsPaid = (memberTx.currency == Currency.COINS) ? -memberTx.amount : 0;
-        int barsPaid = (memberTx.currency == Currency.BARS) ? -memberTx.amount : 0;
-        boolean magicFree = result.wasMagicFreeBuy();
-
-        // create the clone row in the database
-        ItemRecord newClone = repo.insertClone(listing.item, mrec.memberId, coinsPaid, barsPaid);
-
-        // note the new purchase for the item, but only if we didn't do a magicFreeItem
-        if (!magicFree) {
-            repo.nudgeListing(catalogId, true);
+        if (result == null) {
+            // this won't happen because our buyOp always returns true (if it fails,
+            // it will throw an exception). But let's cope should someone change that and
+            // not realize that the result could now be null
+            log.warning("This won't happen. CatalogServlet.purchaseItem.buyOp returned false.");
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
-        MoneyTransaction creatorTx = result.getCreatorTransaction();
-        if (!magicFree && creatorTx != null) {
-            int creatorId = creatorTx.memberId;
-            if (mrec.memberId != creatorId && creatorTx.amount > 0) {
-                // TODO: what if they earned bling?
-                if (creatorTx.currency == Currency.COINS) {
-                    _statLogic.incrementStat(
-                        creatorId, StatType.COINS_EARNED_SELLING, creatorTx.amount);
-                }
+        // update stats, not letting any booch in here screw with the purchase..
+        try {
+            boolean magicFree = result.wasMagicFreeBuy();
+            MoneyTransaction memberTx = result.getMemberTransaction();
+            MoneyTransaction creatorTx = result.getCreatorTransaction();
+            if (!magicFree && creatorTx != null) {
+                int creatorId = creatorTx.memberId;
+                if (mrec.memberId != creatorId && creatorTx.amount > 0) {
+                    // TODO: what if they earned bling?
+                    if (creatorTx.currency == Currency.COINS) {
+                        _statLogic.incrementStat(
+                            creatorId, StatType.COINS_EARNED_SELLING, creatorTx.amount);
+                    }
 
-                // Some items have a stat that may need updating
-                if (itemType == Item.AVATAR) {
-                    _statLogic.ensureIntStatMinimum(
-                        creatorId, StatType.AVATARS_CREATED, StatType.ITEM_SOLD);
-                } else if (itemType == Item.FURNITURE) {
-                    _statLogic.ensureIntStatMinimum(
-                        creatorId, StatType.FURNITURE_CREATED, StatType.ITEM_SOLD);
-                } else if (itemType == Item.DECOR) {
-                    _statLogic.ensureIntStatMinimum(
-                        creatorId, StatType.BACKDROPS_CREATED, StatType.ITEM_SOLD);
+                    // Some items have a stat that may need updating
+                    if (itemType == Item.AVATAR) {
+                        _statLogic.ensureIntStatMinimum(
+                            creatorId, StatType.AVATARS_CREATED, StatType.ITEM_SOLD);
+                    } else if (itemType == Item.FURNITURE) {
+                        _statLogic.ensureIntStatMinimum(
+                            creatorId, StatType.FURNITURE_CREATED, StatType.ITEM_SOLD);
+                    } else if (itemType == Item.DECOR) {
+                        _statLogic.ensureIntStatMinimum(
+                            creatorId, StatType.BACKDROPS_CREATED, StatType.ITEM_SOLD);
+                    }
                 }
             }
+
+            // update their stat set, if they aren't buying something from themselves.
+            if (!magicFree && (mrec.memberId != listing.item.creatorId) &&
+                    (memberTx.currency == Currency.COINS)) {
+                _statLogic.incrementStat(mrec.memberId, StatType.COINS_SPENT, -memberTx.amount);
+            }
+
+        } catch (Exception e) {
+            log.warning("Error logging stats during item purchase", e);
         }
 
-        // make any necessary notifications
-        _itemLogic.itemPurchased(newClone, coinsPaid, barsPaid);
-
-        // update their stat set, if they aren't buying something from themselves.
-        if (!magicFree && (mrec.memberId != listing.item.creatorId) &&
-                (memberTx.currency == Currency.COINS)) {
-            _statLogic.incrementStat(mrec.memberId, StatType.COINS_SPENT, coinsPaid);
-        }
-
-        return newClone.toItem();
+        return buyOp.getItem();
     }
 
     // from interface CatalogService
@@ -582,6 +608,18 @@ public class CatalogServlet extends MsoyServiceServlet
     protected boolean showMature (MemberRecord mrec)
     {
         return (mrec == null) ? false : mrec.isSet(MemberRecord.Flag.SHOW_MATURE);
+    }
+
+    /**
+     * Handles creating an item for MoneyLogic.
+     */
+    protected static abstract class ItemBuyOperation
+        implements MoneyLogic.BuyOperation
+    {
+        /**
+         * Return the newly-created item.
+         */
+        public abstract Item getItem ();
     }
 
     // our dependencies
