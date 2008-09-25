@@ -3,91 +3,46 @@
 
 package client.me;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
 
 import com.threerings.msoy.money.data.all.MoneyTransaction;
-import com.threerings.msoy.money.data.all.ReportType;
 
-import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
 
-public class BalancePanel extends PagedTable<MoneyTransaction>
+public class BalancePanel extends MoneyPanel
 {
-    public BalancePanel (MoneyTransactionDataModel model)
+    public BalancePanel (MoneyTransactionDataModel model, Widget controller)
     {
-        super(10, NAV_ON_TOP);
-
-        addStyleName("Balance");
-
-        _report = model.report;
-        setModel(model, 0);
+        super(model, controller);
     }
 
     @Override
-    public List<Widget> createRow (MoneyTransaction entry)
+    protected void addCustomRow (MoneyTransaction entry, List<Widget> row)
     {
-        List<Widget> row = new ArrayList<Widget>();
+        String amt = entry.currency.format(Math.abs(entry.amount));
+        String debit, credit;
 
-        row.add(MsoyUI.createLabel(MsoyUI.formatDateTime(entry.timestamp), "Time"));
-
-        String description = _dmsgs.xlate(MsoyUI.escapeHTML(entry.description));
-        row.add(MsoyUI.createHTML(description, "Description"));
-
-        if (_report == ReportType.CREATOR) {
-            row.add(MsoyUI.createInlineImage(entry.currency.getSmallIcon()));
-            row.add(MsoyUI.createLabel(entry.currency.format(entry.amount), ""));
+        if (entry.amount < 0) {
+            debit = amt;
+            credit = " ";
         } else {
-            String amt = entry.currency.format(Math.abs(entry.amount));
-            String debit, credit;
-            if (entry.amount < 0) {
-                debit = amt;
-                credit = " ";
-            } else {
-                debit = " ";
-                credit = amt;
-            }
-            row.add(MsoyUI.createLabel(debit, "Debit"));
-            row.add(MsoyUI.createLabel(credit, "Credit"));
-            row.add(MsoyUI.createLabel(entry.currency.format(entry.balance), "Balance"));
+            debit = " ";
+            credit = amt;
         }
-
-        return row;
+        row.add(MsoyUI.createLabel(debit, "Debit"));
+        row.add(MsoyUI.createLabel(credit, "Credit"));
+        row.add(MsoyUI.createLabel(entry.currency.format(entry.balance), "Balance"));
     }
 
     @Override
-    public List<Widget> createHeader ()
+    protected void addCustomHeader (List<Widget> header)
     {
-        List<Widget> header = new ArrayList<Widget>();
-
-        header.add(MsoyUI.createLabel("When", null));
-        header.add(MsoyUI.createLabel("How", null));
         header.add(MsoyUI.createLabel("Debit", null));
         header.add(MsoyUI.createLabel("Credit", null));
         header.add(MsoyUI.createLabel("Balance", null));
-
-        return header;
     }
-
-    @Override
-    public String getEmptyMessage ()
-    {
-        return _msgs.transactionsNone();
-    }
-
-    @Override
-    protected boolean displayNavi (int items)
-    {
-        return true;
-    }
-
-    protected ReportType _report;
-
-    protected static final MeMessages _msgs = GWT.create(MeMessages.class);
-    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 }
