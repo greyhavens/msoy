@@ -10,12 +10,16 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 /**
  * Stores referral information for a given user.
+ *
+ * Nota bene: this class has been deprecated, and will be removed in a future release,
+ * after migrating its tracker data to MemberRecord.
  */
 @Entity(indices={
     @Index(name="ixMemberId", fields={ ReferralRecord.MEMBER_ID }),
     @Index(name="ixAffiliate", fields={ ReferralRecord.AFFILIATE }),
     @Index(name="ixVector", fields={ ReferralRecord.VECTOR }),
     @Index(name="ixCreative", fields={ ReferralRecord.CREATIVE }) })
+// @Deprecated
 public class ReferralRecord extends PersistentRecord
 {
     // AUTO-GENERATED: FIELDS START

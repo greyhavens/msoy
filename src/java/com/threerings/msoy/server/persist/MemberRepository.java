@@ -109,6 +109,7 @@ public class MemberRepository extends DepotRepository
 
         // Converts existing tracking numbers from the ReferralRecord, or creates new ones
         // for those members who didn't get their tracking numbers yet.
+        // TODO: remove ReferralRecord after this migration happened in production.
         ctx.registerMigration(MemberRecord.class, new SchemaMigration(26) {
             @Override
             public int invoke (Connection conn, DatabaseLiaison liaison)
@@ -863,15 +864,6 @@ public class MemberRepository extends DepotRepository
         affRec.memberId = memberId;
         affRec.affiliate = affiliate;
         insert(affRec);
-    }
-
-    /**
-     * Loads up a referral record by member record id.
-     * Returns null if no record exists for that member.
-     */
-    public ReferralRecord loadReferral (final int memberId)
-    {
-        return load(ReferralRecord.class, memberId);
     }
 
     /**
