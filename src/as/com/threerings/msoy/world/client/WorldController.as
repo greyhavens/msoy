@@ -796,22 +796,31 @@ public class WorldController extends MsoyController
             return displayPageGWT(page, args);
 
         } else {
-            const params :Object = MsoyParameters.get();
-            var tracking :String = _wctx.getMemberObject().visitorInfo.makeTrackingArgs(
-                params[VisitorInfo.AFFILIATE_ID]);
+            const tracking :String = _wctx.getMemberObject().visitorInfo.getTrackingArgs();
+            const pageToken :String = StringUtil.isBlank(page) ? tracking
+                                                               : (page + "-" + args + tracking);
 
             var fullURL :String = DeploymentConfig.serverURL;
-// This is disabled right now because various other things are broken
-//             // if we have no current scene, or we're asking to display our current scene (because
-//             // we're in embed mode and are trying to get out) don't do the scene wrap business
-//             const sceneId :int = getCurrentSceneId();
-//             if (sceneId == 0 || (page == "world" && args == ("s"+sceneId))) {
-                if (!StringUtil.isBlank(page)) {
-                    fullURL += "#" + page + "-" + args + tracking;
-                }
-//             } else {
-//                 fullURL += "#world-s" + sceneId + "_" + page + "-" + args + tracking;
-//             }
+            const params :Object = MsoyParameters.get();
+            const affiliate :String = StringUtil.trim(StringUtil.deNull(params["aff"]));
+            if (!StringUtil.isBlank(affiliate)) {
+                fullURL += "welcome?aff=" + affiliate + "&page=" + encodeURIComponent(pageToken);
+            } else {
+                fullURL += "#" + pageToken;
+            }
+
+// Double-old old stuff
+//// This is disabled right now because various other things are broken
+////             // if we have no current scene, or we're asking to display our current scene (because
+////             // we're in embed mode and are trying to get out) don't do the scene wrap business
+////             const sceneId :int = getCurrentSceneId();
+////             if (sceneId == 0 || (page == "world" && args == ("s"+sceneId))) {
+//                if (!StringUtil.isBlank(page)) {
+//                    fullURL += "#" + page + "-" + args + tracking;
+//                }
+////             } else {
+////                 fullURL += "#world-s" + sceneId + "_" + page + "-" + args + tracking;
+////             }
             log.info("Showing external URL " + fullURL);
             return super.showExternalURL(fullURL, false);
         }

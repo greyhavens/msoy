@@ -69,11 +69,6 @@ public class ShareDialog extends FloatingPanel
         open(false);
     }
 
-    //
-    // TODO: Everything below this line is a train wreck
-    //       MXML?
-    //
-
     public function getEmbedCode (size :int) :String
     {
         _memObj = _ctx.getClient().getClientObject() as MemberObject;
@@ -84,7 +79,7 @@ public class ShareDialog extends FloatingPanel
         var affiliate :String = _memObj.isGuest() ? "" : String(_memObj.getMemberId());
         var flashVars :String = VisitorInfo.makeFlashVars(affiliate, _placeId, _inGame);
 
-        if (size == 0) {
+        if (size == 0) { // mini TV view
             flashVars += "&featuredPlace=true";
         }
 

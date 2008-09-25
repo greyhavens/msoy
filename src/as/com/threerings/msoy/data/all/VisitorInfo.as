@@ -27,7 +27,15 @@ public class VisitorInfo
     /** Id for visitorId in the url or flash params */
     public static const VISITOR_ID :String = "vid";
 
-    /** Creates a new visitor info with optional tracking id provided. */
+    /** Player's tracking number, used to assign them to test groups. */
+    public var id :String;
+
+    /** Did this visitor info come from the server during a login? */
+    public var isAuthoritative :Boolean;
+
+    /**
+     * Creates a new visitor info with optional tracking id provided.
+     */
     public function VisitorInfo (id :String = null, isAuthoritative :Boolean = false)
     {
         if (id != null) {
@@ -48,12 +56,6 @@ public class VisitorInfo
         
         this.isAuthoritative = isAuthoritative;
     }
-
-    /** Player's tracking number, used to assign them to test groups. */
-    public var id :String;
-
-    /** Did this visitor info come from the server during a login? */
-    public var isAuthoritative :Boolean;
 
     public function toString() :String
     {
@@ -78,11 +80,9 @@ public class VisitorInfo
     /** 
      * Return the argument string that will append a tracking id to a GWT page url.
      */
-    public function makeTrackingArgs(affiliate :String = null) :String
+    public function getTrackingArgs () :String
     {
-        var args :String = "_" + VISITOR_ID + "_" + id;
-        args += affiliate ? "?" + AFFILIATE_ID + "=" + affiliate : "";
-        return args; 
+        return "_" + VISITOR_ID + "_" + id;
     }
     
     /** 
@@ -91,9 +91,11 @@ public class VisitorInfo
      * @param placeId id of the room to throw people into (sceneId/gameLobby)
      * @param inGame true if the flash vars are for a game and placeId is a game lobby whirled
      */
-    public static function makeFlashVars(affiliate :String, placeId :int, inGame :Boolean) :String
+    public static function makeFlashVars (affiliate :String, placeId :int, inGame :Boolean) :String
     {
+        // always embed the affiliate
         var vars :String = AFFILIATE_ID + "=" + affiliate;
+        // possibly create vars to direct the embed to a particular place
         if (inGame) {
             vars += "&gameLobby=" + placeId + "&" + VECTOR_ID + "=" + GAME_VECTOR + "-" + placeId;
         } else if (placeId != 0) {
