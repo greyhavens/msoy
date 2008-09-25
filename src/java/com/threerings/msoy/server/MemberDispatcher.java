@@ -4,7 +4,7 @@
 package com.threerings.msoy.server;
 
 import com.threerings.msoy.data.MemberMarshaller;
-import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationDispatcher;
@@ -74,7 +74,7 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.GET_ABTEST_GROUP:
             ((MemberProvider)provider).getABTestGroup(
-                source, (ReferralInfo)args[0], (String)args[1], ((Boolean)args[2]).booleanValue(), (InvocationService.ResultListener)args[3]
+                source, (VisitorInfo)args[0], (String)args[1], ((Boolean)args[2]).booleanValue(), (InvocationService.ResultListener)args[3]
             );
             return;
 
@@ -152,19 +152,19 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.TRACK_CLIENT_ACTION:
             ((MemberProvider)provider).trackClientAction(
-                source, (ReferralInfo)args[0], (String)args[1], (String)args[2]
-            );
-            return;
-
-        case MemberMarshaller.TRACK_REFERRAL_CREATION:
-            ((MemberProvider)provider).trackReferralCreation(
-                source, (ReferralInfo)args[0]
+                source, (VisitorInfo)args[0], (String)args[1], (String)args[2]
             );
             return;
 
         case MemberMarshaller.TRACK_TEST_ACTION:
             ((MemberProvider)provider).trackTestAction(
-                source, (ReferralInfo)args[0], (String)args[1], (String)args[2]
+                source, (VisitorInfo)args[0], (String)args[1], (String)args[2]
+            );
+            return;
+
+        case MemberMarshaller.TRACK_VISITOR_INFO_CREATION:
+            ((MemberProvider)provider).trackVisitorInfoCreation(
+                source, (VisitorInfo)args[0]
             );
             return;
 

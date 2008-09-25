@@ -5,7 +5,7 @@ package com.threerings.msoy.data {
 
 import com.threerings.io.TypedArray;
 import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
@@ -105,7 +105,7 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const GET_ABTEST_GROUP :int = 7;
 
     // from interface MemberService
-    public function getABTestGroup (arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :Boolean, arg5 :InvocationService_ResultListener) :void
+    public function getABTestGroup (arg1 :Client, arg2 :VisitorInfo, arg3 :String, arg4 :Boolean, arg5 :InvocationService_ResultListener) :void
     {
         var listener5 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
         listener5.listener = arg5;
@@ -272,32 +272,32 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const TRACK_CLIENT_ACTION :int = 20;
 
     // from interface MemberService
-    public function trackClientAction (arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :String) :void
+    public function trackClientAction (arg1 :Client, arg2 :VisitorInfo, arg3 :String, arg4 :String) :void
     {
         sendRequest(arg1, TRACK_CLIENT_ACTION, [
             arg2, arg3, arg4
         ]);
     }
 
-    /** The method id used to dispatch <code>trackReferralCreation</code> requests. */
-    public static const TRACK_REFERRAL_CREATION :int = 21;
-
-    // from interface MemberService
-    public function trackReferralCreation (arg1 :Client, arg2 :ReferralInfo) :void
-    {
-        sendRequest(arg1, TRACK_REFERRAL_CREATION, [
-            arg2
-        ]);
-    }
-
     /** The method id used to dispatch <code>trackTestAction</code> requests. */
-    public static const TRACK_TEST_ACTION :int = 22;
+    public static const TRACK_TEST_ACTION :int = 21;
 
     // from interface MemberService
-    public function trackTestAction (arg1 :Client, arg2 :ReferralInfo, arg3 :String, arg4 :String) :void
+    public function trackTestAction (arg1 :Client, arg2 :VisitorInfo, arg3 :String, arg4 :String) :void
     {
         sendRequest(arg1, TRACK_TEST_ACTION, [
             arg2, arg3, arg4
+        ]);
+    }
+
+    /** The method id used to dispatch <code>trackVisitorInfoCreation</code> requests. */
+    public static const TRACK_VISITOR_INFO_CREATION :int = 22;
+
+    // from interface MemberService
+    public function trackVisitorInfoCreation (arg1 :Client, arg2 :VisitorInfo) :void
+    {
+        sendRequest(arg1, TRACK_VISITOR_INFO_CREATION, [
+            arg2
         ]);
     }
 

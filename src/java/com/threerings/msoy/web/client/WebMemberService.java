@@ -89,20 +89,20 @@ public interface WebMemberService extends RemoteService
     /**
      * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.
      */
-    int getABTestGroup (ReferralInfo info, String testName, boolean logEvent)
+    int getABTestGroup (VisitorInfo info, String testName, boolean logEvent)
         throws ServiceException;
 
     /**
      * Generic method for tracking a client-side action such as clicking a button.
      */
-    void trackClientAction (ReferralInfo info, String actionName, String details)
+    void trackClientAction (VisitorInfo info, String actionName, String details)
         throws ServiceException;
 
     /**
      * Tracking a client-side action such as clicking a button during an a/b test.  If testName
      * is supplied, the visitor's a/b test group will also be tracked.
      */
-    void trackTestAction (ReferralInfo info, String actionName, String testName)
+    void trackTestAction (VisitorInfo info, String actionName, String testName)
         throws ServiceException;
 
     /**
@@ -110,6 +110,12 @@ public interface WebMemberService extends RemoteService
      */
     @Deprecated
     void trackReferralCreation (ReferralInfo info)
+        throws ServiceException;
+
+    /**
+     * Tracks the creation of a new tracking info structure, for a new visitor.
+     */
+    void trackVisitorInfoCreation (VisitorInfo info)
         throws ServiceException;
 
     /**

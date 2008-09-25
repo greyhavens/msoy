@@ -4,7 +4,7 @@
 package com.threerings.msoy.data;
 
 import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.InvocationMarshaller;
@@ -91,7 +91,7 @@ public class MemberMarshaller extends InvocationMarshaller
     public static final int GET_ABTEST_GROUP = 7;
 
     // from interface MemberService
-    public void getABTestGroup (Client arg1, ReferralInfo arg2, String arg3, boolean arg4, InvocationService.ResultListener arg5)
+    public void getABTestGroup (Client arg1, VisitorInfo arg2, String arg3, boolean arg4, InvocationService.ResultListener arg5)
     {
         InvocationMarshaller.ResultMarshaller listener5 = new InvocationMarshaller.ResultMarshaller();
         listener5.listener = arg5;
@@ -258,32 +258,32 @@ public class MemberMarshaller extends InvocationMarshaller
     public static final int TRACK_CLIENT_ACTION = 20;
 
     // from interface MemberService
-    public void trackClientAction (Client arg1, ReferralInfo arg2, String arg3, String arg4)
+    public void trackClientAction (Client arg1, VisitorInfo arg2, String arg3, String arg4)
     {
         sendRequest(arg1, TRACK_CLIENT_ACTION, new Object[] {
             arg2, arg3, arg4
         });
     }
 
-    /** The method id used to dispatch {@link #trackReferralCreation} requests. */
-    public static final int TRACK_REFERRAL_CREATION = 21;
-
-    // from interface MemberService
-    public void trackReferralCreation (Client arg1, ReferralInfo arg2)
-    {
-        sendRequest(arg1, TRACK_REFERRAL_CREATION, new Object[] {
-            arg2
-        });
-    }
-
     /** The method id used to dispatch {@link #trackTestAction} requests. */
-    public static final int TRACK_TEST_ACTION = 22;
+    public static final int TRACK_TEST_ACTION = 21;
 
     // from interface MemberService
-    public void trackTestAction (Client arg1, ReferralInfo arg2, String arg3, String arg4)
+    public void trackTestAction (Client arg1, VisitorInfo arg2, String arg3, String arg4)
     {
         sendRequest(arg1, TRACK_TEST_ACTION, new Object[] {
             arg2, arg3, arg4
+        });
+    }
+
+    /** The method id used to dispatch {@link #trackVisitorInfoCreation} requests. */
+    public static final int TRACK_VISITOR_INFO_CREATION = 22;
+
+    // from interface MemberService
+    public void trackVisitorInfoCreation (Client arg1, VisitorInfo arg2)
+    {
+        sendRequest(arg1, TRACK_VISITOR_INFO_CREATION, new Object[] {
+            arg2
         });
     }
 

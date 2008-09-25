@@ -21,6 +21,7 @@ import com.threerings.msoy.admin.gwt.AdminServiceAsync;
 import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebMemberServiceAsync;
 
+import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.shell.TrackingCookie;
 import client.ui.MsoyUI;
@@ -101,7 +102,7 @@ public class ABTestListPanel extends FlowPanel
             testButton.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
                     _membersvc.getABTestGroup(
-                        TrackingCookie.get(), test.name, true, new MsoyCallback<Integer>() {
+                        CShell.visitor, test.name, true, new MsoyCallback<Integer>() {
                             public void onSuccess (Integer group) {
                                 MsoyUI.info("You are in group #" + group);
                             }

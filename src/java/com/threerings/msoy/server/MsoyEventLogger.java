@@ -216,13 +216,19 @@ public class MsoyEventLogger
         }
     }
 
-    public void referralCreated (VisitorInfo info, String vector)
+    public void visitorInfoCreated (VisitorInfo info)
     {
         if (info != null) {
-            post(new MsoyEvents.ReferralCreated("", vector, "", info.id));
+            post(new MsoyEvents.VisitorInfoCreated(info));
+        }
+    }
+
+    public void vectorCreated (VisitorInfo info, String vector)
+    {
+        if (info != null && vector != null) {
+            post(new MsoyEvents.VectorCreated(vector, info));
         } else {
             log.warning("Unexpected null VisitorInfo for vector: " + vector);
-            post(new MsoyEvents.ReferralCreated());
         }
     }
 

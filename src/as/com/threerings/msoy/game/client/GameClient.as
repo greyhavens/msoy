@@ -67,7 +67,6 @@ public class GameClient extends MsoyClient
         var params :Object = MsoyParameters.get();
         var creds :MsoyGameCredentials = new MsoyGameCredentials();
         creds.sessionToken = (token == null) ? params["token"] : token;
-        creds.referral = getReferralInfo();
         return creds;
     }
 

@@ -5,6 +5,8 @@ package com.threerings.msoy.server;
 
 import java.util.Date;
 
+import com.threerings.msoy.data.all.VisitorInfo;
+
 import com.threerings.panopticon.common.event.annotations.Event;
 import com.threerings.panopticon.common.event.annotations.Field;
 import com.threerings.panopticon.common.event.annotations.Index;
@@ -386,6 +388,7 @@ public class MsoyEvents
         }
     }
 
+    // @Deprecated
     @Event(name="ReferralCreated")
     public static class ReferralCreated implements MsoyEvent
     {
@@ -407,6 +410,34 @@ public class MsoyEvents
         public ReferralCreated () 
         {
             this(null, null, null, null);
+        }
+    }
+
+    @Event(name="VisitorInfoCreated")
+    public static class VisitorInfoCreated implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Index @Field final public String visitorId;
+        
+        public VisitorInfoCreated (VisitorInfo info) 
+        {
+            this.timestamp = new Date();
+            this.visitorId = toValue(info.id);
+        }
+    }
+
+    @Event(name="VectorCreated")
+    public static class VectorCreated implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Field final public String vector;
+        @Index @Field final public String visitorId;
+        
+        public VectorCreated (String vector, VisitorInfo info) 
+        {
+            this.timestamp = new Date();
+            this.vector = vector;
+            this.visitorId = toValue(info.id);
         }
     }
     

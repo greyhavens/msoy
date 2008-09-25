@@ -31,14 +31,9 @@ public class MsoyGameClient extends CrowdClient
 
         _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
 
-        // pull referral out of the flash client, if they're not set already
-        if (_plobj.referral == null && credentials.referral != null) {
-            _plobj.setReferral(credentials.referral);
-        }
-
         Log.log.info("Player session starting", "memberId", _plobj.memberName.getMemberId(),
             "memberName", _plobj.memberName, "playerId", _plobj.getOid());
-        
+
         // let our various server entities know that this member logged on
         _locator.playerLoggedOn(_plobj);
     }

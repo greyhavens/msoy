@@ -28,6 +28,7 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.persist.ReferralRecord;
@@ -98,6 +99,8 @@ public class MsoyClientResolver extends CrowdClientResolver
             memobj.stats = new StatSet();
             memobj.badges = new EarnedBadgeSet();
             memobj.inProgressBadges = new InProgressBadgeSet();
+            memobj.visitorInfo = new VisitorInfo();
+            _eventLog.visitorInfoCreated(memobj.visitorInfo);
 
         } else if (_username instanceof LurkerName) {
             // we are lurker, we have no visible name to speak of
@@ -185,16 +188,7 @@ public class MsoyClientResolver extends CrowdClientResolver
             }
         }
 
-        // clobber any referral information with what's in the database
-        ReferralRecord refrec = _memberRepo.loadReferral(member.memberId);
-        if (refrec == null) {
-            // if they don't have referral info, it means they're an old user who needs to be
-            // grandfathered into the new referral-tracking order of things. give them
-            // a new entry with an empty affiliate, and a random tracking number.
-            refrec = _memberRepo.setReferral(member.memberId,
-                ReferralInfo.makeInstance("", "", "", ReferralInfo.makeRandomTracker()));
-        }
-        memobj.referral = refrec.toInfo();
+        memobj.visitorInfo = new VisitorInfo(member.visitorId, true);
     }
 
     @Override // from ClientResolver
@@ -235,4 +229,5 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Inject protected StatRepository _statRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected BadgeManager _badgeMan;
+    @Inject protected MsoyEventLogger _eventLog;
 }

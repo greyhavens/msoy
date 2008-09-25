@@ -11,7 +11,7 @@ import com.threerings.presents.net.UsernamePasswordCreds;
 import com.threerings.io.ObjectInputStream;
 import com.threerings.io.ObjectOutputStream;
 
-import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
  * Contains extra information used during authentication with the game server.
@@ -30,9 +30,6 @@ public class MsoyCredentials extends UsernamePasswordCreds
     /** Indicates whether this client is set up as a featured place view. */
     public var featuredPlaceView :Boolean;
 
-    /** Referral info data. */
-    public var referral :ReferralInfo;
-
     /**
      * Creates credentials with the specified username and password.
      * {@link #ident} should be set before logging in unless the client does
@@ -50,7 +47,6 @@ public class MsoyCredentials extends UsernamePasswordCreds
         sessionToken = (ins.readField(String) as String);
         ident = (ins.readField(String) as String);
         featuredPlaceView = ins.readBoolean();
-        referral = ins.readObject() as ReferralInfo;
     }
 
     // from interface Streamable
@@ -60,7 +56,6 @@ public class MsoyCredentials extends UsernamePasswordCreds
         out.writeField(sessionToken);
         out.writeField(ident);
         out.writeBoolean(featuredPlaceView);
-        out.writeObject(referral);
     }
 
     // documentation inherited
@@ -70,7 +65,6 @@ public class MsoyCredentials extends UsernamePasswordCreds
         buf.append(", ident=").append(ident);
         buf.append(", token=").append(sessionToken);
         buf.append(", featuredPlaceView=").append(featuredPlaceView);
-        buf.append(", referral=").append(referral);
     }
 }
 }

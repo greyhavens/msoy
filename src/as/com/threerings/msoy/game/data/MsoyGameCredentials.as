@@ -10,7 +10,7 @@ import com.threerings.util.StringBuilder;
 
 import com.threerings.presents.net.Credentials;
 
-import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
  * Used to authenticate with an MSOY Game server.
@@ -19,9 +19,6 @@ public class MsoyGameCredentials extends Credentials
 {
     /** A session token that identifies this user. */
     public var sessionToken :String;
-
-    /** Referral info data. */
-    public var referral :ReferralInfo;
 
     public function MsoyGameCredentials (name :Name = null)
     {
@@ -33,7 +30,6 @@ public class MsoyGameCredentials extends Credentials
     {
         super.readObject(ins);
         sessionToken = (ins.readField(String) as String);
-        referral = ins.readObject() as ReferralInfo;
     }
 
     // from interface Streamable
@@ -41,7 +37,6 @@ public class MsoyGameCredentials extends Credentials
     {
         super.writeObject(out);
         out.writeField(sessionToken);
-        out.writeObject(referral);
     }
 
     // from Credentials
@@ -49,7 +44,6 @@ public class MsoyGameCredentials extends Credentials
     {
         super.toStringBuf(buf);
         buf.append(", token=", sessionToken);
-        buf.append(", referral=").append(referral);
     }
 }
 }

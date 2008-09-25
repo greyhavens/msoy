@@ -7,8 +7,6 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.net.Credentials;
 
-import com.threerings.msoy.data.all.ReferralInfo;
-
 /**
  * Used to authenticate with an MSOY Game server.
  */
@@ -16,9 +14,6 @@ public class MsoyGameCredentials extends Credentials
 {
     /** A session token that identifies this user. */
     public String sessionToken;
-
-    /** Referral info data. */
-    public ReferralInfo referral;
 
     public MsoyGameCredentials ()
     {
@@ -32,6 +27,5 @@ public class MsoyGameCredentials extends Credentials
     {
         super.toString(buf);
         buf.append(", token=").append(sessionToken);
-        buf.append(", referral=").append(referral);
     }
 }

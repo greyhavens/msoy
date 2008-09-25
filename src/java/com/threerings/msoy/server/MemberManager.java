@@ -59,6 +59,7 @@ import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 
@@ -503,6 +504,7 @@ public class MemberManager
     {
         final MemberObject user = (MemberObject) caller;
         _invoker.postUnit(new WriteOnlyUnit("acknowledgeWarning(" + user.getMemberId() + ")") {
+            @Override
             public void invokePersist () throws Exception {
                 _memberRepo.clearMemberWarning(user.getMemberId());
             }
@@ -610,6 +612,7 @@ public class MemberManager
         }
 
         _invoker.postUnit(new Invoker.Unit("addComplaint") {
+            @Override
             public boolean invoke () {
                 try {
                     _supportLogic.addComplaint(event, memberId);
@@ -619,6 +622,7 @@ public class MemberManager
                 }
                 return true;
             }
+            @Override
             public void handleResult () {
                 SpeakUtil.sendFeedback(source, MsoyCodes.GENERAL_MSGS,
                         _failed ? "m.complain_fail" : "m.complain_success");
@@ -651,9 +655,9 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void trackReferralCreation (final ClientObject caller, final ReferralInfo info)
+    public void trackVisitorInfoCreation (final ClientObject caller, final VisitorInfo info)
     {
-        _eventLog.referralCreated(info);
+        _eventLog.visitorInfoCreated(info);
     }
 
     // from interface MemberProvider
@@ -682,7 +686,8 @@ public class MemberManager
 
     // from interface MemberProvider
     public void getABTestGroup (
-        final ClientObject caller, final ReferralInfo info, final String testName,
+        final ClientObject caller, final VisitorInfo info,
+        final String testName,
         final boolean logEvent, final InvocationService.ResultListener listener)
     {
         _invoker.postUnit(new PersistingUnit(listener) {
@@ -697,7 +702,7 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void trackClientAction (final ClientObject caller, final ReferralInfo info,
+    public void trackClientAction (final ClientObject caller, final VisitorInfo info,
                                    final String actionName, final String details)
     {
         if (info == null) {
@@ -705,11 +710,11 @@ public class MemberManager
                         "actionName", actionName);
             return;
         }
-        _eventLog.clientAction(info.tracker, actionName, details);
+        _eventLog.clientAction(info.id, actionName, details);
     }
 
     // from interface MemberProvider
-    public void trackTestAction (final ClientObject caller, final ReferralInfo info,
+    public void trackTestAction (final ClientObject caller, final VisitorInfo info,
                                  final String actionName, final String testName)
     {
         if (info == null) {
@@ -719,6 +724,7 @@ public class MemberManager
         }
 
         _invoker.postUnit(new Invoker.Unit("getABTestGroup") {
+            @Override
             public boolean invoke () {
                 int abTestGroup = -1;
                 String actualTestName;
@@ -729,7 +735,7 @@ public class MemberManager
                 } else {
                     actualTestName = "";
                 }
-                _eventLog.testAction(info.tracker, actionName, actualTestName, abTestGroup);
+                _eventLog.testAction(info.id, actionName, actualTestName, abTestGroup);
                 return false;
             }
         });

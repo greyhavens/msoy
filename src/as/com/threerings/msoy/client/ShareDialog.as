@@ -26,6 +26,7 @@ import com.threerings.util.MailUtil;
 import com.threerings.msoy.chat.client.ReportingListener;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.ui.CopyableText;
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -85,16 +86,16 @@ public class ShareDialog extends FloatingPanel
         var vector :String;
         if (_inGame) {
             flashVars += "gameLobby=" + _placeId;
-            vector = TrackingCookie.GAME_VECTOR;
+            vector = VisitorInfo.GAME_VECTOR;
 
         } else if (_placeId != 0) {
             flashVars += "sceneId=" + _placeId;
-            vector = TrackingCookie.ROOM_VECTOR;
+            vector = VisitorInfo.ROOM_VECTOR;
 
         } else {
-            vector = TrackingCookie.GENERIC_VECTOR;
+            vector = VisitorInfo.GENERIC_VECTOR;
         }
-        flashVars += "&" + TrackingCookie.makeFlashVars(affiliate, vector, "");
+        flashVars += "&" + VisitorInfo.makeFlashVars(affiliate, vector);
 
         if (size == 0) {
             flashVars += "&featuredPlace=true";

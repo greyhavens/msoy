@@ -62,19 +62,19 @@ public interface WebMemberServiceAsync
     /**
      * The asynchronous version of {@link WebMemberService#getABTestGroup}.
      */
-    void getABTestGroup (ReferralInfo info, String testName, boolean logEvent,
+    void getABTestGroup (VisitorInfo info, String testName, boolean logEvent,
                          AsyncCallback<Integer> callback);
 
     /**
      * The asynchronous version of {@link WebMemberService#trackClientAction}.
      */
-    void trackClientAction (ReferralInfo info, String actionName, String details,
+    void trackClientAction (VisitorInfo info, String actionName, String details,
                             AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link WebMemberService#trackTestAction}.
      */
-    void trackTestAction (ReferralInfo info, String actionName, String testName,
+    void trackTestAction (VisitorInfo info, String actionName, String testName,
                           AsyncCallback<Void> callback);
 
     /**
@@ -82,6 +82,11 @@ public interface WebMemberServiceAsync
      */
     // @Deprecated
     void trackReferralCreation (ReferralInfo info, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of {@link WebMemberService#trackVisitorInfoCreation}.
+     */
+    void trackVisitorInfoCreation (VisitorInfo info, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of

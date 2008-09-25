@@ -3,41 +3,30 @@
 
 package com.threerings.msoy.client {
 
-import flash.display.Stage;
-import flash.ui.ContextMenu;
-
-import flash.events.ContextMenuEvent;
-import flash.external.ExternalInterface;
-import flash.system.Capabilities;
-import flash.system.Security;
-
-import flash.media.SoundMixer;
-import flash.media.SoundTransform;
-
-import com.threerings.util.Log;
-import com.threerings.util.ValueEvent;
-
-import com.threerings.flash.MenuUtil;
-
-import com.threerings.presents.client.ClientAdapter;
-import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.InvocationService_ResultListener;
-
-import com.threerings.presents.dobj.DObjectManager;
-
-import com.threerings.presents.net.Credentials;
-import com.threerings.presents.net.BootstrapData;
-
 import com.threerings.crowd.client.CrowdClient;
-
-import com.threerings.msoy.client.MsoyLogConfig;
-import com.threerings.msoy.client.TrackingCookie;
-
+import com.threerings.flash.MenuUtil;
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
-import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.client.InvocationService_ResultListener;
+import com.threerings.presents.dobj.DObjectManager;
+import com.threerings.presents.net.BootstrapData;
+import com.threerings.presents.net.Credentials;
+import com.threerings.util.Log;
+import com.threerings.util.ValueEvent;
+
+import flash.display.Stage;
+import flash.events.ContextMenuEvent;
+import flash.external.ExternalInterface;
+import flash.media.SoundMixer;
+import flash.media.SoundTransform;
+import flash.system.Capabilities;
+import flash.system.Security;
+import flash.ui.ContextMenu;
 
 /**
  * Dispatched when the client is minimized or unminimized.
@@ -82,7 +71,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         _stage = stage;
 
         setVersion(DeploymentConfig.version);
-        _referrals = [];
         _creds = createStartupCreds(null);
 
         if (_featuredPlaceView) {
@@ -140,17 +128,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         var rdata :MsoyAuthResponseData = (getAuthResponseData() as MsoyAuthResponseData);
         if (rdata.warning != null) {
             new WarningDialog(_ctx, rdata.warning);
-        }
-
-        // send over any newly created referral infos
-        var msvc :MemberService = requireService(MemberService) as MemberService;
-        while (_referrals.length > 0) {
-            var ref :ReferralInfo = _referrals.pop() as ReferralInfo;
-            if (ref != null) {
-                msvc.trackReferralCreation(this, ref);
-            } else {
-                log.info("Empty ReferralInfo in the queue - ignoring...");
-            }
         }
     }
 
@@ -246,7 +223,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         testName :String, logEvent :Boolean, listener :InvocationService_ResultListener) :void
     {
         var msvc :MemberService = requireService(MemberService) as MemberService;
-        msvc.getABTestGroup(this, getReferralInfo(), testName, logEvent, listener);
+        var member :MemberObject = _clobj as MemberObject;
+        msvc.getABTestGroup(this, member.visitorInfo, testName, logEvent, listener);
     }
 
     /**
@@ -260,7 +238,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         // place view. So I say: fuck tracking shit if we can't track shit. I'd rather
         // not piss off the user-- in this case ME.
         if (msvc != null) {
-            msvc.trackClientAction(this, getReferralInfo(), actionName, details);
+            var member :MemberObject = _clobj as MemberObject;
+            msvc.trackClientAction(this, member.visitorInfo, actionName, details);
         }
     }
 
@@ -272,7 +251,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     public function trackTestAction (actionName :String, testName :String) :void
     {
         var msvc :MemberService = requireService(MemberService) as MemberService;
-        msvc.trackTestAction(this, getReferralInfo(), actionName, testName);
+        var member :MemberObject = _clobj as MemberObject;
+        msvc.trackTestAction(this, member.visitorInfo, actionName, testName);
     }
 
     /**
@@ -298,21 +278,15 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         if (_featuredPlaceView || member == null) {
             return;
         }
-
-        if (member.referral == null) {
-            log.warning("Referral info was not stored on the server!");
-            return;
-        }
-
-        // update our referral cookies with authoritative versions from the server -
-        // both in the Flash client, and the browser if available
-        TrackingCookie.save(member.referral, true);
-        try {
-            if (!_embedded && ExternalInterface.available) {
-                ExternalInterface.call("setReferral", member.referral);
+        
+        if (_embedded) {
+            var params :Object = MsoyParameters.get();
+            var vector :String = params[VisitorInfo.VECTOR_ID];
+            if (vector != null && vector.length > 0) {
+                // TODO finish implementation
+                //var msvc :MemberService = requireService(MemberService) as MemberService;
+                //msvc.vectorCreated(this, vector, member.visitorInfo);
             }
-        } catch (e :Error) {
-            log.info("ExternalInterface.call('setReferral') failed", "error", e);
         }
 
         if (_embedded && !_reportedLogon) {
@@ -330,12 +304,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     protected function clientDidLogoff (event :ClientEvent) :void
     {
-        // if this was a registered player, clear out their cookies,
-        // so that any guest using this browser next will be tracked fresh.
-        var member :MemberObject = _clobj as MemberObject;
-        if (member != null && ! member.isGuest()) {
-            TrackingCookie.clear();
-        }
+        return;
     }
 
     /**
@@ -422,64 +391,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     }
 
     /**
-     * Returns referral info stored on the client side.
-     * First checks the Flash cookie, then the browser cookie, then embed parameters.
-     *
-     * This info will be offered to the server, which may override it with its own versions.
-     */
-    public function getReferralInfo () :ReferralInfo
-    {
-        // first, try the local cookie
-        var ref :ReferralInfo = TrackingCookie.get();
-
-        // if that didn't work, see if we can read it from the browser cookie
-        if (ref == null && !isEmbedded() && ExternalInterface.available) {
-            try {
-                log.debug("Querying browser cookie for referral info");
-                var result :Object = ExternalInterface.call("getReferral");
-                if (result != null) {
-                    ref = ReferralInfo.makeInstance(
-                        result.affiliate as String, result.vector as String,
-                        result.creative as String, result.tracker as String);
-                }
-            } catch (e :Error) {
-                log.info("ExternalInterface.call('getReferral') failed", "error", e);
-            }
-        }
-
-        // if calling GWT didn't work either, check embed parameters, and create a new one
-        if (ref == null) {
-            log.debug("Checking embed parameters for referral info");
-            var params :Object = MsoyParameters.get();
-            ref = makeNewReferral(params["aff"], params["vec"], params["cre"]);
-        }
-
-        // finally, if nothing worked, make a blank one with empty affiliate fields,
-        // and a random tracking number
-        if (ref == null) {
-            log.debug("Queries failed - generating new group assignment");
-            ref = makeNewReferral("", "", "");
-        }
-
-        log.debug("Referral info: " + ref);
-        return ref;
-    }
-
-    /**
-     * Creates new referral info, and adds it to the queue of referrals to
-     * send over to the server, after we've finished the handshake.
-     */
-    protected function makeNewReferral (
-        affiliate :String, vector :String, creative :String) :ReferralInfo
-    {
-        var ref :ReferralInfo = ReferralInfo.makeInstance(
-            affiliate, vector, creative, ReferralInfo.makeRandomTracker());
-
-        _referrals.push(ref);
-        return ref;
-    }
-
-    /**
      * Returns the hostname of the game server to which we should connect, or null if that is not
      * configured in our parameters.
      */
@@ -505,9 +416,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected var _minimized :Boolean;
     protected var _embedded :Boolean = true; // default to true until proven false
     protected var _featuredPlaceView :Boolean;
-
-    /** Array of ReferralInfo objects to be sent out to the server, once we finish handshake. */
-    protected var _referrals :Array; // of ReferralInfo
 
     // configure log levels
     MsoyLogConfig.init();

@@ -348,7 +348,6 @@ public class WorldClient extends MsoyClient
         creds.ident = Prefs.getMachineIdent();
         creds.sessionToken = (token == null) ? params["token"] : token;
         creds.featuredPlaceView = _featuredPlaceView;
-        creds.referral = getReferralInfo();
         
         return creds;
     }

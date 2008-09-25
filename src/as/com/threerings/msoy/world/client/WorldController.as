@@ -795,10 +795,8 @@ public class WorldController extends MsoyController
 
         } else {
             const params :Object = MsoyParameters.get();
-            var tracking :String = "";
-            if ((params["aff"] != null) && (params["vec"] != null) && (params["cre"] != null)) {
-                tracking += "_aid_" + params["aff"] + "_" + params["vec"] + "_" + params["cre"];
-            }
+            var tracking :String = _wctx.getMemberObject().visitorInfo.makeTrackingArgs(
+                params[VisitorInfo.AFFILIATE_ID]);
 
             var fullURL :String = DeploymentConfig.serverURL;
 // This is disabled right now because various other things are broken

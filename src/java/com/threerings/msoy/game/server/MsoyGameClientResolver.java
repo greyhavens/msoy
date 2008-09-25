@@ -18,6 +18,8 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyObjectAccess;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -79,16 +81,8 @@ public class MsoyGameClientResolver extends CrowdClientResolver
         // fill in this member's raw friends list
         playerObj.friends = new DSet<FriendEntry>(
             _memberRepo.loadFriends(member.memberId, -1));
-        
-        // just like in MsoyClientResolver, fill in any referral information from the database 
-        ReferralRecord refrec = _memberRepo.loadReferral(member.memberId);
-        if (refrec == null) {
-            // if they don't have referral info, it means they're an old user who needs to be
-            // grandfathered into the referral-tracking order of things. give them a new entry.
-            refrec = _memberRepo.setReferral(member.memberId,
-                ReferralInfo.makeInstance("", "", "", ReferralInfo.makeRandomTracker()));
-        }
-        playerObj.referral = refrec.toInfo();
+
+        playerObj.visitorInfo = new VisitorInfo(member.visitorId, true);
     }
 
     /**
@@ -104,9 +98,13 @@ public class MsoyGameClientResolver extends CrowdClientResolver
 
         // guests operate at the default new user humanity level
         playerObj.humanity = MsoyCodes.STARTING_HUMANITY;
+
+        playerObj.visitorInfo = new VisitorInfo();
+        _eventLog.visitorInfoCreated(playerObj.visitorInfo);
     }
 
     // our dependencies
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ProfileRepository _profileRepo;
+    @Inject protected MsoyEventLogger _eventLog;
 }

@@ -12,9 +12,9 @@ import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebMemberServiceAsync;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
 import client.shell.Pages;
-import client.shell.TrackingCookie;
 import client.util.Link;
 import client.util.ServiceUtil;
 
@@ -70,7 +70,7 @@ public class LandingPage extends Page
         };
 
         _membersvc.getABTestGroup(
-            TrackingCookie.get(), "sep08CreatorsLanding", true,
+            CShell.visitor, "sep08CreatorsLanding", true,
             new AsyncCallback<Integer>() {
                 public void onSuccess (Integer group) {
                     gotTestGroup(testpages, group);

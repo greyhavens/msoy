@@ -142,29 +142,29 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
-    public int getABTestGroup (ReferralInfo info, String testName, boolean logEvent)
+    public int getABTestGroup (VisitorInfo info, String testName, boolean logEvent)
     {
         return _memberLogic.getABTestGroup(testName, info, logEvent);
     }
 
     // from WebMemberService
-    public void trackClientAction (ReferralInfo info, String actionName, String details)
+    public void trackClientAction (VisitorInfo info, String actionName, String details)
     {
         if (info == null) {
             log.warning(
-                "Failed to log client action with null referral", "actionName", actionName);
+                "Failed to log client action with null visitorInfo", "actionName", actionName);
             return;
         }
 
-        _eventLog.clientAction(info.tracker, actionName, details);
+        _eventLog.clientAction(info.id, actionName, details);
     }
 
     // from WebMemberService
-    public void trackTestAction (ReferralInfo info, String actionName, String testName)
+    public void trackTestAction (VisitorInfo info, String actionName, String testName)
     {
         if (info == null) {
             log.warning(
-                "Failed to log test action with null referral", "actionName", actionName);
+                "Failed to log test action with null visitorInfo", "actionName", actionName);
             return;
         }
         int abTestGroup = -1;
@@ -174,7 +174,7 @@ public class MemberServlet extends MsoyServiceServlet
         } else {
             testName = "";
         }
-        _eventLog.testAction(info.tracker, actionName, testName, abTestGroup);
+        _eventLog.testAction(info.id, actionName, testName, abTestGroup);
     }
 
     // from WebMemberService
@@ -185,10 +185,17 @@ public class MemberServlet extends MsoyServiceServlet
     }
 
     // from WebMemberService
+    public void trackVisitorInfoCreation (VisitorInfo info)
+        throws ServiceException
+    {
+        _eventLog.visitorInfoCreated(info);
+    }
+
+    // from WebMemberService
     public void trackVectorAssociation (VisitorInfo info, String vector)
         throws ServiceException
     {
-        _eventLog.referralCreated(info, vector);
+        _eventLog.vectorCreated(info, vector);
     }
 
     // our dependencies

@@ -16,6 +16,7 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
 
@@ -96,6 +97,9 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>referral</code> field. */
     public static const REFERRAL :String = "referral";
+
+    /** The field name of the <code>visitorInfo</code> field. */
+    public static const VISITOR_INFO :String = "visitorInfo";
 
     /** A message sent by the server to denote a notification to be displayed.
      * Format: [ Notification ]. */
@@ -190,7 +194,10 @@ public class MemberObject extends MsoyBodyObject
     /** The headline/status of this player. */
     public var headline :String;
 
-    /** Player's referral information. */
+    /** Player's tracking information. */
+    public var visitorInfo :VisitorInfo;
+
+    /** Player's tracking information. */
     public var referral :ReferralInfo;
 
     /**
@@ -340,6 +347,7 @@ public class MemberObject extends MsoyBodyObject
         walkingId = ins.readInt();
         headline = ins.readField(String) as String;
         referral = (ins.readObject() as ReferralInfo);
+        visitorInfo = (ins.readObject() as VisitorInfo);
     }
 }
 }

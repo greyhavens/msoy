@@ -30,6 +30,7 @@ import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -136,7 +137,7 @@ public class MemberLogic
      *
      * @return The a/b group the visitor has been assigned to, or < 0 for no group.
      */
-    public int getABTestGroup (String testName, ReferralInfo info, boolean logEvent)
+    public int getABTestGroup (String testName, VisitorInfo info, boolean logEvent)
     {
         if (info == null) { // sanity check
             log.warning("Received bogus AB test group request", "name", testName, "info", info,
@@ -168,12 +169,12 @@ public class MemberLogic
         }
 
         // generate the group number based on trackingID + testName
-        final int seed = Math.abs(new String(info.tracker + testName).hashCode());
+        final int seed = Math.abs(new String(info.id + testName).hashCode());
         final int group = (seed % test.numGroups) + 1;
 
         // optionally log an event to say the group was assigned
         if (logEvent && group >= 0) {
-            _eventLog.testAction(info.tracker, "ABTestGroupAssigned", testName, group);
+            _eventLog.testAction(info.id, "ABTestGroupAssigned", testName, group);
         }
 
         return group;
@@ -182,32 +183,25 @@ public class MemberLogic
     /**
      * Return true if the visitor's attributes match those required by the given a/b test
      */
-    protected boolean eligibleForABTest (ABTest test, ReferralInfo info)
+    protected boolean eligibleForABTest (ABTest test, VisitorInfo info)
     {
         // test runs only on new users and visitor is returning
         // (visitor may have been in a group during a previous session!)
         if (test.onlyNewVisitors == true && test.started.after(info.getCreationTime())) {
             return false;
         }
-
-        // wrong affiliate
-        if (test.affiliate != null && test.affiliate.length() > 0
-                && (info.affiliate == null || !info.affiliate.trim().equals(test.affiliate))) {
-            return false;
-        }
-
-        // wrong vector
-        if (test.vector != null && test.vector.length() > 0
-                && (info.vector == null || !info.vector.trim().equals(test.vector))) {
-            return false;
-        }
-
-        // wrong creative
-        if (test.creative != null && test.creative.length() > 0
-                && (info.creative == null || !info.creative.trim().equals(test.creative))) {
-            return false;
-        }
-
+        /*
+         * // wrong affiliate if (test.affiliate != null && test.affiliate.length() > 0 &&
+         * (info.affiliate == null || !info.affiliate.trim().equals(test.affiliate))) { return
+         * false; }
+         *
+         * // wrong vector if (test.vector != null && test.vector.length() > 0 && (info.vector ==
+         * null || !info.vector.trim().equals(test.vector))) { return false; }
+         *
+         * // wrong creative if (test.creative != null && test.creative.length() > 0 &&
+         * (info.creative == null || !info.creative.trim().equals(test.creative))) { return false;
+         * }
+         */
         return true;
     }
 
@@ -224,6 +218,7 @@ public class MemberLogic
         public AddFriend () {
         }
 
+        @Override
         protected void execute (final MemberObject memobj) {
             MemberName friend = new MemberName(_friendName, _friendId);
             boolean online = (_peerMan.locateClient(friend) != null);
@@ -250,6 +245,7 @@ public class MemberLogic
         public RemoveFriend () {
         }
 
+        @Override
         protected void execute (MemberObject memobj) {
             memobj.removeFromFriends(_friendId);
             _friendMan.clearFriendInterest(memobj, _friendId);

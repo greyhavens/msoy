@@ -10,8 +10,6 @@ import com.threerings.util.Name;
 
 import com.threerings.presents.net.UsernamePasswordCreds;
 
-import com.threerings.msoy.data.all.ReferralInfo;
-
 /**
  * Contains extra information used during authentication with the game server.
  */
@@ -28,9 +26,6 @@ public class MsoyCredentials extends UsernamePasswordCreds
 
     /** Indicates whether this client is set up as a featured place view. */
     public boolean featuredPlaceView;
-
-    /** Referral info data. */
-    public ReferralInfo referral;
 
     /**
      * Returns true if the supplied (non-null) session token is a guest session token.
@@ -81,6 +76,5 @@ public class MsoyCredentials extends UsernamePasswordCreds
         super.toString(buf);
         buf.append(", ident=").append(ident);
         buf.append(", featuredPlaceView=").append(featuredPlaceView);
-        buf.append(", referral=").append(referral);
     }
 }

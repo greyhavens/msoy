@@ -82,12 +82,6 @@ public class MsoyClient extends WhirledClient
             _memobj.setTokens(new MsoyTokenRing());
         }
 
-        // if we didn't get referral info from the database already, pull it from
-        // our authentication credentials (ie. from the flash / browser cookies)
-        if (_memobj.referral == null) {
-            _memobj.setReferral(credentials.referral);
-        }
-
         // flag viewing-only clients that way.
         _memobj.viewOnly = credentials.featuredPlaceView;
 

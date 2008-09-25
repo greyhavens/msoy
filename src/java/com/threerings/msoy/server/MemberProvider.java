@@ -4,7 +4,7 @@
 package com.threerings.msoy.server;
 
 import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -51,7 +51,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#getABTestGroup} request.
      */
-    void getABTestGroup (ClientObject caller, ReferralInfo arg1, String arg2, boolean arg3, InvocationService.ResultListener arg4)
+    void getABTestGroup (ClientObject caller, VisitorInfo arg1, String arg2, boolean arg3, InvocationService.ResultListener arg4)
         throws InvocationException;
 
     /**
@@ -128,17 +128,17 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#trackClientAction} request.
      */
-    void trackClientAction (ClientObject caller, ReferralInfo arg1, String arg2, String arg3);
-
-    /**
-     * Handles a {@link MemberService#trackReferralCreation} request.
-     */
-    void trackReferralCreation (ClientObject caller, ReferralInfo arg1);
+    void trackClientAction (ClientObject caller, VisitorInfo arg1, String arg2, String arg3);
 
     /**
      * Handles a {@link MemberService#trackTestAction} request.
      */
-    void trackTestAction (ClientObject caller, ReferralInfo arg1, String arg2, String arg3);
+    void trackTestAction (ClientObject caller, VisitorInfo arg1, String arg2, String arg3);
+
+    /**
+     * Handles a {@link MemberService#trackVisitorInfoCreation} request.
+     */
+    void trackVisitorInfoCreation (ClientObject caller, VisitorInfo arg1);
 
     /**
      * Handles a {@link MemberService#updateAvailability} request.
