@@ -223,14 +223,19 @@ public class FrameEntryPoint
             _membersvc.trackVectorAssociation(info, vector, new AsyncCallback<Void>() {
                 public void onSuccess (Void result) {
                     CShell.log("Saved vector association for " + constInfo);
-                    if (! constInfo.isAuthoritative) {
-                        VisitorCookie.save(constInfo, true);
-                    }
                 }
                 public void onFailure (Throwable caught) {
                     CShell.log("Failed to send vector creation to server.", caught);
                 }
             });
+        }
+
+        // if we have a new visitor info, use that as well
+        if (CShell.visitor == null ||
+            (CShell.visitor.id != info.id && !CShell.visitor.isAuthoritative)) {
+            CShell.log("Updating visitor info from " + CShell.visitor + " to " + info);
+            CShell.visitor = info;
+            VisitorCookie.save(info, true);
         }
 
         // if we still don't have a tracking cookie, try to manufacture one from the HTTP Referer
@@ -758,6 +763,9 @@ public class FrameEntryPoint
             };
         case GET_ACTIVE_INVITE:
             return _activeInvite == null ? null : _activeInvite.flatten().toArray(new String[0]);
+        case GET_VISITOR_INFO:
+            return (CShell.visitor == null) ? null
+                : CShell.visitor.flatten().toArray(new String[0]);
         }
         CShell.log("Got unknown frameCall request [call=" + call + "].");
         return null; // not reached

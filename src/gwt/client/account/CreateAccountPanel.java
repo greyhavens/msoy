@@ -44,7 +44,6 @@ import com.threerings.msoy.web.data.SessionData;
 import client.shell.CShell;
 import client.shell.Pages;
 import client.shell.ShellMessages;
-import client.shell.TrackingCookie;
 import client.ui.DateFields;
 import client.ui.MsoyUI;
 import client.util.DateUtil;
@@ -216,7 +215,7 @@ public class CreateAccountPanel extends FlowPanel
         Invitation invite = CShell.frame.getActiveInvitation();
         info.inviteId = (invite == null) ? null : invite.inviteId;
         info.guestId = CShell.isGuest() ? CShell.getMemberId() : 0;
-        info.referral = TrackingCookie.get();
+        info.visitor = CShell.visitor;
         info.captchaChallenge = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getChallenge() : null;
         info.captchaResponse = RecaptchaUtil.isEnabled() ? RecaptchaUtil.getResponse() : null;
 

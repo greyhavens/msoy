@@ -37,7 +37,7 @@ import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.AffiliateMapRepository;
 import com.threerings.msoy.server.persist.InvitationRecord;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -201,7 +201,7 @@ public class MsoyAuthenticator extends Authenticator
      */
     public MemberRecord createAccount (
         String email, final String password, final String displayName, boolean ignoreRestrict,
-        final InvitationRecord invite, final ReferralInfo referral, String affiliate)
+        final InvitationRecord invite, final VisitorInfo visitor, String affiliate)
         throws ServiceException
     {
         if (!RuntimeConfig.server.registrationEnabled && !ignoreRestrict) {
@@ -222,7 +222,7 @@ public class MsoyAuthenticator extends Authenticator
 
             // create a new member record for the account
             final MemberRecord mrec = createMember(
-                account, displayName, invite, referral, affiliate);
+                account, displayName, invite, visitor, affiliate);
             // clear out our account reference to let the finally block know that all went well and
             // we need not roll back the domain account creation
             account = null;
@@ -518,7 +518,7 @@ public class MsoyAuthenticator extends Authenticator
      * Called to create a starting member record for a first-time logger in.
      */
     protected MemberRecord createMember (
-        Account account, String displayName, InvitationRecord invite, ReferralInfo referral,
+        Account account, String displayName, InvitationRecord invite, VisitorInfo visitor,
         String affiliate)
     {
         // normalize blank affiliates to null
@@ -542,6 +542,11 @@ public class MsoyAuthenticator extends Authenticator
             // look up their affiliate's memberId, if any
             mrec.affiliateMemberId = _affMapRepo.getAffiliateMemberId(affiliate);
         }
+        if (visitor != null) {
+            mrec.visitorId = visitor.id;
+        } else {
+            log.warning("Missing visitor id when creating user " + account.accountName);
+        }
 
         // store their member record in the repository making them a real Whirled citizen
         _memberRepo.insertMember(mrec);
@@ -564,16 +569,10 @@ public class MsoyAuthenticator extends Authenticator
             _memberRepo.setAffiliate(mrec.memberId, affiliate);
         }
 
-        // TODO
-        // if they gave us a valid referral info, store it; otherwise it'll be filled in later
-        if (referral != null) {
-            _memberRepo.setReferral(mrec.memberId, referral);
-        }
-
         // record to the event log that we created a new account
         final String iid = (invite == null) ? null : invite.inviteId;
-        final String tracker = (referral == null) ? null : referral.tracker;
-        _eventLog.accountCreated(mrec.memberId, iid, tracker);
+        final String vid = (visitor == null) ? null : visitor.id;
+        _eventLog.accountCreated(mrec.memberId, iid, vid);
 
         return mrec;
     }

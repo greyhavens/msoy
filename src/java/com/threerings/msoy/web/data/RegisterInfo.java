@@ -6,7 +6,7 @@ package com.threerings.msoy.web.data;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.ReferralInfo;
+import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
  * Contains all the information needed from the client when registering.
@@ -25,7 +25,7 @@ public class RegisterInfo
 
     public String inviteId;
     public int guestId;
-    public ReferralInfo referral;
+    public VisitorInfo visitor;
 
     public String captchaChallenge;
     public String captchaResponse;

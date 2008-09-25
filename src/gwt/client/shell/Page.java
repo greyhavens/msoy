@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.data.Invitation;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
@@ -98,6 +99,8 @@ public abstract class Page
             // obtain our current credentials from the frame
             CShell.creds = WebCreds.unflatten(
                 ArrayUtil.toIterator(frameCall(Frame.Calls.GET_WEB_CREDS, null)));
+            CShell.visitor = VisitorInfo.unflatten(
+                ArrayUtil.toIterator(frameCall(Frame.Calls.GET_VISITOR_INFO, null)));
 
             // and get our current page token from our containing frame
             setPageToken(frameCall(Frame.Calls.GET_PAGE_TOKEN, null)[0]);

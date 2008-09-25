@@ -126,7 +126,7 @@ public class WebUserServlet extends MsoyServiceServlet
         // we are running on a servlet thread at this point and can thus talk to the authenticator
         // directly as it is thread safe (and it blocks) and we are allowed to block
         final MemberRecord mrec = _author.createAccount(
-            info.email, info.password, info.displayName, ignoreRestrict, invite, info.referral,
+            info.email, info.password, info.displayName, ignoreRestrict, invite, info.visitor,
             AffiliateCookie.get(getThreadLocalRequest()));
 
         // store the user's birthday and realname in their profile
