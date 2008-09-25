@@ -3,6 +3,7 @@
 
 package client.person;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,16 +28,30 @@ public class SimpleDropModel<T> implements DropModel<T>
         _contents.remove(content);
         index = Math.min(_contents.size(), index);
         _contents.add(index, content);
+        fireContentInserted(content, index);
     }
 
     public void remove (T content)
     {
         _contents.remove(content);
+        fireContentRemoved(content);
     }
 
     public List<T> getContents ()
     {
         return _contents;
+    }
+
+    // from DropModel
+    public void addDropListener (DropListener<T> listener)
+    {
+        _listeners.add(listener);
+    }
+
+    // from DropModel
+    public void removeDropListener (DropListener<T> listener)
+    {
+        _listeners.remove(listener);
     }
 
     @Override
@@ -45,5 +60,20 @@ public class SimpleDropModel<T> implements DropModel<T>
         return _contents.toString();
     }
 
+    protected void fireContentInserted (T content, int index)
+    {
+        for (DropListener<T> listener : _listeners) {
+            listener.contentInserted(this, content, index);
+        }
+    }
+
+    protected void fireContentRemoved (T content)
+    {
+        for (DropListener<T> listener : _listeners) {
+            listener.contentRemoved(this, content);
+        }
+    }
+
     protected List<T> _contents;
+    protected List<DropListener<T>> _listeners = new ArrayList<DropListener<T>>();
 }

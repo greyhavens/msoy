@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.data.all.MediaDesc;
@@ -45,8 +46,7 @@ public class GalleryDetailPanel extends AbsolutePanel
         // TODO create a listener for count changes
         _countLabel = MsoyUI.createLabel("", "Count");
         setCount(galleryData.photos.size());
-        add(MsoyUI.createLabel(_pmsgs.photoCount(galleryData.photos.size() + ""), "Count"), 110,
-            70);
+        add(_countLabel, 110, 70);
 
         if (readOnly) {
             // add name and description labels
@@ -57,11 +57,15 @@ public class GalleryDetailPanel extends AbsolutePanel
             if (_gallery.isProfileGallery()) {
                 add(MsoyUI.createLabel(GalleryPanel.getGalleryLabel(_gallery), "Name"), 10, 10);
             } else {
-                add(MsoyUI.createTextArea(_gallery.name, "Name", new ChangeListener() {
+                TextBox name = MsoyUI.createTextBox(_gallery.name, Gallery.MAX_NAME_LENGTH,
+                    Gallery.MAX_NAME_LENGTH);
+                name.addStyleName("Name");
+                name.addChangeListener(new ChangeListener() {
                     public void onChange (Widget sender) {
                         _gallery.name = ((TextArea) sender).getText();
                     }
-                }), 10, 10);
+                });
+                add(name, 10, 10);
             }
 
             add(MsoyUI.createTextArea(_gallery.description, "Description", new ChangeListener() {

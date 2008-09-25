@@ -1,4 +1,3 @@
-//
 // $Id$
 
 package client.person;
@@ -7,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import client.shell.Args;
-import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -41,7 +39,6 @@ import com.threerings.msoy.person.gwt.GalleryServiceAsync;
 public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to support dnd
 {
     public static final String EDIT_ACTION = "editgallery";
-
     public static final String CREATE_ACTION = "creategallery";
     public static final String CREATE_PROFILE_ACTION = "createprofilegallery";
 
@@ -69,12 +66,12 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
 
     protected void display (GalleryData galleryData)
     {
-
         _galleryData = galleryData;
         addStyleName("galleryEditPanel");
 
         // add editable gallery detail panel
-        add(new GalleryDetailPanel(_galleryData, false), 0, 0);
+        final GalleryDetailPanel detailPanel = new GalleryDetailPanel(_galleryData, false);
+        add(detailPanel, 0, 0);
 
         // add "save" button
         PushButton saveButton = MsoyUI.createButton(MsoyUI.LONG_THIN, _pmsgs.saveButton(),
@@ -82,8 +79,6 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                 public void onClick (Widget sender) {
                     final PushButton button = (PushButton) sender;
                     button.setEnabled(false);
-CShell.log("Photos: "+_galleryData.photos);
-CShell.log("Saving: "+_galleryData.getPhotoIds());
                     if (_newGallery) {
                         _gallerysvc.createGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
                             new MsoyCallback<Gallery>() {
@@ -120,8 +115,19 @@ CShell.log("Saving: "+_galleryData.getPhotoIds());
         _dragController = new PickupDragController(this, false);
         _dragController.setBehaviorDragProxy(false);
         // dragController.setBehaviorMultipleSelection(true);
-        DropPanel<Photo> dropPanel = new DropPanel<Photo>(_dragController,
-            new SimpleDropModel<Photo>(galleryData.photos)) {
+        SimpleDropModel<Photo> dropModel = new SimpleDropModel<Photo>(galleryData.photos);
+        dropModel.addDropListener(new DropListener<Photo>() {
+            public void contentInserted (DropModel<Photo> model, Photo content, int index) {
+                updateCount(model);
+            }
+            public void contentRemoved (DropModel<Photo> model, Photo content) {
+                updateCount(model);
+            }
+            protected void updateCount (DropModel<Photo> model) {
+                detailPanel.setCount(model.getContents().size());
+            }
+        });
+        DropPanel<Photo> dropPanel = new DropPanel<Photo>(_dragController, dropModel) {
             @Override protected Widget createWidget (Photo photo) {
                 return MediaUtil.createMediaView(photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE);
             }
@@ -207,6 +213,7 @@ CShell.log("Saving: "+_galleryData.getPhotoIds());
 
     protected boolean _newGallery;
     protected GalleryData _galleryData;
+    // protected GalleryDetailPanel _detailPanel;
     protected PickupDragController _dragController;
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);

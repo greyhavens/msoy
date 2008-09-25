@@ -28,6 +28,13 @@ public interface DropModel<T>
      */
     public List<T> getContents ();
 
-    // TODO void addDropListener (DropListener listener);
-    // TODO void removeDropListener (DropListener listener);
+    /**
+     * Adds a listener interested in getting notified when the model contents change.
+     */
+    public void addDropListener (DropListener<T> listener);
+
+    /**
+     * Removes a listener that has grown bored with receiving notifications when the model changes.
+     */
+    public void removeDropListener (DropListener<T> listener);
 }
