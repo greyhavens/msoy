@@ -24,9 +24,6 @@ CONNECT_SERVER=$4
 CONNECT_PORT=$5
 WINDOW_TOKEN=$6
 
-LOGFILE=$MSOY_HOME/log/stdout-b$BUREAU_ID.log
-LOG_EMAIL=nightly-logs@threerings.net
-
 # Override settings with those from MSOY_HOME/dist/${CONF_PREFIX}-server.conf
 if [ -f $MSOY_HOME/dist/${CONF_PREFIX}-server.conf ]; then
     . $MSOY_HOME/dist/${CONF_PREFIX}-server.conf
@@ -55,11 +52,7 @@ LIBS=$MSOY_HOME/dist/msoylib.abc
 # the 'main' abc file
 MAIN=$MSOY_HOME/dist/MsoyThaneClient.abc
 
-# Create the logfile
-touch $LOGFILE
-
 # Start up the server
-{
 echo "Running $DESC"
 echo "------------------------------------------------------------------------------"
 echo "      Bureau ID: $BUREAU_ID"
@@ -71,18 +64,10 @@ echo "           Port: $CONNECT_PORT"
 echo "           Libs: $LIBS"
 echo "           Main: $MAIN"
 echo "   Window Token: $WINDOW_TOKEN"
-echo "------------------------------------------------------------------------------";
-} >>$LOGFILE
+echo "------------------------------------------------------------------------------"
 
 $THANE_INTERPRETER -Dinterp $LIBS $MAIN -- $BUREAU_ID $CONNECT_TOKEN \
-    $CONNECT_SERVER $CONNECT_PORT $WINDOW_TOKEN >>$LOGFILE 2>&1
+    $CONNECT_SERVER $CONNECT_PORT $WINDOW_TOKEN 2>&1
 EXIT_CODE=$?
-
-# Archive the log
-NOW=`date "+%F-%H:%M"`
-mv $LOGFILE $LOGFILE.$NOW
-
-# Prune old logs
-find $MSOY_HOME/log -name "stdout-b$BUREAU_ID.log*" -a -mtime +7 | xargs rm -f
 
 exit $EXIT_CODE

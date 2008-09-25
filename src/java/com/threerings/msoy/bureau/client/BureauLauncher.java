@@ -11,7 +11,6 @@ import com.google.inject.Injector;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.Interval;
-import com.samskivert.util.ProcessLogger;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 
@@ -201,7 +200,7 @@ public class BureauLauncher
         try {
             Process process = builder.start();
             // log the output of the process and prefix with bureau id
-            ProcessLogger.copyMergedOutput(log, bureauId, process);
+            new BureauLogRedirector(bureauId, process.getInputStream());
 
         } catch (java.io.IOException ioe) {
             log.warning("Could not launch thane", "bureauId", bureauId, ioe);
