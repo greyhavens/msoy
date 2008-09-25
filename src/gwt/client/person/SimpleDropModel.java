@@ -27,10 +27,6 @@ public class SimpleDropModel<T> implements DropModel<T>
         _contents.remove(content);
         index = Math.min(_contents.size(), index);
         _contents.add(index, content);
-
-        // TODO delete this
-        // CShell.log("Inserting "+content+" at "+index);
-        // CShell.log("Contents "+this);
     }
 
     public void remove (T content)

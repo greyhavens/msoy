@@ -6,8 +6,11 @@ package client.person;
 import java.util.ArrayList;
 import java.util.List;
 
+import client.shell.Args;
 import client.shell.CShell;
+import client.shell.Pages;
 import client.ui.MsoyUI;
+import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
@@ -19,6 +22,8 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
+import com.threerings.gwt.util.DataModel;
+import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService;
@@ -77,13 +82,15 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                 public void onClick (Widget sender) {
                     final PushButton button = (PushButton) sender;
                     button.setEnabled(false);
+CShell.log("Photos: "+_galleryData.photos);
+CShell.log("Saving: "+_galleryData.getPhotoIds());
                     if (_newGallery) {
                         _gallerysvc.createGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
                             new MsoyCallback<Gallery>() {
                                 public void onSuccess (Gallery result) {
                                     _newGallery = false;
                                     _galleryData.gallery = result;
-                                    button.setEnabled(true);
+                                    success(button);
                                 }
                             }
                         );
@@ -91,11 +98,18 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                         _gallerysvc.updateGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
                             new MsoyCallback<Void>() {
                                 public void onSuccess (Void result) {
-                                    button.setEnabled(true);
+                                    success(button);
                                 }
                             }
                         );
                     }
+                }
+                protected void success (PushButton button) {
+                    button.setEnabled(true);
+                    // send the user back to the gallery view on save
+                    String args = Args.compose(GalleryViewPanel.VIEW_ACTION,
+                        ""+_galleryData.gallery.galleryId);
+                    Link.go(Pages.PEOPLE, args);
                 }
             }
         );
@@ -103,10 +117,10 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         add(saveButton, 45, 350);
 
         // add drop panel for adding to and organizing this gallery
-        final PickupDragController dragController = new PickupDragController(this, false);
-        dragController.setBehaviorDragProxy(false);
+        _dragController = new PickupDragController(this, false);
+        _dragController.setBehaviorDragProxy(false);
         // dragController.setBehaviorMultipleSelection(true);
-        DropPanel<Photo> dropPanel = new DropPanel<Photo>(dragController,
+        DropPanel<Photo> dropPanel = new DropPanel<Photo>(_dragController,
             new SimpleDropModel<Photo>(galleryData.photos)) {
             @Override protected Widget createWidget (Photo photo) {
                 return MediaUtil.createMediaView(photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE);
@@ -117,52 +131,83 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         // show photos that the member owns
         _itemsvc.loadPhotos(new MsoyCallback<List<Photo>>() {
             public void onSuccess (List<Photo> result) {
-                // TODO display photos and allow them to be dropped into gallery
-                CShell.log("Loaded photos: "+result);
-                FlowPanel photoPanel = new FlowPanel();
-                photoPanel.addStyleName("Contents");
-                for (Photo photo : result) {
-                    PayloadWidget<Photo> payload = new PayloadWidget<Photo>(
-                        MediaUtil.createMediaView(photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE),
-                        photo);
-                    dragController.makeDraggable(payload);
-                    photoPanel.add(payload);
-                }
-                GalleryEditPanel.this.add(photoPanel, 10, 425);
-
-                /*
-                _photoGrid = new ItemGrid(Pages.PEOPLE, 1, 5) {
-                    @Override protected String getEmptyMessage () {
-                        return "Empty";
-                    }
-                    @Override public String getTitle () {
-                        return "My Photos";
-                    }
-                    @Override protected Widget createWidget (Item item) {
-                        if (item instanceof Photo) {
-                            Photo photo = (Photo) item;
-                            return new PayloadWidget<Photo>(MediaUtil.createMediaView(
-                                photo.photoMedia, MediaDesc.THUMBNAIL_SIZE), photo);
-                        }
-                        return null;
-                    }
-                };
-                _photoGrid.setPrefixArgs(new String[]{EDIT_ACTION, ""+
-                    _galleryData.gallery.galleryId});
-                List<Item> list = new ArrayList<Item>(result.size());
-                for (Photo photo : result) {
-                    list.add(photo);
-                }
-                // TODO set page
-                GalleryEditPanel.this.add(_photoGrid, 10, 425);
-                _photoGrid.setModel(new SimpleDataModel<Item>(list), 0);
-                */
+                add( new PagedPanel(new SimpleDataModel<Photo>(result), 5), 10, 415);
             }
         });
     }
 
+    /**
+     * Like a PageGrid, but more AJAXy.
+     */
+    protected class PagedPanel extends FlowPanel {
+        public PagedPanel (DataModel<Photo> model, int count) {
+            _model = model;
+            _count = count;
+            addStyleName("Contents");
+            _prevNext = MsoyUI.createPrevNextButtons(new ClickListener() {
+                public void onClick (Widget sender) {
+                    prev();
+                }
+            },
+            new ClickListener() {
+                public void onClick (Widget sender) {
+                    next();
+                }
+            });
+            display();
+        }
+
+        public void next () {
+            if (_page + 1 < getPageCount()) {
+                _page++;
+                display();
+            }
+        }
+
+        public void prev () {
+            if (_page != 0) {
+                _page--;
+                display();
+            }
+        }
+
+        public int getPageCount () {
+            int itemCount = _model.getItemCount();
+            int pageCount =  itemCount / _count;
+            if (itemCount % _count > 0) {
+                pageCount++;
+            }
+            return pageCount;
+        }
+
+        protected void display () {
+            clear();
+            _model.doFetchRows(_page * _count, _count, new MsoyCallback<List<Photo>>() {
+                public void onSuccess (List<Photo> result) {
+                    add(_prevNext);
+                    for (Photo photo : result) {
+                        add(createWidget(photo));
+                    }
+                }
+            });
+        }
+
+        protected Widget createWidget (Photo photo) {
+            PayloadWidget<Photo> payload = new PayloadWidget<Photo>(
+                MediaUtil.createMediaView(photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE), photo);
+            _dragController.makeDraggable(payload);
+            return payload;
+        }
+
+        protected int _page;
+        protected int _count;
+        protected DataModel<Photo> _model;
+        protected Widget _prevNext;
+    }
+
     protected boolean _newGallery;
     protected GalleryData _galleryData;
+    protected PickupDragController _dragController;
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
     protected static final GalleryServiceAsync _gallerysvc = (GalleryServiceAsync)

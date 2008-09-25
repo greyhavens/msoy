@@ -3,7 +3,8 @@
 
 package client.person;
 
-import client.shell.CShell;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
@@ -21,16 +22,18 @@ public abstract class DropPanel<T> extends FlowPanel
     public DropPanel (PickupDragController dragController, DropModel<T> model)
     {
         addStyleName("dropPanel");
+        contentToWidget = new HashMap<T, Widget>();
 
         _dragController = dragController;
         _dropController = new FlowPanelDropController(this) {
             @Override protected void insert(Widget widget, int beforeIndex) {
-                CShell.log("insert: "+widget+" at "+beforeIndex);
                 super.insert(widget, beforeIndex);
                 try {
                     @SuppressWarnings("unchecked")
                     PayloadWidget<T> payloadWidget = (PayloadWidget<T>) widget;
-                    _model.insert(payloadWidget.getPayload(), beforeIndex);
+                    if (!payloadWidget.isPositioner()) {
+                        _model.insert(payloadWidget.getPayload(), beforeIndex);
+                    }
                 } catch (ClassCastException ccex) {
                     // the dropped widget wasn't of type PayloadWidget<T>
                 }
@@ -51,18 +54,6 @@ public abstract class DropPanel<T> extends FlowPanel
         }
     }
 
-    public boolean canDrop (Widget widget)
-    {
-        try {
-            @SuppressWarnings({"unused", "unchecked"})
-            PayloadWidget<T> test = (PayloadWidget<T>) widget;
-            return true;
-        } catch (ClassCastException ccex) {
-            // the dropped widget wasn't of type PayloadWidget<T>
-        }
-        return false;
-    }
-
     public PayloadWidget<T> createPayloadWidget (T payload)
     {
         PayloadWidget<T> payloadWidget = new PayloadWidget<T>(createWidget(payload), payload);
@@ -70,7 +61,37 @@ public abstract class DropPanel<T> extends FlowPanel
         return payloadWidget;
     }
 
-    protected abstract Widget createWidget (T element);
+    @Override
+    public void add(Widget w)
+    {
+        super.add(w);
+        checkForDuplicates(w);
+    }
+
+    @Override
+    public void insert(Widget w, int beforeIndex)
+    {
+        super.insert(w, beforeIndex);
+        checkForDuplicates(w);
+    }
+
+    protected void checkForDuplicates (Widget widget) {
+        // check whether there is already a widget for this content on the panel
+        try {
+            @SuppressWarnings("unchecked")
+            PayloadWidget<T> payloadWidget = (PayloadWidget<T>) widget;
+            T payload = payloadWidget.getPayload();
+            if (!payloadWidget.isPositioner()) {
+                Widget existing = contentToWidget.get(payload);
+                if (existing != null && existing != payloadWidget) {
+                    remove(existing);
+                }
+                contentToWidget.put(payload, payloadWidget);
+            }
+        } catch (ClassCastException lame) {
+            // lame version of instanceof
+        }
+    }
 
     protected Widget createPositioner (DragContext context)
     {
@@ -86,7 +107,10 @@ public abstract class DropPanel<T> extends FlowPanel
         return context.draggable;
     }
 
+    protected abstract Widget createWidget (T element);
+
     protected DropModel<T> _model;
     protected FlowPanelDropController _dropController;
     protected PickupDragController _dragController;
+    protected Map<T, Widget> contentToWidget;
 }
