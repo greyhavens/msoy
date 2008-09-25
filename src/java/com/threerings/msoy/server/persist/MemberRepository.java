@@ -25,7 +25,7 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.CacheKey;
-import com.samskivert.jdbc.depot.EntityMigration;
+import com.samskivert.jdbc.depot.SchemaMigration;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
@@ -102,15 +102,15 @@ public class MemberRepository extends DepotRepository
     {
         super(ctx);
 
-        ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(23, "flow"));
-        ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(23, "accFlow"));
+        ctx.registerMigration(MemberRecord.class, new SchemaMigration.Drop(23, "flow"));
+        ctx.registerMigration(MemberRecord.class, new SchemaMigration.Drop(23, "accFlow"));
         ctx.registerMigration(MemberRecord.class,
-            new EntityMigration.Rename(23, "invitingFriendId", MemberRecord.AFFILIATE_MEMBER_ID));
-        ctx.registerMigration(MemberRecord.class, new EntityMigration.Drop(25, "blingAffiliate"));
+            new SchemaMigration.Rename(23, "invitingFriendId", MemberRecord.AFFILIATE_MEMBER_ID));
+        ctx.registerMigration(MemberRecord.class, new SchemaMigration.Drop(25, "blingAffiliate"));
 
         // Converts existing tracking numbers from the ReferralRecord, or creates new ones
         // for those members who didn't get their tracking numbers yet.
-        ctx.registerMigration(MemberRecord.class, new EntityMigration(26) {
+        ctx.registerMigration(MemberRecord.class, new SchemaMigration(26) {
             @Override
             public int invoke (Connection conn, DatabaseLiaison liaison)
                 throws SQLException
@@ -155,7 +155,7 @@ public class MemberRepository extends DepotRepository
         });
 
         // Convert existing fulfilled InvitationRecords into AffiliateRecords
-        ctx.registerMigration(InvitationRecord.class, new EntityMigration(5) {
+        ctx.registerMigration(InvitationRecord.class, new SchemaMigration(5) {
             @Override public int invoke (
                 java.sql.Connection conn, com.samskivert.jdbc.DatabaseLiaison liaison)
                 throws java.sql.SQLException

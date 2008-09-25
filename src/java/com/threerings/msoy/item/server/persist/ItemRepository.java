@@ -36,7 +36,7 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
+import com.samskivert.jdbc.depot.SchemaMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -123,14 +123,14 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
         };
 
-        _ctx.registerMigration(getCatalogClass(), new EntityMigration.Drop(11, "goldCost"));
+        _ctx.registerMigration(getCatalogClass(), new SchemaMigration.Drop(11, "goldCost"));
         _ctx.registerMigration(getCatalogClass(),
-            new EntityMigration.Rename(11, "flowCost", CatalogRecord.COST));
+            new SchemaMigration.Rename(11, "flowCost", CatalogRecord.COST));
         _ctx.registerMigration(getCatalogClass(),
-            new EntityMigration.Add(11, CatalogRecord.CURRENCY, "0"));
+            new SchemaMigration.Add(11, CatalogRecord.CURRENCY, "0"));
 
         // TEMP added 2008.05.15
-        _ctx.registerMigration(getItemClass(), new EntityMigration(17000) {
+        _ctx.registerMigration(getItemClass(), new SchemaMigration(17000) {
             @Override
             public boolean runBeforeDefault () {
                 return false; // let the damn thing create the column first
@@ -175,12 +175,12 @@ public abstract class ItemRepository<T extends ItemRecord>
         int cloneCurrencyMigrationVersion = 8000; // NOTE: this seems wrong, but it works.
         // mdb is on the case.
         _ctx.registerMigration(getCloneClass(),
-            new EntityMigration.Drop(cloneCurrencyMigrationVersion, "goldPaid"));
+            new SchemaMigration.Drop(cloneCurrencyMigrationVersion, "goldPaid"));
         _ctx.registerMigration(getCloneClass(),
-            new EntityMigration.Rename(cloneCurrencyMigrationVersion,
+            new SchemaMigration.Rename(cloneCurrencyMigrationVersion,
                 "flowPaid", CloneRecord.AMOUNT_PAID));
         _ctx.registerMigration(getCloneClass(),
-            new EntityMigration.Add(cloneCurrencyMigrationVersion, CloneRecord.CURRENCY, "0"));
+            new SchemaMigration.Add(cloneCurrencyMigrationVersion, CloneRecord.CURRENCY, "0"));
     }
 
     /**

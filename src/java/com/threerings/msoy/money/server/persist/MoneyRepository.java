@@ -23,7 +23,7 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
-import com.samskivert.jdbc.depot.EntityMigration;
+import com.samskivert.jdbc.depot.SchemaMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -79,15 +79,15 @@ public class MoneyRepository extends DepotRepository
         super(ctx);
 
         ctx.registerMigration(MemberAccountRecord.class,
-            new EntityMigration.Retype(4, MemberAccountRecord.BLING));
+            new SchemaMigration.Retype(4, MemberAccountRecord.BLING));
         ctx.registerMigration(MemberAccountRecord.class,
-            new EntityMigration.Retype(4, MemberAccountRecord.ACC_BLING));
+            new SchemaMigration.Retype(4, MemberAccountRecord.ACC_BLING));
         ctx.registerMigration(MoneyConfigRecord.class, 
-            new EntityMigration.Retype(3, MoneyConfigRecord.LAST_DISTRIBUTED_BLING));
-        ctx.registerMigration(MemberAccountRecord.class, new EntityMigration.Drop(5, "versionId"));
+            new SchemaMigration.Retype(3, MoneyConfigRecord.LAST_DISTRIBUTED_BLING));
+        ctx.registerMigration(MemberAccountRecord.class, new SchemaMigration.Drop(5, "versionId"));
         ctx.registerMigration(MemberAccountRecord.class,
-            new EntityMigration.Drop(5, "dateLastUpdated"));
-        ctx.registerMigration(MemberAccountRecord.class, new EntityMigration(6) {
+            new SchemaMigration.Drop(5, "dateLastUpdated"));
+        ctx.registerMigration(MemberAccountRecord.class, new SchemaMigration(6) {
             @Override public int invoke (
                 java.sql.Connection conn, com.samskivert.jdbc.DatabaseLiaison liaison)
                 throws java.sql.SQLException

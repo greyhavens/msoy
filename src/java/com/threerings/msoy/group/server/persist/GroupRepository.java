@@ -29,7 +29,7 @@ import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.JDBCUtil;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
-import com.samskivert.jdbc.depot.EntityMigration;
+import com.samskivert.jdbc.depot.SchemaMigration;
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
@@ -94,7 +94,7 @@ public class GroupRepository extends DepotRepository
         };
 
         // TEMP
-        ctx.registerMigration(GroupRecord.class, new EntityMigration(18) {
+        ctx.registerMigration(GroupRecord.class, new SchemaMigration(18) {
             public boolean runBeforeDefault () {
                 return false;
             }
