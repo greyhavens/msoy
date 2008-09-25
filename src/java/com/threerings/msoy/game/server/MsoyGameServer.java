@@ -39,6 +39,8 @@ import com.whirled.game.server.RepoCookieManager;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.server.MsoyBaseServer;
 
+import com.threerings.msoy.person.server.persist.ProfileRepository;
+
 import com.threerings.msoy.game.data.PlayerObject;
 
 import static com.threerings.msoy.Log.log;
@@ -133,7 +135,7 @@ public class MsoyGameServer extends MsoyBaseServer
         throws Exception
     {
         // TODO: the game servers probably need to hear about changes to runtime config bits
-        return new DatabaseConfigRegistry(_perCtx, _invoker);
+        return _configReg;
     }
 
     @Override // from PresentsServer
@@ -167,6 +169,14 @@ public class MsoyGameServer extends MsoyBaseServer
 
     /** Manages our connection back to our parent world server. */
     @Inject protected WorldServerClient _worldClient;
+
+    /** Handles our runtime configuration stuffs. */
+    @Inject protected DatabaseConfigRegistry _configReg;
+
+    // these need to be injected here to ensure that they're created at server startup time rather
+    // than lazily the first time they're referenced
+    @Inject protected ProfileRepository _profileRepo;
+    @Inject protected GameCookieManager _cookMan;
 
     /** The port on which we listen for client connections. */
     protected int _listenPort;
