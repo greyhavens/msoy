@@ -48,6 +48,7 @@ public class BlingPanel extends SmartTable
         setWidget(row++, 1, _blingBalance = new Label());
         setText(row, 0, _msgs.blingWorth(), 1, "rightLabel");
         setWidget(row++, 1, _blingWorth = new Label());
+        setWidget(row++, 0, _cashedOutBling = new Label(), 3, "Success");
         setText(row++, 1, " ", 3, null);
         setText(row++, 0, _msgs.exchangeBlingForBars(), 3, "header");
         setText(row++, 0, _msgs.exchangeBlingDescription(), 3, null);
@@ -75,6 +76,13 @@ public class BlingPanel extends SmartTable
     {
         _blingBalance.setText(Currency.BLING.format(result.bling));
         _blingWorth.setText(formatUSD(result.blingWorth));
+        if (result.cashedOutBling != 0) {
+            _cashedOutBling.setText(_msgs.cashedOutBling(
+                Currency.BLING.format(result.cashedOutBling),
+                formatUSD(result.cashedOutBlingWorth)));
+        } else {
+            _cashedOutBling.setText("");
+        }
     }
     
     protected void doExchange (int memberId)
@@ -115,13 +123,14 @@ public class BlingPanel extends SmartTable
         // Ensure the amount is valid.
         _cashOutBtn.setEnabled(false);
         try {
-            _moneysvc.requestCashOutBling(memberId, blingAmount, new AsyncCallback<Void>() {
+            _moneysvc.requestCashOutBling(memberId, blingAmount, new AsyncCallback<BlingInfo>() {
                 public void onFailure (Throwable cause) {
                     setError(_cashOutStatus, CMe.serverError(cause));
                 }
-                public void onSuccess (Void result) {
+                public void onSuccess (BlingInfo result) {
                     setSuccess(_cashOutStatus, _msgs.cashOutRequestSuccessful());
                     _cashOutBox.setText("");
+                    update(result);
                 }
             });
         } finally {
@@ -176,6 +185,7 @@ public class BlingPanel extends SmartTable
 
     protected Label _blingBalance;
     protected Label _blingWorth;
+    protected Label _cashedOutBling;
     
     protected TextBox _exchangeBox;
     protected Button _exchangeBtn;

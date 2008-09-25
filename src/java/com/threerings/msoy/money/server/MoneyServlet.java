@@ -10,7 +10,6 @@ import com.google.inject.Inject;
 import com.threerings.msoy.money.data.MoneyCodes;
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
-import com.threerings.msoy.money.data.all.MemberMoney;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
@@ -59,11 +58,11 @@ public class MoneyServlet extends MsoyServiceServlet
         }
     }
     
-    public void requestCashOutBling (int memberId, int blingAmount)
+    public BlingInfo requestCashOutBling (int memberId, int blingAmount)
         throws ServiceException
     {
         try {
-            _moneyLogic.requestCashOutBling(memberId, blingAmount);
+            return _moneyLogic.requestCashOutBling(memberId, blingAmount);
         } catch (NotEnoughMoneyException neme) {
             throw new ServiceException(MoneyCodes.E_INSUFFICIENT_BLING);
         } catch (AlreadyCashedOutException acoe) {
@@ -79,9 +78,7 @@ public class MoneyServlet extends MsoyServiceServlet
     protected BlingInfo getBlingInfo (int memberId)
         throws ServiceException
     {
-        MemberMoney money = _moneyLogic.getMoneyFor(memberId);
-        int blingWorth = _moneyLogic.getBlingWorth(money.bling);
-        return new BlingInfo(money.bling, blingWorth);
+        return _moneyLogic.getBlingWorth(memberId);
     }
 
     @Inject protected MoneyLogic _moneyLogic;

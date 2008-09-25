@@ -392,7 +392,7 @@ public class MoneyLogic
      * @throws BelowMinimumBlingException The amount requested is below the minimum amount allowed
      * for cashing out.
      */
-    public void requestCashOutBling (int memberId, int amount)
+    public BlingInfo requestCashOutBling (int memberId, int amount)
         throws NotEnoughMoneyException, AlreadyCashedOutException, BelowMinimumBlingException
     {
         MemberAccountRecord account = _repo.load(memberId);
@@ -419,6 +419,8 @@ public class MoneyLogic
         tx.fill(TransactionType.REQUEST_CASH_OUT, 
             MessageBundle.tcompose("m.request_cash_out", amount), null);
         _repo.storeTransaction(tx);
+        
+        return getBlingWorth(memberId);
     }
 
     /**
@@ -444,8 +446,7 @@ public class MoneyLogic
             TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null);
         _nodeActions.moneyUpdated(accumTx);
         
-        return new BlingExchangeResult(accumTx.balance, 
-            new BlingInfo(deductTx.balance, getBlingWorth(deductTx.balance)));
+        return new BlingExchangeResult(accumTx.balance, getBlingWorth(memberId));
     }
 
     /**
@@ -454,11 +455,13 @@ public class MoneyLogic
      * @param bling The amount of bling (NOT centibling) to get the worth of.
      * @return The amount the bling is worth in USD cents.
      */
-    public int getBlingWorth (int bling)
+    public BlingInfo getBlingWorth (int memberId)
     {
         // Bling is 100x the actual bling value, and since we're returning pennies, blingWorth
         // (measured in dollars) is 0.01x the value we want.  So it balances out.
-        return (int)(bling * RuntimeConfig.server.blingWorth);
+        MemberAccountRecord account = _repo.load(memberId);
+        return new BlingInfo(account.bling, (int)(account.bling * RuntimeConfig.server.blingWorth), 
+            account.cashOutBling, (int)(account.cashOutBlingWorth * account.cashOutBling));
     }
 
     /**
