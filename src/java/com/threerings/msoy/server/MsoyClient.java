@@ -29,6 +29,7 @@ import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.MsoyCredentials;
 import com.threerings.msoy.data.MsoyTokenRing;
 import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRepository;
 
@@ -75,6 +76,15 @@ public class MsoyClient extends WhirledClient
 
         MsoyAuthenticator.Account acct = (MsoyAuthenticator.Account) _authdata;
         MsoyCredentials credentials = (MsoyCredentials) getCredentials();
+
+        if (_memobj.visitorInfo == null && _memobj.memberName.isGuest()) {
+            if (credentials.visitorId != null) {
+                _memobj.visitorInfo = new VisitorInfo(credentials.visitorId, false);
+            } else {
+                _memobj.visitorInfo = new VisitorInfo();
+                _eventLog.visitorInfoCreated(_memobj.visitorInfo);
+            }
+        }
 
         if (acct != null) {
             _memobj.setTokens(acct.tokens);
@@ -141,7 +151,7 @@ public class MsoyClient extends WhirledClient
             log.info("Session ended [id=" + memberId + ", amins=" + activeMins + "].");
             stats.incrementStat(StatType.MINUTES_ACTIVE, activeMins);
             _invoker.postUnit(new WriteOnlyUnit("sessionDidEnd:" + _memobj.memberName) {
-                public void invokePersist () throws Exception {
+                @Override public void invokePersist () throws Exception {
                     // write out any modified stats
                     _statRepo.writeModified(memberId, stats.toArray(new Stat[stats.size()]));
                     // increment their session and minutes online counters

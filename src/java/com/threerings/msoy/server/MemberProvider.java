@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationException;
@@ -51,7 +50,8 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#getABTestGroup} request.
      */
-    void getABTestGroup (ClientObject caller, VisitorInfo arg1, String arg2, boolean arg3, InvocationService.ResultListener arg4)
+    void getABTestGroup (ClientObject caller, String arg1, boolean arg2,
+        InvocationService.ResultListener arg3)
         throws InvocationException;
 
     /**
@@ -128,17 +128,17 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#trackClientAction} request.
      */
-    void trackClientAction (ClientObject caller, VisitorInfo arg1, String arg2, String arg3);
+    void trackClientAction (ClientObject caller, String arg1, String arg2);
 
     /**
      * Handles a {@link MemberService#trackTestAction} request.
      */
-    void trackTestAction (ClientObject caller, VisitorInfo arg1, String arg2, String arg3);
+    void trackTestAction (ClientObject caller, String arg1, String arg2);
 
     /**
      * Handles a {@link MemberService#trackVisitorInfoCreation} request.
      */
-    void trackVisitorInfoCreation (ClientObject caller, VisitorInfo arg1);
+    void trackVisitorInfoCreation (ClientObject caller);
 
     /**
      * Handles a {@link MemberService#updateAvailability} request.
@@ -154,5 +154,5 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#trackVectorAssociation} request.
      */
-    void trackVectorAssociation (ClientObject caller, VisitorInfo arg1, String arg2);
+    void trackVectorAssociation (ClientObject caller, String arg1);
 }

@@ -9,8 +9,11 @@ import com.threerings.crowd.server.CrowdClient;
 
 import com.threerings.msoy.Log;
 import com.threerings.msoy.data.MsoyTokenRing;
+import com.threerings.msoy.data.all.VisitorInfo;
 
+import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.server.MsoyEventLogger;
 
 /**
  * Manages the server side of a client connection for the MSOY Game server.
@@ -27,6 +30,16 @@ public class MsoyGameClient extends CrowdClient
         // configure their access control tokens
         MsoyTokenRing tokens = (MsoyTokenRing) _authdata;
         _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
+        MsoyGameCredentials credentials = (MsoyGameCredentials) getCredentials();
+
+        if (_plobj.visitorInfo == null) {
+            if (credentials.visitorId != null) {
+                _plobj.visitorInfo = new VisitorInfo(credentials.visitorId, false);
+            } else {
+                _plobj.visitorInfo = new VisitorInfo();
+                _eventLog.visitorInfoCreated(_plobj.visitorInfo);
+            }
+        }
 
         Log.log.info("Player session starting", "memberId", _plobj.memberName.getMemberId(),
             "memberName", _plobj.memberName, "playerId", _plobj.getOid());
@@ -89,4 +102,5 @@ public class MsoyGameClient extends CrowdClient
     protected PlayerObject _plobj;
 
     @Inject protected PlayerLocator _locator;
+    @Inject protected MsoyEventLogger _eventLog;
 }

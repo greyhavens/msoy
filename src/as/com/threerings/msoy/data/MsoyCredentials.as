@@ -30,6 +30,9 @@ public class MsoyCredentials extends UsernamePasswordCreds
     /** Indicates whether this client is set up as a featured place view. */
     public var featuredPlaceView :Boolean;
 
+    /** The unique tracking id for this client, if one is assigned */
+    public var visitorId :String;
+
     /**
      * Creates credentials with the specified username and password.
      * {@link #ident} should be set before logging in unless the client does
@@ -47,6 +50,7 @@ public class MsoyCredentials extends UsernamePasswordCreds
         sessionToken = (ins.readField(String) as String);
         ident = (ins.readField(String) as String);
         featuredPlaceView = ins.readBoolean();
+        visitorId = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -56,6 +60,7 @@ public class MsoyCredentials extends UsernamePasswordCreds
         out.writeField(sessionToken);
         out.writeField(ident);
         out.writeBoolean(featuredPlaceView);
+        out.writeField(visitorId);
     }
 
     // documentation inherited
@@ -65,6 +70,7 @@ public class MsoyCredentials extends UsernamePasswordCreds
         buf.append(", ident=").append(ident);
         buf.append(", token=").append(sessionToken);
         buf.append(", featuredPlaceView=").append(featuredPlaceView);
+        buf.append(", visitorId=").append(visitorId);
     }
 }
 }

@@ -4,7 +4,6 @@
 package com.threerings.msoy.client {
 
 import com.threerings.io.TypedArray;
-import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
@@ -35,7 +34,7 @@ public interface MemberService extends InvocationService
     function followMember (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function getABTestGroup (arg1 :Client, arg2 :VisitorInfo, arg3 :String, arg4 :Boolean, arg5 :InvocationService_ResultListener) :void;
+    function getABTestGroup (arg1 :Client, arg3 :String, arg4 :Boolean, arg5 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
     function getCurrentMemberLocation (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
@@ -74,16 +73,16 @@ public interface MemberService extends InvocationService
     function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function trackClientAction (arg1 :Client, arg2 :VisitorInfo, arg3 :String, arg4 :String) :void;
+    function trackClientAction (arg1 :Client, arg3 :String, arg4 :String) :void;
 
     // from Java interface MemberService
-    function trackTestAction (arg1 :Client, arg2 :VisitorInfo, arg3 :String, arg4 :String) :void;
+    function trackTestAction (arg1 :Client, arg3 :String, arg4 :String) :void;
 
     // from Java interface MemberService
-    function trackVisitorInfoCreation (arg1 :Client, arg2 :VisitorInfo) :void;
+    function trackVisitorInfoCreation (arg1 :Client) :void;
 
     // from Java interface MemberService
-    function trackVectorAssociation (arg1 :Client, arg2 :VisitorInfo, arg3 :String) :void;
+    function trackVectorAssociation (arg1 :Client, arg3 :String) :void;
     
     // from Java interface MemberService
     function updateAvailability (arg1 :Client, arg2 :int) :void;

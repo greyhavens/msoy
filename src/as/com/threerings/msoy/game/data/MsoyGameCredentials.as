@@ -20,6 +20,9 @@ public class MsoyGameCredentials extends Credentials
     /** A session token that identifies this user. */
     public var sessionToken :String;
 
+    /** The unique tracking id for this client, if one is assigned */
+    public var visitorId :String;
+
     public function MsoyGameCredentials (name :Name = null)
     {
         super(name);
@@ -30,6 +33,7 @@ public class MsoyGameCredentials extends Credentials
     {
         super.readObject(ins);
         sessionToken = (ins.readField(String) as String);
+        visitorId = (ins.readField(String) as String);
     }
 
     // from interface Streamable
@@ -37,6 +41,7 @@ public class MsoyGameCredentials extends Credentials
     {
         super.writeObject(out);
         out.writeField(sessionToken);
+        out.writeField(visitorId);
     }
 
     // from Credentials
@@ -44,6 +49,7 @@ public class MsoyGameCredentials extends Credentials
     {
         super.toStringBuf(buf);
         buf.append(", token=", sessionToken);
+        buf.append(", visitorId=", visitorId);
     }
 }
 }

@@ -58,7 +58,6 @@ import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.server.util.MailSender;
 
@@ -159,8 +158,7 @@ public class MemberManager
     {
         _ppSnapshot = PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan);
         _ppInvalidator = new Interval(_omgr) {
-            @Override
-            public void expired() {
+            @Override public void expired() {
                 final PopularPlacesSnapshot newSnapshot =
                     PopularPlacesSnapshot.takeSnapshot(_omgr, _peerMan);
                 synchronized(MemberManager.this) {
@@ -230,12 +228,10 @@ public class MemberManager
         final MemberObject user = (MemberObject) caller;
         ensureNotGuest(user);
         _invoker.postUnit(new PersistingUnit("inviteToBeFriend", listener) {
-            @Override
-            public void invokePersistent () throws Exception {
+            @Override public void invokePersistent () throws Exception {
                 _mailLogic.sendFriendInvite(user.getMemberId(), friendId);
             }
-            @Override
-            public void handleSuccess () {
+            @Override public void handleSuccess () {
                 ((InvocationService.ConfirmListener)_listener).requestProcessed();
             }
         });
@@ -275,12 +271,10 @@ public class MemberManager
         throws InvocationException
     {
         _invoker.postUnit(new PersistingUnit(listener) {
-            @Override
-            public void invokePersistent () throws Exception {
+            @Override public void invokePersistent () throws Exception {
                 _homeId = _memberLogic.getHomeId(ownerType, ownerId);
             }
-            @Override
-            public void handleSuccess () {
+            @Override public void handleSuccess () {
                 if (_homeId == null) {
                     handleFailure(new InvocationException("m.no_such_user"));
                 } else {
@@ -449,12 +443,13 @@ public class MemberManager
 
         final String uname = "setDisplayName(" + user.who() + ", " + name + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
-            @Override
-            public void invokePersistent () throws Exception {
+            @Override public void invokePersistent ()
+                throws Exception
+            {
                 _memberRepo.configureDisplayName(user.getMemberId(), name);
             }
-            @Override
-            public void handleSuccess () {
+            @Override public void handleSuccess ()
+            {
                 user.updateDisplayName(name);
                 updateOccupantInfo(user);
             }
@@ -468,12 +463,13 @@ public class MemberManager
     {
         final String uname = "getDisplayName(" + memberId + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
-            @Override
-            public void invokePersistent () throws Exception {
+            @Override public void invokePersistent ()
+                throws Exception
+            {
                 _displayName = String.valueOf(_memberRepo.loadMemberName(memberId));
             }
-            @Override
-            public void handleSuccess () {
+            @Override public void handleSuccess ()
+            {
                 reportRequestProcessed(_displayName);
             }
             protected String _displayName;
@@ -485,13 +481,14 @@ public class MemberManager
                               final InvocationService.ResultListener listener)
     {
         _invoker.postUnit(new PersistingUnit("getGroupName(" + groupId + ")", listener) {
-            @Override
-            public void invokePersistent () throws Exception {
+            @Override public void invokePersistent ()
+                throws Exception
+            {
                 final GroupRecord rec = _groupRepo.loadGroup(groupId);
                 _groupName = (rec == null) ? "" : rec.name;
             }
-            @Override
-            public void handleSuccess () {
+            @Override public void handleSuccess ()
+            {
                 reportRequestProcessed(_groupName);
             }
             protected String _groupName;
@@ -503,8 +500,9 @@ public class MemberManager
     {
         final MemberObject user = (MemberObject) caller;
         _invoker.postUnit(new WriteOnlyUnit("acknowledgeWarning(" + user.getMemberId() + ")") {
-            @Override
-            public void invokePersist () throws Exception {
+            @Override public void invokePersist ()
+                throws Exception
+            {
                 _memberRepo.clearMemberWarning(user.getMemberId());
             }
         });
@@ -559,12 +557,13 @@ public class MemberManager
     {
         final String uname = "getHomeSceneId(" + groupId + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
-            @Override
-            public void invokePersistent () throws Exception {
+            @Override public void invokePersistent ()
+                throws Exception
+            {
                 _homeSceneId = _groupRepo.getHomeSceneId(groupId);
             }
-            @Override
-            public void handleSuccess () {
+            @Override public void handleSuccess ()
+            {
                 reportRequestProcessed(_homeSceneId);
             }
             protected int _homeSceneId;
@@ -611,8 +610,7 @@ public class MemberManager
         }
 
         _invoker.postUnit(new Invoker.Unit("addComplaint") {
-            @Override
-            public boolean invoke () {
+            @Override public boolean invoke () {
                 try {
                     _supportLogic.addComplaint(event, memberId);
                 } catch (Exception e) {
@@ -621,8 +619,7 @@ public class MemberManager
                 }
                 return true;
             }
-            @Override
-            public void handleResult () {
+            @Override public void handleResult () {
                 SpeakUtil.sendFeedback(source, MsoyCodes.GENERAL_MSGS,
                         _failed ? "m.complain_fail" : "m.complain_success");
             }
@@ -641,12 +638,10 @@ public class MemberManager
         final String commitStatus = StringUtil.truncate(status, Profile.MAX_STATUS_LENGTH);
         final String uname = "updateStatus(" + member.getMemberId() + ")";
         _invoker.postUnit(new PersistingUnit(uname, listener) {
-            @Override
-            public void invokePersistent () throws Exception {
+            @Override public void invokePersistent () throws Exception {
                 _profileRepo.updateHeadline(member.getMemberId(), commitStatus);
             }
-            @Override
-            public void handleSuccess () {
+            @Override public void handleSuccess () {
                 member.setHeadline(commitStatus);
                 MemberNodeActions.updateFriendEntries(member);
             }
@@ -654,16 +649,17 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void trackVisitorInfoCreation (final ClientObject caller, final VisitorInfo info)
+    public void trackVisitorInfoCreation (final ClientObject caller)
     {
-        _eventLog.visitorInfoCreated(info);
+        final MemberObject memObj = (MemberObject) caller;
+        _eventLog.visitorInfoCreated(memObj.visitorInfo);
     }
 
     // from interface MemberProvider
-    public void trackVectorAssociation (final ClientObject caller, final VisitorInfo info, 
-        final String vector)
+    public void trackVectorAssociation (final ClientObject caller, final String vector)
     {
-        _eventLog.vectorAssocated(info, vector);
+        final MemberObject memObj = (MemberObject) caller;
+        _eventLog.vectorAssocated(memObj.visitorInfo, vector);
     }
 
     // from interface MemberProvider
@@ -691,14 +687,14 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void getABTestGroup (
-        final ClientObject caller, final VisitorInfo info,
-        final String testName,
+    public void getABTestGroup (final ClientObject caller, final String testName,
         final boolean logEvent, final InvocationService.ResultListener listener)
     {
+        final MemberObject memObj = (MemberObject) caller;
         _invoker.postUnit(new PersistingUnit(listener) {
             @Override public void invokePersistent () throws Exception {
-                _testGroup = new Integer(_memberLogic.getABTestGroup(testName, info, logEvent));
+                _testGroup = new Integer(_memberLogic.getABTestGroup(testName,
+                    memObj.visitorInfo, logEvent));
             }
             @Override public void handleSuccess () {
                 ((InvocationService.ResultListener)_listener).requestProcessed(_testGroup);
@@ -708,40 +704,42 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void trackClientAction (final ClientObject caller, final VisitorInfo info,
-                                   final String actionName, final String details)
+    public void trackClientAction (final ClientObject caller, final String actionName,
+        final String details)
     {
-        if (info == null) {
+        final MemberObject memObj = (MemberObject) caller;
+        if (memObj.visitorInfo == null) {
             log.warning("Failed to log client action with null referral", "caller", caller.who(),
                         "actionName", actionName);
             return;
         }
-        _eventLog.clientAction(info.id, actionName, details);
+        _eventLog.clientAction(memObj.visitorInfo.id, actionName, details);
     }
 
     // from interface MemberProvider
-    public void trackTestAction (final ClientObject caller, final VisitorInfo info,
-                                 final String actionName, final String testName)
+    public void trackTestAction (final ClientObject caller, final String actionName,
+        final String testName)
     {
-        if (info == null) {
-            log.warning("Failed to log test action with null referral", "caller", caller.who(),
+        final MemberObject memObj = (MemberObject) caller;
+        if (memObj.visitorInfo == null) {
+            log.warning("Failed to log test action with null visitorInfo", "caller", caller.who(),
                         "actionName", actionName);
             return;
         }
 
         _invoker.postUnit(new Invoker.Unit("getABTestGroup") {
-            @Override
-            public boolean invoke () {
+            @Override public boolean invoke () {
                 int abTestGroup = -1;
                 String actualTestName;
                 if (testName != null) {
                     // grab the group without logging a tracking event about it
-                    abTestGroup = _memberLogic.getABTestGroup(testName, info, false);
+                    abTestGroup = _memberLogic.getABTestGroup(testName, memObj.visitorInfo, false);
                     actualTestName = testName;
                 } else {
                     actualTestName = "";
                 }
-                _eventLog.testAction(info.id, actionName, actualTestName, abTestGroup);
+                _eventLog.testAction(memObj.visitorInfo.id, actionName, actualTestName,
+                    abTestGroup);
                 return false;
             }
         });
@@ -811,8 +809,7 @@ public class MemberManager
 
             final int newLevel = level;
             _invoker.postUnit(new RepositoryUnit("updateLevel") {
-                @Override
-                public void invokePersist () throws Exception {
+                @Override public void invokePersist () throws Exception {
                     final int memberId = member.getMemberId();
                     // record the new level, and grant a new invite
                     _memberRepo.setUserLevel(memberId, newLevel);
@@ -821,12 +818,10 @@ public class MemberManager
                     _feedRepo.publishMemberMessage(
                         memberId, FeedMessageType.FRIEND_GAINED_LEVEL, String.valueOf(newLevel));
                 }
-                @Override
-                public void handleSuccess () {
+                @Override public void handleSuccess () {
                     _notifyMan.notify(member, new LevelUpNotification(newLevel));
                 }
-                @Override
-                public void handleFailure (final Exception pe) {
+                @Override public void handleFailure (final Exception pe) {
                     log.warning("Unable to set user level [memberId=" +
                         member.getMemberId() + ", level=" + newLevel + "]");
                 }
@@ -873,8 +868,7 @@ public class MemberManager
         final InvocationService.ConfirmListener listener)
     {
         _invoker.postUnit(new RepositoryUnit("setAvatarPt2") {
-            @Override
-            public void invokePersist () throws Exception {
+            @Override public void invokePersist () throws Exception {
                 _memberRepo.configureAvatarId(user.getMemberId(),
                     (avatar == null) ? 0 : avatar.itemId);
                 if (newScale != 0 && avatar != null && avatar.scale != newScale) {
@@ -882,8 +876,7 @@ public class MemberManager
                 }
             }
 
-            @Override
-            public void handleSuccess () {
+            @Override public void handleSuccess () {
                 final Avatar prev = user.avatar;
                 if (newScale != 0 && avatar != null) {
                     avatar.scale = newScale;
@@ -926,8 +919,7 @@ public class MemberManager
                 listener.requestProcessed();
             }
 
-            @Override
-            public void handleFailure (final Exception pe) {
+            @Override public void handleFailure (final Exception pe) {
                 log.warning("Unable to set avatar [user=" + user.which() +
                             ", avatar='" + avatar + "', " + "error=" + pe + "].");
                 log.warning(pe);

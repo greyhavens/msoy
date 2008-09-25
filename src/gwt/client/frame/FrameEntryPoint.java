@@ -374,7 +374,7 @@ public class FrameEntryPoint
         clearDialog();
 
         _dialog = new BorderedDialog(false, false, false) {
-            protected void onClosed (boolean autoClosed) {
+            @Override protected void onClosed (boolean autoClosed) {
                 _dialog = null;
             }
         };
@@ -840,6 +840,11 @@ public class FrameEntryPoint
         }
     }
 
+    protected String getVisitorId ()
+    {
+        return CShell.visitor.id;
+    }
+
     /**
      * Configures top-level functions that can be called by Flash.
      */
@@ -865,6 +870,9 @@ public class FrameEntryPoint
         };
         $wnd.clearClient = function () {
              entry.@client.frame.FrameEntryPoint::deferredCloseClient()();
+        };
+        $wnd.getVisitorId = function () {
+             return entry.@client.frame.FrameEntryPoint::getVisitorId()();
         };
         $wnd.toggleClientHeight = function () {
             @client.util.FlashClients::toggleClientHeight()();

@@ -18,7 +18,6 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.MsoyObjectAccess;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
@@ -96,13 +95,9 @@ public class MsoyGameClientResolver extends CrowdClientResolver
 
         // guests operate at the default new user humanity level
         playerObj.humanity = MsoyCodes.STARTING_HUMANITY;
-
-        playerObj.visitorInfo = new VisitorInfo();
-        _eventLog.visitorInfoCreated(playerObj.visitorInfo);
     }
 
     // our dependencies
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ProfileRepository _profileRepo;
-    @Inject protected MsoyEventLogger _eventLog;
 }

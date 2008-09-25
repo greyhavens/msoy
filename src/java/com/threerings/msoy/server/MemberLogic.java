@@ -217,8 +217,7 @@ public class MemberLogic
         public AddFriend () {
         }
 
-        @Override
-        protected void execute (final MemberObject memobj) {
+        @Override protected void execute (final MemberObject memobj) {
             MemberName friend = new MemberName(_friendName, _friendId);
             boolean online = (_peerMan.locateClient(friend) != null);
             memobj.addToFriends(new FriendEntry(friend, online, _friendPhoto, _friendStatus));
@@ -244,8 +243,7 @@ public class MemberLogic
         public RemoveFriend () {
         }
 
-        @Override
-        protected void execute (MemberObject memobj) {
+        @Override protected void execute (MemberObject memobj) {
             memobj.removeFromFriends(_friendId);
             _friendMan.clearFriendInterest(memobj, _friendId);
         }

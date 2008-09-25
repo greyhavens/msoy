@@ -97,8 +97,6 @@ public class MsoyClientResolver extends CrowdClientResolver
             memobj.stats = new StatSet();
             memobj.badges = new EarnedBadgeSet();
             memobj.inProgressBadges = new InProgressBadgeSet();
-            memobj.visitorInfo = new VisitorInfo();
-            _eventLog.visitorInfoCreated(memobj.visitorInfo);
 
         } else if (_username instanceof LurkerName) {
             // we are lurker, we have no visible name to speak of
@@ -227,5 +225,4 @@ public class MsoyClientResolver extends CrowdClientResolver
     @Inject protected StatRepository _statRepo;
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected BadgeManager _badgeMan;
-    @Inject protected MsoyEventLogger _eventLog;
 }

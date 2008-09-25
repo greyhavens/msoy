@@ -5,7 +5,6 @@ package com.threerings.msoy.data {
 
 import com.threerings.io.TypedArray;
 import com.threerings.msoy.client.MemberService;
-import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService_ConfirmListener;
 import com.threerings.presents.client.InvocationService_InvocationListener;
@@ -105,12 +104,12 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const GET_ABTEST_GROUP :int = 7;
 
     // from interface MemberService
-    public function getABTestGroup (arg1 :Client, arg2 :VisitorInfo, arg3 :String, arg4 :Boolean, arg5 :InvocationService_ResultListener) :void
+    public function getABTestGroup (arg1 :Client, arg2 :String, arg3 :Boolean, arg4 :InvocationService_ResultListener) :void
     {
-        var listener5 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
-        listener5.listener = arg5;
+        var listener4 :InvocationMarshaller_ResultMarshaller = new InvocationMarshaller_ResultMarshaller();
+        listener4.listener = arg4;
         sendRequest(arg1, GET_ABTEST_GROUP, [
-            arg2, arg3, langBoolean.valueOf(arg4), listener5
+            arg2, langBoolean.valueOf(arg3), listener4
         ]);
     }
 
@@ -272,10 +271,10 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const TRACK_CLIENT_ACTION :int = 20;
 
     // from interface MemberService
-    public function trackClientAction (arg1 :Client, arg2 :VisitorInfo, arg3 :String, arg4 :String) :void
+    public function trackClientAction (arg1 :Client, arg2 :String, arg3 :String) :void
     {
         sendRequest(arg1, TRACK_CLIENT_ACTION, [
-            arg2, arg3, arg4
+            arg2, arg3
         ]);
     }
 
@@ -283,10 +282,10 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const TRACK_TEST_ACTION :int = 21;
 
     // from interface MemberService
-    public function trackTestAction (arg1 :Client, arg2 :VisitorInfo, arg3 :String, arg4 :String) :void
+    public function trackTestAction (arg1 :Client, arg2 :String, arg3 :String) :void
     {
         sendRequest(arg1, TRACK_TEST_ACTION, [
-            arg2, arg3, arg4
+            arg2, arg3
         ]);
     }
 
@@ -294,10 +293,10 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const TRACK_VISITOR_INFO_CREATION :int = 22;
 
     // from interface MemberService
-    public function trackVisitorInfoCreation (arg1 :Client, arg2 :VisitorInfo) :void
+    public function trackVisitorInfoCreation (arg1 :Client) :void
     {
         sendRequest(arg1, TRACK_VISITOR_INFO_CREATION, [
-            arg2
+            
         ]);
     }
 
@@ -329,10 +328,10 @@ public class MemberMarshaller extends InvocationMarshaller
     public static const TRACK_VECTOR_ASSOCIATION :int = 25;
 
     // from interface MemberService
-    public function trackVectorAssociation (arg1 :Client, arg2 :VisitorInfo, arg3 :String) :void
+    public function trackVectorAssociation (arg1 :Client, arg2 :String) :void
     {
         sendRequest(arg1, TRACK_VECTOR_ASSOCIATION, [
-            arg2, arg3
+            arg2
         ]);
     }
 }

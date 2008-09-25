@@ -5,12 +5,11 @@ package com.threerings.msoy.server;
 
 import java.util.Date;
 
-import com.threerings.msoy.data.all.VisitorInfo;
-
 import com.threerings.panopticon.common.event.annotations.Event;
 import com.threerings.panopticon.common.event.annotations.Field;
 import com.threerings.panopticon.common.event.annotations.Index;
 
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.money.data.all.Currency;
 
 /**
@@ -240,7 +239,7 @@ public class MsoyEvents
 
         public RoomExit (
             int playerId, int sceneId, boolean isWhirled, int secondsInRoom, int occupantsLeft,
-            String tracker) 
+            String tracker)
         {
             this.timestamp = new Date();
             this.playerId = playerId;
@@ -285,7 +284,7 @@ public class MsoyEvents
         @Field final public String tracker;
 
         public GameExit (
-            int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer, 
+            int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer,
             String tracker)
         {
             this.timestamp = new Date();
@@ -397,8 +396,8 @@ public class MsoyEvents
         @Field final public String vector;
         @Field final public String creative;
         @Index @Field final public String tracker;
-        
-        public ReferralCreated (String affiliate, String vector, String creative, String tracker) 
+
+        public ReferralCreated (String affiliate, String vector, String creative, String tracker)
         {
             this.timestamp = new Date();
             this.affiliate = toValue(affiliate);
@@ -406,8 +405,8 @@ public class MsoyEvents
             this.creative = toValue(creative);
             this.tracker = toValue(tracker);
         }
-        
-        public ReferralCreated () 
+
+        public ReferralCreated ()
         {
             this(null, null, null, null);
         }
@@ -418,8 +417,8 @@ public class MsoyEvents
     {
         @Index @Field final public Date timestamp;
         @Index @Field final public String visitorId;
-        
-        public VisitorInfoCreated (VisitorInfo info) 
+
+        public VisitorInfoCreated (VisitorInfo info)
         {
             this.timestamp = new Date();
             this.visitorId = toValue(info.id);
@@ -432,15 +431,15 @@ public class MsoyEvents
         @Index @Field final public Date timestamp;
         @Field final public String vector;
         @Index @Field final public String visitorId;
-        
-        public VectorAssociated (VisitorInfo info, String vector) 
+
+        public VectorAssociated (VisitorInfo info, String vector)
         {
             this.timestamp = new Date();
             this.vector = vector;
             this.visitorId = toValue(info.id);
         }
     }
-    
+
     @Event(name="AccountCreated")
     public static class AccountCreated implements MsoyEvent
     {

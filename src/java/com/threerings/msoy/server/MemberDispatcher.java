@@ -4,7 +4,6 @@
 package com.threerings.msoy.server;
 
 import com.threerings.msoy.data.MemberMarshaller;
-import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationDispatcher;
@@ -74,7 +73,8 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.GET_ABTEST_GROUP:
             ((MemberProvider)provider).getABTestGroup(
-                source, (VisitorInfo)args[0], (String)args[1], ((Boolean)args[2]).booleanValue(), (InvocationService.ResultListener)args[3]
+                source, (String)args[0],
+                ((Boolean)args[1]).booleanValue(), (InvocationService.ResultListener)args[2]
             );
             return;
 
@@ -152,19 +152,19 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.TRACK_CLIENT_ACTION:
             ((MemberProvider)provider).trackClientAction(
-                source, (VisitorInfo)args[0], (String)args[1], (String)args[2]
+                source, (String)args[0], (String)args[1]
             );
             return;
 
         case MemberMarshaller.TRACK_TEST_ACTION:
             ((MemberProvider)provider).trackTestAction(
-                source, (VisitorInfo)args[0], (String)args[1], (String)args[2]
+                source, (String)args[0], (String)args[1]
             );
             return;
 
         case MemberMarshaller.TRACK_VISITOR_INFO_CREATION:
             ((MemberProvider)provider).trackVisitorInfoCreation(
-                source, (VisitorInfo)args[0]
+                source
             );
             return;
 
@@ -182,7 +182,7 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.TRACK_VECTOR_ASSOCIATION:
             ((MemberProvider)provider).trackVectorAssociation(
-                source, (VisitorInfo)args[0], (String)args[1]
+                source, (String)args[0]
             );
             return;
 

@@ -27,6 +27,9 @@ public class MsoyCredentials extends UsernamePasswordCreds
     /** Indicates whether this client is set up as a featured place view. */
     public boolean featuredPlaceView;
 
+    /** The unique tracking id for this client, if one is assigned */
+    public String visitorId;
+
     /**
      * Returns true if the supplied (non-null) session token is a guest session token.
      */
@@ -76,5 +79,6 @@ public class MsoyCredentials extends UsernamePasswordCreds
         super.toString(buf);
         buf.append(", ident=").append(ident);
         buf.append(", featuredPlaceView=").append(featuredPlaceView);
+        buf.append(", visitorId=").append(visitorId);
     }
 }

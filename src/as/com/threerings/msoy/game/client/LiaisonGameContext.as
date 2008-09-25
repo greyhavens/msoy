@@ -40,6 +40,7 @@ public class LiaisonGameContext
         }
         var gcreds :MsoyGameCredentials = new MsoyGameCredentials(name);
         gcreds.sessionToken = wcreds.sessionToken;
+        gcreds.visitorId = wcreds.visitorId;
         _client = new Client(gcreds);
         _client.addServiceGroup(MsoyCodes.GAME_GROUP);
 

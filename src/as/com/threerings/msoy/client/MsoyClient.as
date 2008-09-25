@@ -3,30 +3,40 @@
 
 package com.threerings.msoy.client {
 
-import com.threerings.crowd.client.CrowdClient;
+import flash.display.Stage;
+import flash.ui.ContextMenu;
+
+import flash.events.ContextMenuEvent;
+import flash.external.ExternalInterface;
+import flash.system.Capabilities;
+import flash.system.Security;
+
+import flash.media.SoundMixer;
+import flash.media.SoundTransform;
+
+import com.threerings.util.Log;
+import com.threerings.util.ValueEvent;
+
 import com.threerings.flash.MenuUtil;
+
+import com.threerings.presents.client.ClientAdapter;
+import com.threerings.presents.client.ClientEvent;
+import com.threerings.presents.client.InvocationService_ResultListener;
+
+import com.threerings.presents.dobj.DObjectManager;
+
+import com.threerings.presents.net.Credentials;
+import com.threerings.presents.net.BootstrapData;
+
+import com.threerings.crowd.client.CrowdClient;
+
+import com.threerings.msoy.client.MsoyLogConfig;
+
 import com.threerings.msoy.data.LurkerName;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyAuthResponseData;
 import com.threerings.msoy.data.MsoyBootstrapData;
 import com.threerings.msoy.data.all.VisitorInfo;
-import com.threerings.presents.client.ClientAdapter;
-import com.threerings.presents.client.ClientEvent;
-import com.threerings.presents.client.InvocationService_ResultListener;
-import com.threerings.presents.dobj.DObjectManager;
-import com.threerings.presents.net.BootstrapData;
-import com.threerings.presents.net.Credentials;
-import com.threerings.util.Log;
-import com.threerings.util.ValueEvent;
-
-import flash.display.Stage;
-import flash.events.ContextMenuEvent;
-import flash.external.ExternalInterface;
-import flash.media.SoundMixer;
-import flash.media.SoundTransform;
-import flash.system.Capabilities;
-import flash.system.Security;
-import flash.ui.ContextMenu;
 
 /**
  * Dispatched when the client is minimized or unminimized.
@@ -224,7 +234,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     {
         var msvc :MemberService = requireService(MemberService) as MemberService;
         var member :MemberObject = _clobj as MemberObject;
-        msvc.getABTestGroup(this, member.visitorInfo, testName, logEvent, listener);
+        msvc.getABTestGroup(this, testName, logEvent, listener);
     }
 
     /**
@@ -239,7 +249,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         // not piss off the user-- in this case ME.
         if (msvc != null) {
             var member :MemberObject = _clobj as MemberObject;
-            msvc.trackClientAction(this, member.visitorInfo, actionName, details);
+            msvc.trackClientAction(this, actionName, details);
         }
     }
 
@@ -252,7 +262,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     {
         var msvc :MemberService = requireService(MemberService) as MemberService;
         var member :MemberObject = _clobj as MemberObject;
-        msvc.trackTestAction(this, member.visitorInfo, actionName, testName);
+        msvc.trackTestAction(this, actionName, testName);
     }
 
     /**
@@ -284,7 +294,7 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             var vector :String = params[VisitorInfo.VECTOR_ID];
             if (vector != null && vector.length > 0) {
                 var msvc :MemberService = requireService(MemberService) as MemberService;
-                msvc.trackVectorAssociation(this, member.visitorInfo, vector);
+                msvc.trackVectorAssociation(this, vector);
             }
         }
 
@@ -303,7 +313,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
      */
     protected function clientDidLogoff (event :ClientEvent) :void
     {
-        return;
     }
 
     /**
@@ -387,6 +396,25 @@ public /*abstract*/ class MsoyClient extends CrowdClient
     protected function createStartupCreds (token :String) :Credentials
     {
         throw new Error("abstract");
+    }
+    
+    /**
+     * Returns visitor tracking info from the client cookies (GWT) if available.
+     */
+    public function getVisitorId () :String
+    {
+        if (!isEmbedded() && ExternalInterface.available) {
+            try {
+                log.debug("Querying browser cookie for visitor tracking info");
+                var result :Object = ExternalInterface.call("getVisitorId");
+                if (result != null) {
+                    return result as String;
+                }
+            } catch (e :Error) {
+                log.info("ExternalInterface.call('getVisitorId') failed", "error", e);
+            }
+        }
+        return null;
     }
 
     /**
