@@ -13,7 +13,6 @@ import com.samskivert.util.StringUtil;
 import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserAction;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
 
@@ -203,17 +202,6 @@ public class MsoyEventLogger
     public void inviteViewed (String inviteId)
     {
         post(new MsoyEvents.InviteViewed(inviteId));
-    }
-
-    // @Deprecated
-    public void referralCreated (ReferralInfo info)
-    {
-        if (info != null) {
-            post(new MsoyEvents.ReferralCreated(
-                info.affiliate, info.vector, info.creative, info.tracker));
-        } else {
-            post(new MsoyEvents.ReferralCreated());
-        }
     }
 
     public void visitorInfoCreated (VisitorInfo info)

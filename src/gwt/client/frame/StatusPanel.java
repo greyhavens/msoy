@@ -28,7 +28,6 @@ import client.shell.Pages;
 import client.shell.Session;
 import client.shell.ShellMessages;
 import client.shell.AffiliateCookie;
-import client.shell.TrackingCookie;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.NaviUtil;
@@ -120,10 +119,6 @@ public class StatusPanel extends SmartTable
         setWidget(0, idx++, MsoyUI.createActionLabel(_cmsgs.statusLogoff(), new ClickListener() {
             public void onClick (Widget sender) {
                 Session.didLogoff();
-                // this button is only visible to logged-in players, who decide to log off.
-                // let's clear out their browser-side referral info, so that any future
-                // guests are tracked afresh.
-                TrackingCookie.clear();
             }
         }));
     }

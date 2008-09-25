@@ -12,7 +12,6 @@ import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntSet;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.FriendManager;
 import com.threerings.msoy.server.MemberLogic;
@@ -175,13 +174,6 @@ public class MemberServlet extends MsoyServiceServlet
             testName = "";
         }
         _eventLog.testAction(info.id, actionName, testName, abTestGroup);
-    }
-
-    // from WebMemberService
-    @Deprecated
-    public void trackReferralCreation(ReferralInfo info)
-    {
-        _eventLog.referralCreated(info);
     }
 
     // from WebMemberService

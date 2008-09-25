@@ -29,7 +29,6 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
@@ -57,9 +56,6 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>visitorInfo</code> field. */
     public static final String VISITOR_INFO = "visitorInfo";
 
-    /** The field name of the <code>referral</code> field. */
-    public static final String REFERRAL = "referral";
-
     /** The field name of the <code>propertyService</code> field. */
     public static final String PROPERTY_SERVICE = "propertyService";
     // AUTO-GENERATED: FIELDS END
@@ -84,10 +80,6 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** Player's referral information. */
     public VisitorInfo visitorInfo;
-
-    /** Player's referral information. */
-    // @Deprecated
-    public ReferralInfo referral;
 
     /** Service for setting player properties. */
     public PropertySpaceMarshaller propertyService;
@@ -329,22 +321,6 @@ public class PlayerObject extends WhirledPlayerObject
         requestAttributeChange(
             VISITOR_INFO, value, ovalue);
         this.visitorInfo = value;
-    }
-
-    /**
-     * Requests that the <code>referral</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setReferral (ReferralInfo value)
-    {
-        ReferralInfo ovalue = this.referral;
-        requestAttributeChange(
-            REFERRAL, value, ovalue);
-        this.referral = value;
     }
 
     /**

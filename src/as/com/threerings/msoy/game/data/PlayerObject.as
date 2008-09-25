@@ -21,7 +21,6 @@ import com.threerings.msoy.data.VizMemberName;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
@@ -46,9 +45,6 @@ public class PlayerObject extends WhirledPlayerObject
     /** The field name of the <code>gameContent</code> field. */
     public static const GAME_CONTENT :String = "gameContent";
 
-    /** The field name of the <code>referral</code> field. */
-    public static const REFERRAL :String = "referral";
-
     /** The field name of the <code>visitorInfo</code> field. */
     public static const VISITOR_INFO :String = "visitorInfo";
     // AUTO-GENERATED: FIELDS END
@@ -70,9 +66,6 @@ public class PlayerObject extends WhirledPlayerObject
 
     /** Contains information on player's ownership of game content (populated lazily). */
     public var gameContent :DSet; /* GameContentOwnership */
-
-    /** Player's tracking information. */
-    public var referral :ReferralInfo;
 
     /** Player's tracking information. */
     public var visitorInfo :VisitorInfo;
@@ -180,7 +173,6 @@ public class PlayerObject extends WhirledPlayerObject
         humanity = ins.readInt();
         friends = (ins.readObject() as DSet);
         gameContent = (ins.readObject() as DSet);
-        referral = (ins.readObject() as ReferralInfo);
         visitorInfo = (ins.readObject() as VisitorInfo);
         propertyService = (ins.readObject() as PropertySpaceMarshaller);
     }

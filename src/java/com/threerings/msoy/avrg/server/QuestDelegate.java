@@ -73,7 +73,7 @@ public class QuestDelegate extends PlaceManagerDelegate
                 _repo.noteUnawardedTime(_gameId, totalMins);
             }
         });
-        
+
     }
 
     @Override // from PlaceManagerDelegate
@@ -106,7 +106,7 @@ public class QuestDelegate extends PlaceManagerDelegate
         final int memberId = player.playerObject.getMemberId();
 
         // TODO: Get this into EventLogDelegate, or write a AVRG-specific one?
-        final String tracker = player.playerObject.referral.tracker;
+        final String tracker = player.playerObject.visitorInfo.id;
         _eventLog.avrgLeft(memberId, _gameId, playTime,
                            _plmgr.getPlaceObject().occupantInfo.size(),
                            tracker);

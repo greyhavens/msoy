@@ -56,7 +56,7 @@ public class EventLoggingDelegate extends GameManagerDelegate
         int seconds = (int)((System.currentTimeMillis() - entry) / 1000);
 
         final MsoyGameManager gmgr = (MsoyGameManager)_plmgr;
-        final String tracker = (plobj.referral != null) ? plobj.referral.tracker : null;
+        final String tracker = (plobj.visitorInfo != null) ? plobj.visitorInfo.id : null;
         if (tracker == null) {
             log.warning("Game finished without referral info", "memberId", memberId);
         }

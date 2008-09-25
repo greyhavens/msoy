@@ -70,7 +70,6 @@ import com.threerings.presents.annotation.BlockingThread;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.person.server.persist.ProfileRecord;
@@ -873,26 +872,6 @@ public class MemberRepository extends DepotRepository
     public ReferralRecord loadReferral (final int memberId)
     {
         return load(ReferralRecord.class, memberId);
-    }
-
-    /**
-     * Adds or updates the referral record for a member with the given id.
-     */
-    // TODO: deprecate?
-    public ReferralRecord setReferral (final int memberId, final ReferralInfo ref)
-    {
-        // TODO: UPDATES?? UPDATES??? WHY WOULD WE EVER UPDATE THIS INFO? IT'S ONE-TIME!!!
-        // (and, if we do decide to keep this madness, there is store())
-        final ReferralRecord newrec = ReferralRecord.fromInfo(memberId, ref);
-        if (loadReferral(memberId) == null) {
-            insert(newrec);
-        } else {
-            log.warning("Holy cow, why are we updating someone's ReferralRecord?",
-                "memberId", memberId, "ref", ref);
-            update(newrec);
-        }
-
-        return newrec;
     }
 
     /**

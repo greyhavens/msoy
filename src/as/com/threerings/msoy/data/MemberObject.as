@@ -15,7 +15,6 @@ import com.threerings.msoy.data.all.ContactEntry;
 import com.threerings.msoy.data.all.FriendEntry;
 import com.threerings.msoy.data.all.GatewayEntry;
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.game.data.GameSummary;
@@ -94,9 +93,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** The field name of the <code>headline</code> field. */
     public static const HEADLINE :String = "headline";
-
-    /** The field name of the <code>referral</code> field. */
-    public static const REFERRAL :String = "referral";
 
     /** The field name of the <code>visitorInfo</code> field. */
     public static const VISITOR_INFO :String = "visitorInfo";
@@ -196,9 +192,6 @@ public class MemberObject extends MsoyBodyObject
 
     /** Player's tracking information. */
     public var visitorInfo :VisitorInfo;
-
-    /** Player's tracking information. */
-    public var referral :ReferralInfo;
 
     /**
      * Return this member's unique id.
@@ -346,7 +339,6 @@ public class MemberObject extends MsoyBodyObject
         viewOnly = ins.readBoolean();
         walkingId = ins.readInt();
         headline = ins.readField(String) as String;
-        referral = (ins.readObject() as ReferralInfo);
         visitorInfo = (ins.readObject() as VisitorInfo);
     }
 }

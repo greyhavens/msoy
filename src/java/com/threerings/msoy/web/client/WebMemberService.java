@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.data.all.VisitorInfo;
 
 import com.threerings.msoy.web.data.Invitation;
@@ -103,13 +102,6 @@ public interface WebMemberService extends RemoteService
      * is supplied, the visitor's a/b test group will also be tracked.
      */
     void trackTestAction (VisitorInfo info, String actionName, String testName)
-        throws ServiceException;
-
-    /**
-     * Tracks the creation of a new referral info structure, for a new visitor.
-     */
-    @Deprecated
-    void trackReferralCreation (ReferralInfo info)
         throws ServiceException;
 
     /**

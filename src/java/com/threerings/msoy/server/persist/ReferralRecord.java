@@ -7,7 +7,6 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
-import com.threerings.msoy.data.all.ReferralInfo;
 
 /**
  * Stores referral information for a given user.
@@ -74,28 +73,6 @@ public class ReferralRecord extends PersistentRecord
 
     /** Persistent tracking number, used to split players into various test groups. */
     public String tracker;
-
-    /**
-     * Convenience function to convert into a ReferralInfo object.
-     */
-    public ReferralInfo toInfo ()
-    {
-        return ReferralInfo.makeInstance(affiliate, vector, creative, tracker);
-    }
-
-    /**
-     * Convenience function to convert from a ReferralInfo object.
-     */
-    public static ReferralRecord fromInfo (int memberId, ReferralInfo info)
-    {
-        ReferralRecord rec = new ReferralRecord();
-        rec.memberId = memberId;
-        rec.affiliate = info.affiliate;
-        rec.vector = info.vector;
-        rec.creative = info.creative;
-        rec.tracker = info.tracker;
-        return rec;
-    }
 
     // AUTO-GENERATED: METHODS START
     /**

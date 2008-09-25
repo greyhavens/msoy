@@ -28,7 +28,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
-import com.threerings.msoy.data.all.ReferralInfo;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebMemberServiceAsync;
@@ -45,7 +44,6 @@ import client.shell.HttpReferrerCookie;
 import client.shell.Pages;
 import client.shell.Session;
 import client.shell.ShellMessages;
-import client.shell.TrackingCookie;
 import client.shell.VisitorCookie;
 import client.ui.BorderedDialog;
 import client.util.ArrayUtil;
@@ -162,8 +160,6 @@ public class FrameEntryPoint
                 _membersvc.getInvitation(inviteId, true, new MsoyCallback<Invitation>() {
                     public void onSuccess (Invitation invite) {
                         _activeInvite = invite;
-                        // also configure our tracking cookie
-                        maybeCreateReferral(""+invite.inviter.getMemberId(), EMAIL_VECTOR, "");
                     }
                 });
             }
@@ -209,9 +205,6 @@ public class FrameEntryPoint
             args = new Args();
             args.setToken(token);
 
-            // save our tracking info, but don't overwrite old values
-            maybeCreateReferral(aff, vec, cre);
-
             // save our info
             vector = aff + ":" + vec + ":" + cre;
         }
@@ -238,15 +231,10 @@ public class FrameEntryPoint
             VisitorCookie.save(info, true);
         }
 
-        // if we still don't have a tracking cookie, try to manufacture one from the HTTP Referer
-        // header, which the server should have saved for us.
-        if (!TrackingCookie.exists()) {
-            if (HttpReferrerCookie.exists()) {
-                String ref = HttpReferrerCookie.get();
-                maybeCreateReferral(ref, token, "");
-            } else {
-                maybeCreateReferral("", "", "");
-            }
+        if (HttpReferrerCookie.exists()) {
+            // TODO: save the referrer somewhere else, so that we can link it up
+            // String ref = HttpReferrerCookie.get();
+            // msvc.httpReferrerCreated(info.id, ref);
         }
 
         // recreate the page token which we'll pass through to the page (or if it's being loaded
@@ -814,31 +802,6 @@ public class FrameEntryPoint
     }
 
     /**
-     * If a tracking cookie doesn't already exist, creates a brand new one
-     * with the supplied referral info and a brand new tracking number.
-     * Also tells the server to log this as an event.
-     */
-    // FIXME ROBERT: delete me
-    protected void maybeCreateReferral (String affiliate, String vector, String creative)
-    {
-        if (! TrackingCookie.exists()) {
-            ReferralInfo ref =
-                ReferralInfo.makeInstance(
-                    affiliate, vector, creative, ReferralInfo.makeRandomTracker());
-            TrackingCookie.save(ref, false);
-            _membersvc.trackReferralCreation(ref, new AsyncCallback<Void>() {
-                public void onSuccess (Void result) {
-                    // noop
-                }
-                public void onFailure (Throwable caught) {
-                    CShell.log("Failed to send referral creation to server.", caught);
-                }
-            });
-            CShell.log("Created a new ReferralInfo: " + ref);
-        }
-    }
-
-    /**
      * Called when Flash or our inner Page frame wants us to dispatch an event.
      */
     protected void triggerEvent (String eventName, JavaScriptObject args)
@@ -902,12 +865,6 @@ public class FrameEntryPoint
         };
         $wnd.clearClient = function () {
              entry.@client.frame.FrameEntryPoint::deferredCloseClient()();
-        };
-        $wnd.getReferral = function () {
-            return @client.shell.TrackingCookie::getAsObject()();
-        };
-        $wnd.setReferral = function (ref) {
-            @client.shell.TrackingCookie::saveAsObject(Ljava/lang/Object;Z)(ref, true);
         };
         $wnd.toggleClientHeight = function () {
             @client.util.FlashClients::toggleClientHeight()();
