@@ -68,6 +68,8 @@ public class MoneyServlet extends MsoyServiceServlet
             throw new ServiceException(MoneyCodes.E_INSUFFICIENT_BLING);
         } catch (AlreadyCashedOutException acoe) {
             throw new ServiceException(MoneyCodes.E_ALREADY_CASHED_OUT);
+        } catch (BelowMinimumBlingException bmbe) {
+            throw new ServiceException(MoneyCodes.E_BELOW_MINIMUM_BLING);
         }
     }
     

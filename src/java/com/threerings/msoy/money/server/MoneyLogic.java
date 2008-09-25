@@ -389,12 +389,20 @@ public class MoneyLogic
      * account.
      * @throws AlreadyCashedOutException The user has already requested a bling cash out that has
      * not yet been fulfilled.
+     * @throws BelowMinimumBlingException The amount requested is below the minimum amount allowed
+     * for cashing out.
      */
     public void requestCashOutBling (int memberId, int amount)
-        throws NotEnoughMoneyException, AlreadyCashedOutException
+        throws NotEnoughMoneyException, AlreadyCashedOutException, BelowMinimumBlingException
     {
         MemberAccountRecord account = _repo.load(memberId);
         
+        // If the user does not have the minimum amount required to cash out bling, don't allow
+        // them to proceed
+        if (amount < RuntimeConfig.server.minimumBlingCashOut) {
+            throw new BelowMinimumBlingException(memberId, amount, 
+                RuntimeConfig.server.minimumBlingCashOut);
+        }
         // Set the amount we wish to cash out.  An error occurred if no rows were updated.
         int rowCount = _repo.setBlingCashOutRequested(memberId, amount * 100, 
             RuntimeConfig.server.blingWorth);

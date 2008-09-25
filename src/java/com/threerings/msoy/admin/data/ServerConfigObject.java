@@ -57,14 +57,14 @@ public class ServerConfigObject extends ConfigObject
     /** The field name of the <code>affiliatePercentage</code> field. */
     public static final String AFFILIATE_PERCENTAGE = "affiliatePercentage";
 
-    /** The field name of the <code>blingCashoutTransactionFee</code> field. */
-    public static final String BLING_CASHOUT_TRANSACTION_FEE = "blingCashoutTransactionFee";
-
     /** The field name of the <code>blingPoolSize</code> field. */
     public static final String BLING_POOL_SIZE = "blingPoolSize";
 
     /** The field name of the <code>blingWorth</code> field. */
     public static final String BLING_WORTH = "blingWorth";
+
+    /** The field name of the <code>minimumBlingCashOut</code> field. */
+    public static final String MINIMUM_BLING_CASH_OUT = "minimumBlingCashOut";
     // AUTO-GENERATED: FIELDS END
 
     /** Whether or not to allow non-admins to log on. */
@@ -109,14 +109,14 @@ public class ServerConfigObject extends ConfigObject
      */
     public float affiliatePercentage = 0.3f;
     
-    /** The amount to deduct when cashing out bling into real money. */
-    public float blingCashoutTransactionFee = 0f;
-    
     /** The amount of bling (NOT centibling) to grant daily to game creators. */
     public int blingPoolSize = 0;
     
-    /** The amount in USD each bling (NOT centibling) is worth.  TODO: BigDecimal? */
+    /** The amount in USD each bling (NOT centibling) is worth. */
     public float blingWorth = 0.05f;
+    
+    /** The minimum amount of bling (NOT centibling) that can be cashed out at a time. */
+    public int minimumBlingCashOut = 500;
     
     @Override // documentation inherited
     public JPanel getEditor (PresentsContext ctx, Field field)
@@ -343,22 +343,6 @@ public class ServerConfigObject extends ConfigObject
     }
 
     /**
-     * Requests that the <code>blingCashoutTransactionFee</code> field be set to the
-     * specified value. The local value will be updated immediately and an
-     * event will be propagated through the system to notify all listeners
-     * that the attribute did change. Proxied copies of this object (on
-     * clients) will apply the value change when they received the
-     * attribute changed notification.
-     */
-    public void setBlingCashoutTransactionFee (float value)
-    {
-        float ovalue = this.blingCashoutTransactionFee;
-        requestAttributeChange(
-            BLING_CASHOUT_TRANSACTION_FEE, Float.valueOf(value), Float.valueOf(ovalue));
-        this.blingCashoutTransactionFee = value;
-    }
-
-    /**
      * Requests that the <code>blingPoolSize</code> field be set to the
      * specified value. The local value will be updated immediately and an
      * event will be propagated through the system to notify all listeners
@@ -388,6 +372,22 @@ public class ServerConfigObject extends ConfigObject
         requestAttributeChange(
             BLING_WORTH, Float.valueOf(value), Float.valueOf(ovalue));
         this.blingWorth = value;
+    }
+
+    /**
+     * Requests that the <code>minimumBlingCashOut</code> field be set to the
+     * specified value. The local value will be updated immediately and an
+     * event will be propagated through the system to notify all listeners
+     * that the attribute did change. Proxied copies of this object (on
+     * clients) will apply the value change when they received the
+     * attribute changed notification.
+     */
+    public void setMinimumBlingCashOut (int value)
+    {
+        int ovalue = this.minimumBlingCashOut;
+        requestAttributeChange(
+            MINIMUM_BLING_CASH_OUT, Integer.valueOf(value), Integer.valueOf(ovalue));
+        this.minimumBlingCashOut = value;
     }
     // AUTO-GENERATED: METHODS END
 }
