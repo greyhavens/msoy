@@ -516,7 +516,7 @@ public class FrameEntryPoint
                 }
 
             } else if (action.equals("game")) {
-                // display a game lobby or enter a game (action_gameId_gameOid)
+                // display a game lobby or enter a game (action_gameId_otherId)
                 displayGame(args.get(1, ""), args.get(2, 0), args.get(3, -1));
 
             } else if (action.startsWith("g")) {
@@ -637,19 +637,19 @@ public class FrameEntryPoint
         });
     }
 
-    protected void displayGame (final String action, int gameId, final int gameOid)
+    protected void displayGame (final String action, int gameId, final int otherId)
     {
     	// if we are neither logged in nor have an assigned guest id, we need one
     	boolean assignGuestId = (CShell.getMemberId() == 0);
         // load up the information needed to launch the game
         _usersvc.loadLaunchConfig(gameId, assignGuestId, new MsoyCallback<LaunchConfig>() {
             public void onSuccess (LaunchConfig result) {
-                launchGame(result, gameOid, action);
+                launchGame(result, otherId, action);
             }
         });
     }
 
-    protected void launchGame (final LaunchConfig config, final int gameOid, String action)
+    protected void launchGame (final LaunchConfig config, final int otherId, String action)
     {
     	// if we were assigned a guest id, make it known to everyone
         if (config.guestId != 0) {
@@ -665,22 +665,26 @@ public class FrameEntryPoint
             break;
 
         case LaunchConfig.FLASH_LOBBIED:
-            if (gameOid <= 0) {
-                String hostPort = "&ghost=" + config.gameServer + "&gport=" + config.gamePort;
-                if (action.equals("m") || action.equals("f") || action.equals("s")) {
-                    displayWorldClient(
-                        "playNow=" + config.gameId + "&mode=" + action + hostPort, null);
-                } else {
-                    displayWorldClient("gameLobby=" + config.gameId + hostPort, null);
+            String hostPort = "&ghost=" + config.gameServer + "&gport=" + config.gamePort;
+            String args;
+            if (action.equals("l")) {
+                args = "gameLobby=" + config.gameId;
+                if (otherId != 0) {
+                    args += "&playerTable=" + otherId;
                 }
+            } else if (action.equals("g")) {
+                args = "gameLocation=" + otherId;
+            } else if (action.equals("m") || action.equals("f") || action.equals("s")) {
+                args = "playNow=" + config.gameId + "&mode=" + action;
             } else {
-                displayWorldClient("gameLocation=" + gameOid, null);
+                args = "gameLobby=" + config.gameId;
             }
+            displayWorldClient(args + hostPort, null);
             break;
 
         case LaunchConfig.JAVA_FLASH_LOBBIED:
         case LaunchConfig.JAVA_SELF_LOBBIED:
-            if (config.type == LaunchConfig.JAVA_FLASH_LOBBIED && gameOid <= 0) {
+            if (config.type == LaunchConfig.JAVA_FLASH_LOBBIED && otherId <= 0) {
                 displayWorldClient("gameLobby=" + config.gameId, null);
 
             } else {
@@ -690,7 +694,7 @@ public class FrameEntryPoint
                 // prepare a command to be invoked once we know Java is loaded
                 _javaReadyCommand = new Command() {
                     public void execute () {
-                        displayJava(config, gameOid);
+                        displayJava(config, otherId);
                     }
                 };
 
