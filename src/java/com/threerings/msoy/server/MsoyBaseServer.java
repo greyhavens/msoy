@@ -103,7 +103,7 @@ public abstract class MsoyBaseServer extends WhirledServer
         final ConfigRegistry confReg = createConfigRegistry();
         AdminProvider.init(_invmgr, confReg);
 
-        // initialize the bureau registry (subclasses will enable specific bureau types)
+        // initialize the bureau registry
         _bureauReg.init();
 
         // initialize our dictionary services
@@ -132,7 +132,6 @@ public abstract class MsoyBaseServer extends WhirledServer
             });
         }
         _conmgr.addChainedAuthenticator(new BureauAuthenticator(_bureauReg));
-        _clmgr.setClientFactory(new BureauLauncherClientFactory(_clmgr.getClientFactory()));
 
         // now initialize our runtime configuration, postponing the remaining server initialization
         // until our configuration objects are available
@@ -210,6 +209,9 @@ public abstract class MsoyBaseServer extends WhirledServer
     protected void finishInit (final Injector injector)
         throws Exception
     {
+        // We need to add this *after* the main init so that it can get first dibs and delegate
+        // to the subclass client factory
+        _clmgr.setClientFactory(new BureauLauncherClientFactory(_clmgr.getClientFactory()));
     }
 
     /** Selects a registered launcher for the next bureau. */
