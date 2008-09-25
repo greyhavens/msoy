@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
@@ -17,6 +17,7 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 import client.shell.DynamicLookup;
 import client.ui.MsoyUI;
+import client.ui.RowPanel;
 
 public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
 {
@@ -25,7 +26,7 @@ public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
         super(10, NAV_ON_TOP);
 
         _nav.add(MsoyUI.createLabel(_msgs.reportFilter(), "ReportFilter"));
-        _nav.add(MsoyUI.createImage(model.report.icon, null));
+        _nav.add(MsoyUI.createImage(model.report.icon, null), HasVerticalAlignment.ALIGN_MIDDLE);
         _nav.add(controller);
 
         addStyleName("Balance");
@@ -69,7 +70,7 @@ public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
     @Override
     protected void addCustomControls (FlexTable table)
     {
-        table.setWidget(0, 0, _nav = new HorizontalPanel());
+        table.setWidget(0, 0, _nav = new RowPanel());
     }
 
     protected abstract void addCustomHeader (List<Widget> header);
@@ -81,7 +82,7 @@ public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
         return true;
     }
 
-    protected HorizontalPanel _nav;
+    protected RowPanel _nav;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
