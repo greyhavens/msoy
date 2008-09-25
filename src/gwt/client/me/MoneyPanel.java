@@ -26,6 +26,8 @@ public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
     {
         super(10, NAV_ON_TOP);
 
+        _table.setCellPadding(5);
+
         _nav.add(MsoyUI.createLabel(_msgs.reportFilter(), "ReportFilter"));
         _nav.add(MsoyUI.createImage(model.report.icon, null), HasVerticalAlignment.ALIGN_MIDDLE);
         _nav.add(controller);
