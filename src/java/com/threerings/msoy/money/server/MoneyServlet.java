@@ -78,7 +78,7 @@ public class MoneyServlet extends MsoyServiceServlet
     protected BlingInfo getBlingInfo (int memberId)
         throws ServiceException
     {
-        return _moneyLogic.getBlingWorth(memberId);
+        return _moneyLogic.getBlingInfo(memberId);
     }
 
     @Inject protected MoneyLogic _moneyLogic;

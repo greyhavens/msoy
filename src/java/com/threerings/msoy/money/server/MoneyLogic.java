@@ -7,6 +7,7 @@ import java.text.NumberFormat;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -420,7 +421,7 @@ public class MoneyLogic
             MessageBundle.tcompose("m.request_cash_out", amount), null);
         _repo.storeTransaction(tx);
         
-        return getBlingWorth(memberId);
+        return getBlingInfo(memberId);
     }
 
     /**
@@ -446,22 +447,32 @@ public class MoneyLogic
             TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null);
         _nodeActions.moneyUpdated(accumTx);
         
-        return new BlingExchangeResult(accumTx.balance, getBlingWorth(memberId));
+        return new BlingExchangeResult(accumTx.balance, getBlingInfo(memberId));
     }
 
     /**
-     * Retrieves the amount that a member's current bling is worth in US pennies.
-     *
-     * @param bling The amount of bling (NOT centibling) to get the worth of.
-     * @return The amount the bling is worth in USD cents.
+     * Retrieves information about a member's bling, including its current worth and whether or
+     * not they have a pending request to cash out bling.
      */
-    public BlingInfo getBlingWorth (int memberId)
+    public BlingInfo getBlingInfo (int memberId)
     {
         // Bling is 100x the actual bling value, and since we're returning pennies, blingWorth
         // (measured in dollars) is 0.01x the value we want.  So it balances out.
         MemberAccountRecord account = _repo.load(memberId);
         return new BlingInfo(account.bling, (int)(account.bling * RuntimeConfig.server.blingWorth), 
             account.cashOutBling, (int)(account.cashOutBlingWorth * account.cashOutBling));
+    }
+    
+    public List<BlingInfo> getBlingCashOutRequests ()
+    {
+        return Lists.transform(_repo.getAccountsCashingOut(), 
+                new Function<MemberAccountRecord, BlingInfo>() {
+            public BlingInfo apply (MemberAccountRecord account) {
+                return new BlingInfo(account.bling, 
+                    (int)(account.bling * RuntimeConfig.server.blingWorth), 
+                    account.cashOutBling, (int)(account.cashOutBlingWorth * account.cashOutBling));
+            }
+        });
     }
 
     /**

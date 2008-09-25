@@ -105,7 +105,9 @@ public class MoneyRepository extends DepotRepository
                     }
                 });
                 } catch (Exception e) {
-                    throw new java.sql.SQLException(e.getMessage());
+                    java.sql.SQLException sqle = new java.sql.SQLException("Migration failed");
+                    sqle.initCause(e);
+                    throw sqle;
                 }
             }
         });
@@ -403,6 +405,17 @@ public class MoneyRepository extends DepotRepository
         updatePartial(MemberAccountRecord.getKey(memberId),
             MemberAccountRecord.CASH_OUT_BLING, 0,
             MemberAccountRecord.CASH_OUT_BLING_WORTH, 0f);
+    }
+    
+    /**
+     * Retrieves all member account records for members that are currently cashing out some amount
+     * of their bling.
+     */
+    public List<MemberAccountRecord> getAccountsCashingOut ()
+    {
+        // select * from MemberAccountRecord where cashOutBling > 0
+        return findAll(MemberAccountRecord.class, new Where(
+            new Conditionals.GreaterThan(MemberAccountRecord.CASH_OUT_BLING_C, 0)));
     }
     
     /** Helper method to setup a query for a transaction history search. */
