@@ -343,10 +343,10 @@ public abstract class ItemRepository<T extends ItemRecord>
      * Loads the specified items in the specified order. Omits missing items from results.
      * Similar to ItemLogic.loadItems(), but only for this repository's item type.
      */
-    public List<T> loadItemsInOrder (Collection<Integer> itemIds)
+    public List<T> loadItemsInOrder (List<Integer> itemIds)
     {
         List<T> items = loadItems(itemIds);
-        Map<Integer, T> idMap = new HashMap<Integer, T>(items.size());
+        Map<Integer, T> idMap = Maps.newHashMapWithExpectedSize(items.size());
         for (T item : items) {
             idMap.put(item.itemId, item);
         }
