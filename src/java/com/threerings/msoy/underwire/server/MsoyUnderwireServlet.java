@@ -4,6 +4,7 @@
 package com.threerings.msoy.underwire.server;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.samskivert.jdbc.depot.PersistenceContext;
 
@@ -56,7 +57,7 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Override // from UnderwireServlet
     protected UnderwireRepository createUnderwireRepository ()
     {
-        return new UnderwireRepository(_perCtx);
+        return _underRepo;
     }
 
     @Override // from UnderwireServlet
@@ -158,6 +159,14 @@ public class MsoyUnderwireServlet extends UnderwireServlet
         }
     }
 
+    @Singleton
+    protected static class MsoyUnderwireRepository extends UnderwireRepository
+    {
+        @Inject public MsoyUnderwireRepository (PersistenceContext perCtx) {
+            super(perCtx);
+        }
+    }
+
     // our dependencies
     @Inject protected PersistenceContext _perCtx;
     @Inject protected MsoyGameActionHandler _actionHandler;
@@ -165,4 +174,5 @@ public class MsoyUnderwireServlet extends UnderwireServlet
     @Inject protected MsoyAuthenticator _author;
     @Inject protected MsoyOOOUserRepository _authRepo;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyUnderwireRepository _underRepo;
 }
