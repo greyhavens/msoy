@@ -9,6 +9,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
@@ -38,7 +39,9 @@ public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
     {
         List<Widget> row = new ArrayList<Widget>();
 
-        row.add(MsoyUI.createLabel(MsoyUI.formatDateTime(entry.timestamp), "Time"));
+        Label time = MsoyUI.createLabel(MsoyUI.formatDateTime(entry.timestamp), "Time");
+        time.setWordWrap(false);
+        row.add(time);
 
         String description = _dmsgs.xlate(MsoyUI.escapeHTML(entry.description));
         row.add(MsoyUI.createHTML(description, "Description"));

@@ -447,12 +447,8 @@
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 }
 
-.Balance .col0 { /* Date */
-  width: 50%;
-}
-
 .Balance .col1 { /* Description */
-  width: 50%;
+  width: 100%;
 }
 
 .Balance .col2, .Balance .col3 { /* Debit, credit */
