@@ -28,13 +28,13 @@ public class AudioCloneRecord extends CloneRecord
     public static final ColumnExp PURCHASE_TIME_C =
         new ColumnExp(AudioCloneRecord.class, PURCHASE_TIME);
 
-    /** The qualified column identifier for the {@link #flowPaid} field. */
-    public static final ColumnExp FLOW_PAID_C =
-        new ColumnExp(AudioCloneRecord.class, FLOW_PAID);
+    /** The qualified column identifier for the {@link #currency} field. */
+    public static final ColumnExp CURRENCY_C =
+        new ColumnExp(AudioCloneRecord.class, CURRENCY);
 
-    /** The qualified column identifier for the {@link #goldPaid} field. */
-    public static final ColumnExp GOLD_PAID_C =
-        new ColumnExp(AudioCloneRecord.class, GOLD_PAID);
+    /** The qualified column identifier for the {@link #amountPaid} field. */
+    public static final ColumnExp AMOUNT_PAID_C =
+        new ColumnExp(AudioCloneRecord.class, AMOUNT_PAID);
 
     /** The qualified column identifier for the {@link #used} field. */
     public static final ColumnExp USED_C =

@@ -7,6 +7,8 @@ import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.money.data.all.Currency;
+
 /** Clone records for TrophySources. */
 @TableGenerator(name="cloneId", pkColumnValue="TROPHYSOURCE_CLONE")
 public class TrophySourceCloneRecord extends CloneRecord
@@ -28,13 +30,13 @@ public class TrophySourceCloneRecord extends CloneRecord
     public static final ColumnExp PURCHASE_TIME_C =
         new ColumnExp(TrophySourceCloneRecord.class, PURCHASE_TIME);
 
-    /** The qualified column identifier for the {@link #flowPaid} field. */
-    public static final ColumnExp FLOW_PAID_C =
-        new ColumnExp(TrophySourceCloneRecord.class, FLOW_PAID);
+    /** The qualified column identifier for the {@link #currency} field. */
+    public static final ColumnExp CURRENCY_C =
+        new ColumnExp(TrophySourceCloneRecord.class, CURRENCY);
 
-    /** The qualified column identifier for the {@link #goldPaid} field. */
-    public static final ColumnExp GOLD_PAID_C =
-        new ColumnExp(TrophySourceCloneRecord.class, GOLD_PAID);
+    /** The qualified column identifier for the {@link #amountPaid} field. */
+    public static final ColumnExp AMOUNT_PAID_C =
+        new ColumnExp(TrophySourceCloneRecord.class, AMOUNT_PAID);
 
     /** The qualified column identifier for the {@link #used} field. */
     public static final ColumnExp USED_C =
@@ -64,9 +66,9 @@ public class TrophySourceCloneRecord extends CloneRecord
     public static final int SCHEMA_VERSION = 1 + BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     @Override
-    public void initialize (ItemRecord parent, int newOwnerId, int flowPaid, int goldPaid)
+    public void initialize (ItemRecord parent, int newOwnerId, Currency currency, int amountPaid)
     {
-        super.initialize(parent, newOwnerId, flowPaid, goldPaid);
+        super.initialize(parent, newOwnerId, currency, amountPaid);
 
         // TODO: copy anything needed from the original
     }

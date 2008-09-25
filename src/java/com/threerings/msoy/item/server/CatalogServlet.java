@@ -169,11 +169,9 @@ public class CatalogServlet extends MsoyServiceServlet
         ItemBuyOperation buyOp = new ItemBuyOperation() {
             public boolean create (boolean magicFree, Currency currency, int amountPaid)
             {
-                int coinsPaid = (currency == Currency.COINS) ? amountPaid : 0;
-                int barsPaid = (currency == Currency.BARS) ? amountPaid : 0;
                 // create the clone row in the database
-                _newClone = repo.insertClone(listing.item, mrec.memberId, coinsPaid, barsPaid);
-                // note the new purchase for the item, but only if we didn't do a magicFreeItem
+                _newClone = repo.insertClone(listing.item, mrec.memberId, currency, amountPaid);
+                // note the new purchase for the item, but only if it wasn't magicFree.
                 if (!magicFree) {
                     repo.nudgeListing(fCatalogId, true);
                 }

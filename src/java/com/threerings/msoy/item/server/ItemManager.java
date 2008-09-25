@@ -66,6 +66,8 @@ import com.threerings.msoy.item.server.ItemLogic.MissingRepositoryException;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.server.RoomManager;
 
+import com.threerings.msoy.money.data.all.Currency;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -272,7 +274,7 @@ public class ItemManager
                         MessageBundle.tcompose(MsoyGameCodes.E_PRIZE_CREATOR_MISMATCH, prize.ident));
                 }
                 log.info("Awarding prize " + listing + " to " + memberId + ".");
-                Item item = repo.insertClone(listing.item, memberId, 0, 0).toItem();
+                Item item = repo.insertClone(listing.item, memberId, Currency.COINS, 0).toItem();
                 _eventLog.prizeEarned(memberId, gameId, prize.ident, prize.targetType);
                 return item;
             }

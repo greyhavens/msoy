@@ -28,13 +28,13 @@ public class FurnitureCloneRecord extends CloneRecord
     public static final ColumnExp PURCHASE_TIME_C =
         new ColumnExp(FurnitureCloneRecord.class, PURCHASE_TIME);
 
-    /** The qualified column identifier for the {@link #flowPaid} field. */
-    public static final ColumnExp FLOW_PAID_C =
-        new ColumnExp(FurnitureCloneRecord.class, FLOW_PAID);
+    /** The qualified column identifier for the {@link #currency} field. */
+    public static final ColumnExp CURRENCY_C =
+        new ColumnExp(FurnitureCloneRecord.class, CURRENCY);
 
-    /** The qualified column identifier for the {@link #goldPaid} field. */
-    public static final ColumnExp GOLD_PAID_C =
-        new ColumnExp(FurnitureCloneRecord.class, GOLD_PAID);
+    /** The qualified column identifier for the {@link #amountPaid} field. */
+    public static final ColumnExp AMOUNT_PAID_C =
+        new ColumnExp(FurnitureCloneRecord.class, AMOUNT_PAID);
 
     /** The qualified column identifier for the {@link #used} field. */
     public static final ColumnExp USED_C =

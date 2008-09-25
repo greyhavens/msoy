@@ -69,12 +69,13 @@ import com.threerings.msoy.server.persist.TagNameRecord;
 import com.threerings.msoy.server.persist.TagRecord;
 import com.threerings.msoy.server.persist.TagRepository;
 
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.gwt.CatalogListing;
-import com.threerings.msoy.item.gwt.CatalogQuery;
 import com.threerings.msoy.money.data.all.Currency;
 
 import com.threerings.msoy.room.server.persist.MemoryRepository;
+
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.gwt.CatalogListing;
+import com.threerings.msoy.item.gwt.CatalogQuery;
 
 import static com.threerings.msoy.Log.log;
 
@@ -106,9 +107,6 @@ public abstract class ItemRepository<T extends ItemRecord>
     {
         _newAndHotDropoffSeconds = Math.max(1, days * 24 * 60 * 60); // don't let us div by 0.
     }
-
-    /** The factor by which we split item cost into gold and flow. */
-    public final static int FLOW_FOR_GOLD = 600;
 
     public ItemRepository (PersistenceContext ctx)
     {
@@ -173,6 +171,16 @@ public abstract class ItemRepository<T extends ItemRecord>
             }
         });
         // END: temp
+
+        int cloneCurrencyMigrationVersion = 8000; // NOTE: this seems wrong, but it works.
+        // mdb is on the case.
+        _ctx.registerMigration(getCloneClass(),
+            new EntityMigration.Drop(cloneCurrencyMigrationVersion, "goldPaid"));
+        _ctx.registerMigration(getCloneClass(),
+            new EntityMigration.Rename(cloneCurrencyMigrationVersion,
+                "flowPaid", CloneRecord.AMOUNT_PAID));
+        _ctx.registerMigration(getCloneClass(),
+            new EntityMigration.Add(cloneCurrencyMigrationVersion, CloneRecord.CURRENCY, "0"));
     }
 
     /**
@@ -825,7 +833,8 @@ public abstract class ItemRepository<T extends ItemRecord>
      * with the new owner. Finally, updates {@link CloneRecord#lastTouched) and
      * {@link CloneRecord#purchaseTime).
      */
-    public ItemRecord insertClone (ItemRecord parent, int newOwnerId, int flowPaid, int goldPaid)
+    public ItemRecord insertClone (
+        ItemRecord parent, int newOwnerId, Currency currency, int amountPaid)
     {
         CloneRecord record;
         try {
@@ -833,7 +842,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        record.initialize(parent, newOwnerId, flowPaid, goldPaid);
+        record.initialize(parent, newOwnerId, currency, amountPaid);
         insert(record);
 
         ItemRecord newClone = (ItemRecord) parent.clone();

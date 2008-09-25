@@ -8,6 +8,8 @@ import java.sql.Timestamp;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 
+import com.threerings.msoy.money.data.all.Currency;
+
 @Entity(indices={
     @Index(name="ixOwner", fields={ CloneRecord.OWNER_ID }),
     @Index(name="ixOriginalItem", fields={ CloneRecord.ORIGINAL_ITEM_ID }),
@@ -28,11 +30,11 @@ public abstract class CloneRecord extends PersistentRecord
     /** The column identifier for the {@link #purchaseTime} field. */
     public static final String PURCHASE_TIME = "purchaseTime";
 
-    /** The column identifier for the {@link #flowPaid} field. */
-    public static final String FLOW_PAID = "flowPaid";
+    /** The column identifier for the {@link #currency} field. */
+    public static final String CURRENCY = "currency";
 
-    /** The column identifier for the {@link #goldPaid} field. */
-    public static final String GOLD_PAID = "goldPaid";
+    /** The column identifier for the {@link #amountPaid} field. */
+    public static final String AMOUNT_PAID = "amountPaid";
 
     /** The column identifier for the {@link #used} field. */
     public static final String USED = "used";
@@ -53,7 +55,7 @@ public abstract class CloneRecord extends PersistentRecord
     public static final String MEDIA_STAMP = "mediaStamp";
     // AUTO-GENERATED: FIELDS END
 
-    public static final int BASE_SCHEMA_VERSION = 7;
+    public static final int BASE_SCHEMA_VERSION = 8;
     public static final int BASE_MULTIPLIER = 1000;
     public static final int SCHEMA_VERSION = BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
@@ -72,11 +74,11 @@ public abstract class CloneRecord extends PersistentRecord
     /** The time at which this clone was purchased from the catalog. */
     public Timestamp purchaseTime;
 
-    /** The amount of flow that was paid for this item. */
-    public int flowPaid;
+    /** The currency used to purchase this item. */
+    public Currency currency;
 
-    /** The amount of gold that was paid for this item. */
-    public int goldPaid;
+    /** The amount (of the above currency) paid for this item. */
+    public int amountPaid;
 
     /** How this item is being used (see Item.USED_AS_FURNITURE). */
     public byte used;
@@ -105,13 +107,13 @@ public abstract class CloneRecord extends PersistentRecord
     /**
      * Initialize a new clone with the specified values.
      */
-    public void initialize (ItemRecord parent, int newOwnerId, int flowPaid, int goldPaid)
+    public void initialize (ItemRecord parent, int newOwnerId, Currency currency, int amountPaid)
     {
         long now = System.currentTimeMillis();
         this.originalItemId = parent.itemId;
         this.ownerId = newOwnerId;
-        this.flowPaid = flowPaid;
-        this.goldPaid = goldPaid;
+        this.currency = currency;
+        this.amountPaid = amountPaid;
         this.purchaseTime = new Timestamp(now);
         this.lastTouched = new Timestamp(now);
     }

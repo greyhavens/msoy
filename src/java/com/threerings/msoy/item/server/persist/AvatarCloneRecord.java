@@ -8,6 +8,8 @@ import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
+import com.threerings.msoy.money.data.all.Currency;
+
 /** Clone records for Avatars. */
 @TableGenerator(name="cloneId", pkColumnValue="AVATAR_CLONE")
 public class AvatarCloneRecord extends CloneRecord
@@ -36,13 +38,13 @@ public class AvatarCloneRecord extends CloneRecord
     public static final ColumnExp PURCHASE_TIME_C =
         new ColumnExp(AvatarCloneRecord.class, PURCHASE_TIME);
 
-    /** The qualified column identifier for the {@link #flowPaid} field. */
-    public static final ColumnExp FLOW_PAID_C =
-        new ColumnExp(AvatarCloneRecord.class, FLOW_PAID);
+    /** The qualified column identifier for the {@link #currency} field. */
+    public static final ColumnExp CURRENCY_C =
+        new ColumnExp(AvatarCloneRecord.class, CURRENCY);
 
-    /** The qualified column identifier for the {@link #goldPaid} field. */
-    public static final ColumnExp GOLD_PAID_C =
-        new ColumnExp(AvatarCloneRecord.class, GOLD_PAID);
+    /** The qualified column identifier for the {@link #amountPaid} field. */
+    public static final ColumnExp AMOUNT_PAID_C =
+        new ColumnExp(AvatarCloneRecord.class, AMOUNT_PAID);
 
     /** The qualified column identifier for the {@link #used} field. */
     public static final ColumnExp USED_C =
@@ -77,9 +79,9 @@ public class AvatarCloneRecord extends CloneRecord
     public float scale;
 
     @Override
-    public void initialize (ItemRecord parent, int newOwnerId, int flowPaid, int goldPaid)
+    public void initialize (ItemRecord parent, int newOwnerId, Currency currency, int amountPaid)
     {
-        super.initialize(parent, newOwnerId, flowPaid, goldPaid);
+        super.initialize(parent, newOwnerId, currency, amountPaid);
 
         // and copy the parent's scale
         this.scale = ((AvatarRecord) parent).scale;
