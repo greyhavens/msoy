@@ -28,6 +28,14 @@ public class Args
     }
 
     /**
+     * Typed version of {@link Args#compose(Object...)}.
+     */
+    public static String compose (String... args)
+    {
+        return compose((Object[]) args);
+    }
+
+    /**
      * Composes multiple arguments into a single string argument that can be properly handled by
      * the Args class.
      */
