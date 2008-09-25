@@ -270,7 +270,7 @@ public class ForumServlet extends MsoyServiceServlet
             // spam our players with this message if requested
             if (spam) {
                 log.info("Spamming players with forum post", "for", mrec.who(), "subject", subject);
-                _mailLogic.spamPlayers(subject, message, 0, 0);
+                _mailLogic.spamPlayers(subject, message);
             }
 
         // otherwise, if the thread is an announcement thread, post a feed message about it

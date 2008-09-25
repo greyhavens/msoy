@@ -36,6 +36,8 @@ import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.SimpleCacheKey;
+import com.samskivert.jdbc.depot.annotation.Computed;
+import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Join;
 import com.samskivert.jdbc.depot.clause.Limit;
@@ -45,6 +47,7 @@ import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
+import com.samskivert.jdbc.depot.operator.Arithmetic;
 import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.FullTextMatch;
@@ -88,6 +91,12 @@ public class MemberRepository extends DepotRepository
     public static interface MemberMigration {
         public void apply (MemberRecord record) throws Exception;
     };
+
+    @Entity @Computed(shadowOf=MemberRecord.class)
+    public static class MemberEmailRecord extends PersistentRecord
+    {
+        public String accountName;
+    }
 
     @Inject public MemberRepository (final PersistenceContext ctx)
     {
@@ -283,6 +292,21 @@ public class MemberRepository extends DepotRepository
             names.put(name.memberId, name.toMemberName());
         }
         return names;
+    }
+
+    /**
+     * Loads the addresses of all members that have not opted out of announcement emails.
+     */
+    public List<String> loadMemberEmailsForAnnouncement ()
+    {
+        SQLExpression annFlag = new Arithmetic.BitAnd(
+            MemberRecord.FLAGS_C, MemberRecord.Flag.NO_ANNOUNCE_EMAIL.getBit());
+        List<String> emails = Lists.newArrayList();
+        for (MemberEmailRecord record :
+                 findAll(MemberEmailRecord.class, new Where(new Equals(annFlag, 0)))) {
+            emails.add(record.accountName);
+        }
+        return emails;
     }
 
     /**

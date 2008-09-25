@@ -4,6 +4,7 @@
 package com.threerings.msoy.person.server;
 
 import java.io.StringWriter;
+import java.util.List;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -159,19 +160,11 @@ public class MailLogic
     /**
      * Sends email to all players who have not opted out of Whirled announcements.
      */
-    public void spamPlayers (String subject, String body, int startId, int endId)
+    public void spamPlayers (String subject, String body)
     {
         // TODO: if we want to continue to use this mechanism to send mass emails to our members,
         // we will need to farm out the mail deliver task to all nodes in the network so that we
         // don't task one node with sending out a million email messages
-
-        // start with member 1 if we weren't given a higher starting id
-        startId = Math.max(startId, 1);
-
-        // if we don't have an endId, go all the way
-        if (endId <= 0) {
-            endId = Integer.MAX_VALUE;
-        }
 
         // convert the body into proper-ish HTML
         body = formatSpam(body);
@@ -179,57 +172,26 @@ public class MailLogic
             return;
         }
 
-        // generate a special header for return path
         String[] headers = makeSpamHeaders(subject);
+        String from = ServerConfig.getFromAddress();
+        int count = 0;
 
-        // loop through 100 members at a time and load up their record and send emails
-        final String from = ServerConfig.getFromAddress();
-        int found;
-        do {
-            final IntSet memIds = new ArrayIntSet();
-            for (int ii = 0; ii < MEMBERS_PER_LOOP; ii++) {
-                final int memberId = ii + startId;
-                if (memberId > endId) {
-                    break;
-                }
-                memIds.add(memberId);
-            }
-            if (memIds.size() == 0) {
-                break;
-            }
-
-            found = 0;
-            for (final MemberRecord mrec : _memberRepo.loadMembers(memIds)) {
-                found++;
-
-                if (mrec.isSet(MemberRecord.Flag.NO_ANNOUNCE_EMAIL)) {
-                    continue;
-                }
-
-                try {
-                    _mailer.sendEmail(mrec.accountName, from, headers, subject, body, true);
-                } catch (final Exception e) {
-                    log.warning("Failed to spam member [subject=" + subject +
-                                ", email=" + mrec.accountName + ", error=" + e + "].");
-                    // roll on through and try the next one
-                }
-            }
-
-            startId += MEMBERS_PER_LOOP;
-        } while (startId < endId && found > 0);
+        // load up the emails of everyone we want to spam
+        List<String> emails = _memberRepo.loadMemberEmailsForAnnouncement();
+        for (String recip : emails) {
+            _mailer.sendEmail(recip, from, headers, subject, body, true);
+            count++;
+        }
 
         // lastly send out mails to our friends at Returnpath (as long as we're not on dev)
         if (!DeploymentConfig.devDeployment) {
             for (String rpaddr : RETURNPATH_ADDRS) {
-                try {
-                    _mailer.sendEmail(rpaddr, from, headers, subject, body, true);
-                } catch (final Exception e) {
-                    log.warning("Failed to spam Returnpath address [subject=" + subject +
-                                ", email=" + rpaddr + ", error=" + e + "].");
-                    // roll on through and try the next one
-                }
+                _mailer.sendEmail(rpaddr, from, headers, subject, body, true);
+                count++;
             }
         }
+
+        log.info("Queued up announcement email", "subject", subject, "count", count);
     }
 
     /**
