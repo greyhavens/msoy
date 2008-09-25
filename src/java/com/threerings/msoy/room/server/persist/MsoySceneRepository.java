@@ -65,20 +65,6 @@ public class MsoySceneRepository extends DepotRepository
     }
 
     /**
-     * Creates our default scenes and starts up our accumulator.
-     */
-    public void init ()
-    {
-        // create our stock scenes if they are not yet created
-        for (SceneRecord.Stock stock : SceneRecord.Stock.values()) {
-            checkCreateStockScene(stock);
-        }
-
-        // initialize our update accumulator
-        _accumulator.init(this);
-    }
-
-    /**
      * Returns the total number of scenes in the repository.
      */
     public int getSceneCount ()
@@ -449,6 +435,20 @@ public class MsoySceneRepository extends DepotRepository
 
         log.info("Creating stock scene " + stock + ".");
         insertScene(model);
+    }
+
+    @Override // from DepotRepository
+    protected void init ()
+    {
+        super.init();
+
+        // create our stock scenes if they are not yet created
+        for (SceneRecord.Stock stock : SceneRecord.Stock.values()) {
+            checkCreateStockScene(stock);
+        }
+
+        // initialize our update accumulator
+        _accumulator.init(this);
     }
 
     @Override // from DepotRepository

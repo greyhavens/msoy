@@ -289,7 +289,6 @@ public class MsoyServer extends MsoyBaseServer
                       ServerConfig.backChannelHost, ServerConfig.serverHost, getListenPorts()[0]);
 
         // intialize various services
-        _sceneRepo.init();
         _adminMan.init();
         _memberMan.init();
         _friendMan.init();
@@ -401,9 +400,6 @@ public class MsoyServer extends MsoyBaseServer
     /** On dev deployments, we keep track of the ports on other nodes (hosted on the same machine
      * that need to be accepted by the policy server. */
     protected ArrayIntSet _otherNodePorts;
-
-    /** Manages world scene data. */
-    @Inject protected MsoySceneRepository _sceneRepo;
 
     /** Our runtime jabber manager. */
     @Inject protected JabberManager _jabberMan;
