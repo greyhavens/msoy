@@ -17,16 +17,7 @@ import com.threerings.io.Streamable;
  */
 public class VisitorInfo
     implements Streamable
-{
-    /** This vector string represents an embedded room. */
-    public static const ROOM_VECTOR :String = "room";
-
-    /** This vector string represents an embedded game. */
-    public static const GAME_VECTOR :String = "game";
-
-    /** This vector string represents my butt. */
-    public static const GENERIC_VECTOR :String = "?";
-    
+{    
     /** Id for affiliate in the url or flash params */
     public static const AFFILIATE_ID :String = "aff";
     
@@ -95,13 +86,26 @@ public class VisitorInfo
     }
     
     /** 
-     * Return a list of tracking variables suitable for the FlashVars embed param.  
+     * Return a list of variables suitable for the FlashVars embed param.  
      * @param affiliate most likely the memberId of the player requesting embed code
-     * @vector one of ROOM_VECTOR, GAME_VECTOR, GENERIC_VECTOR
+     * @param placeId id of the room to throw people into (sceneId/gameLobby)
+     * @param inGame true if the flash vars are for a game and placeId is a game lobby whirled
      */
-    public static function makeFlashVars(affiliate :String, vector :String) :String
+    public static function makeFlashVars(affiliate :String, placeId :int, inGame :Boolean) :String
     {
-        return AFFILIATE_ID + "=" + affiliate + "&" + VECTOR_ID + "=" + vector;
+        var vars :String = AFFILIATE_ID + "=" + affiliate;
+        if (inGame) {
+            vars += "&gameLobby=" + placeId + "&" + VECTOR_ID + "=" + GAME_VECTOR + "-" + placeId;
+        } else if (placeId != 0) {
+            vars += "&sceneId=" + placeId + "&" + VECTOR_ID + "=" + ROOM_VECTOR + "-" + placeId;
+        }
+        return vars;
     }
+    
+    /** This vector string represents an embedded room. */
+    protected static const ROOM_VECTOR :String = "room";
+
+    /** This vector string represents an embedded game. */
+    protected static const GAME_VECTOR :String = "game";
 }
 }

@@ -82,20 +82,7 @@ public class ShareDialog extends FloatingPanel
         url = url.replace(/(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
         
         var affiliate :String = _memObj.isGuest() ? "" : String(_memObj.getMemberId());
-        var flashVars :String = "";
-        var vector :String;
-        if (_inGame) {
-            flashVars += "gameLobby=" + _placeId;
-            vector = VisitorInfo.GAME_VECTOR;
-
-        } else if (_placeId != 0) {
-            flashVars += "sceneId=" + _placeId;
-            vector = VisitorInfo.ROOM_VECTOR;
-
-        } else {
-            vector = VisitorInfo.GENERIC_VECTOR;
-        }
-        flashVars += "&" + VisitorInfo.makeFlashVars(affiliate, vector);
+        var flashVars :String = VisitorInfo.makeFlashVars(affiliate, _placeId, _inGame);
 
         if (size == 0) {
             flashVars += "&featuredPlace=true";
