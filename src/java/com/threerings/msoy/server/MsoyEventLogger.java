@@ -21,6 +21,8 @@ import com.threerings.panopticon.client.net.EventLogger;
 import com.threerings.panopticon.client.net.EventLoggerConfig;
 import com.threerings.panopticon.client.net.EventLoggerFactory;
 
+import com.threerings.msoy.money.data.all.Currency;
+
 import static com.threerings.msoy.Log.log;
 
 /**
@@ -97,9 +99,10 @@ public class MsoyEventLogger
                                             deltaFlow, newTotal));
     }
 
-    public void itemPurchased (int memberId, byte itemType, int itemId, int flowCost, int goldCost)
+    public void itemPurchased (
+        int memberId, byte itemType, int itemId, Currency currency, int amountPaid)
     {
-        post(new MsoyEvents.ItemPurchase(memberId, itemType, itemId, flowCost, goldCost));
+        post(new MsoyEvents.ItemPurchase(memberId, itemType, itemId, currency, amountPaid));
     }
 
     public void itemListedInCatalog (int creatorId, byte itemType, int itemId, int flowCost,

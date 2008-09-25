@@ -45,6 +45,8 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.peer.server.GameNodeAction;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 
+import com.threerings.msoy.money.data.all.Currency;
+
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.data.all.Item;
@@ -364,7 +366,7 @@ public class ItemLogic
      *
      * @param record the newly created item clone.
      */
-    public void itemPurchased (ItemRecord record, int coinsPaid, int barsPaid)
+    public void itemPurchased (ItemRecord record, Currency currency, int amountPaid)
     {
         if (record.getType() == Item.AVATAR) {
             MemberNodeActions.avatarUpdated(record.ownerId, record.itemId);
@@ -386,7 +388,7 @@ public class ItemLogic
         }
 
         _eventLog.itemPurchased(
-            record.ownerId, record.getType(), record.itemId, coinsPaid, barsPaid);
+            record.ownerId, record.getType(), record.itemId, currency, amountPaid);
     }
 
     /**

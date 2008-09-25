@@ -72,11 +72,11 @@ public class MoneyLogic
          *
          * @param magicFree indicates that the product was received for free.
          * @param currency the currency used to make the purchase.
-         * @param price the price paid (May be 0 even if !magicFree).
+         * @param amountPaid the price paid (May be 0 even if !magicFree).
          *
          * @return true on success.
          */
-        boolean create (boolean magicFree, Currency currency, int price);
+        boolean create (boolean magicFree, Currency currency, int amountPaid);
     }
 
     @Inject
