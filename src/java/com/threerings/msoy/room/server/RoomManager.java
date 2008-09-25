@@ -547,7 +547,7 @@ public class RoomManager extends SpotSceneManager
         ClientObject caller, final EntityMemoryEntry entry, RoomService.ResultListener listener)
     {
         // TODO: Validate that the client is at least in the same room?
- 
+
 // NOTE: I've disabled the need to be in control to update memory (Ray July 6, 2007)
 //        // if this client does not currently control this entity; ignore the request; if no one
 //        // controls it, this will assign this client as controller
@@ -608,7 +608,7 @@ public class RoomManager extends SpotSceneManager
         if (!WindowClientObject.isForGame(caller, gameId)) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
-        
+
         Tuple<Integer, String> key = new Tuple<Integer, String>(gameId, mobId);
         if (_mobs.containsKey(key)) {
             log.warning(
@@ -634,7 +634,7 @@ public class RoomManager extends SpotSceneManager
         // then enter the place
         _locmgr.moveTo(mobObj, _plobj.getOid());
     }
-    
+
     // from RoomProvider
     public void moveMob (
         ClientObject caller, int gameId, String mobId, Location newLoc, InvocationListener listener)
@@ -653,7 +653,7 @@ public class RoomManager extends SpotSceneManager
             listener.requestFailed(RoomCodes.E_INTERNAL_ERROR);
             return;
         }
-        
+
         changeLocation(mobObj, (MsoyLocation)newLoc);
     }
 
@@ -665,7 +665,7 @@ public class RoomManager extends SpotSceneManager
         if (!WindowClientObject.isForGame(caller, gameId)) {
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
-        
+
         Tuple<Integer, String> key = new Tuple<Integer, String>(gameId, mobId);
 
         final MobObject mobObj = _mobs.get(key);
@@ -747,7 +747,7 @@ public class RoomManager extends SpotSceneManager
     /**
      * Checks to see if an item is being controlled by any client. If not, the calling client is
      * assigned as the item's controller and true is returned. If the item is already being
-     * controlled or is controllable by the calling client, true is returned. Otherwise false is 
+     * controlled or is controllable by the calling client, true is returned. Otherwise false is
      * returned (indicating that another client currently has control of the item or the client
      * is not allowed to control the item).
      */
@@ -758,9 +758,9 @@ public class RoomManager extends SpotSceneManager
             if (who instanceof WindowClientObject) {
                 // Agents may control avatars that are playing their game
                 MemberObject target = (MemberObject)_omgr.getObject(memberOid);
-                if (target.game == null || !target.game.avrGame || 
+                if (target.game == null || !target.game.avrGame ||
                     !WindowClientObject.isForGame(who, target.game.gameId)) {
-                    log.warning("Agent attempting control of non-player avatar", "who", 
+                    log.warning("Agent attempting control of non-player avatar", "who",
                         who.who(), "avatar", item);
                     return false;
                 }
@@ -770,7 +770,7 @@ public class RoomManager extends SpotSceneManager
                 // yes, you may control your own avatar
                 return true;
             }
-            log.warning("Some user is trying to control another's avatar", "who", who.who(), 
+            log.warning("Some user is trying to control another's avatar", "who", who.who(),
                 "avatar", item, "member", memberOid);
             return false;
         }
@@ -872,7 +872,7 @@ public class RoomManager extends SpotSceneManager
                 // log it!
                 _eventLog.roomLeft(
                     member.getMemberId(), model.sceneId, isWhirled,
-                    secondsInRoom, _roomObj.occupants.size(), member.referral.tracker);
+                    secondsInRoom, _roomObj.occupants.size(), member.visitorInfo.id);
             }
         }
 
@@ -1064,7 +1064,7 @@ public class RoomManager extends SpotSceneManager
         if (loc != null) {
             return new SceneLocation(loc, body.getOid());
         }
-        
+
         // if the from portal has a destination location, use that
         if (from instanceof MsoyPortal && ((MsoyPortal)from).dest != null) {
             return new SceneLocation(((MsoyPortal)from).dest, body.getOid());
