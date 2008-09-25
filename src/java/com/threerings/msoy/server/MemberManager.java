@@ -673,8 +673,8 @@ public class MemberManager
         final String from = memObj.username.toString();
         for (final String recip : emails) {
             // this just passes the buck to an executor, so we can call it from the dobj thread
-            _mailer.sendEmail(recip, from, template, "inviter", memObj.memberName,
-                              "name", placeName, "message", message, "link", url);
+            _mailer.sendTemplateEmail(recip, from, template, "inviter", memObj.memberName,
+                                      "name", placeName, "message", message, "link", url);
         }
 
         cl.requestProcessed();

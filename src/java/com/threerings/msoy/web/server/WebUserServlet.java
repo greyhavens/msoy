@@ -261,9 +261,10 @@ public class WebUserServlet extends MsoyServiceServlet
         }
 
         // create and send a forgot password email
-        _mailer.sendEmail(email, ServerConfig.getFromAddress(), "forgotPassword",
-                          "server_url", ServerConfig.getServerURL(), "email", mrec.accountName,
-                          "memberId", mrec.memberId, "code", code);
+        _mailer.sendTemplateEmail(
+            email, ServerConfig.getFromAddress(), "forgotPassword",
+            "server_url", ServerConfig.getServerURL(), "email", mrec.accountName,
+            "memberId", mrec.memberId, "code", code);
     }
 
     // from interface WebUserService

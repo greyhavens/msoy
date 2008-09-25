@@ -225,7 +225,7 @@ public class InviteServlet extends MsoyServiceServlet
         params.set("server_url", ServerConfig.getServerURL());
 
         String from = (inviter == null) ? ServerConfig.getFromAddress() : inviter.accountName;
-        _mailer.sendEmail(email, from, "memberInvite", params);
+        _mailer.sendTemplateEmail(email, from, "memberInvite", params);
 
         // record the invite and that we sent it
         _memberRepo.addInvite(email, inviterId, inviteId);

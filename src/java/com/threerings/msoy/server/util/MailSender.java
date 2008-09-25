@@ -87,38 +87,43 @@ public class MailSender
     }
 
     /**
-     * Delivers an email using the supplied template and parameters which are used to populate a
-     * {@link Parameters} instance.
+     * Delivers an email using the supplied template and parameters.
+     *
+     * @param recip the recipient address.
+     * @param sender the sender address.
+     * @param template the identifier of the template to use for the body of the mail.
+     * @param an alternating list of string, object which are key/value pairs for substitution into
+     * the template.
      */
-    public void sendEmail (String recip, String sender, String template, Object ... params)
-    {
-        Parameters pobj = new Parameters();
-        for (int ii = 0; ii < params.length; ii += 2) {
-            pobj.set((String)params[ii], params[ii+1]);
-        }
-        sendEmail(recip, sender, template, pobj);
-    }
-
-    /**
-     * Delivers an email using the supplied template and context. The first line of the template
-     * should be the subject and the remaining lines the body.
-     */
-    public void sendEmail (String recip, String sender, String template, Parameters params)
+    public void sendTemplateEmail (String recip, String sender, String template, Object ... params)
     {
         // skip emails to placeholder addresses
         if (!isPlaceholderAddress(recip)) {
-            _executor.execute(new MailTask(recip, sender, template, params));
+            Parameters pobj = new Parameters();
+            for (int ii = 0; ii < params.length; ii += 2) {
+                pobj.set((String)params[ii], params[ii+1]);
+            }
+            _executor.execute(new MailTask(recip, sender, template, pobj));
         }
     }
 
     /**
      * Delivers a preformatted email with the supplied subject and body.
+     *
+     * @param recip the address of the recipient.
+     * @param sender the address of the sender.
+     * @param headers optional additional headers to add to the mail { key, value, key, value, ... }.
+     * @param subject the subject of the email.
+     * @param body the body of the email.
+     * @param whether or not the body is an HTML document or plain text.
      */
-    public void sendEmail (String recip, String sender, String subject, String body, boolean isHTML)
+    public void sendEmail (String recip, String sender, String[] headers, String subject,
+                           String body, boolean isHTML)
     {
         // skip emails to placeholder addresses
         if (!isPlaceholderAddress(recip)) {
-            _executor.execute(new PreformattedMailTask(recip, sender, subject, body, isHTML));
+            _executor.execute(new PreformattedMailTask(
+                                  recip, sender, headers, subject, body, isHTML));
         }
     }
 
@@ -218,10 +223,11 @@ public class MailSender
     /** Handles the delivery of an email message which is preformatted. */
     protected static class PreformattedMailTask implements Runnable
     {
-        public PreformattedMailTask (String recip, String sender,
-                                     String subject, String body, boolean isHTML) {
+        public PreformattedMailTask (String recip, String sender, String[] headers, String subject,
+                                     String body, boolean isHTML) {
             _recip = recip;
             _sender = sender;
+            _headers = headers;
             _subject = subject;
             _body = body;
             _isHTML = isHTML;
@@ -231,6 +237,10 @@ public class MailSender
             try {
                 if (_isHTML) {
                     MimeMessage message = MailUtil.createEmptyMessage();
+                    int hcount = (_headers != null) ? _headers.length : 0;
+                    for (int ii = 0; ii < hcount; ii += 2) {
+                        message.addHeader(_headers[ii], _headers[ii+1]);
+                    }
                     message.setContent(_body, "text/html");
                     MailUtil.deliverMail(new String[] { _recip }, _sender, _subject, message);
                 } else {
@@ -244,6 +254,7 @@ public class MailSender
         }
 
         protected String _recip, _sender, _subject, _body;
+        protected String[] _headers;
         protected boolean _isHTML;
     }
 

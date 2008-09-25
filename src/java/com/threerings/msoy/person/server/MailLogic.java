@@ -179,6 +179,9 @@ public class MailLogic
             return;
         }
 
+        // generate a special header for return path
+        String[] headers = makeSpamHeaders(subject);
+
         // loop through 100 members at a time and load up their record and send emails
         final String from = ServerConfig.getFromAddress();
         int found;
@@ -204,7 +207,7 @@ public class MailLogic
                 }
 
                 try {
-                    _mailer.sendEmail(mrec.accountName, from, subject, body, true);
+                    _mailer.sendEmail(mrec.accountName, from, headers, subject, body, true);
                 } catch (final Exception e) {
                     log.warning("Failed to spam member [subject=" + subject +
                                 ", email=" + mrec.accountName + ", error=" + e + "].");
@@ -219,7 +222,7 @@ public class MailLogic
         if (!DeploymentConfig.devDeployment) {
             for (String rpaddr : RETURNPATH_ADDRS) {
                 try {
-                    _mailer.sendEmail(rpaddr, from, subject, body, true);
+                    _mailer.sendEmail(rpaddr, from, headers, subject, body, true);
                 } catch (final Exception e) {
                     log.warning("Failed to spam Returnpath address [subject=" + subject +
                                 ", email=" + rpaddr + ", error=" + e + "].");
@@ -239,7 +242,8 @@ public class MailLogic
         if (body == null) {
             return;
         }
-        _mailer.sendEmail(recip, ServerConfig.getFromAddress(), subject, body, true);
+        _mailer.sendEmail(recip, ServerConfig.getFromAddress(), makeSpamHeaders(subject),
+                          subject, body, true);
     }
 
     /**
@@ -300,6 +304,16 @@ public class MailLogic
     }
 
     /**
+     * Generates the headers needed by Return Path to track our mails.
+     */
+    protected String[] makeSpamHeaders (String subject)
+    {
+        return new String[] {
+            RP_CAMPAIGN_HEADER, RP_CAMPAIGN_PREFIX + subject.toLowerCase().replace(" ", "_"),
+        };
+    }
+
+    /**
      * Send an email to a Whirled mail recipient to report that they received a Whirled mail. Does
      * nothing if the recipient has requested not to receive such mails.
      */
@@ -310,9 +324,10 @@ public class MailLogic
         if (recip.isSet(MemberRecord.Flag.NO_WHIRLED_MAIL_TO_EMAIL)) {
             return;
         }
-        _mailer.sendEmail(recip.accountName, ServerConfig.getFromAddress(), "gotMail",
-                          "subject", subject,"sender", sender.name, "senderId", sender.memberId,
-                          "body", body, "server_url", ServerConfig.getServerURL());
+        _mailer.sendTemplateEmail(
+            recip.accountName, ServerConfig.getFromAddress(), "gotMail",
+            "subject", subject,"sender", sender.name, "senderId", sender.memberId,
+            "body", body, "server_url", ServerConfig.getServerURL());
     }
 
     @Inject protected RootDObjectManager _omgr;
@@ -324,6 +339,9 @@ public class MailLogic
     @Inject protected MemberRepository _memberRepo;
 
     protected static final int MEMBERS_PER_LOOP = 100;
+
+    protected static final String RP_CAMPAIGN_HEADER = "X-campaignid";
+    protected static final String RP_CAMPAIGN_PREFIX = "threeringsdesign_";
 
     /** 982 email accounts that we include in our user spammage so that we can have Returnpath tell
      * us whether or not our mails are getting through. */
