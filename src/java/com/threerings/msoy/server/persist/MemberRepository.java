@@ -25,7 +25,7 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.CacheKey;
-import com.samskivert.jdbc.depot.SchemaMigration;
+import com.samskivert.jdbc.depot.DataMigration;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
@@ -35,6 +35,7 @@ import com.samskivert.jdbc.depot.PersistenceContext.CacheListener;
 import com.samskivert.jdbc.depot.PersistenceContext.CacheTraverser;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.SchemaMigration;
 import com.samskivert.jdbc.depot.SimpleCacheKey;
 import com.samskivert.jdbc.depot.annotation.Computed;
 import com.samskivert.jdbc.depot.annotation.Entity;
@@ -48,12 +49,12 @@ import com.samskivert.jdbc.depot.expression.FunctionExp;
 import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
-import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Conditionals.Equals;
 import com.samskivert.jdbc.depot.operator.Conditionals.FullTextMatch;
 import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThan;
 import com.samskivert.jdbc.depot.operator.Conditionals.GreaterThanEquals;
 import com.samskivert.jdbc.depot.operator.Conditionals.In;
+import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.operator.Logic.Or;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
@@ -101,20 +102,47 @@ public class MemberRepository extends DepotRepository
     {
         super(ctx);
 
+        // add a cache invalidator that listens to single FriendRecord updates
+        _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
+            public void entryInvalidated (final CacheKey key, final FriendRecord friend) {
+                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviterId);
+                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviteeId);
+            }
+            public void entryCached (final CacheKey key, final FriendRecord newEntry,
+                                     final FriendRecord oldEntry) {
+                // nothing to do here
+            }
+            @Override
+            public String toString () {
+                return "FriendRecord -> FriendsCache";
+            }
+        });
+
+        // add a cache invalidator that listens to MemberRecord updates
+        _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
+            public void entryInvalidated (final CacheKey key, final MemberRecord member) {
+                _ctx.cacheInvalidate(MemberNameRecord.getKey(member.memberId));
+            }
+            public void entryCached (final CacheKey key, final MemberRecord newEntry,
+                                     final MemberRecord oldEntry) {
+            }
+            @Override
+            public String toString () {
+                return "MemberRecord -> MemberNameRecord";
+            }
+        });
+
         ctx.registerMigration(MemberRecord.class, new SchemaMigration.Drop(23, "flow"));
         ctx.registerMigration(MemberRecord.class, new SchemaMigration.Drop(23, "accFlow"));
         ctx.registerMigration(MemberRecord.class,
             new SchemaMigration.Rename(23, "invitingFriendId", MemberRecord.AFFILIATE_MEMBER_ID));
         ctx.registerMigration(MemberRecord.class, new SchemaMigration.Drop(25, "blingAffiliate"));
 
-        // Converts existing tracking numbers from the ReferralRecord, or creates new ones
-        // for those members who didn't get their tracking numbers yet.
+        // Convert existing tracking numbers from the ReferralRecord, or creates new ones for those
+        // members who didn't get their tracking numbers yet.
         // TODO: remove ReferralRecord after this migration happened in production.
-        ctx.registerMigration(MemberRecord.class, new SchemaMigration(26) {
-            @Override
-            public int invoke (Connection conn, DatabaseLiaison liaison)
-                throws SQLException
-            {
+        registerMigration(new DataMigration("2008_09_25_referral_to_tracking_id") {
+            @Override public void invoke () throws DatabaseException {
                 int converted = 0, created = 0;
 
                 // first, copy all referral trackers over to member records
@@ -144,67 +172,34 @@ public class MemberRepository extends DepotRepository
                 }
 
                 log.info(String.format("Converted %d old ReferralRecords, created %d new ones",
-                    converted, created));
-                return converted + created;
-            }
-            @Override
-            public boolean runBeforeDefault ()
-            {
-                return false; // run this migration after we've updated MemberRecord
+                                       converted, created));
             }
         });
 
-        // Convert existing fulfilled InvitationRecords into AffiliateRecords
-        ctx.registerMigration(InvitationRecord.class, new SchemaMigration(5) {
-            @Override public int invoke (
-                java.sql.Connection conn, com.samskivert.jdbc.DatabaseLiaison liaison)
-                throws java.sql.SQLException
-            {
+        // convert existing fulfilled InvitationRecords into AffiliateRecords
+        registerMigration(new DataMigration("2008_09_25_invite_to_affiliate") {
+            @Override public void invoke () throws DatabaseException {
                 // find "fulfilled" invitations
                 List<InvitationRecord> invites = findAll(InvitationRecord.class,
                     new Where(new And(
                         new Conditionals.NotEquals(InvitationRecord.INVITER_ID_C, 0),
                         new Conditionals.NotEquals(InvitationRecord.INVITEE_ID_C, 0))));
+
                 // store 'em as affiliate records
+                int converted = 0;
                 for (InvitationRecord rec : invites) {
                     try {
-                        setAffiliate(rec.inviteeId, String.valueOf(rec.inviterId));
+                        AffiliateRecord affrec = load(AffiliateRecord.class, rec.inviteeId);
+                        if (affrec == null) {
+                            setAffiliate(rec.inviteeId, String.valueOf(rec.inviterId));
+                            converted++;
+                        }
                     } catch (DatabaseException de) {
-                        log.warning("Unable to insert affiliate",
-                            "invitee", rec.inviteeId, "inviter", rec.inviterId, de);
+                        log.warning("Unable to insert affiliate", "invitee", rec.inviteeId,
+                                    "inviter", rec.inviterId, de);
                     }
                 }
-                return invites.size();
-            }
-        });
-
-        // add a cache invalidator that listens to single FriendRecord updates
-        _ctx.addCacheListener(FriendRecord.class, new CacheListener<FriendRecord>() {
-            public void entryInvalidated (final CacheKey key, final FriendRecord friend) {
-                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviterId);
-                _ctx.cacheInvalidate(FRIENDS_CACHE_ID, friend.inviteeId);
-            }
-            public void entryCached (final CacheKey key, final FriendRecord newEntry,
-                                     final FriendRecord oldEntry) {
-                // nothing to do here
-            }
-            @Override
-            public String toString () {
-                return "FriendRecord -> FriendsCache";
-            }
-        });
-
-        // add a cache invalidator that listens to MemberRecord updates
-        _ctx.addCacheListener(MemberRecord.class, new CacheListener<MemberRecord>() {
-            public void entryInvalidated (final CacheKey key, final MemberRecord member) {
-                _ctx.cacheInvalidate(MemberNameRecord.getKey(member.memberId));
-            }
-            public void entryCached (final CacheKey key, final MemberRecord newEntry,
-                                     final MemberRecord oldEntry) {
-            }
-            @Override
-            public String toString () {
-                return "MemberRecord -> MemberNameRecord";
+                log.info("Converted " + converted + " affiliates.");
             }
         });
     }
