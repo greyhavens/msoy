@@ -120,6 +120,12 @@ public class LiaisonGameContext
     }
 
     // from GameContext
+    public function showGameInstructions () :void
+    {
+        _wctx.getWorldController().displayPage("games", "d_" + _wctx.getGameDirector().getGameId());
+    }
+
+    // from GameContext
     public function showGameShop (itemType :int, catalogId :int = 0) :void
     {
         _wctx.getWorldController().handleViewGameShop(

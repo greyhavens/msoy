@@ -10,6 +10,7 @@ import mx.containers.VBox;
 import mx.controls.Text;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandLinkButton;
 import com.threerings.flex.FlexUtil;
 import com.threerings.util.Name;
 
@@ -61,7 +62,7 @@ public class LobbySplashPanel extends VBox
         var babBox :VBox = new VBox();
         babBox.percentWidth = 100;
         babBox.percentHeight = 100;
-        babBox.setStyle("verticalGap", 30);
+        babBox.setStyle("verticalGap", 60);
         babBox.setStyle("horizontalAlign", "center");
         babBox.setStyle("verticalAlign", "middle");
         addChild(babBox);
@@ -105,6 +106,12 @@ public class LobbySplashPanel extends VBox
                 babBox.addChild(yaBox);
             }
         }
+
+        // add a link back to this game's instructions
+        var instrLink :CommandLinkButton = new CommandLinkButton(
+            Msgs.GAME.get("m.lsp_instructions"), _gctx.showGameInstructions);
+        instrLink.styleName = "lobbySplashInstructions";
+        addChild(instrLink);
     }
 
     protected var _gctx :GameContext;

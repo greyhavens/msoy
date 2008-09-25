@@ -110,7 +110,7 @@ public class LobbyPanel extends FloatingPanel
         modal :Boolean = false, parent :DisplayObject = null, center :Boolean = false) :void
     {
         x = 20;
-        y = 25;
+        y = 40;
         super.open(modal, parent, center);
     }
 

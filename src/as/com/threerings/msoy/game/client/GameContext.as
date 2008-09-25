@@ -30,6 +30,11 @@ public interface GameContext extends ParlorContext
     function backToWhirled (showLobby :Boolean) :void;
 
     /**
+     * Displays the active game's instructions.
+     */
+    function showGameInstructions () :void;
+
+    /**
      * Requests that we open the appropriate area of the game's shop.
      */
     function showGameShop (itemType :int, catalogId :int = 0) :void;

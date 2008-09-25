@@ -362,18 +362,40 @@ public class LobbyController extends Controller
         }
     }
 
+    /**
+     * Returns the default starting lobby panel mode for our game type and current circumstances.
+     *
+     * @param noCreate true if the caller requires that we not go straight to table creation.
+     */
+    public function getStartMode (noCreate :Boolean = false) :int
+    {
+        // if we are a party game or multiplayer only...
+        if (_lobj.gameDef.match.getMatchType() == GameConfig.PARTY ||
+            (_lobj.gameDef.match.getMinimumPlayers() > 1)) {
+            // either go to the matchmaking panel or right into create if there is nothing to show
+            // on the matchmaking panel
+            return (haveActionableTables() || noCreate) ? MODE_MATCH : MODE_CREATE;
+        } else {
+            // othrewise show the splash page so they can select single or multiplayer
+            return MODE_SPLASH;
+        }
+    }
+
     // from Subscriber
     public function objectAvailable (obj :DObject) :void
     {
         _lobj = obj as LobbyObject;
         _panel.init(_lobj, _mode == LobbyCodes.PLAY_NOW_FRIENDS);
-        _panel.setMode(_lobj.gameDef.match.getMinimumPlayers() <= 1 ? MODE_SPLASH : MODE_MATCH);
 
+        _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
+
+        // create our table director
         _tableDir = new TableDirector(_gctx, LobbyObject.TABLES, MsoyCodes.GAME_MSGS);
         _tableDir.setTableObject(obj);
         _tableDir.addSeatednessObserver(this);
 
-        _mctx.getMsoyClient().setWindowTitle(_lobj.game.name);
+        // set up our starting panel mode
+        _panel.setMode(getStartMode());
 
         // if we have a player table to join, do that now, otherwise
         if (_playerId != 0) {

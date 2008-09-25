@@ -1112,6 +1112,7 @@ BasePanel {
 
 /** Lobby splash panel */
 .lobbySplashPanel {
+  horizontalAlign: center;
   verticalGap: 0;
 }
 
@@ -1123,6 +1124,12 @@ BasePanel {
 .lobbySplashPlaying {
   fontSize: 14px;
   fontWeight: bold;
+}
+
+.lobbySplashInstructions {
+  fontSize: 11px;
+  color: #999999;
+  textDecoration: underline;
 }
 
 .lobbyMatchPanel {

@@ -178,8 +178,7 @@ public class TableCreationPanel extends VBox
         bottomRow.percentWidth = 100;
         bottomRow.setStyle("horizontalAlign", "right");
         bottomRow.addChild(new CommandButton(Msgs.GAME.get("b.cancel"), function () : void {
-            _ctrl.panel.setMode(_ctrl.haveActionableTables() ?
-                LobbyController.MODE_MATCH : LobbyController.MODE_SPLASH);
+            _ctrl.panel.setMode(_ctrl.getStartMode(true));
         }));
         bottomRow.addChild(new CommandButton(Msgs.GAME.get("b.create"),
             createGame, [ tconfigger, gconf ]));
