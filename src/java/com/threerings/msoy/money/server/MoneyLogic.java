@@ -456,23 +456,12 @@ public class MoneyLogic
      */
     public BlingInfo getBlingInfo (int memberId)
     {
-        // Bling is 100x the actual bling value, and since we're returning pennies, blingWorth
-        // (measured in dollars) is 0.01x the value we want.  So it balances out.
-        MemberAccountRecord account = _repo.load(memberId);
-        return new BlingInfo(account.bling, (int)(account.bling * RuntimeConfig.server.blingWorth), 
-            account.cashOutBling, (int)(account.cashOutBlingWorth * account.cashOutBling));
+        return TO_BLING_INFO.apply(_repo.load(memberId));
     }
     
     public List<BlingInfo> getBlingCashOutRequests ()
     {
-        return Lists.transform(_repo.getAccountsCashingOut(), 
-                new Function<MemberAccountRecord, BlingInfo>() {
-            public BlingInfo apply (MemberAccountRecord account) {
-                return new BlingInfo(account.bling, 
-                    (int)(account.bling * RuntimeConfig.server.blingWorth), 
-                    account.cashOutBling, (int)(account.cashOutBlingWorth * account.cashOutBling));
-            }
-        });
+        return Lists.transform(_repo.getAccountsCashingOut(), TO_BLING_INFO);
     }
 
     /**
@@ -642,6 +631,17 @@ public class MoneyLogic
         return "USD $" + NumberFormat.getNumberInstance().format(dollars) + '.' +
             (cents < 10 ? '0' : "") + cents;
     }
+
+    /** A Function that transforms a MemberArroundRecord to BlingInfo. */
+    protected static Function<MemberAccountRecord, BlingInfo> TO_BLING_INFO =
+        new Function<MemberAccountRecord, BlingInfo>() {
+            public BlingInfo apply (MemberAccountRecord account) {
+                return new BlingInfo(account.bling, 
+                    // this works because we're taking centibling and returning pennies
+                    (int)(account.bling * RuntimeConfig.server.blingWorth), 
+                    account.cashOutBling, (int)(account.cashOutBlingWorth * account.cashOutBling));
+            }
+        };
 
     protected final MoneyExchange _exchange;
     protected final MoneyTransactionExpirer _expirer;
