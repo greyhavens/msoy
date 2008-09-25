@@ -361,7 +361,7 @@ public class ForumServlet extends MsoyServiceServlet
         if (fmr == null) {
             throw new ServiceException(ForumCodes.E_INVALID_MESSAGE);
         }
-        if (fmr.posterId != mrec.memberId) {
+        if (!mrec.isSupport() && fmr.posterId != mrec.memberId) {
             throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
         }
 
