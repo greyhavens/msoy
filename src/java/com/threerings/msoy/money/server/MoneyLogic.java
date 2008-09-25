@@ -236,29 +236,41 @@ public class MoneyLogic
             CurrencyAmount creatorPayout = magicFreeItem ? null : computePayout(false, quote);
             CurrencyAmount affiliatePayout = magicFreeItem ? null : computePayout(true, quote);
 
-            MoneyTransactionRecord creatorTx;
+            MoneyTransactionRecord creatorTx = null;
             if (creatorPayout != null) {
-                creatorTx = _repo.accumulateAndStoreTransaction(creatorId,
-                    creatorPayout.currency, creatorPayout.amount,
-                    TransactionType.CREATOR_PAYOUT,
-                    MessageBundle.tcompose("m.item_sold",
-                        itemDescription, item.type, item.catalogId),
-                    item, buyerTx.id, buyerId);
-            } else {
-                creatorTx = null;
+                try {
+                    creatorTx = _repo.accumulateAndStoreTransaction(creatorId,
+                        creatorPayout.currency, creatorPayout.amount,
+                        TransactionType.CREATOR_PAYOUT,
+                        MessageBundle.tcompose("m.item_sold",
+                            itemDescription, item.type, item.catalogId),
+                        item, buyerTx.id, buyerId);
+
+                } catch (MoneyRepository.NoSuchMemberException nsme) {
+                    log.warning("Invalid item creator, payout cancelled.",
+                        "buyer", buyerId, "creator", creatorId,
+                        "item", itemDescription, "catalogIdent", item);
+                    // but, we continue, just having no creatorTx
+                }
             }
 
             // load the buyer's affiliate
             int affiliateId = (DeploymentConfig.barsEnabled) ? buyerRec.affiliateMemberId : 0;
-            MoneyTransactionRecord affiliateTx;
+            MoneyTransactionRecord affiliateTx = null;
             if (affiliateId != 0 && affiliatePayout != null) {
-                affiliateTx = _repo.accumulateAndStoreTransaction(affiliateId,
-                    affiliatePayout.currency, affiliatePayout.amount,
-                    TransactionType.AFFILIATE_PAYOUT,
-                    MessageBundle.tcompose("m.item_affiliate", buyerRec.name, buyerRec.memberId),
-                    item, buyerTx.id, buyerId);
-            } else {
-                affiliateTx = null;
+                try {
+                    affiliateTx = _repo.accumulateAndStoreTransaction(affiliateId,
+                        affiliatePayout.currency, affiliatePayout.amount,
+                        TransactionType.AFFILIATE_PAYOUT,
+                        MessageBundle.tcompose("m.item_affiliate", buyerRec.name, buyerRec.memberId),
+                        item, buyerTx.id, buyerId);
+
+                } catch (MoneyRepository.NoSuchMemberException nsme) {
+                    log.warning("Invalid user affiliate, payout cancelled.",
+                        "buyer", buyerId, "affiliate", affiliateId,
+                        "item", itemDescription, "catalogIdent", item);
+                    // but, we continue, just having no affiliateTx
+                }
             }
 
             // log this!

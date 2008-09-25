@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
 import com.samskivert.jdbc.depot.EntityMigration;
@@ -60,6 +61,17 @@ import static com.threerings.msoy.Log.log;
 @NotThreadSafe
 public class MoneyRepository extends DepotRepository
 {
+    /**
+     * Thrown when accumulate*() or deduct*() are called with an invalid memberId.
+     */
+    public static class NoSuchMemberException extends DatabaseException
+    {
+        public NoSuchMemberException (int memberId)
+        {
+            super("Member does not have a money record (" + memberId + ")");
+        }
+    }
+
     @Inject
     public MoneyRepository (final PersistenceContext ctx,
         /* TODO REMOVE */ final com.threerings.msoy.server.persist.MemberRepository mrepo)
@@ -118,11 +130,11 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
-     * Deduct money from the specified member's money. Return a MoneyTransaction that
-     * is partially filled-out, but will have the amount set to 0 if amount could not be
-     * deducted. It's important that you check this.
-     * If the money is kept
-     * out, the transaction should be committed later by calling storeTransaction.
+     * Deduct money from the specified member's money.
+     * If the user does not have enough money, a NotEnoughMoneyException will be thrown.
+     *
+     * @return a partially filled-out MTR that should later either be passed to
+     * rollbackDeduction() or filled-in and passed to storeTransaction().
      */
     public MoneyTransactionRecord deduct (
         int memberId, Currency currency, int amount, boolean allowFree)
@@ -139,10 +151,13 @@ public class MoneyRepository extends DepotRepository
             new Conditionals.Equals(MemberAccountRecord.MEMBER_ID_C, memberId),
             new Conditionals.GreaterThanEquals(currencyCol, amount)));
 
-        // TODO: be able to get the balance at the same time as the update, pending Depot changes
         int count = updateLiteral(MemberAccountRecord.class, where, key, fieldValues);
-        int balance = load(MemberAccountRecord.class, key).getAmount(currency);
-        // TODO: count may be 0 if the MAR is missing, in which case the load will NPE..
+        // TODO: be able to get the balance at the same time as the update, pending Depot changes
+        MemberAccountRecord mar = load(MemberAccountRecord.class, key);
+        if (mar == null) {
+            throw new NoSuchMemberException(memberId);
+        }
+        int balance = mar.getAmount(currency);
         if (count == 0 && !allowFree) {
             throw new NotEnoughMoneyException(memberId, currency, amount, balance);
         }
@@ -152,11 +167,8 @@ public class MoneyRepository extends DepotRepository
     }
 
     /**
-     * Deduct money from the specified member's money. Return a MoneyTransaction that
-     * is partially filled-out, but will have the amount set to 0 if amount could not be
-     * deducted. It's important that you check this.
-     * If the money is kept
-     * out, the transaction should be committed later by calling storeTransaction.
+     * Deduct money from the specified member's money and immediately store the
+     * transaction.
      */
     public MoneyTransactionRecord deductAndStoreTransaction (
         int memberId, Currency currency, int amount,
@@ -187,7 +199,9 @@ public class MoneyRepository extends DepotRepository
 
         int count = updateLiteral(MemberAccountRecord.class, key, key, fieldValues);
         if (count == 0) {
-            // TODO: do something sensible if no MAR for the user
+            // the accumulate should always work, so if we mod'd 0 rows, it means there's
+            // no member.
+            throw new NoSuchMemberException(memberId);
         }
         // TODO: be able to get the balance at the same time as the update, pending Depot changes
         int balance = load(MemberAccountRecord.class, key).getAmount(currency);
@@ -243,7 +257,8 @@ public class MoneyRepository extends DepotRepository
 
         int count = updateLiteral(MemberAccountRecord.class, key, key, fieldValues);
         if (count == 0) {
-            // TODO: do something sensible if no MAR
+            // This should never happen, because the deduction must have already worked!
+            throw new NoSuchMemberException(deduction.memberId);
         }
     }
 
