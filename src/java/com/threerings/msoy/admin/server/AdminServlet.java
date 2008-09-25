@@ -143,9 +143,8 @@ public class AdminServlet extends MsoyServiceServlet
         throws ServiceException
     {
         final MemberRecord memrec = requireAdmin();
-        log.info("Spamming the players [spammer=" + memrec.who() + ", subject=" + subject +
-                 ", startId=" + startId + ", endId=" + endId + "].");
-        _mailLogic.spamPlayers(subject, body, startId, endId);
+        log.info("Spamming the players [spammer=" + memrec.who() + ", subject=" + subject + "].");
+        _mailLogic.spamPlayers(subject, body);
         return new int[] { 0, 0, 0 }; // TODO: this is all going away
     }
 
