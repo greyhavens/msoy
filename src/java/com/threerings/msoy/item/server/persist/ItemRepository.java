@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -336,6 +337,27 @@ public abstract class ItemRepository<T extends ItemRecord>
         List<T> items = resolveClones(loadAll(getCloneClass(), getCloneIds(itemIds)));
         items.addAll(loadAll(getItemClass(), getOriginalIds(itemIds)));
         return items;
+    }
+
+    /**
+     * Loads the specified items in the specified order. Omits missing items from results.
+     * Similar to ItemLogic.loadItems(), but only for this repository's item type.
+     */
+    public List<T> loadItemsInOrder (Collection<Integer> itemIds)
+    {
+        List<T> items = loadItems(itemIds);
+        Map<Integer, T> idMap = new HashMap<Integer, T>(items.size());
+        for (T item : items) {
+            idMap.put(item.itemId, item);
+        }
+        List<T> result = Lists.newArrayListWithExpectedSize(items.size());
+        for (Integer id : itemIds) {
+            T item = idMap.get(id);
+            if (item != null) {
+                result.add(item);
+            }
+        }
+        return result;
     }
 
     /**
