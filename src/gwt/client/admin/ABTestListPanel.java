@@ -23,7 +23,6 @@ import com.threerings.msoy.web.client.WebMemberServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
-import client.shell.TrackingCookie;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;

@@ -10,7 +10,6 @@ import com.threerings.crowd.server.CrowdClient;
 import com.threerings.msoy.Log;
 import com.threerings.msoy.data.MsoyTokenRing;
 
-import com.threerings.msoy.game.data.MsoyGameCredentials;
 import com.threerings.msoy.game.data.PlayerObject;
 
 /**
@@ -27,8 +26,6 @@ public class MsoyGameClient extends CrowdClient
 
         // configure their access control tokens
         MsoyTokenRing tokens = (MsoyTokenRing) _authdata;
-        MsoyGameCredentials credentials = (MsoyGameCredentials) getCredentials();
-
         _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
 
         Log.log.info("Player session starting", "memberId", _plobj.memberName.getMemberId(),
