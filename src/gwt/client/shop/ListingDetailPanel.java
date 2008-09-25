@@ -31,7 +31,7 @@ import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
 import client.item.DoListItemPopup;
 import client.item.ItemActivator;
-import client.item.RemixableLabel;
+import client.item.RemixButton;
 import client.item.ShopUtil;
 import client.shell.Args;
 import client.shell.DynamicLookup;
@@ -59,9 +59,12 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _models = models;
         _listing = listing;
 
-        if (isRemixable()) {
+        if (!CShop.isGuest() && isRemixable()) {
             _indeets.add(WidgetUtil.makeShim(10, 10));
-            _indeets.add(new RemixableLabel());
+            _indeets.add(new RemixButton(_msgs.listingRemix(),
+                // TODO: Bar me
+                NaviUtil.onRemixCatalogItem(_item.getType(), _item.itemId, _listing.catalogId,
+                    _listing.quote.getCoins(), _listing.quote.getBars())));
         }
 
         _indeets.add(WidgetUtil.makeShim(10, 10));
@@ -77,16 +80,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         PushButton buyListed = MsoyUI.createButton(MsoyUI.SHORT_THICK, _msgs.listingBuy(), null);
         new BuyCallback(buyListed, listedCur);
 
-        // if the item is remixable, also create a remix button
-        if (!CShop.isGuest() && isRemixable()) {
-            PushButton remix = MsoyUI.createButton(MsoyUI.SHORT_THICK, _msgs.listingRemix(),
-                // TODO: Bar me
-                NaviUtil.onRemixCatalogItem(_item.getType(), _item.itemId, _listing.catalogId,
-                                            _listing.quote.getCoins(), _listing.quote.getBars()));
-            _buyPanel.add(MsoyUI.createButtonPair(remix, buyListed));
-        } else {
-            _buyPanel.add(buyListed);
-        }
+        _buyPanel.add(buyListed);
 
         if (DeploymentConfig.barsEnabled) {
             // make a smaller interface for buying in the alternate currency

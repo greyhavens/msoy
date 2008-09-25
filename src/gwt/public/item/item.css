@@ -151,6 +151,20 @@
   vertical-align: top;
 }
 
+.remixButton {
+  background-image: url(/images/item/remix.png);
+  width: 38px;
+  height: 39px;
+}
+
+.remixButton-up-hovering {
+  background-image: url(/images/item/remix_over.png);
+}
+
+.remixButton-down-hovering {
+  background-image: url(/images/item/remix_down.png);
+}
+
 /* ------------------------------------
    NAVIGATION BAR
 -------------------------------------*/

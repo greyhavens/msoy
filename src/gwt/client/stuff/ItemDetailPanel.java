@@ -27,7 +27,7 @@ import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import client.item.BaseItemDetailPanel;
 import client.item.DoListItemPopup;
 import client.item.ItemActivator;
-import client.item.RemixableLabel;
+import client.item.RemixButton;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
@@ -57,6 +57,12 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
 // TODO
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);
+
+        if (isRemixable()) {
+            _indeets.add(WidgetUtil.makeShim(10, 10));
+            _indeets.add(new RemixButton(_msgs.detailRemix(),
+                NaviUtil.onRemixItem(_item.getType(), _item.itemId)));
+        }
 
         // only add owner buttons for owners and support
         if (_item.ownerId == CShell.getMemberId() || CShell.isSupport()) {
@@ -217,14 +223,8 @@ public class ItemDetailPanel extends BaseItemDetailPanel
 
         // if remixable, add a button for that
         if (remixable) {
-            _details.add(WidgetUtil.makeShim(10, 10));
-            _details.add(new RemixableLabel());
             _details.add(WidgetUtil.makeShim(10, 5));
-
             buttons = new RowPanel();
-            buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailRemix(),
-                                            NaviUtil.onRemixItem(_item.getType(), _item.itemId)));
-
             // if it's a remixed clone, add a button for reverting
             if (!original) {
                 boolean mixed = _item.isAttrSet(Item.ATTR_REMIXED_CLONE);
