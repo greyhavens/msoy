@@ -223,10 +223,10 @@ public class MsoyEventLogger
         }
     }
 
-    public void vectorCreated (VisitorInfo info, String vector)
+    public void vectorAssocated (VisitorInfo info, String vector)
     {
         if (info != null && vector != null) {
-            post(new MsoyEvents.VectorCreated(vector, info));
+            post(new MsoyEvents.VectorAssociated(info, vector));
         } else {
             log.warning("Unexpected null VisitorInfo for vector: " + vector);
         }

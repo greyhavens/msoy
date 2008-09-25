@@ -83,6 +83,9 @@ public interface MemberService extends InvocationService
     function trackVisitorInfoCreation (arg1 :Client, arg2 :VisitorInfo) :void;
 
     // from Java interface MemberService
+    function trackVectorAssociation (arg1 :Client, arg2 :VisitorInfo, arg3 :String) :void;
+    
+    // from Java interface MemberService
     function updateAvailability (arg1 :Client, arg2 :int) :void;
 
     // from Java interface MemberService

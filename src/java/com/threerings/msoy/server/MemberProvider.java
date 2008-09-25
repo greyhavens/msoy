@@ -150,4 +150,9 @@ public interface MemberProvider extends InvocationProvider
      */
     void updateStatus (ClientObject caller, String arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
+
+    /**
+     * Handles a {@link MemberService#trackVectorAssociation} request.
+     */
+    void trackVectorAssociation (ClientObject caller, VisitorInfo arg1, String arg2);
 }

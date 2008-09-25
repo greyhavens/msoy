@@ -426,14 +426,14 @@ public class MsoyEvents
         }
     }
 
-    @Event(name="VectorCreated")
-    public static class VectorCreated implements MsoyEvent
+    @Event(name="VectorAssociated")
+    public static class VectorAssociated implements MsoyEvent
     {
         @Index @Field final public Date timestamp;
         @Field final public String vector;
         @Index @Field final public String visitorId;
         
-        public VectorCreated (String vector, VisitorInfo info) 
+        public VectorAssociated (VisitorInfo info, String vector) 
         {
             this.timestamp = new Date();
             this.vector = vector;

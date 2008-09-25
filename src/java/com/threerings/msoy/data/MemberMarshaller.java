@@ -310,4 +310,13 @@ public class MemberMarshaller extends InvocationMarshaller
             arg2, listener3
         });
     }
+
+    /** The method id used to dispatch {@link #trackVectorAssociation} requests. */
+    public static final int TRACK_VECTOR_ASSOCIATION = 25;
+
+    // from interface MemberService
+    public void trackVectorAssociation (Client arg1, VisitorInfo arg2, String arg3)
+    {
+        sendRequest(arg1, TRACK_VECTOR_ASSOCIATION, new Object[] { arg2, arg3 });
+    }
 }

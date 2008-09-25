@@ -283,9 +283,8 @@ public /*abstract*/ class MsoyClient extends CrowdClient
             var params :Object = MsoyParameters.get();
             var vector :String = params[VisitorInfo.VECTOR_ID];
             if (vector != null && vector.length > 0) {
-                // TODO finish implementation
-                //var msvc :MemberService = requireService(MemberService) as MemberService;
-                //msvc.vectorCreated(this, vector, member.visitorInfo);
+                var msvc :MemberService = requireService(MemberService) as MemberService;
+                msvc.trackVectorAssociation(this, member.visitorInfo, vector);
             }
         }
 

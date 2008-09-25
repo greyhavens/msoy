@@ -660,6 +660,13 @@ public class MemberManager
     }
 
     // from interface MemberProvider
+    public void trackVectorAssociation (final ClientObject caller, final VisitorInfo info, 
+        final String vector)
+    {
+        _eventLog.vectorAssocated(info, vector);
+    }
+
+    // from interface MemberProvider
     public void emailShare (ClientObject caller, boolean isGame, String placeName, int placeId,
                             String[] emails, String message, InvocationService.ConfirmListener cl)
     {

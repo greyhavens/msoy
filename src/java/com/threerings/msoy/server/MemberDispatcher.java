@@ -180,6 +180,12 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
+        case MemberMarshaller.TRACK_VECTOR_ASSOCIATION:
+            ((MemberProvider)provider).trackVectorAssociation(
+                source, (VisitorInfo)args[0], (String)args[1]
+            );
+            return;
+
         default:
             super.dispatchRequest(source, methodId, args);
             return;

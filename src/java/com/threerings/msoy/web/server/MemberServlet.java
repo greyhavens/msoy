@@ -195,7 +195,7 @@ public class MemberServlet extends MsoyServiceServlet
     public void trackVectorAssociation (VisitorInfo info, String vector)
         throws ServiceException
     {
-        _eventLog.vectorCreated(info, vector);
+        _eventLog.vectorAssocated(info, vector);
     }
 
     // our dependencies

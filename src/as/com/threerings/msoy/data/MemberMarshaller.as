@@ -324,5 +324,16 @@ public class MemberMarshaller extends InvocationMarshaller
             arg2, listener3
         ]);
     }
+
+    /** The method id used to dispatch <code>trackVectorAssociation</code> requests. */
+    public static const TRACK_VECTOR_ASSOCIATION :int = 25;
+
+    // from interface MemberService
+    public function trackVectorAssociation (arg1 :Client, arg2 :VisitorInfo, arg3 :String) :void
+    {
+        sendRequest(arg1, TRACK_VECTOR_ASSOCIATION, [
+            arg2, arg3
+        ]);
+    }
 }
 }
