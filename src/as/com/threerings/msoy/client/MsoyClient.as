@@ -79,8 +79,18 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         _featuredPlaceView = UberClient.isFeaturedPlaceView();
         super(null);
         _stage = stage;
-
         setVersion(DeploymentConfig.version);
+        
+        // wire up our JavaScript bridge functions
+        try {
+            if (ExternalInterface.available) {
+                configureExternalFunctions();
+            }
+        } catch (err :Error) {
+            // nada: ExternalInterface isn't there. Oh well!
+            log.info("Unable to configure external functions.");
+        }
+
         _creds = createStartupCreds(null);
 
         if (_featuredPlaceView) {
@@ -93,15 +103,6 @@ public /*abstract*/ class MsoyClient extends CrowdClient
         _ctx = createContext();
         LoggingTargets.configureLogging(_ctx);
 
-        // wire up our JavaScript bridge functions
-        try {
-            if (ExternalInterface.available) {
-                configureExternalFunctions();
-            }
-        } catch (err :Error) {
-            // nada: ExternalInterface isn't there. Oh well!
-            log.info("Unable to configure external functions.");
-        }
         dispatchEvent(new ValueEvent(EMBEDDED_STATE_KNOWN, _embedded));
 
         // allow connecting the media server if it differs from the game server
