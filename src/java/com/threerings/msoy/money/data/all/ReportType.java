@@ -11,9 +11,9 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 public enum ReportType
     implements IsSerializable
 {
-    COINS(1, null, Currency.COINS, Currency.COINS.getSmallIcon()),
-    BARS(2, null, Currency.BARS, Currency.BARS.getSmallIcon()),
-    BLING(3, null, Currency.BLING, Currency.BLING.getSmallIcon()),
+    COINS(1, null, Currency.COINS, Currency.COINS.getLargeIcon()),
+    BARS(2, null, Currency.BARS, Currency.BARS.getLargeIcon()),
+    BLING(3, null, Currency.BLING, Currency.BLING.getLargeIcon()),
     CREATOR(4, EnumSet.of(TransactionType.CREATOR_PAYOUT), null, "/images/profile/browseitems.png"),
     ;
 
