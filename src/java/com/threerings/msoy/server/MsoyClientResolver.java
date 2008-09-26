@@ -184,6 +184,8 @@ public class MsoyClientResolver extends CrowdClientResolver
             }
         }
 
+        // for players, resolve this here from the database.
+        // guests will get resolution later on, in MsoyClient.sessionWillStart()
         memobj.visitorInfo = new VisitorInfo(member.visitorId, true);
     }
 
