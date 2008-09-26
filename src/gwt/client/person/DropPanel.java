@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
+import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.allen_sauer.gwt.dnd.client.drop.FlowPanelDropController;
 import com.allen_sauer.gwt.dnd.client.util.LocationWidgetComparator;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -34,6 +35,19 @@ public abstract class DropPanel<T> extends FlowPanel
             @Override protected LocationWidgetComparator getLocationWidgetComparator() {
               return LocationWidgetComparator.RIGHT_HALF_COMPARATOR;
             }
+            @Override public void onPreviewDrop(DragContext context) throws VetoDragException {
+                super.onPreviewDrop(context);
+                // this is an eensy bit of a hack to not absorb the dropped widget, but rather
+                // get the data from it, and then send it back to where it came from (by throwing
+                // the veto).
+                if (!_capturing) {
+                    PayloadWidget<T> widget = getPayloadWidget(context.draggable);
+                    if (widget != null && widget.getSource() != DropPanel.this) {
+                        _dragController.dragEnd();
+                        throw new VetoDragException();
+                    }
+                }
+            }
         };
         _dragController.registerDropController(_dropController);
 
@@ -51,6 +65,9 @@ public abstract class DropPanel<T> extends FlowPanel
         return payloadWidget;
     }
 
+    /**
+     * Simply adds the given widget to the end of this FlowPanel.
+     */
     @Override
     public void add(Widget widget)
     {
@@ -58,6 +75,10 @@ public abstract class DropPanel<T> extends FlowPanel
         checkForDuplicates(widget);
     }
 
+    /**
+     * Adds the given widget to this panel at the given index. If the widget is a PayloadWidget, its
+     * contents are inserted into the model at the index as well.
+     */
     @Override
     public void insert(Widget widget, int beforeIndex)
     {
@@ -89,6 +110,22 @@ public abstract class DropPanel<T> extends FlowPanel
             _contentToWidget.remove(payload);
         }
         return super.remove(widget);
+    }
+
+
+    public boolean isCapturing ()
+    {
+        return _capturing;
+    }
+
+    /**
+     * This should be set to true if this panel should capture dropped widgets, removing them from
+     * their source panel, or false if we should reject the dropped widgets, sending them back to
+     * where they came from.
+     */
+    public void setCapturing (boolean capturing)
+    {
+        _capturing = capturing;
     }
 
     /**
@@ -145,7 +182,7 @@ public abstract class DropPanel<T> extends FlowPanel
 
     /**
      * Creates the widget used to display the given content. This will get added to a PayloadWidget
-     * to be dragged around.
+     * to be dragged about.
      */
     protected abstract Widget createWidget (T content);
 
@@ -153,4 +190,11 @@ public abstract class DropPanel<T> extends FlowPanel
     protected FlowPanelDropController _dropController;
     protected PickupDragController _dragController;
     protected Map<T, Widget> _contentToWidget;
+
+    /**
+     * This indicates whether this panel should capture dropped widgets, removing them from their
+     * source panel or whether we should reject the dropped widgets, sending them back where they
+     * came from.
+     */
+    protected boolean _capturing;
 }
