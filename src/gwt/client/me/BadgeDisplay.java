@@ -56,23 +56,11 @@ class BadgeDisplay extends FlowPanel
         }
         add(MsoyUI.createLabel(badgeName, "StampName"));
 
-        String badgeDesc = null;
-        try {
-            // first look for a specific message for this level
-            badgeDesc = _dmsgs.xlate("badgeDesc" + badge.level + "_" + hexCode);
-        } catch (MissingResourceException mre) {
-            // No big deal, we'll check for the dynamic version next
-        }
-
-        if (badgeDesc == null) {
-            try {
-                badgeDesc =
-                    _dmsgs.xlate("badgeDescN_" + hexCode).replace("{0}", badge.levelUnits);
-            } catch (MissingResourceException mre) {
-                // again, this is a testing failure case - never let a badge make it to production
-                // with this in the description field.
-                badgeDesc = "MISSING DESCRIPTION [" + hexCode + "]";
-            }
+        // first look for a specific message for this level
+        String badgeDesc = _dmsgs.xlate("badgeDesc" + badge.level + "_" + hexCode);
+        // TODO: unhack this by adding contains() to MessagesLookup
+        if (badgeDesc.startsWith("Invalid key")) {
+            badgeDesc = _dmsgs.get("badgeDescN_" + hexCode, badge.levelUnits);
         }
         add(MsoyUI.createHTML(badgeDesc, "StampDescription"));
     }
