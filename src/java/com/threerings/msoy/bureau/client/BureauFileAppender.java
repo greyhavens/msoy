@@ -6,6 +6,8 @@ import java.util.HashSet;
 
 import com.google.common.collect.Sets;
 
+import com.samskivert.util.StringUtil;
+
 import com.threerings.util.ErrorDatabase;
 import com.threerings.util.OOOFileAppender;
 
@@ -41,6 +43,14 @@ public class BureauFileAppender extends OOOFileAppender
                 nowStamp, summary);
         }
 
+        // Prepend header
+        if (summary.length() > 0) {
+            StringBuffer header = new StringBuffer("Bureaus: ");
+            header.append(StringUtil.join(overallFormat.bureaus.toArray()));
+            header.append("\n\n");
+            summary.insert(0, header);
+        }
+        
         // Send the email
         sendSummary(summary.toString());
 
