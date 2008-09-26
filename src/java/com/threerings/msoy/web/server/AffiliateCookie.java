@@ -26,14 +26,8 @@ public class AffiliateCookie
      */
     public static String get (HttpServletRequest req)
     {
-        String cook = CookieUtil.getCookieValue(req, NAME);
-        if (cook != null) {
-            cook = StringUtil.unhexlate(cook); // unhexlate may return null if cookie is malformed
-            if (cook != null) {
-                cook = TrackingCookieUtil.decode(cook);
-            }
-        }
-        return cook;
+        return TrackingCookieUtil.decode(
+            StringUtil.unhexlate(CookieUtil.getCookieValue(req, NAME)));
     }
 
     /**

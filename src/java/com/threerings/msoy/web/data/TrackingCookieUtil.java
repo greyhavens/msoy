@@ -36,6 +36,9 @@ public class TrackingCookieUtil
     /** Trivially simple ASCII decoder. */
     public static String decode (byte[] bytes)
     {
+        if (bytes == null) {
+            return null;
+        }
         int total = 0;
         StringBuilder sb = new StringBuilder();
 

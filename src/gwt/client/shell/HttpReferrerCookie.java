@@ -33,19 +33,10 @@ public class HttpReferrerCookie
      */
     public static String get ()
     {
-        String raw = CookieUtil.get(NAME);
-        if (raw == null) {
-            return null;
+        String ref = TrackingCookieUtil.decode(StringUtil.unhexlate(CookieUtil.get(NAME)));
+        if (ref != null) {
+            CShell.log("Loaded referrer: " + ref);
         }
-
-        byte[] data = StringUtil.unhexlate(raw);
-        if (data == null) {
-            CShell.log("Dropping malformed referrer " + raw + ".");
-            return null;
-        }
-
-        String ref = TrackingCookieUtil.decode(data);
-        CShell.log("Loaded referrer: " + ref);
         return ref;
     }
 
