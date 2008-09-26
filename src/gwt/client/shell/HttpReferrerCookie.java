@@ -38,7 +38,13 @@ public class HttpReferrerCookie
             return null;
         }
 
-        String ref = TrackingCookieUtil.decode(StringUtil.unhexlate(raw));
+        byte[] data = StringUtil.unhexlate(raw);
+        if (data == null) {
+            CShell.log("Dropping malformed referrer " + raw + ".");
+            return null;
+        }
+
+        String ref = TrackingCookieUtil.decode(data);
         CShell.log("Loaded referrer: " + ref);
         return ref;
     }
