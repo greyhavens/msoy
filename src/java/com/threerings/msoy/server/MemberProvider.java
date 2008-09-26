@@ -50,8 +50,7 @@ public interface MemberProvider extends InvocationProvider
     /**
      * Handles a {@link MemberService#getABTestGroup} request.
      */
-    void getABTestGroup (ClientObject caller, String arg1, boolean arg2,
-        InvocationService.ResultListener arg3)
+    void getABTestGroup (ClientObject caller, String arg1, boolean arg2, InvocationService.ResultListener arg3)
         throws InvocationException;
 
     /**
@@ -136,9 +135,9 @@ public interface MemberProvider extends InvocationProvider
     void trackTestAction (ClientObject caller, String arg1, String arg2);
 
     /**
-     * Handles a {@link MemberService#trackVisitorInfoCreation} request.
+     * Handles a {@link MemberService#trackVectorAssociation} request.
      */
-    void trackVisitorInfoCreation (ClientObject caller);
+    void trackVectorAssociation (ClientObject caller, String arg1);
 
     /**
      * Handles a {@link MemberService#updateAvailability} request.
@@ -150,9 +149,4 @@ public interface MemberProvider extends InvocationProvider
      */
     void updateStatus (ClientObject caller, String arg1, InvocationService.InvocationListener arg2)
         throws InvocationException;
-
-    /**
-     * Handles a {@link MemberService#trackVectorAssociation} request.
-     */
-    void trackVectorAssociation (ClientObject caller, String arg1);
 }

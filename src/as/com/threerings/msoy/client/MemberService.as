@@ -34,7 +34,7 @@ public interface MemberService extends InvocationService
     function followMember (arg1 :Client, arg2 :int, arg3 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function getABTestGroup (arg1 :Client, arg3 :String, arg4 :Boolean, arg5 :InvocationService_ResultListener) :void;
+    function getABTestGroup (arg1 :Client, arg2 :String, arg3 :Boolean, arg4 :InvocationService_ResultListener) :void;
 
     // from Java interface MemberService
     function getCurrentMemberLocation (arg1 :Client, arg2 :int, arg3 :InvocationService_ResultListener) :void;
@@ -73,17 +73,14 @@ public interface MemberService extends InvocationService
     function setHomeSceneId (arg1 :Client, arg2 :int, arg3 :int, arg4 :int, arg5 :InvocationService_ConfirmListener) :void;
 
     // from Java interface MemberService
-    function trackClientAction (arg1 :Client, arg3 :String, arg4 :String) :void;
+    function trackClientAction (arg1 :Client, arg2 :String, arg3 :String) :void;
 
     // from Java interface MemberService
-    function trackTestAction (arg1 :Client, arg3 :String, arg4 :String) :void;
+    function trackTestAction (arg1 :Client, arg2 :String, arg3 :String) :void;
 
     // from Java interface MemberService
-    function trackVisitorInfoCreation (arg1 :Client) :void;
+    function trackVectorAssociation (arg1 :Client, arg2 :String) :void;
 
-    // from Java interface MemberService
-    function trackVectorAssociation (arg1 :Client, arg3 :String) :void;
-    
     // from Java interface MemberService
     function updateAvailability (arg1 :Client, arg2 :int) :void;
 

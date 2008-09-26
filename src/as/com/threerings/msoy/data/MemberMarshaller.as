@@ -289,14 +289,14 @@ public class MemberMarshaller extends InvocationMarshaller
         ]);
     }
 
-    /** The method id used to dispatch <code>trackVisitorInfoCreation</code> requests. */
-    public static const TRACK_VISITOR_INFO_CREATION :int = 22;
+    /** The method id used to dispatch <code>trackVectorAssociation</code> requests. */
+    public static const TRACK_VECTOR_ASSOCIATION :int = 22;
 
     // from interface MemberService
-    public function trackVisitorInfoCreation (arg1 :Client) :void
+    public function trackVectorAssociation (arg1 :Client, arg2 :String) :void
     {
-        sendRequest(arg1, TRACK_VISITOR_INFO_CREATION, [
-            
+        sendRequest(arg1, TRACK_VECTOR_ASSOCIATION, [
+            arg2
         ]);
     }
 
@@ -321,17 +321,6 @@ public class MemberMarshaller extends InvocationMarshaller
         listener3.listener = arg3;
         sendRequest(arg1, UPDATE_STATUS, [
             arg2, listener3
-        ]);
-    }
-
-    /** The method id used to dispatch <code>trackVectorAssociation</code> requests. */
-    public static const TRACK_VECTOR_ASSOCIATION :int = 25;
-
-    // from interface MemberService
-    public function trackVectorAssociation (arg1 :Client, arg2 :String) :void
-    {
-        sendRequest(arg1, TRACK_VECTOR_ASSOCIATION, [
-            arg2
         ]);
     }
 }

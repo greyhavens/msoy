@@ -3,8 +3,6 @@
 
 package com.threerings.msoy.client;
 
-import com.threerings.msoy.data.all.VisitorInfo;
-
 import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
@@ -106,11 +104,6 @@ public interface MemberService extends InvocationService
     void updateStatus (Client client, String status, InvocationListener listener);
 
     /**
-     * Tracks the creation of a new tracking info structure, for a new visitor.
-     */
-    void trackVisitorInfoCreation (Client client, VisitorInfo info);
-
-    /**
      * Shares a scene by emailing offsite friends.
      */
     void emailShare (Client client, boolean isGame, String placeName, int placeId,
@@ -120,19 +113,18 @@ public interface MemberService extends InvocationService
      * Calculate the visitor's a/b test group (eg 1 or 2) or < 0 for no group.
      */
     void getABTestGroup (
-        Client client, VisitorInfo info, String testName, boolean logEvent,
-        ResultListener listener);
+        Client client, String testName, boolean logEvent, ResultListener listener);
 
     /**
      * Generic method for tracking a client-side action such as clicking a button.
      */
-    void trackClientAction (Client client, VisitorInfo info, String actionName, String details);
+    void trackClientAction (Client client, String actionName, String details);
 
     /**
      * Tracking a client-side action such as clicking a button during an a/b test.  If testName
      * is supplied, the visitor's a/b test group will also be tracked.
      */
-    void trackTestAction (Client client, VisitorInfo info, String actionName, String testName);
+    void trackTestAction (Client client, String actionName, String testName);
 
     /**
      * Requests that the server enumerate and send to the client all EarnedBadges possible, for
@@ -144,4 +136,9 @@ public interface MemberService extends InvocationService
      * Requests that any notifications that were deferred on the MemberObject be dispatched now
      */
     void dispatchDeferredNotifications (Client client);
+
+    /**
+     * Requests that any notifications that were deferred on the MemberObject be dispatched now
+     */
+    void trackVectorAssociation (Client client, String vector);
 }

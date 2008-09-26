@@ -73,8 +73,7 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
 
         case MemberMarshaller.GET_ABTEST_GROUP:
             ((MemberProvider)provider).getABTestGroup(
-                source, (String)args[0],
-                ((Boolean)args[1]).booleanValue(), (InvocationService.ResultListener)args[2]
+                source, (String)args[0], ((Boolean)args[1]).booleanValue(), (InvocationService.ResultListener)args[2]
             );
             return;
 
@@ -162,9 +161,9 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
             );
             return;
 
-        case MemberMarshaller.TRACK_VISITOR_INFO_CREATION:
-            ((MemberProvider)provider).trackVisitorInfoCreation(
-                source
+        case MemberMarshaller.TRACK_VECTOR_ASSOCIATION:
+            ((MemberProvider)provider).trackVectorAssociation(
+                source, (String)args[0]
             );
             return;
 
@@ -177,12 +176,6 @@ public class MemberDispatcher extends InvocationDispatcher<MemberMarshaller>
         case MemberMarshaller.UPDATE_STATUS:
             ((MemberProvider)provider).updateStatus(
                 source, (String)args[0], (InvocationService.InvocationListener)args[1]
-            );
-            return;
-
-        case MemberMarshaller.TRACK_VECTOR_ASSOCIATION:
-            ((MemberProvider)provider).trackVectorAssociation(
-                source, (String)args[0]
             );
             return;
 
