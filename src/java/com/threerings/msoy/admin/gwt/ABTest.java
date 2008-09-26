@@ -27,15 +27,6 @@ public class ABTest implements IsSerializable
     /** Only add visitors to a/b groups if this is their first time on whirled */
     public boolean onlyNewVisitors;
 
-    /** Only add visitors to a/b groups if they come from this affiliate */
-    public String affiliate;
-
-    /** Only add visitors to a/b groups if they come from this vector */
-    public String vector;
-
-    /** Only add visitors to a/b groups if they come from this creative */
-    public String creative;
-
     /** Is this test being run on the site right now? */
     public boolean enabled;
 

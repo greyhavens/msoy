@@ -61,27 +61,6 @@ public class ABTestRecord extends PersistentRecord
     public static final ColumnExp ONLY_NEW_VISITORS_C =
         new ColumnExp(ABTestRecord.class, ONLY_NEW_VISITORS);
 
-    /** The column identifier for the {@link #affiliate} field. */
-    public static final String AFFILIATE = "affiliate";
-
-    /** The qualified column identifier for the {@link #affiliate} field. */
-    public static final ColumnExp AFFILIATE_C =
-        new ColumnExp(ABTestRecord.class, AFFILIATE);
-
-    /** The column identifier for the {@link #vector} field. */
-    public static final String VECTOR = "vector";
-
-    /** The qualified column identifier for the {@link #vector} field. */
-    public static final ColumnExp VECTOR_C =
-        new ColumnExp(ABTestRecord.class, VECTOR);
-
-    /** The column identifier for the {@link #creative} field. */
-    public static final String CREATIVE = "creative";
-
-    /** The qualified column identifier for the {@link #creative} field. */
-    public static final ColumnExp CREATIVE_C =
-        new ColumnExp(ABTestRecord.class, CREATIVE);
-
     /** The column identifier for the {@link #enabled} field. */
     public static final String ENABLED = "enabled";
 
@@ -125,18 +104,6 @@ public class ABTestRecord extends PersistentRecord
     /** Only add visitors to a/b groups if this is their first time on whirled */
     public boolean onlyNewVisitors;
 
-    /** Only add visitors to a/b groups if they come from this affiliate */
-    @Column(length=ABTest.MAX_AFFILIATE_LENGTH, nullable=true)
-    public String affiliate;
-
-    /** Only add visitors to a/b groups if they come from this vector */
-    @Column(length=ABTest.MAX_VECTOR_LENGTH, nullable=true)
-    public String vector;
-
-    /** Only add visitors to a/b groups if they come from this creative */
-    @Column(length=ABTest.MAX_CREATIVE_LENGTH, nullable=true)
-    public String creative;
-
     /** Is this test being run on the site right now? */
     public boolean enabled;
 
@@ -150,7 +117,7 @@ public class ABTestRecord extends PersistentRecord
 
     /** Increment this value if you modify the definition of this persistent object in a way that
      * will result in a change to its SQL counterpart. */
-    public static final int SCHEMA_VERSION = 3;
+    public static final int SCHEMA_VERSION = 4;
 
     /**
      * Build a POJO version of this Record, for use outside the persistence system.
@@ -163,9 +130,6 @@ public class ABTestRecord extends PersistentRecord
         test.description = description;
         test.numGroups = numGroups;
         test.onlyNewVisitors = onlyNewVisitors;
-        test.affiliate = affiliate;
-        test.vector = vector;
-        test.creative = creative;
         test.started = (started != null) ? new Date(started.getTime()) : null;
         test.ended = (ended != null) ? new Date(ended.getTime()) : null;
         test.enabled = enabled;
@@ -183,9 +147,6 @@ public class ABTestRecord extends PersistentRecord
         description = test.description;
         numGroups = test.numGroups;
         onlyNewVisitors = test.onlyNewVisitors;
-        affiliate = test.affiliate;
-        vector = test.vector;
-        creative = test.creative;
         started = (test.started != null) ? new Timestamp(test.started.getTime()) : null;
         ended = (test.ended != null) ? new Timestamp(test.ended.getTime()) : null;
         enabled = test.enabled;

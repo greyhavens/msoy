@@ -189,18 +189,6 @@ public class MemberLogic
         if (test.onlyNewVisitors == true && test.started.after(info.getCreationTime())) {
             return false;
         }
-        /*
-         * // wrong affiliate if (test.affiliate != null && test.affiliate.length() > 0 &&
-         * (info.affiliate == null || !info.affiliate.trim().equals(test.affiliate))) { return
-         * false; }
-         *
-         * // wrong vector if (test.vector != null && test.vector.length() > 0 && (info.vector ==
-         * null || !info.vector.trim().equals(test.vector))) { return false; }
-         *
-         * // wrong creative if (test.creative != null && test.creative.length() > 0 &&
-         * (info.creative == null || !info.creative.trim().equals(test.creative))) { return false;
-         * }
-         */
         return true;
     }
 

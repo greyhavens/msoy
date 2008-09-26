@@ -127,36 +127,6 @@ public class ABTestEditorDialog extends BorderedDialog
             }
         });
 
-        final TextBox affiliate = new TextBox();
-        contents.add(new FormElement(_msgs.abTestAffiliateLabel(), affiliate));
-        affiliate.setMaxLength(ABTest.MAX_AFFILIATE_LENGTH);
-        affiliate.setText(_test.affiliate);
-        affiliate.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                _test.affiliate = affiliate.getText().trim();
-            }
-        });
-
-        final TextBox vector = new TextBox();
-        contents.add(new FormElement(_msgs.abTestVectorLabel(), vector));
-        vector.setMaxLength(ABTest.MAX_VECTOR_LENGTH);
-        vector.setText(_test.vector);
-        vector.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                _test.vector = vector.getText().trim();
-            }
-        });
-
-        final TextBox creative = new TextBox();
-        contents.add(new FormElement(_msgs.abTestCreativeLabel(), creative));
-        creative.setMaxLength(ABTest.MAX_CREATIVE_LENGTH);
-        creative.setText(_test.creative);
-        creative.addChangeListener(new ChangeListener() {
-            public void onChange (Widget sender) {
-                _test.creative = creative.getText().trim();
-            }
-        });
-
         Button submit = MsoyUI.createCrUpdateButton(_isNewTest, new ClickListener() {
             public void onClick (Widget widget) {
                 commitEdit();
