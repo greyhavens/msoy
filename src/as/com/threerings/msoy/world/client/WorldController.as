@@ -772,19 +772,9 @@ public class WorldController extends MsoyController
             const tracking :String = _wctx.getMemberObject().visitorInfo.getTrackingArgs();
             const pageToken :String = StringUtil.isBlank(page) ? tracking
                                                                : (page + "-" + args + tracking);
-
-            var fullURL :String = DeploymentConfig.serverURL;
-            const params :Object = MsoyParameters.get();
-            const affiliate :String = StringUtil.trim(StringUtil.deNull(params["aff"]));
-            if (!StringUtil.isBlank(affiliate)) {
-                fullURL += "welcome/" + encodeURIComponent(affiliate) +
-                    "/" + encodeURIComponent(pageToken);
-            } else {
-                fullURL += "#" + pageToken;
-            }
-
-            log.info("Showing external URL " + fullURL);
-            return super.showExternalURL(fullURL, false);
+            const url :String = createPageLink(pageToken, true);
+            log.info("Showing external URL " + url);
+            return super.showExternalURL(url, false);
         }
     }
 

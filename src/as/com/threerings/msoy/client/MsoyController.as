@@ -196,6 +196,32 @@ public class MsoyController extends Controller
     }
 
     /**
+     * Create a link to a page at www.whirled.com, either for us or to share, with the
+     * appropriate affiliate information tacked-on, if necessary.
+     */
+    public function createPageLink (page :String, forUs :Boolean) :String
+    {
+        const memName :MemberName = _mctx.getMyName();
+        const isGuest :Boolean = memName.isGuest();
+        var affiliate :String = null;
+        if (forUs && isGuest) {
+            affiliate = MsoyParameters.get()["aff"] as String;
+
+        } else if (!forUs && !isGuest) {
+            affiliate = String(memName.getMemberId());
+        }
+        var url :String = DeploymentConfig.serverURL;
+        url = url.replace(/(http:\/\/[^\/]*).*/, "$1/"); // TODO: remove?
+        if (StringUtil.isBlank(affiliate)) {
+            return url + "#" + page; // just a straight page visit
+
+        } else {
+            // TODO: uri encoding needed?
+            return url + "welcome/" + StringUtil.trim(affiliate) + "/" + page;
+        }
+    }
+
+    /**
      * Returns an array containing [ isGame, name, id ] for either our current room or our current
      * game.
      */

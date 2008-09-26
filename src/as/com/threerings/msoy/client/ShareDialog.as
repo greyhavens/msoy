@@ -141,21 +141,13 @@ public class ShareDialog extends FloatingPanel
         var box :VBox = createContainer("t.grab_link");
         box.addChild(FlexUtil.createLabel(Msgs.GENERAL.get("l.link_instruction")));
 
-        var url :String = DeploymentConfig.serverURL;
-        url = url.replace(/(http:\/\/[^\/]*).*/, "$1/");
         var page :String;
         if (_inGame) {
             page = "world-game_l_" + _placeId;
         } else if (_placeId != 0) {
             page = "world-s" + _placeId;
         }
-        const memName :MemberName = _ctx.getMyName();
-        if (memName.isGuest()) {
-            url += "#" + page;
-        } else {
-            url += "welcome/" + memName.getMemberId() + "/" + encodeURIComponent(page);
-        }
-
+        const url :String = _ctx.getMsoyController().createPageLink(page, false);
         box.addChild(new CopyableText(url));
         return box;
     }
