@@ -81,7 +81,7 @@ public class StatusPanel extends SmartTable
         FlashEvents.addListener(new NameChangeListener() {
             public void nameChanged (NameChangeEvent event) {
                 _creds.name = new MemberName(event.getName(), _creds.name.getMemberId());
-                setText(0, 0, event.getName());
+                setWidget(0, 0, Link.memberView(_creds.name));
             }
         });
     }
@@ -102,7 +102,7 @@ public class StatusPanel extends SmartTable
 
         // configure our levels
         int idx = 0;
-        setText(0, idx++, _creds.name.toString());
+        setWidget(0, idx++, Link.memberView(_creds.name));
         setWidget(0, idx++, _levels);
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.FLOW, data.flow, 0));
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.GOLD, data.gold, 0));
@@ -166,23 +166,22 @@ public class StatusPanel extends SmartTable
 
             int idx = 0;
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
+            ClickListener onClick = DeploymentConfig.barsEnabled ?
+                NaviUtil.onViewTransactions(ReportType.COINS) : null;
             setWidget(0, idx++, MsoyUI.createActionImage(Currency.COINS.getLargeIcon(),
-                _cmsgs.coinsTip(), DeploymentConfig.barsEnabled ?
-                    NaviUtil.onViewTransactions(ReportType.COINS) : null), 1, "Icon");
+                _cmsgs.coinsTip(), onClick), 1, "Icon");
             setText(0, _coinsIdx = idx++, "0");
 
             if (DeploymentConfig.barsEnabled) {
                 getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
                 setWidget(0, idx++, MsoyUI.createActionImage(Currency.BARS.getLargeIcon(),
-                    _cmsgs.barsTip(), DeploymentConfig.barsEnabled ?
-                        NaviUtil.onViewTransactions(ReportType.BARS) : null), 1, "Icon");
+                    _cmsgs.barsTip(), NaviUtil.onViewTransactions(ReportType.BARS)), 1, "Icon");
                 setText(0, _barsIdx = idx++, "0");
             }
 
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            setWidget(0, idx++, MsoyUI.createActionImage(
-                "/images/header/symbol_level.png", _cmsgs.levelTip(), null),
-                1, "Icon");
+            setWidget(0, idx++, MsoyUI.createActionImage("/images/header/symbol_level.png",
+                _cmsgs.levelTip(), Link.createListener(Pages.ME, "passport")), 1, "Icon");
             setText(0, _levelIdx = idx++, "0");
 
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
