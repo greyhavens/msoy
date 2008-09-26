@@ -12,6 +12,7 @@ import com.google.inject.Singleton;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.SchemaMigration;
 import com.samskivert.jdbc.depot.clause.OrderBy;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.threerings.presents.annotation.BlockingThread;
@@ -27,6 +28,10 @@ public class ABTestRepository extends DepotRepository
     @Inject public ABTestRepository (PersistenceContext perCtx)
     {
         super(perCtx);
+
+        _ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(5, "affiliate"));
+        _ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(5, "vector"));
+        _ctx.registerMigration(ABTestRecord.class, new SchemaMigration.Drop(5, "creative"));
     }
 
     /**
