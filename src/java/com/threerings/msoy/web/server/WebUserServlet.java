@@ -457,6 +457,8 @@ public class WebUserServlet extends MsoyServiceServlet
     protected SessionData startSession (MemberRecord mrec, int expireDays)
         throws ServiceException
     {
+        AffiliateCookie.clear(getThreadLocalResponse());
+
         // if they made it through that gauntlet, create or update their session token
         WebCreds creds = mrec.toCreds(_memberRepo.startOrJoinSession(mrec.memberId, expireDays));
         _mhelper.mapMemberId(creds.token, mrec.memberId);

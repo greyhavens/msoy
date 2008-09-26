@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -30,6 +32,8 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
+
+import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.server.ServerConfig;
 
@@ -155,6 +159,11 @@ public class MsoyHttpServer extends Server
             // available yet. So we squirrel away the referrer in a cookie, and let GWT
             // handle it once it's ready.
             HttpReferrerCookie.check(req, rsp);
+
+            // TEMP: clear old "baff" cookie, which is not to be trusted.
+            if (null != CookieUtil.getCookie(req, "baff")) {
+                CookieUtil.clearCookie(rsp, "baff");
+            }
         }
     } // end: MsoyDefaultServlet
 
@@ -275,46 +284,47 @@ public class MsoyHttpServer extends Server
     /** Populated during {@link #preInit} with dependency resolved servlet instances. */
     protected Map<String, HttpServlet> _servlets = Maps.newHashMap();
 
-    protected static final Map<String, Class<? extends HttpServlet>> SERVLETS = Maps.newHashMap();
-    static {
-        SERVLETS.put(AdminService.ENTRY_POINT, AdminServlet.class);
-        SERVLETS.put(CatalogService.ENTRY_POINT, CatalogServlet.class);
-        SERVLETS.put(CommentService.ENTRY_POINT, CommentServlet.class);
-        SERVLETS.put(ForumService.ENTRY_POINT, ForumServlet.class);
-        SERVLETS.put(GalleryService.ENTRY_POINT, GalleryServlet.class);
-        SERVLETS.put(GameService.ENTRY_POINT, GameServlet.class);
-        SERVLETS.put(GroupService.ENTRY_POINT, GroupServlet.class);
-        SERVLETS.put(InviteService.ENTRY_POINT, InviteServlet.class);
-        SERVLETS.put(IssueService.ENTRY_POINT, IssueServlet.class);
-        SERVLETS.put(ItemService.ENTRY_POINT, ItemServlet.class);
-        SERVLETS.put(LandingService.ENTRY_POINT, LandingServlet.class);
-        SERVLETS.put(MailService.ENTRY_POINT, MailServlet.class);
-        SERVLETS.put(MeService.ENTRY_POINT, MeServlet.class);
-        SERVLETS.put(MoneyService.ENTRY_POINT, MoneyServlet.class);
-        SERVLETS.put(WebMemberService.ENTRY_POINT, MemberServlet.class);
-        SERVLETS.put(ProfileService.ENTRY_POINT, ProfileServlet.class);
-        SERVLETS.put(StuffService.ENTRY_POINT, StuffServlet.class);
-        SERVLETS.put(SwiftlyService.ENTRY_POINT, SwiftlyServlet.class);
-        SERVLETS.put(WebUserService.ENTRY_POINT, WebUserServlet.class);
-        SERVLETS.put(WebRoomService.ENTRY_POINT, WebRoomServlet.class);
-        SERVLETS.put("/facebook", FacebookServlet.class);
-        SERVLETS.put("/gamestubsvc", GameStubServlet.class);
-        SERVLETS.put("/remixuploadsvc", UploadRemixMediaServlet.class);
-        SERVLETS.put("/scenethumbsvc", SceneThumbnailUploadServlet.class);
-        SERVLETS.put("/snapshotsvc", SnapshotItemUploadServlet.class);
-        SERVLETS.put("/swiftlyuploadsvc", SwiftlyUploadServlet.class);
-        SERVLETS.put("/undersvc", MsoyUnderwireServlet.class);
-        SERVLETS.put("/uploadsvc", ItemMediaUploadServlet.class);
-        SERVLETS.put("/embed/*", EmbedRouterServlet.class);
-        SERVLETS.put("/status/*", StatusServlet.class);
-        SERVLETS.put("/mystats/*", MyStatsServlet.class);
-        SERVLETS.put("/gamelogs/*", GameTraceLogServlet.class);
-        SERVLETS.put("/info/*", PublicInfoServlet.class);
-        SERVLETS.put("/rss/*", RSSServlet.class);
-        SERVLETS.put(DeploymentConfig.PROXY_PREFIX + "*", MediaProxyServlet.class);
+    protected static final Map<String, Class<? extends HttpServlet>> SERVLETS =
+        new ImmutableMap.Builder<String, Class<? extends HttpServlet>>()
+        .put(AdminService.ENTRY_POINT, AdminServlet.class)
+        .put(CatalogService.ENTRY_POINT, CatalogServlet.class)
+        .put(CommentService.ENTRY_POINT, CommentServlet.class)
+        .put(ForumService.ENTRY_POINT, ForumServlet.class)
+        .put(GalleryService.ENTRY_POINT, GalleryServlet.class)
+        .put(GameService.ENTRY_POINT, GameServlet.class)
+        .put(GroupService.ENTRY_POINT, GroupServlet.class)
+        .put(InviteService.ENTRY_POINT, InviteServlet.class)
+        .put(IssueService.ENTRY_POINT, IssueServlet.class)
+        .put(ItemService.ENTRY_POINT, ItemServlet.class)
+        .put(LandingService.ENTRY_POINT, LandingServlet.class)
+        .put(MailService.ENTRY_POINT, MailServlet.class)
+        .put(MeService.ENTRY_POINT, MeServlet.class)
+        .put(MoneyService.ENTRY_POINT, MoneyServlet.class)
+        .put(WebMemberService.ENTRY_POINT, MemberServlet.class)
+        .put(ProfileService.ENTRY_POINT, ProfileServlet.class)
+        .put(StuffService.ENTRY_POINT, StuffServlet.class)
+        .put(SwiftlyService.ENTRY_POINT, SwiftlyServlet.class)
+        .put(WebUserService.ENTRY_POINT, WebUserServlet.class)
+        .put(WebRoomService.ENTRY_POINT, WebRoomServlet.class)
+        .put("/facebook", FacebookServlet.class)
+        .put("/gamestubsvc", GameStubServlet.class)
+        .put("/remixuploadsvc", UploadRemixMediaServlet.class)
+        .put("/scenethumbsvc", SceneThumbnailUploadServlet.class)
+        .put("/snapshotsvc", SnapshotItemUploadServlet.class)
+        .put("/swiftlyuploadsvc", SwiftlyUploadServlet.class)
+        .put("/undersvc", MsoyUnderwireServlet.class)
+        .put("/uploadsvc", ItemMediaUploadServlet.class)
+        .put("/welcome", WelcomeServlet.class)
+        .put("/embed/*", EmbedRouterServlet.class)
+        .put("/status/*", StatusServlet.class)
+        .put("/mystats/*", MyStatsServlet.class)
+        .put("/gamelogs/*", GameTraceLogServlet.class)
+        .put("/info/*", PublicInfoServlet.class)
+        .put("/rss/*", RSSServlet.class)
+        .put(DeploymentConfig.PROXY_PREFIX + "*", MediaProxyServlet.class)
         // if -Dthrottle=true is set, serve up files as if we were on a slow connection
-        SERVLETS.put("/*", (Boolean.getBoolean("throttle") || Boolean.getBoolean("throttleMedia"))
+        .put("/*", (Boolean.getBoolean("throttle") || Boolean.getBoolean("throttleMedia"))
             ? MsoyThrottleServlet.class
-            : MsoyDefaultServlet.class);
-    } // end: static initializer
+            : MsoyDefaultServlet.class)
+        .build();
 }

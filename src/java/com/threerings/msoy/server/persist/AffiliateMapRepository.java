@@ -9,6 +9,7 @@ import java.util.Set;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.jdbc.depot.DataMigration;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
@@ -16,6 +17,8 @@ import com.samskivert.jdbc.depot.PersistentRecord;
 import com.samskivert.jdbc.depot.clause.FromOverride;
 import com.samskivert.jdbc.depot.clause.Limit;
 import com.samskivert.jdbc.depot.clause.OrderBy;
+import com.samskivert.jdbc.depot.clause.Where;
+import com.samskivert.jdbc.depot.expression.LiteralExp;
 
 import com.threerings.presents.annotation.BlockingThread;
 
@@ -30,6 +33,14 @@ public class AffiliateMapRepository extends DepotRepository
     @Inject public AffiliateMapRepository (PersistenceContext ctx)
     {
         super(ctx);
+
+        // TEMP: blow away bogus affiliate mappings
+        registerMigration(new DataMigration("2008_09_25_clearAffiliateMappings") {
+            public void invoke () throws DatabaseException
+            {
+                deleteAll(AffiliateMapRecord.class, new Where(new LiteralExp("true")));
+            }
+        });
     }
 
     /**
