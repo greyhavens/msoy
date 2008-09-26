@@ -5,6 +5,8 @@ package com.threerings.msoy.money.data.all;
 
 import java.io.Serializable;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import com.threerings.io.SimpleStreamableObject;
 
 import com.threerings.msoy.money.data.all.Currency;
@@ -17,7 +19,7 @@ import com.threerings.msoy.money.data.all.Currency;
  * @author Ray Greenwell <ray@threerings.net>
  */
 public class PriceQuote extends SimpleStreamableObject
-    implements Serializable
+    implements Serializable, IsSerializable
 {
     public PriceQuote (Currency listedCurrency, int coins, int bars, int coinChangeForBars)
     {
