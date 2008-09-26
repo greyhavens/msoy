@@ -19,7 +19,7 @@ import com.threerings.msoy.web.data.TrackingCookieUtil;
 public class AffiliateCookie
 {
     /** The cookie name. */
-    public static final String NAME = "aff2";
+    public static final String NAME = "a";
 
     /**
      * Return the affiliate cookie value.
@@ -28,7 +28,10 @@ public class AffiliateCookie
     {
         String cook = CookieUtil.getCookieValue(req, NAME);
         if (cook != null) {
-            cook = TrackingCookieUtil.decode(StringUtil.unhexlate(cook));
+            cook = StringUtil.unhexlate(cook); // unhexlate may return null if cookie is malformed
+            if (cook != null) {
+                cook = TrackingCookieUtil.decode(cook);
+            }
         }
         return cook;
     }
