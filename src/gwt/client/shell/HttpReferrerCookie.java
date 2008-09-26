@@ -17,7 +17,7 @@ import com.threerings.msoy.web.data.TrackingCookieUtil;
  */
 public class HttpReferrerCookie
 {
-    public static final String NAME = "ref";
+    public static final String NAME = "vre";
 
     /**
      * Returns true if a valid, not-disabled referrer information is available in a cookie.

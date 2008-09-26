@@ -25,7 +25,7 @@ import com.threerings.msoy.web.data.TrackingCookieUtil;
 public class HttpReferrerCookie
 {
     /** The name of this cookie. */
-    public static final String NAME = "ref";
+    public static final String NAME = "vre";
 
     /**
      * Check to see if they have the cookie, if not, store it if we can.
