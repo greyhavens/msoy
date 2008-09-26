@@ -153,7 +153,7 @@ public class ShareDialog extends FloatingPanel
         if (memName.isGuest()) {
             url += "#" + page;
         } else {
-            url += "welcome?aff=" + memName.getMemberId() + "&page=" + encodeURIComponent(page);
+            url += "welcome/" + memName.getMemberId() + "/" + encodeURIComponent(page);
         }
 
         box.addChild(new CopyableText(url));

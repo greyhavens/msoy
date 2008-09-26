@@ -13,7 +13,7 @@ import com.samskivert.util.StringUtil;
 
 /**
  * Handles requests to assign an affiliate cookie to a user:
- * /welcome?aff=<affiliate>&page=page_tokens_and_args
+ * /welcome/<affiliate>/<page_tokens_and_args>
  */
 public class WelcomeServlet extends HttpServlet
 {
@@ -21,12 +21,24 @@ public class WelcomeServlet extends HttpServlet
     protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
         throws IOException
     {
-        String affiliate = req.getParameter("aff");
-        if (!StringUtil.isBlank(affiliate)) {
-            AffiliateCookie.set(rsp, affiliate);
+        String path = StringUtil.deNull(req.getPathInfo());
+        // the path will now either be "", "/<affiliate>", or "/<affiliate>/<token>"
+        if (path.startsWith("/")) {
+            int nextSlash = path.indexOf("/", 1);
+            String affiliate;
+            if (nextSlash == -1) {
+                affiliate = path.substring(1);
+                path = "";
+            } else {
+                affiliate = path.substring(1, nextSlash);
+                path = path.substring(nextSlash + 1);
+            }
+            // Set up the affiliate for this welcomed user.
+            if (!StringUtil.isBlank(affiliate)) {
+                AffiliateCookie.set(rsp, affiliate);
+            }
         }
 
-        String page = StringUtil.deNull(req.getParameter("page"));
-        rsp.sendRedirect("/#" + page);
+        rsp.sendRedirect("/#" + path);
     }
 }

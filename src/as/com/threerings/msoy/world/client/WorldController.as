@@ -777,8 +777,8 @@ public class WorldController extends MsoyController
             const params :Object = MsoyParameters.get();
             const affiliate :String = StringUtil.trim(StringUtil.deNull(params["aff"]));
             if (!StringUtil.isBlank(affiliate)) {
-                fullURL += "welcome?aff=" + encodeURIComponent(affiliate) +
-                    "&page=" + encodeURIComponent(pageToken);
+                fullURL += "welcome/" + encodeURIComponent(affiliate) +
+                    "/" + encodeURIComponent(pageToken);
             } else {
                 fullURL += "#" + pageToken;
             }

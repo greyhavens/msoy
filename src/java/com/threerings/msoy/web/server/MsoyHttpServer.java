@@ -326,7 +326,7 @@ public class MsoyHttpServer extends Server
         .put("/swiftlyuploadsvc", SwiftlyUploadServlet.class)
         .put("/undersvc", MsoyUnderwireServlet.class)
         .put("/uploadsvc", ItemMediaUploadServlet.class)
-        .put("/welcome", WelcomeServlet.class)
+        .put("/welcome/*", WelcomeServlet.class)
         .put("/embed/*", EmbedRouterServlet.class)
         .put("/status/*", StatusServlet.class)
         .put("/mystats/*", MyStatsServlet.class)

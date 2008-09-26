@@ -678,7 +678,7 @@ public class MemberManager
             url += "#" + page;
         } else {
             // set them up with the affiliate info
-            url += "welcome?aff=" + memObj.getMemberId() + "&page=" + StringUtil.encode(page);
+            url += "welcome/" + memObj.getMemberId() + "/" + StringUtil.encode(page);
         }
 
         final String template = isGame ? "shareGameInvite" : "shareRoomInvite";
