@@ -617,10 +617,10 @@ TabNavigator, TabBar {
 }
 
 .controlBarAVRGButton {
-  upSkin: Embed(source="../../rsrc/media/skins/controlbar/avrg.png");
-  overSkin: Embed(source="../../rsrc/media/skins/controlbar/avrg_over.png");
-  downSkin: Embed(source="../../rsrc/media/skins/controlbar/avrg_down.png");
-  /** UNUSED disabledSkin: Embed(source="../../rsrc/media/skins/controlbar/avrg_disabled.png"); */
+  upSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+  downSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+  overSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/avrg.png");
 }
 
 .tickButton {

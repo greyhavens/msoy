@@ -6,6 +6,7 @@ package com.threerings.msoy.avrg.client {
 import flash.events.Event;
 import flash.events.ProgressEvent;
 
+import flash.display.DisplayObject;
 import flash.display.Loader;
 import flash.display.LoaderInfo;
 
@@ -20,6 +21,7 @@ import com.threerings.crowd.client.PlaceView;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.flash.MediaContainer;
 import com.threerings.util.Log;
+import com.threerings.util.MultiLoader;
 
 import com.threerings.msoy.client.ControlBar;
 import com.threerings.msoy.client.MsoyContext;
@@ -57,6 +59,9 @@ public class AVRGamePanel extends UIComponent
     {
         log.info("Leaving AVRG [plobj=" + plobj + "]");
 
+        // Clear out our thumbnail from the control bar (so the next game won't have it briefly)
+        getControlBar().avrgBtn.setStyle("source", null);
+
         getControlBar().setInAVRGame(false);
 
         // null gameObj for mediaComplete to find if it should run after us
@@ -83,6 +88,11 @@ public class AVRGamePanel extends UIComponent
         provideLoadingFeedback(loader.contentLoaderInfo);
 
         addEventListener(ResizeEvent.RESIZE, handleResize);
+
+        // Give the control bar button our thumbnail
+        MultiLoader.getContents(cfg.thumbnail.getMediaPath(), function (obj :Object) :void {
+            getControlBar().avrgBtn.setStyle("source", DisplayObject(obj));
+        });
     }
 
     // from PlaceLayer
