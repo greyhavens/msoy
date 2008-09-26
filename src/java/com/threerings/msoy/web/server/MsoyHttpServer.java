@@ -32,6 +32,7 @@ import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.servlet.Context;
 import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
+import org.mortbay.resource.Resource;
 
 import com.samskivert.servlet.util.CookieUtil;
 
@@ -138,7 +139,7 @@ public class MsoyHttpServer extends Server
      * fiddling we want. */
     protected static class MsoyDefaultServlet extends DefaultServlet
     {
-        protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
+        @Override protected void doGet (HttpServletRequest req, HttpServletResponse rsp)
             throws ServletException, IOException {
             checkCookies(req, rsp); // we want to check cookies even before we do the redirect
 
@@ -149,6 +150,17 @@ public class MsoyHttpServer extends Server
             } else {
                 super.doGet(req, rsp);
             }
+        }
+
+        @Override protected void sendDirectory (
+            HttpServletRequest req, HttpServletResponse rsp, Resource resource, boolean parent)
+            throws IOException
+        {
+            // it should be possible to provide 'dirAllowed' false in the init params for this
+            // servlet, but 30 minutes of wrangling and Jetty code spelunking failed to uncover why
+            // calling context.setInitParams() did not change the init params actually seen by
+            // servlets added to that context; so instead we do this the hard way
+            rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
 
         protected void checkCookies (HttpServletRequest req, HttpServletResponse rsp)
