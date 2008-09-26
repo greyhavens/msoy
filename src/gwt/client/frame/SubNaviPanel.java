@@ -47,11 +47,6 @@ public class SubNaviPanel extends FlowPanel
                 addLink(null, "Mail", Pages.MAIL, "");
                 addLink(null, "Account", Pages.ME, "account");
 
-                // TODO hiding transactions feature
-                if (DeploymentConfig.devDeployment) {
-                    addLink(null, "Transactions", Pages.ME, "transactions");
-                }
-
                 if (CShell.isSupport()) {
                     addLink(null, "Admin", Pages.ADMINZ, "");
                 }
