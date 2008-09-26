@@ -171,7 +171,7 @@ public class LogonPanel extends SmartTable
         } else {
             message = CShell.serverError(caught);
         }
-        MsoyUI.errorNear(CShell.serverError(message), _password);
+        MsoyUI.errorNear(message, _password);
     }
 
     protected class ForgotPasswordDialog extends SmartTable
