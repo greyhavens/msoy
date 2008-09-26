@@ -18,7 +18,6 @@ public class MsoyLogConfig
     {
         var levels :String = DeploymentConfig.logLevelsConfig;
         if (!StringUtil.isBlank(levels)) {
-            trace("===== SETTING MSOY LOG LEVELS '" + levels + "'");
             Log.setLevels(levels);
         }
     }
