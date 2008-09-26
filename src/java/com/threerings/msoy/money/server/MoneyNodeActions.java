@@ -30,7 +30,9 @@ class MoneyNodeActions
     
     public void moneyUpdated (int memberId, Currency currency, int amount) 
     {
-        _peerMan.invokeNodeAction(new MoneyUpdated(memberId, currency, amount));
+        if (currency == Currency.BLING) { // avoid spamming the other nodes
+            _peerMan.invokeNodeAction(new MoneyUpdated(memberId, currency, amount));
+        }
     }
 
     protected static class MoneyUpdated extends MemberNodeAction
@@ -52,7 +54,9 @@ class MoneyNodeActions
                 switch (_currency) {
                 case COINS:
                     memobj.setCoins(memobj.coins + _amount);
-                    memobj.setAccCoins(memobj.accCoins + _amount);
+                    if (_amount > 0) {
+                        memobj.setAccCoins(memobj.accCoins + _amount);
+                    }
                     break;
                 case BARS:
                     memobj.setBars(memobj.bars + _amount);
