@@ -10,6 +10,7 @@ import com.threerings.presents.client.ConfirmAdapter;
 
 import com.threerings.presents.dobj.AttributeChangeAdapter;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.dobj.MessageEvent;
 
 import com.threerings.crowd.data.BodyObject;
 import com.threerings.crowd.client.PlaceController;
@@ -23,6 +24,7 @@ import com.threerings.msoy.game.client.GameLiaison;
 import com.threerings.msoy.avrg.client.AVRService_AVRGameJoinListener;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.data.AVRGameMarshaller;
+import com.threerings.msoy.avrg.data.AVRGameObject;
 import com.threerings.msoy.avrg.data.AVRMarshaller;
 
 /**
@@ -136,6 +138,21 @@ public class AVRGameLiaison extends GameLiaison
             return config.name;
         }
         return super.gameName;
+    }
+
+    // from interface MessageListener
+    override public function messageReceived (event :MessageEvent) :void
+    {
+        super.messageReceived(event);
+        if  (event.getName() == AVRGameObject.TASK_COMPLETED_MESSAGE) {
+            var coins :int = int(event.getArgs()[1]);
+            const forReal :Boolean = true; //?
+            const hasCookie :Boolean = false; //?
+            if (forReal && _gctx.getPlayerObject().isGuest()) {
+                // if a guest earns flow, we want to show them the "please register" dialog
+                displayGuestFlowEarnage(coins, hasCookie);
+            }
+        }
     }
 }
 }

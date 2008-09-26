@@ -158,9 +158,9 @@ public class AVRGameBackend extends ControlBackend
         callUserCode("playerLeft_v1", memberId);
     }
 
-    public function taskCompleted (taskId :String, amount :int) :void
+    public function taskCompleted (taskId :String, amount :int) :Boolean
     {
-        callUserCode("taskCompleted_v1", taskId, amount);
+        return callUserCode("taskCompleted_v1", taskId, amount);
     }
 
     public function playerMoved (memberId :int) :void

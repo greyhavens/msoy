@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.avrg.client {
 
+import com.threerings.util.MessageBundle;
 import com.threerings.util.Log;
 import com.threerings.util.Name;
 
@@ -24,6 +25,8 @@ import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceConfig;
 import com.threerings.crowd.data.PlaceObject;
 import com.threerings.crowd.util.CrowdContext;
+
+import com.whirled.game.data.WhirledGameCodes;
 
 import com.threerings.msoy.data.all.MemberName;
 
@@ -354,6 +357,13 @@ public class AVRGameController extends PlaceController
         return "[" + (_playerObj == null ? "null" : _playerObj.getMemberId()) + "]";
     }
 
+    protected function reportCoinsAwarded (amount :int) :void
+    {
+        _wctx.getChatDirector().displayInfo(
+            WhirledGameCodes.WHIRLEDGAME_MESSAGE_BUNDLE,
+            MessageBundle.tcompose("m.coins_awarded", amount));
+    }
+
     protected var _wctx :WorldContext;
     protected var _gctx :GameContext;
 
@@ -373,7 +383,12 @@ public class AVRGameController extends PlaceController
         function (event :MessageEvent) :void {
             var name :String = event.getName();
             if (name == AVRGameObject.TASK_COMPLETED_MESSAGE) {
-                _backend.taskCompleted(String(event.getArgs()[0]), int(event.getArgs()[1]));
+                var args :Array = event.getArgs();
+                var task :String = String(args[0]);
+                var amount :int = int(args[1]);
+                if (!_backend.taskCompleted(task, amount)) {
+                    reportCoinsAwarded(amount);
+                }
             }
         });
 

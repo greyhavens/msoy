@@ -119,12 +119,6 @@ public class QuestDelegate extends PlaceManagerDelegate
         final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
-        // nothing is done for guests
-        if (MemberName.isGuest(player.getMemberId())) {
-            listener.requestProcessed();
-            return;
-        }
-
         // sanity check
         if (payoutLevel < 0 || payoutLevel > 1) {
             log.warning("Invalid payout in completeTask() [game=" + where() + ", quest=" + questId +
@@ -174,7 +168,7 @@ public class QuestDelegate extends PlaceManagerDelegate
             @Override
             public void invokePersistent () throws Exception {
                 // award the flow for this quest
-                if (payout > 0) {
+                if (payout > 0 && !MemberName.isGuest(player.getMemberId())) {
                     // TODO: Pass the real minutesPlayed, I assume we need to do humanity
                     // assessment for avrgs as well
                     UserAction action = UserAction.completedQuest(
@@ -186,8 +180,10 @@ public class QuestDelegate extends PlaceManagerDelegate
                 _gameRepo.noteGamePlayed(_gameId, 1, payout);
 
                 // mark the quest completed and create a log record
-                _repo.noteQuestCompleted(
-                    _gameId, player.getMemberId(), questId, playerMins, payoutLevel);
+                if (!MemberName.isGuest(player.getMemberId())) {
+                    _repo.noteQuestCompleted(
+                        _gameId, player.getMemberId(), questId, playerMins, payoutLevel);
+                }
 
                 // if this award consumes the remainder of our awardable flow, recalc our bits
                 if (newFlowToNextRecalc > 0) {
