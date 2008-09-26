@@ -267,8 +267,6 @@ public abstract class Page
      */
     protected void setPageToken (String token)
     {
-        AffiliateCookie.check(token);
-
         Args args = new Args();
         args.setToken(token);
         onHistoryChanged(args);
