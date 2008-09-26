@@ -6,8 +6,6 @@ package client.person;
 import java.util.HashMap;
 import java.util.Map;
 
-import client.shell.CShell;
-
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.FlowPanelDropController;

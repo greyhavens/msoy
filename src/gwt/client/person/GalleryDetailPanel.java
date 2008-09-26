@@ -6,19 +6,13 @@ package client.person;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
-import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.Widget;
-
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
