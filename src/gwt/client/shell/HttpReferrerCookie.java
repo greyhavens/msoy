@@ -3,25 +3,29 @@
 
 package client.shell;
 
+import client.util.StringUtil;
+
 import com.threerings.gwt.util.CookieUtil;
+import com.threerings.msoy.web.data.TrackingCookieUtil;
 
 /**
  * Wrapper for a cookie that stores HTTP "Referer" tags on the very first visit to
- * a Whirled page, and gets used later on to auto-populate the ReferralInfo struct.
- * 
+ * a Whirled page, and gets logged lated to Panopticon.
+ *
  * This class contains browser-side functionality; for server-side code see
- * {@link com.threerings.msoy.web.server.HttpReferrerCookie}. 
+ * {@link com.threerings.msoy.web.server.HttpReferrerCookie}.
  */
 public class HttpReferrerCookie
 {
     public static final String NAME = "ref";
 
     /**
-     * Is referrer information already stored?
+     * Returns true if a valid, not-disabled referrer information is available in a cookie.
      */
-    public static boolean exists ()
+    public static boolean available ()
     {
-        return (CookieUtil.get(NAME) != null);
+        String raw = CookieUtil.get(NAME);
+        return (raw != null) && !REFERRER_DISABLED_VALUE.equals(raw);
     }
 
     /**
@@ -29,7 +33,12 @@ public class HttpReferrerCookie
      */
     public static String get ()
     {
-        String ref = CookieUtil.get(NAME);
+        String raw = CookieUtil.get(NAME);
+        if (raw == null) {
+            return null;
+        }
+
+        String ref = TrackingCookieUtil.decode(StringUtil.unhexlate(raw));
         CShell.log("Loaded referrer: " + ref);
         return ref;
     }
@@ -43,10 +52,10 @@ public class HttpReferrerCookie
         CookieUtil.set("/", 365, NAME, REFERRER_DISABLED_VALUE);
         CShell.log("Referrer disabled.");
     }
-    
-    /** 
+
+    /**
      * Some value that's not null (so the existence check passes), but
-     * also does not contain a meaningful HTTP Reference string. 
+     * also does not contain a meaningful HTTP Reference string.
      */
     private static final String REFERRER_DISABLED_VALUE = "";
 }

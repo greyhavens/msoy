@@ -13,13 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.servlet.util.CookieUtil;
+import com.threerings.msoy.web.data.TrackingCookieUtil;
 
 /**
  * Wrapper for a cookie that stores HTTP "Referer" tags on the very first visit to
- * a Whirled page, and gets used later on to auto-populate the ReferralInfo struct.
- * 
+ * a Whirled page, and gets logged later to Panopticon.
+ *
  * This class contains server-side functionality; for browser-side code see
- * {@link client.shell.HttpReferrerCookie}. 
+ * {@link client.shell.HttpReferrerCookie}.
  */
 public class HttpReferrerCookie
 {
@@ -31,7 +32,7 @@ public class HttpReferrerCookie
      */
     public static void check (HttpServletRequest req, HttpServletResponse rsp)
     {
-        if (null != CookieUtil.getCookie(req, NAME)) {
+        if (CookieUtil.getCookie(req, NAME) != null) {
             return; // we already got one!
         }
 
@@ -46,13 +47,14 @@ public class HttpReferrerCookie
     }
 
     /**
-     * Stores a new HTTP referrer string. 
+     * Stores a new HTTP referrer string.
      */
     public static void set (HttpServletResponse rsp, String referrer)
     {
-        // TODO: obfuscate the referrer?
-        
-        Cookie cookie = new Cookie(NAME, referrer);
+        // obfuscate the referrer
+        String obfuscated = StringUtil.hexlate(TrackingCookieUtil.encode(referrer));
+
+        Cookie cookie = new Cookie(NAME, obfuscated);
         cookie.setMaxAge(365 * 24 * 60 * 60); // leave it there for a year
         cookie.setPath("/");
         rsp.addCookie(cookie);

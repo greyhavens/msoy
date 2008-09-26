@@ -149,6 +149,11 @@ public class MsoyHttpServer extends Server
 
         protected void checkCookies (HttpServletRequest req, HttpServletResponse rsp)
         {
+            // this is a fiddly interaction - the original HTTP Referrer is only available
+            // on the very first page access, because once we start redirecting through GWT
+            // pages, it'll get overwritten. But we don't have the player's visitor ID
+            // available yet. So we squirrel away the referrer in a cookie, and let GWT
+            // handle it once it's ready.
             HttpReferrerCookie.check(req, rsp);
         }
     } // end: MsoyDefaultServlet

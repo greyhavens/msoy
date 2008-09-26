@@ -429,13 +429,28 @@ public class MsoyEvents
     public static class VectorAssociated implements MsoyEvent
     {
         @Index @Field final public Date timestamp;
-        @Field final public String vector;
         @Index @Field final public String visitorId;
+        @Field final public String vector;
 
         public VectorAssociated (VisitorInfo info, String vector)
         {
             this.timestamp = new Date();
-            this.vector = vector;
+            this.vector = toValue(vector);
+            this.visitorId = toValue(info.id);
+        }
+    }
+
+    @Event(name="HttpReferrerAssociated")
+    public static class HttpReferrerAssociated implements MsoyEvent
+    {
+        @Index @Field final public Date timestamp;
+        @Index @Field final public String visitorId;
+        @Field final public String referrer;
+
+        public HttpReferrerAssociated (VisitorInfo info, String referrer)
+        {
+            this.timestamp = new Date();
+            this.referrer = toValue(referrer);
             this.visitorId = toValue(info.id);
         }
     }

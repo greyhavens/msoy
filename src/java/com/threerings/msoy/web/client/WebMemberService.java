@@ -115,4 +115,10 @@ public interface WebMemberService extends RemoteService
      */
     void trackVectorAssociation (VisitorInfo info, String vector)
         throws ServiceException;
+
+    /**
+     * Records an HTTP referrer has been recorded for a specific visitor.
+     */
+    void trackHttpReferrerAssociation (VisitorInfo info, String referrer)
+        throws ServiceException;
 }

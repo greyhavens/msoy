@@ -15,11 +15,14 @@ import com.threerings.gwt.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.VisitorInfo;
+import com.threerings.msoy.web.client.WebMemberService;
+import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
 
+import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 
 /**
@@ -135,6 +138,7 @@ public class Session
             VisitorInfo info = new VisitorInfo();
             VisitorCookie.save(info, false);
             CShell.visitor = info;
+            _membersvc.trackVisitorInfoCreation(info, new NoopAsyncCallback());
         } else {
             // we already have one, just load it back in
             CShell.visitor = VisitorCookie.get();
@@ -154,4 +158,6 @@ public class Session
 
     protected static final WebUserServiceAsync _usersvc = (WebUserServiceAsync)
         ServiceUtil.bind(GWT.create(WebUserService.class), WebUserService.ENTRY_POINT);
+    protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
+        ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

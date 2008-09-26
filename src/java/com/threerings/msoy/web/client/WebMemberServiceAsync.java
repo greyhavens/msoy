@@ -86,4 +86,11 @@ public interface WebMemberServiceAsync
      * {@link WebMemberService#trackVectorAssociation(VisitorInfo, String)}.
      */
     void trackVectorAssociation (VisitorInfo info, String vector, AsyncCallback<Void> callback);
+
+    /**
+     * The asynchronous version of
+     * {@link WebMemberService#trackHttpReferrerAssociation(VisitorInfo, String)}.
+     */
+    void trackHttpReferrerAssociation (VisitorInfo info, String referrer,
+                                       AsyncCallback<Void> callback);
 }

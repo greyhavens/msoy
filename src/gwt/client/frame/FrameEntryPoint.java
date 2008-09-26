@@ -51,6 +51,7 @@ import client.util.FlashClients;
 import client.util.FlashVersion;
 import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.NoopAsyncCallback;
 import client.util.ServiceUtil;
 import client.util.events.FlashEvent;
 import client.util.events.FlashEvents;
@@ -231,10 +232,10 @@ public class FrameEntryPoint
             VisitorCookie.save(info, true);
         }
 
-        if (HttpReferrerCookie.exists()) {
-            // TODO: save the referrer somewhere else, so that we can link it up
-            // String ref = HttpReferrerCookie.get();
-            // msvc.httpReferrerCreated(info.id, ref);
+        if (HttpReferrerCookie.available()) {
+            String ref = HttpReferrerCookie.get();
+            _membersvc.trackHttpReferrerAssociation(info, ref, new NoopAsyncCallback());
+            HttpReferrerCookie.disable();
         }
 
         // recreate the page token which we'll pass through to the page (or if it's being loaded

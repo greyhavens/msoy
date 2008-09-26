@@ -659,7 +659,7 @@ public class MemberManager
     public void trackVectorAssociation (final ClientObject caller, final String vector)
     {
         final MemberObject memObj = (MemberObject) caller;
-        _eventLog.vectorAssocated(memObj.visitorInfo, vector);
+        _eventLog.vectorAssociated(memObj.visitorInfo, vector);
     }
 
     // from interface MemberProvider
