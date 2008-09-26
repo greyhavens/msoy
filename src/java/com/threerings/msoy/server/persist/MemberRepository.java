@@ -176,30 +176,22 @@ public class MemberRepository extends DepotRepository
             }
         });
 
-        // TODO: I also need to make sure existing invites populate the affiliateMemberId field
-//        // TEMP: blow away bogus AffiliateRecords, repopulate
-//        registerMigration(new DataMigration("2008_09_25_populateAffiliateInfo") {
-//            public void invoke () throws DatabaseException
-//            {
-//                // first blow away the old fucking shit
-//                deleteAll(AffiliateRecord.class, new Where(new LiteralExp("true")));
-//
-//                // find "fulfilled" invitations
-//                List<InvitationRecord> invites = findAll(InvitationRecord.class,
-//                    new Where(new And(
-//                        new Conditionals.GreaterThan(InvitationRecord.INVITER_ID_C, 0),
-//                        new Conditionals.GreaterThan(InvitationRecord.INVITEE_ID_C, 0))));
-//                // store 'em as affiliate records
-//                for (InvitationRecord rec : invites) {
-//                    try {
-//                        setAffiliate(rec.inviteeId, String.valueOf(rec.inviterId));
-//                    } catch (DatabaseException de) {
-//                        log.warning("Unable to insert affiliate",
-//                            "invitee", rec.inviteeId, "inviter", rec.inviterId, de);
-//                    }
-//                }
-//            }
-//        });
+        // TEMP: blow away bogus AffiliateRecords, repopulate
+        registerMigration(new DataMigration("2008_09_26_populateAffiliateRecords") {
+            public void invoke () throws DatabaseException
+            {
+                // first blow away the old broken records
+                deleteAll(AffiliateRecord.class, new Where(new LiteralExp("true")));
+
+                // re-populate the AffiliateRecords using the affiliateMemberId field of
+                // everyone's MemberRecord
+                List<MemberRecord> memRecs = findAll(MemberRecord.class,
+                    new Where(new Conditionals.NotEquals(MemberRecord.AFFILIATE_MEMBER_ID_C, 0)));
+                for (MemberRecord rec : memRecs) {
+                    setAffiliate(rec.memberId, String.valueOf(rec.affiliateMemberId));
+                }
+            }
+        });
     }
 
     /**
