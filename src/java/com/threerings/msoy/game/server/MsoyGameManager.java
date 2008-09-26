@@ -28,7 +28,7 @@ public class MsoyGameManager extends WhirledGameManager
         super();
     }
 
-    // from interface WhirledGameProvider
+    // from interface PrizeProvider
     public void awardTrophy (ClientObject caller, String ident, int playerId,
                              InvocationService.InvocationListener listener)
         throws InvocationException
@@ -36,7 +36,7 @@ public class MsoyGameManager extends WhirledGameManager
         _trophyDelegate.awardTrophy(caller, ident, playerId, listener);
     }
 
-    // from interface WhirledGameProvider
+    // from interface PrizeProvider
     public void awardPrize (ClientObject caller, String ident, int playerId,
                             InvocationService.InvocationListener listener)
         throws InvocationException

@@ -7,22 +7,10 @@ import com.threerings.presents.client.Client;
 import com.threerings.presents.client.InvocationService;
 
 /**
- * A service for joining AVR (in-world) games.
+ * A service for AVR (in-world) games.
  */
 public interface AVRGameService extends InvocationService
 {
-    /**
-     * Awards the specified trophy to the requesting player.
-     */
-    public void awardTrophy (
-        Client client, String ident, int playerId, InvocationListener listener);
-
-    /**
-     * Awards the specified prize to the requesting player.
-     */
-    public void awardPrize (
-        Client client, String ident, int playerId, InvocationListener listener);
-
     /**
      * Instruct the server to compute a payout for this player linearly proportional to the
      * payoutLevel (which must lie in the interval [0, 1]). The identifier is not used, but

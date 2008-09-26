@@ -13,6 +13,7 @@ import com.threerings.presents.dobj.DSet;
 import com.threerings.msoy.avrg.data.PlayerLocation;
 
 import com.whirled.game.client.PropertySpaceHelper;
+import com.whirled.game.data.PrizeMarshaller;
 import com.whirled.game.data.PropertySpaceMarshaller;
 import com.whirled.game.data.PropertySpaceObject;
 import com.whirled.game.data.WhirledGameMessageMarshaller;
@@ -55,7 +56,10 @@ public class AVRGameObject extends PlaceObject
     /** Used to communicate with the AVRGameManager. */
     public var avrgService :AVRGameMarshaller;
 
-    /** Used to send messages. */
+    /** The service interface for awarding prizes and trophies. */
+    public var prizeService :PrizeMarshaller;
+    
+   /** Used to send messages. */
     public var messageService :WhirledGameMessageMarshaller;
 
     /** Used to communicate with the AVRGameManager. */
@@ -92,6 +96,7 @@ public class AVRGameObject extends PlaceObject
         playerLocs = (ins.readObject() as DSet);
         gameData = (ins.readObject() as TypedArray);
         avrgService = (ins.readObject() as AVRGameMarshaller);
+        prizeService = (ins.readObject() as PrizeMarshaller);
         messageService = (ins.readObject() as WhirledGameMessageMarshaller);
         propertiesService = (ins.readObject() as PropertySpaceMarshaller);
     }

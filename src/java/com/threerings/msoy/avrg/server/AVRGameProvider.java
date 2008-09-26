@@ -15,18 +15,6 @@ import com.threerings.presents.server.InvocationProvider;
 public interface AVRGameProvider extends InvocationProvider
 {
     /**
-     * Handles a {@link AVRGameService#awardPrize} request.
-     */
-    void awardPrize (ClientObject caller, String arg1, int arg2, InvocationService.InvocationListener arg3)
-        throws InvocationException;
-
-    /**
-     * Handles a {@link AVRGameService#awardTrophy} request.
-     */
-    void awardTrophy (ClientObject caller, String arg1, int arg2, InvocationService.InvocationListener arg3)
-        throws InvocationException;
-
-    /**
      * Handles a {@link AVRGameService#completeTask} request.
      */
     void completeTask (ClientObject caller, int arg1, String arg2, float arg3, InvocationService.ConfirmListener arg4)

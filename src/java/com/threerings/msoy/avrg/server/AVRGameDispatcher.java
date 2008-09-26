@@ -35,18 +35,6 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
         throws InvocationException
     {
         switch (methodId) {
-        case AVRGameMarshaller.AWARD_PRIZE:
-            ((AVRGameProvider)provider).awardPrize(
-                source, (String)args[0], ((Integer)args[1]).intValue(), (InvocationService.InvocationListener)args[2]
-            );
-            return;
-
-        case AVRGameMarshaller.AWARD_TROPHY:
-            ((AVRGameProvider)provider).awardTrophy(
-                source, (String)args[0], ((Integer)args[1]).intValue(), (InvocationService.InvocationListener)args[2]
-            );
-            return;
-
         case AVRGameMarshaller.COMPLETE_TASK:
             ((AVRGameProvider)provider).completeTask(
                 source, ((Integer)args[0]).intValue(), (String)args[1], ((Float)args[2]).floatValue(), (InvocationService.ConfirmListener)args[3]

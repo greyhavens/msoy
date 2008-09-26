@@ -460,7 +460,7 @@ public class ThaneAVRGameBackend
             return false;
         }
 
-        _gameObj.avrgService.awardTrophy(
+        _gameObj.prizeService.awardTrophy(
             _ctx.getClient(), ident, targetId,
             BackendUtils.loggingConfirmListener("awardTrophy"));
 
@@ -470,7 +470,7 @@ public class ThaneAVRGameBackend
     protected function awardPrize_v1 (targetId :int, ident :String) :void
     {
         if (!playerOwnsData(GameData.PRIZE_MARKER, ident, targetId)) {
-            _gameObj.avrgService.awardPrize(
+            _gameObj.prizeService.awardPrize(
                 _ctx.getClient(), ident, targetId,
                 BackendUtils.loggingConfirmListener("awardPrize"));
         }

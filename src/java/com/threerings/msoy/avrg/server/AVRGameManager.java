@@ -59,6 +59,8 @@ import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
 
 import com.whirled.bureau.data.BureauTypes;
+import com.whirled.game.server.PrizeDispatcher;
+import com.whirled.game.server.PrizeProvider;
 import com.whirled.game.server.PropertySpaceDispatcher;
 import com.whirled.game.server.PropertySpaceHandler;
 import com.whirled.game.server.PropertySpaceHelper;
@@ -73,7 +75,7 @@ import static com.threerings.msoy.Log.log;
  */
 @EventThread
 public class AVRGameManager extends PlaceManager
-    implements AVRGameProvider, PlayManager, AVRGameAgentProvider
+    implements AVRGameProvider, PlayManager, AVRGameAgentProvider, PrizeProvider
 {
     /** The magic player id constant for the server agent used when sending private messages. */
     public static final int SERVER_AGENT = Integer.MIN_VALUE;
@@ -176,6 +178,7 @@ public class AVRGameManager extends PlaceManager
 
         _gameObj = (AVRGameObject)_plobj;
         _gameObj.setAvrgService(_invmgr.registerDispatcher(new AVRGameDispatcher(this)));
+        _gameObj.setPrizeService(_invmgr.registerDispatcher(new PrizeDispatcher(this)));
         _gameObj.setMessageService(_invmgr.registerDispatcher(new WhirledGameMessageDispatcher(
             new WhirledGameMessageHandler(_gameObj) {
                 @Override protected ClientObject getAudienceMember (int id)
@@ -259,7 +262,7 @@ public class AVRGameManager extends PlaceManager
         });
     }
 
-    // from interface WhirledGameProvider
+    // from interface PrizeProvider
     public void awardTrophy (ClientObject caller, String ident, int playerId,
                              InvocationService.InvocationListener listener)
         throws InvocationException
@@ -267,7 +270,7 @@ public class AVRGameManager extends PlaceManager
         _trophyDelegate.awardTrophy(caller, ident, playerId, listener);
     }
 
-    // from interface WhirledGameProvider
+    // from interface PrizeProvider
     public void awardPrize (ClientObject caller, String ident, int playerId,
                             InvocationService.InvocationListener listener)
         throws InvocationException
