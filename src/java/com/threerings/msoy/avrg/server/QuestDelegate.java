@@ -106,6 +106,10 @@ public class QuestDelegate extends PlaceManagerDelegate
         final int memberId = player.playerObject.getMemberId();
 
         // TODO: Get this into EventLogDelegate, or write a AVRG-specific one?
+        if (player.playerObject.visitorInfo == null) {
+            log.warning("Missing VisitorInfo on an AVRG player!",
+                "gameId", _gameId, "memberId", player.playerObject.memberName.getMemberId());
+        }
         final String tracker = (player.playerObject.visitorInfo == null) ?
             "" : player.playerObject.visitorInfo.id;
         _eventLog.avrgLeft(memberId, _gameId, playTime,
