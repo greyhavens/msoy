@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="EventHandlers,com.whirled.contrib.EventHandlers,_eventHandlers,freeAllHandlers,registerEventListener,registerOneShotCallback,registerUnload,unregisterEventListener" name="keywords">
+<meta content="EventHandlers,com.whirled.contrib.EventHandlers,_mgr,freeAllHandlers,registerEventListener,registerOneShotCallback,registerUnload,unregisterEventListener" name="keywords">
 <title>com.whirled.contrib.EventHandlers</title>
 </head>
 <body>
@@ -38,11 +38,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Class</td><td class="classSignature">public class EventHandlers</td>
 </tr>
 </table>
-<p></p> 
- A class for keeping track of event listeners and freeing them all at a given time.  This is 
- useful for keeping track of your ENTER_FRAME listeners, and releasing them all on UNLOAD to 
+<p></p>
+ A class for keeping track of event listeners and freeing them all at a given time.  This is
+ useful for keeping track of your ENTER_FRAME listeners, and releasing them all on UNLOAD to
  make sure your game/furni/avatar fully unloads at the proper time.
- <p></p>
+  See {<p></p>
 <br>
 <hr>
 </div>
@@ -54,7 +54,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_eventHandlers">_eventHandlers</a> : Array<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_mgr">_mgr</a> : <a href="../contrib/EventHandlerManager.html">EventHandlerManager</a>
+<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">EventHandlers</td>
 </tr>
 </table>
@@ -79,7 +80,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#registerEventListener()">registerEventListener</a>(dispatcher:IEventDispatcher, event:String, listener:Function):void</div>
+<a class="signatureLink" href="#registerEventListener()">registerEventListener</a>(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void</div>
 <div class="summaryTableDescription">[static]
      Adds the specified listener to the specified dispatcher for the specified event.</div>
 </td><td class="summaryTableOwnerCol">EventHandlers</td>
@@ -87,7 +88,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#registerOneShotCallback()">registerOneShotCallback</a>(dispatcher:IEventDispatcher, event:String, callback:Function):void</div>
+<a class="signatureLink" href="#registerOneShotCallback()">registerOneShotCallback</a>(dispatcher:IEventDispatcher, event:String, callback:Function, useCapture:Boolean = false, priority:int = 0):void</div>
 <div class="summaryTableDescription">[static]
      Registers a zero-arg callback function that should be called once when the event fires.</div>
 </td><td class="summaryTableOwnerCol">EventHandlers</td>
@@ -104,7 +105,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#unregisterEventListener()">unregisterEventListener</a>(dispatcher:IEventDispatcher, event:String, listener:Function):void</div>
+<a class="signatureLink" href="#unregisterEventListener()">unregisterEventListener</a>(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false):void</div>
 <div class="summaryTableDescription">[static]
      Removes the specified listener from the specified dispatcher for the specified event.</div>
 </td><td class="summaryTableOwnerCol">EventHandlers</td>
@@ -118,14 +119,14 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_eventHandlers"></a>
+<a name="_mgr"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_eventHandlers</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_mgr</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static var _eventHandlers:Array</code>
+<code>protected static var _mgr:<a href="../contrib/EventHandlerManager.html">EventHandlerManager</a></code>
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
@@ -153,7 +154,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function registerEventListener(dispatcher:IEventDispatcher, event:String, listener:Function):void</code><p>
+<code>public static function registerEventListener(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void</code><p>
      Adds the specified listener to the specified dispatcher for the specified event.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -172,6 +173,24 @@ showHideInherited();
 <tr>
 <td width="20px"></td><td><code><span class="label">listener</span>:Function</code></td>
 </tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">useCapture</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">priority</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">useWeakReference</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
 </table>
 </div>
 <a name="registerOneShotCallback()"></a>
@@ -181,7 +200,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function registerOneShotCallback(dispatcher:IEventDispatcher, event:String, callback:Function):void</code><p>
+<code>public static function registerOneShotCallback(dispatcher:IEventDispatcher, event:String, callback:Function, useCapture:Boolean = false, priority:int = 0):void</code><p>
      Registers a zero-arg callback function that should be called once when the event fires.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -199,6 +218,18 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">callback</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">useCapture</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">priority</span>:int</code> (default = <code>0</code>)<code></code></td>
 </tr>
 </table>
 </div>
@@ -226,7 +257,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function unregisterEventListener(dispatcher:IEventDispatcher, event:String, listener:Function):void</code><p>
+<code>public static function unregisterEventListener(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false):void</code><p>
      Removes the specified listener from the specified dispatcher for the specified event.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
@@ -244,6 +275,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">listener</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">useCapture</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
 </tr>
 </table>
 </div>

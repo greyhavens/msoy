@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="Log,com.threerings.util.Log,DEBUG,INFO,LEVEL_NAMES,OFF,WARNING,_levels,_module,_setLevels,_targets,addTarget,debug,doLog,dumpStack,formatMessage,getLevel,getLog,getTimeStamp,info,logStackTrace,removeTarget,setLevel,setLevels,stringToLevel,testing,warning" name="keywords">
+<meta content="Log,com.threerings.util.Log,DEBUG,ERROR,INFO,LEVEL_NAMES,OFF,WARNING,_levels,_module,_setLevels,_targets,addTarget,debug,doLog,dumpStack,error,formatMessage,getLevel,getLog,getTimeStamp,info,logStackTrace,removeTarget,setLevel,setLevels,stringToLevel,testing,warning" name="keywords">
 <title>com.threerings.util.Log</title>
 </head>
 <body>
@@ -119,6 +119,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">[static]
      A convenience function for quickly printing a stack trace
      to the log, useful for debugging.</div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#error()">error</a>(... args):void</div>
+<div class="summaryTableDescription">
+     Log a message with 'error' priority.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 <tr class="">
@@ -247,11 +255,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ERROR">ERROR</a> : int = 3<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Log</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#INFO">INFO</a> : int = 1<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OFF">OFF</a> : int = 3<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OFF">OFF</a> : int = 4<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 <tr class="">
@@ -268,7 +280,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#LEVEL_NAMES">LEVEL_NAMES</a> : Array<div class="summaryTableDescription">[static] The names of each level.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#LEVEL_NAMES">LEVEL_NAMES</a> : Array<div class="summaryTableDescription">[static] The outputted names of each level.</div>
 </td><td class="summaryTableOwnerCol">Log</td>
 </tr>
 </table>
@@ -387,6 +399,32 @@ showHideInherited();
      A convenience function for quickly printing a stack trace
      to the log, useful for debugging.
      </p></div>
+<a name="error()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">error</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function error(... args):void</code><p>
+     Log a message with 'error' priority.
+          </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code>... <span class="label">args</span></code> &mdash; The first argument is the actual message to log. After that, each pair
+     of parameters is printed in key/value form, the benefit being that if no log
+     message is generated then toString() will not be called on the values.
+     A final parameter may be an Error, in which case the stack trace is printed.
+          </td>
+</tr>
+</table>
+<br>
+<span class="label">Example</span>
+<br>     <div class='listing'><pre>
+        log.error("Message", "key1", value1, "key2", value2, optionalError);
+     </pre></div>
+     <p></p>
+</div>
 <a name="formatMessage()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -513,6 +551,7 @@ showHideInherited();
 <div class="detailBody">
 <code>public function logStackTrace(error:Error):void</code><p>
      Log just a stack trace with 'warning' priority.
+     Deprecated, sorta. Just use warning("Message", error);
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -654,6 +693,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const DEBUG:int = 0</code><p> Log level constants. </p></div>
+<a name="ERROR"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ERROR</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const ERROR:int = 3</code>
+</div>
 <a name="INFO"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -670,7 +718,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static const LEVEL_NAMES:Array</code><p> The names of each level. The last one isn't used, it corresponds with OFF. </p></div>
+<code>protected static const LEVEL_NAMES:Array</code><p> The outputted names of each level. The last one isn't used, it corresponds with OFF. </p></div>
 <a name="OFF"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -678,7 +726,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const OFF:int = 3</code>
+<code>public static const OFF:int = 4</code>
 </div>
 <a name="WARNING"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

@@ -41,7 +41,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="classHeaderTableLabel">Inheritance</td><td class="inheritanceList">DynamicSprite <img class="inheritArrow" alt="Inheritance" title="Inheritance" src="../../../../../images/inherit-arrow.gif"> flash.display.Sprite</td>
 </tr>
 <tr>
-<td class="classHeaderTableLabel">Subclasses</td><td><a href="../display/ActorSprite.html">ActorSprite</a>, <a href="../display/ShotSprite.html">ShotSprite</a></td>
+<td class="classHeaderTableLabel">Subclasses</td><td><a href="../display/ActorSprite.html">ActorSprite</a>, <a href="../display/HoverSprite.html">HoverSprite</a>, <a href="../display/ShotSprite.html">ShotSprite</a></td>
 </tr>
 </table>
 <p></p>
@@ -148,7 +148,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#generateParticleEffect()">generateParticleEffect</a>(name:String, node:DisplayObject, back:Boolean = false, recolor:String = null, filter:ColorMatrixFilter = null):void</div>
+<a class="signatureLink" href="#generateParticleEffect()">generateParticleEffect</a>(name:String, node:DisplayObject, back:Boolean = false, recolor:String = null, filter:ColorMatrixFilter = null, scaleY:Number = 1):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">DynamicSprite</td>
 </tr>
@@ -320,7 +320,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function generateParticleEffect(name:String, node:DisplayObject, back:Boolean = false, recolor:String = null, filter:ColorMatrixFilter = null):void</code><span class="label">Parameters</span>
+<code>protected function generateParticleEffect(name:String, node:DisplayObject, back:Boolean = false, recolor:String = null, filter:ColorMatrixFilter = null, scaleY:Number = 1):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
@@ -348,6 +348,12 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">filter</span>:ColorMatrixFilter</code> (default = <code>null</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">scaleY</span>:Number</code> (default = <code>1</code>)<code></code></td>
 </tr>
 </table>
 </div>

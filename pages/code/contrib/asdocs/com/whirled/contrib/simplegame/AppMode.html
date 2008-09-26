@@ -91,6 +91,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="hideInheritedProtectedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ObjectDB.html#_events">_events</a> : <a href="../../contrib/EventHandlerManager.html">EventHandlerManager</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="ObjectDB.html">ObjectDB</a></td>
+</tr>
+<tr class="hideInheritedProtectedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ObjectDB.html#_groupedObjects">_groupedObjects</a> : HashMap<div class="summaryTableDescription"> stores a mapping from String to Array </div>
 </td><td class="summaryTableOwnerCol"><a href="ObjectDB.html">ObjectDB</a></td>
 </tr>
@@ -112,7 +117,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol"><a href="ObjectDB.html">ObjectDB</a></td>
 </tr>
 <tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ObjectDB.html#_objectsPendingDestroy">_objectsPendingDestroy</a> : Array<div class="summaryTableDescription"> An array of SimObjects </div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ObjectDB.html#_objectsPendingRemoval">_objectsPendingRemoval</a> : Array<div class="summaryTableDescription"> An array of SimObjects </div>
 </td><td class="summaryTableOwnerCol"><a href="ObjectDB.html">ObjectDB</a></td>
 </tr>
 </table>
@@ -318,8 +323,24 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="ObjectDB.html#finalizeObjectDestruction()">finalizeObjectDestruction</a>(obj:<a href="../simplegame/SimObject.html">SimObject</a>):void</div>
+<a class="signatureLink" href="ObjectDB.html#finalizeObjectRemoval()">finalizeObjectRemoval</a>(obj:<a href="../simplegame/SimObject.html">SimObject</a>):void</div>
 <div class="summaryTableDescription"> Removes a single dead object from the object list.</div>
+</td><td class="summaryTableOwnerCol"><a href="ObjectDB.html">ObjectDB</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="ObjectDB.html#registerEventListener()">registerEventListener</a>(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false, priority:int = 0):void</div>
+<div class="summaryTableDescription">
+     Adds the specified listener to the specified dispatcher for the specified event.</div>
+</td><td class="summaryTableOwnerCol"><a href="ObjectDB.html">ObjectDB</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="ObjectDB.html#registerOneShotCallback()">registerOneShotCallback</a>(dispatcher:IEventDispatcher, event:String, callback:Function, useCapture:Boolean = false, priority:int = 0):void</div>
+<div class="summaryTableDescription">
+     Registers a zero-arg callback function that should be called once when the event fires.</div>
 </td><td class="summaryTableOwnerCol"><a href="ObjectDB.html">ObjectDB</a></td>
 </tr>
 <tr class="">
@@ -328,6 +349,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#setup()">setup</a>():void</div>
 <div class="summaryTableDescription"> Called when the mode is added to the mode stack </div>
 </td><td class="summaryTableOwnerCol">AppMode</td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="ObjectDB.html#shutdown()">shutdown</a>():void</div>
+<div class="summaryTableDescription">
+     Destroys all SimObjects contained by this ObjectDB.</div>
+</td><td class="summaryTableOwnerCol"><a href="ObjectDB.html">ObjectDB</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="ObjectDB.html#unregisterEventListener()">unregisterEventListener</a>(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false):void</div>
+<div class="summaryTableDescription">
+     Removes the specified listener from the specified dispatcher for the specified event.</div>
+</td><td class="summaryTableOwnerCol"><a href="ObjectDB.html">ObjectDB</a></td>
 </tr>
 </table>
 </div>

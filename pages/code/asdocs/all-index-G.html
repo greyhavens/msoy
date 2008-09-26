@@ -348,6 +348,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Get some display objects in the datapack.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/FileUtil.html#getDotSuffix()">getDotSuffix</a>(filename) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/FileUtil.html">FileUtil</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns the substring composed of the characters after the last '.' in the supplied string.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#getEntityIds()">getEntityIds</a>(type) &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
 </tr>
 <tr>
@@ -427,6 +434,20 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Tests if the given line intersects this line.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameBaseSubControl.html#getItemPacks()">getItemPacks</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameBaseSubControl.html">GameBaseSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns the set of all item packs available to this game as an array of objects with the
+     following properties:
+          <pre>
+     ident - string identifier of item pack
+     name - human readable name of item pack
+     mediaURL - URL for item pack content
+     </pre>
+     </td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html#getItemPacks()">getItemPacks</a>() &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html">GameSubControl</a></td>
 </tr>
 <tr>
@@ -460,6 +481,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
 <tr>
 <td width="20"></td><td>
      Get the logging level for the specified module.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameBaseSubControl.html#getLevelPacks()">getLevelPacks</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/GameBaseSubControl.html">GameBaseSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns the set of all level packs available to this game as an array of objects with the
+     following properties:
+          <pre>
+     ident - string identifier of item pack
+     name - human readable name of item pack
+     mediaURL - URL for item pack content
+     premium - boolean indicating that content is premium or not
+     </pre>
+     </td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html#getLevelPacks()">getLevelPacks</a>() &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameSubControl.html">GameSubControl</a></td>
@@ -649,6 +685,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Returns the current orientation of this mobile.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/LocalSubControl.html#getPaintableArea()">getPaintableArea</a>(full) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/LocalSubControl.html">LocalSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns the bounds of the area on which the AVRG will be drawn.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ParameterUtil.html#getParameters()">getParameters</a>(disp, callback) &mdash; Static method in class com.threerings.util.<a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/ParameterUtil.html">ParameterUtil</a></td>
 </tr>
 <tr>
@@ -714,11 +757,25 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
      Get all the players at the table, in their seated position.</td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerBaseSubControl.html#getPlayerItemPacks()">getPlayerItemPacks</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerBaseSubControl.html">PlayerBaseSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns all item packs owned by this client's player (the default) or a specified player.</td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html#getPlayerItemPacks()">getPlayerItemPacks</a>(playerId) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html">PlayerSubControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
      Returns all item packs owned by this client's player (the default) or a specified player.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerBaseSubControl.html#getPlayerLevelPacks()">getPlayerLevelPacks</a>() &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerBaseSubControl.html">PlayerBaseSubControl</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Returns all level packs owned by this client's player (the default) or a specified player.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html#getPlayerLevelPacks()">getPlayerLevelPacks</a>(playerId) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html">PlayerSubControl</a></td>
@@ -854,13 +911,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("GÂ
 </tr>
 <tr>
 <td width="20"></td><td></td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/LocalSubControl.html#getStageSize()">getStageSize</a>(full) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/LocalSubControl.html">LocalSubControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td>
-     Returns the bounds of the "stage" on which the AVRG will be drawn.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html#getState()">getState</a>() &mdash; Method in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/ActorControl.html">ActorControl</a></td>

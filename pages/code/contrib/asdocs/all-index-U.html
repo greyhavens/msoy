@@ -125,7 +125,28 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("UÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/EventHandlers.html#unregisterEventListener()">unregisterEventListener</a>(dispatcher, event, listener) &mdash; Static method in class com.whirled.contrib.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/EventHandlers.html">EventHandlers</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/EventHandlerManager.html#unregisterEventListener()">unregisterEventListener</a>(dispatcher, event, listener, useCapture) &mdash; Method in class com.whirled.contrib.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/EventHandlerManager.html">EventHandlerManager</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Removes the specified listener from the specified dispatcher for the specified event.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/EventHandlers.html#unregisterEventListener()">unregisterEventListener</a>(dispatcher, event, listener, useCapture) &mdash; Static method in class com.whirled.contrib.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/class-list.html');" href="com/whirled/contrib/EventHandlers.html">EventHandlers</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Removes the specified listener from the specified dispatcher for the specified event.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/ObjectDB.html#unregisterEventListener()">unregisterEventListener</a>(dispatcher, event, listener, useCapture) &mdash; Method in class com.whirled.contrib.simplegame.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/ObjectDB.html">ObjectDB</a></td>
+</tr>
+<tr>
+<td width="20"></td><td>
+     Removes the specified listener from the specified dispatcher for the specified event.</td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/SimObject.html#unregisterEventListener()">unregisterEventListener</a>(dispatcher, event, listener, useCapture) &mdash; Method in class com.whirled.contrib.simplegame.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/SimObject.html">SimObject</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
@@ -195,6 +216,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("UÂ
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/display/class-list.html');" href="com/whirled/contrib/platformer/display/DynamicSprite.html#update()">update</a>(delta) &mdash; Method in class com.whirled.contrib.platformer.display.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/display/class-list.html');" href="com/whirled/contrib/platformer/display/DynamicSprite.html">DynamicSprite</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/display/class-list.html');" href="com/whirled/contrib/platformer/display/HoverSprite.html#update()">update</a>(delta) &mdash; Method in class com.whirled.contrib.platformer.display.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/display/class-list.html');" href="com/whirled/contrib/platformer/display/HoverSprite.html">HoverSprite</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/display/class-list.html');" href="com/whirled/contrib/platformer/display/LaserShotSprite.html#update()">update</a>(delta) &mdash; Method in class com.whirled.contrib.platformer.display.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/display/class-list.html');" href="com/whirled/contrib/platformer/display/LaserShotSprite.html">LaserShotSprite</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>
@@ -294,7 +327,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("UÂ
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/SimObject.html#update()">update</a>(dt) &mdash; Method in class com.whirled.contrib.simplegame.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/SimObject.html">SimObject</a></td>
 </tr>
 <tr>
-<td width="20"></td><td> Called once per update tick.</td>
+<td width="20"></td><td>
+     Called once per update tick.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/Updatable.html#update()">update</a>(dt) &mdash; Method in interface com.whirled.contrib.simplegame.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/simplegame/class-list.html');" href="com/whirled/contrib/simplegame/Updatable.html">Updatable</a></td>
@@ -423,7 +457,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("UÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/class-list.html');" href="com/whirled/contrib/platformer/Controller.html#updateACS()">updateACS</a>(event) &mdash; Method in class com.whirled.contrib.platformer.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/class-list.html');" href="com/whirled/contrib/platformer/Controller.html">Controller</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/display/class-list.html');" href="com/whirled/contrib/platformer/display/BoardSprite.html#updateActors()">updateActors</a>(delta) &mdash; Method in class com.whirled.contrib.platformer.display.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/display/class-list.html');" href="com/whirled/contrib/platformer/display/BoardSprite.html">BoardSprite</a></td>
+</tr>
+<tr>
+<td width="20"></td><td></td>
+</tr>
+<tr>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/board/class-list.html');" href="com/whirled/contrib/platformer/board/Collider.html#updateBoundLines()">updateBoundLines</a>(idx) &mdash; Method in class com.whirled.contrib.platformer.board.<a onclick="javascript:loadClassListFrame('com/whirled/contrib/platformer/board/class-list.html');" href="com/whirled/contrib/platformer/board/Collider.html">Collider</a></td>
 </tr>
 <tr>
 <td width="20"></td><td></td>

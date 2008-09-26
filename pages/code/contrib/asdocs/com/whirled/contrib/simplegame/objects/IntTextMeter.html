@@ -188,6 +188,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_display">_display</a> : TextField<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">IntTextMeter</td>
 </tr>
+<tr class="hideInheritedProtectedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="../SimObject.html#_events">_events</a> : <a href="../../../contrib/EventHandlerManager.html">EventHandlerManager</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="../SimObject.html">SimObject</a></td>
+</tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_maxValue">_maxValue</a> : Number<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">IntTextMeter</td>
@@ -251,6 +256,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="../SimObject.html#addTask()">addTask</a>(task:<a href="../../simplegame/ObjectTask.html">ObjectTask</a>):void</div>
 <div class="summaryTableDescription"> Adds an unnamed task to this SimObject.</div>
+</td><td class="summaryTableOwnerCol"><a href="../SimObject.html">SimObject</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="../SimObject.html#destroyedInternal()">destroyedInternal</a>():void</div>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="../SimObject.html">SimObject</a></td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -352,6 +364,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="../SimObject.html#destroyed()">destroyed</a>():void</div>
+<div class="summaryTableDescription">
+     Called after the SimObject has been removed from the active AppMode, or if the
+     object's containing AppMode is removed from the mode stack.</div>
+</td><td class="summaryTableOwnerCol"><a href="../SimObject.html">SimObject</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="../SimObject.html#receiveMessage()">receiveMessage</a>(msg:<a href="../../simplegame/ObjectMessage.html">ObjectMessage</a>):void</div>
 <div class="summaryTableDescription">
      Called to deliver a message to the object.</div>
@@ -360,9 +381,33 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="../SimObject.html#registerEventListener()">registerEventListener</a>(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false, priority:int = 0):void</div>
+<div class="summaryTableDescription">
+     Adds the specified listener to the specified dispatcher for the specified event.</div>
+</td><td class="summaryTableOwnerCol"><a href="../SimObject.html">SimObject</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="../SimObject.html#registerOneShotCallback()">registerOneShotCallback</a>(dispatcher:IEventDispatcher, event:String, callback:Function, useCapture:Boolean = false, priority:int = 0):void</div>
+<div class="summaryTableDescription">
+     Registers a zero-arg callback function that should be called once when the event fires.</div>
+</td><td class="summaryTableOwnerCol"><a href="../SimObject.html">SimObject</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="../SimObject.html#removedFromDB()">removedFromDB</a>():void</div>
 <div class="summaryTableDescription">
      Called immediately after the SimObject has been removed from an AppMode.</div>
+</td><td class="summaryTableOwnerCol"><a href="../SimObject.html">SimObject</a></td>
+</tr>
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="../SimObject.html#unregisterEventListener()">unregisterEventListener</a>(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false):void</div>
+<div class="summaryTableDescription">
+     Removes the specified listener from the specified dispatcher for the specified event.</div>
 </td><td class="summaryTableOwnerCol"><a href="../SimObject.html">SimObject</a></td>
 </tr>
 <tr class="">

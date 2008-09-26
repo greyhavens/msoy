@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="ObjectDB,com.whirled.contrib.simplegame.ObjectDB,_groupedObjects,_listHead,_namedObjects,_objectCount,_objectsPendingDestroy,objectCount,addObject,beginUpdate,broadcastMessage,destroyObject,destroyObjectNamed,endUpdate,finalizeObjectDestruction,getObjectNamed,getObjectRefsInGroup,getObjectsInGroup,sendMessageTo,sendMessageToGroup,sendMessageToNamedObject,update" name="keywords">
+<meta content="ObjectDB,com.whirled.contrib.simplegame.ObjectDB,_events,_groupedObjects,_listHead,_namedObjects,_objectCount,_objectsPendingRemoval,objectCount,addObject,beginUpdate,broadcastMessage,destroyObject,destroyObjectNamed,endUpdate,finalizeObjectRemoval,getObjectNamed,getObjectRefsInGroup,getObjectsInGroup,registerEventListener,registerOneShotCallback,sendMessageTo,sendMessageToGroup,sendMessageToNamedObject,shutdown,unregisterEventListener,update" name="keywords">
 <title>com.whirled.contrib.simplegame.ObjectDB</title>
 </head>
 <body>
@@ -67,6 +67,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_events">_events</a> : <a href="../../contrib/EventHandlerManager.html">EventHandlerManager</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">ObjectDB</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_groupedObjects">_groupedObjects</a> : HashMap<div class="summaryTableDescription"> stores a mapping from String to Array </div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
@@ -84,7 +89,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_objectsPendingDestroy">_objectsPendingDestroy</a> : Array<div class="summaryTableDescription"> An array of SimObjects </div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_objectsPendingRemoval">_objectsPendingRemoval</a> : Array<div class="summaryTableDescription"> An array of SimObjects </div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 </table>
@@ -204,8 +209,40 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#finalizeObjectDestruction()">finalizeObjectDestruction</a>(obj:<a href="SimObject.html">SimObject</a>):void</div>
+<a class="signatureLink" href="#finalizeObjectRemoval()">finalizeObjectRemoval</a>(obj:<a href="SimObject.html">SimObject</a>):void</div>
 <div class="summaryTableDescription"> Removes a single dead object from the object list.</div>
+</td><td class="summaryTableOwnerCol">ObjectDB</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#registerEventListener()">registerEventListener</a>(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false, priority:int = 0):void</div>
+<div class="summaryTableDescription">
+     Adds the specified listener to the specified dispatcher for the specified event.</div>
+</td><td class="summaryTableOwnerCol">ObjectDB</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#registerOneShotCallback()">registerOneShotCallback</a>(dispatcher:IEventDispatcher, event:String, callback:Function, useCapture:Boolean = false, priority:int = 0):void</div>
+<div class="summaryTableDescription">
+     Registers a zero-arg callback function that should be called once when the event fires.</div>
+</td><td class="summaryTableOwnerCol">ObjectDB</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#shutdown()">shutdown</a>():void</div>
+<div class="summaryTableDescription">
+     Destroys all SimObjects contained by this ObjectDB.</div>
+</td><td class="summaryTableOwnerCol">ObjectDB</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#unregisterEventListener()">unregisterEventListener</a>(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false):void</div>
+<div class="summaryTableDescription">
+     Removes the specified listener from the specified dispatcher for the specified event.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 </table>
@@ -217,10 +254,19 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
+<a name="_events"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_events</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _events:<a href="../../contrib/EventHandlerManager.html">EventHandlerManager</a></code>
+</div>
 <a name="_groupedObjects"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_groupedObjects</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_groupedObjects</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -263,14 +309,14 @@ showHideInherited();
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get objectCount():uint</code>
 <br>
 </div>
-<a name="_objectsPendingDestroy"></a>
+<a name="_objectsPendingRemoval"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_objectsPendingDestroy</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_objectsPendingRemoval</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _objectsPendingDestroy:Array</code><p> An array of SimObjects </p></div>
+<code>protected var _objectsPendingRemoval:Array</code><p> An array of SimObjects </p></div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
 <a name="addObject()"></a>
@@ -374,14 +420,14 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="finalizeObjectDestruction()"></a>
+<a name="finalizeObjectRemoval()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">finalizeObjectDestruction</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">finalizeObjectRemoval</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function finalizeObjectDestruction(obj:<a href="SimObject.html">SimObject</a>):void</code><p> Removes a single dead object from the object list. </p><span class="label">Parameters</span>
+<code>protected function finalizeObjectRemoval(obj:<a href="SimObject.html">SimObject</a>):void</code><p> Removes a single dead object from the object list. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">obj</span>:<a href="SimObject.html">SimObject</a></code></td>
@@ -461,6 +507,90 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="registerEventListener()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">registerEventListener</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function registerEventListener(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false, priority:int = 0):void</code><p>
+     Adds the specified listener to the specified dispatcher for the specified event.
+          Listeners registered in this way will be automatically unregistered when the ObjectDB is
+     shutdown.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">dispatcher</span>:IEventDispatcher</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">listener</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">useCapture</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">priority</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
+</table>
+</div>
+<a name="registerOneShotCallback()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">registerOneShotCallback</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function registerOneShotCallback(dispatcher:IEventDispatcher, event:String, callback:Function, useCapture:Boolean = false, priority:int = 0):void</code><p>
+     Registers a zero-arg callback function that should be called once when the event fires.
+          Listeners registered in this way will be automatically unregistered when the ObjectDB is
+     shutdown.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">dispatcher</span>:IEventDispatcher</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">callback</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">useCapture</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">priority</span>:int</code> (default = <code>0</code>)<code></code></td>
+</tr>
+</table>
+</div>
 <a name="sendMessageTo()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -518,6 +648,50 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">objectName</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="shutdown()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">shutdown</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function shutdown():void</code><p>
+     Destroys all SimObjects contained by this ObjectDB. Applications generally don't need
+     to call this function - it's called automatically when an {</p></div>
+<a name="unregisterEventListener()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">unregisterEventListener</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function unregisterEventListener(dispatcher:IEventDispatcher, event:String, listener:Function, useCapture:Boolean = false):void</code><p>
+     Removes the specified listener from the specified dispatcher for the specified event.
+     </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">dispatcher</span>:IEventDispatcher</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">listener</span>:Function</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">useCapture</span>:Boolean</code> (default = <code>false</code>)<code></code></td>
 </tr>
 </table>
 </div>
