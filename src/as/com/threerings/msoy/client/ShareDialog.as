@@ -24,8 +24,8 @@ import com.threerings.io.TypedArray;
 import com.threerings.util.MailUtil;
 
 import com.threerings.msoy.chat.client.ReportingListener;
-import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.ui.CopyableText;
 import com.threerings.msoy.ui.FloatingPanel;
@@ -71,12 +71,12 @@ public class ShareDialog extends FloatingPanel
 
     public function getEmbedCode (size :int) :String
     {
-        _memObj = _ctx.getClient().getClientObject() as MemberObject;
+        const memName :MemberName = _ctx.getMyName();
 
         var url :String = DeploymentConfig.serverURL;
         url = url.replace(/(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
         
-        var affiliate :String = _memObj.isGuest() ? "" : String(_memObj.getMemberId());
+        var affiliate :String = memName.isGuest() ? "" : String(memName.getMemberId());
         var flashVars :String = VisitorInfo.makeFlashVars(affiliate, _placeId, _inGame);
 
         if (size == 0) { // mini TV view
@@ -143,13 +143,20 @@ public class ShareDialog extends FloatingPanel
 
         var url :String = DeploymentConfig.serverURL;
         url = url.replace(/(http:\/\/[^\/]*).*/, "$1/");
+        var page :String;
         if (_inGame) {
-            url += "#world-game_l_" + _placeId;
+            page = "world-game_l_" + _placeId;
         } else if (_placeId != 0) {
-            url += "#world-s" + _placeId;
+            page = "world-s" + _placeId;
         }
-        box.addChild(new CopyableText(url));
+        const memName :MemberName = _ctx.getMyName();
+        if (memName.isGuest()) {
+            url += "#" + page;
+        } else {
+            url += "welcome?aff=" + memName.getMemberId() + "&page=" + encodeURIComponent(page);
+        }
 
+        box.addChild(new CopyableText(url));
         return box;
     }
 
@@ -248,7 +255,6 @@ public class ShareDialog extends FloatingPanel
         close(); // and make like the proverbial audi 5000
     }
 
-    protected var _memObj :MemberObject;
     protected var _inGame :Boolean;
     protected var _placeName :String;
     protected var _placeId :int;
