@@ -107,7 +107,7 @@ public class QuestDelegate extends PlaceManagerDelegate
 
         // TODO: Get this into EventLogDelegate, or write a AVRG-specific one?
         final String tracker = (player.playerObject.visitorInfo == null) ?
-            "" : player.playerObject.visitorInfo.id
+            "" : player.playerObject.visitorInfo.id;
         _eventLog.avrgLeft(memberId, _gameId, playTime,
                            _plmgr.getPlaceObject().occupantInfo.size(),
                            tracker);
