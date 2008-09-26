@@ -6,6 +6,7 @@ package client.person;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
+import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.util.Link;
 import client.util.MediaUtil;
@@ -15,7 +16,6 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -66,12 +66,16 @@ public class GalleryDetailPanel extends AbsolutePanel
                 });
                 add(name, 10, 10);
             }
-
-            add(MsoyUI.createTextArea(_gallery.description, "Description", new ChangeListener() {
+            final LimitedTextArea description = new LimitedTextArea(Gallery.MAX_DESCRIPTION_LENGTH,
+                20, 10);
+            description.setText(_gallery.description);
+            description.addStyleName("Description");
+            description.getTextArea().addChangeListener(new ChangeListener() {
                 public void onChange (Widget sender) {
-                    _gallery.description = ((TextArea) sender).getText();
+                    _gallery.description = description.getText();
                 }
-            }), 10, 140);
+            });
+            add(description, 10, 140);
         }
 
         // if the current member owns this read-only gallery, add an edit button

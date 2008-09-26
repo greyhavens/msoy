@@ -117,7 +117,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         // add drop panel for adding to and organizing this gallery
         _dragController = new PickupDragController(this, false);
         _dragController.setBehaviorDragProxy(false);
-        // dragController.setBehaviorMultipleSelection(true);
+        _dragController.setBehaviorMultipleSelection(true);
         SimpleDropModel<Photo> dropModel = new SimpleDropModel<Photo>(galleryData.photos);
         dropModel.addDropListener(new DropListener<Photo>() {
             public void contentInserted (DropModel<Photo> model, Photo content, int index) {
@@ -141,7 +141,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         _itemsvc.loadPhotos(new MsoyCallback<List<Photo>>() {
             public void onSuccess (List<Photo> result) {
                 final PagedPanel myPhotos = new PagedPanel(new SimpleDataModel<Photo>(result), 5);
-                add(myPhotos, 10, 415);
+                add(myPhotos, 10, 405);
                 // allow photos to get dropped onto this panel (to remove them from a gallery)
                 _dragController.registerDropController(
                     new SimpleDropController(GalleryEditPanel.this) {
@@ -156,6 +156,13 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                                 if (payload.getSource() == myPhotos) {
                                     throw new VetoDragException();
                                 }
+                            }
+                        }
+                        @Override public void onDrop(DragContext context) {
+                            super.onDrop(context);
+                            for (Widget widget : context.selectedWidgets) {
+                                // to the ether with you
+                                remove(widget);
                             }
                         }
                     }
