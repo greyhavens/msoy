@@ -667,14 +667,21 @@ public class MemberManager
                             String[] emails, String message, InvocationService.ConfirmListener cl)
     {
         final MemberObject memObj = (MemberObject) caller;
-        String url = ServerConfig.getServerURL();
+        String page;
         if (isGame) {
-            url += "#world-game_g_" + placeId;
+            page = "world-game_g_" + placeId;
         } else {
-            url += "#world-s" + placeId;
+            page = "world-s" + placeId;
         }
-        final String template = isGame ? "shareGameInvite" : "shareRoomInvite";
+        String url = ServerConfig.getServerURL();
+        if (memObj.isGuest()) {
+            url += "#" + page;
+        } else {
+            // set them up with the affiliate info
+            url += "welcome?aff=" + memObj.getMemberId() + "&page=" + StringUtil.encode(page);
+        }
 
+        final String template = isGame ? "shareGameInvite" : "shareRoomInvite";
         // username is their authentication username which is their email address
         final String from = memObj.username.toString();
         for (final String recip : emails) {
