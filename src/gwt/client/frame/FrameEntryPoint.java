@@ -232,7 +232,8 @@ public class FrameEntryPoint
             VisitorCookie.save(info, true);
         }
 
-        if (HttpReferrerCookie.available()) {
+        // if this is a guest, and we have a referrer cookie from them, record it
+        if (!info.isAuthoritative && HttpReferrerCookie.available()) {
             String ref = HttpReferrerCookie.get();
             _membersvc.trackHttpReferrerAssociation(info, ref, new NoopAsyncCallback());
             HttpReferrerCookie.disable();
