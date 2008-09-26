@@ -234,10 +234,10 @@ import com.threerings.util.CommandEvent;
 import com.threerings.flash.TextFieldUtil;
 
 import com.threerings.msoy.client.Msgs;
-
-import com.threerings.msoy.game.data.GameSummary;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.ui.ScalingMediaContainer;
 
+import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.world.client.WorldController;
 
 import com.threerings.msoy.room.client.MemberSprite;
@@ -308,9 +308,13 @@ class TableIcon extends Sprite
 
     protected function handleMouseClick (... ignored) :void
     {
-        var cmd :String = _gameSummary.avrGame ? WorldController.JOIN_AVR_GAME
-                                               : WorldController.JOIN_GAME_LOBBY;
-        CommandEvent.dispatch(this, cmd, _gameSummary.gameId);
+        if (_gameSummary.avrGame) {
+            CommandEvent.dispatch(this, WorldController.JOIN_AVR_GAME, _gameSummary.gameId);
+        } else {
+            var memberId :int = (_host.getActorInfo().username as MemberName).getMemberId();
+            CommandEvent.dispatch(
+                this, WorldController.JOIN_PLAYER_GAME, [ _gameSummary.gameId, memberId ] );
+        }
     }
 
     protected var _host :MemberSprite;
