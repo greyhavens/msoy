@@ -311,42 +311,6 @@ public class AVRGameManager extends PlaceManager
         roomSubscriptionComplete(sceneId);
     }
 
-    // from AVRGameProvider
-    public void setTicker (ClientObject caller, String tickerName, int msOfDelay,
-                           InvocationService.InvocationListener listener)
-        throws InvocationException
-    {
-        Ticker t;
-        if (msOfDelay >= MIN_TICKER_DELAY) {
-            if (_tickers != null) {
-                t = _tickers.get(tickerName);
-            } else {
-                _tickers = new HashMap<String, Ticker>();
-                t = null;
-            }
-
-            if (t == null) {
-                if (_tickers.size() >= MAX_TICKERS) {
-                    throw new InvocationException(InvocationCodes.ACCESS_DENIED);
-                }
-                t = new Ticker(tickerName, _gameObj);
-                _tickers.put(tickerName, t);
-            }
-            t.start(msOfDelay);
-
-        } else if (msOfDelay <= 0) {
-            if (_tickers != null) {
-                t = _tickers.remove(tickerName);
-                if (t != null) {
-                    t.stop();
-                }
-            }
-
-        } else {
-            throw new InvocationException(InvocationCodes.ACCESS_DENIED);
-        }
-    }
-
     /**
      * Called privately by the ThaneAVRGameController when an agent's code is all set to go
      * and the AVRG can startup.
@@ -414,8 +378,6 @@ public class AVRGameManager extends PlaceManager
     @Override
     protected void didShutdown ()
     {
-        stopTickers();
-
         if (_gameAgentObj != null) {
             _invmgr.clearDispatcher(_gameAgentObj.agentService);
             _breg.destroyAgent(_gameAgentObj);
@@ -558,19 +520,6 @@ public class AVRGameManager extends PlaceManager
     }
 
     /**
-     * Stop and clear all tickers.
-     */
-    protected void stopTickers ()
-    {
-        if (_tickers != null) {
-            for (Ticker ticker : _tickers.values()) {
-                ticker.stop();
-            }
-            _tickers = null;
-        }
-    }
-
-    /**
      * Reports the id/name of this game for use in log messages.
      */
     @Override
@@ -632,54 +581,6 @@ public class AVRGameManager extends PlaceManager
             throw new InvocationException(InvocationCodes.ACCESS_DENIED);
         }
     }
-
-    /**
-     * A timer that fires message events to an AVRG. This is a precise copy of the same class
-     * in WhirledGameManager. Perhaps one day we can avoid this duplication.
-     */
-    protected static class Ticker
-    {
-        /**
-         * Create a Ticker.
-         */
-        public Ticker (String name, AVRGameObject gameObj)
-        {
-            _name = name;
-            // once we are constructed, we want to avoid calling methods on dobjs.
-            _oid = gameObj.getOid();
-            _omgr = gameObj.getManager();
-        }
-
-        public void start (int msOfDelay)
-        {
-            _value = 0;
-            _interval.schedule(0, msOfDelay);
-        }
-
-        public void stop ()
-        {
-            _interval.cancel();
-        }
-
-        /**
-         * The interval that does our work. Note well that this is not a 'safe' interval that
-         * operates using a RunQueue.  This interval instead does something that we happen to know
-         * is safe for any thread: posting an event to the dobj manager.  If we were using a
-         * RunQueue it would be the same event queue and we would be posted there, wait our turn,
-         * and then do the same thing: post this event. We just expedite the process.
-         */
-        protected Interval _interval = new Interval() {
-            public void expired () {
-                _omgr.postEvent(new MessageEvent(
-                    _oid, AVRGameObject.TICKER, new Object[] { _name, _value++ }));
-            }
-        };
-
-        protected int _oid;
-        protected DObjectManager _omgr;
-        protected String _name;
-        protected int _value;
-    } // End: static class Ticker
 
     /**
      * Data for tracking what players are in a scene, so that we know when to flush it.
@@ -755,9 +656,6 @@ public class AVRGameManager extends PlaceManager
     /** The distributed object that only our agent sees. */
     protected AVRGameAgentObject _gameAgentObj;
 
-    /** The map of tickers, lazy-initialized. */
-    protected HashMap<String, Ticker> _tickers;
-
     /** The map of scenes by scene id, one to one. */
     protected HashIntMap<Scene> _scenes = new HashIntMap<Scene>();
 
@@ -789,12 +687,6 @@ public class AVRGameManager extends PlaceManager
     @Inject protected PlayerLocator _locator;
     @Inject protected LocationManager _locmgr;
     @Inject protected WorldServerClient _worldClient;
-
-    /** The minimum delay a ticker can have. */
-    protected static final int MIN_TICKER_DELAY = 50;
-
-    /** The maximum number of tickers allowed at one time. */
-    protected static final int MAX_TICKERS = 3;
 
     /** idle time before shutting down the manager. */
     protected static final long IDLE_UNLOAD_PERIOD =

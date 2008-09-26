@@ -56,17 +56,4 @@ public class AVRGameMarshaller extends InvocationMarshaller
             Integer.valueOf(arg2), arg3, Float.valueOf(arg4), listener5
         });
     }
-
-    /** The method id used to dispatch {@link #setTicker} requests. */
-    public static final int SET_TICKER = 4;
-
-    // from interface AVRGameService
-    public void setTicker (Client arg1, String arg2, int arg3, InvocationService.InvocationListener arg4)
-    {
-        ListenerMarshaller listener4 = new ListenerMarshaller();
-        listener4.listener = arg4;
-        sendRequest(arg1, SET_TICKER, new Object[] {
-            arg2, Integer.valueOf(arg3), listener4
-        });
-    }
 }

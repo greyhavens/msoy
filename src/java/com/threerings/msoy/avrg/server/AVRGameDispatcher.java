@@ -53,12 +53,6 @@ public class AVRGameDispatcher extends InvocationDispatcher<AVRGameMarshaller>
             );
             return;
 
-        case AVRGameMarshaller.SET_TICKER:
-            ((AVRGameProvider)provider).setTicker(
-                source, (String)args[0], ((Integer)args[1]).intValue(), (InvocationService.InvocationListener)args[2]
-            );
-            return;
-
         default:
             super.dispatchRequest(source, methodId, args);
             return;

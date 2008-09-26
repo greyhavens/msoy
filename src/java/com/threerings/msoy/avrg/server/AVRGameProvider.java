@@ -31,10 +31,4 @@ public interface AVRGameProvider extends InvocationProvider
      */
     void completeTask (ClientObject caller, int arg1, String arg2, float arg3, InvocationService.ConfirmListener arg4)
         throws InvocationException;
-
-    /**
-     * Handles a {@link AVRGameService#setTicker} request.
-     */
-    void setTicker (ClientObject caller, String arg1, int arg2, InvocationService.InvocationListener arg3)
-        throws InvocationException;
 }
