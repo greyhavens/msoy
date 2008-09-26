@@ -794,9 +794,7 @@ public class MemberManager
             // half
             if (level == length) {
                 final int[] temp = new int[length*2];
-                for (int ii = 0; ii < length; ii++) {
-                    temp[ii] = _levelForFlow[ii];
-                }
+                System.arraycopy(_levelForFlow, 0, temp, 0, length);
                 _levelForFlow = temp;
                 calculateLevelsForFlow(length);
                 checkCurrentLevel(member);
@@ -829,8 +827,8 @@ public class MemberManager
                     _notifyMan.notify(member, new LevelUpNotification(newLevel));
                 }
                 @Override public void handleFailure (final Exception pe) {
-                    log.warning("Unable to set user level [memberId=" +
-                        member.getMemberId() + ", level=" + newLevel + "]");
+                    log.warning("Unable to set user level.",
+                        "memberId", member.getMemberId(), "level", newLevel);
                 }
             });
         }
