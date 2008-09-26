@@ -9,6 +9,7 @@ import com.threerings.crowd.client.PlaceController;
 import com.threerings.crowd.data.PlaceConfig;
 import com.whirled.game.data.GameDefinition;
 import com.threerings.msoy.avrg.client.AVRGameController;
+import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Game;
 
 /**
@@ -20,12 +21,16 @@ public class AVRGameConfig extends PlaceConfig
     /** The creator provided name of this game. */
     public var name :String;
 
+    /** The game's thumbnail media. */
+    public var thumbnail :MediaDesc;
+
     /**
      * Configures this config with information from the supplied {@link Game} item.
      */
     public function init (game :Game, gameDef :GameDefinition) :void
     {
         this.name = game.name;
+        this.thumbnail = game.getThumbnailMedia();
         _gameId = game.gameId;
         _gameDef = gameDef;
     }
@@ -57,6 +62,7 @@ public class AVRGameConfig extends PlaceConfig
     {
         super.readObject(ins);
         name = ins.readField(String) as String;
+        thumbnail = (ins.readObject() as MediaDesc);
         _gameId = ins.readInt();
         _gameDef = ins.readObject() as GameDefinition;
     }
@@ -66,6 +72,7 @@ public class AVRGameConfig extends PlaceConfig
     {
         super.writeObject(out);
         out.writeField(name);
+        out.writeObject(thumbnail);
         out.writeInt(_gameId);
         out.writeObject(_gameDef);
     }
