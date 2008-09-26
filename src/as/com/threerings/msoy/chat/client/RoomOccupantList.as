@@ -35,6 +35,11 @@ public class RoomOccupantList extends PlayerList
         mouseEnabled = false;
     }
 
+    public function havePlace () :Boolean
+    {
+        return _plobj != null;
+    }
+
     public function setPlaceObject (plobj: PlaceObject) :void
     {
         if (_plobj != null) {

@@ -182,7 +182,8 @@ public class MsoyChatDirector extends ChatDirector
      */
     public function getPlayerList (ltype :String) :PlayerList
     {
-        return (ltype == ChatCodes.PLACE_CHAT_TYPE) ? _roomOccList : null;
+        return (ltype == ChatCodes.PLACE_CHAT_TYPE && _roomOccList.havePlace()) ?
+            _roomOccList : null;
     }
 
     // from ChatDirector
