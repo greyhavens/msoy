@@ -33,7 +33,7 @@ public class MePage extends Page
         } else if (DeploymentConfig.devDeployment && action.equals("passportimagetest")) {
             setContent(_msgs.titlePassportTest(), new PassportImageTestPanel());
 
-        } else if (action.equals(TRANSACTIONS)) {
+        } else if (action.equals(TRANSACTIONS) && DeploymentConfig.barsEnabled) {
             int report = args.get(1, 1);
             int memberId = args.get(2, CMe.getMemberId());
             setContent(_msgs.transactionsTitle(), new TransactionsPanel(report, memberId));
