@@ -108,7 +108,7 @@ public class GalleryViewPanel extends AbsolutePanel
         _galleryData = galleryData;
 
         // add read-only gallery detail panel
-        add(new GalleryDetailPanel(galleryData, true), 0, 0);
+        add(new GalleryDetailPanel(galleryData), 0, 0);
 
         FlowPanel photoPanel = new FlowPanel();
         for (int i = 0; i < galleryData.photos.size(); i++) {

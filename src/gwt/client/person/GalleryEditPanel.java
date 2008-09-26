@@ -72,8 +72,13 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         _galleryData = galleryData;
         addStyleName("galleryEditPanel");
 
+        _dragController = new PickupDragController(this, false);
+        _dragController.setBehaviorDragProxy(false);
+        _dragController.setBehaviorMultipleSelection(true);
+
         // add editable gallery detail panel
-        final GalleryDetailPanel detailPanel = new GalleryDetailPanel(_galleryData, false);
+        final GalleryDetailEditPanel detailPanel = new GalleryDetailEditPanel(_galleryData,
+            _dragController);
         add(detailPanel, 0, 0);
 
         // add "save" button
@@ -115,9 +120,6 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         add(saveButton, 45, 350);
 
         // add drop panel for adding to and organizing this gallery
-        _dragController = new PickupDragController(this, false);
-        _dragController.setBehaviorDragProxy(false);
-        _dragController.setBehaviorMultipleSelection(true);
         SimpleDropModel<Photo> dropModel = new SimpleDropModel<Photo>(galleryData.photos);
         dropModel.addDropListener(new DropListener<Photo>() {
             public void contentInserted (DropModel<Photo> model, Photo content, int index) {
@@ -146,7 +148,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                 _dragController.registerDropController(
                     new SimpleDropController(GalleryEditPanel.this) {
                         @Override public void onPreviewDrop(DragContext context)
-                            throws VetoDragException {
+                        throws VetoDragException {
                             super.onPreviewDrop(context);
                             if (context.draggable instanceof PayloadWidget) {
                                 PayloadWidget<?> payload = (PayloadWidget<?>) context.draggable;

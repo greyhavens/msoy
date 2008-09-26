@@ -6,6 +6,8 @@ package client.person;
 import java.util.HashMap;
 import java.util.Map;
 
+import client.shell.CShell;
+
 import com.allen_sauer.gwt.dnd.client.DragContext;
 import com.allen_sauer.gwt.dnd.client.PickupDragController;
 import com.allen_sauer.gwt.dnd.client.drop.FlowPanelDropController;
@@ -28,23 +30,6 @@ public abstract class DropPanel<T> extends FlowPanel
 
         _dragController = dragController;
         _dropController = new FlowPanelDropController(this) {
-            @Override protected void insert(Widget widget, int beforeIndex) {
-                T payload = null;
-                PayloadWidget<T> payloadWidget = getPayloadWidget(widget);
-                if (payloadWidget != null && !payloadWidget.isPositioner()) {
-                    payload = payloadWidget.getPayload();
-                    if (payloadWidget.getSource() != DropPanel.this) {
-                        // This payload has been dropped from elsewhere. Make sure to use our
-                        // custom widget when adding and displaying it on this panel.
-                        widget = createPayloadWidget(payload);
-                    }
-                }
-                super.insert(widget, beforeIndex);
-                // the model needs to get updated after the widget is inserted
-                if (payload != null) {
-                    _model.insert(payload, beforeIndex);
-                }
-            }
             @Override protected Widget newPositioner(DragContext context) {
                 return DropPanel.this.createPositioner(context);
             }
@@ -78,8 +63,22 @@ public abstract class DropPanel<T> extends FlowPanel
     @Override
     public void insert(Widget widget, int beforeIndex)
     {
+        T payload = null;
+        PayloadWidget<T> payloadWidget = getPayloadWidget(widget);
+        if (payloadWidget != null && !payloadWidget.isPositioner()) {
+            payload = payloadWidget.getPayload();
+            if (payloadWidget.getSource() != DropPanel.this) {
+                // This payload has been dropped from elsewhere. Make sure to use our
+                // custom widget when adding and displaying it on this panel.
+                widget = createPayloadWidget(payload);
+            }
+        }
         super.insert(widget, beforeIndex);
         checkForDuplicates(widget);
+        // the model needs to get updated after the widget is inserted
+        if (payload != null) {
+            _model.insert(payload, beforeIndex);
+        }
     }
 
     @Override
