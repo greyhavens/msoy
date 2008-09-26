@@ -20,7 +20,8 @@ public class BlingInfo
     /** The worth of the bling the user has requested to cash out. */
     public int cashedOutBlingWorth;
     
-    public BlingInfo (int bling, int blingWorth, int cashedOutBling, int cashedOutBlingWorth)
+    public BlingInfo (int bling, int blingWorth, int cashedOutBling, 
+        int cashedOutBlingWorth)
     {
         this.bling = bling;
         this.blingWorth = blingWorth;

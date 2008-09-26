@@ -172,3 +172,35 @@
   width: 650px;
 }
 */
+
+.cashOutWidget {
+  padding: 5px 0px;
+  width: 100%;
+  height: 89px;
+  font-size: 10px;
+}
+
+.cashOutWidget .Name {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.cashOutWidget .Status {
+  font-style: italic;
+}
+
+.cashOutWidget .Extras {
+  width: 120px;
+}
+
+.cashOutWidget .SendMail {
+  background-image: url(/images/profile/sendmail.png);
+  width: 21px;
+  height: 15px;
+}
+
+.cashOutWidget .Remove {
+  background-image: url(/images/profile/remove.png);
+  width: 17px;
+  height: 17px;
+}

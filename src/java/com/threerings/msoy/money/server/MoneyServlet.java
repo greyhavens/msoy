@@ -4,18 +4,26 @@
 package com.threerings.msoy.money.server;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
+import com.samskivert.util.IntMap;
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.money.data.MoneyCodes;
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
+import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 import com.threerings.msoy.money.gwt.MoneyService;
-import com.threerings.msoy.money.server.persist.MoneyRepository;
 import com.threerings.msoy.server.persist.MemberRecord;
+import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -71,6 +79,24 @@ public class MoneyServlet extends MsoyServiceServlet
             throw new ServiceException(MoneyCodes.E_BELOW_MINIMUM_BLING);
         }
     }
+
+    public List<CashOutEntry> getBlingCashOutRequests ()
+        throws ServiceException
+    {
+        Map<Integer, BlingInfo> blingMap = _moneyLogic.getBlingCashOutRequests();
+        
+        // Get all member names for the members in the map.
+        final IntMap<MemberName> names = _memberRepo.loadMemberNames(blingMap.keySet());
+        
+        // Transform the list into cash out entries.
+        return Lists.newArrayList(Iterables.transform(blingMap.entrySet(), 
+            new Function<Map.Entry<Integer, BlingInfo>, CashOutEntry>() {
+                public CashOutEntry apply (Entry<Integer, BlingInfo> entry) {
+                    return new CashOutEntry(entry.getKey(), names.get(entry.getKey()).getNormal(), 
+                        entry.getValue(), "todo@email.com");
+                }
+        }));
+    }
     
     /**
      * Not a public service method, Called by getTransactionHistory
@@ -82,5 +108,5 @@ public class MoneyServlet extends MsoyServiceServlet
     }
 
     @Inject protected MoneyLogic _moneyLogic;
-    @Inject protected MoneyRepository _moneyRepo;
+    @Inject protected MemberRepository _memberRepo;
 }

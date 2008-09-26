@@ -6,11 +6,13 @@ package com.threerings.msoy.money.server;
 import java.text.NumberFormat;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -459,9 +461,21 @@ public class MoneyLogic
         return TO_BLING_INFO.apply(_repo.load(memberId));
     }
     
-    public List<BlingInfo> getBlingCashOutRequests ()
+    /**
+     * Finds all members currently requesting bling cash outs and returns bling information for
+     * each of them.
+     */
+    public Map<Integer, BlingInfo> getBlingCashOutRequests ()
     {
-        return Lists.transform(_repo.getAccountsCashingOut(), TO_BLING_INFO);
+        List<MemberAccountRecord> accounts = _repo.getAccountsCashingOut();
+        
+        // First transform List<MemberAccountRecord> into Map<Integer, MemberAccountRecord>, then
+        // transform into Map<Integer, BlingInfo>.
+        return transformMap(Maps.uniqueIndex(accounts, new Function<MemberAccountRecord, Integer>() {
+            public Integer apply (MemberAccountRecord record) {
+                return record.memberId;
+            }
+        }), TO_BLING_INFO);
     }
 
     /**
@@ -630,6 +644,27 @@ public class MoneyLogic
         int cents = pennies % 100;
         return "USD $" + NumberFormat.getNumberInstance().format(dollars) + '.' +
             (cents < 10 ? '0' : "") + cents;
+    }
+    
+    /**
+     * Transforms the values in a map from one type to another, as dictated by the given function.
+     * I'm surprised this isn't currently in Google collections...
+     * 
+     * @param <K> Type of the map's key.
+     * @param <V1> Type of the source values.
+     * @param <V2> Type of the destination values.
+     * @param values Map of the values to transform.
+     * @param function Function to do the transformation.
+     * @return The transformed map.
+     */
+    protected static <K, V1, V2> Map<K, V2> transformMap (Map<K, V1> values, 
+        Function<? super V1, ? extends V2> function)
+    {
+        Map<K, V2> newMap = Maps.newHashMap();
+        for (Map.Entry<K, V1> value : values.entrySet()) {
+            newMap.put(value.getKey(), function.apply(value.getValue()));
+        }
+        return newMap;
     }
 
     /** A Function that transforms a MemberArroundRecord to BlingInfo. */

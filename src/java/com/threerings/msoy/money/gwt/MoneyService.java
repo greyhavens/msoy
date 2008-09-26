@@ -3,11 +3,14 @@
 
 package com.threerings.msoy.money.gwt;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
+import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 
@@ -37,4 +40,9 @@ public interface MoneyService extends RemoteService
      */
     BlingInfo requestCashOutBling (int memberId, int blingAmount)
         throws ServiceException;
+    
+    /**
+     * Retrieve all members who are currently waiting for a bling cashout.
+     */
+    List<CashOutEntry> getBlingCashOutRequests () throws ServiceException;
 }

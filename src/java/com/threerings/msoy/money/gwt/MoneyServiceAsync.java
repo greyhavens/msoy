@@ -3,10 +3,13 @@
 
 package com.threerings.msoy.money.gwt;
 
+import java.util.List;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
+import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 
@@ -32,5 +35,10 @@ public interface MoneyServiceAsync
      * The asynchronous version of {@link MoneyService#requestCashOutBling}.
      */
     void requestCashOutBling (int memberId, int blingAmount, AsyncCallback<BlingInfo> callback);
+    
+    /**
+     * The asynchronous version of {@link MoneyService#getBlingCashOutRequests}.
+     */
+    void getBlingCashOutRequests (AsyncCallback<List<CashOutEntry>> callback);
 }
 

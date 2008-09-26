@@ -2,6 +2,8 @@
   <inherits name="item"/>
 
   <source path="com/threerings/msoy/admin/gwt"/>
+  <source path="com/threerings/msoy/money/data/all"/>
+  <source path="com/threerings/msoy/money/gwt"/>
 
   <source path="client/admin"/>
 
