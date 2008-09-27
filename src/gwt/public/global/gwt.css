@@ -932,3 +932,46 @@ img, embed, applet, object {
 .GoButton-down-hovering {
   background-image: url(/images/ui/go_down.png);
 }
+
+.stretchButton {
+  cursor: pointer;
+}
+
+.orangeThick, .blueThick {
+  color: white;
+  font-weight: bold;
+  font-size: 28px;
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+}
+
+.orangeThick .W, .orangeThick .E, .blueThick .W, .blueThick .E {
+  width: 36px;
+  height: 44px;
+}
+
+.orangeThick-up .W {
+  background-image: url(/images/ui/orange/thick_left.png);
+}
+
+.orangeThick-up .X {
+  background-image: url(/images/ui/orange/thick_center.png);
+  height: 44px;
+}
+
+.orangeThick-up .E {
+  background-image: url(/images/ui/orange/thick_right.png);
+}
+
+/** TODO: Get real rollovers. */
+
+.orangeThick-up-hovering .W {
+  background-image: url(/images/ui/orange/thick_right.png);
+}
+
+.orangeThick-up-hovering .X {
+  background-image: url(/images/ui/orange/thick_center.png);
+}
+
+.orangeThick-up-hovering .E {
+  background-image: url(/images/ui/orange/thick_left.png);
+}

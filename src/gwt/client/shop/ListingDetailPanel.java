@@ -40,6 +40,7 @@ import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.ui.PriceLabel;
+import client.ui.StretchButton;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
@@ -51,6 +52,22 @@ import client.util.ServiceUtil;
  */
 public class ListingDetailPanel extends BaseItemDetailPanel
 {
+    protected Widget createBuyButton (Currency currency, int amount)
+    {
+        HorizontalPanel horiz = new HorizontalPanel();
+        horiz.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+        horiz.add(MsoyUI.createLabel("BUY!", null));
+        horiz.add(WidgetUtil.makeShim(10, 1));
+        horiz.add(MsoyUI.createImage(currency.getLargeIcon(), null));
+        horiz.add(WidgetUtil.makeShim(10, 1));
+        horiz.add(MsoyUI.createLabel(currency.format(amount), null));
+
+        StretchButton button = new StretchButton("orangeThick", horiz);
+        new BuyCallback(button, currency);
+
+        return button;
+    }
+
     public ListingDetailPanel (CatalogModels models, CatalogListing listing)
     {
         super(listing.detail);
@@ -77,32 +94,12 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _buyPanel.setStyleName("Buy");
 
         // make the primary currency purchase button
-        PushButton buyListed = MsoyUI.createButton(MsoyUI.SHORT_THICK, _msgs.listingBuy(), null);
-        new BuyCallback(buyListed, listedCur);
-
-        _buyPanel.add(buyListed);
-
         if (DeploymentConfig.barsEnabled) {
-            // make a smaller interface for buying in the alternate currency
-            Currency altCur = (listedCur == Currency.COINS) ? Currency.BARS : Currency.COINS;
-            HorizontalPanel altRow = new HorizontalPanel();
-            altRow.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            String altCurName = _dmsgs.xlate("currency" + altCur.toByte());
-            altRow.add(MsoyUI.createLabel(_msgs.listingAltTip(altCurName), null));
-            altRow.add(WidgetUtil.makeShim(5, 5));
-            altRow.add(MsoyUI.createInlineImage(altCur.getSmallIcon()));
-            altRow.add(MsoyUI.createLabel(altCur.format(_listing.quote.getAmount(altCur)), null));
-            altRow.add(WidgetUtil.makeShim(5, 5));
-            Button buyAlt = new Button(_msgs.listingBuyAlt());
-            altRow.add(buyAlt);
-            new BuyCallback(buyAlt, altCur);
-            _buyPanel.add(WidgetUtil.makeShim(5, 5));
-            _buyPanel.add(altRow);
-
-            // and create a link for going to the billing system to buy bars
-            _buyPanel.add(WidgetUtil.makeShim(5, 5));
+            _buyPanel.add(createBuyButton(Currency.BARS, _listing.quote.getBars()));
             _buyPanel.add(Link.buyBars(_msgs.listingBuyBars()));
         }
+
+        _buyPanel.add(createBuyButton(Currency.COINS, _listing.quote.getCoins()));
 
         _details.add(WidgetUtil.makeShim(10, 10));
         _details.add(_buyPanel);
