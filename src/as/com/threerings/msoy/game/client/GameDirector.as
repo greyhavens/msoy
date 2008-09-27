@@ -189,13 +189,16 @@ public class GameDirector extends BasicDirector
                 return;
             }
             if (_liaison.gameId == gameId) {
-                log.warning("Requested to activate the AVRG that's already active [gameId=" +
-                            gameId + "]");
+                if (_liaison.gameConfig == null) {
+                    displayFeedback("m.locating_game");
+                }
                 return;
             }
             // TODO: implement proper leaving, this should only be the fallback
             _liaison.shutdown();
         }
+
+        displayFeedback("m.locating_game");
 
         _liaison = new AVRGameLiaison(_wctx, gameId);
         _liaison.start();
