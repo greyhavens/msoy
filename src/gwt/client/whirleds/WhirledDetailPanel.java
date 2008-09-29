@@ -287,14 +287,6 @@ public class WhirledDetailPanel extends FlowPanel
         };
     }
 
-    protected Command joinGroup () {
-        return new Command() {
-            public void execute () {
-                _groupsvc.joinGroup(_group.groupId, refresh());
-            }
-        };
-    }
-
     protected MsoyCallback<Void> refresh () {
         return new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
