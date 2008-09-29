@@ -11,7 +11,9 @@ import com.samskivert.util.Invoker;
 import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.dobj.AttributeChangeListener;
 import com.threerings.presents.dobj.AttributeChangedEvent;
+import com.threerings.presents.net.AuthRequest;
 import com.threerings.presents.net.BootstrapData;
+import com.threerings.presents.server.net.Connection;
 
 import com.threerings.crowd.data.OccupantInfo;
 
@@ -105,15 +107,35 @@ public class MsoyClient extends WhirledClient
     }
 
     @Override // from PresentsClient
+    protected void resumeSession (AuthRequest req, Connection conn)
+    {
+        super.resumeSession(req, conn);
+
+        // note that we're in the middle of resuming a session so that we don't end our session
+        // when the old connection is closed
+        _resumingSession = true;
+    }
+
+    @Override // from PresentsClient
     protected void sessionConnectionClosed ()
     {
         super.sessionConnectionClosed();
 
-        // end our session on disconnect, it's easy enough to get back to where you were with a
-        // browser reload
-        if (_memobj != null) {
-            safeEndSession();
+        // end our session when the connection is closed, it's easy enough to get back to where you
+        // were with a browser reload
+        if (!_resumingSession && // but not if we're not in the middle of resuming our session
+            _memobj != null) {   // and not if we never fully started our session
+            endSession();
         }
+    }
+
+    @Override // from PresentsClient
+    protected void sessionWillResume ()
+    {
+        super.sessionWillResume();
+
+        // we're out of the woods now and can clear our resuming flag
+        _resumingSession = false;
     }
 
     @Override // from PresentsClient
@@ -218,6 +240,9 @@ public class MsoyClient extends WhirledClient
     /** Only valid in {@link #sessionDidEnd}, lets us know if the session is truly over or if the
      * member just went to another server. */
     protected boolean _sessionForwarded;
+
+    /** Used to avoid ending our session when we're in the middle of resuming it. */
+    protected boolean _resumingSession;
 
     // dependent services
     @Inject protected MsoyEventLogger _eventLog;
