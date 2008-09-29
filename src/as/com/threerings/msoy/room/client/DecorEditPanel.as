@@ -11,6 +11,7 @@ import flash.external.ExternalInterface;
 
 import mx.binding.utils.BindingUtils;
 
+import mx.controls.Button;
 import mx.controls.ComboBox;
 import mx.controls.TextInput;
 import mx.controls.VSlider;
@@ -49,6 +50,7 @@ public class DecorEditPanel extends FlyingPanel
         _studioView = studioView;
         _decor = studioView.getScene().getDecor();
         showCloseButton = true;
+        open();
     }
 
     override public function open (
@@ -79,8 +81,9 @@ public class DecorEditPanel extends FlyingPanel
 
     override protected function handleClose (event :CloseEvent) :void
     {
-        // don't close, just hide
-        visible = false;
+        var btn :Button = getCloseButton();
+        //btn.selected = !btn.selected; // doesn't work
+        FlexUtil.setVisible(_grid, !_grid.visible);
     }
 
     protected function saveChanges (... ignored) :void
@@ -248,10 +251,9 @@ public class DecorEditPanel extends FlyingPanel
         _roomType.selectedIndex = ROOM_TYPES.indexOf(Decor.FLAT_LAYOUT); // smallest layout by def.
         _checkRoomTypes();
 
-        var grid :Grid = new Grid();
-        GridUtil.addRow(grid, typeP);
-        GridUtil.addRow(grid, slideP);
-        addChild(grid);
+        GridUtil.addRow(_grid, typeP);
+        GridUtil.addRow(_grid, slideP);
+        addChild(_grid);
 
         // now bind everything up so that these widgets change things
         _suppressSaves = true;
@@ -287,6 +289,8 @@ public class DecorEditPanel extends FlyingPanel
     protected var _height :TextInput;
     protected var _xoff :TextInput;
     protected var _yoff :TextInput;
+
+    protected var _grid :Grid = new Grid();
 
     protected var _checkRoomTypes :Function;
 }

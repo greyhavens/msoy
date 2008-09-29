@@ -274,19 +274,6 @@ public class RoomStudioView extends RoomView
         _layout.updateScreenLocation(_backdropOverlay);
 
         var decorEditor :DecorEditPanel = new DecorEditPanel(_ctx, this);
-        decorEditor.open();
-
-        var popBtn :CommandButton = new CommandButton();
-        popBtn.setCallback(function () :void {});
-        // TODO: popEditor.styleName = "controlBarTalkButton";
-        popBtn.toolTip = Msgs.STUDIO.get("i.decor_options");
-        popBtn.toggle = true;
-        popBtn.selected = true; // since we start popped
-
-        BindingUtils.bindProperty(popBtn, "selected", decorEditor, "visible");
-        BindingUtils.bindProperty(decorEditor, "visible", popBtn, "selected");
-
-        _ctx.getTopPanel().getControlBar().addCustomButton(popBtn);
     }
 
     protected function initViewFurni (params :Object) :void
