@@ -57,8 +57,11 @@ public class FlyingPanel extends FloatingPanel
         placeBounds.width -= PADDING * 2;
         placeBounds.height -= PADDING * 2;
 
-        // fix our height
-        height = Math.min(height, placeBounds.height);
+        // fix our height (Avoid using Math.min here, because it re-assigns height and
+        // screws up some things during resizing..
+        if (height > placeBounds.height) {
+            height = placeBounds.height;
+        }
 
         // and make sure we fit inside
         PopUpUtil.fitInRect(this, placeBounds);
