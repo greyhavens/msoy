@@ -133,7 +133,7 @@ public class DecorEditPanel extends FlyingPanel
             _height.text = String(height);
             _xoff.text = String(offsetX);
             _yoff.text = String(offsetY);
-            //checkRoomType()
+            _checkRoomTypes()
         } finally {
             _suppressSaves = false;
         }
@@ -238,15 +238,15 @@ public class DecorEditPanel extends FlyingPanel
         };
         expertBtn.setCallback(showExpert);
         showExpert(false);
-        var checkRoomTypes :Function = function ( ... ignored) :void {
+        _checkRoomTypes = function ( ... ignored) :void {
             const on :Boolean = ROOM_TYPES[_roomType.selectedIndex] != Decor.FLAT_LAYOUT;
             for each (var comp :UIComponent in [ horzP, depthP, _hideWalls ]){
                 FlexUtil.setVisible(comp, on);
             }
         };
-        _roomType.addEventListener(Event.CHANGE, checkRoomTypes);
-        _roomType.selectedIndex = ROOM_TYPES.indexOf(Decor.FLAT_LAYOUT);
-        checkRoomTypes();
+        _roomType.addEventListener(Event.CHANGE, _checkRoomTypes);
+        _roomType.selectedIndex = ROOM_TYPES.indexOf(Decor.FLAT_LAYOUT); // smallest layout by def.
+        _checkRoomTypes();
 
         var grid :Grid = new Grid();
         GridUtil.addRow(grid, typeP);
@@ -287,5 +287,7 @@ public class DecorEditPanel extends FlyingPanel
     protected var _height :TextInput;
     protected var _xoff :TextInput;
     protected var _yoff :TextInput;
+
+    protected var _checkRoomTypes :Function;
 }
 }
