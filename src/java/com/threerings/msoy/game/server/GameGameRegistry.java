@@ -727,21 +727,30 @@ public class GameGameRegistry
             return;
         }
 
-        // If they're not in a location, we can send that on immediately.
+        // if they're not in a location, we can report that immediately
         int placeOid = player.getPlaceOid();
         if (placeOid == -1) {
             listener.requestProcessed(placeOid);
             return;
         }
 
-        // Check to make sure the game that they're in is watchable
+        // locate the game manager
         PlaceManager plman = _placeReg.getPlaceManager(placeOid);
         if (plman == null) {
-            log.warning(
-                "Fetched null PlaceManager for player's current gameOid [" + placeOid + "]");
+            log.warning("No PlaceManager for player's game?", "placeOid", placeOid);
             listener.requestFailed("e.player_not_found");
             return;
         }
+
+        // if this is an AVRG, we should be doing something different on the client
+        if (!(plman instanceof MsoyGameManager)) {
+            log.warning("Requested to join player that's probably in an AVRG ", "joiner", playerId,
+                        "mgr", plman.getClass().getName());
+            listener.requestFailed("e.player_not_found");
+            return;
+        }
+
+        // check to make sure the game that they're in is watchable
         MsoyGameConfig gameConfig = (MsoyGameConfig) plman.getConfig();
         MsoyMatchConfig matchConfig = (MsoyMatchConfig) gameConfig.getGameDefinition().match;
         if (matchConfig.unwatchable) {
@@ -749,7 +758,7 @@ public class GameGameRegistry
             return;
         }
 
-        // Check to make sure the game that they're in is not private
+        // check to make sure the game that they're in is not private
         int gameId = gameConfig.getGameId();
         LobbyManager lmgr = _lobbies.get(gameId);
         if (lmgr == null) {
