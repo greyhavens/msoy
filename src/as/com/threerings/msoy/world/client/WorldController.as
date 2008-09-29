@@ -498,6 +498,18 @@ public class WorldController extends MsoyController
     }
 
     /**
+     * Handles the VIEW_GAME_TROPHIES command.
+     */
+    public function handleViewGameTrophies () :void
+    {
+        const gameId :int = getCurrentGameId();
+        if (gameId != 0) {
+            _wctx.getMsoyClient().trackClientAction("flashViewGameTrophies", null);
+            displayPage("games", "d_" + gameId + "_t");
+        }
+    }
+
+    /**
      * Handles the VIEW_GAME_INSTRUCTIONS command.
      */
     public function handleViewGameInstructions () :void
@@ -748,7 +760,10 @@ public class WorldController extends MsoyController
         var menuData :Array = [];
         menuData.push({label: _wctx.getGameDirector().getGameName()});
         menuData.push({type: "separator"});
-        menuData.push({label: Msgs.GENERAL.get("b.avrgComment"), command: VIEW_GAME_COMMENT_PAGE});
+        menuData.push(
+            {label: Msgs.GENERAL.get("b.avrgInstructions"), command: VIEW_GAME_INSTRUCTIONS});
+        menuData.push({label: Msgs.GENERAL.get("b.avrgComment"), command: VIEW_GAME_COMMENT_PAE});
+        menuData.push({label: Msgs.GENERAL.get("b.avrgTrophies"), command: VIEW_GAME_TROPHIES});
         menuData.push({label: Msgs.GENERAL.get("b.avrgInvite"), enabled: false});
         menuData.push({label: Msgs.GENERAL.get("b.avrgExit"), command :LEAVE_AVR_GAME});
 

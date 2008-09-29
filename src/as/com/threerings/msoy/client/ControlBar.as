@@ -261,10 +261,10 @@ public class ControlBar extends HBox
                 GLOBAL_PRIORITY);
         }
 
-        addButton(_instructBtn, [ UI_GAME, UI_AVRGAME ]);
+        addButton(_instructBtn, [ UI_GAME ]);
         addButton(_shareBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
         addButton(_commentBtn, [ UI_ROOM, UI_GAME, UI_AVRGAME ]);
-        addButton(_avrgBtn, [ UI_AVRGAME ]);
+        addButton(_avrgBtn, [ UI_AVRGAME ], PLACE_PRIORITY + 1);
     }
 
     /**

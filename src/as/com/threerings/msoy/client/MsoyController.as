@@ -106,6 +106,9 @@ public class MsoyController extends Controller
     /** Command to display game instructions. */
     public static const VIEW_GAME_INSTRUCTIONS :String = "ViewGameInstructions";
 
+    /** Command to display the comment page for the current scene or game. */
+    public static const VIEW_GAME_TROPHIES :String = "ViewGameTrophies";
+
     /** Command to display a game shop page.
      * args: [ gameId, optional: itemType, optional: catalogId ] */
     public static const VIEW_GAME_SHOP :String = "ViewGameShop";

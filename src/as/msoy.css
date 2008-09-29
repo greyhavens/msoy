@@ -620,7 +620,7 @@ TabNavigator, TabBar {
   upSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   downSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
   overSkin: ClassReference("com.threerings.msoy.ui.ImageButtonSkin");
-  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/avrg.png");
+  defaultImage: Embed(source="../../rsrc/media/skins/controlbar/instructions.png");
 }
 
 .tickButton {
