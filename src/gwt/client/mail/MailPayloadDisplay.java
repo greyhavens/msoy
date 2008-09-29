@@ -17,7 +17,7 @@ import client.util.ServiceUtil;
 /**
  * Base class for payload visualizers. Concrete subclasses of this object are configured with a
  * {@link ConvMessage}, and will be asked to create displays for mail payloads via {@link
- * #widgetForRecipient()} and {@link #widgetForSender()).
+ * #widgetForRecipient} and {@link #widgetForSender}.
  */
 public class MailPayloadDisplay
 {

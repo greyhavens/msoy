@@ -62,25 +62,25 @@ public class MemberInviteStatusRecord extends PersistentRecord
         new ColumnExp(MemberInviteStatusRecord.class, INVITES_SENT);
     // AUTO-GENERATED: FIELDS END
 
-    /** See {@MemberRecord#memberId}. */
+    /** See {@link MemberRecord#memberId}. */
     @Id
     public int memberId;
 
-    /** See {@MemberRecord#permaName}. */
+    /** See {@link MemberRecord#permaName}. */
     public String permaName = "";
 
-    /** See {@MemberRecord#name}. */
+    /** See {@link MemberRecord#name}. */
     public String name = "";
 
     // TODO: this needs fixing. You affiliate is not necessarily your inviter
-    /** See {@MemberRecord#affiliateMemberId}. */
+    /** See {@link MemberRecord#affiliateMemberId}. */
     public int affiliateMemberId;
 
-    /** See {@InviterRecord#invitesGranted}. */
+    /** See {@link InviterRecord#invitesGranted}. */
     @Computed(shadowOf=InviterRecord.class)
     public int invitesGranted;
 
-    /** See {@InviterRecord#invitesSent}. */
+    /** See {@link InviterRecord#invitesSent}. */
     @Computed(shadowOf=InviterRecord.class)
     public int invitesSent;
 

@@ -695,7 +695,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /**
      * Inserts the supplied item into the database. The {@link ItemRecord#itemId} and the
-     * {@link ItemRecord#lastTouched) fields will be filled in as a result of this call.
+     * {@link ItemRecord#lastTouched} fields will be filled in as a result of this call.
      */
     public void insertOriginalItem (T item, boolean catalogListing)
     {
@@ -707,7 +707,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Updates the supplied item in the database. The {@link ItemRecord#lastTouched) field
+     * Updates the supplied item in the database. The {@link ItemRecord#lastTouched} field
      * will be filled in as a result of this call.
      */
     public void updateOriginalItem (T item)
@@ -716,7 +716,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Updates the supplied item in the database. The {@link ItemRecord#lastTouched) field
+     * Updates the supplied item in the database. The {@link ItemRecord#lastTouched} field
      * will be optionally updated. In general, updateLastTouched should be true.
      */
     public void updateOriginalItem (T item, boolean updateLastTouched)
@@ -729,7 +729,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /**
      * Updates a clone item's override media in the database. This is done when we remix.
-     * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
+     * The {@link CloneRecord#lastTouched} field will be filled in as a result of this call.
      */
     public void updateCloneMedia (CloneRecord cloneRec)
     {
@@ -745,7 +745,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /**
      * Updates a clone item's override name in the database.
-     * The {@link CloneRecord#lastTouched) field will be filled in as a result of this call.
+     * The {@link CloneRecord#lastTouched} field will be filled in as a result of this call.
      */
     public void updateCloneName (CloneRecord cloneRec)
     {
@@ -829,9 +829,9 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /**
      * Inserts an item clone into the database with the given owner and purchase data. Also fills
-     * (@link CloneRecord#itemId) with the next available ID and {@link CloneRecord#ownerId)
-     * with the new owner. Finally, updates {@link CloneRecord#lastTouched) and
-     * {@link CloneRecord#purchaseTime).
+     * (@link CloneRecord#itemId) with the next available ID and {@link CloneRecord#ownerId}
+     * with the new owner. Finally, updates {@link CloneRecord#lastTouched} and
+     * {@link CloneRecord#purchaseTime}.
      */
     public ItemRecord insertClone (
         ItemRecord parent, int newOwnerId, Currency currency, int amountPaid)

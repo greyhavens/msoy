@@ -302,7 +302,7 @@ public class ItemManager
      * items are both valid and owned by the user in question. The supplied listener will be
      * notified of success with null.
      *
-     * @see #updateItemUsage(byte, byte, int, int, int, int, ResultListener<Object>)
+     * @see #updateItemUsage(byte, byte, int, int, int, int, ResultListener)
      */
     public void updateItemUsage (int memberId, Avatar oldAvatar, Avatar newAvatar,
                                  ResultListener<Object> lner)

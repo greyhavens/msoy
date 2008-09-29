@@ -56,7 +56,7 @@ public interface StuffServiceAsync
     void loadItemDetail (ItemIdent item, AsyncCallback<StuffService.DetailOrIdent> callback);
 
     /**
-     * The asynchronous version of {@link ItemService#deleteItem}.
+     * The asynchronous version of {@link StuffService#deleteItem}.
      */
     void deleteItem (ItemIdent item, AsyncCallback<Void> callback);
 }

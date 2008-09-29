@@ -262,7 +262,7 @@ public class GroupRecord extends PersistentRecord
     /** The group may be public, invite-only or exclusive as per {@link Group}. */
     public byte policy;
 
-    /** This group's forum permissions, see {@link Group#FORUM_PERMS}. */
+    /** This group's forum permissions, see {@link Group#forumPerms}. */
     public byte forumPerms;
 
     /** The number of people that are currently members of this group. */

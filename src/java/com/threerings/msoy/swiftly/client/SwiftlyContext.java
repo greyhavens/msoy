@@ -95,7 +95,6 @@ public class SwiftlyContext
 
     /**
      * Return the SwiftlyApplication associated with this SwiftlyContext.
-     * @return
      */
     public SwiftlyApplication getApplication ()
     {

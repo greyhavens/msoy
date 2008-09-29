@@ -31,7 +31,7 @@ public interface ItemServiceAsync
         ItemIdent item, byte rating, boolean isFirstRating, AsyncCallback<Float> callback);
 
     /**
-     * The asynchronous version of {@link ItemService.wrapItem}.
+     * The asynchronous version of {@link ItemService#wrapItem}.
      */
     void wrapItem (ItemIdent item, boolean wrap, AsyncCallback<Void> callback);
 
@@ -56,17 +56,17 @@ public interface ItemServiceAsync
     void tagItem (ItemIdent item, String tag, boolean set, AsyncCallback<TagHistory> callback);
 
     /**
-     * The asynchronous version of {@link ItemService.setFlags}.
+     * The asynchronous version of {@link ItemService#setFlags}.
      */
     void setFlags (ItemIdent item, byte mask, byte values, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link ItemService.setMature}.
+     * The asynchronous version of {@link ItemService#setMature}.
      */
     void setMature (ItemIdent item, boolean value, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link ItemService.setFavorite}.
+     * The asynchronous version of {@link ItemService#setFavorite}.
      */
     void setFavorite (byte itemType, int catalogId, boolean favorite, AsyncCallback<Void> callback);
 

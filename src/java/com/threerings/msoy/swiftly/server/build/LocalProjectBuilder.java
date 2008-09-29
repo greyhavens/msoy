@@ -25,7 +25,7 @@ public class LocalProjectBuilder
 {
     /**
      * Create a new local project builder.
-     * @param flexSDK: Local path to the Flex SDK.
+     * @param flexSDK Local path to the Flex SDK.
      */
     public LocalProjectBuilder (SwiftlyProject project, ProjectStorage storage,
                                 File flexSDK, File whirledSDK, File serverRoot)

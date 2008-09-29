@@ -45,7 +45,7 @@ public class MsoyOOOUserRepository extends DepotUserRepository
     /**
      * Deletes all records associated with the supplied user id. This should only be used when
      * account creation failed and we want to wipe a user account that never existed. For user
-     * initiated account deletion use {@link #disableUser} (not yet implemented).
+     * initiated account deletion use to be implemented <code>disableUser</code>.
      */
     public void uncreateUser (int userId)
     {

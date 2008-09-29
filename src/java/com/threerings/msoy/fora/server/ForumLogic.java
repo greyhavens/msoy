@@ -23,7 +23,9 @@ import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.data.MemberCard;
 
+import com.threerings.msoy.fora.gwt.ForumMessage;
 import com.threerings.msoy.fora.gwt.ForumThread;
+import com.threerings.msoy.fora.gwt.ForumService.ThreadResult;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
 import com.threerings.msoy.fora.server.persist.ForumThreadRecord;
@@ -38,6 +40,7 @@ public class ForumLogic
     /**
      * Converts a list of threads to a {@link ThreadResult}, looking up the last poster names and
      * filling in other bits.
+     * 
      * @param needLastReadPost If true, lastReadPostId/Index will be included
      * @param needFirstPost If true, includes {@link ForumMessage} of the original post
      */

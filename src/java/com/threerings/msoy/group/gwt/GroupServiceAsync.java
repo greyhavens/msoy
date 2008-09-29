@@ -23,7 +23,7 @@ public interface GroupServiceAsync
     void getGalaxyData (AsyncCallback<GalaxyData> callback);
 
     /**
-     * The asynchronous version of {@link GroupService#getGroupsList}
+     * The asynchronous version of {@link GroupService#getGroups}
      */
     void getGroups (int offset, int count, boolean needCount,
                     AsyncCallback<GroupService.GroupsResult> callback);
@@ -55,57 +55,57 @@ public interface GroupServiceAsync
                               AsyncCallback<List<GroupMembership>> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.getGroupDetail}
+     * The asynchronous version of {@link GroupService#getGroupDetail}
      */
     void getGroupDetail (int groupId, AsyncCallback<GroupDetail> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.getGroupMembers}
+     * The asynchronous version of {@link GroupService#getGroupMembers}
      */
     void getGroupMembers (int groupId, AsyncCallback<GroupService.MembersResult> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.transferRoom}
+     * The asynchronous version of {@link GroupService#transferRoom}
      */
     void transferRoom (int groupId, int sceneId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.updateGroup}
+     * The asynchronous version of {@link GroupService#updateGroup}
      */
     void updateGroup (Group group, GroupExtras extras, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.createGroup}
+     * The asynchronous version of {@link GroupService#createGroup}
      */
     void createGroup (Group group, GroupExtras extras, AsyncCallback<Group> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.leaveGroup}
+     * The asynchronous version of {@link GroupService#leaveGroup}
      */
     void leaveGroup (int groupId, int memberId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.joinGroup}
+     * The asynchronous version of {@link GroupService#joinGroup}
      */
     void joinGroup (int groupId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.updateMemberRank}
+     * The asynchronous version of {@link GroupService#updateMemberRank}
      */
     void updateMemberRank (int groupId, int memberId, byte newRank, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.tagGroup}
+     * The asynchronous version of {@link GroupService#tagGroup}
      */
     void tagGroup (int groupId, String tag, boolean set, AsyncCallback<TagHistory> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.getRecentTags}
+     * The asynchronous version of {@link GroupService#getRecentTags}
      */
     void getRecentTags (AsyncCallback<List<TagHistory>> callback);
 
     /**
-     * The asynchronous version of {@link GroupService.getTags}
+     * The asynchronous version of {@link GroupService#getTags}
      */
     void getTags (int groupId, AsyncCallback<List<String>> callback);
 

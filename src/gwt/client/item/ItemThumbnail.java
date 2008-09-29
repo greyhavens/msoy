@@ -13,7 +13,7 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
 
 /**
- * A little widget to carry a thumbnail and a label; a light-weight {@link ItemContainer} perhaps.
+ * A little widget to carry a thumbnail and a label.
  */
 public class ItemThumbnail extends FlexTable
 {

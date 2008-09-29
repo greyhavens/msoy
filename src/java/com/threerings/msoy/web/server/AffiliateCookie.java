@@ -14,7 +14,7 @@ import com.samskivert.servlet.util.CookieUtil;
 import com.threerings.msoy.web.data.TrackingCookieUtil;
 
 /**
- * The server-side of {@link client.shell.AffiliateCookie}.
+ * Handles the getting and setting of the affiliate cookie.
  */
 public class AffiliateCookie
 {

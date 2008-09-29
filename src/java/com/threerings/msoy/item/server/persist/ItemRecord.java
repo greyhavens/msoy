@@ -148,7 +148,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      * the prototype item (sourceId == 0 && ownerId == 0)
      * or just a purchased item (sourceId != 0)
      *
-     * See {@link isCatalogOriginal()} and {@link isCatalogPrototype()}
+     * See {@link #isCatalogOriginal} and {@link #isCatalogPrototype}
      */
     public int catalogId;
 

@@ -74,7 +74,7 @@ public class Game extends Item
     /**
      *  The server code media. Games may provide server code (in the form of a compiled action
      *  script library) to be run in a bureau whenever the game launches.
-     *  @see com.threerings.bureau.BureauRegistry
+     *  @see com.threerings.bureau.server.BureauRegistry
      *  @see com.threerings.msoy.game.server.MsoyGameServer
      */
     public MediaDesc serverMedia;
@@ -112,7 +112,7 @@ public class Game extends Item
     }
 
     /**
-     * For the given {@link GameRecord#config} string, checks if the game takes place in the world.
+     * For the given  XML game configuration string, checks if the game takes place in the world.
      */
     public static boolean detectIsInWorld (String config)
     {

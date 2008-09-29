@@ -5,6 +5,8 @@ package com.threerings.msoy.game.data;
 
 import com.threerings.presents.data.InvocationCodes;
 
+import com.threerings.msoy.game.client.LobbyService;
+
 /**
  * Codes and constants used by the lobby services.
  */

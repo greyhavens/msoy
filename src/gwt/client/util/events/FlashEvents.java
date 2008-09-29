@@ -11,6 +11,7 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.threerings.gwt.util.ListenerList;
 
 import client.shell.CShell;
+import client.shell.Frame;
 
 /**
  * Utility class for listening to events from the Flash client.
