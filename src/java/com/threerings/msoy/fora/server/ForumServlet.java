@@ -206,6 +206,11 @@ public class ForumServlet extends MsoyServiceServlet
                 mrec.memberId, threadId, highestPostId, offset + result.messages.size() - 1);
         }
 
+        // log this event for metrics purposes
+        final int memberId = (mrec != null) ? mrec.memberId : MsoyEventLogger.UNKNOWN_MEMBER_ID;
+        final String tracker = (mrec != null) ? mrec.visitorId : getVisitorTracker();
+        _eventLog.forumMessageRead(memberId, tracker);
+
         return result;
     }
 
@@ -256,7 +261,7 @@ public class ForumServlet extends MsoyServiceServlet
                 Collections.singletonMap(group.groupId, group.getName()));
 
         // log this event for metrics purposes
-        _eventLog.forumMessagePosted(mrec.memberId, thread.threadId, thread.posts);
+        _eventLog.forumMessagePosted(mrec.memberId, mrec.visitorId, thread.threadId, thread.posts);
 
         // mark this thread as read by the poster
         _forumRepo.noteLastReadPostId(
@@ -334,7 +339,7 @@ public class ForumServlet extends MsoyServiceServlet
             ftr, mrec.memberId, inReplyTo, message);
 
         // log event for metrics purposes
-        _eventLog.forumMessagePosted(fmr.posterId, fmr.threadId, ftr.posts);
+        _eventLog.forumMessagePosted(mrec.memberId, mrec.visitorId, fmr.threadId, ftr.posts);
 
         // load up the member card for the poster
         IntMap<MemberCard> cards = IntMaps.newHashIntMap();

@@ -423,7 +423,8 @@ public class MsoyAuthenticator extends Authenticator
         }
         rdata.sessionToken = MsoyCredentials.makeGuestSessionToken(memberId);
         rdata.code = MsoyAuthResponseData.SUCCESS;
-        _eventLog.userLoggedIn(memberId, false, System.currentTimeMillis(), creds.sessionToken);
+        _eventLog.userLoggedIn(
+            memberId, creds.visitorId, false, System.currentTimeMillis(), creds.sessionToken);
     }
 
     protected Account authenticateMember (MsoyCredentials creds, MsoyAuthResponseData rdata,
@@ -496,7 +497,7 @@ public class MsoyAuthenticator extends Authenticator
 
         // log.info("User logged on [user=" + user.username + "].");
         rdata.code = MsoyAuthResponseData.SUCCESS;
-        _eventLog.userLoggedIn(member.memberId, account.firstLogon,
+        _eventLog.userLoggedIn(member.memberId, member.visitorId, account.firstLogon,
                                member.created.getTime(), creds.sessionToken);
 
         return account;

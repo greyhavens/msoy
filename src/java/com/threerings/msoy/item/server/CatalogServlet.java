@@ -133,6 +133,12 @@ public class CatalogServlet extends MsoyServiceServlet
                 showMature(mrec), query.search, tagId, query.creatorId, null, query.suiteId);
         }
         result.listings = list;
+
+        // log this for posterity
+        final int memberId = (mrec != null) ? mrec.memberId : MsoyEventLogger.UNKNOWN_MEMBER_ID;
+        final String tracker = (mrec != null) ? mrec.visitorId : getVisitorTracker();
+        _eventLog.shopPageBrowsed(memberId, tracker);
+
         return result;
     }
 
@@ -177,6 +183,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 }
                 // make any necessary notifications
                 _itemLogic.itemPurchased(_newClone, currency, amountPaid);
+                _eventLog.shopPurchase(mrec.memberId, mrec.visitorId);
                 return true;
             }
 
@@ -196,7 +203,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 listing.item.creatorId, listing.item.name,
                 listing.currency, listing.cost, currency, authedCost, buyOp);
         } catch (NotEnoughMoneyException neme) {
-            // TODO: return a better exception, containing their updated balance 
+            // TODO: return a better exception, containing their updated balance
             throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
         } catch (NotSecuredException nse) {
             throw new CostUpdatedException(nse.getQuote());
@@ -404,6 +411,12 @@ public class CatalogServlet extends MsoyServiceServlet
         clrec.detail.creator = _memberRepo.loadMemberName(record.item.creatorId);
         clrec.detail.memberItemInfo = _itemLogic.getMemberItemInfo(mrec, record.item.toItem());
         clrec.quote = quote;
+
+        // let's remember this
+        final int memberId = (mrec != null) ? mrec.memberId : MsoyEventLogger.UNKNOWN_MEMBER_ID;
+        final String tracker = (mrec != null) ? mrec.visitorId : getVisitorTracker();
+        _eventLog.shopDetailsViewed(memberId, tracker);
+
         return clrec;
     }
 

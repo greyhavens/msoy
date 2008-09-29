@@ -15,7 +15,7 @@ import com.threerings.msoy.data.PlayerMetrics;
 import com.threerings.msoy.data.UserAction;
 import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.server.MsoyEvents.MsoyEvent;
-
+import com.threerings.msoy.server.MsoyEvents.Experience.Type;
 import com.threerings.panopticon.client.net.EventLogger;
 import com.threerings.panopticon.client.net.EventLoggerConfig;
 import com.threerings.panopticon.client.net.EventLoggerFactory;
@@ -25,7 +25,7 @@ import com.threerings.msoy.money.data.all.Currency;
 import static com.threerings.msoy.Log.log;
 
 /**
- * Provides a concise, type-safe logging interface to Whirled services.  Logging functions are
+ * Provides a concise, type-safe logging interface to Whirled services. Logging functions are
  * thread-safe. All logging requests will be serialized and delivered to the logging server on a
  * separate thread.
  */
@@ -33,12 +33,21 @@ import static com.threerings.msoy.Log.log;
 public class MsoyEventLogger
 {
     /**
+     * ID used in cases when the real member ID is not known (eg. guest viewing GWT pages).
+     * This isn't really a meaningful number, but it passes the test of:
+     * <code>MemberName.isGuest(UNKNOWN_MEMBER_ID) &&
+     * !MemberName.isVisitor(UNKNOWN_MEMBER_ID)</code>
+     */
+    public static final int UNKNOWN_MEMBER_ID = -1;
+
+    /**
      * Initializes the logger; this must happen before any events can be logged.
      */
     public void init (String ident)
     {
         // log locally (always for now)
-        File logloc = new File(new File(ServerConfig.serverRoot, "log"), "events_" + ident + ".log");
+        File logloc = new File(new File(ServerConfig.serverRoot, "log"), "events_" + ident
+            + ".log");
         log.info("Events logged locally to: " + logloc);
         _local = new LocalEventLogger(logloc);
         _local.start();
@@ -49,9 +58,8 @@ public class MsoyEventLogger
         if (!StringUtil.isBlank(host) && port > 0) {
             try {
                 final String eventstore = "eventspool_" + ident;
-                EventLoggerConfig config =
-                    new EventLoggerConfig(host, port, ServerConfig.eventLogUsername,
-                                          ServerConfig.eventLogPassword, eventstore);
+                EventLoggerConfig config = new EventLoggerConfig(host, port,
+                    ServerConfig.eventLogUsername, ServerConfig.eventLogPassword, eventstore);
 
                 // if our spool directory is not an absolute path, prefix it with the server root
                 File spoolDir = new File(ServerConfig.eventLogSpoolDir);
@@ -86,33 +94,35 @@ public class MsoyEventLogger
         }
     }
 
-    public void currentMemberStats (
-        String serverName, int total, int active, int guests, int viewers)
+    public void currentMemberStats (String serverName, int total, int active, int guests,
+        int viewers)
     {
         post(new MsoyEvents.CurrentMemberStats(serverName, total, active, guests, viewers));
     }
 
     public void flowTransaction (UserAction action, int deltaFlow, int newTotal)
     {
-        post(new MsoyEvents.FlowTransaction(action.memberId, action.type.getNumber(),
-                                            deltaFlow, newTotal));
+        post(new MsoyEvents.FlowTransaction(action.memberId, action.type.getNumber(), deltaFlow,
+            newTotal));
     }
 
-    public void itemPurchased (
-        int memberId, byte itemType, int itemId, Currency currency, int amountPaid)
+    public void itemPurchased (int memberId, byte itemType, int itemId, Currency currency,
+        int amountPaid)
     {
         post(new MsoyEvents.ItemPurchase(memberId, itemType, itemId, currency, amountPaid));
     }
 
     public void itemListedInCatalog (int creatorId, byte itemType, int itemId, int flowCost,
-                                     int goldCost, int pricing, int salesTarget)
+        int goldCost, int pricing, int salesTarget)
     {
-        post(new MsoyEvents.ItemCatalogListing(
-            creatorId, itemType, itemId, flowCost, goldCost, pricing, salesTarget));
+        post(new MsoyEvents.ItemCatalogListing(creatorId, itemType, itemId, flowCost, goldCost,
+            pricing, salesTarget));
     }
 
-    public void userLoggedIn (int memberId, boolean firstLogin, long createdOn, String sessionToken)
+    public void userLoggedIn (int memberId, String tracker, boolean firstLogin, long createdOn,
+        String sessionToken)
     {
+        post(new MsoyEvents.Experience(Type.ACCOUNT_LOGIN, memberId, tracker));
         post(new MsoyEvents.Login(memberId, firstLogin, sessionToken, createdOn));
     }
 
@@ -120,10 +130,9 @@ public class MsoyEventLogger
     {
         PlayerMetrics.RoomVisit room = member.metrics.room;
         PlayerMetrics.Idle idle = member.metrics.idle;
-        post(new MsoyEvents.SessionMetrics(
-                 member.getMemberId(), room.timeInMyRoom, room.timeInFriendRooms,
-                 room.timeInStrangerRooms, room.timeInWhirleds,
-                 idle.timeActive, idle.timeIdle, sessionToken));
+        post(new MsoyEvents.SessionMetrics(member.getMemberId(), room.timeInMyRoom,
+            room.timeInFriendRooms, room.timeInStrangerRooms, room.timeInWhirleds,
+            idle.timeActive, idle.timeIdle, sessionToken));
     }
 
     public void mailSent (int senderId, int recipientId, int payloadType)
@@ -156,32 +165,33 @@ public class MsoyEventLogger
         post(new MsoyEvents.GroupRankModification(memberId, groupId, newRank));
     }
 
-    public void roomLeft (
-        int playerId, int sceneId, boolean isWhirled, int secondsInRoom,
+    public void roomLeft (int playerId, int sceneId, boolean isWhirled, int secondsInRoom,
         int occupantsLeft, String tracker)
     {
-        post(new MsoyEvents.RoomExit(
-            playerId, sceneId, isWhirled, secondsInRoom, occupantsLeft, tracker));
+        Type type = isWhirled ? Type.VISIT_WHIRLED : Type.VISIT_ROOM;
+        post(new MsoyEvents.Experience(type, playerId, tracker));
+        post(new MsoyEvents.RoomExit(playerId, sceneId, isWhirled, secondsInRoom, occupantsLeft,
+            tracker));
     }
 
-    public void avrgLeft (
-        int playerId, int gameId, int seconds, int playersLeft, String tracker)
+    public void avrgLeft (int playerId, int gameId, int seconds, int playersLeft, String tracker)
     {
+        post(new MsoyEvents.Experience(Type.GAME_AVRG, playerId, tracker));
         post(new MsoyEvents.AVRGExit(playerId, gameId, seconds, playersLeft, tracker));
     }
 
-    public void gameLeft (
-        int playerId, byte gameGenre, int gameId, int seconds, boolean multiplayer,
-        String tracker)
+    public void gameLeft (int playerId, byte gameGenre, int gameId, int seconds,
+        boolean multiplayer, String tracker)
     {
+        Type type = multiplayer ? Type.GAME_MULTIPLAYER : Type.GAME_SINGLEPLAYER;
+        post(new MsoyEvents.Experience(type, playerId, tracker));
         post(new MsoyEvents.GameExit(playerId, gameGenre, gameId, seconds, multiplayer, tracker));
     }
 
-    public void gamePlayed (
-        int gameGenre, int gameId, int itemId, int payout, int secondsPlayed, int playerId)
+    public void gamePlayed (int gameGenre, int gameId, int itemId, int payout, int secondsPlayed,
+        int playerId)
     {
-        post(new MsoyEvents.GamePlayed(
-            gameGenre, gameId, itemId, payout, secondsPlayed, playerId));
+        post(new MsoyEvents.GamePlayed(gameGenre, gameId, itemId, payout, secondsPlayed, playerId));
     }
 
     public void trophyEarned (int recipientId, int gameId, String trophyIdent)
@@ -231,6 +241,7 @@ public class MsoyEventLogger
 
     public void accountCreated (int newMemberId, String inviteId, String tracker)
     {
+        post(new MsoyEvents.Experience(Type.ACCOUNT_CREATED, newMemberId, tracker));
         post(new MsoyEvents.AccountCreated(newMemberId, inviteId, tracker));
     }
 
@@ -244,14 +255,30 @@ public class MsoyEventLogger
         post(new MsoyEvents.ProfileUpdated(memberId));
     }
 
-    /**
-     * @param memberId who posted the message.
-     * @param threadId the ID for the discussion thread.
-     * @param postCount the current total number of posts to the thread.
-     */
-    public void forumMessagePosted (int memberId, int threadId, int postCount)
+    public void forumMessageRead (int memberId, String tracker)
     {
-    	post(new MsoyEvents.ForumMessagePosted(memberId, threadId, postCount));
+        post(new MsoyEvents.Experience(Type.FORUMS_READ, memberId, tracker));
+    }
+
+    public void forumMessagePosted (int memberId, String tracker, int threadId, int postCount)
+    {
+        post(new MsoyEvents.Experience(Type.FORUMS_POSTED, memberId, tracker));
+        post(new MsoyEvents.ForumMessagePosted(memberId, threadId, postCount));
+    }
+
+    public void shopPurchase (int memberId, String tracker)
+    {
+        post(new MsoyEvents.Experience(Type.SHOP_PURCHASED, memberId, tracker));
+    }
+
+    public void shopPageBrowsed (int memberId, String tracker)
+    {
+        post(new MsoyEvents.Experience(Type.SHOP_BROWSED, memberId, tracker));
+    }
+
+    public void shopDetailsViewed (int memberId, String tracker)
+    {
+        post(new MsoyEvents.Experience(Type.SHOP_DETAILS, memberId, tracker));
     }
 
     /**
@@ -266,8 +293,8 @@ public class MsoyEventLogger
     }
 
     /**
-     * Generic action such as clicking a particular button, viewing an a/b test or landing
-     * on a page during an a/b test.  Used for short term testing.
+     * Generic action such as clicking a particular button, viewing an a/b test or landing on a
+     * page during an a/b test. Used for short term testing.
      * @param tracker Assigned to every visitor who lands in GWT or Flash
      * @param actionName Identifier such as "LostPasswordButtonClicked"
      * @param testName Optionally record the name of a related a/b test group

@@ -13,6 +13,7 @@ import com.google.inject.Inject;
 import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.VisitorInfo;
 import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.server.MsoyEventLogger;
 import com.threerings.msoy.server.persist.MemberRecord;
@@ -38,6 +39,23 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     {
         return _mhelper.getAuthedUser(
             CookieUtil.getCookieValue(getThreadLocalRequest(), WebCreds.credsCookie()));
+    }
+
+    /**
+     * Returns the visitor ID of the player making this service request, either by asking
+     * the MemberHelper (for registered players), or by reading directly from the cookie
+     * (for guests). Returns null if it can't find one.
+     */
+    protected String getVisitorTracker ()
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser();
+        if (mrec != null) {
+            return mrec.visitorId;
+        }
+
+        VisitorInfo info = VisitorCookie.get(getThreadLocalRequest());
+        return (info != null) ? info.id : null;
     }
 
     /**

@@ -565,6 +565,57 @@ public class MsoyEvents
         }
     }
 
+    /**
+     * Generic one-shot experiences being logged about players.
+     */
+    @Event(name="Experience")
+    public static class Experience implements MsoyEvent
+    {
+        /**
+         * Constants for the various experience events that we log about our users.
+         *
+         * <p>The enum is package-protected, so that we don't expose experience types directly
+         * to client code; changes to this set must be done with understanding of how or whether
+         * reports will need to be changed to cope with the data change.
+         */
+        enum Type {
+            // NOTE: do not change existing string tokens if you don't know how it will affect
+            // Panopticon reports!
+            GAME_SINGLEPLAYER  ("GS"),
+            GAME_MULTIPLAYER   ("GM"),
+            GAME_AVRG          ("GA"),
+            VISIT_WHIRLED      ("VW"),
+            VISIT_ROOM         ("VR"),
+            FORUMS_READ        ("FR"),
+            FORUMS_POSTED      ("FP"),
+            SHOP_BROWSED       ("SB"),
+            SHOP_DETAILS       ("SD"),
+            SHOP_PURCHASED     ("SP"),
+            ACCOUNT_CREATED    ("AC"),
+            ACCOUNT_LOGIN      ("AL");
+
+            /** Package-protected string that gets logged in Panopticon. */
+            final String token;
+
+            private Type (String token) {
+                this.token = token;
+            }
+        }
+
+        @Index @Field final public Date timestamp;
+        @Index @Field final public String tracker;
+        @Field final public int memberId;
+        @Field final public String action;
+
+        public Experience (Type action, int memberId, String tracker)
+        {
+            this.timestamp = new Date();
+            this.tracker = toValue(tracker);
+            this.memberId = memberId;
+            this.action = action.token;
+        }
+    }
+
     protected static String toValue (String input) {
         return (input != null) ? input : "";
     }
