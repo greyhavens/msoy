@@ -126,6 +126,7 @@ public class RoomStudioController extends RoomController
         var model :MsoySceneModel = new MsoySceneModel();
         model.ownerType = MsoySceneModel.OWNER_TYPE_MEMBER;
         model.furnis = TypedArray.create(FurniData);
+        model.entrance = new MsoyLocation(.5, 0, 0);
 
         var params :Object = MsoyParameters.get();
         var decor :Decor;

@@ -990,6 +990,9 @@ public class RoomView extends Sprite
     /** Are we editing the scene? */
     protected var _editing :Boolean = false;
 
+    /** Transparent bitmap on which we can draw the room backdrop.*/
+    protected var _backdropOverlay :BackdropOverlay;
+
     /** The maximum number of pixels to autoscroll per frame. */
     protected static const MAX_AUTO_SCROLL :int = 15;
 }

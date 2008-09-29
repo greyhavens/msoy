@@ -126,6 +126,7 @@ public class UberClient
         case UberClientModes.DECOR_VIEWER:
         case UberClientModes.FURNI_VIEWER:
         case UberClientModes.TOY_VIEWER:
+        case UberClientModes.DECOR_EDITOR:
             var sc :StudioClient = new StudioClient(app.stage, params);
             var rsv :RoomStudioView = sc.getPlaceView();
             rsv.initForViewing(params, mode);

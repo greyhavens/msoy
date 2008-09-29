@@ -10,6 +10,8 @@ import flash.system.Security;
 
 import flash.utils.ByteArray;
 
+import mx.binding.utils.BindingUtils;
+
 import com.threerings.util.Log;
 import com.threerings.util.ValueEvent;
 
@@ -35,6 +37,8 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.FurniData;
 import com.threerings.msoy.room.data.MsoyLocation;
+import com.threerings.msoy.room.data.MsoyScene;
+import com.threerings.msoy.room.data.MsoySceneModel;
 
 /**
  * A non-network RoomView for testing avatars and other room entities.
@@ -75,6 +79,10 @@ public class RoomStudioView extends RoomView
 
         case UberClientModes.DECOR_VIEWER:
             initViewDecor(params);
+            break;
+
+        case UberClientModes.DECOR_EDITOR:
+            initEditDecor(params);
             break;
 
         case UberClientModes.FURNI_VIEWER:
@@ -168,10 +176,44 @@ public class RoomStudioView extends RoomView
     override public function setBackground (decor :Decor) :void
     {
         super.setBackground(decor);
+        checkDrawRoom();
+    }
+
+    override public function updateBackground () :void
+    {
+        super.updateBackground();
+        checkDrawRoom();
+    }
+
+    override protected function relayout () :void
+    {
+        super.relayout();
+
+        if (_avatar != null) {
+            relayoutSprites([ _avatar ]);
+        }
+    }
+
+    protected function checkDrawRoom () :void
+    {
+        var decor :Decor = _scene.getDecor();
 
         // if we're not specifically viewing a decor, show a wireframe decor
-        if (UberClient.getMode() != UberClientModes.DECOR_VIEWER) {
+        switch (UberClient.getMode()) {
+        case UberClientModes.DECOR_VIEWER:
+            // nothing!
+            break;
+
+        case UberClientModes.DECOR_EDITOR:
+            if (_backdropOverlay != null) {
+                _backdrop.drawRoom(_backdropOverlay.graphics, decor.width, decor.height,
+                    true, false, 0.5);
+            }
+            break;
+
+        default:
             _backdrop.drawRoom(_bg.graphics, decor.width, decor.height, true, true);
+            break;
         }
     }
 
@@ -221,6 +263,30 @@ public class RoomStudioView extends RoomView
         _testingSprite = _bg;
 
         addDefaultAvatar();
+    }
+
+    protected function initEditDecor (params :Object) :void
+    {
+        initViewDecor(params);
+
+        _backdropOverlay = new BackdropOverlay();
+        addChild(_backdropOverlay);
+        _layout.updateScreenLocation(_backdropOverlay);
+
+        var decorEditor :DecorEditPanel = new DecorEditPanel(_ctx, this);
+        decorEditor.open();
+
+        var popBtn :CommandButton = new CommandButton();
+        popBtn.setCallback(function () :void {});
+        // TODO: popEditor.styleName = "controlBarTalkButton";
+        popBtn.toolTip = Msgs.GENERAL.get("i.decorPrefs");
+        popBtn.toggle = true;
+        popBtn.selected = true; // since we start popped
+
+        BindingUtils.bindProperty(popBtn, "selected", decorEditor, "visible");
+        BindingUtils.bindProperty(decorEditor, "visible", popBtn, "selected");
+
+        _ctx.getTopPanel().getControlBar().addCustomButton(popBtn);
     }
 
     protected function initViewFurni (params :Object) :void

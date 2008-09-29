@@ -25,6 +25,17 @@ public class StudioMediaDesc extends MediaDesc
         return _url;
     }
 
+    override public function hashCode () :int
+    {
+        return 0; // no need to hash efficiently..
+    }
+
+    override public function equals (other :Object) :Boolean
+    {
+        return (other is StudioMediaDesc) &&
+            (getMediaPath() == StudioMediaDesc(other).getMediaPath());
+    }
+
     protected var _url :String;
 }
 }
