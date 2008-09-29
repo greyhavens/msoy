@@ -157,13 +157,11 @@ public class MsoyHttpServer extends Server
             throws IOException
         {
             if ("/clients/".equals(req.getPathInfo())) {
+                // we allow directory listings for /clients/ so that Jamie's scripts that run guest
+                // clients against production Whirled work
                 super.sendDirectory(req, rsp, resource, parent);
-
             } else {
-                // it should be possible to provide 'dirAllowed' false in the init params for this
-                // servlet, but 30 minutes of wrangling and Jetty code spelunking failed to uncover
-                // why calling context.setInitParams() did not change the init params actually seen
-                // by servlets added to that context; so instead we do this the hard way
+                // everyone else gets to talk to the hand
                 rsp.sendError(HttpServletResponse.SC_FORBIDDEN);
             }
         }
