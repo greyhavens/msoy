@@ -17,7 +17,9 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.money.data.MoneyCodes;
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
+import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
+import com.threerings.msoy.money.data.all.CashOutInfo;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
@@ -66,11 +68,11 @@ public class MoneyServlet extends MsoyServiceServlet
         }
     }
     
-    public BlingInfo requestCashOutBling (int memberId, int blingAmount)
+    public BlingInfo requestCashOutBling (int memberId, int blingAmount, CashOutBillingInfo info)
         throws ServiceException
     {
         try {
-            return _moneyLogic.requestCashOutBling(memberId, blingAmount);
+            return _moneyLogic.requestCashOutBling(memberId, blingAmount, info);
         } catch (NotEnoughMoneyException neme) {
             throw new ServiceException(MoneyCodes.E_INSUFFICIENT_BLING);
         } catch (AlreadyCashedOutException acoe) {
@@ -83,15 +85,15 @@ public class MoneyServlet extends MsoyServiceServlet
     public List<CashOutEntry> getBlingCashOutRequests ()
         throws ServiceException
     {
-        Map<Integer, BlingInfo> blingMap = _moneyLogic.getBlingCashOutRequests();
+        Map<Integer, CashOutInfo> blingMap = _moneyLogic.getBlingCashOutRequests();
         
         // Get all member names for the members in the map.
         final IntMap<MemberName> names = _memberRepo.loadMemberNames(blingMap.keySet());
         
         // Transform the list into cash out entries.
         return Lists.newArrayList(Iterables.transform(blingMap.entrySet(), 
-            new Function<Map.Entry<Integer, BlingInfo>, CashOutEntry>() {
-                public CashOutEntry apply (Entry<Integer, BlingInfo> entry) {
+            new Function<Map.Entry<Integer, CashOutInfo>, CashOutEntry>() {
+                public CashOutEntry apply (Entry<Integer, CashOutInfo> entry) {
                     return new CashOutEntry(entry.getKey(), names.get(entry.getKey()).getNormal(), 
                         entry.getValue(), "todo@email.com");
                 }

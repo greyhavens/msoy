@@ -43,6 +43,8 @@ import com.threerings.presents.annotation.BlockingThread;
 
 import com.threerings.msoy.server.persist.CountRecord;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
+import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.TransactionType;
 
@@ -378,48 +380,84 @@ public class MoneyRepository extends DepotRepository
     }
     
     /**
-     * Sets the amount of bling the user has requested to cash out.  They must currently have that
-     * amount of bling, and they must not already be in the process of cashing out bling.
+     * Commits a bling cash out request.  This will only update the CashOutRecord -- bling deduction
+     * must be handled separately.
      * 
-     * @param memberId ID of the member who is making the request.
-     * @param amount Amount of bling to cash out.
-     * @param blingWorth The amount each bling is worth in USD at this time.
-     * @return The number of records updated.  If 0, there was some error in cashing out.
+     * @param memberId ID of the member to commit.
+     * @param actualAmount Actual amount of centibling that was cashed out.
+     * @return Number of records updated, either 0 or 1.  Can be zero if the member is not currently
+     * cashing out any bling.
      */
-    public int setBlingCashOutRequested (int memberId, int amount, float blingWorth)
+    public int commitBlingCashOutrequest (int memberId, int actualAmount)
     {
         Where where = new Where(new And(
-            new Conditionals.Equals(MemberAccountRecord.MEMBER_ID_C, memberId),
-            new Conditionals.GreaterThanEquals(MemberAccountRecord.BLING_C, amount),
-            new Conditionals.Equals(MemberAccountRecord.CASH_OUT_BLING_C, 0)
-        ));
-        return updatePartial(MemberAccountRecord.class, where,
-            MemberAccountRecord.getKey(memberId),
-            MemberAccountRecord.CASH_OUT_BLING, amount,
-            MemberAccountRecord.CASH_OUT_BLING_WORTH, blingWorth);
+            new Conditionals.Equals(CashOutRecord.MEMBER_ID_C, memberId),
+            new Conditionals.IsNull(CashOutRecord.TIME_COMPLETED)));
+        return updatePartial(CashOutRecord.class, where, CashOutRecord.getKey(memberId),
+            CashOutRecord.TIME_COMPLETED, new Timestamp(System.currentTimeMillis()),
+            CashOutRecord.ACTUAL_BLING_CASHED_OUT_C, actualAmount,
+            CashOutRecord.SUCCESSFUL, false);
     }
     
     /**
-     * Indicates the bling has been cashed out, so we're no longer requesting it.
+     * Cancels a request to cash out bling.
      * 
      * @param memberId ID of the member whose bling has been cashed out.
+     * @param reason The reason the cash out failed.
+     * @return The number of records, either 0 or 1.  If 0, there are no active cash outs for the
+     * user.
      */
-    public void resetBlingCashOutRequest (int memberId)
+    public int cancelBlingCashOutRequest (int memberId, String reason)
     {
-        updatePartial(MemberAccountRecord.getKey(memberId),
-            MemberAccountRecord.CASH_OUT_BLING, 0,
-            MemberAccountRecord.CASH_OUT_BLING_WORTH, 0f);
+        Where where = new Where(new And(
+            new Conditionals.Equals(CashOutRecord.MEMBER_ID_C, memberId),
+            new Conditionals.IsNull(CashOutRecord.TIME_COMPLETED)));
+        return updatePartial(CashOutRecord.class, where, CashOutRecord.getKey(memberId),
+            CashOutRecord.TIME_COMPLETED, new Timestamp(System.currentTimeMillis()),
+            CashOutRecord.FAILURE_REASON, reason,
+            CashOutRecord.SUCCESSFUL, false);
+    }
+
+    /**
+     * Creates a new CashOutRecord that indicates the specified member requested a cash out.
+     * 
+     * @param memberId ID of the member cashing out.
+     * @param blingAmount Amount of centibling, to cash out.
+     * @param blingWorth Worth of each bling at the time the request was made.
+     * @param info Billing information indicating how the member should be paid.
+     * @return The newly created cash out record.
+     */
+    public CashOutRecord createCashOut (int memberId, int blingAmount, float blingWorth,
+        CashOutBillingInfo info)
+    {
+        CashOutRecord cashOut = new CashOutRecord(memberId, blingAmount, 
+            RuntimeConfig.server.blingWorth, info);
+        insert(cashOut);
+        return cashOut;
     }
     
     /**
-     * Retrieves all member account records for members that are currently cashing out some amount
+     * Retrieves the current cash out request for the specified user.
+     * 
+     * @param memberId ID of the member to retrieve a cash out record for.
+     * @return The current cash out record, or null if the user is not currently cashing out.
+     */
+    public CashOutRecord getCurrentCashOutRequest (int memberId)
+    {
+        return load(CashOutRecord.class, new Where(new And(
+            new Conditionals.IsNull(CashOutRecord.TIME_COMPLETED_C),
+            new Conditionals.Equals(CashOutRecord.MEMBER_ID_C, memberId))));
+    }
+    
+    /**
+     * Retrieves all cash out records for members that are currently cashing out some amount
      * of their bling.
      */
-    public List<MemberAccountRecord> getAccountsCashingOut ()
+    public List<CashOutRecord> getAccountsCashingOut ()
     {
-        // select * from MemberAccountRecord where cashOutBling > 0
-        return findAll(MemberAccountRecord.class, new Where(
-            new Conditionals.GreaterThan(MemberAccountRecord.CASH_OUT_BLING_C, 0)));
+        // select * from CashOutRecord where timeCompleted is null
+        return findAll(CashOutRecord.class, new Where(
+            new Conditionals.IsNull(CashOutRecord.TIME_COMPLETED_C)));
     }
     
     /** Helper method to setup a query for a transaction history search. */
@@ -447,5 +485,6 @@ public class MoneyRepository extends DepotRepository
         classes.add(MemberAccountRecord.class);
         classes.add(MoneyTransactionRecord.class);
         classes.add(MoneyConfigRecord.class);
+        classes.add(CashOutRecord.class);
     }
 }

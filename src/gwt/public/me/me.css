@@ -464,6 +464,10 @@
    BLING
 -------------------------------------*/
 
+.bling {
+    font-size: 10pt;
+}
+
 .bling .header {
 	font-weight: bold;
 }

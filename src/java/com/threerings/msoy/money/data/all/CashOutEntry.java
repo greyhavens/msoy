@@ -15,14 +15,14 @@ public class CashOutEntry
 {
     public /* final */ int memberId;
     public /* final */ String displayName;
-    public /* final */ BlingInfo blingInfo;
+    public /* final */ CashOutInfo cashOutInfo;
     public /* final */ String emailAddress;
     
-    public CashOutEntry (int memberId, String displayName, BlingInfo blingInfo, String emailAddress)
+    public CashOutEntry (int memberId, String displayName, CashOutInfo info, String emailAddress)
     {
         this.memberId = memberId;
         this.displayName = displayName;
-        this.blingInfo = blingInfo;
+        this.cashOutInfo = info;
         this.emailAddress = emailAddress;
     }
     

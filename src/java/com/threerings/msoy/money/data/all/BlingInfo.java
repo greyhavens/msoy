@@ -14,19 +14,13 @@ public class BlingInfo
     /** The worth in US pennies. */
     public int blingWorth;
     
-    /** The amount of bling the user has requested to cash out, or 0 if no request. */
-    public int cashedOutBling;
+    public CashOutInfo cashOut;
     
-    /** The worth of the bling the user has requested to cash out. */
-    public int cashedOutBlingWorth;
-    
-    public BlingInfo (int bling, int blingWorth, int cashedOutBling, 
-        int cashedOutBlingWorth)
+    public BlingInfo (int bling, int blingWorth, CashOutInfo cashOut)
     {
         this.bling = bling;
         this.blingWorth = blingWorth;
-        this.cashedOutBling = cashedOutBling;
-        this.cashedOutBlingWorth = cashedOutBlingWorth;
+        this.cashOut = cashOut;
     }
     
     /** For serialization purposes. */

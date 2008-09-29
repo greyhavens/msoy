@@ -13,6 +13,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
@@ -62,6 +63,9 @@ public class BlingPanel extends SmartTable
         setWidget(row++, 1, _exchangeStatus = new Label(""), 2, null);
         setText(row++, 0, _msgs.blingCashOutHeader(), 3, "header");
         setText(row++, 0, _msgs.blingCashOutDescription(), 3, null);
+        setText(row, 0, "Password", 1, "rightLabel");
+        setWidget(row++, 1, new PasswordTextBox());
+        
         setText(row, 0, _msgs.blingCashOutAmount(), 1, "rightLabel");
         setWidget(row, 1, _cashOutBox = new TextBox());
         setWidget(row++, 2, _cashOutBtn = new Button(_msgs.blingCashOutButton(), new ClickListener() {
@@ -76,10 +80,10 @@ public class BlingPanel extends SmartTable
     {
         _blingBalance.setText(Currency.BLING.format(result.bling));
         _blingWorth.setText(formatUSD(result.blingWorth));
-        if (result.cashedOutBling != 0) {
+        if (result.cashOut != null) {
             _cashedOutBling.setText(_msgs.cashedOutBling(
-                Currency.BLING.format(result.cashedOutBling),
-                formatUSD(result.cashedOutBlingWorth)));
+                Currency.BLING.format(result.cashOut.blingAmount),
+                formatUSD(result.cashOut.blingWorth)));
         } else {
             _cashedOutBling.setText("");
         }
@@ -121,7 +125,8 @@ public class BlingPanel extends SmartTable
         }
         
         // Ensure the amount is valid.
-        _cashOutBtn.setEnabled(false);
+        // TODO: Re-enable once UI updated to get payment info.
+        /*_cashOutBtn.setEnabled(false);
         try {
             _moneysvc.requestCashOutBling(memberId, blingAmount, new AsyncCallback<BlingInfo>() {
                 public void onFailure (Throwable cause) {
@@ -135,7 +140,7 @@ public class BlingPanel extends SmartTable
             });
         } finally {
             _cashOutBtn.setEnabled(true);
-        }
+        }*/
     }
     
     protected void setSuccess (Label label, String message)
