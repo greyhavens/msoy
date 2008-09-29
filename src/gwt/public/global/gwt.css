@@ -933,6 +933,10 @@ img, embed, applet, object {
   background-image: url(/images/ui/go_down.png);
 }
 
+.buyButton .X {
+  width: 200px;
+}
+
 .stretchButton {
   cursor: pointer;
 }
@@ -949,29 +953,80 @@ img, embed, applet, object {
   height: 44px;
 }
 
-.orangeThick-up .W {
-  background-image: url(/images/ui/orange/thick_left.png);
+/** ORANGE BUTTON */
+
+.orangeThick .W {
+  background-image: url(/images/ui/button/orange_thick_left.png);
 }
 
-.orangeThick-up .X {
-  background-image: url(/images/ui/orange/thick_center.png);
+.orangeThick .X {
+  background-image: url(/images/ui/button/orange_thick_center.png);
   height: 44px;
 }
 
-.orangeThick-up .E {
-  background-image: url(/images/ui/orange/thick_right.png);
+.orangeThick .E {
+  background-image: url(/images/ui/button/orange_thick_right.png);
 }
 
-/** TODO: Get real rollovers. */
-
 .orangeThick-up-hovering .W {
-  background-image: url(/images/ui/orange/thick_right.png);
+  background-image: url(/images/ui/button/orange_thick_left_over.png);
 }
 
 .orangeThick-up-hovering .X {
-  background-image: url(/images/ui/orange/thick_center.png);
+  background-image: url(/images/ui/button/orange_thick_center_over.png);
 }
 
 .orangeThick-up-hovering .E {
-  background-image: url(/images/ui/orange/thick_left.png);
+  background-image: url(/images/ui/button/orange_thick_right_over.png);
+}
+
+.orangeThick-down-hovering .W {
+  background-image: url(/images/ui/button/orange_thick_left_down.png);
+}
+
+.orangeThick-down-hovering .X {
+  background-image: url(/images/ui/button/orange_thick_center_down.png);
+}
+
+.orangeThick-down-hovering .E {
+  background-image: url(/images/ui/button/orange_thick_right_down.png);
+}
+
+/** BLUE BUTTON */
+
+.blueThick .W {
+  background-image: url(/images/ui/button/blue_thick_left.png);
+}
+
+.blueThick .X {
+  background-image: url(/images/ui/button/blue_thick_center.png);
+  height: 44px;
+}
+
+.blueThick .E {
+  background-image: url(/images/ui/button/blue_thick_right.png);
+}
+
+.blueThick-up-hovering .W {
+  background-image: url(/images/ui/button/blue_thick_left_over.png);
+}
+
+.blueThick-up-hovering .X {
+  background-image: url(/images/ui/button/blue_thick_center_over.png);
+}
+
+.blueThick-up-hovering .E {
+  background-image: url(/images/ui/button/blue_thick_right_over.png);
+}
+
+.blueThick-down-hovering .W {
+  background-image: url(/images/ui/button/blue_thick_left_down.png);
+}
+
+.blueThick-down-hovering .X {
+  background-image: url(/images/ui/button/blue_thick_center_down.png);
+}
+
+.blueThick-down-hovering .E {
+  background-image: url(/images/ui/button/blue_thick_right_down.png);
 }

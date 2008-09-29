@@ -62,7 +62,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         horiz.add(WidgetUtil.makeShim(10, 1));
         horiz.add(MsoyUI.createLabel(currency.format(amount), null));
 
-        StretchButton button = new StretchButton("orangeThick", horiz);
+        StretchButton button = new StretchButton(currency == Currency.BARS ?
+                "orangeThick" : "blueThick", horiz);
+        button.addStyleName("buyButton");
         new BuyCallback(button, currency);
 
         return button;
