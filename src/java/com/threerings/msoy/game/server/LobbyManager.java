@@ -153,8 +153,8 @@ public class LobbyManager
     {
         MsoyMatchConfig match = (MsoyMatchConfig)_lobj.gameDef.match;
         if (match == null || (match.minSeats != 1 && !match.isPartyGame)) {
-            log.warning("Requested single player for non-single player game [who=" + player.who() +
-                        ", ident=" + _lobj.gameDef.ident + ", match=" + match + "].");
+            log.warning("Requested single player for non-single player game", "who", player.who(),
+                        "gameId", getGameId(), "match", match);
             return false;
         }
 
