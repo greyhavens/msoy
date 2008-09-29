@@ -933,10 +933,6 @@ img, embed, applet, object {
   background-image: url(/images/ui/go_down.png);
 }
 
-.buyButton .X {
-  width: 200px;
-}
-
 .stretchButton {
   cursor: pointer;
 }

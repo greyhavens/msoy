@@ -9,6 +9,7 @@ import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
@@ -88,33 +89,20 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         Currency listedCur = _listing.quote.getListedCurrency();
         _indeets.add(_priceLabel = new PriceLabel(listedCur, _listing.quote.getListedAmount()));
 
-        // this will contain all of the buy-related interface and will be replaced with the
-        // "bought" interface when the buying is done
-        _buyPanel = new FlowPanel();
-        _buyPanel.setStyleName("Buy");
-
-        // make the primary currency purchase button
-        if (DeploymentConfig.barsEnabled) {
-            _buyPanel.add(createBuyButton(Currency.BARS, _listing.quote.getBars()));
-            _buyPanel.add(Link.buyBars(_msgs.listingBuyBars()));
-        }
-
-        _buyPanel.add(createBuyButton(Currency.COINS, _listing.quote.getCoins()));
-
-        _details.add(WidgetUtil.makeShim(10, 10));
-        _details.add(_buyPanel);
-
         // create a table to display miscellaneous info and admin/owner actions
-        SmartTable info = new SmartTable("Info", 0, 5);
-        info.setText(0, 0, _msgs.listingListed(), 1, "What");
-        info.setText(0, 1, MsoyUI.formatDate(listing.listedDate));
-        info.setText(1, 0, _msgs.listingPurchases(), 1, "What");
-        info.setText(1, 1, "" + listing.purchases);
-        info.setText(2, 0, _msgs.favoritesCount(), 1, "What");
-        info.setText(2, 1, "" + listing.favoriteCount);
+        //info.setStyle("Info"); // ?
+//        info.setText(0, 0, _msgs.listingListed(), 1, "What");
+//        info.setText(0, 1, MsoyUI.formatDate(listing.listedDate));
+//        info.setText(1, 0, _msgs.listingPurchases(), 1, "What");
+//        info.setText(1, 1, "" + listing.purchases);
+//        info.setText(2, 0, _msgs.favoritesCount(), 1, "What");
+//        info.setText(2, 1, "" + listing.favoriteCount);
 
         // if we are the creator (lister) of this item, allow us to delist it
         if (_detail.creator.getMemberId() == CShop.getMemberId() || CShop.isSupport()) {
+            HorizontalPanel controls = new HorizontalPanel();
+            controls.setStyleName("controls");
+
             Label reprice = new Label(_msgs.listingReprice());
             reprice.addStyleName("actionLabel");
             reprice.addClickListener(new ClickListener() {
@@ -128,7 +116,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     });
                 }
             });
-            info.addWidget(reprice, 2, null);
+            controls.add(reprice);
 
             Label delist = new Label(_msgs.listingDelist());
             new ClickCallback<Void>(delist, _msgs.listingDelistConfirm()) {
@@ -143,17 +131,38 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     return false;
                 }
             };
-            info.addWidget(delist, 2, null);
+            controls.add(createSeparator());
+            controls.add(delist);
 
             if (_listing.originalItemId != 0) {
                 // also add a link to view the original
                 String args = Args.compose("d", ""+_item.getType(), ""+_listing.originalItemId);
-                info.addWidget(Link.create(_msgs.listingViewOrig(), Pages.STUFF, args), 2, null);
+                controls.add(createSeparator());
+                controls.add(Link.create(_msgs.listingViewOrig(), Pages.STUFF, args));
             }
+
+            _details.add(controls);
         }
 
-        _details.add(WidgetUtil.makeShim(10, 10));
-        _details.add(info);
+        // this will contain all of the buy-related interface and will be replaced with the
+        // "bought" interface when the buying is done
+        _buyPanel = new FlowPanel();
+        _buyPanel.setStyleName("Buy");
+
+        // make the primary currency purchase button
+        if (DeploymentConfig.barsEnabled) {
+            _buyPanel.add(createBuyButton(Currency.BARS, _listing.quote.getBars()));
+            Widget link = Link.buyBars(_msgs.listingBuyBars());
+            link.setStyleName("GetBars");
+            _buyPanel.add(link);
+        }
+
+        _buyPanel.add(createBuyButton(Currency.COINS, _listing.quote.getCoins()));
+
+        _details.add(_buyPanel);
+
+        _details.add(MsoyUI.createLabel(
+            _msgs.listedOn(MsoyUI.formatDate(_listing.listedDate)), "listedDate"));
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId), true);
@@ -255,6 +264,11 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         protected Currency _currency;
     };
+
+    protected static Widget createSeparator ()
+    {
+        return new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;");
+    }
 
     protected CatalogModels _models;
     protected CatalogListing _listing;

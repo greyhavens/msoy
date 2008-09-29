@@ -197,6 +197,7 @@
 .listingDetailPanel .Bought {
   border: 1px solid #3776A0;
   padding: 5px;
+  margin-top: 10px;
 }
 
 .listingDetailPanel .Bought .itemActivator {
@@ -210,6 +211,26 @@
 
 .listingDetailPanel .messagePanel .Scroller {
   width: 555px;
+}
+
+.buyButton .X {
+  width: 200px;
+}
+
+.listingDetailPanel .buyButton {
+  margin-top: 20px;
+}
+
+.listingDetailPanel .listedDate {
+  margin-top: 10px;
+  font-size: small;
+  text-align: right;
+}
+
+.listingDetailPanel .controls {
+  margin-top: 10px;
+  font-size: small;
+  text-align: center;
 }
 
 .favoritesPanel {
