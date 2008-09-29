@@ -4,6 +4,7 @@
 package com.threerings.msoy.bureau.server;
 
 import com.threerings.msoy.bureau.client.BureauLauncherDecoder;
+import com.threerings.msoy.bureau.client.BureauLauncherReceiver;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.server.InvocationSender;
 

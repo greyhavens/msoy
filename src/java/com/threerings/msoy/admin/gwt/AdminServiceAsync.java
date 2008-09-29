@@ -77,12 +77,12 @@ public interface AdminServiceAsync
     void updateTest (ABTest test, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link AdminService.getFlaggedItems}.
+     * The asynchronous version of {@link AdminService#getFlaggedItems}.
      */
     void getFlaggedItems (int count, AsyncCallback<List<ItemDetail>> callback);
 
     /**
-     * The asynchronous version of {@link AdminService.deleteItemAdmin}.
+     * The asynchronous version of {@link AdminService#deleteItemAdmin}.
      */
     void deleteItemAdmin (ItemIdent item, String subject, String body,
                           AsyncCallback<Integer> callback);

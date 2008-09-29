@@ -34,12 +34,12 @@ public interface WebMemberServiceAsync
                       AsyncCallback<WebMemberService.FriendsResult> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#acceptFriend}.
+     * The asynchronous version of {@link WebMemberService#addFriend}.
      */
     void addFriend (int friendId, AsyncCallback<Void> callback);
 
     /**
-     * The asynchronous version of {@link WebMemberService#declineFriend}.
+     * The asynchronous version of {@link WebMemberService#removeFriend}.
      */
     void removeFriend (int friendId, AsyncCallback<Void> callback);
 

@@ -30,11 +30,12 @@ public class BureauLauncherClient extends Client
 {
     /**
      * Creates a new bureau launcher client, setting up bureau launcher authentation.
+     * 
      * @param launcher used to run client jobs and receiver for launcher requests
      * @param target if specified, this client will subscribe to the game server registry
-     * object and connect to all the servers therein
+     * object and connect to all the servers therein.
+     * 
      * @see BureauLauncherCredentials
-     * @see BureauLauncherAuthenticator
      * @see BureauLauncherConfig#bureauSharedSecret
      * @see ServerRegistryObject
      */

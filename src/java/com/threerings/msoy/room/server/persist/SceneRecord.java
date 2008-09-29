@@ -199,8 +199,8 @@ public class SceneRecord extends PersistentRecord
 
     /**
      * Converts this scene record in to a partially initialized room info record. The
-     * {@link RoomInfo#owner}, {@link RoomInfof#decor}, {@link RoomInfo#canonicalThumbnail} fields
-     * must be filled in manually if they are needed.
+     * {@link RoomInfo#owner} and {@link RoomInfo#thumbnail} fields must be filled in manually if
+     * they are needed.
      */
     public static final Function<SceneRecord,RoomInfo> TO_ROOM_INFO =
         new Function<SceneRecord,RoomInfo>() {

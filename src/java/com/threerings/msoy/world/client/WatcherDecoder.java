@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.world.client;
 
-
 import com.threerings.presents.client.InvocationDecoder;
 
 /**

@@ -18,6 +18,7 @@ import com.threerings.crowd.server.PlaceManagerDelegate;
 
 import com.threerings.presents.annotation.MainInvoker;
 
+import com.threerings.msoy.avrg.server.AVRGameManager;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.GameTraceLogRecord;
 
