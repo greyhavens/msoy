@@ -18,6 +18,7 @@ import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.mail.gwt.GroupInvitePayload;
 
 import client.ui.MsoyUI;
+import client.util.ClickCallback;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -70,26 +71,22 @@ public class GroupInviteDisplay extends MailPayloadDisplay
 
             add(new InlineLabel(CMail.msgs.groupInvitation(""+_info.name), true, false, true));
             add(WidgetUtil.makeShim(5, 5));
-            Button joinButton = new Button(CMail.msgs.groupBtnJoin(), new ClickListener() {
-                public void onClick (Widget sender) {
-                    joinGroup();
-                    refreshUI();
-                }
-            });
+            Button joinButton = new Button(CMail.msgs.groupBtnJoin());
             joinButton.addStyleName("JoinButton");
             joinButton.setEnabled(_enabled);
-            add(joinButton);
-        }
-
-        protected void joinGroup ()
-        {
-            _groupsvc.joinGroup(_invitePayload.groupId, new MsoyCallback<Void>() {
-                // if joining the group succeeds, mark this invitation as accepted
-                public void onSuccess (Void result) {
+            new ClickCallback<Void>(joinButton) {
+                public boolean callService () {
+                    _groupsvc.joinGroup(_invitePayload.groupId, this);
+                    return true;
+                }
+                public boolean gotResult (Void result) {
                     _invitePayload.responded = true;
                     updateState(_invitePayload, new MsoyCallback.NOOP<Void>());
+                    refreshUI();
+                    return true;
                 }
-            });
+            };
+            add(joinButton);
         }
 
         protected boolean _enabled;
