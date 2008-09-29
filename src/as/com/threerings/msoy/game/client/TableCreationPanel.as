@@ -130,8 +130,7 @@ public class TableCreationPanel extends VBox
             break;
 
         default:
-            Log.getLog(this).warning(
-                "<match type='" + match.getMatchType() + "'> is not a valid type");
+            log.warning("<match type='" + match.getMatchType() + "'> is not a valid type");
             return;
         }
 
@@ -163,9 +162,13 @@ public class TableCreationPanel extends VBox
             _friendsGrid = new SimpleGrid(columns);
             _friendsGrid.setStyle("horizontalGap", 5);
             for each (var friend :FriendEntry in onlineFriends) {
-                var fcb :FriendCheckBox = new FriendCheckBox(friend);
-                fcb.check.addEventListener(Event.CHANGE, friendToggled);
-                _friendsGrid.addCell(fcb);
+                try {
+                    var fcb :FriendCheckBox = new FriendCheckBox(friend);
+                    fcb.check.addEventListener(Event.CHANGE, friendToggled);
+                    _friendsGrid.addCell(fcb);
+                } catch (e :Error) {
+                    log.warning("Failed to add checkbox for friend", "friend", friend, e);
+                }
             }
             addChild(_friendsGrid);
         }
@@ -211,6 +214,8 @@ public class TableCreationPanel extends VBox
     protected var _configBox :Container;
     protected var _friendsGrid :SimpleGrid;
     protected var _inviteAll :CommandCheckBox;
+
+    protected const log :Log = Log.getLog(this);
 
     protected static const FRIENDS_GRID_COLUMNS :int = 6;
 }
