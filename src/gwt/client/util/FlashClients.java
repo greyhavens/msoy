@@ -11,6 +11,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
+import com.threerings.msoy.data.all.UberClientModes;
 
 import client.shell.CShell;
 import client.shell.Frame;
@@ -68,10 +69,16 @@ public class FlashClients
      */
     public static void embedDecorViewer (HTML html)
     {
+        // see if we need to emit a warning instead
         String definition = CShell.frame.checkFlashVersion(600, 400);
-        html.setHTML(definition != null ? definition : WidgetUtil.createFlashObjectDefinition(
-                         "decorViewer", "/clients/" + DeploymentConfig.version + "/decorviewer.swf",
-                         600, 400, ""));
+        if (definition != null) {
+            html.setHTML(definition);
+            return;
+        }
+
+        html.setHTML(WidgetUtil.createFlashObjectDefinition("decorViewer",
+            "/clients/" + DeploymentConfig.version + "/world-client.swf", 600, 400,
+            "mode=" + UberClientModes.DECOR_EDITOR));
     }
 
     /**
