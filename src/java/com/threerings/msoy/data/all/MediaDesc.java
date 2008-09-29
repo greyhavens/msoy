@@ -75,10 +75,10 @@ public class MediaDesc implements Streamable, IsSerializable
     /** Identifies that a preview sized image is desired. */
     public static final int PREVIEW_SIZE = 3;
 
-    /** The "thumbnail" size for canonical snapshots. */
+    /** The "thumbnail" size for scene snapshots. */
     public static final int SNAPSHOT_THUMB_SIZE = 4;
 
-    /** The size for canonical images. */
+    /** The full size for canonical scene snapshots. */
     public static final int CANONICAL_IMAGE_SIZE = 5;
 
     /** The thumbnail image width.  */
@@ -683,6 +683,6 @@ public class MediaDesc implements Streamable, IsSerializable
         THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, // thumbnail size
         THUMBNAIL_WIDTH*4, THUMBNAIL_HEIGHT*4, // preview size
         175, 100, // snapshot thumb size
-        350, 200, // canonical image size
+        350, 200, // full snapshot image size
     };
 }
