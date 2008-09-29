@@ -18,15 +18,19 @@ public class StretchButton extends FocusPanel
         setWidget(_panel = new StretchPanel(styleName, content));
         setStyleName("stretchButton");
 
-        // TODO: Button down states, but always "up" for now
-        _panel.addStyleDependentName("up");
-
         addMouseListener(new MouseListenerAdapter() {
-            public void onMouseEnter (Widget sender) {
+            @Override public void onMouseEnter (Widget sender) {
                 _panel.addStyleDependentName("up-hovering");
             }
-            public void onMouseLeave (Widget sender) {
+            @Override public void onMouseLeave (Widget sender) {
                 _panel.removeStyleDependentName("up-hovering");
+                _panel.removeStyleDependentName("down-hovering");
+            }
+            @Override public void onMouseDown (Widget sender, int x, int y) {
+                _panel.addStyleDependentName("down-hovering");
+            }
+            @Override public void onMouseUp (Widget sender, int x, int y) {
+                _panel.removeStyleDependentName("down-hovering");
             }
         });
     }
