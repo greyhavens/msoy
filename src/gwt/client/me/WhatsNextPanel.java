@@ -131,7 +131,7 @@ public class WhatsNextPanel extends TongueBox
         friends.add(MsoyUI.createLabel(_msgs.nextFriendClick(), "ClickTip"));
 
         // if we have few friends, show larger photo images
-        int size = (data.friends.size() > 6) ?
+        int size = (data.friends.size() > 5) ?
             MediaDesc.QUARTER_THUMBNAIL_SIZE : MediaDesc.HALF_THUMBNAIL_SIZE;
 
         // group our friends by location (in rooms or games)
