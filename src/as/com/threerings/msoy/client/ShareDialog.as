@@ -71,20 +71,22 @@ public class ShareDialog extends FloatingPanel
 
     public function getEmbedCode (size :int) :String
     {
+        var flashVars :String = VisitorInfo.makeFlashVars(_placeId, _inGame);
+        // if we're not a guest, include the "aff=<memberId>" flashvar to affiliate users to us
         const memName :MemberName = _ctx.getMyName();
-
-        var url :String = DeploymentConfig.serverURL;
-        url = url.replace(/(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
-        
-        var affiliate :String = memName.isGuest() ? "" : String(memName.getMemberId());
-        var flashVars :String = VisitorInfo.makeFlashVars(affiliate, _placeId, _inGame);
-
+        if (!memName.isGuest()) {
+            flashVars += "&aff=" + memName.getMemberId();
+        }
         if (size == 0) { // mini TV view
             flashVars += "&featuredPlace=true";
         }
 
-        return Msgs.GENERAL.get("m.embed", flashVars, url,
-            EMBED_SIZES[size][0], EMBED_SIZES[size][1]);
+        const fullLink :String = _ctx.getMsoyController().createPageLink("", false);
+        const swfUrl :String = DeploymentConfig.serverURL.replace(
+            /(http:\/\/[^\/]*).*/, "$1/clients/world-client.swf");
+
+        return Msgs.GENERAL.get("m.embed", flashVars, swfUrl,
+            EMBED_SIZES[size][0], EMBED_SIZES[size][1], fullLink);
     }
 
     protected function createEmailBox () :VBox
