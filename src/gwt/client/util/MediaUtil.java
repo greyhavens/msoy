@@ -105,7 +105,7 @@ public class MediaUtil
     public static Widget createSceneThumbView (MediaDesc thumb, ClickListener onClick)
     {
         if (thumb != null) {
-            return createMediaView(thumb, MediaDesc.CANONICAL_IMAGE_SIZE, onClick);
+            return createMediaView(thumb, MediaDesc.SNAPSHOT_FULL_SIZE, onClick);
         } else {
             Image image = new Image();
             if (onClick != null) {

@@ -79,7 +79,7 @@ public class MediaDesc implements Streamable, IsSerializable
     public static final int SNAPSHOT_THUMB_SIZE = 4;
 
     /** The full size for canonical scene snapshots. */
-    public static final int CANONICAL_IMAGE_SIZE = 5;
+    public static final int SNAPSHOT_FULL_SIZE = 5;
 
     /** The thumbnail image width.  */
     public static final int THUMBNAIL_WIDTH = 80;

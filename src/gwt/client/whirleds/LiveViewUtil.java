@@ -30,7 +30,7 @@ public class LiveViewUtil
         }
 
         FlowPanel panel = new FlowPanel();
-        panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.CANONICAL_IMAGE_SIZE, onClick));
+        panel.add(MediaUtil.createMediaView(snapshot, MediaDesc.SNAPSHOT_FULL_SIZE, onClick));
         Image overlay = MsoyUI.createActionImage("/images/landing/click_overlay.png", onClick);
         overlay.addStyleName("LiveViewOverlay");
         panel.add(overlay);
