@@ -287,7 +287,7 @@ public class FloatingPanel extends TitleWindow
     {
         super.createChildren();
 
-        var closeBtn :UIComponent = mx_internal::closeButton;
+        var closeBtn :UIComponent = getCloseButton();
         closeBtn.buttonMode = true;
         closeBtn.explicitWidth = 13;
         closeBtn.explicitHeight = 14;
@@ -297,9 +297,17 @@ public class FloatingPanel extends TitleWindow
     {
         super.layoutChrome(unscaledWidth, unscaledHeight);
 
-        var closeBtn :UIComponent = mx_internal::closeButton;
+        var closeBtn :UIComponent = getCloseButton();
         closeBtn.x = unscaledWidth - closeBtn.width - 5;
         closeBtn.y = 5;
+    }
+
+    /**
+     * Provides easy access to the close button.
+     */
+    protected function getCloseButton () :Button
+    {
+        return mx_internal::closeButton;
     }
 
     /**
