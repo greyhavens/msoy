@@ -797,8 +797,7 @@
     </dobj>
   </target>
 
-  <!-- generates marshaller and dispatcher classes for all invocation -->
-  <!-- service declarations -->
+  <!-- generates marshaller and dispatcher classes for all invocation service declarations -->
   <target name="genservice" depends="prepare">
     <taskdef name="service" classpathref="classpath"
              classname="com.threerings.presents.tools.GenServiceTask"/>
@@ -828,8 +827,7 @@
     </service>
   </target>
 
-  <!-- generates sender and decoder classes for all invocation -->
-  <!-- receiver declarations -->
+  <!-- generates sender and decoder classes for all invocation receiver declarations -->
   <target name="genreceiver" depends="prepare">
     <taskdef name="receiver" classpathref="classpath"
              classname="com.threerings.presents.tools.GenReceiverTask"/>
@@ -838,12 +836,14 @@
            debug="on" optimize="${build.optimize}" deprecation="on" target="1.5">
       <classpath refid="classpath"/>
       <include name="**/*Receiver.java"/>
-      <exclude name="**/InvocationReceiver.java"/>
+      <exclude name="**/MoneyMessageReceiver.java"/>
     </javac>
     <!-- now generate the associated files -->
     <receiver header="lib/SOURCE_HEADER" classpathref="classpath">
-      <fileset dir="${src.dir}" includes="**/*Receiver.java"
-        excludes="**/InvocationReceiver.java"/>
+      <fileset dir="${src.dir}">
+        <include name="**/*Receiver.java"/>
+        <exclude name="**/MoneyMessageReceiver.java"/>
+      </fileset>
     </receiver>
   </target>
 
