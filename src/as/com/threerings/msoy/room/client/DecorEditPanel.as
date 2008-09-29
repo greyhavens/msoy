@@ -14,8 +14,9 @@ import mx.binding.utils.BindingUtils;
 import mx.controls.ComboBox;
 import mx.controls.TextInput;
 import mx.controls.VSlider;
-
 import mx.containers.Grid;
+import mx.containers.VBox;
+import mx.core.UIComponent;
 
 import mx.events.CloseEvent;
 
@@ -23,9 +24,10 @@ import com.threerings.util.Log;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.FlexUtil;
 import com.threerings.flex.GridUtil;
 
-import com.threerings.msoy.ui.FloatingPanel;
+import com.threerings.msoy.ui.FlyingPanel;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
@@ -38,11 +40,12 @@ import com.threerings.msoy.room.data.MsoySceneModel;
 /**
  * Widgets used for editing a backdrop definition.
  */
-public class DecorEditPanel extends FloatingPanel
+public class DecorEditPanel extends FlyingPanel
 {
     public function DecorEditPanel (ctx :MsoyContext, studioView :RoomStudioView)
     {
-        super(ctx, Msgs.WORLD.get("t.edit_backdrop"));
+        super(ctx, Msgs.STUDIO.get("t.backdrop_editor"));
+        styleName = "sexyWindow";
         _studioView = studioView;
         _decor = studioView.getScene().getDecor();
         showCloseButton = true;
@@ -86,13 +89,14 @@ public class DecorEditPanel extends FloatingPanel
             return;
         }
 
-        _decor.type = int(_types[_roomType.selectedIndex]);
+        _decor.type = int(ROOM_TYPES[_roomType.selectedIndex]);
+        _decor.hideWalls = _hideWalls.selected;
+        _decor.horizon = _horizon.value;
+        _decor.depth = _depth.value;
         _decor.width = int(_width.text);
         _decor.height = int(_height.text);
-        _decor.depth = _depth.value;
-        _decor.horizon = _horizon.value;
-        // TODO: offx/offy?
-        _decor.hideWalls = _hideWalls.selected;
+        _decor.offsetX = int(_xoff.text);
+        _decor.offsetY = int(_yoff.text);
 
         updateDecorInViewer(false);
         updateDecorOnPage();
@@ -120,13 +124,16 @@ public class DecorEditPanel extends FloatingPanel
 
         _suppressSaves = true;
         try {
+            _roomType.selectedIndex = ROOM_TYPES.indexOf(type);
+            _hideWalls.selected = hideWalls;
+            // TODO: scale!
+            _depth.value = depth;
+            _horizon.value = horizon;
             _width.text = String(width);
             _height.text = String(height);
-            _depth.value = depth;
-            _roomType.selectedIndex = _types.indexOf(type);
-            _horizon.value = horizon;
-            // TODO: offx/offy?
-            _hideWalls.selected = hideWalls;
+            _xoff.text = String(offsetX);
+            _yoff.text = String(offsetY);
+            //checkRoomType()
         } finally {
             _suppressSaves = false;
         }
@@ -165,7 +172,20 @@ public class DecorEditPanel extends FloatingPanel
     {
         super.createChildren();
 
-        var grid :Grid = new Grid();
+        _roomType = new ComboBox();
+        var types :Array = [];
+        for (var ii :int = 0; ii < ROOM_TYPES.length; ii++) {
+            types[ii] = { label: Msgs.STUDIO.get("l.room_type_" + ROOM_TYPES[ii]) };
+        }
+        _roomType.dataProvider = types;
+        _roomType.addEventListener(Event.CHANGE, saveChanges);
+
+        _hideWalls = new CommandCheckBox(Msgs.STUDIO.get("l.hide_walls"), saveChanges);
+
+        _scale = new VSlider();
+        _scale.liveDragging = true;
+        _scale.maximum = 1;
+        _scale.minimum = 0;
 
         _horizon = new VSlider();
         _horizon.liveDragging = true;
@@ -177,38 +197,72 @@ public class DecorEditPanel extends FloatingPanel
         _depth.maximum = 2000;
         _depth.minimum = 0;
 
-        _hideWalls = new CommandCheckBox(Msgs.EDITING.get("l.hide_walls"), saveChanges);
-
-        _roomType = new ComboBox();
-        var types :Array = [];
-        for (var ii :int = 0; ii < _types.length; ii++) {
-            types[ii] = { label: Msgs.EDITING.get("m.scene_type_" + _types[ii]) };
-        }
-        _roomType.dataProvider = types;
-        _roomType.addEventListener(Event.CHANGE, saveChanges);
+        var expertBtn :CommandCheckBox = new CommandCheckBox(Msgs.STUDIO.get("l.dimensions"));
 
         _width = new TextInput();
+        _width.maxChars = 4;
         _height = new TextInput();
+        _height.maxChars = 4;
+        _xoff = new TextInput();
+        _xoff.maxChars = 4;
+        _yoff = new TextInput();
+        _yoff.maxChars = 4;
 
-        // TODO: offx/offy?
+        var typeP :Grid = new Grid();
+        GridUtil.addRow(typeP, Msgs.STUDIO.get("l.room_type"), _roomType);
 
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.scene_type"), _roomType, [ 2, 1 ]);
-        GridUtil.addRow(grid, _hideWalls, [ 3, 1 ]);
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.scene_dimensions"), _width, _height);
-        addChild(grid);
+        var detailP :Grid = new Grid();
+        GridUtil.addRow(detailP, _hideWalls, [2, 1]);
+        GridUtil.addRow(detailP, expertBtn, [2, 1]);
+        //var dimL :UIComponent = GridUtil.addRow(detailP, Msgs.STUDIO.get("l.dimensions"), [2, 1]);
+        GridUtil.addRow(detailP, _width, _height);
+        var offsetL :UIComponent = GridUtil.addRow(detailP, Msgs.STUDIO.get("l.offsets"), [2, 1]);
+        GridUtil.addRow(detailP, _xoff, _yoff);
 
-        grid = new Grid();
-        GridUtil.addRow(grid, Msgs.EDITING.get("l.horizon"), _horizon,
-            Msgs.EDITING.get("l.scene_depth"), _depth);
+        var slideP :Grid = new Grid();
+        var scaleP :Grid = new Grid();
+        var horzP :Grid = new Grid();
+        var depthP :Grid = new Grid();
+        GridUtil.addRow(scaleP, Msgs.STUDIO.get("l.scale"));
+        GridUtil.addRow(scaleP, _scale);
+        GridUtil.addRow(horzP, Msgs.STUDIO.get("l.horizon"));
+        GridUtil.addRow(horzP, _horizon);
+        GridUtil.addRow(depthP, Msgs.STUDIO.get("l.depth"));
+        GridUtil.addRow(depthP, _depth);
+        GridUtil.addRow(slideP, scaleP, horzP, depthP, detailP);
+
+        var showExpert :Function = function (toggled :Boolean) :void {
+            for each (var comp :UIComponent in [ _width, _height, _xoff, _yoff, offsetL ]) {
+                FlexUtil.setVisible(comp, toggled);
+            }
+        };
+        expertBtn.setCallback(showExpert);
+        showExpert(false);
+        var checkRoomTypes :Function = function ( ... ignored) :void {
+            const on :Boolean = ROOM_TYPES[_roomType.selectedIndex] != Decor.FLAT_LAYOUT;
+            for each (var comp :UIComponent in [ horzP, depthP, _hideWalls ]){
+                FlexUtil.setVisible(comp, on);
+            }
+        };
+        _roomType.addEventListener(Event.CHANGE, checkRoomTypes);
+        _roomType.selectedIndex = ROOM_TYPES.indexOf(Decor.FLAT_LAYOUT);
+        checkRoomTypes();
+
+        var grid :Grid = new Grid();
+        GridUtil.addRow(grid, typeP);
+        GridUtil.addRow(grid, slideP);
         addChild(grid);
 
         // now bind everything up so that these widgets change things
         _suppressSaves = true;
         try {
+            BindingUtils.bindSetter(saveChanges, _scale, "value");
             BindingUtils.bindSetter(saveChanges, _horizon, "value");
             BindingUtils.bindSetter(saveChanges, _depth, "value");
             BindingUtils.bindSetter(saveChanges, _width, "text");
             BindingUtils.bindSetter(saveChanges, _height, "text");
+            BindingUtils.bindSetter(saveChanges, _xoff, "text");
+            BindingUtils.bindSetter(saveChanges, _yoff, "text");
         } finally {
             _suppressSaves = false;
         }
@@ -222,13 +276,16 @@ public class DecorEditPanel extends FloatingPanel
 
     protected var _studioView :RoomStudioView;
 
-    protected var _types :Array = [ 1, 3]; // this starts out with valid roomtypes
+    protected const ROOM_TYPES :Array = [ Decor.IMAGE_OVERLAY, Decor.FLAT_LAYOUT ];
 
+    protected var _roomType :ComboBox;
+    protected var _scale :VSlider;
     protected var _horizon :VSlider;
     protected var _depth :VSlider;
     protected var _hideWalls :CommandCheckBox;
-    protected var _roomType :ComboBox;
     protected var _width :TextInput;
     protected var _height :TextInput;
+    protected var _xoff :TextInput;
+    protected var _yoff :TextInput;
 }
 }

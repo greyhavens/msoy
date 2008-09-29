@@ -18,6 +18,7 @@
     [ResourceBundle("prefs")]
     [ResourceBundle("world")]
     [ResourceBundle("passport")]
+    [ResourceBundle("studio")]
 </mx:Metadata>
 <mx:Script>
     <![CDATA[

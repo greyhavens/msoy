@@ -46,6 +46,9 @@ public class MsoyCodes extends InvocationCodes
     /** Identifies our passport message bundle. */
     public static const PASSPORT_MSGS :String = "passport";
 
+    /** Identifies our studio message bundle. */
+    public static const STUDIO_MSGS :String = "studio";
+
     /** The maximum length of any name we store in our database tables. */
     public static const MAX_NAME_LENGTH :int = 254; // the db indicates 255, but reality is 254
 }

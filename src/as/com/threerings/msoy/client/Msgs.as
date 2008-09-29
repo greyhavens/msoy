@@ -61,6 +61,12 @@ public class Msgs
         return _prefs;
     }
 
+    /** The studio message bundle. */
+    public static function get STUDIO () :MessageBundle
+    {
+        return _studio;
+    }
+
     /**
      * Initialize the bundles.
      */
@@ -78,6 +84,7 @@ public class Msgs
         _item = msgMgr.getBundle(MsoyCodes.ITEM_MSGS);
         _notify = msgMgr.getBundle(MsoyCodes.NOTIFY_MSGS);
         _prefs = msgMgr.getBundle(MsoyCodes.PREFS_MSGS);
+        _studio = msgMgr.getBundle(MsoyCodes.STUDIO_MSGS);
     }
 
     protected static var _general :MessageBundle;
@@ -88,5 +95,6 @@ public class Msgs
     protected static var _item :MessageBundle;
     protected static var _notify :MessageBundle;
     protected static var _prefs :MessageBundle;
+    protected static var _studio :MessageBundle;
 }
 }
