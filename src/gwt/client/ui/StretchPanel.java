@@ -3,7 +3,6 @@
 
 package client.ui;
 
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;

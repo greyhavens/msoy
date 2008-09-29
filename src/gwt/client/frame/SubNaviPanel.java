@@ -7,8 +7,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
-
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Frame;

@@ -10,25 +10,16 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.util.IntIntMap;
 import com.samskivert.util.StringUtil;
 
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.jdbc.depot.PersistentRecord;
-import com.samskivert.jdbc.depot.annotation.Computed;
-import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.clause.FromOverride;
-import com.samskivert.jdbc.depot.clause.GroupBy;
-import com.samskivert.jdbc.depot.clause.Join;
-import com.samskivert.jdbc.depot.clause.Limit;
-import com.samskivert.jdbc.depot.clause.OrderBy;
-import com.samskivert.jdbc.depot.clause.QueryClause;
 import com.samskivert.jdbc.depot.clause.Where;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
@@ -37,11 +28,8 @@ import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Logic;
 import com.samskivert.jdbc.depot.operator.Logic.And;
 import com.samskivert.jdbc.depot.operator.Logic.Or;
-import com.samskivert.jdbc.depot.operator.SQLOperator;
 
 import com.threerings.msoy.server.persist.CountRecord;
-import com.threerings.msoy.server.persist.TagHistoryRecord;
-import com.threerings.msoy.server.persist.TagRecord;
 
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;

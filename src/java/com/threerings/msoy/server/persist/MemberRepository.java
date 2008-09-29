@@ -4,9 +4,7 @@
 package com.threerings.msoy.server.persist;
 
 import java.io.Serializable;
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Collections;
@@ -22,7 +20,6 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.samskivert.jdbc.DatabaseLiaison;
 import com.samskivert.jdbc.depot.CacheInvalidator;
 import com.samskivert.jdbc.depot.CacheKey;
 import com.samskivert.jdbc.depot.DataMigration;

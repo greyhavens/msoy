@@ -3,7 +3,6 @@
 
 package com.threerings.msoy.avrg.server;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -23,8 +22,6 @@ import com.threerings.presents.annotation.MainInvoker;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.data.ClientObject;
 import com.threerings.presents.data.InvocationCodes;
-import com.threerings.presents.dobj.DObjectManager;
-import com.threerings.presents.dobj.MessageEvent;
 import com.threerings.presents.dobj.ObjectDeathListener;
 import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.dobj.RootDObjectManager;

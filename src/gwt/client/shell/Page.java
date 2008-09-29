@@ -184,7 +184,7 @@ public abstract class Page
 
     /**
      * Called when the user navigates to this page for the first time, and when they follow {@link
-     * Link.create} links within tihs page.
+     * Link#create} links within tihs page.
      */
     public abstract void onHistoryChanged (Args args);
 
