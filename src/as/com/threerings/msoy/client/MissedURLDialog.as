@@ -5,11 +5,9 @@ package com.threerings.msoy.client {
 
 import flash.system.System;
 
-import mx.controls.Label;
 import mx.controls.Text;
 
-import com.threerings.flex.CommandButton;
-
+import com.threerings.msoy.ui.CopyableText;
 import com.threerings.msoy.ui.FloatingPanel;
 
 public class MissedURLDialog extends FloatingPanel
@@ -21,19 +19,13 @@ public class MissedURLDialog extends FloatingPanel
 
         var text :Text = new Text();
         text.text = Msgs.GENERAL.get("m.missedUrl");
-        text.width = ctx.getTopPanel().width - 100;
+        text.width = Math.min(400, ctx.getTopPanel().width - 100);
         addChild(text);
 
-        var label :Label = new Label();
-        label.text = url;
-        label.selectable = true;
-        label.setStyle("fontSize", 14);
-        addChild(label);
+        addChild(new CopyableText(url));
 
-        addButtons(
-            new CommandButton(Msgs.GENERAL.get("b.copy_to_clipboard"), System.setClipboard, url),
-            OK_BUTTON);
-        setButtonWidth(0); // free-size
+        //setButtonWidth(0); // free-size
+        addButtons(OK_BUTTON);
         open(true);
     }
 }
