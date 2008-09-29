@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.person;
+package client.ui.dnd;
 
 /**
  * Listens for changes to the DropModel.

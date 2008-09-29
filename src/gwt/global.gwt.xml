@@ -2,6 +2,7 @@
   <inherits name="com.google.gwt.user.User"/>
   <inherits name="com.google.gwt.i18n.I18N"/>
   <inherits name="com.threerings.gwt.Utils"/>
+  <inherits name="gwt-dnd"/>
 
   <source path="org/gwtwidgets/client"/>
   <source path="com/threerings/io"/>
@@ -15,6 +16,7 @@
 
   <source path="client/util"/>
   <source path="client/ui"/>
+  <source path="client/ui/dnd"/>
   <source path="client/images"/>
   <source path="client/shell"/>
 

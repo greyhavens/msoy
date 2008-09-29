@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.person;
+package client.ui.dnd;
 
 import java.util.HashMap;
 import java.util.Map;

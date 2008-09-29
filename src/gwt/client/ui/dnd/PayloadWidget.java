@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.person;
+package client.ui.dnd;
 
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Widget;
