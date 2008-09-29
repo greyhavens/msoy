@@ -3,9 +3,9 @@
 
 package client.person;
 
+import client.dnd.PayloadWidget;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
-import client.ui.dnd.PayloadWidget;
 import client.util.MediaUtil;
 
 import com.allen_sauer.gwt.dnd.client.DragContext;

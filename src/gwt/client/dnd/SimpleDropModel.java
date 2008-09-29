@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.ui.dnd;
+package client.dnd;
 
 import java.util.ArrayList;
 import java.util.List;

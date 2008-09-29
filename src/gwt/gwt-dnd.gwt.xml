@@ -22,6 +22,7 @@
   <source path="com/allen_sauer/gwt/dnd/client/drop"/>
   <source path="com/allen_sauer/gwt/dnd/client/util"/>
   <source path="com/allen_sauer/gwt/dnd/client/util/impl"/>
+  <source path="client/dnd"/>
 
   <stylesheet src="public/global/gwt-dnd.css"/>
 
