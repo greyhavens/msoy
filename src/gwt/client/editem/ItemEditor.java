@@ -215,7 +215,7 @@ public abstract class ItemEditor extends FlexTable
     protected void addInfo ()
     {
         addRow(_emsgs.editorName(), bind(_name = new TextBox(), new Binder() {
-            public void textUpdated (String text) {
+            @Override public void textUpdated (String text) {
                 _item.name = text;
             }
         }));
@@ -231,7 +231,7 @@ public abstract class ItemEditor extends FlexTable
         addSpacer();
         _description = new LimitedTextArea(Item.MAX_DESCRIPTION_LENGTH, 40, 3);
         bind(_description.getTextArea(), new Binder() {
-            public void textUpdated (String text) {
+            @Override public void textUpdated (String text) {
                 _item.description = text;
             }
         });
@@ -388,9 +388,10 @@ public abstract class ItemEditor extends FlexTable
      * This should be called by item editors that are used for editing media that has a 'main'
      * piece of media.
      */
-    protected ItemMediaUploader createMainUploader (String type, boolean thumb, MediaUpdater updater)
+    protected ItemMediaUploader createMainUploader (String type, boolean isPhoto,
+        MediaUpdater updater)
     {
-        int mode = thumb ? ItemMediaUploader.NORMAL_PLUS_THUMBNAIL : ItemMediaUploader.NORMAL;
+        int mode = isPhoto ? ItemMediaUploader.MODE_PHOTO : ItemMediaUploader.MODE_NORMAL;
         return createUploader(Item.MAIN_MEDIA, type, mode, updater);
     }
 
@@ -400,15 +401,15 @@ public abstract class ItemEditor extends FlexTable
      */
     protected ItemMediaUploader createAuxUploader (String type, MediaUpdater updater)
     {
-        return createUploader(Item.AUX_MEDIA, type, ItemMediaUploader.NORMAL, updater);
+        return createUploader(Item.AUX_MEDIA, type, ItemMediaUploader.MODE_NORMAL, updater);
     }
 
     /**
      * This should be called if item editors want to create a custom furni uploader.
      */
-    protected ItemMediaUploader createFurniUploader (boolean thumb, MediaUpdater updater)
+    protected ItemMediaUploader createFurniUploader (boolean isPhoto, MediaUpdater updater)
     {
-        int mode = thumb ? ItemMediaUploader.NORMAL_PLUS_THUMBNAIL : ItemMediaUploader.NORMAL;
+        int mode = isPhoto ? ItemMediaUploader.MODE_PHOTO : ItemMediaUploader.MODE_NORMAL;
         return createUploader(Item.FURNI_MEDIA, TYPE_FLASH, mode, updater);
     }
 
@@ -417,7 +418,7 @@ public abstract class ItemEditor extends FlexTable
      */
     protected ItemMediaUploader createThumbUploader (MediaUpdater updater)
     {
-        return createUploader(Item.THUMB_MEDIA, TYPE_IMAGE, ItemMediaUploader.THUMBNAIL, updater);
+        return createUploader(Item.THUMB_MEDIA, TYPE_IMAGE, ItemMediaUploader.MODE_THUMB, updater);
     }
 
     /**
@@ -611,7 +612,7 @@ public abstract class ItemEditor extends FlexTable
         if (widget instanceof TextBoxBase) {
             final TextBoxBase textbox = (TextBoxBase)widget;
             textbox.addKeyboardListener(new KeyboardListenerAdapter() {
-                public void onKeyPress (Widget sender, char keyCode, int mods) {
+                @Override public void onKeyPress (Widget sender, char keyCode, int mods) {
                     if (_item != null) {
                         DeferredCommand.addCommand(new Command() {
                             public void execute () {

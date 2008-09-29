@@ -5,10 +5,12 @@ package com.threerings.msoy.item.server;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.List;
 
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 
 import com.samskivert.io.StreamUtil;
@@ -64,28 +66,35 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
         // now we can validate the file size
         validateFileLength(mimeType, ctx.uploadLength);
 
-        // determine whether they also want a thumbnail media generated
-        boolean generateThumb = mediaId.endsWith(Item.PLUS_THUMB);
-        if (generateThumb) {
-            mediaId = mediaId.substring(0, mediaId.length()-Item.PLUS_THUMB.length());
+        // determine whether they also want a thumbnail and furni media generated
+        boolean forPhoto = mediaId.endsWith(Item.FOR_PHOTO);
+        if (forPhoto) {
+            mediaId = mediaId.substring(0, mediaId.length() - Item.FOR_PHOTO.length());
         }
 
+        // we'll return a list of one or more mediaIds and corresponding mediaInfoes
+        List<String> mediaIds = Lists.newArrayList();
+        mediaIds.add(mediaId);
+        List<MediaInfo> mediaInfos = Lists.newArrayList();
+
         // if this is an image...
-        MediaInfo info, tinfo = null;
         if (MediaDesc.isImage(mimeType)) {
             // ...determine its constraints, generate a thumbnail, and publish the data into the
             // media store
-            info = UploadUtil.publishImage(mediaId, uploadFile);
+            mediaInfos.add(UploadUtil.publishImage(mediaId, uploadFile));
 
-            // if the client has requested a thumbnail image to be generated along with this image,
-            // then do that as well
-            if (generateThumb) {
-                tinfo = UploadUtil.publishImage(Item.THUMB_MEDIA, uploadFile);
+            // if the client has requested a thumbnail and furni images to be generated along with
+            // this image, then do that as well
+            if (forPhoto) {
+                mediaIds.add(Item.THUMB_MEDIA);
+                mediaIds.add(Item.FURNI_MEDIA);
+                mediaInfos.add(UploadUtil.publishImage(Item.THUMB_MEDIA, uploadFile));
+                mediaInfos.add(UploadUtil.publishImage(Item.FURNI_MEDIA, uploadFile));
             }
 
         } else {
             // treat all other file types in the same manner, just publish them
-            info = new MediaInfo(uploadFile.getHash(), mimeType);
+            mediaInfos.add(new MediaInfo(uploadFile.getHash(), mimeType));
             UploadUtil.publishUploadFile(uploadFile);
         }
 
@@ -101,14 +110,16 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
         }
 
         // now that we have published the file, post a response back to the caller
-        sendResponse(ctx, client, mediaId, info, tinfo);
+        sendResponse(ctx, client, mediaIds, mediaInfos);
     }
 
     /**
      * Send the response back to the caller.
+     * @mediaIds media types to send back
+     * @mediaInfos media hash/constraint/mimetype for each corresponding mediaId
      */
     protected void sendResponse (
-        UploadContext ctx, Client client, String mediaId, MediaInfo info, MediaInfo tinfo)
+        UploadContext ctx, Client client, List<String> mediaIds, List<MediaInfo> mediaInfos)
         throws IOException
     {
         // write out the magical incantations that are needed to cause our magical little
@@ -120,24 +131,24 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
             case GWT:
                 out.println("<html>");
                 out.println("<head></head>");
-                String script = "parent.setHash('" + mediaId + "', '" + info.hash + "', " +
-                    info.mimeType + ", " + info.constraint + ", " +
-                    info.width + ", " + info.height + ")";
-                if (tinfo != null) {
-                    script += "; parent.setHash('" + Item.THUMB_MEDIA + "', '" + tinfo.hash + "', " +
-                        tinfo.mimeType + ", " + tinfo.constraint + ", " +
-                        tinfo.width + ", " + tinfo.height + ")";
+                String script = "";
+                for (int ii = 0; ii < mediaIds.size(); ii++) {
+                    String mediaId = mediaIds.get(ii);
+                    MediaInfo info = mediaInfos.get(ii);
+                    script += "parent.setHash('" + mediaId + "', '" + info.hash + "', " +
+                        info.mimeType + ", " + info.constraint + ", " + info.width + ", "
+                        + info.height + ");";
                 }
                 out.println("<body onLoad=\"" + script + "\"></body>");
                 out.println("</html>");
                 break;
 
             case MCHOOSER:
-                out.println(mediaId + " " + info.hash + " " + info.mimeType + " " +
-                            info.constraint + " " + info.width + " " + info.height);
-                if (tinfo != null) {
-                    out.println(Item.THUMB_MEDIA + " " + tinfo.hash + " " + tinfo.mimeType + " " +
-                                tinfo.constraint + " " + tinfo.width + " " + tinfo.height);
+                for (int ii = 0; ii < mediaIds.size(); ii++) {
+                    String mediaId = mediaIds.get(ii);
+                    MediaInfo info = mediaInfos.get(ii);
+                    out.println(mediaId + " " + info.hash + " " + info.mimeType + " "
+                        + info.constraint + " " + info.width + " " + info.height);
                 }
                 break;
             }

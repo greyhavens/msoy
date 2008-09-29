@@ -28,9 +28,9 @@ import client.util.MediaUtil;
  */
 public class ItemMediaUploader extends FlexTable
 {
-    public static final int NORMAL = 0;
-    public static final int THUMBNAIL = 1;
-    public static final int NORMAL_PLUS_THUMBNAIL = 2;
+    public static final int MODE_NORMAL = 0;
+    public static final int MODE_THUMB = 1;
+    public static final int MODE_PHOTO = 2;
 
     /**
      * @param id the type of the uploader to create, e.g. {@link Item#MAIN_MEDIA} . This value is
@@ -62,10 +62,10 @@ public class ItemMediaUploader extends FlexTable
         _hint.setWidth((2 * MediaDesc.THUMBNAIL_WIDTH) + "px");
         getFlexCellFormatter().setVerticalAlignment(0, 1, HorizontalPanel.ALIGN_TOP);
 
-        // appending PLUS_THUMB to the media id will indicate to the upload servlet that we want it
-        // to also generate a thumbnail image and report that to us as well after uploading
-        if (mode == NORMAL_PLUS_THUMBNAIL) {
-            mediaId += Item.PLUS_THUMB;
+        // appending FOR_PHOTO to the media id will indicate to the upload servlet that we want it
+        // to also generate thumb and furni images and report those to us as well after uploading
+        if (mode == MODE_PHOTO) {
+            mediaId += Item.FOR_PHOTO;
         }
 
         _form = new FormPanel();
@@ -122,7 +122,7 @@ public class ItemMediaUploader extends FlexTable
     {
         if (desc != null) {
             int width = MediaDesc.THUMBNAIL_WIDTH, height = MediaDesc.THUMBNAIL_HEIGHT;
-            if (_mode != THUMBNAIL) {
+            if (_mode != MODE_THUMB) {
                 width *= 2;
                 height *= 2;
             }

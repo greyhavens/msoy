@@ -92,7 +92,7 @@ public abstract class Item implements Comparable<Item>, Streamable, IsSerializab
     public static final String AUX_MEDIA = "aux";
 
     /** An identifier used to coordinate with the server when uploading media. */
-    public static final String PLUS_THUMB = "_plus_thumb";
+    public static final String FOR_PHOTO = "_for_photo";
 
     /** Indicates that somebody has flagged this item as mature content. */
     public static final byte FLAG_FLAGGED_MATURE = 1 << 0;

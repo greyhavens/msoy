@@ -230,7 +230,7 @@ public class GameEditor extends ItemEditor
             }
         };
         ItemMediaUploader serverMediaUploader = createUploader(
-            Game.SERVER_CODE_MEDIA, TYPE_CODE, ItemMediaUploader.NORMAL, serverMediaUpdater);
+            Game.SERVER_CODE_MEDIA, TYPE_CODE, ItemMediaUploader.MODE_NORMAL, serverMediaUpdater);
         addRow(_emsgs.gameServerMediaLabel(), serverMediaUploader, _emsgs.gameServerMediaTip());
         addRow(_emsgs.gameServerClass(), _serverClass = new TextBox(), _emsgs.gameServerClassTip());
         _serverClass.setVisibleLength(40);

@@ -434,8 +434,13 @@ public class UploadUtil
     public static MediaInfo publishImage (String mediaId, UploadFile uploadFile)
         throws IOException
     {
-        Integer thumbSize = Item.THUMB_MEDIA.equals(mediaId) ? MediaDesc.THUMBNAIL_SIZE : null;
-        return publishImage(thumbSize, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT
+        Integer size = null;
+        if (Item.THUMB_MEDIA.equals(mediaId)) {
+            size = MediaDesc.THUMBNAIL_SIZE;
+        } else if (Item.FURNI_MEDIA.equals(mediaId)) {
+            size = MediaDesc.PREVIEW_SIZE;
+        }
+        return publishImage(size, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT
             ).getMediaInfo();
     }
 
