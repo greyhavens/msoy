@@ -101,7 +101,7 @@ public class RoomStudioController extends RoomController
         var menuItems :Array = [];
         addSelfMenuItems(avatar, menuItems, true);
         if (menuItems.length == 0) {
-            menuItems.push({ label: Msgs.GENERAL.get("l.noAvActions"), enabled: false });
+            menuItems.push({ label: Msgs.STUDIO.get("l.no_actions"), enabled: false });
         }
         popActorMenu(avatar, menuItems);
     }

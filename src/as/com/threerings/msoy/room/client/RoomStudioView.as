@@ -234,7 +234,7 @@ public class RoomStudioView extends RoomView
         addTalkControl();
         var idle :CommandButton = new CommandButton(null, emulateIdle);
         idle.styleName = "controlBarIdleButton";
-        idle.toolTip = Msgs.GENERAL.get("i.idle")
+        idle.toolTip = Msgs.STUDIO.get("i.idle")
         const bar :ControlBar = _ctx.getTopPanel().getControlBar();
         bar.addCustomButton(idle);
 
@@ -279,7 +279,7 @@ public class RoomStudioView extends RoomView
         var popBtn :CommandButton = new CommandButton();
         popBtn.setCallback(function () :void {});
         // TODO: popEditor.styleName = "controlBarTalkButton";
-        popBtn.toolTip = Msgs.GENERAL.get("i.decorPrefs");
+        popBtn.toolTip = Msgs.STUDIO.get("i.decor_options");
         popBtn.toggle = true;
         popBtn.selected = true; // since we start popped
 
@@ -331,7 +331,7 @@ public class RoomStudioView extends RoomView
     protected function addTalkControl () :void
     {
         var talk :CommandButton = new CommandButton(null, emulateChat);
-        talk.toolTip = Msgs.GENERAL.get("i.talk");
+        talk.toolTip = Msgs.STUDIO.get("i.talk");
         talk.styleName = "controlBarTalkButton";
 
         const bar :ControlBar = _ctx.getTopPanel().getControlBar();
@@ -342,7 +342,7 @@ public class RoomStudioView extends RoomView
     {
         _scaleButton = new CommandButton(null, showSpriteScaler);
         _scaleButton.styleName = "controlBarScaleButton";
-        _scaleButton.toolTip = Msgs.GENERAL.get("i.spriteScale");
+        _scaleButton.toolTip = Msgs.STUDIO.get("i.sprite_scale");
         _scaleButton.enabled = false;
 
         _ctx.getTopPanel().getControlBar().addCustomButton(_scaleButton);
