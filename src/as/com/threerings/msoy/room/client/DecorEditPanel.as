@@ -5,17 +5,25 @@ package com.threerings.msoy.room.client {
 
 import flash.display.DisplayObject;
 
+import flash.events.Event;
+
 import flash.external.ExternalInterface;
 
 import mx.binding.utils.BindingUtils;
 
+import mx.controls.ComboBox;
+import mx.controls.TextInput;
 import mx.controls.VSlider;
+
+import mx.containers.Grid;
 
 import mx.events.CloseEvent;
 
 import com.threerings.util.Log;
 
 import com.threerings.flex.CommandButton;
+import com.threerings.flex.CommandCheckBox;
+import com.threerings.flex.GridUtil;
 
 import com.threerings.msoy.ui.FloatingPanel;
 
@@ -78,8 +86,13 @@ public class DecorEditPanel extends FloatingPanel
             return;
         }
 
-        trace("Save Changes....");
+        _decor.type = int(_types[_roomType.selectedIndex]);
+        _decor.width = int(_width.text);
+        _decor.height = int(_height.text);
+        _decor.depth = _depth.value;
         _decor.horizon = _horizon.value;
+        // TODO: offx/offy?
+        _decor.hideWalls = _hideWalls.selected;
 
         updateDecorInViewer(false);
         updateDecorOnPage();
@@ -87,8 +100,6 @@ public class DecorEditPanel extends FloatingPanel
 
     protected function updateMedia (path :String) :void
     {
-        trace("updateMedia called: " + path);
-
         _decor.furniMedia = new StudioMediaDesc(path);
 
         updateDecorInViewer(true);
@@ -98,7 +109,6 @@ public class DecorEditPanel extends FloatingPanel
         width :int, height :int, depth :int, horizon :Number, type :int,
         offsetX :Number, offsetY :Number, hideWalls :Boolean) :void
     {
-        trace("updateParameters called: " + width + ", " + height + " horz: " + horizon);
         _decor.width = width;
         _decor.height = height;
         _decor.depth = depth;
@@ -108,10 +118,15 @@ public class DecorEditPanel extends FloatingPanel
         _decor.offsetY = offsetY;
         _decor.hideWalls = hideWalls;
 
-
         _suppressSaves = true;
         try {
+            _width.text = String(width);
+            _height.text = String(height);
+            _depth.value = depth;
+            _roomType.selectedIndex = _types.indexOf(type);
             _horizon.value = horizon;
+            // TODO: offx/offy?
+            _hideWalls.selected = hideWalls;
         } finally {
             _suppressSaves = false;
         }
@@ -121,13 +136,11 @@ public class DecorEditPanel extends FloatingPanel
 
     protected function updateDecorInViewer (mediaUpdated :Boolean) :void
     {
-//        _studioView.sceneEdited(_decor);
         var newScene :MsoyScene = _studioView.getScene().clone() as MsoyScene;
         var newModel :MsoySceneModel = newScene.getSceneModel() as MsoySceneModel;
         newModel.decor = _decor;
 
         _studioView.setScene(newScene);
-        //_studioView.setBackground(_decor);
         _studioView.updateBackground();
     }
 
@@ -152,17 +165,50 @@ public class DecorEditPanel extends FloatingPanel
     {
         super.createChildren();
 
+        var grid :Grid = new Grid();
+
         _horizon = new VSlider();
         _horizon.liveDragging = true;
         _horizon.maximum = 1;
         _horizon.minimum = 0;
-        addChild(_horizon);
 
+        _depth = new VSlider();
+        _depth.liveDragging = true;
+        _depth.maximum = 2000;
+        _depth.minimum = 0;
+
+        _hideWalls = new CommandCheckBox(Msgs.EDITING.get("l.hide_walls"), saveChanges);
+
+        _roomType = new ComboBox();
+        var types :Array = [];
+        for (var ii :int = 0; ii < _types.length; ii++) {
+            types[ii] = { label: Msgs.EDITING.get("m.scene_type_" + _types[ii]) };
+        }
+        _roomType.dataProvider = types;
+        _roomType.addEventListener(Event.CHANGE, saveChanges);
+
+        _width = new TextInput();
+        _height = new TextInput();
+
+        // TODO: offx/offy?
+
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.scene_type"), _roomType, [ 2, 1 ]);
+        GridUtil.addRow(grid, _hideWalls, [ 3, 1 ]);
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.scene_dimensions"), _width, _height);
+        addChild(grid);
+
+        grid = new Grid();
+        GridUtil.addRow(grid, Msgs.EDITING.get("l.horizon"), _horizon,
+            Msgs.EDITING.get("l.scene_depth"), _depth);
+        addChild(grid);
 
         // now bind everything up so that these widgets change things
         _suppressSaves = true;
         try {
             BindingUtils.bindSetter(saveChanges, _horizon, "value");
+            BindingUtils.bindSetter(saveChanges, _depth, "value");
+            BindingUtils.bindSetter(saveChanges, _width, "text");
+            BindingUtils.bindSetter(saveChanges, _height, "text");
         } finally {
             _suppressSaves = false;
         }
@@ -176,6 +222,13 @@ public class DecorEditPanel extends FloatingPanel
 
     protected var _studioView :RoomStudioView;
 
+    protected var _types :Array = [ 1, 3]; // this starts out with valid roomtypes
+
     protected var _horizon :VSlider;
+    protected var _depth :VSlider;
+    protected var _hideWalls :CommandCheckBox;
+    protected var _roomType :ComboBox;
+    protected var _width :TextInput;
+    protected var _height :TextInput;
 }
 }
