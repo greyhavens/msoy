@@ -762,7 +762,7 @@ public class WorldController extends MsoyController
         menuData.push({type: "separator"});
         menuData.push(
             {label: Msgs.GENERAL.get("b.avrgInstructions"), command: VIEW_GAME_INSTRUCTIONS});
-        menuData.push({label: Msgs.GENERAL.get("b.avrgComment"), command: VIEW_GAME_COMMENT_PAE});
+        menuData.push({label: Msgs.GENERAL.get("b.avrgComment"), command: VIEW_GAME_COMMENT_PAGE});
         menuData.push({label: Msgs.GENERAL.get("b.avrgTrophies"), command: VIEW_GAME_TROPHIES});
         menuData.push({label: Msgs.GENERAL.get("b.avrgInvite"), enabled: false});
         menuData.push({label: Msgs.GENERAL.get("b.avrgExit"), command :LEAVE_AVR_GAME});
