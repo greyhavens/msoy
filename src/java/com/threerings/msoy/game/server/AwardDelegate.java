@@ -38,9 +38,9 @@ import com.threerings.msoy.server.persist.MemberRepository;
 
 import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameRepository;
 
 import com.threerings.msoy.game.data.PlayerObject;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import static com.threerings.msoy.Log.log;
 
@@ -286,11 +286,11 @@ public class AwardDelegate extends RatingDelegate
             @Override
             public void invokePersist () throws Exception {
                 // note that this game was played
-                _gameRepo.noteGamePlayed(
+                _mgameRepo.noteGamePlayed(
                     gameId, isMultiplayer(), _totalTrackedGames, playerMins, _totalAwardedFlow);
                 // if it's time to recalc our payout factor, do that
                 if (newFlowToNextRecalc > 0) {
-                    _newData = _gameRepo.computeAndUpdatePayoutFactor(
+                    _newData = _mgameRepo.computeAndUpdatePayoutFactor(
                         gameId, newFlowToNextRecalc, hourlyRate);
                 }
             }
@@ -943,7 +943,7 @@ public class AwardDelegate extends RatingDelegate
     @Inject protected GameGameRegistry _gameReg;
     @Inject protected WorldServerClient _worldClient;
     @Inject protected MemberRepository _memberRepo;
-    @Inject protected GameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
 
     /** Returns whether or not a {@link Player} is a guest. */
     protected static final Predicate<Player> IS_GUEST = new Predicate<Player>() {

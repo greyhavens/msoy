@@ -40,6 +40,7 @@ import com.threerings.msoy.badge.server.persist.BadgeRepository;
 import com.threerings.msoy.badge.server.persist.EarnedBadgeRecord;
 import com.threerings.msoy.game.data.all.Trophy;
 import com.threerings.msoy.game.gwt.GameRating;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.group.gwt.GroupCard;
@@ -47,7 +48,6 @@ import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.server.ItemLogic;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.Interest;
@@ -313,7 +313,7 @@ public class ProfileServlet extends MsoyServiceServlet
         // now load up and fill in the game details
         for (final IntMap.IntEntry<GameRating> entry : map.intEntrySet()) {
             final int gameId = entry.getIntKey();
-            final GameRecord record = _gameRepo.loadGameRecord(gameId);
+            final GameRecord record = _mgameRepo.loadGameRecord(gameId);
             if (record == null) {
                 log.warning("Player has rating for non-existent game [id=" + gameId + "].");
                 entry.getValue().gameName = "";
@@ -344,7 +344,7 @@ public class ProfileServlet extends MsoyServiceServlet
     @Inject protected FeedRepository _feedRepo;
     @Inject protected GroupRepository _groupRepo;
     @Inject protected ProfileRepository _profileRepo;
-    @Inject protected GameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected TrophyRepository _trophyRepo;
     @Inject protected UserActionRepository _userActionRepo;

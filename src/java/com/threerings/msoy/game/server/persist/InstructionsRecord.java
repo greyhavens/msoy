@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package com.threerings.msoy.item.server.persist;
+package com.threerings.msoy.game.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;

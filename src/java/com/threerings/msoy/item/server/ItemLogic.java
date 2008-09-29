@@ -38,6 +38,7 @@ import com.threerings.msoy.web.data.ServiceException;
 
 import com.threerings.msoy.game.server.GameLogic;
 import com.threerings.msoy.game.server.WorldGameRegistry;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.data.all.GroupMembership;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRecord;
@@ -201,21 +202,23 @@ public class ItemLogic
     /**
      * Creates a new item and inserts it into the appropriate repository.
      */
-    public Item createItem (MemberRecord memrec, Item item)
+    public ItemRecord createItem (int creatorId, Item item)
         throws ServiceException
     {
-        return createItem(memrec, item, null);
+        return createItem(creatorId, item, null);
     }
 
     /**
      * Creates a new item and inserts it into the appropriate repository.
+     *
+     * @return the newly inserted {@link ItemRecord}.
      */
-    public Item createItem (MemberRecord memrec, Item item, ItemIdent parent)
+    public ItemRecord createItem (int creatorId, Item item, ItemIdent parent)
         throws ServiceException
     {
         // validate the item
         if (!item.isConsistent()) {
-            log.warning("Got inconsistent item for upload? [from=" + memrec.who() +
+            log.warning("Got inconsistent item for upload? [from=" + creatorId +
                         ", item=" + item + "].");
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
@@ -225,25 +228,25 @@ public class ItemLogic
         final ItemRecord record = repo.newItemRecord(item);
 
         // configure the item's creator and owner
-        record.creatorId = memrec.memberId;
-        record.ownerId = memrec.memberId;
+        record.creatorId = creatorId;
+        record.ownerId = creatorId;
 
         // determine this item's suite id if it is a subitem
         if (item instanceof SubItem) {
             if (parent == null) {
-                log.warning("Requested to create sub-item with no parent [who=" + memrec.who() +
+                log.warning("Requested to create sub-item with no parent [who=" + creatorId +
                             ", item=" + item + "].");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
             ItemRepository<ItemRecord> prepo = getRepository(parent.type);
             ItemRecord prec = prepo.loadItem(parent.itemId);
             if (prec == null) {
-                log.warning("Requested to make item with missing parent [who=" + memrec.who() +
+                log.warning("Requested to make item with missing parent [who=" + creatorId +
                             ", parent=" + parent + ", item=" + item + "].");
                 throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
             }
-            if (prec.ownerId != memrec.memberId) {
-                log.warning("Requested to make item with invalid parent [who=" + memrec.who() +
+            if (prec.ownerId != creatorId) {
+                log.warning("Requested to make item with invalid parent [who=" + creatorId +
                             ", parent=" + prec + ", item=" + item + "].");
                 throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
             }
@@ -253,7 +256,7 @@ public class ItemLogic
         }
 
         // validate any item specific stuff
-        validateItem(memrec, null, record);
+        validateItem(creatorId, null, record);
 
         // write the item to the database
         repo.insertOriginalItem(record, false);
@@ -261,7 +264,7 @@ public class ItemLogic
         // now do any post update stuff (but don't let its failure fail our request)
         itemUpdated(null, record);
 
-        return record.toItem();
+        return record;
     }
 
     /**
@@ -273,7 +276,7 @@ public class ItemLogic
      *
      * @exception ServiceException thrown if illegal or invalid data was detected in the item.
      */
-    public void validateItem (MemberRecord memrec, ItemRecord orecord, ItemRecord nrecord)
+    public void validateItem (int memberId, ItemRecord orecord, ItemRecord nrecord)
         throws ServiceException
     {
         // member must be a manager of any group they assign to a game
@@ -281,13 +284,52 @@ public class ItemLogic
             GameRecord grec = (GameRecord)nrecord;
             if (orecord == null || ((GameRecord)orecord).groupId != grec.groupId) {
                 if (grec.groupId != Game.NO_GROUP) {
-                    GroupMembershipRecord membership = _groupRepo.getMembership(grec.groupId,
-                        memrec.memberId);
+                    GroupMembershipRecord membership =
+                        _groupRepo.getMembership(grec.groupId, memberId);
                     if (membership == null || membership.rank < GroupMembership.RANK_MANAGER) {
                         throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Deletes the specified item. Checks access and a number of other criteria before allowing the
+     * item to be deleted.
+     */
+    public void deleteItem (MemberRecord deleter, ItemIdent iident)
+        throws ServiceException
+    {
+        ItemRepository<ItemRecord> repo = getRepository(iident.type);
+
+        final ItemRecord item = repo.loadItem(iident.itemId);
+        if (item == null) {
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+        }
+        if (item.ownerId != deleter.memberId) {
+            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+        }
+        if (item.used != 0) {
+            throw new ServiceException(ItemCodes.E_ITEM_IN_USE);
+        }
+        if (item.isCatalogOriginal()) {
+            throw new ServiceException(ItemCodes.E_ITEM_LISTED);
+        }
+        repo.deleteItem(iident.itemId);
+
+        // note: we don't want to propagate any exceptions from here on out because we don't want
+        // to fail the item deletion since the item is already gone
+        try {
+            if (item.getType() == Item.AVATAR) {
+                MemberNodeActions.avatarDeleted(item.ownerId, item.itemId);
+
+            } else if (item.getType() == Item.GAME) {
+                _mgameRepo.gameDeleted((GameRecord)item);
+            }
+
+        } catch (Exception e) {
+            log.warning("itemDeleted failed", "orecord", item, e);
         }
     }
 
@@ -326,6 +368,11 @@ public class ItemLogic
                     }
                 }
 
+                // if this is a newly created game, do some other game metadata business
+                if (orecord == null) {
+                    _mgameRepo.gameCreated(grec);
+                }
+
                 // notify any server hosting this game that its data is updated
                 _peerMan.invokeNodeAction(new GameUpdatedAction(grec.gameId));
 
@@ -340,23 +387,6 @@ public class ItemLogic
 
         } catch (Exception e) {
             log.warning("itemUpdated failed", "orecord", orecord, "nrecord", nrecord, e);
-        }
-    }
-
-    /**
-     * Called when an item has been deleted.
-     */
-    public void itemDeleted (ItemRecord orecord)
-    {
-        // note: we don't want to propagate any exceptions because we don't want to fail the action
-        // that triggered the itemDeleted since that has already completed
-        try {
-            if (orecord.getType() == Item.AVATAR) {
-                MemberNodeActions.avatarDeleted(orecord.ownerId, orecord.itemId);
-            }
-
-        } catch (Exception e) {
-            log.warning("itemDeleted failed", "orecord", orecord, e);
         }
     }
 
@@ -830,6 +860,7 @@ public class ItemLogic
     @Inject protected MemberRepository _memberRepo;
     @Inject protected ItemListRepository _listRepo;
     @Inject protected FavoritesRepository _faveRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
 
     // our myriad item repositories
     @Inject protected AudioRepository _audioRepo;

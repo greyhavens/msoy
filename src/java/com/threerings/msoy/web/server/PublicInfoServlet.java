@@ -22,9 +22,9 @@ import com.google.inject.Inject;
 import com.samskivert.io.StreamUtil;
 
 import com.threerings.msoy.data.all.GroupName;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 
 /**
  * Reports public information about games and whirleds as arrays of JSON objects.
@@ -87,7 +87,7 @@ public class PublicInfoServlet extends HttpServlet
     {
         JSONArray results = new JSONArray();
         for (int id : ids) {
-            GameRecord game = _gameRepo.loadGameRecord(id);
+            GameRecord game = _mgameRepo.loadGameRecord(id);
             if (game != null) {
                 JSONObject m = new JSONObject();
                 m.put("id", game.gameId);
@@ -147,6 +147,6 @@ public class PublicInfoServlet extends HttpServlet
         private final String _paramName;
     }
 
-    @Inject protected GameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected GroupRepository _whirledRepo;
 }

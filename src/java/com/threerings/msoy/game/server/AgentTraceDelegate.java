@@ -18,8 +18,8 @@ import com.threerings.crowd.server.PlaceManagerDelegate;
 
 import com.threerings.presents.annotation.MainInvoker;
 
-import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.item.server.persist.GameTraceLogRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.game.server.persist.GameTraceLogRecord;
 
 import static com.threerings.msoy.Log.log;
 
@@ -224,5 +224,5 @@ public class AgentTraceDelegate extends PlaceManagerDelegate
 
     // our dependencies
     @Inject protected @MainInvoker Invoker _invoker;
-    @Inject protected GameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _gameRepo;
 }

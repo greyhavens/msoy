@@ -32,6 +32,7 @@ import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.game.server.GameLogic;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 import com.threerings.msoy.person.util.FeedMessageType;
 
@@ -58,7 +59,6 @@ import com.threerings.msoy.item.gwt.ShopData;
 import com.threerings.msoy.item.server.persist.CatalogRecord;
 import com.threerings.msoy.item.server.persist.FavoritesRepository;
 import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.ItemRepository;
 import com.threerings.msoy.item.server.persist.SubItemRecord;
@@ -544,7 +544,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public SuiteInfo loadGameSuiteInfo (int gameId)
         throws ServiceException
     {
-        GameRecord record = _gameRepo.loadGameRecord(gameId);
+        GameRecord record = _mgameRepo.loadGameRecord(gameId);
         if (record == null) {
             log.warning("Can't load suite info for non-existent game.", "gameId", gameId);
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
@@ -628,6 +628,6 @@ public class CatalogServlet extends MsoyServiceServlet
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected UserActionRepository _userActionRepo;
     @Inject protected GameLogic _gameLogic;
-    @Inject protected GameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected StatLogic _statLogic;
 }

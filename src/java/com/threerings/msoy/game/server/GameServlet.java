@@ -34,10 +34,8 @@ import com.threerings.parlor.rating.util.Percentiler;
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
 import com.threerings.msoy.item.server.ItemLogic;
-import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.item.server.persist.GameTraceLogEnumerationRecord;
 import com.threerings.msoy.item.server.persist.ItemRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
@@ -57,6 +55,9 @@ import com.threerings.msoy.game.gwt.GameMetrics;
 import com.threerings.msoy.game.gwt.GameService;
 import com.threerings.msoy.game.gwt.PlayerRating;
 import com.threerings.msoy.game.gwt.TrophyCase;
+import com.threerings.msoy.game.server.persist.GameDetailRecord;
+import com.threerings.msoy.game.server.persist.GameTraceLogEnumerationRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 
@@ -87,7 +88,7 @@ public class GameServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = getAuthedUser();
 
-        GameDetailRecord gdr = _gameRepo.loadGameDetail(gameId);
+        GameDetailRecord gdr = _mgameRepo.loadGameDetail(gameId);
         if (gdr == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
@@ -106,7 +107,7 @@ public class GameServlet extends MsoyServiceServlet
             log.warning("Game has no source item", "gameId", gameId);
         }
 
-        detail.instructions = _gameRepo.loadInstructions(gdr.gameId);
+        detail.instructions = _mgameRepo.loadInstructions(gdr.gameId);
 
         if (gdr.listedItemId != 0) {
             ItemRecord item = _gameRepo.loadItem(gdr.listedItemId);
@@ -177,7 +178,7 @@ public class GameServlet extends MsoyServiceServlet
         GameLogs logs = new GameLogs();
         logs.gameId = gameId;
 
-        List<GameTraceLogEnumerationRecord> records = _gameRepo.enumerateTraceLogs(gameId);
+        List<GameTraceLogEnumerationRecord> records = _mgameRepo.enumerateTraceLogs(gameId);
         logs.logIds = new int[records.size()];
         logs.logTimes = new Date[records.size()];
 
@@ -199,7 +200,7 @@ public class GameServlet extends MsoyServiceServlet
         instructions = HTMLSanitizer.sanitize(instructions);
 
         // now that we've confirmed that they're allowed, update the instructions
-        _gameRepo.updateInstructions(gameId, instructions);
+        _mgameRepo.updateInstructions(gameId, instructions);
     }
 
     // from interface GameService
@@ -222,7 +223,7 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
-        GameRecord grec = _gameRepo.loadGameRecord(gameId);
+        GameRecord grec = _mgameRepo.loadGameRecord(gameId);
         if (grec == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
@@ -236,7 +237,7 @@ public class GameServlet extends MsoyServiceServlet
         MemberRecord mrec = getAuthedUser();
         int callerId = (mrec == null) ? 0 : mrec.memberId;
 
-        GameRecord grec = _gameRepo.loadGameRecord(gameId);
+        GameRecord grec = _mgameRepo.loadGameRecord(gameId);
         if (grec == null) {
             return null;
         }
@@ -285,7 +286,7 @@ public class GameServlet extends MsoyServiceServlet
             tcase.shelves[ii++] = shelf;
 
             shelf.gameId = gameId;
-            GameRecord grec = _gameRepo.loadGameRecord(shelf.gameId);
+            GameRecord grec = _mgameRepo.loadGameRecord(shelf.gameId);
             if (grec == null) {
                 log.warning("Have trophies for unknown game [who=" + memberId +
                             ", gameId=" + shelf.gameId + "].");
@@ -377,7 +378,7 @@ public class GameServlet extends MsoyServiceServlet
         List<FeaturedGameInfo> featured = Lists.newArrayList();
         ArrayIntSet have = new ArrayIntSet();
         for (PopularPlacesSnapshot.Place card : pps.getTopGames()) {
-            GameDetailRecord detail = _gameRepo.loadGameDetail(card.placeId);
+            GameDetailRecord detail = _mgameRepo.loadGameDetail(card.placeId);
             // popular places never has in-development games
             GameRecord game = games.get(detail.listedItemId);
             if (game == null) {
@@ -394,7 +395,7 @@ public class GameServlet extends MsoyServiceServlet
         if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
             for (GameRecord game : games.values()) {
                 if (!have.contains(game.gameId)) {
-                    GameDetailRecord detail = _gameRepo.loadGameDetail(game.gameId);
+                    GameDetailRecord detail = _mgameRepo.loadGameDetail(game.gameId);
                     featured.add(_gameLogic.toFeaturedGameInfo(game, detail, 0));
                 }
                 if (featured.size() == ArcadeData.FEATURED_GAME_COUNT) {
@@ -540,7 +541,7 @@ public class GameServlet extends MsoyServiceServlet
         throws ServiceException
     {
         // load the source record
-        GameRecord grec = _gameRepo.loadGameRecord(Game.getDevelopmentId(gameId));
+        GameRecord grec = _mgameRepo.loadGameRecord(Game.getDevelopmentId(gameId));
         if (grec == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
@@ -651,6 +652,7 @@ public class GameServlet extends MsoyServiceServlet
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected GameLogic _gameLogic;
     @Inject protected GameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected ItemLogic _itemLogic;
     @Inject protected TrophyRepository _trophyRepo;
     @Inject protected RatingRepository _ratingRepo;

@@ -36,7 +36,6 @@ import com.threerings.msoy.web.server.ServletWaiter;
 
 import com.threerings.msoy.item.data.ItemCodes;
 import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.server.persist.GameDetailRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 import com.threerings.msoy.money.data.all.MemberMoney;
@@ -45,9 +44,11 @@ import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
-import com.threerings.msoy.game.server.WorldGameRegistry;
 import com.threerings.msoy.game.gwt.ArcadeData;
 import com.threerings.msoy.game.gwt.FeaturedGameInfo;
+import com.threerings.msoy.game.server.WorldGameRegistry;
+import com.threerings.msoy.game.server.persist.GameDetailRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.xml.MsoyGameParser;
 
 import static com.threerings.msoy.Log.log;
@@ -65,7 +66,7 @@ public class GameLogic
         throws ServiceException
     {
         // load up the metadata for this game
-        GameRecord grec = _gameRepo.loadGameRecord(gameId);
+        GameRecord grec = _mgameRepo.loadGameRecord(gameId);
         if (grec == null) {
             throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
         }
@@ -166,8 +167,8 @@ public class GameLogic
         List<FeaturedGameInfo> featured = Lists.newArrayList();
         ArrayIntSet have = new ArrayIntSet();
         for (PopularPlacesSnapshot.Place card : pps.getTopGames()) {
-            GameDetailRecord detail = _gameRepo.loadGameDetail(card.placeId);
-            GameRecord game = _gameRepo.loadGameRecord(card.placeId, detail);
+            GameDetailRecord detail = _mgameRepo.loadGameDetail(card.placeId);
+            GameRecord game = _mgameRepo.loadGameRecord(card.placeId, detail);
             if (game != null && game.rating >= 4 && detail.gamesPlayed > 0) {
                 featured.add(toFeaturedGameInfo(game, detail, card.population));
                 have.add(game.gameId);
@@ -178,7 +179,7 @@ public class GameLogic
         if (featured.size() < ArcadeData.FEATURED_GAME_COUNT) {
             for (GameRecord game : _gameRepo.loadGenre((byte)-1, ArcadeData.FEATURED_GAME_COUNT)) {
                 if (!have.contains(game.gameId) && game.rating >= 4) {
-                    GameDetailRecord detail = _gameRepo.loadGameDetail(game.gameId);
+                    GameDetailRecord detail = _mgameRepo.loadGameDetail(game.gameId);
                     if (detail.gamesPlayed > 0) {
                         featured.add(toFeaturedGameInfo(game, detail, 0));
                     }
@@ -308,6 +309,7 @@ public class GameLogic
     @Inject WorldGameRegistry _gameReg;
     @Inject MsoyPeerManager _peerMan;
     @Inject MoneyLogic _moneyLogic;
+    @Inject MsoyGameRepository _mgameRepo;
     @Inject GameRepository _gameRepo;
     @Inject MemberRepository _memberRepo;
 }

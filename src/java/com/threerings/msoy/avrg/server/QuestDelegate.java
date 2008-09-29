@@ -34,8 +34,7 @@ import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.server.GameContent;
 import com.threerings.msoy.game.server.WorldServerClient;
-
-import com.threerings.msoy.item.server.persist.GameRepository;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.server.MsoyEventLogger;
 
@@ -182,7 +181,7 @@ public class QuestDelegate extends PlaceManagerDelegate
                 }
 
                 // note that we played one game and awarded the specified flow
-                _gameRepo.noteGamePlayed(_gameId, 1, payout);
+                _mgameRepo.noteGamePlayed(_gameId, 1, payout);
 
                 // mark the quest completed and create a log record
                 if (!MemberName.isGuest(player.getMemberId())) {
@@ -197,7 +196,7 @@ public class QuestDelegate extends PlaceManagerDelegate
                         final float targetFlow = flowPerHour * record.playerMinsTotal / 60f;
                         _newFactor = Math.round(targetFlow / record.payoutFactorTotal);
 
-                        _gameRepo.updatePayoutFactor(_gameId, _newFactor, newFlowToNextRecalc);
+                        _mgameRepo.updatePayoutFactor(_gameId, _newFactor, newFlowToNextRecalc);
                         _repo.deleteQuestLogRecords(_gameId);
 
                         log.info("Recalculation complete [factor=(" + flowPerHour + "*" +
@@ -289,7 +288,7 @@ public class QuestDelegate extends PlaceManagerDelegate
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected AVRGameRepository _repo;
-    @Inject protected GameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected WorldServerClient _worldClient;
     @Inject protected MsoyEventLogger _eventLog;
 }

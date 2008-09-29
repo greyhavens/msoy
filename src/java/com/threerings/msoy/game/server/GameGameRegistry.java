@@ -59,6 +59,31 @@ import com.whirled.game.data.GameData;
 import com.whirled.game.server.PropertySpaceDelegate;
 import com.whirled.game.server.PropertySpaceHelper;
 
+import com.threerings.msoy.data.MsoyCodes;
+import com.threerings.msoy.data.StatType;
+import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.person.util.FeedMessageType;
+import com.threerings.msoy.server.MsoyEventLogger;
+
+import com.threerings.msoy.item.data.all.Game;
+import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemPack;
+import com.threerings.msoy.item.data.all.LevelPack;
+import com.threerings.msoy.item.data.all.Prize;
+import com.threerings.msoy.item.data.all.TrophySource;
+import com.threerings.msoy.item.server.persist.GameRecord;
+import com.threerings.msoy.item.server.persist.ItemPackRecord;
+import com.threerings.msoy.item.server.persist.ItemPackRepository;
+import com.threerings.msoy.item.server.persist.LevelPackRecord;
+import com.threerings.msoy.item.server.persist.LevelPackRepository;
+import com.threerings.msoy.item.server.persist.PrizeRecord;
+import com.threerings.msoy.item.server.persist.PrizeRepository;
+import com.threerings.msoy.item.server.persist.TrophySourceRecord;
+import com.threerings.msoy.item.server.persist.TrophySourceRepository;
+
+import com.threerings.msoy.person.server.persist.FeedRepository;
+
 import com.threerings.msoy.avrg.client.AVRService;
 import com.threerings.msoy.avrg.data.AVRGameConfig;
 import com.threerings.msoy.avrg.server.AVRDispatcher;
@@ -68,10 +93,7 @@ import com.threerings.msoy.avrg.server.QuestDelegate;
 import com.threerings.msoy.avrg.server.persist.AVRGameRepository;
 import com.threerings.msoy.avrg.server.persist.GameStateRecord;
 import com.threerings.msoy.avrg.server.persist.PlayerGameStateRecord;
-import com.threerings.msoy.data.MsoyCodes;
-import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.all.MediaDesc;
-import com.threerings.msoy.data.all.MemberName;
+
 import com.threerings.msoy.game.data.GameContentOwnership;
 import com.threerings.msoy.game.data.LobbyCodes;
 import com.threerings.msoy.game.data.LobbyObject;
@@ -81,28 +103,10 @@ import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
 import com.threerings.msoy.game.xml.MsoyGameParser;
-import com.threerings.msoy.item.data.all.Game;
-import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemPack;
-import com.threerings.msoy.item.data.all.LevelPack;
-import com.threerings.msoy.item.data.all.Prize;
-import com.threerings.msoy.item.data.all.TrophySource;
-import com.threerings.msoy.item.server.persist.GameRecord;
-import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.item.server.persist.ItemPackRecord;
-import com.threerings.msoy.item.server.persist.ItemPackRepository;
-import com.threerings.msoy.item.server.persist.LevelPackRecord;
-import com.threerings.msoy.item.server.persist.LevelPackRepository;
-import com.threerings.msoy.item.server.persist.PrizeRecord;
-import com.threerings.msoy.item.server.persist.PrizeRepository;
-import com.threerings.msoy.item.server.persist.TrophySourceRecord;
-import com.threerings.msoy.item.server.persist.TrophySourceRepository;
-import com.threerings.msoy.person.server.persist.FeedRepository;
-import com.threerings.msoy.person.util.FeedMessageType;
-import com.threerings.msoy.server.MsoyEventLogger;
 
 /**
  * Manages the lobbies active on this server.
@@ -132,17 +136,9 @@ public class GameGameRegistry
         // periodically purge old game logs
         new Interval(_invoker) {
             @Override public void expired () {
-                _gameRepo.purgeTraceLogs();
+                _mgameRepo.purgeTraceLogs();
             }
         }.schedule(LOG_DELETION_INTERVAL, LOG_DELETION_INTERVAL);
-    }
-
-    /**
-     * Returns the game repository used to maintain our persistent data.
-     */
-    public GameRepository getGameRepository ()
-    {
-        return _gameRepo;
     }
 
     /**
@@ -848,8 +844,8 @@ public class GameGameRegistry
     protected GameContent assembleGameContent (int gameId)
     {
         GameContent content = new GameContent();
-        content.detail = _gameRepo.loadGameDetail(gameId);
-        GameRecord rec = _gameRepo.loadGameRecord(gameId, content.detail);
+        content.detail = _mgameRepo.loadGameDetail(gameId);
+        GameRecord rec = _mgameRepo.loadGameRecord(gameId, content.detail);
         if (rec != null) {
             content.game = (Game)rec.toItem();
             // load up our level and item packs
@@ -1038,7 +1034,7 @@ public class GameGameRegistry
     @Inject protected RootDObjectManager _omgr;
 
     // various and sundry repositories for loading persistent data
-    @Inject protected GameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected AVRGameRepository _avrgRepo;
     @Inject protected RatingRepository _ratingRepo;
     @Inject protected FeedRepository _feedRepo;

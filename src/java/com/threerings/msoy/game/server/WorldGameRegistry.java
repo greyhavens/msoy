@@ -57,6 +57,7 @@ import com.threerings.msoy.game.client.GameServerService;
 import com.threerings.msoy.game.client.WorldGameService;
 import com.threerings.msoy.game.data.GameSummary;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 
 import com.threerings.msoy.room.server.RoomManager;
 
@@ -252,7 +253,7 @@ public class WorldGameRegistry
         // we're going to need the Game item to finish resolution
         _invoker.postUnit(new PersistingUnit("locateGame", listener) {
             public void invokePersistent () throws Exception {
-                GameRecord grec = _gameRepo.loadGameRecord(gameId);
+                GameRecord grec = _mgameRepo.loadGameRecord(gameId);
                 _game = (grec == null) ? null : (Game)grec.toItem();
             }
             public void handleSuccess () {
@@ -286,7 +287,7 @@ public class WorldGameRegistry
         String name = "inviteFriends(" + gameId + ", " + StringUtil.toString(friendIds) + ")";
         _invoker.postUnit(new RepositoryUnit(name) {
             public void invokePersist () throws Exception {
-                GameRecord grec = _itemMan.getGameRepository().loadGameRecord(gameId);
+                GameRecord grec = _mgameRepo.loadGameRecord(gameId);
                 if (grec == null) {
                     throw new Exception("No record for game."); // the standard logging is good
                 }
@@ -648,6 +649,7 @@ public class WorldGameRegistry
     @Inject protected MemberManager _memberMan;
     @Inject protected ItemManager _itemMan;
     @Inject protected MsoyPeerManager _peerMan;
+    @Inject protected MsoyGameRepository _mgameRepo;
     @Inject protected GameRepository _gameRepo;
     @Inject protected StatLogic _statLogic;
     @Inject protected MoneyLogic _moneyLogic;

@@ -10,7 +10,8 @@ import com.threerings.msoy.item.data.all.ItemPack;
 import com.threerings.msoy.item.data.all.LevelPack;
 import com.threerings.msoy.item.data.all.Prize;
 import com.threerings.msoy.item.data.all.TrophySource;
-import com.threerings.msoy.item.server.persist.GameDetailRecord;
+
+import com.threerings.msoy.game.server.persist.GameDetailRecord;
 
 /**
  * Contains the gobs of game metadata that we load when a lobby or an AVRG is resolved and

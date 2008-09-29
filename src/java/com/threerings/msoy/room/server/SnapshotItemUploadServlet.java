@@ -33,7 +33,7 @@ public class SnapshotItemUploadServlet extends AbstractSnapshotUploadServlet
         image.photoHeight = info.height;
 
         try {
-            _itemLogic.createItem(ctx.memrec, image);
+            _itemLogic.createItem(ctx.memrec.memberId, image);
         } catch (ServiceException se) {
             System.err.println("Ruh-roh: " + se);
         }

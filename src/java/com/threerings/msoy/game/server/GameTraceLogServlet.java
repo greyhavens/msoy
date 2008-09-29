@@ -18,9 +18,9 @@ import com.samskivert.servlet.util.CookieUtil;
 
 import com.threerings.msoy.server.persist.MemberRecord;
 
-import com.threerings.msoy.item.server.persist.GameRepository;
-import com.threerings.msoy.item.server.persist.GameTraceLogEnumerationRecord;
-import com.threerings.msoy.item.server.persist.GameTraceLogRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+import com.threerings.msoy.game.server.persist.GameTraceLogEnumerationRecord;
+import com.threerings.msoy.game.server.persist.GameTraceLogRecord;
 
 import com.threerings.msoy.web.data.WebCreds;
 import com.threerings.msoy.web.server.MemberHelper;
@@ -89,7 +89,7 @@ public class GameTraceLogServlet extends HttpServlet
     protected void exportLog (HttpServletResponse rsp, int logId, int gameId)
         throws IOException
     {
-        GameTraceLogRecord record = _gameRepo.loadTraceLog(logId);
+        GameTraceLogRecord record = _mgameRepo.loadTraceLog(logId);
         if (record == null) {
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
@@ -107,7 +107,7 @@ public class GameTraceLogServlet extends HttpServlet
     {
         rsp.setContentType("text/html");
         rsp.getOutputStream().println("Logs for game [id=" + gameId + "]: ");
-        for (GameTraceLogEnumerationRecord record : _gameRepo.enumerateTraceLogs(gameId)) {
+        for (GameTraceLogEnumerationRecord record : _mgameRepo.enumerateTraceLogs(gameId)) {
             rsp.getOutputStream().print(
                 "<a href='/gamelogs?gameId=" + gameId + "&logId=" + record.logId + "'>" +
                 record.logId + "</a>&nbsp;");
@@ -117,5 +117,5 @@ public class GameTraceLogServlet extends HttpServlet
 
     // our dependencies
     @Inject protected MemberHelper _mhelper;
-    @Inject protected GameRepository _gameRepo;
+    @Inject protected MsoyGameRepository _mgameRepo;
 }

@@ -54,7 +54,7 @@ public class StuffServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser();
 
-        item = _itemLogic.createItem(memrec, item, parent);
+        item = _itemLogic.createItem(memrec.memberId, item, parent).toItem();
 
         // Some items have a stat that may need updating
         if (item instanceof Avatar) {
@@ -104,7 +104,7 @@ public class StuffServlet extends MsoyServiceServlet
         record.fromItem(item);
 
         // make sure these modifications are copacetic
-        _itemLogic.validateItem(memrec, oldrec, record);
+        _itemLogic.validateItem(memrec.memberId, oldrec, record);
 
         // write it back to the database
         repo.updateOriginalItem(record);
@@ -247,25 +247,7 @@ public class StuffServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
-
-        final ItemRecord item = repo.loadItem(iident.itemId);
-        if (item == null) {
-            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-        }
-        if (item.ownerId != memrec.memberId) {
-            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
-        }
-        if (item.used != 0) {
-            throw new ServiceException(ItemCodes.E_ITEM_IN_USE);
-        }
-        if (item.isCatalogOriginal()) {
-            throw new ServiceException(ItemCodes.E_ITEM_LISTED);
-        }
-        repo.deleteItem(iident.itemId);
-
-        // let the item system know that we've deleted this item
-        _itemLogic.itemDeleted(item);
+        _itemLogic.deleteItem(memrec, iident);
     }
 
     /**

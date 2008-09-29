@@ -142,16 +142,15 @@ public class BuildAndExportTask extends AbstractBuildTask
             }
 
             // setup the rest of the generic item fields
-            // TODO: Figure out a way to i18n this string
-            item.name = _projectName + " Swiftly Result";
-            // description cannot be NULL
-            item.description = "";
-            item.ownerId = _member.getMemberId();
-            item.creatorId = _member.getMemberId();
-            _record = repo.newItemRecord(item);
+            item.name = _projectName + " Swiftly Result"; // TODO: i18n this string
+            item.description = ""; // description cannot be NULL
 
-            // insert the new item into the repository
-            repo.insertOriginalItem(_record, false);
+            // create the new item
+            try {
+                _record = _itemLogic.createItem(_member.getMemberId(), item);
+            } catch (ServiceException se) {
+                throw new RuntimeException("Item creation failed.", se);
+            }
 
             // update the collaborator record with the new itemId
             _resultId = _record.itemId;

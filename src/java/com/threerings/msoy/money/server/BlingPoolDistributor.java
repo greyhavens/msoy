@@ -34,9 +34,11 @@ import com.threerings.presents.server.ShutdownManager;
 import com.threerings.msoy.admin.data.ServerConfigObject;
 import com.threerings.msoy.admin.server.RuntimeConfig;
 
+import com.threerings.msoy.game.server.persist.GamePlayRecord;
+import com.threerings.msoy.game.server.persist.MsoyGameRepository;
+
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
-import com.threerings.msoy.item.server.persist.GamePlayRecord;
 import com.threerings.msoy.item.server.persist.GameRecord;
 import com.threerings.msoy.item.server.persist.GameRepository;
 
@@ -62,9 +64,11 @@ public class BlingPoolDistributor
     implements ShutdownManager.Shutdowner
 {
     @Inject
-    public BlingPoolDistributor (MoneyRepository repo, GameRepository gameRepo, ShutdownManager sm)
+    public BlingPoolDistributor (MoneyRepository repo, MsoyGameRepository mgameRepo,
+                                 GameRepository gameRepo, ShutdownManager sm)
     {
         _repo = repo;
+        _mgameRepo = mgameRepo;
         _gameRepo = gameRepo;
 
         sm.registerShutdowner(this);
@@ -158,7 +162,7 @@ public class BlingPoolDistributor
                 }
 
                 // Get all the game play sessions for that day.
-                Collection<GamePlayRecord> gamePlays = _gameRepo.getGamePlaysBetween(
+                Collection<GamePlayRecord> gamePlays = _mgameRepo.getGamePlaysBetween(
                     midnight1.getTimeInMillis(), midnight2.getTimeInMillis());
 
                 // Calculate a total and a map of game ID to the total minutes spent in the game
@@ -259,6 +263,7 @@ public class BlingPoolDistributor
     protected static final Logger log = Logger.getLogger(BlingPoolDistributor.class);
 
     protected final MoneyRepository _repo;
+    protected final MsoyGameRepository _mgameRepo;
     protected final GameRepository _gameRepo;
     protected final Scheduler _scheduler;
 }
