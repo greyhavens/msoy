@@ -57,10 +57,10 @@ public class PeoplePage extends Page
             setContent(CPeople.msgs.inviteTitle(), new InvitePanel());
 
         } else if (action.equals(GalleryEditPanel.CREATE_PROFILE_ACTION)) { // !guest
-            setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel());
+            setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel(true));
 
         } else if (action.equals(GalleryEditPanel.CREATE_ACTION)) { // !guest
-            setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel());
+            setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel(false));
 
         } else if (action.equals(GalleryEditPanel.EDIT_ACTION)) { // !guest
             int galleryId = args.get(1, -1);

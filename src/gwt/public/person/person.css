@@ -125,7 +125,7 @@
 }
 
 .galleryViewPanel .FullSize .Photo {
-  margin: 30px auto 0 auto;
+  margin: 0 auto;
   background-color: #000000;
   border: solid #000000 10px;
 }

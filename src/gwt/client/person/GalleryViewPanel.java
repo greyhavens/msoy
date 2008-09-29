@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
@@ -113,23 +114,30 @@ public class GalleryViewPanel extends AbsolutePanel
         FlowPanel photoPanel = new FlowPanel();
         for (int i = 0; i < galleryData.photos.size(); i++) {
             final int photoIndex = i;
-            ClickListener thumbClickListener = new ClickListener() {
-                public void onClick (Widget sender) {
-                    setPhoto(photoIndex);
-                }
-            };
 
-            // use a table to center image vertically
+            // use a SmartTable to center image vertically
             Photo photo = galleryData.photos.get(i);
-            SmartTable thumbnail = new SmartTable("Thumbnail", 0, 0);
+            SmartTable thumbnail = new SmartTable(0, 0);
             thumbnail.addWidget(MediaUtil.createMediaView(photo.thumbMedia,
-                MediaDesc.THUMBNAIL_SIZE, thumbClickListener), 0, null);
+                MediaDesc.THUMBNAIL_SIZE), 0, null);
             thumbnail.getCellFormatter().setHeight(0, 0, MediaDesc.THUMBNAIL_HEIGHT + "px");
             thumbnail.getCellFormatter().setWidth(0, 0, MediaDesc.THUMBNAIL_WIDTH + "px");
             thumbnail.getCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_MIDDLE);
             thumbnail.getCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
             thumbnail.addWidget(MsoyUI.createLabel(photo.name, "Name"), 0, null);
-            photoPanel.add(thumbnail);
+
+            // use a FocusPanel to catch clicks
+            ClickListener thumbClickListener = new ClickListener() {
+                public void onClick (Widget sender) {
+                    setPhoto(photoIndex);
+                }
+            };
+            FocusPanel thumbClickContainer = new FocusPanel();
+            thumbClickContainer.addStyleName("Thumbnail");
+            thumbClickContainer.addStyleName("actionLabel");
+            thumbClickContainer.add(thumbnail);
+            thumbClickContainer.addClickListener(thumbClickListener);
+            photoPanel.add(thumbClickContainer);
         }
         add(photoPanel, 225, 0);
 
@@ -159,7 +167,7 @@ public class GalleryViewPanel extends AbsolutePanel
         int height = photo.photoHeight;
         if (width > MAX_PHOTO_WIDTH) {
             width = MAX_PHOTO_WIDTH;
-            height = (photo.photoWidth / MAX_PHOTO_WIDTH) * photo.photoHeight;
+            height = Math.round((MAX_PHOTO_WIDTH / (float)photo.photoWidth) * photo.photoHeight);
         }
         if (height > MAX_PHOTO_HEIGHT) {
             height = MAX_PHOTO_HEIGHT;
@@ -189,7 +197,7 @@ public class GalleryViewPanel extends AbsolutePanel
         fullSizeContainer.add(fullSize);
         fullSizeContainer.add(MsoyUI.createLabel(photo.name, "Name"));
         fullSizeContainer.add(MsoyUI.createLabel(photo.description, "Description"));
-        _currentPhoto.add(fullSizeContainer, 0, 0);
+        _currentPhoto.add(fullSizeContainer, 0, 50);
 
         // either a start or stop slideshow button depending on if it is running.
         if (_slideshowTimer == null) {
@@ -198,14 +206,14 @@ public class GalleryViewPanel extends AbsolutePanel
                     startSlideshow(photoIndex);
                 }
             };
-            _currentPhoto.add(new Button(_pmsgs.slideshowStart(), slideshowClick), 240, 520);
+            _currentPhoto.add(new Button(_pmsgs.slideshowStart(), slideshowClick), 240, 20);
         } else {
             ClickListener slideshowClick = new ClickListener() {
                 public void onClick (Widget sender) {
                     stopSlideshow();
                 }
             };
-            _currentPhoto.add(new Button(_pmsgs.slideshowStop(), slideshowClick), 260, 520);
+            _currentPhoto.add(new Button(_pmsgs.slideshowStop(), slideshowClick), 260, 20);
         }
 
         // prev and next buttons
@@ -219,7 +227,7 @@ public class GalleryViewPanel extends AbsolutePanel
                 setPhoto((photoIndex + 1) % _galleryData.photos.size());
             }
         };
-        _currentPhoto.add(MsoyUI.createPrevNextButtons(onPrev, onNext), 330, 520);
+        _currentPhoto.add(MsoyUI.createPrevNextButtons(onPrev, onNext), 330, 20);
 
         add(_currentPhoto, 0, 0);
     }
@@ -277,6 +285,6 @@ public class GalleryViewPanel extends AbsolutePanel
     /** If this is a profile gallery, whose profile is this */
     protected int _profileMemberId = 0;
 
-    protected static int MAX_PHOTO_WIDTH = 400;
+    protected static int MAX_PHOTO_WIDTH = 600;
     protected static int MAX_PHOTO_HEIGHT = 400;
 }

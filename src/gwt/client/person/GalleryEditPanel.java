@@ -50,23 +50,33 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
     public static final String CREATE_ACTION = "creategallery";
     public static final String CREATE_PROFILE_ACTION = "createprofilegallery";
 
-    public GalleryEditPanel ()
+    /**
+     * Creating a new Gallery
+     */
+    public GalleryEditPanel (boolean isProfile)
     {
         // create a new gallery
         _newGallery = true;
         GalleryData galleryData = new GalleryData();
         galleryData.gallery = new Gallery();
-        galleryData.gallery.name = _pmsgs.newGallery();
+        // null name is the indicator for profile galleries
+        if (isProfile) {
+            galleryData.gallery.name = null;
+        } else {
+            galleryData.gallery.name = _pmsgs.newGallery();
+        }
         galleryData.gallery.description = "";
         galleryData.photos = new ArrayList<Photo>();
         display(galleryData);
     }
 
+    /**
+     * Editing an existing gallery
+     */
     public GalleryEditPanel (int galleryId)
     {
         _gallerysvc.loadGallery(galleryId, new MsoyCallback<GalleryData>() {
-            public void onSuccess (GalleryData result)
-            {
+            public void onSuccess (GalleryData result) {
                 display(result);
             }
         });
