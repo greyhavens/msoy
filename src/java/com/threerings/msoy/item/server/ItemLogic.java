@@ -177,7 +177,7 @@ public class ItemLogic
         try {
             return getRepositoryFor(type);
         } catch (MissingRepositoryException mre) {
-            log.warning("Requested invalid repository type " + type + ".");
+            log.warning("Requested invalid repository type " + type + ".", new Exception());
             throw new ServiceException(ItemCodes.INTERNAL_ERROR);
         }
     }
