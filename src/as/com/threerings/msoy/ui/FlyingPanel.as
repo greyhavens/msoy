@@ -9,6 +9,8 @@ import flash.events.Event;
 
 import flash.geom.Rectangle;
 
+import mx.events.ResizeEvent;
+
 import com.threerings.util.ValueEvent;
 
 import com.threerings.flex.PopUpUtil;
@@ -34,18 +36,19 @@ public class FlyingPanel extends FloatingPanel
     {
         super.open(modal, parent, center);
 
-        systemManager.addEventListener(Event.RESIZE, handleStageResized);
+        systemManager.addEventListener(Event.RESIZE, checkPositioning);
+        addEventListener(ResizeEvent.RESIZE, checkPositioning);
     }
 
     override public function close () :void
     {
-        systemManager.removeEventListener(Event.RESIZE, handleStageResized);
+        systemManager.removeEventListener(Event.RESIZE, checkPositioning);
+        removeEventListener(ResizeEvent.RESIZE, checkPositioning);
 
         super.close();
     }
 
-    // TODO: move this back to the friendsList?
-    protected function handleStageResized (...ignored) :void
+    protected function checkPositioning (... ignored) :void
     {
         var placeBounds :Rectangle = _ctx.getTopPanel().getPlaceViewBounds();
         // fit the popup within the new bounds, minux padding.
@@ -53,8 +56,10 @@ public class FlyingPanel extends FloatingPanel
         placeBounds.y += PADDING;
         placeBounds.width -= PADDING * 2;
         placeBounds.height -= PADDING * 2;
+
         // fix our height
         height = Math.min(height, placeBounds.height);
+
         // and make sure we fit inside
         PopUpUtil.fitInRect(this, placeBounds);
     }
