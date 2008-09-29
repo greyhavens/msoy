@@ -17,6 +17,7 @@ public class RoomBackdrop
     /** Refresh room metrics. */
     public function update (decor :Decor) :void
     {
+        _decor = decor;
         _metrics.update(decor);
     }
 
@@ -28,6 +29,10 @@ public class RoomBackdrop
         drawEdges :Boolean, fillWalls :Boolean, edgeAlpha :Number = 1.0) :void
     {
         g.clear();
+
+        if (_decor.type == Decor.FLAT_LAYOUT) {
+            return;
+        }
 
         // fill all our screen area with transparent pixels, so that mousing anywhere in our bounds
         // includes us in the event dispatch. This is primarily necessary to get the ContextMenu
@@ -108,6 +113,8 @@ public class RoomBackdrop
             g.lineStyle(0, 0, 0); // stop drawing lines
         }
     }
+
+    protected var _decor :Decor;
 
     /** The RoomMetrics for doing our layout. */
     protected var _metrics :RoomMetrics = new RoomMetrics();
