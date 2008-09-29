@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.PagedTable;
+import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 
@@ -26,14 +27,20 @@ public abstract class MoneyPanel extends PagedTable<MoneyTransaction>
     {
         super(10, NAV_ON_TOP);
 
-        _table.setCellPadding(5);
-
         _nav.add(MsoyUI.createLabel(_msgs.reportFilter(), "ReportFilter"));
         _nav.add(MsoyUI.createImage(model.report.icon, null), HasVerticalAlignment.ALIGN_MIDDLE);
         _nav.add(controller);
 
         addStyleName("Balance");
         setModel(model, 0);
+    }
+
+    @Override public SmartTable createContents (int start, int count, List<MoneyTransaction> list)
+    {
+        SmartTable table = super.createContents(start, count, list);
+        table.setCellPadding(5);
+
+        return table;
     }
 
     @Override
