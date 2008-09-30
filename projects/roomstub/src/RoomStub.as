@@ -48,6 +48,8 @@ public class RoomStub extends Sprite
     /** The id of the room we'd like to load. */
     public static const ROOM_ID :int = 5168;
 
+    public static const SITE :String = "deviantArt";
+
     /** The server we're connecting with, with a trailing slash. */
     public static const CLIENT_URL :String = "http://www.whirled.com/clients/world-client.swf";
     //public static const SERVER :String = "http://tasman.sea.earth.threerings.net:8080/";
@@ -87,7 +89,8 @@ public class RoomStub extends Sprite
     public function getWhirledParams () :String
     {
         // called by world-client
-        return "sceneId=" + ROOM_ID;
+        return "sceneId=" + ROOM_ID +
+            "&vec=e." + encodeURIComponent(SITE) + ".rooms." + ROOM_ID;
     }
 
     protected function onClientDetailsError (e :ErrorEvent) :void
