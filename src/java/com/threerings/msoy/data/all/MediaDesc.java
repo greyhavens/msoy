@@ -87,12 +87,6 @@ public class MediaDesc implements Streamable, IsSerializable
     /** The thumbnail image height.  */
     public static final int THUMBNAIL_HEIGHT = 60;
 
-    /** The preview image width. */
-    public static final int PREVIEW_WIDTH = 320;
-
-    /** The preview image height. */
-    public static final int PREVIEW_HEIGHT = 240;
-
     /** A constant used to indicate that an image does not exceed half thumbnail size in either
      * dimension. */
     public static final byte NOT_CONSTRAINED = 0;
@@ -689,6 +683,6 @@ public class MediaDesc implements Streamable, IsSerializable
         THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, // thumbnail size
         THUMBNAIL_WIDTH*4, THUMBNAIL_HEIGHT*4, // preview size
         175, 100, // snapshot thumb size
-        PREVIEW_WIDTH, PREVIEW_HEIGHT, // full snapshot image size
+        350, 200, // full snapshot image size
     };
 }
