@@ -120,8 +120,10 @@ public class GalleryViewPanel extends AbsolutePanel
             SmartTable thumbnail = new SmartTable(0, 0);
             thumbnail.addWidget(MediaUtil.createMediaView(photo.getPreviewMedia(),
                 MediaDesc.PREVIEW_SIZE), 0, null);
-            thumbnail.getCellFormatter().setHeight(0, 0, MediaDesc.PREVIEW_HEIGHT + "px");
-            thumbnail.getCellFormatter().setWidth(0, 0, MediaDesc.PREVIEW_WIDTH + "px");
+            thumbnail.getCellFormatter().setHeight(0, 0,
+                MediaDesc.getHeight(MediaDesc.PREVIEW_SIZE) + "px");
+            thumbnail.getCellFormatter().setWidth(0, 0,
+                MediaDesc.getWidth(MediaDesc.PREVIEW_SIZE) + "px");
             thumbnail.getCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_MIDDLE);
             thumbnail.getCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
             thumbnail.addWidget(MsoyUI.createLabel(photo.name, "Name"), 0, null);
