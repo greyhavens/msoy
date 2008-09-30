@@ -168,9 +168,9 @@ public class OccupantSprite extends MsoySprite
     /**
      * Returns the walk speed of this occupant, in pixels / second.
      */
-    public function getMoveSpeed () :Number
+    public function getMoveSpeed (roomScale :Number) :Number
     {
-        return Math.max(MIN_MOVE_SPEED, _moveSpeed * _scale);
+        return Math.max(MIN_MOVE_SPEED, _moveSpeed * _scale * roomScale);
     }
 
     /**

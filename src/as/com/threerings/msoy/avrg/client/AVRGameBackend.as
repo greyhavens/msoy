@@ -341,7 +341,7 @@ public class AVRGameBackend extends ControlBackend
                 sprite.getLocation().y,
                 sprite.getLocation().z,
                 sprite.getLocation().orient,
-                sprite.getMoveSpeed(),
+                sprite.getMoveSpeed(1), /// TODO: this may be wildly inaccurate. remove?
                 sprite.isMoving(),
                 sprite.isIdle(),
                 sprite.getBounds(sprite.stage)
