@@ -282,7 +282,10 @@ public class DecorEditPanel extends FlyingPanel
 
     protected var _studioView :RoomStudioView;
 
-    protected const ROOM_TYPES :Array = [ Decor.IMAGE_OVERLAY, Decor.FLAT_LAYOUT ];
+    /** The room types we support. */
+    // TODO: FIXED_IMAGE is not active because it doesn't seem to play well with room zooming
+    protected const ROOM_TYPES :Array =
+        [ Decor.IMAGE_OVERLAY, /* Decor.FIXED_IMAGE,*/ Decor.FLAT_LAYOUT ];
 
     protected var _roomType :ComboBox;
     protected var _scale :VSlider;
