@@ -935,6 +935,8 @@ img, embed, applet, object {
 
 .stretchButton {
   cursor: pointer;
+  white-space: nowrap;
+  float: left;
 }
 
 .orangeThick, .blueThick {
