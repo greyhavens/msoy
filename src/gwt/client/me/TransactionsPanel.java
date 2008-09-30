@@ -13,6 +13,8 @@ import com.threerings.msoy.money.data.all.ReportType;
 
 import client.shell.Args;
 import client.shell.Pages;
+import client.ui.MsoyUI;
+import client.ui.RoundBox;
 import client.util.Link;
 
 public class TransactionsPanel extends VerticalPanel
@@ -20,6 +22,10 @@ public class TransactionsPanel extends VerticalPanel
     public TransactionsPanel (int reportIndex, final int memberId)
     {
         setStyleName("transactions");
+
+        RoundBox box = new RoundBox(RoundBox.MEDIUM_BLUE);
+        box.add(MsoyUI.createLabel(_msgs.moneyTip(), null));
+        add(box);
 
         ReportType report = ReportType.fromIndex(reportIndex);
         // The data model is used in both the balance panel and the bling panel.
