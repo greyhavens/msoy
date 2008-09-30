@@ -7,6 +7,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -14,6 +15,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.data.all.DeploymentConfig;
@@ -71,13 +73,14 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 //         _indeets.add(_priceLabel = new PriceLabel(listedCur, _listing.quote.getListedAmount()));
 
         // create a table to display miscellaneous info and admin/owner actions
-        //info.setStyle("Info"); // ?
-//        info.setText(0, 0, _msgs.listingListed(), 1, "What");
-//        info.setText(0, 1, MsoyUI.formatDate(listing.listedDate));
-//        info.setText(1, 0, _msgs.listingPurchases(), 1, "What");
-//        info.setText(1, 1, "" + listing.purchases);
-//        info.setText(2, 0, _msgs.favoritesCount(), 1, "What");
-//        info.setText(2, 1, "" + listing.favoriteCount);
+        SmartTable info = new SmartTable("Info", 0, 0);
+        info.setText(0, 0, _msgs.listingListed(), 1, "What");
+        info.setText(0, 1, MsoyUI.formatDate(_listing.listedDate));
+        info.setText(1, 0, _msgs.listingPurchases(), 1, "What");
+        info.setText(1, 1, "" + _listing.purchases);
+        info.setText(2, 0, _msgs.favoritesCount(), 1, "What");
+        info.setText(2, 1, "" + _listing.favoriteCount);
+        _indeets.add(info);
 
         // if we are the creator (lister) of this item, allow us to delist it
         if (_detail.creator.getMemberId() == CShop.getMemberId() || CShop.isSupport()) {
@@ -142,9 +145,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _buyCoins = new BuyButton(Currency.COINS, _listing.quote.getCoins());
         _buyPanel.add(_buyCoins);
         _details.add(_buyPanel);
-
-        String when = MsoyUI.formatDate(_listing.listedDate, false);
-        _details.add(MsoyUI.createLabel(_msgs.listedOn(when), "listedDate"));
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId), true);

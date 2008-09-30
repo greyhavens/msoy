@@ -162,10 +162,6 @@
   background: #1D5884 url(/images/ui/grid_header_right.png) no-repeat right;
 }
 
-.listingDetailPanel .Price {
-  text-align: right;
-}
-
 .listingDetailPanel .shortThickOrangeButton {
   margin-left: auto;
   margin-right: auto;
@@ -178,11 +174,11 @@
 
 .listingDetailPanel .Info {
   margin-left: auto;
-  margin-right: auto;
 }
 
 .listingDetailPanel .Info .What {
   font-weight: bold;
+  text-align: right;
 }
 
 .listingDetailPanel .Buy {
@@ -221,16 +217,11 @@
   margin-top: 20px;
 }
 
-.listingDetailPanel .listedDate {
-  margin-top: 10px;
-  font-size: small;
-  text-align: right;
-}
-
 .listingDetailPanel .controls {
   margin-top: 10px;
   font-size: small;
-  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .favoritesPanel {
