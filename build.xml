@@ -789,11 +789,10 @@
            debug="on" optimize="${build.optimize}" deprecation="on" target="1.5">
       <classpath refid="classpath"/>
       <include name="**/*Object.java"/>
-	  <exclude name="**/chiyogami/**/*.java"/>
     </javac>
     <!-- now generate the associated files -->
     <dobj classpathref="classpath">
-      <fileset dir="${src.dir}" includes="**/*Object.java" excludes="**/chiyogami/**/*.java"/>
+      <fileset dir="${src.dir}" includes="**/*Object.java"/>
     </dobj>
   </target>
 
@@ -929,7 +928,6 @@
     <echo>Compiling MSOY...</echo>
     <javac srcdir="${src.dir}" destdir="${classes.dir}" includeAntRuntime="false"
            debug="on" optimize="off" deprecation="on" target="1.5">
-      <exclude name="**/chiyogami/**/*.java"/>
       <classpath refid="classpath"/>
       <compilerarg value="-Xlint"/>
       <compilerarg value="-Xlint:-serial"/>
