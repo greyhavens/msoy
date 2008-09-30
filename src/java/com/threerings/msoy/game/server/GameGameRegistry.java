@@ -174,8 +174,7 @@ public class GameGameRegistry
         // add our "already resolved" marker and then start resolving
         plobj.addToGameContent(new GameContentOwnership(game.gameId, GameData.RESOLVED_MARKER, ""));
         _invoker.postUnit(new RepositoryUnit("resolveOwnedContent") {
-            @Override
-            public void invokePersist () throws Exception {
+            @Override public void invokePersist () throws Exception {
                 int memberId = plobj.getMemberId(), suiteId = game.getSuiteId();
                 Iterable<LevelPackRecord> lrecords;
                 Iterable<ItemPackRecord> irecords;
@@ -197,8 +196,8 @@ public class GameGameRegistry
                 Iterables.addAll(_ipacks, Iterables.transform(irecords, ItemPackRecord.GET_IDENT));
                 _trophies = _trophyRepo.loadTrophyOwnership(game.gameId, memberId);
             }
-            @Override
-            public void handleSuccess () {
+
+            @Override public void handleSuccess () {
                 if (!plobj.isActive()) {
                     return; // the player has logged off, nevermind
                 }
@@ -211,6 +210,7 @@ public class GameGameRegistry
                     plobj.commitTransaction();
                 }
             }
+
             protected void addContent (byte type, Iterable<String> idents) {
                 plobj.startTransaction();
                 try {
@@ -221,8 +221,8 @@ public class GameGameRegistry
                     plobj.commitTransaction();
                 }
             }
-            @Override
-            protected String getFailureMessage () {
+
+            @Override protected String getFailureMessage () {
                 return "Failed to resolve content [game=" + game.gameId +
                     ", who=" + plobj.who() + "].";
             }
