@@ -262,7 +262,7 @@ public abstract class ItemEditor extends FlexTable
     protected void addFurniUploader ()
     {
         addSpacer();
-        addRow(_emsgs.editorFurniTab(), createFurniUploader(true, new MediaUpdater() {
+        addRow(getFurniTabText(), createFurniUploader(true, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!isValidPrimaryMedia(desc)) {
                     return invalidPrimaryMediaMessage();
@@ -270,7 +270,17 @@ public abstract class ItemEditor extends FlexTable
                 _item.furniMedia = desc;
                 return null;
             }
-        }), _emsgs.editorFurniTitle());
+        }), getFurniTitleText());
+    }
+    
+    protected String getFurniTabText ()
+    {
+        return _emsgs.editorFurniTab();
+    }
+    
+    protected String getFurniTitleText ()
+    {
+        return _emsgs.editorFurniTitle();
     }
 
     protected void addThumbUploader ()

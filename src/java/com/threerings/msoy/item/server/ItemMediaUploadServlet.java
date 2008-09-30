@@ -72,15 +72,15 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
             mediaId = mediaId.substring(0, mediaId.length() - Item.FOR_PHOTO.length());
         }
 
-        // we'll return a list of one or more mediaIds and corresponding mediaInfoes
+        // we'll return a list of one or more mediaIds and corresponding mediaInfos
         List<String> mediaIds = Lists.newArrayList();
-        mediaIds.add(mediaId);
         List<MediaInfo> mediaInfos = Lists.newArrayList();
 
         // if this is an image...
         if (MediaDesc.isImage(mimeType)) {
             // ...determine its constraints, generate a thumbnail, and publish the data into the
             // media store
+            mediaIds.add(mediaId);
             mediaInfos.add(UploadUtil.publishImage(mediaId, uploadFile));
 
             // if the client has requested a thumbnail and furni images to be generated along with

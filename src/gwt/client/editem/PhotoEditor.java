@@ -46,6 +46,18 @@ public class PhotoEditor extends ItemEditor
         }), _emsgs.photoTip());
     }
 
+    @Override// from ItemEditor
+    protected String getFurniTabText ()
+    {
+        return _emsgs.editorPhotoFurniTab();
+    }
+
+    @Override// from ItemEditor
+    protected String getFurniTitleText ()
+    {
+        return _emsgs.editorPhotoFurniTitle();
+    }
+
     protected Photo _photo;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);

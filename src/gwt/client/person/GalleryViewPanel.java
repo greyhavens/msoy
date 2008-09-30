@@ -118,10 +118,10 @@ public class GalleryViewPanel extends AbsolutePanel
             // use a SmartTable to center image vertically
             Photo photo = galleryData.photos.get(i);
             SmartTable thumbnail = new SmartTable(0, 0);
-            thumbnail.addWidget(MediaUtil.createMediaView(photo.thumbMedia,
-                MediaDesc.THUMBNAIL_SIZE), 0, null);
-            thumbnail.getCellFormatter().setHeight(0, 0, MediaDesc.THUMBNAIL_HEIGHT + "px");
-            thumbnail.getCellFormatter().setWidth(0, 0, MediaDesc.THUMBNAIL_WIDTH + "px");
+            thumbnail.addWidget(MediaUtil.createMediaView(photo.getPreviewMedia(),
+                MediaDesc.PREVIEW_SIZE), 0, null);
+            thumbnail.getCellFormatter().setHeight(0, 0, MediaDesc.PREVIEW_HEIGHT + "px");
+            thumbnail.getCellFormatter().setWidth(0, 0, MediaDesc.PREVIEW_WIDTH + "px");
             thumbnail.getCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_MIDDLE);
             thumbnail.getCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
             thumbnail.addWidget(MsoyUI.createLabel(photo.name, "Name"), 0, null);
