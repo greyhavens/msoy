@@ -649,13 +649,6 @@ public class MemberManager
     }
 
     // from interface MemberProvider
-    public void trackVisitorInfoCreation (final ClientObject caller)
-    {
-        final MemberObject memObj = (MemberObject) caller;
-        _eventLog.visitorInfoCreated(memObj.visitorInfo);
-    }
-
-    // from interface MemberProvider
     public void trackVectorAssociation (final ClientObject caller, final String vector)
     {
         final MemberObject memObj = (MemberObject) caller;
