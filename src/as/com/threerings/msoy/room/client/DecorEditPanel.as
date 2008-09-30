@@ -134,6 +134,7 @@ public class DecorEditPanel extends FlyingPanel
             _width.text = String(width);
             _height.text = String(height);
             _depth.value = depth;
+            _depth.tickValues = [ height ];
             _horizon.value = horizon;
             _scale.value = scale;
             _xoff.text = String(offsetX);
@@ -190,7 +191,7 @@ public class DecorEditPanel extends FlyingPanel
         _scale = new VSlider();
         _scale.liveDragging = true;
         _scale.maximum = 4;
-        _scale.minimum = .01;
+        _scale.minimum = .25;
         _scale.tickValues = [ 1 ];
 
         _horizon = new VSlider();
