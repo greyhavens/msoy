@@ -33,8 +33,6 @@ import org.mortbay.jetty.servlet.DefaultServlet;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.resource.Resource;
 
-import com.samskivert.servlet.util.CookieUtil;
-
 import com.threerings.msoy.server.ServerConfig;
 
 import com.threerings.msoy.admin.gwt.AdminService;
@@ -173,11 +171,6 @@ public class MsoyHttpServer extends Server
             // available yet. So we squirrel away the referrer in a cookie, and let GWT
             // handle it once it's ready.
             HttpReferrerCookie.check(req, rsp);
-
-            // TEMP: clear old "baff" cookie, which is not to be trusted.
-            if (null != CookieUtil.getCookie(req, "baff")) {
-                CookieUtil.clearCookie(rsp, "baff");
-            }
         }
     } // end: MsoyDefaultServlet
 
