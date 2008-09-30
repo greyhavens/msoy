@@ -94,6 +94,7 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
 
         } else {
             // treat all other file types in the same manner, just publish them
+            mediaIds.add(mediaId);
             mediaInfos.add(new MediaInfo(uploadFile.getHash(), mimeType));
             UploadUtil.publishUploadFile(uploadFile);
         }
