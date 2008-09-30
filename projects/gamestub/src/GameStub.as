@@ -159,7 +159,7 @@ public class GameStub extends Sprite
 
     protected static const URL :String = SERVER + "gamestubsvc" + 
         "?gameId=" + GAME_ID +
-        "&site=" + SITE +
+        "&site=" + encodeURIComponent(SITE) +
         "&v=" + STUB_VERSION;
 }
 }
