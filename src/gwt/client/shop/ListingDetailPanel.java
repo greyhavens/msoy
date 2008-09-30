@@ -242,7 +242,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             super.onFailure(cause);
 
             if (cause instanceof CostUpdatedException) {
-                updatePrice( ((CostUpdatedException)cause).getQuote());
+                CostUpdatedException cue = (CostUpdatedException) cause;
+                updatePrice(cue.getQuote());
             }
         }
 
