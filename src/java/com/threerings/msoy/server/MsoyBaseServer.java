@@ -209,8 +209,9 @@ public abstract class MsoyBaseServer extends WhirledServer
     protected void finishInit (final Injector injector)
         throws Exception
     {
-        // We need to add this *after* the main init so that it can get first dibs and delegate
-        // to the subclass client factory
+        // We need to chain these client factories *after* the main init so that it can get first
+        // dibs and delegate to the subclass client factory
+        _bureauReg.setDefaultClientFactory();
         _clmgr.setClientFactory(new BureauLauncherClientFactory(_clmgr.getClientFactory()));
     }
 
