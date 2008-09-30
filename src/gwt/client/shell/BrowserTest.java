@@ -35,9 +35,11 @@ public class BrowserTest
 
         final String message;
 
-        if (browserType.equals(SUPPORTED_MSIE) || browserType.equals(SUPPORTED_FIREFOX)
-                || browserType.equals(SAFARI)) {
+        if (browserType.equals(SUPPORTED_MSIE) || browserType.equals(SUPPORTED_FIREFOX)) {
             message = null;
+        }
+        else if (browserType.equals(SAFARI)) {
+            message = _cmsgs.browserUnsupported();
         }
         else if (browserType.equals(OLD_MSIE)) {
             message = _cmsgs.browserOldMsie();
