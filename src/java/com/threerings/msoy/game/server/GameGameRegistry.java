@@ -199,7 +199,7 @@ public class GameGameRegistry
             }
             @Override
             public void handleSuccess () {
-                if (plobj.isActive()) {
+                if (!plobj.isActive()) {
                     return; // the player has logged off, nevermind
                 }
                 plobj.startTransaction();
