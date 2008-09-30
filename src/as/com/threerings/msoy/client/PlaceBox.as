@@ -25,7 +25,7 @@ public class PlaceBox extends LayeredContainer
     public static const LAYER_ROOM_SPINNER :int = 10;
 
     /** The layer priority of the AVRG panel. */
-    public static const LAYER_AVRG_PANEL :int = 15;
+    public static const LAYER_AVRG_PANEL :int = 36;
 
     /** The layer priority of the scrolling chat. */
     public static const LAYER_CHAT_SCROLL :int = 20;
