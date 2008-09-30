@@ -24,41 +24,41 @@ public interface CatalogServiceAsync
     /**
      * The asynchronous version of {@link CatalogService#loadCatalog}.
      */
-    public void loadCatalog (CatalogQuery query, int offset, int rows, boolean includeCount,
-                             AsyncCallback<CatalogService.CatalogResult> callback);
+    void loadCatalog (CatalogQuery query, int offset, int rows, boolean includeCount,
+                      AsyncCallback<CatalogService.CatalogResult> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#purchaseItem}
      */
-    public void purchaseItem (byte itemType, int catalogId, Currency currency, int authedCost,
-                              AsyncCallback<Item> callback);
+    void purchaseItem (byte itemType, int catalogId, Currency currency, int authedCost,
+                       AsyncCallback<Item> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#listItem}
      */
-    public void listItem (ItemIdent item, String descrip, int pricing, int salesTarget,
-                          Currency currency, int cost, AsyncCallback<Integer> callback);
+    void listItem (ItemIdent item, String descrip, int pricing, int salesTarget,
+                   Currency currency, int cost, AsyncCallback<Integer> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#loadListing}
      */
-    public void loadListing (byte itemType, int catalogId, AsyncCallback<CatalogListing> callback);
+    void loadListing (byte itemType, int catalogId, AsyncCallback<CatalogListing> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#updateListing}
      */
-    public void updateListing (ItemIdent item, String descrip, AsyncCallback<Void> callback);
+    void updateListing (ItemIdent item, String descrip, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#updatePricing}
      */
-    public void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
-                               Currency currency, int cost, AsyncCallback<Void> callback);
+    void updatePricing (byte itemType, int catalogId, int pricing, int salesTarget,
+                        Currency currency, int cost, AsyncCallback<Void> callback);
 
     /**
      * Removes the specified catalog listing.
      */
-    public void removeListing (byte itemType, int catalogId, AsyncCallback<Void> callback);
+    void removeListing (byte itemType, int catalogId, AsyncCallback<Void> callback);
 
     /**
      * The asynchronous version of {@link CatalogService#getPopularTags}.
