@@ -84,9 +84,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
                     _listing.quote.getCoins(), _listing.quote.getBars())));
         }
 
-        _indeets.add(WidgetUtil.makeShim(10, 10));
-        Currency listedCur = _listing.quote.getListedCurrency();
-        _indeets.add(_priceLabel = new PriceLabel(listedCur, _listing.quote.getListedAmount()));
+//         _indeets.add(WidgetUtil.makeShim(10, 10));
+//         Currency listedCur = _listing.quote.getListedCurrency();
+//         _indeets.add(_priceLabel = new PriceLabel(listedCur, _listing.quote.getListedAmount()));
 
         // create a table to display miscellaneous info and admin/owner actions
         //info.setStyle("Info"); // ?
@@ -157,11 +157,10 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         }
 
         _buyPanel.add(createBuyButton(Currency.COINS, _listing.quote.getCoins()));
-
         _details.add(_buyPanel);
 
-        _details.add(MsoyUI.createLabel(
-            _msgs.listedOn(MsoyUI.formatDate(_listing.listedDate)), "listedDate"));
+        String when = MsoyUI.formatDate(_listing.listedDate, false);
+        _details.add(MsoyUI.createLabel(_msgs.listedOn(when), "listedDate"));
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId), true);
