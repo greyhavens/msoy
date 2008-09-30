@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * The interface through which the DropPanel accesses its data.
  *
- * @param T the content type.
+ * @param <T> the content type.
  * @author mjensen
  */
 public interface DropModel<T>
