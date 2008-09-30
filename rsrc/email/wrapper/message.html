@@ -2,7 +2,10 @@
 <base href="${base_url}"/>
 <style type="text/css">
 html, body {
+  height: 100%;
+  margin: 0;
   border: none;
+  padding: 0;
   font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -11,6 +14,16 @@ a {
   text-decoration: underline;
 }
 
+a:visited {
+  color: black;
+}
+
+a.external {
+  background: url(/images/ui/external.png) center right no-repeat;
+  padding-right: 16px;
+}
+
+/** These are for iframe-based RichTextArea editing. */
 h1, h2, h3, h4, h5, h6 {
   margin: 0px;
 }
@@ -31,14 +44,39 @@ blockquote {
   margin-top: 5px;
   margin-bottom: 10px;
 }
+
+img {
+  border: none;
+}
+
+/** We have these stylings here so that we can copy click boxes into HTML announcement emails. */
+.clickBox {
+  border: 1px solid #CCCCCC;
+  margin: 5px;
+  padding: 5px; /* TODO: IE won't like */
+}
+
+.clickBox .Label {
+  white-space: nowrap;
+  width: 110px;
+  overflow: hidden;
+}
+
+.clickBox .Name {
+  font-size: 14px;
+  padding-top: 5px;
+}
 </style>
 </head>
 <body>
 <center>
 <table width="692">
-<tr><td style="border: 1px solid #cccccc; padding: 15px;">
+<tr><td><img src="${base_url}/images/email/header.png"></td></tr>
+<tr><td>
 ${content}
-</td></tr><tr><td style="font-size: 12px; text-align: center">
+</td></tr>
+<tr><td style="padding-top: 40px"><img src="${base_url}/images/email/footer.png"></td></tr>
+<tr><td style="font-size: 12px; text-align: center">
 If you no longer wish to receive announcements from Whirled, adjust your
 preferences on the <a href="${base_url}#me-account">Whirled Account</a> page.
 </td></tr>

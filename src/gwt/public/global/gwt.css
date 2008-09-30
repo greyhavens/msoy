@@ -782,23 +782,6 @@ img, embed, applet, object {
   width: 300px;
 }
 
-.clickBox {
-  border: 1px solid #CCCCCC;
-  margin: 5px;
-  padding: 5px; /* TODO: IE won't like */
-}
-
-.clickBox .Label {
-  white-space: nowrap;
-  width: 110px;
-  overflow: hidden;
-}
-
-.clickBox .Name {
-  font-size: 14px;
-  padding-top: 5px;
-}
-
 .memberStatus {
   font-size: 14px;
 }

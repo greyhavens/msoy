@@ -1,11 +1,11 @@
 /**
  * $Id$
  *
- * CSS styles shared (really) )globally. DO NOT put GWT stylings in here.
+ * CSS styles shared (really) globally. DO NOT put GWT stylings in here.
  * Global GWT stylings go in gwt.css.
  *
- * Note: changes to these stylings should be matched by changes to
- * rsrc/email/wrapper/message.html's inline stylings.
+ * Note: changes to these stylings should be matched by changes to the inline stylings in:
+ * rsrc/email/wrapper/message.html
  */
 
 html, body {
@@ -50,4 +50,22 @@ blockquote {
   margin-left: 15px;
   margin-top: 5px;
   margin-bottom: 10px;
+}
+
+/** We have these stylings here so that we can copy click boxes into HTML announcement emails. */
+.clickBox {
+  border: 1px solid #CCCCCC;
+  margin: 5px;
+  padding: 5px; /* TODO: IE won't like */
+}
+
+.clickBox .Label {
+  white-space: nowrap;
+  width: 110px;
+  overflow: hidden;
+}
+
+.clickBox .Name {
+  font-size: 14px;
+  padding-top: 5px;
 }
