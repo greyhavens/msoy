@@ -29,7 +29,7 @@ import com.threerings.messaging.Replier;
  * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
-public class MoneyMessageReceiver
+public class MoneyMessageListener
     implements Shutdowner
 {
     /**
@@ -38,7 +38,7 @@ public class MoneyMessageReceiver
      * @param conn Connection to listen for messages on.
      * @param logic MoneyLogic implementation to call.
      */
-    public MoneyMessageReceiver (final MessageConnection conn, final MoneyLogic logic, 
+    public MoneyMessageListener (final MessageConnection conn, final MoneyLogic logic, 
         final MemberRepository memberRepo, final ShutdownManager sm, final Invoker invoker)
     {
         _conn = conn;
@@ -189,7 +189,7 @@ public class MoneyMessageReceiver
         }
     }
     
-    protected static final Logger logger = Logger.getLogger(MoneyMessageReceiver.class);
+    protected static final Logger logger = Logger.getLogger(MoneyMessageListener.class);
     
     protected final MessageConnection _conn;
     protected final MoneyLogic _logic;

@@ -98,7 +98,7 @@ public class MoneyLogic
         _userActionRepo = userActionRepo;
         _eventLog = eventLog;
         _expirer = new MoneyTransactionExpirer(repo, invoker, sm);
-        _msgReceiver = new MoneyMessageReceiver(conn, this, memberRepo, sm, invoker);
+        _msgReceiver = new MoneyMessageListener(conn, this, memberRepo, sm, invoker);
         _nodeActions = nodeActions;
         _exchange = exchange;
         _blingDistributor = blingDistributor;
@@ -702,7 +702,7 @@ public class MoneyLogic
     protected final UserActionRepository _userActionRepo;
     protected final MoneyRepository _repo;
     protected final PriceQuoteCache _priceCache;
-    protected final MoneyMessageReceiver _msgReceiver;
+    protected final MoneyMessageListener _msgReceiver;
     protected final MoneyNodeActions _nodeActions;
     protected final BlingPoolDistributor _blingDistributor;
 }

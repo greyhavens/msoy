@@ -819,13 +819,11 @@
            debug="on" optimize="${build.optimize}" deprecation="on" target="1.5">
       <classpath refid="classpath"/>
       <include name="**/*Receiver.java"/>
-      <exclude name="**/MoneyMessageReceiver.java"/>
     </javac>
     <!-- now generate the associated files -->
     <receiver header="lib/SOURCE_HEADER" classpathref="classpath">
       <fileset dir="${src.dir}">
         <include name="**/*Receiver.java"/>
-        <exclude name="**/MoneyMessageReceiver.java"/>
       </fileset>
     </receiver>
   </target>
