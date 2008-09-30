@@ -97,7 +97,7 @@ public class GameDetailPanel extends SmartTable
 
         FlowPanel play = new FlowPanel();
         play.setStyleName("playPanel");
-        play.add(PlayButton.create(game.gameId, detail.minPlayers, detail.maxPlayers,
+        play.add(PlayButton.create(gameId, detail.minPlayers, detail.maxPlayers,
                                    game.isInWorld(), game.groupId, _msgs.gdpNoWhirled(),
                                    PlayButton.Size.LARGE));
         if (detail.playingNow > 0) {
