@@ -199,6 +199,9 @@ public class GameGameRegistry
             }
             @Override
             public void handleSuccess () {
+                if (plobj.isActive()) {
+                    return; // the player has logged off, nevermind
+                }
                 plobj.startTransaction();
                 try {
                     addContent(GameData.LEVEL_DATA, _lpacks);
