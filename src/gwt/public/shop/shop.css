@@ -174,11 +174,12 @@
 
 .listingDetailPanel .Info {
   margin-left: auto;
+  font-size: 13px;
 }
 
 .listingDetailPanel .Info .What {
-  font-weight: bold;
   text-align: right;
+  padding-right: 5px;
 }
 
 .listingDetailPanel .Buy {

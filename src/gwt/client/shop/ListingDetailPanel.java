@@ -75,7 +75,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         // create a table to display miscellaneous info and admin/owner actions
         SmartTable info = new SmartTable("Info", 0, 0);
         info.setText(0, 0, _msgs.listingListed(), 1, "What");
-        info.setText(0, 1, MsoyUI.formatDate(_listing.listedDate));
+        info.setText(0, 1, MsoyUI.formatDate(_listing.listedDate, false));
         info.setText(1, 0, _msgs.listingPurchases(), 1, "What");
         info.setText(1, 1, "" + _listing.purchases);
         info.setText(2, 0, _msgs.favoritesCount(), 1, "What");
