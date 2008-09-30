@@ -21,7 +21,7 @@ public interface WebRoomServiceAsync
     void loadMemberRooms (int memberId, AsyncCallback<WebRoomService.MemberRoomsResult> callback);
 
     /**
-     * The asynchronous version of {@link WebRoomService.loadGroupRooms}
+     * The asynchronous version of {@link WebRoomService#loadGroupRooms}
      */
     void loadGroupRooms (int groupId, AsyncCallback<WebRoomService.RoomsResult> callback);
 }

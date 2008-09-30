@@ -52,6 +52,6 @@ public class GroupDetail
     /** The number of people online in this group's scenes (as of the last snapshot). */
     public int population;
 
-    /** The top {@link NUM_TOP_MEMBERS} members of this group, ordered by rank */
+    /** The top {@link #NUM_TOP_MEMBERS} members of this group, ordered by rank */
     public List<GroupMemberCard> topMembers;
 }

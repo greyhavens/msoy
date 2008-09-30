@@ -4,12 +4,13 @@
 package client.editem;
 
 import com.google.gwt.core.client.GWT;
+
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Video;
 import com.threerings.msoy.item.data.all.Item;
 
 /**
- * A class for creating and editing {@link Photo} digital items.
+ * A class for creating and editing {@link Video} digital items.
  */
 public class VideoEditor extends ItemEditor
 {

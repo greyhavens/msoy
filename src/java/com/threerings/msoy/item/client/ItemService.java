@@ -33,7 +33,7 @@ public interface ItemService extends InvocationService
 
     /**
      * Retrieve the catalog id for the specified item.
-     * @return to the listener, an Integer object or null.
+     * @returns to the listener, an Integer object or null.
      * null - the specified item is owned by the player, we should just show the detail
      * page.
      * 0 - the item is not listed in the catalog

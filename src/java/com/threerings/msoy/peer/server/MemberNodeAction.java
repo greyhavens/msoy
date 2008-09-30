@@ -16,7 +16,7 @@ import com.threerings.msoy.peer.data.MsoyNodeObject;
 
 /**
  * An action to be invoked on every server on which a member is logged in. You must read {@link
- * NodeAction} for caveats before using this class.
+ * PeerManager.NodeAction} for caveats before using this class.
  */
 public abstract class MemberNodeAction extends PeerManager.NodeAction
 {

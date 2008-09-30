@@ -128,10 +128,6 @@ public class MemberLogic
      * not eligible for the a/b test, return < 0.
      *
      * @param testName String identifier for the test
-     * @param trackingTimestamp When the visitor was first assigned tracking information
-     * @param affiliate String identifier for the visitor's affiliate (eg miniclip)
-     * @param vector String identifier for the visitor's vector
-     * @param creative String identifier for the visitor's creative
      * @param logEvent If true, track that this visitor was added to this group
      *
      * @return The a/b group the visitor has been assigned to, or < 0 for no group.

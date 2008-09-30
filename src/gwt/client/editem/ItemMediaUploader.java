@@ -33,8 +33,8 @@ public class ItemMediaUploader extends FlexTable
     public static final int MODE_PHOTO = 2;
 
     /**
-     * @param id the type of the uploader to create, e.g. {@link Item#MAIN_MEDIA} . This value is
-     * later passed to the bridge to identify the hash/mimeType returned by the server.
+     * @param mediaId the type of the uploader to create, e.g. {@link Item#MAIN_MEDIA} . This value 
+     * is later passed to the bridge to identify the hash/mimeType returned by the server.
      * @param type the type of media being chosen: {@link ItemEditor#TYPE_IMAGE}, etc.
      * @param mode whether we're uploading normal media, thumbnail media or normal media that
      * should also generate a thumbnail image when changed.

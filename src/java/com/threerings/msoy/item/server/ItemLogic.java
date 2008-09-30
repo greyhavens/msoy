@@ -270,7 +270,7 @@ public class ItemLogic
     /**
      * Ensures that the values specified in this item record are valid.
      *
-     * @param memrec the member that is doing the updating or creating.
+     * @param memberId the member that is doing the updating or creating.
      * @param orecord the unmodified record in the case of an update, null in the case of a create.
      * @param nrecord the newly created or updated item.
      *

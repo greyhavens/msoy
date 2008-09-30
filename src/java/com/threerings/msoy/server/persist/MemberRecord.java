@@ -12,6 +12,7 @@ import com.samskivert.jdbc.depot.annotation.*; // for Depot annotations
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
 import com.samskivert.util.StringUtil;
+import com.threerings.util.Name;
 
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.all.MemberName;

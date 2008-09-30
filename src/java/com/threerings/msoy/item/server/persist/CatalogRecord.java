@@ -104,7 +104,7 @@ public abstract class CatalogRecord extends PersistentRecord
     /** The cost to purchase a clone of this item. */
     public int cost;
 
-    /** The pricing of this item; {@see CatalogListing#pricing}. */
+    /** The pricing of this item; See {@link CatalogListing#pricing}. */
     public int pricing;
 
     /** The number of unit sales after which to adjust the price or delist this item. */

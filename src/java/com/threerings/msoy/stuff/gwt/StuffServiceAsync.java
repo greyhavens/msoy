@@ -31,7 +31,7 @@ public interface StuffServiceAsync
     void remixItem (Item item, AsyncCallback<Item> callback);
 
     /**
-     * The asynchronous version of {@link StuffService#revertRemixClone}.
+     * The asynchronous version of {@link StuffService#revertRemixedClone}.
      */
     void revertRemixedClone (ItemIdent itemIdent, AsyncCallback<Item> callback);
 

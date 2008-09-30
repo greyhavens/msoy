@@ -39,7 +39,7 @@
   </fileset>
 
   <!-- override the src dirset and package names for the common javadoc target -->
-  <property name="javadoc.pkg.names" value="client.*,com.threerings.*"/>
+  <property name="javadoc.pkg.names" value="client.*,com.threerings.msoy.*"/>
   <path id="javadoc.src.path">
     <!-- TODO make this only look for bits inside of client/ -->
     <dirset dir="${gsrc.dir}">

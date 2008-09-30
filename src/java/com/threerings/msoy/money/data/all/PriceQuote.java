@@ -13,7 +13,7 @@ import com.threerings.msoy.money.data.all.Currency;
 
 /**
  * Contains secured prices when a member views an item. This can be cached and identified by a
- * {@link PriceKey}.
+ * PriceKey.
  *
  * @author Kyle Sampson <kyle@threerings.net>
  * @author Ray Greenwell <ray@threerings.net>

@@ -89,7 +89,7 @@ public class CommentRecord extends PersistentRecord
     /**
      * Converts this persistent record to a runtime record.
      *
-     * @param names a mapping from member id to {@link MemberCard} that should contain {@link
+     * @param cards a mapping from member id to {@link MemberCard} that should contain {@link
      * #memberId}.
      */
     public Comment toComment (Map<Integer, MemberCard> cards)

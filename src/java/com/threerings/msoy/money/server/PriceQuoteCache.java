@@ -10,8 +10,6 @@ import net.sf.ehcache.Element;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.threerings.msoy.item.data.all.ItemIdent;
-
 import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
@@ -42,9 +40,9 @@ public class PriceQuoteCache
     }
     
     /**
-     * Adds the quote to the cache. Subsequent calls to {@link #getEscrow(int, ItemIdent)}
-     * for this PriceKey will return the quote data, unless the cache is full and the
-     * quote is dropped to make room, or the quote expires.
+     * Adds the quote to the cache. Subsequent calls to {@link #getQuote} for this PriceKey will
+     * return the quote data, unless the cache is full and the quote is dropped to make room, or
+     * the quote expires.
      */
     public void addQuote (final PriceKey key, final PriceQuote quote)
     {

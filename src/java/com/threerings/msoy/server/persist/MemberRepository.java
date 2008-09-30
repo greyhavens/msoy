@@ -932,8 +932,6 @@ public class MemberRepository extends DepotRepository
 
     /**
      * Loads the member ids of the specified member's friends.
-     *
-     * @param limit a limit on the number of friend ids to load or 0 for all of them.
      */
     public IntSet loadFriendIds (int memberId)
     {

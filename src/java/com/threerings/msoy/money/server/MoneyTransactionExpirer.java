@@ -18,9 +18,6 @@ import com.threerings.msoy.money.server.persist.MoneyRepository;
  * Manages expiration of {@link MoneyTransactionRecord}s.  Coin records should
  * be removed from the database if they are more than 10 days old (by default).
  * 
- * This does not start automatically -- call {@link #start()} to start the background
- * thread.
- * 
  * @author Kyle Sampson <kyle@threerings.net>
  */
 public class MoneyTransactionExpirer

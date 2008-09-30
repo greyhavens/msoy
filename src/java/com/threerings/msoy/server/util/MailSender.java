@@ -92,8 +92,8 @@ public class MailSender
      * @param recip the recipient address.
      * @param sender the sender address.
      * @param template the identifier of the template to use for the body of the mail.
-     * @param an alternating list of string, object which are key/value pairs for substitution into
-     * the template.
+     * @param params an alternating list of string, object which are key/value pairs for 
+     * substitution into the template.
      */
     public void sendTemplateEmail (String recip, String sender, String template, Object ... params)
     {
@@ -115,7 +115,7 @@ public class MailSender
      * @param headers optional additional headers to add to the mail { key, value, key, value, ... }.
      * @param subject the subject of the email.
      * @param body the body of the email.
-     * @param whether or not the body is an HTML document or plain text.
+     * @param isHTML whether or not the body is an HTML document or plain text.
      */
     public void sendEmail (String recip, String sender, String[] headers, String subject,
                            String body, boolean isHTML)

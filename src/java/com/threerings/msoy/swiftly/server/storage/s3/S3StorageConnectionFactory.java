@@ -5,6 +5,8 @@ package com.threerings.msoy.swiftly.server.storage.s3;
 
 import com.threerings.s3.client.S3Connection;
 
+import com.threerings.msoy.swiftly.server.storage.ProjectS3Storage;
+
 /**
  * Interface for providing S3Connection instances to {@link ProjectS3Storage}
  *

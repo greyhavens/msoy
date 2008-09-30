@@ -11,6 +11,8 @@ import com.samskivert.util.IntMap;
 
 import com.threerings.presents.annotation.EventThread;
 
+import com.threerings.msoy.world.server.WorldWatcherManager;
+
 import static com.threerings.msoy.Log.log;
 
 /**

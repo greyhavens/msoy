@@ -833,10 +833,6 @@ public class AwardDelegate extends RatingDelegate
             }
         }
 
-        /**
-         * Called once {@link #secondsPlayed} is no longer needed to accumulate those seconds to
-         * our total second of playtime.
-         */
         public void accumSecondsPlayed () {
             _unnotedSecondsPlayed += _sessionSecondsPlayed;
             _sessionSecondsPlayed = 0;

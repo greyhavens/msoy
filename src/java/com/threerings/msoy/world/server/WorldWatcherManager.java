@@ -7,15 +7,10 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.Tuple;
-import com.threerings.msoy.data.MemberLocation;
-import com.threerings.msoy.data.all.MemberName;
-import com.threerings.msoy.game.server.WorldGameRegistry;
-import com.threerings.msoy.peer.data.HostedRoom;
-import com.threerings.msoy.peer.server.MsoyPeerManager;
-import com.threerings.msoy.peer.server.MsoyPeerManager.RemoteMemberObserver;
 
 import com.threerings.presents.annotation.EventThread;
 import com.threerings.presents.data.ClientObject;
@@ -24,6 +19,14 @@ import com.threerings.presents.dobj.ObjectDestroyedEvent;
 import com.threerings.presents.server.InvocationManager;
 import com.threerings.presents.server.ShutdownManager;
 import com.threerings.presents.server.ShutdownManager.Shutdowner;
+
+import com.threerings.msoy.data.MemberLocation;
+import com.threerings.msoy.data.all.MemberName;
+import com.threerings.msoy.game.server.WorldGameRegistry;
+import com.threerings.msoy.peer.data.HostedRoom;
+import com.threerings.msoy.peer.server.MsoyPeerManager;
+import com.threerings.msoy.peer.server.MsoyPeerManager.RemoteMemberObserver;
+import com.threerings.msoy.world.client.WatcherReceiver;
 
 import static com.threerings.msoy.Log.log;
 

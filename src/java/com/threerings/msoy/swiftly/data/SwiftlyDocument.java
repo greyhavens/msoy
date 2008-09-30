@@ -133,7 +133,6 @@ public abstract class SwiftlyDocument
 
     /**
      * Tell the supplied editor to load this document, at the supplied row and column.
-     * @param highlight indicates whether the new location should be highlighted briefly
      */
     public abstract void loadInEditor (SwiftlyDocumentEditor editor, PositionLocation location);
 

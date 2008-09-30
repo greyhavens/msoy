@@ -305,7 +305,7 @@ public class UploadUtil
      * filesystem first, and then s3 if enabled. A map of headers to be added to the s3 object may
      * be supplied.
      *
-     * @return MediaInfo Note that the dimensions and constraint will be zero in the returned
+     * @returns MediaInfo Note that the dimensions and constraint will be zero in the returned
      * MediaInfo object because the image is not decoded.
      */
     protected static void publishStream (InputStream input, String subdirectory, String name,
@@ -472,7 +472,7 @@ public class UploadUtil
      * Computes and fills in the constraints on the supplied image, scaling thumbnails as
      * necessary, and publishes the image data to the media store.
      *
-     * @param size the size of the thumbnail to generate, or null to omit the thumbnail.
+     * @param thumbSize the size of the thumbnail to generate, or null to omit the thumbnail.
      *
      * @return a MediaInfo object filled in with the published image info.
      */

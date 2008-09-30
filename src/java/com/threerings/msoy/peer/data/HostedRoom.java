@@ -3,6 +3,8 @@
 
 package com.threerings.msoy.peer.data;
 
+import com.threerings.msoy.room.data.MsoySceneModel;
+
 /**
  * Represents a hosted room on a particular server.
  */

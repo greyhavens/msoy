@@ -10,7 +10,7 @@ import com.threerings.msoy.data.MemberObject;
  * A reference to a client-side executable which can participate in the pseudo-server control
  * mechanism.
  *
- * {@see EntityControl}
+ * @see EntityControl
  */
 public abstract class Controllable extends SimpleStreamableObject
     implements Comparable<Controllable>

@@ -6,6 +6,8 @@ package com.threerings.msoy.bureau.client;
 import com.threerings.presents.client.InvocationService;
 import com.threerings.presents.client.Client;
 
+import com.threerings.msoy.bureau.data.ServerRegistryObject;
+
 /**
  * Service for use by a bureau launcher.
  */

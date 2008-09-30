@@ -196,13 +196,12 @@ public class MoneyLogic
      * Purchases an item. This will only update the appropriate
      * accounts of an exchange of money -- item fulfillment must be handled separately.
      *
-     * @param buyer the member record of the buying user.
+     * @param buyerRec the member record of the buying user.
      * @param item the identity of the catalog listing.
      * @param listedCurrency the currency at which the item is listed.
      * @param listedAmount the amount at which the item is listed.
-     * @param buyType the currency the buyer is using
+     * @param buyCurrency the currency the buyer is using
      * @param authedAmount the amount the buyer has validated to purchase the item.
-     * @param isSupport is the buyer a member of the support staff?
      * @throws NotSecuredException iff there is no secured price for the item and the authorized
      * buy amount is not enough money.
      * @return a BuyResult, or null if the BuyOperation returned false.
@@ -539,9 +538,9 @@ public class MoneyLogic
     /**
      * Secures a price for an item. This ensures the user will be able to purchase an item
      * for a set price. This price will remain available for some amount of time (specified by
-     * {@link MoneyConfiguration#getSecurePriceDuration()}. The secured price may also be removed
+     * {@link PriceQuoteCache#SECURED_PRICE_DURATION}. The secured price may also be removed
      * if the maximum number of secured prices system-wide has been reached (specified by
-     * {@link MoneyConfiguration#getMaxSecuredPrices()}. In either case, an attempt to buy the
+     * {@link PriceQuoteCache#MAX_SECURED_PRICES}. In either case, an attempt to buy the
      * item will fail with a {@link NotSecuredException}. If a guest id is specified, the quote
      * is returned, but not saved in the cache.
      *

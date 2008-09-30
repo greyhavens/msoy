@@ -89,7 +89,7 @@ public interface SwiftlyService extends RemoteService
 
     /**
      * Adds a collaborator from a project.
-     * @return the MemberName record of the member that just joined.
+     * @returns the MemberName record of the member that just joined.
      */
     void joinCollaborators (int projectId, MemberName name)
         throws ServiceException;

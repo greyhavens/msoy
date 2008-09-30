@@ -4,6 +4,7 @@
 package client.ui;
 
 import com.google.gwt.user.client.Element;
+import com.google.gwt.user.client.ui.impl.PopupImpl;
 import com.google.gwt.user.client.ui.impl.PopupImplMozilla;
 
 /**

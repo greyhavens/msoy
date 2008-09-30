@@ -13,7 +13,7 @@ import com.threerings.gwt.ui.SmartTable;
 import client.images.box.BoxImages;
 
 /**
- * Basically a {@link VerticalPanel} with a rounded background. It's not actually a VerticalPanel
+ * Basically a VerticalPanel with a rounded background. It's not actually a VerticalPanel
  * so don't get any funny ideas.
  */
 public class RoundBox extends SmartTable
