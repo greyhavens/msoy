@@ -13,6 +13,7 @@ import com.threerings.util.Log;
 import com.threerings.flash.Vector3;
 import com.threerings.msoy.item.data.all.Decor;
 import com.threerings.msoy.room.client.ClickLocation;
+import com.threerings.msoy.room.client.DecorSprite;
 import com.threerings.msoy.room.client.RoomElement;
 import com.threerings.msoy.room.client.RoomMetrics;
 import com.threerings.msoy.room.client.RoomView;
@@ -38,6 +39,7 @@ public class RoomLayoutStandard implements RoomLayout
     // from interface RoomLayout
     public function update (data :Decor) :void
     {
+        _decor = data;
         _metrics.update(data);
     }
 
@@ -276,7 +278,7 @@ public class RoomLayoutStandard implements RoomLayout
         case RoomCodes.LAYOUT_NORMAL:
             var loc :MsoyLocation = target.getLocation();
             var screen :Point = _metrics.roomToScreen(loc.x, loc.y, loc.z);
-            var scale :Number = _metrics.scaleAtDepth(loc.z);
+            var scale :Number = _metrics.scaleAtDepth(loc.z) * getDecorScale(target);
             offset = (offset != null ? offset : NO_OFFSET);
             target.setScreenLocation(screen.x - offset.x, screen.y - offset.y, scale);
             break;
@@ -338,6 +340,14 @@ public class RoomLayoutStandard implements RoomLayout
         }
     }
 
+    protected function getDecorScale (element :RoomElement) :Number
+    {
+        if (element is DecorSprite) {
+            return 1; // The decor scale actually applies to everything but the decor. Smoke that!
+        }
+        return _decor.scale;
+    }
+
     /**
      * Return -1 if the element at the specified index should be in front of 
      * the comparison element, 1 if behind, or 0 to keep the same relative position.
@@ -381,6 +391,9 @@ public class RoomLayoutStandard implements RoomLayout
 
     /** Room metrics storage. */
     protected var _metrics :RoomMetrics;
+
+    /** The decor. */
+    protected var _decor :Decor;
 
     /** RoomView object that contains this instance. */
     protected var _parentView :RoomView;

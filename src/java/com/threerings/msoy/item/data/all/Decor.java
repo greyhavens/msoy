@@ -51,6 +51,9 @@ public class Decor extends Item
     /** Bitmap offset along the y axis, in room units. */
     public float offsetY;
 
+    /** The adjusted scale of entities in this room. */
+    public float scale;
+
     @Override // from Item
     public byte getType ()
     {
@@ -63,7 +66,7 @@ public class Decor extends Item
         return super.isConsistent() &&
             nonBlank(name, MAX_NAME_LENGTH) &&
             type < TYPE_COUNT && width > 0 && height > 0 && depth > 0 &&
-            horizon <= 1.0f && horizon >= 0.0f;
+            horizon <= 1.0f && horizon >= 0.0f && scale > 0;
     }
 
     @Override // from Item

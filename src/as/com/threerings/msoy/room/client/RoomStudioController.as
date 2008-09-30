@@ -133,11 +133,12 @@ public class RoomStudioController extends RoomController
         if (UberClient.getMode() == UberClientModes.DECOR_VIEWER) {
             decor = new Decor();
             decor.type = int(params.decorType);
+            decor.hideWalls = ("true" == String(params.decorHideWalls));
             decor.width = int(params.decorWidth);
             decor.height = int(params.decorHeight);
             decor.depth = int(params.decorDepth);
             decor.horizon = Number(params.decorHorizon);
-            decor.hideWalls = ("true" == String(params.decorHideWalls));
+            decor.scale = Number(params.decorScale);
             decor.offsetX = Number(params.decorOffsetX);
             decor.offsetY = Number(params.decorOffsetY);
             decor.furniMedia = new StudioMediaDesc(params.media as String);

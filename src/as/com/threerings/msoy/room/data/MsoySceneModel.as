@@ -263,13 +263,14 @@ public class MsoySceneModel extends SceneModel
         decor.furniMedia = new DefaultItemMediaDesc(
             MediaDesc.IMAGE_PNG, Item.DECOR, Item.MAIN_MEDIA);
         decor.type = Decor.IMAGE_OVERLAY;
-        decor.depth = 400;
+        decor.hideWalls = false;
         decor.width = 800;
         decor.height = 494;
+        decor.depth = 400;
         decor.horizon = 0.5;
+        decor.scale = 1;
         decor.offsetX = 0;
         decor.offsetY = 0;
-        decor.hideWalls = false;
         return decor;
     }
     

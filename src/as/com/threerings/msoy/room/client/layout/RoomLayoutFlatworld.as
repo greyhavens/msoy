@@ -66,9 +66,9 @@ public class RoomLayoutFlatworld extends RoomLayoutStandard
         var loc :MsoyLocation = target.getLocation();
         offset = (offset != null) ? offset : NO_OFFSET;
 
-        // simply position them at their straightforward pixel location, scale 1.
+        // simply position them at their straightforward pixel location, default scale.
         target.setScreenLocation(loc.x * _metrics.sceneWidth - offset.x,
-           ((1 - loc.y) * _metrics.sceneHeight) - offset.y, 1);
+           ((1 - loc.y) * _metrics.sceneHeight) - offset.y, getDecorScale(target));
         // z ordering can still be used for layering
         adjustZOrder(target as DisplayObject);
     }
@@ -79,7 +79,5 @@ public class RoomLayoutFlatworld extends RoomLayoutStandard
         // horizon doesn't matter - just fill up the lower quarter
         return 0.25;
     }
-
 }
 }
-    

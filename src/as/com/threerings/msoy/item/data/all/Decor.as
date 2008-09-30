@@ -54,6 +54,9 @@ public class Decor extends Item
     /** Bitmap offset along the y axis, in room units. */
     public var offsetY :Number;
 
+    /** The adjusted scale of entities in this room. */
+    public var scale :Number;
+
     public function Decor ()
     {
     }
@@ -82,6 +85,7 @@ public class Decor extends Item
         hideWalls = ins.readBoolean();
         offsetX = ins.readFloat();
         offsetY = ins.readFloat();
+        scale = ins.readFloat();
     }
 
     // from interface Streamable
@@ -96,6 +100,7 @@ public class Decor extends Item
         out.writeBoolean(hideWalls);
         out.writeFloat(offsetX);
         out.writeFloat(offsetY);
+        out.writeFloat(scale);
     }
 
     // from Item

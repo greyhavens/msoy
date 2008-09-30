@@ -190,7 +190,7 @@ public class RoomStudioView extends RoomView
         super.relayout();
 
         if (_avatar != null) {
-            relayoutSprites([ _avatar ]);
+            relayoutSprite(_avatar);
         }
     }
 

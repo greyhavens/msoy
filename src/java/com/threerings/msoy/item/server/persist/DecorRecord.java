@@ -4,6 +4,7 @@
 package com.threerings.msoy.item.server.persist;
 
 import com.samskivert.jdbc.depot.Key;
+import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.TableGenerator;
 import com.samskivert.jdbc.depot.expression.ColumnExp;
 
@@ -73,6 +74,13 @@ public class DecorRecord extends ItemRecord
     /** The qualified column identifier for the {@link #offsetY} field. */
     public static final ColumnExp OFFSET_Y_C =
         new ColumnExp(DecorRecord.class, OFFSET_Y);
+
+    /** The column identifier for the {@link #scale} field. */
+    public static final String SCALE = "scale";
+
+    /** The qualified column identifier for the {@link #scale} field. */
+    public static final ColumnExp SCALE_C =
+        new ColumnExp(DecorRecord.class, SCALE);
 
     /** The qualified column identifier for the {@link #itemId} field. */
     public static final ColumnExp ITEM_ID_C =
@@ -179,7 +187,11 @@ public class DecorRecord extends ItemRecord
     /** Bitmap offset along the y axis, in room units. */
     public float offsetY;
 
-    public static final int SCHEMA_VERSION = 2 +
+    /** The adjusted scale of entities in this room. */
+    @Column(defaultValue="1")
+    public float scale;
+
+    public static final int SCHEMA_VERSION = 3 +
         BASE_SCHEMA_VERSION * BASE_MULTIPLIER;
 
     @Override // from ItemRecord
@@ -202,6 +214,7 @@ public class DecorRecord extends ItemRecord
         hideWalls = decor.hideWalls;
         offsetX = decor.offsetX;
         offsetY = decor.offsetY;
+        scale = decor.scale;
     }
 
     @Override // from ItemRecord
@@ -216,6 +229,7 @@ public class DecorRecord extends ItemRecord
         object.hideWalls = hideWalls;
         object.offsetX = offsetX;
         object.offsetY = offsetY;
+        object.scale = scale;
         return object;
     }
 

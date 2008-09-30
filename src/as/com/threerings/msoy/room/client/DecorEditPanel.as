@@ -94,10 +94,11 @@ public class DecorEditPanel extends FlyingPanel
 
         _decor.type = int(ROOM_TYPES[_roomType.selectedIndex]);
         _decor.hideWalls = _hideWalls.selected;
-        _decor.horizon = _horizon.value;
-        _decor.depth = _depth.value;
         _decor.width = int(_width.text);
         _decor.height = int(_height.text);
+        _decor.depth = _depth.value;
+        _decor.horizon = _horizon.value;
+        _decor.scale = _scale.value;
         _decor.offsetX = int(_xoff.text);
         _decor.offsetY = int(_yoff.text);
 
@@ -113,27 +114,28 @@ public class DecorEditPanel extends FlyingPanel
     }
 
     protected function updateParameters (
-        width :int, height :int, depth :int, horizon :Number, type :int,
-        offsetX :Number, offsetY :Number, hideWalls :Boolean) :void
+        type :int, hideWalls :Boolean, width :int, height :int, depth :int,
+        horizon :Number, scale :Number, offsetX :Number, offsetY :Number) :void
     {
+        _decor.type = type;
+        _decor.hideWalls = hideWalls;
         _decor.width = width;
         _decor.height = height;
         _decor.depth = depth;
-        _decor.type = type;
         _decor.horizon = horizon;
+        _decor.scale = scale;
         _decor.offsetX = offsetX;
         _decor.offsetY = offsetY;
-        _decor.hideWalls = hideWalls;
 
         _suppressSaves = true;
         try {
             _roomType.selectedIndex = ROOM_TYPES.indexOf(type);
             _hideWalls.selected = hideWalls;
-            // TODO: scale!
-            _depth.value = depth;
-            _horizon.value = horizon;
             _width.text = String(width);
             _height.text = String(height);
+            _depth.value = depth;
+            _horizon.value = horizon;
+            _scale.value = scale;
             _xoff.text = String(offsetX);
             _yoff.text = String(offsetY);
             _checkRoomTypes()
@@ -163,8 +165,8 @@ public class DecorEditPanel extends FlyingPanel
             }
 
             ExternalInterface.call("updateDecor",
-                _decor.width, _decor.height, _decor.depth, _decor.horizon,
-                _decor.type, _decor.offsetX, _decor.offsetY, _decor.hideWalls);
+                _decor.type, _decor.hideWalls, _decor.width, _decor.height, _decor.depth,
+                _decor.horizon, _decor.scale, _decor.offsetX, _decor.offsetY);
 
         } catch (e :Error) {
             log.warning("Unable to send decor to hosting page.", e);
@@ -187,17 +189,19 @@ public class DecorEditPanel extends FlyingPanel
 
         _scale = new VSlider();
         _scale.liveDragging = true;
-        _scale.maximum = 1;
-        _scale.minimum = 0;
+        _scale.maximum = 4;
+        _scale.minimum = .01;
+        _scale.tickValues = [ 1 ];
 
         _horizon = new VSlider();
         _horizon.liveDragging = true;
         _horizon.maximum = 1;
         _horizon.minimum = 0;
+        _horizon.tickValues = [ .5 ];
 
         _depth = new VSlider();
         _depth.liveDragging = true;
-        _depth.maximum = 2000;
+        _depth.maximum = 2000; // TODO: higher?
         _depth.minimum = 0;
 
         var expertBtn :CommandCheckBox = new CommandCheckBox(Msgs.STUDIO.get("l.dimensions"));

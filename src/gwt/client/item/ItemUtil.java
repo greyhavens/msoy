@@ -155,9 +155,10 @@ public class ItemUtil
      */
     public static String createDecorViewerParams (Decor decor)
     {
-        return "decorType=" + decor.type + "&decorWidth=" + decor.width +
-            "&decorHeight=" + decor.height + "&decorDepth=" + decor.depth +
-            "&decorHorizon=" + decor.horizon + "&decorHideWalls=" + decor.hideWalls +
+        return "decorType=" + decor.type + "&decorHideWalls=" + decor.hideWalls +
+            "&decorWidth=" + decor.width + "&decorHeight=" + decor.height +
+            "&decorDepth=" + decor.depth +
+            "&decorHorizon=" + decor.horizon + "&decorScale=" + decor.scale +
             "&decorOffsetX=" + decor.offsetX + "&decorOffsetY=" + decor.offsetY +
             "&username=Test%20Avatar"; // add a name for the test avatar..
     }

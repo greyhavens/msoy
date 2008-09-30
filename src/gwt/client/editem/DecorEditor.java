@@ -33,6 +33,7 @@ public class DecorEditor extends ItemEditor
         d.offsetX = 0;
         d.offsetY = 0;
         d.hideWalls = false;
+        d.scale = 1;
         return d;
     }
 
@@ -53,8 +54,8 @@ public class DecorEditor extends ItemEditor
                     _decor.depth = (short) height;
                     // clear offsets
                     _decor.offsetX = _decor.offsetY = 0;
+                    _decor.scale = 1;
                     sendDecorUpdateToFlash();
-                    updateDebuggingLabel();
                 }
                 return null;
             }
@@ -85,53 +86,25 @@ public class DecorEditor extends ItemEditor
         super.setItem(item);
         _decor = (Decor)item;
 
-        updateDebuggingLabel();
         sendDecorUpdateToFlash();
-    }
-
-    /**
-     * When the decor item had changed, updates numeric values being displayed.
-     */
-    protected void updateDebuggingLabel ()
-    {
-        // the following is useful while debugging gwt/flash interop
-
-        /*
-        String typelabel = _emsgs.decorType_None();
-        switch (_decor.type) {
-        case Decor.IMAGE_OVERLAY: typelabel = _emsgs.decorType_Standard(); break;
-        case Decor.FIXED_IMAGE: typelabel = _emsgs.decorType_Fixed(); break;
-        }
-
-        // GWT doesn't emulate java.text.NumberFormat...
-        // so we "format" this float by hand to three decimal places. ugh. :(
-        String horizon = Float.toString(Math.round (_decor.horizon * 1000f) / 1000f);
-
-        MsoyUI.info(
-            _emsgs.decorDimensions() + " " + _decor.width + " x " +
-            _decor.height + " x " + _decor.depth + "<br/>" +
-            _emsgs.decorHorizon() + " " + horizon + " / " +
-            _decor.offsetX + ", " + _decor.offsetY + ", " + _decor.hideWalls + "<br/>" +
-            _emsgs.decorType() + " " + typelabel);
-        */
     }
 
     /**
      * Receives a number of values from DecorViewer, and updates the Decor item accordingly.
      */
     protected void updateDecorFromFlash (
-        short width, short height, short depth, float horizon,
-        byte type, float offsetX, float offsetY, boolean hideWalls)
+        byte type, boolean hideWalls, short width, short height, short depth,
+        float horizon, float scale, float offsetX, float offsetY)
     {
+        _decor.type = type;
+        _decor.hideWalls = hideWalls;
         _decor.width = width;
         _decor.height = height;
         _decor.depth = depth;
         _decor.horizon = horizon;
-        _decor.type = type;
+        _decor.scale = scale;
         _decor.offsetX = offsetX;
         _decor.offsetY = offsetY;
-        _decor.hideWalls = hideWalls;
-        updateDebuggingLabel();
     }
 
     /**
@@ -142,8 +115,8 @@ public class DecorEditor extends ItemEditor
         if (_decor.furniMedia != null) {
             mediaUpdateHelper(_decor.furniMedia.getMediaPath());
         }
-        decorUpdateHelper(_decor.width, _decor.height, _decor.depth, _decor.horizon, _decor.type,
-                          _decor.offsetX, _decor.offsetY, _decor.hideWalls);
+        decorUpdateHelper(_decor.type, _decor.hideWalls, _decor.width, _decor.height,
+            _decor.depth, _decor.horizon, _decor.scale, _decor.offsetX, _decor.offsetY);
     }
 
     /**
@@ -153,21 +126,21 @@ public class DecorEditor extends ItemEditor
         $wnd.updateDecorInit = function () {
             editor.@client.editem.DecorEditor::sendDecorUpdateToFlash()();
         };
-        $wnd.updateDecor = function (width, height, depth, horizon,
-                                     type, offsetX, offsetY, hideWalls)
+        $wnd.updateDecor = function (type, hideWalls, width, height, depth, horizon, scale,
+                                     offsetX, offsetY)
         {
-            editor.@client.editem.DecorEditor::updateDecorFromFlash(SSSFBFFZ)(
-                width, height, depth, horizon, type, offsetX, offsetY, hideWalls);
+            editor.@client.editem.DecorEditor::updateDecorFromFlash(BZSSSFFFF)(
+                type, hideWalls, width, height, depth, horizon, scale, offsetX, offsetY);
         };
     }-*/;
 
     protected static native void decorUpdateHelper (
-        int width, int height, int depth, float horizon, byte type,
-        float offsetX, float offsetY, boolean hideWalls) /*-{
+        byte type, boolean hideWalls, int width, int height, int depth, float horizon, float scale,
+        float offsetX, float offsetY) /*-{
         var viewer = $doc.getElementById("decorViewer");
         if (viewer) {
             viewer.updateParameters(
-                width, height, depth, horizon, type, offsetX, offsetY, hideWalls);
+                type, hideWalls, width, height, depth, horizon, scale, offsetX, offsetY);
         }
     }-*/;
 
