@@ -674,22 +674,6 @@
     <copy file="${deploy.dir}/videoviewer.swf" todir="pages/clients/${version}"/>
   </target>
 
-  <!-- builds our awesome decor viewer -->
-  <target name="decorviewer" depends="asprepare">
-    <exec executable="${basedir}/bin/mxmlc" failonerror="true">
-      <arg value="-load-config"/>
-      <arg value="etc/msoy-config.xml"/>
-      <arg value="-compiler.optimize"/>
-      <arg value="-compiler.source-path=${asrc.dir}/"/>
-      <arg value="-compiler.source-path=rsrc/{locale}/i18n"/>
-      <arg value="-output"/>
-      <arg value="${deploy.dir}/decorviewer.swf"/>
-      <arg value="-file-specs"/>
-      <arg value="${asrc.dir}/DecorViewer.mxml"/>
-    </exec>
-    <copy file="${deploy.dir}/decorviewer.swf" todir="pages/clients/${version}"/>
-  </target>
-
   <!-- builds our neighborhood visualization client -->
   <target name="neighborhood">
     <ant dir="projects/neighborhood" target="dist" inheritAll="false"/>
@@ -992,7 +976,7 @@
   <!-- TODO: the tutorial target has been removed from flashapps until it compiles again after a
        the API shuffle is done, and the tutorial code has been refactored -->
   <!-- builds top-level flash applications. -->
-  <target name="flashapps" depends="asprepare,mediastub,videoviewer,decorviewer,remixer"
+  <target name="flashapps" depends="asprepare,mediastub,videoviewer,remixer"
           description="Rebuilds all of our Flash clients and applets.">
     <antcall target="ascompile"><param name="astype" value="world"/></antcall>
     <antcall target="ascompile"><param name="astype" value="game"/></antcall>
