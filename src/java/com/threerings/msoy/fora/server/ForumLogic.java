@@ -24,6 +24,7 @@ import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.data.MemberCard;
 
 import com.threerings.msoy.fora.gwt.ForumMessage;
+import com.threerings.msoy.fora.gwt.ForumService;
 import com.threerings.msoy.fora.gwt.ForumThread;
 import com.threerings.msoy.fora.server.persist.ForumMessageRecord;
 import com.threerings.msoy.fora.server.persist.ForumRepository;
