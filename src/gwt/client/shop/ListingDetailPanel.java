@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -77,7 +76,9 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         info.setText(0, 0, _msgs.listingListed(), 1, "What");
         info.setText(0, 1, MsoyUI.formatDate(_listing.listedDate, false));
         info.setText(1, 0, _msgs.listingPurchases(), 1, "What");
-        info.setText(1, 1, "" + _listing.purchases);
+        info.setText(1, 1, CatalogListing.PRICING_LIMITED_EDITION == _listing.pricing ?
+                _msgs.limitedPurchases(""+_listing.purchases, ""+_listing.salesTarget) :
+                ""+_listing.purchases);
         info.setText(2, 0, _msgs.favoritesCount(), 1, "What");
         info.setText(2, 1, "" + _listing.favoriteCount);
         _indeets.add(info);
