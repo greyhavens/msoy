@@ -35,8 +35,14 @@ public class GameStubServlet extends HttpServlet
             return;
         }
 
-        // TODO: massage the referer to just be "bla.com"
-        String site = StringUtil.deNull(req.getHeader("Referer"));
+        String site = req.getParameter("site");
+        if (StringUtil.isBlank(site)) {
+            site = req.getParameter("aff"); // OLD-STYLE
+            if (StringUtil.isBlank(site)) {
+                // I don't think this works, I don't think we get a referer...
+                site = StringUtil.deNull(req.getHeader("Referer"));
+            }
+        }
 
         String response;
 //        if (needToSendError) {
@@ -48,7 +54,7 @@ public class GameStubServlet extends HttpServlet
                 "/clients/" + DeploymentConfig.version + "/world-client.swf</url>" +
                 "<params>" +
                     //"guest=t" + SEP +
-                    "vec=gamestub:" + gameId + ":" + site + SEP +
+                    "vec=e." + StringUtil.encode(site) + ".games." + gameId + SEP +
                     "gameLobby=" + gameId +
                 "</params>";
 //        }
