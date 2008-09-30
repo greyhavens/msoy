@@ -68,10 +68,12 @@ public class VisitorInfo
     {
         // possibly create vars to direct the embed to a particular place
         if (inGame) {
-            return "gameLobby=" + placeId + "&" + VECTOR_ID + "=" + GAME_VECTOR + "-" + placeId;
+            return "gameLobby=" + placeId + "&" +
+                VECTOR_ID + "=e.whirled." + GAME_VECTOR + "." + placeId;
 
         } else if (placeId != 0) {
-            return "sceneId=" + placeId + "&" + VECTOR_ID + "=" + ROOM_VECTOR + "-" + placeId;
+            return "sceneId=" + placeId + "&" +
+                VECTOR_ID + "=e.whirled." + ROOM_VECTOR + "." + placeId;
 
         } else {
             return "";
@@ -79,9 +81,9 @@ public class VisitorInfo
     }
 
     /** This vector string represents an embedded room. */
-    protected static const ROOM_VECTOR :String = "room";
+    protected static const ROOM_VECTOR :String = "rooms";
 
     /** This vector string represents an embedded game. */
-    protected static const GAME_VECTOR :String = "game";
+    protected static const GAME_VECTOR :String = "games";
 }
 }
