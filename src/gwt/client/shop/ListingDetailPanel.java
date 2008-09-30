@@ -24,6 +24,7 @@ import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.CostUpdatedException;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.PriceQuote;
 
 import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
@@ -37,7 +38,6 @@ import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
-import client.ui.PriceLabel;
 import client.ui.StretchButton;
 import client.util.ClickCallback;
 import client.util.FlashClients;
@@ -50,24 +50,6 @@ import client.util.ServiceUtil;
  */
 public class ListingDetailPanel extends BaseItemDetailPanel
 {
-    protected Widget createBuyButton (Currency currency, int amount)
-    {
-        HorizontalPanel horiz = new HorizontalPanel();
-        horiz.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-        horiz.add(MsoyUI.createLabel("BUY!", null));
-        horiz.add(WidgetUtil.makeShim(10, 1));
-        horiz.add(MsoyUI.createImage(currency.getLargeIcon(), null));
-        horiz.add(WidgetUtil.makeShim(10, 1));
-        horiz.add(MsoyUI.createLabel(currency.format(amount), null));
-
-        StretchButton button = new StretchButton(currency == Currency.BARS ?
-                "orangeThick" : "blueThick", horiz);
-        button.addStyleName("buyButton");
-        new BuyCallback(button, currency);
-
-        return button;
-    }
-
     public ListingDetailPanel (CatalogModels models, CatalogListing listing)
     {
         super(listing.detail);
@@ -148,15 +130,17 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _buyPanel = new FlowPanel();
         _buyPanel.setStyleName("Buy");
 
-        // make the primary currency purchase button
+        // Buy with bars, plus a link on how to acquire some
+        _buyBars = new BuyButton(Currency.BARS, _listing.quote.getBars());
         if (DeploymentConfig.barsEnabled) {
-            _buyPanel.add(createBuyButton(Currency.BARS, _listing.quote.getBars()));
+            _buyPanel.add(_buyBars);
             Widget link = Link.buyBars(_msgs.listingBuyBars());
             link.setStyleName("GetBars");
             _buyPanel.add(link);
         }
 
-        _buyPanel.add(createBuyButton(Currency.COINS, _listing.quote.getCoins()));
+        _buyCoins = new BuyButton(Currency.COINS, _listing.quote.getCoins());
+        _buyPanel.add(_buyCoins);
         _details.add(_buyPanel);
 
         String when = MsoyUI.formatDate(_listing.listedDate, false);
@@ -221,6 +205,12 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         });
     }
 
+    protected void updatePrice (PriceQuote quote)
+    {
+        _buyBars.setAmount(quote.getBars());
+        _buyCoins.setAmount(quote.getCoins());
+    }
+
     protected class BuyCallback extends ClickCallback<Item>
     {
         public BuyCallback (SourcesClickEvents button, Currency currency)
@@ -252,12 +242,35 @@ public class ListingDetailPanel extends BaseItemDetailPanel
             super.onFailure(cause);
 
             if (cause instanceof CostUpdatedException) {
-                CostUpdatedException cue = (CostUpdatedException) cause;
-                _listing.quote = cue.getQuote();
-                _priceLabel.updatePrice(_listing.quote.getListedCurrency(),
-                                        _listing.quote.getListedAmount());
-                // TODO: update the alt label as well
+                updatePrice( ((CostUpdatedException)cause).getQuote());
             }
+        }
+
+        protected Currency _currency;
+    };
+
+    protected class BuyButton extends StretchButton
+    {
+        public BuyButton (Currency currency, int amount)
+        {
+            super(currency == Currency.BARS ? "orangeThick" : "blueThick", null);
+            _currency = currency;
+            addStyleName("buyButton");
+            new BuyCallback(this, _currency);
+            setAmount(amount);
+        }
+
+        public void setAmount (int amount)
+        {
+            HorizontalPanel horiz = new HorizontalPanel();
+            horiz.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
+            horiz.add(MsoyUI.createLabel(_msgs.shopBuy(), null));
+            horiz.add(WidgetUtil.makeShim(10, 1));
+            horiz.add(MsoyUI.createImage(_currency.getLargeIcon(), null));
+            horiz.add(WidgetUtil.makeShim(10, 1));
+            horiz.add(MsoyUI.createLabel(_currency.format(amount), null));
+
+            setContent(horiz);
         }
 
         protected Currency _currency;
@@ -271,7 +284,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     protected CatalogModels _models;
     protected CatalogListing _listing;
     protected FlowPanel _buyPanel;
-    protected PriceLabel _priceLabel;
+    protected BuyButton _buyBars, _buyCoins;
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
