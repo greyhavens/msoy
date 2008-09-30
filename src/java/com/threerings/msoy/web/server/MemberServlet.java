@@ -180,7 +180,7 @@ public class MemberServlet extends MsoyServiceServlet
     public void trackVisitorInfoCreation (VisitorInfo info)
         throws ServiceException
     {
-        _eventLog.visitorInfoCreated(info);
+        _eventLog.visitorInfoCreated(info, true);
     }
 
     // from WebMemberService

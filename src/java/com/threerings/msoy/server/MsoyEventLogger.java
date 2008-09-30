@@ -122,7 +122,9 @@ public class MsoyEventLogger
     public void userLoggedIn (int memberId, String tracker, boolean firstLogin, long createdOn,
         String sessionToken)
     {
-        post(new MsoyEvents.Experience(Type.ACCOUNT_LOGIN, memberId, tracker));
+        if (memberId != 0) {
+            post(new MsoyEvents.Experience(Type.ACCOUNT_LOGIN, memberId, tracker));
+        }
         post(new MsoyEvents.Login(memberId, firstLogin, sessionToken, createdOn));
     }
 
@@ -214,10 +216,10 @@ public class MsoyEventLogger
         post(new MsoyEvents.InviteViewed(inviteId));
     }
 
-    public void visitorInfoCreated (VisitorInfo info)
+    public void visitorInfoCreated (VisitorInfo info, boolean fromWeb)
     {
         if (info != null) {
-            post(new MsoyEvents.VisitorInfoCreated(info));
+            post(new MsoyEvents.VisitorInfoCreated(info, fromWeb));
         }
     }
 

@@ -79,14 +79,16 @@ public class MsoyClient extends WhirledClient
         MsoyAuthenticator.Account acct = (MsoyAuthenticator.Account) _authdata;
         MsoyCredentials credentials = (MsoyCredentials) getCredentials();
 
-        // retrieve or manufacture a new visitor ID for the new player (but not for viewers)
+        // if this is a guest account, they didn't get a VisitorInfo through the resolver.
+        // so let's pull one from their flash credentials, or manufacture a brand new one.
+        // (but only do this for real guests, not lurkers!)
         final boolean guest = _memobj.memberName.isGuest() && !_memobj.memberName.isViewer();
         if (_memobj.visitorInfo == null && guest) {
             if (credentials.visitorId != null) {
                 _memobj.visitorInfo = new VisitorInfo(credentials.visitorId, false);
             } else {
                 _memobj.visitorInfo = new VisitorInfo();
-                _eventLog.visitorInfoCreated(_memobj.visitorInfo);
+                _eventLog.visitorInfoCreated(_memobj.visitorInfo, false);
             }
         }
 

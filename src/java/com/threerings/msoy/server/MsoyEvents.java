@@ -417,11 +417,13 @@ public class MsoyEvents
     {
         @Index @Field final public Date timestamp;
         @Index @Field final public String tracker;
+        @Field final public boolean web;
 
-        public VisitorInfoCreated (VisitorInfo info)
+        public VisitorInfoCreated (VisitorInfo info, boolean web)
         {
             this.timestamp = new Date();
             this.tracker = toValue(info.id);
+            this.web = web;
         }
     }
 

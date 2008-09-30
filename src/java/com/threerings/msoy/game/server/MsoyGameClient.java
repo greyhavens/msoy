@@ -32,12 +32,14 @@ public class MsoyGameClient extends CrowdClient
         _plobj.setTokens(tokens == null ? new MsoyTokenRing() : tokens);
         MsoyGameCredentials credentials = (MsoyGameCredentials) getCredentials();
 
+        // if this is a guest account, they didn't get a VisitorInfo through the resolver.
+        // so let's pull one from their flash credentials, or manufacture a brand new one.
         if (_plobj.visitorInfo == null) {
             if (credentials.visitorId != null) {
                 _plobj.visitorInfo = new VisitorInfo(credentials.visitorId, false);
             } else {
                 _plobj.visitorInfo = new VisitorInfo();
-                _eventLog.visitorInfoCreated(_plobj.visitorInfo);
+                _eventLog.visitorInfoCreated(_plobj.visitorInfo, false);
             }
         }
 
