@@ -27,7 +27,7 @@ public class BackdropOverlay extends Shape
     // documentation inherited from interface RoomElement
     public function getRoomLayer () :int
     {
-        return RoomCodes.FOREGROUND_EFFECT_LAYER;
+        return RoomCodes.FOREGROUND_LAYER;
     }
     
     // documentation inherited from interface RoomElement

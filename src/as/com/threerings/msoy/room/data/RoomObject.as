@@ -10,7 +10,6 @@ import com.threerings.whirled.spot.data.SpotSceneObject;
 
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.EntityControl;
-import com.threerings.msoy.room.data.EffectData;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 
 /**
@@ -27,9 +26,6 @@ public class RoomObject extends SpotSceneObject
 
     /** The field name of the <code>controllers</code> field. */
     public static const CONTROLLERS :String = "controllers";
-
-    /** The field name of the <code>effects</code> field. */
-    public static const EFFECTS :String = "effects";
 
     /** The field name of the <code>propertySpaces</code> field. */
     public static const PROPERTY_SPACES :String = "propertySpaces";
@@ -56,11 +52,6 @@ public class RoomObject extends SpotSceneObject
      * Format: [ url | MediaDesc ]. */
     public static const MUSIC_ENDED :String = "musicEnded";
 
-    /** A message sent by the server when an effect should be added to
-     * the specified player's sprite.
-     * Format: [ oid, EffectData ]. */
-    public static const ADD_EFFECT :String = "addEffect";
-
     /** Our room service marshaller. */
     public var roomService :RoomMarshaller;
 
@@ -71,10 +62,6 @@ public class RoomObject extends SpotSceneObject
     /** Contains mappings for all controlled entities in this room. */
     public var controllers :DSet = new DSet();
     EntityControl; // reference to force linkage
-
-    /** Contains the currently displayed "effects" (temporary furniture..). */
-    public var effects :DSet = new DSet();
-    EffectData; // reference to force linkage
 
     /** The property spaces associated with this room. */
     public var propertySpaces :DSet = new DSet();
@@ -87,7 +74,6 @@ public class RoomObject extends SpotSceneObject
         roomService = (ins.readObject() as RoomMarshaller);
         memories = (ins.readObject() as DSet);
         controllers = (ins.readObject() as DSet);
-        effects = (ins.readObject() as DSet);
         propertySpaces = (ins.readObject() as DSet);
     }
 }

@@ -81,7 +81,6 @@ import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.Controllable;
 import com.threerings.msoy.room.data.ControllableAVRGame;
 import com.threerings.msoy.room.data.ControllableEntity;
-import com.threerings.msoy.room.data.EffectData;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.FurniData;
@@ -158,56 +157,6 @@ public class RoomManager extends SpotSceneManager
         } catch (InvocationException ie) {
             return ie.getMessage(); // return the error string
         }
-    }
-
-    /**
-     * Add a transient effect on the specified body.
-     */
-    public void addTransientEffect (int bodyOid, MediaDesc media)
-    {
-        addTransientEffect(bodyOid, media, EffectData.MODE_NONE, null);
-    }
-
-    /**
-     * Add a transient effect on the specified body.
-     */
-    public void addTransientEffect (int bodyOid, MediaDesc media, byte paramMode, String parameter)
-    {
-        EffectData effect = new EffectData();
-        effect.media = media;
-        effect.setParameter(paramMode, parameter);
-        _roomObj.postMessage(RoomObject.ADD_EFFECT, bodyOid, effect);
-    }
-
-    /**
-     * Create and add an effect.
-     */
-    public EffectData addEffect (MediaDesc media, MsoyLocation loc, byte roomLayer)
-    {
-        EffectData effect = createEffect(media, loc, roomLayer);
-        _roomObj.addToEffects(effect);
-        return effect;
-    }
-
-    /**
-     * Create a new effect for use in this room.
-     */
-    public EffectData createEffect (MediaDesc media, MsoyLocation loc, byte roomLayer)
-    {
-        EffectData effect = new EffectData();
-        effect.id = _nextEffectId++;
-        effect.media = media;
-        effect.loc = loc;
-        effect.roomLayer = roomLayer;
-        return effect;
-    }
-
-    /**
-     * Create a new effect for use in this room.
-     */
-    public EffectData createEffect (MediaDesc media, MsoyLocation loc)
-    {
-        return createEffect(media, loc, RoomCodes.FURNITURE_LAYER);
     }
 
     /**
@@ -1411,9 +1360,6 @@ public class RoomManager extends SpotSceneManager
 
     /** For all MemberInfo's, a mapping of ItemIdent to the member's oid. */
     protected Map<ItemIdent,Integer> _avatarIdents = Maps.newHashMap();
-
-    /** The next id to use for an effect. */
-    protected short _nextEffectId;
 
     @Inject protected MsoyPeerManager _peerMan;
     @Inject protected ItemManager _itemMan;

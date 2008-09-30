@@ -69,7 +69,6 @@ import com.threerings.msoy.room.data.ActorInfo;
 import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.ControllableAVRGame;
 import com.threerings.msoy.room.data.ControllableEntity;
-import com.threerings.msoy.room.data.EffectData;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.FurniData;
@@ -736,30 +735,6 @@ public class RoomObjectController extends RoomController
         }
     }
 
-    /**
-     * Do any needed clientside adjustments to the effect data.
-     */
-    public function adjustEffectData (effect :EffectData) :EffectData
-    {
-        switch (effect.actionType) {
-        default:
-            log.warning("Unhandled EffectData parameter mode: " + effect.actionType);
-            Log.dumpStack();
-            // fall through to MODE_NONE...
-
-        case EffectData.MODE_NONE:
-            return effect;
-
-        case EffectData.MODE_XLATE:
-            effect.actionData = Msgs.GENERAL.xlate(effect.actionData);
-            break;
-        }
-
-        // set the mode to MODE_NONE to indicate that we've adjusted
-        effect.actionType = EffectData.MODE_NONE;
-        return effect;
-    }
-
     // documentation inherited
     override public function willEnterPlace (plobj :PlaceObject) :void
     {
@@ -1042,10 +1017,6 @@ public class RoomObjectController extends RoomController
                 }
             }
             break;
-
-        case RoomObject.ADD_EFFECT:
-            addTransientEffect(args[0] as int /*bodyOid*/, args[1] as EffectData);
-            break;
         }
     }
 
@@ -1055,20 +1026,6 @@ public class RoomObjectController extends RoomController
     protected function musicFinishedPlaying (... ignored) :void
     {
         _roomObj.manager.invoke(RoomObject.MUSIC_ENDED, _music.getURL());
-    }
-
-    /**
-     * Add a transient effect to an actor sprite.
-     */
-    protected function addTransientEffect (bodyOid :int, effect :EffectData) :void
-    {
-        var actor :OccupantSprite = _roomObjectView.getOccupant(bodyOid);
-        if (actor != null) {
-            actor.addTransientEffect(adjustEffectData(effect));
-
-        } else {
-            log.info("Unable to find actor for transient effect [bodyOid=" + bodyOid + "].");
-        }
     }
 
     /**

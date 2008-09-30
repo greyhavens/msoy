@@ -33,16 +33,13 @@ public interface RoomCodes extends InvocationCodes
     public static final String E_CANNOT_SET_PROPERTY = "e.cannot_add_set_property";
 
     /** A room layer that is in front of normal furniture and such. */
-    public static final byte FOREGROUND_EFFECT_LAYER = 0;
+    public static final byte FOREGROUND_LAYER = 0;
 
     /** The normal room layer where most things are placed. */
     public static final byte FURNITURE_LAYER = 1;
 
-    /** A room layer that is behind of normal furniture, but in front of decor. */
-    public static final byte BACKGROUND_EFFECT_LAYER = 2;
-
     /** The backmost layer, should only be occupied by decor objects. */
-    public static final byte DECOR_LAYER = 3;
+    public static final byte DECOR_LAYER = 2;
 
     /** Layout constant: normal layout. */
     public static final byte LAYOUT_NORMAL = 0;

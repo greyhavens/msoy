@@ -22,9 +22,6 @@ public class RoomObject extends SpotSceneObject
     /** The field name of the <code>controllers</code> field. */
     public static final String CONTROLLERS = "controllers";
 
-    /** The field name of the <code>effects</code> field. */
-    public static final String EFFECTS = "effects";
-
     /** The field name of the <code>propertySpaces</code> field. */
     public static final String PROPERTY_SPACES = "propertySpaces";
     // AUTO-GENERATED: FIELDS END
@@ -50,11 +47,6 @@ public class RoomObject extends SpotSceneObject
      * Format: [ url ]. */
     public static final String MUSIC_ENDED = "musicEnded";
 
-    /** A message sent by the server when an effect should be added to
-     * the specified player's sprite.
-     * Format: [ oid, EffectData ]. */
-    public static final String ADD_EFFECT = "addEffect";
-
     /** Our room service marshaller. */
     public RoomMarshaller roomService;
 
@@ -63,9 +55,6 @@ public class RoomObject extends SpotSceneObject
 
     /** Contains mappings for all controlled entities in this room. */
     public DSet<EntityControl> controllers = new DSet<EntityControl>();
-
-    /** Contains the currently displayed "effects" (temporary furniture..). */
-    public DSet<EffectData> effects = new DSet<EffectData>();
 
     /** The property spaces associated with this room. */
     public DSet<RoomPropertiesEntry> propertySpaces = DSet.newDSet();
@@ -179,53 +168,6 @@ public class RoomObject extends SpotSceneObject
         requestAttributeChange(CONTROLLERS, value, this.controllers);
         DSet<EntityControl> clone = (value == null) ? null : value.typedClone();
         this.controllers = clone;
-    }
-
-    /**
-     * Requests that the specified entry be added to the
-     * <code>effects</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void addToEffects (EffectData elem)
-    {
-        requestEntryAdd(EFFECTS, effects, elem);
-    }
-
-    /**
-     * Requests that the entry matching the supplied key be removed from
-     * the <code>effects</code> set. The set will not change until the
-     * event is actually propagated through the system.
-     */
-    public void removeFromEffects (Comparable<?> key)
-    {
-        requestEntryRemove(EFFECTS, effects, key);
-    }
-
-    /**
-     * Requests that the specified entry be updated in the
-     * <code>effects</code> set. The set will not change until the event is
-     * actually propagated through the system.
-     */
-    public void updateEffects (EffectData elem)
-    {
-        requestEntryUpdate(EFFECTS, effects, elem);
-    }
-
-    /**
-     * Requests that the <code>effects</code> field be set to the
-     * specified value. Generally one only adds, updates and removes
-     * entries of a distributed set, but certain situations call for a
-     * complete replacement of the set value. The local value will be
-     * updated immediately and an event will be propagated through the
-     * system to notify all listeners that the attribute did
-     * change. Proxied copies of this object (on clients) will apply the
-     * value change when they received the attribute changed notification.
-     */
-    public void setEffects (DSet<EffectData> value)
-    {
-        requestAttributeChange(EFFECTS, value, this.effects);
-        DSet<EffectData> clone = (value == null) ? null : value.typedClone();
-        this.effects = clone;
     }
 
     /**

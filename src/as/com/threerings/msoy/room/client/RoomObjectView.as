@@ -58,7 +58,6 @@ import com.threerings.msoy.room.client.editor.DoorTargetEditController;
 import com.threerings.msoy.room.data.AudioData;
 import com.threerings.msoy.room.data.ControllableAVRGame;
 import com.threerings.msoy.room.data.ControllableEntity;
-import com.threerings.msoy.room.data.EffectData;
 import com.threerings.msoy.room.data.EntityControl;
 import com.threerings.msoy.room.data.EntityMemoryEntry;
 import com.threerings.msoy.room.data.FurniUpdate_Remove;
@@ -174,7 +173,6 @@ public class RoomObjectView extends RoomView
         if (!_loadAllMedia) {
             _loadAllMedia = true;
             updateAllFurni();
-            updateAllEffects();
         }
     }
 
@@ -207,7 +205,6 @@ public class RoomObjectView extends RoomView
 
         // this will take care of anything added
         updateAllFurni();
-        updateAllEffects();
     }
 
     /**
@@ -283,9 +280,6 @@ public class RoomObjectView extends RoomView
                         (ctrl.controlled as ControllableAVRGame).getGameId());
                 }
             }
-
-        } else if (RoomObject.EFFECTS == name) {
-            addEffect(event.getEntry() as EffectData);
         }
     }
 
@@ -303,9 +297,6 @@ public class RoomObjectView extends RoomView
         } else if (RoomObject.MEMORIES == name) {
             var mem :EntityMemoryEntry = event.getEntry() as EntityMemoryEntry;
             dispatchMemoryChanged(mem.item, mem.key, mem.value);
-
-        } else if (RoomObject.EFFECTS == name) {
-            updateEffect(event.getEntry() as EffectData);
         }
     }
 
@@ -316,10 +307,6 @@ public class RoomObjectView extends RoomView
 
         if (PlaceObject.OCCUPANT_INFO == name) {
             removeBody((event.getOldEntry() as OccupantInfo).getBodyOid());
-
-        } else if (RoomObject.EFFECTS == name) {
-            removeEffect(event.getKey() as int);
-
         }
     }
 
@@ -437,7 +424,6 @@ public class RoomObjectView extends RoomView
         // stop listening for client minimization events
         _ctx.getClient().removeEventListener(MsoyClient.MINI_WILL_CHANGE, miniWillChange);
 
-        removeAll(_effects);
         removeAllOccupants();
 
         super.didLeavePlace(plobj);
@@ -551,8 +537,6 @@ public class RoomObjectView extends RoomView
     {
         super.backgroundFinishedLoading();
 
-        updateAllEffects();
-        
         // TODO: HOWSABOUT WE ONLY USE THE DOOR THINGY WHEN WE'RE MAKING DOORS!
         // inform the "floating" door editor
         DoorTargetEditController.updateLocation();
@@ -570,8 +554,6 @@ public class RoomObjectView extends RoomView
     {
         super.relayout();
 
-        relayoutSprites(_effects.values())
-
         if (UberClient.isFeaturedPlaceView()) {
             var sceneWidth :int = Math.round(_scene.getWidth() * scaleX) as int;
             if (sceneWidth < _actualWidth) {
@@ -586,18 +568,6 @@ public class RoomObjectView extends RoomView
                     rect.x = newX;
                     scrollRect = rect;
                 }
-            }
-        }
-    }
-
-    /**
-     * Re-layout any effects.
-     */
-    protected function updateAllEffects () :void
-    {
-        if (shouldLoadAll()) {
-            for each (var effect :EffectData in _roomObj.effects.toArray()) {
-                updateEffect(effect);
             }
         }
     }
@@ -723,36 +693,6 @@ public class RoomObjectView extends RoomView
         spriteDidUpdate(sprite);
     }
 
-    protected function addEffect (effect :EffectData) :FurniSprite
-    {
-        var sprite :EffectSprite = new EffectSprite(_ctx, _octrl.adjustEffectData(effect));
-        addSprite(sprite);
-        sprite.setLocation(effect.loc);
-        sprite.roomScaleUpdated();
-        _effects.put(effect.id, sprite);
-        return sprite;
-    }
-
-    protected function updateEffect (effect :EffectData) :void
-    {
-        var sprite :FurniSprite = (_effects.get(effect.id) as FurniSprite);
-        if (sprite != null) {
-            spriteWillUpdate(sprite);
-            sprite.update(_octrl.adjustEffectData(effect));
-            spriteDidUpdate(sprite);
-        } else {
-            addEffect(effect);
-        }
-    }
-
-    protected function removeEffect (effectId :int) :void
-    {
-        var sprite :EffectSprite = (_effects.remove(effectId) as EffectSprite);
-        if (sprite != null) {
-            removeSprite(sprite);
-        }
-    }
-
     override protected function addAllOccupants () :void
     {
         if (!shouldLoadAll()) {
@@ -781,8 +721,5 @@ public class RoomObjectView extends RoomView
 
     /** The transitory properties of the current scene. */
     protected var _roomObj :RoomObject;
-
-    /** Maps effect id -> EffectData for effects. */
-    protected var _effects :HashMap = new HashMap();
 }
 }

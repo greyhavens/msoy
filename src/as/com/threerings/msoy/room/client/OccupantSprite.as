@@ -27,7 +27,6 @@ import com.threerings.msoy.chat.client.ComicOverlay;
 import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.world.client.WorldContext;
 
-import com.threerings.msoy.room.data.EffectData;
 import com.threerings.msoy.room.data.MsoyLocation;
 import com.threerings.msoy.room.data.MsoyScene;
 
@@ -83,18 +82,6 @@ public class OccupantSprite extends MsoySprite
         _extras.scaleY = 1 / matrix.d;
         recheckLabel();
         arrangeDecorations();
-    }
-
-    /**
-     * Adds a special effect to this sprite.
-     */
-    public function addTransientEffect (effect :EffectData) :void
-    {
-        var sprite :EffectSprite = new EffectSprite(_ctx, effect);
-        sprite.addEventListener(MsoySprite.LOCATION_UPDATED, handleEffectUpdated);
-        sprite.addEventListener(EffectSprite.EFFECT_FINISHED, handleEffectFinished);
-        sprite.x = getActualWidth()/2;
-        addChild(sprite);
     }
 
     /**
@@ -678,26 +665,6 @@ public class OccupantSprite extends MsoySprite
         } else {
             return 0;
         }
-    }
-
-    /**
-     * Handles an update to an effect's size/hotspot/etc.
-     */
-    protected function handleEffectUpdated (event :ValueEvent) :void
-    {
-        var effectSprite :EffectSprite = (event.target as EffectSprite);
-        var p :Point = effectSprite.getLayoutHotSpot();
-        effectSprite.x = getActualWidth()/2 - p.x;
-        effectSprite.y = getActualHeight()/2 - p.y;
-    }
-
-    /**
-     * Handle an effect that has finished playing.
-     */
-    protected function handleEffectFinished (event :ValueEvent) :void
-    {
-        var effectSprite :EffectSprite = (event.target as EffectSprite);
-        removeChild(effectSprite);
     }
 
     /**
