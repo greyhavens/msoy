@@ -102,7 +102,7 @@ public class DecorEditPanel extends FlyingPanel
         _decor.offsetX = int(_xoff.text);
         _decor.offsetY = int(_yoff.text);
 
-        updateDecorInViewer(false);
+        updateDecorInViewer();
         updateDecorOnPage();
     }
 
@@ -110,7 +110,7 @@ public class DecorEditPanel extends FlyingPanel
     {
         _decor.furniMedia = new StudioMediaDesc(path);
 
-        updateDecorInViewer(true);
+        updateDecorInViewer();
     }
 
     protected function updateParameters (
@@ -144,10 +144,10 @@ public class DecorEditPanel extends FlyingPanel
             _suppressSaves = false;
         }
 
-        updateDecorInViewer(false);
+        updateDecorInViewer();
     }
 
-    protected function updateDecorInViewer (mediaUpdated :Boolean) :void
+    protected function updateDecorInViewer () :void
     {
         var newScene :MsoyScene = _studioView.getScene().clone() as MsoyScene;
         var newModel :MsoySceneModel = newScene.getSceneModel() as MsoySceneModel;
