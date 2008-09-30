@@ -11,7 +11,7 @@ import com.threerings.msoy.data.all.MediaDesc;
  */
 public class Photo extends Item
 {
-    /** The photo media. */
+    /** The photo media. This is the full-size version. furniMedia is 4x thumbnail size. */
     public MediaDesc photoMedia;
 
     /** The width (in pixels) of the photo media. */
