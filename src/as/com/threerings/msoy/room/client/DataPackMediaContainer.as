@@ -21,6 +21,7 @@ import flash.system.Security;
 
 import flash.utils.ByteArray;
 
+import com.threerings.util.Log;
 import com.threerings.util.StringUtil;
 
 import com.threerings.msoy.ui.MsoyMediaContainer;
@@ -175,7 +176,7 @@ public class DataPackMediaContainer extends MsoyMediaContainer
         }
 
         // otherwise, if we didn't exit above,
-        trace("Whaddafuck: " + _url);
+        log.warning("Error with stub", "url", _url);
         handleComplete(event);
     }
 
@@ -266,9 +267,8 @@ public class DataPackMediaContainer extends MsoyMediaContainer
             } catch (err :Error) {
                 log.logStackTrace(err);
             }
-
-            // otherwise, if we didn't exit above,
-            trace("Wigglefuck: " + _url);
+            // if we didn't exit above...
+            log.warning("Error with stub", "url", _url);
         }
     }
 

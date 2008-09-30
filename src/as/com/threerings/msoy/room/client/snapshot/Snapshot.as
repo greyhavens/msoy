@@ -28,6 +28,8 @@ public class Snapshot
 {    
     public var bitmap :BitmapData;
 
+    public const log :Log = Log.getLog(this);
+
     /**
      * Create a 'Snapshot' of the provided view.  With a frame of the provided size.
      */
@@ -102,11 +104,10 @@ public class Snapshot
             } else {
                 try {
                     bitmap.draw(child, matrix, null, null, null, true);
-                    //trace("== Snapshot: raw sprite");
 
                 } catch (err :SecurityError) {
                     // not a critical error
-                    Log.getLog(this).info("Unable to snapshot Room element: " + err);
+                    log.info("Unable to snapshot Room element", err);
                     allSuccess = false;
                 }
             }            
@@ -120,7 +121,7 @@ public class Snapshot
      */
     public function encodeAndUpload (uploadOperation:Function, uploadDone:Function) :void
     {
-        trace("starting encoding");
+        log.debug("starting encoding");
         _uploadOperation = uploadOperation
         _uploadDone = uploadDone;
         _encoder = new BackgroundJPGEncoder(bitmap, 70);
@@ -140,7 +141,7 @@ public class Snapshot
 
     protected function handleJpegEncoded (event :ValueEvent) :void
     {
-        trace("jpeg encoded");
+        log.debug("jpeg encoded");
         
         // call whatever we're supposed to call with the jpeg data now that we have it
         _uploadOperation(event.value as ByteArray);
