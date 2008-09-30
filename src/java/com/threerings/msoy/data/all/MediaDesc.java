@@ -682,7 +682,7 @@ public class MediaDesc implements Streamable, IsSerializable
         THUMBNAIL_WIDTH/2, THUMBNAIL_HEIGHT/2, // half thumbnail size
         THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT, // thumbnail size
         THUMBNAIL_WIDTH*4, THUMBNAIL_HEIGHT*4, // preview size
-        175, 100, // snapshot thumb size
-        350, 200, // full snapshot image size
+        175, 100, // scene snapshot thumb size
+        350, 200, // full scene snapshot image size
     };
 }
