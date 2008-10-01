@@ -79,7 +79,6 @@ public class TableCreationPanel extends VBox
         super.createChildren();
 
         styleName = "tableCreationPanel";
-        percentWidth = 100;
 
         addChild(FlexUtil.createLabel(Msgs.GAME.get("t.create_table"), "lobbyTitle"));
 
@@ -95,7 +94,6 @@ public class TableCreationPanel extends VBox
         // add a configuration for the table name (before we give the game 
         var tableName :TextInput = new TextInput();
         tableName.text = Msgs.GAME.get("l.default_table", _ctx.getPlayerObject().getVisibleName());
-        tableName.percentWidth = 100;
         gconf.addControl(FlexUtil.createTipLabel(Msgs.GAME.get("l.table"), Msgs.GAME.get("i.table")),
                          tableName);
 
@@ -158,8 +156,7 @@ public class TableCreationPanel extends VBox
             addChild(FlexUtil.createLabel(Msgs.GAME.get("l.invite_no_friends")));
 
         } else {
-            var columns :int = Math.min(FRIENDS_GRID_COLUMNS, onlineFriends.length);
-            _friendsGrid = new SimpleGrid(columns);
+            _friendsGrid = new SimpleGrid(FRIENDS_GRID_COLUMNS);
             _friendsGrid.setStyle("horizontalGap", 5);
             for each (var friend :FriendEntry in onlineFriends) {
                 try {
@@ -217,7 +214,7 @@ public class TableCreationPanel extends VBox
 
     protected const log :Log = Log.getLog(this);
 
-    protected static const FRIENDS_GRID_COLUMNS :int = 6;
+    protected static const FRIENDS_GRID_COLUMNS :int = 4;
 }
 }
 
@@ -247,7 +244,7 @@ class FriendCheckBox extends VBox
 
         addChild(MediaWrapper.createView(friend.photo, MediaDesc.HALF_THUMBNAIL_SIZE));
         var name :Label = FlexUtil.createLabel(friend.name.toString());
-        name.maxWidth = 2*MediaDesc.THUMBNAIL_WIDTH/3;
+        name.maxWidth = 4*MediaDesc.THUMBNAIL_WIDTH/5;
         addChild(name);
         addChild(check = new CheckBox());
         check.width = 14; // don't ask; go punch someone at adobe instead

@@ -47,10 +47,10 @@ import com.threerings.msoy.game.data.PlayerObject;
 public class LobbyPanel extends FloatingPanel
 {
     /** The maximum width of the lobby panel. */
-    public static const LOBBY_PANEL_WIDTH :int = 325; // in px
+    public static const WIDTH :int = 325; // in px
 
     /** The maximum height of the lobby panel. */
-    public static const LOBBY_PANEL_HEIGHT :int = 450; // in px
+    public static const HEIGHT :int = 450; // in px
 
     /**
      * Create a new LobbyPanel.
@@ -62,8 +62,9 @@ public class LobbyPanel extends FloatingPanel
         _ctrl = ctrl;
 
         styleName = "sexyWindow";
-        width = LOBBY_PANEL_WIDTH;
-        height = LOBBY_PANEL_HEIGHT;
+        setStyle("horizontalAlign", "left"); // override the sexy default
+        width = WIDTH;
+        height = HEIGHT;
         showCloseButton = true;
     }
 

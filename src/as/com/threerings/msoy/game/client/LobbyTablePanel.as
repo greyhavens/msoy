@@ -276,7 +276,7 @@ class SeatPanel extends VBox
     protected var _bootBtn :CommandButton;
 
     protected static const SEAT_GRID_WHITESPACE :int =
-        LobbyPanel.LOBBY_PANEL_WIDTH - (26+10) /* borders */ -
+        LobbyPanel.WIDTH - (26+10) /* borders */ -
         MediaDesc.THUMBNAIL_WIDTH * LobbyTablePanel.SEAT_COLS -
         5 * (LobbyTablePanel.SEAT_COLS-1) /* gaps */;
 }
