@@ -13,7 +13,7 @@ import com.samskivert.util.StringUtil;
 
 /**
  * Handles requests to assign an affiliate cookie to a user:
- * /welcome/<affiliate>/<page_tokens_and_args>
+ * /welcome/[affiliate]/[page_tokens_and_args]
  */
 public class WelcomeServlet extends HttpServlet
 {
