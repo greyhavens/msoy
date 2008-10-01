@@ -117,6 +117,12 @@ public class QuestDelegate extends PlaceManagerDelegate
                            _plmgr.getPlaceObject().occupantInfo.size(),
                            tracker);
 
+        // Flush the total coins accrued
+        // TODO: Pass the real minutesPlayed, I assume we need to do humanity
+        // assessment for avrgs as well
+        UserAction action = UserAction.completedQuest(memberId, _content.game.name, _gameId, -1);
+        _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
+
         _worldClient.updatePlayer(memberId, null);
     }
 
@@ -132,6 +138,15 @@ public class QuestDelegate extends PlaceManagerDelegate
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
+        Player playerStat =  _players.get(player.getOid());
+        
+        if (playerStat == null) {
+            log.warning(
+                "Player not found in stat cache", "oid", player.getOid(), "memberId",
+                player.getMemberId());
+            return;
+        }
+        
         final int flowPerHour = RuntimeConfig.server.hourlyGameFlowRate;
         final int recalcMins = RuntimeConfig.server.payoutFactorReassessment;
 
@@ -170,17 +185,15 @@ public class QuestDelegate extends PlaceManagerDelegate
             newFlowToNextRecalc = 0;
         }
 
+        // accumulate the flow for this quest (to be persisted later)
+        if (payout > 0 && !MemberName.isGuest(player.getMemberId())) {
+            playerStat.coinsAccrued += payout;
+            _worldClient.reportCoinAward(player.getMemberId(), payout);
+        }
+
         _invoker.postUnit(new PersistingUnit("completeTask", listener) {
             @Override
             public void invokePersistent () throws Exception {
-                // award the flow for this quest
-                if (payout > 0 && !MemberName.isGuest(player.getMemberId())) {
-                    // TODO: Pass the real minutesPlayed, I assume we need to do humanity
-                    // assessment for avrgs as well
-                    UserAction action = UserAction.completedQuest(
-                        player.getMemberId(), _content.game.name, _gameId, -1);
-                    _worldClient.awardCoins(_gameId, action, payout);
-                }
 
                 // note that we played one game and awarded the specified flow
                 _mgameRepo.noteGamePlayed(_gameId, 1, payout);
@@ -252,6 +265,7 @@ public class QuestDelegate extends PlaceManagerDelegate
         public PlayerObject playerObject;
         public int beganStamp;
         public int secondsPlayed;
+        public int coinsAccrued;
 
         public Player (final PlayerObject playerObject)
         {
