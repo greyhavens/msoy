@@ -21,6 +21,8 @@ import com.threerings.presents.annotation.EventQueue;
 import com.threerings.presents.peer.server.persist.NodeRecord;
 import com.threerings.presents.peer.server.persist.NodeRepository;
 
+import com.threerings.bureau.util.BureauLogRedirector;
+
 import com.threerings.msoy.bureau.server.BureauLauncherConfig;
 
 import static com.threerings.msoy.Log.log;
