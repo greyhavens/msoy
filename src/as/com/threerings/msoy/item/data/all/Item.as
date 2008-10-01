@@ -268,13 +268,21 @@ public /*abstract*/ class Item
     }
 
     /**
+     * Returns true if this item is a clone of something listed in the catalog.
+     */
+    public function isCatalogClone () :Boolean
+    {
+        return (sourceId != 0) && (catalogId != 0);
+    }
+
+    /**
      * Returns the suite for which this item is the parent. If the item is a listed catalog
      * prototype, the suite id will be its negated catalog listing id. If the item is a mutable
      * original, the suite id will be its item id.
      */
     public function getSuiteId () :int
     {
-        return (ownerId == 0 && catalogId != 0) ? -catalogId : itemId;
+        return (isCatalogOriginal() || isCatalogClone()) ? -catalogId : itemId;
     }
 
     /**
