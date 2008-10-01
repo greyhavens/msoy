@@ -208,6 +208,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected void updatePrice (PriceQuote quote)
     {
+        _listing.quote = quote;
         _buyBars.setAmount(quote.getBars());
         _buyCoins.setAmount(quote.getCoins());
     }
