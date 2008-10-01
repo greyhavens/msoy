@@ -148,52 +148,15 @@ public class BlingPoolDistributor
             CalendarUtil.zeroTime(midnight2); // make it midnight
             int days = CalendarUtil.getDaysBetween(midnight1, midnight2);
 
-            // now set midnight2 to be the day after midnight1, in case we're doing more than one day
+            // now set midnight2 to be the day after midnight1,
+            // in case we're doing more than one day
             midnight2 = (Calendar) midnight1.clone();
             midnight2.add(Calendar.DATE, 1);
 
             // We'll repeat this for the number of days since we last executed it (could be 0).
             for (int i = 0; i < days; i++) {
-                log.info("Distributing bling.",
-                    "day", DateFormat.getDateInstance().format(midnight1.getTime()),
-                    "bling", RuntimeConfig.server.blingPoolSize); // don't log centibling..
-                if (blingPool <= 0) {
-                    continue; // but we did the logging...
-                }
-
-                // Get all the game play sessions for that day.
-                Collection<GamePlayRecord> gamePlays = _mgameRepo.getGamePlaysBetween(
-                    midnight1.getTimeInMillis(), midnight2.getTimeInMillis());
-
-                // Calculate a total and a map of game ID to the total minutes spent in the game
-                long totalMinutes = 0;
-                Map<Integer, Long> minutesPerGame = new HashMap<Integer, Long>();
-                for (GamePlayRecord gamePlay : gamePlays) {
-                    totalMinutes += gamePlay.playerMins;
-                    if (minutesPerGame.get(gamePlay.gameId) == null) {
-                        minutesPerGame.put(gamePlay.gameId, (long)gamePlay.playerMins);
-                    } else {
-                        minutesPerGame.put(gamePlay.gameId, 
-                            minutesPerGame.get(gamePlay.gameId) + gamePlay.playerMins);
-                    }
-                }
-
-                // Get all the games, since we need the creatorId from them.
-                Map<Integer, GameRecord> gameMap = new HashMap<Integer, GameRecord>();
-                for (GameRecord game : _gameRepo.loadItems(minutesPerGame.keySet())) {
-                    gameMap.put(game.itemId, game);
-                }
-
-                // Assuming we have a non-zero number of minutes games were played this day, grant a
-                // portion of the bling pool to each game's creator.
-                if (totalMinutes > 0) {
-                    for (Entry<Integer, Long> entry : minutesPerGame.entrySet()) {
-                        int awardedBling = (int)(blingPool * entry.getValue() / totalMinutes);
-                        awardBling(gameMap.get(entry.getKey()), awardedBling);
-                    }
-                }
-
-                // increment one dates
+                distributeBling(blingPool, midnight1, midnight2);
+                // increment one day each
                 midnight1.add(Calendar.DATE, 1);
                 midnight2.add(Calendar.DATE, 1);
             }
@@ -201,6 +164,51 @@ public class BlingPoolDistributor
         } finally {
             // Complete bling distribution up to the date that we completed successfully in here.
             _repo.completeBlingDistribution(new java.sql.Date(now.getTimeInMillis()));
+        }
+    }
+
+    /**
+     * Distribute the specified amount of bling for games played between the two times.
+     */
+    protected void distributeBling (int blingPool, Calendar midnight1, Calendar midnight2)
+    {
+        log.info("Distributing bling.",
+            "day", DateFormat.getDateInstance().format(midnight1.getTime()),
+            "bling", RuntimeConfig.server.blingPoolSize); // don't log centibling..
+        if (blingPool <= 0) {
+            return; // but we did the logging...
+        }
+
+        // Get all the game play sessions for that day.
+        Collection<GamePlayRecord> gamePlays = _mgameRepo.getGamePlaysBetween(
+            midnight1.getTimeInMillis(), midnight2.getTimeInMillis());
+
+        // Calculate a total and a map of game ID to the total minutes spent in the game
+        long totalMinutes = 0;
+        Map<Integer, Long> minutesPerGame = new HashMap<Integer, Long>();
+        for (GamePlayRecord gamePlay : gamePlays) {
+            totalMinutes += gamePlay.playerMins;
+            if (minutesPerGame.get(gamePlay.gameId) == null) {
+                minutesPerGame.put(gamePlay.gameId, (long)gamePlay.playerMins);
+            } else {
+                minutesPerGame.put(gamePlay.gameId, 
+                    minutesPerGame.get(gamePlay.gameId) + gamePlay.playerMins);
+            }
+        }
+
+        // Get all the games, since we need the creatorId from them.
+        Map<Integer, GameRecord> gameMap = new HashMap<Integer, GameRecord>();
+        for (GameRecord game : _gameRepo.loadItems(minutesPerGame.keySet())) {
+            gameMap.put(game.itemId, game);
+        }
+
+        // Assuming we have a non-zero number of minutes games were played this day, grant a
+        // portion of the bling pool to each game's creator.
+        if (totalMinutes > 0) {
+            for (Entry<Integer, Long> entry : minutesPerGame.entrySet()) {
+                int awardedBling = (int)(blingPool * entry.getValue() / totalMinutes);
+                awardBling(gameMap.get(entry.getKey()), awardedBling);
+            }
         }
     }
 
