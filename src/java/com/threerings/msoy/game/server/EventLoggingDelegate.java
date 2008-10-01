@@ -36,6 +36,14 @@ public class EventLoggingDelegate extends GameManagerDelegate
 
         // track when this occupant entered
         _entries.put(bodyOid, System.currentTimeMillis());
+
+        final MsoyGameManager gmgr = (MsoyGameManager)_plmgr;
+        final PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
+
+        int memberId = plobj.memberName.getMemberId();
+        String tracker = (plobj.visitorInfo != null) ? plobj.visitorInfo.id : null;
+
+        _eventLog.gameEntered(memberId, gmgr.isMultiplayer(), tracker);
     }
 
     @Override

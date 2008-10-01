@@ -62,7 +62,6 @@ import com.threerings.msoy.data.MemberObject;
 import com.threerings.msoy.data.MsoyBodyObject;
 import com.threerings.msoy.data.MsoyCodes;
 import com.threerings.msoy.data.StatType;
-import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.peer.server.MsoyPeerManager;
 import com.threerings.msoy.server.BootablePlaceManager;
 import com.threerings.msoy.server.MemberLocator;
@@ -788,6 +787,10 @@ public class RoomManager extends SpotSceneManager
             if (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP) {
                 member.stats.addToSetStat(StatType.WHIRLEDS_VISITED, model.ownerId);
             }
+
+            // log it!
+            boolean isWhirled = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
+            _eventLog.roomEntered(member.getMemberId(), isWhirled, member.visitorInfo.id);
         }
     }
 

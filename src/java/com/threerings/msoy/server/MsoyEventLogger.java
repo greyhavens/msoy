@@ -167,26 +167,38 @@ public class MsoyEventLogger
         post(new MsoyEvents.GroupRankModification(memberId, groupId, newRank));
     }
 
-    public void roomLeft (int playerId, int sceneId, boolean isWhirled, int secondsInRoom,
-        int occupantsLeft, String tracker)
+    public void roomEntered (int playerId, boolean isWhirled, String tracker)
     {
         Type type = isWhirled ? Type.VISIT_WHIRLED : Type.VISIT_ROOM;
         post(new MsoyEvents.Experience(type, playerId, tracker));
+    }
+
+    public void roomLeft (int playerId, int sceneId, boolean isWhirled, int secondsInRoom,
+        int occupantsLeft, String tracker)
+    {
         post(new MsoyEvents.RoomExit(playerId, sceneId, isWhirled, secondsInRoom, occupantsLeft,
             tracker));
     }
 
-    public void avrgLeft (int playerId, int gameId, int seconds, int playersLeft, String tracker)
+    public void avrgEntered (int playerId, String tracker)
     {
         post(new MsoyEvents.Experience(Type.GAME_AVRG, playerId, tracker));
+    }
+
+    public void avrgLeft (int playerId, int gameId, int seconds, int playersLeft, String tracker)
+    {
         post(new MsoyEvents.AVRGExit(playerId, gameId, seconds, playersLeft, tracker));
+    }
+
+    public void gameEntered (int playerId, boolean multiplayer, String tracker)
+    {
+        Type type = multiplayer ? Type.GAME_MULTIPLAYER : Type.GAME_SINGLEPLAYER;
+        post(new MsoyEvents.Experience(type, playerId, tracker));
     }
 
     public void gameLeft (int playerId, byte gameGenre, int gameId, int seconds,
         boolean multiplayer, String tracker)
     {
-        Type type = multiplayer ? Type.GAME_MULTIPLAYER : Type.GAME_SINGLEPLAYER;
-        post(new MsoyEvents.Experience(type, playerId, tracker));
         post(new MsoyEvents.GameExit(playerId, gameGenre, gameId, seconds, multiplayer, tracker));
     }
 

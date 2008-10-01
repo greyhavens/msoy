@@ -87,6 +87,8 @@ public class QuestDelegate extends PlaceManagerDelegate
         _players.put(bodyOid, new Player(player));
 
         _worldClient.updatePlayer(player.getMemberId(), _content.game);
+
+        _eventLog.avrgEntered(player.getMemberId(), player.visitorInfo.id);
     }
 
     @Override // from PlaceManagerDelegate
