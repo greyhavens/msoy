@@ -97,13 +97,26 @@ public class MailSender
      */
     public void sendTemplateEmail (String recip, String sender, String template, Object ... params)
     {
+        Parameters pobj = new Parameters();
+        for (int ii = 0; ii < params.length; ii += 2) {
+            pobj.set((String)params[ii], params[ii+1]);
+        }
+        sendTemplateEmail(recip, sender, template, pobj);
+    }
+
+    /**
+     * Delivers an email using the supplied template and parameters.
+     *
+     * @param recip the recipient address.
+     * @param sender the sender address.
+     * @param template the identifier of the template to use for the body of the mail.
+     * @param params a filled-in Parameters instance.
+     */
+    public void sendTemplateEmail (String recip, String sender, String template, Parameters params)
+    {
         // skip emails to placeholder addresses
         if (!isPlaceholderAddress(recip)) {
-            Parameters pobj = new Parameters();
-            for (int ii = 0; ii < params.length; ii += 2) {
-                pobj.set((String)params[ii], params[ii+1]);
-            }
-            _executor.execute(new MailTask(recip, sender, template, pobj));
+            _executor.execute(new MailTask(recip, sender, template, params));
         }
     }
 
