@@ -2,8 +2,10 @@ package com.threerings.msoy.bureau.client;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import com.samskivert.util.StringUtil;
@@ -21,26 +23,63 @@ public class BureauFileAppender extends OOOFileAppender
         throws IOException
     {
         long nowStamp = System.currentTimeMillis();
+
+        // First do the overall summary with no full text, collecting bureau names as we go
+        BureauMergedFormat overallFormat = new BureauMergedFormat();
+        StringBuffer overallSummary = new StringBuffer();
+        summarizeLog(
+            target, "Filtered messages (all bureaus)", overallFormat, new ErrorDatabase() {
+                @Override public boolean shouldSummarize (long nowStamp, String message) {
+                    return true;
+                }}, nowStamp, overallSummary);
+
+        // Read the summary database
         ErrorDatabase errors = new ErrorDatabase();
         errors.readFrom(_database);
+
+        // Now do each bureau into a separate buffer, inserting a marker between the full text
+        // and the summary.
+        String marker = "~!@#" + nowStamp + "~!@#";
+        HashMap<String, StringBuffer> summaries = Maps.newHashMap();
+        for (String bureau : overallFormat.bureaus) {
+            BureauFilteredFormat bformat = new BureauFilteredFormat(bureau);
+            StringBuffer bsummary = new StringBuffer();
+            String header = marker + "Filtered messages (" + bureau + ")";
+            summarizeLog(target, header, bformat, errors, nowStamp, bsummary);
+            summaries.put(bureau, bsummary);
+        }
         
         StringBuffer summary = new StringBuffer();
 
-        // First do the overall summary, printing full message text where dictated by error db.
-        // These lines will be prefixed by the bureau id.
-        BureauMergedFormat overallFormat = new BureauMergedFormat();
-        summarizeLog(target, "Filtered messages (all bureaus)", overallFormat, errors, nowStamp, 
-            summary);
-
-        // Now do each bureau, suppressing full message text since it has already been printed.
-        ErrorDatabase summaryOnly = new ErrorDatabase() {
-            @Override public boolean shouldSummarize (long nowStamp, String message) {
-                return true;
-            }};
+        // Append all full text portions
         for (String bureau : overallFormat.bureaus) {
-            BureauFilteredFormat bformat = new BureauFilteredFormat(bureau);
-            summarizeLog(target, "Filtered messages (" + bureau + ")", bformat, summaryOnly,
-                nowStamp, summary);
+            StringBuffer bsummary = summaries.get(bureau);
+            int mpos = bsummary.indexOf(marker);
+            if (mpos <= 0) {
+                continue;
+            }
+            summary.append(bsummary.substring(0, mpos));
+        }
+
+        // Append the overall summary
+        if (overallSummary.length() > 0) {
+            if (summary.length() > 0) {
+                summary.append("\n");
+            }
+            summary.append(overallSummary);
+        }
+        
+        // Append all summary portions
+        for (String bureau : overallFormat.bureaus) {
+            StringBuffer bsummary = summaries.get(bureau);
+            int mpos = bsummary.indexOf(marker);
+            if (mpos == -1) {
+                continue;
+            }
+            if (summary.length() > 0) {
+                summary.append("\n");
+            }
+            summary.append(bsummary.substring(mpos + marker.length()));
         }
 
         // Prepend header
