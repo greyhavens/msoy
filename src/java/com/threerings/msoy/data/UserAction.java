@@ -26,7 +26,7 @@ public class UserAction extends SimpleStreamableObject
         SENT_FRIEND_INVITE(10), ACCEPTED_FRIEND_INVITE(11), INVITED_FRIEND_JOINED(13),
 
         // game related actions
-        PLAYED_GAME(20), COMPLETED_QUEST(21),
+        PLAYED_GAME(20),
 
         // item and shop related actions
         CREATED_ITEM(30), BOUGHT_ITEM(31), LISTED_ITEM(32),
@@ -116,12 +116,6 @@ public class UserAction extends SimpleStreamableObject
     {
         String descrip = MessageBundle.tcompose("m.played_game", gameName, gameId, seconds);
         return new UserAction(Type.PLAYED_GAME, memberId, descrip, gameId + " " + seconds);
-    }
-
-    public static UserAction completedQuest (int memberId, String gameName, int gameId, int seconds)
-    {
-        String descrip = MessageBundle.tcompose("m.completed_quest", gameName, gameId, seconds);
-        return new UserAction(Type.COMPLETED_QUEST, memberId, descrip, gameId + " " + seconds);
     }
 
     public static UserAction createdItem (int memberId)

@@ -7,6 +7,7 @@ import static com.threerings.msoy.Log.log;
 
 import com.google.inject.Inject;
 
+import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.jdbc.WriteOnlyUnit;
 
 import com.samskivert.util.HashIntMap;
@@ -65,14 +66,18 @@ public class QuestDelegate extends PlaceManagerDelegate
     {
         super.didShutdown();
 
-        final int totalMins = Math.max(1, Math.round(getTotalTrackedSeconds() / 60f));
+        // if any players remain unpaid out, pay them out now
+        for (int bodyOid : _players.keySet().toArray(new Integer[_players.size()])) {
+            payoutPlayer(bodyOid);
+        }
+
+        // record any minutes that were played that did not get noted via the completion of tasks
+        final int unawardedMins = Math.max(1, Math.round(_totalUnawardedSeconds / 60f));
         _invoker.postUnit(new WriteOnlyUnit("shutdown") {
-            @Override
-            public void invokePersist () throws Exception {
-                _repo.noteUnawardedTime(_gameId, totalMins);
+            @Override public void invokePersist () throws Exception {
+                _repo.noteUnawardedTime(_gameId, unawardedMins);
             }
         });
-
     }
 
     @Override // from PlaceManagerDelegate
@@ -85,78 +90,43 @@ public class QuestDelegate extends PlaceManagerDelegate
             return;
         }
         _players.put(bodyOid, new Player(player));
-
         _worldClient.updatePlayer(player.getMemberId(), _content.game);
-
         _eventLog.avrgEntered(player.getMemberId(), player.visitorInfo.id);
     }
 
     @Override // from PlaceManagerDelegate
     public void bodyLeft (final int bodyOid)
     {
-        final Player player = _players.remove(bodyOid);
-        if (player == null) {
-            log.warning("Eek, unregistered player vanished from OidList [gameId=" + _gameId +
-                        "bodyOid=" + bodyOid + "]");
-            return;
-        }
-
-        final int playTime = player.getPlayTime(now());
-        _totalTrackedSeconds += playTime;
-
-        final int memberId = player.playerObject.getMemberId();
-
-        // TODO: Get this into EventLogDelegate, or write a AVRG-specific one?
-        if (player.playerObject.visitorInfo == null) {
-            log.warning("Missing VisitorInfo on an AVRG player!",
-                "gameId", _gameId, "memberId", player.playerObject.memberName.getMemberId());
-        }
-        final String tracker = (player.playerObject.visitorInfo == null) ?
-            "" : player.playerObject.visitorInfo.id;
-        _eventLog.avrgLeft(memberId, _gameId, playTime,
-                           _plmgr.getPlaceObject().occupantInfo.size(),
-                           tracker);
-
-        // Flush the total coins accrued
-        // TODO: Pass the real minutesPlayed, I assume we need to do humanity
-        // assessment for avrgs as well
-        UserAction action = UserAction.completedQuest(memberId, _content.game.name, _gameId, -1);
-        _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
-
-        _worldClient.updatePlayer(memberId, null);
+        payoutPlayer(bodyOid);
     }
 
+    /**
+     * Notes that the supplied player completed the specified task. Computes a coin payout for the
+     * player, transiently reports it to them and accumulates it to their stat record for actual
+     * payout when they leave the game.
+     */
     public void completeTask (
-        final PlayerObject player, final String questId, final float payoutLevel,
+        final PlayerObject plobj, final String questId, final float payoutLevel,
         final InvocationService.ConfirmListener listener)
         throws InvocationException
     {
         // sanity check
         if (payoutLevel < 0 || payoutLevel > 1) {
-            log.warning("Invalid payout in completeTask() [game=" + where() + ", quest=" + questId +
-                        ", payout=" + payoutLevel + ", caller=" + player.who() + "].");
+            log.warning("Invalid payout", "game", where(), "caller", plobj.who(),
+                        "quest", questId, "payout", payoutLevel);
             throw new InvocationException(InvocationCodes.INTERNAL_ERROR);
         }
 
-        Player playerStat =  _players.get(player.getOid());
-        
-        if (playerStat == null) {
-            log.warning(
-                "Player not found in stat cache", "oid", player.getOid(), "memberId",
-                player.getMemberId());
+        Player player = _players.get(plobj.getOid());
+        if (player == null) {
+            log.warning("Asked to complete task for untracked player?", "oid", plobj.getOid(),
+                        "memberId", plobj.getMemberId());
             return;
         }
-        
-        final int flowPerHour = RuntimeConfig.server.hourlyGameFlowRate;
-        final int recalcMins = RuntimeConfig.server.payoutFactorReassessment;
 
-        // note how much player time has accumulated since our last payout
-        final int playerSecs = getTotalTrackedSeconds();
-        _totalTrackedSeconds -= playerSecs;
-        final int playerMins = Math.round(playerSecs / 60f);
-
-        // payout factor depends on accumulated play time -- if we've yet to accumulate
-        // enough data for a calculation, guesstimate 5 mins
+        // payout factor depends on accumulated play time -- if we've yet to accumulate enough data
+        // for a calculation, guesstimate 5 mins
+        int flowPerHour = RuntimeConfig.server.hourlyGameFlowRate;
         int payoutFactor = (_content.detail.payoutFactor == 0) ?
             ((5 * flowPerHour) / 60) : _content.detail.payoutFactor;
 
@@ -169,10 +139,83 @@ public class QuestDelegate extends PlaceManagerDelegate
                         ", wanted=" + rawPayout + ", got=" + payout + "].");
         }
 
-        // note that we've used up some of our flow budget (this same adjustment will be
-        // recorded to the database in noteGamePlayed())
-        _content.detail.flowToNextRecalc -= payout;
+        // if this user is a guest, just report that it was completed and avoid any persistent
+        // business (all the persisting will hopefully soon go away anyway)
+        if (MemberName.isGuest(plobj.getMemberId())) {
+            listener.requestProcessed();
+            return;
+        }
 
+        // accumulate the flow for this quest (to be persisted later)
+        final int playerSecs = player.taskCompleted(payout);
+        final int playerMins = Math.round(playerSecs / 60f);
+        if (payout > 0) {
+            _worldClient.reportCoinAward(plobj.getMemberId(), payout);
+        }
+
+        // TODO: this is only used to recompute AVRG flow payout AFAIK, so it should go away and we
+        // should use the standard system used by normal games for this purpose
+        _invoker.postUnit(new PersistingUnit("completeTask", listener) {
+            @Override public void invokePersistent () throws Exception {
+                // mark the quest completed and create a log record
+                _repo.noteQuestCompleted(
+                    _gameId, plobj.getMemberId(), questId, playerMins, payoutLevel);
+            }
+            @Override public void handleSuccess () {
+                // report task completion to the game
+                plobj.postMessage(AVRGameObject.TASK_COMPLETED_MESSAGE, questId, payout);
+                reportRequestProcessed();
+            }
+        });
+    }
+
+    /**
+     * Convenience method to calculate the current timestmap in seconds.
+     */
+    protected static int now ()
+    {
+        return (int) (System.currentTimeMillis() / 1000);
+    }
+
+    /**
+     * Pays accumulated coins to the supplied player and potentially recalculates our payout factor
+     * if this player's payout consumes the last of our coin budget.
+     */
+    protected void payoutPlayer (final int bodyOid)
+    {
+        final Player player = _players.remove(bodyOid);
+        if (player == null) {
+            log.warning("Can't payout untracked player", "gameId", _gameId, "bodyOid", bodyOid);
+            return;
+        }
+        final int memberId = player.playerObject.getMemberId();
+        final int unawardedTime = player.getPlayTime(now());
+        final int totalPlayTime = player.timeAccrued + unawardedTime;
+
+        // note this players unawarded time so that we can record it when we shutdown
+        _totalUnawardedSeconds += unawardedTime;
+
+        // TODO: Get this into EventLogDelegate, or write a AVRG-specific one?
+        if (player.playerObject.visitorInfo == null) {
+            log.warning("No VisitorInfo for AVRG player!", "gameId", _gameId, "memberId", memberId);
+        }
+        final String tracker = (player.playerObject.visitorInfo == null) ?
+            "" : player.playerObject.visitorInfo.id;
+        _eventLog.avrgLeft(memberId, _gameId, totalPlayTime,
+                           _plmgr.getPlaceObject().occupantInfo.size(), tracker);
+
+        // do the actual coin awarding
+        UserAction action = UserAction.playedGame(
+            memberId, _content.game.name, _gameId, totalPlayTime);
+        _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
+        _worldClient.updatePlayer(memberId, null);
+
+        // note that we've used up some of our flow budget (this same adjustment will be recorded
+        // to the database in noteGamePlayed())
+        _content.detail.flowToNextRecalc -= player.coinsAccrued;
+
+        final int flowPerHour = RuntimeConfig.server.hourlyGameFlowRate;
+        final int recalcMins = RuntimeConfig.server.payoutFactorReassessment;
         final int newFlowToNextRecalc;
         // if this payout consumed the remainder of our awardable flow, queue a factor recalc
         if (_content.detail.flowToNextRecalc <= 0) {
@@ -185,24 +228,17 @@ public class QuestDelegate extends PlaceManagerDelegate
             newFlowToNextRecalc = 0;
         }
 
-        // accumulate the flow for this quest (to be persisted later)
-        if (payout > 0 && !MemberName.isGuest(player.getMemberId())) {
-            playerStat.coinsAccrued += payout;
-            _worldClient.reportCoinAward(player.getMemberId(), payout);
-        }
+        // note that games were played, coins were paid, and possibly do a payout factor recalc
+        _invoker.postUnit(new RepositoryUnit("bodyLeft") {
+            @Override public void invokePersist () throws Exception {
+                // note that we played some number of "games" and awarded the specified flow
+                _mgameRepo.noteGamePlayed(_gameId, player.tasksCompleted, player.coinsAccrued);
 
-        _invoker.postUnit(new PersistingUnit("completeTask", listener) {
-            @Override
-            public void invokePersistent () throws Exception {
-
-                // note that we played one game and awarded the specified flow
-                _mgameRepo.noteGamePlayed(_gameId, 1, payout);
-
-                // mark the quest completed and create a log record
-                if (!MemberName.isGuest(player.getMemberId())) {
-                    _repo.noteQuestCompleted(
-                        _gameId, player.getMemberId(), questId, playerMins, payoutLevel);
-                }
+//                 // mark the quest completed and create a log record
+//                 if (!MemberName.isGuest(player.getMemberId())) {
+//                     _repo.noteQuestCompleted(
+//                         _gameId, player.getMemberId(), questId, playerMins, payoutLevel);
+//                 }
 
                 // if this award consumes the remainder of our awardable flow, recalc our bits
                 if (newFlowToNextRecalc > 0) {
@@ -221,72 +257,48 @@ public class QuestDelegate extends PlaceManagerDelegate
                 }
             }
 
-            @Override
-            public void handleSuccess () {
-                // report task completion to the game
-                player.postMessage(AVRGameObject.TASK_COMPLETED_MESSAGE, questId, payout);
-
+            @Override public void handleSuccess () {
                 // if we updated the payout factor in the db, do it in dobj land too
                 if (newFlowToNextRecalc > 0) {
                     _content.detail.payoutFactor = _newFactor;
                 }
-
-                reportRequestProcessed();
             }
 
             protected int _newFactor;
         });
     }
 
-    /**
-     * Return the total number of seconds that players were being tracked.
-     */
-    protected int getTotalTrackedSeconds ()
-    {
-        int total = _totalTrackedSeconds;
-        final int now = now();
-
-        for (final Player player : _players.values()) {
-            total += player.getPlayTime(now);
-        }
-        return total;
-    }
-
-    /**
-     * Convenience method to calculate the current timestmap in seconds.
-     */
-    protected static int now ()
-    {
-        return (int) (System.currentTimeMillis() / 1000);
-    }
-
     protected class Player
     {
         public PlayerObject playerObject;
-        public int beganStamp;
-        public int secondsPlayed;
-        public int coinsAccrued;
 
-        public Player (final PlayerObject playerObject)
-        {
+        public int coinsAccrued;
+        public int tasksCompleted;
+        public int timeAccrued;
+
+        public Player (final PlayerObject playerObject) {
             this.playerObject = playerObject;
-            this.beganStamp = now();
+            _beganStamp = now();
         }
 
-        public int getPlayTime (final int now) {
-            int secondsOfPlay = secondsPlayed;
-            if (beganStamp != 0) {
-                secondsOfPlay += (now - beganStamp);
+        public int getPlayTime (int now) {
+            int secondsOfPlay = 0;
+            if (_beganStamp != 0) {
+                secondsOfPlay += (now - _beganStamp);
             }
             return secondsOfPlay;
         }
 
-        public void stopTracking (final int endStamp) {
-            if (beganStamp != 0) {
-                secondsPlayed += endStamp - beganStamp;
-                beganStamp = 0;
-            }
+        public int taskCompleted (int payout) {
+            coinsAccrued += payout;
+            tasksCompleted++;
+            int now = now(), taskTime = getPlayTime(now);
+            timeAccrued += taskTime;
+            _beganStamp = now;
+            return taskTime;
         }
+
+        protected int _beganStamp;
     }
 
     /** The gameId of this particular AVRG. */
@@ -298,9 +310,9 @@ public class QuestDelegate extends PlaceManagerDelegate
     /** A map to track current AVRG player data, per PlayerObject Oid. */
     protected IntMap<Player> _players = new HashIntMap<Player>();
 
-    /** Counts the total number of seconds that have elapsed during 'tracked' time, for each
-     * tracked member that is no longer present with a Player object. */
-    protected int _totalTrackedSeconds = 0;
+    /** Records the number of seconds played by players that did not end up getting noted when they
+     * completed a task. */
+    protected int _totalUnawardedSeconds = 0;
 
     @Inject protected @MainInvoker Invoker _invoker;
     @Inject protected AVRGameRepository _repo;
