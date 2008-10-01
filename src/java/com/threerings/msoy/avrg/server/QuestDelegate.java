@@ -5,6 +5,8 @@ package com.threerings.msoy.avrg.server;
 
 import static com.threerings.msoy.Log.log;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 
 import com.samskivert.util.HashIntMap;
@@ -50,6 +52,23 @@ public class QuestDelegate extends PlaceManagerDelegate
         _gameId = _content.game.gameId;
     }
 
+    /**
+     * Flushes the pending coin earnings for the specified player (if they are not a player of this
+     * game or have no pending coin earnings, this method does nothing).
+     */
+    public void flushCoinEarnings (final int playerId)
+    {
+        // flow record is indexed by oid not playerId so we have to search
+        Player player = Iterables.find(_players.values(), new Predicate<Player>() {
+            public boolean apply (Player player) {
+                return player.playerObject.getMemberId() == playerId;
+            }
+        });
+        if (player != null) {
+            payoutPlayer(player, true);
+        }
+    }
+
     @Override
     public void didStartup (final PlaceObject plobj)
     {
@@ -62,9 +81,10 @@ public class QuestDelegate extends PlaceManagerDelegate
         super.didShutdown();
 
         // if any players remain unpaid out, pay them out now
-        for (int bodyOid : _players.keySet().toArray(new Integer[_players.size()])) {
-            payoutPlayer(bodyOid);
+        for (Player player : _players.values()) {
+            payoutPlayer(player, false);
         }
+        _players.clear();
     }
 
     @Override // from PlaceManagerDelegate
@@ -84,7 +104,12 @@ public class QuestDelegate extends PlaceManagerDelegate
     @Override // from PlaceManagerDelegate
     public void bodyLeft (final int bodyOid)
     {
-        payoutPlayer(bodyOid);
+        final Player player = _players.remove(bodyOid);
+        if (player == null) {
+            log.warning("Can't payout untracked player", "gameId", _gameId, "bodyOid", bodyOid);
+            return;
+        }
+        payoutPlayer(player, false);
     }
 
     /**
@@ -126,6 +151,9 @@ public class QuestDelegate extends PlaceManagerDelegate
                         ", wanted=" + rawPayout + ", got=" + payout + "].");
         }
 
+        // note that they completed this task
+        player.taskCompleted(payout);
+
         // accumulate the flow for this quest (to be persisted later)
         if (payout > 0) {
             _worldClient.reportCoinAward(plobj.getMemberId(), payout);
@@ -150,28 +178,26 @@ public class QuestDelegate extends PlaceManagerDelegate
      * Pays accumulated coins to the supplied player and potentially recalculates our payout factor
      * if this player's payout consumes the last of our coin budget.
      */
-    protected void payoutPlayer (final int bodyOid)
+    protected void payoutPlayer (final Player player, boolean flushing)
     {
-        final Player player = _players.remove(bodyOid);
-        if (player == null) {
-            log.warning("Can't payout untracked player", "gameId", _gameId, "bodyOid", bodyOid);
-            return;
-        }
         final int memberId = player.playerObject.getMemberId();
         final int playerSecs = player.timeAccrued + player.getPlayTime(now());
         final int playerMins = Math.round(playerSecs / 60f);
 
-        // TODO: Get this into EventLogDelegate, or write a AVRG-specific one?
-        if (player.playerObject.visitorInfo == null) {
-            log.warning("No VisitorInfo for AVRG player!", "gameId", _gameId, "memberId", memberId);
-        }
-        final String tracker = (player.playerObject.visitorInfo == null) ?
-            "" : player.playerObject.visitorInfo.id;
-        _eventLog.avrgLeft(memberId, _gameId, playerSecs,
-                           _plmgr.getPlaceObject().occupantInfo.size(), tracker);
+        if (!flushing) {
+            // TODO: Get this into EventLogDelegate, or write a AVRG-specific one?
+            if (player.playerObject.visitorInfo == null) {
+                log.warning("No VisitorInfo for AVRG player!", "gameId", _gameId,
+                            "memberId", memberId);
+            }
+            final String tracker = (player.playerObject.visitorInfo == null) ?
+                "" : player.playerObject.visitorInfo.id;
+            _eventLog.avrgLeft(memberId, _gameId, playerSecs,
+                               _plmgr.getPlaceObject().occupantInfo.size(), tracker);
 
-        // let the world know that this player is no longer playing our game
-        _worldClient.updatePlayer(memberId, null);
+            // let the world know that this player is no longer playing our game
+            _worldClient.updatePlayer(memberId, null);
+        }
 
         // if we're a guest, we don't actually award and coins, so we also don't record these
         // minutes or coin awards to our coin payout recalc metrics
@@ -179,13 +205,20 @@ public class QuestDelegate extends PlaceManagerDelegate
             return;
         }
 
-        // do the actual coin awarding
-        UserAction action = UserAction.playedGame(memberId, _content.game.name, _gameId, playerSecs);
-        _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
+        // if they accrued any coins, pay them out
+        if (player.coinsAccrued > 0) {
+            // do the actual coin awarding
+            UserAction action = UserAction.playedGame(
+                memberId, _content.game.name, _gameId, playerSecs);
+            _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
 
-        // note games played and coins awarded for coin payout factor calculation purposes
-        _gameReg.updateGameMetrics(
-            _content.detail, true, playerMins, player.tasksCompleted, player.coinsAccrued);
+            // note games played and coins awarded for coin payout factor calculation purposes
+            _gameReg.updateGameMetrics(
+                _content.detail, true, playerMins, player.tasksCompleted, player.coinsAccrued);
+        }
+
+        // reset their accumulated coins and whatnot
+        player.reset();
     }
 
     protected class Player
@@ -198,24 +231,26 @@ public class QuestDelegate extends PlaceManagerDelegate
 
         public Player (final PlayerObject playerObject) {
             this.playerObject = playerObject;
-            _beganStamp = now();
+            reset();
         }
 
         public int getPlayTime (int now) {
-            int secondsOfPlay = 0;
-            if (_beganStamp != 0) {
-                secondsOfPlay += (now - _beganStamp);
-            }
-            return secondsOfPlay;
+            return now - _beganStamp;
         }
 
-        public int taskCompleted (int payout) {
+        public void taskCompleted (int payout) {
             coinsAccrued += payout;
             tasksCompleted++;
-            int now = now(), taskTime = getPlayTime(now);
-            timeAccrued += taskTime;
+            int now = now();
+            timeAccrued += getPlayTime(now);
             _beganStamp = now;
-            return taskTime;
+        }
+
+        public void reset () {
+            coinsAccrued = 0;
+            tasksCompleted = 0;
+            timeAccrued = 0;
+            _beganStamp = now();
         }
 
         protected int _beganStamp;

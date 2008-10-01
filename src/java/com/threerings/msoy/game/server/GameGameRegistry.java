@@ -450,6 +450,11 @@ public class GameGameRegistry
                     ((AwardDelegate)delegate).flushCoinEarnings(playerId);
                 }
             });
+            plmgr.applyToDelegates(new PlaceManager.DelegateOp(QuestDelegate.class) {
+                public void apply (PlaceManagerDelegate delegate) {
+                    ((QuestDelegate)delegate).flushCoinEarnings(playerId);
+                }
+            });
         }
     }
 
@@ -991,8 +996,7 @@ public class GameGameRegistry
         }
 
         _invoker.postUnit(new Invoker.Unit("flushPercentiler") {
-            @Override
-            public boolean invoke () {
+            @Override public boolean invoke () {
                 try {
                     _ratingRepo.updatePercentile(gameId, tiler);
                 } catch (Exception e) {
@@ -1018,9 +1022,8 @@ public class GameGameRegistry
             }
         }
 
-        log.info(
-            "AVRG " + why + ": evicting players and shutting down manager", "gameId", amgr.getGameId(),
-            "evicted", players.size());
+        log.info("AVRG " + why + ": evicting players and shutting down manager",
+                 "gameId", amgr.getGameId(), "evicted", players.size());
 
         // now throw the players out
         for (PlayerObject player : players) {
