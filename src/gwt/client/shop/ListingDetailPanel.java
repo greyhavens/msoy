@@ -256,7 +256,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
     {
         public BuyButton (Currency currency, int amount)
         {
-            super(currency == Currency.BARS ? "orangeThick" : "blueThick", null);
+            super(currency == Currency.BARS ? ORANGE_THICK : BLUE_THICK, null);
             _currency = currency;
             addStyleName("buyButton");
             new BuyCallback(this, _currency);
