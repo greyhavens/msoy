@@ -5,6 +5,7 @@ package client.me;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -15,6 +16,7 @@ import client.shell.Args;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
+import client.ui.StretchButton;
 import client.util.Link;
 
 public class TransactionsPanel extends VerticalPanel
@@ -23,9 +25,17 @@ public class TransactionsPanel extends VerticalPanel
     {
         setStyleName("transactions");
 
-        RoundBox box = new RoundBox(RoundBox.MEDIUM_BLUE);
-        box.add(MsoyUI.createLabel(_msgs.moneyTip(), null));
-        add(box);
+        HorizontalPanel horiz = new HorizontalPanel();
+
+        RoundBox tip = new RoundBox(RoundBox.MEDIUM_BLUE);
+        tip.add(MsoyUI.createLabel(_msgs.moneyTip(), null));
+        horiz.add(tip);
+
+        StretchButton button = new StretchButton(StretchButton.ORANGE_THICK,
+            MsoyUI.createLabel(_msgs.buyBars(), null));
+        horiz.add(button);
+
+        add(horiz);
 
         ReportType report = ReportType.fromIndex(reportIndex);
         // The data model is used in both the balance panel and the bling panel.
@@ -44,11 +54,14 @@ public class TransactionsPanel extends VerticalPanel
         });
         reportBox.setSelectedIndex(reportIndex-1);
 
-        add(Link.buyBars("Buy some bars!")); // TODO: i18n
         add((report == ReportType.CREATOR) ?
             new IncomePanel(model, reportBox) : new BalancePanel(model, reportBox));
+
+        // Extra bits
         if (report == ReportType.BLING) {
             add(new BlingPanel(model));
+        } else if (CMe.isSupport() && report == ReportType.COINS) {
+            // TODO
         }
     }
 
