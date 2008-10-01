@@ -113,9 +113,6 @@ public class MsoyServer extends MsoyBaseServer
         }
     }
 
-    /** An invoker for sending email. */
-    @Deprecated public static Invoker mailInvoker;
-
     /**
      * Starts everything a runnin'.
      */
@@ -183,11 +180,6 @@ public class MsoyServer extends MsoyBaseServer
         // to be distinguished and connected
         _conmgr.addChainedAuthenticator(new WindowAuthenticator(ServerConfig.windowSharedSecret));
         _clmgr.setClientFactory(new WindowClientFactory(_clmgr.getClientFactory()));
-
-        // initialize the mail invoker
-        mailInvoker = new Invoker("mail_invoker", _omgr);
-        mailInvoker.setDaemon(true);
-        mailInvoker.start();
 
         // initialize our HTTP server
         _httpServer.init(new File(ServerConfig.serverRoot, "log"));
