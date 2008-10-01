@@ -39,7 +39,6 @@ import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
-import client.ui.StretchButton;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
@@ -131,21 +130,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // this will contain all of the buy-related interface and will be replaced with the
         // "bought" interface when the buying is done
-        _buyPanel = new FlowPanel();
-        _buyPanel.setStyleName("Buy");
-
-        // Buy with bars, plus a link on how to acquire some
-        _buyBars = new BuyButton(Currency.BARS, _listing.quote.getBars());
-        if (DeploymentConfig.barsEnabled) {
-            _buyPanel.add(_buyBars);
-            Widget link = Link.buyBars(_msgs.listingBuyBars());
-            link.setStyleName("GetBars");
-            _buyPanel.add(link);
-        }
-
-        _buyCoins = new BuyButton(Currency.COINS, _listing.quote.getCoins());
-        _buyPanel.add(_buyCoins);
-        _details.add(_buyPanel);
+        _details.add(new BuyPanel(_listing));
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId), true);
@@ -159,43 +144,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 //         }
     }
 
-    protected void itemPurchased (Item item)
-    {
-        byte itype = item.getType();
-
-        // clear out the buy button
-        _buyPanel.clear();
-        _buyPanel.setStyleName("Bought");
-
-        // change the buy button into a "you bought it" display
-        String type = _dmsgs.xlate("itemType" + itype);
-        _buyPanel.add(MsoyUI.createLabel(_msgs.boughtTitle(type), "Title"));
-
-        if (FlashClients.clientExists() && !(item instanceof SubItem)) {
-            _buyPanel.add(new ItemActivator(item, true));
-            _buyPanel.add(new Label(getUsageMessage(itype)));
-        } else {
-            _buyPanel.add(new Label(_msgs.boughtViewStuff(type)));
-            String ptype = _dmsgs.xlate("pItemType" + itype);
-            _buyPanel.add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
-        }
-    }
-
-    protected static String getUsageMessage (byte itemType)
-    {
-        if (itemType == Item.AVATAR) {
-            return _msgs.boughtAvatarUsage();
-        } else if (itemType == Item.DECOR) {
-            return _msgs.boughtDecorUsage();
-        } else if (itemType == Item.AUDIO) {
-            return _msgs.boughtAudioUsage();
-        } else if (itemType == Item.PET) {
-            return _msgs.boughtPetUsage();
-        } else {
-            return _msgs.boughtOtherUsage();
-        }
-    }
-
     @Override
     protected void addTagMenuItems (final String tag, PopupMenu menu)
     {
@@ -206,79 +154,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         });
     }
 
-    protected void updatePrice (PriceQuote quote)
-    {
-        _listing.quote = quote;
-        _buyBars.setAmount(quote.getBars());
-        _buyCoins.setAmount(quote.getCoins());
-    }
-
-    protected class BuyCallback extends ClickCallback<Item>
-    {
-        public BuyCallback (SourcesClickEvents button, Currency currency)
-        {
-            super(button);
-            _currency = currency;
-        }
-
-        public boolean callService ()
-        {
-            if (CShop.isGuest()) {
-                MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(),
-                                  Link.createListener(Pages.ACCOUNT, "create"));
-            } else {
-                _catalogsvc.purchaseItem(_item.getType(), _listing.catalogId,
-                                         _currency, _listing.quote.getAmount(_currency), this);
-            }
-            return true;
-        }
-
-        public boolean gotResult (Item item)
-        {
-            itemPurchased(item);
-            return false; // don't reenable buy button
-        }
-
-        public void onFailure (Throwable cause)
-        {
-            super.onFailure(cause);
-
-            if (cause instanceof CostUpdatedException) {
-                CostUpdatedException cue = (CostUpdatedException) cause;
-                updatePrice(cue.getQuote());
-            }
-        }
-
-        protected Currency _currency;
-    };
-
-    protected class BuyButton extends StretchButton
-    {
-        public BuyButton (Currency currency, int amount)
-        {
-            super(currency == Currency.BARS ? ORANGE_THICK : BLUE_THICK, null);
-            _currency = currency;
-            addStyleName("buyButton");
-            new BuyCallback(this, _currency);
-            setAmount(amount);
-        }
-
-        public void setAmount (int amount)
-        {
-            HorizontalPanel horiz = new HorizontalPanel();
-            horiz.setVerticalAlignment(HorizontalPanel.ALIGN_MIDDLE);
-            horiz.add(MsoyUI.createLabel(_msgs.shopBuy(), null));
-            horiz.add(WidgetUtil.makeShim(10, 1));
-            horiz.add(MsoyUI.createImage(_currency.getLargeIcon(), null));
-            horiz.add(WidgetUtil.makeShim(10, 1));
-            horiz.add(MsoyUI.createLabel(_currency.format(amount), null));
-
-            setContent(horiz);
-        }
-
-        protected Currency _currency;
-    };
-
     protected static Widget createSeparator ()
     {
         return new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;");
@@ -286,8 +161,6 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
     protected CatalogModels _models;
     protected CatalogListing _listing;
-    protected FlowPanel _buyPanel;
-    protected BuyButton _buyBars, _buyCoins;
 
     protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
