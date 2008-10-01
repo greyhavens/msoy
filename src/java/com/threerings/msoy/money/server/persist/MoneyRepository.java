@@ -117,6 +117,9 @@ public class MoneyRepository extends DepotRepository
                 return false;
             }
         });
+        ctx.registerMigration(CashOutRecord.class, new SchemaMigration.Drop(3, "timeCompleted"));
+        ctx.registerMigration(CashOutRecord.class, new SchemaMigration.Drop(3, "actualBlingCashedOut"));
+        ctx.registerMigration(CashOutRecord.class, new SchemaMigration.Drop(4, "failureReason"));
     }
 
     /**
@@ -392,10 +395,10 @@ public class MoneyRepository extends DepotRepository
     {
         Where where = new Where(new And(
             new Conditionals.Equals(CashOutRecord.MEMBER_ID_C, memberId),
-            new Conditionals.IsNull(CashOutRecord.TIME_COMPLETED)));
+            new Conditionals.IsNull(CashOutRecord.TIME_FINISHED)));
         return updatePartial(CashOutRecord.class, where, CashOutRecord.getKey(memberId),
-            CashOutRecord.TIME_COMPLETED, new Timestamp(System.currentTimeMillis()),
-            CashOutRecord.ACTUAL_BLING_CASHED_OUT_C, actualAmount,
+            CashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
+            CashOutRecord.ACTUAL_CASHED_OUT_C, actualAmount,
             CashOutRecord.SUCCESSFUL, false);
     }
     
@@ -411,10 +414,10 @@ public class MoneyRepository extends DepotRepository
     {
         Where where = new Where(new And(
             new Conditionals.Equals(CashOutRecord.MEMBER_ID_C, memberId),
-            new Conditionals.IsNull(CashOutRecord.TIME_COMPLETED)));
+            new Conditionals.IsNull(CashOutRecord.TIME_FINISHED)));
         return updatePartial(CashOutRecord.class, where, CashOutRecord.getKey(memberId),
-            CashOutRecord.TIME_COMPLETED, new Timestamp(System.currentTimeMillis()),
-            CashOutRecord.FAILURE_REASON, reason,
+            CashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
+            CashOutRecord.CANCEL_REASON, reason,
             CashOutRecord.SUCCESSFUL, false);
     }
 
@@ -445,7 +448,7 @@ public class MoneyRepository extends DepotRepository
     public CashOutRecord getCurrentCashOutRequest (int memberId)
     {
         return load(CashOutRecord.class, new Where(new And(
-            new Conditionals.IsNull(CashOutRecord.TIME_COMPLETED_C),
+            new Conditionals.IsNull(CashOutRecord.TIME_FINISHED_C),
             new Conditionals.Equals(CashOutRecord.MEMBER_ID_C, memberId))));
     }
     
@@ -457,7 +460,7 @@ public class MoneyRepository extends DepotRepository
     {
         // select * from CashOutRecord where timeCompleted is null
         return findAll(CashOutRecord.class, new Where(
-            new Conditionals.IsNull(CashOutRecord.TIME_COMPLETED_C)));
+            new Conditionals.IsNull(CashOutRecord.TIME_FINISHED_C)));
     }
     
     /** Helper method to setup a query for a transaction history search. */

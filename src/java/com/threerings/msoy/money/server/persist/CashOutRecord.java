@@ -9,6 +9,7 @@ import net.jcip.annotations.NotThreadSafe;
 
 import com.samskivert.jdbc.depot.Key;
 import com.samskivert.jdbc.depot.PersistentRecord;
+import com.samskivert.jdbc.depot.annotation.Column;
 import com.samskivert.jdbc.depot.annotation.Entity;
 import com.samskivert.jdbc.depot.annotation.Id;
 import com.samskivert.jdbc.depot.annotation.Index;
@@ -16,7 +17,13 @@ import com.samskivert.jdbc.depot.expression.ColumnExp;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutInfo;
 
-@Entity(indices={ @Index(name="ixTimeCompleted", fields={ CashOutRecord.TIME_COMPLETED }) })
+/**
+ * Represents an attempt to cash out bling.  The request may be pending, fulfilled, or canceled.
+ * If pending, it must be fulfilled or canceled by whoever is processing cash out requests.
+ * 
+ * @author Kyle Sampson <kyle@threerings.net>
+ */
+@Entity(indices={ @Index(name="ixTimeCompleted", fields={ CashOutRecord.TIME_FINISHED }) })
 @NotThreadSafe
 public class CashOutRecord extends PersistentRecord
 {
@@ -98,12 +105,12 @@ public class CashOutRecord extends PersistentRecord
     public static final ColumnExp TIME_REQUESTED_C =
         new ColumnExp(CashOutRecord.class, TIME_REQUESTED);
 
-    /** The column identifier for the {@link #timeCompleted} field. */
-    public static final String TIME_COMPLETED = "timeCompleted";
+    /** The column identifier for the {@link #timeFinished} field. */
+    public static final String TIME_FINISHED = "timeFinished";
 
-    /** The qualified column identifier for the {@link #timeCompleted} field. */
-    public static final ColumnExp TIME_COMPLETED_C =
-        new ColumnExp(CashOutRecord.class, TIME_COMPLETED);
+    /** The qualified column identifier for the {@link #timeFinished} field. */
+    public static final ColumnExp TIME_FINISHED_C =
+        new ColumnExp(CashOutRecord.class, TIME_FINISHED);
 
     /** The column identifier for the {@link #successful} field. */
     public static final String SUCCESSFUL = "successful";
@@ -126,19 +133,19 @@ public class CashOutRecord extends PersistentRecord
     public static final ColumnExp BLING_WORTH_C =
         new ColumnExp(CashOutRecord.class, BLING_WORTH);
 
-    /** The column identifier for the {@link #failureReason} field. */
-    public static final String FAILURE_REASON = "failureReason";
+    /** The column identifier for the {@link #cancelReason} field. */
+    public static final String CANCEL_REASON = "cancelReason";
 
-    /** The qualified column identifier for the {@link #failureReason} field. */
-    public static final ColumnExp FAILURE_REASON_C =
-        new ColumnExp(CashOutRecord.class, FAILURE_REASON);
+    /** The qualified column identifier for the {@link #cancelReason} field. */
+    public static final ColumnExp CANCEL_REASON_C =
+        new ColumnExp(CashOutRecord.class, CANCEL_REASON);
 
-    /** The column identifier for the {@link #actualBlingCashedOut} field. */
-    public static final String ACTUAL_BLING_CASHED_OUT = "actualBlingCashedOut";
+    /** The column identifier for the {@link #actualCashedOut} field. */
+    public static final String ACTUAL_CASHED_OUT = "actualCashedOut";
 
-    /** The qualified column identifier for the {@link #actualBlingCashedOut} field. */
-    public static final ColumnExp ACTUAL_BLING_CASHED_OUT_C =
-        new ColumnExp(CashOutRecord.class, ACTUAL_BLING_CASHED_OUT);
+    /** The qualified column identifier for the {@link #actualCashedOut} field. */
+    public static final ColumnExp ACTUAL_CASHED_OUT_C =
+        new ColumnExp(CashOutRecord.class, ACTUAL_CASHED_OUT);
     // AUTO-GENERATED: FIELDS END
 
     /** ID of the member who requested a cash out. */
@@ -176,7 +183,8 @@ public class CashOutRecord extends PersistentRecord
     public Timestamp timeRequested;
     
     /** Date/time when this cash out was completed, or null if not completed. */
-    public Timestamp timeCompleted;
+    @Column(nullable=true)
+    public Timestamp timeFinished;
     
     /** True of the cash out completed successfully, false otherwise. */
     public boolean successful;
@@ -187,16 +195,27 @@ public class CashOutRecord extends PersistentRecord
     /** Worth of the bling at the time it was cashed out. */
     public float blingWorth;
     
-    /** If completed unsuccessfully, indicates the reason this cash out failed. */
-    public String failureReason;
+    /** If completed unsuccessfully, indicates the reason this cash out was canceled. */
+    @Column(nullable=true)
+    public String cancelReason;
     
     /** If completed successfully, the actual amount of bling that was cashed out. */
-    public Integer actualBlingCashedOut;
+    @Column(nullable=true)
+    public Integer actualCashedOut;
     
-    public static final int SCHEMA_VERSION = 1;
+    public static final int SCHEMA_VERSION = 4;
 
     public CashOutRecord () { }
     
+    /**
+     * Constructs a new cash out record in the pending state.
+     * 
+     * @param memberId ID of the member this record is for.
+     * @param blingAmount Amount of centibling the user requested to cash out.
+     * @param blingWorth Worth of bling in USD
+     * @param info The user's billing information, indicating how their request should be
+     * fulfilled.
+     */
     public CashOutRecord (int memberId, int blingAmount, float blingWorth, CashOutBillingInfo info)
     {
         this.memberId = memberId;
@@ -214,12 +233,15 @@ public class CashOutRecord extends PersistentRecord
         this.country = info.country;
     }
     
+    /**
+     * Constructs a CashOutInfo from the information in this record.
+     */
     public CashOutInfo toInfo ()
     {
         return new CashOutInfo(blingAmount, (int)(blingWorth * blingAmount), 
             new CashOutBillingInfo(firstName, lastName, paypalEmailAddress, phoneNumber, 
-            streetAddress, city, state, postalCode, country), timeRequested, timeCompleted, 
-            successful, actualBlingCashedOut, failureReason);
+            streetAddress, city, state, postalCode, country), timeRequested, timeFinished, 
+            successful, actualCashedOut, cancelReason);
     }
     
     // AUTO-GENERATED: METHODS START

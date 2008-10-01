@@ -36,8 +36,8 @@ public interface MoneyServiceAsync
     /**
      * The asynchronous version of {@link MoneyService#requestCashOutBling}.
      */
-    void requestCashOutBling (int memberId, int blingAmount, CashOutBillingInfo info,
-        AsyncCallback<BlingInfo> callback);
+    void requestCashOutBling (int memberId, int blingAmount, String password, 
+        CashOutBillingInfo info, AsyncCallback<BlingInfo> callback);
     
     /**
      * The asynchronous version of {@link MoneyService#getBlingCashOutRequests}.

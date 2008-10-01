@@ -25,6 +25,7 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 import com.threerings.msoy.money.gwt.MoneyService;
+import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
 import com.threerings.msoy.web.data.ServiceCodes;
@@ -69,9 +70,16 @@ public class MoneyServlet extends MsoyServiceServlet
         }
     }
     
-    public BlingInfo requestCashOutBling (int memberId, int blingAmount, CashOutBillingInfo info)
-        throws ServiceException
+    public BlingInfo requestCashOutBling (int memberId, int blingAmount, String password, 
+        CashOutBillingInfo info) throws ServiceException
     {
+        // Re-auth the user before allowing them to continue.
+        MemberRecord mrec = requireAuthedUser();
+        if (mrec.memberId != memberId) {
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+        _authenticator.authenticateSession(mrec.accountName, password);
+        
         try {
             return _moneyLogic.requestCashOutBling(memberId, blingAmount, info);
         } catch (NotEnoughMoneyException neme) {
@@ -121,4 +129,5 @@ public class MoneyServlet extends MsoyServiceServlet
 
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberRepository _memberRepo;
+    @Inject protected MsoyAuthenticator _authenticator;
 }

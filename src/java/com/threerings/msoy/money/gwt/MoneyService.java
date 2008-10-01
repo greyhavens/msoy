@@ -38,10 +38,11 @@ public interface MoneyService extends RemoteService
         throws ServiceException;
     
     /**
-     * Request a cashout of some amount of bling.
+     * Request a cashout of some amount of bling.  This will verify the user's password before
+     * cashing out bling.
      */
-    BlingInfo requestCashOutBling (int memberId, int blingAmount, CashOutBillingInfo info)
-        throws ServiceException;
+    BlingInfo requestCashOutBling (int memberId, int blingAmount, String password, 
+        CashOutBillingInfo info) throws ServiceException;
     
     /**
      * Retrieve all members who are currently waiting for a bling cashout.

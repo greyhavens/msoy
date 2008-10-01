@@ -5,6 +5,11 @@ package com.threerings.msoy.money.data.all;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+/**
+ * Contains billing information for a cash out request made by the user.
+ * 
+ * @author Kyle Sampson <kyle@threerings.net>
+ */
 public class CashOutBillingInfo
     implements IsSerializable
 {

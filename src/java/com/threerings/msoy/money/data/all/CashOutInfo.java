@@ -24,13 +24,13 @@ public class CashOutInfo
     
     public boolean successful;
     
-    public int actualAmountCashedOut;
+    public Integer actualAmountCashedOut;
     
     public String failureReason;
 
     public CashOutInfo (int blingAmount, int blingWorth, CashOutBillingInfo billingInfo,
             Date timeRequested, Date timeCompleted, boolean successful,
-            int actualAmountCashedOut, String failureReason)
+            Integer actualAmountCashedOut, String failureReason)
     {
         this.blingAmount = blingAmount;
         this.blingWorth = blingWorth;
