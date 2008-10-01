@@ -107,9 +107,11 @@ public class UserAction extends SimpleStreamableObject
         return new UserAction(Type.ACCEPTED_FRIEND_INVITE, memberId, null);
     }
 
-    public static UserAction invitedFriendJoined (int inviterId)
+    public static UserAction invitedFriendJoined (int inviterId, String newcomerName, int newcomerId)
     {
-        return new UserAction(Type.INVITED_FRIEND_JOINED, inviterId, "m.invited_friend_joined");
+        String descrip = MessageBundle.tcompose(
+            "m.invited_friend_joined", newcomerName, newcomerId);
+        return new UserAction(Type.INVITED_FRIEND_JOINED, inviterId, descrip);
     }
 
     public static UserAction playedGame (int memberId, String gameName, int gameId, int seconds)
