@@ -220,8 +220,7 @@ public class MoneyLogic
         int buyerId = buyerRec.memberId;
 
         // Get the secured prices for the item.
-        PriceKey key = new PriceKey(buyerId, item);
-        PriceQuote quote = _priceCache.getQuote(key);
+        PriceQuote quote = _priceCache.getQuote(buyerId, item);
         if (quote == null || quote.getAmount(buyCurrency) > authedAmount) {
             // In the unlikely scenarios that there was either no secured price (expired) or
             // they provided an out-of-date authed amount, we go ahead and secure a new price
@@ -320,7 +319,7 @@ public class MoneyLogic
             }
 
             // The price no longer needs to be in the cache.
-            _priceCache.removeQuote(key);
+            _priceCache.removeQuote(buyerId, item);
             // Inform the exchange that we've actually made the exchange
             if (!magicFree) {
                 // TODO: possibly pass detailed info into the exchange
@@ -558,8 +557,7 @@ public class MoneyLogic
 
         final PriceQuote quote = _exchange.secureQuote(listedCurrency, listedAmount);
         if (!MemberName.isGuest(buyerId)) {
-            final PriceKey key = new PriceKey(buyerId, item);
-            _priceCache.addQuote(key, quote);
+            _priceCache.addQuote(buyerId, item, quote);
         }
         return quote;
     }

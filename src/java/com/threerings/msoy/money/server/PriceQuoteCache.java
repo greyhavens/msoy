@@ -3,12 +3,18 @@
 
 package com.threerings.msoy.money.server;
 
+import java.io.Serializable;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
+import com.google.common.base.Preconditions;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import com.threerings.msoy.item.data.all.CatalogIdent;
 
 import com.threerings.msoy.money.data.all.PriceQuote;
 
@@ -44,9 +50,9 @@ public class PriceQuoteCache
      * return the quote data, unless the cache is full and the quote is dropped to make room, or
      * the quote expires.
      */
-    public void addQuote (final PriceKey key, final PriceQuote quote)
+    public void addQuote (int memberId, CatalogIdent item, PriceQuote quote)
     {
-        _cache.put(new Element(key, quote));
+        _cache.put(new Element(new PriceKey(memberId, item), quote));
     }
 
     /**
@@ -56,10 +62,10 @@ public class PriceQuoteCache
      *
      * @return The secured quote, or null.
      */
-    public PriceQuote getQuote (final PriceKey key)
+    public PriceQuote getQuote (int memberId, CatalogIdent item)
         throws NotSecuredException
     {
-        final Element e = _cache.get(key);
+        final Element e = _cache.getQuiet(new PriceKey(memberId, item));
         if (e == null) {
             return null;
         }
@@ -69,9 +75,9 @@ public class PriceQuoteCache
     /**
      * Removes the quote, so it is no longer reserved. Does nothing if the key is not present.
      */
-    public void removeQuote (final PriceKey key)
+    public void removeQuote (int memberId, CatalogIdent item)
     {
-        _cache.remove(key);
+        _cache.remove(new PriceKey(memberId, item));
     }
 
     protected final Cache _cache;
@@ -79,4 +85,37 @@ public class PriceQuoteCache
     protected static final int SECURED_PRICE_DURATION = 10;
     protected static final int MAX_SECURED_PRICES = 10000;
     protected static final String CACHE_NAME = "secured_prices";
+}
+
+class PriceKey
+    implements Serializable
+{
+    public PriceKey (int memberId, CatalogIdent item)
+    {
+        Preconditions.checkNotNull(item);
+        _memberId = memberId;
+        _ident = item;
+    }
+
+    @Override
+    public int hashCode ()
+    {
+        int hash = _memberId;
+        hash = 31 * hash + _ident.hashCode();
+        return hash;
+    }
+
+    @Override
+    public boolean equals (final Object obj)
+    {
+        if (this == obj) return true;
+        if (!(obj instanceof PriceKey)) {
+            return false;
+        }
+        PriceKey that = (PriceKey)obj; 
+        return (_memberId == that._memberId) && _ident.equals(that._ident);
+    }
+
+    protected int _memberId;
+    protected CatalogIdent _ident;
 }
