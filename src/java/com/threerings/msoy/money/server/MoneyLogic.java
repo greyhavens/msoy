@@ -200,7 +200,7 @@ public class MoneyLogic
         Preconditions.checkArgument(delta <= 0, "Only deduction supported.");
 
         modifyMoney(memberId, currency, delta, TransactionType.SUPPORT_ADJUST,
-            UserAction.supportAdjust(memberId, supportId, supportName));
+            UserAction.supportAdjust(memberId, supportName, supportId));
     }
 
     /**

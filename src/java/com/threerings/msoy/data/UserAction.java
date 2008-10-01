@@ -158,9 +158,9 @@ public class UserAction extends SimpleStreamableObject
         return new UserAction(Type.TRANSFER_FROM_GUEST, memberId, "m.transfer_from_guest");
     }
 
-    public static UserAction supportAdjust (int memberId, int supportId, String supportName)
+    public static UserAction supportAdjust (int memberId, String supportName, int supportId)
     {
-        String descrip = MessageBundle.tcompose("m.support_adjust", supportId, supportName);
+        String descrip = MessageBundle.tcompose("m.support_adjust", supportName, supportId);
         return new UserAction(Type.SUPPORT_ADJUST, memberId, descrip, null);
     }
 
