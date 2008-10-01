@@ -100,7 +100,7 @@ public class SnapshotController extends Controller
             "\r\n" + String(scene.getId()) + "\r\n" + b +
             "Content-Disposition: form-data; name=\"name\"\r\n" +
             "\r\n" + escape(itemName) + "\r\n" + b +
-            "Content-Disposition: form-data; name=\"snapshot_for_photo\"; " +
+            "Content-Disposition: form-data; name=\"snapshot;furni;thumb\"; " +
             "filename=\"snapshot.jpg\"\r\n" +
             "Content-Type: image/jpeg\r\n" +
             "\r\n");

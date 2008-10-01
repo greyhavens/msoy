@@ -45,11 +45,14 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
         // wrap the FileItem in an UploadFile for publishing
         UploadFile uploadFile = new FileItemUploadFile(ctx.file);
 
-        // attempt to extract the mediaId
-        String mediaId = ctx.file.getFieldName();
-        if (mediaId == null) {
+        // attempt to extract the list of mediaIds. First will be the main media, followed
+        // by optional thumb and/or furni mediaIds which indicate a thumb or furni mediaInfo
+        // should be generated and returned along with the main media info.
+        String fieldName = ctx.file.getFieldName();
+        if (fieldName == null) {
             throw new FileUploadException("Failed to extract mediaId from upload request.");
         }
+        List<String> mediaIds = Lists.newArrayList(fieldName.split(";"));
 
         // TODO: check that this is a supported content type
         log.info("Received file: [type: " + ctx.file.getContentType() +
@@ -66,35 +69,29 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
         // now we can validate the file size
         validateFileLength(mimeType, ctx.uploadLength);
 
-        // determine whether they also want a thumbnail and furni media generated
-        boolean forPhoto = mediaId.endsWith(Item.FOR_PHOTO);
-        if (forPhoto) {
-            mediaId = mediaId.substring(0, mediaId.length() - Item.FOR_PHOTO.length());
-        }
-
-        // we'll return a list of one or more mediaIds and corresponding mediaInfos
-        List<String> mediaIds = Lists.newArrayList();
+        // we'll return a mediaInfo for each mediaId supplied
         List<MediaInfo> mediaInfos = Lists.newArrayList();
 
         // if this is an image...
         if (MediaDesc.isImage(mimeType)) {
             // ...determine its constraints, generate a thumbnail, and publish the data into the
             // media store
-            mediaIds.add(mediaId);
-            mediaInfos.add(UploadUtil.publishImage(mediaId, uploadFile));
+            String mainMediaId = mediaIds.get(0);
+            mediaInfos.add(UploadUtil.publishImage(mainMediaId, uploadFile, false));
 
-            // if the client has requested a thumbnail and furni images to be generated along with
-            // this image, then do that as well
-            if (forPhoto) {
-                mediaIds.add(Item.THUMB_MEDIA);
-                mediaIds.add(Item.FURNI_MEDIA);
-                mediaInfos.add(UploadUtil.publishImage(Item.THUMB_MEDIA, uploadFile));
-                mediaInfos.add(UploadUtil.publishImage(Item.FURNI_MEDIA, uploadFile));
+            for (int ii = 1; ii < mediaIds.size(); ii++) {
+                String mediaId = mediaIds.get(ii);
+                // if the client has requested scaled thumbnail or furni images to be generated
+                // along with this image, do that as well. Furni in this case will be 320x200.
+                if (Item.THUMB_MEDIA.equals(mediaId) && !Item.THUMB_MEDIA.equals(mainMediaId)) {
+                    mediaInfos.add(UploadUtil.publishImage(Item.THUMB_MEDIA, uploadFile, true));
+                } else if (Item.FURNI_MEDIA.equals(mediaId)
+                    && !Item.FURNI_MEDIA.equals(mainMediaId)) {
+                    mediaInfos.add(UploadUtil.publishImage(Item.FURNI_MEDIA, uploadFile, true));
+                }
             }
-
         } else {
             // treat all other file types in the same manner, just publish them
-            mediaIds.add(mediaId);
             mediaInfos.add(new MediaInfo(uploadFile.getHash(), mimeType));
             UploadUtil.publishUploadFile(uploadFile);
         }
@@ -133,7 +130,7 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
                 out.println("<html>");
                 out.println("<head></head>");
                 String script = "";
-                for (int ii = 0; ii < mediaIds.size(); ii++) {
+                for (int ii = 0; ii < mediaIds.size() && ii < mediaInfos.size(); ii++) {
                     String mediaId = mediaIds.get(ii);
                     MediaInfo info = mediaInfos.get(ii);
                     script += "parent.setHash('" + mediaId + "', '" + info.hash + "', " +
@@ -145,7 +142,7 @@ public class ItemMediaUploadServlet extends AbstractUploadServlet
                 break;
 
             case MCHOOSER:
-                for (int ii = 0; ii < mediaIds.size(); ii++) {
+                for (int ii = 0; ii < mediaIds.size() && ii < mediaInfos.size(); ii++) {
                     String mediaId = mediaIds.get(ii);
                     MediaInfo info = mediaInfos.get(ii);
                     out.println(mediaId + " " + info.hash + " " + info.mimeType + " "

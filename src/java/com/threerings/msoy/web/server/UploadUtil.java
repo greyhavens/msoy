@@ -427,17 +427,18 @@ public class UploadUtil
 
     /**
      * Computes and fills in the constraints on the supplied image, scaling thumbnails as
-     * necessary, and publishes the image data to the media store.
+     * necessary, and publishes the image data to the media store. Furni media will be scaled to
+     * Preview size, as used by Photos in Galleries and shop preview panes.
      *
      * @return a MediaInfo object filled in with the published image info.
      */
-    public static MediaInfo publishImage (String mediaId, UploadFile uploadFile)
+    public static MediaInfo publishImage (String mediaId, UploadFile uploadFile, boolean doScale)
         throws IOException
     {
         Integer size = null;
-        if (Item.THUMB_MEDIA.equals(mediaId)) {
+        if (doScale && Item.THUMB_MEDIA.equals(mediaId)) {
             size = MediaDesc.THUMBNAIL_SIZE;
-        } else if (Item.FURNI_MEDIA.equals(mediaId)) {
+        } else if (doScale && Item.FURNI_MEDIA.equals(mediaId)) {
             size = MediaDesc.PREVIEW_SIZE;
         }
         return publishImage(size, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT

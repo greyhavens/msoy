@@ -272,12 +272,12 @@ public abstract class ItemEditor extends FlexTable
             }
         }), getFurniTitleText());
     }
-    
+
     protected String getFurniTabText ()
     {
         return _emsgs.editorFurniTab();
     }
-    
+
     protected String getFurniTitleText ()
     {
         return _emsgs.editorFurniTitle();
@@ -397,12 +397,14 @@ public abstract class ItemEditor extends FlexTable
     /**
      * This should be called by item editors that are used for editing media that has a 'main'
      * piece of media.
+     * @param isPhoto if True, a thubmnail and 320x200 furni will also be generated and returned
      */
     protected ItemMediaUploader createMainUploader (String type, boolean isPhoto,
         MediaUpdater updater)
     {
-        int mode = isPhoto ? ItemMediaUploader.MODE_PHOTO : ItemMediaUploader.MODE_NORMAL;
-        return createUploader(Item.MAIN_MEDIA, type, mode, updater);
+        String mediaIds = Item.MAIN_MEDIA;
+        mediaIds += isPhoto ? ";" + Item.THUMB_MEDIA + ";" + Item.FURNI_MEDIA : "";
+        return createUploader(mediaIds, type, ItemMediaUploader.MODE_NORMAL, updater);
     }
 
     /**
@@ -416,11 +418,13 @@ public abstract class ItemEditor extends FlexTable
 
     /**
      * This should be called if item editors want to create a custom furni uploader.
+     * @param genThumb if True, a thubmnail will also be generated and returned for images
      */
-    protected ItemMediaUploader createFurniUploader (boolean isPhoto, MediaUpdater updater)
+    protected ItemMediaUploader createFurniUploader (boolean genThumb, MediaUpdater updater)
     {
-        int mode = isPhoto ? ItemMediaUploader.MODE_PHOTO : ItemMediaUploader.MODE_NORMAL;
-        return createUploader(Item.FURNI_MEDIA, TYPE_FLASH, mode, updater);
+        String mediaIds = Item.FURNI_MEDIA;
+        mediaIds += genThumb ? ";" + Item.THUMB_MEDIA : "";
+        return createUploader(mediaIds, TYPE_FLASH, ItemMediaUploader.MODE_NORMAL, updater);
     }
 
     /**
@@ -435,10 +439,11 @@ public abstract class ItemEditor extends FlexTable
      * Creates and configures a media uploader.
      */
     protected ItemMediaUploader createUploader (
-        String id, String type, int mode, MediaUpdater updater)
+        String mediaIds, String type, int mode, MediaUpdater updater)
     {
-        ItemMediaUploader uploader = new ItemMediaUploader(id, type, mode, updater);
-        _uploaders.put(id, uploader);
+        ItemMediaUploader uploader = new ItemMediaUploader(mediaIds, type, mode, updater);
+        // record the uploader under the MAIN mediaId.
+        _uploaders.put(mediaIds.split(";")[0], uploader);
         return uploader;
     }
 

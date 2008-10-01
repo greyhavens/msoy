@@ -30,17 +30,18 @@ public class ItemMediaUploader extends FlexTable
 {
     public static final int MODE_NORMAL = 0;
     public static final int MODE_THUMB = 1;
-    public static final int MODE_PHOTO = 2;
 
     /**
-     * @param mediaId the type of the uploader to create, e.g. {@link Item#MAIN_MEDIA} . This value 
-     * is later passed to the bridge to identify the hash/mimeType returned by the server.
+     * @param mediaIds a semicolon-delimited list of types for the uploader to create, e.g.
+     * {@link Item#MAIN_MEDIA} or {@link Item#MAIN_MEDIA};{@link Item#THUMB_MEDIA}. This value is
+     * later passed to the bridge to identify the hash/mimeType returned by the server.
      * @param type the type of media being chosen: {@link ItemEditor#TYPE_IMAGE}, etc.
      * @param mode whether we're uploading normal media, thumbnail media or normal media that
      * should also generate a thumbnail image when changed.
      * @param updater the updater that knows how to set the media hash on the item.
      */
-    public ItemMediaUploader (String mediaId, String type, int mode, ItemEditor.MediaUpdater updater)
+    public ItemMediaUploader (String mediaIds, String type, int mode,
+            ItemEditor.MediaUpdater updater)
     {
         setStyleName("mediaUploader");
         setCellPadding(0);
@@ -62,12 +63,6 @@ public class ItemMediaUploader extends FlexTable
         _hint.setWidth((2 * MediaDesc.THUMBNAIL_WIDTH) + "px");
         getFlexCellFormatter().setVerticalAlignment(0, 1, HorizontalPanel.ALIGN_TOP);
 
-        // appending FOR_PHOTO to the media id will indicate to the upload servlet that we want it
-        // to also generate thumb and furni images and report those to us as well after uploading
-        if (mode == MODE_PHOTO) {
-            mediaId += Item.FOR_PHOTO;
-        }
-
         _form = new FormPanel();
         _panel = new HorizontalPanel();
         _form.setWidget(_panel);
@@ -88,7 +83,7 @@ public class ItemMediaUploader extends FlexTable
             }
         });
 
-        _upload.setName(mediaId);
+        _upload.setName(mediaIds);
         _panel.add(_upload);
 
         _form.addFormHandler(new FormHandler() {
