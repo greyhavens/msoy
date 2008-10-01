@@ -12,6 +12,9 @@ import com.threerings.msoy.data.all.VisitorInfo;
 
 /**
  * Wrapper for visitor information.
+ *
+ * <p>
+ * Server-side version of {@link client.shell.VisitorCookie}.
  */
 public class VisitorCookie
 {
