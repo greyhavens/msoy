@@ -62,7 +62,7 @@ public class AdminServlet extends MsoyServiceServlet
     public void grantInvitations (final int numberInvitations, final Date activeSince)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAdmin();
+        final MemberRecord memrec = requireAdminUser();
         Timestamp since = activeSince != null ? new Timestamp(activeSince.getTime()) : null;
         for (final int memberId : _memberRepo.grantInvites(numberInvitations, since)) {
             sendGotInvitesMail(memrec.memberId, memberId, numberInvitations);
@@ -73,7 +73,7 @@ public class AdminServlet extends MsoyServiceServlet
     public void grantInvitations (final int numberInvitations, final int memberId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAdmin();
+        final MemberRecord memrec = requireAdminUser();
         _memberRepo.grantInvites(memberId, numberInvitations);
         sendGotInvitesMail(memrec.memberId, memberId, numberInvitations);
     }
@@ -82,7 +82,7 @@ public class AdminServlet extends MsoyServiceServlet
     public MemberAdminInfo getMemberInfo (final int memberId)
         throws ServiceException
     {
-        requireSupport();
+        requireSupportUser();
 
         final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
         if (tgtrec == null) {
@@ -118,7 +118,7 @@ public class AdminServlet extends MsoyServiceServlet
     public MemberInviteResult getPlayerList (final int inviterId)
         throws ServiceException
     {
-        requireAdmin();
+        requireAdminUser();
 
         final MemberInviteResult res = new MemberInviteResult();
         final MemberRecord memRec = inviterId == 0 ? null : _memberRepo.loadMember(inviterId);
@@ -142,7 +142,7 @@ public class AdminServlet extends MsoyServiceServlet
     public int[] spamPlayers (final String subject, final String body, int startId, int endId)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAdmin();
+        final MemberRecord memrec = requireAdminUser();
         log.info("Spamming the players [spammer=" + memrec.who() + ", subject=" + subject + "].");
         _mailLogic.spamPlayers(subject, body);
         return new int[] { 0, 0, 0 }; // TODO: this is all going away
@@ -152,7 +152,7 @@ public class AdminServlet extends MsoyServiceServlet
     public void setIsSupport (final int memberId, final boolean isSupport)
         throws ServiceException
     {
-        final MemberRecord memrec = requireAdmin();
+        final MemberRecord memrec = requireAdminUser();
         final MemberRecord tgtrec = _memberRepo.loadMember(memberId);
         if (tgtrec != null) {
             // log this as a warning so that it shows up in the nightly filtered logs
@@ -204,7 +204,7 @@ public class AdminServlet extends MsoyServiceServlet
         int start, int count, boolean needTotal)
         throws ServiceException
     {
-        requireSupport();
+        requireSupportUser();
 
         PagedResult<AffiliateMapping> result = new PagedResult<AffiliateMapping>();
         result.page = Lists.newArrayList(Iterables.transform(
@@ -219,7 +219,7 @@ public class AdminServlet extends MsoyServiceServlet
     public void mapAffiliate (String affiliate, int memberId)
         throws ServiceException
     {
-        requireSupport();
+        requireSupportUser();
 
         _affMapRepo.storeMapping(affiliate, memberId);
         _memberRepo.updateAffiliateMemberId(affiliate, memberId);
@@ -229,7 +229,7 @@ public class AdminServlet extends MsoyServiceServlet
     public List<ItemDetail> getFlaggedItems (final int count)
         throws ServiceException
     {
-        requireSupport();
+        requireSupportUser();
 
         // it'd be nice to round-robin the item types or something, so the first items in the queue
         // aren't always from the same type... perhaps we'll just do something clever in the UI
@@ -258,7 +258,7 @@ public class AdminServlet extends MsoyServiceServlet
     public Integer deleteItemAdmin (final ItemIdent iident, final String subject, final String body)
         throws ServiceException
     {
-        final MemberRecord memrec = requireSupport();
+        final MemberRecord memrec = requireSupportUser();
 
         final byte type = iident.type;
         final ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
@@ -300,26 +300,6 @@ public class AdminServlet extends MsoyServiceServlet
         }
 
         return Integer.valueOf(deletionCount);
-    }
-
-    protected MemberRecord requireAdmin ()
-        throws ServiceException
-    {
-        final MemberRecord memrec = requireAuthedUser();
-        if (!memrec.isAdmin()) {
-            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-        }
-        return memrec;
-    }
-
-    protected MemberRecord requireSupport ()
-        throws ServiceException
-    {
-        final MemberRecord memrec = requireAuthedUser();
-        if (!memrec.isSupport()) {
-            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-        }
-        return memrec;
     }
 
     protected void sendGotInvitesMail (final int senderId, final int recipientId, final int number)

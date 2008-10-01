@@ -304,10 +304,7 @@ public class ItemServlet extends MsoyServiceServlet
     public void setMature (ItemIdent iident, boolean value)
         throws ServiceException
     {
-        MemberRecord mRec = requireAuthedUser();
-        if (!mRec.isSupport()) {
-            throw new ServiceException(ItemCodes.ACCESS_DENIED);
-        }
+        MemberRecord mRec = requireSupportUser();
 
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(iident.type);
         // TODO: If things get really tight, this could use updatePartial() later.

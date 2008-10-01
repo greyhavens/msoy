@@ -104,10 +104,7 @@ public class MoneyServlet extends MsoyServiceServlet
     public void supportAdjust (int memberId, Currency currency, int delta)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-        if (!mrec.isSupport()) {
-            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
-        }
+        MemberRecord mrec = requireSupportUser();
 
         // Additional safety checks in MoneyLogic
         _moneyLogic.supportAdjust(memberId, currency, delta, mrec.memberId, mrec.name);

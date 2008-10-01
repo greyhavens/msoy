@@ -85,10 +85,7 @@ public class MeServlet extends MsoyServiceServlet
     public void updateWhirledNews (final String newsHtml)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-        if (!mrec.isSupport()) {
-            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
-        }
+        MemberRecord mrec = requireSupportUser();
 
         postDObjectAction(new Runnable() {
             public void run () {

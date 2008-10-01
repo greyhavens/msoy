@@ -117,12 +117,7 @@ public class InviteServlet extends MsoyServiceServlet
                                           String customMessage, boolean anonymous)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-
-        // if they're requesting anonymous invites and are not an admin, rejecto!
-        if (anonymous && !mrec.isAdmin()) {
-            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
-        }
+        MemberRecord mrec = anonymous ? requireAdminUser() : requireAuthedUser();
 
 // TODO: nix this when we stop caring about retaining the potential to limit growth
 //             // make sure this user still has available invites; we already check this value in GWT

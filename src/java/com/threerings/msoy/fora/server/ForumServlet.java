@@ -422,10 +422,7 @@ public class ForumServlet extends MsoyServiceServlet
     public void sendPreviewEmail (String subject, String message)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-        if (!mrec.isSupport()) {
-            throw new ServiceException(ForumCodes.E_ACCESS_DENIED);
-        }
+        MemberRecord mrec = requireSupportUser();
         _mailLogic.previewSpam(mrec.accountName, subject, message);
     }
 

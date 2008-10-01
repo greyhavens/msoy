@@ -42,23 +42,6 @@ public class MsoyServiceServlet extends RemoteServiceServlet
     }
 
     /**
-     * Returns the visitor ID of the player making this service request, either by asking
-     * the MemberHelper (for registered players), or by reading directly from the cookie
-     * (for guests). Returns null if it can't find one.
-     */
-    protected String getVisitorTracker ()
-        throws ServiceException
-    {
-        MemberRecord mrec = getAuthedUser();
-        if (mrec != null) {
-            return mrec.visitorId;
-        }
-
-        VisitorInfo info = VisitorCookie.get(getThreadLocalRequest());
-        return (info != null) ? info.id : null;
-    }
-
-    /**
      * Returns the member record for the member making this service request.
      *
      * @exception ServiceException thrown if the session has expired or is otherwise invalid.
@@ -83,6 +66,51 @@ public class MsoyServiceServlet extends RemoteServiceServlet
         }
 
         return mrec;
+    }
+
+    /**
+     * Returns the member record for the member making this request, requiring that they
+     * be <b>support</b> or higher.
+     */
+    protected MemberRecord requireSupportUser ()
+        throws ServiceException
+    {
+        final MemberRecord memrec = requireAuthedUser();
+        if (!memrec.isSupport()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+        return memrec;
+    }
+
+    /**
+     * Returns the member record for the member making this request, requiring that they
+     * be <b>admin</b> or higher.
+     */
+    protected MemberRecord requireAdminUser ()
+        throws ServiceException
+    {
+        final MemberRecord memrec = requireAuthedUser();
+        if (!memrec.isAdmin()) {
+            throw new ServiceException(MsoyAuthCodes.ACCESS_DENIED);
+        }
+        return memrec;
+    }
+
+    /**
+     * Returns the visitor ID of the player making this service request, either by asking
+     * the MemberHelper (for registered players), or by reading directly from the cookie
+     * (for guests). Returns null if it can't find one.
+     */
+    protected String getVisitorTracker ()
+        throws ServiceException
+    {
+        MemberRecord mrec = getAuthedUser();
+        if (mrec != null) {
+            return mrec.visitorId;
+        }
+
+        VisitorInfo info = VisitorCookie.get(getThreadLocalRequest());
+        return (info != null) ? info.id : null;
     }
 
     /**

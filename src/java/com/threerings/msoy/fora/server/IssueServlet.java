@@ -107,10 +107,7 @@ public class IssueServlet extends MsoyServiceServlet
     public Issue createIssue (Issue issue, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-        if (!mrec.isSupport()) {
-            throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
-        }
+        MemberRecord mrec = requireSupportUser();
 
         Issue rissue = _issueRepo.createIssue(issue).toIssue();
         rissue.creator = issue.creator;
@@ -126,10 +123,7 @@ public class IssueServlet extends MsoyServiceServlet
     public Issue updateIssue (Issue issue)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-        if (!mrec.isSupport()) {
-            throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
-        }
+        MemberRecord mrec = requireSupportUser();
 
         IssueRecord irec = _issueRepo.loadIssue(issue.issueId);
         if (irec.state != Issue.STATE_OPEN) {
@@ -151,10 +145,7 @@ public class IssueServlet extends MsoyServiceServlet
     public void assignMessage (int issueId, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-        if (!mrec.isSupport()) {
-            throw new ServiceException(IssueCodes.E_ACCESS_DENIED);
-        }
+        MemberRecord mrec = requireSupportUser();
         IssueRecord irec = _issueRepo.loadIssue(issueId);
         if (irec.state != Issue.STATE_OPEN) {
             throw new ServiceException(IssueCodes.E_ISSUE_CLOSED);
