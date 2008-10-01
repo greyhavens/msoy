@@ -20,6 +20,7 @@ import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.CashOutInfo;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
@@ -98,6 +99,22 @@ public class MoneyServlet extends MsoyServiceServlet
                         entry.getValue(), "todo@email.com");
                 }
         }));
+    }
+
+    public void supportAdjust (int memberId, Currency currency, int delta)
+        throws ServiceException
+    {
+        MemberRecord mrec = requireAuthedUser();
+        if (!mrec.isSupport()) {
+            throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
+        }
+
+        // Only coin deductions supported for now
+        if (Currency.COINS != currency || delta >= 0) {
+            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
+        }
+
+        _moneyLogic.supportAdjust(memberId, currency, delta, mrec.memberId, mrec.name);
     }
     
     /**

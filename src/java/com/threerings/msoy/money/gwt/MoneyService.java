@@ -12,6 +12,7 @@ import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 
@@ -45,5 +46,12 @@ public interface MoneyService extends RemoteService
     /**
      * Retrieve all members who are currently waiting for a bling cashout.
      */
-    List<CashOutEntry> getBlingCashOutRequests () throws ServiceException;
+    List<CashOutEntry> getBlingCashOutRequests ()
+        throws ServiceException;
+
+    /**
+     * Used by support to deduct coins from a player as a logged transaction.
+     */
+    void supportAdjust (int memberId, Currency currency, int delta)
+        throws ServiceException;
 }

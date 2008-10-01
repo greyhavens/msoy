@@ -180,16 +180,24 @@ public class MoneyLogic
      */
     public MoneyTransaction boughtBars (int memberId, int numBars, String payment)
     {
-        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests cannot buy bars.");
         Preconditions.checkArgument(numBars >= 0, "numBars is invalid: %d", numBars);
 
-        MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
-            memberId, Currency.BARS, numBars, TransactionType.BARS_BOUGHT,
-            MessageBundle.tcompose("m.bought_bars", payment), null);
-        _nodeActions.moneyUpdated(tx);
-        logAction(UserAction.boughtBars(memberId), tx);
+        return modifyMoney(memberId, Currency.BARS, numBars, TransactionType.BARS_BOUGHT,
+            UserAction.boughtBars(memberId, payment));
+    }
 
-        return tx.toMoneyTransaction();
+    /**
+     * The member has his purse poked by support staff. This adds or lowers their currency by
+     * some amount as logged transaction.
+     *
+     * @param supportId Logged ID of the acting support member.
+     * @param supportName Logged visible name of the acting support member.
+     */
+    public void supportAdjust (
+        int memberId, Currency currency, int delta, int supportId, String supportName)
+    {
+        modifyMoney(memberId, currency, delta, TransactionType.SUPPORT_ADJUST,
+            UserAction.supportAdjust(memberId, supportId, supportName));
     }
 
     /**
@@ -616,6 +624,19 @@ public class MoneyLogic
         }
 
         return new CurrencyAmount(currency, amount);
+    }
+
+    protected MoneyTransaction modifyMoney
+        (int memberId, Currency currency, int delta, TransactionType type, UserAction action)
+    {
+        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests do not have money.");
+
+        MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
+            memberId, currency, delta, type, action.description, null);
+        _nodeActions.moneyUpdated(tx);
+        logAction(action, tx);
+
+        return tx.toMoneyTransaction();
     }
 
     protected void logAction (UserAction action, MoneyTransactionRecord tx)

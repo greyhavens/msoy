@@ -21,7 +21,8 @@ public enum TransactionType
     RECEIVED_FROM_EXCHANGE(8),
     CASHED_OUT(9),
     REQUEST_CASH_OUT(10),
-    CANCEL_CASH_OUT(11)
+    CANCEL_CASH_OUT(11),
+    SUPPORT_ADJUST(12),
     ;
 
     // Required by ByteEnum

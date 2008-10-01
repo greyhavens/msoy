@@ -35,7 +35,7 @@ public class UserAction extends SimpleStreamableObject
         EARNED_BADGE(40),
 
         // (purely) money related actions
-        BOUGHT_BARS(50), RECEIVED_PAYOUT(51), TRANSFER_FROM_GUEST(52),
+        BOUGHT_BARS(50), RECEIVED_PAYOUT(51), TRANSFER_FROM_GUEST(52), SUPPORT_ADJUST(53),
 
         UNUSED(255);
 
@@ -140,9 +140,10 @@ public class UserAction extends SimpleStreamableObject
         return new UserAction(Type.EARNED_BADGE, memberId, descrip);
     }
 
-    public static UserAction boughtBars (int memberId)
+    public static UserAction boughtBars (int memberId, String payment)
     {
-        return new UserAction(Type.BOUGHT_BARS, memberId, null);
+        String descrip = MessageBundle.tcompose("m.bought_bars", payment);
+        return new UserAction(Type.BOUGHT_BARS, memberId, descrip);
     }
 
     public static UserAction receivedPayout (int memberId)
@@ -153,6 +154,12 @@ public class UserAction extends SimpleStreamableObject
     public static UserAction transferFromGuest (int memberId)
     {
         return new UserAction(Type.TRANSFER_FROM_GUEST, memberId, "m.transfer_from_guest");
+    }
+
+    public static UserAction supportAdjust (int memberId, int supportId, String supportName)
+    {
+        String descrip = MessageBundle.tcompose("m.support_adjust", supportId, supportName);
+        return new UserAction(Type.SUPPORT_ADJUST, memberId, descrip, null);
     }
 
     /** Used for unserialization. */

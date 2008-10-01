@@ -11,6 +11,7 @@ import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
+import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 
@@ -42,5 +43,10 @@ public interface MoneyServiceAsync
      * The asynchronous version of {@link MoneyService#getBlingCashOutRequests}.
      */
     void getBlingCashOutRequests (AsyncCallback<List<CashOutEntry>> callback);
+
+    /**
+     * The asynchronous version of {@link MoneyService#supportAdjust}.
+     */
+    void supportAdjust (int memberId, Currency currency, int delta, AsyncCallback<Void> callback);
 }
 
