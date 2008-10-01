@@ -331,7 +331,7 @@ public class AVRGameManager extends PlaceManager
         }
         PlayerObject player = _locator.lookupPlayer(playerId);
         if (player == null) {
-            log.warning("Agent requested non-player to leave", "caller", caller,
+            log.info("Agent requested non-player to leave", "caller", caller,
                 "playerId", playerId);
             return;
         }
@@ -482,7 +482,7 @@ public class AVRGameManager extends PlaceManager
         // Update our internal records
         Scene oldScene = _players.get(memberId);
         if (oldScene != null && sceneId == oldScene.sceneId) {
-            log.warning("Player entered scene twice", "memberId", memberId, "scene", oldScene);
+            log.info("Player entered scene twice", "memberId", memberId, "scene", oldScene);
 
         } else {
             Scene scene = _scenes.get(sceneId);
