@@ -196,6 +196,9 @@ public class MoneyLogic
     public void supportAdjust (
         int memberId, Currency currency, int delta, int supportId, String supportName)
     {
+        Preconditions.checkArgument(Currency.COINS == currency, "Only coin adjustment supported.");
+        Preconditions.checkArgument(delta <= 0, "Only deduction supported.");
+
         modifyMoney(memberId, currency, delta, TransactionType.SUPPORT_ADJUST,
             UserAction.supportAdjust(memberId, supportId, supportName));
     }

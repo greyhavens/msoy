@@ -109,11 +109,7 @@ public class MoneyServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }
 
-        // Only coin deductions supported for now
-        if (Currency.COINS != currency || delta >= 0) {
-            throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
-        }
-
+        // Additional safety checks in MoneyLogic
         _moneyLogic.supportAdjust(memberId, currency, delta, mrec.memberId, mrec.name);
     }
     
