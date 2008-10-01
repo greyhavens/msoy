@@ -10,7 +10,6 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.TreeMultimap;
 import com.google.inject.Inject;
 
-import com.samskivert.jdbc.RepositoryUnit;
 import com.samskivert.util.ArrayIntSet;
 import com.samskivert.util.IntMap;
 import com.samskivert.util.IntMaps;
@@ -265,46 +264,9 @@ public class AwardDelegate extends RatingDelegate
             totalMinutes = capDuration * _totalTrackedGames;
         }
 
-        // update our in-memory record to reflect this gameplay
-        _content.detail.flowToNextRecalc -= _totalAwardedFlow;
-        _content.detail.gamesPlayed += _totalTrackedGames;
-
-        // determine whether or not it's time to recalculate this game's payout factor
-        final int hourlyRate = RuntimeConfig.server.hourlyGameFlowRate;
-        final int newFlowToNextRecalc;
-        if (_content.detail.flowToNextRecalc <= 0) {
-            newFlowToNextRecalc = RuntimeConfig.server.payoutFactorReassessment * hourlyRate +
-                _content.detail.flowToNextRecalc;
-            _content.detail.flowToNextRecalc = newFlowToNextRecalc;
-        } else {
-            newFlowToNextRecalc = 0;
-        }
-
-        // record this gameplay for future game metrics tracking and blah blah
-        final int gameId = _content.detail.gameId, playerMins = Math.max(totalMinutes, 1);
-        _invoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
-            @Override
-            public void invokePersist () throws Exception {
-                // note that this game was played
-                _mgameRepo.noteGamePlayed(
-                    gameId, isMultiplayer(), _totalTrackedGames, playerMins, _totalAwardedFlow);
-                // if it's time to recalc our payout factor, do that
-                if (newFlowToNextRecalc > 0) {
-                    _newData = _mgameRepo.computeAndUpdatePayoutFactor(
-                        gameId, newFlowToNextRecalc, hourlyRate);
-                }
-            }
-            @Override
-            public void handleSuccess () {
-                // update the in-memory detail record if we changed things
-                if (_newData != null) {
-                    _content.detail.payoutFactor = _newData[0];
-                    _content.detail.avgSingleDuration = _newData[1];
-                    _content.detail.avgMultiDuration = _newData[2];
-                }
-            }
-            protected int[] _newData;
-        });
+        // record that games were played and potentially update our payout factor
+        _gameReg.updateGameMetrics(
+            _content.detail, isMultiplayer(), totalMinutes, _totalTrackedGames, _totalAwardedFlow);
     }
 
     @Override // from PlaceManagerDelegate

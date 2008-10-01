@@ -82,6 +82,7 @@ import com.threerings.msoy.item.server.persist.PrizeRepository;
 import com.threerings.msoy.item.server.persist.TrophySourceRecord;
 import com.threerings.msoy.item.server.persist.TrophySourceRepository;
 
+import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.person.server.persist.FeedRepository;
 
 import com.threerings.msoy.avrg.client.AVRService;
@@ -103,6 +104,7 @@ import com.threerings.msoy.game.data.MsoyGameDefinition;
 import com.threerings.msoy.game.data.MsoyMatchConfig;
 import com.threerings.msoy.game.data.PlayerObject;
 import com.threerings.msoy.game.data.all.Trophy;
+import com.threerings.msoy.game.server.persist.GameDetailRecord;
 import com.threerings.msoy.game.server.persist.MsoyGameRepository;
 import com.threerings.msoy.game.server.persist.TrophyRecord;
 import com.threerings.msoy.game.server.persist.TrophyRepository;
@@ -379,6 +381,55 @@ public class GameGameRegistry
     public void gameDidPayout (int memberId, Game game, int payout, int secondsPlayed)
     {
         _eventLog.gamePlayed(game.genre, game.gameId, game.itemId, payout, secondsPlayed, memberId);
+    }
+
+    /**
+     * Notes that some number of games were played, player minutes accumulated and coins paid out
+     * for the supplied game. The appropriate records are stored in the database to faciliate
+     * payout factor recalculation, recalculation is performed if the time to do so has arrived and
+     * the supplied detail record is updated with the new information.
+     */
+    public void updateGameMetrics (final GameDetailRecord detail, final boolean isMultiplayer,
+                                   int minutesPlayed, final int gamesPlayed, final int coinsAwarded)
+    {
+        // update our in-memory record to reflect this gameplay
+        detail.flowToNextRecalc -= coinsAwarded;
+        detail.gamesPlayed += gamesPlayed;
+
+        // determine whether or not it's time to recalculate this game's payout factor
+        final int hourlyRate = RuntimeConfig.server.hourlyGameFlowRate;
+        final int newFlowToNextRecalc;
+        if (detail.flowToNextRecalc <= 0) {
+            newFlowToNextRecalc = RuntimeConfig.server.payoutFactorReassessment * hourlyRate +
+                detail.flowToNextRecalc;
+            detail.flowToNextRecalc = newFlowToNextRecalc;
+        } else {
+            newFlowToNextRecalc = 0;
+        }
+
+        // record this gameplay for future game metrics tracking and blah blah
+        final int gameId = detail.gameId, playerMins = Math.max(minutesPlayed, 1);
+        _invoker.postUnit(new RepositoryUnit("updateGameDetail(" + gameId + ")") {
+            @Override public void invokePersist () throws Exception {
+                // note that game were played
+                _mgameRepo.noteGamePlayed(
+                    gameId, isMultiplayer, gamesPlayed, playerMins, coinsAwarded);
+                // if it's time to recalc our payout factor, do that
+                if (newFlowToNextRecalc > 0) {
+                    _newData = _mgameRepo.computeAndUpdatePayoutFactor(
+                        gameId, newFlowToNextRecalc, hourlyRate);
+                }
+            }
+            @Override public void handleSuccess () {
+                // update the in-memory detail record if we changed things
+                if (_newData != null) {
+                    detail.payoutFactor = _newData[0];
+                    detail.avgSingleDuration = _newData[1];
+                    detail.avgMultiDuration = _newData[2];
+                }
+            }
+            protected int[] _newData;
+        });
     }
 
     /**
