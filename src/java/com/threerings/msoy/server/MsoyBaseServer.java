@@ -49,6 +49,7 @@ import com.threerings.msoy.bureau.server.BureauLauncherClientFactory;
 import com.threerings.msoy.bureau.server.BureauLauncherDispatcher;
 import com.threerings.msoy.bureau.server.BureauLauncherProvider;
 import com.threerings.msoy.bureau.server.BureauLauncherSender;
+import com.threerings.msoy.bureau.server.MsoyBureauClientFactory;
 
 import static com.threerings.msoy.Log.log;
 
@@ -211,7 +212,7 @@ public abstract class MsoyBaseServer extends WhirledServer
     {
         // We need to chain these client factories *after* the main init so that it can get first
         // dibs and delegate to the subclass client factory
-        _bureauReg.setDefaultClientFactory();
+        _clmgr.setClientFactory(new MsoyBureauClientFactory(_clmgr.getClientFactory()));
         _clmgr.setClientFactory(new BureauLauncherClientFactory(_clmgr.getClientFactory()));
     }
 
