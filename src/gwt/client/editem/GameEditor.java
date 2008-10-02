@@ -154,6 +154,8 @@ public class GameEditor extends ItemEditor
         }
         addRow(_emsgs.gameGenre(), _genre);
 
+        addTab(_emsgs.gameTabConfig());
+
         addRow(_emsgs.gameGameType(), bind(_matchType = new ListBox(), new Binder() {
             @Override public void valueChanged () {
                 boolean isParty = (_matchType.getSelectedIndex() == 1);
@@ -181,17 +183,20 @@ public class GameEditor extends ItemEditor
         _matchType.addItem(_dmsgs.xlate("gameType0"));
         _matchType.addItem(_dmsgs.xlate("gameType2"));
 
-        // TODO: it'd be nice to force-format this text field for integers, or something
         addRow(_emsgs.gameMinPlayers(), _minPlayers = new NumberTextBox(false, 5));
         _minPlayers.setText("1");
-
         addRow(_emsgs.gameMaxPlayers(), _maxPlayers = new NumberTextBox(false, 5));
         _maxPlayers.setText("1");
-
         addRow(_emsgs.gameWatchable(), _watchable = new CheckBox());
         _watchable.setChecked(true);
 
-        // add a tab for uploading the game media
+        addRow(_emsgs.gameDefinition(), _extras = new TextArea());
+        _extras.setCharacterWidth(60);
+        _extras.setVisibleLines(5);
+
+        addTab(_emsgs.gameTabCode());
+
+        // add a UI for uploading the game client and server code
         addSpacer();
         addRow(_emsgs.gameLabel(), createMainUploader(TYPE_CODE, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
@@ -202,6 +207,22 @@ public class GameEditor extends ItemEditor
                 return null;
             }
         }), _emsgs.gameTip());
+
+        MediaUpdater serverMediaUpdater = new MediaUpdater() {
+            public String updateMedia (String name, MediaDesc desc, int width, int height) {
+                _game.serverMedia = desc; // TODO: validate media type
+                return null;
+            }
+        };
+        ItemMediaUploader serverMediaUploader = createUploader(
+            Game.SERVER_CODE_MEDIA, TYPE_CODE, ItemMediaUploader.MODE_NORMAL, serverMediaUpdater);
+        addRow(_emsgs.gameServerMediaLabel(), serverMediaUploader, _emsgs.gameServerMediaTip());
+        addRow(_emsgs.gameServerClass(), _serverClass = new TextBox(), _emsgs.gameServerClassTip());
+        _serverClass.setVisibleLength(40);
+
+        addRow(_emsgs.gameAVRG(), _avrg = new CheckBox(), _emsgs.gameAVRGTip());
+
+        addTab(_emsgs.gameTabMedia());
 
         // add a tab for uploading the game screenshot
         ItemMediaUploader shotter = createAuxUploader(TYPE_IMAGE, new MediaUpdater() {
@@ -221,7 +242,10 @@ public class GameEditor extends ItemEditor
 
         super.addExtras();
 
-        // list of whirleds this player is a member of
+        addTab(_emsgs.gameTabExtras());
+
+        // a UI for selecting this game's associated whirled
+        addSpacer();
         _whirled = new ListBox();
         addRow(_emsgs.gameWhirledLabel(), _whirled, _emsgs.gameWhirledTip());
 
@@ -229,27 +253,6 @@ public class GameEditor extends ItemEditor
         addSpacer();
         addRow(_emsgs.gameShopTag(), _shopTag = new TextBox());
         addTip(_emsgs.gameShopTagTip());
-
-        addSpacer();
-        addRow(_emsgs.gameDefinition(), _extras = new TextArea());
-        _extras.setCharacterWidth(60);
-        _extras.setVisibleLines(5);
-        addRow(_emsgs.gameAVRG(), _avrg = new CheckBox());
-
-        // add a tab for uploading the game server code
-        addSpacer();
-        addTip(_emsgs.gameServerHeadingTip());
-        MediaUpdater serverMediaUpdater = new MediaUpdater() {
-            public String updateMedia (String name, MediaDesc desc, int width, int height) {
-                _game.serverMedia = desc; // TODO: validate media type
-                return null;
-            }
-        };
-        ItemMediaUploader serverMediaUploader = createUploader(
-            Game.SERVER_CODE_MEDIA, TYPE_CODE, ItemMediaUploader.MODE_NORMAL, serverMediaUpdater);
-        addRow(_emsgs.gameServerMediaLabel(), serverMediaUploader, _emsgs.gameServerMediaTip());
-        addRow(_emsgs.gameServerClass(), _serverClass = new TextBox(), _emsgs.gameServerClassTip());
-        _serverClass.setVisibleLength(40);
     }
 
     /**

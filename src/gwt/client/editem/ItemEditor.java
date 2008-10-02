@@ -28,12 +28,11 @@ import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
-import com.threerings.gwt.ui.WidgetUtil;
-
 import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
+import client.ui.StyledTabPanel;
 import client.util.ServiceUtil;
 import client.util.MsoyCallback;
 
@@ -122,24 +121,23 @@ public abstract class ItemEditor extends FlexTable
         addExtras();
         addDescription();
 
-        addSpacer();
-        HorizontalPanel footer = new HorizontalPanel();
-        int row = getRowCount();
-        setWidget(row, 1, footer);
-        footer.add(_esubmit = new Button("submit"));
+        _esubmit = new Button("submit");
         _esubmit.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 commitEdit();
             }
         });
-        footer.add(WidgetUtil.makeShim(5, 5));
-        Button ecancel;
-        footer.add(ecancel = new Button(_cmsgs.cancel()));
+        Button ecancel = new Button(_cmsgs.cancel());
         ecancel.addClickListener(new ClickListener() {
             public void onClick (Widget widget) {
                 _parent.editComplete(null);
             }
         });
+
+        addSpacer();
+        int row = getRowCount();
+        setWidget(row, 1, MsoyUI.createButtonPair(_esubmit, ecancel));
+        getFlexCellFormatter().setHorizontalAlignment(row, 1, HasAlignment.ALIGN_RIGHT);
     }
 
     /**
@@ -332,6 +330,23 @@ public abstract class ItemEditor extends FlexTable
     }
 
     /**
+     * Creates a tab and activates it such that all subsequent configuration values (added with
+     * methods like {@link #addRow} and {@link #addTip} are added to the most recently added tab's
+     * internal table rather than to the top-level item editor.
+     */
+    protected void addTab (String label)
+    {
+        if (_tabs == null) {
+            int row = getRowCount();
+            setWidget(row, 0, _tabs = new StyledTabPanel());
+            _tabs.setWidth("100%");
+            getFlexCellFormatter().setColSpan(row, 0, 2);
+        }
+        _tabs.add(_current = new FlexTable(), label);
+        _tabs.selectTab(0);
+    }
+
+    /**
      * Helper function for overriders of {@link #addInfo} etc.
      */
     protected void addRow (String label, Widget widget)
@@ -344,20 +359,20 @@ public abstract class ItemEditor extends FlexTable
      */
     protected void addRow (String label, Widget widget, String tip)
     {
-        int row = getRowCount();
+        int row = _current.getRowCount();
         // this aims to make the label column skinny; it even works on some browsers...
-        getFlexCellFormatter().setWidth(row, 0, "50px");
+        _current.getFlexCellFormatter().setWidth(row, 0, "50px");
         if (tip != null) {
             FlowPanel flow = new FlowPanel();
             flow.add(MsoyUI.createLabel(label, "nowrapLabel"));
             flow.add(MsoyUI.createLabel(tip, "tipLabel"));
-            setWidget(row, 0, flow);
+            _current.setWidget(row, 0, flow);
         } else {
-            setText(row, 0, label);
-            getFlexCellFormatter().setStyleName(row, 0, "nowrapLabel");
+            _current.setText(row, 0, label);
+            _current.getFlexCellFormatter().setStyleName(row, 0, "nowrapLabel");
         }
-        getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
-        setWidget(row, 1, widget);
+        _current.getFlexCellFormatter().setVerticalAlignment(row, 0, HasAlignment.ALIGN_TOP);
+        _current.setWidget(row, 1, widget);
     }
 
     /**
@@ -365,10 +380,10 @@ public abstract class ItemEditor extends FlexTable
      */
     protected void addRow (Widget widget)
     {
-        int row = getRowCount();
-        setWidget(row, 0, widget);
-        getFlexCellFormatter().setColSpan(row, 0, 2);
-        getFlexCellFormatter().setStyleName(row, 0, "Item");
+        int row = _current.getRowCount();
+        _current.setWidget(row, 0, widget);
+        _current.getFlexCellFormatter().setColSpan(row, 0, 2);
+        _current.getFlexCellFormatter().setStyleName(row, 0, "Item");
     }
 
     /**
@@ -376,10 +391,10 @@ public abstract class ItemEditor extends FlexTable
      */
     protected void addTip (String tip)
     {
-        int row = getRowCount();
-        setText(row, 1, tip);
-        getFlexCellFormatter().setStyleName(row, 1, "tipLabel");
-        getFlexCellFormatter().setWidth(row, 1, "400px");
+        int row = _current.getRowCount();
+        _current.setText(row, 1, tip);
+        _current.getFlexCellFormatter().setStyleName(row, 1, "tipLabel");
+        _current.getFlexCellFormatter().setWidth(row, 1, "400px");
     }
 
     /**
@@ -387,11 +402,11 @@ public abstract class ItemEditor extends FlexTable
      */
     protected void addSpacer ()
     {
-        int row = getRowCount();
-        setText(row, 0, " ");
-        getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
-        getFlexCellFormatter().setHeight(row, 0, "10px");
-        getFlexCellFormatter().setColSpan(row, 0, 2);
+        int row = _current.getRowCount();
+        _current.setText(row, 0, " ");
+        _current.getFlexCellFormatter().setStyleName(row, 0, "tipLabel");
+        _current.getFlexCellFormatter().setHeight(row, 0, "10px");
+        _current.getFlexCellFormatter().setColSpan(row, 0, 2);
     }
 
     /**
@@ -688,6 +703,9 @@ public abstract class ItemEditor extends FlexTable
     protected TextBox _name;
     protected LimitedTextArea _description;
     protected Button _esubmit;
+
+    protected StyledTabPanel _tabs;
+    protected FlexTable _current = this;
 
     protected Map<String, ItemMediaUploader> _uploaders = new HashMap<String, ItemMediaUploader>();
 
