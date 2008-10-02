@@ -37,7 +37,7 @@ public class ShopPage extends Page
         String action = args.get(0, "");
 
         if (action.equals(LOAD_LISTING)) {
-            byte type = (byte)args.get(1, Item.NOT_A_TYPE);
+            byte type = getItemType(args, 1, Item.NOT_A_TYPE);
             int catalogId = args.get(2, 0);
             _catalogsvc.loadListing(type, catalogId, new MsoyCallback<CatalogListing>() {
                 public void onSuccess (CatalogListing listing) {
@@ -49,14 +49,14 @@ public class ShopPage extends Page
         } else if (action.equals(FAVORITES)) {
             // if no member is specified, we use the current member
             int memberId = args.get(1, CShop.getMemberId());
-            byte itemType = (byte)args.get(2, Item.NOT_A_TYPE);
+            byte type = getItemType(args, 2, Item.NOT_A_TYPE);
             int page = args.get(3, 0);
-            setContent(new FavoritesPanel(_models, memberId, itemType, page));
+            setContent(new FavoritesPanel(_models, memberId, type, page));
 
         } else if (action.equals(SUITE)) {
             final int gameId = args.get(1, 0);
-            final byte itemType = (byte)args.get(2, Item.LEVEL_PACK);
-            final byte page = (byte)args.get(3, 0);
+            final byte itemType = getItemType(args, 2, Item.LEVEL_PACK);
+            final int page = args.get(3, 0);
             if (_suite.getGameId() != gameId) {
                 // only load the suite info in the case that the game id has changed
                 _catalogsvc.loadGameSuiteInfo(gameId, new MsoyCallback<CatalogService.SuiteInfo>() {
@@ -73,7 +73,7 @@ public class ShopPage extends Page
             }
 
         } else {
-            byte type = (byte)args.get(0, Item.NOT_A_TYPE);
+            byte type = getItemType(args, 0, Item.NOT_A_TYPE);
             if (type == Item.NOT_A_TYPE) {
                 setContent(_msgs.catalogTitle(), new ShopPanel());
             } else {
@@ -98,6 +98,19 @@ public class ShopPage extends Page
 
         // load up our translation dictionaries
         CShop.msgs = (ShopMessages)GWT.create(ShopMessages.class);
+    }
+
+    /**
+     * Extracts the item type from the arguments, sanitizing it if necessary.
+     */
+    protected byte getItemType (Args args, int index, byte deftype)
+    {
+        byte type = (byte)args.get(index, deftype);
+        if (Item.getClassForType(type) == null) {
+            CShell.log("Rejecting invalid item type", "type", type, "args", args);
+            return deftype;
+        }
+        return type;
     }
 
     protected CatalogModels _models = new CatalogModels();
