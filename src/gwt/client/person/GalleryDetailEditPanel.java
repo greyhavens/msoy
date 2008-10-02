@@ -4,6 +4,7 @@
 package client.person;
 
 import client.dnd.PayloadWidget;
+import client.ui.CreatorLabel;
 import client.ui.LimitedTextArea;
 import client.ui.MsoyUI;
 import client.util.MediaUtil;
@@ -16,9 +17,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.CenteredBox;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.Gallery;
@@ -40,10 +42,13 @@ public class GalleryDetailEditPanel extends AbsolutePanel
         if (gallery.thumbMedia != null) {
             thumbnail = MediaUtil.createMediaView(gallery.thumbMedia, MediaDesc.THUMBNAIL_SIZE);
         } else {
-            // TODO make wonderful
-            thumbnail = MsoyUI.createLabel("drag here", "GalleryThumbnail");
+            thumbnail = MsoyUI.createLabel(_pmsgs.galleryNoThumbnail(), "Text");
         }
-        final SimplePanel thumbnailPanel = MsoyUI.createSimplePanel("GalleryThumbnail", thumbnail);
+
+        final CenteredBox thumbnailPanel = new CenteredBox(thumbnail, "GalleryThumbnail",
+            MediaDesc.getWidth(MediaDesc.THUMBNAIL_SIZE),
+            MediaDesc.getHeight(MediaDesc.THUMBNAIL_SIZE));
+        //final SimplePanel thumbnailPanel = MsoyUI.createSimplePanel("GalleryThumbnail", thumbnail);
         // allow for the user to drop an image on the thumbnail panel to set the thumbnail media
         // for the gallery
         SimpleDropController thumbnailDrop = new SimpleDropController(thumbnailPanel) {
@@ -53,7 +58,8 @@ public class GalleryDetailEditPanel extends AbsolutePanel
                     if (droppings.getPayload() instanceof Photo) {
                         Photo image = (Photo) droppings.getPayload();
                         gallery.thumbMedia = image.thumbMedia;
-                        thumbnailPanel.setWidget(MediaUtil.createMediaView(image.thumbMedia,
+                        thumbnailPanel.clear();
+                        thumbnailPanel.add(MediaUtil.createMediaView(image.thumbMedia,
                             MediaDesc.THUMBNAIL_SIZE));
                     }
                 }
@@ -63,11 +69,10 @@ public class GalleryDetailEditPanel extends AbsolutePanel
             }
         };
         dragController.registerDropController(thumbnailDrop);
-        add(thumbnailPanel, 10, 60);
+        add(thumbnailPanel, 10, 10);
 
-        _countLabel = MsoyUI.createLabel("", "Count");
+        add(_countLabel = MsoyUI.createLabel("", "Count"), 20, 80);
         setCount(galleryData.photos.size());
-        add(_countLabel, 110, 70);
 
         // do not allow profile gallery name to be edited
         if (gallery.isProfileGallery()) {
@@ -81,8 +86,13 @@ public class GalleryDetailEditPanel extends AbsolutePanel
                     gallery.name = ((TextBox) sender).getText();
                 }
             });
-            add(name, 10, 10);
+            add(name, 105, 7);
         }
+
+        // creator name
+        add(new CreatorLabel(galleryData.owner), 415, 10);
+
+        // description textarea
         final LimitedTextArea description = new LimitedTextArea(Gallery.MAX_DESCRIPTION_LENGTH, 20,
             10);
         description.setText(gallery.description);
@@ -92,7 +102,7 @@ public class GalleryDetailEditPanel extends AbsolutePanel
                 gallery.description = description.getText();
             }
         });
-        add(description, 10, 140);
+        add(description, 100, 35);
     }
 
     /**

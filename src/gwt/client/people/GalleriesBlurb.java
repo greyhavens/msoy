@@ -49,7 +49,10 @@ public class GalleriesBlurb extends Blurb
         } else {
             FlowPanel galleriesPanel = MsoyUI.createFlowPanel("Galleries");
             for (int i = 0; i < pdata.galleries.size() && i < NUM_GALLERIES; i++) {
-                galleriesPanel.add(new GalleryWidget(pdata.galleries.get(i)));
+                // don't display profile galleries here.
+                if (pdata.galleries.get(i).name != null) {
+                    galleriesPanel.add(new GalleryWidget(pdata.galleries.get(i)));
+                }
             }
             setContent(galleriesPanel);
         }

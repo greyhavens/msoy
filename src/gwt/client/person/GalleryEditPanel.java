@@ -26,11 +26,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.CenteredBox;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.SimpleDataModel;
 import com.threerings.msoy.data.all.MediaDesc;
+import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.item.gwt.ItemService;
 import com.threerings.msoy.item.gwt.ItemServiceAsync;
@@ -97,7 +102,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         add(detailPanel, 0, 0);
 
         // add "save" button
-        PushButton saveButton = MsoyUI.createButton(MsoyUI.LONG_THIN, _pmsgs.saveButton(),
+        PushButton saveButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _pmsgs.saveButton(),
             new ClickListener() {
                 public void onClick (Widget sender) {
                     final PushButton button = (PushButton) sender;
@@ -132,12 +137,16 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
             }
         );
         saveButton.addStyleName("Save");
-        add(saveButton, 45, 350);
+        add(saveButton, 575, 70);
+
+        // instructions for drop box will be removed when the first content is inserted
+        final FlowPanel dragInstructions = MsoyUI.createFlowPanel("DragInstructions");
 
         // add drop panel for adding to and organizing this gallery
         SimpleDropModel<Photo> dropModel = new SimpleDropModel<Photo>(galleryData.photos);
         dropModel.addDropListener(new DropListener<Photo>() {
             public void contentInserted (DropModel<Photo> model, Photo content, int index) {
+                dragInstructions.clear();
                 updateCount(model);
             }
             public void contentRemoved (DropModel<Photo> model, Photo content) {
@@ -149,16 +158,28 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         });
         DropPanel<Photo> dropPanel = new DropPanel<Photo>(_dragController, dropModel) {
             @Override protected Widget createWidget (Photo photo) {
-                return MediaUtil.createMediaView(photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE);
+                return new CenteredBox(MediaUtil.createMediaView(photo.thumbMedia,
+                    MediaDesc.THUMBNAIL_SIZE), "ThumbnailImage");
             }
         };
-        add(dropPanel, 225, 10);
+        add(dropPanel, 0, 120);
+
+        // instructions for drop box are added after dropModel
+        if (_galleryData.photos.size() == 0) {
+            dragInstructions.add(MsoyUI.createLabel(_pmsgs.galleryDragInstructions1(),
+                "DragInstructions1"));
+            dragInstructions.add(MsoyUI.createLabel(_pmsgs.galleryDragInstructions2(),
+                "DragInstructions2"));
+            add(dragInstructions, 200, 180);
+        }
 
         // show all photos that the member owns
+        final SimplePanel photoContainer = new SimplePanel();
+        add(photoContainer, 0, 370);
         _itemsvc.loadPhotos(new MsoyCallback<List<Photo>>() {
             public void onSuccess (List<Photo> result) {
-                final PagedPanel myPhotos = new PagedPanel(new SimpleDataModel<Photo>(result), 5);
-                add(myPhotos, 10, 405);
+                final PhotoList myPhotos = new PhotoList(new SimpleDataModel<Photo>(result), 12);
+                photoContainer.setWidget(myPhotos);
                 // allow photos to get dropped onto this panel (to remove them from a gallery)
                 _dragController.registerDropController(
                     new SimpleDropController(GalleryEditPanel.this) {
@@ -186,26 +207,43 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                 );
             }
         });
+
+        // "your photos" title goes over photo list
+        add(new Image("/images/people/gallery_photo_icon.png"), 10, 375);
+        add(MsoyUI.createLabel(_pmsgs.galleryPhotoListTitle(), "PhotoListTitle"), 65, 385);
+
+        // button link to photo upload panel goes over photo list
+        add(MsoyUI.createButton(MsoyUI.LONG_THIN,
+            _pmsgs.galleryUploadPhotos(),
+            new ClickListener() {
+                public void onClick (Widget sender) {
+                    Link.go(Pages.STUFF, Args.compose("c", "" + Item.PHOTO));
+                }
+            }
+        ), 550, 600);
     }
 
     /**
      * A paginated list of Photos.
+     * TODO add page numbers.
      */
-    protected class PagedPanel extends FlowPanel {
-        public PagedPanel (DataModel<Photo> model, int count) {
+    protected class PhotoList extends FlowPanel {
+        public PhotoList (DataModel<Photo> model, int count) {
             _model = model;
             _count = count;
-            addStyleName("Contents");
-            _prevNext = MsoyUI.createPrevNextButtons(new ClickListener() {
-                public void onClick (Widget sender) {
-                    prev();
-                }
-            },
-            new ClickListener() {
-                public void onClick (Widget sender) {
-                    next();
-                }
-            });
+            addStyleName("PhotoList");
+            _prevNext = MsoyUI.createPrevNextButtons(
+                new ClickListener() {
+                    public void onClick (Widget sender) {
+                        prev();
+                    }
+                },
+                new ClickListener() {
+                    public void onClick (Widget sender) {
+                        next();
+                    }
+                });
+            _prevNext.addStyleName("PrevNextButtons");
             display();
         }
 
@@ -245,8 +283,9 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         }
 
         protected Widget createWidget (Photo photo) {
-            PayloadWidget<Photo> payload = new PayloadWidget<Photo>(this,
-                MediaUtil.createMediaView(photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE), photo);
+            PayloadWidget<Photo> payload = new PayloadWidget<Photo>(
+                this, new CenteredBox(MediaUtil.createMediaView(
+                    photo.thumbMedia, MediaDesc.THUMBNAIL_SIZE), "ThumbnailImage"), photo);
             _dragController.makeDraggable(payload);
             return payload;
         }

@@ -119,7 +119,7 @@ public class GalleryServlet extends MsoyServiceServlet
         data.photos = Lists.newArrayList(Lists.transform(
             _photoRepo.loadItemsInOrder(PrimitiveArrays.asList(galleryRecord.photoItemIds)),
             new ItemRecord.ToItem<Photo>()));
-        data.ownerId = galleryRecord.ownerId;
+        data.owner = _memberRepo.loadMemberName(galleryRecord.ownerId);
         return data;
     }
 

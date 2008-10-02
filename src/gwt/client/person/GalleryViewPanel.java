@@ -15,16 +15,15 @@ import client.util.ServiceUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.SmartTable;
-
+import com.threerings.gwt.ui.CenteredBox;
+import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Photo;
 import com.threerings.msoy.person.gwt.GalleryData;
@@ -38,7 +37,7 @@ import com.threerings.msoy.person.gwt.GalleryServiceAsync;
  *
  * @author mjensen
  */
-public class GalleryViewPanel extends AbsolutePanel
+public class GalleryViewPanel extends FlowPanel
 {
     public static final String VIEW_ACTION = "gallery";
     public static final String VIEW_PROFILE_ACTION = "profileGallery";
@@ -49,21 +48,21 @@ public class GalleryViewPanel extends AbsolutePanel
      * @param galleryId
      * @param memberId
      */
-    public GalleryViewPanel (final int galleryId, final int memberId)
+    public GalleryViewPanel (final int galleryId, final int memberId, final int photoId)
     {
         addStyleName("galleryViewPanel");
 
         if (galleryId > 0) {
         _gallerysvc.loadGallery(galleryId, new MsoyCallback<GalleryData>() {
             public void onSuccess (GalleryData galleryData) {
-                displayGallery(galleryData);
+                displayGallery(galleryData, photoId);
             }
         });
         } else {
             _profileMemberId = memberId;
             _gallerysvc.loadMeGallery(memberId, new MsoyCallback<GalleryData>() {
                 public void onSuccess (GalleryData galleryData) {
-                    displayGallery(galleryData);
+                    displayGallery(galleryData, photoId);
                 }
             });
         }
@@ -73,7 +72,7 @@ public class GalleryViewPanel extends AbsolutePanel
      * If galleryData contains a list of images, display the gallery details and thumbnails for
      * those images, otherwise display an error and/or edit button.
      */
-    protected void displayGallery (GalleryData galleryData)
+    protected void displayGallery (GalleryData galleryData, final int photoId)
     {
         FlowPanel error = MsoyUI.createFlowPanel("Error");
         if (galleryData == null) {
@@ -92,7 +91,7 @@ public class GalleryViewPanel extends AbsolutePanel
             }
 
         } else if (galleryData.photos == null || galleryData.photos.size() == 0) {
-            if (galleryData.ownerId == CShell.getMemberId()) {
+            if (galleryData.owner.getMemberId() == CShell.getMemberId()) {
                 error.add(new HTML(_pmsgs.galleryNoPhotosSelf()));
                 final String args = Args.compose(GalleryEditPanel.EDIT_ACTION,
                     galleryData.gallery.galleryId);
@@ -102,67 +101,126 @@ public class GalleryViewPanel extends AbsolutePanel
                 error.add(new HTML(_pmsgs.galleryNoPhotosOther()));
             }
         }
+        // if there is an error, display it and stop rendering page
         if (error.getWidgetCount() > 0) {
             add(error);
             return;
         }
         _galleryData = galleryData;
 
-        // add read-only gallery detail panel
-        add(new GalleryDetailPanel(galleryData), 0, 0);
+        // click gallery detail panel to return to list of images
+        ClickListener galleryDetailListener = new ClickListener() {
+            public void onClick (Widget sender) {
+                setPhoto(-1);
+            }
+        };
+        FocusPanel galleryDetailClick = new FocusPanel(new GalleryDetailPanel(galleryData));
+        galleryDetailClick.addClickListener(galleryDetailListener);
+        add(galleryDetailClick);
 
-        FlowPanel photoPanel = new FlowPanel();
-        for (int i = 0; i < galleryData.photos.size(); i++) {
-            final int photoIndex = i;
+        // slieshow | view all galleries | edit actions
+        InlinePanel actions = new InlinePanel("Actions");
+        ClickListener slideshowClick = new ClickListener() {
+            public void onClick (Widget sender) {
+                // toggle slideshow and text of this link
+                if (((Label)sender).getText().equals(_pmsgs.gallerySlideshowStart())) {
+                    ((Label)sender).setText(_pmsgs.gallerySlideshowStop());
+                    startSlideshow();
+                } else {
+                    ((Label)sender).setText(_pmsgs.gallerySlideshowStart());
+                    stopSlideshow();
+                }
+            }
+        };
+        actions.add(MsoyUI.createActionLabel(_pmsgs.gallerySlideshowStart(), slideshowClick));
+        actions.add(new Label("|"));
+        final String viewGalleriesArgs = Args.compose(GalleryPanel.GALLERIES_ACTION,
+            _galleryData.owner.getMemberId());
+        actions.add(MsoyUI.createActionLabel(_pmsgs.galleryViewAll(),
+            Link.createListener(Pages.PEOPLE, viewGalleriesArgs)));
+        if (galleryData.owner.getMemberId() == CShell.getMemberId()) {
+            actions.add(new Label("|"));
+            final String args = Args.compose(GalleryEditPanel.EDIT_ACTION,
+                _galleryData.gallery.galleryId);
+            final ClickListener listener = Link.createListener(Pages.PEOPLE, args);
+            actions.add(MsoyUI.createActionLabel(_pmsgs.editButton(), listener));
+        }
+        add(actions);
 
-            // use a SmartTable to center image vertically
-            Photo photo = galleryData.photos.get(i);
-            SmartTable thumbnail = new SmartTable(0, 0);
-            thumbnail.addWidget(MediaUtil.createMediaView(photo.getPreviewMedia(),
-                MediaDesc.PREVIEW_SIZE), 0, null);
-            thumbnail.getCellFormatter().setHeight(0, 0,
-                MediaDesc.getHeight(MediaDesc.PREVIEW_SIZE) + "px");
-            thumbnail.getCellFormatter().setWidth(0, 0,
-                MediaDesc.getWidth(MediaDesc.PREVIEW_SIZE) + "px");
-            thumbnail.getCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_MIDDLE);
-            thumbnail.getCellFormatter().setHorizontalAlignment(0, 0, HasAlignment.ALIGN_CENTER);
-            thumbnail.addWidget(MsoyUI.createLabel(photo.name, "Name"), 0, null);
+        // list all the photos
+        add(_photoPanel = new FlowPanel());
+        for (int ii = 0; ii < galleryData.photos.size(); ii++) {
+            final int photoIndex = ii;
+            Photo photo = galleryData.photos.get(ii);
 
-            // use a FocusPanel to catch clicks
+            // clicking on an image will bring up the full view of it
             ClickListener thumbClickListener = new ClickListener() {
                 public void onClick (Widget sender) {
                     setPhoto(photoIndex);
                 }
             };
-            FocusPanel thumbClickContainer = new FocusPanel();
-            thumbClickContainer.addStyleName("Thumbnail");
-            thumbClickContainer.addStyleName("actionLabel");
-            thumbClickContainer.add(thumbnail);
-            thumbClickContainer.addClickListener(thumbClickListener);
-            photoPanel.add(thumbClickContainer);
+
+            // add thumbnail and image name to a box
+            Widget image = MediaUtil.createMediaView(photo.getPreviewMedia(),
+                MediaDesc.getWidth(MediaDesc.PREVIEW_SIZE) / 2,
+                MediaDesc.getHeight(MediaDesc.PREVIEW_SIZE) / 2, thumbClickListener);
+            FlowPanel thumbnail = MsoyUI.createFlowPanel("Thumbnail");
+            // size the containing box here, include space for 1px border
+            thumbnail.add(new CenteredBox(image, "Image",
+                MediaDesc.getWidth(MediaDesc.PREVIEW_SIZE) / 2 + 2,
+                MediaDesc.getHeight(MediaDesc.PREVIEW_SIZE) / 2 + 2));
+            thumbnail.add(MsoyUI.createLabel(photo.name, "Name"));
+            _photoPanel.add(thumbnail);
         }
-        add(photoPanel, 225, 0);
 
         // this will be filled with the photos
         _currentPhoto = new AbsolutePanel();
         _currentPhoto.addStyleName("CurrentPhoto");
+
+        // set the current photo if there was one in the URL
+        if (photoId > 0) {
+            for (Photo photo : _galleryData.photos) {
+                if (photo.itemId == photoId) {
+                    setPhoto(_galleryData.photos.indexOf(photo));
+                    return;
+                }
+            }
+        }
     }
 
     /**
-     * Change which photo is being shown. If photo is null, just clear the current photo.
+     * Change which photo is being shown. If photo is null, clear the current photo.
+     * TODO change the url to match selected photo
      */
     protected void setPhoto (final int photoIndex)
     {
         _currentPhoto.clear();
+        _currentPhotoIndex = photoIndex;
 
         if (photoIndex < 0 || photoIndex >= _galleryData.photos.size()) {
             remove(_currentPhoto);
+            add(_photoPanel);
             return;
         }
         Photo photo = _galleryData.photos.get(photoIndex);
+        remove(_photoPanel);
+        add(_currentPhoto);
 
-        // grey out the bg
-        _currentPhoto.add(MsoyUI.createFlowPanel("GreyMask"), 0, 0);
+        // photo name
+        _currentPhoto.add(MsoyUI.createLabel(photo.name, "FullPhotoName"), 10, 0);
+
+        // prev and next buttons
+        ClickListener onPrev = new ClickListener() {
+            public void onClick (Widget sender) {
+                setPhoto(photoIndex == 0 ? _galleryData.photos.size() - 1 : photoIndex - 1);
+            }
+        };
+        ClickListener onNext = new ClickListener() {
+            public void onClick (Widget sender) {
+                setPhoto((photoIndex + 1) % _galleryData.photos.size());
+            }
+        };
+        _currentPhoto.add(MsoyUI.createPrevNextButtons(onPrev, onNext), 560, 0);
 
         // determine the width of the most constrained side and override the media constraint
         int width = photo.photoWidth;
@@ -191,55 +249,15 @@ public class GalleryViewPanel extends AbsolutePanel
                 setPhoto(-1);
             }
         };
-
-        // Image name, photo and description will be centered
-        FlowPanel fullSizeContainer = MsoyUI.createFlowPanel("FullSize");
-        Widget fullSize = MediaUtil.createMediaView(photo.photoMedia, width, height, onClick);
-        fullSize.addStyleName("Photo");
-        fullSizeContainer.add(fullSize);
-        fullSizeContainer.add(MsoyUI.createLabel(photo.name, "Name"));
-        fullSizeContainer.add(MsoyUI.createLabel(photo.description, "Description"));
-        _currentPhoto.add(fullSizeContainer, 0, 50);
-
-        // either a start or stop slideshow button depending on if it is running.
-        if (_slideshowTimer == null) {
-            ClickListener slideshowClick = new ClickListener() {
-                public void onClick (Widget sender) {
-                    startSlideshow(photoIndex);
-                }
-            };
-            _currentPhoto.add(new Button(_pmsgs.slideshowStart(), slideshowClick), 240, 20);
-        } else {
-            ClickListener slideshowClick = new ClickListener() {
-                public void onClick (Widget sender) {
-                    stopSlideshow();
-                }
-            };
-            _currentPhoto.add(new Button(_pmsgs.slideshowStop(), slideshowClick), 260, 20);
-        }
-
-        // prev and next buttons
-        ClickListener onPrev = new ClickListener() {
-            public void onClick (Widget sender) {
-                setPhoto(photoIndex == 0 ? _galleryData.photos.size() - 1 : photoIndex - 1);
-            }
-        };
-        ClickListener onNext = new ClickListener() {
-            public void onClick (Widget sender) {
-                setPhoto((photoIndex + 1) % _galleryData.photos.size());
-            }
-        };
-        _currentPhoto.add(MsoyUI.createPrevNextButtons(onPrev, onNext), 330, 20);
-
-        add(_currentPhoto, 0, 0);
+        Widget fullPhoto = MediaUtil.createMediaView(photo.photoMedia, width, height, onClick);
+        _currentPhoto.add(MsoyUI.createSimplePanel("FullPhoto", fullPhoto), 0, 35);
     }
 
     /**
-     * Starts the slideshow immediately at a given photo index.
+     * Start the slideshow immediately at the first photo or next photo if one is being shown.
      */
-    protected void startSlideshow (final int photoIndex)
+    protected void startSlideshow ()
     {
-        _slideshowIndex = photoIndex;
         _slideshowTimer = new Timer() {
             @Override public void run() {
                 advanceSlideshow();
@@ -253,19 +271,22 @@ public class GalleryViewPanel extends AbsolutePanel
      */
     protected void advanceSlideshow ()
     {
-        _slideshowIndex = (_slideshowIndex + 1) % _galleryData.photos.size();
-        setPhoto(_slideshowIndex);
+        if (_currentPhotoIndex < 0) {
+            setPhoto(0);
+        } else {
+            setPhoto((_currentPhotoIndex + 1) % _galleryData.photos.size());
+        }
         _slideshowTimer.schedule(5000);
     }
 
     /**
-     * Halt the slideshow, and reset the slideshow button by setting the photo one more time.
+     * Halt the slideshow and return to the list of photos.
      */
     protected void stopSlideshow ()
     {
         _slideshowTimer.cancel();
         _slideshowTimer = null;
-        setPhoto(_slideshowIndex);
+        setPhoto(-1);
     }
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);
@@ -275,11 +296,14 @@ public class GalleryViewPanel extends AbsolutePanel
     /** List of photos and gallery details */
     protected GalleryData _galleryData;
 
-    /** Current photo index for the slideshow */
-    protected int _slideshowIndex;
+    /** The index of the photo currently being displayed, used for slideshow */
+    protected int _currentPhotoIndex;
 
     /** Fires every 5 seconds while slideshow is running */
     protected Timer _slideshowTimer;
+
+    /** List of photos; hidden while viewing one photo in full */
+    protected FlowPanel _photoPanel;
 
     /** Panel to display the photo currently being displayed in full */
     protected AbsolutePanel _currentPhoto;

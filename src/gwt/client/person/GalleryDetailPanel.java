@@ -3,16 +3,14 @@
 
 package client.person;
 
-import client.shell.Args;
-import client.shell.CShell;
-import client.shell.Pages;
+import client.ui.CreatorLabel;
 import client.ui.MsoyUI;
-import client.util.Link;
 import client.util.MediaUtil;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.ClickListener;
+import com.threerings.gwt.ui.CenteredBox;
+import com.threerings.gwt.ui.InlinePanel;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
@@ -29,28 +27,23 @@ public class GalleryDetailPanel extends AbsolutePanel
         Gallery gallery = galleryData.gallery;
         setStyleName("galleryDetailPanel");
 
-        // Thumbnail
-        if (gallery.thumbMedia != null) {
-            add(MsoyUI.createSimplePanel("GalleryThumbnail", MediaUtil.createMediaView(
-                gallery.thumbMedia, MediaDesc.THUMBNAIL_SIZE)), 10, 60);
-        } else {
-            add(MsoyUI.createLabel("no image", "GalleryThumbnail"), 10, 60);
-        }
+        // Thumbnail centered horizontally & vertically
+        add(new CenteredBox(MediaUtil.createMediaView(gallery.thumbMedia,
+            MediaDesc.THUMBNAIL_SIZE), "GalleryThumbnail",
+            MediaDesc.getWidth(MediaDesc.THUMBNAIL_SIZE),
+            MediaDesc.getHeight(MediaDesc.THUMBNAIL_SIZE)), 10, 10);
 
         String countText = galleryData.photos.size() == 1 ? _pmsgs.onePhoto() :
             _pmsgs.photoCount(""+galleryData.photos.size());
-        add(MsoyUI.createLabel(countText, "Count"), 110, 70);
+        add(MsoyUI.createLabel(countText, "Count"), 20, 80);
 
-        // add name and description labels
-        add(MsoyUI.createLabel(GalleryPanel.getGalleryLabel(gallery), "Name"), 10, 10);
-        add(MsoyUI.createLabel(gallery.description, "Description"), 10, 140);
+        // Gallery and creator name are inline
+        InlinePanel nameAndCreator = new InlinePanel("NameAndCreator");
+        nameAndCreator.add(MsoyUI.createLabel(GalleryPanel.getGalleryLabel(gallery), "Name"));
+        nameAndCreator.add(new CreatorLabel(galleryData.owner));
+        add(nameAndCreator, 105, 5);
 
-        // if the current member owns this read-only gallery, add an edit button
-        if (galleryData.ownerId == CShell.getMemberId()) {
-            final String args = Args.compose(GalleryEditPanel.EDIT_ACTION, gallery.galleryId);
-            final ClickListener listener = Link.createListener(Pages.PEOPLE, args);
-            add(MsoyUI.createButton(MsoyUI.LONG_THIN, _pmsgs.editButton(), listener), 40, 270);
-        }
+        add(MsoyUI.createLabel(gallery.description, "Description"), 105, 40);
     }
 
     protected static final PersonMessages _pmsgs = (PersonMessages)GWT.create(PersonMessages.class);

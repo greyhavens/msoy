@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Photo;
 
 /**
@@ -17,7 +18,7 @@ public class GalleryData implements IsSerializable
 {
     public Gallery gallery;
     public List<Photo> photos;
-    public int ownerId;
+    public MemberName owner;
 
     public List<Integer> getPhotoIds ()
     {
@@ -28,8 +29,9 @@ public class GalleryData implements IsSerializable
         return ids;
     }
 
-    public String toString ()
+    @Override public String toString ()
     {
-        return "[gallery=" + gallery + ", photos=" + photos + ", ownerId=" + ownerId + "]";
+        return "[gallery=" + gallery + ", photos=" + photos + ", ownerId=" + owner.getMemberId()
+            + "]";
     }
 }
