@@ -3,12 +3,6 @@
 
 package client.me;
 
-import client.shell.CShell;
-import client.shell.ShellMessages;
-import client.util.ServiceUtil;
-import client.util.StringUtil;
-import client.util.events.StatusChangeEvent;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.NumberFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -18,6 +12,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
@@ -25,6 +20,13 @@ import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.gwt.MoneyServiceAsync;
+
+import client.shell.CShell;
+import client.shell.ShellMessages;
+import client.ui.NumberTextBox;
+import client.util.ServiceUtil;
+import client.util.StringUtil;
+import client.util.events.StatusChangeEvent;
 
 public class BlingPanel extends SmartTable
 {
@@ -57,7 +59,7 @@ public class BlingPanel extends SmartTable
         setText(row++, 0, _msgs.exchangeBlingForBars(), 3, "header");
         setText(row++, 0, _msgs.exchangeBlingDescription(), 3, null);
         setText(row, 0, _msgs.exchangeAmount(), 1, "rightLabel");
-        setWidget(row, 1, _exchangeBox = new TextBox());
+        setWidget(row, 1, _exchangeBox = new NumberTextBox(true));
         setWidget(row++, 2, _exchangeBtn = new Button(_msgs.exchangeButton(), new ClickListener() {
             public void onClick (Widget sender) {
                 doExchange(memberId);
@@ -91,7 +93,7 @@ public class BlingPanel extends SmartTable
         setWidget(row++, 1, _countryBox = new TextBox());
         
         setText(row, 0, _msgs.blingCashOutAmount(), 1, "rightLabel");
-        setWidget(row, 1, _cashOutBox = new TextBox());
+        setWidget(row, 1, _cashOutBox = new NumberTextBox(true));
         setWidget(row++, 2, _cashOutBtn = new Button(_msgs.blingCashOutButton(), new ClickListener() {
             public void onClick (Widget sender) {
                 doCashOut(memberId);
@@ -212,15 +214,9 @@ public class BlingPanel extends SmartTable
         return true;
     }
     
-    protected int getValidAmount (TextBox box, Label status, String invalidMessage)
+    protected int getValidAmount (NumberTextBox box, Label status, String invalidMessage)
     {
-        final int blingAmount;
-        try {
-            blingAmount = Integer.parseInt(box.getText());
-        } catch (Exception e) {
-            setError(status, invalidMessage);
-            return 0;
-        }
+        final int blingAmount = box.getValue().intValue();
         if (blingAmount < 1) {
             setError(status, invalidMessage);
             return 0;
@@ -247,10 +243,10 @@ public class BlingPanel extends SmartTable
     protected Label _blingWorth;
     protected Label _cashedOutBling;
     
-    protected TextBox _exchangeBox;
+    protected NumberTextBox _exchangeBox;
     protected Button _exchangeBtn;
     protected Label _exchangeStatus;
-    protected TextBox _cashOutBox;
+    protected NumberTextBox _cashOutBox;
     protected PasswordTextBox _passwordBox;
     protected TextBox _firstNameBox;
     protected TextBox _lastNameBox;
