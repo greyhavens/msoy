@@ -14,7 +14,7 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 
-import client.shell.DynamicLookup;
+import client.shell.CShell;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
 import client.util.ServiceUtil;
@@ -37,7 +37,7 @@ public class DeductPanel extends HorizontalPanel
     {
         _moneysvc.supportAdjust(memberId, currency, -amount, new AsyncCallback<Void>() {
             public void onFailure (Throwable t) {
-                MsoyUI.error(_dmsgs.xlate(t.getMessage()));
+                MsoyUI.error(CShell.serverError(t));
             }
             public void onSuccess (Void v) {
                 MsoyUI.info(_msgs.deductSuccess(""+amount));
@@ -45,7 +45,6 @@ public class DeductPanel extends HorizontalPanel
         });
     }
 
-    protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
 
     protected static final MoneyServiceAsync _moneysvc = (MoneyServiceAsync)
