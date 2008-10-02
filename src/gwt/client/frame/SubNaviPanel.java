@@ -40,15 +40,9 @@ public class SubNaviPanel extends FlowPanel
                 addLink(null, "Me", Pages.ME, "");
                 addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
                 addLink(null, "Rooms", Pages.PEOPLE, Args.compose("rooms", memberId), false);
-                addLink(null, "Passport", Pages.ME, "passport");
                 addLink(null, "Friends", Pages.PEOPLE, "");
-                addLink(null, "Profile", Pages.PEOPLE, "" + memberId);
                 addLink(null, "Mail", Pages.MAIL, "");
                 addLink(null, "Account", Pages.ME, "account");
-
-                if (CShell.isSupport()) {
-                    addLink(null, "Admin", Pages.ADMINZ, "");
-                }
             }
             break;
 
@@ -111,10 +105,14 @@ public class SubNaviPanel extends FlowPanel
         add(Link.create(label, page, args));
     }
 
-    public void addContextLink (String label, Pages page, String args)
+    public void addContextLink (String label, Pages page, String args, int position)
     {
-        insert(new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;"), 1);
-        insert(Link.create(label, page, args), 2);
+        // sanity check the position
+        if (position > getWidgetCount()) {
+            position = getWidgetCount();
+        }
+        insert(new HTML("&nbsp;&nbsp;|&nbsp;&nbsp;"), position++);
+        insert(Link.create(label, page, args), position);
     }
 
     public Image addImageLink (String path, String tip, Pages page, String args)

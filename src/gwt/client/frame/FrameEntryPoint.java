@@ -294,9 +294,9 @@ public class FrameEntryPoint
     }
 
     // from interface Frame
-    public void addNavLink (String label, Pages page, String args)
+    public void addNavLink (String label, Pages page, String args, int position)
     {
-        _bar.addContextLink(label, page, args);
+        _bar.addContextLink(label, page, args, position);
     }
 
     // from interface Frame
@@ -728,7 +728,8 @@ public class FrameEntryPoint
             setTitle(args[0]);
             return null;
         case ADD_NAV_LINK:
-            addNavLink(args[0], Enum.valueOf(Pages.class, args[1]), args[2]);
+            addNavLink(args[0], Enum.valueOf(Pages.class, args[1]), args[2],
+                       Integer.parseInt(args[3]));
             return null;
         case NAVIGATE_TO:
             navigateTo(args[0]);

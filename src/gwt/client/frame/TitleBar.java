@@ -80,9 +80,9 @@ public class TitleBar extends SmartTable
         setCloseVisible(closeWasVisible);
     }
 
-    public void addContextLink (String label, Pages page, String args)
+    public void addContextLink (String label, Pages page, String args, int position)
     {
-        _subnavi.addContextLink(label, page, args);
+        _subnavi.addContextLink(label, page, args, position);
     }
 
     public void setCloseVisible (boolean visible)

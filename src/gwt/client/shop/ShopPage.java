@@ -53,7 +53,7 @@ public class ShopPage extends Page
                     setContent(new ListingDetailPanel(_models, listing));
                 }
             });
-            CShell.frame.addNavLink(_dmsgs.xlate("pItemType" + type), Pages.SHOP, ""+type);
+            CShell.frame.addNavLink(_dmsgs.xlate("pItemType" + type), Pages.SHOP, ""+type, 1);
 
         } else if (action.equals(FAVORITES)) {
             // if no member is specified, we use the current member
@@ -70,13 +70,14 @@ public class ShopPage extends Page
                 // only load the suite info in the case that the game id has changed
                 _catalogsvc.loadGameSuiteInfo(gameId, new MsoyCallback<CatalogService.SuiteInfo>() {
                     public void onSuccess (CatalogService.SuiteInfo suite) {
-                        CShell.frame.addNavLink(suite.name, Pages.GAMES, Args.compose("d", gameId));
+                        CShell.frame.addNavLink(
+                            suite.name, Pages.GAMES, Args.compose("d", gameId), 1);
                         _suite.display(gameId, suite, itemType, page);
                         setContent(_suite.getTitle(), _suite);
                     }
                 });
             } else {
-                CShell.frame.addNavLink(_suite.getName(), Pages.GAMES, Args.compose("d", gameId));
+                CShell.frame.addNavLink(_suite.getName(), Pages.GAMES, Args.compose("d", gameId), 1);
                 _suite.display(itemType, page);
                 setContent(_suite.getTitle(), _suite);
             }
