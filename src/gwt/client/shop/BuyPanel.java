@@ -4,6 +4,7 @@
 package client.shop;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -38,9 +39,13 @@ import client.util.ServiceUtil;
  */
 public class BuyPanel extends FlowPanel
 {
-    public BuyPanel (CatalogListing listing)
+    /**
+     * @param callback optional. Notified only on success.
+     */
+    public BuyPanel (CatalogListing listing, AsyncCallback<Item> callback)
     {
         _listing = listing;
+        _callback = callback;
         setStyleName("Buy");
 
         // Buy with bars, plus a link on how to acquire some
@@ -75,6 +80,10 @@ public class BuyPanel extends FlowPanel
             add(new Label(_msgs.boughtViewStuff(type)));
             String ptype = _dmsgs.xlate("pItemType" + itype);
             add(Link.create(_msgs.boughtGoNow(ptype), Pages.STUFF, ""+itype));
+        }
+
+        if (_callback != null) {
+            _callback.onSuccess(item);
         }
     }
 
@@ -168,6 +177,8 @@ public class BuyPanel extends FlowPanel
     }; // end: class BuyButton
 
     protected CatalogListing _listing;
+
+    protected AsyncCallback<Item> _callback;
 
     protected BuyButton _buyBars, _buyCoins;
 

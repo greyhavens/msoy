@@ -17,6 +17,7 @@ import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 import client.editem.EditorHost;
 import client.editem.ItemEditor;
 import client.remix.ItemRemixer;
+import client.remix.RemixerHost;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
@@ -97,15 +98,14 @@ public class StuffPage extends Page
         // if we're editing an item, display that interface
         } else if ("e".equals(arg0) || "c".equals(arg0)) {
             byte type = (byte)args.get(1, Item.AVATAR);
-            ItemEditor editor = ItemEditor.createItemEditor(type, createEditorHost());
+            final ItemEditor editor = ItemEditor.createItemEditor(type, createEditorHost());
             if ("e".equals(arg0)) {
                 int itemId = args.get(2, 0);
-                Item item = _models.findItem(type, itemId);
-                if (item == null) {
-                    editor.setItem(itemId);
-                } else {
-                    editor.setItem(item);
-                }
+                getItem(type, itemId, new MsoyCallback<Item>() {
+                    public void onSuccess (Item result) {
+                        editor.setItem(result);
+                    }
+                });
             } else {
                 editor.setItem(editor.createBlankItem());
                 byte ptype = (byte)args.get(2, 0);
@@ -119,17 +119,13 @@ public class StuffPage extends Page
         } else if ("r".equals(arg0)) {
             byte type = (byte) args.get(1, Item.AVATAR);
             int itemId = args.get(2, 0);
-            ItemRemixer remixer = new ItemRemixer(createEditorHost());
-            Item item = _models.findItem(type, itemId);
-            if (item != null) {
-                remixer.setItem(item);
-            } else {
-                remixer.setItem(type, itemId);
-            }
+            final ItemRemixer remixer = new ItemRemixer();
+            getItem(type, itemId, new MsoyCallback<Item>() {
+                public void onSuccess (Item result) {
+                    remixer.init(createRemixHost(), result, 0);
+                }
+            });
             setContent(remixer);
-            if (args.getArgCount() > 3) {
-                remixer.setCatalogInfo(args.get(3, 0), args.get(4, 0), args.get(5, 0));
-            }
 
         } else {
             // otherwise we're viewing our inventory
@@ -156,10 +152,36 @@ public class StuffPage extends Page
         };
     }
 
+    protected RemixerHost createRemixHost ()
+    {
+        final EditorHost ehost = createEditorHost();
+        return new RemixerHost() {
+            public void buyItem () {
+                // not needed here
+            }
+
+            public void remixComplete (Item item) {
+                ehost.editComplete(item);
+            }
+        };
+    }
+
     @Override
     public Pages getPageId ()
     {
         return Pages.STUFF;
+    }
+
+    protected void getItem (byte type, int itemId, MsoyCallback<Item> callback)
+    {
+        Item item = _models.findItem(type, itemId);
+        if (item != null) {
+            callback.onSuccess(item);
+            return;
+        }
+
+        // otherwise load it
+        _stuffsvc.loadItem(new ItemIdent(type, itemId), callback);
     }
 
     protected ItemPanel getItemPanel (byte itemType)

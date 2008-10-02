@@ -26,7 +26,6 @@ import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import client.editem.EditemMessages;
-import client.editem.EditorHost;
 import client.item.ImageChooserPopup;
 import client.item.ItemUtil;
 import client.shell.CShell;
@@ -35,13 +34,11 @@ import client.ui.PriceLabel;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
-// TODO: Bar me
 public class ItemRemixer extends FlexTable
 {
-    public ItemRemixer (EditorHost host)
+    public ItemRemixer ()
     {
         _singleton = this;
-        _parent = host;
 
         setStyleName("itemRemixer");
         setCellPadding(0);
@@ -50,41 +47,26 @@ public class ItemRemixer extends FlexTable
         configureBridges();
     }
 
-    /**
-     * Set the price of the item, for use when we're remixing a listed item.
-     */
-    public void setCatalogInfo (int catalogId, int flowCost, int goldCost)
+    public void init (RemixerHost host, Item item, int catalogId)
     {
-        _catalogId = catalogId;
-        _flowCost = flowCost;
-        _goldCost = goldCost;
-    }
-
-    public void setItem (byte type, int itemId)
-    {
-        _stuffsvc.loadItem(new ItemIdent(type, itemId), new MsoyCallback<Item>() {
-            public void onSuccess (Item result) {
-                setItem(result);
-            }
-        });
-    }
-
-    public void setItem (Item item)
-    {
+        _parent = host;
         _item = item;
+        _catalogId = catalogId;
+
         VerticalPanel vpan = new VerticalPanel();
         vpan.add(createRemixControls(item));
+        setWidget(0, 0, vpan);
+    }
 
-        if (_catalogId != 0) {
-            HorizontalPanel hpan = new HorizontalPanel();
-            hpan.setHorizontalAlignment(HorizontalPanel.ALIGN_RIGHT);
-            _priceLabel = new PriceLabel(Currency.COINS, _flowCost);
-            hpan.add(_priceLabel);
-            hpan.setCellWidth(_priceLabel, WIDTH + "px");
-            vpan.add(hpan);
+    public void itemPurchased (Item item)
+    {
+        boolean success = (item != null);
+        if (success) {
+            _item = item;
+            _catalogId = 0;
         }
 
-        setWidget(0, 0, vpan);
+        setItemPurchased(success);
     }
 
     protected Widget createRemixControls (Item item)
@@ -113,6 +95,14 @@ public class ItemRemixer extends FlexTable
     }
 
     /**
+     * Called when the user saves a must-buy remix.
+     */
+    protected void buyItem ()
+    {
+        _parent.buyItem();
+    }
+
+    /**
      * Show the ImageFileChooser and let the user select a photo from their inventory.
      *
      * TODO: the damn ImageChooserPopup needs a proper cancel button and a response when it
@@ -129,7 +119,7 @@ public class ItemRemixer extends FlexTable
 
     protected void cancelRemix ()
     {
-        _parent.editComplete(null);
+        _parent.remixComplete(null);
     }
 
     protected void setHash (
@@ -141,37 +131,12 @@ public class ItemRemixer extends FlexTable
             return;
         }
 
-        if (_catalogId != 0) {
-            _catalogsvc.purchaseItem(
-                // TODO: This doesn't work at all for bars until we refactor this whole class
-                _item.getType(), _catalogId, Currency.COINS, _flowCost, new AsyncCallback<Item>() {
-                public void onSuccess (Item result) {
-                    _item = result;
-                    _catalogId = 0;
-                    // re-enter, to save our remix
-                    setHash(id, mediaHash, mimeType, constraint, width, height);
-                }
-
-                public void onFailure (Throwable cause) {
-                    MsoyUI.error(CShell.serverError(cause));
-                    if (cause instanceof CostUpdatedException) {
-                        CostUpdatedException cue = (CostUpdatedException) cause;
-                        _flowCost = cue.getQuote().getCoins();
-                        _goldCost = cue.getQuote().getBars();
-                        _priceLabel.updatePrice(Currency.COINS, _flowCost);
-                        enableBuyButton();
-                    }
-                }
-            });
-            return;
-        }
-
         _item.setPrimaryMedia(new MediaDesc(mediaHash, (byte) mimeType, (byte) constraint));
 
         _stuffsvc.remixItem(_item, new MsoyCallback<Item>() {
             public void onSuccess (Item item) {
                 MsoyUI.info(_emsgs.msgItemUpdated());
-                _parent.editComplete(item);
+                _parent.remixComplete(item);
             }
         });
     }
@@ -179,7 +144,8 @@ public class ItemRemixer extends FlexTable
     /**
      * Set a photo as a new image source in the remixer. The PopupFilePreview needs to be up..
      */
-    protected static native void setPhotoUrl (String url) /*-{
+    protected static native void setPhotoUrl (String url)
+    /*-{
         var controls = $doc.getElementById("remixControls");
         if (controls) {
             try {
@@ -190,11 +156,12 @@ public class ItemRemixer extends FlexTable
         }
     }-*/;
 
-    protected static native void enableBuyButton () /*-{
+    protected static native void setItemPurchased (boolean success)
+    /*-{
         var controls = $doc.getElementById("remixControls");
         if (controls) {
             try {
-                controls.enableBuyButton();
+                controls.itemPurchased(success);
             } catch (e) {
                 // nada
             }
@@ -211,6 +178,11 @@ public class ItemRemixer extends FlexTable
         _singleton.setHash(fid, fhash, mimeType, constraint, width, height);
     }
 
+    protected static void bridgeBuyItem ()
+    {
+        _singleton.buyItem();
+    }
+
     protected static void bridgeCancelRemix ()
     {
         _singleton.cancelRemix();
@@ -221,7 +193,11 @@ public class ItemRemixer extends FlexTable
         _singleton.pickPhoto();
     }
 
-    protected static native void configureBridges () /*-{
+    protected static native void configureBridges ()
+    /*-{
+        $wnd.buyItem = function () {
+            @client.remix.ItemRemixer::bridgeBuyItem()();
+        };
         $wnd.setRemixHash = function (id, hash, type, constraint, width, height) {
             @client.remix.ItemRemixer::bridgeSetHash(Ljava/lang/String;Ljava/lang/String;IIII)(
                 id, hash, type, constraint, width, height);
@@ -234,21 +210,16 @@ public class ItemRemixer extends FlexTable
         };
     }-*/;
 
-    protected EditorHost _parent;
+    protected RemixerHost _parent;
 
     /** The item we're remixing. */
     protected Item _item;
 
     protected int _catalogId;
-    protected int _flowCost, _goldCost;
-
-    protected PriceLabel _priceLabel;
 
     protected static ItemRemixer _singleton;
 
     protected static final EditemMessages _emsgs = GWT.create(EditemMessages.class);
-    protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
-        ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
         ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
 

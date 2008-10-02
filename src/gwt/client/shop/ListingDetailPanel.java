@@ -61,9 +61,8 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         if (!CShop.isGuest() && isRemixable()) {
             _indeets.add(WidgetUtil.makeShim(10, 10));
             _indeets.add(new RemixButton(_msgs.listingRemix(),
-                // TODO: Bar me
-                NaviUtil.onRemixCatalogItem(_item.getType(), _item.itemId, _listing.catalogId,
-                    _listing.quote.getCoins(), _listing.quote.getBars())));
+                Link.createListener(Pages.SHOP, Args.compose(ShopPage.REMIX,
+                    _item.getType(), _item.itemId, _listing.catalogId))));
         }
 
 //         _indeets.add(WidgetUtil.makeShim(10, 10));
@@ -130,7 +129,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
 
         // this will contain all of the buy-related interface and will be replaced with the
         // "bought" interface when the buying is done
-        _details.add(new BuyPanel(_listing));
+        _details.add(new BuyPanel(_listing, null));
 
         // display a comment interface below the listing details
         addTabBelow("Comments", new CommentsPanel(_item.getType(), listing.catalogId), true);

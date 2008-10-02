@@ -71,12 +71,4 @@ public class NaviUtil
     {
         return Link.createListener(Pages.ME, Args.compose("transactions", report.toIndex()));
     }
-
-    // TODO: This should probably be passed a PriceQuote
-    public static ClickListener onRemixCatalogItem (
-        byte type, int itemId, int catalogId, int flowCost, int goldCost)
-    {
-        return Link.createListener(Pages.STUFF, Args.compose(
-                    "r", type, itemId, catalogId, flowCost, goldCost));
-    }
 }

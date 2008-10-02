@@ -149,6 +149,11 @@
   margin-bottom: 5px;
 }
 
+.buyRemixPanel {
+  width: 320px;
+  padding: 15px 15px 15px 15px;
+}
+
 .catalogPanel .pagedGrid .Header .SortBy {
   width: 50px;
   padding-right: 5px;

@@ -7,19 +7,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.History;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import com.threerings.msoy.item.data.all.Item;
+import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
+import com.threerings.msoy.stuff.gwt.StuffService;
+import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
 import client.item.ShopUtil;
+import client.remix.ItemRemixer;
+import client.remix.RemixerHost;
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Page;
 import client.shell.Pages;
+import client.util.Link;
 import client.util.MsoyCallback;
+import client.util.NaviUtil;
 import client.util.ServiceUtil;
 
 /**
@@ -30,6 +39,7 @@ public class ShopPage extends Page
     public static final String LOAD_LISTING = "l";
     public static final String FAVORITES = "f";
     public static final String SUITE = "g";
+    public static final String REMIX = "r";
 
     @Override // from Page
     public void onHistoryChanged (Args args)
@@ -72,6 +82,18 @@ public class ShopPage extends Page
                 setContent(_suite.getTitle(), _suite);
             }
 
+        } else if (action.equals(REMIX)) {
+            final byte type = getItemType(args, 1, Item.AVATAR);
+            final int itemId = args.get(2, 0);
+            final int catalogId = args.get(3, 0);
+            final ItemRemixer remixer = new ItemRemixer();
+            _stuffsvc.loadItem(new ItemIdent(type, itemId), new MsoyCallback<Item>() {
+                public void onSuccess (Item result) {
+                    remixer.init(createRemixerHost(remixer, type, catalogId), result, catalogId);
+                }
+            });
+            setContent(remixer);
+
         } else {
             byte type = getItemType(args, 0, Item.NOT_A_TYPE);
             if (type == Item.NOT_A_TYPE) {
@@ -100,6 +122,39 @@ public class ShopPage extends Page
         CShop.msgs = (ShopMessages)GWT.create(ShopMessages.class);
     }
 
+    protected RemixerHost createRemixerHost (
+        final ItemRemixer remixer, final byte type, final int catalogId)
+    {
+        return new RemixerHost() {
+            public void buyItem () {
+                // Request the listing, re-reserving a new price for us
+                _catalogsvc.loadListing(type, catalogId, new MsoyCallback<CatalogListing>() {
+                    public void onSuccess (CatalogListing listing) {
+                        // and display a mini buy dialog.
+                        new BuyRemixDialog(listing, new AsyncCallback<Item>() {
+                                public void onFailure (Throwable cause) { /* not used */ }
+
+                                public void onSuccess (Item item) {
+                                    remixer.itemPurchased(item);
+                                }
+                            });
+                    }
+                });
+            }
+
+            // called only when the remixer exits
+            public void remixComplete (Item item)
+            {
+                if (item != null) {
+                    Link.go(Pages.STUFF, Args.compose("d", item.getType(), item.itemId));
+
+                } else {
+                    History.back();
+                }
+            }
+        };
+    }
+
     /**
      * Extracts the item type from the arguments, sanitizing it if necessary.
      */
@@ -122,4 +177,8 @@ public class ShopPage extends Page
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
+
+   protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
+       ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
+
 }
