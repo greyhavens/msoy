@@ -211,12 +211,13 @@
   width: 555px;
 }
 
-.buyButton .X {
-  width: 200px;
+.listingDetailPanel .buyButton .X {
+  width: 100%;
 }
 
 .listingDetailPanel .buyButton {
   margin-top: 20px;
+  width: 100%;
 }
 
 .listingDetailPanel .controls {
