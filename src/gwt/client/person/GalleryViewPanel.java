@@ -122,12 +122,15 @@ public class GalleryViewPanel extends FlowPanel
         InlinePanel actions = new InlinePanel("Actions");
         ClickListener slideshowClick = new ClickListener() {
             public void onClick (Widget sender) {
+                Label slideshowLabel = (Label)sender;
                 // toggle slideshow and text of this link
-                if (((Label)sender).getText().equals(_pmsgs.gallerySlideshowStart())) {
-                    ((Label)sender).setText(_pmsgs.gallerySlideshowStop());
+                if (slideshowLabel.getText().equals(_pmsgs.gallerySlideshowStart())) {
+                    slideshowLabel.setText(_pmsgs.gallerySlideshowStop());
+                    slideshowLabel.addStyleName("Stop");
                     startSlideshow();
                 } else {
-                    ((Label)sender).setText(_pmsgs.gallerySlideshowStart());
+                    slideshowLabel.setText(_pmsgs.gallerySlideshowStart());
+                    slideshowLabel.removeStyleName("Stop");
                     stopSlideshow();
                 }
             }

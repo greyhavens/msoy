@@ -76,7 +76,7 @@ public class GalleryDetailEditPanel extends AbsolutePanel
 
         // do not allow profile gallery name to be edited
         if (gallery.isProfileGallery()) {
-            add(MsoyUI.createLabel(GalleryPanel.getGalleryLabel(gallery), "Name"), 10, 10);
+            add(MsoyUI.createLabel(GalleryPanel.getGalleryLabel(gallery), "Name"), 105, 10);
         } else {
             TextBox name = MsoyUI.createTextBox(gallery.name, Gallery.MAX_NAME_LENGTH,
                 Gallery.MAX_NAME_LENGTH);

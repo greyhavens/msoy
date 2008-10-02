@@ -95,6 +95,10 @@
   text-decoration: none;
 }
 
+.galleryViewPanel .Actions .Stop {
+  color: #cc3333;
+}
+
 .galleryViewPanel .Thumbnail {
   margin: 10px 0 0 8px;
   float: left;
@@ -126,6 +130,9 @@
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-weight: bold;
   font-size: 24px;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 530px;
 }
 
 .galleryViewPanel .CurrentPhoto .FullPhoto {
@@ -209,7 +216,7 @@
   color: #24598d;
   font-size: 14px;
   width: 300px;
-  height: 20px;
+  height: 25px;
 }
 
 .galleryEditPanel .galleryDetailPanel .Description {
