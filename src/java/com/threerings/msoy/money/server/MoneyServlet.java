@@ -83,6 +83,7 @@ public class MoneyServlet extends MsoyServiceServlet
         try {
             return _moneyLogic.requestCashOutBling(memberId, blingAmount, info);
         } catch (NotEnoughMoneyException neme) {
+            // TODO: return new balance, brah
             throw new ServiceException(MoneyCodes.E_INSUFFICIENT_BLING);
         } catch (AlreadyCashedOutException acoe) {
             throw new ServiceException(MoneyCodes.E_ALREADY_CASHED_OUT);
@@ -118,6 +119,7 @@ public class MoneyServlet extends MsoyServiceServlet
             // Additional safety checks in MoneyLogic
             _moneyLogic.supportAdjust(memberId, currency, delta, mrec.getName());
         } catch (NotEnoughMoneyException e) {
+            // TODO: return new balance, brah
             throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
         }
     }
