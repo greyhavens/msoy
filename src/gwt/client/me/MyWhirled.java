@@ -10,8 +10,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import com.threerings.msoy.item.data.all.Item;
-
 import com.threerings.msoy.person.gwt.FeedMessage;
 import com.threerings.msoy.person.gwt.MeService;
 import com.threerings.msoy.person.gwt.MeServiceAsync;
@@ -23,7 +21,6 @@ import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 
-import client.item.StuffNaviBar;
 import client.person.FeedPanel;
 import client.person.PersonMessages;
 
@@ -42,7 +39,6 @@ public class MyWhirled extends VerticalPanel
 
     protected void init (MyWhirledData data)
     {
-        add(new StuffNaviBar(Item.NOT_A_TYPE));
         add(MsoyUI.createLabel(_msgs.populationDisplay("" + data.whirledPopulation), "Pop"));
         add(new WhatsNextPanel(data));
         String empty = data.friendCount > 0 ? _pmsgs.emptyFeed() : _pmsgs.emptyFeedNoFriends();

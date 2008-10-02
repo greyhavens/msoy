@@ -31,7 +31,7 @@ public interface Frame
     public static final int CLOSE_BUTTON_OFFSET = -16;
 
     /** Enumerates our different header tabs. */
-    public static enum Tabs { ME, FRIENDS, GAMES, WHIRLEDS, SHOP, /*CREATE,*/ HELP };
+    public static enum Tabs { ME, STUFF, GAMES, WHIRLEDS, SHOP, /*CREATE,*/ HELP };
 
     /** Codes for use with our inner frame to top frame RPC mechanism. */
     public static enum Calls {

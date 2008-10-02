@@ -17,10 +17,10 @@ public enum Pages
     LANDING(null),
     MAIL(Frame.Tabs.ME),
     ME(Frame.Tabs.ME),
-    PEOPLE(Frame.Tabs.FRIENDS),
+    PEOPLE(Frame.Tabs.ME),
     ROOM(Frame.Tabs.WHIRLEDS),
     SHOP(Frame.Tabs.SHOP),
-    STUFF(Frame.Tabs.ME),
+    STUFF(Frame.Tabs.STUFF),
     SUPPORT(Frame.Tabs.HELP),
     SWIFTLY(null), // TODO: Frame.Tabs.CREATE
     WHIRLEDS(Frame.Tabs.WHIRLEDS),

@@ -41,6 +41,7 @@ public class SubNaviPanel extends FlowPanel
                 addImageLink("/images/me/menu_home.png", "Home", Pages.WORLD, "m" + memberId);
                 addLink(null, "Rooms", Pages.PEOPLE, Args.compose("rooms", memberId), false);
                 addLink(null, "Passport", Pages.ME, "passport");
+                addLink(null, "Friends", Pages.PEOPLE, "");
                 addLink(null, "Profile", Pages.PEOPLE, "" + memberId);
                 addLink(null, "Mail", Pages.MAIL, "");
                 addLink(null, "Account", Pages.ME, "account");
@@ -51,12 +52,9 @@ public class SubNaviPanel extends FlowPanel
             }
             break;
 
-        case FRIENDS:
-            if (CShell.isGuest()) {
-                addLink(null, "Search", Pages.PEOPLE, "");
-            } else {
-                addLink(null, "My Friends", Pages.PEOPLE, "");
-                addLink(null, "Invite Friends", Pages.PEOPLE, "invites");
+        case STUFF:
+            if (!CShell.isGuest()) {
+                addLink(null, "My Stuff", Pages.STUFF, "");
             }
             break;
 

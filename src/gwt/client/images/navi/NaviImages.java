@@ -47,14 +47,14 @@ public interface NaviImages extends ImageBundle
     @Resource("me_selected.png")
     AbstractImagePrototype sme ();
 
-    @Resource("friends.png")
-    AbstractImagePrototype friends ();
+    @Resource("stuff.png")
+    AbstractImagePrototype stuff ();
 
-    @Resource("friends_over.png")
-    AbstractImagePrototype ofriends ();
+    @Resource("stuff_over.png")
+    AbstractImagePrototype ostuff ();
 
-    @Resource("friends_selected.png")
-    AbstractImagePrototype sfriends ();
+    @Resource("stuff_selected.png")
+    AbstractImagePrototype sstuff ();
 
     @Resource("worlds.png")
     AbstractImagePrototype worlds ();

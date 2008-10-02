@@ -46,8 +46,8 @@ public class FrameHeader extends SmartTable
         String lpath = "/images/header/header_logo.png";
         setWidget(col++, 0, MsoyUI.createActionImage(lpath, onLogoClick), 1, "Logo");
         addButton(col++, Pages.ME, _cmsgs.menuMe(), _images.me(), _images.ome(), _images.sme());
-        addButton(col++, Pages.PEOPLE, _cmsgs.menuFriends(), _images.friends(), _images.ofriends(),
-                  _images.sfriends());
+        addButton(col++, Pages.STUFF, _cmsgs.menuStuff(), _images.stuff(), _images.ostuff(),
+                  _images.sstuff());
         addButton(col++, Pages.GAMES, _cmsgs.menuGames(), _images.games(), _images.ogames(),
                   _images.sgames());
         addButton(col++, Pages.WHIRLEDS, _cmsgs.menuWorlds(), _images.worlds(), _images.oworlds(),
