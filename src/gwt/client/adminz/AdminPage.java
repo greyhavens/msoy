@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.admin;
+package client.adminz;
 
 import com.google.gwt.core.client.GWT;
 

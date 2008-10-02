@@ -5,10 +5,10 @@
   <source path="com/threerings/msoy/money/data/all"/>
   <source path="com/threerings/msoy/money/gwt"/>
 
-  <source path="client/admin"/>
+  <source path="client/adminz"/>
 
-  <public path="public/admin"/>
-  <stylesheet src="admin.css"/>
+  <public path="public/adminz"/>
+  <stylesheet src="adminz.css"/>
 
-  <entry-point class="client.admin.AdminPage"/>
+  <entry-point class="client.adminz.AdminPage"/>
 </module>

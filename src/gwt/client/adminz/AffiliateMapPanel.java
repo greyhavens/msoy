@@ -1,7 +1,7 @@
 //
 // $Id$
 
-package client.admin;
+package client.adminz;
 
 import java.util.ArrayList;
 import java.util.List;
