@@ -65,13 +65,13 @@ public class PassportPanel extends FlowPanel
                 "/images/me/icon_" + catNameLower + ".png", null), catName, stamps));
 
             if (data.stamps.get(category).size() == 0) {
-                stamps.add(MsoyUI.createSimplePanel("EmptyLabel", MsoyUI.createLabel(
-                    _msgs.passportEmptyCategory(data.stampOwner, catName), null)));
+                stamps.add(MsoyUI.createSimplePanel(MsoyUI.createLabel(
+                    _msgs.passportEmptyCategory(data.stampOwner, catName), null), "EmptyLabel"));
                 continue;
             }
 
             for (Badge badge : data.stamps.get(category)) {
-                stamps.add(MsoyUI.createSimplePanel("BoxedBadge", new BadgeDisplay(badge)));
+                stamps.add(MsoyUI.createSimplePanel(new BadgeDisplay(badge), "BoxedBadge"));
             }
         }
    }

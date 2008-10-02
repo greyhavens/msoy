@@ -72,7 +72,7 @@ public class MyWhirleds extends AbsolutePanel
     protected void gotData (List<MyGroupCard> whirleds)
     {
         WhirledsGrid grid = new WhirledsGrid();
-        add(MsoyUI.createSimplePanel("WhirledsGrid", grid));
+        add(MsoyUI.createSimplePanel(grid, "WhirledsGrid"));
         grid.setModel(new SimpleDataModel<MyGroupCard>(whirleds), 0);
     }
 

@@ -151,7 +151,7 @@ public class MsoyUI
     /**
      * Creates a SimplePanel with the supplied style and widget
      */
-    public static SimplePanel createSimplePanel (String styleName, Widget widget)
+    public static SimplePanel createSimplePanel (Widget widget, String styleName)
     {
         SimplePanel panel = new SimplePanel();
         if (styleName != null) {

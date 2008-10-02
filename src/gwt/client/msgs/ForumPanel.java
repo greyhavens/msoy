@@ -79,7 +79,7 @@ public class ForumPanel extends TitledListPanel
             header.setWidget(0, col++, rss, 1, "RSS");
         }
         // default title may be overwritten later
-        _title = MsoyUI.createSimplePanel("TitleBox", new Label(title));
+        _title = MsoyUI.createSimplePanel(new Label(title), "TitleBox");
         header.setWidget(0, col++, _title, 1, "Title");
 
         if (listener != null) {

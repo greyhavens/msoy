@@ -37,7 +37,7 @@ public class StuffNaviBar extends FlowPanel
             add(MsoyUI.makeActionImage(image.createImage(), null, 
                 Link.createListener(Pages.STUFF, "" + type)));
         }
-        add(MsoyUI.createSimplePanel("clear", null));
+        add(MsoyUI.createSimplePanel(null, "clear"));
     }
 
     protected static final StuffImages _images = GWT.create(StuffImages.class);

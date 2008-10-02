@@ -192,7 +192,7 @@ public class ABTestEditorDialog extends BorderedDialog
     {
         public FormElement (String labelText, Widget widget) {
             add(MsoyUI.createLabel(labelText, "Label"));
-            add(MsoyUI.createSimplePanel("Element", widget));
+            add(MsoyUI.createSimplePanel(widget, "Element"));
         }
     }
 

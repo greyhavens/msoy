@@ -111,7 +111,7 @@ public class CreateAccountPanel extends FlowPanel
         HorizontalPanel controls = new HorizontalPanel();
         controls.setWidth("500px");
 
-        controls.add(_status = MsoyUI.createSimplePanel("Status", null));
+        controls.add(_status = MsoyUI.createSimplePanel(null, "Status"));
         controls.add(WidgetUtil.makeShim(10, 10));
         controls.setHorizontalAlignment(HasAlignment.ALIGN_RIGHT);
         ClickListener createGo = new ClickListener() {

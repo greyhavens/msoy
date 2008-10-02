@@ -392,8 +392,8 @@ public class WhirledDetailPanel extends FlowPanel
     {
         public TopMembersPanel () {
             setStyleName("TopMembersPanel");
-            add(MsoyUI.createSimplePanel("Title", MsoyUI.createHTML(
-                _msgs.detailTopMembersTitle(), null)));
+            add(MsoyUI.createSimplePanel(MsoyUI.createHTML(
+                _msgs.detailTopMembersTitle(), null), "Title"));
 
             FlowPanel content = new FlowPanel();
             content.setStyleName("Content");
@@ -412,8 +412,8 @@ public class WhirledDetailPanel extends FlowPanel
                 if (member.rank == GroupMembership.RANK_MANAGER) {
                     members.setHTML(ii * 2, 1, _msgs.detailTopMembersManager(), 1, "Manager");
                 }
-                SimplePanel name = MsoyUI.createSimplePanel("Name", Link.memberView(""
-                    + member.name, member.name.getMemberId()));
+                SimplePanel name = MsoyUI.createSimplePanel(Link.memberView(""
+                    + member.name, member.name.getMemberId()), "Name");
                 members.setWidget((ii * 2) + 1, 0, name);
             }
 

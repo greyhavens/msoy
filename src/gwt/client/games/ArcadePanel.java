@@ -100,14 +100,14 @@ public class ArcadePanel extends FlowPanel
                     genreGame.add(
                         new ThumbBox(game.thumbMedia, MediaDesc.THUMBNAIL_SIZE, gameClick));
                     genreGame.add(MsoyUI.createSimplePanel(
-                                      "Name", MsoyUI.createActionLabel(game.name, gameClick)));
+                                      MsoyUI.createActionLabel(game.name, gameClick), "Name"));
                     genreGame.add(MsoyUI.createLabel(MsoyUI.truncateParagraph(game.description, 50),
                                                      "Description"));
                 } else {
                     genreGame.add(new ThumbBox(game.thumbMedia, 
                                                MediaDesc.HALF_THUMBNAIL_SIZE, gameClick));
                     genreGame.add(MsoyUI.createSimplePanel(
-                                      "Name", MsoyUI.createActionLabel(game.name, gameClick)));
+                                      MsoyUI.createActionLabel(game.name, gameClick), "Name"));
                 }
             }
 
@@ -116,8 +116,8 @@ public class ArcadePanel extends FlowPanel
                 add(MsoyUI.createFlowPanel("GenreGame"));
             }
 
-            add(MsoyUI.createSimplePanel("ViewAll", Link.create(
-                _msgs.genreMore(""+genre.gameCount), Pages.GAMES, Args.compose("g", genre.genre))));
+            add(MsoyUI.createSimplePanel(Link.create(
+                _msgs.genreMore(""+genre.gameCount), Pages.GAMES, Args.compose("g", genre.genre)), "ViewAll"));
         }
     }
 
@@ -131,7 +131,7 @@ public class ArcadePanel extends FlowPanel
             add(MsoyUI.createLabel(index+"", "Number"));
             ClickListener onClick = Link.createListener(Pages.GAMES, Args.compose("d", game.gameId));
             add(new ThumbBox(game.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE, onClick));
-            add(MsoyUI.createSimplePanel("Name", MsoyUI.createActionLabel(game.name, onClick)));
+            add(MsoyUI.createSimplePanel(MsoyUI.createActionLabel(game.name, onClick), "Name"));
         }
     }
 

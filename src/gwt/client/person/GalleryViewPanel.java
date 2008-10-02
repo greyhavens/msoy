@@ -250,7 +250,7 @@ public class GalleryViewPanel extends FlowPanel
             }
         };
         Widget fullPhoto = MediaUtil.createMediaView(photo.photoMedia, width, height, onClick);
-        _currentPhoto.add(MsoyUI.createSimplePanel("FullPhoto", fullPhoto), 0, 35);
+        _currentPhoto.add(MsoyUI.createSimplePanel(fullPhoto, "FullPhoto"), 0, 35);
     }
 
     /**

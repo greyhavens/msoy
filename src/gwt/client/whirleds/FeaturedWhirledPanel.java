@@ -34,7 +34,7 @@ public class FeaturedWhirledPanel extends FlowPanel
         setStyleName("FeaturedWhirled");
         _showPlaceholder = showPlaceholder;
         add(MsoyUI.createLabel(_msgs.featuredTitle(), "Title"));
-        add(_flashPanel = MsoyUI.createSimplePanel("Flash", null));
+        add(_flashPanel = MsoyUI.createSimplePanel(null, "Flash"));
         add(_infoPanel = new FlowPanel());
 
         // prev & next buttons are re-positioned in the css
