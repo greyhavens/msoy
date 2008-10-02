@@ -15,4 +15,7 @@ public interface MoneyCodes extends InvocationCodes
     
     /** Occurs when the user attempts to cash out less than the minimum amount of bling. */
     public static String E_BELOW_MINIMUM_BLING = "e.below_minimum_bling";
+
+    /** Occurs when a support member tries to deduct more money than is available. */
+    public static String E_MONEY_OVERDRAWN = "e.money_overdrawn";
 }

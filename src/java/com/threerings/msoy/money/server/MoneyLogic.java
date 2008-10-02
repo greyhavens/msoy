@@ -182,8 +182,12 @@ public class MoneyLogic
     {
         Preconditions.checkArgument(numBars >= 0, "numBars is invalid: %d", numBars);
 
-        return modifyMoney(memberId, Currency.BARS, numBars, TransactionType.BARS_BOUGHT,
-            UserAction.boughtBars(memberId, payment));
+        try {
+            return modifyMoney(memberId, Currency.BARS, numBars, TransactionType.BARS_BOUGHT,
+                UserAction.boughtBars(memberId, payment));
+        } catch (NotEnoughMoneyException e) {
+            throw new IllegalStateException();
+        }
     }
 
     /**
@@ -195,6 +199,7 @@ public class MoneyLogic
      */
     public void supportAdjust (
         int memberId, Currency currency, int delta, MemberName support)
+        throws NotEnoughMoneyException
     {
         Preconditions.checkArgument(Currency.COINS == currency, "Only coin adjustment supported.");
         Preconditions.checkArgument(delta <= 0, "Only deduction supported.");
@@ -631,25 +636,18 @@ public class MoneyLogic
 
     /**
      * Internal method to add or deduct money from a user.
-     * @return The resulting transaction, or null if there was a problem.
      */
     protected MoneyTransaction modifyMoney
         (int memberId, Currency currency, int delta, TransactionType type, UserAction action)
+        throws NotEnoughMoneyException
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests do not have money.");
 
-        MoneyTransactionRecord tx;
-        if (delta > 0) {
-            tx = _repo.accumulateAndStoreTransaction(
-                memberId, currency, delta, type, action.description, null);
-        } else {
-            try {
-                tx = _repo.deductAndStoreTransaction(
-                    memberId, currency, -delta, type, action.description, null);
-            } catch (NotEnoughMoneyException e) {
-                return null;
-            }
-        }
+        MoneyTransactionRecord tx = (delta > 0) ?
+            _repo.accumulateAndStoreTransaction(
+                memberId, currency, delta, type, action.description, null) :
+            _repo.deductAndStoreTransaction(
+                memberId, currency, -delta, type, action.description, null);
 
         _nodeActions.moneyUpdated(tx);
         logAction(action, tx);

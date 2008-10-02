@@ -114,8 +114,12 @@ public class MoneyServlet extends MsoyServiceServlet
     {
         MemberRecord mrec = requireSupportUser();
 
-        // Additional safety checks in MoneyLogic
-        _moneyLogic.supportAdjust(memberId, currency, delta, mrec.getName());
+        try {
+            // Additional safety checks in MoneyLogic
+            _moneyLogic.supportAdjust(memberId, currency, delta, mrec.getName());
+        } catch (NotEnoughMoneyException e) {
+            throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
+        }
     }
     
     /**
