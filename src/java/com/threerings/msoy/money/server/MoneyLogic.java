@@ -629,13 +629,30 @@ public class MoneyLogic
         return new CurrencyAmount(currency, amount);
     }
 
+    /**
+     * Internal method to add or deduct money from a user.
+     * @return The resulting transaction, or null if there was a problem.
+     */
     protected MoneyTransaction modifyMoney
         (int memberId, Currency currency, int delta, TransactionType type, UserAction action)
     {
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests do not have money.");
 
-        MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(
-            memberId, currency, delta, type, action.description, null);
+        MoneyTransactionRecord tx;
+        
+        if (delta > 0)
+        {
+            tx = _repo.accumulateAndStoreTransaction(
+                memberId, currency, delta, type, action.description, null);
+        } else {
+            try {
+                tx = _repo.deductAndStoreTransaction(
+                    memberId, currency, -delta, type, action.description, null);
+            } catch (NotEnoughMoneyException e) {
+                return null;
+            }
+        }
+
         _nodeActions.moneyUpdated(tx);
         logAction(action, tx);
 
