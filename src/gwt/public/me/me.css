@@ -434,6 +434,11 @@
   margin: 0 15px 15px 0;
 }
 
+.BarsTip {
+  width: 0;
+  font-size: small;
+}
+
 .Balance {
   width: 100%;
 }

@@ -32,9 +32,13 @@ public class TransactionsPanel extends VerticalPanel
         tip.add(MsoyUI.createLabel(_msgs.moneyTip(), null));
         horiz.add(tip);
 
-        StretchButton button = new StretchButton(StretchButton.ORANGE_THICK,
+        VerticalPanel vert = new VerticalPanel();
+        vert.setStyleName("BarsTip");
+        vert.add(MsoyUI.createLabel(_msgs.barsTip(), null));
+        StretchButton buyBars = new StretchButton(StretchButton.ORANGE_THICK,
             MsoyUI.createLabel(_msgs.buyBars(), null));
-        horiz.add(button);
+        vert.add(buyBars);
+        horiz.add(vert);
 
         add(horiz);
 
