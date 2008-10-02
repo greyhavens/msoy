@@ -128,22 +128,28 @@ public class CShell
     }
 
     /** Reports a log message to the console. */
-    public static void log (String message)
+    public static void log (String message, Object... args)
     {
-        if (GWT.isScript()) {
-            consoleLog(message);
-        } else {
-            GWT.log(message, null);
+        StringBuilder sb = new StringBuilder();
+        sb.append(message);
+        if (args.length > 1) {
+            sb.append(" [");
+            for (int ii = 0, ll = args.length/2; ii < ll; ii++) {
+                if (ii > 0) {
+                    sb.append(", ");
+                }
+                sb.append(args[2*ii]).append("=").append(args[2*ii+1]);
+            }
+            sb.append("]");
         }
-    }
-
-    /** Reports a log message and exception stack trace to the console. */
-    public static void log (String message, Throwable error)
-    {
+        Object error = (args.length % 2 == 1) ? args[args.length-1] : null;
         if (GWT.isScript()) {
-            consoleLog(message + ": " + error); // TODO: log stack trace?
+            if (error != null) {
+                sb.append(": ").append(error);
+            }
+            consoleLog(sb.toString());
         } else {
-            GWT.log(message, error);
+            GWT.log(sb.toString(), (Throwable)error);
         }
     }
 
