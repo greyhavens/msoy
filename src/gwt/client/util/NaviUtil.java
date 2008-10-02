@@ -52,11 +52,6 @@ public class NaviUtil
         return Args.compose("d", gameId, tab.code());
     }
 
-    public static void viewItem (byte type, int itemId)
-    {
-        Link.go(Pages.STUFF, Args.compose(type, -1, itemId));
-    }
-
     public static ClickListener onCreateItem (byte type, byte ptype, int pitemId)
     {
         return Link.createListener(Pages.STUFF, Args.compose("c", type, ptype, pitemId));

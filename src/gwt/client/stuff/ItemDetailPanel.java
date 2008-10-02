@@ -121,7 +121,12 @@ public class ItemDetailPanel extends BaseItemDetailPanel
     @Override // BaseItemDetailPanel
     protected void onUpClicked ()
     {
-        CStuff.viewParent(_item);
+        if (_item instanceof SubItem) {
+            SubItem sitem = (SubItem)_item;
+            Link.go(Pages.STUFF, Args.compose("d", sitem.getSuiteMasterType(), sitem.suiteId));
+        } else {
+            Link.go(Pages.STUFF, ""+_item.getType());
+        }
     }
 
     protected void addOwnerButtons ()

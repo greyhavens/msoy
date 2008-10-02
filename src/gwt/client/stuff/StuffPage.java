@@ -18,6 +18,7 @@ import client.editem.EditorHost;
 import client.editem.ItemEditor;
 import client.remix.ItemRemixer;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Page;
 import client.shell.Pages;
@@ -50,9 +51,9 @@ public class StuffPage extends Page
     @Override // from Page
     public void onHistoryChanged (Args args)
     {
-        if (CStuff.isGuest()) {
+        if (CShell.isGuest()) {
             // if we have no creds, just display a message saying logon
-            setContent(MsoyUI.createLabel(CStuff.msgs.logon(), "infoLabel"));
+            setContent(MsoyUI.createLabel(_msgs.logon(), "infoLabel"));
             return;
         }
 
@@ -66,7 +67,7 @@ public class StuffPage extends Page
             // otherwise we're display a particular item's details
             ItemIdent ident = new ItemIdent(type, itemId);
 
-            final String title = CStuff.msgs.stuffTitle(_dmsgs.xlate("pItemType" + type));
+            final String title = _msgs.stuffTitle(_dmsgs.xlate("pItemType" + type));
             if (_detail != null && _detail.item.getIdent().equals(ident)) {
                 // update the detail with the one in our models
                 Item item = _models.findItem(type, itemId);
@@ -133,7 +134,7 @@ public class StuffPage extends Page
         } else {
             // otherwise we're viewing our inventory
             byte type = (byte)args.get(0, Item.AVATAR);
-            String title = CStuff.msgs.stuffTitleMain();
+            String title = _msgs.stuffTitleMain();
             ItemPanel panel = getItemPanel(type);
             panel.setPage(args.get(1, -1));
             setContent(title, panel);
@@ -161,15 +162,6 @@ public class StuffPage extends Page
         return Pages.STUFF;
     }
 
-    @Override // from Page
-    protected void initContext ()
-    {
-        super.initContext();
-
-        // load up our translation dictionaries
-        CStuff.msgs = (StuffMessages)GWT.create(StuffMessages.class);
-    }
-
     protected ItemPanel getItemPanel (byte itemType)
     {
         ItemPanel panel = _itemPanels.get(itemType);
@@ -184,6 +176,7 @@ public class StuffPage extends Page
     protected ItemDetail _detail;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
+    protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
         ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
 }

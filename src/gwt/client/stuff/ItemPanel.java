@@ -28,6 +28,7 @@ import com.threerings.msoy.item.data.all.Item;
 
 import client.item.StuffNaviBar;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -85,13 +86,13 @@ public class ItemPanel extends FlowPanel
                 return new ItemEntry(item);
             }
             @Override protected String getEmptyMessage () {
-                return CStuff.msgs.panelNoItems(_dmsgs.xlate("itemType" + _type));
+                return _msgs.panelNoItems(_dmsgs.xlate("itemType" + _type));
             }
             @Override protected boolean displayNavi (int items) {
                 return true;
             }
             @Override protected void addCustomControls (FlexTable controls) {
-                controls.setText(0, 0, CStuff.msgs.ipfTitle());
+                controls.setText(0, 0, _msgs.ipfTitle());
                 controls.getFlexCellFormatter().setStyleName(0, 0, "Show");
                 controls.setWidget(0, 1, _filters);
             }
@@ -141,7 +142,7 @@ public class ItemPanel extends FlowPanel
         _upload.getFlexCellFormatter().setStyleName(1, 0, "Pitch");
 
         // add the create button
-        _upload.setWidget(1, 1, new Button(CStuff.msgs.panelCreateNew(),
+        _upload.setWidget(1, 1, new Button(_msgs.panelCreateNew(),
                                            NaviUtil.onCreateItem(_type, (byte)0, 0)), 1, "Button");
         _upload.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
     }
@@ -150,7 +151,7 @@ public class ItemPanel extends FlowPanel
     {
         String pitch = _dmsgs.xlate("itemUploadPitch" + _type + postfix);
         if (-1 != pitch.indexOf("@MEMBER_ID@")) {
-            return pitch.replaceAll("@MEMBER_ID@", "" + CStuff.getMemberId());
+            return pitch.replaceAll("@MEMBER_ID@", "" + CShell.getMemberId());
         }
         return pitch;
     }
@@ -169,14 +170,14 @@ public class ItemPanel extends FlowPanel
             tbar.setStyleName("Title");
             tbar.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
 
-            String title = _type == Item.NOT_A_TYPE ? CStuff.msgs.stuffTitleMain()
-                : CStuff.msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type));
+            String title = _type == Item.NOT_A_TYPE ?
+                _msgs.stuffTitleMain() : _msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type));
             tbar.add(MsoyUI.createLabel(title, "Type"));
 
-            tbar.add(MsoyUI.createLabel(CStuff.msgs.ipShopFor(), "For"));
+            tbar.add(MsoyUI.createLabel(_msgs.ipShopFor(), "For"));
             tbar.add(WidgetUtil.makeShim(5, 5));
             ClickListener onClick = Link.createListener(Pages.SHOP, "" + _type);
-            tbar.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, CStuff.msgs.ipToCatalog(), onClick));
+            tbar.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.ipToCatalog(), onClick));
             tbar.add(WidgetUtil.makeShim(10, 10));
 
             add(tbar);
@@ -220,13 +221,14 @@ public class ItemPanel extends FlowPanel
     protected HorizontalPanel _search;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
+    protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
 
     protected static final String[] FLABELS = {
-        CStuff.msgs.ipfAll(),
-        CStuff.msgs.ipfUploaded(),
-        CStuff.msgs.ipfPurchased(),
-        CStuff.msgs.ipfUnused(),
-        CStuff.msgs.ipfUsed()
+        _msgs.ipfAll(),
+        _msgs.ipfUploaded(),
+        _msgs.ipfPurchased(),
+        _msgs.ipfUnused(),
+        _msgs.ipfUsed()
     };
 
     protected static final List<Predicate<Item>> FILTERS = new ArrayList<Predicate<Item>>(); {

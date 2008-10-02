@@ -61,7 +61,7 @@ public class SubItemPanel extends PagedGrid<Item>
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return CStuff.msgs.panelNoItems(_dmsgs.xlate("itemType" + _type));
+        return _msgs.panelNoItems(_dmsgs.xlate("itemType" + _type));
     }
 
     @Override // from PagedGrid
@@ -73,7 +73,7 @@ public class SubItemPanel extends PagedGrid<Item>
     @Override // from PagedGrid
     protected void addCustomControls (FlexTable controls)
     {
-        _create = new Button(CStuff.msgs.panelCreateNew()); // ClickListener added later
+        _create = new Button(_msgs.panelCreateNew()); // ClickListener added later
         controls.setWidget(0, 0, _create);
     }
 
@@ -83,6 +83,7 @@ public class SubItemPanel extends PagedGrid<Item>
     protected Button _create;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
+    protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
 
     protected static final int ROWS = 2;
 }
