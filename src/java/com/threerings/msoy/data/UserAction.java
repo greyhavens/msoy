@@ -21,6 +21,8 @@ public class UserAction extends SimpleStreamableObject
 {
     /** Represents our various action types. */
     public enum Type {
+        // NOTE: do not change these numbers unless you're also going to update Panopticon reports
+
         // general actions
         CREATED_PROFILE(1), UPDATED_PROFILE(2), CREATED_ACCOUNT(3),
 
