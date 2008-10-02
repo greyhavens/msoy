@@ -112,19 +112,20 @@ public class RemixControls extends HBox
         _saveBtn.enabled = false;
 
         try {
-            ExternalInterface.addCallback("enableBuyButton", enableBuyButton);
+            ExternalInterface.addCallback("itemPurchased", itemPurchased);
         } catch (err :Error) {
             // whatever
         }
 
         ParameterUtil.getParameters(app, function (params :Object) :void  {
             _params = params;
+            setMustBuy("true" == params["mustBuy"]);
+
             var media :String = params["media"] as String;
 
             createPreviewer(params["type"] as String);
 
-            const mustBuy :Boolean = ("true" == params["mustBuy"]);
-            _saveBtn.label = _ctx.REMIX.get(mustBuy ? "b.save_and_buy" : "b.save_all");
+            _saveBtn.label = _ctx.REMIX.get(_mustBuy ? "b.save_and_buy" : "b.save_all");
 
             _ctx.pack = new EditableDataPack(media);
             _ctx.pack.addEventListener(Event.COMPLETE, handlePackComplete);
@@ -146,10 +147,23 @@ public class RemixControls extends HBox
         return copy.toString();
     }
 
-    protected function enableBuyButton () :void
+    protected function setMustBuy (mustBuy :Boolean) :void
     {
-        _saveBtn.enabled = true;
-        _cancelBtn.enabled = true;
+        _mustBuy = mustBuy;
+        _saveBtn.label = _ctx.REMIX.get(_mustBuy ? "b.save_and_buy" : "b.save_all");
+    }
+
+    protected function itemPurchased (success :Boolean) :void
+    {
+        if (success) {
+            setMustBuy(false);
+            commit(); // and then re-try the save,
+
+        } else {
+            // re-enable buttons...
+            _saveBtn.enabled = true;
+            _cancelBtn.enabled = true;
+        }
     }
 
     protected function createControlsHeader () :UIComponent
@@ -354,11 +368,19 @@ public class RemixControls extends HBox
     {
         _saveBtn.enabled = false;
         _cancelBtn.enabled = false;
-        callLater(callLater, [ startUpload ]);
+        callLater(callLater, [ saveRemix ]);
     }
 
-    protected function startUpload () :void
+    protected function saveRemix () :void
     {
+        if (_mustBuy) {
+            // tell the GWT side that we wish to purchase the remix
+            if (ExternalInterface.available) {
+                ExternalInterface.call("buyItem");
+            }
+            return;
+        }
+
         if (_lastBytes == null) {
             _lastBytes = _ctx.pack.serialize();
         }
@@ -421,6 +443,9 @@ public class RemixControls extends HBox
     protected var _lastBytes :ByteArray;
 
     protected var _params :Object;
+
+    /** Do we need to buy this item before we can save the remix? */
+    protected var _mustBuy :Boolean;
 
     // configure log levels
     MsoyLogConfig.init();
