@@ -210,6 +210,9 @@ public class GameEditor extends ItemEditor
         addSpacer();
         MediaUpdater serverMediaUpdater = new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
+                if (!isValidServerAgentMedia(desc)) {
+                    return _emsgs.errMediaNotABC();
+                }
                 _game.serverMedia = desc; // TODO: validate media type
                 return null;
             }
@@ -376,6 +379,12 @@ public class GameEditor extends ItemEditor
     {
         // game media must be swfs. maybe we'll want remixable in the future?
         return desc.isSWF();
+    }
+
+    /** Checks mime type for use as a server agent. */
+    protected boolean isValidServerAgentMedia (MediaDesc desc)
+    {
+        return desc.mimeType == MediaDesc.COMPILED_ACTION_SCRIPT_LIBRARY;
     }
 
     protected Game _game;
