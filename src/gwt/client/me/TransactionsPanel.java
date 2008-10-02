@@ -48,7 +48,7 @@ public class TransactionsPanel extends VerticalPanel
         }
         reportBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget widget) {
-                Link.go(Pages.ME, Args.compose("transactions",
+                Link.go(Pages.ME, Args.compose(MePage.TRANSACTIONS,
                         String.valueOf(reportBox.getSelectedIndex()+1),
                         String.valueOf(memberId)));
             }
@@ -62,7 +62,7 @@ public class TransactionsPanel extends VerticalPanel
         if (report == ReportType.BLING) {
             add(new BlingPanel(model));
         } else if (CShell.isSupport() && report == ReportType.COINS) {
-            // TODO
+            add(new DeductPanel(memberId));
         }
     }
 
