@@ -639,9 +639,7 @@ public class MoneyLogic
         Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests do not have money.");
 
         MoneyTransactionRecord tx;
-        
-        if (delta > 0)
-        {
+        if (delta > 0) {
             tx = _repo.accumulateAndStoreTransaction(
                 memberId, currency, delta, type, action.description, null);
         } else {
