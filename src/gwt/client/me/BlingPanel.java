@@ -23,6 +23,7 @@ import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 
 import client.shell.CShell;
 import client.shell.ShellMessages;
+import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
 import client.util.ServiceUtil;
 import client.util.StringUtil;
@@ -65,7 +66,6 @@ public class BlingPanel extends SmartTable
                 doExchange(memberId);
             }
         }));
-        setWidget(row++, 1, _exchangeStatus = new Label(""), 2, null);
         setText(row++, 0, _msgs.blingCashOutHeader(), 3, "header");
         setText(row++, 0, _msgs.blingCashOutDescription(), 3, null);
         setText(row, 0, _msgs.fieldTemplate(_msgs.cashOutPassword()), 1, "rightLabel");
@@ -100,7 +100,6 @@ public class BlingPanel extends SmartTable
                 doCashOut(memberId);
             }
         }));
-        setWidget(row++, 1, _cashOutStatus = new Label(""), 2, null);
     }
     
     protected void update (BlingInfo result)
@@ -119,7 +118,7 @@ public class BlingPanel extends SmartTable
     protected void doExchange (int memberId)
     {
         // Validate the data
-        int blingAmount = getValidAmount(_exchangeBox, _exchangeStatus, _msgs.blingInvalidAmount());
+        int blingAmount = getValidAmount(_exchangeBox, _msgs.blingInvalidAmount());
         if (blingAmount == 0) {
             return;
         }
@@ -130,10 +129,10 @@ public class BlingPanel extends SmartTable
             _moneysvc.exchangeBlingForBars(memberId, blingAmount, 
                     new AsyncCallback<BlingExchangeResult>() {
                 public void onFailure (Throwable cause) {
-                    setError(_exchangeStatus, CShell.serverError(cause));
+                    MsoyUI.errorNear(CShell.serverError(cause), _exchangeBox);
                 }
                 public void onSuccess (BlingExchangeResult result) {
-                    setSuccess(_exchangeStatus, _msgs.blingExchangeSuccessful());
+                    MsoyUI.info(_msgs.blingExchangeSuccessful());
                     _exchangeBox.setText("");
                     update(result.blingInfo);
                     CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.GOLD, 
@@ -148,25 +147,24 @@ public class BlingPanel extends SmartTable
     protected void doCashOut (int memberId)
     {
         // Validate the data
-        int blingAmount = getValidAmount(_cashOutBox, _cashOutStatus, _msgs.blingInvalidAmount());
+        int blingAmount = getValidAmount(_cashOutBox, _msgs.blingInvalidAmount());
         if (blingAmount == 0) {
             return;
         }
-        if (!requireField(_passwordBox.getText(), _cashOutStatus, _msgs.cashOutPassword()) ||
-            !requireField(_firstNameBox.getText(), _cashOutStatus, _msgs.cashOutFirstName()) ||
-            !requireField(_lastNameBox.getText(), _cashOutStatus, _msgs.cashOutLastName()) ||
-            !requireField(_paypalEmailBox.getText(), _cashOutStatus, _msgs.cashOutPayPalEmail()) ||
-            !requireField(_phoneNumberBox.getText(), _cashOutStatus, _msgs.cashOutPhoneNumber()) ||
-            !requireField(_streetAddressBox.getText(), _cashOutStatus,
-                          _msgs.cashOutStreetAddress()) ||
-            !requireField(_cityBox.getText(), _cashOutStatus, _msgs.cashOutCity()) ||
-            !requireField(_stateBox.getText(), _cashOutStatus, _msgs.cashOutState()) ||
-            !requireField(_postalCodeBox.getText(), _cashOutStatus, _msgs.cashOutPostalCode()) ||
-            !requireField(_countryBox.getText(), _cashOutStatus, _msgs.cashOutCountry())) {
+        if (!requireField(_passwordBox, _msgs.cashOutPassword()) ||
+            !requireField(_firstNameBox, _msgs.cashOutFirstName()) ||
+            !requireField(_lastNameBox, _msgs.cashOutLastName()) ||
+            !requireField(_paypalEmailBox, _msgs.cashOutPayPalEmail()) ||
+            !requireField(_phoneNumberBox, _msgs.cashOutPhoneNumber()) ||
+            !requireField(_streetAddressBox, _msgs.cashOutStreetAddress()) ||
+            !requireField(_cityBox, _msgs.cashOutCity()) ||
+            !requireField(_stateBox, _msgs.cashOutState()) ||
+            !requireField(_postalCodeBox, _msgs.cashOutPostalCode()) ||
+            !requireField(_countryBox, _msgs.cashOutCountry())) {
             return;
         }
         if (!_paypalEmailBox.getText().equals(_paypalEmailConfirmBox.getText())) {
-            setError(_cashOutStatus, _msgs.cashOutEmailsDontMatch());
+            MsoyUI.errorNear(_msgs.cashOutEmailsDontMatch(), _paypalEmailConfirmBox);
             return;
         }
         
@@ -180,10 +178,10 @@ public class BlingPanel extends SmartTable
                 _cityBox.getText(), _stateBox.getText(), _postalCodeBox.getText(), 
                 _countryBox.getText()), new AsyncCallback<BlingInfo>() {
                 public void onFailure (Throwable cause) {
-                    setError(_cashOutStatus, CShell.serverError(cause));
+                    MsoyUI.error(CShell.serverError(cause));
                 }
                 public void onSuccess (BlingInfo result) {
-                    setSuccess(_cashOutStatus, _msgs.cashOutRequestSuccessful());
+                    MsoyUI.info(_msgs.cashOutRequestSuccessful());
                     _cashOutBox.setText("");
                     update(result);
                 }
@@ -193,34 +191,20 @@ public class BlingPanel extends SmartTable
         }
     }
     
-    protected void setSuccess (Label label, String message)
+    protected boolean requireField (TextBox box, String fieldName)
     {
-        label.setText(message);
-        label.removeStyleName("Error");
-        label.addStyleName("Success");
-    }
-    
-    protected void setError (Label label, String message)
-    {
-        label.setText(message);
-        label.removeStyleName("Success");
-        label.addStyleName("Error");
-    }
-    
-    protected boolean requireField (String value, Label status, String fieldName)
-    {
-        if (StringUtil.isBlank(value)) {
-            setError(status, _msgs.fieldRequired(fieldName));
+        if (StringUtil.isBlank(box.getText())) {
+            MsoyUI.errorNear(_msgs.fieldRequired(fieldName), box);
             return false;
         }
         return true;
     }
     
-    protected int getValidAmount (NumberTextBox box, Label status, String invalidMessage)
+    protected int getValidAmount (NumberTextBox box, String invalidMessage)
     {
         final int blingAmount = box.getValue().intValue();
         if (blingAmount < 1) {
-            setError(status, invalidMessage);
+            MsoyUI.errorNear(invalidMessage, box);
             return 0;
         }
         return blingAmount;
@@ -247,7 +231,6 @@ public class BlingPanel extends SmartTable
     
     protected NumberTextBox _exchangeBox;
     protected Button _exchangeBtn;
-    protected Label _exchangeStatus;
     protected NumberTextBox _cashOutBox;
     protected PasswordTextBox _passwordBox;
     protected TextBox _firstNameBox;
@@ -262,7 +245,6 @@ public class BlingPanel extends SmartTable
     protected TextBox _countryBox;
     
     protected Button _cashOutBtn;
-    protected Label _cashOutStatus;
     
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
