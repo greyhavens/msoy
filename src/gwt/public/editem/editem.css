@@ -4,3 +4,7 @@
  * CSS styles for the (shared) Item editor interfaces.
  */
 
+.itemEditor {
+  margin: 5px;
+  width: 670px;
+}

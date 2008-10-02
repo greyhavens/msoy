@@ -197,7 +197,6 @@ public class GameEditor extends ItemEditor
         addTab(_emsgs.gameTabCode());
 
         // add a UI for uploading the game client and server code
-        addSpacer();
         addRow(_emsgs.gameLabel(), createMainUploader(TYPE_CODE, false, new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 if (!isValidGameMedia(desc)) {
@@ -208,6 +207,7 @@ public class GameEditor extends ItemEditor
             }
         }), _emsgs.gameTip());
 
+        addSpacer();
         MediaUpdater serverMediaUpdater = new MediaUpdater() {
             public String updateMedia (String name, MediaDesc desc, int width, int height) {
                 _game.serverMedia = desc; // TODO: validate media type
@@ -217,10 +217,13 @@ public class GameEditor extends ItemEditor
         ItemMediaUploader serverMediaUploader = createUploader(
             Game.SERVER_CODE_MEDIA, TYPE_CODE, ItemMediaUploader.MODE_NORMAL, serverMediaUpdater);
         addRow(_emsgs.gameServerMediaLabel(), serverMediaUploader, _emsgs.gameServerMediaTip());
-        addRow(_emsgs.gameServerClass(), _serverClass = new TextBox(), _emsgs.gameServerClassTip());
+        addRow(_emsgs.gameServerClass(), _serverClass = new TextBox());
+        addTip(_emsgs.gameServerClassTip());
         _serverClass.setVisibleLength(40);
 
-        addRow(_emsgs.gameAVRG(), _avrg = new CheckBox(), _emsgs.gameAVRGTip());
+        addSpacer();
+        addRow(_emsgs.gameAVRG(), _avrg = new CheckBox());
+        addTip(_emsgs.gameAVRGTip());
 
         addTab(_emsgs.gameTabMedia());
 
@@ -237,7 +240,6 @@ public class GameEditor extends ItemEditor
             }
         });
         shotter.setHint(_emsgs.gameShotHint(""+GameDetail.SHOT_WIDTH, ""+GameDetail.SHOT_HEIGHT));
-        addSpacer();
         addRow(_emsgs.gameShotTab(), shotter, _emsgs.gameShotTitle());
 
         super.addExtras();
@@ -245,9 +247,9 @@ public class GameEditor extends ItemEditor
         addTab(_emsgs.gameTabExtras());
 
         // a UI for selecting this game's associated whirled
-        addSpacer();
         _whirled = new ListBox();
-        addRow(_emsgs.gameWhirledLabel(), _whirled, _emsgs.gameWhirledTip());
+        addRow(_emsgs.gameWhirledLabel(), _whirled);
+        addTip(_emsgs.gameWhirledTip());
 
         // allow them to specify their shop tag
         addSpacer();
