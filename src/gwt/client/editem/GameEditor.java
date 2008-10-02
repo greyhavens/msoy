@@ -7,6 +7,7 @@ import java.util.List;
 
 import client.shell.CShell;
 import client.shell.DynamicLookup;
+import client.ui.NumberTextBox;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
@@ -164,13 +165,11 @@ public class GameEditor extends ItemEditor
         _matchType.addItem(_dmsgs.xlate("gameType2"));
 
         // TODO: it'd be nice to force-format this text field for integers, or something
-        addRow(_emsgs.gameMinPlayers(), _minPlayers = new TextBox());
+        addRow(_emsgs.gameMinPlayers(), _minPlayers = new NumberTextBox(false, 5));
         _minPlayers.setText("1");
-        _minPlayers.setVisibleLength(5);
 
-        addRow(_emsgs.gameMaxPlayers(), _maxPlayers = new TextBox());
+        addRow(_emsgs.gameMaxPlayers(), _maxPlayers = new NumberTextBox(false, 5));
         _maxPlayers.setText("1");
-        _maxPlayers.setVisibleLength(5);
 
         addRow(_emsgs.gameWatchable(), _watchable = new CheckBox());
         _watchable.setChecked(true);
@@ -360,7 +359,7 @@ public class GameEditor extends ItemEditor
     protected Game _game;
 
     protected ListBox _genre;
-    protected TextBox _minPlayers, _maxPlayers;
+    protected NumberTextBox _minPlayers, _maxPlayers;
     protected ListBox _matchType;
     protected CheckBox _watchable;
     protected TextBox _serverClass;
