@@ -154,13 +154,30 @@ public class GameEditor extends ItemEditor
         }
         addRow(_emsgs.gameGenre(), _genre);
 
-        // seated continuous games are disabled for
         addRow(_emsgs.gameGameType(), bind(_matchType = new ListBox(), new Binder() {
-            @Override
-            public void valueChanged () {
-                // TODO: disable or hide min/max players and watchable if this is a party game
+            @Override public void valueChanged () {
+                boolean isParty = (_matchType.getSelectedIndex() == 1);
+                if (isParty) {
+                    _oldMin = _minPlayers.getText();
+                    _minPlayers.setText("1");
+                    _oldMax = _maxPlayers.getText();
+                    _maxPlayers.setText("99");
+                    _oldWatch = _watchable.isChecked();
+                    _watchable.setChecked(true);
+                } else {
+                    _minPlayers.setText(_oldMin);
+                    _maxPlayers.setText(_oldMax);
+                    _watchable.setChecked(_oldWatch);
+                }
+                // TODO: it would be nicer to just hide these
+                _minPlayers.setEnabled(!isParty);
+                _maxPlayers.setEnabled(!isParty);
+                _watchable.setEnabled(!isParty);
             }
+            protected String _oldMin, _oldMax;
+            protected boolean _oldWatch;
         }));
+        // seated continuous games are disabled for now
         _matchType.addItem(_dmsgs.xlate("gameType0"));
         _matchType.addItem(_dmsgs.xlate("gameType2"));
 
