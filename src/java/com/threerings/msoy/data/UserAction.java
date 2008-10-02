@@ -10,6 +10,8 @@ import com.threerings.io.SimpleStreamableObject;
 import com.threerings.util.ActionScript;
 import com.threerings.util.MessageBundle;
 
+import com.threerings.msoy.data.all.MemberName;
+
 /**
  * Represent an action taken by a user; used for humanity assessment and to tag money earning and
  * spending transactions.
@@ -107,10 +109,10 @@ public class UserAction extends SimpleStreamableObject
         return new UserAction(Type.ACCEPTED_FRIEND_INVITE, memberId, null);
     }
 
-    public static UserAction invitedFriendJoined (int inviterId, String newcomerName, int newcomerId)
+    public static UserAction invitedFriendJoined (int inviterId, MemberName newcomer)
     {
         String descrip = MessageBundle.tcompose(
-            "m.invited_friend_joined", newcomerName, newcomerId);
+            "m.invited_friend_joined", newcomer, newcomer.getMemberId());
         return new UserAction(Type.INVITED_FRIEND_JOINED, inviterId, descrip);
     }
 
@@ -158,9 +160,9 @@ public class UserAction extends SimpleStreamableObject
         return new UserAction(Type.TRANSFER_FROM_GUEST, memberId, "m.transfer_from_guest");
     }
 
-    public static UserAction supportAdjust (int memberId, String supportName, int supportId)
+    public static UserAction supportAdjust (int memberId, MemberName support)
     {
-        String descrip = MessageBundle.tcompose("m.support_adjust", supportName, supportId);
+        String descrip = MessageBundle.tcompose("m.support_adjust", support, support.getMemberId());
         return new UserAction(Type.SUPPORT_ADJUST, memberId, descrip, null);
     }
 

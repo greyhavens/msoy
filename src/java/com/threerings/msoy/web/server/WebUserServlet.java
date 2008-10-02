@@ -171,7 +171,7 @@ public class WebUserServlet extends MsoyServiceServlet
                     // pay out a sign up bonus to the inviter
                     _moneyLogic.awardCoins(
                         inviter.memberId, CoinAwards.INVITED_FRIEND_JOINED, true,
-                        UserAction.invitedFriendJoined(inviter.memberId, mrec.name, mrec.memberId));
+                        UserAction.invitedFriendJoined(inviter.memberId, mrec.getName()));
                 } catch (Exception e) {
                     log.warning("Failed to wire up friendship for created account " +
                             "[member=" + mrec.who() + ", inviter=" + inviter.who() + "].", e);
