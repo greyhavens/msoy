@@ -34,7 +34,6 @@ import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.util.ClickCallback;
 import client.util.Link;
-import client.util.NaviUtil;
 import client.util.ServiceUtil;
 
 /**

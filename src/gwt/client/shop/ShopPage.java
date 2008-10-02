@@ -28,7 +28,6 @@ import client.shell.Page;
 import client.shell.Pages;
 import client.util.Link;
 import client.util.MsoyCallback;
-import client.util.NaviUtil;
 import client.util.ServiceUtil;
 
 /**

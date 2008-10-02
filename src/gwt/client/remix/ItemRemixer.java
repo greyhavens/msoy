@@ -5,9 +5,7 @@ package client.remix;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -16,12 +14,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.ItemIdent;
 import com.threerings.msoy.item.data.all.Decor;
-import com.threerings.msoy.item.gwt.CatalogService;
-import com.threerings.msoy.item.gwt.CatalogServiceAsync;
-import com.threerings.msoy.item.gwt.CostUpdatedException;
-import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.stuff.gwt.StuffService;
 import com.threerings.msoy.stuff.gwt.StuffServiceAsync;
 
@@ -30,7 +23,6 @@ import client.item.ImageChooserPopup;
 import client.item.ItemUtil;
 import client.shell.CShell;
 import client.ui.MsoyUI;
-import client.ui.PriceLabel;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
