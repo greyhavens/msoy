@@ -3,6 +3,8 @@
 
 package client.people;
 
+import com.google.gwt.core.client.GWT;
+
 import com.threerings.gwt.ui.SmartTable;
 
 import com.threerings.msoy.game.data.all.Trophy;
@@ -27,7 +29,7 @@ public class TrophiesBlurb extends Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
-        setHeader(CPeople.msgs.trophiesTitle());
+        setHeader(_msgs.trophiesTitle());
 
         // display our trophies in a nice grid
         SmartTable grid = new SmartTable(0, 4);
@@ -35,7 +37,9 @@ public class TrophiesBlurb extends Blurb
         TrophyGrid.populateTrophyGrid(grid, tvec);
         setContent(grid);
 
-        setFooterLink(CPeople.msgs.seeAll(), Pages.GAMES,
+        setFooterLink(_msgs.seeAll(), Pages.GAMES,
                       Args.compose("t", pdata.name.getMemberId()));
     }
+
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 }

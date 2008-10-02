@@ -7,40 +7,32 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.ui.ClickListener;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SourcesClickEvents;
 import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.data.all.Item;
-import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
-import com.threerings.msoy.item.gwt.CostUpdatedException;
-import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.PriceQuote;
 
 import client.comment.CommentsPanel;
 import client.item.BaseItemDetailPanel;
 import client.item.DoListItemPopup;
-import client.item.ItemActivator;
 import client.item.RemixButton;
 import client.item.ShopUtil;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.PopupMenu;
 import client.util.ClickCallback;
-import client.util.FlashClients;
 import client.util.Link;
 import client.util.NaviUtil;
 import client.util.ServiceUtil;
@@ -58,7 +50,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _models = models;
         _listing = listing;
 
-        if (!CShop.isGuest() && isRemixable()) {
+        if (!CShell.isGuest() && isRemixable()) {
             _indeets.add(WidgetUtil.makeShim(10, 10));
             _indeets.add(new RemixButton(_msgs.listingRemix(),
                 Link.createListener(Pages.SHOP, Args.compose(ShopPage.REMIX,
@@ -82,7 +74,7 @@ public class ListingDetailPanel extends BaseItemDetailPanel
         _indeets.add(info);
 
         // if we are the creator (lister) of this item, allow us to delist it
-        if (_detail.creator.getMemberId() == CShop.getMemberId() || CShop.isSupport()) {
+        if (_detail.creator.getMemberId() == CShell.getMemberId() || CShell.isSupport()) {
             HorizontalPanel controls = new HorizontalPanel();
             controls.setStyleName("controls");
 

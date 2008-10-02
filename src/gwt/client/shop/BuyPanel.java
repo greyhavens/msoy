@@ -24,6 +24,7 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
 import client.item.ItemActivator;
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -119,7 +120,7 @@ public class BuyPanel extends FlowPanel
 
         public boolean callService ()
         {
-            if (CShop.isGuest()) {
+            if (CShell.isGuest()) {
                 MsoyUI.infoAction(_msgs.msgMustRegister(), _msgs.msgRegister(),
                                   Link.createListener(Pages.ACCOUNT, "create"));
             } else {

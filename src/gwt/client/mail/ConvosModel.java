@@ -8,6 +8,7 @@ import java.util.List;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import client.shell.CShell;
 import client.util.ServiceBackedDataModel;
 import client.util.ServiceUtil;
 import client.util.events.StatusChangeEvent;
@@ -37,7 +38,7 @@ public class ConvosModel extends ServiceBackedDataModel<Conversation, MailServic
         }
 
         // now dispatch an event indicating our new unread mail count
-        CMail.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, unread, unread+1));
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.MAIL, unread, unread+1));
     }
 
     /**
@@ -75,7 +76,8 @@ public class ConvosModel extends ServiceBackedDataModel<Conversation, MailServic
     }
 
     @Override // from ServiceBackedDataModel
-    protected void callFetchService (int start, int count, boolean needCount, AsyncCallback<MailService.ConvosResult> callback) {
+    protected void callFetchService (int start, int count, boolean needCount,
+                                     AsyncCallback<MailService.ConvosResult> callback) {
         _mailsvc.loadConversations(start, count, needCount, callback);
     }
 

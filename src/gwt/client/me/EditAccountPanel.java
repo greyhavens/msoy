@@ -25,6 +25,7 @@ import com.threerings.msoy.web.client.WebUserService;
 import com.threerings.msoy.web.client.WebUserServiceAsync;
 import com.threerings.msoy.web.data.AccountInfo;
 
+import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.RowPanel;
@@ -55,7 +56,7 @@ public class EditAccountPanel extends SmartTable
         int row = 0;
 
         // configure or display permaname interface
-        if (CMe.creds.permaName == null) {
+        if (CShell.creds.permaName == null) {
             setText(row++, 0, _msgs.editPickPermaNameHeader(), 3, "Header");
 
             setText(row, 0, _msgs.editPermaName(), 1, "rightLabel");
@@ -73,7 +74,7 @@ public class EditAccountPanel extends SmartTable
 
         } else {
             setText(row, 0, _msgs.editPermaName(), 1, "rightLabel");
-            setText(row++, 1, CMe.creds.permaName, 1, "PermaName");
+            setText(row++, 1, CShell.creds.permaName, 1, "PermaName");
         }
 
         // configure email address interface
@@ -81,7 +82,7 @@ public class EditAccountPanel extends SmartTable
 
         setText(row, 0, _msgs.editEmail(), 1, "rightLabel");
         setWidget(row, 1, _email = new TextBox());
-        _email.setText(CMe.creds.accountName);
+        _email.setText(CShell.creds.accountName);
         _email.addKeyboardListener(_valemail);
         _upemail = new Button(_cmsgs.update(), new ClickListener() {
             public void onClick (Widget widget) {
@@ -174,7 +175,7 @@ public class EditAccountPanel extends SmartTable
                 _rname.setText(_accountInfo.realName = oldRealName);
                 _rname.setEnabled(true);
                 _uprname.setEnabled(true);
-                setError(CMe.serverError(cause));
+                setError(CShell.serverError(cause));
             }
         });
     }
@@ -185,12 +186,12 @@ public class EditAccountPanel extends SmartTable
         _upemail.setEnabled(false);
         _usersvc.updateEmail(email, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
-                CMe.creds.accountName = email;
+                CShell.creds.accountName = email;
                 setStatus(_msgs.emailUpdated());
             }
             public void onFailure (Throwable cause) {
                 _upemail.setEnabled(true);
-                setError(CMe.serverError(cause));
+                setError(CShell.serverError(cause));
             }
         });
     }
@@ -206,14 +207,14 @@ public class EditAccountPanel extends SmartTable
             }
             public void onFailure (Throwable cause) {
                 _upeprefs.setEnabled(true);
-                setError(CMe.serverError(cause));
+                setError(CShell.serverError(cause));
             }
         });
     }
 
     protected void updatePassword ()
     {
-        final String password = CMe.frame.md5hex(_password.getText().trim());
+        final String password = CShell.frame.md5hex(_password.getText().trim());
         _uppass.setEnabled(false);
         _password.setEnabled(false);
         _confirm.setEnabled(false);
@@ -229,7 +230,7 @@ public class EditAccountPanel extends SmartTable
                 _password.setEnabled(true);
                 _confirm.setEnabled(true);
                 _uppass.setEnabled(true);
-                setError(CMe.serverError(cause));
+                setError(CShell.serverError(cause));
             }
         });
     }
@@ -241,7 +242,7 @@ public class EditAccountPanel extends SmartTable
         _pname.setEnabled(false);
         _usersvc.configurePermaName(pname, new AsyncCallback<Void>() {
             public void onSuccess (Void result) {
-                CMe.creds.permaName = pname;
+                CShell.creds.permaName = pname;
                 getFlexCellFormatter().setStyleName(_permaRow, 1, "PermaName");
                 setText(_permaRow, 1, pname);
                 setText(_permaRow, 2, "");
@@ -251,7 +252,7 @@ public class EditAccountPanel extends SmartTable
             public void onFailure (Throwable cause) {
                 _pname.setEnabled(true);
                 _uppname.setEnabled(true);
-                setError(CMe.serverError(cause));
+                setError(CShell.serverError(cause));
             }
         });
     }
@@ -274,7 +275,7 @@ public class EditAccountPanel extends SmartTable
         String email = _email.getText().trim();
         boolean valid = false;
         if (email.length() < 4 || email.indexOf("@") == -1 ||
-            email.equals(CMe.creds.accountName)) {
+            email.equals(CShell.creds.accountName)) {
             setStatus("");
         } else {
             setStatus(_msgs.editEmailReady());

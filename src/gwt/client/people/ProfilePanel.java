@@ -12,6 +12,7 @@ import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
+import client.shell.CShell;
 import client.util.ServiceUtil;
 
 /**
@@ -36,17 +37,17 @@ public class ProfilePanel extends VerticalPanel
                 init(result);
             }
             public void onFailure (Throwable cause) {
-                CPeople.log("Failed to load profile data [for=" + _memberId + "].", cause);
-                add(new Label(CPeople.serverError(cause)));
+                CShell.log("Failed to load profile data [for=" + _memberId + "].", cause);
+                add(new Label(CShell.serverError(cause)));
             }
         });
     }
 
     protected void init (ProfileService.ProfileResult pdata)
     {
-        CPeople.frame.setTitle((_memberId == CPeople.getMemberId()) ?
-                               CPeople.msgs.profileSelfTitle() :
-                               CPeople.msgs.profileOtherTitle(pdata.name.toString()));
+        CShell.frame.setTitle((_memberId == CShell.getMemberId()) ?
+                              _msgs.profileSelfTitle() :
+                              _msgs.profileOtherTitle(pdata.name.toString()));
 
         for (Blurb _blurb : _blurbs) {
             if (_blurb.shouldDisplay(pdata)) {
@@ -67,6 +68,7 @@ public class ProfilePanel extends VerticalPanel
         new FeedBlurb(), new CommentsBlurb()
     };
 
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
         ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
 }

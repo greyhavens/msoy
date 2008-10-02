@@ -20,6 +20,7 @@ import com.threerings.msoy.mail.gwt.ConvMessage;
 import com.threerings.msoy.mail.gwt.MailService;
 import com.threerings.msoy.mail.gwt.MailServiceAsync;
 
+import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
@@ -58,7 +59,7 @@ public class ConvoPanel extends FlowPanel
         SmartTable header = new SmartTable("Header", 0, 0);
         header.setWidth("100%");
         header.setHTML(0, 0, "&nbsp;", 1, "TopLeft");
-        header.setText(0, 1, CMail.msgs.convoWith(""+result.other), 1, "Title");
+        header.setText(0, 1, _msgs.convoWith(""+result.other), 1, "Title");
         addControls(header);
         header.setHTML(0, header.getCellCount(0), "&nbsp;", 1, "TopRight");
         add(header);
@@ -86,8 +87,8 @@ public class ConvoPanel extends FlowPanel
     {
         int col = table.getCellCount(0);
 
-        Button delete = new Button(CMail.msgs.convoDelete());
-        new ClickCallback<Boolean>(delete, CMail.msgs.deleteConfirm()) {
+        Button delete = new Button(_msgs.convoDelete());
+        new ClickCallback<Boolean>(delete, _msgs.deleteConfirm()) {
             public boolean callService () {
                 _mailsvc.deleteConversation(_convoId, false, this);
                 return true;
@@ -95,7 +96,7 @@ public class ConvoPanel extends FlowPanel
             public boolean gotResult (Boolean deleted) {
                 if (!deleted) {
                     refresh();
-                    MsoyUI.info(CMail.msgs.deleteNotDeleted());
+                    MsoyUI.info(_msgs.deleteNotDeleted());
                 } else {
                     _model.conversationDeleted(_convoId);
                     History.back();
@@ -105,7 +106,7 @@ public class ConvoPanel extends FlowPanel
         };
         table.setWidget(0, col++, delete, 1, "Control");
 
-        table.setWidget(0, col++, new Button(CMail.msgs.convoBack(), new ClickListener() {
+        table.setWidget(0, col++, new Button(_msgs.convoBack(), new ClickListener() {
             public void onClick (Widget sender) {
                 History.back();
             }
@@ -140,7 +141,7 @@ public class ConvoPanel extends FlowPanel
             }
             if (msg.payload != null) {
                 MailPayloadDisplay display = MailPayloadDisplay.getDisplay(_convoId, msg);
-                Widget payviz = (CMail.getMemberId() == msg.author.name.getMemberId()) ?
+                Widget payviz = (CShell.getMemberId() == msg.author.name.getMemberId()) ?
                     display.widgetForSender() : display.widgetForRecipient();
                 if (payviz != null) {
                     _contents.add(payviz);
@@ -153,8 +154,8 @@ public class ConvoPanel extends FlowPanel
 
             if (showReply) {
                 _contents.add(WidgetUtil.makeShim(10, 10));
-                String action = _msg.author.name.getMemberId() == CMail.getMemberId() ?
-                    CMail.msgs.convoFollowUp() : CMail.msgs.convoReply();
+                String action = _msg.author.name.getMemberId() == CShell.getMemberId() ?
+                    _msgs.convoFollowUp() : _msgs.convoReply();
                 _contents.add(_reply = new Button(action, new ClickListener() {
                     public void onClick (Widget sender) {
                         showReply();
@@ -179,7 +180,7 @@ public class ConvoPanel extends FlowPanel
                 }
             }));
 
-            Button send = new Button(CMail.msgs.convoSend());
+            Button send = new Button(_msgs.convoSend());
             reply.setWidget(1, 1, send);
             reply.getFlexCellFormatter().setHorizontalAlignment(1, 1, HasAlignment.ALIGN_RIGHT);
             _contents.add(reply);
@@ -219,6 +220,7 @@ public class ConvoPanel extends FlowPanel
     protected ConvosModel _model;
     protected int _convoId;
 
+    protected static final MailMessages _msgs = GWT.create(MailMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
         ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);

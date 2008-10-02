@@ -13,6 +13,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.msoy.money.data.all.ReportType;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
@@ -60,7 +61,7 @@ public class TransactionsPanel extends VerticalPanel
         // Extra bits
         if (report == ReportType.BLING) {
             add(new BlingPanel(model));
-        } else if (CMe.isSupport() && report == ReportType.COINS) {
+        } else if (CShell.isSupport() && report == ReportType.COINS) {
             // TODO
         }
     }

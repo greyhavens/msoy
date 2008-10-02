@@ -57,12 +57,12 @@ public class ItemGiftDisplay extends MailPayloadDisplay
             clear();
 
             if (_giftPayload.item == null) {
-                add(MsoyUI.createLabel(CMail.msgs.giftGone(), null));
+                add(MsoyUI.createLabel(_msgs.giftGone(), null));
                 return;
             }
 
             if (_enabled) {
-                add(MsoyUI.createLabel(CMail.msgs.giftItem(), null));
+                add(MsoyUI.createLabel(_msgs.giftItem(), null));
             }
 
             _stuffsvc.loadItem(_giftPayload.item, new MsoyCallback<Item>() {
@@ -103,6 +103,7 @@ public class ItemGiftDisplay extends MailPayloadDisplay
 
     protected ItemGiftPayload _giftPayload;
 
+    protected static final MailMessages _msgs = GWT.create(MailMessages.class);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)
         ServiceUtil.bind(GWT.create(StuffService.class), StuffService.ENTRY_POINT);
     protected static final ItemServiceAsync _itemsvc = (ItemServiceAsync)

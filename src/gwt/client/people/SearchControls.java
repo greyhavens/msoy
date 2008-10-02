@@ -3,6 +3,7 @@
 
 package client.people;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.Button;
@@ -18,6 +19,7 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -33,19 +35,19 @@ public class SearchControls extends SmartTable
         super("searchControls", 0, 5);
 
         PushButton action;
-        if (CPeople.isGuest()) {
-            action = MsoyUI.createButton(MsoyUI.LONG_THIN, CPeople.msgs.searchJoin(),
+        if (CShell.isGuest()) {
+            action = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.searchJoin(),
                                          Link.createListener(Pages.ACCOUNT, "create"));
         } else {
-            action = MsoyUI.createButton(MsoyUI.LONG_THIN, CPeople.msgs.searchInvite(),
+            action = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.searchInvite(),
                                          Link.createListener(Pages.PEOPLE, "invites"));
         }
         setWidget(0, 0, action, 1, "Action");
         getFlexCellFormatter().setRowSpan(0, 0, 2);
 
         FlowPanel bits = new FlowPanel();
-        bits.add(MsoyUI.createLabel(CPeople.msgs.searchTitle(), "Title"));
-        bits.add(MsoyUI.createLabel(CPeople.msgs.searchTip(), "Tip"));
+        bits.add(MsoyUI.createLabel(_msgs.searchTitle(), "Title"));
+        bits.add(MsoyUI.createLabel(_msgs.searchTip(), "Tip"));
         setWidget(0, 1, bits, 2, null);
 
         setWidget(1, 0, _search = MsoyUI.createTextBox("", -1, -1), 1, null);
@@ -60,7 +62,7 @@ public class SearchControls extends SmartTable
             }
         });
         _search.addKeyboardListener(new EnterClickAdapter(this));
-        setWidget(1, 1, _go = new Button(CPeople.msgs.searchGo(), this));
+        setWidget(1, 1, _go = new Button(_msgs.searchGo(), this));
         _go.setEnabled(false);
 
         setWidget(1, 2, WidgetUtil.makeShim(15, 15));
@@ -91,4 +93,6 @@ public class SearchControls extends SmartTable
 
     protected TextBox _search;
     protected Button _go;
+
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 }

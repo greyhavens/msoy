@@ -3,7 +3,10 @@
 
 package client.people;
 
+import com.google.gwt.core.client.GWT;
+
 import com.threerings.gwt.ui.SmartTable;
+
 import com.threerings.msoy.profile.gwt.ProfileService;
 
 import client.item.ListingBox;
@@ -19,7 +22,7 @@ public class FavoritesBlurb extends Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
-        setHeader(CPeople.msgs.favoritesTitle());
+        setHeader(_msgs.favoritesTitle());
 
         SmartTable grid = new SmartTable();
         for (int ii = 0; ii < pdata.faves.size(); ii++) {
@@ -27,7 +30,9 @@ public class FavoritesBlurb extends Blurb
         }
         setContent(grid);
 
-        setFooterLink(CPeople.msgs.seeMoreFavorites(), Pages.SHOP,
+        setFooterLink(_msgs.seeMoreFavorites(), Pages.SHOP,
             Args.compose("f", pdata.name.getMemberId()));
     }
+
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 }

@@ -6,6 +6,7 @@ package client.mail;
 import com.google.gwt.core.client.GWT;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
 import client.shell.Pages;
 import client.ui.MsoyUI;
@@ -16,7 +17,7 @@ public class MailPage extends Page
     public void onHistoryChanged (Args args)
     {
         // if we have no creds, just display a message saying logon
-        if (CMail.isGuest()) {
+        if (CShell.isGuest()) {
             setContent(MsoyUI.createLabel(_msgs.logon(), "infoLabel"));
             return;
         }
@@ -48,15 +49,6 @@ public class MailPage extends Page
     public Pages getPageId ()
     {
         return Pages.MAIL;
-    }
-
-    @Override // from Page
-    protected void initContext ()
-    {
-        super.initContext();
-
-        // load up our translation dictionaries
-        CMail.msgs = (MailMessages)GWT.create(MailMessages.class);
     }
 
     protected ConvosModel _model = new ConvosModel();

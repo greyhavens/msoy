@@ -3,6 +3,7 @@
 
 package client.mail;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Widget;
@@ -46,7 +47,7 @@ public class PresentDisplay extends MailPayloadDisplay
                 onClick = Link.createListener(
                     Pages.STUFF, Args.compose("d", ""+payload.ident.type, ""+payload.ident.itemId));
                 setWidget(0, 1, WidgetUtil.makeShim(10, 10));
-                setText(0, 2, CMail.msgs.presentRecipTip());
+                setText(0, 2, _msgs.presentRecipTip());
             }
 
             setWidget(0, 0, new ThumbBox(payload.thumbMedia, onClick));
@@ -54,4 +55,6 @@ public class PresentDisplay extends MailPayloadDisplay
             getFlexCellFormatter().setHorizontalAlignment(1, 0, HasAlignment.ALIGN_CENTER);
         }
     }
+
+    protected static final MailMessages _msgs = GWT.create(MailMessages.class);
 }

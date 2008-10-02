@@ -19,6 +19,7 @@ import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 
 import client.ui.MemberStatusLabel;
@@ -68,7 +69,7 @@ public class MemberList extends PagedGrid<MemberCard>
             public void execute () {
                 _membersvc.removeFriend(card.name.getMemberId(), new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
-                        MsoyUI.info(CPeople.msgs.mlRemoved(card.name.toString()));
+                        MsoyUI.info(_msgs.mlRemoved(card.name.toString()));
                         removeItem(card);
                     }
                 });
@@ -100,28 +101,28 @@ public class MemberList extends PagedGrid<MemberCard>
             }
             setWidget(2, 0, new MemberStatusLabel(card.status));
 
-            boolean isNotMe = CPeople.getMemberId() != card.name.getMemberId();
+            boolean isNotMe = CShell.getMemberId() != card.name.getMemberId();
             SmartTable extras = new SmartTable("Extras", 0, 5);
             ClickListener onClick;
             int row = 0;
 
             // potentially show the add friend button
-            if (isNotMe && !card.isFriend && !CPeople.isGuest()) {
+            if (isNotMe && !card.isFriend && !CShell.isGuest()) {
                 onClick = InviteFriendPopup.createListener(card.name);
                 extras.setWidget(row, 0, MsoyUI.createActionImage(
                                      "/images/profile/addfriend.png", onClick));
                 extras.setWidget(row++, 1, MsoyUI.createActionLabel(
-                                     CPeople.msgs.mlAddFriend(), onClick));
+                                     _msgs.mlAddFriend(), onClick));
             }
 
             // if we're not a guest, we can send them mail
-            if (isNotMe && !CPeople.isGuest()) {
+            if (isNotMe && !CShell.isGuest()) {
                 onClick = Link.createListener(
                     Pages.MAIL, Args.compose("w", "m", ""+card.name.getMemberId()));
                 extras.setWidget(row, 0,
                     MsoyUI.createActionImage("/images/profile/sendmail.png", onClick));
                 extras.setWidget(row++, 1,
-                    MsoyUI.createActionLabel(CPeople.msgs.mlSendMail(), onClick));
+                    MsoyUI.createActionLabel(_msgs.mlSendMail(), onClick));
             }
 
             // always show the visit home button
@@ -129,16 +130,16 @@ public class MemberList extends PagedGrid<MemberCard>
             extras.setWidget(row, 0,
                 MsoyUI.createActionImage("/images/profile/visithome.png", onClick));
             extras.setWidget(row++, 1,
-                MsoyUI.createActionLabel(CPeople.msgs.mlVisitHome(), onClick));
+                MsoyUI.createActionLabel(_msgs.mlVisitHome(), onClick));
 
             // if they are our friend, show the remove friend button
             if (isNotMe && card.isFriend) {
                 onClick = new PromptPopup(
-                    CPeople.msgs.mlRemoveConfirm(""+card.name), removeFriend(card));
+                    _msgs.mlRemoveConfirm(""+card.name), removeFriend(card));
                 extras.setWidget(row, 0,
                     MsoyUI.createActionImage("/images/profile/remove.png", onClick));
                 extras.setWidget(row++, 1,
-                    MsoyUI.createActionLabel(CPeople.msgs.mlRemoveFriend(), onClick));
+                    MsoyUI.createActionLabel(_msgs.mlRemoveFriend(), onClick));
             }
 
             setWidget(0, 2, extras);
@@ -150,6 +151,7 @@ public class MemberList extends PagedGrid<MemberCard>
 
     protected String _emptyMessage;
 
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

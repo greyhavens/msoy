@@ -12,6 +12,7 @@ import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
+import client.shell.CShell;
 import client.ui.HeaderBox;
 import client.ui.MsoyUI;
 import client.util.MsoyCallback;
@@ -43,16 +44,16 @@ public class FriendsPanel extends FlowPanel
     protected void gotFriends (WebMemberService.FriendsResult data)
     {
         if (data == null) {
-            add(MsoyUI.createLabel(CPeople.msgs.friendsNoSuchMember(), null));
+            add(MsoyUI.createLabel(_msgs.friendsNoSuchMember(), null));
             return;
         }
 
-        boolean self = (CPeople.getMemberId() == _memberId);
-        CPeople.frame.setTitle(self ? CPeople.msgs.friendsSelfTitle() :
-                               CPeople.msgs.friendsOtherTitle(data.name.toString()));
+        boolean self = (CShell.getMemberId() == _memberId);
+        CShell.frame.setTitle(
+            self ? _msgs.friendsSelfTitle() : _msgs.friendsOtherTitle(data.name.toString()));
         _friends = new MemberList(
-            self ? CPeople.msgs.noFriendsSelf() : CPeople.msgs.noFriendsOther());
-        String title = CPeople.msgs.friendsWhoseFriends(data.name.toString());
+            self ? _msgs.noFriendsSelf() : _msgs.noFriendsOther());
+        String title = _msgs.friendsWhoseFriends(data.name.toString());
         add(new HeaderBox(title, _friends));
         _friends.setModel(new SimpleDataModel<MemberCard>(data.friends), 0);
     }
@@ -60,6 +61,7 @@ public class FriendsPanel extends FlowPanel
     protected int _memberId;
     protected MemberList _friends;
 
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
 }

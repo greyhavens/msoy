@@ -58,7 +58,7 @@ public class ShopPage extends Page
 
         } else if (action.equals(FAVORITES)) {
             // if no member is specified, we use the current member
-            int memberId = args.get(1, CShop.getMemberId());
+            int memberId = args.get(1, CShell.getMemberId());
             byte type = getItemType(args, 2, Item.NOT_A_TYPE);
             int page = args.get(3, 0);
             setContent(new FavoritesPanel(_models, memberId, type, page));
@@ -111,15 +111,6 @@ public class ShopPage extends Page
     public Pages getPageId ()
     {
         return Pages.SHOP;
-    }
-
-    @Override // from Page
-    protected void initContext ()
-    {
-        super.initContext();
-
-        // load up our translation dictionaries
-        CShop.msgs = (ShopMessages)GWT.create(ShopMessages.class);
     }
 
     protected RemixerHost createRemixerHost (

@@ -107,7 +107,7 @@ public class IssueServlet extends MsoyServiceServlet
     public Issue createIssue (Issue issue, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = requireSupportUser();
+        requireSupportUser();
 
         Issue rissue = _issueRepo.createIssue(issue).toIssue();
         rissue.creator = issue.creator;
@@ -145,7 +145,7 @@ public class IssueServlet extends MsoyServiceServlet
     public void assignMessage (int issueId, int messageId)
         throws ServiceException
     {
-        MemberRecord mrec = requireSupportUser();
+        requireSupportUser();
         IssueRecord irec = _issueRepo.loadIssue(issueId);
         if (irec.state != Issue.STATE_OPEN) {
             throw new ServiceException(IssueCodes.E_ISSUE_CLOSED);

@@ -57,9 +57,9 @@ public class ShopPanel extends HorizontalPanel
         SmartTable header = new SmartTable(0, 0);
         header.setWidget(0, 0, new Image("/images/shop/shop_bag.png"), 1, "Bag");
         header.getFlexCellFormatter().setRowSpan(0, 0, 2);
-        header.setWidget(0, 1, new Marquee(null, CShop.msgs.shopMarquee()), 1, "Marquee");
+        header.setWidget(0, 1, new Marquee(null, _msgs.shopMarquee()), 1, "Marquee");
         header.getFlexCellFormatter().setHorizontalAlignment(0, 1, HasAlignment.ALIGN_RIGHT);
-        header.setText(1, 0, CShop.msgs.shopIntro(), 1, "Intro");
+        header.setText(1, 0, _msgs.shopIntro(), 1, "Intro");
         _contents.add(header);
         _contents.add(WidgetUtil.makeShim(10, 10));
 
@@ -74,23 +74,23 @@ public class ShopPanel extends HorizontalPanel
     protected void init (ShopData data)
     {
         SmartTable boxes = new SmartTable(0, 0);
-        boxes.setWidget(0, 0, createTop("avatar", CShop.msgs.shopTopAvatars(), data.topAvatars));
+        boxes.setWidget(0, 0, createTop("avatar", _msgs.shopTopAvatars(), data.topAvatars));
         boxes.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
         boxes.getFlexCellFormatter().setRowSpan(0, 0, 3);
         boxes.setWidget(0, 1, WidgetUtil.makeShim(10, 10));
         boxes.getFlexCellFormatter().setRowSpan(0, 1, 3);
         if (data.featuredPet != null) {
-            boxes.setWidget(0, 2, createFeatured("pet", CShop.msgs.shopFeatPet(), data.featuredPet));
+            boxes.setWidget(0, 2, createFeatured("pet", _msgs.shopFeatPet(), data.featuredPet));
             boxes.getFlexCellFormatter().setVerticalAlignment(0, 2, HasAlignment.ALIGN_TOP);
         }
         boxes.setWidget(1, 0, WidgetUtil.makeShim(10, 10));
         if (data.featuredToy != null) {
-            boxes.setWidget(2, 0, createFeatured("toy", CShop.msgs.shopFeatToy(), data.featuredToy));
+            boxes.setWidget(2, 0, createFeatured("toy", _msgs.shopFeatToy(), data.featuredToy));
             boxes.getFlexCellFormatter().setVerticalAlignment(2, 2, HasAlignment.ALIGN_TOP);
         }
         boxes.setWidget(0, 3, WidgetUtil.makeShim(10, 10));
         boxes.getFlexCellFormatter().setRowSpan(0, 3, 3);
-        boxes.setWidget(0, 4, createTop("furni", CShop.msgs.shopTopFurniture(), data.topFurniture));
+        boxes.setWidget(0, 4, createTop("furni", _msgs.shopTopFurniture(), data.topFurniture));
         boxes.getFlexCellFormatter().setVerticalAlignment(0, 4, HasAlignment.ALIGN_TOP);
         boxes.getFlexCellFormatter().setRowSpan(0, 4, 3);
 
@@ -118,7 +118,7 @@ public class ShopPanel extends HorizontalPanel
         FlowPanel right = new FlowPanel();
         right.add(new ThumbBox(card.thumbMedia, onClick));
         right.add(WidgetUtil.makeShim(10, 10));
-        right.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, CShop.msgs.shopBuy(), onClick));
+        right.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.shopBuy(), onClick));
 
         SmartTable contents = new SmartTable("FeatListingBox", 0, 0);
         contents.setWidget(0, 0, left);
@@ -145,7 +145,7 @@ public class ShopPanel extends HorizontalPanel
             super("TopListingBox", 0, 0);
             setWidget(0, 1, new ThumbBox(card.thumbMedia, MediaDesc.HALF_THUMBNAIL_SIZE,
                                          makeClick(card)), 1, "Thumb");
-            setText(1, 0, CShop.msgs.shopRank(""+rank), 1, "Ranking");
+            setText(1, 0, _msgs.shopRank(""+rank), 1, "Ranking");
             setWidget(1, 1, MsoyUI.createLabel(card.name, "Name")); // requires overflow: hidden
             setText(2, 1, _imsgs.itemBy(card.creator.toString()), 1, "Creator");
         }
@@ -153,6 +153,7 @@ public class ShopPanel extends HorizontalPanel
 
     protected FlowPanel _contents;
 
+    protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final ItemMessages _imsgs = GWT.create(ItemMessages.class);
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);

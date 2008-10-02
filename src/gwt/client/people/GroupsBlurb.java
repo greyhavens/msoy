@@ -20,6 +20,7 @@ import com.threerings.msoy.group.gwt.GroupServiceAsync;
 import com.threerings.msoy.profile.gwt.ProfileService;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
@@ -41,7 +42,7 @@ public class GroupsBlurb extends Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
-        setHeader(CPeople.msgs.groupsTitle());
+        setHeader(_msgs.groupsTitle());
         setContent(new GroupsGrid(pdata.groups));
     }
 
@@ -63,17 +64,17 @@ public class GroupsBlurb extends Blurb
         @Override // from PagedGrid
         protected String getEmptyMessage ()
         {
-            return CPeople.msgs.notInGroupsOther();
+            return _msgs.notInGroupsOther();
         }
 
         @Override // from PagedGrid
         protected Widget createEmptyContents ()
         {
-            if (CPeople.getMemberId() != _name.getMemberId()) {
+            if (CShell.getMemberId() != _name.getMemberId()) {
                 return super.createEmptyContents();
             }
-            return createEmptyTable(CPeople.msgs.notInGroupsSelf(),
-                                    CPeople.msgs.notInGroupsJoin(), Pages.WHIRLEDS, "");
+            return createEmptyTable(_msgs.notInGroupsSelf(),
+                                    _msgs.notInGroupsJoin(), Pages.WHIRLEDS, "");
         }
 
         @Override // from PagedGrid
@@ -91,16 +92,16 @@ public class GroupsBlurb extends Blurb
 //         @Override // from PagedGrid
 //         protected void addCustomControls (FlexTable controls)
 //         {
-//             if (!CPeople.isGuest() && CPeople.getMemberId() != _name.getMemberId()) {
-//                 Button inviteButton = new Button(CPeople.msgs.inviteToGroup());
+//             if (!CShell.isGuest() && CShell.getMemberId() != _name.getMemberId()) {
+//                 Button inviteButton = new Button(_msgs.inviteToGroup());
 //                 new ClickCallback<List<GroupMembership>>(inviteButton) {
 //                     public boolean callService () {
-//                         _groupsvc.getMembershipGroups(CPeople.getMemberId(), true, this);
+//                         _groupsvc.getMembershipGroups(CShell.getMemberId(), true, this);
 //                         return true;
 //                     }
 //                     public boolean gotResult (List<GropuMembership> inviteGroups) {
 //                         if (inviteGroups.size() == 0) {
-//                             MsoyUI.infoNear(CPeople.msgs.haveNoGroups(), _trigger);
+//                             MsoyUI.infoNear(_msgs.haveNoGroups(), _trigger);
 //                         } else {
 //                             new MailComposition(_name, "Join this group!",
 //                                                 new GroupInvite.Composer(inviteGroups),
@@ -129,6 +130,7 @@ public class GroupsBlurb extends Blurb
         }
     }
 
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 

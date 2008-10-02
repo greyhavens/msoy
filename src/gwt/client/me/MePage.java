@@ -8,6 +8,7 @@ import com.google.gwt.core.client.GWT;
 import com.threerings.msoy.data.all.DeploymentConfig;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Page;
 import client.shell.Pages;
 import client.util.Link;
@@ -27,7 +28,7 @@ public class MePage extends Page
         } else if (action.equals("passport")) {
             // guests should never get a link to a passport page that will use the default, so 0
             // is fine (it'll through an internal error on the server)
-            int defaultId = CMe.creds == null ? 0 : CMe.creds.name.getMemberId();
+            int defaultId = CShell.creds == null ? 0 : CShell.creds.name.getMemberId();
             setContent(_msgs.titlePassport(), new PassportPanel(args.get(1, defaultId)));
 
         } else if (DeploymentConfig.devDeployment && action.equals("passportimagetest")) {
@@ -35,10 +36,10 @@ public class MePage extends Page
 
         } else if (action.equals(TRANSACTIONS) && DeploymentConfig.barsEnabled) {
             int report = args.get(1, 1);
-            int memberId = args.get(2, CMe.getMemberId());
+            int memberId = args.get(2, CShell.getMemberId());
             setContent(_msgs.transactionsTitle(), new TransactionsPanel(report, memberId));
 
-        } else if (!CMe.isGuest()) {
+        } else if (!CShell.isGuest()) {
             setContent(new MyWhirled());
 
         } else {

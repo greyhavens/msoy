@@ -22,6 +22,7 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.shell.ShellMessages;
@@ -38,7 +39,7 @@ public class InterestsBlurb extends Blurb
     @Override // from Blurb
     public boolean shouldDisplay (ProfileService.ProfileResult pdata)
     {
-        return (pdata.interests.size() > 0 || CPeople.getMemberId() == pdata.name.getMemberId());
+        return (pdata.interests.size() > 0 || CShell.getMemberId() == pdata.name.getMemberId());
     }
 
     @Override // from Blurb
@@ -48,7 +49,7 @@ public class InterestsBlurb extends Blurb
 
         _interests = pdata.interests;
 
-        setHeader(CPeople.msgs.interestsTitle());
+        setHeader(_msgs.interestsTitle());
         displayInterests();
     }
 
@@ -67,8 +68,8 @@ public class InterestsBlurb extends Blurb
         setContent(contents);
 
         // display the edit button if this is our profile
-        if (_name.getMemberId() == CPeople.getMemberId()) {
-            setFooterLabel(CPeople.msgs.interestsEdit(), new ClickListener() {
+        if (_name.getMemberId() == CShell.getMemberId()) {
+            setFooterLabel(_msgs.interestsEdit(), new ClickListener() {
                 public void onClick (Widget source) {
                     startEdit();
                 }
@@ -174,6 +175,7 @@ public class InterestsBlurb extends Blurb
     protected List<Interest> _interests;
     protected TextBox[] _iEditors;
 
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)

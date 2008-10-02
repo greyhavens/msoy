@@ -37,29 +37,29 @@ public class InviteFriendPopup extends BorderedDialog
 
     protected InviteFriendPopup (final MemberName target)
     {
-        setHeaderTitle(CPeople.msgs.ifriendTitle(""+target));
+        setHeaderTitle(_msgs.ifriendTitle(""+target));
 
         SmartTable contents = new SmartTable("inviteFriend", 0, 5);
-        contents.setText(0, 0, CPeople.msgs.ifriendTo(), 1, "rightLabel");
+        contents.setText(0, 0, _msgs.ifriendTo(), 1, "rightLabel");
         contents.setText(0, 1, ""+target);
 
-        contents.setText(1, 0, CPeople.msgs.ifriendSubject(), 1, "rightLabel");
+        contents.setText(1, 0, _msgs.ifriendSubject(), 1, "rightLabel");
         contents.setWidget(1, 1, _subject = new TextBox());
         _subject.setWidth("300px");
-        _subject.setText(CPeople.msgs.ifriendDefSubject());
+        _subject.setText(_msgs.ifriendDefSubject());
 
-        contents.setText(2, 0, CPeople.msgs.ifriendMessage(), 1, "rightLabel");
+        contents.setText(2, 0, _msgs.ifriendMessage(), 1, "rightLabel");
         contents.setWidget(2, 1, _body = new TextArea());
         _body.setWidth("300px");
         _body.setVisibleLines(5);
-        _body.setText(CPeople.msgs.ifriendDefMessage());
+        _body.setText(_msgs.ifriendDefMessage());
 
         setContents(contents);
 
-        Button send = new Button(CPeople.msgs.ifriendSend());
+        Button send = new Button(_msgs.ifriendSend());
         new StartConvoCallback(send, _subject, _body) {
             public boolean gotResult (Void result) {
-                MsoyUI.info(CPeople.msgs.ifriendSent());
+                MsoyUI.info(_msgs.ifriendSent());
                 hide();
                 return false;
             }
@@ -89,5 +89,6 @@ public class InviteFriendPopup extends BorderedDialog
     protected TextBox _subject;
     protected TextArea _body;
 
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

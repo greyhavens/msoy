@@ -30,7 +30,7 @@ public class CommentsBlurb extends Blurb
     {
         super.init(pdata);
 
-        setHeader(CPeople.msgs.commentsTitle());
+        setHeader(_msgs.commentsTitle());
         setContent(_wall = new WallPanel(pdata.name.getMemberId()));
         restorePostFooter();
     }
@@ -77,5 +77,6 @@ public class CommentsBlurb extends Blurb
 
     protected WallPanel _wall;
 
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
 }

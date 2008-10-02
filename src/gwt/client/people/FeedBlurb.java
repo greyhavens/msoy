@@ -31,8 +31,8 @@ public class FeedBlurb extends Blurb
     {
         super.init(pdata);
 
-        setHeader(CPeople.msgs.feedTitle());
-        String empty = CPeople.msgs.emptySelfFeed(pdata.name.toString());
+        setHeader(_msgs.feedTitle());
+        String empty = _msgs.emptySelfFeed(pdata.name.toString());
         FeedPanel feed = new FeedPanel(empty, false, new FeedPanel.FeedLoader() {
             public void loadFeed (int feedDays, AsyncCallback<List<FeedMessage>> callback) {
                 _profilesvc.loadSelfFeed(pdata.name.getMemberId(), feedDays, callback);
@@ -42,6 +42,7 @@ public class FeedBlurb extends Blurb
         setContent(feed);
     }
 
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
         ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
 }

@@ -68,8 +68,8 @@ public class SearchPanel extends FlowPanel
     public void setResults (List<MemberCard> cards, int page, String search)
     {
         _searchString = search;
-        _members = new MemberList(CPeople.msgs.searchResultsNoMatch(search));
-        add(new HeaderBox(CPeople.msgs.searchResultsTitle(search), _members));
+        _members = new MemberList(_msgs.searchResultsNoMatch(search));
+        add(new HeaderBox(_msgs.searchResultsTitle(search), _members));
         _members.setModel(new SimpleDataModel<MemberCard>(cards), page);
     }
 
@@ -89,6 +89,7 @@ public class SearchPanel extends FlowPanel
     protected MemberList _members;
     protected String _searchString;
 
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
         ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);
 }

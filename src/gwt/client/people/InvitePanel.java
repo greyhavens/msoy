@@ -31,6 +31,7 @@ import com.threerings.msoy.person.gwt.MemberInvites;
 import com.threerings.msoy.web.data.EmailContact;
 import com.threerings.msoy.web.data.Invitation;
 
+import client.shell.CShell;
 import client.shell.ShellMessages;
 import client.ui.BorderedDialog;
 import client.ui.BorderedPopup;
@@ -52,7 +53,7 @@ public class InvitePanel extends VerticalPanel
         setSpacing(10);
         setStyleName("invite");
 
-        add(MsoyUI.createHTML(CPeople.msgs.inviteBanner(), "Banner"));
+        add(MsoyUI.createHTML(_msgs.inviteBanner(), "Banner"));
 
         RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
         ClickListener addEmail = new ClickListener() {
@@ -64,40 +65,40 @@ public class InvitePanel extends VerticalPanel
         // Add a name/e-mail and import webmail section
         SmartTable input = new SmartTable(0, 5);
         int row = 0;
-        input.setText(row++, 0, CPeople.msgs.inviteManualTitle(), 3, null);
+        input.setText(row++, 0, _msgs.inviteManualTitle(), 3, null);
         input.setWidget(row, 0, _friendName = MsoyUI.createTextBox("", MAX_WEBMAIL_LENGTH, 0));
-        DefaultTextListener.configure(_friendName, CPeople.msgs.inviteFriendName());
+        DefaultTextListener.configure(_friendName, _msgs.inviteFriendName());
         _friendEmail = MsoyUI.createTextBox("", MAX_WEBMAIL_LENGTH, 0);
         _friendEmail.addKeyboardListener(new EnterClickAdapter(addEmail));
-        DefaultTextListener.configure(_friendEmail, CPeople.msgs.inviteFriendEmail());
+        DefaultTextListener.configure(_friendEmail, _msgs.inviteFriendEmail());
         input.setWidget(row, 1, _friendEmail, 2, null);
-        input.setWidget(row++, 2, new Button(CPeople.msgs.inviteAdd(), addEmail));
+        input.setWidget(row++, 2, new Button(_msgs.inviteAdd(), addEmail));
 
-        input.setText(row, 0, CPeople.msgs.inviteGrabber(), 3, null);
+        input.setText(row, 0, _msgs.inviteGrabber(), 3, null);
         ClickListener showSupported = new ClickListener() {
             public void onClick (Widget widget) {
                 BorderedPopup popup = new BorderedPopup(true);
-                popup.setWidget(MsoyUI.createHTML(CPeople.msgs.inviteSupportedList(),
+                popup.setWidget(MsoyUI.createHTML(_msgs.inviteSupportedList(),
                                                   "importSupportList"));
                 popup.show();
             }
         };
-        input.setWidget(row++, 1, MsoyUI.createActionLabel(CPeople.msgs.inviteSupported(),
+        input.setWidget(row++, 1, MsoyUI.createActionLabel(_msgs.inviteSupported(),
                                                            "ImportSupportLink", showSupported));
 
         input.setWidget(row, 0, _webAddress = MsoyUI.createTextBox("", MAX_WEBMAIL_LENGTH, 0));
-        DefaultTextListener.configure(_webAddress, CPeople.msgs.inviteWebAddress());
-        input.setText(row, 1, CPeople.msgs.inviteWebPassword());
+        DefaultTextListener.configure(_webAddress, _msgs.inviteWebAddress());
+        input.setText(row, 1, _msgs.inviteWebPassword());
         input.setWidget(row, 2, _webPassword = new PasswordTextBox());
-        Button webImport = new Button(CPeople.msgs.inviteWebImport());
+        Button webImport = new Button(_msgs.inviteWebImport());
         new ClickCallback<List<EmailContact>>(webImport) {
             public boolean callService () {
                 if ("".equals(_webAddress.getText())) {
-                    MsoyUI.info(CPeople.msgs.inviteEnterWebAddress());
+                    MsoyUI.info(_msgs.inviteEnterWebAddress());
                     return false;
                 }
                 if ("".equals(_webPassword.getText())) {
-                    MsoyUI.info(CPeople.msgs.inviteEnterWebPassword());
+                    MsoyUI.info(_msgs.inviteEnterWebPassword());
                     return false;
                 }
                 _invitesvc.getWebMailAddresses(_webAddress.getText(), _webPassword.getText(), this);
@@ -109,14 +110,14 @@ public class InvitePanel extends VerticalPanel
                         _emailList.addItem(ec.name, ec.email);
                     }
                 }
-                _webAddress.setText(CPeople.msgs.inviteWebAddress());
+                _webAddress.setText(_msgs.inviteWebAddress());
                 _webPassword.setText("");
                 webmailResults(addresses);
                 return true;
             }
         };
         input.setWidget(row++, 3, webImport);
-        input.setText(row++, 0, CPeople.msgs.inviteNote(), 4, "Tip");
+        input.setText(row++, 0, _msgs.inviteNote(), 4, "Tip");
         box.add(input);
 
         // Shows the people that will be mailed
@@ -125,30 +126,30 @@ public class InvitePanel extends VerticalPanel
 
         // From and custom message box
         SmartTable from = new SmartTable(0, 5);
-        from.setText(0, 0, CPeople.msgs.inviteFrom(), 1, "Title");
+        from.setText(0, 0, _msgs.inviteFrom(), 1, "Title");
         from.getFlexCellFormatter().setWidth(0, 0, "10px");
-        _fromName = MsoyUI.createTextBox(CPeople.creds.name.toString(), MAX_FROM_LEN, 0);
+        _fromName = MsoyUI.createTextBox(CShell.creds.name.toString(), MAX_FROM_LEN, 0);
         from.setWidget(0, 1, _fromName);
         _customMessage = MsoyUI.createTextArea("", -1, 3);
         from.setWidget(1, 0, _customMessage, 2, null);
         _customMessage.setWidth("600px");
-        DefaultTextListener.configure(_customMessage, CPeople.msgs.inviteCustom());
+        DefaultTextListener.configure(_customMessage, _msgs.inviteCustom());
         box.add(WidgetUtil.makeShim(10, 10));
         box.add(from);
 
         // Not currently used
-        _anonymous = new CheckBox(CPeople.msgs.inviteAnonymous());
+        _anonymous = new CheckBox(_msgs.inviteAnonymous());
 
         // Invite tip and button
         box.add(WidgetUtil.makeShim(10, 10));
         SmartTable buttons = new SmartTable(0, 0);
         buttons.setWidth("100%");
-        buttons.setText(0, 0, CPeople.msgs.inviteMessage(), 1, "Tip");
-        buttons.setWidget(0, 1, MsoyUI.createButton(MsoyUI.LONG_THIN, CPeople.msgs.inviteButton(),
+        buttons.setText(0, 0, _msgs.inviteMessage(), 1, "Tip");
+        buttons.setWidget(0, 1, MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.inviteButton(),
                     new ClickListener() {
             public void onClick (Widget widget) {
                 if (_emailList.getItems().isEmpty()) {
-                    MsoyUI.info(CPeople.msgs.inviteEnterAddresses());
+                    MsoyUI.info(_msgs.inviteEnterAddresses());
                 } else {
                     checkAndSend();
                 }
@@ -159,9 +160,9 @@ public class InvitePanel extends VerticalPanel
 
         // Shows pending invitations
         _penders = new SmartTable(0, 5);
-        _penders.setText(0, 0, CPeople.msgs.invitePendingHeader(), 3, "Header");
-        _penders.setText(1, 0, CPeople.msgs.invitePendingTip(), 3, "Tip");
-        _penders.setText(2, 0, CPeople.msgs.inviteNoPending());
+        _penders.setText(0, 0, _msgs.invitePendingHeader(), 3, "Header");
+        _penders.setText(1, 0, _msgs.invitePendingTip(), 3, "Tip");
+        _penders.setText(2, 0, _msgs.inviteNoPending());
         add(_penders);
 
         _invitesvc.getInvitationsStatus(new MsoyCallback<MemberInvites>() {
@@ -177,12 +178,12 @@ public class InvitePanel extends VerticalPanel
             return;
 
         } else if (!_friendEmail.getText().matches(MsoyUI.EMAIL_REGEX)) {
-            MsoyUI.info(CPeople.msgs.inviteInvalidEmail());
+            MsoyUI.info(_msgs.inviteInvalidEmail());
 
         } else {
             _emailList.addItem(_friendName.getText(), _friendEmail.getText());
-            _friendName.setText(CPeople.msgs.inviteFriendName());
-            _friendEmail.setText(CPeople.msgs.inviteFriendEmail());
+            _friendName.setText(_msgs.inviteFriendName());
+            _friendEmail.setText(_msgs.inviteFriendEmail());
         }
     }
 
@@ -230,7 +231,7 @@ public class InvitePanel extends VerticalPanel
         Set<String> accepted = new HashSet<String>();
         for (EmailContact contact : _emailList.getItems()) {
             if (!contact.email.matches(MsoyUI.EMAIL_REGEX)) {
-                MsoyUI.error(CPeople.msgs.inviteInvalidAddress(contact.email));
+                MsoyUI.error(_msgs.inviteInvalidAddress(contact.email));
                 return;
             }
             String laddr = contact.email.toLowerCase();
@@ -241,7 +242,7 @@ public class InvitePanel extends VerticalPanel
         }
 
         String from = _fromName.getText().trim(), msg = _customMessage.getText().trim();
-        if (msg.equals(CPeople.msgs.inviteCustom())) {
+        if (msg.equals(_msgs.inviteCustom())) {
             msg = "";
         }
         boolean anon = _anonymous.isChecked();
@@ -256,7 +257,7 @@ public class InvitePanel extends VerticalPanel
 
     protected void inviteResults (List<EmailContact> addrs, InvitationResults invRes)
     {
-        ResultsPopup rp = new ResultsPopup(CPeople.msgs.inviteResults());
+        ResultsPopup rp = new ResultsPopup(_msgs.inviteResults());
         int row = 0;
         boolean success = false;
         SmartTable contents = rp.getContents();
@@ -265,10 +266,10 @@ public class InvitePanel extends VerticalPanel
             if (invRes.results[ii] == InvitationResults.SUCCESS) { // null == null;
                 EmailContact ec = addrs.get(ii);
                 if (!success) {
-                    contents.setText(row++, 0, CPeople.msgs.inviteResultsSuccessful());
+                    contents.setText(row++, 0, _msgs.inviteResultsSuccessful());
                     success = true;
                 }
-                contents.setText(row++, 0, CPeople.msgs.inviteMember(ec.name, ec.email), 3, null);
+                contents.setText(row++, 0, _msgs.inviteMember(ec.name, ec.email), 3, null);
             }
         }
         if (success) {
@@ -280,15 +281,15 @@ public class InvitePanel extends VerticalPanel
             if (invRes.names[ii] != null) {
                 EmailContact ec = addrs.get(ii);
                 if (!members) {
-                    contents.setText(row++, 0, CPeople.msgs.inviteResultsMembers());
+                    contents.setText(row++, 0, _msgs.inviteResultsMembers());
                     members = true;
                 }
-                contents.setText(row, 0, CPeople.msgs.inviteMember(ec.name, ec.email));
+                contents.setText(row, 0, _msgs.inviteMember(ec.name, ec.email));
                 ClickListener onClick = InviteFriendPopup.createListener(invRes.names[ii]);
                 contents.setWidget(row, 1, MsoyUI.createActionImage(
                             "/images/profile/addfriend.png", onClick));
                 contents.setWidget(row++, 2, MsoyUI.createActionLabel(
-                            CPeople.msgs.mlAddFriend(), onClick));
+                            _msgs.mlAddFriend(), onClick));
             }
         }
         if (members) {
@@ -301,14 +302,14 @@ public class InvitePanel extends VerticalPanel
                 continue;
             }
             if (!failed) {
-                contents.setText(row++, 0, CPeople.msgs.inviteResultsFailed());
+                contents.setText(row++, 0, _msgs.inviteResultsFailed());
                 failed = true;
             }
             EmailContact ec = addrs.get(ii);
-            String name = CPeople.msgs.inviteMember(ec.name, ec.email);
+            String name = _msgs.inviteMember(ec.name, ec.email);
             String result = invRes.results[ii].startsWith("e.") ?
-                CPeople.msgs.inviteResultsNote(name, CPeople.serverError(invRes.results[ii])) :
-                CPeople.msgs.inviteResultsNote(name, invRes.results[ii]);
+                _msgs.inviteResultsNote(name, CShell.serverError(invRes.results[ii])) :
+                _msgs.inviteResultsNote(name, invRes.results[ii]);
             contents.setText(row++, 0, result, 3, null);
         }
         rp.show();
@@ -316,21 +317,21 @@ public class InvitePanel extends VerticalPanel
 
     protected void webmailResults (List<EmailContact> contacts)
     {
-        ResultsPopup rp = new ResultsPopup(CPeople.msgs.webmailResults());
+        ResultsPopup rp = new ResultsPopup(_msgs.webmailResults());
         boolean showResults = false;
         int row = 0;
         SmartTable contents = rp.getContents();
 
-        contents.setText(row++, 0, CPeople.msgs.inviteResultsMembers());
+        contents.setText(row++, 0, _msgs.inviteResultsMembers());
         for (EmailContact ec : contacts) {
             if (ec.mname != null) {
                 showResults = true;
-                contents.setText(row, 0, CPeople.msgs.inviteMember(ec.name, ec.email));
+                contents.setText(row, 0, _msgs.inviteMember(ec.name, ec.email));
                 ClickListener onClick = InviteFriendPopup.createListener(ec.mname);
                 contents.setWidget(row, 1, MsoyUI.createActionImage(
                             "/images/profile/addfriend.png", onClick));
                 contents.setWidget(row++, 2, MsoyUI.createActionLabel(
-                            CPeople.msgs.mlAddFriend(), onClick));
+                            _msgs.mlAddFriend(), onClick));
             }
         }
 
@@ -374,13 +375,13 @@ public class InvitePanel extends VerticalPanel
             super();
             setStyleName("InviteList");
             setCellSpacing(0);
-            setText(0, 0, CPeople.msgs.inviteListName());
+            setText(0, 0, _msgs.inviteListName());
             getFlexCellFormatter().setWidth(0, 0, "190px");
             getFlexCellFormatter().setStyleName(0, 0, "Header");
-            setText(0, 1, CPeople.msgs.inviteListRemove());
+            setText(0, 1, _msgs.inviteListRemove());
             getFlexCellFormatter().setWidth(0, 1, "40px");
             getFlexCellFormatter().setStyleName(0, 1, "Header");
-            setText(0, 2, CPeople.msgs.inviteListEmail());
+            setText(0, 2, _msgs.inviteListEmail());
             getFlexCellFormatter().setWidth(0, 2, "364px");
             getFlexCellFormatter().setStyleName(0, 2, "Header");
 
@@ -455,6 +456,7 @@ public class InvitePanel extends VerticalPanel
     protected TextBox _friendEmail;
     protected InviteList _emailList;
 
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final InviteServiceAsync _invitesvc = (InviteServiceAsync)
         ServiceUtil.bind(GWT.create(InviteService.class), InviteService.ENTRY_POINT);

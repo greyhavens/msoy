@@ -5,6 +5,7 @@ package client.people;
 
 import java.util.List;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
@@ -37,7 +38,7 @@ public class RatingsBlurb extends Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
-        setHeader(CPeople.msgs.ratingsTitle());
+        setHeader(_msgs.ratingsTitle());
         setContent(new RatingGrid(pdata.ratings));
     }
 
@@ -98,13 +99,15 @@ public class RatingsBlurb extends Blurb
             }
 
             if (entry.singleRating > 0) {
-                setText(1, 0, CPeople.msgs.ratingsSingle());
+                setText(1, 0, _msgs.ratingsSingle());
                 getFlexCellFormatter().setStyleName(1, 0, "Note");
                 setText(1, 1, "" + entry.singleRating);
                 getFlexCellFormatter().setStyleName(1, 1, "Rating");
             }
         }
     }
+
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 
     protected static final int RATING_ROWS = 2;
 }

@@ -35,6 +35,7 @@ import com.threerings.msoy.web.client.WebMemberService;
 import com.threerings.msoy.web.client.WebMemberServiceAsync;
 import com.threerings.msoy.web.data.MemberCard;
 
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
@@ -55,7 +56,7 @@ public class ComposePanel extends FlowPanel
         SmartTable header = new SmartTable("Header", 0, 0);
         header.setWidth("100%");
         header.setHTML(0, 0, "&nbsp;", 1, "TopLeft");
-        header.setText(0, 1, CMail.msgs.composeTitle(), 1, "Middle");
+        header.setText(0, 1, _msgs.composeTitle(), 1, "Middle");
         header.getFlexCellFormatter().addStyleName(0, 1, "WriteTo");
         header.setHTML(0, 2, "&nbsp;", 1, "TopRight");
         add(header);
@@ -65,7 +66,7 @@ public class ComposePanel extends FlowPanel
         _contents.getFlexCellFormatter().setRowSpan(0, 0, 5);
         _contents.getFlexCellFormatter().setVerticalAlignment(0, 0, HasAlignment.ALIGN_TOP);
 
-        _contents.setText(0, 1, CMail.msgs.composeTo(), 1, "Label");
+        _contents.setText(0, 1, _msgs.composeTo(), 1, "Label");
         _contents.setWidget(0, 2, _friendBox = new ListBox());
         _friendBox.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
@@ -76,21 +77,21 @@ public class ComposePanel extends FlowPanel
             }
         });
 
-        _contents.setText(1, 0, CMail.msgs.composeSubject(), 1, "Label");
+        _contents.setText(1, 0, _msgs.composeSubject(), 1, "Label");
         _contents.setWidget(1, 1, _subject = new TextBox());
         _subject.setWidth("390px");
 
-        _contents.setText(2, 0, CMail.msgs.composeMessage(), 1, "Label");
+        _contents.setText(2, 0, _msgs.composeMessage(), 1, "Label");
         _contents.getFlexCellFormatter().setVerticalAlignment(2, 0, HasAlignment.ALIGN_TOP);
         _contents.setWidget(2, 1, _body = new TextArea());
         _body.setVisibleLines(10);
         _body.setWidth("390px");
 
-        _send = new Button(CMail.msgs.composeSend());
+        _send = new Button(_msgs.composeSend());
         _send.setEnabled(false);
         new StartConvoCallback(_send, _subject, _body) {
             public boolean gotResult (Void result) {
-                MsoyUI.info(CMail.msgs.composeSent(_recipient.name.toString()));
+                MsoyUI.info(_msgs.composeSent(_recipient.name.toString()));
                 // if we just mailed an item as a gift, we can't go back to the item detail page
                 // because we no longer have access to it, so go to the STUFF page instead
                 if (_payload instanceof PresentPayload) {
@@ -107,7 +108,7 @@ public class ComposePanel extends FlowPanel
                 return _payload;
             }
         };
-        Button discard = new Button(CMail.msgs.composeDiscard(), new ClickListener() {
+        Button discard = new Button(_msgs.composeDiscard(), new ClickListener() {
             public void onClick (Widget sender) {
                 History.back();
             }
@@ -145,7 +146,7 @@ public class ComposePanel extends FlowPanel
             public void onSuccess (Item result) {
                 PresentPayload payload = new PresentPayload(
                     result.getIdent(), result.name, result.getThumbnailMedia());
-                _contents.setText(3, 0, CMail.msgs.composeAttachment(), 1, "Label");
+                _contents.setText(3, 0, _msgs.composeAttachment(), 1, "Label");
                 _contents.getFlexCellFormatter().setVerticalAlignment(
                     3, 0, HasAlignment.ALIGN_TOP);
                 _contents.setWidget(3, 1, new ThumbBox(payload.thumbMedia, null));
@@ -158,8 +159,8 @@ public class ComposePanel extends FlowPanel
     {
         _groupsvc.getGroupInfo(groupId, new MsoyCallback<GroupService.GroupInfo>() {
             public void onSuccess (GroupService.GroupInfo result) {
-                _contents.setText(3, 0, CMail.msgs.composeGroupInvite(), 1, "Label");
-                _contents.setText(3, 1, CMail.msgs.composeGroupDeets("" + result.name));
+                _contents.setText(3, 0, _msgs.composeGroupInvite(), 1, "Label");
+                _contents.setText(3, 1, _msgs.composeGroupDeets("" + result.name));
                 _payload = new GroupInvitePayload(result.name.getGroupId(), false);
             }
         });
@@ -171,7 +172,7 @@ public class ComposePanel extends FlowPanel
 
         // TODO: replace this with a magical auto-completing search box
         if (_friendBox.isAttached()) {
-            _membersvc.loadFriends(CMail.getMemberId(),
+            _membersvc.loadFriends(CShell.getMemberId(),
                 new MsoyCallback<WebMemberService.FriendsResult>() {
                     public void onSuccess (WebMemberService.FriendsResult result) {
                         _friends = result.friends;
@@ -210,6 +211,7 @@ public class ComposePanel extends FlowPanel
     protected TextArea _body;
     protected Button _send;
 
+    protected static final MailMessages _msgs = GWT.create(MailMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
     protected static final StuffServiceAsync _stuffsvc = (StuffServiceAsync)

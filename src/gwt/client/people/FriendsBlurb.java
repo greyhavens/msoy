@@ -3,6 +3,7 @@
 
 package client.people;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -14,6 +15,7 @@ import com.threerings.msoy.profile.gwt.ProfileService;
 import com.threerings.msoy.web.data.MemberCard;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
@@ -34,14 +36,14 @@ public class FriendsBlurb extends Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
-        setHeader(CPeople.msgs.friendsTitle());
+        setHeader(_msgs.friendsTitle());
 
         if (pdata.friends.size() == 0) {
-            if (CPeople.getMemberId() != _name.getMemberId()) {
-                setContent(new Label(CPeople.msgs.noFriendsOther()));
+            if (CShell.getMemberId() != _name.getMemberId()) {
+                setContent(new Label(_msgs.noFriendsOther()));
             } else {
                 setContent(GroupsBlurb.createEmptyTable(
-                               CPeople.msgs.noFriendsSelf(), CPeople.msgs.noFriendsFindEm(),
+                               _msgs.noFriendsSelf(), _msgs.noFriendsFindEm(),
                                Pages.PEOPLE, "search"));
             }
         } else {
@@ -52,7 +54,7 @@ public class FriendsBlurb extends Blurb
             setContent(grid);
         }
 
-        setFooterLink(CPeople.msgs.seeAllFriends("" + pdata.totalFriendCount),
+        setFooterLink(_msgs.seeAllFriends("" + pdata.totalFriendCount),
                       Pages.PEOPLE, Args.compose("f", pdata.name.getMemberId()));
     }
 
@@ -70,4 +72,6 @@ public class FriendsBlurb extends Blurb
             add(MsoyUI.createActionLabel(card.name.toString(), profileClick));
         }
     }
+
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 }

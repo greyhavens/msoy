@@ -51,14 +51,14 @@ public class FriendInviteDisplay extends MailPayloadDisplay
         protected void buildUI (boolean friendStatus, boolean roundtrip)
         {
             if (friendStatus) {
-                setText(0, 0, roundtrip ? CMail.msgs.friendAccepted(""+_message.author.name) :
-                        CMail.msgs.friendAlreadyFriend(""+_message.author.name));
+                setText(0, 0, roundtrip ? _msgs.friendAccepted(""+_message.author.name) :
+                        _msgs.friendAlreadyFriend(""+_message.author.name));
                 setText(0, 1, "");
 
             } else {
-                setText(0, 0, CMail.msgs.friendInvitation(), 0, "rowPanelCell");
+                setText(0, 0, _msgs.friendInvitation(), 0, "rowPanelCell");
 
-                Button ayeButton = new Button(CMail.msgs.friendBtnAccept());
+                Button ayeButton = new Button(_msgs.friendBtnAccept());
                 new ClickCallback<Void>(ayeButton) {
                     public boolean callService () {
                         _membersvc.addFriend(_message.author.name.getMemberId(), this);
@@ -77,12 +77,13 @@ public class FriendInviteDisplay extends MailPayloadDisplay
         protected void mailResponse ()
         {
             _mailsvc.continueConversation(
-                _convoId, CMail.msgs.friendReplyBody(), null, new MsoyCallback.NOOP<ConvMessage>());
+                _convoId, _msgs.friendReplyBody(), null, new MsoyCallback.NOOP<ConvMessage>());
         }
 
         protected boolean _thirdPerson;
     }
 
+    protected static final MailMessages _msgs = GWT.create(MailMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)
         ServiceUtil.bind(GWT.create(WebMemberService.class), WebMemberService.ENTRY_POINT);
     protected static final MailServiceAsync _mailsvc = (MailServiceAsync)

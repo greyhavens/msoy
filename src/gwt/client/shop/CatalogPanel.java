@@ -25,6 +25,7 @@ import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.item.gwt.CatalogQuery;
 
+import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.item.ShopUtil;
 import client.item.TagCloud;
@@ -65,7 +66,7 @@ public class CatalogPanel extends SmartTable
         };
         _searchBox.addKeyboardListener(new EnterClickAdapter(clickListener));
 
-        Button searchGo = new Button(CShop.msgs.catalogSearch());
+        Button searchGo = new Button(_msgs.catalogSearch());
         searchGo.addClickListener(clickListener);
 
         HorizontalPanel search = new HorizontalPanel();
@@ -92,13 +93,13 @@ public class CatalogPanel extends SmartTable
             @Override protected String getEmptyMessage () {
                 String name = _dmsgs.xlate("itemType" + _query.itemType);
                 if (_query.tag != null) {
-                    return CShop.msgs.catalogNoTag(name, _query.tag);
+                    return _msgs.catalogNoTag(name, _query.tag);
                 } else if (_query.search != null) {
-                    return CShop.msgs.catalogNoMatch(name, _query.search);
+                    return _msgs.catalogNoMatch(name, _query.search);
                 } else if (_query.creatorId != 0) {
-                    return CShop.msgs.catalogNoCreator(name);
+                    return _msgs.catalogNoCreator(name);
                 } else {
-                    return CShop.msgs.catalogNoList(name);
+                    return _msgs.catalogNoList(name);
                 }
             }
             @Override protected void configureNavi (
@@ -109,7 +110,7 @@ public class CatalogPanel extends SmartTable
             }
             @Override protected void addCustomControls (FlexTable controls) {
                 controls.setWidget(
-                    0, 0, new InlineLabel(CShop.msgs.catalogSortBy(), false, false, false));
+                    0, 0, new InlineLabel(_msgs.catalogSortBy(), false, false, false));
                 controls.getFlexCellFormatter().setStyleName(0, 0, "SortBy");
                 controls.setWidget(0, 1, _sortBox);
             }
@@ -136,11 +137,11 @@ public class CatalogPanel extends SmartTable
         }
 
         if (_query.search != null) {
-            setFilteredBy(CShop.msgs.catalogSearchFilter(_query.search));
+            setFilteredBy(_msgs.catalogSearchFilter(_query.search));
         } else if (_query.tag != null) {
-            setFilteredBy(CShop.msgs.catalogTagFilter(_query.tag));
+            setFilteredBy(_msgs.catalogTagFilter(_query.tag));
         } else if (_query.creatorId != 0) {
-            setFilteredBy(CShop.msgs.catalogCreatorFilter());
+            setFilteredBy(_msgs.catalogCreatorFilter());
         } else {
             setFilteredBy(null);
         }
@@ -163,7 +164,7 @@ public class CatalogPanel extends SmartTable
         setWidget(0, 0, new SideBar(new CatalogQueryLinker(_query), false, cloud));
 
         // set up our page title
-        CShop.frame.setTitle(_dmsgs.xlate("pItemType" + _query.itemType));
+        CShell.frame.setTitle(_dmsgs.xlate("pItemType" + _query.itemType));
     }
 
     // from interface TagCloud.TagListener
@@ -184,7 +185,7 @@ public class CatalogPanel extends SmartTable
             CatalogQuery query = new CatalogQuery();
             query.itemType = _query.itemType;
             query.sortBy = _query.sortBy;
-            filter.add(Link.create(CShop.msgs.catalogClearFilter(),
+            filter.add(Link.create(_msgs.catalogClearFilter(),
                                               Pages.SHOP, ShopUtil.composeArgs(query, 0)));
             _listings.setWidget(0, 0, filter, 1, "Blurb");
         }
@@ -199,6 +200,7 @@ public class CatalogPanel extends SmartTable
     protected ListBox _sortBox;
     protected ListingGrid _items;
 
+    protected static final ShopMessages _msgs = GWT.create(ShopMessages.class);
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
 
     protected static final int TAG_COUNT = 10;
@@ -207,13 +209,13 @@ public class CatalogPanel extends SmartTable
     protected static final int HEADER_HEIGHT = 15 /* gap */ + 59 /* top tags, etc. */;
 
     protected static final String[] SORT_LABELS = new String[] {
-        CShop.msgs.sortByNewAndHot(),
-        CShop.msgs.sortByRating(),
-        CShop.msgs.sortByListDate(),
-        CShop.msgs.sortByPriceAsc(),
-        CShop.msgs.sortByPriceDesc(),
-        CShop.msgs.sortByPurchases(),
-        CShop.msgs.sortByFavorites(),
+        _msgs.sortByNewAndHot(),
+        _msgs.sortByRating(),
+        _msgs.sortByListDate(),
+        _msgs.sortByPriceAsc(),
+        _msgs.sortByPriceDesc(),
+        _msgs.sortByPurchases(),
+        _msgs.sortByFavorites(),
     };
     protected static final byte[] SORT_VALUES = new byte[] {
         CatalogQuery.SORT_BY_NEW_AND_HOT,

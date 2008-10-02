@@ -24,7 +24,6 @@ import com.threerings.msoy.admin.server.RuntimeConfig;
 import com.threerings.msoy.group.server.persist.GroupMembershipRecord;
 import com.threerings.msoy.group.server.persist.GroupRepository;
 
-import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.data.all.MemberName;
 
 import com.threerings.msoy.badge.data.BadgeType;
@@ -85,7 +84,7 @@ public class MeServlet extends MsoyServiceServlet
     public void updateWhirledNews (final String newsHtml)
         throws ServiceException
     {
-        MemberRecord mrec = requireSupportUser();
+        requireSupportUser();
 
         postDObjectAction(new Runnable() {
             public void run () {

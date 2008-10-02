@@ -3,6 +3,7 @@
 
 package client.people;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -17,6 +18,7 @@ import client.person.GalleryEditPanel;
 import client.person.GalleryPanel;
 import client.person.GalleryViewPanel;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.ThumbBox;
@@ -34,17 +36,17 @@ public class GalleriesBlurb extends Blurb
         if (pdata.galleries != null && pdata.galleries.size() > 0) {
             return true;
         }
-        return (CPeople.getMemberId() == pdata.name.getMemberId());
+        return (CShell.getMemberId() == pdata.name.getMemberId());
     }
 
     @Override // from Blurb
     public void init (ProfileService.ProfileResult pdata)
     {
         super.init(pdata);
-        setHeader(CPeople.msgs.galleriesTitle());
+        setHeader(_msgs.galleriesTitle());
 
         if (pdata.galleries == null || pdata.galleries.size() == 0) {
-            setContent(new InlineLabel(CPeople.msgs.noGalleriesSelf(), false, false, false));
+            setContent(new InlineLabel(_msgs.noGalleriesSelf(), false, false, false));
 
         } else {
             FlowPanel galleriesPanel = MsoyUI.createFlowPanel("Galleries");
@@ -59,13 +61,13 @@ public class GalleriesBlurb extends Blurb
 
         // links to create gallery and/or see all galleries
         FlowPanel footerLinks = new FlowPanel();
-        if (CPeople.getMemberId() == _name.getMemberId()) {
-            footerLinks.add(Link.create(CPeople.msgs.createGallery(), Pages.PEOPLE,
+        if (CShell.getMemberId() == _name.getMemberId()) {
+            footerLinks.add(Link.create(_msgs.createGallery(), Pages.PEOPLE,
                 GalleryEditPanel.CREATE_ACTION));
         }
         if (pdata.galleries != null && pdata.galleries.size() > NUM_GALLERIES) {
             footerLinks.add(WidgetUtil.makeShim(10, 10));
-            footerLinks.add(Link.create(CPeople.msgs.seeAll(), Pages.PEOPLE, Args.compose(
+            footerLinks.add(Link.create(_msgs.seeAll(), Pages.PEOPLE, Args.compose(
                 GalleryPanel.GALLERIES_ACTION, _name.getMemberId())));
         }
         setFooter(footerLinks);
@@ -89,6 +91,8 @@ public class GalleriesBlurb extends Blurb
             add(MsoyUI.createActionLabel(gallery.name, clickListener));
         }
     }
+
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 
     protected static final int NUM_GALLERIES = 6;
 }

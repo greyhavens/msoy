@@ -3,6 +3,7 @@
 
 package client.mail;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -26,16 +27,16 @@ public class GameAwardDisplay extends MailPayloadDisplay
         table.setWidget(0, 0, new ThumbBox(_payload.getAwardMedia(), null));
         table.getFlexCellFormatter().setRowSpan(0, 0, 2);
 
-        table.setText(0, 1, CMail.msgs.awardTitle());
+        table.setText(0, 1, _msgs.awardTitle());
         String args = NaviUtil.gameDetail(_payload.gameId, NaviUtil.GameDetails.TROPHIES);
         table.setWidget(0, 2, Link.create(_payload.gameName, Pages.GAMES, args));
 
         switch (_payload.awardType) {
         case GameAwardPayload.TROPHY:
-            table.setText(1, 0, CMail.msgs.trophyName());
+            table.setText(1, 0, _msgs.trophyName());
             break;
         case GameAwardPayload.PRIZE:
-            table.setText(1, 0, CMail.msgs.prizeName());
+            table.setText(1, 0, _msgs.prizeName());
             break;
         }
         table.setText(1, 1, _payload.awardName);
@@ -50,4 +51,6 @@ public class GameAwardDisplay extends MailPayloadDisplay
     }
 
     protected GameAwardPayload _payload;
+
+    protected static final MailMessages _msgs = GWT.create(MailMessages.class);
 }

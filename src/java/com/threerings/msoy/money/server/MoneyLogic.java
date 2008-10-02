@@ -194,8 +194,7 @@ public class MoneyLogic
      * The member has his purse poked by support staff. This adds or lowers their currency by
      * some amount as logged transaction.
      *
-     * @param supportId Logged ID of the acting support member.
-     * @param supportName Logged visible name of the acting support member.
+     * @param support Logged name of the acting support member.
      */
     public void supportAdjust (
         int memberId, Currency currency, int delta, MemberName support)

@@ -27,7 +27,7 @@ public class PeoplePage extends Page
             displaySearch(args);
 
         } else if (args.get(0, 0) != 0) {
-            setContent(CPeople.msgs.profileTitle(), new ProfilePanel(args.get(0, 0)));
+            setContent(_msgs.profileTitle(), new ProfilePanel(args.get(0, 0)));
 
         } else if (action.equals("f")) {
             setContent(new FriendsPanel(args.get(1, 0)));
@@ -37,39 +37,39 @@ public class PeoplePage extends Page
 
         } else if (action.equals(GalleryPanel.GALLERIES_ACTION)) {
             int memberId = args.get(1, CShell.getMemberId());
-            setContent(CPeople.msgs.galleriesTitle(), new GalleryPanel(memberId));
+            setContent(_msgs.galleriesTitle(), new GalleryPanel(memberId));
 
         } else if (action.equals(GalleryViewPanel.VIEW_ACTION)) {
             int galleryId = args.get(1, -1);
             int photoId = args.get(2, -1);
-            setContent(CPeople.msgs.galleriesTitle(), new GalleryViewPanel(galleryId, 0, photoId));
+            setContent(_msgs.galleriesTitle(), new GalleryViewPanel(galleryId, 0, photoId));
 
         } else if (action.equals(GalleryViewPanel.VIEW_PROFILE_ACTION)) {
             int memberId = args.get(1, -1);
             int photoId = args.get(2, -1);
-            setContent(CPeople.msgs.galleriesTitle(), new GalleryViewPanel(0, memberId, photoId));
+            setContent(_msgs.galleriesTitle(), new GalleryViewPanel(0, memberId, photoId));
 
-        } else if (CPeople.isGuest()) {
+        } else if (CShell.isGuest()) {
             setContent(new PeoplePanel());
 
         } else if (action.equals("me")) { // !guest
-            setContent(new ProfilePanel(CPeople.getMemberId()));
+            setContent(new ProfilePanel(CShell.getMemberId()));
 
         } else if (action.equals("invites")) { // !guest
-            setContent(CPeople.msgs.inviteTitle(), new InvitePanel());
+            setContent(_msgs.inviteTitle(), new InvitePanel());
 
         } else if (action.equals(GalleryEditPanel.CREATE_PROFILE_ACTION)) { // !guest
-            setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel(true));
+            setContent(_msgs.galleriesTitle(), new GalleryEditPanel(true));
 
         } else if (action.equals(GalleryEditPanel.CREATE_ACTION)) { // !guest
-            setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel(false));
+            setContent(_msgs.galleriesTitle(), new GalleryEditPanel(false));
 
         } else if (action.equals(GalleryEditPanel.EDIT_ACTION)) { // !guest
             int galleryId = args.get(1, -1);
-            setContent(CPeople.msgs.galleriesTitle(), new GalleryEditPanel(galleryId));
+            setContent(_msgs.galleriesTitle(), new GalleryEditPanel(galleryId));
 
         } else { // !guest
-            setContent(new FriendsPanel(CPeople.getMemberId()));
+            setContent(new FriendsPanel(CShell.getMemberId()));
         }
     }
 
@@ -77,15 +77,6 @@ public class PeoplePage extends Page
     public Pages getPageId ()
     {
         return Pages.PEOPLE;
-    }
-
-    @Override // from Page
-    protected void initContext ()
-    {
-        super.initContext();
-
-        // load up our translation dictionaries
-        CPeople.msgs = (PeopleMessages)GWT.create(PeopleMessages.class);
     }
 
     protected void displaySearch (Args args)
@@ -99,4 +90,6 @@ public class PeoplePage extends Page
 
     protected int _memberId = -1;
     protected SearchPanel _search;
+
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 }

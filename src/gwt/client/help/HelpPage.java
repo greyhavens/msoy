@@ -3,8 +3,6 @@
 
 package client.help;
 
-import com.google.gwt.core.client.GWT;
-
 import client.shell.Args;
 import client.shell.Page;
 import client.shell.Pages;
@@ -21,14 +19,5 @@ public class HelpPage extends Page
     public Pages getPageId ()
     {
         return Pages.HELP;
-    }
-
-    @Override // from Page
-    protected void initContext ()
-    {
-        super.initContext();
-
-        // load up our translation dictionaries
-        CHelp.msgs = (HelpMessages)GWT.create(HelpMessages.class);
     }
 }

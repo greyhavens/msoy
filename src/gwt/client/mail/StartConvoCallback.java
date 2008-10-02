@@ -34,11 +34,11 @@ public abstract class StartConvoCallback extends ClickCallback<Void>
         String subject = _subject.getText().trim();
         String body = _body.getText().trim();
         if (subject.length() == 0) {
-            MsoyUI.error(_msgs.sccMissingSubject());
+            MsoyUI.error(_mmsgs.sccMissingSubject());
             return false;
         }
         if (body.length() == 0) {
-            MsoyUI.error(_msgs.sccMissingBody());
+            MsoyUI.error(_mmsgs.sccMissingBody());
             return false;
         }
         _mailsvc.startConversation(getRecipientId(), subject, body, getPayload(), this);
@@ -55,7 +55,7 @@ public abstract class StartConvoCallback extends ClickCallback<Void>
     protected TextBox _subject;
     protected TextArea _body;
 
-    protected static final MailMessages _msgs = GWT.create(MailMessages.class);
+    protected static final MailMessages _mmsgs = GWT.create(MailMessages.class);
     protected static final MailServiceAsync _mailsvc = (MailServiceAsync)
         ServiceUtil.bind(GWT.create(MailService.class), MailService.ENTRY_POINT);
 }

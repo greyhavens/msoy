@@ -15,6 +15,7 @@ import com.threerings.msoy.room.gwt.WebRoomService;
 import com.threerings.msoy.room.gwt.WebRoomServiceAsync;
 import com.threerings.msoy.room.gwt.WebRoomService.MemberRoomsResult;
 
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.TongueBox;
@@ -41,8 +42,8 @@ public class RoomsPanel extends VerticalPanel
 
     protected void init (MemberRoomsResult result)
     {
-        boolean isOwner = result.owner.getMemberId() == CPeople.getMemberId();
-        CPeople.frame.setTitle(isOwner ? _msgs.roomsMineTitle()
+        boolean isOwner = result.owner.getMemberId() == CShell.getMemberId();
+        CShell.frame.setTitle(isOwner ? _msgs.roomsMineTitle()
             : _msgs.roomsTitle(result.owner.toString()));
 
         add(new TongueBox(null, isOwner ? _msgs.roomsMineIntro()

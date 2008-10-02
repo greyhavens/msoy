@@ -64,13 +64,13 @@ public class GroupInviteDisplay extends MailPayloadDisplay
         {
             clear();
             if (_enabled && _info.rank != GroupMembership.RANK_NON_MEMBER) {
-                add(MsoyUI.createLabel(CMail.msgs.groupAlreadyMember(""+_info.name), null));
+                add(MsoyUI.createLabel(_msgs.groupAlreadyMember(""+_info.name), null));
                 return;
             }
 
-            add(new InlineLabel(CMail.msgs.groupInvitation(""+_info.name), true, false, true));
+            add(new InlineLabel(_msgs.groupInvitation(""+_info.name), true, false, true));
             add(WidgetUtil.makeShim(5, 5));
-            Button joinButton = new Button(CMail.msgs.groupBtnJoin());
+            Button joinButton = new Button(_msgs.groupBtnJoin());
             joinButton.addStyleName("JoinButton");
             joinButton.setEnabled(_enabled);
             new ClickCallback<Void>(joinButton) {
@@ -94,6 +94,7 @@ public class GroupInviteDisplay extends MailPayloadDisplay
 
     protected GroupInvitePayload _invitePayload;
 
+    protected static final MailMessages _msgs = GWT.create(MailMessages.class);
     protected static final GroupServiceAsync _groupsvc = (GroupServiceAsync)
         ServiceUtil.bind(GWT.create(GroupService.class), GroupService.ENTRY_POINT);
 }

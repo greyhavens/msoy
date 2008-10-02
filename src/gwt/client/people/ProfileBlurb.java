@@ -32,6 +32,7 @@ import com.threerings.msoy.profile.gwt.ProfileServiceAsync;
 import client.item.ImageChooserPopup;
 import client.item.ShopUtil;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.shell.ShellMessages;
 import client.ui.DateFields;
@@ -58,7 +59,7 @@ public class ProfileBlurb extends Blurb
         addStyleName("ProfileTongue");
 
         if (pdata.profile == null) {
-            setText(0, 0, CPeople.msgs.profileLoadFailed());
+            setText(0, 0, _msgs.profileLoadFailed());
         } else {
             _pdata = pdata;
             _profile = pdata.profile;
@@ -68,7 +69,7 @@ public class ProfileBlurb extends Blurb
 
     protected void displayProfile ()
     {
-        boolean isMe = (_name.getMemberId() == CPeople.getMemberId());
+        boolean isMe = (_name.getMemberId() == CShell.getMemberId());
 
         // create our photo section with various buttons
         SmartTable photo = new SmartTable("Photo", 0, 5);
@@ -97,17 +98,17 @@ public class ProfileBlurb extends Blurb
         String ageSex = "";
         switch (_profile.sex) {
         case Profile.SEX_MALE:
-            ageSex = CPeople.msgs.sex(CPeople.msgs.sexMale());
+            ageSex = _msgs.sex(_msgs.sexMale());
             break;
         case Profile.SEX_FEMALE:
-            ageSex = CPeople.msgs.sex(CPeople.msgs.sexFemale());
+            ageSex = _msgs.sex(_msgs.sexFemale());
             break;
         }
         if (_profile.age > 0) {
             if (ageSex.length() > 0) {
                 ageSex += ", ";
             }
-            ageSex += CPeople.msgs.age("" + _profile.age);
+            ageSex += _msgs.age("" + _profile.age);
         }
         if (ageSex.length() > 0) {
             info.addText(ageSex, 1, null);
@@ -122,50 +123,50 @@ public class ProfileBlurb extends Blurb
 
         FlowPanel level = new FlowPanel();
         level.setStyleName("Level");
-        level.add(MsoyUI.createLabel(CPeople.msgs.level(), "Label"));
+        level.add(MsoyUI.createLabel(_msgs.level(), "Label"));
         level.add(MsoyUI.createLabel("" + _profile.level, "Value"));
         details.add(level);
 
         SmartTable dbits = new SmartTable(0, 5);
         if (!isBlank(_profile.permaName)) {
-            addDetail(dbits, CPeople.msgs.permaName(), _profile.permaName);
+            addDetail(dbits, _msgs.permaName(), _profile.permaName);
         }
         if (_profile.memberSince > 0L) {
             String since = MsoyUI.formatDate(new Date(_profile.memberSince));
-            if (CPeople.isSupport()) {
-                addDetail(dbits, CPeople.msgs.memberSince(),
+            if (CShell.isSupport()) {
+                addDetail(dbits, _msgs.memberSince(),
                           Link.create(since, Pages.ADMINZ,
                                       Args.compose("info", _name.getMemberId())));
             } else {
-                addDetail(dbits, CPeople.msgs.memberSince(), since);
+                addDetail(dbits, _msgs.memberSince(), since);
             }
         }
         if (_profile.lastLogon > 0L) {
-            addDetail(dbits, CPeople.msgs.lastOnline(),
+            addDetail(dbits, _msgs.lastOnline(),
                       MsoyUI.formatDateTime(new Date(_profile.lastLogon)));
         }
         if (!isBlank(_profile.homePageURL)) {
             Anchor homepage = new Anchor(_profile.homePageURL, _profile.homePageURL, "_blank", true);
-            addDetail(dbits, CPeople.msgs.homepage(), homepage);
+            addDetail(dbits, _msgs.homepage(), homepage);
         }
         details.add(dbits);
 
         // create our action buttons
         FlowPanel buttons = new FlowPanel();
         buttons.setStyleName("Buttons");
-        if (!CPeople.isGuest() && !_pdata.isOurFriend && !isMe) {
-            addButton(buttons, "/images/profile/addfriend.png", CPeople.msgs.inviteFriend(),
+        if (!CShell.isGuest() && !_pdata.isOurFriend && !isMe) {
+            addButton(buttons, "/images/profile/addfriend.png", _msgs.inviteFriend(),
                       InviteFriendPopup.createListener(_name));
         }
-        if (!CPeople.isGuest() && !isMe) {
-            addButton(buttons, "/images/profile/sendmail.png", CPeople.msgs.sendMail(),
+        if (!CShell.isGuest() && !isMe) {
+            addButton(buttons, "/images/profile/sendmail.png", _msgs.sendMail(),
                       Pages.MAIL, Args.compose("w", "m", ""+_name.getMemberId()));
         }
-        addButton(buttons, "/images/profile/visithome.png", CPeople.msgs.visitHome(),
+        addButton(buttons, "/images/profile/visithome.png", _msgs.visitHome(),
                   Pages.WORLD, "m" + _name.getMemberId());
-        addButton(buttons, "/images/profile/viewrooms.png", CPeople.msgs.seeRooms(),
+        addButton(buttons, "/images/profile/viewrooms.png", _msgs.seeRooms(),
                   Pages.PEOPLE, Args.compose("rooms", _name.getMemberId()));
-        addButton(buttons, "/images/profile/browseitems.png", CPeople.msgs.browseItems(),
+        addButton(buttons, "/images/profile/browseitems.png", _msgs.browseItems(),
                   Pages.SHOP, ShopUtil.composeArgs(Item.AVATAR, null, null, _name.getMemberId()));
 
         // display all of our sections in a nice little layout
@@ -180,8 +181,8 @@ public class ProfileBlurb extends Blurb
         setContent(content);
 
         // display the edit button if this is our profile
-        if (_name.getMemberId() == CPeople.getMemberId()) {
-            setFooterLabel(CPeople.msgs.profileEdit(), new ClickListener() {
+        if (_name.getMemberId() == CShell.getMemberId()) {
+            setFooterLabel(_msgs.profileEdit(), new ClickListener() {
                 public void onClick (Widget source) {
                     startEdit();
                 }
@@ -224,7 +225,7 @@ public class ProfileBlurb extends Blurb
         SmartTable econtent = new SmartTable("profileEditor", 0, 5);
 
         int row = 0;
-        econtent.setText(row, 0, CPeople.msgs.displayName());
+        econtent.setText(row, 0, _msgs.displayName());
         econtent.setWidget(row++, 1, _ename = new TextBox());
         _ename.setMaxLength(MemberName.MAX_DISPLAY_NAME_LENGTH);
         _ename.setText(_name.toString());
@@ -247,38 +248,38 @@ public class ProfileBlurb extends Blurb
         }));
         econtent.setWidget(row++, 1, panel);
 
-        econtent.setText(row, 0, CPeople.msgs.status());
+        econtent.setText(row, 0, _msgs.status());
         // seed the status line with a facebook-esque que, if empty
         String status = _profile.headline == "" || _profile.headline == null ?
-            CPeople.msgs.statusQue() : _profile.headline;
+            _msgs.statusQue() : _profile.headline;
         _estatus = MsoyUI.createTextBox(status, Profile.MAX_STATUS_LENGTH, 30);
         econtent.setWidget(row++, 1, _estatus);
 
-        econtent.setText(row, 0, CPeople.msgs.homepage());
+        econtent.setText(row, 0, _msgs.homepage());
         _ehomepage = MsoyUI.createTextBox(_profile.homePageURL, Profile.MAX_HOMEPAGE_LENGTH, 30);
         HorizontalPanel ehomepageBox = new HorizontalPanel();
         ehomepageBox.add(new Label("http://"));
         ehomepageBox.add(_ehomepage);
         econtent.setWidget(row++, 1, ehomepageBox);
 
-        econtent.setText(row, 0, CPeople.msgs.esex());
+        econtent.setText(row, 0, _msgs.esex());
         econtent.setWidget(row++, 1, _esex = new ListBox());
         _esex.addItem("Don't show");
-        _esex.addItem(CPeople.msgs.sexMale());
-        _esex.addItem(CPeople.msgs.sexFemale());
+        _esex.addItem(_msgs.sexMale());
+        _esex.addItem(_msgs.sexFemale());
         _esex.setSelectedIndex(_profile.sex);
 
-        econtent.setText(row, 0, CPeople.msgs.ebirthday());
+        econtent.setText(row, 0, _msgs.ebirthday());
         econtent.setWidget(row++, 1, _ebirthday = new DateFields());
         if (_profile.birthday != null) {
             _ebirthday.setDate(_profile.birthday);
         }
 
-        econtent.setText(row, 0, CPeople.msgs.eage());
+        econtent.setText(row, 0, _msgs.eage());
         econtent.setWidget(row++, 1, _eshowAge = new CheckBox(""));
         _eshowAge.setChecked(_profile.age > 0);
 
-        econtent.setText(row, 0, CPeople.msgs.elocation());
+        econtent.setText(row, 0, _msgs.elocation());
         econtent.setWidget(row++, 1, _elocation = new TextBox());
         _elocation.setVisibleLength(30);
         _elocation.setText(unBlank(_profile.location));
@@ -310,7 +311,7 @@ public class ProfileBlurb extends Blurb
                                 "" + MemberName.MAX_DISPLAY_NAME_LENGTH), _ename);
             return;
         }
-        if (!CPeople.isSupport() && !MemberName.isValidNonSupportName(name)) {
+        if (!CShell.isSupport() && !MemberName.isValidNonSupportName(name)) {
             MsoyUI.infoNear(_cmsgs.nonSupportNameInvalid(), _ename);
             return;
         }
@@ -318,7 +319,7 @@ public class ProfileBlurb extends Blurb
         // configure our profile instance with their bits
         _name = new MemberName(name, _name.getMemberId());
         String status = _estatus.getText();
-        _profile.headline = status == CPeople.msgs.statusQue() ? "" : status.trim();
+        _profile.headline = status == _msgs.statusQue() ? "" : status.trim();
         _profile.homePageURL = _ehomepage.getText().trim();
         _profile.location = _elocation.getText().trim();
         _profile.sex = (byte)_esex.getSelectedIndex();
@@ -338,8 +339,8 @@ public class ProfileBlurb extends Blurb
         _profilesvc.updateProfile(name, _profile, new MsoyCallback<Void>() {
             public void onSuccess (Void result) {
                 displayProfile();
-                if (!name.equals(CPeople.creds.name.toString())) {
-                    CPeople.frame.dispatchEvent(new NameChangeEvent(name));
+                if (!name.equals(CShell.creds.name.toString())) {
+                    CShell.frame.dispatchEvent(new NameChangeEvent(name));
                 }
             }
         });
@@ -364,6 +365,7 @@ public class ProfileBlurb extends Blurb
     protected ListBox _esex;
     protected DateFields _ebirthday;
 
+    protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final ProfileServiceAsync _profilesvc = (ProfileServiceAsync)
         ServiceUtil.bind(GWT.create(ProfileService.class), ProfileService.ENTRY_POINT);

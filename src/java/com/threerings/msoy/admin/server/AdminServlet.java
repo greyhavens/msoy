@@ -18,7 +18,6 @@ import com.samskivert.util.IntSet;
 
 import com.threerings.gwt.util.PagedResult;
 
-import com.threerings.msoy.data.MsoyAuthCodes;
 import com.threerings.msoy.server.ServerMessages;
 import com.threerings.msoy.server.persist.AffiliateMapRecord;
 import com.threerings.msoy.server.persist.AffiliateMapRepository;
