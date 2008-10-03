@@ -76,7 +76,7 @@ public class ProfileBlurb extends Blurb
         ClickListener thumbClickListener = new ClickListener() {
             public void onClick (Widget sender)
             {
-                Link.go(Pages.PEOPLE, Args.compose("profileGallery", _name.getMemberId()));
+                Link.go(Pages.PEOPLE, Args.compose("pgallery", _name.getMemberId()));
             }
         };
         // TODO - make public - link to the member's profile gallery in DEV only

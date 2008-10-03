@@ -40,7 +40,7 @@ import com.threerings.msoy.person.gwt.GalleryServiceAsync;
 public class GalleryViewPanel extends FlowPanel
 {
     public static final String VIEW_ACTION = "gallery";
-    public static final String VIEW_PROFILE_ACTION = "profileGallery";
+    public static final String VIEW_PROFILE_ACTION = "pgallery";
 
     /**
      * Expects either galleryId if displaying a specific gallery, or a memberId if displaying that
