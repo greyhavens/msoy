@@ -5,10 +5,13 @@ package client.me;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.WidgetUtil;
 
 import com.threerings.msoy.money.data.all.ReportType;
 
@@ -20,7 +23,7 @@ import client.ui.RoundBox;
 import client.ui.StretchButton;
 import client.util.Link;
 
-public class TransactionsPanel extends VerticalPanel
+public class TransactionsPanel extends FlowPanel
 {
     public TransactionsPanel (int reportIndex, final int memberId)
     {
@@ -32,9 +35,8 @@ public class TransactionsPanel extends VerticalPanel
         tip.add(MsoyUI.createLabel(_msgs.moneyTip(), null));
         horiz.add(tip);
 
-        VerticalPanel vert = new VerticalPanel();
-        vert.setStyleName("BarsTip");
-        vert.add(MsoyUI.createLabel(_msgs.barsTip(), null));
+        FlowPanel vert = new FlowPanel();
+        vert.add(MsoyUI.createHTML(_msgs.barsTip(), "BarsTip"));
         StretchButton buyBars = new StretchButton(StretchButton.ORANGE_THICK,
             MsoyUI.createLabel(_msgs.buyBars(), null));
         vert.add(buyBars);

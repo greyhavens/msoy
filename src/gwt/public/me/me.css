@@ -427,7 +427,6 @@
 
 .transactions {
   padding: 15px;
-  width: 100%;
 }
 
 .transactions .roundBox {
@@ -435,8 +434,9 @@
 }
 
 .BarsTip {
-  width: 0;
   font-size: small;
+  text-align: center;
+  padding-bottom: 5px;
 }
 
 .Balance {
