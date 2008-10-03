@@ -18,6 +18,7 @@ import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.RoundBox;
 import client.ui.StretchButton;
+import client.util.NaviUtil;
 import client.util.Link;
 
 public class TransactionsPanel extends FlowPanel
@@ -36,7 +37,7 @@ public class TransactionsPanel extends FlowPanel
         vert.add(MsoyUI.createHTML(_msgs.barsTip(), "BarsTip"));
         StretchButton buyBars = new StretchButton(StretchButton.ORANGE_THICK,
             MsoyUI.createLabel(_msgs.buyBars(), null));
-        buyBars.addClickListener(Link.onBuyBars());
+        buyBars.addClickListener(NaviUtil.onBuyBars());
         vert.add(buyBars);
         horiz.add(vert);
 

@@ -3,7 +3,9 @@
 
 package client.util;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.msoy.money.data.all.ReportType;
 
@@ -70,5 +72,15 @@ public class NaviUtil
     public static ClickListener onViewTransactions (ReportType report)
     {
         return Link.createListener(Pages.ME, Args.compose("transactions", report.toIndex()));
+    }
+
+    /** When clicked, popup up a window to billing to buy bars. */
+    public static ClickListener onBuyBars ()
+    {
+        return new ClickListener() {
+            public void onClick (Widget sender) {
+                Window.open(Link.billingURL(), "_blank", null);
+            }
+        };
     }
 }

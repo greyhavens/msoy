@@ -6,7 +6,6 @@ package client.util;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ClickListenerCollection;
@@ -78,15 +77,6 @@ public class Link
     public static Anchor buyBars (String label)
     {
         return new Anchor(billingURL(), label, "_blank");
-    }
-
-    public static ClickListener onBuyBars ()
-    {
-        return new ClickListener() {
-            public void onClick (Widget sender) {
-                Window.open(billingURL(), "_blank", null);
-            }
-        };
     }
 
     /**
