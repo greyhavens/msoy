@@ -121,67 +121,67 @@ public class ThaneAVRGameController
     /** Inform the server that the agent is ready. */
     public function agentReady () :void
     {
-        log.info("Reporting agent ready " + _gameObj.which() + ".");
+        log.info("Reporting agent ready", "gameObj", _gameObj.which());
         _gameObj.manager.invoke("agentReady");
     }
 
-    /** Retrieves the room for the given room id. Returns null if it is not yet available or could 
-     *  not be found. */
-    public function getRoom (roomId :int, why :String = null) :RoomObject
+    /** Retrieves the room for the given room id.
+     *  @throws UserError if the game is not being played in this room or if the room is not yet
+     *  available. */
+    public function getRoom (roomId :int) :RoomObject
     {
         var binding :SceneBinding = _bindings.get(roomId);
         if (binding == null || binding.room == null) {
-            if (why !== null) {
-                log.warning("Room not found " + why + " [roomId=" + roomId + "]");
-            }
-            return null;
+            throw new UserError("Room not in game [roomId=" + roomId + "]");
         }
         return binding.room;
     }
 
-    /** Retrieves the room properties for the given room id. Returns null if they are not yet
-     * available or if the room could not be found. */
+    /** Retrieves the room properties for the given room id.
+     *  @throws UserError if the game is not being played in this room or if the room is not yet
+     *  available. */
     public function getRoomProps (roomId :int) :RoomPropertiesObject
     {
         var binding :SceneBinding = _bindings.get(roomId);
-        if (binding == null) {
-            return null;
+        if (binding == null || binding.roomProps == null) {
+            throw new UserError("Room not in game [roomId=" + roomId + "]");
         }
         return binding.roomProps;
     }
 
-    /** Retrieves the client session instance for the given room id. Returns null if the room could
-     * not be found or if the window to the room has not yet been opened. */
+    /** Retrieves the client session instance for the given room id.
+     *  @throws UserError if the game is not being played in this room or if the room is not yet
+     *  available.
+     *  @see WindowDirector */
     public function getRoomClient (roomId :int) :Client
     {
         var binding :SceneBinding = _bindings.get(roomId);
-        if (binding == null) {
-            return null;
+        if (binding == null || binding.window == null) {
+            throw new UserError("Room not in game [roomId=" + roomId + "]");
         }
         return binding.window.getClient();
     }
 
-    /** Retrieves the player object by the given player id (member id). Returns null if the player is not
-     * in the game or the subscription to the player is not yet completed. */
-    public function getPlayer (playerId :int) :PlayerObject
+    /** Retrieves the player object by the given player id (member id).
+     *  @throws UserError if the player is not in the game or is not yet available. */
+    public function getPlayerForUser (playerId :int) :PlayerObject
     {
-        var playerBinding :PlayerBinding = _players.get(playerId) as PlayerBinding;
-        if (playerBinding == null) {
-            return null;
+        var playerObj :PlayerObject = getPlayer(playerId);
+        if (playerObj == null) {
+            throw new UserError("Player not in game [playerId=" + playerId + "]");
         }
-        var playerObj :PlayerObject = _playerSubs.getObj(playerBinding.oid) as PlayerObject;
         return playerObj;
     }
 
     /**
      * Removes the given player from the game.
+     * @throws UserError if the player is not currently inthe game.
      */
     public function deactivateGame (playerId :int) :void
     {
         var binding :PlayerBinding = _players.get(playerId);
         if (binding == null) {
-            log.warning("Deactivating player not in game [playerId=" + playerId + "]");
-            return;
+            throw new UserError("Deactivating player not in game [playerId=" + playerId + "]");
         }
         binding.deactivated = true;
         _transactions.addClient(_ctx.getClient());
@@ -198,6 +198,8 @@ public class ThaneAVRGameController
 
     /**
      * Returns the array of mob ids in a room.
+     * @throws UserError if the game is not being played in this room or if the room is not yet
+     * available.
      */
     public function getMobIds (roomId :int) :Array
     {
@@ -205,25 +207,23 @@ public class ThaneAVRGameController
         if (binding != null) {
             return binding.mobs.keys();
         }
-        log.warning("Room not found for getMobIds [roomId=" + roomId + "]");
-        return [];
+        throw new UserError("Room not in game [roomId=" + roomId + "]");
     }
 
     /**
-     * Retrieves the info structure for the mob in the given room and with the given id.
+     * Retrieves the info structure for the mob in the given room and with the given id. Returns
+     * null if the mob of the given id is not in the room.
+     * @throws UserError if the game is not being played in this room or if the room is not yet
+     * available.
      */
     public function getMobInfo (roomId :int, mobId :String) :MobInfo
     {
         var binding :SceneBinding = _bindings.get(roomId);
         if (binding == null) {
-            log.warning("Room not found for getMobInfo [roomId=" + roomId + "]");
+            throw new UserError("Room not in game [roomId=" + roomId + "]");
             return null;
         }
-        var mobInfo :MobInfo = binding.mobs.get(mobId) as MobInfo;
-        if (mobInfo == null) {
-            log.warning("Mob not found in room [roomId=" + roomId + ", mobId=" + mobId + "]");
-        }
-        return mobInfo;
+        return binding.mobs.get(mobId) as MobInfo;
     }
 
     /**
@@ -234,6 +234,18 @@ public class ThaneAVRGameController
     public function getTransactions () :Transactions
     {
         return _transactions;
+    }
+
+    /** Retrieves the player object by the given player id (member id). Returns null if the player
+     *  is not in the game or is not yet available. */
+    protected function getPlayer (playerId :int) :PlayerObject
+    {
+        var playerBinding :PlayerBinding = _players.get(playerId) as PlayerBinding;
+        var playerObj :PlayerObject;
+        if (playerBinding != null) {
+            playerObj = _playerSubs.getObj(playerBinding.oid) as PlayerObject
+        }
+        return playerObj;
     }
 
     protected function entryAdded (event :EntryAddedEvent) :void
@@ -268,8 +280,7 @@ public class ThaneAVRGameController
             var binding :PlayerBinding = PlayerBinding(_players.get(pl.playerId));
             if (binding == null) {
                 log.warning(
-                    "playerLocations entry updated prior to addition [pl=" + pl + ", oldPl=" +
-                    oldPl + "]");
+                    "playerLocations entry updated prior to addition", "pl", pl, "oldPl", oldPl);
                 return;
             }
             if (!binding.suppressRoomTransitions) {
@@ -308,7 +319,7 @@ public class ThaneAVRGameController
             var playerObj :PlayerObject = _playerSubs.getObj(occInfo.bodyOid) as PlayerObject;
             if (playerObj == null) {
                 // TODO: downgrade to info if this is happening frequently
-                log.warning("Player left game before subscription completed: " + occInfo);
+                log.warning("Player left game before subscription completed", "occInfo", occInfo);
 
             } else {
                 var doRoomTransition :Boolean = true;
@@ -317,7 +328,9 @@ public class ThaneAVRGameController
                 if (playerBinding == null) {
                     // This is very weird since we create the binding when the PlayerObject is
                     // available
-                    log.warning("Player leaving game has a subscription but no binding");
+                    log.warning(
+                        "Player leaving game has a subscription but no binding", "playerObj",
+                        playerObj.which());
 
                 } else {
                     doRoomTransition = !playerBinding.suppressRoomTransitions;
@@ -348,7 +361,7 @@ public class ThaneAVRGameController
         if (binding != null) {
             // this shouldn't happen since scenes should be explicitly removed well before a host 
             // change
-            log.warning("Unexpected host change: " + binding);
+            log.warning("Unexpected host change", "binding", binding);
             removeBinding(binding.sceneId);
         }
 
@@ -357,16 +370,14 @@ public class ThaneAVRGameController
         binding.sceneId = scene.sceneId;
         _bindings.put(scene.sceneId, binding);
 
-        var info :String = "scene=" + scene;
-
-        log.debug("Opening window ["  + info + "]");
+        log.debug("Opening window", "scene", scene);
         var resultListener :com.threerings.util.ResultAdapter = 
             new com.threerings.util.ResultAdapter(
                 function (wnd :Window) :void {
                     gotWindow(binding, wnd);
                 },
                 function (cause :Error) :void {
-                    log.warning("Failed to open window [" + info + ", cause=\"" + cause + "\"]");
+                    log.warning("Failed to open window", "scene", scene, "cause", cause);
                 });
 
         _ctx.getWindowDirector().openWindow(scene.hostname, scene.port, resultListener);
@@ -374,16 +385,14 @@ public class ThaneAVRGameController
 
     protected function gotWindow (binding :SceneBinding, window :Window) :void
     {
-        var info :String = "binding=" + binding + ", window=" + window;
-
         // close the window immediately if this binding has been removed
         if (wasRemoved(binding)) {
-            log.warning("Window no longer needed [" + info + "]");
+            log.warning("Window no longer needed", "binding", binding, "window", window);
             _ctx.getWindowDirector().closeWindow(window);
             return;
         }
 
-        log.debug("Got window [" + info + "]");
+        log.debug("Got window", "binding", binding, "window", window);
 
         // set the window so it can be closed later
         binding.window = window;
@@ -392,7 +401,9 @@ public class ThaneAVRGameController
         var resultListener :com.threerings.presents.client.ResultAdapter = 
             new com.threerings.presents.client.ResultAdapter(
                 function (cause :String) :void {
-                    log.warning("Failed to get room oid [" + info + ", cause=\"" + cause + "\"]");
+                    log.warning(
+                        "Failed to get room oid", "binding", binding, "window", window, "cause",
+                        cause);
                 },
                 function (roomOid :int) :void {
                     gotRoomOid(binding, roomOid);
@@ -406,15 +417,13 @@ public class ThaneAVRGameController
 
     protected function gotRoomOid (binding :SceneBinding, oid :int) :void
     {
-        var info :String = "binding=" + binding + ", roomOid=" + oid;
-
         // if this player has been removed, forget it
         if (wasRemoved(binding)) {
-            log.warning("Room oid no longer needed [" + info + "]");
+            log.warning("Room oid no longer needed", "binding", binding, "roomOid", oid);
             return;
         }
         
-        log.debug("Got room id ["  + info + "]");
+        log.debug("Got room id", "binding", binding, "roomOid", oid);
 
         // subscribe to the room object
         var subscriber :SubscriberAdapter = new SubscriberAdapter(
@@ -422,7 +431,9 @@ public class ThaneAVRGameController
                 gotRoomObject(binding, obj);
             },
             function (oid :int, cause :ObjectAccessError) :void {
-                log.warning("Failed to subscribe to room [" + info + ", cause=\"" + cause + "\"]");
+                log.warning(
+                    "Failed to subscribe to room", "binding", binding, "roomOid", oid, "cause",
+                    cause);
             }
         );
 
@@ -432,16 +443,14 @@ public class ThaneAVRGameController
 
     protected function gotRoomObject (binding :SceneBinding, roomObj :RoomObject) :void
     {
-        var info :String = "binding=" + binding + ", roomOid=" + roomObj.getOid();
-
         // if this scene has been removed, unsubscribe right away
         if (wasRemoved(binding)) {
-            log.warning("Room no longer needed [" + info + "]");
+            log.warning("Room no longer needed", "binding", binding, "roomOid", roomObj.getOid());
             binding.subscriber.unsubscribe(binding.window.getDObjectManager());
             return;
         }
 
-        log.info("Got room [" + info + "]");
+        log.info("Got room", "binding", binding, "roomOid", roomObj.getOid());
 
         binding.room = roomObj;
         binding.avatarAdapter = _backend.createAvatarAdapter(roomObj);
@@ -491,14 +500,13 @@ public class ThaneAVRGameController
 
     protected function gotRoomPropsOid (binding :SceneBinding, propsOid :int) :void
     {
-        var info :String = "binding=" + binding + ", propsOid=" + propsOid;
-        
         if (wasRemoved(binding)) {
-            log.warning("Room props oid no longer needed [" + info + "]");
+            log.warning(
+                "Room props oid no longer needed", "binding", binding, "propsOid", propsOid);
             return;
         }
 
-        log.debug("Got room props id [" + info + "]");
+        log.debug("Got room props id", "binding", binding, "propsOid", propsOid);
 
         // subscribe to the properties object
         var subscriber :SubscriberAdapter = new SubscriberAdapter(
@@ -507,7 +515,8 @@ public class ThaneAVRGameController
             },
             function (oid :int, cause :ObjectAccessError) :void {
                 log.warning(
-                    "Failed to subscribe to room props [" + info + ", cause=\"" + cause + "\"]");
+                    "Failed to subscribe to room props", "binding", binding, "propsOid", propsOid,
+                    "cause", cause);
             }
         );
 
@@ -518,16 +527,15 @@ public class ThaneAVRGameController
     protected function gotRoomPropertiesObject (
         binding :SceneBinding, propsObj :RoomPropertiesObject) :void
     {
-        var info :String = "binding=" + binding + ", propsOid=" + propsObj.getOid();
-
         // if this scene has been removed, unsubscribe right away
         if (wasRemoved(binding)) {
-            log.warning("Room props no longer needed [" + info + "]");
+            log.warning(
+                "Room props no longer needed", "binding", binding, "propsOid", propsObj.getOid());
             binding.propsSubscriber.unsubscribe(binding.window.getDObjectManager());
             return;
         }
 
-        log.info("Got room props [" + info + "]");
+        log.info("Got room props", "binding", binding, "propsOid", propsObj.getOid());
 
         binding.roomProps = propsObj;
 
@@ -544,11 +552,11 @@ public class ThaneAVRGameController
     {
         var binding :SceneBinding = _bindings.remove(sceneId) as SceneBinding;
         if (binding == null) {
-            log.warning("SceneBinding not found to remove: " + sceneId);
+            log.warning("SceneBinding not found to remove", "sceneId", sceneId);
             return;
         }
 
-        log.debug("Removing binding: " + binding);
+        log.debug("Removing binding", "binding", binding);
 
         _backend.roomUnloaded(sceneId);
 
@@ -621,8 +629,7 @@ public class ThaneAVRGameController
         var mobInfo :MobInfo = resolveMobInfo(evt.getName(), evt.getEntry());
         if (mobInfo != null) {
             if (MobInfo(evt.getOldEntry()).getIdent() != mobInfo.getIdent()) {
-                log.warning(
-                    "Mob changed idents [old=" + evt.getOldEntry() + ", new=" + mobInfo + "]");
+                log.warning("Mob changed idents", "old", evt.getOldEntry(), "new", mobInfo);
             }
             binding.mobs.put(mobInfo.getIdent(), mobInfo);
             _backend.mobChanged(binding.sceneId, mobInfo.getIdent());
@@ -635,8 +642,8 @@ public class ThaneAVRGameController
         if (mobInfo != null) {
             if (!binding.mobs.remove(mobInfo.getIdent())) {
                 log.warning(
-                    "Removing mob not found in binding [binding=" + binding + ", mobId=" + 
-                    mobInfo.getIdent() + "]");
+                    "Removing mob not found in binding", "binding", binding, "mobId",
+                    mobInfo.getIdent());
             }
             _backend.mobRemoved(binding.sceneId, mobInfo.getIdent());
         }

@@ -85,7 +85,7 @@ public class ThaneAVRGameBackend
      */
     public function playerJoinedGame (memberId :int) :void
     {
-        log.info("Player joined game: " + memberId);
+        log.info("Player joined game", "memberId", memberId);
         callUserCode("playerJoinedGame_v1", memberId);
     }
 
@@ -94,7 +94,7 @@ public class ThaneAVRGameBackend
      */
     public function playerLeftGame (memberId :int) :void
     {
-        log.info("Player left game: " + memberId);
+        log.info("Player left game", "memberId", memberId);
         callUserCode("playerLeftGame_v1", memberId);
     }
 
@@ -103,7 +103,7 @@ public class ThaneAVRGameBackend
      */
     public function playerEnteredRoom (memberId :int, roomId :int) :void
     {
-        log.info("Player entered room: " + memberId + ", " + roomId);
+        log.info("Player entered room", "memberId", memberId, "roomId", roomId);
         callUserCode("enteredRoom_v1", memberId, roomId);
         callUserCode("playerEntered_v1", roomId, memberId);
     }
@@ -113,7 +113,7 @@ public class ThaneAVRGameBackend
      */
     public function playerLeftRoom (memberId :int, roomId :int) :void
     {
-        log.info("Player left room: " + memberId + ", " + roomId);
+        log.info("Player left room", "memberId", memberId, "roomId", roomId);
         callUserCode("playerLeft_v1", roomId, memberId);
         callUserCode("leftRoom_v1", memberId, roomId);
     }
@@ -171,7 +171,7 @@ public class ThaneAVRGameBackend
 
         if (_userFuncs != null) {
             props.alreadyConnected = true;
-            log.warning("User code connected more than once. [backend=" + this + "].");
+            log.warning("User code connected more than once", "backend", this);
             return;
         }
 
@@ -280,7 +280,7 @@ public class ThaneAVRGameBackend
     protected function game_getGameData_v1 (targetId :int) :Object
     {
         if (targetId != 0) {
-            throw new Error("Internal error: unexpected target id");
+            throw new UserError("Internal error: unexpected target id");
         }
         return _gameObj.getUserProps();
     }
@@ -290,7 +290,7 @@ public class ThaneAVRGameBackend
         immediate :Boolean) :void
     {
         if (targetId != 0) {
-            throw new Error("Internal error: unexpected target id");
+            throw new UserError("Internal error: unexpected target id");
         }
         BackendUtils.encodeAndSet(
             ensureGameClient(), _gameObj, name, value, key, isArray, immediate);
@@ -304,32 +304,26 @@ public class ThaneAVRGameBackend
 
     protected function isPlayerHere_v1 (roomId :int, playerId :int) :Boolean
     {
-        var playerRoomId :int = getPlayerRoomId(playerId);
-        return playerRoomId != 0 && playerRoomId == roomId;
+        try {
+            var playerRoomId :int = getPlayerRoomId(playerId);
+            return playerRoomId != 0 && playerRoomId == roomId;
+        } catch (e :UserError) {
+        }
+        return false;
     }
 
     protected function getAvatarInfo_v1 (roomId :int, playerId :int) :Array
     {
         var roomObj :RoomObject = _controller.getRoom(getPlayerRoomId(playerId));
-        if (roomObj == null) {
-            log.debug("Room not found [playerId=" + playerId + "]");
-            return null;
-        }
-
         var actorInfo :ActorInfo;
         actorInfo = BackendUtils.resolvePlayerWorldInfo(_gameObj, roomObj, playerId) as ActorInfo;
-        if (actorInfo == null) {
-            log.debug("ActorInfo not found [playerId=" + playerId + "]");
-            return null;
-        }
-
         var loc :MsoyLocation;
         loc = (roomObj.occupantLocs.get(actorInfo.bodyOid) as SceneLocation).loc as MsoyLocation;
         if (loc == null) {
-            log.debug(
-                "Location not found [playerId=" + playerId + ", boyOid=" + actorInfo.bodyOid +
-                ", sceneLoc=" + roomObj.occupantLocs.get(actorInfo.bodyOid) + "]");
-            return null;
+            log.warning(
+                "Location not found", "playerId", playerId, "bodyOid", actorInfo.bodyOid,
+                "sceneLoc", roomObj.occupantLocs.get(actorInfo.bodyOid));
+            loc = new MsoyLocation(.5, 0, .5);
         }
 
         var data :Array = new Array(10);
@@ -342,7 +336,7 @@ public class ThaneAVRGameBackend
         data[6] = 1.0; // TODO moveSpeed
         data[7] = false; // TODO isMoving
         data[8] = actorInfo.status == OccupantInfo.IDLE;
-        data[9] = null; // TODO: stageBounds
+        data[9] = null; // TODO: bounds
         return data;
     }
 
@@ -350,20 +344,14 @@ public class ThaneAVRGameBackend
         roomId :int, mobId :String, mobName :String, x :Number, y :Number, z :Number) :void
     {
         if (StringUtil.isBlank(mobId)) {
-            log.warning("Blank mobId in spawnMob");
-            return;
+            throw new UserError("Blank mobId in spawnMob");
         }
 
         if (StringUtil.isBlank(mobName)) {
-            log.warning("Blank mobName in spawnMob");
-            return;
+            throw new UserError("Blank mobName in spawnMob");
         }
 
-        var roomObj :RoomObject = _controller.getRoom(roomId, "for spawnMob");
-        if (roomObj == null) {
-            return;
-        }
-
+        var roomObj :RoomObject = _controller.getRoom(roomId);
         var loc :MsoyLocation = new MsoyLocation(x, y, z);
         roomObj.roomService.spawnMob(
             ensureRoomClient(roomId), _controller.getGameId(), mobId, mobName, loc,
@@ -373,15 +361,10 @@ public class ThaneAVRGameBackend
     protected function despawnMob_v1 (roomId :int, mobId :String) :void
     {
         if (StringUtil.isBlank(mobId)) {
-            log.warning("Blank mobId in despawnMob");
-            return;
+            throw new UserError("Blank mobId in despawnMob");
         }
 
-        var roomObj :RoomObject = _controller.getRoom(roomId, "for despawnMob");
-        if (roomObj == null) {
-            return;
-        }
-
+        var roomObj :RoomObject = _controller.getRoom(roomId);
         roomObj.roomService.despawnMob(
             ensureRoomClient(roomId), _controller.getGameId(), mobId,
             BackendUtils.loggingInvocationListener("despawnMob"));
@@ -394,11 +377,7 @@ public class ThaneAVRGameBackend
 
     protected function moveMob_v1 (roomId :int, id :String, x :Number, y :Number, z :Number) :void
     {
-        var roomObj :RoomObject = _controller.getRoom(roomId, "for moveMob");
-        if (roomObj == null) {
-            return;
-        }
-
+        var roomObj :RoomObject = _controller.getRoom(roomId);
         roomObj.roomService.moveMob(
             ensureRoomClient(roomId), _controller.getGameId(), id, 
             new MsoyLocation(x, y, z), BackendUtils.loggingConfirmListener("moveMob"));
@@ -407,9 +386,6 @@ public class ThaneAVRGameBackend
     protected function room_sendMessage_v1 (roomId :int, name :String, value :Object) :void
     {
         var roomProps :RoomPropertiesObject = _controller.getRoomProps(roomId);
-        if (roomProps == null) {
-            throw new Error("Room not loaded [roomId=" + roomId + "]");
-        }
         BackendUtils.sendMessage(
             roomProps.messageService, ensureRoomClient(roomId), name, value, "room");
     }
@@ -419,10 +395,6 @@ public class ThaneAVRGameBackend
     protected function room_getGameData_v1 (roomId :int) :Object
     {
         var roomProps :RoomPropertiesObject = _controller.getRoomProps(roomId);
-        if (roomProps == null) {
-            // TODO: is there a more appropriate way to deal with room errors?
-            throw new Error("Room not loaded [roomId=" + roomId + "]");
-        }
         return roomProps.getUserProps();
     }
 
@@ -431,9 +403,6 @@ public class ThaneAVRGameBackend
         immediate :Boolean) :void
     {
         var roomProps :RoomPropertiesObject = _controller.getRoomProps(roomId);
-        if (roomProps == null) {
-            throw new Error("Room not loaded [roomId=" + roomId + "]");
-        }
         BackendUtils.encodeAndSet(
             ensureRoomClient(roomId), roomProps, name, value, key, isArray, immediate);
     }
@@ -489,7 +458,7 @@ public class ThaneAVRGameBackend
     protected function completeTask_v1 (playerId :int, taskId :String, payout :Number) :void
     {
         if (StringUtil.isBlank(taskId)) {
-            return;
+            throw new UserError("Task id must not be blank");
         }
 
         payout = Math.max(0, Math.min(payout, 1));
@@ -543,10 +512,7 @@ public class ThaneAVRGameBackend
     // -------------------- .getPlayer().props --------------------
     protected function player_getGameData_v1 (playerId :int) :Object
     {
-        var player :PlayerObject = _controller.getPlayer(playerId);
-        if (player == null) {
-            throw new Error("Player not found [playerId=" + playerId + "]");
-        }
+        var player :PlayerObject = _controller.getPlayerForUser(playerId);
         return player.getUserProps();
     }
 
@@ -554,10 +520,7 @@ public class ThaneAVRGameBackend
         playerId :int, name :String, value :Object, key :Object, isArray :Boolean, 
         immediate :Boolean) :void
     {
-        var player :PlayerObject = _controller.getPlayer(playerId);
-        if (player == null) {
-            throw new Error("Player not found [playerId=" + playerId + "]");
-        }
+        var player :PlayerObject = _controller.getPlayerForUser(playerId);
         BackendUtils.encodeAndSet(
             ensureGameClient(), player, name, value, key, isArray, immediate);
     }
@@ -568,8 +531,7 @@ public class ThaneAVRGameBackend
     {
         var pl :PlayerLocation = _gameObj.playerLocs.get(playerId) as PlayerLocation;
         if (pl == null) {
-            log.warning("Room not found for player [id=" + playerId + "]");
-            return 0;
+            throw new UserError("Player not found [playerId=" + playerId + "]");
         }
         return pl.sceneId;
     }
@@ -582,16 +544,12 @@ public class ThaneAVRGameBackend
     {
         var roomId :int = getPlayerRoomId(playerId);
         if (roomId == 0) {
-            return;
+            throw new UserError("Player not in any room [playerId=" + playerId + "]");
         }
 
         // TODO: maybe expose ThaneAVRGameController::SceneBinding instead of always doing lookup 
         // twice
-        var roomObj :RoomObject = _controller.getRoom(roomId, "");
-        if (roomObj == null) {
-            return;
-        }
-
+        var roomObj :RoomObject = _controller.getRoom(roomId);
         fn(roomObj, ensureRoomClient(roomId));
     }
 
@@ -600,10 +558,7 @@ public class ThaneAVRGameBackend
      */
     protected function playerOwnsData (type :int, ident :String, playerId :int) :Boolean
     {
-        var player :PlayerObject = _controller.getPlayer(playerId);
-        if (player == null) {
-            throw new Error("Player not found [playerId=" + playerId + "]");
-        }
+        var player :PlayerObject = _controller.getPlayerForUser(playerId);
         return player.ownsGameContent(_controller.getGameId(), type, ident)
     }
 
@@ -616,16 +571,17 @@ public class ThaneAVRGameBackend
             try {
                 var func :Function = (_userFuncs[name] as Function);
                 if (func == null) {
-                    log.warning("User code function " + name + " not found.");
+                    // TODO: Can we detect if this is user's fault? If so, throw UserError
+                    log.warning("User code not found", "name", name);
                 } else {
                     return func.apply(null, args);
                 }
             } catch (err :Error) {
-                log.warning("Error in user code: " + err);
-                log.logStackTrace(err);
+                // TODO: Do we really want to pester msoy-logs with errors in user code?
+                log.warning("Error in user code", err);
             }
         } else {
-            log.warning("Calling user code " + name + " before connection.");
+            log.warning("Calling user code before connection", "name", name);
         }
         return undefined;
     }
@@ -637,7 +593,7 @@ public class ThaneAVRGameBackend
      */
     protected function filterPlayer (memberId :int) :Boolean
     {
-        return _controller.getPlayer(memberId) != null;
+        return _controller.getPlayerForUser(memberId) != null;
     }
 
     /**
@@ -668,5 +624,4 @@ public class ThaneAVRGameBackend
     protected var _gameObj :AVRGameObject;
     protected var _privateMessageAdapter :BackendNetAdapter;
 }
-
 }

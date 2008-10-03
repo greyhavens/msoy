@@ -97,12 +97,6 @@ public class BackendUtils
         var encoded :Object = PropertySpaceHelper.encodeProperty(value, (key == null));
         var ikey :Integer = (key == null) ? null : new Integer(int(key));
 
-        // TODO: remove this check
-        if (obj.getPropService() == null) {
-            log.info("No property service for " + obj);
-            return;
-        }
-
         obj.getPropService().setProperty(
             client, name, encoded, ikey, isArray, false, null, 
             loggingConfirmListener("setProperty"));
@@ -116,7 +110,7 @@ public class BackendUtils
                     key, isArray);
 
             } catch (re :RangeError) {
-                trace("Error setting property (immediate): " + re);
+                log.warning("Error setting property (immediate)", "name", name, re);
             }
         }
     }
@@ -222,6 +216,7 @@ public class BackendUtils
 
     /**
      * Sets the location of an avatar in its room.
+     * @throws UserError if the player is not in the game or room
      */
     public static function setAvatarLocation (
         gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
@@ -235,6 +230,7 @@ public class BackendUtils
 
     /**
      * Tells an avatar to play a custom action.
+     * @throws UserError if the player is not in the game or room
      */
     public static function playAvatarAction (
         gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
@@ -249,6 +245,7 @@ public class BackendUtils
 
     /**
      * Sets the state of an avatar.
+     * @throws UserError if the player is not in the game or room
      */
     public static function setAvatarState (
         gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
@@ -262,6 +259,7 @@ public class BackendUtils
 
     /**
      * Sets the move speed of an avatar.
+     * @throws UserError if the player is not in the game or room
      */
     public static function setAvatarMoveSpeed (
         gameObj :AVRGameObject, room :RoomObject, client :Client, playerId :int, 
@@ -292,7 +290,7 @@ public class BackendUtils
         :InvocationService_ConfirmListener
     {
         return new ConfirmAdapter(function (cause :String) :void {
-            log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
+            log.warning("Service failure", "service", svc, "cause", cause);
         }, processed);
     }
 
@@ -303,43 +301,41 @@ public class BackendUtils
         :InvocationService_InvocationListener
     {
         return new InvocationAdapter(function (cause :String) :void {
-            log.warning("Service failure [service=" + svc + ", cause=" + cause + "].");
+            log.warning("Service failure", "service", svc, "cause", cause);
         });
     }
 
     /**
      * Extracts the room occupant info for the given player id, also making sure the player is in
-     * the game. Returns null if the player is not in the game or room.
+     * the game.
+     * @throws UserError if the player is not in the game or room.
      */
     public static function resolvePlayerWorldInfo (
         gameObj :AVRGameObject, roomObj :RoomObject, playerId :int) :OccupantInfo
     {
         var occInfo :OccupantInfo = gameObj.getOccupantInfo(new MemberName("", playerId));
         if (occInfo == null) {
-            log.warning("Player not found on game server [id=" + playerId + "]");
-            return null;
+            throw new UserError("Player not in game [playerId=" + playerId + "]");
         }
         occInfo = roomObj.getOccupantInfo(occInfo.username);
         if (occInfo == null) {
-            log.warning("Player not found on world server [id=" + playerId + "]");
+            throw new UserError("Player not in room [playerId=" + playerId + "]");
         }
         return occInfo;
     }
 
     /**
-     * Extracts the ident of an actor in a room and passes it to a function. Reports a warning if 
-     * the ident could not be obtained and does not call the function.
+     * Extracts the ident of an actor in a room and passes it to a function.
+     * @throws UserError if the ident could not be obtained
      */
     public static function resolvePlayerIdent (
         gameObj :AVRGameObject, roomObj :RoomObject, playerId :int, fn :Function) :void
     {
         var occInfo :OccupantInfo = resolvePlayerWorldInfo(gameObj, roomObj, playerId);
-        if (occInfo == null) {
-            return;
-        }
         var actorInfo :ActorInfo = occInfo as ActorInfo;
         if (actorInfo == null) {
-            log.warning("Resolving ident of non-actor [occInfo=" + occInfo + "]");
+            // This is pretty weird
+            log.warning("Resolving ident of non-actor", "occInfo", occInfo);
             return;
         }
         var ident :ItemIdent = actorInfo.getItemIdent();
