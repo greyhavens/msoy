@@ -99,7 +99,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         // add editable gallery detail panel
         final GalleryDetailEditPanel detailPanel = new GalleryDetailEditPanel(_galleryData,
             _dragController);
-        add(detailPanel, 0, 0);
+        add(detailPanel, 0, 10);
 
         // add "save" button
         PushButton saveButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _pmsgs.saveButton(),

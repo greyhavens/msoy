@@ -68,12 +68,10 @@
 }
 
 .galleryViewPanel {
-  width: 100%;
-  height: 100%;
-  min-height: 550px;
   background-color: #FFFFFF;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
+  padding-top: 10px;
 }
 
 .galleryViewPanel .Error {
@@ -151,7 +149,7 @@
   background: url(/images/people/gallery_details_box.png) no-repeat;
   width: 666px;
   height: 99px;
-  margin: 10px 0 10px 10px;
+  margin: 0 0 10px 10px;
 }
 
 .galleryDetailPanel .GalleryThumbnail {
