@@ -134,7 +134,7 @@ public /*abstract*/ class Item
     public var ownerId :int;
 
     /** The id of the catalog listing associated with this item. This item may be the
-     * original item or a purchased clone. Use isCatalogOriginal() to check. */
+     * original item or a purchased clone. Use isListedOriginal() to check. */
     public var catalogId :int;
 
     /** The current rating of this item, either 0 or between 1 and 5. */
@@ -251,20 +251,21 @@ public /*abstract*/ class Item
     }
 
     /**
-     * Returns the sourceId, or this itemId if this item is not a clone.
+     * Returns the id of the item of which this item is a clone, or this item's own item id if it
+     * is an original item.
      */
-    public function getPrototypeId () :int
+    public function getMasterId () :int
     {
         return (sourceId == 0) ? itemId : sourceId;
     }
 
     /**
-     * Returns true if this item is a catalog original, rather than just a clone of
-     * something listed in the catalog.
+     * Returns true if this item is an original item that has been listed in the catalog and now
+     * serves as the work-in-progress item from which the litsing is generated.
      */
-    public function isCatalogOriginal () :Boolean
+    public function isListedOriginal () :Boolean
     {
-        return (sourceId == 0) && (catalogId != 0);
+        return (sourceId == 0) && (catalogId != 0) && (ownerId != 0);
     }
 
     /**
@@ -276,13 +277,13 @@ public /*abstract*/ class Item
     }
 
     /**
-     * Returns the suite for which this item is the parent. If the item is a listed catalog
-     * prototype, the suite id will be its negated catalog listing id. If the item is a mutable
-     * original, the suite id will be its item id.
+     * Returns the suite for which this item is the parent. If the item is a listed catalog master,
+     * the suite id will be its negated catalog listing id. If the item is a mutable original, the
+     * suite id will be its item id.
      */
     public function getSuiteId () :int
     {
-        return (isCatalogOriginal() || isCatalogClone()) ? -catalogId : itemId;
+        return (isCatalogMaster() || isCatalogClone()) ? -catalogId : itemId;
     }
 
     /**

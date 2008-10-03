@@ -406,7 +406,7 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Returns the count of clones of the specified prototype item.
+     * Returns the count of clones of the specified master item.
      */
     public int loadCloneRecordCount (int itemId)
     {
@@ -836,7 +836,7 @@ public abstract class ItemRepository<T extends ItemRecord>
         if (listing.originalItemId != 0) {
             noteListing(listing.originalItemId, 0);
         }
-        // if there are no clones of the prototype record, delete it as well
+        // if there are no clones of the master record, delete it as well
         if (loadCloneRecordCount(listing.listedItemId) == 0) {
             deleteItem(listing.listedItemId);
         } else  {
@@ -950,7 +950,7 @@ public abstract class ItemRepository<T extends ItemRecord>
 
     /**
      * Transfers rating records from one record to another. This is used when a catalog listing is
-     * updated to migrate the players' individual rating records from the old prototype item to the
+     * updated to migrate the players' individual rating records from the old master item to the
      * new one.
      *
      * <p> Note: this destabilizes the rating of the abandoned previous listing, but that rating is

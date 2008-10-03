@@ -313,7 +313,7 @@ public class ItemLogic
         if (item.used != 0) {
             throw new ServiceException(ItemCodes.E_ITEM_IN_USE);
         }
-        if (item.isCatalogOriginal()) {
+        if (item.isListedOriginal()) {
             throw new ServiceException(ItemCodes.E_ITEM_LISTED);
         }
         repo.deleteItem(iident.itemId);

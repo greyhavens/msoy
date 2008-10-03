@@ -291,7 +291,7 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // we will modify the original item (it's a clone, no need to worry) to create the new
-        // catalog listing prototype item
+        // catalog listing master item
         int originalItemId = originalItem.itemId;
         ItemRecord listItem = originalItem;
         listItem.prepareForListing(null);
@@ -317,7 +317,7 @@ public class CatalogServlet extends MsoyServiceServlet
         // we'll trim the description rather than fail the insert if something is haywire)
         listItem.description = StringUtil.truncate(descrip, Item.MAX_DESCRIPTION_LENGTH);
 
-        // create our new immutable catalog prototype item
+        // create our new immutable catalog master item
         repo.insertOriginalItem(listItem, true);
 
         // copy tags from the original item to the new listing item
@@ -449,7 +449,7 @@ public class CatalogServlet extends MsoyServiceServlet
         ItemRecord oldListItem = repo.loadItem(record.listedItemId);
 
         // we will modify the original item (it's a clone, no need to worry) to create the new
-        // catalog listing prototype item
+        // catalog master item
         ItemRecord listItem = originalItem;
         listItem.prepareForListing(oldListItem);
 
@@ -457,7 +457,7 @@ public class CatalogServlet extends MsoyServiceServlet
         // we'll trim the description rather than fail the insert if something is haywire)
         listItem.description = StringUtil.truncate(descrip, Item.MAX_DESCRIPTION_LENGTH);
 
-        // update our catalog prototype item
+        // update our catalog master item
         repo.updateOriginalItem(listItem);
 
         // note that the listed item was updated

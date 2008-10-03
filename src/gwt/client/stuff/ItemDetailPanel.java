@@ -134,7 +134,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         // figure out a few pieces of common info
         int memberId = CShell.getMemberId();
         boolean original = (_item.sourceId == 0);
-        boolean catalogOriginal = _item.isCatalogOriginal();
+        boolean listedOriginal = _item.isListedOriginal();
         boolean canEditAndList = memberId == _item.creatorId || CShell.isSupport();
         boolean remixable = isRemixable();
         boolean used = (_item.used != Item.UNUSED);
@@ -180,7 +180,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // if this item is listed in the catalog or listable, add a UI for that
-        if (canEditAndList && (catalogOriginal || _item.sourceId == 0)) {
+        if (canEditAndList && (listedOriginal || _item.sourceId == 0)) {
             _details.add(WidgetUtil.makeShim(10, 10));
 
             // this handles both creating and updating of listings
@@ -191,7 +191,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             };
 
             // if the item is listed, add a biggish UI for updating the listing and pricing
-            if (catalogOriginal) {
+            if (listedOriginal) {
                 String args = Args.compose("l", _item.getType(), _item.catalogId);
                 _details.add(createTipLink(_msgs.detailUplistTip(), _msgs.detailViewListing(),
                                            Link.createListener(Pages.SHOP, args)));
@@ -201,7 +201,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 buttons.add(MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailUplist(), onDoList));
 
                 boolean salable = (!(_item instanceof SubItem) || ((SubItem)_item).isSalable());
-                if (catalogOriginal && salable) {
+                if (listedOriginal && salable) {
                     // add a button for repricing the listing
                     PushButton button =
                         MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailUpprice(), null);
@@ -251,7 +251,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         }
 
         // if this item is giftable, add a UI for that
-        if (!catalogOriginal) {
+        if (!listedOriginal) {
             _details.add(WidgetUtil.makeShim(10, 10));
             _details.add(_giftBits = new FlowPanel());
         }

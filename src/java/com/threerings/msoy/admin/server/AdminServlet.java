@@ -267,8 +267,8 @@ public class AdminServlet extends MsoyServiceServlet
         int deletionCount = 0;
         owners.add(item.creatorId);
 
-        // we've loaded the original item, if it represents the original listing
-        // or a prototype item, we want to squish the original catalog listing.
+        // we've loaded the original item, if it represents the original listing or a catalog
+        // master item, we want to squish the original catalog listing.
         if (item.catalogId != 0) {
             final CatalogRecord catrec = repo.loadListing(item.catalogId, false);
             if (catrec != null && catrec.listedItemId == item.itemId) {

@@ -101,10 +101,8 @@ public class MsoyGameRepository extends DepotRepository
      */
     public void gameCreated (GameRecord item)
     {
-        boolean catalogPrototype = (item.ownerId == 0);
-
         // sanity check
-        if (catalogPrototype && item.gameId == 0) {
+        if (item.isCatalogMaster() && item.gameId == 0) {
             log.warning("Listed game with no assigned game id " + item + ".");
         }
 
@@ -120,8 +118,8 @@ public class MsoyGameRepository extends DepotRepository
             // fill the game id back into the newly created game record
             item.gameId = -gdr.gameId;
 
-        } else if (catalogPrototype) {
-            // update the game detail record with the new catalog prototype id
+        } else if (item.isCatalogMaster()) {
+            // update the game detail record with the new listed item id
             updatePartial(GameDetailRecord.class, item.gameId,
                           GameDetailRecord.LISTED_ITEM_ID, item.itemId);
         }

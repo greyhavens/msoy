@@ -142,13 +142,13 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
      * e.g. it's listed in the catalog or a gifted item in a mail message. */
     public int ownerId;
 
-    /** The catalog listing associated with this item. Set to 0 if this item is not listed.
-     * If nonzero, the item is either:
-     * the original item (sourceId == 0 && ownerId != 0)
-     * the prototype item (sourceId == 0 && ownerId == 0)
-     * or just a purchased item (sourceId != 0)
+    /** The catalog listing associated with this item. Set to 0 if this item is not listed. If
+     * nonzero, the item is either:
+     * the original item (sourceId == 0 && ownerId != 0),
+     * the master item (sourceId == 0 && ownerId == 0),
+     * or just a purchased item (sourceId != 0).
      *
-     * See {@link #isCatalogOriginal} and {@link #isCatalogPrototype}
+     * See {@link #isListedOriginal} and {@link #isCatalogMaster}.
      */
     public int catalogId;
 
@@ -220,19 +220,19 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     }
 
     /**
-     * Returns true if this item is a catalog original, rather than just a clone of
-     * something listed or the prototype from which all clones are made.
+     * Returns true if this item is an original item that has been listed in the catalog and now
+     * serves as the work-in-progress item from which the litsing is generated.
      */
-    public boolean isCatalogOriginal ()
+    public boolean isListedOriginal ()
     {
         return (sourceId == 0) && (catalogId != 0) && (ownerId != 0);
     }
 
     /**
-     * Returns true if this item is a catalog prototype from which clones are configured,
+     * Returns true if this item is a catalog master from which clones are configured,
      * rather than just a clone, or the original item.
      */
-    public boolean isCatalogPrototype ()
+    public boolean isCatalogMaster ()
     {
         return (sourceId == 0) && (catalogId != 0) && (ownerId == 0);
     }
@@ -256,7 +256,7 @@ public abstract class ItemRecord extends PersistentRecord implements Streamable
     /**
      * Clears out any fields that should be reset when listing this item in the catalog.
      *
-     * @param oldListing the previous catalog prototype item if this item has already been listed,
+     * @param oldListing the previous catalog master item if this item has already been listed,
      * or null if it is being listed for the first time.
      */
     public void prepareForListing (ItemRecord oldListing)
