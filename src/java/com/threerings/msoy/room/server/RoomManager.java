@@ -790,7 +790,12 @@ public class RoomManager extends SpotSceneManager
 
             // log it!
             boolean isWhirled = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
-            _eventLog.roomEntered(member.getMemberId(), isWhirled, member.visitorInfo.id);
+            if (member.visitorInfo == null) {
+                log.warning("Player without visitorInfo spotted in bodyEntered()!",
+                    "memberName", member.getMemberName(), "memberId", member.getMemberId());
+            } else {
+                _eventLog.roomEntered(member.getMemberId(), isWhirled, member.visitorInfo.id);
+            }
         }
     }
 
