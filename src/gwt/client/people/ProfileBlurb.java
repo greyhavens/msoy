@@ -72,20 +72,16 @@ public class ProfileBlurb extends Blurb
         boolean isMe = (_name.getMemberId() == CShell.getMemberId());
 
         // create our photo section with various buttons
-        SmartTable photo = new SmartTable("Photo", 0, 5);
-        ClickListener thumbClickListener = new ClickListener() {
-            public void onClick (Widget sender)
-            {
-                Link.go(Pages.PEOPLE, Args.compose("pgallery", _name.getMemberId()));
-            }
-        };
-        // TODO - make public - link to the member's profile gallery in DEV only
-        if (DeploymentConfig.devDeployment) {
-            photo.addWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE,
-                thumbClickListener), 2, null);
-        } else {
-            photo.addWidget(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE),
-                2, null);
+        FlowPanel photo = new FlowPanel();
+        photo.setStyleName("Photo");
+        String mepics = Args.compose("pgallery", _name.getMemberId());
+        ClickListener onClick = null;
+        if (DeploymentConfig.devDeployment) { // TODO - make public
+            onClick = Link.createListener(Pages.PEOPLE, mepics);
+        }
+        photo.add(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE, onClick));
+        if (DeploymentConfig.devDeployment) { // TODO - make public
+            photo.add(Link.create(_msgs.photosOfMe(), Pages.PEOPLE, mepics));
         }
 
         // create the info section with their name, a/s/l, etc.

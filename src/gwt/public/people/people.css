@@ -16,10 +16,19 @@
   width: 100%;
 }
 
+.profile .Profile .Photo {
+  margin: 15px 0px 10px 5px;
+  text-align: center;
+}
+
+.profile .Profile .Photo a {
+  padding-top: 5px;
+  font-size: 12px;
+}
+
 .profile .Profile .Photo .gwt-Image {
   margin-left: auto;
   margin-right: auto;
-  padding: 10px 0px 10px 10px;
 }
 
 .profile .Profile .Info {
@@ -66,7 +75,7 @@
 
 .profile .Profile .Buttons img {
   display: inline;
-  padding-right: 2px;
+  padding-right: 3px;
 }
 
 .profile .Profile .Buttons .Link {
