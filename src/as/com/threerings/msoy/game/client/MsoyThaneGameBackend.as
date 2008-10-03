@@ -36,6 +36,14 @@ public class MsoyThaneGameBackend extends ThaneGameBackend
         }
         return player.ownsGameContent(cfg.getGameId(), type, ident)
     }
+
+    /** @inheritDoc */
+    // from BaseGameBackend
+    override protected function reportGameError (message :String, error :Error = null) :void
+    {
+        // We don't want these messages in our logs, go straight to the user code
+        _ctrl.outputToUserCode(message, error);
+    }
 }
 
 }
