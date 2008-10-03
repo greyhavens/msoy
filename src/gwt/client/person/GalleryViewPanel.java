@@ -164,14 +164,13 @@ public class GalleryViewPanel extends FlowPanel
             };
 
             // add thumbnail and image name to a box
-            Widget image = MediaUtil.createMediaView(photo.getPreviewMedia(),
-                MediaDesc.getWidth(MediaDesc.PREVIEW_SIZE) / 2,
-                MediaDesc.getHeight(MediaDesc.PREVIEW_SIZE) / 2, thumbClickListener);
+            Widget image = MediaUtil.createMediaView(
+                photo.getPreviewMedia(), MediaDesc.PREVIEW_SIZE, thumbClickListener);
             FlowPanel thumbnail = MsoyUI.createFlowPanel("Thumbnail");
             // size the containing box here, include space for 1px border
             thumbnail.add(new CenteredBox(image, "Image",
-                MediaDesc.getWidth(MediaDesc.PREVIEW_SIZE) / 2 + 2,
-                MediaDesc.getHeight(MediaDesc.PREVIEW_SIZE) / 2 + 2));
+                                          MediaDesc.getWidth(MediaDesc.PREVIEW_SIZE) + 2,
+                                          MediaDesc.getHeight(MediaDesc.PREVIEW_SIZE) + 2));
             thumbnail.add(MsoyUI.createLabel(photo.name, "Name"));
             _photoPanel.add(thumbnail);
         }
