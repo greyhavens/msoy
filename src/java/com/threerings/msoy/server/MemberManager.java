@@ -713,7 +713,7 @@ public class MemberManager
                         "actionName", actionName);
             return;
         }
-        _eventLog.clientAction(memObj.visitorInfo.id, actionName, details);
+        _eventLog.clientAction(memObj.getVisitorId(), actionName, details);
     }
 
     // from interface MemberProvider
@@ -738,7 +738,7 @@ public class MemberManager
                 } else {
                     actualTestName = "";
                 }
-                _eventLog.testAction(memObj.visitorInfo.id, actionName, actualTestName,
+                _eventLog.testAction(memObj.getVisitorId(), actionName, actualTestName,
                     abTestGroup);
                 return false;
             }

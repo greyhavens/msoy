@@ -97,7 +97,7 @@ public class QuestDelegate extends PlaceManagerDelegate
         }
         _players.put(bodyOid, new Player(player));
         _worldClient.updatePlayer(player.getMemberId(), _content.game);
-        _eventLog.avrgEntered(player.getMemberId(), player.visitorInfo.id);
+        _eventLog.avrgEntered(player.getMemberId(), player.getVisitorId());
     }
 
     @Override // from PlaceManagerDelegate
@@ -228,10 +228,9 @@ public class QuestDelegate extends PlaceManagerDelegate
                 log.warning("No VisitorInfo for AVRG player!", "gameId", _gameId,
                             "memberId", memberId);
             }
-            final String tracker = (player.playerObject.visitorInfo == null) ?
-                "" : player.playerObject.visitorInfo.id;
             _eventLog.avrgLeft(memberId, _gameId, playerSecs,
-                               _plmgr.getPlaceObject().occupantInfo.size(), tracker);
+                               _plmgr.getPlaceObject().occupantInfo.size(),
+                               player.playerObject.getVisitorId());
 
             // let the world know that this player is no longer playing our game
             _worldClient.updatePlayer(memberId, null);

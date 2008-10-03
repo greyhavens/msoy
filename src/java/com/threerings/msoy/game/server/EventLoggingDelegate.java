@@ -41,9 +41,7 @@ public class EventLoggingDelegate extends GameManagerDelegate
         final PlayerObject plobj = (PlayerObject)_omgr.getObject(bodyOid);
 
         int memberId = plobj.memberName.getMemberId();
-        String tracker = (plobj.visitorInfo != null) ? plobj.visitorInfo.id : null;
-
-        _eventLog.gameEntered(memberId, gmgr.isMultiplayer(), tracker);
+        _eventLog.gameEntered(memberId, gmgr.isMultiplayer(), plobj.getVisitorId());
     }
 
     @Override
@@ -62,15 +60,9 @@ public class EventLoggingDelegate extends GameManagerDelegate
         // now that they left, log their info
         int memberId = plobj.memberName.getMemberId();
         int seconds = (int)((System.currentTimeMillis() - entry) / 1000);
-
-        final MsoyGameManager gmgr = (MsoyGameManager)_plmgr;
-        final String tracker = (plobj.visitorInfo != null) ? plobj.visitorInfo.id : null;
-        if (tracker == null) {
-            log.warning("Game finished without referral info", "memberId", memberId);
-        }
-
+        boolean isMultiplayer = ((MsoyGameManager)_plmgr).isMultiplayer();
         _eventLog.gameLeft(memberId, _content.game.genre, _content.game.gameId, seconds,
-                           gmgr.isMultiplayer(), tracker);
+                           isMultiplayer, plobj.getVisitorId());
     }
 
     /** Game description. */

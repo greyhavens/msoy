@@ -31,6 +31,8 @@ import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.data.all.VisitorInfo;
 
+import static com.threerings.msoy.Log.log;
+
 /**
  * Contains information on a player logged on to an MSOY Game server.
  */
@@ -120,6 +122,18 @@ public class PlayerObject extends WhirledPlayerObject
         key.type = type;
         key.ident = ident;
         return gameContent.containsKey(key);
+    }
+
+    /**
+     * Returns {@link #visitorInfo}.id but logs a warning and stack trace if visitorInfo is null.
+     */
+    public String getVisitorId ()
+    {
+        if (visitorInfo == null) {
+            log.warning("Member missing visitorInfo", "who", who(), new Exception());
+            return "";
+        }
+        return visitorInfo.id;
     }
 
     // from interface MsoyUserObject

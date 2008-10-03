@@ -341,6 +341,18 @@ public class MemberObject extends MsoyBodyObject
         return GroupMembership.RANK_NON_MEMBER;
     }
 
+    /**
+     * Returns {@link #visitorInfo}.id but logs a warning and stack trace if visitorInfo is null.
+     */
+    public String getVisitorId ()
+    {
+        if (visitorInfo == null) {
+            log.warning("Member missing visitorInfo", "who", who(), new Exception());
+            return "";
+        }
+        return visitorInfo.id;
+    }
+
 //    /**
 //     * Add the specified scene to the recent scene list for this user.
 //     */

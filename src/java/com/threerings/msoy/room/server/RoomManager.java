@@ -790,12 +790,7 @@ public class RoomManager extends SpotSceneManager
 
             // log it!
             boolean isWhirled = (model.ownerType == MsoySceneModel.OWNER_TYPE_GROUP);
-            if (member.visitorInfo == null) {
-                log.warning("Player without visitorInfo spotted in bodyEntered()!",
-                    "memberName", member.getMemberName(), "memberId", member.getMemberId());
-            } else {
-                _eventLog.roomEntered(member.getMemberId(), isWhirled, member.visitorInfo.id);
-            }
+            _eventLog.roomEntered(member.getMemberId(), isWhirled, member.getVisitorId());
         }
     }
 
@@ -829,7 +824,7 @@ public class RoomManager extends SpotSceneManager
                 // log it!
                 _eventLog.roomLeft(
                     member.getMemberId(), model.sceneId, isWhirled,
-                    secondsInRoom, _roomObj.occupants.size(), member.visitorInfo.id);
+                    secondsInRoom, _roomObj.occupants.size(), member.getVisitorId());
             }
         }
 
