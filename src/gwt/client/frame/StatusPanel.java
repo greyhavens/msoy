@@ -8,6 +8,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 
 import com.google.gwt.user.client.ui.ClickListener;
+import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -102,7 +103,8 @@ public class StatusPanel extends SmartTable
 
         // configure our levels
         int idx = 0;
-        setWidget(0, idx++, Link.memberView(_creds.name));
+        setWidget(0, idx, Link.memberView(_creds.name));
+        getFlexCellFormatter().setHorizontalAlignment(0, idx++, HasAlignment.ALIGN_RIGHT);
         setWidget(0, idx++, _levels);
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.FLOW, data.flow, 0));
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.GOLD, data.gold, 0));
