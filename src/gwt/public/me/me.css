@@ -433,21 +433,21 @@
   margin: 0 15px 15px 0;
 }
 
-.BarsTip {
+.transactions .BarsTip {
   font-size: small;
   text-align: center;
   padding-bottom: 5px;
 }
 
-.Balance {
+.transactions .Balance {
   width: 100%;
 }
 
-.Balance .row1 {
+.transactions .Balance .row1 {
   background: #dbeffc;
 }
 
-.Balance .header {
+.transactions .Balance .header {
   background: #ff992b;
   color: white;
   text-align: center;
@@ -456,15 +456,15 @@
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
 }
 
-.Balance .col1 { /* Description */
+.transactions .Balance .col1 { /* Description */
   width: 100%;
 }
 
-.Balance .col2, .Balance .col3, .Balance .col4 { /* Debit, credit, balance */
+.transactions .Balance .col2, .Balance .col3, .Balance .col4 { /* Debit, credit, balance */
   text-align: right;
 }
 
-.Balance .ReportFilter {
+.transactions .Balance .ReportFilter {
   width: 50px;
   padding-right: 5px;
 }
