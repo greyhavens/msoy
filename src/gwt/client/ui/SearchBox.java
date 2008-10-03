@@ -53,6 +53,30 @@ public class SearchBox extends HorizontalPanel
         clearSearch(false);
     }
 
+    /**
+     * Creates a click listener that can be added to a "search" button to go along with this box.
+     */
+    public ClickListener makeSearchListener () {
+        return new ClickListener() {
+            public void onClick (Widget widget) {
+                doSearch();
+            }
+        };
+    }
+
+    /**
+     * Configures the contents of the search box.
+     */
+    public void setText (String text)
+    {
+        if (text == null || text.length() == 0) {
+            clearSearch(false);
+        } else {
+            _input.removeStyleName("Faded");
+            _input.setText(text);
+        }
+    }
+
     protected void doSearch ()
     {
         String query = _input.getText().trim();
