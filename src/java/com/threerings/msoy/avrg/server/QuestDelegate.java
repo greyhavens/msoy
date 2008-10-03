@@ -80,10 +80,9 @@ public class QuestDelegate extends PlaceManagerDelegate
     {
         super.didShutdown();
 
-        // if any players remain unpaid out, pay them out now
-        for (Player player : _players.values()) {
-            payoutPlayer(player, false);
-        }
+        // if any players remain unpaid out, pay them out now (this will also note any accumulated
+        // playtime for these players that was not associated with a payout)
+        flushAllPlayers();
         _players.clear();
     }
 
@@ -164,6 +163,16 @@ public class QuestDelegate extends PlaceManagerDelegate
 
         // tell the requester that we're groovy
         listener.requestProcessed();
+
+        // finally, if we have pending coin awards that exceed our current coin budget, flush 'em
+        // and trigger a recaculation of our payout rate
+        int pendingCoins = 0;
+        for (Player p : _players.values()) {
+            pendingCoins += p.coinsAccrued;
+        }
+        if (pendingCoins >= _content.detail.flowToNextRecalc) {
+            flushAllPlayers();
+        }
     }
 
     /**
@@ -172,6 +181,35 @@ public class QuestDelegate extends PlaceManagerDelegate
     protected static int now ()
     {
         return (int) (System.currentTimeMillis() / 1000);
+    }
+
+    /**
+     * Pays out all players any accrued coins and records all player minutes and coin awards to
+     * this game's activity log, potentially recalculating its payout factor as a result.
+     */
+    protected void flushAllPlayers ()
+    {
+        int totalSecs = 0, totalTasks = 0, totalAward = 0;
+
+        // pay out flow to all players, total up our coin awards and play time
+        for (Player player : _players.values()) {
+            final int playerSecs = player.timeAccrued + player.getPlayTime(now());
+            totalSecs += playerSecs;
+            totalTasks += player.tasksCompleted;
+            if (player.coinsAccrued > 0) {
+                final UserAction action = UserAction.playedGame(
+                    player.playerObject.getMemberId(), _content.game.name, _gameId, playerSecs);
+                _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
+                totalAward += player.coinsAccrued;
+                player.reset();
+            }
+        }
+
+        // if we actually awarded coins or accrued time, update our game metrics
+        if (totalAward > 0 || totalSecs > 0) {
+            final int totalMins = Math.round(totalSecs / 60f);
+            _gameReg.updateGameMetrics(_content.detail, true, totalMins, totalTasks, totalAward);
+        }
     }
 
     /**
@@ -208,11 +246,13 @@ public class QuestDelegate extends PlaceManagerDelegate
         // if they accrued any coins, pay them out
         if (player.coinsAccrued > 0) {
             // do the actual coin awarding
-            UserAction action = UserAction.playedGame(
+            final UserAction action = UserAction.playedGame(
                 memberId, _content.game.name, _gameId, playerSecs);
             _worldClient.awardCoins(_gameId, action, player.coinsAccrued);
+        }
 
-            // note games played and coins awarded for coin payout factor calculation purposes
+        // note time played and coins awarded for coin payout factor calculation purposes
+        if (playerMins > 0 || player.coinsAccrued > 0) {
             _gameReg.updateGameMetrics(
                 _content.detail, true, playerMins, player.tasksCompleted, player.coinsAccrued);
         }
