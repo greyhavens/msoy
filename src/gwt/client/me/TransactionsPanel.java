@@ -36,6 +36,7 @@ public class TransactionsPanel extends FlowPanel
         vert.add(MsoyUI.createHTML(_msgs.barsTip(), "BarsTip"));
         StretchButton buyBars = new StretchButton(StretchButton.ORANGE_THICK,
             MsoyUI.createLabel(_msgs.buyBars(), null));
+        buyBars.addClickListener(Link.onBuyBars());
         vert.add(buyBars);
         horiz.add(vert);
 

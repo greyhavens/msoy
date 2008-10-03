@@ -6,6 +6,7 @@ package client.util;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.ClickListenerCollection;
@@ -60,15 +61,32 @@ public class Link
     }
 
     /**
-     * Returns link that pops up the billing page.
+     * Get the billing URL, appending the username for easy logins if available.
      */
-    public static Anchor buyBars (String label)
+    public static String billingURL ()
     {
         String href = DeploymentConfig.billingURL;
         if (CShell.creds != null) {
             href += "?initUsername=" + CShell.creds.accountName;
         }
-        return new Anchor(href, label, "_blank");
+        return href;
+    }
+
+    /**
+     * Returns link that pops up the billing page.
+     */
+    public static Anchor buyBars (String label)
+    {
+        return new Anchor(billingURL(), label, "_blank");
+    }
+
+    public static ClickListener onBuyBars ()
+    {
+        return new ClickListener() {
+            public void onClick (Widget sender) {
+                Window.open(billingURL(), "_blank", null);
+            }
+        };
     }
 
     /**
