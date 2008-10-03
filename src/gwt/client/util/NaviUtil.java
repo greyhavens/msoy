@@ -74,7 +74,9 @@ public class NaviUtil
         return Link.createListener(Pages.ME, Args.compose("transactions", report.toIndex()));
     }
 
-    /** When clicked, popup up a window to billing to buy bars. */
+    /**
+     * When clicked, popup up a window to billing to buy bars.
+     */
     public static ClickListener onBuyBars ()
     {
         return new ClickListener() {
