@@ -346,11 +346,14 @@ public class MemberObject extends MsoyBodyObject
      */
     public String getVisitorId ()
     {
-        if (visitorInfo == null) {
+        if (isVisitor(getMemberId())) {
+            return "";
+        } else if (visitorInfo == null) {
             log.warning("Member missing visitorInfo", "who", who(), new Exception());
             return "";
+        } else {
+            return visitorInfo.id;
         }
-        return visitorInfo.id;
     }
 
 //    /**
