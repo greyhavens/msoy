@@ -277,6 +277,15 @@ public /*abstract*/ class Item
     }
 
     /**
+     * Returns true if this item is a catalog master from which clones are configured,
+     * rather than just a clone, or the original item.
+     */
+    public function isCatalogMaster () :Boolean
+    {
+        return (sourceId == 0) && (catalogId != 0) && (ownerId == 0);
+    }
+
+    /**
      * Returns the suite for which this item is the parent. If the item is a listed catalog master,
      * the suite id will be its negated catalog listing id. If the item is a mutable original, the
      * suite id will be its item id.
