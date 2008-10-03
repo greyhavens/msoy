@@ -209,7 +209,7 @@
   </target>
 
   <!-- enumerate our translation files -->
-  <property name="msgs1.list" value="shell.Shell,account.Account,admin.Admin,shop.Shop"/>
+  <property name="msgs1.list" value="shell.Shell,account.Account,adminz.Admin,shop.Shop"/>
   <property name="msgs2.list" value="games.Games,whirleds.Whirleds,stuff.Stuff,editem.Editem"/>
   <property name="msgs3.list" value="item.Item,mail.Mail,msgs.Msgs,people.People,swiftly.Swiftly"/>
   <property name="msgs4.list" value="room.Room,me.Me,remix.Remix,help.Help,support.Support"/>
