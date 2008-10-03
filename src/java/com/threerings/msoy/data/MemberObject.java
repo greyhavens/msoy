@@ -346,7 +346,7 @@ public class MemberObject extends MsoyBodyObject
      */
     public String getVisitorId ()
     {
-        if (isVisitor(getMemberId())) {
+        if (MemberName.isViewer(getMemberId())) {
             return "";
         } else if (visitorInfo == null) {
             log.warning("Member missing visitorInfo", "who", who(), new Exception());
