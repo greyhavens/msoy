@@ -10,10 +10,9 @@ import java.util.Map.Entry;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-import com.samskivert.util.IntMap;
-import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.money.data.MoneyCodes;
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
@@ -98,14 +97,20 @@ public class MoneyServlet extends MsoyServiceServlet
         Map<Integer, CashOutInfo> blingMap = _moneyLogic.getBlingCashOutRequests();
         
         // Get all member names for the members in the map.
-        final IntMap<MemberName> names = _memberRepo.loadMemberNames(blingMap.keySet());
+        final Map<Integer, MemberRecord> names = Maps.uniqueIndex(
+            _memberRepo.loadMembers(blingMap.keySet()), new Function<MemberRecord, Integer>() {
+                public Integer apply (MemberRecord record) {
+                    return record.memberId;
+                }
+            });
         
         // Transform the list into cash out entries.
         return Lists.newArrayList(Iterables.transform(blingMap.entrySet(), 
             new Function<Map.Entry<Integer, CashOutInfo>, CashOutEntry>() {
                 public CashOutEntry apply (Entry<Integer, CashOutInfo> entry) {
-                    return new CashOutEntry(entry.getKey(), names.get(entry.getKey()).getNormal(), 
-                        entry.getValue(), "todo@email.com");
+                    MemberRecord member = names.get(entry.getKey());
+                    return new CashOutEntry(entry.getKey(), 
+                        member.getName().getNormal(), entry.getValue(), member.accountName);
                 }
         }));
     }

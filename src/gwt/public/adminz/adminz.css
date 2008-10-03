@@ -177,7 +177,7 @@
   padding: 5px 0px;
   width: 100%;
   height: 89px;
-  font-size: 10px;
+  font-size: 10pt;
 }
 
 .cashOutWidget .Name {
@@ -185,11 +185,29 @@
   padding-bottom: 2px;
 }
 
-.cashOutWidget .Status {
-  font-style: italic;
+.cashOutWidget .PopupPanel {
+  font-size: 12pt;
+  font-weight: bold;
+  padding-top: 10px;
 }
 
-.cashOutWidget .Extras {
+.cashOutWidget .PopupPanel .PopupCell {
+  font-size: 12pt;
+  font-weight: bold;
+  vertical-align: top;
+}
+
+.cashOutWidget .PopupPanel .PopupButton {
+  margin-left: 3px;
+  margin-right: 3px;
+}
+
+.cashOutWidget .PopupPanel .Reason {
+  width: 450px;
+  height: 50px;
+}
+
+.cashOutWidget .Extras .sideButton {
   width: 120px;
 }
 
