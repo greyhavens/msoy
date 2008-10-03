@@ -182,8 +182,8 @@ public class GameGameRegistry
                 Iterable<ItemPackRecord> irecords;
                 if (game.isDevelopmentVersion()) {
                     // this will only work for the game developer, but we can dig it
-                    lrecords = _lpackRepo.loadOriginalItems(memberId, suiteId);
-                    irecords = _ipackRepo.loadOriginalItems(memberId, suiteId);
+                    lrecords = _lpackRepo.loadOriginalItems(memberId, suiteId, null);
+                    irecords = _ipackRepo.loadOriginalItems(memberId, suiteId, null);
                     // filter out non-premium level packs since those normally wouldn't be owned
                     lrecords = Iterables.filter(lrecords, new Predicate<LevelPackRecord>() {
                         public boolean apply (LevelPackRecord record) {
@@ -191,8 +191,8 @@ public class GameGameRegistry
                         }
                     });
                 } else {
-                    lrecords = _lpackRepo.loadClonedItems(memberId, suiteId);
-                    irecords = _ipackRepo.loadClonedItems(memberId, suiteId);
+                    lrecords = _lpackRepo.loadClonedItems(memberId, suiteId, null);
+                    irecords = _ipackRepo.loadClonedItems(memberId, suiteId, null);
                 }
                 Iterables.addAll(_lpacks, Iterables.transform(lrecords, LevelPackRecord.GET_IDENT));
                 Iterables.addAll(_ipacks, Iterables.transform(irecords, ItemPackRecord.GET_IDENT));
@@ -634,7 +634,7 @@ public class GameGameRegistry
         AVRGameManager mgr = _avrgManagers.get(gameId);
         if (mgr != null) {
             _locmgr.leavePlace(player);
-            
+
             // Make sure we notify the world server too, since we are officially deactivating this
             // game as opposed to just leaving it tempoararily.
             _worldClient.leaveAVRGame(playerId);
@@ -901,7 +901,7 @@ public class GameGameRegistry
             log.warning("No listeners when done activating AVRGame", "gameId", gameId);
         }
     }
-    
+
     // from AVRGameManager.LifecycleObserver
     public void avrGameAgentDestroyed (AVRGameManager mgr)
     {
@@ -1033,7 +1033,7 @@ public class GameGameRegistry
         // then immediately shut down the manager
         amgr.shutdown();
     }
-    
+
     protected void killBureauSession (int gameId)
     {
         String bureauId = BureauTypes.GAME_BUREAU_ID_PREFIX + gameId;
@@ -1109,7 +1109,7 @@ public class GameGameRegistry
     @Inject protected ItemPackRepository _ipackRepo;
     @Inject protected TrophySourceRepository _tsourceRepo;
     @Inject protected PrizeRepository _prizeRepo;
-    
+
     /** Period of game log deletion. */
     protected static final long LOG_DELETION_INTERVAL = 6 * 60 * 60 * 1000;
 }

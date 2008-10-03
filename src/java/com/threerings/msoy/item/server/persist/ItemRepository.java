@@ -56,6 +56,7 @@ import com.samskivert.jdbc.depot.expression.LiteralExp;
 import com.samskivert.jdbc.depot.expression.SQLExpression;
 import com.samskivert.jdbc.depot.expression.ValueExp;
 import com.samskivert.jdbc.depot.operator.Arithmetic;
+import com.samskivert.jdbc.depot.operator.Conditionals;
 import com.samskivert.jdbc.depot.operator.Conditionals.*;
 import com.samskivert.jdbc.depot.operator.Logic.*;
 import com.samskivert.jdbc.depot.operator.SQLOperator;
@@ -264,14 +265,24 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Loads all original items owned by the specified member in the specified suite.
      */
-    public List<T> loadOriginalItems (int ownerId, int suiteId)
+    public List<T> loadOriginalItems (int ownerId, int suiteId, String searchQuery)
     {
-        Where where;
+        SQLOperator ownerSuite;
         if (suiteId == 0) {
-            where = new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId);
+            ownerSuite = new Conditionals.Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId);
         } else {
-            where = new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId,
-                              getItemColumn(SubItemRecord.SUITE_ID), suiteId);
+            ownerSuite = new And(
+                new Conditionals.Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId),
+                new Conditionals.Equals(getItemColumn(SubItemRecord.SUITE_ID), suiteId));
+        }
+
+        // add the search string clause if needed
+        Where where;
+        if (searchQuery != null && searchQuery.length() > 0) {
+            where = new Where(
+                new And(ownerSuite, buildSearchStringClause(searchQuery)));
+        } else {
+            where = new Where(ownerSuite);
         }
         return findAll(getItemClass(), where);
     }
@@ -287,14 +298,22 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Loads all cloned items owned by the specified member.
      */
-    public List<T> loadClonedItems (int ownerId, int suiteId)
+    public List<T> loadClonedItems (int ownerId, int suiteId, String searchQuery)
     {
-        Where where;
+        SQLOperator ownerSuite;
         if (suiteId == 0) {
-            where = new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId);
+            ownerSuite = new Conditionals.Equals(getCloneColumn(CloneRecord.OWNER_ID), ownerId);
         } else {
-            where = new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId,
-                              getItemColumn(SubItemRecord.SUITE_ID), suiteId);
+            ownerSuite = new And(new Conditionals.Equals(getCloneColumn(CloneRecord.OWNER_ID),
+                ownerId), new Conditionals.Equals(getItemColumn(SubItemRecord.SUITE_ID), suiteId));
+        }
+
+        // add the search string clause if needed
+        Where where;
+        if (searchQuery != null && searchQuery.length() > 0) {
+            where = new Where(new And(ownerSuite, buildSearchStringClause(searchQuery)));
+        } else {
+            where = new Where(ownerSuite);
         }
         return loadClonedItems(where);
     }

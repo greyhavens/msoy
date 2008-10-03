@@ -44,16 +44,20 @@ public class InventoryModels
     }
 
     // from interface ItemDataModel
-    public void loadModel (byte type, int suiteId, final AsyncCallback<DataModel<Item>> cb)
+    public void loadModel (byte type, int suiteId, String query,
+        final AsyncCallback<DataModel<Item>> cb)
     {
         final Key key = new Key(type, suiteId);
-        SimpleDataModel<Item> model = _models.get(key);
-        if (model != null) {
-            cb.onSuccess(model);
-            return;
+        // query will be non-null (perhaps "") if it has changed.
+        if (query == null) {
+            SimpleDataModel<Item> model = _models.get(key);
+            if (model != null) {
+                cb.onSuccess(model);
+                return;
+            }
         }
 
-        _stuffsvc.loadInventory(type, suiteId, new AsyncCallback<List<Item>>() {
+        _stuffsvc.loadInventory(type, suiteId, query, new AsyncCallback<List<Item>>() {
             public void onSuccess (List<Item> result) {
                 SimpleDataModel<Item> model = new SimpleDataModel<Item>(result);
                 _models.put(key, model);

@@ -45,7 +45,7 @@ public class SubItemPanel extends PagedGrid<Item>
         if (!visible || hasModel()) {
             return;
         }
-        _models.loadModel(_type, _parent.getSuiteId(), new MsoyCallback<DataModel<Item>>() {
+        _models.loadModel(_type, _parent.getSuiteId(), null, new MsoyCallback<DataModel<Item>>() {
             public void onSuccess (DataModel<Item> model) {
                 setModel(model, 0);
             }

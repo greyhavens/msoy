@@ -128,9 +128,9 @@ public class StuffPage extends Page
         } else {
             // otherwise we're viewing our inventory
             byte type = (byte)args.get(0, Item.AVATAR);
-            String title = _msgs.stuffTitleMain();
             ItemPanel panel = getItemPanel(type);
-            panel.setPage(args.get(1, -1));
+            panel.setPageAndQuery(args.get(1, -1), args.get(2, null));
+            String title = _msgs.stuffTitleMain();
             setContent(title, panel);
         }
     }

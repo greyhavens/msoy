@@ -14,12 +14,15 @@ import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HasAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
-import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.DataModel;
 import com.threerings.gwt.util.Predicate;
 import com.threerings.gwt.util.SimpleDataModel;
@@ -54,6 +57,37 @@ public class ItemPanel extends FlowPanel
         _type = type;
         boolean isCatalogType = isCatalogItem(type);
 
+        // prepare the search box
+        _search = new HorizontalPanel();
+        _search.setStyleName("Search");
+        _search.setSpacing(5);
+        _search.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
+        _search.add(MsoyUI.createLabel("Search", "SearchTitle"));
+        final ListBox searchTypes = new ListBox();
+        for (byte searchType : Item.TYPES) {
+            searchTypes.addItem(_dmsgs.xlate("pItemType" + searchType), searchType + "");
+            if (searchType == type) {
+                searchTypes.setSelectedIndex(searchTypes.getItemCount() - 1);
+            }
+        }
+        _search.add(searchTypes);
+        _searchBox = new TextBox();
+        _searchBox.setVisibleLength(20);
+        _search.add(_searchBox);
+        ClickListener searchListener = new ClickListener() {
+            public void onClick (Widget sender) {
+                String newQuery = _searchBox.getText().trim();
+                if (newQuery == null || newQuery.length() == 0) {
+                    // send in NO_QUERY to indicate we want to clear the query
+                    newQuery = NO_QUERY;
+                }
+                Link.go(Pages.STUFF, Args.compose(
+                    searchTypes.getValue(searchTypes.getSelectedIndex()), 0, newQuery));
+            }
+        };
+        _searchBox.addKeyboardListener(new EnterClickAdapter(searchListener));
+        _search.add(MsoyUI.createImageButton("GoButton", searchListener));
+
         // a drop down for setting filters
         _filters = new ListBox();
         for (String element2 : FLABELS) {
@@ -61,7 +95,7 @@ public class ItemPanel extends FlowPanel
         }
         _filters.addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
-                showInventory(0, FILTERS.get(_filters.getSelectedIndex()));
+                showInventory(0, FILTERS.get(_filters.getSelectedIndex()), null);
             }
         });
 
@@ -106,18 +140,28 @@ public class ItemPanel extends FlowPanel
     }
 
     /**
-     * Requests that the specified page of inventory items be displayed.
+     * Requests that the specified page of inventory items be displayed and that the specified
+     * query be used when fetching contents. Both are optional.
      */
-    public void setPage (int page)
+    public void setPageAndQuery (int page, String query)
     {
         // if we're asked to display the "default" page, display the last page we remember
         if (page < 0) {
             page = _mostRecentPage;
         }
-        _mostRecentPage = page; // now remember this age
+        _mostRecentPage = page; // now remember this page
+
+        // NO_QUERY or "" will refresh the data because the seach was just cleared
+        if (query != null && query.equals(NO_QUERY)) {
+            query = "";
+        }
+
+        if (query != null) {
+            _searchBox.setText(query);
+        }
 
         // make sure we're showing and have our data
-        showInventory(page, null);
+        showInventory(page, null, query);
     }
 
     protected boolean isCatalogItem (byte type)
@@ -159,28 +203,20 @@ public class ItemPanel extends FlowPanel
     /**
      * Requests that the current inventory page be displayed (clearing out any currently displayed
      * item detail view).
+     * @pred a method of filtering the data. If non-null, will be applied to the list of items
+     * @param query If non-null, this query is being applied so data must be reloaded from db
      */
-    protected void showInventory (final int page, final Predicate<Item> pred)
+    protected void showInventory (final int page, final Predicate<Item> pred, final String query)
     {
         // don't fiddle with things if the inventory is already showing
         if (!_contents.isAttached()) {
             clear();
 
-            HorizontalPanel tbar = new HorizontalPanel();
-            tbar.setStyleName("Title");
-            tbar.setVerticalAlignment(HasAlignment.ALIGN_MIDDLE);
+            String title = _type == Item.NOT_A_TYPE ? _msgs.stuffTitleMain()
+                : _msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type));
+            add(MsoyUI.createLabel(title, "TypeTitle"));
 
-            String title = _type == Item.NOT_A_TYPE ?
-                _msgs.stuffTitleMain() : _msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type));
-            tbar.add(MsoyUI.createLabel(title, "Type"));
-
-            tbar.add(MsoyUI.createLabel(_msgs.ipShopFor(), "For"));
-            tbar.add(WidgetUtil.makeShim(5, 5));
-            ClickListener onClick = Link.createListener(Pages.SHOP, "" + _type);
-            tbar.add(MsoyUI.createButton(MsoyUI.SHORT_THIN, _msgs.ipToCatalog(), onClick));
-            tbar.add(WidgetUtil.makeShim(10, 10));
-
-            add(tbar);
+            add(_search);
 
             add(new StuffNaviBar(_type));
 
@@ -192,7 +228,7 @@ public class ItemPanel extends FlowPanel
 
         // maybe we're changing our predicate or changing page on an already loaded model
         SimpleDataModel<Item>  model = _models.getModel(_type, 0);
-        if (model != null) {
+        if (model != null && query == null) {
             if (pred == null) {
                 _contents.displayPage(page, true);
             } else {
@@ -202,7 +238,7 @@ public class ItemPanel extends FlowPanel
         }
 
         // otherwise we have to load
-        _models.loadModel(_type, 0, new MsoyCallback<DataModel<Item>>() {
+        _models.loadModel(_type, 0, query, new MsoyCallback<DataModel<Item>>() {
             public void onSuccess (DataModel<Item> model) {
                 if (pred != null) {
                     model = ((SimpleDataModel<Item>) model).filter(pred);
@@ -214,11 +250,13 @@ public class ItemPanel extends FlowPanel
 
     protected InventoryModels _models;
     protected byte _type;
+    protected String _query;
     protected int _mostRecentPage;
     protected ListBox _filters;
     protected PagedGrid<Item> _contents;
     protected SmartTable _upload;
     protected HorizontalPanel _search;
+    protected TextBox _searchBox;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
@@ -261,4 +299,7 @@ public class ItemPanel extends FlowPanel
     protected static final int BLURB_HEIGHT = 33 /* title */ + 71 /* contents */;
     protected static final int BOX_HEIGHT = 104;
     protected static final int ACTIVATOR_HEIGHT = 22;
+
+    /** Indicator that the search query has just been cleared. */
+    protected static final String NO_QUERY = "noquery";
 }

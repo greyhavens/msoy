@@ -355,10 +355,10 @@ public class ItemServlet extends MsoyServiceServlet
     {
         MemberRecord memrec = requireAuthedUser();
         List<Photo> photos = Lists.newArrayList();
-        for (PhotoRecord record : _photoRepo.loadOriginalItems(memrec.memberId, 0)) {
+        for (PhotoRecord record : _photoRepo.loadOriginalItems(memrec.memberId, 0, null)) {
             photos.add((Photo)record.toItem());
         }
-        for (PhotoRecord record : _photoRepo.loadClonedItems(memrec.memberId, 0)) {
+        for (PhotoRecord record : _photoRepo.loadClonedItems(memrec.memberId, 0, null)) {
             photos.add((Photo)record.toItem());
         }
         Collections.sort(photos);

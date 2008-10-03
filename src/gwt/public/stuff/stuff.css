@@ -25,7 +25,7 @@
   min-height: 100%;
 }
 
-.itemPanel .Title .Type {
+.itemPanel .TypeTitle {
   background: url(/images/stuff/orange_header.png) no-repeat;
   width: 233px;
   height: 38px; /* 41 - padding */
@@ -38,10 +38,25 @@
   margin-bottom: 10px;
 }
 
-.itemPanel .Title .For {
-  padding-left: 93px;
+.itemPanel .Search {
+  position: absolute;
+  top: 10px;
+  left: 265px;
+  background: url(/images/stuff/search_bg.png) no-repeat;
+  width: 411px;
+  height: 31px;
+}
+
+.itemPanel .Search .SearchTitle {
+  color: #b8daf0;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  padding-left: 5px;
+}
+
+.itemPanel .Search select,
+.itemPanel .Search input {
   font-size: 13px;
-  color: white;
 }
 
 .itemPanel .pagedGrid {

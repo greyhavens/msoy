@@ -42,7 +42,8 @@ public interface ItemDataModel
     /**
      * Loads a data model for the specified item type and suite.
      */
-    void loadModel (byte itemType, int suiteId, AsyncCallback<DataModel<Item>> resultCallback);
+    void loadModel (byte itemType, int suiteId, String query,
+        AsyncCallback<DataModel<Item>> resultCallback);
 
     /**
      * Loads item details for a particular item.

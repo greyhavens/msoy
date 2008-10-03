@@ -166,7 +166,7 @@ public class StuffServlet extends MsoyServiceServlet
     }
 
     // from interface StuffService
-    public List<Item> loadInventory (byte type, int suiteId)
+    public List<Item> loadInventory (byte type, int suiteId, String query)
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
@@ -180,10 +180,10 @@ public class StuffServlet extends MsoyServiceServlet
 
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         List<Item> items = Lists.newArrayList();
-        for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId)) {
+        for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId, query)) {
             items.add(record.toItem());
         }
-        for (ItemRecord record : repo.loadClonedItems(memrec.memberId, suiteId)) {
+        for (ItemRecord record : repo.loadClonedItems(memrec.memberId, suiteId, query)) {
             items.add(record.toItem());
         }
         Collections.sort(items);
