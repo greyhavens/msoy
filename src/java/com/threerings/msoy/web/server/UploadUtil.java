@@ -432,13 +432,14 @@ public class UploadUtil
      *
      * @return a MediaInfo object filled in with the published image info.
      */
-    public static MediaInfo publishImage (String mediaId, UploadFile uploadFile, boolean doScale)
+    public static MediaInfo publishImage (String mediaId, UploadFile uploadFile,
+        boolean scaleFurni)
         throws IOException
     {
         Integer size = null;
-        if (doScale && Item.THUMB_MEDIA.equals(mediaId)) {
+        if (Item.THUMB_MEDIA.equals(mediaId)) {
             size = MediaDesc.THUMBNAIL_SIZE;
-        } else if (doScale && Item.FURNI_MEDIA.equals(mediaId)) {
+        } else if (scaleFurni && Item.FURNI_MEDIA.equals(mediaId)) {
             size = MediaDesc.PREVIEW_SIZE;
         }
         return publishImage(size, uploadFile, THUMBNAIL_MIME_TYPE, THUMBNAIL_IMAGE_FORMAT
