@@ -452,6 +452,10 @@ public class GameServlet extends MsoyServiceServlet
                         info.playersOnline = ppg.population;
                     }
                     ggames.add(info);
+                    // stop when we've got 3*HIGHLIGHTED_GAMES
+                    if (ggames.size() == 3*ArcadeData.Genre.HIGHLIGHTED_GAMES) {
+                        break;
+                    }
                 }
             }
 
