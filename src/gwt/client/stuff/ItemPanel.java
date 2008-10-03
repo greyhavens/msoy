@@ -20,7 +20,6 @@ import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import com.threerings.gwt.ui.EnterClickAdapter;
 import com.threerings.gwt.ui.PagedGrid;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.util.DataModel;
@@ -35,6 +34,7 @@ import client.shell.CShell;
 import client.shell.DynamicLookup;
 import client.shell.Pages;
 import client.ui.MsoyUI;
+import client.ui.SearchBox;
 import client.util.FlashClients;
 import client.util.Link;
 import client.util.MsoyCallback;
@@ -71,22 +71,17 @@ public class ItemPanel extends FlowPanel
             }
         }
         _search.add(searchTypes);
-        _searchBox = new TextBox();
-        _searchBox.setVisibleLength(20);
-        _search.add(_searchBox);
-        ClickListener searchListener = new ClickListener() {
-            public void onClick (Widget sender) {
-                String newQuery = _searchBox.getText().trim();
-                if (newQuery == null || newQuery.length() == 0) {
-                    // send in NO_QUERY to indicate we want to clear the query
-                    newQuery = NO_QUERY;
-                }
-                Link.go(Pages.STUFF, Args.compose(
-                    searchTypes.getValue(searchTypes.getSelectedIndex()), 0, newQuery));
+        _searchBox = new SearchBox(new SearchBox.Listener() {
+            public void search (String query) {
+                String type = searchTypes.getValue(searchTypes.getSelectedIndex());
+                Link.go(Pages.STUFF, Args.compose(_type, 0, query));
             }
-        };
-        _searchBox.addKeyboardListener(new EnterClickAdapter(searchListener));
-        _search.add(MsoyUI.createImageButton("GoButton", searchListener));
+            public void clearSearch () {
+                Link.go(Pages.STUFF, Args.compose(_type, 0));
+            }
+        });
+        _search.add(_searchBox);
+        _search.add(MsoyUI.createImageButton("GoButton", _searchBox.makeSearchListener()));
 
         // a drop down for setting filters
         _filters = new ListBox();
@@ -114,7 +109,7 @@ public class ItemPanel extends FlowPanel
         _contents = new PagedGrid<Item>(rows, COLUMNS) {
             @Override protected void displayPageFromClick (int page) {
                 // route our page navigation through the URL
-                Link.go(Pages.STUFF, Args.compose(_type, page));
+                Link.go(Pages.STUFF, ((InventoryModels.Stuff)_model).makeArgs(page));
             }
             @Override protected Widget createWidget (Item item) {
                 return new ItemEntry(item);
@@ -143,7 +138,7 @@ public class ItemPanel extends FlowPanel
      * Requests that the specified page of inventory items be displayed and that the specified
      * query be used when fetching contents. Both are optional.
      */
-    public void setPageAndQuery (int page, String query)
+    public void setArgs (int page, String query)
     {
         // if we're asked to display the "default" page, display the last page we remember
         if (page < 0) {
@@ -151,17 +146,11 @@ public class ItemPanel extends FlowPanel
         }
         _mostRecentPage = page; // now remember this page
 
-        // NO_QUERY or "" will refresh the data because the seach was just cleared
-        if (query != null && query.equals(NO_QUERY)) {
-            query = "";
-        }
-
-        if (query != null) {
-            _searchBox.setText(query);
-        }
+        // update our search box
+        _searchBox.setText(query);
 
         // make sure we're showing and have our data
-        showInventory(page, null, query);
+        showInventory(page, new Predicate.TRUE<Item>(), query);
     }
 
     protected boolean isCatalogItem (byte type)
@@ -211,15 +200,11 @@ public class ItemPanel extends FlowPanel
         // don't fiddle with things if the inventory is already showing
         if (!_contents.isAttached()) {
             clear();
-
-            String title = _type == Item.NOT_A_TYPE ? _msgs.stuffTitleMain()
-                : _msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type));
+            String title = (_type == Item.NOT_A_TYPE) ? _msgs.stuffTitleMain() :
+                _msgs.stuffTitle(_dmsgs.xlate("pItemType" + _type));
             add(MsoyUI.createLabel(title, "TypeTitle"));
-
             add(_search);
-
             add(new StuffNaviBar(_type));
-
             add(_contents);
             if (_upload != null) {
                 add(_upload);
@@ -227,23 +212,17 @@ public class ItemPanel extends FlowPanel
         }
 
         // maybe we're changing our predicate or changing page on an already loaded model
-        SimpleDataModel<Item>  model = _models.getModel(_type, 0);
-        if (model != null && query == null) {
-            if (pred == null) {
-                _contents.displayPage(page, true);
-            } else {
-                _contents.setModel(model.filter(pred), page);
-            }
+        SimpleDataModel<Item> model = _models.getModel(_type, 0, query);
+        if (model != null) {
+            _contents.setModel(model.filter(pred), page);
             return;
         }
 
         // otherwise we have to load
         _models.loadModel(_type, 0, query, new MsoyCallback<DataModel<Item>>() {
-            public void onSuccess (DataModel<Item> model) {
-                if (pred != null) {
-                    model = ((SimpleDataModel<Item>) model).filter(pred);
-                }
-                _contents.setModel(model, page);
+            public void onSuccess (DataModel<Item> result) {
+                SimpleDataModel<Item> model = (SimpleDataModel<Item>)result;
+                _contents.setModel(model.filter(pred), page);
             }
         });
     }
@@ -256,7 +235,7 @@ public class ItemPanel extends FlowPanel
     protected PagedGrid<Item> _contents;
     protected SmartTable _upload;
     protected HorizontalPanel _search;
-    protected TextBox _searchBox;
+    protected SearchBox _searchBox;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);

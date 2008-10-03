@@ -49,9 +49,4 @@ public interface ItemDataModel
      * Loads item details for a particular item.
      */
     void loadItemDetail(ItemIdent ident, AsyncCallback<StuffService.DetailOrIdent> resultCallback);
-
-    /**
-     * Gets the data model for the given item type used to back a PagedGrid instance.
-     */
-    DataModel<Item> getGridModel (byte itemType);
 }
