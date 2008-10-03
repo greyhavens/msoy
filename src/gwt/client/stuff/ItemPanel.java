@@ -229,13 +229,13 @@ public class ItemPanel extends FlowPanel
 
     protected InventoryModels _models;
     protected byte _type;
-    protected String _query;
     protected int _mostRecentPage;
+
+    protected HorizontalPanel _search;
+    protected SearchBox _searchBox;
     protected ListBox _filters;
     protected PagedGrid<Item> _contents;
     protected SmartTable _upload;
-    protected HorizontalPanel _search;
-    protected SearchBox _searchBox;
 
     protected static final DynamicLookup _dmsgs = GWT.create(DynamicLookup.class);
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);
@@ -278,7 +278,4 @@ public class ItemPanel extends FlowPanel
     protected static final int BLURB_HEIGHT = 33 /* title */ + 71 /* contents */;
     protected static final int BOX_HEIGHT = 104;
     protected static final int ACTIVATOR_HEIGHT = 22;
-
-    /** Indicator that the search query has just been cleared. */
-    protected static final String NO_QUERY = "noquery";
 }
