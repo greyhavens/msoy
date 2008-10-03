@@ -355,7 +355,7 @@ public class ThaneAVRGameBackend
         var loc :MsoyLocation = new MsoyLocation(x, y, z);
         roomObj.roomService.spawnMob(
             ensureRoomClient(roomId), _controller.getGameId(), mobId, mobName, loc,
-            BackendUtils.loggingInvocationListener("spawnMob"));
+            BackendUtils.loggingInvocationListener("spawnMob", _controller.outputToUserCode));
     }
 
     protected function despawnMob_v1 (roomId :int, mobId :String) :void
@@ -367,7 +367,7 @@ public class ThaneAVRGameBackend
         var roomObj :RoomObject = _controller.getRoom(roomId);
         roomObj.roomService.despawnMob(
             ensureRoomClient(roomId), _controller.getGameId(), mobId,
-            BackendUtils.loggingInvocationListener("despawnMob"));
+            BackendUtils.loggingInvocationListener("despawnMob", _controller.outputToUserCode));
     }
 
     protected function getSpawnedMobs_v1 (roomId :int) :Array
@@ -380,7 +380,8 @@ public class ThaneAVRGameBackend
         var roomObj :RoomObject = _controller.getRoom(roomId);
         roomObj.roomService.moveMob(
             ensureRoomClient(roomId), _controller.getGameId(), id, 
-            new MsoyLocation(x, y, z), BackendUtils.loggingConfirmListener("moveMob"));
+            new MsoyLocation(x, y, z), BackendUtils.loggingConfirmListener(
+                "moveMob", null, _controller.outputToUserCode));
     }
 
     protected function room_sendMessage_v1 (roomId :int, name :String, value :Object) :void
@@ -431,7 +432,8 @@ public class ThaneAVRGameBackend
 
         _gameObj.prizeService.awardTrophy(
             _ctx.getClient(), ident, targetId,
-            BackendUtils.loggingConfirmListener("awardTrophy"));
+            BackendUtils.loggingConfirmListener("awardTrophy", null, 
+                _controller.outputToUserCode));
 
         return true;
     }
@@ -441,7 +443,8 @@ public class ThaneAVRGameBackend
         if (!playerOwnsData(GameData.PRIZE_MARKER, ident, targetId)) {
             _gameObj.prizeService.awardPrize(
                 _ctx.getClient(), ident, targetId,
-                BackendUtils.loggingConfirmListener("awardPrize"));
+                BackendUtils.loggingConfirmListener("awardPrize", null, 
+                    _controller.outputToUserCode));
         }
     }
 
@@ -464,7 +467,8 @@ public class ThaneAVRGameBackend
         payout = Math.max(0, Math.min(payout, 1));
         _gameObj.avrgService.completeTask(
             ensureGameClient(), playerId, taskId, payout,
-            BackendUtils.loggingConfirmListener("completeTask"));
+            BackendUtils.loggingConfirmListener("completeTask", null, 
+                _controller.outputToUserCode));
     }
 
     protected function playAvatarAction_v1 (playerId :int, action :String) :void
@@ -577,8 +581,7 @@ public class ThaneAVRGameBackend
                     return func.apply(null, args);
                 }
             } catch (err :Error) {
-                // TODO: Do we really want to pester msoy-logs with errors in user code?
-                log.warning("Error in user code", err);
+                _controller.outputToUserCode("An Error occurred while calling " + name, err);
             }
         } else {
             log.warning("Calling user code before connection", "name", name);

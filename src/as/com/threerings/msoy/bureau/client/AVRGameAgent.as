@@ -7,22 +7,33 @@ package com.threerings.msoy.bureau.client {
 
 import flash.events.TimerEvent;
 import flash.utils.Timer;
-import com.threerings.bureau.Log;
-import com.threerings.bureau.client.Agent;
+
 import com.threerings.io.TypedArray;
-import com.threerings.msoy.avrg.client.ThaneAVRGameController;
-import com.threerings.msoy.avrg.data.AVRGameAgentObject;
-import com.threerings.msoy.avrg.data.AVRGameObject;
-import com.threerings.msoy.bureau.util.MsoyBureauContext;
+
+import com.threerings.util.Log;
+
 import com.threerings.presents.dobj.ObjectAccessError;
 import com.threerings.presents.dobj.Subscriber;
 import com.threerings.presents.dobj.SubscriberAdapter;
+
 import com.threerings.presents.util.SafeSubscriber;
+
+import com.threerings.bureau.client.Agent;
+
 import com.whirled.bureau.client.UserCode;
+
+import com.threerings.msoy.bureau.util.MsoyBureauContext;
+
+import com.threerings.msoy.avrg.data.AVRGameAgentObject;
+import com.threerings.msoy.avrg.data.AVRGameObject;
+
+import com.threerings.msoy.avrg.client.ThaneAVRGameController;
 
 /** The container for a user's avr game control code. */
 public class AVRGameAgent extends Agent
 {
+    public static var log :Log = Log.getLog(AVRGameAgent);
+
     public function AVRGameAgent (ctx :MsoyBureauContext)
     {
         _ctx = ctx;
@@ -33,13 +44,13 @@ public class AVRGameAgent extends Agent
     // from Agent
     public override function start () :void
     {
-        Log.info("Starting agent " + _agentObj);
+        log.info("Starting agent", "agent", _agentObj.which());
 
         // subscribe to the game object
         var delegator :Subscriber = 
             new SubscriberAdapter(objectAvailable, requestFailed);
 
-        Log.info("Subscribing to game object " + gameAgentObj.gameOid);
+        log.info("Subscribing to game object", "oid", gameAgentObj.gameOid);
 
         _subscriber = new SafeSubscriber(gameAgentObj.gameOid, delegator);
         _subscriber.subscribe(_ctx.getDObjectManager());
@@ -51,7 +62,7 @@ public class AVRGameAgent extends Agent
     // from Agent
     public override function stop () :void
     {
-        Log.info("Stopping agent " + _agentObj);
+        log.info("Stopping agent", "agent", _agentObj.which());
 
         _subscriber.unsubscribe(_ctx.getDObjectManager());
         _subscriber = null;
@@ -74,6 +85,17 @@ public class AVRGameAgent extends Agent
         }
     }
 
+    /**
+     * Outputs a message to the user code's internal trace method. This is used to avoid
+     * generating warnings and traces from backend and controller code.
+     */
+    public function outputToUserCode (msg :String, err :Error = null) :void
+    {
+        if (_userCode != null) {
+            _userCode.outputTrace(msg, err);
+        }
+    }
+
     /** Access the agent object, casted to a game agent object. */
     protected function get gameAgentObj () :AVRGameAgentObject
     {
@@ -86,11 +108,11 @@ public class AVRGameAgent extends Agent
      */
     protected function objectAvailable (gameObj :AVRGameObject) :void
     {
-        Log.info("Subscribed to game object " + gameObj);
+        log.info("Subscribed to game object", "gameObj", gameObj.which());
         _gameObj = gameObj;
 
         _controller = createController();
-        _controller.init(_ctx, _gameObj, gameAgentObj);
+        _controller.init(_ctx, _gameObj, this, gameAgentObj);
 
         if (_userCode != null && _gameObj != null) {
             launchUserCode();
@@ -102,8 +124,7 @@ public class AVRGameAgent extends Agent
      */
     protected function requestFailed (oid :int, cause :ObjectAccessError) :void
     {
-        Log.warning("Could not subscribe to game object [oid=" + oid + "]");
-        Log.logStackTrace(cause);
+        log.warning("Could not subscribe to game object", "oid", oid, cause);
     }
 
     /**
@@ -112,12 +133,12 @@ public class AVRGameAgent extends Agent
     protected function gotUserCode (userCode :UserCode) :void
     {
         if (userCode == null) {
-            Log.warning("Unable to load user code [agent: " + _agentObj + "]");
+            log.warning("Unable to load user code", "agent", _agentObj);
             return;
         }
 
         _userCode = userCode;
-        Log.info("Loaded user code " + _userCode);
+        log.info("Loaded user code", "userCode", _userCode);
 
         if (_userCode != null && _gameObj != null) {
             launchUserCode();
@@ -132,7 +153,7 @@ public class AVRGameAgent extends Agent
         _userCode.connect(_controller.backend.getConnectListener(), relayTrace);
         
         if (!_controller.backend.isConnected()) {
-            Log.info("Could not connect to user code");
+            log.info("Could not connect to user code");
             return;
         }
 

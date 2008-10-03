@@ -286,22 +286,37 @@ public class BackendUtils
      * Creates a confirm listener that will log failures with a service name and optionally 
      * call a function on success.
      */
-    public static function loggingConfirmListener (svc :String, processed :Function = null)
+    public static function loggingConfirmListener (
+        svc :String, processed :Function = null, altOutputFn :Function = null)
         :InvocationService_ConfirmListener
     {
         return new ConfirmAdapter(function (cause :String) :void {
-            log.warning("Service failure", "service", svc, "cause", cause);
+            if (altOutputFn != null) {
+                var msg :String = new Date().toLocaleTimeString();
+                msg += ": service failure [service=" + svc + ", cause=" + cause + "]";
+                altOutputFn(msg);
+
+            } else {
+                log.warning("Service failure", "service", svc, "cause", cause);
+            }
         }, processed);
     }
 
     /**
      * Creates an invocation listener that will log failures with a service name.
      */
-    public static function loggingInvocationListener (svc :String) 
+    public static function loggingInvocationListener (svc :String, altOutputFn :Function = null)
         :InvocationService_InvocationListener
     {
         return new InvocationAdapter(function (cause :String) :void {
-            log.warning("Service failure", "service", svc, "cause", cause);
+            if (altOutputFn != null) {
+                var msg :String = new Date().toLocaleTimeString();
+                msg += ": service failure [service=" + svc + ", cause=" + cause + "]";
+                altOutputFn(msg);
+
+            } else {
+                log.warning("Service failure", "service", svc, "cause", cause);
+            }
         });
     }
 

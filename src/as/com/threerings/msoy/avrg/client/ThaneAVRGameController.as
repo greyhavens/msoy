@@ -32,6 +32,7 @@ import com.threerings.msoy.room.data.RoomObject;
 import com.threerings.msoy.room.data.RoomPropertiesEntry;
 import com.threerings.msoy.room.data.RoomPropertiesObject;
 
+import com.threerings.msoy.bureau.client.AVRGameAgent;
 import com.threerings.msoy.bureau.client.ThaneWorldService;
 import com.threerings.msoy.bureau.client.Window;
 import com.threerings.msoy.bureau.util.MsoyBureauContext;
@@ -47,10 +48,12 @@ public class ThaneAVRGameController
 
     /** Initializes the game controller. */
     public function init (
-        ctx :MsoyBureauContext, gameObj :AVRGameObject, gameAgentObj :AVRGameAgentObject) :void
+        ctx :MsoyBureauContext, gameObj :AVRGameObject, gameAgent :AVRGameAgent,
+        gameAgentObj :AVRGameAgentObject) :void
     {
         _ctx = ctx;
         _gameObj = gameObj;
+        _gameAgent = gameAgent;
         _gameAgentObj = gameAgentObj;
 
         // create the backend
@@ -109,6 +112,7 @@ public class ThaneAVRGameController
         // null our init references
         _ctx = null;
         _gameObj = null;
+        _gameAgent = null;
         _gameAgentObj = null;
     }
 
@@ -234,6 +238,19 @@ public class ThaneAVRGameController
     public function getTransactions () :Transactions
     {
         return _transactions;
+    }
+
+    /**
+     * Outputs a message to the trace function within the user code.
+     */
+    public function outputToUserCode (msg :String, err :Error = null) :void
+    {
+        if (_gameAgent != null) {
+            _gameAgent.outputToUserCode(msg, err);
+
+        } else {
+            log.warning("User error occurred after shutdown");
+        }
     }
 
     /** Retrieves the player object by the given player id (member id). Returns null if the player
@@ -657,6 +674,7 @@ public class ThaneAVRGameController
 
     protected var _ctx :MsoyBureauContext;
     protected var _backend :ThaneAVRGameBackend;
+    protected var _gameAgent :AVRGameAgent;
     protected var _gameObj :AVRGameObject;
     protected var _gameAgentObj :AVRGameAgentObject;
     protected var _bindings :HashMap = new HashMap();
