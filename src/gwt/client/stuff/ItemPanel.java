@@ -74,7 +74,7 @@ public class ItemPanel extends FlowPanel
         _searchBox = new SearchBox(new SearchBox.Listener() {
             public void search (String query) {
                 String type = searchTypes.getValue(searchTypes.getSelectedIndex());
-                Link.go(Pages.STUFF, Args.compose(_type, 0, query));
+                Link.go(Pages.STUFF, Args.compose(type, 0, query));
             }
             public void clearSearch () {
                 Link.go(Pages.STUFF, Args.compose(_type, 0));
