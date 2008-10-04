@@ -182,8 +182,8 @@ public class GameGameRegistry
                 Iterable<ItemPackRecord> irecords;
                 if (game.isDevelopmentVersion()) {
                     // this will only work for the game developer, but we can dig it
-                    lrecords = _lpackRepo.loadOriginalItems(memberId, suiteId, null);
-                    irecords = _ipackRepo.loadOriginalItems(memberId, suiteId, null);
+                    lrecords = _lpackRepo.loadOriginalItems(memberId, suiteId);
+                    irecords = _ipackRepo.loadOriginalItems(memberId, suiteId);
                     // filter out non-premium level packs since those normally wouldn't be owned
                     lrecords = Iterables.filter(lrecords, new Predicate<LevelPackRecord>() {
                         public boolean apply (LevelPackRecord record) {
@@ -191,8 +191,8 @@ public class GameGameRegistry
                         }
                     });
                 } else {
-                    lrecords = _lpackRepo.loadClonedItems(memberId, suiteId, null);
-                    irecords = _ipackRepo.loadClonedItems(memberId, suiteId, null);
+                    lrecords = _lpackRepo.loadClonedItems(memberId, suiteId);
+                    irecords = _ipackRepo.loadClonedItems(memberId, suiteId);
                 }
                 Iterables.addAll(_lpacks, Iterables.transform(lrecords, LevelPackRecord.GET_IDENT));
                 Iterables.addAll(_ipacks, Iterables.transform(irecords, ItemPackRecord.GET_IDENT));

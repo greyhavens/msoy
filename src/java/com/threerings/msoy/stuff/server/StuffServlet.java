@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
@@ -178,13 +179,22 @@ public class StuffServlet extends MsoyServiceServlet
             throw new ServiceException(ServiceCodes.E_INTERNAL_ERROR);
         }
 
+        // sanity check
+        if (suiteId != 0 && !StringUtil.isBlank(query)) {
+            log.warning("Requested to search an item suite which is not supported.",
+                        "who", who(memrec), "suiteId", suiteId, "query", query);
+            query = null;
+        }
+
         ItemRepository<ItemRecord> repo = _itemLogic.getRepository(type);
         List<Item> items = Lists.newArrayList();
-        for (ItemRecord record : repo.loadOriginalItems(memrec.memberId, suiteId, query)) {
-            items.add(record.toItem());
-        }
-        for (ItemRecord record : repo.loadClonedItems(memrec.memberId, suiteId, query)) {
-            items.add(record.toItem());
+        Function<ItemRecord, Item> toItem = new ItemRecord.ToItem<Item>();
+        if (StringUtil.isBlank(query)) {
+            items.addAll(Lists.transform(repo.loadOriginalItems(memrec.memberId, suiteId), toItem));
+            items.addAll(Lists.transform(repo.loadClonedItems(memrec.memberId, suiteId), toItem));
+        } else {
+            items.addAll(Lists.transform(repo.findOriginalItems(memrec.memberId, query), toItem));
+            items.addAll(Lists.transform(repo.findClonedItems(memrec.memberId, query), toItem));
         }
         Collections.sort(items);
 

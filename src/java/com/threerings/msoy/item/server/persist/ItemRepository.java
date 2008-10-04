@@ -265,24 +265,14 @@ public abstract class ItemRepository<T extends ItemRecord>
     /**
      * Loads all original items owned by the specified member in the specified suite.
      */
-    public List<T> loadOriginalItems (int ownerId, int suiteId, String searchQuery)
+    public List<T> loadOriginalItems (int ownerId, int suiteId)
     {
-        SQLOperator ownerSuite;
-        if (suiteId == 0) {
-            ownerSuite = new Conditionals.Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId);
-        } else {
-            ownerSuite = new And(
-                new Conditionals.Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId),
-                new Conditionals.Equals(getItemColumn(SubItemRecord.SUITE_ID), suiteId));
-        }
-
-        // add the search string clause if needed
         Where where;
-        if (searchQuery != null && searchQuery.length() > 0) {
-            where = new Where(
-                new And(ownerSuite, buildSearchStringClause(searchQuery)));
+        if (suiteId == 0) {
+            where = new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId);
         } else {
-            where = new Where(ownerSuite);
+            where = new Where(getItemColumn(ItemRecord.OWNER_ID), ownerId,
+                              getItemColumn(SubItemRecord.SUITE_ID), suiteId);
         }
         return findAll(getItemClass(), where);
     }
@@ -296,26 +286,38 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
+     * Finds all items owned by the specified player that match the supplied query.
+     */
+    public List<T> findOriginalItems (int ownerId, String query)
+    {
+        return findAll(getItemClass(), new Where(
+            new And(new Conditionals.Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId),
+                    buildSearchStringClause(query))));
+    }
+
+    /**
      * Loads all cloned items owned by the specified member.
      */
-    public List<T> loadClonedItems (int ownerId, int suiteId, String searchQuery)
+    public List<T> loadClonedItems (int ownerId, int suiteId)
     {
-        SQLOperator ownerSuite;
-        if (suiteId == 0) {
-            ownerSuite = new Conditionals.Equals(getCloneColumn(CloneRecord.OWNER_ID), ownerId);
-        } else {
-            ownerSuite = new And(new Conditionals.Equals(getCloneColumn(CloneRecord.OWNER_ID),
-                ownerId), new Conditionals.Equals(getItemColumn(SubItemRecord.SUITE_ID), suiteId));
-        }
-
-        // add the search string clause if needed
         Where where;
-        if (searchQuery != null && searchQuery.length() > 0) {
-            where = new Where(new And(ownerSuite, buildSearchStringClause(searchQuery)));
+        if (suiteId == 0) {
+            where = new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId);
         } else {
-            where = new Where(ownerSuite);
+            where = new Where(getCloneColumn(CloneRecord.OWNER_ID), ownerId,
+                              getItemColumn(SubItemRecord.SUITE_ID), suiteId);
         }
         return loadClonedItems(where);
+    }
+
+    /**
+     * Finds all items owned by the specified player that match the supplied query.
+     */
+    public List<T> findClonedItems (int ownerId, String query)
+    {
+        return loadClonedItems(new Where(
+            new And(new Conditionals.Equals(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
+                    buildSearchStringClause(query))));
     }
 
     /**

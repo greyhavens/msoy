@@ -79,7 +79,8 @@ public interface StuffService extends RemoteService
 
     /**
      * Loads all items in a player's inventory of the specified type and optionally restricted to
-     * the specified suite or items whose name/description/tags match a specified string.
+     * the specified suite *or* items whose name/description/tags match a specified string, but not
+     * both.
      */
     List<Item> loadInventory (byte type, int suiteId, String query)
         throws ServiceException;
