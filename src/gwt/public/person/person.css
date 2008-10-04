@@ -60,11 +60,22 @@
 }
 
 /* ------------------------------------
-   GALLERY & GALLERY VIEW PANEL
+   GALLERY LIST & GALLERY VIEW PANEL
 -------------------------------------*/
 
-.galleryPanel .clickBox {
-  float: left;
+.galleryPanel {
+  padding: 10px;
+}
+
+.galleryPanel .Title {
+  font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  color: #247393;
+  font-size: 24px;
+}
+
+.galleryPanel .CreateButton {
+  margin: 10px 0 10px 530px;
 }
 
 .galleryViewPanel {

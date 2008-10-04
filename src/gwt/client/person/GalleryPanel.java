@@ -3,18 +3,25 @@
 
 package client.person;
 
-import java.util.List;
-
 import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.ClickBox;
+import client.ui.MsoyUI;
+import client.util.Link;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.PushButton;
+import com.google.gwt.user.client.ui.Widget;
+
+import com.threerings.gwt.ui.FloatPanel;
+
 import com.threerings.msoy.person.gwt.Gallery;
+import com.threerings.msoy.person.gwt.GalleryListData;
 import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.GalleryServiceAsync;
 
@@ -31,16 +38,41 @@ public class GalleryPanel extends FlowPanel
     {
         addStyleName("galleryPanel");
 
-        _gallerysvc.loadGalleries(memberId, new MsoyCallback<List<Gallery>>(){
-            public void onSuccess (List<Gallery> result) {
-                for (int i = 0; i < result.size(); i++) {
-                    Gallery gallery = result.get(i);
-                    String args = Args.compose(GalleryViewPanel.VIEW_ACTION, ""+gallery.galleryId);
-                    add(new ClickBox(gallery.thumbMedia, getGalleryLabel(gallery),
-                        Pages.PEOPLE, args));
-                }
+        _gallerysvc.loadGalleries(memberId, new MsoyCallback<GalleryListData>() {
+            public void onSuccess (GalleryListData result) {
+                displayGalleries(result);
             }
         });
+    }
+
+    /**
+     * Print a list of galleries
+     */
+    protected void displayGalleries (GalleryListData data)
+    {
+        add(MsoyUI.createLabel(_pmsgs.galleryListTitle(data.owner.toString()), "Title"));
+
+        FloatPanel galleries = new FloatPanel("GalleriesList");
+        add(galleries);
+        for (int i = 0; i < data.galleries.size(); i++) {
+            Gallery gallery = data.galleries.get(i);
+            String args = Args.compose(GalleryViewPanel.VIEW_ACTION, "" + gallery.galleryId);
+            Widget click = new ClickBox(gallery.thumbMedia, getGalleryLabel(gallery),
+                Pages.PEOPLE, args);
+            galleries.add(click);
+        }
+
+        // add a create gallery button if player is looking at their own galleries
+        if (CShell.getMemberId() == data.owner.getMemberId()) {
+            PushButton create = MsoyUI.createButton(MsoyUI.LONG_THIN,
+                _pmsgs.galleryCreate(), new ClickListener() {
+                public void onClick (Widget sender) {
+                    Link.go(Pages.PEOPLE, GalleryEditPanel.CREATE_ACTION);
+                }
+            });
+            create.addStyleName("CreateButton");
+            add(create);
+        }
     }
 
     /**

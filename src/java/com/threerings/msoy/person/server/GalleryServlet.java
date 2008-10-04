@@ -22,6 +22,7 @@ import com.threerings.msoy.web.server.MsoyServiceServlet;
 
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryData;
+import com.threerings.msoy.person.gwt.GalleryListData;
 import com.threerings.msoy.person.gwt.GalleryService;
 import com.threerings.msoy.person.gwt.ProfileCodes;
 import com.threerings.msoy.person.server.persist.GalleryRecord;
@@ -84,10 +85,16 @@ public class GalleryServlet extends MsoyServiceServlet
     }
 
     // from GalleryService
-    public List<Gallery> loadGalleries (int memberId)
+    public GalleryListData loadGalleries (int memberId)
         throws ServiceException
     {
-        return _galleryLogic.loadGalleries(memberId);
+        GalleryListData data = new GalleryListData();
+        data.owner = _memberRepo.loadMemberName(memberId);
+        if (data.owner == null) {
+            throw new ServiceException(ProfileCodes.E_MEMBER_DOES_NOT_EXIST);
+        }
+        data.galleries = _galleryLogic.loadGalleries(memberId);
+        return data;
     }
 
     // from GalleryService

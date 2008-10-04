@@ -8,7 +8,8 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.FlowPanel;
+
+import com.threerings.gwt.ui.FloatPanel;
 
 import com.threerings.msoy.item.data.all.Item;
 
@@ -22,11 +23,11 @@ import client.util.Link;
  * Displays a way to navigate our stuff. Used on the Me page and the My Stuff page which is why it
  * lives in item.
  */
-public class StuffNaviBar extends FlowPanel
+public class StuffNaviBar extends FloatPanel
 {
     public StuffNaviBar (byte selectedType)
     {
-        setStyleName("stuffNaviBar");
+        super("stuffNaviBar");
 
         for (byte type : Item.TYPES) {
             AbstractImagePrototype image = UP_IMAGES.get(type);
@@ -34,10 +35,9 @@ public class StuffNaviBar extends FlowPanel
                 CShell.log("Missing stuff image for item type " + type + ".");
                 continue;
             }
-            add(MsoyUI.makeActionImage(image.createImage(), null, 
+            add(MsoyUI.makeActionImage(image.createImage(), null,
                 Link.createListener(Pages.STUFF, "" + type)));
         }
-        add(MsoyUI.createSimplePanel(null, "clear"));
     }
 
     protected static final StuffImages _images = GWT.create(StuffImages.class);

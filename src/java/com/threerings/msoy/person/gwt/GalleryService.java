@@ -22,7 +22,7 @@ public interface GalleryService extends RemoteService
     /**
      * Loads all of the galleries belonging to the given member ID.
      */
-    public List<Gallery> loadGalleries (int memberId)
+    public GalleryListData loadGalleries (int memberId)
         throws ServiceException;
 
     /**

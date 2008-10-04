@@ -16,7 +16,7 @@ public interface GalleryServiceAsync
      * The asynchronous version of {@link GalleryService#loadGalleries}.
      */
     void loadGalleries (int memberId,
-                        AsyncCallback<List<Gallery>> callback);
+                        AsyncCallback<GalleryListData> callback);
 
     /**
      * The asynchronous version of {@link GalleryService#loadMeGallery}.
