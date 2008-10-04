@@ -18,8 +18,30 @@ import com.threerings.util.OOOFileAppender;
  */
 public class BureauFileAppender extends OOOFileAppender
 {
+    /**
+     * Summarizes the log specified by the first command line argument and prints it to stdout
+     * instead of sending via email.
+     */
+    public static void main (String[] args)
+        throws IOException
+    {
+        BureauFileAppender appender = new BureauFileAppender();
+        File target = new File(args[0]);
+        StringBuffer summary = new StringBuffer();
+        appender.summarizeLog(target, summary);
+        System.out.print(summary);
+    }
+    
     @Override // from OOOFileAppender
     protected void summarizeLog (File target)
+        throws IOException
+    {
+        StringBuffer summary = new StringBuffer();
+        summarizeLog(target, summary);
+        sendSummary(summary.toString());
+    }
+    
+    protected void summarizeLog (File target, StringBuffer summary)
         throws IOException
     {
         long nowStamp = System.currentTimeMillis();
@@ -49,8 +71,6 @@ public class BureauFileAppender extends OOOFileAppender
             summaries.put(bureau, bsummary);
         }
         
-        StringBuffer summary = new StringBuffer();
-
         // Append all full text portions
         for (String bureau : overallFormat.bureaus) {
             StringBuffer bsummary = summaries.get(bureau);
@@ -90,9 +110,6 @@ public class BureauFileAppender extends OOOFileAppender
             summary.insert(0, header);
         }
         
-        // Send the email
-        sendSummary(summary.toString());
-
         // Prune & write out message timestamps
         errors.pruneOldErrors(nowStamp);
         errors.writeTo(_database);
@@ -198,8 +215,15 @@ public class BureauFileAppender extends OOOFileAppender
             if (!_line.startsWith(_prefix)) {
                 return false;
             }
-
+            
             _pos = _prefix.length();
+
+            // Ignore stuff from user code, this will get relayed to the database logs
+            if (_pos + 9 <= _line.length() && _line.substring(_pos, _pos + 9).equals(
+                "UserCode-")) {
+                return false;
+            }
+
             return true;
         }
 
