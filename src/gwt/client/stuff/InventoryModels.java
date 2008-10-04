@@ -43,7 +43,7 @@ public class InventoryModels
             super(items);
             this.type = type;
             this.suiteId = suiteId;
-            this.query = query;
+            this.query = (query != null && query.length() == 0) ? null : query;
         }
 
         public boolean matches (Item item) {

@@ -115,7 +115,9 @@ public class ItemPanel extends FlowPanel
                 return new ItemEntry(item);
             }
             @Override protected String getEmptyMessage () {
-                return _msgs.panelNoItems(_dmsgs.xlate("itemType" + _type));
+                String query = ((InventoryModels.Stuff)_model).query;
+                return (query == null) ? _msgs.panelNoItems(_dmsgs.xlate("itemType" + _type)) :
+                    _msgs.panelNoMatches(query);
             }
             @Override protected boolean displayNavi (int items) {
                 return true;
