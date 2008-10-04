@@ -48,7 +48,7 @@ import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 import com.threerings.msoy.money.data.all.TransactionType;
-import com.threerings.msoy.money.server.persist.CashOutRecord;
+import com.threerings.msoy.money.server.persist.BlingCashOutRecord;
 import com.threerings.msoy.money.server.persist.MemberAccountRecord;
 import com.threerings.msoy.money.server.persist.MoneyTransactionRecord;
 import com.threerings.msoy.money.server.persist.MoneyRepository;
@@ -358,7 +358,7 @@ public class MoneyLogic
      * Called to effect the removal of bling from a member's account for cash-out purposes.
      *
      * @param memberId ID of the member whose bling will be cashed out.
-     * @param amount Amount of the bling to actually cash out.  This may be different than the
+     * @param amount Amount of the centibling to actually cash out.  This may be different than the
      * amount requested, at the discretion of the support person handling this request.
      */
     public void cashOutBling (int memberId, int amount)
@@ -367,9 +367,9 @@ public class MoneyLogic
         MemberAccountRecord account = _repo.load(memberId);
         String payment = formatUSD((int)(amount * account.cashOutBlingWorth));
         MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
-            memberId, Currency.BLING, amount * 100,
+            memberId, Currency.BLING, amount,
             TransactionType.CASHED_OUT, MessageBundle.tcompose("m.cashed_out", payment), null);
-        _repo.commitBlingCashOutrequest(memberId, amount);
+        _repo.commitBlingCashOutRequest(memberId, amount);
         
         // if that didn't throw a NotEnoughMoneyException, we're good to go.
         _nodeActions.moneyUpdated(deductTx);
@@ -386,15 +386,6 @@ public class MoneyLogic
     public void cancelCashOutBling (int memberId, String reason)
     {
         _repo.cancelBlingCashOutRequest(memberId, reason);
-        
-        // TODO: I don't believe this is necessary anymore
-        /*// Create a transaction containing the reason.
-        MemberAccountRecord account = _repo.load(memberId);
-        MoneyTransactionRecord tx = new MoneyTransactionRecord(memberId, Currency.BLING, 
-            0, account.bling);
-        tx.fill(TransactionType.CANCEL_CASH_OUT, 
-            MessageBundle.tcompose("m.cancel_cash_out", reason), null);
-        _repo.storeTransaction(tx);*/
     }
     
     /**
@@ -434,18 +425,10 @@ public class MoneyLogic
         }
         
         // Add a cash out record for this member.
-        CashOutRecord cashOut = _repo.createCashOut(memberId, blingAmount, 
+        BlingCashOutRecord cashOut = _repo.createCashOut(memberId, blingAmount, 
             RuntimeConfig.server.blingWorth, info);
         
-        // TODO: Not sure if we still need this.
-        /*// Create a no-amount transaction to indicate the request was made.
-        MoneyTransactionRecord tx = new MoneyTransactionRecord(memberId, Currency.BLING, 
-            0, account.bling);
-        tx.fill(TransactionType.REQUEST_CASH_OUT, 
-            MessageBundle.tcompose("m.request_cash_out", amount), null);
-        _repo.storeTransaction(tx);*/
-        
-        return TO_BLING_INFO.apply(new Tuple<MemberAccountRecord, CashOutRecord>(
+        return TO_BLING_INFO.apply(new Tuple<MemberAccountRecord, BlingCashOutRecord>(
                 account, cashOut));
     }
 
@@ -481,7 +464,7 @@ public class MoneyLogic
      */
     public BlingInfo getBlingInfo (int memberId)
     {
-        return TO_BLING_INFO.apply(new Tuple<MemberAccountRecord, CashOutRecord>(
+        return TO_BLING_INFO.apply(new Tuple<MemberAccountRecord, BlingCashOutRecord>(
                 _repo.load(memberId), _repo.getCurrentCashOutRequest(memberId)));
     }
     
@@ -491,12 +474,12 @@ public class MoneyLogic
      */
     public Map<Integer, CashOutInfo> getBlingCashOutRequests ()
     {
-        List<CashOutRecord> accounts = _repo.getAccountsCashingOut();
+        List<BlingCashOutRecord> accounts = _repo.getAccountsCashingOut();
         
         // First transform List<CashOutRecord> into Map<Integer, CashOutRecord>, then
         // transform into Map<Integer, CashOutInfo>.
-        return transformMap(Maps.uniqueIndex(accounts, new Function<CashOutRecord, Integer>() {
-            public Integer apply (CashOutRecord record) {
+        return transformMap(Maps.uniqueIndex(accounts, new Function<BlingCashOutRecord, Integer>() {
+            public Integer apply (BlingCashOutRecord record) {
                 return record.memberId;
             }
         }), TO_CASH_OUT_INFO);
@@ -712,20 +695,19 @@ public class MoneyLogic
     }
 
     /** A Function that transforms a MemberArroundRecord and CashOutRecord to BlingInfo. */
-    protected static Function<Tuple<MemberAccountRecord, CashOutRecord>, BlingInfo> TO_BLING_INFO =
-        new Function<Tuple<MemberAccountRecord, CashOutRecord>, BlingInfo>() {
-            public BlingInfo apply (Tuple<MemberAccountRecord, CashOutRecord> records) {
-                return new BlingInfo(records.left.bling, 
-                    // this works because we're taking centibling and returning pennies
-                    (int)(records.left.bling * RuntimeConfig.server.blingWorth), 
+    protected static Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo> TO_BLING_INFO =
+        new Function<Tuple<MemberAccountRecord, BlingCashOutRecord>, BlingInfo>() {
+            public BlingInfo apply (Tuple<MemberAccountRecord, BlingCashOutRecord> records) {
+                return new BlingInfo(records.left.bling, RuntimeConfig.server.blingWorth, 
+                    RuntimeConfig.server.minimumBlingCashOut * 100, 
                     records.right == null ? null : records.right.toInfo());
             }
         };
         
     /** A Function that transforms a CashOutRecord into a CashOutInfo. */
-    protected static Function<CashOutRecord, CashOutInfo> TO_CASH_OUT_INFO =
-        new Function<CashOutRecord, CashOutInfo>() {
-            public CashOutInfo apply (CashOutRecord record) {
+    protected static Function<BlingCashOutRecord, CashOutInfo> TO_CASH_OUT_INFO =
+        new Function<BlingCashOutRecord, CashOutInfo>() {
+            public CashOutInfo apply (BlingCashOutRecord record) {
                 return record.toInfo();
             }
         };

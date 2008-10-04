@@ -51,6 +51,19 @@ public interface MoneyService extends RemoteService
         throws ServiceException;
 
     /**
+     * Performs the bling cashout the user requested earlier, for the specified amount of
+     * centibling.
+     */
+    void cashOutBling (int memberId, int blingAmount)
+        throws ServiceException;
+    
+    /**
+     * Cancels a user's requested cash out.
+     */
+    void cancelCashOut (int memberId, String reason)
+        throws ServiceException;
+    
+    /**
      * Used by support to deduct coins from a player as a logged transaction.
      */
     void supportAdjust (int memberId, Currency currency, int delta)

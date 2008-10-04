@@ -6,6 +6,7 @@ package client.adminz;
 import java.util.List;
 
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.NumberTextBox;
@@ -49,7 +50,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
     @Override // from PagedGrid
     protected String getEmptyMessage ()
     {
-        return "<Empty>";
+        return _msgs.cashOutEmptyMessage();
     }
 
     @Override // from PagedGrid
@@ -61,7 +62,11 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
     protected void init ()
     {
         addStyleName("dottedGrid");
-        
+        reload();
+    }
+    
+    protected void reload ()
+    {
         _moneysvc.getBlingCashOutRequests(new AsyncCallback<List<CashOutEntry>>() {
             public void onFailure (Throwable caught) {
                 
@@ -78,16 +83,18 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
         {
             super("cashOutWidget", 0, 3);
             
+            this.entry = item;
+            
             setWidget(0, 0, Link.create(item.displayName, Pages.PEOPLE,
                          Integer.toString(item.memberId)), 1, "Name");
             
             setWidget(1, 0, new Anchor("mailto:" + item.emailAddress, item.emailAddress));
-            setText(2, 0, "Amount: " + Currency.BLING.format(item.cashOutInfo.blingAmount));
-            setText(3, 0, "Worth: " + formatUSD(item.cashOutInfo.blingWorth));
-            setText(4, 0, "Requested: " + MsoyUI.formatDateTime(item.cashOutInfo.timeRequested));
+            setText(2, 0, _msgs.cashOutEntryAmount(Currency.BLING.format(item.cashOutInfo.blingAmount)));
+            setText(3, 0, _msgs.cashOutEntryWorth(formatUSD(item.cashOutInfo.blingWorth)));
+            setText(4, 0, _msgs.cashOutEntryRequested(MsoyUI.formatDateTime(item.cashOutInfo.timeRequested)));
             setText(0, 1, item.cashOutInfo.billingInfo.firstName + ' ' + 
                 item.cashOutInfo.billingInfo.lastName);
-            setText(1, 1, "PayPal: " + item.cashOutInfo.billingInfo.paypalEmailAddress);
+            setText(1, 1, _msgs.cashOutEntryPayPal(item.cashOutInfo.billingInfo.paypalEmailAddress));
             setText(2, 1, item.cashOutInfo.billingInfo.streetAddress);
             setText(3, 1, item.cashOutInfo.billingInfo.city + ", " +
                 item.cashOutInfo.billingInfo.state + ' ' +
@@ -96,7 +103,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
             setText(4, 1, item.cashOutInfo.billingInfo.phoneNumber);
             
             SmartTable extras = new SmartTable("Extras", 0, 5);
-            Button btn = new Button("Transactions");
+            Button btn = new Button(_msgs.cashOutEntryTransactionsButton());
             btn.addStyleName("sideButton");
             btn.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -104,7 +111,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
                 }
             });
             extras.addWidget(btn, 0, null);
-            btn = new Button("Cash Out");
+            btn = new Button(_msgs.cashOutEntryCashOutButton());
             btn.addStyleName("sideButton");
             btn.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -112,7 +119,7 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
                 }
             });
             extras.addWidget(btn, 0, null);
-            btn = new Button("Cancel Request");
+            btn = new Button(_msgs.cashOutEntryCancelButton());
             btn.addStyleName("sideButton");
             btn.addClickListener(new ClickListener() {
                 public void onClick (Widget sender) {
@@ -140,8 +147,13 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
                 setWidget(0, 1, _reasonBox = new TextArea(), 0, "PopupCell");
                 _reasonBox.addStyleName("Reason");
                 
-                Button btn = new Button("Cancel this Request");
+                Button btn = new Button(_msgs.cashOutEntryCancelButton());
                 btn.addStyleName("PopupButton");
+                btn.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        doCancel();
+                    }
+                });
                 setWidget(0, 2, btn, 0, "PopupCell");
             }
             
@@ -152,6 +164,19 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
                 _reasonBox.setFocus(true);
             }
             
+            protected void doCancel ()
+            {
+                _moneysvc.cancelCashOut(entry.memberId, _reasonBox.getText(), new AsyncCallback<Void>() {
+                    public void onFailure (Throwable cause) {
+                        MsoyUI.error(CShell.serverError(cause));
+                    }
+                    public void onSuccess (Void result) {
+                        reload();
+                        MsoyUI.info(_msgs.cashOutEntryCancelSuccess());
+                    }
+                });
+            }
+            
             protected TextArea _reasonBox;
         }
         
@@ -159,15 +184,22 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
         {
             public CashOutPanel (String initialAmount)
             {
-                add(new InlineLabel("Amount to cash out: "));
+                add(new InlineLabel(_msgs.cashOutEntryCashOutPanelAmount()));
                 
                 _amountBox = new NumberTextBox(true);
                 _amountBox.setText(initialAmount);
                 add(_amountBox);
                 
-                Button btn = new Button("Cash Out This Member");
+                Button btn = new Button(_msgs.cashOutEntryCashOutPanelButton());
                 btn.addStyleName("PopupButton");
+                btn.addClickListener(new ClickListener() {
+                    public void onClick (Widget sender) {
+                        doCashOut();
+                    }
+                });
                 add(btn);
+                
+                add(_status = new InlineLabel(""));
             }
             
             @Override
@@ -178,8 +210,25 @@ public class CashOutTable extends PagedGrid<CashOutEntry>
                 _amountBox.setFocus(true);
             }
             
-            protected NumberTextBox _amountBox;
+            protected void doCashOut()
+            {
+                int blingAmount = (int)(_amountBox.getValue().floatValue() * 100.0);
+                _moneysvc.cashOutBling(entry.memberId, blingAmount, new AsyncCallback<Void>() {
+                    public void onFailure (Throwable cause) {
+                        MsoyUI.error(CShell.serverError(cause));
+                    }
+                    public void onSuccess (Void result) {
+                        reload();
+                        MsoyUI.info(_msgs.cashOutEntryCashOutSuccess());
+                    }
+                });
+            }
+            
+            protected final NumberTextBox _amountBox;
+            protected final InlineLabel _status;
         }
+        
+        protected final CashOutEntry entry;
     }
     
     /**

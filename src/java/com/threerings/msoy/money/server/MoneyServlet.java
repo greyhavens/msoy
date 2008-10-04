@@ -129,6 +129,31 @@ public class MoneyServlet extends MsoyServiceServlet
         }
     }
     
+    public void cashOutBling (int memberId, int blingAmount)
+        throws ServiceException
+    {
+        requireSupportUser();
+        
+        try {
+            _moneyLogic.cashOutBling(memberId, blingAmount);
+        } catch (NotEnoughMoneyException e) {
+            // TODO: return new balance, brah
+            throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
+        }
+    }
+    
+    public void cancelCashOut (int memberId, String reason)
+        throws ServiceException
+    {
+        // Normal user or support user can cancel
+        MemberRecord authedUser = getAuthedUser();
+        if (memberId != authedUser.memberId) {
+            requireSupportUser();
+        }
+        
+        _moneyLogic.cancelCashOutBling(memberId, reason);
+    }
+    
     /**
      * Not a public service method, Called by getTransactionHistory
      */

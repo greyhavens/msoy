@@ -48,5 +48,15 @@ public interface MoneyServiceAsync
      * The asynchronous version of {@link MoneyService#supportAdjust}.
      */
     void supportAdjust (int memberId, Currency currency, int delta, AsyncCallback<Void> callback);
+    
+    /**
+     * The asynchronous version of {@link MoneyService#cashOutBling}.
+     */
+    void cashOutBling (int memberId, int blingAmount, AsyncCallback<Void> callback);
+    
+    /**
+     * The asynchronous version of {@link MoneyService#cancelCashOut}.
+     */
+    void cancelCashOut (int memberId, String reason, AsyncCallback<Void> callback);
 }
 

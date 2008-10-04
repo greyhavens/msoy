@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.money.server.persist;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 
@@ -20,6 +21,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.samskivert.jdbc.depot.CacheInvalidator.TraverseWithFilter;
 import com.samskivert.jdbc.depot.DatabaseException;
 import com.samskivert.jdbc.depot.DepotRepository;
 import com.samskivert.jdbc.depot.DuplicateKeyException;
@@ -117,9 +119,6 @@ public class MoneyRepository extends DepotRepository
                 return false;
             }
         });
-        ctx.registerMigration(CashOutRecord.class, new SchemaMigration.Drop(3, "timeCompleted"));
-        ctx.registerMigration(CashOutRecord.class, new SchemaMigration.Drop(3, "actualBlingCashedOut"));
-        ctx.registerMigration(CashOutRecord.class, new SchemaMigration.Drop(4, "failureReason"));
     }
 
     /**
@@ -391,17 +390,17 @@ public class MoneyRepository extends DepotRepository
      * @return Number of records updated, either 0 or 1.  Can be zero if the member is not currently
      * cashing out any bling.
      */
-    public int commitBlingCashOutrequest (int memberId, int actualAmount)
+    public int commitBlingCashOutRequest (int memberId, int actualAmount)
     {
         Where where = new Where(new And(
-            new Conditionals.Equals(CashOutRecord.MEMBER_ID_C, memberId),
-            new Conditionals.IsNull(CashOutRecord.TIME_FINISHED)));
-        return updatePartial(CashOutRecord.class, where, CashOutRecord.getKey(memberId),
-            CashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
-            CashOutRecord.ACTUAL_CASHED_OUT_C, actualAmount,
-            CashOutRecord.SUCCESSFUL, false);
+            new Conditionals.Equals(BlingCashOutRecord.MEMBER_ID_C, memberId),
+            new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED_C)));
+        return updatePartial(BlingCashOutRecord.class, where, new ActiveCashOutInvalidator(memberId),
+            BlingCashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
+            BlingCashOutRecord.ACTUAL_CASHED_OUT, actualAmount,
+            BlingCashOutRecord.SUCCESSFUL, false);
     }
-    
+        
     /**
      * Cancels a request to cash out bling.
      * 
@@ -413,12 +412,12 @@ public class MoneyRepository extends DepotRepository
     public int cancelBlingCashOutRequest (int memberId, String reason)
     {
         Where where = new Where(new And(
-            new Conditionals.Equals(CashOutRecord.MEMBER_ID_C, memberId),
-            new Conditionals.IsNull(CashOutRecord.TIME_FINISHED)));
-        return updatePartial(CashOutRecord.class, where, CashOutRecord.getKey(memberId),
-            CashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
-            CashOutRecord.CANCEL_REASON, reason,
-            CashOutRecord.SUCCESSFUL, false);
+            new Conditionals.Equals(BlingCashOutRecord.MEMBER_ID_C, memberId),
+            new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED_C)));
+        return updatePartial(BlingCashOutRecord.class, where, new ActiveCashOutInvalidator(memberId),
+            BlingCashOutRecord.TIME_FINISHED, new Timestamp(System.currentTimeMillis()),
+            BlingCashOutRecord.CANCEL_REASON, reason,
+            BlingCashOutRecord.SUCCESSFUL, false);
     }
 
     /**
@@ -430,10 +429,10 @@ public class MoneyRepository extends DepotRepository
      * @param info Billing information indicating how the member should be paid.
      * @return The newly created cash out record.
      */
-    public CashOutRecord createCashOut (int memberId, int blingAmount, float blingWorth,
+    public BlingCashOutRecord createCashOut (int memberId, int blingAmount, float blingWorth,
         CashOutBillingInfo info)
     {
-        CashOutRecord cashOut = new CashOutRecord(memberId, blingAmount, 
+        BlingCashOutRecord cashOut = new BlingCashOutRecord(memberId, blingAmount, 
             RuntimeConfig.server.blingWorth, info);
         insert(cashOut);
         return cashOut;
@@ -445,22 +444,39 @@ public class MoneyRepository extends DepotRepository
      * @param memberId ID of the member to retrieve a cash out record for.
      * @return The current cash out record, or null if the user is not currently cashing out.
      */
-    public CashOutRecord getCurrentCashOutRequest (int memberId)
+    public BlingCashOutRecord getCurrentCashOutRequest (int memberId)
     {
-        return load(CashOutRecord.class, new Where(new And(
-            new Conditionals.IsNull(CashOutRecord.TIME_FINISHED_C),
-            new Conditionals.Equals(CashOutRecord.MEMBER_ID_C, memberId))));
+        return load(BlingCashOutRecord.class, new Where(new And(
+            new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED_C),
+            new Conditionals.Equals(BlingCashOutRecord.MEMBER_ID_C, memberId))));
     }
     
     /**
      * Retrieves all cash out records for members that are currently cashing out some amount
      * of their bling.
      */
-    public List<CashOutRecord> getAccountsCashingOut ()
+    public List<BlingCashOutRecord> getAccountsCashingOut ()
     {
         // select * from CashOutRecord where timeCompleted is null
-        return findAll(CashOutRecord.class, new Where(
-            new Conditionals.IsNull(CashOutRecord.TIME_FINISHED_C)));
+        return findAll(BlingCashOutRecord.class, new Where(
+            new Conditionals.IsNull(BlingCashOutRecord.TIME_FINISHED_C)));
+    }
+    
+    /** Cache invalidator that invalidates a member's current cash out record. */
+    protected static class ActiveCashOutInvalidator extends TraverseWithFilter<BlingCashOutRecord>
+    {
+        public ActiveCashOutInvalidator (int memberId)
+        {
+            super(BlingCashOutRecord.class);
+            _memberId = memberId;
+        }
+        
+        protected boolean testForEviction (Serializable key, BlingCashOutRecord record) 
+        {
+            return record.memberId == _memberId && record.timeFinished == null;
+        }
+        
+        protected final int _memberId;
     }
     
     /** Helper method to setup a query for a transaction history search. */
@@ -488,6 +504,6 @@ public class MoneyRepository extends DepotRepository
         classes.add(MemberAccountRecord.class);
         classes.add(MoneyTransactionRecord.class);
         classes.add(MoneyConfigRecord.class);
-        classes.add(CashOutRecord.class);
+        classes.add(BlingCashOutRecord.class);
     }
 }
