@@ -7,12 +7,14 @@ import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
+import client.util.ClickCallback;
 import client.util.Link;
 import client.util.MediaUtil;
 import client.util.MsoyCallback;
 import client.util.ServiceUtil;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.History;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ClickListener;
@@ -145,8 +147,23 @@ public class GalleryViewPanel extends FlowPanel
             actions.add(new Label("|"));
             final String args = Args.compose(GalleryEditPanel.EDIT_ACTION,
                 _galleryData.gallery.galleryId);
-            final ClickListener listener = Link.createListener(Pages.PEOPLE, args);
-            actions.add(MsoyUI.createActionLabel(_pmsgs.editButton(), listener));
+            final ClickListener editListener = Link.createListener(Pages.PEOPLE, args);
+            actions.add(MsoyUI.createActionLabel(_pmsgs.galleryEditButton(), editListener));
+            actions.add(new Label("|"));
+            Label delete = MsoyUI.createActionLabel(_pmsgs.galleryDeleteButton(), null);
+            delete.addStyleName("actionLabel");
+            new ClickCallback<Void>(delete, _pmsgs.galleryConfirmDelete()) {
+                public boolean callService () {
+                    _gallerysvc.deleteGallery(_galleryData.gallery.galleryId, this);
+                    return true;
+                }
+                public boolean gotResult (Void result) {
+                    MsoyUI.info(_pmsgs.galleryDeleted());
+                    History.back(); // back up to the last page
+                    return false;
+                }
+            };
+            actions.add(delete);
         }
         add(actions);
 
