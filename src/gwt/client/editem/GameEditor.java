@@ -35,7 +35,9 @@ import com.threerings.msoy.item.data.all.Item;
  */
 public class GameEditor extends ItemEditor
 {
-    /** Constants from com.threerings.parlor.game.data.GameConfig */
+    /** Constants from com.threerings.parlor.game.data.GameConfig. These can't be imported directly
+     * since this is gwt code. The names are the same in order to increase coupling and hence the
+     * likelihood that they will show up in a search.  */
     public static String SEATED_GAME = "0";
     public static String SEATED_CONTINUOUS = "1";
     public static String PARTY = "2";
@@ -102,8 +104,24 @@ public class GameEditor extends ItemEditor
             }
             if (match.hasAttribute("type")) {
                 // this will be more sensible when SEATED_CONTINUOUS is re-instated as a game type
-                _matchType.setSelectedIndex(SEATED_GAME.equals(match.getAttribute("type")) ? 0 : 1);
+                for (GameType gtype : GameType.values()) {
+                    if (match.getAttribute("type").equals(gtype.getMatchType())) {
+                        _gameType.setSelectedIndex(gtype.ordinal());
+                    }
+                }
             }
+        }
+
+        // avrg overrides the match element, it is not a real match type
+        if (xml.getElementsByTagName("avrg").getLength() > 0) {
+            _gameType.setSelectedIndex(GameType.AVRG.ordinal());
+        }
+        
+        // disable min, max and watchable for non-seated games
+        if (_gameType.getSelectedIndex() != GameType.SEATED.ordinal()) {
+            _minPlayers.setEnabled(false);
+            _maxPlayers.setEnabled(false);
+            _watchable.setEnabled(false);
         }
 
         NodeList params = xml.getElementsByTagName("params");
@@ -130,11 +148,6 @@ public class GameEditor extends ItemEditor
                 ((TextBox)bits[ii+1]).setText(elem.getFirstChild().toString());
             }
         }
-
-        NodeList avrg = xml.getElementsByTagName("avrg");
-        if (avrg.getLength() > 0) {
-            _avrg.setChecked(true);
-        }
     }
 
     @Override // from ItemEditor
@@ -156,10 +169,14 @@ public class GameEditor extends ItemEditor
 
         addTab(_emsgs.gameTabConfig());
 
-        addRow(_emsgs.gameGameType(), bind(_matchType = new ListBox(), new Binder() {
+        addRow(_emsgs.gameGameType(), bind(_gameType = new ListBox(), new Binder() {
             @Override public void valueChanged () {
-                boolean isParty = (_matchType.getSelectedIndex() == 1);
-                if (isParty) {
+                boolean isSeated = (_gameType.getSelectedIndex() == GameType.SEATED.ordinal());
+                boolean wasSeated = _minPlayers.isEnabled();
+                if (isSeated == wasSeated) {
+                    return; // don't re-overwrite the stored values
+                }
+                if (!isSeated) {
                     _oldMin = _minPlayers.getText();
                     _minPlayers.setText("1");
                     _oldMax = _maxPlayers.getText();
@@ -172,16 +189,17 @@ public class GameEditor extends ItemEditor
                     _watchable.setChecked(_oldWatch);
                 }
                 // TODO: it would be nicer to just hide these
-                _minPlayers.setEnabled(!isParty);
-                _maxPlayers.setEnabled(!isParty);
-                _watchable.setEnabled(!isParty);
+                _minPlayers.setEnabled(isSeated);
+                _maxPlayers.setEnabled(isSeated);
+                _watchable.setEnabled(isSeated);
             }
-            protected String _oldMin, _oldMax;
+            protected String _oldMin = "1", _oldMax = "1";
             protected boolean _oldWatch;
         }));
-        // seated continuous games are disabled for now
-        _matchType.addItem(_dmsgs.xlate("gameType0"));
-        _matchType.addItem(_dmsgs.xlate("gameType2"));
+
+        for (GameType gtype : GameType.values()) {
+            _gameType.addItem(gtype.getText());
+        }
 
         addRow(_emsgs.gameMinPlayers(), _minPlayers = new NumberTextBox(false, 5));
         _minPlayers.setText("1");
@@ -225,8 +243,6 @@ public class GameEditor extends ItemEditor
         _serverClass.setVisibleLength(40);
 
         addSpacer();
-        addRow(_emsgs.gameAVRG(), _avrg = new CheckBox());
-        addTip(_emsgs.gameAVRGTip());
 
         addTab(_emsgs.gameTabMedia());
 
@@ -295,9 +311,14 @@ public class GameEditor extends ItemEditor
         Document xml = XMLParser.createDocument();
         xml.appendChild(xml.createElement("game"));
 
+        // Set the game type
+        // NOTE that AVRG games get set to type = PARTY, but it makes no difference
         Element match = xml.createElement("match");
-        // this will need to be more sensible when we're using SEATED_CONTINUOUS
-        String type = _matchType.getSelectedIndex() == 0 ? SEATED_GAME : PARTY;
+        GameType gameType = GameType.values()[_gameType.getSelectedIndex()];
+        String type = gameType.getMatchType();
+        if (type == null) {
+            type = PARTY;
+        }
         match.setAttribute("type", type);
         xml.getFirstChild().appendChild(match);
 
@@ -323,7 +344,8 @@ public class GameEditor extends ItemEditor
             }
         }
 
-        if (_avrg.isChecked()) {
+        if (gameType == GameType.AVRG) {
+            // This is really what makes an avrg do its special thing
             xml.getFirstChild().appendChild(xml.createElement("avrg"));
         }
 
@@ -387,14 +409,40 @@ public class GameEditor extends ItemEditor
         return desc.mimeType == MediaDesc.COMPILED_ACTION_SCRIPT_LIBRARY;
     }
 
+    // this is for populating the game type list box. AVRG is not analogous to a "match" type but
+    // is most appropriately treated as a type of game.
+    protected enum GameType
+    {
+        // seated continuous games are disabled for now
+        SEATED("gameType0", SEATED_GAME),
+        PARTY("gameType2", GameEditor.PARTY),
+        //SEATED_CONT("gameType1", SEATED_CONTINUOUS),
+        AVRG("gameType3", null);
+        
+        GameType (String lookup, String matchType) {
+            _lookup = lookup;
+            _matchType = matchType;
+        }
+        
+        public String getText () {
+            return _dmsgs.xlate(_lookup);
+        }
+
+        public String getMatchType () {
+            return _matchType;
+        }
+
+        protected String _lookup;
+        protected String _matchType;
+    };
+    
     protected Game _game;
 
     protected ListBox _genre;
     protected NumberTextBox _minPlayers, _maxPlayers;
-    protected ListBox _matchType;
+    protected ListBox _gameType;
     protected CheckBox _watchable;
     protected TextBox _serverClass;
-    protected CheckBox _avrg;
     protected TextArea _extras;
     protected ListBox _whirled;
     protected TextBox _shopTag;
