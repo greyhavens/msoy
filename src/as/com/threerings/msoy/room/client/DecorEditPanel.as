@@ -45,7 +45,7 @@ public class DecorEditPanel extends FlyingPanel
 {
     public function DecorEditPanel (ctx :MsoyContext, studioView :RoomStudioView)
     {
-        super(ctx, Msgs.STUDIO.get("t.backdrop_editor"));
+        super(ctx, Msgs.STUDIO.get("t.backdrop_props"));
         styleName = "sexyWindow";
         _studioView = studioView;
         _decor = studioView.getScene().getDecor();
@@ -99,8 +99,8 @@ public class DecorEditPanel extends FlyingPanel
         _decor.depth = _depth.value;
         _decor.horizon = _horizon.value;
         _decor.scale = _scale.value;
-        _decor.offsetX = int(_xoff.text);
-        _decor.offsetY = int(_yoff.text);
+        _decor.offsetX = Number(_xoff.text);
+        _decor.offsetY = Number(_yoff.text);
 
         updateDecorInViewer();
         updateDecorOnPage();
