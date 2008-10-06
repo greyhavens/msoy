@@ -17,7 +17,6 @@ import com.threerings.msoy.person.gwt.MyWhirledData;
 
 import client.person.FeedPanel;
 import client.person.PersonMessages;
-import client.shell.Args;
 import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
