@@ -25,7 +25,7 @@ public class WelcomePanel extends FlowPanel
         RoundBox box = new RoundBox(RoundBox.DARK_BLUE);
         box.addStyleName("Box");
         box.add(MsoyUI.createLabel(_msgs.welcomeBoxTitle(), "Title"));
-        box.add(MsoyUI.createHTML(_msgs.welcomeSubtitle(""+STARTER_FLOW), null));
+        box.add(MsoyUI.createHTML(_msgs.welcomeSubtitle(""+STARTER_COINS), null));
         add(box);
 
         add(WidgetUtil.makeShim(20, 20));
@@ -65,5 +65,5 @@ public class WelcomePanel extends FlowPanel
 
     // this is defined in UserAction which we can't reference from GWT, when GWT supports 1.5
     // features, we can move it to MemberCodes or somewhere accessible to everyone
-    protected static final int STARTER_FLOW = 1000;
+    protected static final int STARTER_COINS = 1000;
 }

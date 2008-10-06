@@ -124,7 +124,7 @@ public class DoListItemPopup extends VerticalPanel
 
             row = pricing.addText(_imsgs.doListCost(), 1, "rightLabel");
             pricing.setWidget(row, 1, _cost = new NumberTextBox(false, 5, 5), 1, null);
-            int cost = (listing == null) ? DEFAULT_FLOW_COST : listing.quote.getListedAmount();
+            int cost = (listing == null) ? DEFAULT_COIN_COST : listing.quote.getListedAmount();
             _cost.setText(String.valueOf(cost));
 
             // TODO: You know what this needs? A mockup
@@ -264,8 +264,7 @@ public class DoListItemPopup extends VerticalPanel
     protected static final CatalogServiceAsync _catalogsvc = (CatalogServiceAsync)
         ServiceUtil.bind(GWT.create(CatalogService.class), CatalogService.ENTRY_POINT);
 
-    protected static final int DEFAULT_FLOW_COST = 100;
-    protected static final int DEFAULT_GOLD_COST = 0;
+    protected static final int DEFAULT_COIN_COST = 100;
     protected static final int DEFAULT_SALES_TARGET = 500;
 
     protected static final Currency[] CURRENCY_VALUES = { Currency.COINS, Currency.BARS };

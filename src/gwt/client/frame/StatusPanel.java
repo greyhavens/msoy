@@ -60,7 +60,7 @@ public class StatusPanel extends SmartTable
                     }
                     break;
 
-                case StatusChangeEvent.FLOW:
+                case StatusChangeEvent.COINS:
                     _levels.setCoins(event.getValue());
                     // if we earned flow, display some fancy graphics
                     if (isIncrease(event)) {
@@ -68,7 +68,7 @@ public class StatusPanel extends SmartTable
                     }
                     break;
 
-                case StatusChangeEvent.GOLD:
+                case StatusChangeEvent.BARS:
                     _levels.setBars(event.getValue());
                     break;
 
@@ -106,8 +106,8 @@ public class StatusPanel extends SmartTable
         setWidget(0, idx, Link.memberView(_creds.name));
         getFlexCellFormatter().setHorizontalAlignment(0, idx++, HasAlignment.ALIGN_RIGHT);
         setWidget(0, idx++, _levels);
-        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.FLOW, data.flow, 0));
-        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.GOLD, data.gold, 0));
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.COINS, data.flow, 0));
+        CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.BARS, data.gold, 0));
         CShell.frame.dispatchEvent(new StatusChangeEvent(StatusChangeEvent.LEVEL, data.level, 0));
 
         // configure our 'new mail' indicator

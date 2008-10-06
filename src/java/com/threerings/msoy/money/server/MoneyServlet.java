@@ -14,12 +14,12 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.threerings.msoy.money.data.MoneyCodes;
-import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.CashOutInfo;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.MoneyResult;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
@@ -53,11 +53,12 @@ public class MoneyServlet extends MsoyServiceServlet
         return new TransactionPageResult(total, page, getBlingInfo(memberId));
     }
     
-    public BlingExchangeResult exchangeBlingForBars (int memberId, int blingAmount)
+    public MoneyResult exchangeBlingForBars (int memberId, int blingAmount)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
-        // TODO: I guess someday we'll allow support+ to exchange for others
+        // TODO: I guess someday we'll allow support+ to exchange for others, but for now
+        // the memberId parameter is sorta worthless...
         if (mrec.memberId != memberId) {
             throw new ServiceException(ServiceCodes.E_ACCESS_DENIED);
         }

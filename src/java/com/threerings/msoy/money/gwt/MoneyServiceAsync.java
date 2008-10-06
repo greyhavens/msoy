@@ -7,11 +7,11 @@ import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.Currency;
+import com.threerings.msoy.money.data.all.MoneyResult;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 
@@ -30,14 +30,15 @@ public interface MoneyServiceAsync
     /**
      * The asynchronous version of {@link MoneyService#exchangeBlingForBars}.
      */
-    void exchangeBlingForBars (int memberId, int blingAmount, 
-        AsyncCallback<BlingExchangeResult> callback);
+    void exchangeBlingForBars (
+        int memberId, int blingAmount, AsyncCallback<MoneyResult> callback);
 
     /**
      * The asynchronous version of {@link MoneyService#requestCashOutBling}.
      */
-    void requestCashOutBling (int memberId, int blingAmount, String password, 
-        CashOutBillingInfo info, AsyncCallback<BlingInfo> callback);
+    void requestCashOutBling (
+        int memberId, int blingAmount, String password, CashOutBillingInfo info,
+        AsyncCallback<BlingInfo> callback);
     
     /**
      * The asynchronous version of {@link MoneyService#getBlingCashOutRequests}.
