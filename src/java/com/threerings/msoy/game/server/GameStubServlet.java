@@ -35,13 +35,11 @@ public class GameStubServlet extends HttpServlet
             return;
         }
 
-        String site = req.getParameter("site");
-        if (StringUtil.isBlank(site)) {
-            site = req.getParameter("aff"); // OLD-STYLE
-            if (StringUtil.isBlank(site)) {
-                // I don't think this works, I don't think we get a referer...
-                site = StringUtil.deNull(req.getHeader("Referer"));
-            }
+        int version = 0;
+        try {
+            version = Integer.parseInt(req.getParameter("v"));
+        } catch (NumberFormatException nfe) {
+            // no worries
         }
 
         String response;
@@ -49,17 +47,29 @@ public class GameStubServlet extends HttpServlet
 //            response = "<error>" + someErrorMessage + "</error>";
 //
 //        } else {
-        String SEP = "&amp;";
             response = "<url>http://" + req.getServerName() + ":" + req.getServerPort() +
                 "/clients/" + DeploymentConfig.version + "/world-client.swf</url>" +
-                "<params>" +
-                    //"guest=t" + SEP +
-                    "vec=e." + StringUtil.encode(site) + ".games." + gameId + SEP +
-                    "gameLobby=" + gameId +
-                "</params>";
+                "<params>" + getParams(req, gameId, version) + "</params>";
 //        }
 
         sendResponse(rsp, "<r>" + response + "</r>");
+    }
+
+    /**
+     * Get the parameters that should be passed to the whirled client by the stub.
+     */
+    protected String getParams (HttpServletRequest req, int gameId, int version)
+    {
+        final String SEP = "&amp;";
+        String params = "gameLobby=" + gameId;
+
+        // return a "vector" for old gamestubs (new stubs make the vector themselves)
+        if (version == 0) {
+            String site = StringUtil.deNull(req.getParameter("aff"));
+            params += SEP + "vec=e." + StringUtil.encode(site) + ".games." + gameId;
+        }
+
+        return params;
     }
 
     protected void sendResponse (HttpServletResponse rsp, String response)
