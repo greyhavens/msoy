@@ -118,15 +118,7 @@ public class GameStub extends Sprite
 
     protected function getVectorParam () :String
     {
-        return "vec=e." + encodeURIComponent(massageHost(getHost())) + ".games." + GAME_ID;
-    }
-
-    protected function massageHost (host :String) :String
-    {
-        switch (host) {
-        default: return host;
-        case "ungrounded": return "newgrounds";
-        }
+        return "vec=e." + encodeURIComponent(getHost()) + ".games." + GAME_ID;
     }
 
     protected function getHost () :String
@@ -147,7 +139,15 @@ public class GameStub extends Sprite
         if (lastdot != -1) {
             host = host.substring(lastdot + 1);
         }
-        return host;
+        return massageHost(host);
+    }
+
+    protected function massageHost (host :String) :String
+    {
+        switch (host) {
+        default: return host;
+        case "ungrounded": return "newgrounds";
+        }
     }
 
     protected function onClientDetailsError (e :ErrorEvent) :void
