@@ -48,8 +48,6 @@ public class GameStub extends Sprite
     /** The id of the game we'd like to load. */
     public static const GAME_ID :int = 8;
 
-    public static const SITE :String = "newgrounds";
-
     /** The server we're connecting with, with a trailing slash. */
     public static const SERVER :String = "http://www.whirled.com/";
     //public static const SERVER :String = "http://tasman.sea.earth.threerings.net:8080/";
@@ -103,7 +101,7 @@ public class GameStub extends Sprite
         var clientUrl :String = String(details.url[0]);
         trace("GameStub: loading '" + clientUrl + "'");
 
-        _whirledParams = details.params[0];
+        _whirledParams = details.params[0] + "&" + getVectorParam();
 
         // allow all loaded content to cross-script this SWF
         // @TODO - is there any reason to make this more restrictive?
@@ -116,6 +114,40 @@ public class GameStub extends Sprite
         _clientLoader.load(new URLRequest(clientUrl),
             new LoaderContext(true, new ApplicationDomain(null)));
         addChild(_clientLoader);
+    }
+
+    protected function getVectorParam () :String
+    {
+        return "vec=e." + encodeURIComponent(massageHost(getHost())) + ".games." + GAME_ID;
+    }
+
+    protected function massageHost (host :String) :String
+    {
+        switch (host) {
+        default: return host;
+        case "ungrounded": return "newgrounds";
+        }
+    }
+
+    protected function getHost () :String
+    {
+        var result :Object = URL_REGEXP.exec(this.loaderInfo.url);
+        if (result == null) {
+            return "";
+        }
+
+        var host :String = String(result[2]);
+        // strip the last part
+        var lastdot :int = host.lastIndexOf(".");
+        if (lastdot != -1) {
+            host = host.substring(0, lastdot);
+        }
+        // now just keep the last part
+        lastdot = host.lastIndexOf(".");
+        if (lastdot != -1) {
+            host = host.substring(lastdot + 1);
+        }
+        return host;
     }
 
     protected function onClientDetailsError (e :ErrorEvent) :void
@@ -155,11 +187,12 @@ public class GameStub extends Sprite
 
     protected var _label :TextField;
 
-    protected static const STUB_VERSION :uint = 0;
+    protected static const URL_REGEXP :RegExp = /^(\w+:\/\/)?\/?([^:\/\s]+)/; // protocol and host..
+
+    protected static const STUB_VERSION :uint = 1;
 
     protected static const URL :String = SERVER + "gamestubsvc" + 
         "?gameId=" + GAME_ID +
-        "&site=" + encodeURIComponent(SITE) +
         "&v=" + STUB_VERSION;
 }
 }
