@@ -60,8 +60,6 @@ public abstract class Badge
      */
     abstract public String imageUrl ();
 
-
-
     @Override // from Object
     public boolean equals (Object o)
     {
