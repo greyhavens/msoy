@@ -142,7 +142,7 @@ public class UserAction extends SimpleStreamableObject
     public static UserAction earnedBadge (int memberId, int badgeCode, int level)
     {
         String descrip = MessageBundle.compose(
-            "m.earned_badge", "badge_" + Integer.toHexString(badgeCode), "badgelevel_" + level);
+            "m.earned_badge", "badgelevel_" + level, "badge_" + Integer.toHexString(badgeCode));
         return new UserAction(Type.EARNED_BADGE, memberId, descrip);
     }
 

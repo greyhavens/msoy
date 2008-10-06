@@ -341,7 +341,7 @@
 .badgeDisplay .StampName {
   position: absolute;
   left: 90px;
-  top: 20px;
+  top: 8px;
   width: 57px;
   color: #1c4c74;
   font-weight: bold;
@@ -492,7 +492,7 @@
 }
 
 .bling .header {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .bling .Error {

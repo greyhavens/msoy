@@ -50,6 +50,7 @@ class BadgeDisplay extends FlowPanel
         String badgeName = hexCode;
         try {
             badgeName = _dmsgs.xlate("badge_" + hexCode);
+            badgeName += " " + MsoyUI.arabicToRomanNumeral(badge.level + 1);
         } catch (MissingResourceException mre) {
             // displaying the hex code is the failure case - make sure to test all new badges
             // before letting them out to production.

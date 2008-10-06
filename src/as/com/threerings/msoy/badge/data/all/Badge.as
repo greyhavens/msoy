@@ -36,6 +36,23 @@ public /* abstract */ class Badge extends SimpleStreamableObject
     }
 
     /**
+     * Returns the name of the current level.
+     */
+    public function get levelName () :String
+    {
+        var levelNumber :int = level + 1;
+        var roman :String = "";
+        for (var ii :int = 0; ii < ROMAN_TIERS.length; ii++) {
+            while (levelNumber >= ROMAN_TIERS[ii]) {
+                roman += ROMAN_NUMERALS[ii];
+                levelNumber -= ROMAN_TIERS[ii];
+            }
+        }
+        return roman;
+    }
+
+
+    /**
      * Returns the public access image URL for this badge.
      */
     public function get imageUrl () :String
@@ -65,5 +82,10 @@ public /* abstract */ class Badge extends SimpleStreamableObject
 
     protected static const BADGE_IMAGE_DIR :String = "badge/";
     protected static const BADGE_IMAGE_TYPE :String = ".png";
+
+    /** Standard roman numerals support up to 3999, but it is extremely unlikely that we ever 
+     * have more than 20 or so levels. */
+    protected static const ROMAN_TIERS :Array = [ 10, 9, 5, 4, 1 ];
+    protected static const ROMAN_NUMERALS :Array = [ "X", "IX", "V", "IV", "I" ];
 }
 }

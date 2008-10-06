@@ -291,7 +291,6 @@ public class FeedPanel extends TongueBox
                 return message.data[0];
 
             case 105: // FRIEND_WON_BADGE
-                // discover the full name for this badge (e.g. "Journeyman Gamer")
                 String badgeName;
                 int badgeCode = Integer.parseInt(message.data[0]);
                 try {
@@ -301,17 +300,11 @@ public class FeedPanel extends TongueBox
                     badgeName = "MISSING NAME (code=" + badgeCode + ")";
                 }
 
-                String badgeLevelName;
                 int badgeLevel = Integer.parseInt(message.data[1]);
-                try {
-                    badgeLevelName = _dmsgs.xlate("badgelevel_" + badgeLevel);
-                } catch (MissingResourceException e) {
-                    badgeLevelName = "MISSING LEVEL NAME (level=" + badgeLevel + ")";
-                }
-
                 int memberId = ((FriendFeedMessage)message).friend.getMemberId();
                 return Link.createHtml(
-                    badgeLevelName + " " + badgeName, Pages.ME, Args.compose("passport", memberId));
+                    badgeName + " " + MsoyUI.arabicToRomanNumeral(badgeLevel + 1), Pages.ME,
+                    Args.compose("passport", memberId));
             }
 
             return null;

@@ -117,7 +117,6 @@ public class PassportPanel extends FlowPanel
             nextHeader.add(MsoyUI.createImage("/images/me/passport_header_right.png", null));
             add(nextHeader);
 
-            // TODO pull out the real "next" badges
             HorizontalPanel nextBadges = new HorizontalPanel();
             nextBadges.setStyleName("NextBadges");
             nextBadges.add(MsoyUI.createImage("/images/me/passport_box_left.png", null));

@@ -136,6 +136,27 @@ public class MsoyUI
     }
 
     /**
+     * Returns the roman numeral representation of any arabic number between 1 and 3,999.  If a
+     * value outside of that range is supplied, an IllegalArgumentException is thrown.
+     */
+    public static String arabicToRomanNumeral (int arabic)
+    {
+        if (arabic < 1 || arabic > 3999) {
+            throw new IllegalArgumentException(
+                "Arabic number for conversion must be between 1 and 3999");
+        }
+
+        String roman = "";
+        for (int ii = 0; ii < ROMAN_TIERS.length; ii++) {
+            while (arabic >= ROMAN_TIERS[ii]) {
+                roman += ROMAN_NUMERALS[ii];
+                arabic -= ROMAN_TIERS[ii];
+            }
+        }
+        return roman;
+    }
+
+    /**
      * Creates an HTML label with the supplied text and style. <em>Warning:</em> never pass user
      * supplied text into an HTML label. Cross-site-scripting-o-rama!
      */
@@ -588,6 +609,11 @@ public class MsoyUI
     protected static final SimpleDateFormat _tfmt = new SimpleDateFormat("h:mmaa");
     protected static final SimpleDateFormat _mfmt = new SimpleDateFormat("MMM dd");
     protected static final SimpleDateFormat _yfmt = new SimpleDateFormat("MMM dd, yyyy");
+
+    protected static final int[] ROMAN_TIERS =
+        new int[] { 1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1 };
+    protected static final String[] ROMAN_NUMERALS =
+        new String[] { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I" };
 
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final WebMemberServiceAsync _membersvc = (WebMemberServiceAsync)

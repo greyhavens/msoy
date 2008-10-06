@@ -102,8 +102,7 @@ public class AwardPanel
 
         } else if (award is Badge) {
             var badge :Badge = (award as Badge);
-            var level :String = 
-                _wctx.xlate(MsoyCodes.PASSPORT_MSGS, "m.badge_level_" + badge.level);
+            var level :String = badge.levelName;
             name = _wctx.xlate(MsoyCodes.PASSPORT_MSGS, badge.nameProp, level);
             msg = MessageBundle.tcompose("m.badge_awarded", name, badge.coinValue);
             title = _wctx.xlate(MsoyCodes.PASSPORT_MSGS, "t.badge_awarded");
