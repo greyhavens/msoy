@@ -429,11 +429,25 @@
   padding: 15px;
 }
 
-.transactions .roundBox {
-  margin: 0 15px 15px 0;
+.transactions .Blurb {
+  margin-bottom: 15px;
+  width: 100%;
 }
 
-.transactions .BarsTip {
+.transactions .Blurb .roundBox {
+  margin-right: 15px;
+}
+
+.transactions .Blurb .roundBox .Center {
+  width: 100%;
+  text-align: center;
+}
+
+.transactions .Blurb .Billing {
+  width: 0;
+}
+
+.transactions .Blurb .BillingTip {
   font-size: small;
   text-align: center;
   padding-bottom: 5px;

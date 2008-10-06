@@ -5,8 +5,8 @@ package client.me;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -27,21 +27,23 @@ public class TransactionsPanel extends FlowPanel
     {
         setStyleName("transactions");
 
-        HorizontalPanel horiz = new HorizontalPanel();
+        FlexTable blurb = new FlexTable();
+        blurb.setStyleName("Blurb");
 
         RoundBox tip = new RoundBox(RoundBox.MEDIUM_BLUE);
-        tip.add(MsoyUI.createLabel(_msgs.moneyTip(), null));
-        horiz.add(tip);
+        tip.add(MsoyUI.createLabel(REPORT_TIPS[reportIndex-1], null));
+        blurb.setWidget(0, 0, tip);
 
-        FlowPanel vert = new FlowPanel();
-        vert.add(MsoyUI.createHTML(_msgs.barsTip(), "BarsTip"));
+        FlowPanel billing = new FlowPanel();
         StretchButton buyBars = new StretchButton(StretchButton.ORANGE_THICK,
             MsoyUI.createLabel(_msgs.buyBars(), null));
         buyBars.addClickListener(NaviUtil.onBuyBars());
-        vert.add(buyBars);
-        horiz.add(vert);
+        billing.add(MsoyUI.createHTML(_msgs.billingTip(), "BillingTip"));
+        billing.add(buyBars);
+        blurb.setWidget(0, 1, billing);
+        blurb.getCellFormatter().setStyleName(0, 1, "Billing");
 
-        add(horiz);
+        add(blurb);
 
         ReportType report = ReportType.fromIndex(reportIndex);
         // The data model is used in both the balance panel and the bling panel.
@@ -75,5 +77,9 @@ public class TransactionsPanel extends FlowPanel
 
     protected static final String[] REPORT_NAMES = {
         _msgs.reportCoins(), _msgs.reportBars(), _msgs.reportBling(), _msgs.reportCreator()
+    };
+
+    protected static final String[] REPORT_TIPS = {
+        _msgs.tipCoins(), _msgs.tipBars(), _msgs.tipBling(), _msgs.tipCreator()
     };
 }
