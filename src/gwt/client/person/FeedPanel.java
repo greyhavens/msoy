@@ -23,6 +23,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import com.threerings.msoy.badge.data.all.Badge;
 import com.threerings.msoy.badge.data.all.EarnedBadge;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
@@ -303,7 +304,7 @@ public class FeedPanel extends TongueBox
                 int badgeLevel = Integer.parseInt(message.data[1]);
                 int memberId = ((FriendFeedMessage)message).friend.getMemberId();
                 return Link.createHtml(
-                    badgeName + " " + MsoyUI.arabicToRomanNumeral(badgeLevel + 1), Pages.ME,
+                    badgeName + " " + Badge.getLevelName(badgeLevel), Pages.ME,
                     Args.compose("passport", memberId));
             }
 

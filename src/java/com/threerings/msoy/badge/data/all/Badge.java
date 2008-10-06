@@ -10,6 +10,22 @@ import com.threerings.presents.dobj.DSet;
 public abstract class Badge
     implements DSet.Entry, IsSerializable
 {
+    /**
+     * Returns the name of the current level.
+     */
+    public static String getLevelName (int level)
+    {
+        level += 1;
+        String roman = "";
+        for (int ii = 0; ii < ROMAN_TIERS.length; ii++) {
+            while (level >= ROMAN_TIERS[ii]) {
+                roman += ROMAN_NUMERALS[ii];
+                level -= ROMAN_TIERS[ii];
+            }
+        }
+        return roman;
+    }
+
     /** The unique code representing the type of this badge. */
     public int badgeCode;
 
@@ -44,6 +60,8 @@ public abstract class Badge
      */
     abstract public String imageUrl ();
 
+
+
     @Override // from Object
     public boolean equals (Object o)
     {
@@ -71,4 +89,9 @@ public abstract class Badge
 
     protected static final String BADGE_IMAGE_DIR = "badge/";
     protected static final String BADGE_IMAGE_TYPE = ".png";
+
+    /** Standard roman numerals support up to 3999, but it is extremely unlikely that we ever 
+     * have more than 20 or so levels. */
+    protected static final int[] ROMAN_TIERS = { 10, 9, 5, 4, 1 };
+    protected static final String[] ROMAN_NUMERALS = { "X", "IX", "V", "IV", "I" };
 }
