@@ -25,6 +25,8 @@ import com.threerings.presents.client.ResultAdapter;
 import com.threerings.crowd.data.OccupantInfo;
 import com.threerings.crowd.data.PlaceObject;
 
+import com.whirled.bureau.client.GameAgentController;
+
 import com.threerings.msoy.game.data.PlayerObject;
 
 import com.threerings.msoy.room.data.MobInfo;
@@ -43,6 +45,7 @@ import com.threerings.msoy.avrg.data.PlayerLocation;
 import com.threerings.msoy.avrg.data.SceneInfo;
 
 public class ThaneAVRGameController
+    implements GameAgentController
 {
     public var log :Log = Log.getLog(this);
 
@@ -82,7 +85,8 @@ public class ThaneAVRGameController
         _gameAgentObj.addListener(_setAdapter);
     }
 
-    /** Shuts down the AVRG controller. */
+    /** @inheritDoc */
+    // from AgentController
     public function shutdown () :void
     {
         // flush all scene bindings
@@ -122,11 +126,34 @@ public class ThaneAVRGameController
         return _backend;
     }
 
-    /** Inform the server that the agent is ready. */
+    /** @inheritDoc */
+    // from AgentController
     public function agentReady () :void
     {
         log.info("Reporting agent ready", "gameObj", _gameObj.which());
         _gameObj.manager.invoke("agentReady");
+    }
+
+    /** @inheritDoc */
+    // from AgentController
+    public function agentFailed () :void
+    {
+        log.info("Reporting agent failed", "gameObj", _gameObj.which());
+        _gameObj.manager.invoke("agentFailed");
+    }
+
+    /** @inheritDoc */
+    // from AgentController
+    public function getConnectListener () :Function
+    {
+        return backend.getConnectListener();
+    }
+
+    /** @inheritDoc */
+    // from AgentController
+    public function isConnected () :Boolean
+    {
+        return backend.isConnected();
     }
 
     /** Retrieves the room for the given room id.
