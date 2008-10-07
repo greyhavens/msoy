@@ -3,6 +3,9 @@
 
 package com.threerings.msoy.bureau.client;
 
+import java.util.HashSet;
+import java.util.Iterator;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
@@ -11,6 +14,7 @@ import com.google.inject.Injector;
 import com.samskivert.jdbc.ConnectionProvider;
 import com.samskivert.jdbc.depot.PersistenceContext;
 import com.samskivert.util.Interval;
+import com.samskivert.util.Logger;
 import com.samskivert.util.RunQueue;
 import com.samskivert.util.StringUtil;
 
@@ -173,6 +177,14 @@ public class BureauLauncher
             }
         }.start();
 
+        // Print a status summary every 30 minutes
+        final int SUMMARY_INTERVAL = 30*60*1000;
+        new Interval(_runner) {
+            public void expired () {
+                printSummary();
+            }
+        }.schedule(SUMMARY_INTERVAL, SUMMARY_INTERVAL);
+
         log.info("Starting");
         _runner.run();
         log.info("Exiting");
@@ -202,7 +214,8 @@ public class BureauLauncher
         try {
             Process process = builder.start();
             // log the output of the process and prefix with bureau id
-            new BureauLogRedirector(bureauId, process.getInputStream());
+            _activeBureaus.add(new BureauLogRedirector(bureauId, process.getInputStream()));
+            ++_totalLaunched;
 
         } catch (java.io.IOException ioe) {
             log.warning("Could not launch thane", "bureauId", bureauId, ioe);
@@ -298,6 +311,26 @@ public class BureauLauncher
             log.warning("Could not load nodes", e);
         }
     }
+    
+    protected void printSummary ()
+    {
+        // Prune old redirectors
+        for (Iterator<BureauLogRedirector> it = _activeBureaus.iterator(); it.hasNext();) {
+            if (!it.next().isRunning()) {
+                it.remove();
+            }
+        }
+
+        Object[] args = {"totalLaunched", _totalLaunched, "activeCount",
+            _activeBureaus.size(), "connectionCount", _connections._clients.size()};
+        String msg = "Status";
+
+        // Print summary to launcher log
+        log.info(msg, args);
+
+        // Print summary to merged log
+        Logger.getLogger(BureauLogRedirector.class).info(msg, args);
+    }
 
     /** Presents run queue. */
     @Inject protected Runner _runner;
@@ -318,6 +351,12 @@ public class BureauLauncher
         }
     };
 
+    /** The total number of bureaus launched. */
+    protected int _totalLaunched;
+
+    /** The current set of log redirectors. Pruned periodically when printing a summary. */
+    protected HashSet<BureauLogRedirector> _activeBureaus = new HashSet<BureauLogRedirector>();
+    
     /** The nodes repository. */
     @Inject protected NodeRepository _nodeRepo;
 
