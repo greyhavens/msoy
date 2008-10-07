@@ -903,6 +903,25 @@ public class GameGameRegistry
     }
 
     // from AVRGameManager.LifecycleObserver
+    public void avrGameAgentFailedToStart (AVRGameManager mgr)
+    {
+        int gameId = mgr.getGameId();
+
+        if (_avrgManagers.get(gameId) != null) {
+            log.warning(
+                "Agent failed to start but is already started?", "gameId", gameId);
+        }
+
+        ResultListenerList list = _loadingAVRGames.remove(gameId);
+        if (list != null) {
+            list.requestFailed("e.agent_error");
+        } else {
+            log.warning(
+                "No listeners when AVRGame agent failed", "gameId", gameId);
+        }
+    }
+
+    // from AVRGameManager.LifecycleObserver
     public void avrGameAgentDestroyed (AVRGameManager mgr)
     {
         // we don't like to run AVRGs with no agents, shut 'er down

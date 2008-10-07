@@ -83,6 +83,9 @@ public class AVRGameManager extends PlaceManager
         /** Informs the observer the AVRG manager is ready for operation. */
         void avrGameReady (AVRGameManager mgr);
 
+        /** Informs the observer that our agent could not start. */
+        void avrGameAgentFailedToStart (AVRGameManager mgr);
+
         /** Informs the observer a shutdown has happened. */
         void avrGameDidShutdown (AVRGameManager mgr);
 
@@ -320,6 +323,16 @@ public class AVRGameManager extends PlaceManager
         log.info(
             "AVRG Agent ready", "clientOid", caller.getOid(), "agentOid", _gameAgentObj.getOid());
         _lifecycleObserver.avrGameReady(this);
+    }
+
+    /**
+     * Called privately by the ThaneAVRGameController when an agent's code could not be loaded.
+     */
+    public void agentFailed (ClientObject caller)
+    {
+        log.info(
+            "AVRG Agent failed", "clientOid", caller.getOid(), "agentOid", _gameAgentObj.getOid());
+        _lifecycleObserver.avrGameAgentFailedToStart(this);
     }
 
     // From AVRGameAgentProvider
