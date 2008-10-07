@@ -39,7 +39,8 @@ public class GalleryDetailPanel extends AbsolutePanel
 
         // Gallery and creator name are inline
         InlinePanel nameAndCreator = new InlinePanel("NameAndCreator");
-        nameAndCreator.add(MsoyUI.createLabel(GalleryPanel.getGalleryLabel(gallery), "Name"));
+        nameAndCreator.add(MsoyUI.createLabel(GalleryPanel.getGalleryLabel(gallery,
+            galleryData.owner), "Name"));
         nameAndCreator.add(new CreatorLabel(galleryData.owner));
         add(nameAndCreator, 105, 5);
 

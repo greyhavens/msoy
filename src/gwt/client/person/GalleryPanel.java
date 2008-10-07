@@ -20,6 +20,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.FloatPanel;
 
+import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.person.gwt.Gallery;
 import com.threerings.msoy.person.gwt.GalleryListData;
 import com.threerings.msoy.person.gwt.GalleryService;
@@ -57,7 +58,7 @@ public class GalleryPanel extends FlowPanel
         for (int i = 0; i < data.galleries.size(); i++) {
             Gallery gallery = data.galleries.get(i);
             String args = Args.compose(GalleryViewPanel.VIEW_ACTION, "" + gallery.galleryId);
-            Widget click = new ClickBox(gallery.thumbMedia, getGalleryLabel(gallery),
+            Widget click = new ClickBox(gallery.thumbMedia, getGalleryLabel(gallery, data.owner),
                 Pages.PEOPLE, args);
             galleries.add(click);
         }
@@ -79,9 +80,9 @@ public class GalleryPanel extends FlowPanel
      * If the gallery is the "profile" gallery, this will return the correct profile label;
      * otherwise, this just returns the gallery name.
      */
-    public static String getGalleryLabel (Gallery gallery) {
+    public static String getGalleryLabel (Gallery gallery, MemberName owner) {
         return gallery.isProfileGallery() ?
-            _pmsgs.galleryProfileName(CShell.creds.name.toString()) : gallery.name;
+            _pmsgs.galleryProfileName(owner.toString()) : gallery.name;
     }
 
     protected static final GalleryServiceAsync _gallerysvc = (GalleryServiceAsync)

@@ -11,6 +11,7 @@ import client.dnd.DropPanel;
 import client.dnd.PayloadWidget;
 import client.dnd.SimpleDropModel;
 import client.shell.Args;
+import client.shell.CShell;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.util.Link;
@@ -64,8 +65,9 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         _newGallery = true;
         GalleryData galleryData = new GalleryData();
         galleryData.gallery = new Gallery();
-        // null name is the indicator for profile galleries
+        galleryData.owner = CShell.creds.name;
         if (isProfile) {
+            // null name is the indicator for profile galleries
             galleryData.gallery.name = null;
         } else {
             galleryData.gallery.name = _pmsgs.galleryNewName();
@@ -206,8 +208,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
      */
     protected void saveGallery (final boolean backToView, final PushButton saveButton)
     {
-        final String viewPageArgs = Args.compose(GalleryViewPanel.VIEW_ACTION,
-            _galleryData.gallery.galleryId);
+
 
         if (_newGallery) {
             _gallerysvc.createGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
@@ -219,7 +220,8 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                             saveButton.setEnabled(true);
                         }
                         if (backToView) {
-                            Link.go(Pages.PEOPLE, viewPageArgs);
+                            Link.go(Pages.PEOPLE, Args.compose(GalleryViewPanel.VIEW_ACTION,
+                                _galleryData.gallery.galleryId));
                         }
                     }
                 }
@@ -232,7 +234,8 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                             saveButton.setEnabled(true);
                         }
                         if (backToView) {
-                            Link.go(Pages.PEOPLE, viewPageArgs);
+                            Link.go(Pages.PEOPLE, Args.compose(GalleryViewPanel.VIEW_ACTION,
+                                _galleryData.gallery.galleryId));
                         }
                     }
                 }
