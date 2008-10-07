@@ -85,9 +85,8 @@ public class SliderPopup extends Canvas
         addEventListener(MouseEvent.ROLL_OVER, mouseOverHandler, false, 0, true);
         _slider.addEventListener(SliderEvent.THUMB_RELEASE, thumbReleaseHandler, false, 0, true);
 
-        var but :CommandButton = new CommandButton(null, resetTick);
-        but.styleName = "tickButton";
-        but.toolTip = Msgs.GENERAL.get("i.tickButton");
+        var but :TickButton = new TickButton(_slider);
+        but.setCallback(tickButtonClicked);
         but.x = 4;
         but.y = 90;
         addChild(but);
@@ -125,36 +124,9 @@ public class SliderPopup extends Canvas
         }
     }
 
-    /**
-     * Set the slider value to the closest tickValue, or the next higher if already on one.
-     */
-    protected function resetTick () :void
+    protected function tickButtonClicked () :void
     {
         _adjusted = true;
-
-        const value :Number = _slider.value;
-        const ticks :Array = _slider.tickValues;
-        if (ticks == null) {
-            return;
-        }
-        const dex :int = ticks.indexOf(value);
-        if (dex != -1) {
-            // we're at a tick, jump to the next tick
-            _slider.value = Number(ticks[(dex + 1) % ticks.length]);
-
-        } else {
-            // jump to the closest tick
-            var closeValue :Number = value;
-            var closeness :Number = Number.MAX_VALUE;
-            for each (var tickVal :Number in ticks) {
-                var diff :Number = Math.abs(tickVal - value);
-                if (diff < closeness) {
-                    closeness = diff;
-                    closeValue = tickVal;
-                }
-            }
-            _slider.value = closeValue;
-        }
     }
 
     // EVENT HANDLERS
