@@ -919,6 +919,8 @@ public class GameGameRegistry
             log.warning(
                 "No listeners when AVRGame agent failed", "gameId", gameId);
         }
+        
+        mgr.shutdown();
     }
 
     // from AVRGameManager.LifecycleObserver
