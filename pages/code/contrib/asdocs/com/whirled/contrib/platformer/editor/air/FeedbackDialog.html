@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../../print.css" type="text/css" media="print">
-<meta content="FeedbackDialog,com.whirled.contrib.platformer.editor.air.FeedbackDialog,_feedback,createChildren" name="keywords">
+<meta content="FeedbackDialog,com.whirled.contrib.platformer.editor.air.FeedbackDialog,_feedback,createChildren,popError,popFeedback" name="keywords">
 <title>com.whirled.contrib.platformer.editor.air.FeedbackDialog</title>
 </head>
 <body>
@@ -84,9 +84,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="LightweightCenteredDialog.html#openCentered()">openCentered</a>(parentWindow:NativeWindow):void</div>
+<a class="signatureLink" href="LightweightCenteredDialog.html#open()">open</a>(openWindowActive:Boolean = true):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="LightweightCenteredDialog.html">LightweightCenteredDialog</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#popError()">popError</a>(error:String):void</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">FeedbackDialog</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#popFeedback()">popFeedback</a>(feedback:String):void</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">FeedbackDialog</td>
 </tr>
 </table>
 </div>
@@ -154,6 +168,34 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected override function createChildren():void</code>
+</div>
+<a name="popError()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">popError</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function popError(error:String):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">error</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="popFeedback()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">popFeedback</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function popFeedback(feedback:String):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">feedback</span>:String</code></td>
+</tr>
+</table>
 </div>
 <br>
 <br>

@@ -62,7 +62,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="TaskContainer.html#_activeTaskCount">_activeTaskCount</a> : uint<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="TaskContainer.html#_activeTaskCount">_activeTaskCount</a> : int<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="TaskContainer.html">TaskContainer</a></td>
 </tr>
 <tr class="hideInheritedProtectedProperty">
@@ -101,7 +101,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#RepeatingTask()">RepeatingTask</a>(task1:<a href="../ObjectTask.html">ObjectTask</a> = null, task2:<a href="../ObjectTask.html">ObjectTask</a> = null)</div>
+<a class="signatureLink" href="#RepeatingTask()">RepeatingTask</a>(... subtasks)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">RepeatingTask</td>
 </tr>
@@ -231,16 +231,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function RepeatingTask(task1:<a href="../ObjectTask.html">ObjectTask</a> = null, task2:<a href="../ObjectTask.html">ObjectTask</a> = null)</code><span class="label">Parameters</span>
+<code>public function RepeatingTask(... subtasks)</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">task1</span>:<a href="../ObjectTask.html">ObjectTask</a></code> (default = <code>null</code>)<code></code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">task2</span>:<a href="../ObjectTask.html">ObjectTask</a></code> (default = <code>null</code>)<code></code></td>
+<td width="20px"></td><td><code>... <span class="label">subtasks</span></code></td>
 </tr>
 </table>
 </div>

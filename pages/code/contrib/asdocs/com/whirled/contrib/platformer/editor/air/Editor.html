@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../../print.css" type="text/css" media="print">
-<meta content="Editor,com.whirled.contrib.platformer.editor.air.Editor,CLOSE_PROJECT,CREATE_PROJECT,EDIT_PROJECT,FILE_MENU,LOAD_PROJECT,PROJECT_MENU,QUIT,SAVE_PIECES,_menuItems,_pieceEditView,_projectFile,_projectMenu,_projectXml,_spriteFactoryInit,_window,addPieceEditor,checkFileSanity,closeCurrentProject,createChildren,editProject,loadProject,menuItemClicked,popError,popFeedback,resolvePath,savePieceFile,setPieceSpriteFactoryClass" name="keywords">
+<meta content="Editor,com.whirled.contrib.platformer.editor.air.Editor,ADD_LEVEL,CLOSE_LEVEL,CLOSE_PROJECT,CREATE_PROJECT,EDITOR_SHARED_OBJECT,EDIT_PROJECT,FILE_MENU,LEVEL_MENU,LOAD_PROJECT,OPEN_LEVEL,PROJECT_FILE_PROP,PROJECT_MENU,QUIT,SAVE_LEVEL,SAVE_PIECES,_levelMenu,_menuItems,_openLevels,_pieceEditView,_projectFile,_projectMenu,_spriteFactoryInit,_window,log,addLevel,addLevelEditor,addLevelsToMenu,addPieceEditor,closeCurrentProject,closeLevel,createChildren,editProject,findLevel,getLevelXmlFile,getProjectXmlFile,loadProject,menuItemClicked,saveLevel,savePieceFile,setLevelMenuItemsEnabled,setPieceSpriteFactoryInit" name="keywords">
 <title>com.whirled.contrib.platformer.editor.air.Editor</title>
 </head>
 <body>
@@ -56,7 +56,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_levelMenu">_levelMenu</a> : Object<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_menuItems">_menuItems</a> : ArrayCollection<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_openLevels">_openLevels</a> : HashMap<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
 <tr class="">
@@ -65,7 +73,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_projectFile">_projectFile</a> : File<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_projectFile">_projectFile</a> : <a href="file/XmlFile.html">XmlFile</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
 <tr class="">
@@ -73,15 +82,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_projectXml">_projectXml</a> : XML<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">Editor</td>
-</tr>
-<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_spriteFactoryInit">_spriteFactoryInit</a> : Function<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_window">_window</a> : WindowedApplication<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_window">_window</a> : WindowedApplication<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
 </table>
@@ -103,35 +108,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#checkFileSanity()">checkFileSanity</a>(file:File, extension:String, description:String, popErrors:Boolean = true):Boolean</div>
-<div class="summaryTableDescription">[static]</div>
-</td><td class="summaryTableOwnerCol">Editor</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#popError()">popError</a>(error:String):void</div>
-<div class="summaryTableDescription">[static]</div>
-</td><td class="summaryTableOwnerCol">Editor</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#popFeedback()">popFeedback</a>(feedback:String):void</div>
-<div class="summaryTableDescription">[static]</div>
-</td><td class="summaryTableOwnerCol">Editor</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#resolvePath()">resolvePath</a>(parentDirectory:File, path:String):File</div>
-<div class="summaryTableDescription">[static]</div>
-</td><td class="summaryTableOwnerCol">Editor</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#setPieceSpriteFactoryClass()">setPieceSpriteFactoryClass</a>(initFunc:Function):void</div>
+<a class="signatureLink" href="#setPieceSpriteFactoryInit()">setPieceSpriteFactoryInit</a>(initFunc:Function):void</div>
 <div class="summaryTableDescription">
      By default, this Editor will use PieceSpriteFactory.init.</div>
 </td><td class="summaryTableOwnerCol">Editor</td>
@@ -148,7 +125,28 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#addPieceEditor()">addPieceEditor</a>(xmlFile:File, swfFile:File):void</div>
+<a class="signatureLink" href="#addLevel()">addLevel</a>(name:String = null):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addLevelEditor()">addLevelEditor</a>(levelFile:<a href="file/XmlFile.html">XmlFile</a>, addToLevel:Boolean = true):Boolean</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addLevelsToMenu()">addLevelsToMenu</a>(levels:*):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addPieceEditor()">addPieceEditor</a>(xmlFile:<a href="file/XmlFile.html">XmlFile</a>, swfFile:<a href="file/SwfFile.html">SwfFile</a>):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
@@ -156,6 +154,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#closeCurrentProject()">closeCurrentProject</a>():void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#closeLevel()">closeLevel</a>(levelName:String):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
@@ -176,7 +181,30 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#loadProject()">loadProject</a>(file:File = null):void</div>
+<a class="signatureLink" href="#findLevel()">findLevel</a>(menuObject:Object):String</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getLevelXmlFile()">getLevelXmlFile</a>(levelName:String):<a href="file/XmlFile.html">XmlFile</a>
+</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getProjectXmlFile()">getProjectXmlFile</a>(path:String):<a href="file/XmlFile.html">XmlFile</a>
+</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#loadProject()">loadProject</a>(file:<a href="file/XmlFile.html">XmlFile</a> = null):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
@@ -190,7 +218,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="#saveLevel()">saveLevel</a>(levelName:String):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="#savePieceFile()">savePieceFile</a>():void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setLevelMenuItemsEnabled()">setLevelMenuItemsEnabled</a>(levelName:String, values:Object):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
@@ -204,11 +246,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ADD_LEVEL">ADD_LEVEL</a> : String = "Add Level"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CLOSE_LEVEL">CLOSE_LEVEL</a> : String = "Close Level"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CLOSE_PROJECT">CLOSE_PROJECT</a> : String = "Close"<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#CREATE_PROJECT">CREATE_PROJECT</a> : String = "Create Project"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#EDITOR_SHARED_OBJECT">EDITOR_SHARED_OBJECT</a> : String = "PlatformerEditor"<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
 <tr class="">
@@ -220,7 +274,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#LEVEL_MENU">LEVEL_MENU</a> : String = "Levels"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#LOAD_PROJECT">LOAD_PROJECT</a> : String = "Load Project"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#log">log</a> : Log<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#OPEN_LEVEL">OPEN_LEVEL</a> : String = "Open Level"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PROJECT_FILE_PROP">PROJECT_FILE_PROP</a> : String = "projectFile"<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
 <tr class="">
@@ -229,6 +299,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#QUIT">QUIT</a> : String = "Quit"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Editor</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SAVE_LEVEL">SAVE_LEVEL</a> : String = "Save Level"<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Editor</td>
 </tr>
 <tr class="">
@@ -244,14 +318,32 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
+<a name="_levelMenu"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_levelMenu</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _levelMenu:Object</code>
+</div>
 <a name="_menuItems"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_menuItems</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_menuItems</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
 <code>protected var _menuItems:ArrayCollection</code>
+</div>
+<a name="_openLevels"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_openLevels</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _openLevels:HashMap</code>
 </div>
 <a name="_pieceEditView"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -269,7 +361,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _projectFile:File</code>
+<code>protected var _projectFile:<a href="file/XmlFile.html">XmlFile</a></code>
 </div>
 <a name="_projectMenu"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -279,15 +371,6 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _projectMenu:Object</code>
-</div>
-<a name="_projectXml"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_projectXml</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _projectXml:XML</code>
 </div>
 <a name="_spriteFactoryInit"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -305,7 +388,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static var _window:WindowedApplication</code>
+<code>protected var _window:WindowedApplication</code>
 </div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
@@ -320,55 +403,37 @@ showHideInherited();
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="addPieceEditor()"></a>
+<a name="addLevel()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">addPieceEditor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">addLevel</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function addPieceEditor(xmlFile:File, swfFile:File):void</code><span class="label">Parameters</span>
+<code>protected function addLevel(name:String = null):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">xmlFile</span>:File</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">swfFile</span>:File</code></td>
+<td width="20px"></td><td><code><span class="label">name</span>:String</code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>
-<a name="checkFileSanity()"></a>
+<a name="addLevelEditor()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">checkFileSanity</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">addLevelEditor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function checkFileSanity(file:File, extension:String, description:String, popErrors:Boolean = true):Boolean</code><span class="label">Parameters</span>
+<code>protected function addLevelEditor(levelFile:<a href="file/XmlFile.html">XmlFile</a>, addToLevel:Boolean = true):Boolean</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">file</span>:File</code></td>
+<td width="20px"></td><td><code><span class="label">levelFile</span>:<a href="file/XmlFile.html">XmlFile</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">extension</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">description</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">popErrors</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">addToLevel</span>:Boolean</code> (default = <code>true</code>)<code></code></td>
 </tr>
 </table>
 <p></p>
@@ -376,6 +441,40 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="addLevelsToMenu()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addLevelsToMenu</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function addLevelsToMenu(levels:*):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">levels</span>:*</code></td>
+</tr>
+</table>
+</div>
+<a name="addPieceEditor()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addPieceEditor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function addPieceEditor(xmlFile:<a href="file/XmlFile.html">XmlFile</a>, swfFile:<a href="file/SwfFile.html">SwfFile</a>):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">xmlFile</span>:<a href="file/XmlFile.html">XmlFile</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">swfFile</span>:<a href="file/SwfFile.html">SwfFile</a></code></td>
 </tr>
 </table>
 </div>
@@ -387,6 +486,20 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected function closeCurrentProject():void</code>
+</div>
+<a name="closeLevel()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">closeLevel</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function closeLevel(levelName:String):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">levelName</span>:String</code></td>
+</tr>
+</table>
 </div>
 <a name="createChildren()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -411,6 +524,69 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="findLevel()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">findLevel</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function findLevel(menuObject:Object):String</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">menuObject</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>String</code></td>
+</tr>
+</table>
+</div>
+<a name="getLevelXmlFile()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getLevelXmlFile</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function getLevelXmlFile(levelName:String):<a href="file/XmlFile.html">XmlFile</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">levelName</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="file/XmlFile.html">XmlFile</a></code></td>
+</tr>
+</table>
+</div>
+<a name="getProjectXmlFile()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getProjectXmlFile</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function getProjectXmlFile(path:String):<a href="file/XmlFile.html">XmlFile</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">path</span>:String</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="file/XmlFile.html">XmlFile</a></code></td>
+</tr>
+</table>
+</div>
 <a name="loadProject()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -418,10 +594,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function loadProject(file:File = null):void</code><span class="label">Parameters</span>
+<code>protected function loadProject(file:<a href="file/XmlFile.html">XmlFile</a> = null):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">file</span>:File</code> (default = <code>null</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">file</span>:<a href="file/XmlFile.html">XmlFile</a></code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>
@@ -439,58 +615,17 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="popError()"></a>
+<a name="saveLevel()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">popError</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">saveLevel</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function popError(error:String):void</code><span class="label">Parameters</span>
+<code>protected function saveLevel(levelName:String):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">error</span>:String</code></td>
-</tr>
-</table>
-</div>
-<a name="popFeedback()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">popFeedback</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public static function popFeedback(feedback:String):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">feedback</span>:String</code></td>
-</tr>
-</table>
-</div>
-<a name="resolvePath()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">resolvePath</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public static function resolvePath(parentDirectory:File, path:String):File</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">parentDirectory</span>:File</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">path</span>:String</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>File</code></td>
+<td width="20px"></td><td><code><span class="label">levelName</span>:String</code></td>
 </tr>
 </table>
 </div>
@@ -503,14 +638,34 @@ showHideInherited();
 <div class="detailBody">
 <code>protected function savePieceFile():void</code>
 </div>
-<a name="setPieceSpriteFactoryClass()"></a>
+<a name="setLevelMenuItemsEnabled()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">setPieceSpriteFactoryClass</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">setLevelMenuItemsEnabled</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setPieceSpriteFactoryClass(initFunc:Function):void</code><p>
+<code>protected function setLevelMenuItemsEnabled(levelName:String, values:Object):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">levelName</span>:String</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">values</span>:Object</code></td>
+</tr>
+</table>
+</div>
+<a name="setPieceSpriteFactoryInit()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setPieceSpriteFactoryInit</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setPieceSpriteFactoryInit(initFunc:Function):void</code><p>
      By default, this Editor will use PieceSpriteFactory.init.  If you wish to customize the 
      sprite factory loading procedure, you can pass a function in here of the following signature,
      and it will be called instead:
@@ -524,10 +679,28 @@ showHideInherited();
 </div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
+<a name="ADD_LEVEL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ADD_LEVEL</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const ADD_LEVEL:String = "Add Level"</code>
+</div>
+<a name="CLOSE_LEVEL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">CLOSE_LEVEL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const CLOSE_LEVEL:String = "Close Level"</code>
+</div>
 <a name="CLOSE_PROJECT"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">CLOSE_PROJECT</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">CLOSE_PROJECT</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -541,6 +714,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected static const CREATE_PROJECT:String = "Create Project"</code>
+</div>
+<a name="EDITOR_SHARED_OBJECT"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">EDITOR_SHARED_OBJECT</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const EDITOR_SHARED_OBJECT:String = "PlatformerEditor"</code>
 </div>
 <a name="EDIT_PROJECT"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -560,6 +742,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected static const FILE_MENU:String = "File"</code>
 </div>
+<a name="LEVEL_MENU"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">LEVEL_MENU</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const LEVEL_MENU:String = "Levels"</code>
+</div>
 <a name="LOAD_PROJECT"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -568,6 +759,33 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected static const LOAD_PROJECT:String = "Load Project"</code>
+</div>
+<a name="log"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">log</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const log:Log</code>
+</div>
+<a name="OPEN_LEVEL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">OPEN_LEVEL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const OPEN_LEVEL:String = "Open Level"</code>
+</div>
+<a name="PROJECT_FILE_PROP"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">PROJECT_FILE_PROP</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const PROJECT_FILE_PROP:String = "projectFile"</code>
 </div>
 <a name="PROJECT_MENU"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -586,6 +804,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected static const QUIT:String = "Quit"</code>
+</div>
+<a name="SAVE_LEVEL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SAVE_LEVEL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const SAVE_LEVEL:String = "Save Level"</code>
 </div>
 <a name="SAVE_PIECES"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

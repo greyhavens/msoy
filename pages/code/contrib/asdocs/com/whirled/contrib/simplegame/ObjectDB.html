@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../print.css" type="text/css" media="print">
-<meta content="ObjectDB,com.whirled.contrib.simplegame.ObjectDB,_events,_groupedObjects,_listHead,_namedObjects,_objectCount,_objectsPendingRemoval,objectCount,addObject,beginUpdate,broadcastMessage,destroyObject,destroyObjectNamed,endUpdate,finalizeObjectRemoval,getObjectNamed,getObjectRefsInGroup,getObjectsInGroup,registerEventListener,registerOneShotCallback,sendMessageTo,sendMessageToGroup,sendMessageToNamedObject,shutdown,unregisterEventListener,update" name="keywords">
+<meta content="ObjectDB,com.whirled.contrib.simplegame.ObjectDB,_events,_groupedObjects,_listHead,_namedObjects,_objectCount,_objectsPendingRemoval,objectCount,addObject,beginUpdate,broadcastMessage,destroyObject,destroyObjectNamed,destroyObjectsInGroup,endUpdate,finalizeObjectRemoval,getObjectNamed,getObjectRefsInGroup,getObjectsInGroup,registerEventListener,registerOneShotCallback,sendMessageTo,sendMessageToGroup,sendMessageToNamedObject,shutdown,unregisterEventListener,update" name="keywords">
 <title>com.whirled.contrib.simplegame.ObjectDB</title>
 </head>
 <body>
@@ -107,7 +107,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#addObject()">addObject</a>(obj:<a href="SimObject.html">SimObject</a>, displayParent:DisplayObjectContainer = null):<a href="../simplegame/SimObjectRef.html">SimObjectRef</a>
 </div>
 <div class="summaryTableDescription">
-     Adds a SimObject to the database.</div>
+     Adds a SimObject to the ObjectDB.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 <tr class="">
@@ -121,14 +121,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#destroyObject()">destroyObject</a>(ref:<a href="SimObjectRef.html">SimObjectRef</a>):void</div>
-<div class="summaryTableDescription"> Removes a SimObject from the mode.</div>
+<div class="summaryTableDescription"> Removes a SimObject from the ObjectDB.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#destroyObjectNamed()">destroyObjectNamed</a>(name:String):void</div>
-<div class="summaryTableDescription"> Removes a SimObject from the mode.</div>
+<div class="summaryTableDescription"> Removes a SimObject from the ObjectDB.</div>
+</td><td class="summaryTableOwnerCol">ObjectDB</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#destroyObjectsInGroup()">destroyObjectsInGroup</a>(groupName:String):void</div>
+<div class="summaryTableDescription"> Removes all SimObjects in the given group from the ObjectDB.</div>
 </td><td class="summaryTableOwnerCol">ObjectDB</td>
 </tr>
 <tr class="">
@@ -327,7 +334,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function addObject(obj:<a href="SimObject.html">SimObject</a>, displayParent:DisplayObjectContainer = null):<a href="../simplegame/SimObjectRef.html">SimObjectRef</a></code><p>
-     Adds a SimObject to the database. The SimObject must not be owned by another database.
+     Adds a SimObject to the ObjectDB. The SimObject must not be owned by another ObjectDB.
      If displayParent is not null, obj's attached DisplayObject will be added as a child
      of displayParent.
      </p><span class="label">Parameters</span>
@@ -385,7 +392,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function destroyObject(ref:<a href="SimObjectRef.html">SimObjectRef</a>):void</code><p> Removes a SimObject from the mode. </p><span class="label">Parameters</span>
+<code>public function destroyObject(ref:<a href="SimObjectRef.html">SimObjectRef</a>):void</code><p> Removes a SimObject from the ObjectDB. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">ref</span>:<a href="SimObjectRef.html">SimObjectRef</a></code></td>
@@ -399,10 +406,24 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function destroyObjectNamed(name:String):void</code><p> Removes a SimObject from the mode. </p><span class="label">Parameters</span>
+<code>public function destroyObjectNamed(name:String):void</code><p> Removes a SimObject from the ObjectDB. </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">name</span>:String</code></td>
+</tr>
+</table>
+</div>
+<a name="destroyObjectsInGroup()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">destroyObjectsInGroup</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function destroyObjectsInGroup(groupName:String):void</code><p> Removes all SimObjects in the given group from the ObjectDB. </p><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">groupName</span>:String</code></td>
 </tr>
 </table>
 </div>

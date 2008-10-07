@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="AVRGameAvatar,com.whirled.avrg.AVRGameAvatar,isIdle,isMoving,moveSpeed,name,orientation,stageBounds,state,x,y,z" name="keywords">
+<meta content="AVRGameAvatar,com.whirled.avrg.AVRGameAvatar,bounds,isIdle,isMoving,moveSpeed,name,orientation,state,x,y,z" name="keywords">
 <title>com.whirled.avrg.AVRGameAvatar</title>
 </head>
 <body>
@@ -39,7 +39,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
-<p></p>
+ Describes the current state of a player's avatar for an AVRG client or server agent.
+ <p></p>
+<p>
+<span class="classHeaderTableLabel">See also</span>
+</p>
+<div class="seeAlso">
+<a href="RoomSubControlBase.html#getAvatarInfo()" target="">RoomSubControlBase.getAvatarInfo()</a>
+</div>
 <br>
 <hr>
 </div>
@@ -51,11 +58,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#isIdle">isIdle</a> : Boolean<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#bounds">bounds</a> : Rectangle<div class="summaryTableDescription"> The bounding rectangle of the avatar, in pixels.</div>
 </td><td class="summaryTableOwnerCol">AVRGameAvatar</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#isMoving">isMoving</a> : Boolean<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#isIdle">isIdle</a> : Boolean<div class="summaryTableDescription"> Whether the avatar is currently idle.</div>
+</td><td class="summaryTableOwnerCol">AVRGameAvatar</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#isMoving">isMoving</a> : Boolean<div class="summaryTableDescription"> Whether the avatar is currently moving.</div>
 </td><td class="summaryTableOwnerCol">AVRGameAvatar</td>
 </tr>
 <tr class="">
@@ -63,31 +74,27 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">AVRGameAvatar</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#name">name</a> : String<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#name">name</a> : String<div class="summaryTableDescription"> The avatar's associated display name.</div>
 </td><td class="summaryTableOwnerCol">AVRGameAvatar</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#orientation">orientation</a> : int<div class="summaryTableDescription"> The avatar's orientation.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#orientation">orientation</a> : int<div class="summaryTableDescription"> The orientation of the avatar, measured in counter-clockwise degrees from front facing.</div>
 </td><td class="summaryTableOwnerCol">AVRGameAvatar</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#stageBounds">stageBounds</a> : Rectangle<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#state">state</a> : String<div class="summaryTableDescription"> The avatar's current state.</div>
 </td><td class="summaryTableOwnerCol">AVRGameAvatar</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#state">state</a> : String<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#x">x</a> : Number<div class="summaryTableDescription"> The x position of the avatar's registration point, measured in room coordinates.</div>
 </td><td class="summaryTableOwnerCol">AVRGameAvatar</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#x">x</a> : Number<div class="summaryTableDescription"> The avatar's x position.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#y">y</a> : Number<div class="summaryTableDescription"> The y position of the avatar's registration point, measured in room coordinates.</div>
 </td><td class="summaryTableOwnerCol">AVRGameAvatar</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#y">y</a> : Number<div class="summaryTableDescription"> The avatar's y position.</div>
-</td><td class="summaryTableOwnerCol">AVRGameAvatar</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#z">z</a> : Number<div class="summaryTableDescription"> The avatar's z position.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#z">z</a> : Number<div class="summaryTableDescription"> The z position of the avatar's registration point, measured in room coordinates.</div>
 </td><td class="summaryTableOwnerCol">AVRGameAvatar</td>
 </tr>
 </table>
@@ -99,15 +106,32 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="isIdle"></a>
+<a name="bounds"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">isIdle</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">bounds</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public var isIdle:Boolean</code>
+<code>public var bounds:Rectangle</code><p> The bounding rectangle of the avatar, in pixels. This is in the same coodinates as the
+     paintable area returned by the <code>LocalSubControl</code>. For example an avatar on the
+     left side of a normal room will have a <code>bounds.left</code> near zero.
+     </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="LocalSubControl.html#getPaintableArea()" target="">LocalSubControl.getPaintableArea()</a>
 </div>
+</div>
+<a name="isIdle"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">isIdle</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public var isIdle:Boolean</code><p> Whether the avatar is currently idle. Player avatars automatically go into this state after
+     not moving the mouse over the browser or flash player window for a few minutes.</p></div>
 <a name="isMoving"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -115,8 +139,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var isMoving:Boolean</code>
-</div>
+<code>public var isMoving:Boolean</code><p> Whether the avatar is currently moving.
+          </p><p>NOTE: this value is always false for server agents. Avatars are considered to arrive
+     immediately at their destinations.</p> </div>
 <a name="moveSpeed"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -124,7 +149,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var moveSpeed:Number</code><p> The avatar's move speed, in pixels per second. </p></div>
+<code>public var moveSpeed:Number</code><p> The avatar's move speed, in pixels per second.
+          </p><p>NOTE: this value is not available for server agents. Avatars are considered to arrive
+     immediately at their destinations. </div>
 <a name="name"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -132,8 +159,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var name:String</code>
-</div>
+<code>public var name:String</code><p> The avatar's associated display name. </p></div>
 <a name="orientation"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -141,16 +167,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var orientation:int</code><p> The avatar's orientation. </p></div>
-<a name="stageBounds"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">stageBounds</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public var stageBounds:Rectangle</code>
-</div>
+<code>public var orientation:int</code><p> The orientation of the avatar, measured in counter-clockwise degrees from front facing. If
+     the avatar is facing towards the player's screen, the orientation is 0. Facing to the right,
+     90&deg;, to the rear 180&deg; and to the left 270&deg;.</p></div>
 <a name="state"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -158,8 +177,8 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var state:String</code>
-</div>
+<code>public var state:String</code><p> The avatar's current state. These are the same states that appear on the avatar's "Change
+     state" menu. </p></div>
 <a name="x"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -167,7 +186,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var x:Number</code><p> The avatar's x position. </p></div>
+<code>public var x:Number</code><p> The x position of the avatar's registration point, measured in room coordinates.
+     </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="http://wiki.whirled.com/Coordinate_systems" target="mm_external">http://wiki.whirled.com/Coordinate_systems</a>
+</div>
+</div>
 <a name="y"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -175,7 +201,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var y:Number</code><p> The avatar's y position. </p></div>
+<code>public var y:Number</code><p> The y position of the avatar's registration point, measured in room coordinates.
+     </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="http://wiki.whirled.com/Coordinate_systems" target="mm_external">http://wiki.whirled.com/Coordinate_systems</a>
+</div>
+</div>
 <a name="z"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -183,7 +216,14 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public var z:Number</code><p> The avatar's z position. </p></div>
+<code>public var z:Number</code><p> The z position of the avatar's registration point, measured in room coordinates.
+     </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="http://wiki.whirled.com/Coordinate_systems" target="mm_external">http://wiki.whirled.com/Coordinate_systems</a>
+</div>
+</div>
 <br>
 <br>
 <hr>

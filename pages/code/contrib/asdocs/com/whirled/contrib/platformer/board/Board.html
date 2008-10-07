@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="Board,com.whirled.contrib.platformer.board.Board,ACTORS,ACTOR_ADDED,BOTTOM_BOUND,DYNAMIC_ADDED,DYNAMIC_REMOVED,GENERICS,GROUP_ADDED,ITEM_BACK,ITEM_DOWN,ITEM_FORWARD,ITEM_REMOVED,ITEM_UP,ITEM_UPDATED,LEFT_BOUND,PIECE_ADDED,PIECE_LOADED,PIECE_REMOVED,PLATFORMS,RIGHT_BOUND,SHOT_ADDED,TOP_BOUND,_actors,_bound,_dynamicIns,_dynamics,_groupNames,_listeners,_maxId,_name,_pfac,_pieceTree,_shots,_xml,addActor,addDynamic,addDynamicIns,addEventListener,addOrReplaceXML,addPiece,addPieceGroup,addShot,adjustMaxId,boardHas,flipPiece,genDynamicsXML,genPieceTreeXML,getActors,getBackgroundXML,getBound,getDynamicIns,getDynamics,getDynamicsXML,getEventXML,getGroup,getGroupNames,getItem,getMaxId,getName,getPieceTreeXML,getPieces,getXML,hasActor,isItem,loadCoords,loadDynamic,loadDynamics,loadFromXML,loadPieceTree,moveItemBack,moveItemDown,moveItemForward,moveItemUp,removeDynamic,removeEventListener,removeItem,sendEvent,setBound,setName,updateDynamicIns,updatePiece" name="keywords">
+<meta content="Board,com.whirled.contrib.platformer.board.Board,ACTORS,ACTOR_ADDED,BOTTOM_BOUND,DYNAMIC_ADDED,DYNAMIC_REMOVED,GENERICS,GROUP_ADDED,ITEM_BACK,ITEM_DOWN,ITEM_FORWARD,ITEM_REMOVED,ITEM_UP,ITEM_UPDATED,LEFT_BOUND,PIECE_ADDED,PIECE_LOADED,PIECE_REMOVED,PLATFORMS,RIGHT_BOUND,SHOT_ADDED,SPAWNERS,TOP_BOUND,_actors,_bound,_dynamicIns,_dynamics,_groupNames,_listeners,_maxId,_name,_pfac,_pieceTree,_shots,_xml,addActor,addDynamic,addDynamicIns,addEventListener,addOrReplaceXML,addPiece,addPieceGroup,addShot,adjustMaxId,boardHas,flipPiece,genDynamicsXML,genPieceTreeXML,getActor,getActors,getBackgroundXML,getBound,getDynamic,getDynamicIns,getDynamics,getDynamicsXML,getEventXML,getGroup,getGroupNames,getItem,getMaxId,getName,getPieceTreeXML,getPieces,getXML,hasActor,isItem,loadCoords,loadDynamic,loadDynamics,loadFromXML,loadPieceTree,moveItemBack,moveItemDown,moveItemForward,moveItemUp,removeDynamic,removeEventListener,removeItem,sendEvent,setBound,setName,updateDynamicIns,updatePiece" name="keywords">
 <title>com.whirled.contrib.platformer.board.Board</title>
 </head>
 <body>
@@ -52,7 +52,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_actors">_actors</a> : Array<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_actors">_actors</a> : Object<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
 <tr class="">
@@ -64,7 +64,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_dynamics">_dynamics</a> : Array<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_dynamics">_dynamics</a> : Object<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
 <tr class="">
@@ -93,7 +93,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_shots">_shots</a> : Array<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_shots">_shots</a> : Object<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
 <tr class="">
@@ -175,7 +175,15 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getActors()">getActors</a>():Array</div>
+<a class="signatureLink" href="#getActor()">getActor</a>(id:int):<a href="../piece/Actor.html">Actor</a>
+</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Board</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getActors()">getActors</a>():Object</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
@@ -196,14 +204,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getDynamicIns()">getDynamicIns</a>(group:String):Array</div>
+<a class="signatureLink" href="#getDynamic()">getDynamic</a>(id:int):<a href="../piece/Dynamic.html">Dynamic</a>
+</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getDynamics()">getDynamics</a>():Array</div>
+<a class="signatureLink" href="#getDynamicIns()">getDynamicIns</a>(group:String):Object</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">Board</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getDynamics()">getDynamics</a>():Object</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
@@ -282,7 +298,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#loadDynamic()">loadDynamic</a>(xml:XML):<a href="../piece/Dynamic.html">Dynamic</a>
 </div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
 <tr class="">
@@ -402,7 +418,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#genDynamicsXML()">genDynamicsXML</a>(dynamics:Array, nodename:String):XML</div>
+<a class="signatureLink" href="#genDynamicsXML()">genDynamicsXML</a>(dynamics:Object, nodename:String):XML</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
@@ -416,7 +432,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getGroup()">getGroup</a>(tree:String):Array</div>
+<a class="signatureLink" href="#getGroup()">getGroup</a>(tree:String):Object</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
@@ -437,7 +453,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#loadDynamics()">loadDynamics</a>(xml:XML, arr:Array):void</div>
+<a class="signatureLink" href="#loadDynamics()">loadDynamics</a>(xml:XML, arr:Object):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
@@ -545,6 +561,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SPAWNERS">SPAWNERS</a> : String = "spawners"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">Board</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#TOP_BOUND">TOP_BOUND</a> : int = 0<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">Board</td>
 </tr>
@@ -564,7 +584,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _actors:Array</code>
+<code>protected var _actors:Object</code>
 </div>
 <a name="_bound"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -591,7 +611,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _dynamics:Array</code>
+<code>protected var _dynamics:Object</code>
 </div>
 <a name="_groupNames"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -653,7 +673,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _shots:Array</code>
+<code>protected var _shots:Object</code>
 </div>
 <a name="_xml"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -886,10 +906,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function genDynamicsXML(dynamics:Array, nodename:String):XML</code><span class="label">Parameters</span>
+<code>protected function genDynamicsXML(dynamics:Object, nodename:String):XML</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">dynamics</span>:Array</code></td>
+<td width="20px"></td><td><code><span class="label">dynamics</span>:Object</code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -927,6 +947,27 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="getActor()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getActor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getActor(id:int):<a href="../piece/Actor.html">Actor</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">id</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../piece/Actor.html">Actor</a></code></td>
+</tr>
+</table>
+</div>
 <a name="getActors()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -934,12 +975,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getActors():Array</code>
+<code>public function getActors():Object</code>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Array</code></td>
+<td width="20"></td><td><code>Object</code></td>
 </tr>
 </table>
 </div>
@@ -980,6 +1021,27 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="getDynamic()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getDynamic</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function getDynamic(id:int):<a href="../piece/Dynamic.html">Dynamic</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">id</span>:int</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../piece/Dynamic.html">Dynamic</a></code></td>
+</tr>
+</table>
+</div>
 <a name="getDynamicIns()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -987,7 +1049,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getDynamicIns(group:String):Array</code><span class="label">Parameters</span>
+<code>public function getDynamicIns(group:String):Object</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">group</span>:String</code></td>
@@ -997,7 +1059,7 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Array</code></td>
+<td width="20"></td><td><code>Object</code></td>
 </tr>
 </table>
 </div>
@@ -1008,12 +1070,12 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getDynamics():Array</code>
+<code>public function getDynamics():Object</code>
 <p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Array</code></td>
+<td width="20"></td><td><code>Object</code></td>
 </tr>
 </table>
 </div>
@@ -1061,7 +1123,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function getGroup(tree:String):Array</code><span class="label">Parameters</span>
+<code>protected function getGroup(tree:String):Object</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">tree</span>:String</code></td>
@@ -1071,7 +1133,7 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code>Array</code></td>
+<td width="20"></td><td><code>Object</code></td>
 </tr>
 </table>
 </div>
@@ -1273,7 +1335,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function loadDynamic(xml:XML):<a href="../piece/Dynamic.html">Dynamic</a></code><span class="label">Parameters</span>
+<code>public static function loadDynamic(xml:XML):<a href="../piece/Dynamic.html">Dynamic</a></code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">xml</span>:XML</code></td>
@@ -1294,7 +1356,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function loadDynamics(xml:XML, arr:Array):void</code><span class="label">Parameters</span>
+<code>protected function loadDynamics(xml:XML, arr:Object):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">xml</span>:XML</code></td>
@@ -1303,7 +1365,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">arr</span>:Array</code></td>
+<td width="20px"></td><td><code><span class="label">arr</span>:Object</code></td>
 </tr>
 </table>
 </div>
@@ -1762,6 +1824,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const SHOT_ADDED:String = "shot_added"</code>
+</div>
+<a name="SPAWNERS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SPAWNERS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const SPAWNERS:String = "spawners"</code>
 </div>
 <a name="TOP_BOUND"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

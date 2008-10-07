@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="AVRGameControl,com.whirled.avrg.AVRGameControl,agent,game,local,player,room,enteredRoom_v1,leftRoom_v1" name="keywords">
+<meta content="AVRGameControl,com.whirled.avrg.AVRGameControl,agent,game,local,player,room" name="keywords">
 <title>com.whirled.avrg.AVRGameControl</title>
 </head>
 <body>
@@ -42,14 +42,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
- This file should be included by AVR games so that they can communicate
- with the whirled.
+ This file should be included by AVR game clients so that they can communicate with their server
+ agent and the whirled.
   AVRGame means: Alternate Virtual Reality Game, and refers to games
  played within the whirled environment with your avatar.
-  <p><b>Note</b>: The AVRG framework is "alpha" and may be changed in incompatible ways.
- If you are making an AVRG game, please let us know what you're doing in the AVRG
- discussion forum: <a href="http://first.whirled.com/#whirleds-d_135_r">http://first.whirled.com/#whirleds-d_135_r</a></p>
- <p></p>
+  <p>AVR games can be significantly more complicated than lobbied games. Please consult the whirled
+ wiki section on AVRGs as well as the AVRG discussion forum if you're having any problems.</p>
+  <p></p>
+<p>
+<span class="classHeaderTableLabel">See also</span>
+</p>
+<div class="seeAlso">
+<a href="http://wiki.whirled.com/AVR_Games" target="mm_external">http://wiki.whirled.com/AVR_Games</a>
+<br>
+<a href="http://www.whirled.com/#whirleds-d_135" target="mm_external">http://www.whirled.com/#whirleds-d_135</a>
+</div>
 <br>
 <hr>
 </div>
@@ -62,29 +69,32 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#agent">agent</a> : <a href="../avrg/AgentSubControl.html">AgentSubControl</a>
-<div class="summaryTableDescription">[read-only]</div>
+<div class="summaryTableDescription">[read-only]
+     Accesses the client's agent sub control.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#game">game</a> : <a href="../avrg/GameSubControl.html">GameSubControl</a>
-<div class="summaryTableDescription">[read-only]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#game">game</a> : <a href="../avrg/GameSubControlClient.html">GameSubControlClient</a>
+<div class="summaryTableDescription">[read-only]
+     Accesses the client's game sub control.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#local">local</a> : <a href="../avrg/LocalSubControl.html">LocalSubControl</a>
 <div class="summaryTableDescription">[read-only]
-     Get the LocalSubControl which contains methods that are only relevant on the
-     client, as they deal with e.g.</div>
+     Accesses the client's local sub control.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#player">player</a> : <a href="../avrg/PlayerSubControl.html">PlayerSubControl</a>
-<div class="summaryTableDescription">[read-only]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#player">player</a> : <a href="../avrg/PlayerSubControlClient.html">PlayerSubControlClient</a>
+<div class="summaryTableDescription">[read-only]
+     Accesses the client's local player sub control.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#room">room</a> : <a href="../avrg/RoomSubControl.html">RoomSubControl</a>
-<div class="summaryTableDescription">[read-only]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#room">room</a> : <a href="../avrg/RoomSubControlClient.html">RoomSubControlClient</a>
+<div class="summaryTableDescription">[read-only]
+     Accesses the client's room sub control for the player's current room.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 </table>
@@ -109,7 +119,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#AVRGameControl()">AVRGameControl</a>(disp:DisplayObject)</div>
 <div class="summaryTableDescription">
-     Create a world game interface.</div>
+     Creates a new game control for an AVR game client.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -129,13 +139,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      together.</div>
 </td><td class="summaryTableOwnerCol"><a href="../AbstractControl.html">AbstractControl</a></td>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#enteredRoom_v1()">enteredRoom_v1</a>(scene:int):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">AVRGameControl</td>
-</tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -145,13 +148,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
      loaded up our SWF by itself?
      </div>
 </td><td class="summaryTableOwnerCol"><a href="../AbstractControl.html">AbstractControl</a></td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#leftRoom_v1()">leftRoom_v1</a>(scene:int):void</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">AVRGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -203,7 +199,9 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>agent:<a href="../avrg/AgentSubControl.html">AgentSubControl</a></code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<code>agent:<a href="../avrg/AgentSubControl.html">AgentSubControl</a></code>&nbsp;&nbsp;[read-only]<p>
+     Accesses the client's agent sub control.
+     </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get agent():<a href="../avrg/AgentSubControl.html">AgentSubControl</a></code>
 <br>
@@ -215,9 +213,11 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>game:<a href="../avrg/GameSubControl.html">GameSubControl</a></code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<code>game:<a href="../avrg/GameSubControlClient.html">GameSubControlClient</a></code>&nbsp;&nbsp;[read-only]<p>
+     Accesses the client's game sub control.
+     </p><span class="label">Implementation</span>
 <br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get game():<a href="../avrg/GameSubControl.html">GameSubControl</a></code>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get game():<a href="../avrg/GameSubControlClient.html">GameSubControlClient</a></code>
 <br>
 </div>
 <a name="local"></a>
@@ -228,8 +228,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>local:<a href="../avrg/LocalSubControl.html">LocalSubControl</a></code>&nbsp;&nbsp;[read-only]<p>
-     Get the LocalSubControl which contains methods that are only relevant on the
-     client, as they deal with e.g. on-screen pixels rather than logical positioning.
+     Accesses the client's local sub control.
      </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get local():<a href="../avrg/LocalSubControl.html">LocalSubControl</a></code>
@@ -242,9 +241,11 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>player:<a href="../avrg/PlayerSubControl.html">PlayerSubControl</a></code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<code>player:<a href="../avrg/PlayerSubControlClient.html">PlayerSubControlClient</a></code>&nbsp;&nbsp;[read-only]<p>
+     Accesses the client's local player sub control.
+     </p><span class="label">Implementation</span>
 <br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get player():<a href="../avrg/PlayerSubControl.html">PlayerSubControl</a></code>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get player():<a href="../avrg/PlayerSubControlClient.html">PlayerSubControlClient</a></code>
 <br>
 </div>
 <a name="room"></a>
@@ -254,9 +255,11 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>room:<a href="../avrg/RoomSubControl.html">RoomSubControl</a></code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<code>room:<a href="../avrg/RoomSubControlClient.html">RoomSubControlClient</a></code>&nbsp;&nbsp;[read-only]<p>
+     Accesses the client's room sub control for the player's current room.
+     </p><span class="label">Implementation</span>
 <br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get room():<a href="../avrg/RoomSubControl.html">RoomSubControl</a></code>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get room():<a href="../avrg/RoomSubControlClient.html">RoomSubControlClient</a></code>
 <br>
 </div>
 <a name="constructorDetail"></a>
@@ -269,41 +272,11 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function AVRGameControl(disp:DisplayObject)</code><p>
-     Create a world game interface. The display object is your world game.
+     Creates a new game control for an AVR game client.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">disp</span>:DisplayObject</code></td>
-</tr>
-</table>
-</div>
-<a name="methodDetail"></a>
-<div class="detailSectionHeader">Method detail</div>
-<a name="enteredRoom_v1()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">enteredRoom_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function enteredRoom_v1(scene:int):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">scene</span>:int</code></td>
-</tr>
-</table>
-</div>
-<a name="leftRoom_v1()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">leftRoom_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>public function leftRoom_v1(scene:int):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">scene</span>:int</code></td>
 </tr>
 </table>
 </div>

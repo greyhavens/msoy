@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="LevelPacks,com.whirled.contrib.LevelPacks,_levelPacks,getAvailableIdents,getLevelPack,getLevelPacks,getMediaURL,init,isLevelPack" name="keywords">
+<meta content="LevelPacks,com.whirled.contrib.LevelPacks,_mgr,getAvailableIdents,getLevelPack,getLevelPacks,getMediaURL,init,isLevelPack" name="keywords">
 <title>com.whirled.contrib.LevelPacks</title>
 </head>
 <body>
@@ -51,7 +51,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_levelPacks">_levelPacks</a> : HashMap<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_mgr">_mgr</a> : <a href="../contrib/LevelPackManager.html">LevelPackManager</a>
+<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">LevelPacks</td>
 </tr>
 </table>
@@ -101,7 +102,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#init()">init</a>(levelPacks:Array):void</div>
-<div class="summaryTableDescription">[static] 
+<div class="summaryTableDescription">[static]
      Call init after the WhirledGameControl is connected and the level packs are available.</div>
 </td><td class="summaryTableOwnerCol">LevelPacks</td>
 </tr>
@@ -122,14 +123,14 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_levelPacks"></a>
+<a name="_mgr"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_levelPacks</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_mgr</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static var _levelPacks:HashMap</code>
+<code>protected static var _mgr:<a href="../contrib/LevelPackManager.html">LevelPackManager</a></code>
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
@@ -221,7 +222,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static function init(levelPacks:Array):void</code><p> 
+<code>public static function init(levelPacks:Array):void</code><p>
      Call init after the WhirledGameControl is connected and the level packs are available.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">

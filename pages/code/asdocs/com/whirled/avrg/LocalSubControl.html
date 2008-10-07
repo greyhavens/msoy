@@ -60,7 +60,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#mobSpriteExporter">mobSpriteExporter</a> : Function<div class="summaryTableDescription">[read-only]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#mobSpriteExporter">mobSpriteExporter</a> : Function<div class="summaryTableDescription">[read-only]
+     Accesses the previously set mob sprite exporter.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 </table>
@@ -103,8 +104,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#feedback()">feedback</a>(msg:String):void</div>
 <div class="summaryTableDescription">
-     Display a feedback chat message for the local player only, no other players
-     or observers will see it.</div>
+     Displays a feedback chat message for the local player only, no other players or observers
+     will see it.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="">
@@ -167,15 +168,17 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#setHitPointTester()">setHitPointTester</a>(tester:Function):void</div>
 <div class="summaryTableDescription">
-     Configures the AVRG with a function to call to determine which pixels are alive
-     for mouse purposes and which are not.</div>
+     Configures the AVRG with a function to call to determine which pixels are alive for mouse
+     purposes and which are not.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#setMobSpriteExporter()">setMobSpriteExporter</a>(exporter:Function):void</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Sets the function that will manufacture <code>DisplayObject</code> instances on the client
+     when mobs are spawned by the server agent.</div>
 </td><td class="summaryTableOwnerCol">LocalSubControl</td>
 </tr>
 </table>
@@ -248,10 +251,18 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>mobSpriteExporter:Function</code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<code>mobSpriteExporter:Function</code>&nbsp;&nbsp;[read-only]<p>
+     Accesses the previously set mob sprite exporter.
+     </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get mobSpriteExporter():Function</code>
 <br>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../avrg/LocalSubControl.html#setMobSpriteExporter()" target="">setMobSpriteExporter()</a>
+</div>
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
@@ -263,8 +274,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function feedback(msg:String):void</code><p>
-     Display a feedback chat message for the local player only, no other players
-     or observers will see it.
+     Displays a feedback chat message for the local player only, no other players or observers
+     will see it.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -287,9 +298,9 @@ showHideInherited();
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">full</span>:Boolean</code> (default = <code>true</code>)<code></code> &mdash; If true (the default), return the entire paintable area. If false,
-     return the area occupied by the room's decor, which can be smaller than the entire
-     paintable area in narrow rooms, or when the room view is zoomed out.
+<td width="20px"></td><td><code><span class="label">full</span>:Boolean</code> (default = <code>true</code>)<code></code> &mdash; If true (the default), returns the entire paintable area. If false, returns the
+     area occupied by the room's decor, which can be smaller than the entire paintable area in
+     narrow rooms, or when the room view is zoomed out.
           </td>
 </tr>
 </table>
@@ -299,9 +310,15 @@ showHideInherited();
 <tr>
 <td width="20"></td><td><code>Rectangle</code> &mdash; a Rectangle containing the bounds of the paintable area, or null if the area is not
      defined
-     </td>
+          </td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../avrg/LocalSubControl.html#event:SizeChanged" target="">SizeChanged</a>
+</div>
 </div>
 <a name="locationToPaintable()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -419,13 +436,13 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function setHitPointTester(tester:Function):void</code><p>
-     Configures the AVRG with a function to call to determine which pixels are alive
-     for mouse purposes and which are not. By default, all non-transparent pixels will
-     capture the mouse. The prototype for this method is identical to what the Flash
-     API establishes in DisplayObject:
-     <code>
-        testHitPoint(x :Number, y :Number, shapeFlag :Boolean) :Boolean
-     </code>
+     Configures the AVRG with a function to call to determine which pixels are alive for mouse
+     purposes and which are not. By default, all non-transparent pixels will capture the mouse.
+     The prototype for this method is identical to what the Flash API establishes in
+     <code>DisplayObject</code>:
+          <div class='listing'><pre>
+        function testHitPoint(x :Number, y :Number, shapeFlag :Boolean) :Boolean
+     </pre></div>
           </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -444,12 +461,35 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function setMobSpriteExporter(exporter:Function):void</code><span class="label">Parameters</span>
+<code>public function setMobSpriteExporter(exporter:Function):void</code><p>
+     Sets the function that will manufacture <code>DisplayObject</code> instances on the client
+     when mobs are spawned by the server agent. The function must take the string type of the
+     requested mob and return a <code>DisplayObject</code>:
+     
+     <div class='listing'><pre>
+        function createMobSprite (type :String) :DisplayObject;
+     </pre></div>
+          </p><p>Once created, the mob will be drawn in the room until the server agent despawns it. Clients
+     should not attempt to remove the sprite. Each mob in a room has a corresponding
+     <code>MobSubControlClient</code>. Games that use mobs should call this function during
+     initialization so that if the player is joining an in-progress game, all the previously
+     spawned mobs will be created.</p>
+          <span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">exporter</span>:Function</code></td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="RoomSubControlServer.html#spawnMob()" target="">RoomSubControlServer.spawnMob()</a>
+<br>
+<a href="RoomSubControlClient.html#getMobSubControl()" target="">RoomSubControlClient.getMobSubControl()</a>
+<br>
+<a href="http://wiki.whirled.com/Mobs" target="mm_external">http://wiki.whirled.com/Mobs</a>
+</div>
 </div>
 <div class="detailSectionHeader">Event detail</div>
 <a name="event:sizeChanged"></a>
@@ -466,9 +506,15 @@ showHideInherited();
  Dispatched when the control has been resized.
   </p><p>
      An event type dispatched when the control has been resized.
-     key: N/A
-     value: N/A
-          </p></div>
+     <br/><b>name</b> - not used
+     <br/><b>value</b> - not used
+          </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="../avrg/LocalSubControl.html#getPaintableArea()" target="">getPaintableArea()</a>
+</div>
+</div>
 <br>
 <br>
 <hr>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="AVRServerGameControl,com.whirled.avrg.AVRServerGameControl,game,getPlayer,getRoom,roomUnloaded_v1" name="keywords">
+<meta content="AVRServerGameControl,com.whirled.avrg.AVRServerGameControl,game,getPlayer,getRoom" name="keywords">
 <title>com.whirled.avrg.AVRServerGameControl</title>
 </head>
 <body>
@@ -42,14 +42,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
- This file should be included by AVR games so that they can communicate
- with the whirled.
-  AVRGame means: Alternate Virtual Reality Game, and refers to games
- played within the whirled environment with your avatar.
-  <p><b>Note</b>: The AVRG framework is "alpha" and may be changed in incompatible ways.
- If you are making an AVRG game, please let us know what you're doing in the AVRG
- discussion forum: <a href="http://first.whirled.com/#whirleds-d_135_r">http://first.whirled.com/#whirleds-d_135_r</a></p>
- <p></p>
+ This file should be included by the server agents of AVR games so that they can communicate
+ with the whirled. Server agents are normally responsible for deciding how players will be
+ grouped and for an arbitrary amount of the game logic.
+  <p>AVRGame means: Alternate Virtual Reality Game, and refers to games played within the whirled
+ environment with your avatar.</p>
+  <p>AVR games can be significantly more complicated than lobbied games. Please consult the whirled
+ wiki section on AVRGs as well as the AVRG discussion forum if you're having any problems.</p>
+  <p></p>
+<p>
+<span class="classHeaderTableLabel">See also</span>
+</p>
+<div class="seeAlso">
+<a href="http://wiki.whirled.com/AVR_Games" target="mm_external">http://wiki.whirled.com/AVR_Games</a>
+<br>
+<a href="http://www.whirled.com/#whirleds-d_135" target="mm_external">http://www.whirled.com/#whirleds-d_135</a>
+</div>
 <br>
 <hr>
 </div>
@@ -61,8 +69,9 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#game">game</a> : <a href="../avrg/GameServerSubControl.html">GameServerSubControl</a>
-<div class="summaryTableDescription">[read-only]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#game">game</a> : <a href="../avrg/GameSubControlServer.html">GameSubControlServer</a>
+<div class="summaryTableDescription">[read-only]
+     Accesses the server agent's game sub control.</div>
 </td><td class="summaryTableOwnerCol">AVRServerGameControl</td>
 </tr>
 </table>
@@ -87,7 +96,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#AVRServerGameControl()">AVRServerGameControl</a>(serv:<a href="../ServerObject.html">ServerObject</a>)</div>
 <div class="summaryTableDescription">
-     Create a world game interface.</div>
+     Creates a new game control for a server agent.</div>
 </td><td class="summaryTableOwnerCol">AVRServerGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -110,17 +119,19 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getPlayer()">getPlayer</a>(playerId:int):<a href="../avrg/PlayerServerSubControl.html">PlayerServerSubControl</a>
+<a class="signatureLink" href="#getPlayer()">getPlayer</a>(playerId:int):<a href="../avrg/PlayerSubControlServer.html">PlayerSubControlServer</a>
 </div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Accesses the server agent's player sub control for a player with a given id.</div>
 </td><td class="summaryTableOwnerCol">AVRServerGameControl</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#getRoom()">getRoom</a>(roomId:int):<a href="../avrg/RoomServerSubControl.html">RoomServerSubControl</a>
+<a class="signatureLink" href="#getRoom()">getRoom</a>(roomId:int):<a href="../avrg/RoomSubControlServer.html">RoomSubControlServer</a>
 </div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">
+     Accesses the server agent's room sub control for a given room id.</div>
 </td><td class="summaryTableOwnerCol">AVRServerGameControl</td>
 </tr>
 <tr class="hideInheritedMethod">
@@ -140,23 +151,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription">
      Unregisters an event listener.</div>
 </td><td class="summaryTableOwnerCol"><a href="../AbstractControl.html">AbstractControl</a></td>
-</tr>
-</table>
-</div>
-<a name="protectedMethodSummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Methods</div>
-<table id="summaryTableProtectedMethod" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Method</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#roomUnloaded_v1()">roomUnloaded_v1</a>(roomId:int):void</div>
-<div class="summaryTableDescription">
-     Called by the backend when a room is no longer accessible.</div>
-</td><td class="summaryTableOwnerCol">AVRServerGameControl</td>
 </tr>
 </table>
 </div>
@@ -200,9 +194,11 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>game:<a href="../avrg/GameServerSubControl.html">GameServerSubControl</a></code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<code>game:<a href="../avrg/GameSubControlServer.html">GameSubControlServer</a></code>&nbsp;&nbsp;[read-only]<p>
+     Accesses the server agent's game sub control.
+     </p><span class="label">Implementation</span>
 <br>
-<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get game():<a href="../avrg/GameServerSubControl.html">GameServerSubControl</a></code>
+<code>&nbsp;&nbsp;&nbsp;&nbsp;public function get game():<a href="../avrg/GameSubControlServer.html">GameSubControlServer</a></code>
 <br>
 </div>
 <a name="constructorDetail"></a>
@@ -215,7 +211,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function AVRServerGameControl(serv:<a href="../ServerObject.html">ServerObject</a>)</code><p>
-     Create a world game interface. The display object is your world game.
+     Creates a new game control for a server agent.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -232,7 +228,11 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getPlayer(playerId:int):<a href="../avrg/PlayerServerSubControl.html">PlayerServerSubControl</a></code><span class="label">Parameters</span>
+<code>public function getPlayer(playerId:int):<a href="../avrg/PlayerSubControlServer.html">PlayerSubControlServer</a></code><p>
+     Accesses the server agent's player sub control for a player with a given id. Server agents
+     are notified when a player joins and quits the game by events. An <code>Error</code> is
+     thrown if the requested player has not joined the game or has quit.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">playerId</span>:int</code></td>
@@ -242,9 +242,13 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code><a href="../avrg/PlayerServerSubControl.html">PlayerServerSubControl</a></code></td>
+<td width="20"></td><td><code><a href="../avrg/PlayerSubControlServer.html">PlayerSubControlServer</a></code></td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">AVRGameControlEvent.PLAYER_JOINED<br>AVRGameControlEvent.PLAYER_QUIT</div>
 </div>
 <a name="getRoom()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -253,7 +257,13 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function getRoom(roomId:int):<a href="../avrg/RoomServerSubControl.html">RoomServerSubControl</a></code><span class="label">Parameters</span>
+<code>public function getRoom(roomId:int):<a href="../avrg/RoomSubControlServer.html">RoomSubControlServer</a></code><p>
+     Accesses the server agent's room sub control for a given room id. This method will fail by
+     throwing an <code>Error</code> if the room is not currently loaded by the server agent. A
+     room with at least one player in it is guaranteed to be loaded. Server agents are notified
+     of player entry and exit by events. A room with no players in it should be considered
+     unloaded after the event is sent for the last player exiting the room.
+     </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">roomId</span>:int</code></td>
@@ -263,25 +273,21 @@ showHideInherited();
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20"></td><td><code><a href="../avrg/RoomServerSubControl.html">RoomServerSubControl</a></code></td>
+<td width="20"></td><td><code><a href="../avrg/RoomSubControlServer.html">RoomSubControlServer</a></code></td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="AVRGamePlayerEvent.html#ENTERED_ROOM" target="">AVRGamePlayerEvent.ENTERED_ROOM</a>
+<br>
+<a href="AVRGamePlayerEvent.html#LEFT_ROOM" target="">AVRGamePlayerEvent.LEFT_ROOM</a>
+<br>
+<a href="AVRGameRoomEvent.html#PLAYER_ENTERED" target="">AVRGameRoomEvent.PLAYER_ENTERED</a>
+<br>
+<a href="AVRGameRoomEvent.html#PLAYER_LEFT" target="">AVRGameRoomEvent.PLAYER_LEFT</a>
 </div>
-<a name="roomUnloaded_v1()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">roomUnloaded_v1</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function roomUnloaded_v1(roomId:int):void</code><p>
-     Called by the backend when a room is no longer accessible.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">roomId</span>:int</code></td>
-</tr>
-</table>
 </div>
 <br>
 <br>

@@ -57,7 +57,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_activeTaskCount">_activeTaskCount</a> : uint<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_activeTaskCount">_activeTaskCount</a> : int<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">TaskContainer</td>
 </tr>
 <tr class="">
@@ -88,7 +88,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#TaskContainer()">TaskContainer</a>(type:uint, task1:<a href="../ObjectTask.html">ObjectTask</a> = null, task2:<a href="../ObjectTask.html">ObjectTask</a> = null)</div>
+<a class="signatureLink" href="#TaskContainer()">TaskContainer</a>(type:uint, subtasks:Array = null)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">TaskContainer</td>
 </tr>
@@ -202,7 +202,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _activeTaskCount:uint</code>
+<code>protected var _activeTaskCount:int</code>
 </div>
 <a name="_completedTasks"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -249,7 +249,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function TaskContainer(type:uint, task1:<a href="../ObjectTask.html">ObjectTask</a> = null, task2:<a href="../ObjectTask.html">ObjectTask</a> = null)</code><span class="label">Parameters</span>
+<code>public function TaskContainer(type:uint, subtasks:Array = null)</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">type</span>:uint</code></td>
@@ -258,13 +258,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">task1</span>:<a href="../ObjectTask.html">ObjectTask</a></code> (default = <code>null</code>)<code></code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">task2</span>:<a href="../ObjectTask.html">ObjectTask</a></code> (default = <code>null</code>)<code></code></td>
+<td width="20px"></td><td><code><span class="label">subtasks</span>:Array</code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
 </div>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="DynamicTree,com.whirled.contrib.platformer.editor.DynamicTree,_details,_dxml,_dynamic,_settingsBox,addButtons,addDynamic,buildDynamicTree,createHD,getColumn,getItemName,updateDetails,updateDynamic" name="keywords">
+<meta content="DynamicTree,com.whirled.contrib.platformer.editor.DynamicTree,_details,_dxml,_dynamic,_settingsBox,addButtons,addDynamic,buildDynamicTree,createHD,genDetails,getColumn,getDef,getItemName,updateDetails,updateDynamic" name="keywords">
 <title>com.whirled.contrib.platformer.editor.DynamicTree</title>
 </head>
 <body>
@@ -137,6 +137,20 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="BaseTree.html#addXML()">addXML</a>(xml:XML, tree:String = null):String</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="BaseTree.html">BaseTree</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#genDetails()">genDetails</a>(details:Array, box:Box, def:XML, d:<a href="../piece/Dynamic.html">Dynamic</a>):void</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">DynamicTree</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#getDef()">getDef</a>(ddef:XML, dobj:Object):XML</div>
+<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">DynamicTree</td>
 </tr>
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -409,6 +423,38 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="genDetails()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">genDetails</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function genDetails(details:Array, box:Box, def:XML, d:<a href="../piece/Dynamic.html">Dynamic</a>):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">details</span>:Array</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">box</span>:Box</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">def</span>:XML</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">d</span>:<a href="../piece/Dynamic.html">Dynamic</a></code></td>
+</tr>
+</table>
+</div>
 <a name="getColumn()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -422,6 +468,33 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>AdvancedDataGridColumn</code></td>
+</tr>
+</table>
+</div>
+<a name="getDef()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">getDef</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static function getDef(ddef:XML, dobj:Object):XML</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">ddef</span>:XML</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">dobj</span>:Object</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>XML</code></td>
 </tr>
 </table>
 </div>

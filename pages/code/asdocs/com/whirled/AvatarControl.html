@@ -437,7 +437,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="#event:actionTriggered">actionTriggered</a>
 </div>
 </td><td class="summaryTableDescription summaryTableCol">
- Dispatched when the user controlling this avatar triggers an action.</td><td class="summaryTableOwnerCol">AvatarControl</td>
+ Dispatched when the user or game controlling this avatar triggers an action.</td><td class="summaryTableOwnerCol">AvatarControl</td>
 </tr>
 <tr class="hideInheritedEvent">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
@@ -767,12 +767,18 @@ showHideInherited();
 <br>
 <span class="label">ControlEvent.type property = </span><a href="../whirled/ControlEvent.html#ACTION_TRIGGERED"><code>com.whirled.ControlEvent.ACTION_TRIGGERED</code></a>
 <br><p>
- Dispatched when the user controlling this avatar triggers an action.
+ Dispatched when the user or game controlling this avatar triggers an action.
  
  </p><p> An event type dispatched when an action is triggered.
      name: action name 
      value: action value
-          </p></div>
+          </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="avrg/PlayerSubControlBase.html#playAvatarAction()" target="">com.whirled.avrg.PlayerSubControlBase.playAvatarAction()</a>
+</div>
+</div>
 <a name="event:avatarSpoke"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>

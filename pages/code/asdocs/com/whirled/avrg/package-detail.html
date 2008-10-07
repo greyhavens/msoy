@@ -41,80 +41,89 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Pa
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="AgentSubControl.html">AgentSubControl</a></td><td class="summaryTableLastCol">
- This subcontrol is used by an AVRG on the client to send messages to the server agent.</td>
+ Provides AVR game clients a way to communicate to their server agent.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="AVRGameAvatar.html">AVRGameAvatar</a></td><td class="summaryTableLastCol">&nbsp;</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="AVRGameAvatar.html">AVRGameAvatar</a></td><td class="summaryTableLastCol">
+ Describes the current state of a player's avatar for an AVRG client or server agent.</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="AVRGameControl.html">AVRGameControl</a></td><td class="summaryTableLastCol">
- This file should be included by AVR games so that they can communicate
- with the whirled.</td>
+ This file should be included by AVR game clients so that they can communicate with their server
+ agent and the whirled.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="AVRGameControlEvent.html">AVRGameControlEvent</a></td><td class="summaryTableLastCol">&nbsp;</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="AVRGameControlEvent.html">AVRGameControlEvent</a></td><td class="summaryTableLastCol">
+ Conveys information about a change to the state of an AVR game.</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="AVRGamePlayerEvent.html">AVRGamePlayerEvent</a></td><td class="summaryTableLastCol">
- An event dispatched on a per-player AVRG sub control.</td>
+ Conveys information about a change to the state of a particular player in an AVR game.</td>
 </tr>
 <tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="AVRGameRoomEvent.html">AVRGameRoomEvent</a></td><td class="summaryTableLastCol">
- An event dispatched on a per-player AVRG sub control.</td>
+ Conveys information about a change to the state of a particular room in an AVR game.</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="AVRServerGameControl.html">AVRServerGameControl</a></td><td class="summaryTableLastCol">
- This file should be included by AVR games so that they can communicate
+ This file should be included by the server agents of AVR games so that they can communicate
  with the whirled.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="GameBaseSubControl.html">GameBaseSubControl</a></td><td class="summaryTableLastCol">&nbsp;</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="GameSubControlBase.html">GameSubControlBase</a></td><td class="summaryTableLastCol">
+ Provides AVR game services for server agents and clients.</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="GameServerSubControl.html">GameServerSubControl</a></td><td class="summaryTableLastCol">&nbsp;</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="GameSubControlClient.html">GameSubControlClient</a></td><td class="summaryTableLastCol">
+ Provides AVR client game services.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="GameSubControl.html">GameSubControl</a></td><td class="summaryTableLastCol">&nbsp;</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="GameSubControlServer.html">GameSubControlServer</a></td><td class="summaryTableLastCol">
+ Provides services for AVR game server agents.</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="LocalSubControl.html">LocalSubControl</a></td><td class="summaryTableLastCol">
  Defines actions, accessors and callbacks available on the client only.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="MobBaseSubControl.html">MobBaseSubControl</a></td><td class="summaryTableLastCol">
- Defines actions, accessors and callbacks available to all MOBs.</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="MobSubControlBase.html">MobSubControlBase</a></td><td class="summaryTableLastCol">
+ Provides a means of accessing and controlling a previously spawned MOB.</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="MobServerSubControl.html">MobServerSubControl</a></td><td class="summaryTableLastCol">
- Defines actions, accessors and callbacks available to MOBs on the server.</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="MobSubControlClient.html">MobSubControlClient</a></td><td class="summaryTableLastCol">
+ Provides clients with a means of accessing and controlling a previously spawned MOB.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="MobSubControl.html">MobSubControl</a></td><td class="summaryTableLastCol">
- Defines actions, accessors and callbacks available to MOBs on the client.</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="MobSubControlServer.html">MobSubControlServer</a></td><td class="summaryTableLastCol">
+ Provides the server agent with a means of controlling a previously spawned MOB.</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="PlayerBaseSubControl.html">PlayerBaseSubControl</a></td><td class="summaryTableLastCol">&nbsp;</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="PlayerSubControlBase.html">PlayerSubControlBase</a></td><td class="summaryTableLastCol">
+ Provides services for a single player of an AVRG to the server agent and client.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="PlayerServerSubControl.html">PlayerServerSubControl</a></td><td class="summaryTableLastCol">&nbsp;</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="PlayerSubControlClient.html">PlayerSubControlClient</a></td><td class="summaryTableLastCol">
+ Provides services for the client's player of an AVRG.</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="PlayerSubControl.html">PlayerSubControl</a></td><td class="summaryTableLastCol">&nbsp;</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="PlayerSubControlServer.html">PlayerSubControlServer</a></td><td class="summaryTableLastCol">
+ Provides the server agent for an AVR game with services related to a single player.</td>
 </tr>
 <tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="PropControl.html">PropControl</a></td><td class="summaryTableLastCol">
  Defines actions, accessors and callbacks available to all Props.</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="RoomBaseSubControl.html">RoomBaseSubControl</a></td><td class="summaryTableLastCol">
- Defines actions, accessors and callbacks available on the client only.</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="RoomSubControlBase.html">RoomSubControlBase</a></td><td class="summaryTableLastCol">
+ Provides AVR services for a single room to clients and server agents.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="RoomServerSubControl.html">RoomServerSubControl</a></td><td class="summaryTableLastCol">&nbsp;</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="RoomSubControlClient.html">RoomSubControlClient</a></td><td class="summaryTableLastCol">
+ Provides AVR services for a client player's current room.</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="RoomSubControl.html">RoomSubControl</a></td><td class="summaryTableLastCol">
- Defines actions, accessors and callbacks available on the client only.</td>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="RoomSubControlServer.html">RoomSubControlServer</a></td><td class="summaryTableLastCol">
+ Provides AVR services for a single room to server agents only.</td>
 </tr>
 </table>
 <p></p>

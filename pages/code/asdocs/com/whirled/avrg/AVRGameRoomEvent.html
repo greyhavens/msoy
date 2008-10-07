@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../print.css" type="text/css" media="print">
-<meta content="AVRGameRoomEvent,com.whirled.avrg.AVRGameRoomEvent,AVATAR_CHANGED,MOB_CONTROL_AVAILABLE,PLAYER_ENTERED,PLAYER_LEFT,PLAYER_MOVED,_roomId,roomId,clone,toString" name="keywords">
+<meta content="AVRGameRoomEvent,com.whirled.avrg.AVRGameRoomEvent,AVATAR_CHANGED,MOB_CONTROL_AVAILABLE,PLAYER_ENTERED,PLAYER_LEFT,PLAYER_MOVED,roomId,clone,toString" name="keywords">
 <title>com.whirled.avrg.AVRGameRoomEvent</title>
 </head>
 <body>
@@ -42,8 +42,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
- An event dispatched on a per-player AVRG sub control.
+ Conveys information about a change to the state of a particular room in an AVR game.
  <p></p>
+<p>
+<span class="classHeaderTableLabel">See also</span>
+</p>
+<div class="seeAlso">
+<a href="RoomSubControlClient.html" target="">RoomSubControlClient</a>
+<br>
+<a href="RoomSubControlServer.html" target="">RoomSubControlServer</a>
+</div>
 <br>
 <hr>
 </div>
@@ -64,32 +72,20 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="hideInheritedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="AVRGameControlEvent.html#name">name</a> : String<div class="summaryTableDescription">
-     Retrieve the 'name' for this event, which is a String value
+     Retrieves the 'name' for this event, which is a String value
      whose meaning is determined by the event type.</div>
 </td><td class="summaryTableOwnerCol"><a href="AVRGameControlEvent.html">AVRGameControlEvent</a></td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#roomId">roomId</a> : int<div class="summaryTableDescription">[read-only]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#roomId">roomId</a> : int<div class="summaryTableDescription">[read-only]
+     Gets the id of the room whose state is changing.</div>
 </td><td class="summaryTableOwnerCol">AVRGameRoomEvent</td>
 </tr>
 <tr class="hideInheritedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="AVRGameControlEvent.html#value">value</a> : Object<div class="summaryTableDescription">
-     Retrieve the object 'value' for this event, which is a value
+     Retrieves the object 'value' for this event, which is a value
      whose meaning is determined by the event type.</div>
 </td><td class="summaryTableOwnerCol"><a href="AVRGameControlEvent.html">AVRGameControlEvent</a></td>
-</tr>
-</table>
-</div>
-<a name="protectedPropertySummary"></a>
-<div class="summarySection">
-<div class="summaryTableTitle">Protected Properties</div>
-<table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
-<tr>
-<th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_roomId">_roomId</a> : int<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">AVRGameRoomEvent</td>
 </tr>
 </table>
 </div>
@@ -105,21 +101,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#AVRGameRoomEvent()">AVRGameRoomEvent</a>(type:String, roomId:int, name:String = null, value:Object = null)</div>
 <div class="summaryTableDescription">
-     Create a new AVRGameRoomEvent.</div>
+     Creates a new AVRGameRoomEvent.</div>
 </td><td class="summaryTableOwnerCol">AVRGameRoomEvent</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#clone()">clone</a>():Event</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">  </div>
 </td><td class="summaryTableOwnerCol">AVRGameRoomEvent</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#toString()">toString</a>():String</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription">  </div>
 </td><td class="summaryTableOwnerCol">AVRGameRoomEvent</td>
 </tr>
 </table>
@@ -140,21 +136,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#AVATAR_CHANGED">AVATAR_CHANGED</a> : String = "avatarChanged"<div class="summaryTableDescription">[static] An event type dispatched when something has changed about a player's avatar.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#AVATAR_CHANGED">AVATAR_CHANGED</a> : String = "avatarChanged"<div class="summaryTableDescription">[static]
+     An event type dispatched when something has changed about an avatar in the room.</div>
 </td><td class="summaryTableOwnerCol">AVRGameRoomEvent</td>
 </tr>
 <tr class="hideInheritedConstant">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="AVRGameControlEvent.html#MOB_APPEARANCE_CHANGED">MOB_APPEARANCE_CHANGED</a> : String = "mobAppearanceChanged"<div class="summaryTableDescription">[static]
-     An event type dispatched when a mob has changed appearance.</div>
+     An event type dispatched when a spawned MOB has changed appearance.</div>
 </td><td class="summaryTableOwnerCol"><a href="AVRGameControlEvent.html">AVRGameControlEvent</a></td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MOB_CONTROL_AVAILABLE">MOB_CONTROL_AVAILABLE</a> : String = "mobControlAvailable"<div class="summaryTableDescription">[static] An event type dispatched when the control for a spawned mob is available.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MOB_CONTROL_AVAILABLE">MOB_CONTROL_AVAILABLE</a> : String = "mobControlAvailable"<div class="summaryTableDescription">[static]
+     An event type dispatched when the control for a MOB spawned in the room has become available.</div>
 </td><td class="summaryTableOwnerCol">AVRGameRoomEvent</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PLAYER_ENTERED">PLAYER_ENTERED</a> : String = "playerEntered"<div class="summaryTableDescription">[static]
-     An event type dispatched when a player entered a room.</div>
+     An event type dispatched when a player entered the room.</div>
 </td><td class="summaryTableOwnerCol">AVRGameRoomEvent</td>
 </tr>
 <tr class="hideInheritedConstant">
@@ -164,17 +162,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PLAYER_LEFT">PLAYER_LEFT</a> : String = "playerLeft"<div class="summaryTableDescription">[static]
-     An event type dispatched either when a player left a room.</div>
+     An event type dispatched either when a player leaves the room.</div>
 </td><td class="summaryTableOwnerCol">AVRGameRoomEvent</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PLAYER_MOVED">PLAYER_MOVED</a> : String = "playerMoved"<div class="summaryTableDescription">[static] An event type dispatched either when a player of our game who's also in our
-     current room took up a new location in the scene.</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PLAYER_MOVED">PLAYER_MOVED</a> : String = "playerMoved"<div class="summaryTableDescription">[static]
+     An event type dispatched when a player of our game who's also in the room took up a new
+     location.</div>
 </td><td class="summaryTableOwnerCol">AVRGameRoomEvent</td>
 </tr>
 <tr class="hideInheritedConstant">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="AVRGameControlEvent.html#PLAYER_QUIT_GAME">PLAYER_QUIT_GAME</a> : String = "playerQuitGame"<div class="summaryTableDescription">[static]
-     An event type dispatched when somebody left the AVRG.</div>
+     An event type dispatched when somebody is leaving the AVRG.</div>
 </td><td class="summaryTableOwnerCol"><a href="AVRGameControlEvent.html">AVRGameControlEvent</a></td>
 </tr>
 <tr class="hideInheritedConstant">
@@ -191,23 +190,16 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_roomId"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">_roomId</td><td class="detailHeaderType">property</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected var _roomId:int</code>
-</div>
 <a name="roomId"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">roomId</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">roomId</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>roomId:int</code>&nbsp;&nbsp;[read-only]<span class="label">Implementation</span>
+<code>roomId:int</code>&nbsp;&nbsp;[read-only]<p>
+     Gets the id of the room whose state is changing.
+     </p><span class="label">Implementation</span>
 <br>
 <code>&nbsp;&nbsp;&nbsp;&nbsp;public function get roomId():int</code>
 <br>
@@ -222,7 +214,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function AVRGameRoomEvent(type:String, roomId:int, name:String = null, value:Object = null)</code><p>
-     Create a new AVRGameRoomEvent.
+     Creates a new AVRGameRoomEvent.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -257,8 +249,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function clone():Event</code>
-<p></p>
+<code>public override function clone():Event</code><p>  </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -273,8 +264,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function toString():String</code>
-<p></p>
+<code>public override function toString():String</code><p>  </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -291,10 +281,17 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const AVATAR_CHANGED:String = "avatarChanged"</code><p> An event type dispatched when something has changed about a player's avatar.
-     key: N/A
-     value: N/A
-          </p></div>
+<code>public static const AVATAR_CHANGED:String = "avatarChanged"</code><p>
+     An event type dispatched when something has changed about an avatar in the room.
+     <br/><b>name</b> - not used
+     <br/><b>value :int</b> - id of the player whose avatar changed
+          </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="RoomSubControlBase.html#getAvatarInfo()" target="">RoomSubControlBase.getAvatarInfo()</a>
+</div>
+</div>
 <a name="MOB_CONTROL_AVAILABLE"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -302,10 +299,21 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const MOB_CONTROL_AVAILABLE:String = "mobControlAvailable"</code><p> An event type dispatched when the control for a spawned mob is available.
-     key: mobId :String
-     value: mobControl :MobBaseControl
-          </p></div>
+<code>public static const MOB_CONTROL_AVAILABLE:String = "mobControlAvailable"</code><p>
+     An event type dispatched when the control for a MOB spawned in the room has become available.
+     <br/><b>name</b> - the id of the MOB
+     <br/><b>value :MobSubControlBase</b> - the new control
+          </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="RoomSubControlServer.html#spawnMob()" target="">RoomSubControlServer.spawnMob()</a>
+<br>
+<a href="MobSubControlServer.html" target="">MobSubControlServer</a>
+<br>
+<a href="MobSubControlClient.html" target="">MobSubControlClient</a>
+</div>
+</div>
 <a name="PLAYER_ENTERED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -314,9 +322,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const PLAYER_ENTERED:String = "playerEntered"</code><p>
-     An event type dispatched when a player entered a room.
-     key: N/A
-     value: the memberId of the player
+     An event type dispatched when a player entered the room.
+     <br/><b>name</b> - not used
+     <br/><b>value :int</b> - the id of the player entering
           </p></div>
 <a name="PLAYER_LEFT"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -326,9 +334,9 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const PLAYER_LEFT:String = "playerLeft"</code><p>
-     An event type dispatched either when a player left a room.
-     key: N/A
-     value: the memberId of the player
+     An event type dispatched either when a player leaves the room.
+     <br/><b>name</b> - not used
+     <br/><b>value :int</b> - the id of the player leaving
           </p></div>
 <a name="PLAYER_MOVED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -337,10 +345,11 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public static const PLAYER_MOVED:String = "playerMoved"</code><p> An event type dispatched either when a player of our game who's also in our
-     current room took up a new location in the scene.
-     key: N/A
-     value: the memberId of the player
+<code>public static const PLAYER_MOVED:String = "playerMoved"</code><p>
+     An event type dispatched when a player of our game who's also in the room took up a new
+     location.
+     <br/><b>name</b> - not used
+     <br/><b>value :int</b> - the id of the player who moved
           </p></div>
 <br>
 <br>

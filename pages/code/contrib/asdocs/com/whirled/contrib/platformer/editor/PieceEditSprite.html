@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="PieceEditSprite,com.whirled.contrib.platformer.editor.PieceEditSprite,NODE_MOVE_LAYER,PIECE_GRID_LAYER,PIECE_LAYER,GRID_LAYER,initDisplay,mouseDownHandler,mouseMoveHandler,mouseOutHandler,mouseOverHandler,mouseUpHandler,setPiece" name="keywords">
+<meta content="PieceEditSprite,com.whirled.contrib.platformer.editor.PieceEditSprite,NODE_MOVE_LAYER,PIECE_ADD_KEY,PIECE_GRID_LAYER,PIECE_LAYER,_addKeyDown,GRID_LAYER,initDisplay,keyDown,keyUp,mouseDownHandler,mouseMoveHandler,mouseOutHandler,mouseUpHandler,setNodeMoveLayer,setPiece" name="keywords">
 <title>com.whirled.contrib.platformer.editor.PieceEditSprite</title>
 </head>
 <body>
@@ -60,6 +60,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableProtectedProperty" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_addKeyDown">_addKeyDown</a> : Boolean = false<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PieceEditSprite</td>
 </tr>
 <tr class="hideInheritedProtectedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="EditSprite.html#_bX">_bX</a> : int<div class="summaryTableDescription"></div>
@@ -130,6 +134,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
+<a class="signatureLink" href="EditSprite.html#getUIComponent()">getUIComponent</a>():UIComponent</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="EditSprite.html">EditSprite</a></td>
+</tr>
+<tr class="hideInheritedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
 <a class="signatureLink" href="EditSprite.html#getX()">getX</a>():int</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="EditSprite.html">EditSprite</a></td>
@@ -168,6 +179,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <a class="signatureLink" href="EditSprite.html#positionViewTile()">positionViewTile</a>(dX:Number, dY:Number):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="EditSprite.html">EditSprite</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setNodeMoveLayer()">setNodeMoveLayer</a>(sprite:Sprite):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PieceEditSprite</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -242,12 +260,26 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PieceEditSprite</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#keyDown()">keyDown</a>(event:KeyboardEvent):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PieceEditSprite</td>
+</tr>
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="EditSprite.html#keyPressed()">keyPressed</a>(event:KeyboardEvent):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="EditSprite.html">EditSprite</a></td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#keyUp()">keyUp</a>(event:KeyboardEvent):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">PieceEditSprite</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -270,12 +302,12 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">PieceEditSprite</td>
 </tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<tr class="hideInheritedProtectedMethod">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#mouseOverHandler()">mouseOverHandler</a>(event:MouseEvent):void</div>
+<a class="signatureLink" href="EditSprite.html#mouseOverHandler()">mouseOverHandler</a>(event:MouseEvent):void</div>
 <div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">PieceEditSprite</td>
+</td><td class="summaryTableOwnerCol"><a href="EditSprite.html">EditSprite</a></td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
@@ -359,6 +391,10 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">PieceEditSprite</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PIECE_ADD_KEY">PIECE_ADD_KEY</a> : int<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">PieceEditSprite</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PIECE_GRID_LAYER">PIECE_GRID_LAYER</a> : int = 0<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">PieceEditSprite</td>
 </tr>
@@ -379,10 +415,19 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
+<a name="_addKeyDown"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_addKeyDown</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _addKeyDown:Boolean = false</code>
+</div>
 <a name="GRID_LAYER"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">GRID_LAYER</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">GRID_LAYER</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
@@ -412,6 +457,34 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected override function initDisplay():void</code>
+</div>
+<a name="keyDown()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">keyDown</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function keyDown(event:KeyboardEvent):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:KeyboardEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="keyUp()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">keyUp</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function keyUp(event:KeyboardEvent):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">event</span>:KeyboardEvent</code></td>
+</tr>
+</table>
 </div>
 <a name="mouseDownHandler()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -455,20 +528,6 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="mouseOverHandler()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">mouseOverHandler</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected override function mouseOverHandler(event:MouseEvent):void</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">event</span>:MouseEvent</code></td>
-</tr>
-</table>
-</div>
 <a name="mouseUpHandler()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -480,6 +539,20 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">event</span>:MouseEvent</code></td>
+</tr>
+</table>
+</div>
+<a name="setNodeMoveLayer()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setNodeMoveLayer</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setNodeMoveLayer(sprite:Sprite):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">sprite</span>:Sprite</code></td>
 </tr>
 </table>
 </div>
@@ -507,6 +580,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected static const NODE_MOVE_LAYER:int = 2</code>
+</div>
+<a name="PIECE_ADD_KEY"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">PIECE_ADD_KEY</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const PIECE_ADD_KEY:int</code>
 </div>
 <a name="PIECE_GRID_LAYER"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">

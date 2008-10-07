@@ -45,7 +45,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
-<p></p>
+ Conveys information about a change to the state of an AVR game.
+ <p></p>
 <br>
 <hr>
 </div>
@@ -58,13 +59,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#name">name</a> : String<div class="summaryTableDescription">[read-only]
-     Retrieve the 'name' for this event, which is a String value
+     Retrieves the 'name' for this event, which is a String value
      whose meaning is determined by the event type.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControlEvent</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#value">value</a> : Object<div class="summaryTableDescription">[read-only]
-     Retrieve the object 'value' for this event, which is a value
+     Retrieves the object 'value' for this event, which is a value
      whose meaning is determined by the event type.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControlEvent</td>
 </tr>
@@ -82,21 +83,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summarySignature">
 <a class="signatureLink" href="#AVRGameControlEvent()">AVRGameControlEvent</a>(type:String, name:String = null, value:Object = null, cancelable:Boolean = false)</div>
 <div class="summaryTableDescription">
-     Create a new AVRGameControlEvent.</div>
+     Creates a new AVRGameControlEvent.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControlEvent</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#clone()">clone</a>():Event</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription"> </div>
 </td><td class="summaryTableOwnerCol">AVRGameControlEvent</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#toString()">toString</a>():String</div>
-<div class="summaryTableDescription"></div>
+<div class="summaryTableDescription"> </div>
 </td><td class="summaryTableOwnerCol">AVRGameControlEvent</td>
 </tr>
 </table>
@@ -110,7 +111,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MOB_APPEARANCE_CHANGED">MOB_APPEARANCE_CHANGED</a> : String = "mobAppearanceChanged"<div class="summaryTableDescription">[static]
-     An event type dispatched when a mob has changed appearance.</div>
+     An event type dispatched when a spawned MOB has changed appearance.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControlEvent</td>
 </tr>
 <tr class="">
@@ -120,7 +121,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#PLAYER_QUIT_GAME">PLAYER_QUIT_GAME</a> : String = "playerQuitGame"<div class="summaryTableDescription">[static]
-     An event type dispatched when somebody left the AVRG.</div>
+     An event type dispatched when somebody is leaving the AVRG.</div>
 </td><td class="summaryTableOwnerCol">AVRGameControlEvent</td>
 </tr>
 <tr class="">
@@ -145,7 +146,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>name:String</code>&nbsp;&nbsp;[read-only]<p>
-     Retrieve the 'name' for this event, which is a String value
+     Retrieves the 'name' for this event, which is a String value
      whose meaning is determined by the event type.
      </p><span class="label">Implementation</span>
 <br>
@@ -160,7 +161,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>value:Object</code>&nbsp;&nbsp;[read-only]<p>
-     Retrieve the object 'value' for this event, which is a value
+     Retrieves the object 'value' for this event, which is a value
      whose meaning is determined by the event type.
      </p><span class="label">Implementation</span>
 <br>
@@ -177,7 +178,7 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function AVRGameControlEvent(type:String, name:String = null, value:Object = null, cancelable:Boolean = false)</code><p>
-     Create a new AVRGameControlEvent.
+     Creates a new AVRGameControlEvent.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -212,8 +213,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function clone():Event</code>
-<p></p>
+<code>public override function clone():Event</code><p> </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -228,8 +228,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public override function toString():String</code>
-<p></p>
+<code>public override function toString():String</code><p> </p><p></p>
 <span class="label">Returns</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -247,10 +246,18 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const MOB_APPEARANCE_CHANGED:String = "mobAppearanceChanged"</code><p>
-     An event type dispatched when a mob has changed appearance.
-     key: N/A
-     value: N/A
-          </p></div>
+     An event type dispatched when a spawned MOB has changed appearance.
+     <br/><b>name</b> - not used
+     <br/><b>value</b> - not used
+          </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="MobSubControlClient.html" target="">MobSubControlClient</a>
+<br>
+<a href="MobSubControlServer.html" target="">MobSubControlServer</a>
+</div>
+</div>
 <a name="PLAYER_JOINED_GAME"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -260,9 +267,15 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const PLAYER_JOINED_GAME:String = "playerJoinedGame"</code><p>
      An event type dispatched when somebody joined the AVRG.
-     key: N/A
-     value: the memberId of the player
-          </p></div>
+     <br/><b>name</b> - not used
+     <br/><b>value :int</b> - the id of the player who has joined
+          </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="GameSubControlServer.html" target="">GameSubControlServer</a>
+</div>
+</div>
 <a name="PLAYER_QUIT_GAME"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -271,10 +284,16 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public static const PLAYER_QUIT_GAME:String = "playerQuitGame"</code><p>
-     An event type dispatched when somebody left the AVRG.
-     key: N/A
-     value: the memberId of the player
-          </p></div>
+     An event type dispatched when somebody is leaving the AVRG.
+     <br/><b>name</b> - not used
+     <br/><b>value :int</b> - the memberId of the player
+          </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="GameSubControlServer.html" target="">GameSubControlServer</a>
+</div>
+</div>
 <a name="SIZE_CHANGED"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -284,9 +303,17 @@ showHideInherited();
 <div class="detailBody">
 <code>public static const SIZE_CHANGED:String = "sizeChanged"</code><p>
      An event type dispatched when the control has been resized.
-     key: N/A
-     value: N/A
-          </p></div>
+     <br/><b>name</b> - not used
+     <br/><b>value</b> - not used
+          </p><p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="LocalSubControl.html" target="">LocalSubControl</a>
+<br>
+<a href="LocalSubControl.html#getPaintableArea()" target="">LocalSubControl.getPaintableArea()</a>
+</div>
+</div>
 <br>
 <br>
 <hr>

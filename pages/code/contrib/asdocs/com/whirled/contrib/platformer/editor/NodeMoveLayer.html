@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="NodeMoveLayer,com.whirled.contrib.platformer.editor.NodeMoveLayer,DISPLAY_RADIUS,LINE_WEIGHT,SELECTION_COLOR,_currentNode,clearDisplay,createDisplay,mousePositionUpdated,update" name="keywords">
+<meta content="NodeMoveLayer,com.whirled.contrib.platformer.editor.NodeMoveLayer,ADD_MODE,BOUND_MARKER_RADIUS,EDIT_MODE,HIGHLIGHT_RADIUS,LINE_WEIGHT,MOUSE_BOUND_COLOR,SELECTED_COLOR,_addNode,_boundGraphics,_bounds,_boundsDetail,_currentNode,_highlightGraphics,_maxX,_maxY,_mode,_mouseBound,_mouseDown,_selectedBound,_selectedGraphics,addBoundMarker,checkLineIntersection,findBoundIndex,findBoundOnNode,markNode,mouseDown,mouseOut,mousePositionUpdated,regenerateBounds,removeBound,setBoundColor,setMode,update" name="keywords">
 <title>com.whirled.contrib.platformer.editor.NodeMoveLayer</title>
 </head>
 <body>
@@ -62,7 +62,56 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_addNode">_addNode</a> : Point<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_boundGraphics">_boundGraphics</a> : Graphics<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_bounds">_bounds</a> : Array<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_boundsDetail">_boundsDetail</a> : <a href="../editor/BoundsDetail.html">BoundsDetail</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_currentNode">_currentNode</a> : Point<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_highlightGraphics">_highlightGraphics</a> : Graphics<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_maxX">_maxX</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_maxY">_maxY</a> : int<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_mode">_mode</a> : int = 1<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_mouseBound">_mouseBound</a> : Object<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_mouseDown">_mouseDown</a> : Boolean = false<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_selectedBound">_selectedBound</a> : Object<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_selectedGraphics">_selectedGraphics</a> : Graphics<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
 </tr>
 <tr class="hideInheritedProtectedProperty">
@@ -81,14 +130,28 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#NodeMoveLayer()">NodeMoveLayer</a>()</div>
+<a class="signatureLink" href="#NodeMoveLayer()">NodeMoveLayer</a>(detail:<a href="BoundsDetail.html">BoundsDetail</a>, pieceWidth:int, pieceHeight:int)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#clearDisplay()">clearDisplay</a>():void</div>
+<a class="signatureLink" href="#addBoundMarker()">addBoundMarker</a>(position:Point, markerColor:uint, idx:int = -1):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#mouseDown()">mouseDown</a>(down:Boolean):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#mouseOut()">mouseOut</a>():void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
 </tr>
@@ -96,6 +159,27 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#mousePositionUpdated()">mousePositionUpdated</a>(mouseX:Number, mouseY:Number):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#removeBound()">removeBound</a>(position:Point):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setBoundColor()">setBoundColor</a>(position:Point, markerColor:uint):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#setMode()">setMode</a>(mode:int):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
 </tr>
@@ -118,13 +202,58 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#createDisplay()">createDisplay</a>():void</div>
+<a class="signatureLink" href="#checkLineIntersection()">checkLineIntersection</a>(closestNode:Point):int</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#findBoundIndex()">findBoundIndex</a>(node:Point = null):int</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#findBoundOnNode()">findBoundOnNode</a>(node:Point = null):Object</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#markNode()">markNode</a>(gfx:Graphics, position:Point, radius:int, color:uint):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#regenerateBounds()">regenerateBounds</a>():void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
 </tr>
 </table>
 </div>
-<a name="constantSummary"></a><a name="protectedConstantSummary"></a>
+<a name="constantSummary"></a>
+<div class="summarySection">
+<div class="summaryTableTitle">Public Constants</div>
+<table id="summaryTableConstant" class="summaryTable " cellpadding="3" cellspacing="0">
+<tr>
+<th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ADD_MODE">ADD_MODE</a> : int = 2<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#EDIT_MODE">EDIT_MODE</a> : int = 1<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+</table>
+</div>
+<a name="protectedConstantSummary"></a>
 <div class="summarySection">
 <div class="summaryTableTitle">Protected Constants</div>
 <table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
@@ -132,7 +261,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#DISPLAY_RADIUS">DISPLAY_RADIUS</a> : int = 5<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#BOUND_MARKER_RADIUS">BOUND_MARKER_RADIUS</a> : int = 3<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#HIGHLIGHT_RADIUS">HIGHLIGHT_RADIUS</a> : int = 5<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
 </tr>
 <tr class="">
@@ -140,7 +273,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SELECTION_COLOR">SELECTION_COLOR</a> : int = 0x880000<div class="summaryTableDescription">[static]</div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MOUSE_BOUND_COLOR">MOUSE_BOUND_COLOR</a> : int = 0x000000<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#SELECTED_COLOR">SELECTED_COLOR</a> : int = 0xDD00DD<div class="summaryTableDescription">[static]</div>
 </td><td class="summaryTableOwnerCol">NodeMoveLayer</td>
 </tr>
 </table>
@@ -152,14 +289,122 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
+<a name="_addNode"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_addNode</td><td class="detailHeaderType">property</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _addNode:Point</code>
+</div>
+<a name="_boundGraphics"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_boundGraphics</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _boundGraphics:Graphics</code>
+</div>
+<a name="_bounds"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_bounds</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _bounds:Array</code>
+</div>
+<a name="_boundsDetail"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_boundsDetail</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _boundsDetail:<a href="../editor/BoundsDetail.html">BoundsDetail</a></code>
+</div>
 <a name="_currentNode"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_currentNode</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_currentNode</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
 <code>protected var _currentNode:Point</code>
+</div>
+<a name="_highlightGraphics"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_highlightGraphics</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _highlightGraphics:Graphics</code>
+</div>
+<a name="_maxX"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_maxX</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _maxX:int</code>
+</div>
+<a name="_maxY"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_maxY</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _maxY:int</code>
+</div>
+<a name="_mode"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_mode</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _mode:int = 1</code>
+</div>
+<a name="_mouseBound"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_mouseBound</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _mouseBound:Object</code>
+</div>
+<a name="_mouseDown"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_mouseDown</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _mouseDown:Boolean = false</code>
+</div>
+<a name="_selectedBound"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_selectedBound</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _selectedBound:Object</code>
+</div>
+<a name="_selectedGraphics"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_selectedGraphics</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _selectedGraphics:Graphics</code>
 </div>
 <a name="constructorDetail"></a>
 <div class="detailSectionHeader">Constructor detail</div>
@@ -170,27 +415,170 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function NodeMoveLayer()</code>
+<code>public function NodeMoveLayer(detail:<a href="BoundsDetail.html">BoundsDetail</a>, pieceWidth:int, pieceHeight:int)</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">detail</span>:<a href="BoundsDetail.html">BoundsDetail</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">pieceWidth</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">pieceHeight</span>:int</code></td>
+</tr>
+</table>
 </div>
 <a name="methodDetail"></a>
 <div class="detailSectionHeader">Method detail</div>
-<a name="clearDisplay()"></a>
+<a name="addBoundMarker()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">clearDisplay</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
+<td class="detailHeaderName">addBoundMarker</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>public function clearDisplay():void</code>
+<code>public function addBoundMarker(position:Point, markerColor:uint, idx:int = -1):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">position</span>:Point</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">markerColor</span>:uint</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">idx</span>:int</code> (default = <code>-1</code>)<code></code></td>
+</tr>
+</table>
 </div>
-<a name="createDisplay()"></a>
+<a name="checkLineIntersection()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">createDisplay</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">checkLineIntersection</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function createDisplay():void</code>
+<code>protected function checkLineIntersection(closestNode:Point):int</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">closestNode</span>:Point</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="findBoundIndex()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">findBoundIndex</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function findBoundIndex(node:Point = null):int</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">node</span>:Point</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>int</code></td>
+</tr>
+</table>
+</div>
+<a name="findBoundOnNode()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">findBoundOnNode</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function findBoundOnNode(node:Point = null):Object</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">node</span>:Point</code> (default = <code>null</code>)<code></code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code>Object</code></td>
+</tr>
+</table>
+</div>
+<a name="markNode()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">markNode</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function markNode(gfx:Graphics, position:Point, radius:int, color:uint):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">gfx</span>:Graphics</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">position</span>:Point</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">radius</span>:int</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">color</span>:uint</code></td>
+</tr>
+</table>
+</div>
+<a name="mouseDown()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">mouseDown</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function mouseDown(down:Boolean):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">down</span>:Boolean</code></td>
+</tr>
+</table>
+</div>
+<a name="mouseOut()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">mouseOut</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function mouseOut():void</code>
 </div>
 <a name="mousePositionUpdated()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -209,6 +597,63 @@ showHideInherited();
 </tr>
 <tr>
 <td width="20px"></td><td><code><span class="label">mouseY</span>:Number</code></td>
+</tr>
+</table>
+</div>
+<a name="regenerateBounds()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">regenerateBounds</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function regenerateBounds():void</code>
+</div>
+<a name="removeBound()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">removeBound</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function removeBound(position:Point):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">position</span>:Point</code></td>
+</tr>
+</table>
+</div>
+<a name="setBoundColor()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setBoundColor</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setBoundColor(position:Point, markerColor:uint):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">position</span>:Point</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">markerColor</span>:uint</code></td>
+</tr>
+</table>
+</div>
+<a name="setMode()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">setMode</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function setMode(mode:int):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">mode</span>:int</code></td>
 </tr>
 </table>
 </div>
@@ -240,14 +685,41 @@ showHideInherited();
 </div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
-<a name="DISPLAY_RADIUS"></a>
+<a name="ADD_MODE"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">DISPLAY_RADIUS</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">ADD_MODE</td><td class="detailHeaderType">constant</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static const DISPLAY_RADIUS:int = 5</code>
+<code>public static const ADD_MODE:int = 2</code>
+</div>
+<a name="BOUND_MARKER_RADIUS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">BOUND_MARKER_RADIUS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const BOUND_MARKER_RADIUS:int = 3</code>
+</div>
+<a name="EDIT_MODE"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">EDIT_MODE</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public static const EDIT_MODE:int = 1</code>
+</div>
+<a name="HIGHLIGHT_RADIUS"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">HIGHLIGHT_RADIUS</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const HIGHLIGHT_RADIUS:int = 5</code>
 </div>
 <a name="LINE_WEIGHT"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -258,14 +730,23 @@ showHideInherited();
 <div class="detailBody">
 <code>protected static const LINE_WEIGHT:int = 2</code>
 </div>
-<a name="SELECTION_COLOR"></a>
+<a name="MOUSE_BOUND_COLOR"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">SELECTION_COLOR</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">MOUSE_BOUND_COLOR</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected static const SELECTION_COLOR:int = 0x880000</code>
+<code>protected static const MOUSE_BOUND_COLOR:int = 0x000000</code>
+</div>
+<a name="SELECTED_COLOR"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">SELECTED_COLOR</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const SELECTED_COLOR:int = 0xDD00DD</code>
 </div>
 <br>
 <br>

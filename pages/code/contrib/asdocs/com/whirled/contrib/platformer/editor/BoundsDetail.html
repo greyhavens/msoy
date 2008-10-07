@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../print.css" type="text/css" media="print">
-<meta content="BoundsDetail,com.whirled.contrib.platformer.editor.BoundsDetail,MOUSE_MODE,NUMBER_MODE,_bounds,_mouseBox,_numberBox,_topBox,addBound,createBox,modeClicked,setData" name="keywords">
+<meta content="BoundsDetail,com.whirled.contrib.platformer.editor.BoundsDetail,ADD_MODE_LABEL,EDIT_MODE_LABEL,MOUSE_MODE,NUMBER_MODE,_bounds,_editSprite,_mouseBox,_mouseModeLabel,_nodeMoveLayer,_numberBox,_pieceDetails,_topBox,addBound,addClickBound,boundMoved,createBox,findBound,modeChanged,modeClicked,nodeSelected,setData,updateNumberBox" name="keywords">
 <title>com.whirled.contrib.platformer.editor.BoundsDetail</title>
 </head>
 <body>
@@ -79,11 +79,30 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </td><td class="summaryTableOwnerCol">BoundsDetail</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_editSprite">_editSprite</a> : <a href="../editor/PieceEditSprite.html">PieceEditSprite</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_mouseBox">_mouseBox</a> : VBox<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoundsDetail</td>
 </tr>
 <tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_mouseModeLabel">_mouseModeLabel</a> : Text<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_nodeMoveLayer">_nodeMoveLayer</a> : <a href="../editor/NodeMoveLayer.html">NodeMoveLayer</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
+</tr>
+<tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_numberBox">_numberBox</a> : VBox<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_pieceDetails">_pieceDetails</a> : <a href="../editor/PieceEditDetails.html">PieceEditDetails</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoundsDetail</td>
 </tr>
 <tr class="">
@@ -102,7 +121,21 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#BoundsDetail()">BoundsDetail</a>(attr:XML)</div>
+<a class="signatureLink" href="#BoundsDetail()">BoundsDetail</a>(attr:XML, editSprite:<a href="PieceEditSprite.html">PieceEditSprite</a>, pieceDetails:<a href="PieceEditDetails.html">PieceEditDetails</a>)</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#addClickBound()">addClickBound</a>(pos:Point, idx:int):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#boundMoved()">boundMoved</a>(oldPos:Point, newPos:Point):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoundsDetail</td>
 </tr>
@@ -110,6 +143,20 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
 <a class="signatureLink" href="#createBox()">createBox</a>():Box</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#modeChanged()">modeChanged</a>(mode:int):void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#nodeSelected()">nodeSelected</a>(pos:Point):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoundsDetail</td>
 </tr>
@@ -144,6 +191,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoundsDetail</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#findBound()">findBound</a>(pos:Point):<a href="../editor/BoundDetail.html">BoundDetail</a>
+</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
+</tr>
 <tr class="hideInheritedProtectedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
@@ -158,6 +213,13 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">BoundsDetail</td>
 </tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
+<div class="summarySignature">
+<a class="signatureLink" href="#updateNumberBox()">updateNumberBox</a>():void</div>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
+</tr>
 </table>
 </div>
 <a name="constantSummary"></a><a name="protectedConstantSummary"></a>
@@ -166,6 +228,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <table id="summaryTableProtectedConstant" class="summaryTable " cellpadding="3" cellspacing="0">
 <tr>
 <th>&nbsp;</th><th colspan="2">Constant</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#ADD_MODE_LABEL">ADD_MODE_LABEL</a> : String = "Currently in Add mode - release the 'a' key to edit nodes"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
+</tr>
+<tr class="">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#EDIT_MODE_LABEL">EDIT_MODE_LABEL</a> : String = "Enter Add mode by clicking in the edit area and holding the 'a' key"<div class="summaryTableDescription">[static]</div>
+</td><td class="summaryTableOwnerCol">BoundsDetail</td>
 </tr>
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#MOUSE_MODE">MOUSE_MODE</a> : String = "Mouse Mode"<div class="summaryTableDescription">[static]</div>
@@ -193,6 +263,15 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _bounds:Array</code>
 </div>
+<a name="_editSprite"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_editSprite</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _editSprite:<a href="../editor/PieceEditSprite.html">PieceEditSprite</a></code>
+</div>
 <a name="_mouseBox"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -202,6 +281,24 @@ showHideInherited();
 <div class="detailBody">
 <code>protected var _mouseBox:VBox</code>
 </div>
+<a name="_mouseModeLabel"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_mouseModeLabel</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _mouseModeLabel:Text</code>
+</div>
+<a name="_nodeMoveLayer"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_nodeMoveLayer</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _nodeMoveLayer:<a href="../editor/NodeMoveLayer.html">NodeMoveLayer</a></code>
+</div>
 <a name="_numberBox"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -210,6 +307,15 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>protected var _numberBox:VBox</code>
+</div>
+<a name="_pieceDetails"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">_pieceDetails</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected var _pieceDetails:<a href="../editor/PieceEditDetails.html">PieceEditDetails</a></code>
 </div>
 <a name="_topBox"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -229,10 +335,22 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function BoundsDetail(attr:XML)</code><span class="label">Parameters</span>
+<code>public function BoundsDetail(attr:XML, editSprite:<a href="PieceEditSprite.html">PieceEditSprite</a>, pieceDetails:<a href="PieceEditDetails.html">PieceEditDetails</a>)</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">attr</span>:XML</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">editSprite</span>:<a href="PieceEditSprite.html">PieceEditSprite</a></code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">pieceDetails</span>:<a href="PieceEditDetails.html">PieceEditDetails</a></code></td>
 </tr>
 </table>
 </div>
@@ -252,6 +370,46 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="addClickBound()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">addClickBound</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function addClickBound(pos:Point, idx:int):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">pos</span>:Point</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">idx</span>:int</code></td>
+</tr>
+</table>
+</div>
+<a name="boundMoved()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">boundMoved</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function boundMoved(oldPos:Point, newPos:Point):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">oldPos</span>:Point</code></td>
+</tr>
+<tr>
+<td class="paramSpacer">&nbsp;</td>
+</tr>
+<tr>
+<td width="20px"></td><td><code><span class="label">newPos</span>:Point</code></td>
+</tr>
+</table>
+</div>
 <a name="createBox()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -265,6 +423,41 @@ showHideInherited();
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20"></td><td><code>Box</code></td>
+</tr>
+</table>
+</div>
+<a name="findBound()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">findBound</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function findBound(pos:Point):<a href="../editor/BoundDetail.html">BoundDetail</a></code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">pos</span>:Point</code></td>
+</tr>
+</table>
+<p></p>
+<span class="label">Returns</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20"></td><td><code><a href="../editor/BoundDetail.html">BoundDetail</a></code></td>
+</tr>
+</table>
+</div>
+<a name="modeChanged()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">modeChanged</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function modeChanged(mode:int):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">mode</span>:int</code></td>
 </tr>
 </table>
 </div>
@@ -282,6 +475,20 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="nodeSelected()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">nodeSelected</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>public function nodeSelected(pos:Point):void</code><span class="label">Parameters</span>
+<table border="0" cellspacing="0" cellpadding="0">
+<tr>
+<td width="20px"></td><td><code><span class="label">pos</span>:Point</code></td>
+</tr>
+</table>
+</div>
 <a name="setData()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -296,12 +503,39 @@ showHideInherited();
 </tr>
 </table>
 </div>
+<a name="updateNumberBox()"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">updateNumberBox</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected function updateNumberBox():void</code>
+</div>
 <a name="constantDetail"></a>
 <div class="detailSectionHeader">Constant detail</div>
+<a name="ADD_MODE_LABEL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">ADD_MODE_LABEL</td><td class="detailHeaderType">constant</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const ADD_MODE_LABEL:String = "Currently in Add mode - release the 'a' key to edit nodes"</code>
+</div>
+<a name="EDIT_MODE_LABEL"></a>
+<table cellspacing="0" cellpadding="0" class="detailHeader">
+<tr>
+<td class="detailHeaderName">EDIT_MODE_LABEL</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
+</tr>
+</table>
+<div class="detailBody">
+<code>protected static const EDIT_MODE_LABEL:String = "Enter Add mode by clicking in the edit area and holding the 'a' key"</code>
+</div>
 <a name="MOUSE_MODE"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">MOUSE_MODE</td><td class="detailHeaderType">constant</td>
+<td class="detailHeaderName">MOUSE_MODE</td><td class="detailHeaderType">constant</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">

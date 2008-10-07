@@ -45,7 +45,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 </tr>
 </table>
 <p></p>
- This subcontrol is used by an AVRG on the client to send messages to the server agent.
+ Provides AVR game clients a way to communicate to their server agent.
  <p></p>
 <br>
 <hr>
@@ -153,7 +153,8 @@ showHideInherited();
 </table>
 <div class="detailBody">
 <code>public function sendMessage(name:String, value:Object = null):void</code><p>
-     Sends a message to the agent.
+     Sends a message to the agent. The agent receives messages by adding a
+     <code>MESSAGE_RECEIVED</code> event listener to <code>GameSubControlServer</code>.
      </p><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
@@ -166,6 +167,12 @@ showHideInherited();
 <td width="20px"></td><td><code><span class="label">value</span>:Object</code> (default = <code>null</code>)<code></code></td>
 </tr>
 </table>
+<p>
+<span class="label">See also</span>
+</p>
+<div class="seeAlso">
+<a href="GameSubControlBase.html#event:MsgReceived" target="">GameSubControlBase.MsgReceived</a>
+</div>
 </div>
 <br>
 <br>

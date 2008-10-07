@@ -78,23 +78,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("LÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerBaseSubControl.html#event:leftRoom">leftRoom</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerBaseSubControl.html">PlayerBaseSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlBase.html#event:leftRoom">leftRoom</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlBase.html">PlayerSubControlBase</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
- Dispatched when we've left our current room.</td>
+ Dispatched when this player has left a room (or has chosen to leave the game).</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGamePlayerEvent.html#LEFT_ROOM">LEFT_ROOM</a> &mdash; Constant static property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGamePlayerEvent.html">AVRGamePlayerEvent</a></td>
 </tr>
 <tr>
-<td width="20"></td><td> An event type dispatched when we leave our current room.</td>
-</tr>
-<tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControl.html#leftRoom_v1()">leftRoom_v1</a>(scene) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControl.html">AVRGameControl</a></td>
-</tr>
-<tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+     An event type dispatched when the player leaves a room.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html#length">length</a> &mdash; Property in class com.threerings.flash.<a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/Vector2.html">Vector2</a></td>
@@ -189,8 +184,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("LÂ
 </tr>
 <tr>
 <td width="20"></td><td>
-     Get the LocalSubControl which contains methods that are only relevant on the
-     client, as they deal with e.g.</td>
+     Accesses the client's local sub control.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameControl.html#local">local</a> &mdash; Property in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/GameControl.html">GameControl</a></td>

@@ -62,11 +62,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="hideInheritedProtectedProperty">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ShotTask.html#_cab">_cab</a> : <a href="../board/ActorBounds.html">ActorBounds</a>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol"><a href="ShotTask.html">ShotTask</a></td>
-</tr>
-<tr class="hideInheritedProtectedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ColliderTask.html#_cc">_cc</a> : <a href="../game/CollisionController.html">CollisionController</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="ColliderTask.html">ColliderTask</a></td>
@@ -75,6 +70,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ColliderTask.html#_cd">_cd</a> : <a href="../board/ColliderDetails.html">ColliderDetails</a>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="ColliderTask.html">ColliderTask</a></td>
+</tr>
+<tr class="hideInheritedProtectedProperty">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ShotTask.html#_cdb">_cdb</a> : <a href="../board/DynamicBounds.html">DynamicBounds</a>
+<div class="summaryTableDescription"></div>
+</td><td class="summaryTableOwnerCol"><a href="ShotTask.html">ShotTask</a></td>
 </tr>
 <tr class="hideInheritedProtectedProperty">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol"><a class="signatureLink" href="ColliderTask.html#_collider">_collider</a> : <a href="../board/Collider.html">Collider</a>
@@ -224,7 +224,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#didHit()">didHit</a>(hit:Number, ab:<a href="ActorBounds.html">ActorBounds</a>):Number</div>
+<a class="signatureLink" href="#didHit()">didHit</a>(hit:Number, db:<a href="DynamicBounds.html">DynamicBounds</a>):Number</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">LaserShotTask</td>
 </tr>
@@ -291,7 +291,7 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected override function didHit(hit:Number, ab:<a href="ActorBounds.html">ActorBounds</a>):Number</code><span class="label">Parameters</span>
+<code>protected override function didHit(hit:Number, db:<a href="DynamicBounds.html">DynamicBounds</a>):Number</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
 <td width="20px"></td><td><code><span class="label">hit</span>:Number</code></td>
@@ -300,7 +300,7 @@ showHideInherited();
 <td class="paramSpacer">&nbsp;</td>
 </tr>
 <tr>
-<td width="20px"></td><td><code><span class="label">ab</span>:<a href="ActorBounds.html">ActorBounds</a></code></td>
+<td width="20px"></td><td><code><span class="label">db</span>:<a href="DynamicBounds.html">DynamicBounds</a></code></td>
 </tr>
 </table>
 <p></p>

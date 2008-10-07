@@ -59,7 +59,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("AÂ
 </tr>
 <tr>
 <td width="20"></td><td>
- Dispatched when the user controlling this avatar triggers an action.</td>
+ Dispatched when the user or game controlling this avatar triggers an action.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html#event:actionTriggered">actionTriggered</a> &mdash; Event in class com.whirled.<a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/EntityControl.html">EntityControl</a></td>
@@ -225,7 +225,8 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("AÂ
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControl.html#agent">agent</a> &mdash; Property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControl.html">AVRGameControl</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+     Accesses the client's agent sub control.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/NetSubControl.html#agent">agent</a> &mdash; Property in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/NetSubControl.html">NetSubControl</a></td>
@@ -245,7 +246,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("AÂ
 </tr>
 <tr>
 <td width="20"></td><td>
- This subcontrol is used by an AVRG on the client to send messages to the server agent.</td>
+ Provides AVR game clients a way to communicate to their server agent.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/AlphaFade.html">AlphaFade</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/threerings/flash/class-list.html');" href="com/threerings/flash/package-detail.html">com.threerings.flash</a></td>
@@ -443,18 +444,18 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("AÂ
 <td width="20"></td><td></td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomBaseSubControl.html#event:avatarChanged">avatarChanged</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomBaseSubControl.html">RoomBaseSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlBase.html#event:avatarChanged">avatarChanged</a> &mdash; Event in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/RoomSubControlBase.html">RoomSubControlBase</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
- Dispatched when something has changed about a player's
- avatar.</td>
+ Dispatched when something has changed about a player's avatar in this room.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameRoomEvent.html#AVATAR_CHANGED">AVATAR_CHANGED</a> &mdash; Constant static property in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameRoomEvent.html">AVRGameRoomEvent</a></td>
 </tr>
 <tr>
-<td width="20"></td><td> An event type dispatched when something has changed about a player's avatar.</td>
+<td width="20"></td><td>
+     An event type dispatched when something has changed about an avatar in the room.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/AvatarControl.html">AvatarControl</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/class-list.html');" href="com/whirled/package-detail.html">com.whirled</a></td>
@@ -493,70 +494,72 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("AÂ
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameAvatar.html">AVRGameAvatar</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+ Describes the current state of a player's avatar for an AVRG client or server agent.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControl.html">AVRGameControl</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
- This file should be included by AVR games so that they can communicate
- with the whirled.</td>
+ This file should be included by AVR game clients so that they can communicate with their server
+ agent and the whirled.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControl.html#AVRGameControl()">AVRGameControl</a>(disp) &mdash; Constructor in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControl.html">AVRGameControl</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Create a world game interface.</td>
+     Creates a new game control for an AVR game client.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html">AVRGameControlEvent</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td>
 </tr>
 <tr>
-<td width="20"></td><td></td>
+<td width="20"></td><td>
+ Conveys information about a change to the state of an AVR game.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html#AVRGameControlEvent()">AVRGameControlEvent</a>(type, name, value, cancelable) &mdash; Constructor in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameControlEvent.html">AVRGameControlEvent</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Create a new AVRGameControlEvent.</td>
+     Creates a new AVRGameControlEvent.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGamePlayerEvent.html">AVRGamePlayerEvent</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
- An event dispatched on a per-player AVRG sub control.</td>
+ Conveys information about a change to the state of a particular player in an AVR game.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGamePlayerEvent.html#AVRGamePlayerEvent()">AVRGamePlayerEvent</a>(type, playerId, name, value, cancelable) &mdash; Constructor in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGamePlayerEvent.html">AVRGamePlayerEvent</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Create a new AVRGamePlayerEvent.</td>
+     Creates a new AVRGamePlayerEvent.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameRoomEvent.html">AVRGameRoomEvent</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
- An event dispatched on a per-player AVRG sub control.</td>
+ Conveys information about a change to the state of a particular room in an AVR game.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameRoomEvent.html#AVRGameRoomEvent()">AVRGameRoomEvent</a>(type, roomId, name, value) &mdash; Constructor in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRGameRoomEvent.html">AVRGameRoomEvent</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Create a new AVRGameRoomEvent.</td>
+     Creates a new AVRGameRoomEvent.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/AVRServerGameControl.html">AVRServerGameControl</a> &mdash; Class in package <a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
- This file should be included by AVR games so that they can communicate
+ This file should be included by the server agents of AVR games so that they can communicate
  with the whirled.</td>
 </tr>
 <tr>
@@ -564,14 +567,14 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("AÂ
 </tr>
 <tr>
 <td width="20"></td><td>
-     Create a world game interface.</td>
+     Creates a new game control for a server agent.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerServerSubControl.html#awardPrize()">awardPrize</a>(ident) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerServerSubControl.html">PlayerServerSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlServer.html#awardPrize()">awardPrize</a>(ident) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlServer.html">PlayerSubControlServer</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Awards the specified prize item to this client's player (the default) or a specified player.</td>
+     Awards the specified prize item to this player.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html#awardPrize()">awardPrize</a>(ident, playerId) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html">PlayerSubControl</a></td>
@@ -581,11 +584,11 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("AÂ
      Awards the specified prize item to this client's player (the default) or a specified player.</td>
 </tr>
 <tr>
-<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerServerSubControl.html#awardTrophy()">awardTrophy</a>(ident) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerServerSubControl.html">PlayerServerSubControl</a></td>
+<td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlServer.html#awardTrophy()">awardTrophy</a>(ident) &mdash; Method in class com.whirled.avrg.<a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/PlayerSubControlServer.html">PlayerSubControlServer</a></td>
 </tr>
 <tr>
 <td width="20"></td><td>
-     Awards the specified trophy to this client's player (the default) or a specified player.</td>
+     Awards the specified trophy to this player.</td>
 </tr>
 <tr>
 <td colspan="2" class="idxrow"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html#awardTrophy()">awardTrophy</a>(ident, playerId) &mdash; Method in class com.whirled.game.<a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/PlayerSubControl.html">PlayerSubControl</a></td>

@@ -4,7 +4,7 @@
 <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link rel="stylesheet" href="../../../../../../style.css" type="text/css" media="screen">
 <link rel="stylesheet" href="../../../../../../print.css" type="text/css" media="print">
-<meta content="EditProjectDialog,com.whirled.contrib.platformer.editor.air.EditProjectDialog,_createPieceXml,_existingProject,_pieceSwfFile,_pieceXmlFile,_projectXml,_saveCallback,createChildren,createPieceXML,fileDialogCloseHandler,findFile,findPath,handleSave,sanitizeFilename,saveAndClose,setStyles" name="keywords">
+<meta content="EditProjectDialog,com.whirled.contrib.platformer.editor.air.EditProjectDialog,_dynamicsXmlRow,_existingProject,_pieceSwfRow,_pieceXmlRow,_projectXml,_saveCallback,createChildren,fileDialogCloseHandler,handleSave,saveAndClose,setStyles" name="keywords">
 <title>com.whirled.contrib.platformer.editor.air.EditProjectDialog</title>
 </head>
 <body>
@@ -54,19 +54,23 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <th>&nbsp;</th><th colspan="2">Property</th><th class="summaryTableOwnerCol">Defined&nbsp;by</th>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_createPieceXml">_createPieceXml</a> : Boolean = false<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_dynamicsXmlRow">_dynamicsXmlRow</a> : <a href="../air/EditorFileRow.html">EditorFileRow</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">EditProjectDialog</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_existingProject">_existingProject</a> : File<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_existingProject">_existingProject</a> : <a href="file/XmlFile.html">XmlFile</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">EditProjectDialog</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_pieceSwfFile">_pieceSwfFile</a> : File<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_pieceSwfRow">_pieceSwfRow</a> : <a href="../air/EditorFileRow.html">EditorFileRow</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">EditProjectDialog</td>
 </tr>
 <tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_pieceXmlFile">_pieceXmlFile</a> : File<div class="summaryTableDescription"></div>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol"><a class="signatureLink" href="#_pieceXmlRow">_pieceXmlRow</a> : <a href="../air/EditorFileRow.html">EditorFileRow</a>
+<div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">EditProjectDialog</td>
 </tr>
 <tr class="">
@@ -97,7 +101,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#EditProjectDialog()">EditProjectDialog</a>(existingProject:File, callback:Function)</div>
+<a class="signatureLink" href="#EditProjectDialog()">EditProjectDialog</a>(existingProject:<a href="file/XmlFile.html">XmlFile</a>, callback:Function)</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">EditProjectDialog</td>
 </tr>
@@ -111,7 +115,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="hideInheritedMethod">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol"><img class="inheritedSummaryImage" title="Inherited" alt="Inherited" src="../../../../../../images/inheritedSummary.gif"></td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="LightweightCenteredDialog.html#openCentered()">openCentered</a>(parentWindow:NativeWindow):void</div>
+<a class="signatureLink" href="LightweightCenteredDialog.html#open()">open</a>(openWindowActive:Boolean = true):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol"><a href="LightweightCenteredDialog.html">LightweightCenteredDialog</a></td>
 </tr>
@@ -134,13 +138,6 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#createPieceXML()">createPieceXML</a>(label:Label):Function</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">EditProjectDialog</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
 <a class="signatureLink" href="#fileDialogCloseHandler()">fileDialogCloseHandler</a>(file:File):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">EditProjectDialog</td>
@@ -148,29 +145,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Cl
 <tr class="">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
 <div class="summarySignature">
-<a class="signatureLink" href="#findFile()">findFile</a>(desc:String, label:Label, file:File, extension:String):Function</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">EditProjectDialog</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#findPath()">findPath</a>(reference:File, child:File):String</div>
-<div class="summaryTableDescription"></div>
-</td><td class="summaryTableOwnerCol">EditProjectDialog</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#sanitizeFilename()">sanitizeFilename</a>(file:File):File</div>
-<div class="summaryTableDescription">
-     I can't believe how much Adobe fails at life.</div>
-</td><td class="summaryTableOwnerCol">EditProjectDialog</td>
-</tr>
-<tr class="">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableInheritanceCol">&nbsp;</td><td class="summaryTableSignatureCol">
-<div class="summarySignature">
-<a class="signatureLink" href="#saveAndClose()">saveAndClose</a>(file:File):void</div>
+<a class="signatureLink" href="#saveAndClose()">saveAndClose</a>(file:<a href="file/XmlFile.html">XmlFile</a>):void</div>
 <div class="summaryTableDescription"></div>
 </td><td class="summaryTableOwnerCol">EditProjectDialog</td>
 </tr>
@@ -190,14 +165,14 @@ showHideInherited();
 <div class="MainContent">
 <a name="propertyDetail"></a>
 <div class="detailSectionHeader">Property detail</div>
-<a name="_createPieceXml"></a>
+<a name="_dynamicsXmlRow"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_createPieceXml</td><td class="detailHeaderType">property</td>
+<td class="detailHeaderName">_dynamicsXmlRow</td><td class="detailHeaderType">property</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _createPieceXml:Boolean = false</code>
+<code>protected var _dynamicsXmlRow:<a href="../air/EditorFileRow.html">EditorFileRow</a></code>
 </div>
 <a name="_existingProject"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -206,25 +181,25 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _existingProject:File</code>
+<code>protected var _existingProject:<a href="file/XmlFile.html">XmlFile</a></code>
 </div>
-<a name="_pieceSwfFile"></a>
+<a name="_pieceSwfRow"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_pieceSwfFile</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_pieceSwfRow</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _pieceSwfFile:File</code>
+<code>protected var _pieceSwfRow:<a href="../air/EditorFileRow.html">EditorFileRow</a></code>
 </div>
-<a name="_pieceXmlFile"></a>
+<a name="_pieceXmlRow"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
-<td class="detailHeaderName">_pieceXmlFile</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
+<td class="detailHeaderName">_pieceXmlRow</td><td class="detailHeaderType">property</td><td class="detailHeaderRule">&nbsp;</td>
 </tr>
 </table>
 <div class="detailBody">
-<code>protected var _pieceXmlFile:File</code>
+<code>protected var _pieceXmlRow:<a href="../air/EditorFileRow.html">EditorFileRow</a></code>
 </div>
 <a name="_projectXml"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
@@ -253,10 +228,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>public function EditProjectDialog(existingProject:File, callback:Function)</code><span class="label">Parameters</span>
+<code>public function EditProjectDialog(existingProject:<a href="file/XmlFile.html">XmlFile</a>, callback:Function)</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">existingProject</span>:File</code></td>
+<td width="20px"></td><td><code><span class="label">existingProject</span>:<a href="file/XmlFile.html">XmlFile</a></code></td>
 </tr>
 <tr>
 <td class="paramSpacer">&nbsp;</td>
@@ -277,27 +252,6 @@ showHideInherited();
 <div class="detailBody">
 <code>protected override function createChildren():void</code>
 </div>
-<a name="createPieceXML()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">createPieceXML</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function createPieceXML(label:Label):Function</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">label</span>:Label</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>Function</code></td>
-</tr>
-</table>
-</div>
 <a name="fileDialogCloseHandler()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -312,72 +266,6 @@ showHideInherited();
 </tr>
 </table>
 </div>
-<a name="findFile()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">findFile</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function findFile(desc:String, label:Label, file:File, extension:String):Function</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">desc</span>:String</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">label</span>:Label</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">file</span>:File</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">extension</span>:String</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>Function</code></td>
-</tr>
-</table>
-</div>
-<a name="findPath()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">findPath</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function findPath(reference:File, child:File):String</code><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">reference</span>:File</code></td>
-</tr>
-<tr>
-<td class="paramSpacer">&nbsp;</td>
-</tr>
-<tr>
-<td width="20px"></td><td><code><span class="label">child</span>:File</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>String</code></td>
-</tr>
-</table>
-</div>
 <a name="handleSave()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -387,31 +275,6 @@ showHideInherited();
 <div class="detailBody">
 <code>public function handleSave():void</code>
 </div>
-<a name="sanitizeFilename()"></a>
-<table cellspacing="0" cellpadding="0" class="detailHeader">
-<tr>
-<td class="detailHeaderName">sanitizeFilename</td><td class="detailHeaderParens">()</td><td class="detailHeaderType">method</td><td class="detailHeaderRule">&nbsp;</td>
-</tr>
-</table>
-<div class="detailBody">
-<code>protected function sanitizeFilename(file:File):File</code><p>
-     I can't believe how much Adobe fails at life.  AIR lets you filter file selection by 
-     extension on file selection for open and file selection for upload... but not file selection
-     for save.
-     </p><span class="label">Parameters</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20px"></td><td><code><span class="label">file</span>:File</code></td>
-</tr>
-</table>
-<p></p>
-<span class="label">Returns</span>
-<table border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td width="20"></td><td><code>File</code></td>
-</tr>
-</table>
-</div>
 <a name="saveAndClose()"></a>
 <table cellspacing="0" cellpadding="0" class="detailHeader">
 <tr>
@@ -419,10 +282,10 @@ showHideInherited();
 </tr>
 </table>
 <div class="detailBody">
-<code>protected function saveAndClose(file:File):void</code><span class="label">Parameters</span>
+<code>protected function saveAndClose(file:<a href="file/XmlFile.html">XmlFile</a>):void</code><span class="label">Parameters</span>
 <table border="0" cellspacing="0" cellpadding="0">
 <tr>
-<td width="20px"></td><td><code><span class="label">file</span>:File</code></td>
+<td width="20px"></td><td><code><span class="label">file</span>:<a href="file/XmlFile.html">XmlFile</a></code></td>
 </tr>
 </table>
 </div>

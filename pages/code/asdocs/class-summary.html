@@ -58,7 +58,7 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Al
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/AgentSubControl.html">AgentSubControl</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
- This subcontrol is used by an AVRG on the client to send messages to the server agent.</td>
+ Provides AVR game clients a way to communicate to their server agent.</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/threerings/flash/AlphaFade.html">AlphaFade</a>
@@ -111,37 +111,39 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Al
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/AVRGameAvatar.html">AVRGameAvatar</a>
 <br>
-</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">&nbsp;</td>
+</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
+ Describes the current state of a player's avatar for an AVRG client or server agent.</td>
 </tr>
 <tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/AVRGameControl.html">AVRGameControl</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
- This file should be included by AVR games so that they can communicate
- with the whirled.</td>
+ This file should be included by AVR game clients so that they can communicate with their server
+ agent and the whirled.</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/AVRGameControlEvent.html">AVRGameControlEvent</a>
 <br>
-</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">&nbsp;</td>
+</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
+ Conveys information about a change to the state of an AVR game.</td>
 </tr>
 <tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/AVRGamePlayerEvent.html">AVRGamePlayerEvent</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
- An event dispatched on a per-player AVRG sub control.</td>
+ Conveys information about a change to the state of a particular player in an AVR game.</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/AVRGameRoomEvent.html">AVRGameRoomEvent</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
- An event dispatched on a per-player AVRG sub control.</td>
+ Conveys information about a change to the state of a particular room in an AVR game.</td>
 </tr>
 <tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/AVRServerGameControl.html">AVRServerGameControl</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
- This file should be included by AVR games so that they can communicate
+ This file should be included by the server agents of AVR games so that they can communicate
  with the whirled.</td>
 </tr>
 <tr class="prow1">
@@ -355,26 +357,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Al
  with the whirled.</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/GameBaseSubControl.html">GameBaseSubControl</a>
-<br>
-</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">&nbsp;</td>
-</tr>
-<tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/game/GameContentEvent.html">GameContentEvent</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/package-detail.html">com.whirled.game</a></td><td class="summaryTableLastCol">
  Dispatched when content-related events happen.</td>
 </tr>
-<tr class="prow1">
+<tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/game/GameControl.html">GameControl</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/package-detail.html">com.whirled.game</a></td><td class="summaryTableLastCol">
  Used to coordinate game state and control your multiplayer game.</td>
-</tr>
-<tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/GameServerSubControl.html">GameServerSubControl</a>
-<br>
-</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">&nbsp;</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/game/GameSubControl.html">GameSubControl</a>
@@ -383,9 +375,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Al
  Access game-specific controls.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/GameSubControl.html">GameSubControl</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/GameSubControlBase.html">GameSubControlBase</a>
 <br>
-</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">&nbsp;</td>
+</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
+ Provides AVR game services for server agents and clients.</td>
+</tr>
+<tr class="prow1">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/GameSubControlClient.html">GameSubControlClient</a>
+<br>
+</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
+ Provides AVR client game services.</td>
+</tr>
+<tr class="prow0">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/GameSubControlServer.html">GameSubControlServer</a>
+<br>
+</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
+ Provides services for AVR game server agents.</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/threerings/flash/GraphicsUtil.html">GraphicsUtil</a>
@@ -458,16 +463,16 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Al
  Merely a typed container for two Points.</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/game/LocalSubControl.html">LocalSubControl</a>
-<br>
-</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/package-detail.html">com.whirled.game</a></td><td class="summaryTableLastCol">
- Provides access to the 'local' game services.</td>
-</tr>
-<tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/LocalSubControl.html">LocalSubControl</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
  Defines actions, accessors and callbacks available on the client only.</td>
+</tr>
+<tr class="prow0">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/game/LocalSubControl.html">LocalSubControl</a>
+<br>
+</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/package-detail.html">com.whirled.game</a></td><td class="summaryTableLastCol">
+ Provides access to the 'local' game services.</td>
 </tr>
 <tr class="prow1">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/threerings/util/Log.html">Log</a>
@@ -541,22 +546,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Al
  A simple mechanism for queueing functions to be called on the next frame.</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/MobBaseSubControl.html">MobBaseSubControl</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/MobSubControlBase.html">MobSubControlBase</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
- Defines actions, accessors and callbacks available to all MOBs.</td>
+ Provides a means of accessing and controlling a previously spawned MOB.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/MobServerSubControl.html">MobServerSubControl</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/MobSubControlClient.html">MobSubControlClient</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
- Defines actions, accessors and callbacks available to MOBs on the server.</td>
+ Provides clients with a means of accessing and controlling a previously spawned MOB.</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/MobSubControl.html">MobSubControl</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/MobSubControlServer.html">MobSubControlServer</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
- Defines actions, accessors and callbacks available to MOBs on the client.</td>
+ Provides the server agent with a means of controlling a previously spawned MOB.</td>
 </tr>
 <tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/threerings/util/MultiLoader.html">MultiLoader</a>
@@ -616,25 +621,28 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Al
  Defines actions, accessors and callbacks available to all Pets.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/PlayerBaseSubControl.html">PlayerBaseSubControl</a>
-<br>
-</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">&nbsp;</td>
-</tr>
-<tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/PlayerServerSubControl.html">PlayerServerSubControl</a>
-<br>
-</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">&nbsp;</td>
-</tr>
-<tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/game/PlayerSubControl.html">PlayerSubControl</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/game/class-list.html');" href="com/whirled/game/package-detail.html">com.whirled.game</a></td><td class="summaryTableLastCol">
  Provides access to 'player' game services.</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/PlayerSubControl.html">PlayerSubControl</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/PlayerSubControlBase.html">PlayerSubControlBase</a>
 <br>
-</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">&nbsp;</td>
+</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
+ Provides services for a single player of an AVRG to the server agent and client.</td>
+</tr>
+<tr class="prow0">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/PlayerSubControlClient.html">PlayerSubControlClient</a>
+<br>
+</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
+ Provides services for the client's player of an AVRG.</td>
+</tr>
+<tr class="prow1">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/PlayerSubControlServer.html">PlayerSubControlServer</a>
+<br>
+</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
+ Provides the server agent for an AVR game with services related to a single player.</td>
 </tr>
 <tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/PropControl.html">PropControl</a>
@@ -690,21 +698,22 @@ if (!isEclipse() || window.name != ECLIPSE_FRAME_NAME) {titleBar_setSubTitle("Al
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/threerings/util/class-list.html');" href="com/threerings/util/package-detail.html">com.threerings.util</a></td><td class="summaryTableLastCol">&nbsp;</td>
 </tr>
 <tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/RoomBaseSubControl.html">RoomBaseSubControl</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/RoomSubControlBase.html">RoomSubControlBase</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
- Defines actions, accessors and callbacks available on the client only.</td>
+ Provides AVR services for a single room to clients and server agents.</td>
 </tr>
 <tr class="prow0">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/RoomServerSubControl.html">RoomServerSubControl</a>
-<br>
-</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">&nbsp;</td>
-</tr>
-<tr class="prow1">
-<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/RoomSubControl.html">RoomSubControl</a>
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/RoomSubControlClient.html">RoomSubControlClient</a>
 <br>
 </td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
- Defines actions, accessors and callbacks available on the client only.</td>
+ Provides AVR services for a client player's current room.</td>
+</tr>
+<tr class="prow1">
+<td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/avrg/RoomSubControlServer.html">RoomSubControlServer</a>
+<br>
+</td><td class="summaryTableCol"><a onclick="javascript:loadClassListFrame('com/whirled/avrg/class-list.html');" href="com/whirled/avrg/package-detail.html">com.whirled.avrg</a></td><td class="summaryTableLastCol">
+ Provides AVR services for a single room to server agents only.</td>
 </tr>
 <tr class="prow0">
 <td class="summaryTablePaddingCol">&nbsp;</td><td class="summaryTableSecondCol"><a href="com/whirled/game/SeatingSubControl.html">SeatingSubControl</a>
