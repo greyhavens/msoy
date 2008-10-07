@@ -3,6 +3,7 @@
 
 package com.threerings.msoy.money.server;
 
+import com.threerings.msoy.money.data.all.BalanceInfo;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 
 /**
@@ -58,6 +59,39 @@ public class BuyResult
     public MoneyTransaction getAffiliateTransaction ()
     {
         return _affiliateTransaction;
+    }
+
+    public BalanceInfo getBuyerBalances ()
+    {
+        int buyerId = _memberTransaction.memberId;
+        BalanceInfo balances = new BalanceInfo();
+        // examine each transaction in turn, freely blowing away balance info from an earlier
+        // transaction if applicable, since payouts are done in buyer, creator, affiliate order.
+        updateBalance(balances, buyerId, _memberTransaction);
+        updateBalance(balances, buyerId, _creatorTransaction);
+        updateBalance(balances, buyerId, _affiliateTransaction);
+        return balances;
+    }
+
+    protected void updateBalance (BalanceInfo balances, int memberId, MoneyTransaction tx)
+    {
+        if (tx == null || tx.memberId != memberId) {
+            return;
+        }
+
+        switch (tx.currency) {
+        case COINS:
+            balances.coins = tx.balance;
+            break;
+
+        case BARS:
+            balances.bars = tx.balance;
+            break;
+
+        case BLING:
+            balances.bling = tx.balance;
+            break;
+        }
     }
     
     protected boolean _magicFree;

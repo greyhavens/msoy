@@ -27,13 +27,13 @@ import com.threerings.msoy.money.data.all.PriceQuote;
 import client.item.ItemActivator;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
-import client.shell.MoneyUtil;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.StretchButton;
 import client.util.ClickCallback;
 import client.util.FlashClients;
 import client.util.Link;
+import client.util.MoneyUtil;
 import client.util.ServiceUtil;
 
 /**
@@ -112,7 +112,7 @@ public class BuyPanel extends FlowPanel
         _buyCoins.setAmount(quote.getCoins());
     }
 
-    protected class BuyCallback extends ClickCallback<Item>
+    protected class BuyCallback extends ClickCallback<CatalogService.PurchaseResult>
     {
         public BuyCallback (SourcesClickEvents button, Currency currency)
         {
@@ -132,9 +132,10 @@ public class BuyPanel extends FlowPanel
             return true;
         }
 
-        public boolean gotResult (Item item)
+        public boolean gotResult (CatalogService.PurchaseResult result)
         {
-            itemPurchased(item);
+            MoneyUtil.updateBalances(result.balances);
+            itemPurchased(result.item);
             return false; // don't reenable buy button
         }
 

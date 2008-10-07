@@ -1,7 +1,9 @@
 //
 // $Id$
 
-package client.shell;
+package client.util;
+
+import client.shell.CShell;
 
 import client.util.events.StatusChangeEvent;
 

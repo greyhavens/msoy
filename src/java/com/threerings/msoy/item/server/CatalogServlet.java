@@ -145,7 +145,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public Item purchaseItem (byte itemType, int catalogId, Currency currency, int authedCost)
+    public PurchaseResult purchaseItem (
+        byte itemType, int catalogId, Currency currency, int authedCost)
         throws ServiceException
     {
         final MemberRecord mrec = requireAuthedUser();
@@ -256,7 +257,10 @@ public class CatalogServlet extends MsoyServiceServlet
             log.warning("Error logging stats during item purchase", e);
         }
 
-        return buyOp.getItem();
+        PurchaseResult purchResult = new PurchaseResult();
+        purchResult.item = buyOp.getItem();
+        purchResult.balances = result.getBuyerBalances();
+        return purchResult;
     }
 
     // from interface CatalogService

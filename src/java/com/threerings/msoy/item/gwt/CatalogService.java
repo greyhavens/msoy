@@ -14,6 +14,7 @@ import com.threerings.msoy.web.data.ServiceException;
 
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.ItemIdent;
+import com.threerings.msoy.money.data.all.BalanceInfo;
 import com.threerings.msoy.money.data.all.Currency;
 
 /**
@@ -31,6 +32,16 @@ public interface CatalogService extends RemoteService
          * The particular set of listings requested.
          */
         public List<ListingCard> listings;
+    }
+
+    /** Returned by {@link #purchaseItem} */
+    public static class PurchaseResult implements IsSerializable
+    {
+        /** The item that was purchased. */
+        public Item item;
+
+        /** Any updated balances. */
+        public BalanceInfo balances;
     }
 
     /** Provides results for {@link #loadFavorites}. */
@@ -80,7 +91,7 @@ public interface CatalogService extends RemoteService
     /**
      * Purchases the item of the specified id and type.
      */
-    Item purchaseItem (byte itemType, int catalogId, Currency currency, int authedCost)
+    PurchaseResult purchaseItem (byte itemType, int catalogId, Currency currency, int authedCost)
         throws ServiceException;
 
     /**
