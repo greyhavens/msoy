@@ -69,7 +69,9 @@ public class ThaneAVRGameBackend
     public function shutdown () :void
     {
         // shut down sub-backends, remove listeners
-        _privateMessageAdapter.release();
+        if (_privateMessageAdapter != null) {
+            _privateMessageAdapter.release();
+        }
     }
 
     /**
