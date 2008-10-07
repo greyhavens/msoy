@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.Anchor;
 import com.threerings.gwt.ui.SmartTable;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MediaDesc;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.item.data.all.Item;
@@ -75,9 +76,13 @@ public class ProfileBlurb extends Blurb
         photo.setStyleName("Photo");
         String mepics = Args.compose("pgallery", _name.getMemberId());
         ClickListener onClick = null;
-        onClick = Link.createListener(Pages.PEOPLE, mepics);
+        if (DeploymentConfig.devDeployment) { // TODO - make public
+            onClick = Link.createListener(Pages.PEOPLE, mepics);
+        }
         photo.add(MediaUtil.createMediaView(_profile.photo, MediaDesc.THUMBNAIL_SIZE, onClick));
-        photo.add(Link.create(_msgs.photosOfMe(), Pages.PEOPLE, mepics));
+        if (DeploymentConfig.devDeployment) { // TODO - make public
+            photo.add(Link.create(_msgs.photosOfMe(), Pages.PEOPLE, mepics));
+        }
 
         // create the info section with their name, a/s/l, etc.
         SmartTable info = new SmartTable("Info", 0, 5);
