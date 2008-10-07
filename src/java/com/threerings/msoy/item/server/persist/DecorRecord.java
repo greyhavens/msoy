@@ -227,8 +227,14 @@ public class DecorRecord extends ItemRecord
         object.depth = depth;
         object.horizon = horizon;
         object.hideWalls = hideWalls;
-        object.offsetX = offsetX;
-        object.offsetY = offsetY;
+        // TEMP TODO
+        // Oh my goodness! How did this bug get in here! It seems legacy decors have
+        // had their offsets zeroed out. Oh me, oh my. What a problem.
+        // Let's see if anyone notices. I have an inkling that the only decors using these
+        // are tweaky/wacky decors that nobody cares about anyway.
+        // Ray, Oct 6, 2008.
+        //object.offsetX = offsetX;
+        //object.offsetY = offsetY;
         object.scale = scale;
         return object;
     }
