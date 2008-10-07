@@ -82,7 +82,7 @@
   background-color: #FFFFFF;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  padding-top: 10px;
+  padding: 10px 0;
 }
 
 .galleryViewPanel .Error {
@@ -102,10 +102,6 @@
 
 .galleryViewPanel .Actions .actionLabel {
   text-decoration: none;
-}
-
-.galleryViewPanel .Actions .Stop {
-  color: #cc3333;
 }
 
 .galleryViewPanel .Thumbnail {
@@ -129,27 +125,37 @@
 
 .galleryViewPanel .CurrentPhoto {
   width: 100%;
-  height: 460px;
-  margin-top: 10px;
+  height: 500px;
 }
-
-.galleryViewPanel .CurrentPhoto .FullPhotoName {
+    
+.galleryViewPanel .CurrentPhoto .LargePhotoName {
   color: #247393;
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-weight: bold;
   font-size: 24px;
-  overflow: hidden;
-  white-space: nowrap;
-  width: 530px;
 }
 
-.galleryViewPanel .CurrentPhoto .FullPhoto {
+.galleryViewPanel .CurrentPhoto .creator, 
+.galleryViewPanel .CurrentPhoto .creator a {
+  color: #154676;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.galleryViewPanel .CurrentPhoto .LargePhoto {
   width: 100%;
   text-align: center;
 }
-.galleryViewPanel .CurrentPhoto .FullPhoto img {
+.galleryViewPanel .CurrentPhoto .LargePhoto img {
   border: 1px solid #CCCCCC;
 }
+
+.galleryViewPanel .CurrentPhoto .ViewFullSize {
+  text-decoration: none;
+  color: #247393;
+  margin-top: 10px;
+}
+
 
 /* ------------------------------------
    GALLERY DETAILS PANEL (VIEW & EDIT)
@@ -171,7 +177,6 @@
   font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
   font-weight: bold;
   font-size: 14px;
-  text-align: center;
 }
 
 .galleryDetailPanel .Count {
@@ -212,9 +217,9 @@
 -------------------------------------*/
 
 .galleryEditPanel {
-  width: 100%;
   height: 100%;
-  min-height: 650px;
+  width: 100%;
+  min-height: 610px;
   background-color: #FFFFFF;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
@@ -327,4 +332,9 @@
   font-weight: bold;
   color: #5491bd;
   font-size: 24px;
+}
+
+.galleryEditPanel .UploadPhotos {
+  text-decoration: none;
+  color: #247393;
 }

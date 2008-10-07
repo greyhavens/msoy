@@ -40,14 +40,22 @@ public class PeoplePage extends Page
             setContent(_msgs.galleriesTitle(), new GalleryPanel(memberId));
 
         } else if (action.equals(GalleryViewPanel.VIEW_ACTION)) {
-            int galleryId = args.get(1, -1);
-            int photoId = args.get(2, -1);
-            setContent(_msgs.galleriesTitle(), new GalleryViewPanel(galleryId, 0, photoId));
+            setContent(_msgs.galleriesTitle(), _galleryViewPanel = new GalleryViewPanel());
+            _galleryViewPanel.setArgs(args, false);
 
         } else if (action.equals(GalleryViewPanel.VIEW_PROFILE_ACTION)) {
-            int memberId = args.get(1, -1);
-            int photoId = args.get(2, -1);
-            setContent(_msgs.galleriesTitle(), new GalleryViewPanel(0, memberId, photoId));
+            // unlike VIEW_PHOTO_ACTION, this will always refresh the gallery data
+            setContent(_msgs.galleriesTitle(), _galleryViewPanel = new GalleryViewPanel());
+            _galleryViewPanel.setArgs(args, true);
+
+        } else if (action.equals(GalleryViewPanel.VIEW_PHOTO_ACTION)) {
+            // keep the gallery if one is already there
+            if (_galleryViewPanel == null) {
+                _galleryViewPanel = new GalleryViewPanel();
+            }
+            setContent(_msgs.galleriesTitle(), _galleryViewPanel);
+            // this will only reload gallery data if a different gallery is being viewed
+            _galleryViewPanel.setArgs(args, false);
 
         } else if (CShell.isGuest()) {
             setContent(new PeoplePanel());
@@ -90,6 +98,7 @@ public class PeoplePage extends Page
 
     protected int _memberId = -1;
     protected SearchPanel _search;
+    protected GalleryViewPanel _galleryViewPanel;
 
     protected static final PeopleMessages _msgs = GWT.create(PeopleMessages.class);
 }

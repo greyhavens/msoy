@@ -33,8 +33,8 @@ public class GalleryDetailPanel extends AbsolutePanel
             MediaDesc.getWidth(MediaDesc.THUMBNAIL_SIZE),
             MediaDesc.getHeight(MediaDesc.THUMBNAIL_SIZE)), 10, 10);
 
-        String countText = galleryData.photos.size() == 1 ? _pmsgs.onePhoto() :
-            _pmsgs.photoCount(""+galleryData.photos.size());
+        String countText = galleryData.photos.size() == 1 ? _pmsgs.galleryOnePhoto()
+            : _pmsgs.galleryPhotoCount("" + galleryData.photos.size());
         add(MsoyUI.createLabel(countText, "Count"), 20, 80);
 
         // Gallery and creator name are inline

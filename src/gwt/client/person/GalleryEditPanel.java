@@ -68,7 +68,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         if (isProfile) {
             galleryData.gallery.name = null;
         } else {
-            galleryData.gallery.name = _pmsgs.newGallery();
+            galleryData.gallery.name = _pmsgs.galleryNewName();
         }
         galleryData.gallery.description = "";
         galleryData.photos = new ArrayList<Photo>();
@@ -102,37 +102,13 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         add(detailPanel, 0, 10);
 
         // add "save" button
-        PushButton saveButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN, _pmsgs.saveButton(),
+        PushButton saveButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
+            _pmsgs.gallerySaveButton(),
             new ClickListener() {
                 public void onClick (Widget sender) {
                     final PushButton button = (PushButton) sender;
                     button.setEnabled(false);
-                    if (_newGallery) {
-                        _gallerysvc.createGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
-                            new MsoyCallback<Gallery>() {
-                                public void onSuccess (Gallery result) {
-                                    _newGallery = false;
-                                    _galleryData.gallery = result;
-                                    success(button);
-                                }
-                            }
-                        );
-                    } else {
-                        _gallerysvc.updateGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
-                            new MsoyCallback<Void>() {
-                                public void onSuccess (Void result) {
-                                    success(button);
-                                }
-                            }
-                        );
-                    }
-                }
-                protected void success (PushButton button) {
-                    button.setEnabled(true);
-                    // send the user back to the gallery view on save
-                    String args = Args.compose(GalleryViewPanel.VIEW_ACTION,
-                        ""+_galleryData.gallery.galleryId);
-                    Link.go(Pages.PEOPLE, args);
+                    saveGallery(true, button);
                 }
             }
         );
@@ -213,14 +189,55 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
         add(MsoyUI.createLabel(_pmsgs.galleryPhotoListTitle(), "PhotoListTitle"), 65, 385);
 
         // button link to photo upload panel goes over photo list
-        add(MsoyUI.createButton(MsoyUI.LONG_THIN,
-            _pmsgs.galleryUploadPhotos(),
+        add(MsoyUI.createActionLabel(_pmsgs.galleryUploadPhotos(), "UploadPhotos",
             new ClickListener() {
                 public void onClick (Widget sender) {
+                    // save the gallery before leaving this page
+                    saveGallery(false, null);
                     Link.go(Pages.STUFF, Args.compose("c", "" + Item.PHOTO));
                 }
-            }
-        ), 550, 600);
+            }), 210, 395);
+    }
+
+    /**
+     * Create a new gallery or update an existing one.
+     * @param backToView if true, player will be returned to gallery view on success.
+     * @param saveButton if supplied, this will be enabled on success.
+     */
+    protected void saveGallery (final boolean backToView, final PushButton saveButton)
+    {
+        final String viewPageArgs = Args.compose(GalleryViewPanel.VIEW_ACTION,
+            _galleryData.gallery.galleryId);
+
+        if (_newGallery) {
+            _gallerysvc.createGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
+                new MsoyCallback<Gallery>() {
+                    public void onSuccess (Gallery result) {
+                        _newGallery = false;
+                        _galleryData.gallery = result;
+                        if (saveButton != null) {
+                            saveButton.setEnabled(true);
+                        }
+                        if (backToView) {
+                            Link.go(Pages.PEOPLE, viewPageArgs);
+                        }
+                    }
+                }
+            );
+        } else {
+            _gallerysvc.updateGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
+                new MsoyCallback<Void>() {
+                    public void onSuccess (Void result) {
+                        if (saveButton != null) {
+                            saveButton.setEnabled(true);
+                        }
+                        if (backToView) {
+                            Link.go(Pages.PEOPLE, viewPageArgs);
+                        }
+                    }
+                }
+            );
+        }
     }
 
     /**

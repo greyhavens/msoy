@@ -16,6 +16,7 @@ import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.ChangeListener;
+import com.google.gwt.user.client.ui.FocusListenerAdapter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -95,11 +96,19 @@ public class GalleryDetailEditPanel extends AbsolutePanel
         // description textarea
         final LimitedTextArea description = new LimitedTextArea(Gallery.MAX_DESCRIPTION_LENGTH, 20,
             10);
-        description.setText(gallery.description);
+        description.setText(gallery.description != null && gallery.description.length() > 0
+            ? gallery.description : _pmsgs.galleryDescDefault());
         description.addStyleName("Description");
         description.getTextArea().addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
                 gallery.description = description.getText();
+            }
+        });
+        description.getTextArea().addFocusListener(new FocusListenerAdapter() {
+            public void onFocus (Widget sender) {
+                if (description.getTextArea().getText().equals(_pmsgs.galleryDescDefault())) {
+                    description.getTextArea().setText("");
+                }
             }
         });
         add(description, 100, 35);
@@ -110,7 +119,7 @@ public class GalleryDetailEditPanel extends AbsolutePanel
      */
     public void setCount (int count)
     {
-        String text = count == 1 ? _pmsgs.onePhoto() : _pmsgs.photoCount(""+count);
+        String text = count == 1 ? _pmsgs.galleryOnePhoto() : _pmsgs.galleryPhotoCount(""+count);
         _countLabel.setText(text);
     }
 

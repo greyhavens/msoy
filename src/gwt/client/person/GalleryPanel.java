@@ -81,7 +81,7 @@ public class GalleryPanel extends FlowPanel
      */
     public static String getGalleryLabel (Gallery gallery) {
         return gallery.isProfileGallery() ?
-            _pmsgs.profileGallery(CShell.creds.name.toString()) : gallery.name;
+            _pmsgs.galleryProfileName(CShell.creds.name.toString()) : gallery.name;
     }
 
     protected static final GalleryServiceAsync _gallerysvc = (GalleryServiceAsync)
