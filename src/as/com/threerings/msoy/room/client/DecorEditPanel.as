@@ -81,7 +81,7 @@ public class DecorEditPanel extends FlyingPanel
 
     override protected function handleClose (event :CloseEvent) :void
     {
-        var btn :Button = getCloseButton();
+        //var btn :Button = getCloseButton();
         //btn.selected = !btn.selected; // doesn't work
         FlexUtil.setVisible(_grid, !_grid.visible);
     }
@@ -92,15 +92,10 @@ public class DecorEditPanel extends FlyingPanel
             return;
         }
 
-        _decor.type = int(ROOM_TYPES[_roomType.selectedIndex]);
-        _decor.hideWalls = _hideWalls.selected;
-        _decor.width = int(_width.text);
-        _decor.height = int(_height.text);
+        readRoomType();
         _decor.depth = _depth.value;
         _decor.horizon = _horizon.value;
         _decor.scale = _scale.value;
-        _decor.offsetX = Number(_xoff.text);
-        _decor.offsetY = Number(_yoff.text);
 
         updateDecorInViewer();
         updateDecorOnPage();
@@ -129,16 +124,11 @@ public class DecorEditPanel extends FlyingPanel
 
         _suppressSaves = true;
         try {
-            _roomType.selectedIndex = ROOM_TYPES.indexOf(type);
-            _hideWalls.selected = hideWalls;
-            _width.text = String(width);
-            _height.text = String(height);
+            _roomType.selectedIndex = figureRoomType();
             _depth.value = depth;
             _depth.tickValues = [ height ];
             _horizon.value = horizon;
             _scale.value = scale;
-            _xoff.text = String(offsetX);
-            _yoff.text = String(offsetY);
             _checkRoomTypes()
         } finally {
             _suppressSaves = false;
@@ -180,13 +170,11 @@ public class DecorEditPanel extends FlyingPanel
 
         _roomType = new ComboBox();
         var types :Array = [];
-        for (var ii :int = 0; ii < ROOM_TYPES.length; ii++) {
-            types[ii] = { label: Msgs.STUDIO.get("l.room_type_" + ROOM_TYPES[ii]) };
+        for (var ii :int = 0; ii < ROOM_KEYS.length; ii++) {
+            types[ii] = { label: Msgs.STUDIO.get(ROOM_KEYS[ii]) };
         }
         _roomType.dataProvider = types;
         _roomType.addEventListener(Event.CHANGE, saveChanges);
-
-        _hideWalls = new CommandCheckBox(Msgs.STUDIO.get("l.hide_walls"), saveChanges);
 
         _scale = new VSlider();
         _scale.liveDragging = true;
@@ -205,27 +193,8 @@ public class DecorEditPanel extends FlyingPanel
         _depth.maximum = 2000; // TODO: higher?
         _depth.minimum = 0;
 
-        var expertBtn :CommandCheckBox = new CommandCheckBox(Msgs.STUDIO.get("l.dimensions"));
-
-        _width = new TextInput();
-        _width.maxChars = 4;
-        _height = new TextInput();
-        _height.maxChars = 4;
-        _xoff = new TextInput();
-        _xoff.maxChars = 4;
-        _yoff = new TextInput();
-        _yoff.maxChars = 4;
-
         var typeP :Grid = new Grid();
         GridUtil.addRow(typeP, Msgs.STUDIO.get("l.room_type"), _roomType);
-
-        var detailP :Grid = new Grid();
-        GridUtil.addRow(detailP, _hideWalls, [2, 1]);
-        GridUtil.addRow(detailP, expertBtn, [2, 1]);
-        //var dimL :UIComponent = GridUtil.addRow(detailP, Msgs.STUDIO.get("l.dimensions"), [2, 1]);
-        GridUtil.addRow(detailP, _width, _height);
-        var offsetL :UIComponent = GridUtil.addRow(detailP, Msgs.STUDIO.get("l.offsets"), [2, 1]);
-        GridUtil.addRow(detailP, _xoff, _yoff);
 
         var slideP :Grid = new Grid();
         var scaleP :Grid = new Grid();
@@ -237,23 +206,17 @@ public class DecorEditPanel extends FlyingPanel
         GridUtil.addRow(horzP, _horizon);
         GridUtil.addRow(depthP, Msgs.STUDIO.get("l.depth"));
         GridUtil.addRow(depthP, _depth);
-        GridUtil.addRow(slideP, scaleP, horzP, depthP, detailP);
+        GridUtil.addRow(slideP, scaleP, horzP, depthP);
 
-        var showExpert :Function = function (toggled :Boolean) :void {
-            for each (var comp :UIComponent in [ _width, _height, _xoff, _yoff, offsetL ]) {
-                FlexUtil.setVisible(comp, toggled);
-            }
-        };
-        expertBtn.setCallback(showExpert);
-        showExpert(false);
         _checkRoomTypes = function ( ... ignored) :void {
-            const on :Boolean = ROOM_TYPES[_roomType.selectedIndex] != Decor.FLAT_LAYOUT;
-            for each (var comp :UIComponent in [ horzP, depthP, _hideWalls ]){
+            // turn depth and horizon off for flatland
+            const on :Boolean = _roomType.selectedIndex != ROOM_FLATLAND;
+            for each (var comp :UIComponent in [ horzP, depthP ]){
                 FlexUtil.setVisible(comp, on);
             }
         };
         _roomType.addEventListener(Event.CHANGE, _checkRoomTypes);
-        _roomType.selectedIndex = ROOM_TYPES.indexOf(Decor.FLAT_LAYOUT); // smallest layout by def.
+        _roomType.selectedIndex = ROOM_FLATLAND; // flatland is smallest layout
         _checkRoomTypes();
 
         GridUtil.addRow(_grid, typeP);
@@ -266,12 +229,54 @@ public class DecorEditPanel extends FlyingPanel
             BindingUtils.bindSetter(saveChanges, _scale, "value");
             BindingUtils.bindSetter(saveChanges, _horizon, "value");
             BindingUtils.bindSetter(saveChanges, _depth, "value");
-            BindingUtils.bindSetter(saveChanges, _width, "text");
-            BindingUtils.bindSetter(saveChanges, _height, "text");
-            BindingUtils.bindSetter(saveChanges, _xoff, "text");
-            BindingUtils.bindSetter(saveChanges, _yoff, "text");
         } finally {
             _suppressSaves = false;
+        }
+    }
+
+    /**
+     * Return the room type, according to the decor properties.
+     */
+    protected function figureRoomType () :int
+    {
+        if (_decor.type == Decor.FLAT_LAYOUT) {
+            return ROOM_FLATLAND;
+
+        } else if ((_decor.type == Decor.IMAGE_OVERLAY) && _decor.hideWalls) {
+            return ROOM_NO_WALLS;
+
+        } else {
+            // some old decors may be other types, but we f'n don't care
+            return ROOM_NORMAL;
+        }
+    }
+
+    /**
+     * Turn the selected room type back into decor properties, according to ROOM_TYPES.
+     */
+    protected function readRoomType () :void
+    {
+        switch (_roomType.selectedIndex) {
+        case ROOM_NORMAL:
+        case ROOM_NO_WALLS:
+            _decor.type = Decor.IMAGE_OVERLAY;
+            _decor.hideWalls = (_roomType.selectedIndex == ROOM_NO_WALLS);
+            break;
+
+        case ROOM_FLATLAND:
+            _decor.type = Decor.FLAT_LAYOUT;
+            // WEIRD, flatland seems to freak out if the depth is not normalish, so reset that
+            _suppressSaves = true;
+            try {
+                _depth.value = _decor.height;
+            } finally {
+                _suppressSaves = false;
+            }
+            break;
+
+        default:
+            log.warning("Unhandled room type!");
+            break;
         }
     }
 
@@ -283,20 +288,20 @@ public class DecorEditPanel extends FlyingPanel
 
     protected var _studioView :RoomStudioView;
 
+    // NOTE: There is no support for FIXED_IMAGE right now,
+    // because it doesn't play well with zooming
     /** The room types we support. */
-    // TODO: FIXED_IMAGE is not active because it doesn't seem to play well with room zooming
-    protected const ROOM_TYPES :Array =
-        [ Decor.IMAGE_OVERLAY, /* Decor.FIXED_IMAGE,*/ Decor.FLAT_LAYOUT ];
+
+    protected const ROOM_NORMAL :int = 0;
+    protected const ROOM_NO_WALLS :int = 1;
+    protected const ROOM_FLATLAND :int = 2;
+
+    protected const ROOM_KEYS :Array = [ "m.room_normal", "m.room_no_walls", "m.room_flat" ];
 
     protected var _roomType :ComboBox;
     protected var _scale :VSlider;
     protected var _horizon :VSlider;
     protected var _depth :VSlider;
-    protected var _hideWalls :CommandCheckBox;
-    protected var _width :TextInput;
-    protected var _height :TextInput;
-    protected var _xoff :TextInput;
-    protected var _yoff :TextInput;
 
     protected var _grid :Grid = new Grid();
 
