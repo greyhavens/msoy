@@ -39,20 +39,14 @@ public class BlingPanel extends SmartTable
         setCellSpacing(10);
         setStyleName("bling");
         
-        model.addBlingCallback(new AsyncCallback<BlingInfo>() {
-            public void onFailure (Throwable caught) {
-                // Ignore
-            }
-            public void onSuccess (BlingInfo result) {
-                update(result);
-            }
-        });
-        _memberId = model.memberId;
+        _model = model;
         init();
     }
     
     protected void init ()
     {
+        clear();
+
         int row = 0;
         setText(row++, 0, _msgs.blingHeader(), 3, "header");
         setText(row, 0, _msgs.blingBalance(), 1, "rightLabel");
@@ -66,11 +60,20 @@ public class BlingPanel extends SmartTable
         setWidget(row, 1, _exchangeBox = new NumberTextBox(true));
         setWidget(row++, 2, _exchangeBtn = new Button(_msgs.exchangeButton(), new ClickListener() {
             public void onClick (Widget sender) {
-                doExchange(_memberId);
+                doExchange(_model.memberId);
             }
         }));
         setText(row++, 0, _msgs.blingCashOutHeader(), 3, "header");
         _cashOutRow = row;
+
+        _model.addBlingCallback(new AsyncCallback<BlingInfo>() {
+            public void onFailure (Throwable caught) {
+                // Ignore
+            }
+            public void onSuccess (BlingInfo result) {
+                update(result);
+            }
+        });
     }
     
     protected void update (BlingInfo result)
@@ -81,6 +84,19 @@ public class BlingPanel extends SmartTable
             setWidget(_cashOutRow, 0, new Label(_msgs.cashedOutBling(
                 Currency.BLING.format(result.cashOut.blingAmount),
                 formatUSD(result.cashOut.blingWorth))), 3, "Success");
+            setWidget(_cashOutRow, 1, new Button(_cmsgs.cancel(), new ClickListener() {
+                public void onClick (final Widget sender) {
+                    _moneysvc.cancelCashOut(_model.memberId, "m.user_cancelled", new AsyncCallback<Void>() {
+                        public void onFailure (Throwable cause) {
+                            MsoyUI.errorNear(CShell.serverError(cause), sender);
+                        }
+                        public void onSuccess (Void v) {
+                            MsoyUI.info(_msgs.cancelCashOutSuccess());
+                            init();
+                        }
+                    });
+                }
+            }));
         } else {
             if (result.bling >= result.minCashOutBling) {
                 setWidget(_cashOutRow, 0, new CashOutForm(result.worthPerBling), 3, "bling");
@@ -138,7 +154,7 @@ public class BlingPanel extends SmartTable
             setWidget(row++, 2, _cashOutBtn =
                       new Button(_msgs.blingCashOutButton(), new ClickListener() {
                 public void onClick (Widget sender) {
-                    doCashOut(_memberId);
+                    doCashOut(_model.memberId);
                 }
             }));
         }
@@ -273,8 +289,9 @@ public class BlingPanel extends SmartTable
     protected NumberTextBox _exchangeBox;
     protected Button _exchangeBtn;
     
-    protected final int _memberId;
     protected int _cashOutRow;
+
+    protected MoneyTransactionDataModel _model;
     
     protected static final ShellMessages _cmsgs = GWT.create(ShellMessages.class);
     protected static final MeMessages _msgs = GWT.create(MeMessages.class);
