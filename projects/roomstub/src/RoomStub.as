@@ -1,6 +1,7 @@
 package {
 
 import flash.display.Loader;
+import flash.display.LoaderInfo;
 import flash.display.Sprite;
 import flash.display.StageAlign;
 import flash.display.StageScaleMode;
@@ -8,13 +9,14 @@ import flash.events.ErrorEvent;
 import flash.events.Event;
 import flash.events.IOErrorEvent;
 import flash.events.SecurityErrorEvent;
+import flash.external.ExternalInterface;
+import flash.net.LocalConnection;
 import flash.net.URLLoader;
 import flash.net.URLRequest;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 import flash.system.Security;
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 
 // On Kongregate, the width limit is 700, but there appears to be
@@ -45,14 +47,14 @@ import flash.text.TextFormat;
 [SWF(width="700", height="575")]
 public class RoomStub extends Sprite
 {
+    public static const WIDTH :int = 700;
+    public static const HEIGHT :int = 575;
+
     /** The id of the room we'd like to load. */
     public static const ROOM_ID :int = 5168;
 
-    public static const SITE :String = "deviantArt";
-
-    /** The server we're connecting with, with a trailing slash. */
     public static const CLIENT_URL :String = "http://www.whirled.com/clients/world-client.swf";
-    //public static const SERVER :String = "http://tasman.sea.earth.threerings.net:8080/";
+    //public static const CLIENT_URL :String = "http://tasman.sea.earth.threerings.net:8080/clients/world-client.swf";
 
     public function RoomStub ()
     {
@@ -62,8 +64,10 @@ public class RoomStub extends Sprite
         }
 
         _label = new TextField();
-        _label.autoSize = TextFieldAutoSize.LEFT;
+        _label.width = WIDTH;
+        _label.height = HEIGHT;
         _label.selectable = false;
+        _label.wordWrap = true;
         var tf :TextFormat = new TextFormat();
         tf.font = "_sans";
         tf.size = 18;
@@ -71,7 +75,7 @@ public class RoomStub extends Sprite
         tf.color = 0xFFFFFF;
         _label.defaultTextFormat = tf;
         addChild(_label);
-        setLabel("Loading...");
+        _label.text = "Loading...";
 
         // allow all loaded content to cross-script this SWF
         // @TODO - is there any reason to make this more restrictive?
@@ -90,13 +94,7 @@ public class RoomStub extends Sprite
     {
         // called by world-client
         return "sceneId=" + ROOM_ID +
-            "&vec=e." + encodeURIComponent(SITE) + ".rooms." + ROOM_ID;
-    }
-
-    protected function onClientDetailsError (e :ErrorEvent) :void
-    {
-        trace("client details load error: " + e);
-        reportError(e);
+            "&vec=e." + encodeURIComponent(getHost()) + ".rooms." + ROOM_ID;
     }
 
     protected function onClientLoaded (...ignored) :void
@@ -108,21 +106,47 @@ public class RoomStub extends Sprite
     protected function onClientLoadError (e :ErrorEvent) :void
     {
         removeChild(_clientLoader);
-        trace("client load error: " + e);
-        reportError(e);
+        _label.text = "Error loading: " + e.text;
     }
 
-    protected function reportError (e :ErrorEvent) :void
+    protected function getHost () :String
     {
-        setLabel("Error loading: " + e.text);
+        trace("==== The url: " + this.loaderInfo.url);
+        trace("==== Just the domain ma'am: " + new LocalConnection().domain);
+        try {
+            trace("== with feeling: " + ExternalInterface.call("window.location.href.toString"));
+        } catch (e :Error) {
+            // le boo, le hoo
+        }
+
+        var result :Object = URL_REGEXP.exec(this.loaderInfo.url);
+        if (result == null) {
+            return "";
+        }
+
+        var host :String = String(result[2]);
+        // strip the last part
+        var lastdot :int = host.lastIndexOf(".");
+        if (lastdot != -1) {
+            host = host.substring(0, lastdot);
+        }
+        // now just keep the last part
+        lastdot = host.lastIndexOf(".");
+        if (lastdot != -1) {
+            host = host.substring(lastdot + 1);
+        }
+        return massageHost(host);
     }
 
-    protected function setLabel (s :String) :void
+    protected function massageHost (host :String) :String
     {
-        _label.text = s;
-        _label.width = _label.textWidth + 5;
-        _label.height = _label.textHeight + 4;
+        switch (host) {
+        default: return host;
+        case "ungrounded": return "newgrounds";
+        }
     }
+
+    protected static const URL_REGEXP :RegExp = /^(\w+:\/\/)?\/?([^:\/\s]+)/; // protocol and host
 
     protected var _clientLoader :Loader;
 
