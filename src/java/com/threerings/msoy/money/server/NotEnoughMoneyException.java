@@ -3,7 +3,10 @@
 
 package com.threerings.msoy.money.server;
 
+import com.threerings.msoy.money.data.all.BalanceInfo;
 import com.threerings.msoy.money.data.all.Currency;
+
+import com.threerings.msoy.money.gwt.InsufficientFundsException;
 
 /**
  * Occurs when a member attempts to use some amount of money they do not have.
@@ -29,6 +32,26 @@ public class NotEnoughMoneyException extends MoneyException
     {
         this(memberId, currency, amountDesired, amountAvailable);
         initCause(cause);
+    }
+
+    public InsufficientFundsException toServiceException ()
+    {
+        BalanceInfo balances = new BalanceInfo();
+        switch (_currency) {
+        case COINS:
+            balances.coins = _moneyAvailable;
+            break;
+
+        case BARS:
+            balances.bars = _moneyAvailable;
+            break;
+
+        case BLING:
+            balances.bling = _moneyAvailable;
+            break;
+        }
+
+        return new InsufficientFundsException(balances);
     }
 
     public int getMemberId ()

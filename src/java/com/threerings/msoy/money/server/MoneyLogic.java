@@ -39,7 +39,7 @@ import com.threerings.msoy.server.persist.UserActionRepository;
 import com.threerings.msoy.item.data.all.CatalogIdent;
 import com.threerings.msoy.item.data.all.Item;
 
-import com.threerings.msoy.money.data.all.MoneyResult;
+import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutInfo;
@@ -182,12 +182,12 @@ public class MoneyLogic
     {
         Preconditions.checkArgument(numBars >= 0, "numBars is invalid: %d", numBars);
 
-        try {
-            return modifyMoney(memberId, Currency.BARS, numBars, TransactionType.BARS_BOUGHT,
-                UserAction.boughtBars(memberId, payment));
-        } catch (NotEnoughMoneyException e) {
-            throw new IllegalStateException();
-        }
+        UserAction action = UserAction.boughtBars(memberId, payment);
+        MoneyTransactionRecord tx = _repo.accumulateAndStoreTransaction(memberId,
+            Currency.BARS, numBars, TransactionType.BARS_BOUGHT, action.description, null);
+        _nodeActions.moneyUpdated(tx);
+        logAction(action, tx);
+        return tx.toMoneyTransaction();
     }
 
     /**
@@ -196,6 +196,7 @@ public class MoneyLogic
      *
      * @param support Logged name of the acting support member.
      */
+    // TODO Fucking return something for fuck's sake!!! We just fucking changed shit!!!
     public void supportAdjust (
         int memberId, Currency currency, int delta, MemberName support)
         throws NotEnoughMoneyException
@@ -203,8 +204,16 @@ public class MoneyLogic
         Preconditions.checkArgument(Currency.COINS == currency, "Only coin adjustment supported.");
         Preconditions.checkArgument(delta <= 0, "Only deduction supported.");
 
-        modifyMoney(memberId, currency, delta, TransactionType.SUPPORT_ADJUST,
-            UserAction.supportAdjust(memberId, support));
+        UserAction action = UserAction.supportAdjust(memberId, support);
+
+        MoneyTransactionRecord tx = (delta > 0)
+            ? _repo.accumulateAndStoreTransaction(memberId, currency, delta,
+                TransactionType.SUPPORT_ADJUST, action.description, null)
+            : _repo.deductAndStoreTransaction(memberId, currency, -delta,
+                TransactionType.SUPPORT_ADJUST, action.description, null);
+
+        _nodeActions.moneyUpdated(tx);
+        logAction(action, tx);
     }
 
     /**
@@ -441,7 +450,7 @@ public class MoneyLogic
      * @throws NotEnoughMoneyException The account does not have the specified amount of bling
      * available, aight?
      */
-    public MoneyResult exchangeBlingForBars (int memberId, int blingAmount)
+    public BlingExchangeResult exchangeBlingForBars (int memberId, int blingAmount)
         throws NotEnoughMoneyException
     {
         MoneyTransactionRecord deductTx = _repo.deductAndStoreTransaction(
@@ -455,7 +464,7 @@ public class MoneyLogic
             TransactionType.RECEIVED_FROM_EXCHANGE, "m.exchanged_from_bling", null);
         _nodeActions.moneyUpdated(accumTx);
         
-        return new MoneyResult(null, accumTx.balance, getBlingInfo(memberId));
+        return new BlingExchangeResult(accumTx.balance, getBlingInfo(memberId));
     }
 
     /**
@@ -614,27 +623,6 @@ public class MoneyLogic
         }
 
         return new CurrencyAmount(currency, amount);
-    }
-
-    /**
-     * Internal method to add or deduct money from a user.
-     */
-    protected MoneyTransaction modifyMoney
-        (int memberId, Currency currency, int delta, TransactionType type, UserAction action)
-        throws NotEnoughMoneyException
-    {
-        Preconditions.checkArgument(!MemberName.isGuest(memberId), "Guests do not have money.");
-
-        MoneyTransactionRecord tx = (delta > 0) ?
-            _repo.accumulateAndStoreTransaction(
-                memberId, currency, delta, type, action.description, null) :
-            _repo.deductAndStoreTransaction(
-                memberId, currency, -delta, type, action.description, null);
-
-        _nodeActions.moneyUpdated(tx);
-        logAction(action, tx);
-
-        return tx.toMoneyTransaction();
     }
 
     protected void logAction (UserAction action, MoneyTransactionRecord tx)

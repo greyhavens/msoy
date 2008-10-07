@@ -17,10 +17,10 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.InlineLabel;
 import com.threerings.gwt.ui.SmartTable;
+import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.MoneyResult;
 import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.money.gwt.MoneyServiceAsync;
 
@@ -232,12 +232,13 @@ public class BlingPanel extends SmartTable
         
         // Ensure the amount is valid.
         _exchangeBtn.setEnabled(false);
-        _moneysvc.exchangeBlingForBars(memberId, blingAmount, new AsyncCallback<MoneyResult>() {
+        _moneysvc.exchangeBlingForBars(memberId, blingAmount,
+            new AsyncCallback<BlingExchangeResult>() {
             public void onFailure (Throwable cause) {
                 _exchangeBtn.setEnabled(true);
                 MsoyUI.errorNear(CShell.serverError(cause), _exchangeBox);
             }
-            public void onSuccess (MoneyResult result) {
+            public void onSuccess (BlingExchangeResult result) {
                 _exchangeBtn.setEnabled(true);
                 MsoyUI.info(_msgs.blingExchangeSuccessful());
                 _exchangeBox.setText("");

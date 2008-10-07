@@ -14,12 +14,12 @@ import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 import com.threerings.msoy.money.data.MoneyCodes;
+import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.CashOutInfo;
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.MoneyResult;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
@@ -53,7 +53,7 @@ public class MoneyServlet extends MsoyServiceServlet
         return new TransactionPageResult(total, page, getBlingInfo(memberId));
     }
     
-    public MoneyResult exchangeBlingForBars (int memberId, int blingAmount)
+    public BlingExchangeResult exchangeBlingForBars (int memberId, int blingAmount)
         throws ServiceException
     {
         MemberRecord mrec = requireAuthedUser();
@@ -65,8 +65,7 @@ public class MoneyServlet extends MsoyServiceServlet
         try {
             return _moneyLogic.exchangeBlingForBars(memberId, blingAmount);
         } catch (NotEnoughMoneyException neme) {
-            // TODO: return new balance, brah
-            throw new ServiceException(MoneyCodes.E_INSUFFICIENT_BLING);
+            throw neme.toServiceException();
         }
     }
     
@@ -83,8 +82,7 @@ public class MoneyServlet extends MsoyServiceServlet
         try {
             return _moneyLogic.requestCashOutBling(memberId, blingAmount, info);
         } catch (NotEnoughMoneyException neme) {
-            // TODO: return new balance, brah
-            throw new ServiceException(MoneyCodes.E_INSUFFICIENT_BLING);
+            throw neme.toServiceException();
         } catch (AlreadyCashedOutException acoe) {
             throw new ServiceException(MoneyCodes.E_ALREADY_CASHED_OUT);
         } catch (BelowMinimumBlingException bmbe) {
@@ -124,8 +122,8 @@ public class MoneyServlet extends MsoyServiceServlet
         try {
             // Additional safety checks in MoneyLogic
             _moneyLogic.supportAdjust(memberId, currency, delta, mrec.getName());
-        } catch (NotEnoughMoneyException e) {
-            // TODO: return new balance, brah
+        } catch (NotEnoughMoneyException neme) {
+            // TODO: use InsufficientFundsException?
             throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
         }
     }
@@ -138,7 +136,7 @@ public class MoneyServlet extends MsoyServiceServlet
         try {
             _moneyLogic.cashOutBling(memberId, blingAmount);
         } catch (NotEnoughMoneyException e) {
-            // TODO: return new balance, brah
+            // TODO: use InsufficientFundsException?
             throw new ServiceException(MoneyCodes.E_MONEY_OVERDRAWN);
         }
     }

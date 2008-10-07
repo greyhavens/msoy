@@ -39,6 +39,7 @@ import com.threerings.msoy.person.util.FeedMessageType;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.MoneyTransaction;
 import com.threerings.msoy.money.data.all.PriceQuote;
+import com.threerings.msoy.money.gwt.InsufficientFundsException;
 import com.threerings.msoy.money.server.BuyResult;
 import com.threerings.msoy.money.server.MoneyLogic;
 import com.threerings.msoy.money.server.NotEnoughMoneyException;
@@ -100,7 +101,8 @@ public class CatalogServlet extends MsoyServiceServlet
     }
 
     // from interface CatalogService
-    public CatalogResult loadCatalog (CatalogQuery query, int offset, int rows, boolean includeCount)
+    public CatalogResult loadCatalog (
+        CatalogQuery query, int offset, int rows, boolean includeCount)
         throws ServiceException
     {
         MemberRecord mrec = getAuthedUser();
@@ -203,8 +205,7 @@ public class CatalogServlet extends MsoyServiceServlet
                 listing.item.creatorId, listing.item.name,
                 listing.currency, listing.cost, currency, authedCost, buyOp);
         } catch (NotEnoughMoneyException neme) {
-            // TODO: return a better exception, containing their updated balance
-            throw new ServiceException(ItemCodes.INSUFFICIENT_FLOW);
+            throw neme.toServiceException();
         } catch (NotSecuredException nse) {
             throw new CostUpdatedException(nse.getQuote());
         }
@@ -225,11 +226,11 @@ public class CatalogServlet extends MsoyServiceServlet
             if (!magicFree && creatorTx != null) {
                 int creatorId = creatorTx.memberId;
                 if (mrec.memberId != creatorId && creatorTx.amount > 0) {
-                    // TODO: what if they earned bling?
                     if (creatorTx.currency == Currency.COINS) {
                         _statLogic.incrementStat(
                             creatorId, StatType.COINS_EARNED_SELLING, creatorTx.amount);
                     }
+                    // else: I guess if they earned BLING, that's it's own reward
 
                     // Some items have a stat that may need updating
                     if (itemType == Item.AVATAR) {
@@ -359,9 +360,8 @@ public class CatalogServlet extends MsoyServiceServlet
         _itemLogic.itemUpdated(null, listItem);
 
         // note in the event log that an item was listed
-        // TODO: Bar me
         _eventLog.itemListedInCatalog(listItem.creatorId, listItem.getType(), listItem.itemId,
-                                      cost, 0, pricing, salesTarget);
+            currency, cost, pricing, salesTarget);
 
         return record.catalogId;
     }

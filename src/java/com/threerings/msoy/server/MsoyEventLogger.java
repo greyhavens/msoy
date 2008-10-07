@@ -112,9 +112,11 @@ public class MsoyEventLogger
         post(new MsoyEvents.ItemPurchase(memberId, itemType, itemId, currency, amountPaid));
     }
 
-    public void itemListedInCatalog (int creatorId, byte itemType, int itemId, int flowCost,
-        int goldCost, int pricing, int salesTarget)
+    public void itemListedInCatalog (int creatorId, byte itemType, int itemId,
+        Currency currency, int cost, int pricing, int salesTarget)
     {
+        int flowCost = (currency == Currency.COINS) ? cost : 0;
+        int goldCost = (currency == Currency.BARS) ? cost : 0;
         post(new MsoyEvents.ItemCatalogListing(creatorId, itemType, itemId, flowCost, goldCost,
             pricing, salesTarget));
     }

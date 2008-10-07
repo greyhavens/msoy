@@ -25,12 +25,6 @@ public interface ItemCodes extends InvocationCodes
     /** An error code returned by the item services. */
     public static final String E_CANT_SELF_CROSSBUY = "e.cant_self_crossbuy";
 
-    /** An error code for any operation that needs to debit a member's flow. */
-    public static final String INSUFFICIENT_FLOW = "m.insufficient_flow";
-
-    /** An error code for any operation that needs to debit a member's gold. */
-    public static final String INSUFFICIENT_GOLD = "m.insufficient_gold";
-
     /** An error code for listing sub items whose super item is not listed. */
     public static final String SUPER_ITEM_NOT_LISTED = "m.list_super_item";
 }

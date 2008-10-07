@@ -20,12 +20,14 @@ import com.threerings.msoy.item.gwt.CatalogListing;
 import com.threerings.msoy.item.gwt.CatalogService;
 import com.threerings.msoy.item.gwt.CatalogServiceAsync;
 import com.threerings.msoy.item.gwt.CostUpdatedException;
+import com.threerings.msoy.money.gwt.InsufficientFundsException;
 import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
 import client.item.ItemActivator;
 import client.shell.CShell;
 import client.shell.DynamicLookup;
+import client.shell.MoneyUtil;
 import client.shell.Pages;
 import client.ui.MsoyUI;
 import client.ui.StretchButton;
@@ -143,6 +145,9 @@ public class BuyPanel extends FlowPanel
             if (cause instanceof CostUpdatedException) {
                 CostUpdatedException cue = (CostUpdatedException) cause;
                 updatePrice(cue.getQuote());
+
+            } else if (cause instanceof InsufficientFundsException) {
+                MoneyUtil.updateBalances(((InsufficientFundsException) cause).getBalances());
             }
         }
 

@@ -8,11 +8,11 @@ import java.util.List;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 import com.threerings.msoy.web.data.ServiceException;
+import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
 import com.threerings.msoy.money.data.all.CashOutBillingInfo;
 import com.threerings.msoy.money.data.all.CashOutEntry;
 import com.threerings.msoy.money.data.all.Currency;
-import com.threerings.msoy.money.data.all.MoneyResult;
 import com.threerings.msoy.money.data.all.ReportType;
 import com.threerings.msoy.money.data.all.TransactionPageResult;
 
@@ -34,7 +34,7 @@ public interface MoneyService extends RemoteService
     /**
      * Exchanges some amount of bling for bars.
      */
-    MoneyResult exchangeBlingForBars (int memberId, int blingAmount)
+    BlingExchangeResult exchangeBlingForBars (int memberId, int blingAmount)
         throws ServiceException;
     
     /**
