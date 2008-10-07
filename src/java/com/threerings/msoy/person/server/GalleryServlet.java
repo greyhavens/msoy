@@ -43,6 +43,18 @@ public class GalleryServlet extends MsoyServiceServlet
         throws ServiceException
     {
         MemberRecord memrec = requireAuthedUser();
+
+        // players can only have one "me" gallery with a null name, so check for existance
+        if (gallery.name == null) {
+            GalleryRecord existingMeGallery = _galleryRepo.loadMeGallery(memrec.memberId);
+            if (existingMeGallery != null) {
+                // if somehow a second me gallery is being created, instead overwrite the first
+                gallery.galleryId = existingMeGallery.galleryId;
+                updateGallery(gallery, photoItemIds);
+                return gallery;
+            }
+        }
+
         // only add photos that the member owns
         photoItemIds.removeAll(validateOwnership(memrec.memberId, photoItemIds));
 
