@@ -22,13 +22,6 @@ public class ProfilePanel extends VerticalPanel
 {
     public ProfilePanel (int memberId)
     {
-        // TODO - make public - add galleries to the list of blurbs in DEV only
-        if (DeploymentConfig.devDeployment) {
-            _blurbs = new Blurb[] { new ProfileBlurb(), new InterestsBlurb(), new FriendsBlurb(),
-                new StampsBlurb(), new GalleriesBlurb(), new TrophiesBlurb(), new RatingsBlurb(),
-                new GroupsBlurb(), new FavoritesBlurb(), new FeedBlurb(), new CommentsBlurb() };
-        }
-
         setStyleName("profile");
         _memberId = memberId;
         // issue a request for this member's profile page data
@@ -63,7 +56,7 @@ public class ProfilePanel extends VerticalPanel
     /** The blurbs we'll display on our profile. */
     protected Blurb[] _blurbs = {
         new ProfileBlurb(), new InterestsBlurb(), new FriendsBlurb(), new StampsBlurb(),
-        new TrophiesBlurb(), new RatingsBlurb(), new GroupsBlurb(),
+        new GalleriesBlurb(), new TrophiesBlurb(), new RatingsBlurb(), new GroupsBlurb(),
         new FavoritesBlurb(),
         new FeedBlurb(), new CommentsBlurb()
     };
