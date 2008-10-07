@@ -190,7 +190,7 @@
 }
 
 .whatsNext .NextBadges .Divider {
-  width: 3px;
+  width: 4px;
   height: 141px;
   position: relative;
 }
@@ -198,6 +198,7 @@
 .whatsNext .NextBadges .Divider img {
   position: absolute;
   top: 4px;
+  left: 2px;
 }
 
 /* ------------------------------------
