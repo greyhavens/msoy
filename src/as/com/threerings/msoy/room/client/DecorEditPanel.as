@@ -125,6 +125,7 @@ public class DecorEditPanel extends FlyingPanel
         _suppressSaves = true;
         try {
             _roomType.selectedIndex = figureRoomType();
+            _depth.maximum = Math.max(height * 8, depth); // in case there's legacy deepness
             _depth.value = depth;
             _depth.tickValues = [ height ];
             _horizon.value = horizon;
@@ -190,7 +191,7 @@ public class DecorEditPanel extends FlyingPanel
 
         _depth = new VSlider();
         _depth.liveDragging = true;
-        _depth.maximum = 2000; // TODO: higher?
+        // _depth.maximum is set in updateParameters
         _depth.minimum = 0;
 
         var typeP :Grid = new Grid();
