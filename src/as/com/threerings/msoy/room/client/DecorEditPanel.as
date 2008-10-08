@@ -80,7 +80,7 @@ public class DecorEditPanel extends FlyingPanel
             return;
         }
 
-        // register everything. We are never actually closed
+        // or, we're in the web site, being used to edit a decor
         try {
             ExternalInterface.addCallback("updateMedia", updateMedia);
             ExternalInterface.addCallback("updateParameters", updateParameters);
@@ -110,8 +110,10 @@ public class DecorEditPanel extends FlyingPanel
         _decor.horizon = _horizon.value;
         _decor.scale = _scale.value;
 
-        updateDecorInViewer();
-        updateDecorOnPage();
+        if (_decor.furniMedia != null) {
+            updateDecorInViewer();
+            updateDecorOnPage();
+        }
     }
 
     protected function updateMedia (path :String) :void
