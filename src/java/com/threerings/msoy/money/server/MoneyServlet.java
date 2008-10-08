@@ -93,7 +93,7 @@ public class MoneyServlet extends MsoyServiceServlet
         }
 
         // Spam the cash out mailing list
-        _mailer.sendTemplateEmail("blingcashout@threerings.net", "no-reply@whirled.com",
+        _mailer.sendTemplateEmail(CASHOUT_NOTIFY_EMAIL, "no-reply@whirled.com",
             "blingCashOutNotice", "memberId", mrec.memberId, "name", mrec.name,
             "url", DeploymentConfig.serverURL + "#adminz-cashout"); // TODO: A more meaningful URL
 
@@ -176,4 +176,6 @@ public class MoneyServlet extends MsoyServiceServlet
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyAuthenticator _authenticator;
     @Inject protected MailSender _mailer;
+
+    protected static final String CASHOUT_NOTIFY_EMAIL = "blingcashout@threerings.net";
 }
