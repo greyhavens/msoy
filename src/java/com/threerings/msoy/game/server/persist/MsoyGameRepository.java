@@ -146,12 +146,21 @@ public class MsoyGameRepository extends DepotRepository
                         update(gdr);
                     }
                 }
-                // this should never happen as catalog originals are not (currently) deleted
-                if (gdr.listedItemId == item.itemId) {
-                    log.warning("Deleting listed item for game?! " + gdr + ".");
-                }
+                // zeroing out listedItemId is handled in gameDelisted()
             }
         }
+    }
+
+    /**
+     * Called by ItemLogic when a game item is delisted.
+     *
+     * @param item the catalog master item that was delisted.
+     */
+    public void gameDelisted (GameRecord item)
+    {
+        // update the game detail record with the new listed item id
+        updatePartial(GameDetailRecord.class, item.gameId,
+                      GameDetailRecord.LISTED_ITEM_ID, 0);
     }
 
     /**

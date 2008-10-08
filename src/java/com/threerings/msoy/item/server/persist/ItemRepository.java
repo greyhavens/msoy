@@ -786,16 +786,16 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Create a row in our catalog table corresponding to the given item record, which should
-     * be of the immutable variety.
+     * Create a row in our catalog table with the given master item record. {@link
+     * ItemRecord#catalogId} will be filled into the supplied master.
      */
     public CatalogRecord insertListing (
-        ItemRecord listItem, int originalItemId, int pricing, int salesTarget,
+        ItemRecord master, int originalItemId, int pricing, int salesTarget,
         Currency currency, int cost, long listingTime)
     {
-        if (listItem.ownerId != 0) {
+        if (master.ownerId != 0) {
             throw new IllegalArgumentException(
-                "Can't list item with owner [itemId=" + listItem.itemId + "]");
+                "Can't list item with owner [itemId=" + master.itemId + "]");
         }
 
         CatalogRecord record;
@@ -804,8 +804,8 @@ public abstract class ItemRepository<T extends ItemRecord>
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        record.item = listItem;
-        record.listedItemId = listItem.itemId;
+        record.item = master;
+        record.listedItemId = master.itemId;
         record.originalItemId = originalItemId;
         record.listedDate = new Timestamp(listingTime);
         record.pricing = pricing;
@@ -818,6 +818,9 @@ public abstract class ItemRepository<T extends ItemRecord>
         // wire this listed item and its original up to the catalog record
         noteListing(record.listedItemId, record.catalogId);
         noteListing(originalItemId, record.catalogId);
+
+        // fill this in for the caller
+        master.catalogId = record.catalogId;
 
         return record;
     }
@@ -837,23 +840,29 @@ public abstract class ItemRepository<T extends ItemRecord>
     }
 
     /**
-     * Removes the listing for the specified item from the catalog, returns true if a listing was
-     * found and removed, false otherwise.
+     * Removes the listing for the specified item from the catalog.
+     *
+     * @return true if the catalog master was deleted, false if it was left around because it had
+     * been purchased one or more times.
      */
     public boolean removeListing (CatalogRecord listing)
     {
+        // remove the catalog listing record
+        delete(getCatalogClass(), listing.catalogId);
         // clear out the listing mappings for the original item
         if (listing.originalItemId != 0) {
             noteListing(listing.originalItemId, 0);
         }
         // if there are no clones of the master record, delete it as well
+        boolean masterDeleted = false;
         if (loadCloneRecordCount(listing.listedItemId) == 0) {
             deleteItem(listing.listedItemId);
+            masterDeleted = true;
         } else  {
-            // otherwise disassociate it from the catalog record as that is about to go away
+            // otherwise disassociate it from the catalog record as that has gone away
             noteListing(listing.listedItemId, 0);
         }
-        return delete(getCatalogClass(), listing.catalogId) > 0;
+        return masterDeleted;
     }
 
     /**

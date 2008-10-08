@@ -298,8 +298,8 @@ public class CatalogServlet extends MsoyServiceServlet
         // we will modify the original item (it's a clone, no need to worry) to create the new
         // catalog listing master item
         int originalItemId = originalItem.itemId;
-        ItemRecord listItem = originalItem;
-        listItem.prepareForListing(null);
+        ItemRecord master = originalItem;
+        master.prepareForListing(null);
 
         // if this item has a suite id (it's part of another item's suite), we need to configure
         // its listed suite as the catalog id of the suite master item
@@ -315,26 +315,26 @@ public class CatalogServlet extends MsoyServiceServlet
             if (suiteMaster.catalogId == 0) {
                 throw new ServiceException(ItemCodes.SUPER_ITEM_NOT_LISTED);
             }
-            ((SubItemRecord)listItem).suiteId = -suiteMaster.catalogId;
+            ((SubItemRecord)master).suiteId = -suiteMaster.catalogId;
         }
 
         // use the updated description (the client should prevent this from being too long, but
         // we'll trim the description rather than fail the insert if something is haywire)
-        listItem.description = StringUtil.truncate(descrip, Item.MAX_DESCRIPTION_LENGTH);
+        master.description = StringUtil.truncate(descrip, Item.MAX_DESCRIPTION_LENGTH);
 
         // create our new immutable catalog master item
-        repo.insertOriginalItem(listItem, true);
+        repo.insertOriginalItem(master, true);
 
         // copy tags from the original item to the new listing item
         long now = System.currentTimeMillis();
-        repo.getTagRepository().copyTags(originalItemId, listItem.itemId, mrec.memberId, now);
+        repo.getTagRepository().copyTags(originalItemId, master.itemId, mrec.memberId, now);
 
         // sanitize the sales target
         salesTarget = Math.max(salesTarget, CatalogListing.MIN_SALES_TARGET);
 
         // create & insert the catalog record
         CatalogRecord record = repo.insertListing(
-            listItem, originalItemId, pricing, salesTarget, currency, cost, now);
+            master, originalItemId, pricing, salesTarget, currency, cost, now);
 
         // note in the user action system that they listed an item
         _userActionRepo.logUserAction(UserAction.listedItem(mrec.memberId));
@@ -342,9 +342,9 @@ public class CatalogServlet extends MsoyServiceServlet
         // publish to the member's feed if it's not hidden
         if (pricing != CatalogListing.PRICING_HIDDEN) {
             _feedRepo.publishMemberMessage(
-                mrec.memberId, FeedMessageType.FRIEND_LISTED_ITEM, listItem.name + "\t" +
+                mrec.memberId, FeedMessageType.FRIEND_LISTED_ITEM, master.name + "\t" +
                 String.valueOf(repo.getItemType()) + "\t" + String.valueOf(record.catalogId) +
-                "\t" + MediaDesc.mdToString(listItem.getThumbMediaDesc()));
+                "\t" + MediaDesc.mdToString(master.getThumbMediaDesc()));
         }
 
         // some items are related to a stat that may need updating.  Use originalItem.creatorId
@@ -361,10 +361,10 @@ public class CatalogServlet extends MsoyServiceServlet
         }
 
         // note that the listed item was created
-        _itemLogic.itemUpdated(null, listItem);
+        _itemLogic.itemUpdated(null, master);
 
         // note in the event log that an item was listed
-        _eventLog.itemListedInCatalog(listItem.creatorId, listItem.getType(), listItem.itemId,
+        _eventLog.itemListedInCatalog(master.creatorId, master.getType(), master.itemId,
             currency, cost, pricing, salesTarget);
 
         return record.catalogId;
@@ -454,18 +454,18 @@ public class CatalogServlet extends MsoyServiceServlet
 
         // we will modify the original item (it's a clone, no need to worry) to create the new
         // catalog master item
-        ItemRecord listItem = originalItem;
-        listItem.prepareForListing(oldListItem);
+        ItemRecord master = originalItem;
+        master.prepareForListing(oldListItem);
 
         // use the updated description (the client should prevent this from being too long, but
         // we'll trim the description rather than fail the insert if something is haywire)
-        listItem.description = StringUtil.truncate(descrip, Item.MAX_DESCRIPTION_LENGTH);
+        master.description = StringUtil.truncate(descrip, Item.MAX_DESCRIPTION_LENGTH);
 
         // update our catalog master item
-        repo.updateOriginalItem(listItem);
+        repo.updateOriginalItem(master);
 
         // note that the listed item was updated
-        _itemLogic.itemUpdated(oldListItem, listItem);
+        _itemLogic.itemUpdated(oldListItem, master);
     }
 
     // from interface CatalogService
@@ -515,20 +515,7 @@ public class CatalogServlet extends MsoyServiceServlet
     public void removeListing (byte itemType, int catalogId)
         throws ServiceException
     {
-        MemberRecord mrec = requireAuthedUser();
-
-        // load up the listing to be removed
-        ItemRepository<ItemRecord> repo = _itemLogic.getRepository(itemType);
-        CatalogRecord listing = repo.loadListing(catalogId, true);
-        if (listing == null) {
-            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
-        }
-
-        // make sure we're the creator of the listed item
-        requireIsUser(mrec, listing.item.creatorId, "removeListing", listing.item);
-
-        // go ahead and remove the user
-        repo.removeListing(listing);
+        _itemLogic.removeListing(requireAuthedUser(), itemType, catalogId);
     }
 
     // from interface CatalogService

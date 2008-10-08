@@ -272,7 +272,7 @@ public class AdminServlet extends MsoyServiceServlet
         if (item.catalogId != 0) {
             final CatalogRecord catrec = repo.loadListing(item.catalogId, false);
             if (catrec != null && catrec.listedItemId == item.itemId) {
-                repo.removeListing(catrec);
+                _itemLogic.removeListing(memrec, type, item.catalogId);
             }
         }
 

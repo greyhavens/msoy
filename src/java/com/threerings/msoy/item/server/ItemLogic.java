@@ -318,18 +318,41 @@ public class ItemLogic
         }
         repo.deleteItem(iident.itemId);
 
-        // note: we don't want to propagate any exceptions from here on out because we don't want
-        // to fail the item deletion since the item is already gone
-        try {
-            if (item.getType() == Item.AVATAR) {
-                MemberNodeActions.avatarDeleted(item.ownerId, item.itemId);
+        itemDeleted(item);
+    }
 
-            } else if (item.getType() == Item.GAME) {
-                _mgameRepo.gameDeleted((GameRecord)item);
+    /**
+     * Removes the specified catalog listing.
+     */
+    public void removeListing (MemberRecord remover, byte itemType, int catalogId)
+        throws ServiceException
+    {
+        // load up the listing to be removed
+        ItemRepository<ItemRecord> repo = getRepository(itemType);
+        CatalogRecord listing = repo.loadListing(catalogId, true);
+        if (listing == null) {
+            throw new ServiceException(ItemCodes.E_NO_SUCH_ITEM);
+        }
+
+        // make sure we're the creator of the listed item
+        if (remover.memberId != listing.item.creatorId && !remover.isSupport()) {
+            log.warning("Disallowing listing removal for non-owner", "who", remover.who(),
+                        "listing", listing);
+            throw new ServiceException(ItemCodes.E_ACCESS_DENIED);
+        }
+
+        // remove the listing record and possibly the catalog master item
+        if (repo.removeListing(listing)) {
+            itemDeleted(listing.item);
+        }
+
+        // if this is a game record, let the game repository know it was delisted
+        if (listing.item instanceof GameRecord) {
+            try {
+                _mgameRepo.gameDelisted((GameRecord)listing.item);
+            } catch (Exception e) {
+                log.warning("Failed to note game delisting", "game", listing.item, e);
             }
-
-        } catch (Exception e) {
-            log.warning("itemDeleted failed", "orecord", item, e);
         }
     }
 
@@ -387,6 +410,28 @@ public class ItemLogic
 
         } catch (Exception e) {
             log.warning("itemUpdated failed", "orecord", orecord, "nrecord", nrecord, e);
+        }
+    }
+
+    /**
+     * Called after an item is deleted. Performs and post delete actions needed.
+     *
+     * @param record the item record for the just deleted item.
+     */
+    public void itemDeleted (ItemRecord record)
+    {
+        // note: we don't want to propagate any exceptions from here on out because we don't want
+        // to fail the item deletion since the item is already gone
+        try {
+            if (record.getType() == Item.AVATAR) {
+                MemberNodeActions.avatarDeleted(record.ownerId, record.itemId);
+
+            } else if (record.getType() == Item.GAME) {
+                _mgameRepo.gameDeleted((GameRecord)record);
+            }
+
+        } catch (Exception e) {
+            log.warning("itemDeleted failed", "record", record, e);
         }
     }
 
