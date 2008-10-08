@@ -8,7 +8,7 @@ import java.util.Map;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
-
+import com.google.gwt.user.client.ui.PushButton;
 import com.threerings.gwt.ui.FloatPanel;
 
 import com.threerings.msoy.item.data.all.Item;
@@ -16,7 +16,6 @@ import com.threerings.msoy.item.data.all.Item;
 import client.images.stuff.StuffImages;
 import client.shell.CShell;
 import client.shell.Pages;
-import client.ui.MsoyUI;
 import client.util.Link;
 
 /**
@@ -30,18 +29,29 @@ public class StuffNaviBar extends FloatPanel
         super("stuffNaviBar");
 
         for (byte type : Item.TYPES) {
-            AbstractImagePrototype image = UP_IMAGES.get(type);
-            if (image == null) {
+            AbstractImagePrototype upImage = type == selectedType ? SELECTED_IMAGES.get(type)
+                : UP_IMAGES.get(type);
+            // over image == selected image
+            AbstractImagePrototype overImage = SELECTED_IMAGES.get(type);
+            AbstractImagePrototype downImage = DOWN_IMAGES.get(type);
+            if (upImage == null || overImage == null || downImage == null) {
                 CShell.log("Missing stuff image for item type " + type + ".");
                 continue;
             }
-            add(MsoyUI.makeActionImage(image.createImage(), null,
-                Link.createListener(Pages.STUFF, "" + type)));
+
+            PushButton button = new PushButton(upImage.createImage(), downImage.createImage(),
+                Link.createListener(Pages.STUFF, "" + type));
+            button.getUpHoveringFace().setImage(overImage.createImage());
+            add(button);
         }
     }
 
     protected static final StuffImages _images = GWT.create(StuffImages.class);
     protected static final Map<Byte, AbstractImagePrototype> UP_IMAGES =
+        new HashMap<Byte, AbstractImagePrototype>();
+    protected static final Map<Byte, AbstractImagePrototype> DOWN_IMAGES =
+        new HashMap<Byte, AbstractImagePrototype>();
+    protected static final Map<Byte, AbstractImagePrototype> SELECTED_IMAGES =
         new HashMap<Byte, AbstractImagePrototype>();
     static {
         UP_IMAGES.put(Item.AVATAR, _images.avatar());
@@ -53,6 +63,28 @@ public class StuffNaviBar extends FloatPanel
         UP_IMAGES.put(Item.PHOTO, _images.photo());
         UP_IMAGES.put(Item.AUDIO, _images.audio());
         UP_IMAGES.put(Item.VIDEO, _images.video());
+    }
+    static {
+        DOWN_IMAGES.put(Item.AVATAR, _images.avatar_d());
+        DOWN_IMAGES.put(Item.FURNITURE, _images.furniture_d());
+        DOWN_IMAGES.put(Item.DECOR, _images.decor_d());
+        DOWN_IMAGES.put(Item.TOY, _images.toy_d());
+        DOWN_IMAGES.put(Item.PET, _images.pet_d());
+        DOWN_IMAGES.put(Item.GAME, _images.game_d());
+        DOWN_IMAGES.put(Item.PHOTO, _images.photo_d());
+        DOWN_IMAGES.put(Item.AUDIO, _images.audio_d());
+        DOWN_IMAGES.put(Item.VIDEO, _images.video_d());
+    }
+    static {
+        SELECTED_IMAGES.put(Item.AVATAR, _images.avatar_s());
+        SELECTED_IMAGES.put(Item.FURNITURE, _images.furniture_s());
+        SELECTED_IMAGES.put(Item.DECOR, _images.decor_s());
+        SELECTED_IMAGES.put(Item.TOY, _images.toy_s());
+        SELECTED_IMAGES.put(Item.PET, _images.pet_s());
+        SELECTED_IMAGES.put(Item.GAME, _images.game_s());
+        SELECTED_IMAGES.put(Item.PHOTO, _images.photo_s());
+        SELECTED_IMAGES.put(Item.AUDIO, _images.audio_s());
+        SELECTED_IMAGES.put(Item.VIDEO, _images.video_s());
     }
 }
 

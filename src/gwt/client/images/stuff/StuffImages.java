@@ -8,60 +8,88 @@ import com.google.gwt.user.client.ui.ImageBundle;
 
 /**
  * Contains images for My Stuff navigation.
+ * Rollover images == Selected Images
  */
 public interface StuffImages extends ImageBundle
 {
-    @Resource("audio.png")
+    @Resource("music_default.png")
     AbstractImagePrototype audio ();
 
-    @Resource("audio_s.png")
+    @Resource("music_selected.png")
     AbstractImagePrototype audio_s ();
+    
+    @Resource("music_down.png")
+    AbstractImagePrototype audio_d ();
 
-    @Resource("avatar.png")
+    @Resource("avatars_default.png")
     AbstractImagePrototype avatar ();
 
-    @Resource("avatar_s.png")
+    @Resource("avatars_selected.png")
     AbstractImagePrototype avatar_s ();
 
-    @Resource("decor.png")
+    @Resource("avatars_down.png")
+    AbstractImagePrototype avatar_d ();
+
+    @Resource("decor_default.png")
     AbstractImagePrototype decor ();
 
-    @Resource("decor_s.png")
+    @Resource("decor_selected.png")
     AbstractImagePrototype decor_s ();
 
-    @Resource("furniture.png")
+    @Resource("decor_down.png")
+    AbstractImagePrototype decor_d ();
+
+    @Resource("furni_default.png")
     AbstractImagePrototype furniture ();
 
-    @Resource("furniture_s.png")
+    @Resource("furni_selected.png")
     AbstractImagePrototype furniture_s ();
 
-    @Resource("game.png")
+    @Resource("furni_down.png")
+    AbstractImagePrototype furniture_d ();
+
+    @Resource("games_default.png")
     AbstractImagePrototype game ();
 
-    @Resource("game_s.png")
+    @Resource("games_selected.png")
     AbstractImagePrototype game_s ();
+    
+    @Resource("games_down.png")
+    AbstractImagePrototype game_d ();
 
-    @Resource("pet.png")
+    @Resource("pets_default.png")
     AbstractImagePrototype pet ();
 
-    @Resource("pet_s.png")
+    @Resource("pets_selected.png")
     AbstractImagePrototype pet_s ();
 
-    @Resource("photo.png")
+    @Resource("pets_down.png")
+    AbstractImagePrototype pet_d ();
+
+    @Resource("images_default.png")
     AbstractImagePrototype photo ();
 
-    @Resource("photo_s.png")
+    @Resource("images_selected.png")
     AbstractImagePrototype photo_s ();
 
-    @Resource("toy.png")
+    @Resource("images_down.png")
+    AbstractImagePrototype photo_d ();
+
+    @Resource("toys_default.png")
     AbstractImagePrototype toy ();
 
-    @Resource("toy_s.png")
+    @Resource("toys_selected.png")
     AbstractImagePrototype toy_s ();
 
-    @Resource("video.png")
+    @Resource("toys_down.png")
+    AbstractImagePrototype toy_d ();
+
+    @Resource("videos_default.png")
     AbstractImagePrototype video ();
 
-    @Resource("video_s.png")
+    @Resource("videos_selected.png")
     AbstractImagePrototype video_s ();
+
+    @Resource("videos_down.png")
+    AbstractImagePrototype video_d ();
 }
