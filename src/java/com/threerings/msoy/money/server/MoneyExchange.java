@@ -9,10 +9,8 @@ import com.threerings.msoy.money.data.all.Currency;
 import com.threerings.msoy.money.data.all.PriceQuote;
 
 /**
- * Handles money exchanges.
+ * Handles exchanges between coins and bars as part of a purchase.
  */
-// TODO: this is mostly placeholder, the final service may look different.
-//
 @Singleton
 public class MoneyExchange
 {
@@ -63,6 +61,10 @@ public class MoneyExchange
         return _exchangeRate;
     }
 
-    // TEMPorary implmentation: the number of coins in each bar
-    protected float _exchangeRate = 288;
+    // Value / time, from Puzzle Pirates: $0.25 / hr
+    // hourly coin rate = 3000
+    // therefore 3000 coins = $.25
+    // bars are valued at $.10
+    // therefore 1 bar = 1200 coins
+    protected float _exchangeRate = 1200;
 }
