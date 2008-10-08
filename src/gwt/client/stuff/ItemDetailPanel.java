@@ -50,10 +50,10 @@ import client.util.events.ItemUsageListener;
 public class ItemDetailPanel extends BaseItemDetailPanel
     implements ItemUsageListener, DoListItemPopup.ListedListener
 {
-    public ItemDetailPanel (ItemDataModel model, ItemDetail detail)
+    public ItemDetailPanel (InventoryModels models, ItemDetail detail)
     {
         super(detail);
-        _model = model;
+        _models = models;
 
 // TODO
 //         ItemUtil.addItemSpecificButtons(_item, _buttons);
@@ -77,7 +77,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 continue;
             }
             addTabBelow(_dmsgs.xlate("pItemType" + types[ii].getType()),
-                        new SubItemPanel(_model, types[ii].getType(), _item), false);
+                        new SubItemPanel(_models, types[ii].getType(), _item), false);
         }
     }
 
@@ -155,7 +155,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             // add a button for renaming
             PushButton rename = MsoyUI.createButton(MsoyUI.LONG_THIN, _msgs.detailRename(), null);
             buttons.add(rename);
-            new RenameHandler(rename, _item, _model);
+            new RenameHandler(rename, _item, _models);
         }
 
         _details.add(WidgetUtil.makeShim(10, 10));
@@ -303,7 +303,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
             }
             public boolean gotResult (Void result) {
                 // remove the item from our data model
-                _model.itemDeleted(_item);
+                _models.itemDeleted(_item);
 
                 MsoyUI.info(_msgs.msgItemDeleted());
                 History.back(); // back up to the page that contained the item
@@ -323,7 +323,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
                 return true;
             }
             public boolean gotResult (Item item) {
-                _model.itemUpdated(item);
+                _models.itemUpdated(item);
                 _item = item;
                 _detail.item = item;
 
@@ -345,7 +345,7 @@ public class ItemDetailPanel extends BaseItemDetailPanel
         return row;
     }
 
-    protected ItemDataModel _model;
+    protected InventoryModels _models;
     protected PushButton _deleteBtn;
     protected FlowPanel _giftBits;
 

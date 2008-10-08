@@ -43,7 +43,12 @@ public interface StuffServiceAsync
     /**
      * The asynchronous version of {@link StuffService#loadInventory}.
      */
-    void loadInventory (byte type, int suiteId, String query, AsyncCallback<List<Item>> callback);
+    void loadInventory (byte type, String query, AsyncCallback<List<Item>> callback);
+
+    /**
+     * The asynchronous version of {@link StuffService#loadSubInventory}.
+     */
+    void loadSubInventory (byte type, int suiteId, AsyncCallback<List<Item>> callback);
 
     /**
      * Loads the details of a particular item.

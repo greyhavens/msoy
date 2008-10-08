@@ -31,7 +31,7 @@ import client.util.events.ItemUsageListener;
  * Maintains information on our member's inventory.
  */
 public class InventoryModels
-    implements ItemUsageListener, ItemDataModel
+    implements ItemUsageListener
 {
     public static class Stuff extends SimpleDataModel<Item>
     {
@@ -39,11 +39,11 @@ public class InventoryModels
         public final int suiteId;
         public final String query;
 
-        public Stuff (List<Item> items, byte type, int suiteId, String query) {
+        public Stuff (List<Item> items, Key key) {
             super(items);
-            this.type = type;
-            this.suiteId = suiteId;
-            this.query = (query != null && query.length() == 0) ? null : query;
+            type = key.type;
+            suiteId = key.suiteId;
+            query = key.query;
         }
 
         public boolean matches (Item item) {
@@ -89,35 +89,32 @@ public class InventoryModels
     /**
      * Looks up the data model with the specified parameters. Returns null if we have none.
      */
-    public SimpleDataModel<Item> getModel (byte type, int suiteId, String query)
+    public SimpleDataModel<Item> getModel (byte type, String query)
     {
-        return _models.get(new Key(type, suiteId, query));
+        return _models.get(new Key(type, 0, query));
     }
 
-    // from interface ItemDataModel
-    public void loadModel (final byte type, final int suiteId, final String query,
-                           final AsyncCallback<DataModel<Item>> cb)
+    /**
+     * Loads a data model for items of the specified type and matching the optionally supplied
+     * query.
+     */
+    public void loadModel (byte type, String query, AsyncCallback<DataModel<Item>> cb)
     {
-        final Key key = new Key(type, suiteId, query);
-        Stuff model = _models.get(key);
-        if (model != null) {
-            cb.onSuccess(model);
-            return;
-        }
-
-        _stuffsvc.loadInventory(type, suiteId, query, new AsyncCallback<List<Item>>() {
-            public void onSuccess (List<Item> result) {
-                Stuff model = new Stuff(result, type, suiteId, query);
-                _models.put(key, model);
-                cb.onSuccess(model);
-            }
-            public void onFailure (Throwable caught) {
-                cb.onFailure(caught);
-            }
-        });
+        loadModel(new Key(type, 0, query), cb);
     }
 
-    // from interface ItemDataModel
+    /**
+     * Loads a data model for sub-items of the specified type with the specified parent.
+     */
+    public void loadSubModel (byte type, int suiteId, AsyncCallback<DataModel<Item>> cb)
+    {
+        loadModel(new Key(type, suiteId, null), cb);
+    }
+
+    /**
+     * Used to try to find an item in the local data model/cache. If this returns null, then the
+     * item will get loaded from the server.
+     */
     public Item findItem (byte type, final int itemId)
     {
         Predicate<Item> itemP = new Predicate<Item>() {
@@ -138,6 +135,30 @@ public class InventoryModels
         return null;
     }
 
+    /**
+     * A callback to let the model know that the item was renamed, etc.
+     */
+    public void itemUpdated (Item item)
+    {
+        for (Stuff model : _models.values()) {
+            if (model.matches(item)) {
+                model.updateItem(item);
+            }
+        }
+    }
+
+    /**
+     * Let the model know that the item was deleted.
+     */
+    public void itemDeleted (Item item)
+    {
+        for (Stuff model : _models.values()) {
+            if (model.matches(item)) {
+                model.removeItem(item);
+            }
+        }
+    }
+
     // from interface ItemUsageListener
     public void itemUsageChanged (ItemUsageEvent event)
     {
@@ -153,23 +174,28 @@ public class InventoryModels
         }
     }
 
-    // from interface ItemDataModel
-    public void itemUpdated (Item item)
+    protected void loadModel (final Key key, final AsyncCallback<DataModel<Item>> cb)
     {
-        for (Stuff model : _models.values()) {
-            if (model.matches(item)) {
-                model.updateItem(item);
-            }
+        Stuff model = _models.get(key);
+        if (model != null) {
+            cb.onSuccess(model);
+            return;
         }
-    }
 
-    // from interface ItemDataModel
-    public void itemDeleted (Item item)
-    {
-        for (Stuff model : _models.values()) {
-            if (model.matches(item)) {
-                model.removeItem(item);
+        AsyncCallback<List<Item>> callback = new AsyncCallback<List<Item>>() {
+            public void onSuccess (List<Item> result) {
+                Stuff model = new Stuff(result, key);
+                _models.put(key, model);
+                cb.onSuccess(model);
             }
+            public void onFailure (Throwable caught) {
+                cb.onFailure(caught);
+            }
+        };
+        if (key.suiteId != 0) {
+            _stuffsvc.loadSubInventory(key.type, key.suiteId, callback);
+        } else {
+            _stuffsvc.loadInventory(key.type, key.query, callback);
         }
     }
 
@@ -190,7 +216,7 @@ public class InventoryModels
 
         public boolean equals (Object other) {
             Key okey = (Key)other;
-            return type == okey.type && suiteId == okey.suiteId &&
+            return type == okey.type && (suiteId == okey.suiteId) &&
                 ((query != null && query.equals(okey.query)) || query == okey.query);
         }
     }

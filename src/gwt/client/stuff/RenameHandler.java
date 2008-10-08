@@ -27,12 +27,12 @@ import client.util.ServiceUtil;
  */
 public class RenameHandler extends ClickCallback<String>
 {
-    public RenameHandler (SourcesClickEvents trigger, Item item, ItemDataModel detailListener)
+    public RenameHandler (SourcesClickEvents trigger, Item item, InventoryModels models)
     {
         super(trigger, "");
 
         _item = item;
-        _listener = detailListener;
+        _models = models;
         _name = new TextBox();
         _name.setMaxLength(Item.MAX_NAME_LENGTH);
         _name.setVisibleLength(Item.MAX_NAME_LENGTH);
@@ -48,7 +48,7 @@ public class RenameHandler extends ClickCallback<String>
     // from ClickCallback
     public boolean gotResult (String result) {
         _item.name = result;
-        _listener.itemUpdated(_item);
+        _models.itemUpdated(_item);
         // just force a reload of the detail page
         Link.replace(Pages.STUFF, Args.compose(
                     "d", _item.getType(), _item.itemId,
@@ -90,7 +90,7 @@ public class RenameHandler extends ClickCallback<String>
     }
 
     protected Item _item;
-    protected ItemDataModel _listener;
+    protected InventoryModels _models;
     protected TextBox _name;
 
     protected static final StuffMessages _msgs = GWT.create(StuffMessages.class);

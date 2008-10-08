@@ -22,7 +22,7 @@ import client.util.NaviUtil;
  */
 public class SubItemPanel extends PagedGrid<Item>
 {
-    public SubItemPanel (ItemDataModel models, byte type, Item parent)
+    public SubItemPanel (InventoryModels models, byte type, Item parent)
     {
         super(ROWS, ItemPanel.COLUMNS, PagedGrid.NAV_ON_BOTTOM);
         addStyleName("subInventoryContents");
@@ -45,7 +45,7 @@ public class SubItemPanel extends PagedGrid<Item>
         if (!visible || hasModel()) {
             return;
         }
-        _models.loadModel(_type, _parent.getSuiteId(), null, new MsoyCallback<DataModel<Item>>() {
+        _models.loadSubModel(_type, _parent.getSuiteId(), new MsoyCallback<DataModel<Item>>() {
             public void onSuccess (DataModel<Item> model) {
                 setModel(model, 0);
             }
@@ -77,7 +77,7 @@ public class SubItemPanel extends PagedGrid<Item>
         controls.setWidget(0, 0, _create);
     }
 
-    protected ItemDataModel _models;
+    protected InventoryModels _models;
     protected byte _type;
     protected Item _parent;
     protected Button _create;
