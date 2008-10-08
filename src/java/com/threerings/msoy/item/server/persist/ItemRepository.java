@@ -290,9 +290,13 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> findOriginalItems (int ownerId, String query)
     {
+        // buildSearchStringClause requires a left join on CatalogRecord
+        Join joinClause = new Join(getItemClass(), ItemRecord.ITEM_ID, getCatalogClass(),
+            CatalogRecord.LISTED_ITEM_ID);
+        joinClause.setType(Join.Type.LEFT_OUTER);
         return findAll(getItemClass(), new Where(
             new And(new Conditionals.Equals(getItemColumn(ItemRecord.OWNER_ID), ownerId),
-                    buildSearchStringClause(query))));
+                    buildSearchStringClause(query))), joinClause);
     }
 
     /**
@@ -315,9 +319,13 @@ public abstract class ItemRepository<T extends ItemRecord>
      */
     public List<T> findClonedItems (int ownerId, String query)
     {
+        // buildSearchStringClause requires a left join on CatalogRecord
+        Join joinClause = new Join(getCloneClass(), CloneRecord.ORIGINAL_ITEM_ID,
+            getCatalogClass(), CatalogRecord.LISTED_ITEM_ID);
+        joinClause.setType(Join.Type.LEFT_OUTER);
         return loadClonedItems(new Where(
             new And(new Conditionals.Equals(getCloneColumn(CloneRecord.OWNER_ID), ownerId),
-                    buildSearchStringClause(query))));
+                    buildSearchStringClause(query))), joinClause);
     }
 
     /**
