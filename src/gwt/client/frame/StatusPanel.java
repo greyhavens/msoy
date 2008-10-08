@@ -16,7 +16,6 @@ import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 import com.threerings.gwt.util.CookieUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.data.all.MemberName;
 import com.threerings.msoy.web.data.SessionData;
 import com.threerings.msoy.web.data.WebCreds;
@@ -168,13 +167,13 @@ public class StatusPanel extends SmartTable
 
             int idx = 0;
             getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
-            ClickListener onClick = DeploymentConfig.barsEnabled ?
+            ClickListener onClick = CShell.barsEnabled() ?
                 NaviUtil.onViewTransactions(ReportType.COINS) : null;
             setWidget(0, idx++, MsoyUI.createActionImage(Currency.COINS.getLargeIcon(),
                 _cmsgs.coinsTip(), onClick), 1, "Icon");
             setText(0, _coinsIdx = idx++, "0");
 
-            if (DeploymentConfig.barsEnabled) {
+            if (CShell.barsEnabled()) {
                 getFlexCellFormatter().setWidth(0, idx++, "15px"); // gap!
                 setWidget(0, idx++, MsoyUI.createActionImage(Currency.BARS.getLargeIcon(),
                     _cmsgs.barsTip(), NaviUtil.onViewTransactions(ReportType.BARS)), 1, "Icon");
@@ -198,7 +197,7 @@ public class StatusPanel extends SmartTable
         }
 
         public void setBars (int bars) {
-            if (DeploymentConfig.barsEnabled) {
+            if (CShell.barsEnabled()) {
                 setText(0, _barsIdx, Currency.BARS.format(bars));
             }
         }

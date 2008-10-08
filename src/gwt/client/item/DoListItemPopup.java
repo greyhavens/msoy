@@ -17,7 +17,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.threerings.gwt.ui.SmartTable;
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.money.data.all.Currency;
@@ -128,7 +127,7 @@ public class DoListItemPopup extends VerticalPanel
             _cost.setText(String.valueOf(cost));
 
             // TODO: You know what this needs? A mockup
-            if (DeploymentConfig.barsEnabled) {
+            if (CShell.barsEnabled()) {
                 _currencyBox = new ListBox();
                 for (int i=0; i<CURRENCY_LABELS.length; ++i) {
                     _currencyBox.addItem(CURRENCY_LABELS[i]);

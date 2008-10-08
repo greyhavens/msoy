@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Widget;
 
 import com.threerings.gwt.ui.WidgetUtil;
 
-import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.item.data.all.Item;
 import com.threerings.msoy.item.data.all.SubItem;
 import com.threerings.msoy.item.gwt.CatalogListing;
@@ -53,7 +52,7 @@ public class BuyPanel extends FlowPanel
 
         // Buy with bars, plus a link on how to acquire some
         _buyBars = new BuyButton(Currency.BARS, _listing.quote.getBars());
-        if (DeploymentConfig.barsEnabled) {
+        if (CShell.barsEnabled()) {
             add(_buyBars);
             Widget link = Link.buyBars(_msgs.listingBuyBars());
             link.setStyleName("GetBars");

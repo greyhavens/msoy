@@ -68,7 +68,7 @@ public class DashboardPanel extends FlexTable
         controls.add(new Button(_msgs.affMapButton(), Link.createListener(Pages.ADMINZ, "affmap")));
         
         // Only add cash out button if bars are enabled.
-        if (DeploymentConfig.barsEnabled) {
+        if (CShell.barsEnabled()) {
             controls.add(new Button(_msgs.cashOutButton(), Link.createListener(Pages.ADMINZ, "cashout")));
         }
         
