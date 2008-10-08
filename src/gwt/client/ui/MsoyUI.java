@@ -312,6 +312,7 @@ public class MsoyUI
     {
         PushButton button = new PushButton();
         button.setStyleName(style);
+        button.addStyleName("actionLabel");
         if (listener != null) {
             button.addClickListener(listener);
         }
