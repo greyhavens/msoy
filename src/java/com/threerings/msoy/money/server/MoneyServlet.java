@@ -13,6 +13,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
+import com.threerings.msoy.data.all.DeploymentConfig;
 import com.threerings.msoy.money.data.MoneyCodes;
 import com.threerings.msoy.money.data.all.BlingExchangeResult;
 import com.threerings.msoy.money.data.all.BlingInfo;
@@ -27,6 +28,7 @@ import com.threerings.msoy.money.gwt.MoneyService;
 import com.threerings.msoy.server.MsoyAuthenticator;
 import com.threerings.msoy.server.persist.MemberRecord;
 import com.threerings.msoy.server.persist.MemberRepository;
+import com.threerings.msoy.server.util.MailSender;
 import com.threerings.msoy.web.data.ServiceCodes;
 import com.threerings.msoy.web.data.ServiceException;
 import com.threerings.msoy.web.server.MsoyServiceServlet;
@@ -79,8 +81,9 @@ public class MoneyServlet extends MsoyServiceServlet
         }
         _authenticator.authenticateSession(mrec.accountName, password);
         
+        BlingInfo result;
         try {
-            return _moneyLogic.requestCashOutBling(memberId, blingAmount, info);
+            result = _moneyLogic.requestCashOutBling(memberId, blingAmount, info);
         } catch (NotEnoughMoneyException neme) {
             throw neme.toServiceException();
         } catch (AlreadyCashedOutException acoe) {
@@ -88,6 +91,13 @@ public class MoneyServlet extends MsoyServiceServlet
         } catch (BelowMinimumBlingException bmbe) {
             throw new ServiceException(MoneyCodes.E_BELOW_MINIMUM_BLING);
         }
+
+        // Spam the cash out mailing list
+        _mailer.sendTemplateEmail("blingcashout@threerings.net", "no-reply@whirled.com",
+            "blingCashOutNotice", "memberId", mrec.memberId, "name", mrec.name,
+            "url", DeploymentConfig.serverURL + "#adminz-cashout"); // TODO: A more meaningful URL
+
+        return result;
     }
 
     public List<CashOutEntry> getBlingCashOutRequests ()
@@ -165,4 +175,5 @@ public class MoneyServlet extends MsoyServiceServlet
     @Inject protected MoneyLogic _moneyLogic;
     @Inject protected MemberRepository _memberRepo;
     @Inject protected MsoyAuthenticator _authenticator;
+    @Inject protected MailSender _mailer;
 }
