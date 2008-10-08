@@ -81,7 +81,10 @@ public class NaviUtil
     {
         return new ClickListener() {
             public void onClick (Widget sender) {
-                Window.open(Link.billingURL(), "_blank", null);
+                Window.open(Link.billingURL(), "_blank",
+                    // For those silly browsers that open this in a new window instead of a new
+                    // tab, enable all the chrome options on the new window.
+                    "resizable=1,menubar=1,toolbar=1,location=1,status=1,scrollbars=1");
             }
         };
     }
