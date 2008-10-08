@@ -20,6 +20,9 @@ public class GalleryData implements IsSerializable
     public List<Photo> photos;
     public MemberName owner;
 
+    /** True if some part of the gallery has changed and not yet saved */
+    public boolean hasUnsavedChanges;
+
     public List<Integer> getPhotoIds ()
     {
         List<Integer> ids = new ArrayList<Integer>();

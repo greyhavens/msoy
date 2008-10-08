@@ -67,7 +67,7 @@ public class GalleryViewPanel extends FlowPanel
     {
         if (isProfileGallery) {
             // fetch the profile gallery info
-            _profileMemberId = args.get(1, -1);
+            _profileMemberId = args.get(1, 0);
             _gallerysvc.loadMeGallery(_profileMemberId, new MsoyCallback<GalleryData>() {
                 public void onSuccess (GalleryData galleryData) {
                     displayGallery(galleryData);
@@ -76,8 +76,8 @@ public class GalleryViewPanel extends FlowPanel
             return;
         }
 
-        final int galleryId = args.get(1, -1);
-        final int photoId = args.get(2, -1);
+        final int galleryId = args.get(1, 0);
+        final int photoId = args.get(2, 0);
 
         if (_galleryData != null && _galleryData.gallery.galleryId == galleryId) {
             // don't refetch gallery data, just display the right image
@@ -102,7 +102,7 @@ public class GalleryViewPanel extends FlowPanel
     {
         FlowPanel error = MsoyUI.createFlowPanel("Error");
         if (galleryData == null) {
-            if (_profileMemberId > 0) {
+            if (_profileMemberId != 0) {
                 if (_profileMemberId == CShell.getMemberId()) {
                     error.add(new HTML(_pmsgs.galleryProfileNoPhotosSelf()));
                     final String args = Args.compose(GalleryEditPanel.CREATE_PROFILE_ACTION,
@@ -210,7 +210,7 @@ public class GalleryViewPanel extends FlowPanel
     {
         // get the location in the photo in our set, if it exists
         int tempPhotoIndex = -1;
-        if (photoId > 0) {
+        if (photoId != 0) {
             for (Photo photo : _galleryData.photos) {
                 if (photo.itemId == photoId) {
                     tempPhotoIndex = _galleryData.photos.indexOf(photo);

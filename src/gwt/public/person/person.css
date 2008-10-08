@@ -100,10 +100,6 @@
   margin-left: 10px;
 }
 
-.galleryViewPanel .Actions .actionLabel {
-  text-decoration: none;
-}
-
 .galleryViewPanel .Thumbnail {
   margin: 10px 0 0 8px;
   float: left;
@@ -139,7 +135,6 @@
 .galleryViewPanel .CurrentPhoto .creator a {
   color: #154676;
   font-size: 14px;
-  text-decoration: none;
 }
 
 .galleryViewPanel .CurrentPhoto .LargePhoto {
@@ -151,7 +146,6 @@
 }
 
 .galleryViewPanel .CurrentPhoto .ViewFullSize {
-  text-decoration: none;
   color: #247393;
   margin-top: 10px;
 }
@@ -200,7 +194,6 @@
 .galleryDetailPanel .creator a {
   color: #154676;
   font-size: 14px;
-  text-decoration: none;
 }
 
 .galleryDetailPanel .Description {
@@ -335,6 +328,5 @@
 }
 
 .galleryEditPanel .UploadPhotos {
-  text-decoration: none;
   color: #247393;
 }

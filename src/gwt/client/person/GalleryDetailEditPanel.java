@@ -34,7 +34,8 @@ import com.threerings.msoy.person.gwt.GalleryData;
 */
 public class GalleryDetailEditPanel extends AbsolutePanel
 {
-    public GalleryDetailEditPanel (GalleryData galleryData, PickupDragController dragController)
+    public GalleryDetailEditPanel (final GalleryData galleryData,
+            PickupDragController dragController)
     {
         final Gallery gallery = galleryData.gallery;
         setStyleName("galleryDetailPanel");
@@ -59,6 +60,7 @@ public class GalleryDetailEditPanel extends AbsolutePanel
                     if (droppings.getPayload() instanceof Photo) {
                         Photo image = (Photo) droppings.getPayload();
                         gallery.thumbMedia = image.thumbMedia;
+                        galleryData.hasUnsavedChanges = true;
                         thumbnailPanel.clear();
                         thumbnailPanel.add(MediaUtil.createMediaView(image.thumbMedia,
                             MediaDesc.THUMBNAIL_SIZE));
@@ -86,6 +88,7 @@ public class GalleryDetailEditPanel extends AbsolutePanel
             name.addChangeListener(new ChangeListener() {
                 public void onChange (Widget sender) {
                     gallery.name = ((TextBox) sender).getText();
+                    galleryData.hasUnsavedChanges = true;
                 }
             });
             add(name, 105, 7);
@@ -103,6 +106,7 @@ public class GalleryDetailEditPanel extends AbsolutePanel
         description.getTextArea().addChangeListener(new ChangeListener() {
             public void onChange (Widget sender) {
                 gallery.description = description.getText();
+                galleryData.hasUnsavedChanges = true;
             }
         });
         description.getTextArea().addFocusListener(new FocusListenerAdapter() {

@@ -82,14 +82,15 @@ public class GalleryRepository extends DepotRepository
      */
     public void updateGallery (Gallery gallery, int[] photoItemIds)
     {
-        updatePartial(GalleryRecord.getKey(gallery.galleryId),
-                      GalleryRecord.NAME, gallery.name,
-                      GalleryRecord.DESCRIPTION, gallery.description,
+        GalleryRecord galleryRecord = GalleryRecord.fromGallery(gallery);
+        updatePartial(GalleryRecord.getKey(galleryRecord.galleryId),
+                      GalleryRecord.NAME, galleryRecord.name,
+                      GalleryRecord.DESCRIPTION, galleryRecord.description,
                       GalleryRecord.PHOTO_ITEM_IDS, photoItemIds,
                       GalleryRecord.LAST_MODIFIED, currentTimestamp(),
-                      GalleryRecord.THUMB_MEDIA_HASH, gallery.thumbMedia.hash,
-                      GalleryRecord.THUMB_MIME_TYPE, gallery.thumbMedia.mimeType,
-                      GalleryRecord.THUMB_CONSTRAINT, gallery.thumbMedia.constraint);
+                      GalleryRecord.THUMB_MEDIA_HASH, galleryRecord.thumbMediaHash,
+                      GalleryRecord.THUMB_MIME_TYPE, galleryRecord.thumbMimeType,
+                      GalleryRecord.THUMB_CONSTRAINT, galleryRecord.thumbConstraint);
     }
 
     /**

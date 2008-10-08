@@ -25,6 +25,7 @@ import com.allen_sauer.gwt.dnd.client.VetoDragException;
 import com.allen_sauer.gwt.dnd.client.drop.SimpleDropController;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -103,7 +104,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
             _dragController);
         add(detailPanel, 0, 10);
 
-        // add "save" button
+        // add "save" and "cancel" buttons
         PushButton saveButton = MsoyUI.createButton(MsoyUI.MEDIUM_THIN,
             _pmsgs.gallerySaveButton(),
             new ClickListener() {
@@ -115,7 +116,21 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
             }
         );
         saveButton.addStyleName("Save");
-        add(saveButton, 575, 70);
+        add(saveButton, 575, 45);
+
+        Button cancelButton = new Button("Cancel", new ClickListener() {
+            public void onClick (Widget sender) {
+                if (_newGallery) {
+                    Link.go(Pages.PEOPLE, Args.compose(GalleryPanel.GALLERIES_ACTION,
+                        CShell.getMemberId()));
+                } else {
+                    Link.go(Pages.PEOPLE, Args.compose(GalleryViewPanel.VIEW_ACTION,
+                        _galleryData.gallery.galleryId));
+                }
+            }
+        });
+        cancelButton.setWidth("90px");
+        add(cancelButton, 575, 80);
 
         // instructions for drop box will be removed when the first content is inserted
         final FlowPanel dragInstructions = MsoyUI.createFlowPanel("DragInstructions");
@@ -126,9 +141,11 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
             public void contentInserted (DropModel<Photo> model, Photo content, int index) {
                 dragInstructions.clear();
                 updateCount(model);
+                _galleryData.hasUnsavedChanges = true;
             }
             public void contentRemoved (DropModel<Photo> model, Photo content) {
                 updateCount(model);
+                _galleryData.hasUnsavedChanges = true;
             }
             protected void updateCount (DropModel<Photo> model) {
                 detailPanel.setCount(model.getContents().size());
@@ -208,7 +225,10 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
      */
     protected void saveGallery (final boolean backToView, final PushButton saveButton)
     {
-
+        if (!_galleryData.hasUnsavedChanges) {
+            saveComplete(backToView, saveButton);
+            return;
+        }
 
         if (_newGallery) {
             _gallerysvc.createGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
@@ -216,13 +236,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
                     public void onSuccess (Gallery result) {
                         _newGallery = false;
                         _galleryData.gallery = result;
-                        if (saveButton != null) {
-                            saveButton.setEnabled(true);
-                        }
-                        if (backToView) {
-                            Link.go(Pages.PEOPLE, Args.compose(GalleryViewPanel.VIEW_ACTION,
-                                _galleryData.gallery.galleryId));
-                        }
+                        saveComplete(backToView, saveButton);
                     }
                 }
             );
@@ -230,13 +244,7 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
             _gallerysvc.updateGallery(_galleryData.gallery, _galleryData.getPhotoIds(),
                 new MsoyCallback<Void>() {
                     public void onSuccess (Void result) {
-                        if (saveButton != null) {
-                            saveButton.setEnabled(true);
-                        }
-                        if (backToView) {
-                            Link.go(Pages.PEOPLE, Args.compose(GalleryViewPanel.VIEW_ACTION,
-                                _galleryData.gallery.galleryId));
-                        }
+                        saveComplete(backToView, saveButton);
                     }
                 }
             );
@@ -244,8 +252,23 @@ public class GalleryEditPanel extends AbsolutePanel // AbsolutePanel needed to s
     }
 
     /**
+     * Called when save is finished, enable save button and/or redirect to the gallery view.
+     */
+    protected void saveComplete (boolean backToView, PushButton saveButton)
+    {
+        _galleryData.hasUnsavedChanges = false;
+        if (saveButton != null) {
+            saveButton.setEnabled(true);
+        }
+        if (backToView) {
+            Link.go(Pages.PEOPLE, Args.compose(GalleryViewPanel.VIEW_ACTION,
+                _galleryData.gallery.galleryId));
+        }
+    }
+
+    /**
      * A paginated list of Photos.
-     * TODO add page numbers.
+     * TODO add page numbers and disable prev/next at appropriate times.
      */
     protected class PhotoList extends FlowPanel {
         public PhotoList (DataModel<Photo> model, int count) {
