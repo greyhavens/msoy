@@ -22,6 +22,9 @@ import mx.core.UIComponent;
 import mx.events.CloseEvent;
 
 import com.threerings.util.Log;
+import com.threerings.util.ValueEvent;
+
+import com.threerings.flash.MediaContainer;
 
 import com.threerings.flex.CommandButton;
 import com.threerings.flex.CommandCheckBox;
@@ -32,6 +35,7 @@ import com.threerings.msoy.ui.FlyingPanel;
 
 import com.threerings.msoy.client.Msgs;
 import com.threerings.msoy.client.MsoyContext;
+import com.threerings.msoy.client.MsoyParameters;
 
 import com.threerings.msoy.item.data.all.Decor;
 
@@ -67,6 +71,15 @@ public class DecorEditPanel extends FlyingPanel
 
     protected function doHookup () :void
     {
+        // maybe we're being used as a tester in the SDK....
+        var media :String = MsoyParameters.get()["media"] as String;
+        if (media != null) {
+            updateMedia(media);
+            _studioView.getBackground().addEventListener(
+                MediaContainer.SIZE_KNOWN, handleTestingSizeKnown);
+            return;
+        }
+
         // register everything. We are never actually closed
         try {
             ExternalInterface.addCallback("updateMedia", updateMedia);
@@ -152,7 +165,6 @@ public class DecorEditPanel extends FlyingPanel
     {
         try {
             if (!ExternalInterface.available) {
-                log.warning("External interface not available, can't save decor.");
                 return;
             }
 
@@ -279,6 +291,14 @@ public class DecorEditPanel extends FlyingPanel
             log.warning("Unhandled room type!");
             break;
         }
+    }
+
+    protected function handleTestingSizeKnown (event :ValueEvent) :void
+    {
+        const w :int = int(event.value[0]);
+        const h :int = int(event.value[1]);
+
+        updateParameters(Decor.IMAGE_OVERLAY, false, w, h, h, .5, 1, 0, 0);
     }
 
     protected var log :Log = Log.getLog(this);
