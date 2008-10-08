@@ -7,7 +7,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -32,7 +31,7 @@ public class TransactionsPanel extends FlowPanel
         blurb.setStyleName("Blurb");
 
         RoundBox tip = new RoundBox(RoundBox.MEDIUM_BLUE);
-        tip.add(new HTML(REPORT_TIPS[reportIndex-1]));
+        tip.add(MsoyUI.createHTML(REPORT_TIPS[reportIndex-1], null));
         blurb.setWidget(0, 0, tip);
 
         FlowPanel billing = new FlowPanel();
