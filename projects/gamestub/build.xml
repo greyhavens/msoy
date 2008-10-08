@@ -2,7 +2,7 @@
 <project name="gamestub" default="compile" basedir=".">
 
   <!-- define some basic project parameters -->
-  <property name="app.name"         value="GameStub"/>
+  <property name="app.name"         value="Stub"/>
   <property name="app.source-dir"   value="src/"/>
   <property name="root.path"        value="../.."/>
   <property name="flex.path"        value="${root.path}/lib/flex_sdk"/>

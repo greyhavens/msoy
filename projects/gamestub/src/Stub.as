@@ -33,7 +33,7 @@ import flash.text.TextFormat;
 
 
 /**
- * GameStub. A small wrapper to load up a whirled client and play a game
+ * Stub. A small wrapper to load up a whirled client and play a game or visit a room
  * from some 3rd party site.
  *
  * NOTE: Please avoid using any non-builtin classes here.
@@ -45,7 +45,7 @@ import flash.text.TextFormat;
  *    has defined a version of StringUtil that is old and lacking those methods.
  */
 [SWF(width="700", height="575")]
-public class GameStub extends Sprite
+public class Stub extends Sprite
 {
     public static const WIDTH :int = 700;
     public static const HEIGHT :int = 575;
@@ -56,7 +56,7 @@ public class GameStub extends Sprite
     //public static const CLIENT_URL :String = "http://www.whirled.com/clients/world-client.swf";
     public static const CLIENT_URL :String = "http://tasman.sea.earth.threerings.net:8080/clients/world-client.swf";
 
-    public function GameStub ()
+    public function Stub ()
     {
         if (stage != null) {
             stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -83,70 +83,39 @@ public class GameStub extends Sprite
 
         // now let's try loading the client
         _clientLoader = new Loader();
-        _clientLoader.contentLoaderInfo.addEventListener(Event.INIT, onClientLoaded);
-        _clientLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, onClientLoadError);
+        _clientLoader.contentLoaderInfo.addEventListener(Event.INIT, handleLoaded);
+        _clientLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, handleLoadError);
         _clientLoader.load(new URLRequest(CLIENT_URL),
             new LoaderContext(true, new ApplicationDomain(null)));
         addChild(_clientLoader);
     }
 
+    /**
+     * The uberclient will call this method to retrieve startup parameters.
+     */
     public function getWhirledParams () :String
     {
-        // called by world-client
-        return "gameLobby=" + GAME_ID +
-            "&vec=e." + encodeURIComponent(getHost()) + ".games." + GAME_ID;
+        return "mode=10&game=" + GAME_ID;
+
+        // or room=" + ROOM_ID;
+
+// this stuff is no longer needed, it's been loaded into the client...
+//        return "gameLobby=" + GAME_ID +
+//            "&vec=e." + encodeURIComponent(getHost()) + ".games." + GAME_ID;
     }
 
-    protected function onClientLoaded (...ignored) :void
+    protected function handleLoaded (... ignored) :void
     {
         removeChild(_label);
         _label = null;
     }
 
-    protected function onClientLoadError (e :ErrorEvent) :void
+    protected function handleLoadError (e :ErrorEvent) :void
     {
         removeChild(_clientLoader);
+        _clientLoader = null;
         _label.text = "Error loading: " + e.text;
     }
-
-    protected function getHost () :String
-    {
-        trace("==== The url: " + this.loaderInfo.url);
-        trace("==== Just the domain ma'am: " + new LocalConnection().domain);
-        try {
-            trace("== with feeling: " + ExternalInterface.call("window.location.href.toString"));
-        } catch (e :Error) {
-            // le boo, le hoo
-        }
-
-        var result :Object = URL_REGEXP.exec(this.loaderInfo.url);
-        if (result == null) {
-            return "";
-        }
-
-        var host :String = String(result[2]);
-        // strip the last part
-        var lastdot :int = host.lastIndexOf(".");
-        if (lastdot != -1) {
-            host = host.substring(0, lastdot);
-        }
-        // now just keep the last part
-        lastdot = host.lastIndexOf(".");
-        if (lastdot != -1) {
-            host = host.substring(lastdot + 1);
-        }
-        return massageHost(host);
-    }
-
-    protected function massageHost (host :String) :String
-    {
-        switch (host) {
-        default: return host;
-        case "ungrounded": return "newgrounds";
-        }
-    }
-
-    protected static const URL_REGEXP :RegExp = /^(\w+:\/\/)?\/?([^:\/\s]+)/; // protocol and host
 
     protected var _clientLoader :Loader;
 
