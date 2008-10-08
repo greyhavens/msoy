@@ -45,8 +45,6 @@ public class BlingPanel extends SmartTable
     
     protected void init ()
     {
-        clear();
-
         int row = 0;
         setText(row++, 0, _msgs.blingHeader(), 3, "header");
         setText(row, 0, _msgs.blingBalance(), 1, "rightLabel");
@@ -76,7 +74,7 @@ public class BlingPanel extends SmartTable
         });
     }
     
-    protected void update (BlingInfo result)
+    protected void update (final BlingInfo result)
     {
         _blingBalance.setText(Currency.BLING.format(result.bling));
         _blingWorth.setText(formatUSD((int)(result.worthPerBling * result.bling)));
@@ -92,7 +90,9 @@ public class BlingPanel extends SmartTable
                         }
                         public void onSuccess (Void v) {
                             MsoyUI.info(_msgs.cancelCashOutSuccess());
-                            init();
+                            // Show the cash out form
+                            result.cashOut = null;
+                            update(result);
                         }
                     });
                 }
