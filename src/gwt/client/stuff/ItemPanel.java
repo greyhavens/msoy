@@ -113,7 +113,8 @@ public class ItemPanel extends FlowPanel
                 return new ItemEntry(item);
             }
             @Override protected String getEmptyMessage () {
-                String query = ((InventoryModels.Stuff)_model).query;
+                String query = _model instanceof InventoryModels.Stuff
+                    ? ((InventoryModels.Stuff)_model).query : null;
                 return (query == null) ? _msgs.panelNoItems(_dmsgs.xlate("itemType" + _type)) :
                     _msgs.panelNoMatches(query);
             }

@@ -4,6 +4,8 @@
 package client.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.DeferredCommand;
 import com.google.gwt.user.client.ui.ClickListener;
 import com.google.gwt.user.client.ui.FocusListenerAdapter;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -74,7 +76,25 @@ public class SearchBox extends HorizontalPanel
         } else {
             _input.removeStyleName("Faded");
             _input.setText(text);
+            if (!_close.isAttached()) {
+                add(_close);
+            }
         }
+    }
+
+    @Override // from Widget
+    protected void onLoad ()
+    {
+        // on load, if there is search criteria in the box, focus on it
+        super.onLoad();
+        DeferredCommand.addCommand(new Command() {
+            public void execute () {
+                if (!_input.getText().equals(_cmsgs.searchDefault())
+                    && _input.getText().length() > 0) {
+                    _input.setFocus(true);
+                }
+            }
+        });
     }
 
     protected void doSearch ()
