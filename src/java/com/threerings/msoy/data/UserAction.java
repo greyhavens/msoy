@@ -7,6 +7,9 @@ import com.samskivert.util.HashIntMap;
 import com.samskivert.util.IntMap;
 
 import com.threerings.io.SimpleStreamableObject;
+
+import com.threerings.msoy.badge.data.all.Badge;
+
 import com.threerings.util.ActionScript;
 import com.threerings.util.MessageBundle;
 
@@ -141,8 +144,9 @@ public class UserAction extends SimpleStreamableObject
 
     public static UserAction earnedBadge (int memberId, int badgeCode, int level)
     {
-        String descrip = MessageBundle.compose(
-            "m.earned_badge", "badgelevel_" + level, "badge_" + Integer.toHexString(badgeCode));
+        String descrip = MessageBundle.compose("m.earned_badge",
+            MessageBundle.tcompose("badge_" + Integer.toHexString(badgeCode),
+                                   Badge.getLevelName(level)));
         return new UserAction(Type.EARNED_BADGE, memberId, descrip);
     }
 

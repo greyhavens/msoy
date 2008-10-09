@@ -4,7 +4,6 @@
 package client.me;
 
 import java.util.Date;
-import java.util.MissingResourceException;
 
 import com.google.gwt.core.client.GWT;
 
@@ -47,14 +46,7 @@ class BadgeDisplay extends FlowPanel
         add(MsoyUI.createImage(badge.imageUrl(), "StampImage"));
 
         String hexCode = Integer.toHexString(badge.badgeCode);
-        String badgeName = hexCode;
-        try {
-            badgeName = _dmsgs.xlate("badge_" + hexCode);
-            badgeName += " " + Badge.getLevelName(badge.level);
-        } catch (MissingResourceException mre) {
-            // displaying the hex code is the failure case - make sure to test all new badges
-            // before letting them out to production.
-        }
+        String badgeName = _dmsgs.get("badge_" + hexCode, Badge.getLevelName(badge.level));
         add(MsoyUI.createLabel(badgeName, "StampName"));
 
         // first look for a specific message for this level
